@@ -1,0 +1,542 @@
+{\rtf1\mac\ansicpg10000\cocoartf100
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
+\f3\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;}
+\vieww10620\viewh10020\viewkind0
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs48 \cf0 Aiuto TeXShop\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs28 \cf0 Indice\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i\b0\fs24 \cf0 \
+	Introduzione\
+	Come Ottenere e Installare teTeX\
+	Come Ottenere e Installare TeXShop\
+	Compilare i Documenti\
+	Includere Figure\
+	Modificare il Menu dei Modelli\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\i0\b \cf0 	
+\f1\i\b0 Impostare il Documento Principale di un Progetto
+\f0\i0\b \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i\b0 \cf0 	Preferenze\
+	Stampare\
+	BibTeX\
+        	MakeIndex\
+	Aprire Altri Documenti con TeXShop\
+	Conversioni Grafiche\
+        	Localizzazioni\
+	Segnalazione di Errori\
+	Licenza\
+	Traduzione\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\i0\b \cf0 \
+Introduzione:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+TeXShop \'8f una applicazione per Mac OS X con cui puoi compilare documenti in formato TeX e Latex e controllare il risultato direttamente sullo schermo. L'applicazione utilizza i compilatori 
+\f1\i pdftex
+\f2\i0  e 
+\f1\i pdflatex
+\f2\i0  al posto di 
+\f1\i tex
+\f2\i0  e 
+\f1\i latex
+\f2\i0 ; questi compilatori generano output in pdf  al posto del dvi. Poich\'8f il formato grafico nativo del sistema X \'8f il pdf, questo \'8f il formato pi\'9d semplice da usare per la visualizzazione sullo schermo. 
+\f1\i Pdftex
+\f2\i0  e 
+\f1\i pdflatex
+\f2\i0  sono stati scritti da Han The Thanh, Petr Sojka, e Jiri Zlatuska.\
+\
+I documenti pdf generati da TeXShop sono in formato pdf standard e possono essere distribuiti ad altri utenti e visualizzati su una grande variet\'88 di sistemi. Ad esempio, possono essere visualizzati da Adobe Acrobat con il sistema Mac OS 9.\
+\
+TeXShop non comprende il software TeX ma usa la distribuzione standard teTeX, una collezione dell'intera suite dei programmi, documenti e utilities TeX, creta da Thomas Esser. Questa collezione (la versione di TeX standard sui sistemi Linux) \'8f stata compilata per Mac OS X. Le istruzione per ottenere sono date qui sotto.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Come Ottenere e Installare teTeX:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+L'ultima versione di teTeX per MacOSX \'8f stata compilata da Gerben Wierda. La sua versione si pu\'98 scaricare dai siti\
+\
+	http://www.uoregon.edu/~koch/texshop/texshop.html\
+\
+e\
+\
+	ftp://ftp.nluug.nl/pub/comp/next/MacOSX/teTeX-1.07-fmt-1.02.macosx.tar.gz\
+\
+Il documento nel sito dell'Oregon \'8f chiamato "tetex.tar.gz", mentre il documento in Olanda si chiama  "teTeX-1.07-fmt-1.02.macosx.tar.gz". Procurati uno di questi file e mettilo nella tua home directory. Apri una finestra dell'applicazione Terminale e scrivi i seguenti comandi:\
+\
+                
+\f3\fs20 cd\
+        sudo  tcsh\
+        tar  -zpPxvf  tetex.tar.gz\
+        cd  /usr/local\
+        mkdir  bin\
+        cd  /usr/local/teTeX\
+        source  mklinks\
+
+\f2\fs24                \
+ Se la tua stampante usa il formato "letter" invece di "A4" digita anche il seguente comando:\
+ \
+                
+\f3\fs20 texconfig  dvips  paper  letter\
+
+\f2\fs24                \
+Questi comandi devono essere eseguiti da un utente con accesso come Amministratore. Il conto creato durante l'installazione di Mac OS X \'8f uno di questi. Il comando "sudo" genera un avviso e richiede l'introduzione di una password; inserisci la parola d'ordine usuale del tuo conto. Il comando "tar" generer\'88 numerose linee di output, comprese linee di avviso del tipo "unable to set uid/guid; no such file or directory." Questo \'8f normale; ignora gli avvisi. Quando hai finito esci dall'applicazione Terminale. Puoi cancellare il documento "tetex.tar.gz."\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Come Ottenere e Installare TeXShop:
+\f2\b0 \
+\
+Dal tuo conto di login, entra nel sito web:\
+\
+	www.uoregon.edu/~koch/texshop/texshop.html\
+\
+Segui il link ``TeXShop Program''. Questo produrr\'88 un documento chiamato texshop.tar.gz. In una finestra dell'applicazione Terminale, digita i seguenti comandi:\
+\
+                
+\f3\fs20 gzip  -d  texshop.tar.gz\
+        tar  -xf  texshop.tar\
+        rm  texshop.tar.gz
+\f2\fs24 \
+\
+Questo produrr\'88 una cartella chiamata "TeXShop Folder" con all'interno l'applicazione TeXShop e diversi documenti che puoi leggere e cancellare. Trascina TeXShop nella cartella Applicazioni. Se hai intenzione di usare TeXShop spesso, trascina la sua icona sul Dock.\
+\
+
+\f0\b Compilare i Documenti:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Per usare TeXShop, scrivi il documento sorgente in formato Latex nella finestra di editing. Quindi premi il pulsante "Latex" nella parte superiore della finestra. L'input verr\'88 salvato e verr\'88 lanciato il compilatore 
+\f1\i pdftex
+\f2\i0 . Si aprir\'88 una seconda finestra con i messaggi generati dal compilatore 
+\f1\i tex
+\f2\i0 . Nel caso ci fossero degli errori, 
+\f1\i pdflatex
+\f2\i0  si interromper\'88; premi "return" per ignorare gli errori uno alla volta, o uno dei comandi tex standard per interrompere la compilazione, eseguirla in modo continuo, ecc. Non appena il documento \'8f stato compilato, apparir\'88 una nuova finestra con l'anteprima del documento pdf generato. \
+\
+Per compilare un documento TeX, premi il pulsante "Programma" e seleziona TeX al posto di Latex. Se di preferenza usi TeX, scegli questo formato come default nelle Preferenze dell'applicazione.\
+\
+Puoi correggere gli errori immediatamente nella finestra di editing e premere nuovamente il pulsante "TeX" o "Latex" senza interrompere la compilazione. L'applicazione interromper\'88 la prima compilazione e lancer\'88 
+\f1\i pdflatex
+\f2\i0  nuovamente.\
+\
+TeXShop tiene traccia dei primi venti errori. Per saltare direttamente alle linee del documento sorgente contenti gli errori,  scegli "Vai all'Errore" nel menu Composizione o digita l'abbreviazione di tastiera per questo comando.\
+\
+Quando correggi gli errori e compili nuovamente, la finesta di anteprima ricorder\'88 la pagina che stavi precedentemente visualizzando.\
+\
+Se una linea nel documento sorgente contiene i caratteri "%:", TeXShop interpreta le parole seguenti come una "etichetta" e aggiunge queste parole al menu a tendina Tags. Scegliendo un elemento di questo menu, salterai direttamente alla linea corrispondente nel documento sorgente.\
+\
+TeXShop pu\'98 gestire simultaneamente pi\'9d documenti. Se scegli "Nuovo" o "Apri" dal menu Archivio, il tuo documento originale rimarr\'88 aperto e si apriranno nuove finestre per i nuovi documenti. Se apri un documento tex in una cartella contenente un documento pdf con lo stesso nome, si aprir\'88 anche la corrispondente finestra di anteprima.\
+\
+Puoi avviare TeXShop con un doppio clic su un documento che abbia estensione ".tex". L'applicazione aprir\'88 quel documento sorgente e (se esiste) il documento pdf associato.\
+\
+Puoi chiudere la finestra con l'anteprima pdf in ogni momento. Ricomparir\'88 non appena il documento sorgente verr\'88 compilato di nuovo. Se chiudi la finestra di input, si chiuder\'88 anche la finestra di anteprima (le eventuali finestre con altri documenti tex rimarranno aperte). Perci\'98, se una finestra contenente un documento sorgente crea confusione sullo schermo, nascondila nel Dock invece di chiuderla.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i \cf0 Attenzione
+\f2\i0 : 
+\f1\i pdftex
+\f2\i0  e 
+\f1\i pdflatex
+\f2\i0  sono programmi unix che mal gestiscono gli spazi contenuti nei nomi dei file. Per questa ragione, \'8f buona regola che i documenti creati con TeXShop non contengano spazi. L'applicazione TeXShop di per se, non ha problemi nel gestire gli spazi nei nomi dei file.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Includere Figure:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Nei documenti TeX \'8f pratica comune utilizzare il formato grafico eps (encapsulated postscript), poich\'8f questo formato viene stampato correttamente in ogni dimensione. Il formato grafico nativo del sistema X \'8f il pdf (postscript display format); anche questo formato viene riprodotto correttamento in ogni dimensione. Di conseguenza, i file grafici da includere nei documenti TeXShop devono essere creati in formato pdf. \'e9 molto probabile che nel corso dei prossimi mesi la maggior parte delle applicazioni grafiche per il Macintosh verrano modificate per generare output in formato pdf. Stanno gi\'88 comparendo utilit\'88 che possono convertire documenti da un formato grafico all'altro.\
+\
+Gli autori di 
+\f1\i pdflatex
+\f2\i0  hanno resa semplice l'operazione di includere documenti grafici in un sorgente Latex, da compilare con 
+\f1\i pdflatex
+\f2\i0 , anche nel caso in cui il documento debba essere successivamente compilato con il 
+\f1\i latex
+\f2\i0  standard e convertito in formato dvi per essere distribuito ad altri utenti. Inserisci le linee seguenti, all'inizio di tale sorgente Latex:\
+\
+	
+\f3\fs20 \\newif\\ifpdf\
+	\\ifx\\pdfoutput\\undefined\
+	\\pdffalse % we are not running PDFLaTeX\
+	\\else\
+	\\pdfoutput=1 % we are running PDFLaTeX\
+	\\pdftrue\
+	\\fi\
+\
+	\\ifpdf\
+	\\usepackage[pdftex]\{graphicx\}\
+	\\else\
+	\\usepackage\{graphicx\}\
+	\\fi\
+
+\f2\fs24  
+\f0\b \
+
+\f2\b0 Dopo il comando "\\begin\{document\}" inserisci le linee\
+\
+	
+\f3\fs20 \\ifpdf\
+	\\DeclareGraphicsExtensions\{.pdf, .jpg\}\
+	\\else\
+	\\DeclareGraphicsExtensions\{.eps, .jpg\}\
+	\\fi\
+\
+
+\f2\fs24 Quando vuoi includere un documento grafico, ad esempio "f1.pdf ", usa il comando\
+\
+	
+\f3\fs20 \\includegraphics[width=2in]\{f1\}
+\f2\fs24 \
+\
+Questo comando inserir\'88 il documento grafico "f1.pdf" se il sorgente \'8f compilato con 
+\f1\i pdflatex
+\f2\i0 , o il documento "f1.eps" se il sorgente \'8f compilato con 
+\f1\i latex
+\f2\i0 .\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\i0\b \cf0 Modificare il Menu dei Modelli:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Quando TeXShop viene lanciato per la prima volta, viene creata la cartella\
+\
+	~/Library/TeXShop/Templates\
+\
+con all'interno i documenti 
+\f1\i Graphics.tex, TexTemplate.tex,
+\f2\i0  e 
+\f1\i LatexTemplate.tex
+\f2\i0 . I nomi di questi documenti vengono mostrati nel menu a tendina Modelli in cima alla finestra di input. Scegliendo una di questi voci, il contenuto del corrispondente documento di esempio viene introdotto nel documento sorgente a partire dalla posizione attuale del cursore. \
+\
+I tre modelli sono documenti tex standard che possono essere aperti e modificati con TeXShop. \'e9 anche possibile aggiungere ulteriori modelli; anche questi compariranno nel menu a tendina Modelli, ammesso che i loro nomi finiscano con l'estensione ".tex". Se lo desideri, i documenti modello originali possono essere rimossi.\
+\
+Per ripristinare i modelli originali, nel caso in cui questi siano stati modificati, cancella la cartella Templates e lancia l'applicazione TeXShop nuovamente. La cartella verr\'88 ricreata con il suo contenuto originale.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 \
+Impostare il Documento Principale di un Progetto:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \'e9 pratica comune dividere un documento sorgente molto grande in documenti pi\'9d piccoli controllati da un 
+\f1\i documento principale
+\f2\i0 . Ad esempio, il documento principale di un progetto di un libro potrebbe avere la forma\
+\
+	
+\f3\fs20 \\documentclass[11pt]\{book\}\
+	\\includeonly\{Chapter2/two.tex\}\
+	\\textwidth = 6.5 in\
+	\\textheight = 9 in\
+	\\begin\{document\}\
+	\\include\{Chapter1/one.tex\}\
+	\\include\{Chapter2/two.tex\}\
+	\\include\{Chapter3/three.tex\}\
+	\\end\{document\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 	\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Questo documento principale contiene i comandi di formattazione dell'intero progetto, mentre il contenuto vero e proprio risiede nei documenti 
+\f1\i one.tex, two.tex,
+\f2\i0  e 
+\f1\i three.tex
+\f2\i0 . La seconda linea del codice qui sopra, dice a TeX di compilare solo il capitolo due (Chapter2), per velocizzarne la compilazione al momento della scrittura. Una volta ultimato, questa linea pu\'98 essere commentata e l'intero progetto compilato un'ultima volta.\
+\
+Al momento della scrittura del capitolo due, \'8f naturale aprire in TeXShop  il sorgente 
+\f1\i two.tex
+\f2\i0 . Tuttavia, dopo avere effettuato delle modifiche, TeXShop non deve compilare 
+\f1\i two.tex
+\f2\i0 , ma deve poter compilare il documento principale del progetto. Questa possibilit\'88 pu\'98 essere abilitata con il comando "Definisci Documento Principale..." nel menu Archivio. Questo comando apre un pannello al cui interno \'8f possibile specificare il nome del documento principale.\
+\
+Se il documento principale \'8f contenuto nella stessa cartella del documento sorgente, \'8f sufficiente scrivere il suo nome, compresa l'estensione ".tex". Ad esempio, se il documento principale \'8f chiamato 
+\f1\i Main
+\f2\i0 , nella finestra di dialogo puoi scrivere 
+\f1\i Main.tex
+\f2\i0 .\
+\
+Se il documento principale \'8f posto in una cartella differente, il suo nome deve essere specificato in modo relativo rispetto al sorgente. Nel caso dell'esempio precedente, i vari capitoli sono contenuti in sottocartelle all'interno della cartella contenente il documento principale. In quel caso, nella finestra di dialogo dovresti scrivere 
+\f1\i ../Main.tex
+\f2\i0 , per specificare la posizione relativa del documento principale rispetto al sorgente del capitolo.\
+\
+Infine, il nome del documento principale pu\'98 essere specificato in modo assoluto, ad esempio 
+\f1\i /Utenti/io/Main.tex .
+\f2\i0 \
+\
+Se l'intero sorgente TeX \'8f contenuto in un unico documento, non \'8f necessario impostare il documento principale.\
+\
+TeXShop registra il nome del documento principale in un file con lo stesso nome del documento sorgente, ma con estensione ".texshop". Ad esempio, se il documento sorgente del capitolo due si chiama 
+\f1\i two.tex
+\f2\i0 , TeXShop scriver\'88 il nome del documento principale in 
+\f1\i two.texshop
+\f2\i0 , nella stessa cartella di 
+\f1\i two.tex
+\f2\i0 . Se successivamente il documento 
+\f1\i tex.texshop
+\f2\i0  verr\'88 cancellato, TeXShop ricomincer\'88 a compilare 
+\f1\i two.tex
+\f2\i0  al posto di 
+\f1\i Main.tex
+\f2\i0 .\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 \
+Preferenze:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Il menu Preferenze pu\'98 essere utilizzato per modificare diverse impostazioni: il font di default della finestra di input, l'ingrandimento di default della finestra di anteprima, e la posizione di default delle finestre quando mostrate per la prima volta.\
+\
+Il pannello delle preferenze pu\'98 essere usato anche per modificare i comandi da eseguire quando i pulsanti "TeX" e "Latex" vengono premuti. Questa possibilit\'88 \'8f utile per gli utenti che preferiscono una versione di TeX chiamata 
+\f1\i etex
+\f2\i0 , e le versioni pdf chiamate 
+\f1\i pdfetex
+\f2\i0  e 
+\f1\i pdfelatex
+\f2\i0 . \'e9 anche utile nel caso in cui i file binari della tua installazione di teTeX risiedano in posizioni diverse da quelle predefinite. Ovviamente, il comando sostitutivo deve continuare a produrre output in formato pdf. Nella finestra di dialogo scrivi il path completo dei nuovi programmi.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Stampare:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Per stampare l'output di un documento Tex, scegli il comando "Stampa" dal menu Archivio. Per stampare il sorgente, seleziona "Stampa Sorgente".\
+\
+Il comando di stampa pu\'98 essere eseguito da teTeX senza usare TeXShop. Quando desideri stampare, apri una finestra dell'applicazione Terminale e compila il sorgente un'ultima volta con 
+\f1\i tex
+\f2\i0  o 
+\f1\i latex
+\f2\i0 , invece di 
+\f1\i pdftex
+\f2\i0  o 
+\f1\i pdflatex
+\f2\i0 , usando, ad esempio\
+\
+	latex myfile\
+\
+Questo comando generer\'88 un documento in formato dvi. Stampa il documento dvi con il comando\
+\
+	dvips myfile\
+\
+I problemi di questo metodo sono due. In primo luogo, funziona solo se hai a disposizione una stampante postscript. Gli esperti di Tex sanno come superare questo problema. In secondo luogo, anche dopo aver definito una stampante con l'applicazione Print Center, il daemon lpr non riconosce la stampante e il comando dvips generer\'88 un messaggio d'errore poich\'8f non riconosce alcuna stampante disponibile. Mike Najarian ha inoltrato una nota a proposito della stampa con lpr sulla lista di discussione "macosx-admin" gestita da Omnigroup.  Ecco di seguito le istruzioni di Najarian:\
+\
+1) Con un editor di testo, crea un file chiamato "myprintcap" con un contenuto simile al seguente. "My_Printer", all'inizio del file, pu\'98 essere modificato per contenere il nome con cui scegli di chiamare la stampante all'interno del sistema X.  "host.domain.edu" deve essere sostituito con l'indirizzo tcp/ip del computer che gestisce la stampante. "HPLaserJet" deve essere sosituito con il nome della stampante definito nel computer che gestisce la stampante. Le righe successive la prima, iniziano con un carattere di tabultore.\
+\
+My_Printer: \\\
+	:lp=:rm=host.domain.edu:rp=HPLaserJet:sd=/var/spool/lpd/HPLaserJet: \\\
+	:ty=PostScript:\
+\
+Assicurati di salvare il documento in formato di test piano, e non rtf. Se la tua stampante \'8f connessa direttamente, invece che in modo remoto via ethernet, non so come queste definizioni debbano essere modificate.\
+\
+2) Lancia l'applicazione Terminale. Esegui il comando\
+\
+	sudo niload printcap  /  <  myprintcap\
+\
+3) Crea la cartella /var/spool/lpd/HPLaserJet, sostituendo a "HPLaserJet" il nome della stampante che hai definito precedentemente.\
+\
+4) Avvia l'applicazione Print Center. La nuova stampante creata in netinfo verr\'88 riconosciuta. Clicca per accettare la scelta e la nuova stampante diventer\'88 la tua stampante di default.\
+\
+5) Usando un editor, crea un documento chiamato  ".cshrc" nella tua cartella home,  contenente\
+\
+	setenv PRINTER My_Printer\
+\
+con il nome della stampante precedentemente scelto al posto di  "My_Printer".\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 BibTeX:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 BibTeX \'8f uno strumento usato per creare le bibliografie all'interno dei documenti Latex. Questa applicazione presuppone che tu abbia un grande database di riferimenti bibliografici che citi spesso. Con dei semplici comandi puoi citare i riferimenti che desideri all'interno del sorgente latex; BibTeX crea successivamente la bibliografia del tuo articolo, con i soli riferimenti citati.\
+\
+Qui di seguito vi \'8f un esempio tratto da 
+\f1\i The Latex Companion
+\f2\i0  by Goossens, Mittelbach, and Samarin. Consulta questo libro per ulteriori dettagli. Supponi che il database sia un file chiamato "mybibliography.bib" contenente il testo mostrato qui sotto. In questo testo, i campi  "Felici:1991, Knuth:WEB," e "Liang:1983" sono i valori chiave usati per citare gli articoli nel sorgente latex.\
+	\
+	@article\{Felici:1991,\
+	author	=\{James Felici\},\
+	title	=\{\{PostScript versus TrueType\}\},\
+	journal	=\{Macworld\},\
+	volume	=8, pages=\{195--201\},\
+	month	=sep, year = 1991		\}\
+\
+	@techreport\{Knuth:WEB,\
+	title	=\{\{The \\textsf\{WEB\} System of\
+		Structured Documentation\}\},\
+	month	=sep, year = 1983,\
+	author	=\{Donald E. Knuth\},\
+	address	=\{Stanford, CA 94305\},\
+	number	=\{STAN-CS-83-980\},\
+	institution=\{Department of Computer\
+		Science, Stanford University\}  \}\
+\
+	@phdthesis\{Liang:1983,\
+	author	=\{Franklin Mark Liang\},\
+	month	=jun, year = 1983,\
+	school	=\{Stanford University\},\
+	address	=\{Stanford, CA 94305\},\
+	title	=\{\{Word Hy-phen-a-tion by\
+		Com-pu-ter\}\},\
+	note	=\{Also available as Stanford\
+		University, Department of\
+		Computer Science Report\
+		No. STAN-CS-83-977\}   \}\
+\
+Supponi che il sorgente latex si chiami "myfile.tex" e contenga il seguente testo:\
+\
+	\\begin\{document\}\
+	Consider the  argument of Felici~\\cite\{Felici:1991\} in light of these comments.\
+	\\nocite\{Liang:1983\} We provide further remarks later.\
+\
+	\\bibliographystyle\{plain\}\
+	\\bibliography\{mybibliography\}\
+	\\end\{document\}\
+\
+Una volta compilato, nel testo comparir\'88 una citazione all'articolo di Felici, e alla fine del testo verr\'88 creata una bibliografia con gli articoli di Felici e Liang, ma non l'articolo di Knuth.\
+\
+In questo esempio, TeXShop pu\'98 essere usato come segue. Dapprima edita e compila il documento "myfile.tex" come al solito. Nell'output le citazioni compariranno come "[?]" e mancher\'88 la bibliorafia. Successivamente seleziona "Bibtex" all'interno del pulsante Programmi e lancia Bibtex. Quindi seleziona "Latex" e compila di nuovo. Le citazioni continueranno a comparire come "[?]", ma la bibliografia verr\'88 aggiunta all'output. Compila un'ulitma volta e le citazioni avranno i loro valori corretti.\
+\
+Il documento "mybibliography.bib" pu\'98 essere aperto e modificato da TeXShop. Quando TeXShop apre un documento il cui nome non termina con l'estenzione ".tex" o ".TEX", i pulsanti di compilazione vengono disabilitati. Quando il documento viene successivamente salvato con i comandi "Registra" o "Registra Come...", il nome sar\'88 esattamente quello selezionato, senza l'aggiunta dell'estensione ".tex". Pertanto, il database bibliografico pu\'98 essere modificato mentre si scrive un nuovo articolo.\
+\
+(Tuttavia, se usi TeXShop per creare il documento "mybibliography.bib" da zero, l'estensione ".tex" verr\'88 aggiunta quando salvi la prima volta. Questo \'8f un baco che verr\'88 corretto successivamente. Rimuovi l'estensione ".tex" all'interno del Finder e riapri il documento per continuare a editarlo.)\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 MakeIndex:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 MakeIndex \'8f uno strumento usato per aggiungere l'indice a un documento LaTeX. Per creare l'indice devi:\
+\
+	a) Aggiungere il comando "\\usepackage\{makeidx\}" all'inizio del sorgente;\
+        \
+        	b) Aggiungere il comando "\\makeindex" nel preambolo del documento;\
+                \
+               c) Aggiungere il comando "\\printindex" nel punto in cui deve comparire l'indice, ad esempio immediatamente prima di "\\end\{document\}"\
+               \
+               d) Aggiungere dei riferimenti all'indice all'interno del sorgente, come nell'esempio qui sotto:\
+               \
+	"There are many animals in the world \\index\{animal\}. Examples include bears and tigers \\index\{bear|tiger\}\
+               and various insects \\index\{insect|see\{animal\}\}."\
+               \
+Per creare l'indice, compila il documento come sempre. Lancia MakeIndex e compila di nuovo.\
+ \
+Ulteriori dettagli si possono trovare in 
+\f1\i The Latex Companion
+\f2\i0  by Goossens, Mittelbach, and Samarin.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Aprire Altri Documenti con TeXShop:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+TeXShop pu\'98 aprire la maggior parte dei documenti da editare. Questa capacit\'88 \'8f stata pensata per dare agli utenti la possibilit\'88 di leggere i documenti con estensioni ".log", ".aux", etc. legati ai documetni TeX. I file con estensioni  ".jpg", ".tiff", e ".pdf" sono aperti come documenti grafici.\
+\
+Tuttavia, non \'8f una buona idea usare TeXShop come editor generale. TeXShop pu\'98 leggere documenti scritti nel formato UniCode e altri, ma registra sempre i documenti in formato Ascii 8-bit, essendo questo il formato che 
+\f1\i tex
+\f2\i0  e 
+\f1\i latex
+\f2\i0  capiscono. Di conseguenza, se TeXShop viene usato per modificare documenti non collegati al TeX, si possono perdere informazioni.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Conversioni Grafiche:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 I documenti grafici TeX spesso sono creati nei formati eps o tiff. Questi documenti devono essere convertiti in pdf o jpg per essere visualizzati sullo schermo, o in eps per essere stampati con dvips.\
+\
+	1) In ghostscript esiste una utilit\'88 chiamata "epstopdf" che pu\'98 convertire \
+	da eps a pdf. Per creare il documento "mygraphics.pdf" da "mygraphics.eps", \
+	scrivi\
+		\
+		epstopdf myfile.eps\
+\
+	2) Mathematica pu\'98 registrare le immagini in formato eps. Tuttavia Mathematica \
+	utilizza la convenzione Macintosh per il fine linea e i documenti devono\
+	essere convertiti alla convenzione Unix, prima di poter usare epstopdf.\
+\
+	3) L'applicazione ImageMagick \'8f stata compilata per MacOSX e pu\'98 convertire\
+	documenti tiff nei formati eps e pdf.\
+        \
+Queste utilit\'88 sono disponibili nel sito http://www.uoregon.edu/~koch/texshop/texshop.html.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Localizzazioni:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 TeXShop contiene una localizzazione francese a cura di Jerome Laurens, una tedesca a cura di Keith J. Schultz e una italiana a cura di Giuseppe Carlino. La versione tedesca non \'8f completa e sar\'88 completata a breve.\
+	\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Segnalazione di Errori:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Per inviare segnalazioni di errori e suggerimenti, contatta\
+\
+	Richard Koch\
+        	Mathematics Department\
+        	University of Oregon\
+        	Eugene, Oregon 97403      \
+	koch@math.uoregon.edu\
+\
+	J\'8er\'99me Laurens\
+       	jerome.laurens@u-bourgogne.fr\
+                             \
+	Dirk Olmes\
+	dirk@xanthippe.ping.de\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Licenza:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 TeXShop \'8f distribuito con licenza GNU General Public License (GPL).  Questo significa che sei libero di usare, copiare e modificare il programma. Se distribuisci le tue modifiche ad altri utenti, anche queste devono essere fornite con licenza GPL.\
+\
+Il codice sorgente \'8f disponibli nel sito web:\
+\
+	http://darkwing.uoregon.edu/~koch/texshop/texshop.html\
+ \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Traduzione:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+Se hai commenti o correzioni da fare, contatta:\
+\
+	Giuseppe Carlino\
+	beps@mac.com\
+}

@@ -122,6 +122,7 @@
 // - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type; /* no longer used; see .m file */
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
+- (BOOL)isDocumentEdited;
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

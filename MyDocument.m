@@ -331,6 +331,7 @@ static NSArray*	kTaggedTagSections = nil;
         }
  /* end of images */
  if (externalEditor) {
+    [self setHasUndoManager: NO];  // so reporting no changes does not lead to error messages
     texTask = nil;
     bibTask = nil;
     indexTask = nil;
@@ -419,6 +420,22 @@ static NSArray*	kTaggedTagSections = nil;
             [pdfWindow makeKeyAndOrderFront: self];
         }
 }
+
+/* A user reported that while working with an external editor, he quit TeXShop and was
+asked if he wanted to save documents. When he did, the source file was replaced with an
+empty file. He had used Page Setup, which marked the file as changed. The code below
+insures that files opened with an external editor are never marked as changed. 
+WARNING: This causes stack problems if the undo manager is enabled, so it is disabled
+in other code when an external editor is being used. */
+
+- (BOOL)isDocumentEdited
+{
+    if (externalEditor)
+        return NO;
+    else
+        return [super isDocumentEdited];
+}
+
 
 //-----------------------------------------------------------------------------
 - (void)registerForNotifications

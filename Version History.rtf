@@ -1,0 +1,91 @@
+{\rtf1\mac\ansicpg10000{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11300\paperh11860
+\pard\tx1440\tx2180\tx4320\tx5760\tx7200\li1480\fi-20\qc
+
+\f0\fs48 \cf0 TeXShop\
+\
+\pard\tx1440\tx2180\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+
+\fs24 \cf0 Version 1.0d1	Released July 23, 2000\
+\
+\
+\pard\tx1440\tx2180\tx2800\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 Version 1.0d2	Released August 31, 2000\
+\
+	Bugs Fixed:\
+\
+		In 1.0d1, if a character with ascii code larger than 127 was\
+		added to a source file, the file could not be saved. 		Suppose a user opened the file ``try.tex'', typed additional\
+		material, and inadvertently held down the option key while \
+		typing a character. When the new version was typeset, the \
+		system reported that ``try.tex'' no longer existed. In fact,\
+		the old ``try.tex'' had been renamed ``try~.tex'' and additions\
+		had not been saved. Fixed in 1.0d2, thanks to a detailed bug\
+		report from Geoff Leyland.\
+\
+\
+Version 1.0d3	Releasted October 7, 2000\
+\
+	This release is for the Public Beta release of OS X.\
+\
+	Bugs Fixed:\
+\
+		The public beta of OS X introduced the following bug: pushing \
+		the Tex or  Latex button for the first time would save the file, \
+		but not typeset it. This is due to a change made by Apple in the\
+		NSDocument class. Fixed in this version.\
+\
+	New Feature:\
+\
+		The NSPDFImageRep class is not complete in the public\
+		beta. It does not use embedded fonts or display embedded pdf \
+		graphics. This version of TexShop has a preference item which\
+		allows users to image pdf files using ghostscript rather than Apple's\
+		pdf class. Ghostscript does use Tex fonts, and it shows embedded\
+		jpg, but not pdf, images. (Note: I later discovered that my\
+		ghostscript did not show pdf images because it was missing\
+		the "fonts" folder. This is now fixed.)\
+\
+		This version still uses the Apple NSPDFImageRep class to\
+		print, so documents with symbols or graphics will not print\
+		correctly. A temporary workaround is to write the\
+		document with TexShop and then open the pdftex output a\
+		final time in Adobe Acrobat running under Classic and print \
+		from that program. Another workaround is to typeset a final \
+		time using the terminal program and tex or latex, and print the\
+		dvi output file using dvips. \
+\
+\
+Version 1.0d4	Released November 1, 2000\
+\
+	Bugs Fixed:\
+\
+		Previous versions saved tex source as 7-bit ascii code.\
+		This version saves tex source as 8-bit ascii code. European \
+		users requested this change because they use packages\
+		which allow them to type accented characters directly.\
+		Such users should add the line\
+\
+			 \\usepackage[applemac]\{inputenc\}\
+\
+		to their source so pdflatex will correctly interprete the 8-bit\
+		characters.\
+\
+	Additional Features:\
+\
+		Changed the name from TexShop to TeXShop, at the request of a\
+		few folks.\
+\
+		Added tick marks to the magnification slider, and restricted its values\
+		in ghostscript mode.\
+\
+		Allowed the program to open most files, not just files with extension\
+		.tex. 		\
+\
+				\
+\
+		\
+\
+		\
+}

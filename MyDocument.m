@@ -70,6 +70,7 @@
     
     NSString		*imagePath;
     NSString		*projectPath;
+    NSString		*fileExtension;
     NSString		*nameString;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
@@ -92,6 +93,11 @@
        }
        
     [textWindow setInitialFirstResponder: textView];
+    
+    if (myDisplayPref != 0) {
+        [[pdfView slider] setNumberOfTickMarks: 5];
+        [[pdfView slider] setAllowsTickMarkValuesOnly: YES];
+        }
        
         [[NSNotificationCenter defaultCenter] addObserver:self 
             selector:@selector(checkATaskStatus:) 
@@ -107,7 +113,11 @@
             selector:@selector(writeTexOutput:)
             name:NSFileHandleReadCompletionNotification object:nil
             ];
+            
         
+        fileExtension = [[self fileName] pathExtension];
+        if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]))
+            return;
         projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingString:@".texshop"];
         if ([myFileManager fileExistsAtPath: projectPath]) {
             nameString = [NSString stringWithContentsOfFile: projectPath];
@@ -145,7 +155,7 @@
     // Insert code here to write your document from the given data.
     // The following is line has been changed to fix the bug from Geoff Leyland 
     // return [[textView string] dataUsingEncoding: NSASCIIStringEncoding];
-    return [[textView string] dataUsingEncoding: NSASCIIStringEncoding allowLossyConversion:YES];
+    return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
 }
 
 
@@ -236,7 +246,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     theItem = [sender selectedItem];
     
     if (theItem) {
-        nameString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/Templates/"];
+        nameString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates/"];
         nameString = [nameString stringByAppendingString:[theItem title]]; 
         nameString = [[nameString stringByAppendingString: @".tex"] stringByExpandingTildeInPath];
         templateString = [NSString stringWithContentsOfFile: nameString];
@@ -363,7 +373,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
         myData = [[aNotification userInfo] 
             objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([myData length]) {
-            newOutput = [[NSString alloc] initWithData: myData encoding:NSASCIIStringEncoding];
+            newOutput = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
             [outputText replaceCharactersInRange: [outputText selectedRange]
                 withString: newOutput];
             [outputText scrollRangeToVisible: [outputText selectedRange]];
@@ -382,7 +392,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
         NSString *myString = [texCommand stringValue];
         NSString *returnString = [NSString stringWithCString:lineFeedString];
         NSString *newString = [myString stringByAppendingString: returnString];
-        myData = [newString dataUsingEncoding: NSASCIIStringEncoding allowLossyConversion:YES];
+        myData = [newString dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
         [writeHandle writeData: myData];
         }
 }
@@ -425,7 +435,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     result = [NSApp runModalForWindow: prefWindow];
     if (result == 0) {
         
-        myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/TexShop Preferences"];
+        myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/TeXShop Preferences"];
         fullString = [myString stringByExpandingTildeInPath];
         myData = [myFileManager contentsAtPath: fullString];
         myArray = [NSUnarchiver unarchiveObjectWithData: myData];
@@ -464,13 +474,13 @@ if (inputPipe == [[aNotification object] standardInput]) {
             }
             
         [myTexEngine release];
-        myData = [[texEngine stringValue] dataUsingEncoding: NSASCIIStringEncoding];
-        myTexEngine = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
+        myData = [[texEngine stringValue] dataUsingEncoding: NSMacOSRomanStringEncoding];
+        myTexEngine = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
         [myArray replaceObjectAtIndex: 11 withObject: myTexEngine];
         
         [myLatexEngine release];
-        myData = [[latexEngine stringValue] dataUsingEncoding: NSASCIIStringEncoding];
-        myLatexEngine = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
+        myData = [[latexEngine stringValue] dataUsingEncoding: NSMacOSRomanStringEncoding];
+        myLatexEngine = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
         [myArray replaceObjectAtIndex: 12 withObject: myLatexEngine];
         
         i = [[pdfDisplayChange selectedCell] tag];
@@ -478,8 +488,17 @@ if (inputPipe == [[aNotification object] standardInput]) {
             myDisplayPref = i;
             aNumber = [NSNumber numberWithInt: myDisplayPref];
             [myArray replaceObjectAtIndex: 13 withObject: aNumber];
+            if (myDisplayPref != 0) {
+                [[pdfView slider] setNumberOfTickMarks: 5];
+                [[pdfView slider] setAllowsTickMarkValuesOnly: YES];
+                [pdfView changeSize: self];
+                 }
+            else {
+                [[pdfView slider] setNumberOfTickMarks: 9];
+                [[pdfView slider] setAllowsTickMarkValuesOnly: NO];
+                }
             }
-            
+
         i = [[gsColor selectedCell] tag];
         if (i != myColorPref) {
             myColorPref = i;
@@ -576,13 +595,13 @@ if (inputPipe == [[aNotification object] standardInput]) {
     NSDirectoryEnumerator	*enumerator;
     int				versionNumber = 1;
     
-    myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/Templates"];
+    myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"];
     if (! [myFileManager fileExistsAtPath:[myString stringByExpandingTildeInPath] isDirectory: &isDir]) {
     
-         myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs"];
+         myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs"];
          if (! [myFileManager fileExistsAtPath: [myString stringByExpandingTildeInPath]])
             success = [myFileManager createDirectoryAtPath: [myString stringByExpandingTildeInPath] attributes: nil];
-         myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/Templates"]; 
+         myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"]; 
          fullString = [myString stringByExpandingTildeInPath];
          success = [myFileManager createDirectoryAtPath: fullString attributes: nil];
          
@@ -597,7 +616,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
          [myFileManager createFileAtPath: [fullString stringByAppendingString: @"/GraphicsTemplate.tex"] contents: myData attributes: nil];
         }
         
-    myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/TexShop Preferences"];
+    myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/TeXShop Preferences"];
     fullString = [myString stringByExpandingTildeInPath];
     
     if ([myFileManager fileExistsAtPath: fullString])
@@ -694,7 +713,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [myFileManager createFileAtPath: fullString contents: myData attributes: nil];
         }
         
-        myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/Templates"];
+        myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"];
     	fullString = [myString stringByExpandingTildeInPath];
 	enumerator = [myFileManager enumeratorAtPath: fullString];
         while (file = [enumerator nextObject]) 
@@ -1106,6 +1125,14 @@ if (inputPipe == [[aNotification object] standardInput]) {
 - (void) printSource: sender;
 {
     [myDocument printSource: sender];
+}
+
+- (void) destroyGSRep;
+{
+    if (gsRep != nil) {
+        [gsRep release];
+        gsRep = nil;
+        }
 }
 
 - (id) slider;

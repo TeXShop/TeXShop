@@ -82,6 +82,7 @@
 - (void) changeSize: sender;
 - (void) printDocument: sender;
 - (id) slider;
+- (void) destroyGSRep;
 - (void) setDocument: (id) theDocument;
 - (void) drawWithGhostscript;
 @end

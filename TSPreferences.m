@@ -108,6 +108,9 @@ Loads the .nib file if necessary, fills all the controls with the values from th
         externalEditorTouched = NO;
         syntaxColorTouched = NO;
         magnificationTouched = NO;
+// added by mitsu --(G) EncodingSupport
+        encodingTouched = NO;
+// end addition
         oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
@@ -254,14 +257,17 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         case 5: value = [NSString stringWithString:@"EUC_JP"];
                 break;
                 
-        case 6: value = [NSString stringWithString:@"MacKorean"];
-                break;
-        // --- end 
-        
-        case 7: value = [NSString stringWithString:@"UTF-8 Unicode"];
+        // Mitsuhiro Shishikura Jan 4, 2003:
+        case 6: value = [NSString stringWithString:@"JISJapanese"];
                 break;
                 
-        case 8: value = [NSString stringWithString:@"Standard Unicode"];
+        case 7: value = [NSString stringWithString:@"MacKorean"];
+                break;
+        
+        case 8: value = [NSString stringWithString:@"UTF-8 Unicode"];
+                break;
+                
+        case 9: value = [NSString stringWithString:@"Standard Unicode"];
                 break;
                 
         default: value = [NSString stringWithString:@"MacOSRoman"];
@@ -269,6 +275,11 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         }
         
     [SUD setObject:value forKey:EncodingKey];
+// added by mitsu --(G) EncodingSupport
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object:self];
+    encodingTouched = YES;
+// end addition
+
 }
 
 /*" Change tab size "*/
@@ -405,7 +416,9 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
     
     activeWindow = (MyWindow *)[[TSWindowManager sharedInstance] activePdfWindow];
 
-    if (activeWindow != nil)
+ // The comment below fixes a bug; magnification didn't take if no pdf window open
+ //   if (activeWindow != nil) 
+                                
     {
         [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfMagnificationKey] 				forKey:PdfMagnificationKey];
         mag = [_magTextField doubleValue];
@@ -612,6 +625,22 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleBehaviorKey];
 }
 
+/*" This method is connected to the "Console" matrix on the TeX pane.
+
+A tag of 0 means "always", a tag of 1 means "when errors occur".
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)saveRelatedButtonPressed:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD boolForKey:SaveRelatedKey] forKey:SaveRelatedKey];
+
+	// since the default program values map identically to the tags of the NSButtonCells,
+	// we can use the tag directly here.
+        [SUD setBool:[sender state] forKey:SaveRelatedKey];
+}
+
 
 //==============================================================================
 // other target/action methods
@@ -625,7 +654,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         NSMutableString *path;
 	// save everything to the user defaults
         
-        /* WARNING: the next two commands were added by koch on March 17.
+        
+ /* WARNING: the next seven commands were added by koch on March 17.
         They are needed because the TextBox fields do not send a command
         until the return key is pressed. But pressing the return key also
         closes preferences. Users will instead modify the text and then
@@ -633,15 +663,22 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         these preferences weren't changed. A user sent email asking how to
         activate pdfelatex in the old TeXShop, so I tried it on
         the new program and couldn't! */
+// See mitsu change below instead
+//        [self tabsChanged: self];
+//        [self texProgramChanged: self];
+//        [self latexProgramChanged: self];
+//        [self texGSProgramChanged: self];
+//        [self latexGSProgramChanged: self];
+//        [self texScriptProgramChanged: self];
+//        [self latexScriptProgramChanged: self];
         
-        [self tabsChanged: self];
-        [self texProgramChanged: self];
-        [self latexProgramChanged: self];
-        [self texGSProgramChanged: self];
-        [self latexGSProgramChanged: self];
-        [self texScriptProgramChanged: self];
-        [self latexScriptProgramChanged: self];
+// added by mitsu --(M) Path Settings on "okButtonPressed:" in TSPreferences
+// This is a simpler way to reflect changes in the controls
+	[_prefsWindow makeFirstResponder: _prefsWindow];
+// end addition
+
 	[SUD synchronize];
+
 
         // re-Set the environment for subtasks
         [TSEnvironment release];
@@ -681,6 +718,12 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
             [SUD setBool:oldSyntaxColor forKey:SyntaxColoringEnabledKey];
             [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
             }
+// added by mitsu --(G) EncodingSupport
+        if (encodingTouched) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object: self ];
+            }
+// end addition
+
     // The user defaults have changed. Force update of the user interface.
     /* koch: The code below doesn't take because the undo manager doesn't actually
     undo here. It calls undo during the next event loop. So the code below is called too soon.
@@ -741,8 +784,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         // if (! [[NSFileManager defaultManager] fileExistsAtPath: TexTemplatePathKey] )
         //    [self createTemplates];
         
-        if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]] )
-            [self createTemplates];
+        // this was moved to TSAppDelegate
+        // if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]] )
+        //    [self createTemplates];
             
         // end of changes
 	
@@ -798,8 +842,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         [self createTemplates];
         */
         
-        // create necessary directories and template files
-        [self createTemplates];
+        // create necessary directories and template files; later moved to TSAppDelegate
+        // [self createTemplates];
         
         // end of change
         
@@ -808,71 +852,6 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 //==============================================================================
 // helpers
 //==============================================================================
-
-- (void)createTemplates
-{
-    	NSArray 	*templates;
-	NSEnumerator 	*templateEnum;
-        NSString 	*fileName;
-
-    // The code below is replaced by new code written by Sarah Chambers
-    /*
-    // create the necessary directories
-	NS_DURING
-		// create ~/Library/TeXShop/Templates
-		[self createDirectoryAtPath:TexTemplatePathKey];
-	NS_HANDLER
-	{
-		NSRunAlertPanel(@"Error", [localException reason], @"Couldn't Create Templates Folder", nil, nil);
-		return;
-	}
-	NS_ENDHANDLER
-	// fill in our templates
-	templates = [NSBundle pathsForResourcesOfType:@"tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
-	templateEnum = [templates objectEnumerator];
-	while (fileName = [templateEnum nextObject])
-	{
-		[self copyToTemplateDirectory:fileName];
-	}
-    */
-    
-     // if preferences folder doesn't exist already...
-    if (!([[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]]))
-    {
-        // create the necessary directories
-            NS_DURING
-                    // create ~/Library/TeXShop
-                    [self createDirectoryAtPath:[TexTemplatePathKey stringByDeletingLastPathComponent]];
-            NS_HANDLER
-            {
-                    NSRunAlertPanel(@"Error", [localException reason], @"Couldn't create TeXShop Folder", nil, nil);
-                    return;
-            }
-            NS_ENDHANDLER
-    
-        // create the necessary directories
-            NS_DURING
-                    // create ~/Library/TeXShop/Templates
-                    [self createDirectoryAtPath:TexTemplatePathKey];
-            NS_HANDLER
-            {
-                    NSRunAlertPanel(@"Error", [localException reason], @"Couldn't Create Templates Folder", nil, nil);
-                    return;
-            }
-            NS_ENDHANDLER
-    
-        // fill in our templates
-            templates = [NSBundle pathsForResourcesOfType:@"tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
-            templateEnum = [templates objectEnumerator];
-            while (fileName = [templateEnum nextObject])
-            {
-                    [self copyToTemplateDirectory:fileName];
-            }
-    }
-
-// end of changes
-
-}
 
 /*"  %{This method is not to be called from outside of this class.}
 
@@ -919,13 +898,15 @@ This method retrieves the application preferences from the defaults object and s
         myTag = 4;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"EUC_JP"])
         myTag = 5;
-    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"JISJapanese"])
         myTag = 6;
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+        myTag = 7;
     // --- end
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"])
-        myTag = 7;
-    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
         myTag = 8;
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
+        myTag = 9;
     else
         myTag = 0;
     [_defaultEncodeMatrix selectItemAtIndex: myTag];
@@ -959,6 +940,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
         [_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
         [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
+        [_saveRelatedButton setState:[defaults boolForKey:SaveRelatedKey]];
 }
 
 /*" %{This method is not to be called from outside of this class}
@@ -975,57 +957,7 @@ This method updates the textField that represents the name of the selected font 
     [_documentFontTextField setStringValue:fontDescription];
 }
 	
-/*" %{This method is not to be called from outside of this class.}
+/*" %{This method is not to be called from outside of this class.} "*/
 
-Creates the directory at %path making sure that %path does not already exist (which is no problem) and if it exists it is a directory (throws an exception if not).
-"*/ 
-//------------------------------------------------------------------------------
-- (void)createDirectoryAtPath:(NSString *)path
-//------------------------------------------------------------------------------
-{
-	NSFileManager *fileManager;
-	BOOL directoryExists, isDirectory;
-	
-	fileManager = [NSFileManager defaultManager];
-	path = [path stringByStandardizingPath];
-	directoryExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
-	if (directoryExists == NO)
-	{
-		// create the dir
-		if ([fileManager createDirectoryAtPath:path attributes:nil] == NO)
-		{
-			[NSException raise:XDirectoryCreation format:@"could not create directory '%@'!", path];
-		}
-	}
-	else if (isDirectory == NO)
-	{
-		[NSException raise:XDirectoryCreation format:@"'%@' already exists and is NO directory!", path];
-	}
-}
-
-/*" %{This method is not to be called from outside of this class.}
-
-Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no files are overwritten.
-"*/
-//------------------------------------------------------------------------------
-- (void)copyToTemplateDirectory:(NSString *)fileName
-//------------------------------------------------------------------------------
-{
-	NSFileManager *fileManager;
-	NSString *destFileName;
-	
-	fileManager = [NSFileManager defaultManager];
-	destFileName = [NSString pathWithComponents:[NSArray arrayWithObjects:[TexTemplatePathKey stringByStandardizingPath], [fileName lastPathComponent], nil]];
-	
-	// check if that file already exists
-	if ([fileManager fileExistsAtPath:destFileName isDirectory:NULL] == NO)
-	{
-		// file doesn't exist -> copy it
-		if ([fileManager copyPath:fileName toPath:destFileName handler:nil] == NO)
-		{
-			NSRunAlertPanel(@"Error", [NSString stringWithFormat:@"cound not copy '%@' to '%@'", fileName, destFileName], @"shit happens", nil, nil, nil);
-		}
-	}
-}
 
 @end

@@ -27,6 +27,10 @@
     [myDocument printSource: sender];
 }
 
+- (void) doTypeset: sender;
+{
+    [myDocument doTypeset: sender];
+}
 - (void) doTex: sender;
 {
     [myDocument doTex: sender];
@@ -55,6 +59,11 @@
 - (void) doContext: sender;
 {
     [myDocument doContext: sender];
+}
+
+- (void) doMetaFont: sender;
+{
+    [myDocument doMetaFont: sender];
 }
 
 - (void) previousPage: sender;
@@ -193,6 +202,14 @@
             case NSHomeFunctionKey: [self firstPage: self]; return;
             
             case NSEndFunctionKey: [self lastPage: self]; return;
+            
+             case ' ':
+                if (([theEvent modifierFlags] & NSShiftKeyMask) == 0)
+                    [self nextPage: self];
+                else
+                    [self previousPage: self];
+                return;
+
 
             
             }
@@ -312,7 +329,10 @@
 			[anItem action] == @selector(doBibtex:) ||
 			[anItem action] == @selector(doIndex:) ||
 			[anItem action] == @selector(doMetapost:) ||
-			[anItem action] == @selector(doContext:))
+			[anItem action] == @selector(doContext:) ||
+                        [anItem action] == @selector(doMetaFont:) ||
+                        [anItem action] == @selector(doTypeset:)
+                        )
 			return NO;
 		if ([anItem action] == @selector(printDocument:))
 			return (([myDocument imageType] == isPDF) ||

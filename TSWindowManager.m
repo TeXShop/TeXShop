@@ -8,6 +8,9 @@
 #import "TSWindowManager.h"
 #import "globals.h"
 #import "extras.h"
+// added by mitsu --(J+) Check mark in "Typeset" menu
+#import "MyDocument.h"
+// end addition
 
 @implementation TSWindowManager
 /*"
@@ -57,6 +60,11 @@ static id _sharedInstance = nil;
 {    
     // do not retain the window here!
     _activeDocumentWindow = [note object];
+    
+    // added by mitsu --(J+) check mark in "Typeset" menu
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: YES];
+// end addition
+
 }
 
 /*" This method is registered with the NotificationCenter and will be called when a document window will be closed. 
@@ -85,6 +93,12 @@ static id _sharedInstance = nil;
 {    
     // do not retain the window here!
     _activePdfWindow = [note object];
+    
+// added by mitsu --(J+) check mark in "Typeset" menu
+    if ([[[note object] document] imageType] == isTeX)
+		[self checkProgramMenuItem: [[[note object] document] whichEngine] checked: YES];
+// end addition
+
 }
 
 /*" This method is registered with the NotificationCenter and will be called when a document window will be closed. 
@@ -94,6 +108,8 @@ static id _sharedInstance = nil;
 //-----------------------------------------------------------------------------
 {
     _activePdfWindow = nil;
+    
+
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +118,34 @@ static id _sharedInstance = nil;
 {
     return _activePdfWindow;
 }
+
+// added by mitsu --(J+) check mark in "Typeset" menu
+//-----------------------------------------------------------------------------
+- (void)documentWindowDidResignKey:(NSNotification *)note
+//-----------------------------------------------------------------------------
+{    
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: NO];
+}
+
+//-----------------------------------------------------------------------------
+- (void)pdfWindowDidResignKey:(NSNotification *)note
+//-----------------------------------------------------------------------------
+{    
+    if ([[[note object] document] imageType] == isTeX)
+		[self checkProgramMenuItem: [[[note object] document] whichEngine] checked: NO];
+}
+
+
+//-----------------------------------------------------------------------------
+- (void)checkProgramMenuItem: (int)programID checked: (BOOL)flag
+//-----------------------------------------------------------------------------
+{    
+    [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu] 
+        itemWithTag:programID] setState: (flag)?NSOnState:NSOffState];
+}
+
+// end addition
+
 
 
 @end

@@ -11,6 +11,7 @@
 extern NSString *DefaultCommandKey;
 extern NSString *DefaultScriptKey;
 extern NSString *ConsoleBehaviorKey;
+extern NSString *SaveRelatedKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
@@ -46,6 +47,7 @@ extern NSString *TexTemplatePathKey;
 extern NSString *LatexPanelPathKey;
 extern NSString *AutoCompletionPathKey;
 extern NSString *MenuShortcutsPathKey;
+extern NSString *MacrosPathKey;
 extern NSString *TSHasBeenUsedKey;
 extern NSString *UserInfoPathKey;
 extern NSString *commentredKey;
@@ -76,7 +78,15 @@ extern NSString *ExternalEditorNotification;
 
 /*" Other variables "*/
 // extern BOOL documentsHaveLoaded;
-extern NSMutableDictionary *TSEnvironment;	/*" Store for environment for subtasks, set in TSPreferences "*/
+extern NSMutableDictionary 	*TSEnvironment;	/*" Store for environment for subtasks, set in TSPreferences "*/
+extern int			shouldFilter;   /*" Used for Japanese yen conversion "*/
+extern int			texChar;	/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern NSDictionary		*autocompletionDictionary;  // added by Greg Landweber
+/* Code by Anton Leuski */
+extern NSArray*			kTaggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
+extern NSArray*			kTaggedTagSections; /*" Used by Tag menu; "*/
+
+
 
 
 /*" Symbolic constants for the matrix used in 'Source window Position' of the TSPreferences. "*/
@@ -116,3 +126,26 @@ typedef enum _DefaultCommand
     DefaultCommandConTEXt = 2,
     DefaultCommandOmega = 3
 } _DefaultCommand;
+
+
+/*" Symbolic constants for Japanese conversion "*/
+typedef enum _ShiftCommand
+{
+    filterNone = 0,
+    filterMacJ = 1,
+    filterNSSJIS = 2
+} _ShiftCommand;
+
+/*" Symbolic constants to determine TeX engine "*/
+/*" These are also tags on the typeset menu and the pulldown toolbar menus "*/
+typedef enum _EngineCommand
+{
+    TexEngine = 1,
+    LatexEngine = 2,
+    BibtexEngine = 3,
+    IndexEngine = 4,
+    MetapostEngine = 5,
+    ContextEngine = 6,
+    MetafontEngine = 7
+} _EngineCommand;
+

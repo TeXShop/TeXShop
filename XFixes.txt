@@ -1,38 +1,59 @@
-December 12, 2002
+January 2, 2003
 
-Changes since 1.25
+Changes since 1.26; Changes due to Mitsuhiro Shishikura with
+small Koch changes
 
-a) Removed "\b" and changed to just empty string
+a) Magnification: mousing in the pdf Display magnifies a small
+surrounding section; hold down "option" to enlarge the area
+displayed.
 
-b) Changed version to 1.26
+b) New documents are now correctly named "Untitled, Untitled-1, etc."
+without spaces!
 
-c) Japanese Localization and extra code formats by Seiji Zenitani
+c) User input text typed in the Console window is added to the
+output in the upper part of this window so a complete record of
+typesetting transactions is available.
 
-d) Added support for Latin 2, UTF-8 Unicode, and Standard OSX Unicode
+d) Added support for file types .def, .fd, .ltx, .clo
 
-e) Added customizable panel by Gerog Klein
+e) Better way of accepting changes in input items in preferences
 
-f) Better German localization by Max Horn; also improvements from
-	Horn for validateMenuItem code
+f) Now magnification can be changed in preferences even if no
+	pdf view window is open
 
-g) Users can now configure their own keyboard menu shortcuts
+g) Changed the typeset and program choosing buttons and menus
 
-h) Can now open and save metafont (mf) and metapost (mp) files
+h) Added typeset menu; changed keyboard equivalent of font panel
 
-k) Can now open and save ANY text file
+i) jpg and tiff images failed if magnification was not 100; this is fixed
 
-l) Also understands mp and mf files and can edit with correct extension
+j) Added all Japanese modifications by Mitsuhiro Shishikura
 
-m) Add auto complete code from Greg Landweber
+k) Added Macro item and stuff by Mitsuhiro Shishikura
 
-n) Added Configuration... menu to Help menu, explaining how to
-reconfigure the program
+l) Added John Nairn change: 
 
-o) Added MetaFont support
+	If any line of the source document begins with
 
-p) No longer clears the undo stack when saving a document
+		%SourceDoc ../Main.tex
 
+then the system will typeset ../Main.tex if it is open,
+and otherwise open it and typeset it. Here ../Main.tex can
+be replaced by any absolute path, or path with ~, or path with ../
+characters. Also \jobname can replace the name of the file. 
 
+Notice that this is a replacement for the SetProjectRoot command
+of TeXShop, and really more useful.
+
+m) Nairn also added another change. That change searched the
+file to be typeset for input myfile commands, and saved these
+files if open in TeXShop. This is now added, with a preference
+item to turn it on or off.
+
+o) I modified the TeXShop Root File support so it repeats Nairn's
+behavior in l). So now exactly the same behavior can be achieved
+either by created a root file using the TeXShop menu, or by adding
+a $SourceDoc line to the source file.
 
 
 

@@ -15,6 +15,10 @@
 
 #import "MyDocumentToolbar.h"
 #import "MyView.h"
+// added by mitsu --(H) Macro menu; macroButton
+#import "MacroMenuController.h"
+// end addition
+
 
 static NSString* 	kSourceToolbarIdentifier 	= @"Source Toolbar Identifier";
 static NSString* 	kPDFToolbarIdentifier 		= @"PDF Toolbar Identifier";
@@ -32,6 +36,10 @@ static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 			= @"Templates";
+// added by mitsu --(H) Macro menu; macroButton
+static NSString*	kMacrosTID			= @"Macros";
+// end addition
+	
 
 // PDF Window toolbar items
 static NSString*	kTypesetEETID			= @"TypesetEE";
@@ -132,7 +140,12 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 	[tags removeFromSuperview];
 	[popupButton retain];
 	[popupButton removeFromSuperview];
+// added by mitsu --(H) Macro menu; macroButton
+	[macroButton retain];
+	[macroButton removeFromSuperview];
+// end addition
 	[[self textWindow] setToolbar: [self makeToolbar: kSourceToolbarIdentifier]];
+
 
         [previousButton retain];
         [previousButton removeFromSuperview];
@@ -262,6 +275,21 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 		return toolbarItem;
 	}
+        
+// added by mitsu --(H) Macro menu; macroButton
+    if ([itemIdent isEqual: kMacrosTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButton];
+		NSMenuItem*		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+
+		[menuFormRep setSubmenu: [macroButton menu]];
+		[[MacroMenuController sharedInstance] addItemsToPopupButton: macroButton];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+// end addition
+
 
 // PDF toolbar
 
@@ -360,6 +388,9 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 					// NSToolbarSeparatorItemIdentifier, 
 					// kLaTeXTID,
 					// kBibTeXTID,
+                                        // added by mitsu --(H) Macro menu; macroButton
+					kMacrosTID,
+                                        // end addition
 					kTagsTID,
 					kTemplatesID,
 					NSToolbarFlexibleSpaceItemIdentifier, 
@@ -414,6 +445,9 @@ static NSString*	kMagnificationTID 		= @"Magnification";
                                         kMetaFontID,
 					kTagsTID,
 					kTemplatesID,
+                                        // added by mitsu --(H) Macro menu; macroButton
+					kMacrosTID,
+                                        // end addition
 					NSToolbarPrintItemIdentifier, 
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier, 

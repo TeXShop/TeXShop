@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>ROOT</string>
+	<key>submenu</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Applescript</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>--AppleScript
+
+tell application "Acrobat Reader 5.0"
+  activate
+  open POSIX file #PDFPATH#
+end tell
+</string>
+					<key>name</key>
+					<string>View pdf with Acrobat</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--AppleScript
+-- #FILEPATH# in the text will be replaced by the path of the document
+-- #DVIPATH#, #PSPATH#, #PDFPATH# are also replaced by the paths of .dvi, .ps, .dvi files.  
+-- to use the path in Finder, use (alias POSIX file filepath)
+-- example: show tex and pdf files in Finder
+
+try
+tell application "Finder"
+  activate
+  reveal {alias POSIX file #FILEPATH#, alias POSIX file #PDFPATH#}
+end tell
+on error
+end try</string>
+					<key>name</key>
+					<string>Show files</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--AppleScript
+-- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
+-- example: show TeXShop home page in a web browser
+
+open location "http://darkwing.uoregon.edu/~koch/texshop/texshop.html"</string>
+					<key>name</key>
+					<string>TeXShop home page</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--AppleScript
+-- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
+
+open location "http://www.rna.nl/tex.html"</string>
+					<key>name</key>
+					<string>teTeX/TeXLive home page</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Separator</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>\begin{#SEL#}
+#INS#
+\end{#SEL#}</string>
+			<key>name</key>
+			<string>Begin/End</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>%SourceDoc #INS#</string>
+			<key>name</key>
+			<string>SourceDoc</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Separator</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Headings</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>name</key>
+					<string>11pt</string>
+					<key>submenu</key>
+					<array>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[11pt]{article}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>key</key>
+							<string></string>
+							<key>name</key>
+							<string>article</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[11pt]{book}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>name</key>
+							<string>book</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[11pt]{report}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>name</key>
+							<string>report</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>12pt</string>
+					<key>submenu</key>
+					<array>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[12pt]{article}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>name</key>
+							<string>article</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[12ptj]{book}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>name</key>
+							<string>book</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\documentclass[12pt]{report}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<key>name</key>
+							<string>report</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Subdivisions</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\chapter{#SEL##INS#}</string>
+					<key>name</key>
+					<string>chapter</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\paragraph{#SEL##INS#}</string>
+					<key>name</key>
+					<string>paragraph</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\subparagraph{#SEL##INS#}</string>
+					<key>name</key>
+					<string>subparagraph</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\section{#SEL##INS#}</string>
+					<key>name</key>
+					<string>section</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\subsection{#SEL##INS#}</string>
+					<key>name</key>
+					<string>subsection</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\subsubsection{#SEL##INS#}</string>
+					<key>name</key>
+					<string>subsubsection</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Mathematics</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\[\left(\begin{array}{ccc}  &amp;   &amp;   \\  &amp;   &amp;   \\  &amp;   &amp;   \end{array}\right)\]</string>
+					<key>name</key>
+					<string>array</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{equation}#INS#\end{equation}</string>
+					<key>name</key>
+					<string>equation</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{equation*}#INS#\end{equation*}</string>
+					<key>name</key>
+					<string>equation*</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{eqnarray}#INS#\end{eqnarray}</string>
+					<key>name</key>
+					<string>eqnarray</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{eqnarray*}#INS#\end{eqnarray*}</string>
+					<key>name</key>
+					<string>eqnarray*</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Text Styles</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\emph{#SEL##INS#}</string>
+					<key>name</key>
+					<string>emphasize</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>typeface</string>
+					<key>submenu</key>
+					<array>
+						<dict>
+							<key>content</key>
+							<string>\mathbf{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Bold</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\mathcal{#SEL##INS#}</string>
+							<key>name</key>
+							<string>CAL</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\mathit{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Italic</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\mathrm{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Roman</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\mathsf{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Sans Serif</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\mathtt{#SEL##INS#}</string>
+							<key>name</key>
+							<string>TypeWriter</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>size</string>
+					<key>submenu</key>
+					<array>
+						<dict>
+							<key>content</key>
+							<string>{\tiny #SEL##INS#}</string>
+							<key>name</key>
+							<string>tiny</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\scriptsize #SEL##INS#}</string>
+							<key>name</key>
+							<string>scriptsize</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\footnotesize #SEL##INS#}</string>
+							<key>name</key>
+							<string>footnotesize</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\small #SEL##INS#}</string>
+							<key>name</key>
+							<string>small</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\normalsize #SEL##INS#}</string>
+							<key>name</key>
+							<string>normalsize</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\large #SEL##INS#}</string>
+							<key>name</key>
+							<string>large</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\Large #SEL##INS#}</string>
+							<key>name</key>
+							<string>Large</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\LARGE #SEL##INS#}</string>
+							<key>name</key>
+							<string>LARGE</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\huge #SEL##INS#}</string>
+							<key>name</key>
+							<string>huge</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>{\Huge #SEL##INS#}</string>
+							<key>name</key>
+							<string>Huge</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>style</string>
+					<key>submenu</key>
+					<array>
+						<dict>
+							<key>content</key>
+							<string>\textbf{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Bold</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textsc{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Small Caps</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textmd{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Medium</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textit{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Italic</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textsl{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Slanted</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textrm{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Roman</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textsf{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Sans Serif</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\texttt{#SEL##INS#}</string>
+							<key>name</key>
+							<string>TypeWriter</string>
+						</dict>
+						<dict>
+							<key>content</key>
+							<string>\textup{#SEL##INS#}</string>
+							<key>name</key>
+							<string>Upright</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\underline{#SEL##INS#}</string>
+					<key>name</key>
+					<string>Underline</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Lists</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\begin{description}\item[ ] #SEL##INS#\end{description}</string>
+					<key>name</key>
+					<string>description</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{enumerate}\item #SEL##INS#\end{enumerate}</string>
+					<key>name</key>
+					<string>enumerate</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{itemize}\item #SEL##INS#\end{itemize}</string>
+					<key>name</key>
+					<string>itemize</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Offsets</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\footnote{#SEL##INS#}</string>
+					<key>name</key>
+					<string>footnote</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\marginpar{#SEL##INS#}</string>
+					<key>name</key>
+					<string>marginpar</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Insertions</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\begin{quotation}#SEL##INS#\end{quotation}</string>
+					<key>name</key>
+					<string>quotation</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{quote}#SEL##INS#\end{quote}</string>
+					<key>name</key>
+					<string>quote</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{verbatim}#SEL##INS#\end{verbatim}</string>
+					<key>name</key>
+					<string>verbatim</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{verse}#SEL##INS#\end{verse}</string>
+					<key>name</key>
+					<string>verse</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Tables</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\hline</string>
+					<key>name</key>
+					<string>hline</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{table}[htdp]\caption{default}\begin{center}\begin{tabular}{|c|c|}#SEL##INS#\end{tabular}\end{center}\label{default}\end{table}%</string>
+					<key>name</key>
+					<string>table</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Figures</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>\begin{figure}[htbp]\begin{center}#SEL##INS#\caption{default}\label{default}\end{center}\end{figure}</string>
+					<key>name</key>
+					<string>regular</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>\begin{figure}[htbp]\begin{center}\epsfile{file=#SEL##INS#,scale=0.8}\caption{{\bf default}}\label{default}\end{center}\end{figure}</string>
+					<key>name</key>
+					<string>epsfile</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

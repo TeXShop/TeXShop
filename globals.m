@@ -10,6 +10,7 @@
 NSString *DefaultCommandKey = @"DefaultCommand";
 NSString *DefaultScriptKey = @"DefaultScript";
 NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
+NSString *SaveRelatedKey = @"SaveRelated";
 NSString *DocumentFontKey = @"DocumentFont";
 NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";
 NSString *DocumentWindowNameKey = @"DocumentWindow";
@@ -45,6 +46,7 @@ NSString *TexTemplatePathKey = @"~/Library/TeXShop/Templates";
 NSString *LatexPanelPathKey = @"~/Library/TeXShop/LatexPanel";
 NSString *AutoCompletionPathKey = @"~/Library/TeXShop/Keyboard";
 NSString *MenuShortcutsPathKey = @"~/Library/TeXShop/Menus";
+NSString *MacrosPathKey = @"~/Library/TeXShop/Macros";
 NSString *TSHasBeenUsedKey = @"TSHasBeenUsed";
 NSString *UserInfoPathKey = @"UserInfoPath";
 NSString *commentredKey = @"commentred";
@@ -74,5 +76,12 @@ NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 
 /*" Other variables "*/
 // BOOL documentsHaveLoaded;
-NSMutableDictionary *TSEnvironment;
+NSMutableDictionary 	*TSEnvironment;
+int			shouldFilter;
+int			texChar;
+NSDictionary		*autocompletionDictionary;  // added by Greg Landweber
+/* Code by Anton Leuski */
+NSArray*		kTaggedTeXSections; 
+NSArray*		kTaggedTagSections; 
+
 

@@ -503,7 +503,13 @@ scroller position.
         
         if ((imageType == isTeX) || (imageType == isPDF)) {
          
-            myBounds = [theRep bounds];
+//            myBounds = [theRep bounds];
+// mitsu change; the file dvipdfmx for Japanese users creates pdf files with nonzero origin, but the origin must
+// be zero in TeXShop to draw correctly
+            myBounds.origin.x = 0; myBounds.origin.y = 0;
+            myBounds.size = [theRep bounds].size;
+// end 
+            
             newWidth = myBounds.size.width;
             newHeight = myBounds.size.height;
             [totalPage setIntValue: [myRep pageCount]];
@@ -513,7 +519,12 @@ scroller position.
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
             if (! modifiedRep) {
-                myBounds = [myRep bounds];
+                // myBounds = [myRep bounds];
+                // mitsu change
+                myBounds.origin.x = 0; myBounds.origin.y = 0;
+                myBounds.size = [myRep bounds].size;
+                // end 
+
                 oldWidth = myBounds.size.width;
                 oldHeight = myBounds.size.height;
                 newBounds.size.width = myBounds.size.width * (magsize);
@@ -566,6 +577,145 @@ scroller position.
     [[NSNotificationCenter defaultCenter] removeObserver:self];       
     [super dealloc];
 }
+
+// added by mitsu --(I) Magnifying Glass
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    NSPoint mouseLocWindow, mouseLocView;
+	NSRect oldBounds, newBounds, magRectWindow, magRectView, oldRect, diffRect;
+	float minY, maxY;
+	BOOL postNote, cursorVisible;
+        
+        // koch
+        int	magWidth = 150;
+        int	magHeight = 100;
+        int	magOffsetX = magWidth/2;
+        int	magOffsetY = magHeight/2;
+        // end koch
+	
+#define magScale 	0.4	// you may want to change this
+
+	// you may want to restrict the magnification
+	//if (!([theEvent modifierFlags] & NSCommandKeyMask))
+	//	return;
+        
+	postNote = [self postsBoundsChangedNotifications];
+	[self setPostsBoundsChangedNotifications: NO];	// block the view from sending notification
+	//[self lockFocus]; // the view is already focused, so it is not necessary to lock?
+	
+	oldBounds = [self bounds];
+	oldRect.origin = [self convertPoint: [theEvent locationInWindow] fromView:nil];
+	oldRect.size = NSMakeSize(0,0);
+	cursorVisible = YES;
+	
+	do {
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) 
+                    {	
+                        // koch
+                         if (([theEvent modifierFlags] & NSAlternateKeyMask)) {
+                            magWidth = 380;
+                            magHeight = 250;
+                            magOffsetX = magWidth/2;
+                            magOffsetY = magHeight/2;
+                            }
+                        else {
+                            magWidth = 150;
+                            magHeight = 100;
+                            magOffsetX = magWidth/2;
+                            magOffsetY = magHeight/2;
+                            }
+                        // end koch
+            
+			// get Mouse location and check if it is with the view's rect
+                        if (!([theEvent type]==NSFlagsChanged))
+                            mouseLocWindow = [theEvent locationInWindow];
+			mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+			// check if the mouse is in the rect
+			if([self mouse:mouseLocView inRect:[self visibleRect]])
+			{
+				if (cursorVisible)
+				{
+					[NSCursor hide];
+					cursorVisible = NO;
+				}
+				// define rect for magnification in window coordinate
+				magRectWindow = NSMakeRect(mouseLocWindow.x-magOffsetX, mouseLocWindow.y-magOffsetY, 
+											magWidth, magHeight);
+				// resize bounds around mouseLocView
+				newBounds = NSMakeRect(mouseLocView.x+magScale*(oldBounds.origin.x-mouseLocView.x), 
+								mouseLocView.y+magScale*(oldBounds.origin.y-mouseLocView.y),
+								magScale*(oldBounds.size.width), magScale*(oldBounds.size.height));
+				[self setBounds: newBounds];
+				// draw it in the rect
+				magRectView = [self convertRect:magRectWindow fromView:nil];
+				[self displayRect: magRectView];
+				// reset bounds
+				[self setBounds: oldBounds];
+				magRectView = [self convertRect:magRectWindow fromView:nil];
+				// clean up the trace
+				diffRect.origin.x = oldRect.origin.x;
+				diffRect.size.width = oldRect.size.width;
+				if ((diffRect.size.height = magRectView.origin.y-oldRect.origin.y) > 0)
+				{	// erase bottom
+					diffRect.origin.y = oldRect.origin.y;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+					minY = magRectView.origin.y;
+				}
+				else
+					minY = oldRect.origin.y;
+				if ((diffRect.size.height = oldRect.origin.y+oldRect.size.height
+									-magRectView.origin.y-magRectView.size.height) > 0)
+				{	// erase top
+					diffRect.origin.y = magRectView.origin.y+magRectView.size.height;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+					maxY = magRectView.origin.y+magRectView.size.height;
+				}
+				else
+					maxY = oldRect.origin.y+oldRect.size.height;
+				diffRect.origin.y = minY;
+				diffRect.size.height = maxY-minY;
+				if ((diffRect.size.width = magRectView.origin.x-oldRect.origin.x) > 0)
+				{	// erase left
+					diffRect.origin.x = oldRect.origin.x;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+				}
+				if ((diffRect.size.width = oldRect.origin.x+oldRect.size.width
+											-magRectView.origin.x-magRectView.size.width) > 0)
+				{	// erase right
+					diffRect.origin.x = magRectView.origin.x+magRectView.size.width;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+				}
+				// remember the current rect
+				oldRect = magRectView;
+			}
+			else
+			{
+				// mouse is not in the rect, show cursor and reset old rect
+				if (!cursorVisible)
+				{
+					[NSCursor unhide];
+					cursorVisible = YES;
+				}
+				[self displayRect: oldRect];
+				oldRect.origin = mouseLocView;
+				oldRect.size = NSMakeSize(0,0);
+			}
+		}
+		else if ([theEvent type]==NSLeftMouseUp)
+		{
+			break;
+		}
+        theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+                NSLeftMouseDraggedMask | NSFlagsChangedMask];
+	} while (YES);
+	
+	[NSCursor unhide];
+	//[self unlockFocus];
+	[self setPostsBoundsChangedNotifications: postNote];
+	[self setNeedsDisplayInRect: oldRect];
+}
+// end addition
+
 
 
 @end

@@ -17,9 +17,11 @@
    
 - (void) printDocument: sender;
 - (void) printSource: sender;
+- (void) doTypeset: sender;
 - (void) doTex: sender;
 - (void) doLatex: sender;
 - (void) doBibtex: sender;
+- (void) doMetaFont: sender;
 - (void) doIndex: sender;
 - (void) previousPage: sender;
 - (void) nextPage: sender;

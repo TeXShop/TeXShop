@@ -14,6 +14,9 @@
     MyDocument	*myDocument;
 }
 
+// added by mitsu --(H) Macro menu; used to detect the document from a window
+- (MyDocument *)document;
+// end addition
 - (void) doChooseMethod: sender;
 - (void) makeKeyAndOrderFront:(id)sender;
 - (void) sendEvent:(NSEvent *)theEvent;

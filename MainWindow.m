@@ -11,6 +11,14 @@
 
 @implementation MainWindow : NSWindow
 
+// added by mitsu --(H) Macro menu; used to detect the document from a window
+- (MyDocument *)document
+{
+	return myDocument;
+}
+// end addition
+
+
 - (void)makeKeyAndOrderFront:(id)sender;
 {
    if (

@@ -4,9 +4,8 @@
 
 <!--  
 	Advanced users can replace TeXShop's default keyboard menu shortcuts with their
-	own customized versions using this file. Edit the file as described below. Create a
-	new folder called ~/Library/TeXShop/Menus and place this file in that folder
-	with the name "KeyEquivalents.plist".
+	own customized versions using this file. This file must be named "KeyEquivalents.plsit"
+        and live in the folder ~/Library/TeXShop/Menus.
 
 	The structure of this file is as follows. At the top level, we list the items
 	in the main TeXShop menu: TeXShop, File, Edit, Format, etc. We need only list
@@ -46,8 +45,17 @@
 	command will not "take." In that case, the other command must be removed or changed.
 	To remove a command, write the first array element as <string></string>. The order
 	of these operations does not matter, so a key command can be assigned to a new
-	menu item at one spot in this file, and later removed from its original item. 
+	menu item at one spot in this file, and later removed from its original item.
+        
+	Below is an example to show how this works. The example implements a crazy redefinition:
+	the key equivalent W is removed from the Close menu, and Comment, Uncomment, Indent,
+	and Unindent items are assigned X, Y, Z, W with various combinations of option and
+	control keys. Since nobody would actually want to do this, the example is commented out;
+	use it as a guide and add similar definitions which are not bracketed inside the
+	comment symbols <!-- and --> 
 --> 
+
+<!--
 
 <dict>
 	
@@ -112,3 +120,5 @@
 
 </dict>
 </plist>
+
+-->

@@ -18,4 +18,8 @@
 - (NSWindow *)activeDocumentWindow;
 - (NSWindow *)activePdfWindow;
 
+// added by mitsu --(J+) check mark in "Typeset" menu
+- (void)checkProgramMenuItem: (int)programID checked: (BOOL)flag;
+// end addition
+
 @end

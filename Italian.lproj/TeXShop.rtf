@@ -1,8 +1,7 @@
-{\rtf1\mac\ansicpg10000\cocoartf100
+{\rtf1\mac\ansicpg10000\cocoartf102
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica-BoldOblique;
 \f3\fswiss\fcharset77 Helvetica;\f4\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\vieww13000\viewh13680\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -22,6 +21,11 @@
 	Come Ottenere e Installare teTeX\
 	Come Ottenere e Installare TeXShop\
 	Compilare i Documenti\
+	Controllo dell'Ortografia\
+	Trucchi per l'Editing\
+	Pannello Latex\
+	Barra degli Strumenti e Applescript\
+	Usare un Editor Esterno\
 	Includere Figure\
 	Metodo Alternativo di Compilazione\
 	Modificare il Menu dei Modelli\
@@ -33,6 +37,7 @@
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f1\b0 \cf0 	Preferenze\
+	Unicode\
 	Stampare\
 	BibTeX\
         	MakeIndex\
@@ -42,6 +47,11 @@
 	Sintassi Colorata\
 	Ulteriori Informazioni su teTeX\
 	Coesistenza con Fink\
+	Coesistenza con Altre Distribuzioni TeX\
+	ConTeXt e MetaPost\
+	Documenti Plist\
+	Auto-Completamento\
+	Ridefinire le Scorciatoie di Tastiere del Menu\
 	Segnalazione di Errori\
 	Licenza\
 	Traduzione\
@@ -52,7 +62,7 @@ Introduzione:\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f3\b0 \cf0 \
-TeXShop \'8f una applicazione per Mac OS X con cui puoi compilare documenti in formato TeX e Latex e controllare il risultato direttamente sullo schermo. L'applicazione utilizza i compilatori 
+TeXShop \'8f una applicazione per Mac OS X con cui puoi compilare documenti in formato TeX e LaTeX e controllare il risultato direttamente sullo schermo. L'applicazione utilizza 
 \f1\i pdftex
 \f3\i0  e 
 \f1\i pdflatex
@@ -60,7 +70,7 @@ TeXShop \'8f una applicazione per Mac OS X con cui puoi compilare documenti in f
 \f1\i tex
 \f3\i0  e 
 \f1\i latex
-\f3\i0 ; questi compilatori generano output in formato pdf anzich\'8f dvi. Poich\'8f il formato grafico nativo del sistema X \'8f il pdf, questo \'8f il formato pi\'9d semplice da usare per la visualizzazione sullo schermo. 
+\f3\i0 . Questi programmi generano output in formato pdf anzich\'8f dvi. Poich\'8f il formato grafico nativo del sistema X \'8f il pdf, questo \'8f il formato pi\'9d semplice da usare per la visualizzazione sullo schermo. 
 \f1\i Pdftex
 \f3\i0  e 
 \f1\i pdflatex
@@ -68,9 +78,9 @@ TeXShop \'8f una applicazione per Mac OS X con cui puoi compilare documenti in f
 \
 I documenti pdf generati da TeXShop sono in formato pdf standard e possono essere distribuiti ad altri utenti e visualizzati su una grande variet\'88 di sistemi. Ad esempio, possono essere visualizzati da Adobe Acrobat con il sistema Mac OS 9.\
 \
-TeXShop non comprende il software TeX ma usa la distribuzione standard 
+TeXShop non include il software TeX ma usa la distribuzione standard 
 \f1\i teTeX
-\f3\i0 , una collezione dell'intera suite dei programmi, documenti e utilities TeX, creta da Thomas Esser. Questa collezione (la versione di TeX standard sui sistemi Linux) \'8f stata compilata per Mac OS X da Gerben Wierda. Le istruzione per ottenerla sono date qui di seguito.\
+\f3\i0 , una collezione dell'intera suite dei programmi, documenti e utilities TeX, creta da Thomas Esser. Questa collezione (la versione di TeX standard sui sistemi Linux) \'8f stata compilata per Mac OS X da Gerben Wierda. Le istruzioni per ottenerla sono date qui di seguito.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -78,15 +88,23 @@ TeXShop non comprende il software TeX ma usa la distribuzione standard
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f3\b0 \cf0 \
-L'ultima versione di teTeX per MacOSX \'8f stata compilata da Gerben Wierda. La sua versione si trova nel sito\
+L'ultima versione di teTeX per MacOSX \'8f stata compilata da Gerben Wierda. La sua versione include anche un aggiornamento dei programmi contenuti nella distribuzione TeXLive del TeX's Users's Group. Per ottenere questi documenti e programmi, vai al sito di Wierda:\
 \
-	http://www.uoregon.edu/~koch/texshop/texshop.html\
+	http://www.rna.nl/tex.html\
 \
-in un file chiamato "teTeX.dmg." Procurati questo documento, e aprilo con un doppio click da un account di tipo Amministratore, come quello creato durante l'installazione di Mac OS X. Si aprir\'88 una cartella contenente il programma "TeXGSInstaller." Avvia questa applicazione e assicurati di installare sia teTex che ghostscript, perch\'8e TeXShop usa i comandi ghostscript.\
+e procurati l'installatore TeX, i-Installer. Lo troverai nel pacchetto II2.dmg. Esegui l'installer e installa i seguenti pacchetti:\
 \
-I sorgenti completi di teTeX sono disponibili sul sito di Wierda. Il sito contiene anche le istruzioni per configurare e compilare il codice per Mac OS X:\
+	TeX Foundation\
+	TeX Programs\
+	Ghostscript 7\
+	Freetype 2\
+	wmf and iconv conversion support\
+	ImageMagick\
+	CM Super for TeX\
+ \
+I primi due pacchetti sono essenziali per TeX. Il terzo pacchetto \'8f necessario per usare l'opzione TeX + Ghostscript descritta sotto. I pacchetti quarto, quinto e sesto, sono usati per convertire i documenti grafici in formati che TeX possa utilizzare. Il pacchetto finale contiene un set opzionale di font aggiuntivi.\
 \
-	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/\
+Ulteriori istruzioni per l'installazione, possono essere reperite nel sito di Wierda e nel sito di TeXShop elencati qui sotto.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -104,7 +122,7 @@ e segui il link TeXShop per scaricare il file TeXShop.dmg. Eseguendo un doppio c
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f3\b0 \cf0 Per usare TeXShop, scrivi il documento sorgente in formato Latex nella finestra di editing. Quindi premi il pulsante "Latex" nella parte superiore della finestra. L'input verr\'88 salvato e verr\'88 lanciato il compilatore 
+\f3\b0 \cf0 Per usare TeXShop, scrivi il documento sorgente in formato Latex nella finestra di editing. Quindi premi il pulsante "LaTeX" nella parte superiore della finestra. L'input verr\'88 salvato e verr\'88 lanciato il compilatore 
 \f1\i pdftex
 \f3\i0 . Si aprir\'88 una seconda finestra con i messaggi generati dal compilatore 
 \f1\i tex
@@ -116,13 +134,15 @@ Per compilare un documento TeX, premi il pulsante "Programma" e seleziona TeX al
 \
 Se noti un errore, puoi correggerlo immediatamente nella finestra di editing e premere nuovamente il pulsante "TeX" o "Latex". L'applicazione interromper\'88 automaticamente la prima compilazione e ne lancer\'88 un'altra.\
 \
-TeXShop tiene traccia dei primi venti errori. Per saltare direttamente alle linee del documento sorgente contenti gli errori,  scegli "Vai all'Errore" nel menu Composizione o digita l'abbreviazione di tastiera per questo comando.\
+TeXShop tiene traccia dei primi venti errori. Per saltare direttamente alle linee del documento sorgente contenti gli errori,  scegli "Vai all'Errore" nel menu Composizione o digita la scorciatoia di tastiera per questo comando.\
 \
 Quando correggi gli errori e compili nuovamente, la finesta di anteprima ricorder\'88 la pagina che stavi precedentemente visualizzando.\
 \
-Se una linea nel documento sorgente contiene i caratteri "%:", TeXShop interpreta le parole seguenti come una "etichetta" e aggiunge queste parole al menu a tendina Etichette. Scegliendo un elemento di questo menu, salterai direttamente alla linea corrispondente nel documento sorgente.\
+Se una linea nel documento sorgente contiene i caratteri "%:", TeXShop interpreta le parole seguenti come una "etichetta" e aggiunge queste parole al menu a tendina Etichette. Scegliendo un elemento di questo menu, salterai direttamente alla linea corrispondente nel documento sorgente. Le linee che iniziano con le parole \\section, \\subsection, \\subsubsection o \\chapter sono automaticamente aggiunte al menu Etichette. Tuttavia, questo comportamento pu\'98 essere modificato digitando il seguendo comando nel Terminal  di Apple:\
 \
-TeXShop pu\'98 gestire simultaneamente pi\'9d documenti. Se scegli "Nuovo" o "Apri" dal menu Archivio, il tuo documento originale rimarr\'88 aperto e si apriranno nuove finestre per i nuovi documenti. Se apri un documento tex in una cartella contenente un documento pdf con lo stesso nome, si aprir\'88 anche la corrispondente finestra di anteprima.\
+	defaults write texshop TagSections NO\
+\
+TeXShop pu\'98 gestire simultaneamente pi\'9d documenti. Se scegli "Nuovo" o "Apri" dal menu Archivio, il tuo documento originale rimarr\'88 aperto e si apriranno nuove finestre per i nuovi documenti. Se apri un documento TeX in una cartella contenente un documento pdf con lo stesso nome, si aprir\'88 anche la corrispondente finestra di anteprima.\
 \
 Puoi avviare TeXShop con un doppio clic su un documento che abbia estensione ".tex". L'applicazione aprir\'88 quel documento sorgente e (se esiste) il documento pdf associato.\
 \
@@ -133,11 +153,79 @@ Puoi chiudere la finestra con l'anteprima pdf in ogni momento. Ricomparir\'88 no
 \f1\i \cf0 pdftex
 \f3\i0  e 
 \f1\i pdflatex
-\f3\i0  sono programmi unix derivati dal programma TeX di Donald Knuth. La sintassi del TeX non permette di usare spazi nei nomi dei file. Per questa ragione, i documenti creati con TeXShop non dovrebbero avere nomi contenenti spaziature. L'applicazione TeXShop di per s\'8e, non ha problemi nel gestire gli spazi nei nomi dei file.\
+\f3\i0  sono programmi unix derivati dal TeX di Donald Knuth. La sintassi del TeX non permette di usare spazi nei nomi dei file. Per questa ragione, i documenti creati con TeXShop non dovrebbero avere nomi contenenti spaziature. L'applicazione TeXShop di per s\'8e, non ha problemi nel gestire gli spazi nei nomi dei file.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Includere Figure:\
+\f0\b \cf0 Controllo dell'Ortografia:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 \
+I programmi Cocoa ereditano automaticamente la tecnologia di controllo ortografico fornita da Apple, ma il controllore ortografico Apple non capisce la sintassi LaTeX. Tuttavia, si possono aggiungere alla tecnologia Apple altri servizi ortografici; questi saranno poi disponibili in tutte le applicazioni Cocoa.\
+\
+TeXShop \'8f compatibile con il controllo ortografico continuo, attivabile tramite comando da menu. Un elemento nelle preferenze definisce lo stato iniziale di questa funzione.\
+\
+Aspell \'8f un "Ispell pi\'9d intelligente" scritto da Kevin Adkinson per le macchine Unix. Il suo programma \'8f stato portato su Mac OS X e trasformato in servizio ortografico, da Anton Leuski. Il nuovo correttore ortografico \'8f compatibile con la sintassi di LaTeX. Per procurartelo, vai al sito:\
+\
+	http://www-ciir.cs.umass.edu/~leouski/cocoaspell/\
+\
+Un correttore ortogragico LaTeX alternativo spesso usato in Mac OS 9, \'8f Excalibur. Questo correttore, scritto da Rick Zaccone, \'8f stato portato su Mac OS X; pu\'98 aprire i documenti di TeXShop. Per procurartelo, vai al sito:\
+\
+	http://www.eg.bucknell.edu/~excalibr/excalibur.html
+\f0\b \
+
+\f3\b0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Trucchi per l'Editing:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 \
+Gruppi di linee possono essere commentati e successivamente riattivati, usando un comando do menu. Inoltre, gruppi di linee possono anche essere spostati a destra e a sinistra tramite un comando di menu. Se una linea inizia con una serie di tabulatori o spazi, la nuove linee successive inizieranno nella stessa posizione, finch\'8e questo comportamento non viene annullato cancellando gli spazi a inizio riga. Questa funzione \'8f stata aggiunta a TeXShop da Nicol\'88s Ojeda B\'8ar in Argentina, che pu\'98 essere raggiunto all'indirizzo lojedaortiz@interlink.com.ar.  Grazie!\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Pannello Latex:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 Sotto il menu Finestre, vi \'8f la voce "Pannello Latex..." Scegliendo questo elemento si aprir\'88 un pannello contenente un gran numero di simboli matematici, caratteri dell'alfabeto greco, caratteri internazionali, e ambienti di digitazione. Cliccando su un simbolo, verr\'88 inserito il testo corrispondente nel sorgente LaTeX.  Questo splendido pannello \'8f frutto del lavoro di Geoffroy Lenglin, che ha appena finito un master in Aeronautica e Astronautica al MIT. Geoffroy pu\'98 essere raggiunto all'indirizzo geoffroy.lenglin@m4x.org.\
+\
+Alcuni simboli contenuti nel pannello richiedono che l'istruzione\
+\
+	
+\f4\fs20 \\usepackage\{amssymb\}\
+
+\f3\fs24 \
+sia inserita all'inizio del sorgente.\
+\
+E' possibile personalizzare il comportamento del pannello. La cartella di distribuzione di TeXShop contiene un documento chiamato "completion.plist". Questo documento contiene tutte le stringhe di caratteri inserite nel codice sorgente quando viene selezionato un elemento del pannello. Se tale stringa contiene #SEL#, allora il testo selezionato sostituir\'88 questa espressione nel testo inserito. Se una stringa contiene #INS#, allora quando il testo sar\'88 inserito, il cursore verr\'88 posizionato in quel punto. Per personalizzare il comportamento del pannello, edita il documento completion.plist. Poi trova la cartella ~/Libreria/TeXShop. Aggiungi una cartella chiamata ~/Libreria/TeXShop/LatexPanel e posiziona il documento completion.plist modificato in questa cartella.\
+\
+Modificare i documenti plist \'8f un po' macchinoso; riferisciti al capitolo corrispondente alla fine di questo documento di aiuto.\
+\
+Editando completion.plist, gli utenti possono aggiungere fino a sedici elementi al Pannello Latex. Questi pulsanti sono mostrati nel sotto-pannello "Custom" del Pannello Latex. Riferisciti ai commenti in completion.plist per dettagli riguardo a tali elementi.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Barra degli Strumenti e AppleScript:
+\f3\b0 \
+\
+Usando il menu "Personalizza Barra degli Strumenti" si possono modificare la selezione e la posizione degli strumenti collocati in cima alle finestre Sorgente TeX e Anteprima PDF. Il supporto per la barra degli strumenti \'8f interamente lavoro di Anton Leuski. Grazie!\
+\
+TeXShop supporta AppleScript. Anche questo \'8f frutto di Anton Leuski. Il supporto di AppleScript migliorer\'88 in futuro.\
+\
+
+\f0\b Usare un Editor Esterno:
+\f3\b0 \
+\
+TexShop pu\'98 essere configurato per usare un editor esterno. Vi \'8f un nuovo comando da menu "Apri per Anteprima..." Quando questo elemento viene selezionato, ti verr\'88 chiesto di selezionare un documento sorgente tex. Tuttavia, si aprir\'88 soltanto il documento pdf di anteprima associato (se il sorgente non \'8f stato ancora compilato, si aprir\'88 una finestra vuota). Grazie alla barra degli strumenti di Leuski, la finestra di anteprima pu\'98 essere configurata per contenere un pulsante di compilazione. Puoi aprire il documento sorgente in un editor qualsiasi. Per compilare, registra le modifiche nel tuo editor, passa alla finestra di anteprima di TeXShop e compila. In questo modo, TeXShop non aprir\'88 o modificher\'88 mai il sorgente. Semplicemente, passer\'88 questo documento ai processi TeX o LaTeX di Unix.\
+\
+Per gli utenti che preferisco usare un editore esterno la maggior parte del tempo, nelle Preferenze esiste un elemento chiamato "Configura per Editor Esterno." Quando questo elemento \'8f selezionato, i menu "Apri" e "Apri Recente..." aprono i documenti sorgenti tex nella modalit\'88 sopra descritta, per l'editing con editore esterno. Inoltre, il comando "Apri per Anteprima..." diventa "Apri per Editare..." e apre i sorgenti tex con l'editor interno di TeXShop per quelle rare occasioni in cui si desidera usare quest'ultimo. I comandi "Apri" e "Apri Recente..." possono anche aprire documenti in formato jpg, tiff, ps, pdf, div, log e altri; questo comportamento non viene modificato selezionando la preferenza descritta.\
+\
+Il supporto AppleScript per l'opzione di editor esterno \'8f ancora piuttosto debole; nelle future versioni migliorer\'88 e sar\'88 possibile compilare interamente dall'interno di un editor esterno compatibilie con AppleScript.\
+\
+
+\f0\b Includere Figure:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -145,56 +233,35 @@ Puoi chiudere la finestra con l'anteprima pdf in ogni momento. Ricomparir\'88 no
 \f1\i pdftex
 \f3\i0  and 
 \f1\i pdflatex
-\f3\i0  possono usare documenti grafici nei formati pdf, jpg o tif. Una peculiarit\'88 \'8f che i documenti in formato tiff devono avere estensione ".tif" anzich\'8e ".tiff". Il formato grafco nativo di Mac OS X \'8f il pdf (portable document format) e documenti di questo tipo verranno stampati correttamente a qualsiasi dimensione. E' molto probabile che la maggior parte delle future applicazioni grafiche Mac genereranno documenti in formato pdf.\
+\f3\i0  possono usare documenti grafici nei formati pdf, jpg, png o mps. Se usi il modello LaTeX predefinito e hai installato il pacchetto di conversione grafica contenuto nella distribuzione di Gerben Wierda, puoi anche usare documenti grafici prodotti nei formati eps e tif; questi verranno automaticamente convertiti nei formati pdf e png durante la compilazione. Una peculiarit\'88 \'8f che i documenti in formato tiff devono avere estensione ".tif" anzich\'8e ".tiff". Il formato grafco nativo di Mac OS X \'8f il pdf (portable document format) e documenti di questo tipo verranno stampati correttamente con qualsiasi dimensione. E' molto probabile che la maggior parte delle future applicazioni grafiche Mac genereranno documenti in formato pdf.\
 \
 Se hai usato TeX nel passato, le tue illustrazioni probabilmente saranno in formato 
 \f1\i eps
-\f3\i0 . 
+\f3\i0 . Questi documenti devono essere convertiti in pdf prima di poter essere compilati con 
 \f1\i pdftex
 \f3\i0   e 
 \f1\i pdflatex
-\f3\i0  non possono usare direttamente questi documenti, ma le illustrazioni possono essere convertite in formato pdf. Per convertire un documento eps, aprilo con TeXShop. L'illustrazione apparir\'88 in una finestra grafica e TeXShop simultaneamente scriver\'88 su disco il corrispondente documento pdf. Ghostscript contiene anche un programma da eseguire da linea di comando per effettuare la conversione; in pratica TeXShop utilizza questo programma. Per convertire il documento miodocumento.eps in miodocumento.pdf da Terminale, scrivi\
-\
+\f3\i0 . Come spiegato sopra, se usi il documento LaTeX predefinito la conversione avverr\'88 automaticamente. Per convertire un documento eps, puoi anche aprirlo con TeXShop. L'illustrazione apparir\'88 in una finestra grafica e TeXShop simultaneamente scriver\'88 su disco il corrispondente documento pdf. Ghostscript contiene anche un programma da eseguire da linea di comando per effettuare la conversione; in realt\'88 TeXShop utilizza proprio questo programma. Per convertire il documento miodocumento.eps in miodocumento.pdf da Terminale, scrivi\
 \
      epstopdf miodocumento.eps   \
 \
 Gli autori di 
 \f1\i pdflatex
-\f3\i0  hanno resa semplice l'operazione di includere documenti grafici in un sorgente Latex, da compilare con 
+\f3\i0  e del pacchetto grafico 
+\f1\i graphicx
+\f3\i0  hanno resa semplice l'operazione di includere documenti grafici in un sorgente LaTeX da compilare con 
 \f1\i pdflatex
 \f3\i0 , anche nel caso in cui il documento debba essere successivamente compilato con il 
 \f1\i latex
-\f3\i0  standard e convertito in formato dvi per essere distribuito ad altri utenti. Inserisci le linee seguenti, all'inizio di tale sorgente Latex:\
+\f3\i0  standard e convertito in formato dvi per essere distribuito ad altri utenti. Inserisci le linee seguenti all'inizio di tale sorgente Latex:\
 \
 	
-\f4\fs20 \\newif\\ifpdf\
-	\\ifx\\pdfoutput\\undefined\
-	\\pdffalse % we are not running PDFLaTeX\
-	\\else\
-	\\pdfoutput=1 % we are running PDFLaTeX\
-	\\pdftrue\
-	\\fi\
-\
-	\\ifpdf\
-	\\usepackage[pdftex]\{graphicx\}\
-	\\else\
-	\\usepackage\{graphicx\}\
-	\\fi\
+\f4\fs20 \\usepackage\{graphicx\}\
 
 \f3\fs24  
 \f0\b \
 
-\f3\b0 Dopo il comando "\\begin\{document\}" inserisci le linee\
-\
-	
-\f4\fs20 \\ifpdf\
-	\\DeclareGraphicsExtensions\{.pdf, .jpg\}\
-	\\else\
-	\\DeclareGraphicsExtensions\{.eps, .jpg\}\
-	\\fi\
-\
-
-\f3\fs24 Quando vuoi includere un documento grafico, ad esempio "f1.pdf ", usa il comando\
+\f3\b0 Quando vuoi includere un documento grafico, ad esempio "f1.pdf ", usa il comando\
 \
 	
 \f4\fs20 \\includegraphics[width=2in]\{f1\}
@@ -205,6 +272,20 @@ Questo comando inserir\'88 il documento grafico "f1.pdf" se il sorgente \'8f com
 \f3\i0 , o il documento "f1.eps" se il sorgente \'8f compilato con 
 \f1\i latex
 \f3\i0 .\
+\
+Se hai eseguito un aggiornamento da una precedente versione di TeXShop e vuoi usare la conversione automatica dei documenti eps e tif durante la compilazione, accertati che:\
+\
+	a) Ghostscript 7, Freetype 2, wmf e iconv (supporto per la conversione) e ImageMagick siano installati con l'installer di Gerben Wierda.\
+\
+	b) La preferenza del programma pdflatex sia "pdflatex --shell-escape".\
+\
+	c) L'intestazione del sorgente LaTeX contenga le seguenti linee:\
+\
+	
+\f4\fs20 \\usepackage\{graphicx\}\
+	\\usepackage\{epstopdf\}\
+	\\DeclareGraphicsRule\{.tif\}\{png\}\{.png\}\{`convert #1 `basename #1 .tif`.png\}
+\f3\fs24 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f1\i \cf0 \
@@ -235,8 +316,7 @@ Il metodo "Tex e Ghostscript" pu\'98 essere usato per i vecchi progetti con molt
 \f1\i pdflatex
 \f3\i0 . L'uso indicher\'88 quale sia il  motore di compilazione da preferire. \
 \
-Esiste un modo per impostare in modo permanente il metodo di compilazione di un documento, indipendentemente dal metodo impostato nelle preferenze.\
-Se la prima linea del documento \'8f %&tex, senza spaziature all'inizio della linea, allora sar\'88 usato il metodo tex e ghostscript. Se la prima linea \'8f %&latex, allora sar\'88 usato latex e ghostscript. Se la prima linea \'8f %&pdftex o %&pdflatex, allora sar\'88 usato pdftex o pdflatex. Se la prima linea \'8f %&personaltex o %&personallatex, allora sar\'88 usato lo script personalizzato impostato nelle preferenze.\
+Esiste un modo per impostare in modo permanente il metodo di compilazione di un documento, indipendentemente dal metodo impostato nelle preferenze. Se la prima linea del documento \'8f %&tex, senza spaziature all'inizio della linea, allora sar\'88 usato il metodo tex e ghostscript. Se la prima linea \'8f %&latex, allora sar\'88 usato LaTeX e ghostscript. Se la prima linea \'8f %&pdftex o %&pdflatex, allora sar\'88 usato pdftex o pdflatex. Se la prima linea \'8f %&personaltex o %&personallatex, allora sar\'88 usato lo script personalizzato impostato nelle preferenze.\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f1\i \cf0 \
@@ -248,17 +328,19 @@ Se la prima linea del documento \'8f %&tex, senza spaziature all'inizio della li
 
 \f3\b0 \cf0 Quando TeXShop viene lanciato per la prima volta, viene creata la cartella\
 \
-	~/Library/TeXShop/Templates\
+	~/Libreria/TeXShop/Templates\
 \
 con all'interno i documenti 
 \f1\i Graphics.tex, TexTemplate.tex,
 \f3\i0  e 
 \f1\i LatexTemplate.tex
-\f3\i0 . I nomi di questi documenti vengono mostrati nel menu a tendina Modelli in cima alla finestra di input. Scegliendo una di questi voci, il contenuto del corrispondente documento di esempio viene introdotto nel documento sorgente a partire dalla posizione attuale del cursore. \
+\f3\i0 . I nomi di questi documenti vengono mostrati nel menu a tendina Modelli in testa alla finestra di input. Scegliendo una di questi voci, il contenuto del corrispondente documento di esempio viene introdotto nel documento sorgente a partire dalla posizione attuale del cursore. \
 \
 I tre modelli sono documenti tex standard che possono essere aperti e modificati con TeXShop. \'e9 anche possibile aggiungere ulteriori modelli; anche questi compariranno nel menu a tendina Modelli, ammesso che i loro nomi finiscano con l'estensione ".tex". I documenti modello originali possono essere rimossi.\
 \
 Per ripristinare i modelli originali, nel caso in cui questi siano stati modificati, cancella la cartella Templates e lancia l'applicazione TeXShop nuovamente. La cartella verr\'88 ricreata con il suo contenuto originale.\
+\
+I comandi \\usepackage\{amssymb\} e \\usepackage\{graphicx\} precedentemente menzionati sono inclusi nei modelli LaTeX predefiniti. Tuttavia, quando un utente aggiorna TeXShop, questo modello non viene aggiornato perch\'8f l'utente potrebbe averlo modificato.\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 \
@@ -345,9 +427,25 @@ Il pannello delle preferenze pu\'98 essere usato anche per modificare i comandi 
 \f1\i pdfelatex
 \f3\i0 . Ovviamente i comandi sostitutivi devono produrre un output in formato pdf. Se i nuovi programmi sono nella directory dei binari di TeX, \'8f sufficiente specificarne il nome nella finestra delle preferenze; la finestra accetter\'88 il path completo dei programmi, se questi risiedono altrove.\
 \
+Il sistema di editing di TeXShop \'8f realizzato tramite la classe di editing di Cocoa della Apple, e usa Unicode per il suo lavoro interno. Quando i documenti TeXShop sono scritti su disco, sono generalmente convertiti in formato ascii 8-bit poich\'8e TeX si aspetta di ricevere documenti in questo formato. Ci sono tre modi per effettuare la conversione, chiamati Mac OS Roman, Iso Latin 1 e Iso Latin 2. Il metodo usato viene selezionato nelle preferenze. Per molti utenti, non ci sar\'88 alcuna differenza tra una scelta e l'altra. Alcuni pacchetti TeX consentono agli utenti di digitare i caratteri accentati europei direttamente dalla tastiera. Grazie a Martin Heusse per aver fornito il codice per questa preferenza. Le versioni precedenti di TeXShop hanno sempre usato la conversione Mac OS Roman.\
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Stampare:\
+\f0\b \cf0 Unicode:
+\f3\b0 \
+\
+Unicode \'8f un formato che simultaneamente codifica caratteri per diverse lingue del mondo: Arabo, Cinese, Greco, Ebraico, Giapponese, Romano, Russo e altri. Cocoa pu\'98 produrre Unicode, perci\'98 pu\'98 farlo anche TeXShop. Per sperimentare, apri le preferenze Internazionale nel programma Preferenze di Sistema, scegli il sotto-pannello Menu Tastiera e aggiungi altre selezioni agli elementi gi\'88 selezionati. \'e9 illuminante selezionare Greco (perch\'8e familiare), Ebraico (perch\'8e scritto da destra a sinistra), Arabo (perch\'8e scritto da destra a sinistra con ampio uso di legature, cos\'93 i caratteri hanno aspetto diverso se scritti in mezzo alle parole o alla fine), e Cinese. Comparir\'88 un nuovo menu con una bandiera che indica il linguaggio di input corrente.\
+\
+Scrivi alcuni caratteri, cambia lingua di inserimento e scrivi altri caratteri.\
+\
+Ci sono diversi formati per documenti Unicode. Una preferenza permette di scegliere tra due di questi. L'Unicode standard di OS X \'8f la codifica usuale usata da Mac OS X, ma non so quanto sia utile nel mondo TeX. L'Unicode UTF-8 \'8f un formato popolare perch\'8e i caratteri ascii ordinari appaiono come sempre. Se un documento \'8f salvato in formato UTF-8, TeX pu\'98 processarlo, ma convertir\'88 tutti i caratteri Unicode in punti interrogativi.\
+\
+Esiste un pacchetto TeX che accetta come input documenti in formato UTF-8; vedi:\
+\
+	http://www.ctan.org/tex-archive/macros/latex/contrib/supported/unicode/\
+\
+
+\f0\b Stampare:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -359,13 +457,14 @@ Il pannello delle preferenze pu\'98 essere usato anche per modificare i comandi 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f3\b0 \cf0 BibTeX \'8f uno strumento usato per creare le bibliografie all'interno dei documenti Latex. Questa applicazione presuppone che tu abbia un grande database di riferimenti bibliografici che citi spesso. Con dei semplici comandi puoi citare i riferimenti che desideri all'interno del sorgente latex; BibTeX crea successivamente la bibliografia del tuo articolo, con i soli riferimenti citati.\
+\f3\b0 \cf0 BibTeX \'8f uno strumento usato per creare le bibliografie all'interno dei documenti Latex. Questa applicazione presuppone che tu abbia un grande database di riferimenti bibliografici che citi spesso. Con dei semplici comandi puoi citare i riferimenti che desideri all'interno del sorgente LaTeX; BibTeX crea successivamente la bibliografia del tuo articolo, con i soli riferimenti citati.\
 \
 Qui di seguito vi \'8f un esempio tratto da 
 \f1\i The Latex Companion
-\f3\i0  by Goossens, Mittelbach, and Samarin. Consulta questo libro per ulteriori dettagli. Supponi che il database sia un file chiamato "mybibliography.bib" contenente il testo mostrato qui sotto. In questo testo, i campi  "Felici:1991, Knuth:WEB," e "Liang:1983" sono i valori chiave usati per citare gli articoli nel sorgente latex.\
+\f3\i0  by Goossens, Mittelbach, and Samarin. Consulta questo libro per ulteriori dettagli. Supponi che il database sia un file chiamato "mybibliography.bib" contenente il testo mostrato qui sotto. In questo testo, i campi  "Felici:1991, Knuth:WEB," e "Liang:1983" sono i valori chiave usati per citare gli articoli nel sorgente LaTeX.\
 	\
-	@article\{Felici:1991,\
+	
+\f4\fs20 @article\{Felici:1991,\
 	author	=\{James Felici\},\
 	title	=\{\{PostScript versus TrueType\}\},\
 	journal	=\{Macworld\},\
@@ -392,25 +491,26 @@ Qui di seguito vi \'8f un esempio tratto da
 	note	=\{Also available as Stanford\
 		University, Department of\
 		Computer Science Report\
-		No. STAN-CS-83-977\}   \}\
+		No. STAN-CS-83-977\}   \}
+\f3\fs24 \
 \
-Supponi che il sorgente latex si chiami "myfile.tex" e contenga il seguente testo:\
+Supponi che il sorgente LaTeX si chiami "myfile.tex" e contenga il seguente testo:\
 \
-	\\begin\{document\}\
+	
+\f4\fs20 \\begin\{document\}\
 	Consider the  argument of Felici~\\cite\{Felici:1991\} in light of these comments.\
 	\\nocite\{Liang:1983\} We provide further remarks later.\
 \
 	\\bibliographystyle\{plain\}\
 	\\bibliography\{mybibliography\}\
 	\\end\{document\}\
-\
+
+\f3\fs24 \
 Una volta compilato, nel testo comparir\'88 una citazione all'articolo di Felici, e alla fine del testo verr\'88 creata una bibliografia con gli articoli di Felici e Liang, ma non l'articolo di Knuth.\
 \
 In questo esempio, TeXShop pu\'98 essere usato come segue. Dapprima edita e compila il documento "myfile.tex" come al solito. Nell'output le citazioni compariranno come "[?]" e mancher\'88 la bibliorafia. Successivamente seleziona "Bibtex" all'interno del pulsante Programmi e lancia Bibtex. Quindi seleziona "Latex" e compila di nuovo. Le citazioni continueranno a comparire come "[?]", ma la bibliografia verr\'88 aggiunta all'output. Compila un'ulitma volta e le citazioni avranno i loro valori corretti.\
 \
-Il documento "mybibliography.bib" pu\'98 essere aperto e modificato da TeXShop. Quando TeXShop apre un documento il cui nome non termina con l'estenzione ".tex" o ".TEX", i pulsanti di compilazione vengono disabilitati. Quando il documento viene successivamente salvato con i comandi "Registra" o "Registra Come...", il nome sar\'88 esattamente quello selezionato, senza l'aggiunta dell'estensione ".tex". Pertanto, il database bibliografico pu\'98 essere modificato mentre si scrive un nuovo articolo.\
-\
-(Tuttavia, se usi TeXShop per creare il documento "mybibliography.bib" da zero, l'estensione ".tex" verr\'88 aggiunta quando salvi la prima volta. Questo \'8f un baco che verr\'88 corretto successivamente. Rimuovi l'estensione ".tex" all'interno del Finder e riapri il documento per continuare a editarlo.)\
+Il documento "mybibliography.bib" pu\'98 essere aperto e modificato da TeXShop. Se usi TeXShop per creare il documento "mubibliography.bib" da zero, usa il meno a tendina chiamato "formato file" per salvare il documento in formato bib anzich\'8e tex.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -447,11 +547,9 @@ TeXShop pu\'98 aprire la maggior parte dei documenti da editare. Questa capacit\
 \
 TeXShop pu\'98 anche aprire documenti ".dvi" e ".ps".  In questi casi, i documenti vengono convertiti in formato pdf e mostrati come tali.\
 \
-Usare TeXShop come editor generale non \'8f una buona idea. TeXShop pu\'98 leggere documenti scritti nel formato UniCode e altri, ma registra sempre i documenti in formato Ascii 8-bit, essendo questo il formato che 
-\f1\i tex
-\f3\i0  e 
-\f1\i latex
-\f3\i0  capiscono. Di conseguenza, se TeXShop viene usato per modificare documenti non collegati al TeX, si possono perdere informazioni.\
+TeXShop pu\'98 aprire documenti ".ins", ".dts", ".sty", ".cls", "mf" e "mp" per processarli. Pu\'98 aprire ogni tipo di documento di testo.\
+\
+Usare TeXShop come editor generale non \'8f una buona idea. TeXShop pu\'98 leggere documenti scritti nel formato Unicode e altri, ma registra nel formato scelto nelle Preferenze. Di conseguenza, se TeXShop viene usato per modificare documenti non collegati al TeX, si possono perdere informazioni.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -459,9 +557,9 @@ Usare TeXShop come editor generale non \'8f una buona idea. TeXShop pu\'98 legge
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f3\b0 \cf0 Mathematica pu\'98 salvare immagini in formato eps. Se la maggior parte delle tue illustrazioni viene da Mathematica, \'8f preferibile usare il metodo di compilazione "Tex e Ghostscript."\
+\f3\b0 \cf0 Mathematica pu\'98 salvare immagini in formato eps. Questi documenti possono essere utilizzati con l'opzione di compilazione; come spiegato sopra saranno automaticamente convertiti in pdf se compilati con pdflatex.\
 \
-I documenti eps prodotti da Mathematica usano la convenzione di fine linea di Macintosh. Versioni precedenti di TeXShop e teTeX richiedevano che questi file fossero convertiti secondo la convenzione di fine linea Unix, prima di poter essere convertiti in formato pdf. Questo non \'8f pi\'9d necessario nelle ultime versioni di TeXShop/teTeX.\
+I documenti eps prodotti da Mathematica usano la convenzione di fine linea di Macintosh. Versioni precedenti di TeXShop e teTeX richiedevano che questi file fossero convertiti secondo la convenzione di fine linea Unix, prima di poter essere convertiti in formato pdf. Questo non \'8f pi\'9d necessario.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -469,7 +567,11 @@ I documenti eps prodotti da Mathematica usano la convenzione di fine linea di Ma
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f3\b0 \cf0 TeXShop contiene una localizzazione olandese a cura di Maarten Sneep, francese a cura di Jerome Laurens, tedesca a cura di Keith J. Schultz e Sascha Beverungen e una italiana a cura di Giuseppe Carlino. Grazie!\
+\f3\b0 \cf0 TeXShop contiene una localizzazione olandese a cura di Maarten Sneep, francese a cura di Jerome Laurens, tedesca a cura di Keith J. Schultz, Sascha Beverungen, Martin Kerz e Max Horn, una italiana a cura di Giuseppe Carlino, una giapponese a cura di Seiji Zenitani, una spagnola a cura di Juan L. Varona e una portoghese a cura di Paulo T. Abreu. Grazie!\
+\
+In Giappone, talvolta vengono usate versioni modificate di TeX e LaTeX chiamate ptex e platex. TeXShop \'8f stato modificato da Makoto Inoue e Seiji Zenitani per lavorare con queste versioni. Per ulteriori dettagli vedi la documentazione inclusa nella distribuzione di TeXShop e sul mio sito web.\
+\
+Per ulteriori dettagli vedi http://home.att.ne.jp/alpha/z123/texshop-j.html. Ptex e platex sono disponibili in http://www.ascii.co.jp/pb/ptex/. Dvipdfm \'8f disponibile al sito http://hamilcar.phys.kyushu-u.ac.jp/~hirata/dvipdfm/index.html.ja. Un visualizzatore dvi per il Giapponese \'8f disponibile al sito http://macptex.appi.keio.ac.jp/~uchiyama/macptex.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -520,12 +622,131 @@ e copia il documento "new.sty" dentro la cartella misc.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f3\b0 \cf0 Mac OS X pu\'98 anche eseguire applicazioni nell'ambiente X-window, usando software di terze parti, alcuni dei quali gratuiti. Fink \'8f un sistema per scaricare, compilare e eseguire applicazioni X-windows all'interno di Mac OS X. Per maggiori dettagli visita http://fink.sourceforge.net.\
+\f3\b0 \cf0 Mac OS X pu\'98 anche eseguire applicazioni nell'ambiente X-window, usando software di terze parti, alcuni dei quali gratuiti. Fink \'8f un sistema per scaricare, compilare e eseguire applicazioni X-windows all'interno di Mac OS X. Per maggiori dettagli visita http://fink.sourceforge.net. In particolare Fink pu\'98 installare ghostview, xdvi e xemacs.\
 \
-Fink installa le applicazioni in /sw/bin. Fin qui tutto bene. Tuttavia, Fink reimposta anche la variabile di ambiente PATH, cos\'93 che questa locazione sia la prima ad essere scansita in cerca di applicazioni. Sfortunatamente, gli utenti di Fink talvolta installano una seconda copia di ghostscript o teTeX utilizzando Fink.  La versione di ghostscript installata \'8f la 7, invece della 6, che crea documenti pdf che Mac OS X non riesce a mostrare correttamente. Il teTeX reinstallato, non contiene alcuni degli script usati da TeXShop e non \'8f configurato per cercare i documenti da includere all'interno di ~/Library.\
+Fink installa le applicazioni in /sw/bin. Uno dei pacchetti che Fink pu\'98 installare \'8f teTeX. Nel passato questo ha causato dei problemi perch\'8f gli utenti avevano duplicati di teTeX, configuravano uno dei due per poi scoprire che la configurazione non era valida per l'altra copia. L'ultima versione di Fink da l'opzione di usare l'installazione teTeX di Gerben Wierda con link simbolici in /sw/bin piuttosto che installare una seconda copia. Raccomandiamo di scegliere questa opzione.\
 \
-Le ultime versioni di TeXShop e teTeX sono immuni dai problemi creati da Fink. Usano la distribuzione di Wierda di teTeX e ghostscript, anche se sono installate le versioni di Fink. Gli utenti che installano Ghostscript e teTeX con Fink, devono essere consapevoli che queste versioni dovranno essere usate da Terminale, e che questo pu\'98 determinare comportamenti inattesi. Ci sono alcune ragioni, per cui alcuni utenti vogliono usare la versione di Fink di Ghostscript, ma la distribuzione di teTeX di Wierda dovrebbe comunque funzionare correttamente con le applicazioni X-windows come xdvi; perci\'98 ci sono poche ragioni per installare la versione di Fink.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Coesistenza con Altre Distribuzioni TeX:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 \
+I problemi possono sorgere quando sono presenti distribuzioni multiple di TeX, soprattutto se queste impostano variabili di ambiente. Quando vengono usati documenti diversi da quelli che ci si aspetta si possono produrre problemi piuttosto difficili da individuare.\
  \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 ConTeXt e MetaPost:
+\f3\b0 \
+\
+ConTeXt \'8f una pacchetto di macro di TeX di uso generale realizzato da Hans Hagen; per alcuni, costituisce una seria alternativa a LaTeX. Per dettagli vedi http://www.pragma-ade.com/.\
+\
+MetaPost \'8f un sistema tipo MetaFont realizzato da John Hobby, che pu\'98 generare documenti postscript e pdf. Il pacchetto pu\'98 essere usato per disegnare illustrazioni postscript elaborate. Per maggiori dettagli vedi http://cm.bell-labs.com/who/hobby/MetaPost.html. Esempi di metapost interessanti possono essere trovati in molti siti web; per esempio, vedi http://www.cs.ucc.ie/~dongen/mpost/mpost.html. TeXShop ora supporta MetaPost.\
+\
+Qui di seguito, un esempio di documento MetaPost:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f4\fs20 \cf0 	prologues:=2;\
+	color yellow; yellow = green + red;\
+	def star (expr size, n, pos, color)=\
+		for a=0 step 360/n until 360:\
+			draw (origin -- (size/2,0))\
+			rotatedaround (origin, a)\
+			shifted pos withcolor color;\
+		endfor ;\
+	enddef;\
+\
+	beginfig(-1);\
+	pickup pencircle scaled 2mm; star (2cm,5,origin,red);\
+	endfig;\
+\
+	beginfig(2);\
+	pickup pencircle scaled 2mm; star (2cm,7,origin,yellow);\
+	endfig;\
+\
+	beginfig(3);\
+	pickup pencircle scaled 2mm; star (2cm,11,origin,green);\
+	endfig;\
+\
+	beginfig(4);\
+	pickup pencircle scaled 2mm; star (2cm,13,origin,blue);\
+	endfig;\
+\
+	end\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\fs24 \cf0 \
+Supponi che questo documento si chiami "metademo.tex." Quando il documento viene processato da MetaPost, verranno generati quattro diversi documenti postscript chiamati metademo.ps, metademo.2, metademo.3 e metademo.4. Questi nomi sono determinati dal parametro numerico di "beginfig()." Se questo numero \'8f positivo, come in beginfig(10), il documento risultante sar\'88 chiamato metademo.10. Se questo numero \'8f negativo, come in beginfig(-10), il documento risultante sar\'88 chiamato metademo.ps, e qualsiasi documento metademo.ps precedentemente generato dal sorgente verr\'88 sovrascritto.\
+\
+TeXShop assume che uno dei numeri beginfig() sia negativo, e pertanto che un documento chiamato metademo.ps venga generato da MetaPost. TeXShop quindi chiama epstopdf per convertire questo documento postscript in formato pdf, e mostra in anteprima il documento cos\'93 ottenuto. Se non \'8f presente alcuno parametro negativo, MetaPost verr\'88 eseguito senza errori fino a compimento, ma TeXShop mostrer\'88 un errore quando cercher\'88 di convertire metademo.ps in formato pdf.\
+\
+Quando stai editando un documento MetaPost, cambia il numero, da positivo a negativo, della figura che vuoi editare. TeXShop mostrer\'88 allora la figura in considerazione. Quando sei soddisfatto con la figura, cambia ancora il numero da negativo a positivo.\
+\
+TeXShop pu\'98 convertire i documenti postscript come metademo.2 in pdf, ma precedentemente \'8f necessario rinominare questi documenti come metademo.2.ps cos\'93 che TeXShop li riconosca propriamente come postscript.\
+\
+Una volta che i documenti MetaPost sono stati creati, questi possono essere mostrati a schermo come qualsiasi altra illustrazione. Se \'8f necessario convertirli in pdf, si pu\'98 usare pdflatex; altrimenti si pu\'98 usare TeX e Ghostscript per includere le illustrazioni postscript senza conversioni. Per esempio, le quattro illustrazioni create dal documento MetaPost precedente, possono essere mostrate compilando con TeX e Ghostscript il seguento documento:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f4\fs20 \cf0 	\\documentclass[11pt] \{article\}\
+	\\usepackage\{graphicx\}\
+\
+	\\begin\{document\}\
+\
+	Here are some illustrations.\
+	\\vspace\{.2in\}\
+\
+	\\includegraphics[width=1cm]\{metademo.1\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.2\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.3\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.4\}\
+	\\hfill\
+\
+	\\end\{document\}\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 Documenti Plist:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 \
+Max OS X usa estensivamente i documenti in formato xml; xml \'8f un linguaggio strutturato legato a html.\
+\
+TeXShop usa tre documenti xml per la configurazione: completion.plist, autocompletion.plist, and KeyEquivalents.plist. Copie di questi tre documenti si trovano nella cartella di distribuzione di TeXShop. Se non hai questa cartella, puoi ottenerne una copia direttamente da TeXShop. Tenendo premuto il tasto comando (mela) e cliccando sull'icona di TeXShop, si aprir\'88 un menu; scegli "Mostra Contenuto Pacchetto". Apparir\'88 una cartella. Cerca nelle varie sotto-cartelle finch\'8e non trovi i documenti xml. Copiali sulla scrivania trascinandoli tenendo il tast opzione premuto. Assicurati di lasciare le copie originali all'interno della cartella di TeXShop! \
+\
+Questi documenti sono usati per configurare il Pannello Latex, l'Auto Completamento e le Scorciatoie di Tastiera. Di seguito troverai i dettagli.\
+\
+I documenti con estensione plist sono documenti di testo ordinari. Possono essere aperti e modificati con TeXShop, TextEdit o un altro editor di testo. Ciascuno di questi tre documenti e' introdotto da una serie di commenti che spiegano il formato. Editarli \'8f immediato ma noioso.\
+\
+Gli utenti che hanno installato gli Strumenti di Sviluppo, Developer Tools, scopriranno che con un doppio click i documenti .plist si aprono in Property List Editor. Questa applicazione \'8f utile per editare i documenti plist, ma \'8f instabile e non mostra i commenti. Pertanto \'8f meglio usare TeXShop.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Auto-Completamento:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 Greg Landweber ha aggiunto l'auto-completamento all'editor di TeXShop. Digitando le virgolette, vengono inserite automaticamente le corrispondenti virgolette di chiusura e il cursore viene posizianto in mezzo ad esse. Digitando il simbolo ^ verr\'88 inserito ^\{ \} con il cursore tra le parentesi graffe. E cos\'93 via. Attualmente sono disponibili trentanove completamenti.\
+\
+L'auto-completamento pu\'98 essere abilitato o disabilitato nelle Preferenze. L'impostazione di default \'8f disabilitato. Per provare l'auto-completamento attivalo nelle Preferenze.\
+\
+L'auto-completamento \'8f configurabile dall'utente. La cartella di distribuzione di TeXShop contiene un documento chiamato "autocompletion.plist". Per configurare l'auto-completamento, cerca la cartella ~/Libreria/TeXShop e aggiungi una nuova cartella chiamata ~/Libreria/TeXShop/Keyboard. In questa cartella colloca una copia del documento autocompletion.plist. Quindi, apri il documento per modificare le scekte di Landweber e aggiungere le tue. Esaminando il documento autocompletion.plist puoi trovare un elenco completo dei completamenti predefiniti.\
+\
+Vedi le sezioni precedenti per dettagli sui documenti in formato plist.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Ridefinire le Scorciatoie di Tastiere del Menu:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\b0 \cf0 \
+\'e9 possibile ridefinire tutte scorciatoie di tastiera dei comandi del menu di TeXShop. La cartella di distribuzione di TeXShop contiene un documento chiamato "KeyEquivalents.plist". Cerca la cartella ~/Libreria/TeXShop e aggiungi una nuova cartella chiamata ~/Libreria/TeXShop/Menus. Collocaci dentro una copia del documento KeyEquivalents.plist. Quindi edita il documento per ridefinire le combinazioni di tasti relative ai comandi selezionati. Per ulteriori dettagli, vedi la documentazione all'inizio di questo documento. Il documento originale KeyEquivalents.plist \'8f un modello che illustra il formato del documento, ma produce delle terribili combinazioni di tasti alternative. Pertanto, \'8f difficile usarlo senza prima averlo modificato!\
+\
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Segnalazione di Errori:\
@@ -542,6 +763,8 @@ Le ultime versioni di TeXShop e teTeX sono immuni dai problemi creati da Fink. U
 \
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
+        \
+        Le segnalazioni di errori per teTeX e LaTeX devono essere inviate a:\
 \
 	Gerben Wierda\
 	Gerben_Wierda@rna.nl\

@@ -15,6 +15,9 @@
 */
 
 #import "TextFinder.h"
+// added by mitsu --(A) TeXChar filtering and (G) EncodingSupport
+#import "EncodingSupport.h"
+// end addition
 
 NSString *FindStringChangedNotification = @"Find Selection Changed Notification";
 
@@ -75,13 +78,20 @@ static id sharedFindObject = nil;
     }
 }
 
+
 - (void)loadUI {
     if (!findTextField) {
         if (![NSBundle loadNibNamed:@"FindPanel" owner:self])  {
             NSLog(@"Failed to load FindPanel.nib");
             NSBeep();
+            return;
         }
 	if (self == sharedFindObject) [[findTextField window] setFrameAutosaveName:@"Find"];
+// added by mitsu --(A) TeXChar filtering
+		[findTextField setDelegate: [EncodingSupport sharedInstance]];
+		[replaceTextField setDelegate: [EncodingSupport sharedInstance]];
+// end addition
+
     }
     [findTextField setStringValue:[self findString]];
 }

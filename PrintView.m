@@ -15,7 +15,10 @@
     id		value;
     
     myRep = aRep;
-    value = [super initWithFrame: [myRep bounds]];
+    // mitsu change; in Japan, dvipdfmx creates pdf files with nonzero origin
+    // value = [super initWithFrame: [myRep bounds]];
+    value = [super initWithFrame: NSMakeRect(0, 0, [myRep bounds].size.width, [myRep bounds].size.height)];
+    // end
     return self;
 }
 
@@ -55,7 +58,11 @@
     if (thePage < 1) thePage = 1;
     if (thePage > [myRep pageCount]) thePage = [myRep pageCount];
     [myRep setCurrentPage: thePage - 1];
-    aRect = [myRep bounds];
+    // mitsu; see above
+    // aRect = [myRep bounds];
+    aRect.origin.x = 0; aRect.origin.y = 0;
+    aRect.size = [myRep bounds].size;
+    // end
     return aRect;
 }
 
@@ -69,5 +76,7 @@
 {
     myPrintOperation = aPrintOperation;
 }
+
+
 
 @end

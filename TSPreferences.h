@@ -39,6 +39,7 @@
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
         IBOutlet NSTextField	*_tabsTextField;		/*" connected to tab size text field "*/
+        IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
 	
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
         NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -49,6 +50,9 @@
         BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
         BOOL			magnificationTouched;
         BOOL			externalEditorTouched;
+// added by mitsu --(G) EncodingSupport
+        BOOL			encodingTouched;
+// end addition
 }
 
 + (id)sharedInstance;
@@ -88,6 +92,7 @@
 - (IBAction)defaultScriptChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
 - (IBAction)consoleBehaviorChanged:sender;
+- (IBAction)saveRelatedButtonPressed:sender;
 
 - (IBAction)okButtonPressed:sender;
 - (IBAction)cancelButtonPressed:sender;
@@ -101,10 +106,7 @@
 //------------------------------------------------------------------------------
 // private API
 //------------------------------------------------------------------------------
-- (void)createDirectoryAtPath:(NSString *)path;
-- (void)copyToTemplateDirectory:(NSString *)fileName;
 - (void)updateControlsFromUserDefaults:(NSUserDefaults *)defaults;
 - (void)updateDocumentFontTextField;
-- (void)createTemplates;
 
 @end

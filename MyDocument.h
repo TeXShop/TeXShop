@@ -6,7 +6,6 @@
 
 #define NUMBEROFERRORS	20
 
-
 #define	isTeX		0
 #define isOther		1
 #define isPDF		2
@@ -38,8 +37,8 @@
     id			programButtonEE;
     id			tags;
     int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
-    int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = context, 3 = omega, 4 = megapost, 5 = bibtex,
-                                                    6 = makeindex "*/
+    int			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
+                                                    7 = metafont "*/
     BOOL		tagLine;
     BOOL		typesetStart;		/*" YES if tex output "*/
     NSFileHandle	*writeHandle;
@@ -77,7 +76,9 @@
     id			previousButton;
     id			nextButton;
     BOOL		externalEditor;
-    NSDictionary	*autocompletionDictionary;  // added by Greg Landweber
+// added by mitsu --(H) Macro menu; macroButton
+    id			macroButton;		/*" pull-down list for macros "*/
+// end addition
 
 }
  
@@ -87,6 +88,7 @@
 - (void) doMetapost: sender;
 - (void) doContext: sender;
 - (void) doIndex: sender;
+- (void) doMetaFont: sender;
 - (void) doTypeset: sender;
 - (void) doTypesetEE: sender;
 - (void) doTemplate: sender;
@@ -117,6 +119,7 @@
 - (void) fixColor2: (unsigned)from :(unsigned)to;
 - (void) fixColorBlack: sender;
 - (void) textDidChange:(NSNotification *)aNotification;
+- (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType;
 - (void) setupTags;
 - (int) imageType;
 - (id) pdfWindow;
@@ -124,11 +127,10 @@
 - (id) textView;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
+- (NSString *)displayName;
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
-- (void) updateChangeCount: (NSDocumentChangeType)changeType;
-// - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type; /* no longer used; see .m file */
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
 - (BOOL)isDocumentEdited;
@@ -139,11 +141,27 @@
 // - (void)fixColor1:(NSTimer *)timer;
 
 //-----------------------------------------------------------------------------
+// Extra methods
+//-----------------------------------------------------------------------------
+
+// added by mitsu --(J) Typeset command
+- (int)whichEngine;
+// end addition
+
+//-----------------------------------------------------------------------------
 // private API
 //-----------------------------------------------------------------------------
 - (void)registerForNotifications;
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
+// added by John Nairn
+- (BOOL)checkMasterFile:(NSString *)theSource forPrinting:(BOOL)toPrint;
+- (BOOL) checkRootFile_forPrinting:(BOOL)toPrint;
+- (void) checkFileLinks:(NSString *)theSource;
+- (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
+        homePath:(NSString *)home job:(NSString *)jobname;
+- (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;
+
 
 @end
 

@@ -1,7 +1,7 @@
 {\rtf1\mac\ansicpg10000\cocoartf102
 {\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fswiss\fcharset77 Helvetica-Oblique;}
 {\colortbl;\red255\green255\blue255;}
-\vieww15780\viewh14620\viewkind0
+\vieww14640\viewh14680\viewkind0
 \pard\tx1440\tx2180\tx4320\tx5760\tx7200\li1480\fi-20\qc
 
 \f0\fs48 \cf0 TeXShop\
@@ -865,6 +865,110 @@ Version 1.26		January 2, 2002\
 \
 		The "indent" command now inserts tabs instead of spaces.\
 \
+Version 1.27		January 17, 2003\
+\
+		The majority of new features in this version are due to Mitsuhiro Shishikura,\
+		who sent them just as version 1.26 was being released. The new TeXShop \
+		source code contains a folder with the email messages sent by Shishikura; \
+		they provide an excellent model of the correct way to suggest changes. \
+		Shishikura sent revised source code, a description of what the changes \
+		were supposed to accomplish, and a description of exactly where the \
+		source code changed.\
+\
+		Shishikura additions:\
+\
+		Pressing the mouse in the pdf display magnifies a small surrounding\
+		section of the display. Holding the option key while pressing enlarges\
+		the section being magnified.\
+\
+		A new macros menu and marcos button in the toolbar define an alternate way\
+		to insert text into the source document. Items in this menu behave \
+		like buttons in the existing Latex Panel. In addition, AppleScript items\
+		in the menu run user defined scripts. For example, a default script opens\
+		the pdf output in Adobe Acrobat. \
+\
+		A Macro Editor is provided to modify the Macros menu, defining new macros\
+		and rearranging the existing items in the menu. The help menu contains\
+		an item displaying help for this editor.\
+\
+		User inputs in the console window are added in red to the display at the\
+		top of this window, so this display has a complete record of interaction with\
+		TeX during typesetting. \
+\
+		Added support for file types .def, fd, .ltx, .clo\
+\
+		Added a "Typeset" menu, with keyboard shortcut command-T. This typesets the\
+		file with the currently chosen program. To make this change, the typeset\
+		menu and toolbar items have been rearranged to behave in a more\
+		rational way.\
+\
+		Extensive support was added for users in Japan. An additional encoding,\
+		Japanese (JIS), is added to those defined by Seiji Zenitani in verison 1.26.\
+		Earlier versions required special versions of completion.plist when using the\
+		Japanese "yen" encoding; this is no longer necessary. (Explanation for users\
+		not in Japan: Japanese keyboards often omit the \\ character, replacing it with\
+		the "yen" character \'b4. A special version of tex is available which uses \'b4\
+		rather than \\ as a TeX escape character. TeXShop recognizes this \
+		substitution when using the encoding Japanese (ShiftJIS \'b4).)\
+\
+		The following change was inspired by a contribution from John.Nairn, to be\
+		listed in a minute:\
+\
+		The "Set Project Root" behavior of TeXShop has changed. Users writing\
+		books often organize the project as follows:  a master source file, perhaps\
+		called "Main.tex," is created. This file defines global macros and then inputs\
+		the sources for individual chapters. The source files for these chapters are\
+		contained in subfolders, one for each chapter. In TeXShop, it is possible to\
+		associate a "root file" with each chapter file. In previous versions, when the chapter\
+		was typeset, TeXShop actually typeset Main.tex and associated the resulting pdf\
+		file with the chapter. If several chapters were open at once, several copies of the\
+		book pdf file would appear. In the new program, this does not happen. Instead, when\
+		the chapter is typeset, TeXShop opens Main.tex if it is not already open and typesets\
+		this file. So only one pdf file is displayed, even if several chapter files are open.\
+\
+		The two additions below were contributed by John Nairn:\
+\
+		It is no longer necessary to set the project root for each chapter. Instead, include\
+		a line of code in the chapter source of the form "%SourceDoc ../Main.tex" without\
+		the quotations to achieve the same effect. (Nairn's code behaved as described in\
+		the previous paragraph; TeXShop has been revised so root files can be set in\
+		two different ways, but both ways produce the same effect.)\
+\
+		A new preference item has been added called "During File Save, Save Related\
+		Files." When a document is typeset, it is first saved. If this item is checked, the\
+		document will also be searched for \\Input lines, and if the resulting files are also\
+		open in TeXShop, they will also be saved.\
+\
+		Localization support for Japanese and Italian is improved.\
+\
+		TeXShop now keeps configuration files for Templates, the Latex Panel, the\
+		Macros Menu, possible redefinition of menu keyboard shortcuts, and possible\
+		autocompletion codes in subfolders of the folder ~/Library/TeXShop. These\
+		folders are created with default configuration files when TeXShop first starts.\
+		To move TeXShop to a different machine preserving these configurations,\
+		copy the ~/Library/TeXShop folder to the new machine.\
+\
+	Bugs Fixed:\
+\
+		New documents are now titled "Untitled", "Untitled-1", "Unititled-2", etc. \
+		In TeXShop 1.26 and earlier, these names contained spaces even though TeX\
+		cannot process file names with spaces. I tried to fix this bug several times \
+		without success; the fix is due to Shishikura.\
+\
+		Preference acceptance of changes made by typing in text boxes has improved.\
+		\
+		Several users wrote that their preference changes of default pdf magnification\
+		were not accepted when they pressed "OK." Until recently, I could not reproduce\
+		this bug. It turns out that the pdf window had to be open when making the\
+		preference change or else the change would appear to work but wouldn't. This\
+		is fixed.\
+\
+		TeXShop can display jpg and tiff files. In 1.26 and earlier, the display window\
+		was blank if the default pdf magnification was not 1. This is fixed. \
+		\
+		When syntax coloring, TeXShop interpreted the sequence \\% as the beginning\
+		of a comment. This is fixed.\
+		\
 		\
 \
   \

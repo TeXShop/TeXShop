@@ -63,7 +63,7 @@ aPoint.y = [[NSUserDefaults standardUserDefaults] floatForKey:PanelOriginYKey];
 [[self window] setFrameOrigin: aPoint];
 [[self window] setHidesOnDeactivate: YES];
 // [self window] is actually an NSPanel, so it responds to the message below
-[[self window] setBecomesKeyOnlyIfNeeded: YES];
+[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
 
 arrayFunctions1=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Functions1"]];
 arrayEnvironments=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Environments" ]];

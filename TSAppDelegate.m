@@ -5,12 +5,12 @@
 //  Created by dirk on Tue Jan 23 2001.
 //
 
-
 #import <Foundation/Foundation.h>
 #import "TSAppDelegate.h"
 #import "TSPreferences.h"
 #import "globals.h"
 #import "TSWindowManager.h"
+#import "MacroMenuController.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -28,7 +28,18 @@
     NSString *fileName;
     NSMutableString *path;
     NSDictionary *factoryDefaults;
-
+    
+    kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+					@"\\section",
+					@"\\subsection",
+					@"\\subsubsection",
+					nil];
+					
+    kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+					@"section: ",
+					@"subsection: ",
+					@"subsubsection: ",
+					nil];
     // if this is the first time the app is used, register a set of defaults to make sure
     // that the app is useable.
     if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
@@ -52,10 +63,31 @@
     [path appendString:@":"];
     [path appendString:[SUD stringForKey:GSBinPathKey]];
     [TSEnvironment setObject: path forKey: @"PATH"];
+
+// Set up ~/Library/TeXShop; must come before dealing with EncodingSupport and MacoMenuController below    
+    [self configureTemplates]; // this call must come first because it creates the TeXShop folder if it does not yet exist
+    [self configureMenuShortcutsFolder];
+    [self configureAutoCompletion];
+    [self configureLatexPanel];
+    [self configureMacro];
     
-    [self configureMenuKeyEquivalents];
+// Finish configuration of various pieces
+    [[MacroMenuController sharedInstance] loadMacros];
+    [self finishAutoCompletionConfigure];
+    [self finishMenuKeyEquivalentsConfigure];
     [self configureExternalEditor];
-	
+    
+     if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;		// yen
+    else
+        texChar = 0x005c;	// backslash
+
+// added by mitsu --(H) Macro menu and (G) EncodingSupport
+    [[EncodingSupport sharedInstance] setupForEncoding];        // this must come after
+    [[MacroMenuController sharedInstance] setupMainMacroMenu];
+// end addition
+
+
     // documentsHaveLoaded = NO;
 }
 
@@ -64,7 +96,335 @@
     return [SUD boolForKey:MakeEmptyDocumentKey];
 }
 
-- (void)configureMenuKeyEquivalents
+
+/*" %{This method is not to be called from outside of this class.}
+
+Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no files are overwritten.
+"*/
+//------------------------------------------------------------------------------
+- (void)copyToTemplateDirectory:(NSString *)fileName
+//------------------------------------------------------------------------------
+{
+	NSFileManager *fileManager;
+	NSString *destFileName;
+        BOOL result;
+	
+	fileManager = [NSFileManager defaultManager];
+	destFileName = [NSString pathWithComponents:[NSArray arrayWithObjects:[TexTemplatePathKey stringByStandardizingPath], 
+                [fileName lastPathComponent], nil]];
+	
+	// check if that file already exists
+	if ([fileManager fileExistsAtPath:destFileName isDirectory:NULL] == NO)
+            {
+            NS_DURING
+            // file doesn't exist -> copy it
+            result = [fileManager copyPath:fileName toPath:destFileName handler:nil];
+            NS_HANDLER
+            ;
+            NS_ENDHANDLER
+            }
+}
+
+// ------------- these routines create ~/Library/TeXShop and folders and files if necessary ----------
+
+- (void)configureTemplates
+{
+    	NSArray 	*templates;
+	NSEnumerator 	*templateEnum;
+        NSString 	*fileName;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below was written by Sarah Chambers
+     // if preferences folder doesn't exist already...
+     
+    // First create TeXShop directory if it does not exist
+    if (!([fileManager fileExistsAtPath: [[TexTemplatePathKey stringByStandardizingPath] stringByDeletingLastPathComponent]]))
+    {
+        // create the necessary directories
+            NS_DURING
+            {
+            // create ~/Library/TeXShop
+                result = [fileManager createDirectoryAtPath:[[TexTemplatePathKey stringByStandardizingPath] 
+                stringByDeletingLastPathComponent]  attributes:nil];
+            }
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't create TeXShop Folder", nil, nil);
+                return;
+                }
+    }
+    
+    
+    // Next create Templates folder
+    if (!([fileManager fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]]))
+        {
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[TexTemplatePathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+            	result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't create Templates Folder", nil, nil);
+                return;
+                }
+        // fill in our templates
+            templates = [NSBundle pathsForResourcesOfType:@"tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
+            templateEnum = [templates objectEnumerator];
+            while (fileName = [templateEnum nextObject])
+            {
+                    [self copyToTemplateDirectory:fileName ];
+            }
+        }
+
+
+// end of changes
+
+}
+
+
+- (void)configureAutoCompletion
+{
+        NSString 	*fileName, *autoCompletionPath;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Keyboard folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [AutoCompletionPathKey stringByStandardizingPath]]))
+        {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[AutoCompletionPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Keyboard Folder", nil, nil);
+                    return;
+                    }
+            }
+    
+    // now see if autocompletion.plist is inside; if not, copy it from the program folder
+    autoCompletionPath = [AutoCompletionPathKey stringByStandardizingPath];
+    autoCompletionPath = [autoCompletionPath stringByAppendingPathComponent:@"autocompletion"];
+    autoCompletionPath = [autoCompletionPath stringByAppendingPathExtension:@"plist"];
+    if (! [fileManager fileExistsAtPath: autoCompletionPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"];
+            if (fileName) {
+                result = [fileManager copyPath:fileName toPath:autoCompletionPath handler:nil];
+                }
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create AutoCompleteion plist", nil, nil);
+                return;
+                }
+        }
+}
+
+- (void)configureLatexPanel
+{
+        NSString 	*fileName, *completionPath;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Keyboard folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [LatexPanelPathKey stringByStandardizingPath]]))
+    {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[LatexPanelPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Latex Panel Folder", nil, nil);
+                    return;
+                    }
+    }
+    
+    // now see if autocompletion.plist is inside; if not, copy it from the program folder
+    completionPath = [LatexPanelPathKey stringByStandardizingPath];
+    completionPath = [completionPath stringByAppendingPathComponent:@"completion"];
+    completionPath = [completionPath stringByAppendingPathExtension:@"plist"];
+    if (! [fileManager fileExistsAtPath: completionPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"completion" ofType:@"plist"];
+            if (fileName) 
+                result = [fileManager copyPath:fileName toPath:completionPath handler:nil];
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create Latex Panel plist", nil, nil);
+                return;
+                }
+        }
+}
+
+- (void)configureMenuShortcutsFolder;
+{
+        NSString 	*fileName, *keyEquivalentsPath;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Keyboard folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [MenuShortcutsPathKey stringByStandardizingPath]]))
+    {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[MenuShortcutsPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Menu Folder", nil, nil);
+                    return;
+                    }
+    }
+    
+    // now see if autocompletion.plist is inside; if not, copy it from the program folder
+    keyEquivalentsPath = [MenuShortcutsPathKey stringByStandardizingPath];
+    keyEquivalentsPath = [keyEquivalentsPath stringByAppendingPathComponent:@"KeyEquivalents"];
+    keyEquivalentsPath = [keyEquivalentsPath stringByAppendingPathExtension:@"plist"];
+   if (! [fileManager fileExistsAtPath: keyEquivalentsPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"KeyEquivalents" ofType:@"plist"];
+            if (fileName) 
+                result = [fileManager copyPath:fileName toPath:keyEquivalentsPath handler:nil];
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create KeyEquivalents plist", nil, nil);
+                return;
+                }
+        }
+}
+
+
+- (void)configureMacro
+{
+        NSString 	*fileName, *macrosPath;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Keyboard folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [MacrosPathKey stringByStandardizingPath]]))
+    {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[MacrosPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Macros Folder", nil, nil);
+                    return;
+                    }
+    }
+    
+    // now see if autocompletion.plist is inside; if not, copy it from the program folder
+    macrosPath = [MacrosPathKey stringByStandardizingPath];
+    macrosPath = [macrosPath stringByAppendingPathComponent:@"Macros"];
+    macrosPath = [macrosPath stringByAppendingPathExtension:@"plist"];
+    if (! [fileManager fileExistsAtPath: macrosPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"Macros" ofType:@"plist"];
+            if (fileName) 
+                result = [fileManager copyPath:fileName toPath:macrosPath handler:nil];
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create Macros plist", nil, nil);
+                return;
+                }
+        }
+}
+
+// ------------ end of folder and file creation routines  ---------------------
+
+    // Added by Greg Landweber to load the autocompletion dictionary
+    // This code is modified from the code to load the LaTeX panel
+- (void) finishAutoCompletionConfigure 
+{
+    NSString	*autocompletionPath;
+    
+    autocompletionPath = [AutoCompletionPathKey stringByStandardizingPath];
+    autocompletionPath = [autocompletionPath stringByAppendingPathComponent:@"autocompletion"];
+    autocompletionPath = [autocompletionPath stringByAppendingPathExtension:@"plist"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]) 
+	autocompletionDictionary=[NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
+    else
+	autocompletionDictionary=[NSDictionary dictionaryWithContentsOfFile:
+	 [[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
+    [autocompletionDictionary retain];
+    // end of code added by Greg Landweber
+}
+
+
+// This is further menuKey configuration assuming folder already created
+- (void)finishMenuKeyEquivalentsConfigure
 {
     NSString		*shortcutsPath, *theChar;
     NSDictionary	*shortcutsDictionary, *menuDictionary;
@@ -74,6 +434,8 @@
     id			key, key1, key2, object;
     unsigned int	mask;
     int			value;
+    
+     // The code below is copied from Sarah Chambers' code
     
     shortcutsPath = [MenuShortcutsPathKey stringByStandardizingPath];
     shortcutsPath = [shortcutsPath stringByAppendingPathComponent:@"KeyEquivalents"];
@@ -237,6 +599,20 @@
     
     configFilePath = [[NSBundle mainBundle] pathForResource:@"Configuration" ofType:@"rtf"];
    [[NSWorkspace sharedWorkspace] openFile:configFilePath  withApplication:@"TextEdit"];
+}
+
+- (void)showMacrosHelp:(id)sender
+{
+    NSString	*configFilePath;
+    
+    configFilePath = [[NSBundle mainBundle] pathForResource:@"MacrosHelp" ofType:@"rtf"];
+   [[NSWorkspace sharedWorkspace] openFile:configFilePath  withApplication:@"TextEdit"];
+}
+
+- (void)dealloc
+{
+    [autocompletionDictionary release];
+    [super dealloc];
 }
 
 /* I interprete comments from Anton Leuski as saying that this is not

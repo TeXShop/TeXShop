@@ -15,6 +15,7 @@
                 doMetapost = id; 
                 doPreferences = id; 
                 doTex = id; 
+                doTypeset = id; 
                 doUncomment = id; 
                 doUnindent = id; 
                 enterSelection = id; 
@@ -35,6 +36,18 @@
             SUPERCLASS = NSObject; 
         }, 
         {
+            ACTIONS = {openMacroEditor = id; }; 
+            CLASS = MacroEditor; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = MacroMenuController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {macroMenu = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             ACTIONS = {orderFrontStandardAboutPanel = id; }; 
             CLASS = NSApplication; 
             LANGUAGE = ObjC; 
@@ -42,7 +55,12 @@
         }, 
         {CLASS = STEController; LANGUAGE = ObjC; SUPERCLASS = NSDocumentController; }, 
         {
-            ACTIONS = {displayLatexPanel = id; openForPreview = id; showConfiguration = id; }; 
+            ACTIONS = {
+                displayLatexPanel = id; 
+                openForPreview = id; 
+                showConfiguration = id; 
+                showMacrosHelp = id; 
+            }; 
             CLASS = TSAppDelegate; 
             LANGUAGE = ObjC; 
             SUPERCLASS = NSObject; 

@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\vieww12560\viewh13900\viewkind0
+\vieww13520\viewh15800\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -25,6 +25,7 @@
 	Checking Spelling\
 	Editing Tricks\
 	Latex Panel\
+	Macros\
 	Toolbar and Applescript\
 	Using an External Editor\
 	Including Graphics\
@@ -105,7 +106,7 @@ More detailed installation instructions can be found on Wierda's site, and on th
 \f0\b \cf0 Getting and Installing TeXShop:
 \f2\b0 \
 \
-In your user account, log onto the web site\
+Log onto the web site\
 \
 	www.uoregon.edu/~koch/texshop/texshop.html\
 \
@@ -116,7 +117,7 @@ and click the TeXShop link to download the file TeXShop.dmg. Double click on thi
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 To use TeXShop, type your LaTeX input in the editing window it provides. Then push the "LaTeX" button at the top of the window. The input will be saved and 
+\f2\b0 \cf0 To use TeXShop, type your LaTeX input in the editing window it provides. Then push the "Typeset" button at the top of the window. The input will be saved and 
 \f1\i pdflatex
 \f2\i0  will run. A second window will open displaying messages from 
 \f1\i tex
@@ -124,9 +125,11 @@ and click the TeXShop link to download the file TeXShop.dmg. Double click on thi
 \f1\i pdflatex
 \f2\i0  will halt; type "return" to skip the errors one by one, or one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing control-1.\
 \
-To typeset a TeX document, push the "Program" button and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.\
+Press the mouse on a section of the pdf output display to magnify the region near the cursor. Hold down the option key to enlarge the region being magnified.\
 \
-If you notice an error, you can immediately fix it in the editing window and push the "TeX" or "LaTeX" button again without halting the first invocation of 
+To typeset a TeX document, push the button labeled LaTeX and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.\
+\
+If you notice an error, you can immediately fix it in the editing window and push the "Typeset" button again without halting the first invocation of 
 \f1\i pdflatex
 \f2\i0 . The program will kill that invocation and run another. \
 \
@@ -139,6 +142,8 @@ If a line in the source begins with the characters "%:", TeXShop interprets the 
 	defaults write texshop TagSections NO\
 \
 TeXShop can show multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.\
+\
+Some users like to divide their source into multiple files controlled by a master file using an \\input command. TeXShop always saves the source file before typesetting. If the preference item "During File Save, Save Related Files" is checked, the master file will be searched before typesetting and any input file open in TeXShop will also be saved. This feature is due to John Nairn.\
 \
 You can start TeXShop by double clicking on a document with extension ".tex". The program will open that input document and (if it exists) the associated pdf document.\
 \
@@ -165,7 +170,7 @@ Aspell is "a more intelligent Ispell" for Unix machines written by Kevin Adkinso
 \
 	http://www-ciir.cs.umass.edu/~leouski/cocoaspell/\
 \
-An alternate LaTeX spell checker named Excalibur is often used on Mac OS 9. This spell checker, written by Rick Zaccone, has been ported to Mac OS X; it can open TeXShop files. To obtain it, go to\
+An alternate LaTeX spell checker named Excalibur is often used. This spell checker was written by Rick Zaccone; it can open TeXShop files. To obtain it, go to\
 \
 	http://www.eg.bucknell.edu/~excalibr/excalibur.html
 \f0\b \
@@ -173,7 +178,7 @@ An alternate LaTeX spell checker named Excalibur is often used on Mac OS 9. This
 Editing Tricks:\
 \
 
-\f2\b0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs or spaces, new lines will start at the same position until the behavior is cancelled by backspacing. This behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
+\f2\b0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can be indented with a menu command, and later moved back. If a line starts with a series of tabs or spaces, new lines will start at the same position until the behavior is cancelled by backspacing. This behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -181,7 +186,7 @@ Editing Tricks:\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f2\b0 \cf0 \
-Under the Windows menu, there is an item named "Latex Panel..." Choosing this item will open a panel containing a large number of mathematical symbols, Greek letters, international characters, and typesetting environments. Clicking on a symbol will insert the corresponding text into your LaTeX source file. This wonderful panel is the work of Geoffroy Lenglin, who just finished a masters degree in Aeronautics and Astronautics at MIT.  Geoffroy can be reached at geoffroy.lenglin@m4x.org.\
+Under the Windows menu, there is an item named "Latex Panel..." Choosing this item will open a panel containing a large number of mathematical symbols, Greek letters, international characters, and typesetting environments. Clicking on a symbol will insert the corresponding text into your LaTeX source file. This wonderful panel is the work of Geoffroy Lenglin, who can be reached at geoffroy.lenglin@m4x.org.\
 \
 Some symbols in the panel require the line\
 \
@@ -191,11 +196,21 @@ Some symbols in the panel require the line\
 
 \f2\fs24 at the top of the source file. \
 \
-It is possible to customize the behavior of the panel. The TeXShop distribution folder contains a file named "completion.plist." This file contains all strings inserted into the source code when a Palette item is chosen. If such a string contains #SEL#, then the current selection will replace this expression in the inserted string. If a string contains #INS#, then the cursor will be set to this position when the string is inserted. To customize panel behavior, edit completion.plist. Then find the folder ~/Library/TeXShop. Add a new folder named ~/Library/TeXShop/LatexPanel and place the edited completion.plist in this folder. \
+It is possible to customize the behavior of the panel. When TeXShop first runs, it creates a file ~/Library/TeXShop/LatexPanel/completion.plist inside your personal Library folder. This file is an ordinary text file which can be opened and edited by TeXShop. The file contains all strings inserted into the source code when a Palette item is chosen. If such a string contains #SEL#, then the current selection will replace this expression in the inserted string. If a string contains #INS#, then the cursor will be set to this position when the string is inserted. To customize panel behavior, edit completion.plist.\
 \
-Editing plist files is slightly tricky; see the item about them at the end of this help file.\
+Editing plist files is slightly tricky; see the item about them at the end of this help file. Be sure to edit and save in UTF-8 format if you use Unicode characters.\
 \
 Users can add up to sixteen additional items to the Latex Panel by editing completion.plist. These are displayed on the "Custom" subpanel of the Latex Panel. See comments in completion.plist for details about adding such items.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Macros:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+There is an alternate mechanism to insert commonly used TeX commands in your source document. Find the command in the Macro menu or the Macro button on the toolbar and choose it. In addition, some macros run AppleScript commands. A Macro Editor is provided which allows you to examine current macros, modify them, and add your own macros. For details, see the "About Macros" document in the Help menu. The TeXShop Macro commands and the Macro Editor were created by Mitsuhiro Shishikura. Default macros were created by Mitsuhiro Shishikura and Hirokazu Ogawa.\
+\
+Macros are stored in the file ~/Library/TeXShop/Macros/Macros.plist. This is an ordinary text file which can be copied and sent to others; thus you can distribute macros you have created. The Macro Editor has a command to read a plist file and add macros in it to existing macros.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -211,7 +226,7 @@ TeXShop supports Applescript. This is also the work of Anton Leuski. Applescript
 Using an External Editor:\
 \
 
-\f2\b0 TeXShop can be configured for an external editor. There is a new menu item named "Open for Preview..." When this item is chosen, you will be asked to select a tex source file. But only the associated pdf preview window opens (if the source has not yet been typeset, this preview window will be blank). Thanks to Leuski's toolbars, the preview window can be configured to contain a typesetting button. You can open you source file in any editor. When it is time to typeset, save the changes in your editor, switch to the preview window, and typeset. In this mode, TeXShop will never open or modify the source file. It will simply pass this file to the Unix TeX or LaTeX process.\
+\f2\b0 TeXShop can be configured for an external editor. There is a menu item named "Open for Preview..." When this item is chosen, you will be asked to select a tex source file. But only the associated pdf preview window opens (if the source has not yet been typeset, this preview window will be blank). Thanks to Leuski's toolbars, the preview window can be configured to contain a typesetting button. You can open your source file in any editor. When it is time to typeset, save the changes in your editor, switch to the preview window, and typeset. In this mode, TeXShop will never open or modify the source file. It will simply pass this file to the Unix TeX or LaTeX process.\
 \
 For users who prefer external editors most of the time, there is a preference item called "Configure for External Editor." When this preference is chosen, the "Open" and "Open Recent..." menus open tex source files in the above manner for editing with an external editor. Moreover, the  "Open for Preview..." menu becomes "Open for Editing..." and opens the source file in TeXShop's internal editor for those rare occasions when the internal editor is desired. The "Open" and "Open Recent..." menus can also open jpg, tiff, ps, pdf, dvi, log, and other files; selecting the new preference does not change this behavior.\
 \
@@ -331,7 +346,7 @@ and places the files
 \
 The three template files are standard TeX files which can be opened and edited by TeXShop. Additional TeX files can be inserted into the Templates folder; they will also appear under the Templates pull down menu provided their names end with the extension ".tex". The original template files can be removed if desired.\
 \
-To restore the original template files after they have been edited, delete the Templates folder and run TeXShop again. It will recreate the folder and restore its original contents. \
+To restore the original template files, delete the Templates folder and run TeXShop again. It will recreate the folder and restore its original contents. \
 \
 The commands \\usepackage\{amssymb\} and \\usepackage\{graphicx\} mentioned earlier are included in the default LatexTemplate. However, when users upgrade TeXShop, this template is not upgraded since the user may have modified it. 
 \f0\b \
@@ -400,11 +415,15 @@ TeXShop remembers the name of the root file by writing this information to a fil
 \f1\i Main.tex
 \f2\i0 .\
 \
-When a file is typeset using the root system, the file is saved, but the root file is not automatically saved. Save the root file manually if you make changes. Similarly the %!latex command for setting the typesetting method automatically must be set in files themselves, not just in the root file.  \
+There is an alternate method to set the root file. Instead of setting a root file, including a line like the one below in the chapter source file:\
+\
+	
+\f3\fs20 %SourceDoc ../Main.tex\
+
+\f2\fs24 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 \
-Setting Preferences:\
+\f0\b \cf0 Setting Preferences:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -547,7 +566,7 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. If you use Te
 \
 TeXShop can also open ".dvi" and ".ps" files. In these cases, it converts the file to pdf and displays this pdf file.\
 \
-TeXShop can open ".ins", ".dts", ".sty", ".cls", "mf", and "mp" files for processing. It can open any text file.\
+TeXShop can open ".ins", ".dts", ".sty", ".cls", "mf", ".def", ".fd", ".ltx", ".clo", and "mp" files for processing. It can open any text file.\
 \
 It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it saves files in the format chosen in Preferences. Consequently, information may be lost if TeXShop is used to edit files which really aren't related to TeX.  
 \f0\b \
@@ -571,9 +590,7 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
 
 \f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, Martin Kerz, and Max Horn, an Italian localization by Giuseppe Carlino, a Japanese localization by Seiji Zenitani, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks!\
 \
-In Japan, modified versions of TeX and LaTeX called ptex and platex are sometimes used. TeXShop has been modified by Makoto Inoue and Seiji Zenitani to deal with these versions. See files in the TeXShop distribution folder on my web site for further details.\
-\
-See http://home.att.ne.jp/alpha/z123/texshop-j.html for further details. Ptex and platex are available at http://www.ascii.co.jp/pb/ptex/. Dvipdfm is available at http://hamilcar.phys.kyushu-u.ac.jp/~hirata/dvipdfm/index.html.ja. A dvi previewer for Japanese is available at http://macptex.appi.keio.ac.jp/~uchiyama/macptex.html.\
+In Japan, modified versions of TeX and LaTeX called ptex and platex are sometimes used. TeXShop has been modified by Makoto Inoue, Seiji Zenitani, and Mitsuhiro Shishikura to deal with these versions. See files in the TeXShop distribution folder on my web site. See http://home.att.ne.jp/alpha/z123/texshop-j.html for further details. Ptex and platex are available at http://www.ascii.co.jp/pb/ptex/. Dvipdfm is available at http://hamilcar.phys.kyushu-u.ac.jp/~hirata/dvipdfm/index.html.ja. A dvi previewer for Japanese is available at http://macptex.appi.keio.ac.jp/~uchiyama/macptex.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -727,11 +744,13 @@ Once MetaPost files have been created, then can be displayed like any other illu
 
 \f2\b0 \cf0 Mac OS X makes extensive use of xml files; xml is a structured language closely related to html. \
 \
-TeXShop uses three xml files for configuration: completion.plist, autocompletion.plist, and KeyEquivalents.plist. Copies of these files are in the TeXShop distribution folder. If you do not have this folder, you can retrieve a copy of the files from TeXShop itself. Hold down the command key and click on the TeXShop icon. A menu will appear; choose "Show Package Contents." A folder will appear. Search through various subfolders until you find the files. Copy them to the desktop by dragging them while holding down the option key. Be sure to leave the originals behind in the TeXShop folder!\
+TeXShop uses four xml files for configuration: completion.plist, autocompletion.plist, KeyEquivalents.plist, and Macros.plist. These files reside inside your personal library in a folder called ~/Library/TeXShop created when TeXShop first runs. If you have modified the default TeXShop configuration and want to move TeXShop to another machine preserving your modifications, copy ~/Library/TeXShop to the new machine.\
 \
-These files are used to configure the Latex Panel, Auto Completion, and the Keyboard Menu Shortcuts. Details are given elsewhere in this document. \
+The files are used to configure the Latex Panel, Auto Completion, the Keyboard Menu Shortcuts, and the Macro menu. Details are given elsewhere in this document. \
 \
-Files of type plist are ordinary text files, so they can be opened and edited with TeXShop, TextEdit, or other text editors. Editing the file is straightforward, but somewhat tedious.\
+Files of type plist are ordinary text files, so they can be opened and edited with TeXShop, TextEdit, or other text editors. Editing the file is straightforward, but somewhat tedious. \
+\
+If a plist file contains unicode characters, it needs to be edited and saved in UTF-8 format. Before opening such a file in TeXShop, change the TeXShop encoding preference to UTF-8. Then edit and save the file. Then change the encoding preference back to the original value. The default value is MacOSRoman if you did not reset it earlier.\
 \
 If you installed the Developer distribution of Mac OS X and you double click a .plist file, it will open in a program named Property List Editor. This program is useful for editing plist files, but it is buggy and does not display all file information. In particular, comments are missing. It is better to use TeXShop.\
 \
@@ -745,15 +764,15 @@ If you installed the Developer distribution of Mac OS X and you double click a .
 \
 Auto completion can be turned off or on with a preference item. The default preference is off. To try auto completion, turn it on.\
 \
-Auto completion is user configurable. The TeXShop distribution folder contains a file called "autocompletion.plist". To configure autocompletion, find the folder ~/Library/TeXShop and add a new folder named ~/Library/TeXShop/Keyboard. Place a copy of autocompletion.plist in this folder. Then edit the file to redefine Landweber's choices and add your own. You can examine the autocompletion.plist file to find a complete list of the default completions. \
-\
-See the earlier section on plist files for details.
-\f0\b \
-\
+Auto completion is user configurable. To configure, open the file ~/Library/TeXShop/Keyboard/completion.plist with TeXShop. Read the comments at the top, edit appropriately to  redefine Landweber's choices or add your own, and save. Be sure to edit and save in UTF-8 format if you use Unicode characters.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 \
 Redefining Keyboard Menu Shortcuts:\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 It is possible to redefine all keyboard menu shortcuts used by TeXShop. The TeXShop distribution folder contains a file called "KeyEquivalents.plist". Find the folder ~/Library/TeXShop and add a new folder named ~/Library/TeXShop/Menus. Place a copy of KeyEquivalents.plist in this folder. Then edit the file to redefine selected menu shortcuts. See the documentation at the top of the file for details. The original KeyEquivalents.plist file is a sample which illustrates the format of the file, but it produces awful keyboard alternates. So you will not want to use it without editing!
+\f2\b0 \cf0 It is possible to redefine all keyboard menu shortcuts used by TeXShop. To do so, open the file ~/Library/TeXShop/Menus/KeyEquivalents.plist with TeXShop, read the comments at the top of the file, and edit the file to redefine selected menu shortcuts. Be sure to edit and save in UTF-8 format if you use Unicode characters.
 \f3\fs20 \
 
 \f2\fs24 \

@@ -39,6 +39,8 @@
         IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
         IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/	
         IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
+        IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
+        IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
         IBOutlet NSTextField	*_tabsTextField;		/*" connected to tab size text field "*/
@@ -107,6 +109,8 @@
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;
 - (IBAction)defaultScriptChanged:sender;
+- (IBAction)defaultMetaPostChanged:sender;
+- (IBAction)defaultBibtexChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;

@@ -16,6 +16,66 @@
 </TR>
 </TABLE>
 
+<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.32 addes two extra features to TeXShop and fixes some bugs.
+</font>
+<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
+</font>
+<ul>
+<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+There is a new menu item, "New Tag", which inserts an empty tag in the
+					source text and positions the cursor so the user can add the name of the tag.
+					As a corollary, there is now a keystroke to add a new tag; the keystroke
+					is command-2.
+</font>
+
+<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+In Applescript macros, the terms #LOGPATH#, #AUXPATH#, #INDPATH#,
+					#BBLPATH#, and #HTMLPATH# will now be recognized; this has been added
+					at the request of Claus Gerhardt.
+</font>
+
+<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+There is a new option to set the program called by MetaPost. See the
+					TeXShop help file for an explanation.
+</font>
+
+<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+The drag and drop code has been improved by Seiji Zenitani. Dropping
+					files of types pdf, jpg, jpeg, tif, tiff, eps, or ps on the source document will
+					produce \includegraphics and a reference to the file. Dropping a file of type
+					cls, sty, or bib will \documentclass, \usepackage, or \bibliographystyle and
+					a file reference. Dropping any other text file will produce \input and a file
+					reference.
+</font>
+
+</ul>
+
+<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
+</font>
+		<ul>
+<font size="2" face="Lucida Grande,Geneva,Arial">
+<li> Although the magnification level can increase to 1000 in version 1.31, 
+					the arrow keys next to the magnification control only allowed values up to
+					400. This is fixed.
+
+
+<li> If the preview window's toolbar was in text-only mode and the magnification
+					panel was selected, the resulting small dialog window would not go away
+					in 1.31. This is fixed. 
+
+<li> In Preferences, if the user set the tab size or the preview window magnification
+					and then cancelled, the new values would still appear when the Preference
+					panel was again displayed. This is fixed.
+
+<li> Suppose the preference to place the first page on the right side is active.
+					In 1.31, the left arrow key did now work in double page mode, and the right arrow
+					key stopped one page before the end. In double multipage mode, the end
+					key, the page down key, and the right arrow key stopped before displaying
+					the last page. All of these problems are fixed.
+
+</ul>
+
+
 <P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.31 addes some extra features to TeXShop and fixes several bugs.
 </font>
 <p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
@@ -128,271 +188,6 @@ deactivated.
 
 
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.30 fixes several bugs.
-</font>
-<ul>
-
-
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-When TeXShop was hidden and later shown, the source window scrolled to the
-		top. This is fixed.
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		Other bugs in split window were fixed.
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		The right mouse again works in the source window.
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		When the toolbar was displayed in text only mode, menus behaved strangely.
-</font>
-		This is fixed.
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		When a document is typeset, it is no longer saved first if it has not been changed
-		since the last save.
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		TeXShop Help has better indexing; clicking on the TeXShop icon in help brings
-		you back to the main page.
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-		Additional localizations in German and Spanish.
-</font>
-</ul>
-
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.29 adds a number of extra features to TeXShop and fixes several bugs.
-</font>
-
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
-</font>
-<ul>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	New PDF display options have been provided by Mitsuhiro Shishikura. The original
-		page by page option is still available, but it is now also possible to scroll through the
-		entire pdf document or to display two pages side by side. The default choice can
-		be set in Preferences and the display can later be changed by menu action.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	Shishikura has also modified the magnification options for preview display. The
-		original option is still available, but it is now possible to display in actual size, or fit
-		the display to the size of the window. A default choice can be set in Preferences
-		and the magnification behavior can later be changed at will by menu.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	The magnification glass behavior has changed slightly. A toolbar item fixes the
-		size of the region to be magnified; double or triple clicking enlarges this region.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	It is possible to select a portion of the pdf preview display and copy and paste the
-		resulting graphic into another program. Drag and drop of the selection is also supported.
-		Preference items allow users to select the file type of the copy (pdf, png, jpg, tiff, etc.)
-		and the foreground and background colors and transparency. This feature is also
-		due to Shishikura.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	Preview selection combined with drag and drop can be used with Keynote. 
-		Using the default copy preferences, a text selection can be dropped on a Keynote slide; 
-		the background of the text will be transparent, so the slide background will show between the
-		letters. This text can be resized since the default copy format is pdf.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	Seiji Zenitani has added the ability to drag and drop files onto the source window.
-		If a tex file is dropped, an "\input " command will be added there with a relative
-		path to the file. If a graphic file is dropped, an "\includegraphics " command will
-		be added.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-Shishikura also added command completion. Type the first few letters of a word and
-		hit the escape key. The remaining letters will be entered. Hitting escape again will
-		cycle through all possible completions. Initially this will have limited usefulness because
-		the completion dictionary is almost empty. To add a word to the dictionary, select the
-		word and choose "Add Word" under the Format menu. Notice that this menu
-		command has a key equivalent. To see and edit the entire dictionary, choose
-		"Open Completion File" under the Format menu. Notice that the completion can be
-		more complicated than just a single word, and the cursor can be placed correctly
-		within this completion. Examine the samples provided in the default file for details.
-		This feature will be improved in later versions.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	The source window can now be split, so one section can be viewed and written while another
-		portion is also visible. Keyboard input can go to either split portion and will
-		also immediately appear in the other portion.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	The source and preview window toolbars now work in text only mode.
-</font>
-
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	TeXShop now has support for ISO Latin 5 (used in Turkey) and for several
-		Russian formats. Vladimir Novikov provided helpful information
-		about formats to support.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	Some users must deal with a number of file encodings. For these users, the open and
-		save panels now allow the file encoding to be individually chosen for a file. When a file
-		is first opened, the default choice for this encoding will be the one listed 	in preferences, so most users
-		can ignore this new choice. If a different encoding is chosen when a file is opened,
-		that encoding will be the default choice when the file is later saved.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	A small number of users ran into the following problem. They would receive a file 
-		with one encoding, say UTF-8, but mistakenly open it with another encoding, say 
-		Mac OS Roman. If they did not notice the problem, they might typeset the file. 
-		Typesetting always saves the file first, so the original file would
-		be overwritten with a file in a different encoding, losing information. TeXShop now has
-		a hidden preference to provide some protection in this situation. When this preference
-		is active, TeXShop will create a backup file before it saves or typesets a file. To turn this on, type the
-		following command in Terminal:
-<ul>
-<li>			defaults write TeXShop SaveBackup YES
-</ul>
-	
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	Support for epsi files was added.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	The default commands for pdftex and pdflatex are now "pdftex --shell-escape" and
-		"pdflatex --shell-escape." The "shell-escape" portion of this text tells pdftex that it is
-		legal to run other programs during typesetting. This is useful because if tex finds a
-		graphic file in an unsupported format, it can automatically call another program to
-		convert it to supported format. For example, the default Latex template automatically
-		converts tif files to png and automatically converts eps files to pdf.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	This creates one difficulty that may worry some users. The "shell-escape" flag allows pdftex
-		to run ANY program. Thus a disgruntled student could send you a tex source file
-		by email and when you typeset it you would discover that some of the files in your
-		directory had been erased.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	I believe the danger is slight. A source file which did harm would have to be created
-		deliberately; sending a "virus" via tex source seems somewhat esoteric. Nevertheless,
-		there are two ways that you can protect yourself. The first and easiest is to remove the
-		letters "--shell-escape" from the two spots they occur in Preferences and then convert
-		all of your graphic files by hand.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	TeXShop now provides a different protection. A preference item under the Engine
-		tab is labeled "Shell Escape Warning;" this item is off when TeXShop is delivered.
-		If the item is on and "shell-escape" is active, then the first time a file is typeset during
-		a TexShop session, a warning dialog will appear allowing you to turn shell-escape
-		off for that particular file. This dialog will not appear again during the session for that
-		particular file. Thus you can typeset your own files using "shell-escape" and typeset
-		files received in the mail without "shell-escape."
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	TeXShop can now create submenus in the Templates menu. To do so, create folders
-		in the Templates folder. This code was written by Seiji Zenitani.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	It has always been possible to color TeX output. To do so, add the line
-<ul>
-<li>			\usepackage{color}
-</ul>
-		to the preamble, and insert a line like
-<ul>
-<li>			\color{blue}
-</ul>
-		before typesetting begins. To color a limited section of text, use a command like
-<ul>
-<li>			{\color{red} This is very important!}
-</ul>
-		To define custom colors, use a command like
-<ul>
-<li>			\definecolor{mycolor}{rgb}{0.2, 0.7, 0.8}
-</ul>
-
-</font>
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	When output is colored, the output may be difficult to read on the preview screen.
-		TeXShop has hidden preferences to set the background color of the preview window.
-		This background color will not appear when the document is printed. To set the
-		background to gray, issue the following commands in Terminal:
-<ul>
-<li>			defaults write TeXShop Pdfbackground_R 0.5
-<li>			defaults write TeXShop Pdfbackground_G 0.5
-<li>			defaults write TeXShop Pdfbackground_B 0.5
-</ul>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	Change 0.5 to 1 to get back to white. If you find yourself changing the background often,
-		create an Applescript macro named "PDF background gray" with the Macro Editor
-		using the following text:
-<ul>
-<li>		     --AppleScript
-<li>		     do shell script "defaults write TeXShop Pdfbackground_R 0.5"
-<li>		     do shell script "defaults write TeXShop Pdfbackground_G 0.5"
-<li>		     do shell script "defaults write TeXShop Pdfbackground_B 0.5"
-</ul>
-
-		and create a similar macro named "PDF background white". 
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">
-	The German help file was revised by Martin Kerz and Laurent Meister. Additional French
-		localization was provided by Jean-Claude De Soza. Additional Spanish localization
-		was provided by Juan Luis Varona Malumbres.
-</font>
-
-
-</ul>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
-</font>
-		<ul>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	Undo is now permitted past typesetting operations and file saves. Thus it is possible
-		to typeset and then undo several changes made before the typesetting command.
-		This bug was fixed earlier, but the fix created problems and had to be removed.
-		Now the fix is back for good.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	When a user closed a document and then tried to throw the pdf away, the Finder
-		complained that it was still open. TeXShop would have to quit before the pdf
-		could be thrown away. This bug was fixed by Wolfgang Lux.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	The error coding failed for the new root file behavior. If "chapter1" had a root file, 
-		then after typesetting, control-E and the error menu command would be inactive.
-		This is fixed.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	The \phi and \varphi symbols were reversed in the Latex Panel. This was reported
-		by Oleg Skipa and Rob Leigh and is now fixed. The code inserted by the "[" and
-		"]" symbols in the Latex Panel is now correct, and the cursor is conveniently
-		placed for the "Equations" entry.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	The metapost script was improved by Joseph C. Slater.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	Some international characters in autocompletion.plist were repaired by Alexander
-		Wittig.
-</font>
-
-<li><font size="2" face="Lucida Grande,Geneva,Arial">	In German, the latex panel initially required two clicks to open. This is fixed.
-</font>
-
-
-</ul>
-		<ul>
-			
-		</ul>
 	</BODY>
 
 </HTML>

@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
-# This short script calls mpost
-# Richard Koch; November 1, 2003
+# This short script calls texexec to run a conTeXt job
+# Richard Koch; September 14, 2001
 
 set mygspath = "/usr/local/bin"
 if (-x ${mygspath}/ps2pdf) then
@@ -17,4 +17,5 @@ endif
 
 set filename = "$argv[2]"
 
-mpost "${filename:r}.mp"
+mptopdf "${filename:r}.mp"
+mv "${filename:r}-0.pdf" "${filename:r}.pdf"

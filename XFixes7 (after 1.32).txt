@@ -1,0 +1,80 @@
+November 3, 2003
+
+Changes since 1.32
+
+1) Now "Select All" can be used to select the full page of
+pdf output in selection mode. There is one restriction;
+in Multi-Page mode and Double-Multi-Page mode, select all is
+only active if the document has at most 20 pages, since
+otherwise the selected pdf would be enormous and bring the
+machine to a crawl.
+
+2) Fixed a strange bug in 10.2.8 (and possibly earlier systems)
+reported by Jerry Keough. If you have set preferences
+so no empty window opens at startup, and if you open a
+document, make the pdf window active, and then close the source
+window, the next time you use the menu, the program will crash.
+This bug does not occur on Panther.
+
+Investigation shows that the problem lies in the sequence of
+notifications sent when windows close or become active. In
+Panther, the notifications are sent in the following order for
+the above sequence:
+
+	pdf close
+	document active
+	document close
+
+as expected. In 10.2.8 (and probably in 10.2 in general)
+
+	document close
+	pdf close
+	document active
+
+so the system believes that a document is active when, in fact, it
+no longer exists. The menu crash occurs when the menu code asks a
+document which no longer exists to describe its state.
+
+The fix is a litte scary. When a document closes, I make an explicit
+call to TSWindowManager to report that the document is closed. 
+In Panther, investigation shows that this call occurs as follows:
+
+	pdf close
+	document active
+	new call
+	document close
+
+and in 10.2.8 it occurs as follows
+
+	document close
+	pdf close
+	document active
+	new call
+
+Notice that this new call is only sent when the entire document
+is closing. So both orders are correct.
+
+Experiments also show that if a second window is waiting to become
+active, it's "document active" message is sent after all of these
+calls in both cases.
+
+3) Added additional code for drag and drop by Zenitani. See the previous
+XFixes6 for the basic idea of this code. The new version reports an
+error if the filename of the dropped file contains a space. The new
+code also permits customization. The method of customization is
+easy to work with, but perhaps the design is a little strange:
+customization is done with the Macro menu. Insert a new submenu
+titled "Drag & Drop". Inside items under this menu like
+".pdf"; each item is a file extension. Insert the code that should
+be included in the body of this item; for instance, the code for
+.pdf might be "\includegraphics[#INS#]{%r}" In these inclusions,
+
+	%F full path of an dropped file
+	%f dropped filename
+	%r relative path of the dropped file
+	%n filename without extension
+	%e extension.
+
+If an extension is not mentioned in the Macro Editor, then it is
+handled in the default manner Zenitani previously defined. Thus for
+most people, no macro "Drag & Drop" submenu is needed.

@@ -57,6 +57,7 @@
 - (void)setupForPDFRep: (NSPDFImageRep *)newRep style: (int)newPageStyle;
 - (void)setFrameAndBounds; // mitsu 1.29 (O)
 - (void)fitToSize;
+- (BOOL)acceptsFirstResponder;
 // magnification
 - (double) magnification;
 - (void) setMagnification: (double) magSize;
@@ -96,6 +97,7 @@
 - (void)scrollByDragging: (NSEvent *)theEvent;
 // select and copy
 - (void)selectARect: (NSEvent *)theEvent;
+- (void)selectAll: (id)sender;
 - (void)updateMarquee: (NSTimer *)timer;
 - (void)cleanupMarquee: (BOOL)terminate;
 - (void)recacheMarquee;

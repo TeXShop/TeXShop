@@ -146,7 +146,7 @@ static id sharedMacroMenuController = nil;
 	
 	if (!macroDict || ![macroDict isKindOfClass: [NSDictionary class]])
 	{	// alert: failed to parse Macros.plist
-		NSRunAlertPanel(@"Error", @"failed to parse ~/Library/TeXShop/Macros/Macros.plist", 
+		NSRunAlertPanel(@"Error", @"failed to parse ~/Library/TeXShop/Macros/Macros_??.plist file", 
 						nil, nil, nil);
 		if (error) [error release]; // mitsu 1.29 (U) added 
 		macroDict = nil;
@@ -313,6 +313,8 @@ static id sharedMacroMenuController = nil;
 		macroString = sender;
 	else
 		return;
+                
+        if( macroString == nil ) return;    // zenitani 1.33
 		
 	if ([macroString length] <14 || 
 		(![[[macroString substringToIndex: 13] lowercaseString] isEqualToString:@"--applescript"] 
@@ -354,6 +356,23 @@ static id sharedMacroMenuController = nil;
 		[newString replaceOccurrencesOfString: @"#PSPATH#" withString: 
 					[NSString stringWithFormat: @"\"%@.ps\"", filePath] 
 					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#LOGPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.log\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#AUXPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.aux\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#INDPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.ind\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#BBLPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.bbl\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#HTMLPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.html\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#NAMEPATH#" withString: filePath];
+                                        options: 0 range: NSMakeRange(0, [newString length])];
 		
 		NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: newString];
 		NSDictionary *errorInfo;

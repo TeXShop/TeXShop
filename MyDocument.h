@@ -197,6 +197,7 @@
 	length: (unsigned)newLength key:(NSString *)key;
 - (void)undoSpecial:(id)theDictionary;
 - (void)doCommentOrIndent: (id)sender;
+- (void)newTag: (id)sender;
 - (void)saveDocument: (id)sender;
 // end mitsu 1.29
 

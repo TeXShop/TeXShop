@@ -71,6 +71,48 @@ static id _sharedInstance = nil;
 // end addition
 
 }
+/* This method was added on November 9, 2003, to fix the following bug: in Jaguar (but not Panther)
+    when the application does not open empty windows upon activation,  suppose we make the 
+    preview window be the active window, and then reach over and close the document window.
+    If no other windows are active, then clicking on the menu bar causes a crash.
+    
+    Investigation shows that in Panther, the various notifications below are sent in the following
+    order:
+    
+        pdf close
+        document active
+        document close
+        
+    but in 10.2.8 they are sent in the following order
+    
+        document close
+        pdf close
+        document active
+        
+    The fix is to add the following new call, used only by the close method of MyDocument.
+    Experiments show that this call and the various notifications are made in the following order
+    in Panther
+    
+        pdf close
+        document active
+        new call
+        document close
+        
+    and in 10.2.8
+    
+        document close
+        pdf close
+        document active
+        new call
+        
+    If a second document is available and becomes active, then in either case it's
+    document active notification is received after all of the above calls.
+    
+*/
+- (void)closeActiveDocument
+{
+    _activeDocumentWindow = nil;
+}
 
 /*" This method is registered with the NotificationCenter and will be called when a document window will be closed. 
 "*/
@@ -132,7 +174,6 @@ static id _sharedInstance = nil;
 //-----------------------------------------------------------------------------
 {
     _activePdfWindow = nil;
-    
 
 }
 

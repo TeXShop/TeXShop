@@ -1102,6 +1102,9 @@ preference change is cancelled. "*/
         tagTimer = nil;
     }
     [pdfWindow close];
+    /* The next line fixes a crash bug in Jaguar; see closeActiveDocument for
+    a description. */
+    [[TSWindowManager sharedInstance] closeActiveDocument];
     	
     // mitsu 1.29 (P)
     if (!fileIsTex && [[self fileName] isEqualToString: 
@@ -1907,6 +1910,8 @@ if (! externalEditor) {
     NSString		*myEngine;
     NSString		*myEngineFirst, *myEngineLast;
     NSString		*enginePath;
+    NSString            *mpEngineString;
+    NSString            *bibtexEngineString;
     NSString		*tetexBinPath;
     NSRange		aRange;
     unsigned		here;
@@ -2044,7 +2049,12 @@ if (! externalEditor) {
                 
             else if (whichEngine == MetapostEngine)
                 {
-                enginePath = [[NSBundle mainBundle] pathForResource:@"metapostwrap" ofType:nil];
+                switch ([SUD integerForKey:MetaPostCommandKey]) {
+                    case 0: mpEngineString = @"mptopdfwrap"; break;
+                    case 1: mpEngineString = @"metapostwrap"; break;
+                    default: mpEngineString = @"mptopdfwrap"; break;
+                    }
+                enginePath = [[NSBundle mainBundle] pathForResource:mpEngineString ofType:nil];
                 [args addObject: [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"]];
                  }
                 
@@ -2148,7 +2158,13 @@ if (! externalEditor) {
             [bibTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
             [bibTask setEnvironment: TSEnvironment];
             tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
-            enginePath = [tetexBinPath stringByAppendingString:@"bibtex"];
+            
+             switch ([SUD integerForKey:BibtexCommandKey]) {
+                    case 0: bibtexEngineString = @"bibtex"; break;
+                    case 1: bibtexEngineString = @"jbibtex"; break;
+                    default: bibtexEngineString = @"bibtex"; break;
+                    }
+            enginePath = [tetexBinPath stringByAppendingString:bibtexEngineString];
             [bibTask setLaunchPath: enginePath];
             [bibTask setArguments:args];
             [bibTask setStandardOutput: outputPipe];
@@ -5085,5 +5101,28 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 
 // end mitsu 1.29
 
+- (void)newTag: (id)sender;
+{
+    NSString		*text;
+    NSRange		myRange, tempRange;
+    unsigned		start, end, end1, changeStart, changeEnd;
+    int			theChar;
+
+    text = [textView string];
+    myRange = [textView selectedRange];
+    // get old string for Undo
+    [text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
+    tempRange.location = start;
+    tempRange.length = 0;
+    [textView replaceCharactersInRange:tempRange withString:@"%:\n"];
+    changeStart = tempRange.location;
+    changeEnd = changeStart + 2;
+    [self fixColor:changeStart :changeEnd];
+    [self registerUndoWithString:@"" location:tempRange.location 
+						length:3 key: @"New Tag"];
+    tempRange.location = start+2;
+    tempRange.length = 0;
+    [textView setSelectedRange: tempRange];
+}
 
 @end

@@ -17,6 +17,7 @@
 
 - (NSWindow *)activeDocumentWindow;
 - (NSWindow *)activePdfWindow;
+- (void)closeActiveDocument;
 
 // added by mitsu --(J+) check mark in "Typeset" menu
 - (void)checkProgramMenuItem: (int)programID checked: (BOOL)flag;

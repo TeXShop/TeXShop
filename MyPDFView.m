@@ -329,8 +329,16 @@ scroller position.
 		else
 			totalWidth = pageWidth;
 		pageHeight = [myRep size].height; 
-		if (newPageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)
-			totalHeight = (pageHeight + PAGE_SPACE_V)*(([myRep pageCount]+1)/2) - PAGE_SPACE_V;
+		if (newPageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE) {
+                        switch (firstPageStyle) {
+                            case PDF_FIRST_LEFT: 
+                                totalHeight = (pageHeight + PAGE_SPACE_V)*(([myRep pageCount]+1)/2) - PAGE_SPACE_V;
+                                break;
+                            case PDF_FIRST_RIGHT:
+                                totalHeight = (pageHeight + PAGE_SPACE_V)*(([myRep pageCount]+2)/2) - PAGE_SPACE_V;
+                                break;
+                        }                
+                }
 		else // PDF_TWO_PAGE_STYLE
 			totalHeight = pageHeight;
 		[[self superview] setPostsBoundsChangedNotifications: YES];
@@ -487,6 +495,11 @@ scroller position.
 		newMag = floor(newMag * 100 +0.0001)/100;
 		[self setMagnification: newMag];
 	}
+}
+
+- (BOOL)acceptsFirstResponder;
+{
+    return YES;
 }
 
 
@@ -1146,6 +1159,7 @@ failed. If you change the code below, be sure to test carefully!
 		if (pagenumber < ([myRep pageCount]) - 1) 
 		{
 			pagenumber++;
+                        [self cleanupMarquee: YES];
 			[self displayPage: pagenumber];
 		}
 	}
@@ -1231,10 +1245,18 @@ failed. If you change the code below, be sure to test carefully!
 					newVisible.origin.x = myBounds.origin.x;
 			}
 			else if (pageStyle == PDF_TWO_PAGE_STYLE)
-			{
-				if ([myRep currentPage] > 1)
-					[self displayPage: 2*([myRep currentPage]/2)-1];
-				return;
+                        {
+                                 switch (firstPageStyle) {
+                                    case PDF_FIRST_LEFT: 
+                                        if ([myRep currentPage] > 1)
+                                            [self displayPage: 2*([myRep currentPage]/2)-1];
+                                        break;
+                                    case PDF_FIRST_RIGHT:
+                                        if ([myRep currentPage] > 0)
+                                            [self displayPage: 2*(([myRep currentPage] + 1)/2)-2];
+                                        break;
+                                    }
+                                return;
 			}
 			else 
 			{	// scroll vertically
@@ -1286,10 +1308,18 @@ failed. If you change the code below, be sure to test carefully!
 			}
 			else if (pageStyle == PDF_TWO_PAGE_STYLE)
 			{
-				if (2*([myRep currentPage]/2)+2 <[myRep pageCount])
-					[self displayPage: 2*([myRep currentPage]/2)+2];
-				return;
-			}
+                                switch (firstPageStyle) {
+                                    case PDF_FIRST_LEFT: 
+                                        if (2*([myRep currentPage]/2)+2 <[myRep pageCount])
+                                            [self displayPage: 2*([myRep currentPage]/2)+2];
+                                        break;
+                                    case PDF_FIRST_RIGHT:
+                                        if (2*(([myRep currentPage] + 1)/2)+1 < [myRep pageCount])
+                                            [self displayPage: 2*(([myRep currentPage] + 1)/2)+1];
+                                        break;
+                                    }
+                                return;
+                        }
 			else
 			{	// scroll vertically
 				newVisible.origin.y -= newVisible.size.height - VERTICAL_SCROLL_OVERLAP;
@@ -1590,7 +1620,8 @@ failed. If you change the code below, be sure to test carefully!
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	[[self window] makeFirstResponder: [self window]]; // mitsu 1.29b
+//	[[self window] makeFirstResponder: [self window]]; // mitsu 1.29b
+        [[self window] makeFirstResponder: self];
 
 	if ([theEvent clickCount] >= 2)
 	{
@@ -2372,6 +2403,68 @@ failed. If you change the code below, be sure to test carefully!
 	[sizeWindow close];
 #endif
 }
+
+- (void)selectAll: (id)sender;
+{
+    if ((mouseMode == MOUSE_MODE_SELECT) && 
+        ((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE) || ([myRep pageCount] <= 20)))
+        {
+	NSRect selRectWindow, selRectSuper;
+	NSBezierPath *path = [NSBezierPath bezierPath];
+	static int phase = 0;
+	float pattern[] = {3,3};
+	
+	[path setLineWidth: 0.01];
+	[self cleanupMarquee: YES];
+	[[self window] discardCachedImage];
+        			            
+        // restore the cached image in order to clear the rect
+        [[self window] restoreCachedImage];
+                        
+        selectedRect = [self frame];
+        selectedRect.size.width = totalWidth;
+        selectedRect.size.height = totalHeight;
+        selRectWindow = [self convertRect: selectedRect toView: nil];
+        // cache the window image
+        [[self window] cacheImageInRect:NSInsetRect(selRectWindow, -2, -2)];
+        // draw rect frame
+        [path removeAllPoints]; // reuse path
+        // in order to draw a clear frame we draw an adjusted rect in clip view
+        selRectSuper = [[self superview] convertRect:selRectWindow fromView: nil];
+        if (!NSIsEmptyRect(selRectSuper))
+        {	// shift the coordinated by a half integer
+                selRectSuper = NSInsetRect(NSIntegralRect(selRectSuper), .5, .5);
+                [path appendBezierPathWithRect: selRectSuper];
+        }
+        else // if width or height is zero, we cannot use NSIntegralRect, which returns zero rect
+        {	 // so draw a path by hand
+                selRectSuper.origin.x = floor(selRectSuper.origin.x)+0.5;
+                selRectSuper.origin.y = floor(selRectSuper.origin.y)+0.5;
+                [path appendBezierPathWithPoints: &(selRectSuper.origin) count: 1];
+                selRectSuper.origin.x += floor(selRectSuper.size.width);
+                selRectSuper.origin.y += floor(selRectSuper.size.height);
+                [path appendBezierPathWithPoints: &(selRectSuper.origin) count: 1];
+        }
+        //[path setLineWidth: 0.01];
+        [[self superview] lockFocus];
+        [[NSGraphicsContext currentContext] setShouldAntialias: NO];
+        [[NSColor whiteColor] set];
+        [path stroke];
+        [path setLineDash: pattern count: 2 phase: phase];
+        [[NSColor blackColor] set];
+        [path stroke];
+        phase = (phase+1) % 6;
+        [[self superview] unlockFocus];
+        // display the image drawn in the buffer
+        [[self window] flushWindow];
+			
+	selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self 
+			selector:@selector(updateMarquee:) userInfo:nil repeats:YES];
+	oldVisibleRect = [self visibleRect];
+        }
+}
+
+
 
 // updates the frame of selected rectangle
 - (void)updateMarquee: (NSTimer *)timer

@@ -53,6 +53,8 @@ extern NSString *TexCommandKey;
 extern NSString *TexGSCommandKey;
 extern NSString *TexScriptCommandKey;
 extern NSString *TexTemplatePathKey;
+extern NSString *MetaPostCommandKey;
+extern NSString *BibtexCommandKey;
 extern NSString *LatexPanelPathKey;
 extern NSString *AutoCompletionPathKey;
 extern NSString *MenuShortcutsPathKey;

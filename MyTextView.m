@@ -7,6 +7,7 @@
 #import "TSWindowManager.h" // mitsu 1.29 (T2)
 #import "EncodingSupport.h"
 #import "TSPreferences.h"
+#import "MacroMenuController.h" // zenitani 1.33
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -64,6 +65,7 @@
     return YES;
 }
 
+/*
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
     NSPasteboard *pb = [ sender draggingPasteboard ];
     NSString *type = [ pb availableTypeFromArray:
@@ -109,6 +111,152 @@
         else  [super concludeDragOperation:sender];
     }
 // end addition
+*/
+
+// zenitani 1.33 begin
+- (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
+    NSPasteboard *pb = [ sender draggingPasteboard ];
+    NSString *type = [ pb availableTypeFromArray:
+        [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
+    if ((type) && ([type isEqualToString:NSFilenamesPboardType])) {
+        NSArray *ar = [pb propertyListForType:NSFilenamesPboardType];
+        unsigned cnt = [ar count];
+        if( cnt == 0 ) return;
+        NSString *thisFile = [[[[self window] windowController] document] fileName];
+        unsigned i;
+        for( i=0; i<cnt; i++ ){
+            NSString *filePath = [ar objectAtIndex:i];
+            NSString *fileName = [filePath lastPathComponent];
+            NSString *baseName = [fileName stringByDeletingPathExtension];
+            NSString *fileExt  = [[fileName pathExtension] lowercaseString];
+            NSString *relPath  = [[TSPreferences sharedInstance] relativePath: filePath fromFile: thisFile ];
+            NSString *insertString;
+            NSMutableString *tmpString;
+
+            // zenitani 1.33(2) begin
+            NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
+            if( [fileExt isEqualToString: @"pdf"] &&
+                ((sourceDragMask & NSDragOperationLink) || (sourceDragMask & NSDragOperationGeneric)) ){
+                insertString = [self readSourceFromEquationEditorPDF: filePath];
+                if( insertString != nil ){
+                    [self insertText:insertString];
+                    [[self undoManager] setActionName: NSLocalizedString(@"Drag && Drop", @"Drag && Drop")];
+                    return;
+                }
+            }
+            // zenitani 1.33(2) end
+
+            // zenitani 1.33(0)
+            NSRange myRange = [filePath rangeOfString: @" " options: NSLiteralSearch];
+            if( myRange.location != NSNotFound ){
+                NSBeginAlertSheet(@"Do not use spaces in file names.",
+                                    nil,nil,nil,[self window],nil,nil,nil,nil,
+                                    @"Path Name: %@",filePath);
+                                    return;
+            }
+
+            insertString = [self getDragnDropMacroString: fileExt];
+            if( insertString == nil )    insertString = [self getDragnDropMacroString: @"*"];
+            if( insertString == nil )    insertString = @"\\input{%r}\n";
+
+            tmpString = [NSMutableString stringWithString: insertString];
+            [tmpString replaceOccurrencesOfString: @"%F" withString: filePath options: 0 range: NSMakeRange(0, [tmpString length])];
+            [tmpString replaceOccurrencesOfString: @"%f" withString: fileName options: 0 range: NSMakeRange(0, [tmpString length])];
+            [tmpString replaceOccurrencesOfString: @"%n" withString: baseName options: 0 range: NSMakeRange(0, [tmpString length])];
+            [tmpString replaceOccurrencesOfString: @"%e" withString: fileExt options: 0 range: NSMakeRange(0, [tmpString length])];
+            [tmpString replaceOccurrencesOfString: @"%r" withString: relPath options: 0 range: NSMakeRange(0, [tmpString length])];
+            [[[[self window] windowController] document] insertSpecial: tmpString
+						undoKey: NSLocalizedString(@"Drag && Drop", @"Drag && Drop")];
+//            [[MacroMenuController sharedInstance] doMacro: tmpString];
+//            [self insertText:tmpString];
+            return;
+        }
+        [ self display ];
+    }else{
+        [super concludeDragOperation:sender];
+    }
+}
+
+- (NSString *)getDragnDropMacroString: (NSString *)fileNameExtension
+{
+    NSDictionary *dict1, *dict2;
+    NSEnumerator *enum1, *enum2;
+    NSArray     *array1, *array2;
+    NSString    *nameStr, *targetStr, *contentStr;
+    NSDictionary *macroDict = [[MacroMenuController sharedInstance] macroDictionary];
+    if( macroDict == nil ) return nil;
+
+    targetStr = [NSString stringWithFormat: @".%@", fileNameExtension ];
+    array1 = [macroDict objectForKey: SUBMENU_KEY];
+    enum1 = [array1 objectEnumerator];
+
+    while (dict1 = (NSDictionary *)[enum1 nextObject])
+    {
+        nameStr = [dict1 objectForKey: NAME_KEY];
+        if( [nameStr isEqualToString: @"Drag & Drop"] ){
+            array2 = [dict1 objectForKey: SUBMENU_KEY];
+            if( array2 )
+            {
+                enum2 = [array2 objectEnumerator];
+                while( dict2 = (NSDictionary *)[enum2 nextObject] )
+                {
+                    nameStr = [dict2 objectForKey: NAME_KEY];
+                    if( [nameStr isEqualToString: targetStr] )
+                    {
+                        contentStr = [dict2 objectForKey: CONTENT_KEY];
+                        if( contentStr )    return contentStr;
+                    }
+                }
+            }
+        }
+    }
+    return nil;
+}
+// zenitani 1.33 end
+
+// zenitani 1.33(2) begin
+- (NSString *)readSourceFromEquationEditorPDF:(NSString *)filePath
+{
+    NSDictionary *fileAttr;
+    NSNumber    *fileSize;
+    NSString    *fileContent;
+    unsigned    fileLength;
+    NSMutableString *equationString;
+    NSStringEncoding	theEncoding;
+    NSData      *fileData;
+    NSRange myRange, searchRange;
+    
+    // check filesize. (< 1MB)
+    fileAttr = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
+    fileSize = [fileAttr objectForKey:NSFileSize];
+    if(! ( fileSize && [fileSize intValue] < 1024 * 1024 ) ){  return nil; }
+    
+    // Encoding tag is fixed to 0 (Mac OS Roman). At least it doesn't work when it is 5 (DOSJapanese; Shift JIS).
+    fileData = [NSData dataWithContentsOfFile:filePath];
+    theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: 0];
+    fileContent = [[[NSString alloc] initWithData:fileData encoding:theEncoding] autorelease];
+    if( fileContent == nil ) return nil;
+
+    fileLength = [fileContent length];
+    myRange = [fileContent rangeOfString: @"/Subject (ESannot" options: NSLiteralSearch];
+    if(( myRange.location == NSNotFound ) || ( myRange.location + myRange.length > fileLength - 10 ))  return nil;
+
+    searchRange.location = myRange.location + myRange.length;
+    searchRange.length   = fileLength - searchRange.location;
+    myRange = [fileContent rangeOfString: @"ESannotend" options: NSLiteralSearch range: searchRange ];
+    if( myRange.location == NSNotFound )  return nil;
+
+    searchRange.length   = myRange.location - searchRange.location;
+    equationString = [NSMutableString stringWithString: [fileContent substringWithRange: searchRange]];
+    [equationString replaceOccurrencesOfString: @"ESslash" withString: @"\\" options: 0 range: NSMakeRange(0, [equationString length])];
+    [equationString replaceOccurrencesOfString: @"ESleftbrack" withString: @"{" options: 0 range: NSMakeRange(0, [equationString length])];
+    [equationString replaceOccurrencesOfString: @"ESrightbrack" withString: @"}" options: 0 range: NSMakeRange(0, [equationString length])];
+    [equationString replaceOccurrencesOfString: @"ESdollar" withString: @"$" options: 0 range: NSMakeRange(0, [equationString length])];
+    [equationString appendString: @"\n"];
+    return equationString;
+}
+// zenitani 1.33(2) end
+
 
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
 {
@@ -381,11 +529,14 @@
 	NSCharacterSet *charSet;
 	unichar c;
 	
+        /*
 	if ([[theEvent characters] isEqualToString: commandCompletionChar] && 
 			([theEvent modifierFlags] & ~NSShiftKeyMask) == 0 && 
 			![self hasMarkedText] && commandCompletionList)
+        */
+        if ([[theEvent characters] isEqualToString: commandCompletionChar] && (![self hasMarkedText]) && commandCompletionList)
 	{
-		textString = [self string]; // this will change during operations (such as undo)
+                textString = [self string]; // this will change during operations (such as undo)
 		selectedLocation = [self selectedRange].location;
 		// check for LaTeX \begin{...}
 		if (selectedLocation > 0 && [textString characterAtIndex: selectedLocation-1] == '}' 

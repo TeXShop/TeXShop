@@ -849,6 +849,25 @@ person script.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultScriptKey];
 }
 
+//------------------------------------------------------------------------------
+- (IBAction)defaultMetaPostChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:MetaPostCommandKey] forKey:MetaPostCommandKey];
+
+        [SUD setInteger:[[sender selectedCell] tag] forKey:MetaPostCommandKey];
+}
+
+//------------------------------------------------------------------------------
+- (IBAction)defaultBibtexChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:BibtexCommandKey] forKey:BibtexCommandKey];
+
+        [SUD setInteger:[[sender selectedCell] tag] forKey:BibtexCommandKey];
+}
 
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
@@ -974,7 +993,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
     /* koch: The code below doesn't take because the undo manager doesn't actually
     undo here. It calls undo during the next event loop. So the code below is called too soon.
     I called it again when the preference panel is shown. */
-    [self updateControlsFromUserDefaults:SUD];
+//    [self updateControlsFromUserDefaults:SUD];
 }
 
 //==============================================================================
@@ -1089,6 +1108,7 @@ This method retrieves the application preferences from the defaults object and s
     double	magnification;
     int		mag, tabSize;
     int		myTag;
+    NSNumber    *myNumber;
 	
 	fontData = [defaults objectForKey:DocumentFontKey];
 	if (fontData != nil)
@@ -1162,7 +1182,9 @@ This method retrieves the application preferences from the defaults object and s
             
         magnification = [defaults floatForKey:PdfMagnificationKey];
         mag = round(magnification * 100.0);
-        [_magTextField setIntValue: mag];
+        myNumber = [NSNumber numberWithInt: mag];
+        [_magTextField setStringValue:[myNumber stringValue]];
+  //      [_magTextField setIntValue: mag];
         
         
 #ifdef MITSU_PDF
@@ -1224,13 +1246,22 @@ This method retrieves the application preferences from the defaults object and s
 	myTag = [defaults integerForKey:PdfColorParam1Key];
 	itemIndex = [_colorParam1Popup indexOfItemWithTag: myTag];
 	if (itemIndex == -1) itemIndex = 2; // default index = 2
-    [_colorParam1Popup selectItemAtIndex: itemIndex];
+        [_colorParam1Popup selectItemAtIndex: itemIndex];
+
+        myTag = [defaults integerForKey:MetaPostCommandKey];
+        [_defaultMetaPostMatrix selectCellWithTag: myTag];
+        
+        myTag = [defaults integerForKey:BibtexCommandKey];
+        [_defaultBibtexMatrix selectCellWithTag: myTag];
+
     
 	// end mitsu 1.29
 #endif
         
         tabSize = [defaults integerForKey: tabsKey];
-        [_tabsTextField setIntValue: tabSize]; 
+        myNumber = [NSNumber numberWithInt: tabSize];
+        [_tabsTextField setStringValue:[myNumber stringValue]];
+        // [_tabsTextField setIntValue: tabSize];
 
         [_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];

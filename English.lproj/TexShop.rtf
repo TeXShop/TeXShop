@@ -1,0 +1,356 @@
+{\rtf1\mac\ansicpg10000{\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs48 \cf0 TexShop Help File\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs28 \cf0 Table of Contents\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i\b0\fs24 \cf0 \
+	Preliminaries\
+	Getting and Installing teTex\
+	Typesetting Documents\
+	Including Graphics\
+	Modifying the Templates Menu\
+	Setting a Project Root File\
+	Setting Preferences\
+	Sending Bug Reports\
+	License\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i0\b \cf0 \
+Preliminaries:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 TexShop is a Mac OS X program which can typeset TeX and Latex files and preview the output on the screen. The program typesets using 
+\i pdftex
+\i0  or 
+\i pdflatex
+\i0  instead of 
+\i tex
+\i0  or 
+\i latex
+\i0 ; these programs output pdf files rather than dvi files. Since pdf is the native graphics format of Mac OS X, it is easy to display the output on the screen. 
+\i Pdftex
+\i0  and 
+\i pdflatex
+\i0  were written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
+\
+The pdf files created by TexShop are standard pdf files which can be given to other people and displayed on a variety of computer systems.\
+\
+TexShop does not include TeX. Instead it uses the standard TeX distribution 
+\i teTeX
+\i0 , a wonderful collection of the entire suite of TeX programs, files, and utilities created by Thomas Esser. This collection (the standard version of TeX on Linux systems) has been compiled for Mac OS X. Instructions on obtaining it are given below.\
+\
+TexShop is written in Cocoa and relies on the NSPDFImageRep class to display output files. This class is not complete as of Developer Release 4; the following ingredients are missing:\
+\
+	a) the class cannot interpret embedded fonts, so it substitutes standard \
+	system fonts in displays.\
+\
+	b) the class cannot interpret embedded graphic objects, so it shows an\
+	empty region where the graphic would be.\
+\
+Thus TexShop is not immediately useful. But the current binary will work correctly once Apple completes the NSPDFImageRep class.
+\b \
+\
+\
+Getting and Installing teTex:\
+\
+
+\b0 The full teTeX distribution compiled for Mac OS X is available at the teTeX web site:\
+\
+	http://www.tug.org/tetex\
+\
+Several tar files must be obtained and installed, as explained at the site.\
+\
+Later versions of the distribution can be obtained and installed at any time; TexShop does not install any configuration files in the teTeX tree.\
+\
+There is another way to obtain the distribution which is somewhat easier, and I'll give complete instructions for that method. Using a web server, connect to\
+\
+	http://next-ftp.peak.org\
+\
+The version of teTeX on this site was compiled for Mac OS X Server, but works equally well on the latest Mac OS X. On the left panel of the screen, push "NeXT Archive." At the bottom of the resulting page, push "Mac OSX Server". On the resulting page, select "All." Scroll down on the resulting page and download the file "teTeX-full-1.0.2a-P-b.tgz." This is a 38.4 MB file, which will arrive with the name "teTeX-full-1.0.2a-P-b.tgz.tar.gz".\
+\
+In a terminal window, type the command\
+\
+	gzip -d teTeX-full-1.0.2a-P-b.tgz.tar.gz\
+\
+and then the command\
+\
+	gnutar -xf teTeX-full-1.0.2a-P-b.tgz.tar\
+\
+These will produce a folder named teTeX-full.pkg (together with a file "teTeX-full-1.0.2a-P-b.tgz.tar", which can be thrown away).\
+\
+Inside the folder teTeX-full.pkg, there are five files, but only "teTeX-full.pax.gz" matters; it contains a compressed version of teTeX. \
+\
+Log out and log in as 
+\i root
+\i0 . Create the directory "/Local/Library" if it does not exist. Move the file "teTeX-full.pax.gz" to this directory. In a terminal window, change to this directory and type the command\
+\
+	gzip -d teTeX-full.pax.gz\
+\
+and then the command\
+\
+	pax -r -f teTeX-full.pax\
+\
+This will create a new folder named "teTeX" inside the folder "/Local/Library". The file "teTeX-full.pax" can be thrown away. The folder teTeX contains the complete teTeX distribution.\
+\
+While still logged in as 
+\i root
+\i0 , create symbolic links to the binary files for teTeX in the following manner. Create the directory "/usr/local/bin" if it does not exist. In a terminal window, type and execute the command\
+\
+	ln    -s    /Local/Library/teTeX/bin/powerpc-apple-rhapsody5.3/*    /usr/local/bin \
+\
+You can immediately use the standard command line programs in TeX: 
+\i tex, latex, dvips,
+\i0  etc.\
+\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Typesetting Documents:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 To use TexShop, type your TeX or Latex input in the editing window it provides. Then push the "TeX" or "Latex" button at the top of the window. The input will be saved and 
+\i pdftex
+\i0  or 
+\i pdflatex
+\i0  will run. A second window will open displaying the messages from 
+\i tex
+\i0 . If there are errors, 
+\i pdftex
+\i0  will halt; type "return" to skip the errors one by one, or one of the standard tex inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file.\
+\
+If you notice an error, you can immediately fix it in the editing window and push the "TeX" or "Latex" button again without halting the first invocation of 
+\i pdftex
+\i0 . The program will kill that invocation and run another.\
+\
+When you fix errors and typeset again, the viewer will remember the page you were previously viewing.\
+\
+TexShop can show handle multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a tex file in a folder which contains a pdf file with the same name, this pdf will also appear.\
+\
+You can start TexShop by double clicking on a document with extension ".tex". The program will open that input document and (if it exists) the associated pdf document.\
+\
+You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other tex documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i \cf0 Warning: pdftex
+\i0  and 
+\i pdflatex
+\i0  are unix programs which do not like spaces in filenames. Source files created with TexShop should be given names without spaces. If these source files are contained in subdirectories of your home directory, the names of these subdirectories also should have no spaces. TexShop itself has no problem with spaces in filenames.  \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+Including Graphics:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 It is common to use eps (encapsulated postscript) graphic files in TeX documents because such files print well at any size. The native graphics format of Mac OS X is pdf (postscript display format); these files also print well at any size. Consequently, graphics for TexShop documents should be created in pdf format. It is likely that most Mac graphics programs will be modified to output pdf over the next few months.\
+\
+The public domain package 
+\i Ghostscript
+\i0  runs on Mac OS X and contains commands which convert eps files to pdf format. Utilities are beginning to appear which make this conversion process simple. Please consult the standard archives.\
+\
+The authors of 
+\i pdflatex
+\i0  have made it easy to include pdf graphic files in a Latex document typeset with 
+\i pedlatex
+\i0 , even if the document will later be typeset by standard 
+\i latex
+\i0  and converted to a dvi file for distribution to other people. At the top of such a Latex input file, include the following lines:\
+\
+	
+\f1\fs20 \\newif\\ifpdf\
+	\\ifx\\pdfoutput\\undefined\
+	\\pdffalse % we are not running PDFLaTeX\
+	\\else\
+	\\pdfoutput=1 % we are running PDFLaTeX\
+	\\pdftrue\
+	\\fi\
+\
+	\\ifpdf\
+	\\usepackage[pdftex]\{graphicx\}\
+	\\else\
+	\\usepackage\{graphicx\}\
+	\\fi\
+
+\f0\fs24  
+\b \
+
+\b0 After the "\\begin\{document\}" command, include the lines\
+\
+	
+\f1\fs20 \\ifpdf\
+	\\DeclareGraphicsExtensions\{.jpg,.pdf\}\
+	\\else\
+	\\DeclareGraphicsExtensions\{.jpg,.eps\}\
+	\\fi\
+\
+
+\f0\fs24 When you wish to include a graphic file, say "f1.pdf ", use the command\
+\
+	
+\f1\fs20 \\includegraphics[width=2in]\{f1\}
+\f0\fs24 \
+\
+This command will cause 
+\i tex
+\i0  to input the graphic file "f1.pdf" when the text is typeset with 
+\i pdflatex
+\i0 , but input the file "f1.eps" when the text is typeset with 
+\i latex. 
+\i0 \
+\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Modifying the Templates Menu:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 When TexShop runs for the first time, it creates a folder\
+\
+	~/Library/Preferences/TexShop Prefs/Templates\
+\
+and places the files 
+\i Graphics.tex, TexTemplate.tex,
+\i0  and 
+\i LatexTemplate.tex
+\i0  in this folder. The names of these files are shown under the Templates pull down menu at the top of the input window. Choosing one of these items inserts the contents of the template file at the current cursor position in the source.\
+\
+The three template files are standard tex files which can be opened and edited by TexShop. Additional tex files can be inserted into the Templates folder; they will also appear under the Templates pull down menu provided their names end with the extension ".tex". The original template files can be removed if desired.\
+\
+To restore the original template files after they have been edited, delete the Templates folder and run TexShop again. It will recreate the folder and restore its original contents.  
+\b \
+\
+Setting a Project Root File:\
+\
+
+\b0 It is common to split large input files into several smaller files controlled by a 
+\i root
+\i0  file. For instance, the root file of a book project might have the form\
+\
+	
+\f1\fs20 \\documentclass[11pt]\{book\}\
+	\\includeonly\{Chapter2/two.tex\}\
+	\\textwidth = 6.5 in\
+	\\textheight = 9 in\
+	\\begin\{document\}\
+	\\include\{Chapter1/one.tex\}\
+	\\include\{Chapter2/two.tex\}\
+	\\include\{Chapter3/three.tex\}\
+	\\end\{document\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 	\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 This root file contains formatting commands for the entire project, but the subject matter is contained in files 
+\i one.tex, two.tex,
+\i0  and 
+\i three.tex
+\i0 . The second line above tells TeX to typeset chapter two only, speeding up typesetting while chapter two is being written. When the book is complete, this line can be commented out and the entire book can be typeset a final time.\
+\
+While chapter two is being written, it would be natural to open the file 
+\i two.tex
+\i0  in TexShop. But after changes are made to this input file, TexShop should not typeset 
+\i two.tex
+\i0 ; instead it should typeset the root file. TexShop can be told to do so using the menu command "Set Project Root..."  This menu command presents a panel with a text box where the name of the root file can be entered. \
+\
+If the root file is in the same folder as the input file, it is enough to give its name, including the ".tex" extension. For instance, if the root file is named 
+\i Main
+\i0 , you can enter 
+\i Main.tex
+\i0  in the dialog window.\
+\
+If the root file is in a different directory, its name can be given relative to the location of the input file. In the above example, the various chapters are contained in subfolders within the folder containing the root file. In that case, you could enter 
+\i ../Main.tex
+\i0  in the dialog window, showing the location of the root file relative to the chapter input file.\
+\
+Finally, the name of the root can be given with an absolute name, as in 
+\i /Local/User/me/Main.tex
+\i0 .\
+\
+If the entire TeX source is contained in a single file, it is not necessary to set the root project name.\
+\
+TexShop remembers the name of the root file by writing this information to a file with the same name as the input file and the extension ".texshop". For instance, if the input for chapter two is in 
+\i two.tex
+\i0 , TexShop writes the name of the root in 
+\i two.texshop
+\i0  in the same directory as 
+\i two.tex
+\i0 .  If the file 
+\i two.texshop
+\i0  is later thrown away, TexShop will revert to typesetting 
+\i two.tex
+\i0  rather than 
+\i Main.tex
+\i0 . \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+Setting Preferences:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. To set these items, readjust them as desired and then make the choices permanent with the preferences dialog.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 The preference dialog can also be used to change the commands executed when the "TeX" and "Latex" buttons are pushed. This is useful because some users prefer a version of TeX called 
+\i etex
+\i0 , and there are pdf versions of etex called 
+\i pdfetex
+\i0  and 
+\i pdfelatex
+\i0 . \
+\
+Obviously the substituted command must still produce a pdf output file. Write the full path to the new programs in the preference dialog.\
+\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Sending Bug Reports:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 To file bug reports and suggest improvements, contact
+\b \
+
+\b0 \
+	Richard Koch\
+        	Mathematics Department\
+        	University of Oregon\
+        	Eugene, Oregon 97403      \
+	koch@math.uoregon.edu\
+\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 License:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 TexShop is provided under the GNU General Public License (GPL). This means that you are free to use, copy, and modify the program. If you give your modifications to others, the modifications must also be provided under the GPL. \
+\
+The source code is available on my web site:\
+\
+	http://darkwing.uoregon.edu/~koch\
+ \
+\
+}

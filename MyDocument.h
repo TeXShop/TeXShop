@@ -106,7 +106,7 @@
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 - (void) updateChangeCount: (NSDocumentChangeType)changeType;
-- (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
+// - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type; /* no longer used; see .m file */
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
 

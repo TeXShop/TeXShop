@@ -525,6 +525,60 @@ Version 1.14		January 27, 2002\
 		the latex + ghostscript bug won't be fixed.\
 \
 		\
+Version 1.15		February 7, 2002\
+\
+		A new menu item enables spell checking as you type. The initial setting \
+		of this menu is determined by a preference item, but the\
+		setting can later be toggled. This change was prompted by the release of\
+		the Unix spell checker Aspell for Mac OS X. This spell checker, by Kevin\
+		Atkinson, is "a more intelligent Ispell." It was ported to Mac OS X by \
+		Anton Leuski and converted into a spelling service. The spell checker \
+		has a Latex filter, and so becomes the long-awaited "cocoa spell checker \
+		for TeX." To obtain the spell checker, which is free, go to\
+		http://homepage.mac.com/leuski/cocoaspell/ \
+\
+		The English version of the help file has been expanded. In particular, \
+		operation of MetaPost is explained more clearly. These changes will eventually \
+		appear in Internationalized versions of the help file.\
+\
+		The Latex Panel has been polished. For example, it is now \
+		possible to select a section of text and then choose the typeface Emph; braces \
+		will be placed around the selected text. The cursor is also placed more carefully \
+		when items are inserted from the panel. \
+\
+		The elegant code for this change was written by Max Horn. Each palette\
+		item is represented by a string in the file "completion.plist." This string will\
+		be inserted into the source when the Palette item is chosen. Horn's code\
+		allows the completion.plist string to contain #SEL#; each such occurance\
+		is replaced by the current selection when the string is inserted. Similarly if\
+		the completion.plist string contains #INS#, this will become the cursor\
+		position when the string is inserted.\
+\
+		As soon as Geoff Lenglin heard of this code, he modified completion.plist\
+		to take advantage of it. Other errors in completion.plist were fixed.\
+\
+		It is now possible to customize completion.plist. Recall that TeXShop adds\
+		a folder ~/Library/TeXShop/Templates to the user Library for templates. If this\
+		folder contains a folder ~/Library/TeXShop/LatexPanel containing a\
+		completion.plist file, then this file will be used instead of the default file in\
+		the TeXShop bundle. \
+\
+		Subsections and subsubsections are now added to the tags menu automatically.\
+\
+		TeXShop now has the option of loading and saving files using the\
+		MacJapanese encoding. This change is due to Makoto Inoue, and makes\
+		TeXShop compatible with the Japanese versions of TeX and LaTeX called ptex\
+		and platex, available at ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/.\
+		 \
+	Bugs Fixed:\
+\
+		If a user edited a file, closed it, and chose not to save the changes, the \
+		associated pdf window might not close, leading to a crash at some later time. \
+		This is fixed.\
+		\
+		Some panel entries like \\item inserted strings containing the illegal\
+		character 0x007f. This is fixed.\
+\
 \
 		\
 \

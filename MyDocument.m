@@ -302,6 +302,7 @@
     myRange.location = 0;
     myRange.length = 0;
     [textView setSelectedRange: myRange];
+    [textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textWindow setInitialFirstResponder: textView];
     [textWindow makeFirstResponder: textView];
     
@@ -500,6 +501,7 @@ preference change is cancelled. "*/
         [tagTimer release];
         tagTimer = nil;
     }
+    [pdfWindow close];
     [super close];
 }
 
@@ -519,6 +521,9 @@ preference change is cancelled. "*/
         saveOperation:(NSSaveOperationType)saveOperationType 
 */
 
+/* This is the old way to set the type of files to TEXT. It has
+been replaced by a method introduced in system 10.1. */
+/*
  - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
  {
     BOOL		myValue;
@@ -530,7 +535,6 @@ preference change is cancelled. "*/
     
     myValue = [super writeToFile:fileName ofType:type];
    
-    /*
     if (fileName) {
         myURL = [NSURL fileURLWithPath:fileName];
         // the remaining code is Carbon
@@ -545,10 +549,10 @@ preference change is cancelled. "*/
         myCatalogInfo.finderInfo[3] = 'T';
         myError = FSSetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo);
         }
-    */
 
     return myValue;
  }
+ */
  
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
@@ -557,8 +561,10 @@ preference change is cancelled. "*/
     // return [[textView string] dataUsingEncoding: NSASCIIStringEncoding];
     if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
-    else
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         return [[textView string] dataUsingEncoding: NSISOLatin1StringEncoding allowLossyConversion:YES];
+    else
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese) allowLossyConversion:YES];
 }
 
 
@@ -574,12 +580,18 @@ preference change is cancelled. "*/
 
     id myData;
     
-    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"]) 
+    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         aString = [[NSString stringWithContentsOfFile:fileName] retain];
-    else {
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"]) {
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: NSISOLatin1StringEncoding] retain];
         }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)] retain];
+        }
+    else
+        aString = [[NSString stringWithContentsOfFile:fileName] retain];
     return YES;
 }
 
@@ -1518,12 +1530,19 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSRange	myRange, nameRange, gotoRange;
     unsigned	length;
     int		theChar;
-    BOOL	done;
-    BOOL	section, chapter;
+    int		texChar;
+    BOOL	done, tagfound;
+    BOOL	section, subsection, subsubsection, chapter;
     
     title = [tags titleOfSelectedItem];
     
+    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;
+    else
+        texChar = 0x005c;
+    
     section = NO; chapter = NO;
+    subsection = NO; subsubsection = NO;
     if ([SUD boolForKey: TagSectionsKey]) { 
         if ([title length] >= 9) {
             myRange.location = 0;
@@ -1533,11 +1552,35 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 section = YES;
             else if ([first isEqualToString:@"chapter:"])
                 chapter = YES;
-            if (section || chapter) {
-                myRange.location = 9;
-                myRange.length = [title length] - 9;
-                mainTitle = [title substringWithRange: myRange];
-                }
+            }
+        if ([title length] >= 12) {
+            myRange.location = 0;
+            myRange.length = 11;
+            first = [title substringWithRange: myRange];
+            if ([first isEqualToString:@"subsection:"])
+                subsection = YES;
+            }
+       if ([title length] >= 15) {
+            myRange.location = 0;
+            myRange.length = 14;
+            first = [title substringWithRange: myRange];
+            if ([first isEqualToString:@"subsubsection:"])
+                subsubsection = YES;
+            }     
+        if (section || chapter) {
+            myRange.location = 9;
+            myRange.length = [title length] - 9;
+            mainTitle = [title substringWithRange: myRange];
+            }
+        if (subsection) {
+            myRange.location = 12;
+            myRange.length = [title length] - 12;
+            mainTitle = [title substringWithRange: myRange];
+            }
+        if (subsubsection) {
+            myRange.location = 15;
+            myRange.length = [title length] - 15;
+            mainTitle = [title substringWithRange: myRange];
             }
         }
         
@@ -1566,25 +1609,61 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                         }
                     }
                 }
-            else if ((theChar == 0x005c) && (start < length - 8) && (section || chapter)) {
-                nameRange.location = start + 1;
-                nameRange.length = 7;
-                tagString = [text substringWithRange: nameRange];
-                if (
-                    (([tagString isEqualToString:@"section"]) && section) ||
-                    (([tagString isEqualToString:@"chapter"]) && chapter)
-                   ) {
-                   nameRange.location = start + 8;
-                   nameRange.length = (end - start - 8);
-                   tagString = [text substringWithRange: nameRange];
-                   if ([mainTitle isEqualToString:tagString]) {
-                    done = YES;
+                
+            else if (theChar == texChar) {
+                tagfound = NO;
+                if (section  && (start < length - 8)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 7;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"section"]) {
+                        tagfound = YES;
+                        nameRange.location = start + 8;
+                        nameRange.length = (end - start - 8);
+                        tagString = [text substringWithRange: nameRange];
+                        }
+                    }
+                else if (chapter  && (start < length - 8)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 7;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"chapter"]) {
+                        tagfound = YES;
+                        nameRange.location = start + 8;
+                        nameRange.length = (end - start - 8);
+                        tagString = [text substringWithRange: nameRange];
+                        }
+                    }
+                else if (subsection && (start < length - 11)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 10;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"subsection"]) {
+                        tagfound = YES;
+                        nameRange.location = start + 11;
+                        nameRange.length = (end - start - 11);
+                        tagString = [text substringWithRange: nameRange];
+                        }
+                    }
+                else if (subsubsection && (start < length - 14)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 13;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"subsubsection"]) {
+                        tagfound = YES;
+                        nameRange.location = start + 14;
+                        nameRange.length = (end - start - 14);
+                        tagString = [text substringWithRange: nameRange];
+                        }
+                    }
+                    
+                if (tagfound && ([mainTitle isEqualToString:tagString])) {
+                        done = YES;
                         gotoRange.location = start;
                         gotoRange.length = (end - start);
                         [textView setSelectedRange: gotoRange];
                         [textView scrollRangeToVisible: gotoRange];
                         }
-                    }
                 }
             }
         }
@@ -1767,10 +1846,15 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSColor	*regularColor;
     long	length, location, final;
     unsigned	start1, end1;
-    int		theChar;
+    int		theChar, texChar;
     unsigned	end;
     
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
+    
+    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;
+    else
+        texChar = 0x005c;
    
     // commentColor = [NSColor redColor];
     // commandColor = [NSColor blueColor];
@@ -1833,7 +1917,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 location = end;
                 }
                 
-             else if (theChar == 0x005c) {
+             else if (theChar == texChar) {
                 colorRange.location = location;
                 colorRange.length = 1;
                 location++;
@@ -1913,11 +1997,19 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         tagLine = YES;
         
     if ([SUD boolForKey: TagSectionsKey]) {
-        tagRange = [replacementString rangeOfString:@"\section"];
+        tagRange = [replacementString rangeOfString:@"\\section"];
         if (tagRange.length != 0)
             tagLine = YES;
             
-        tagRange = [replacementString rangeOfString:@"\chapter"];
+        tagRange = [replacementString rangeOfString:@"\\chapter"];
+        if (tagRange.length != 0)
+            tagLine = YES;
+            
+        tagRange = [replacementString rangeOfString:@"\\subsection"];
+        if (tagRange.length != 0)
+            tagLine = YES;
+            
+        tagRange = [replacementString rangeOfString:@"\\subsubsection"];
         if (tagRange.length != 0)
             tagLine = YES;
             
@@ -1925,17 +2017,23 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
         tagRange.location = start;
         tagRange.length = end - start;
-        matchRange = [textString rangeOfString:@"\section" options:0 range:tagRange];
+        
+        matchRange = [textString rangeOfString:@"\\section" options:0 range:tagRange];
         if (matchRange.length != 0)
             tagLine = YES;
             
-        textString = [textView string];
-        [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
-        tagRange.location = start;
-        tagRange.length = end - start;
-        matchRange = [textString rangeOfString:@"\chapter" options:0 range:tagRange];
+        matchRange = [textString rangeOfString:@"\\chapter" options:0 range:tagRange];
         if (matchRange.length != 0)
             tagLine = YES;
+            
+        matchRange = [textString rangeOfString:@"\\subsection" options:0 range:tagRange];
+        if (matchRange.length != 0)
+            tagLine = YES;
+            
+        matchRange = [textString rangeOfString:@"\\subsubsection" options:0 range:tagRange];
+        if (matchRange.length != 0)
+            tagLine = YES;
+            
         }
     
     if (replacementString == nil) 
@@ -2074,41 +2172,49 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     unsigned	start, end, irrelevant;
     NSRange	myRange, nameRange;
     unsigned	length, index;
-    int		theChar;
+    int		theChar, texChar;
+    BOOL	found;
 
-    if (fileIsTex) 
-    {
-        text = [textView string];
-        length = [text length];
-        index = tagLocation + 10000;
-        myRange.location = tagLocation;
-        myRange.length = 1;
-        while ((myRange.location < length) && (myRange.location < index)) 
-        {
-            [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
-            myRange.location = end;
-            if ((start + 3) < end) 
-            {
-                theChar = [text characterAtIndex: start];
-                if (theChar == 0x0025) 
-                {
-                    theChar = [text characterAtIndex: (start + 1)];
-                    if (theChar == 0x003a) 
-                    {
-                        nameRange.location = start + 2;
-                        nameRange.length = (end - start - 2);
-                        tagString = [text substringWithRange: nameRange];
-                        [tags addItemWithTitle:tagString];
+    if (!fileIsTex) return;
+     
+    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;
+    else
+        texChar = 0x005c;
+        
+    text = [textView string];
+    length = [text length];
+    index = tagLocation + 10000;
+    myRange.location = tagLocation;
+    myRange.length = 1;
+    
+    while ((myRange.location < length) && (myRange.location < index)) { 
+        [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        myRange.location = end;
+        
+        if ((start + 3) < end) {
+            theChar = [text characterAtIndex: start];
+            
+            if (theChar == 0x0025) {
+             
+                theChar = [text characterAtIndex: (start + 1)];
+                if (theChar == 0x003a) { 
+                    nameRange.location = start + 2;
+                    nameRange.length = (end - start - 2);
+                    tagString = [text substringWithRange: nameRange];
+                    [tags addItemWithTitle:tagString];
                     }
                 }
-                
-                else if ((theChar == 0x005c) && ((start + 10) < end) &&
-                    ([SUD boolForKey: TagSectionsKey])) {
+            
+            else if ((theChar == texChar) && ([SUD boolForKey: TagSectionsKey])) {
+            
+                found = NO;
+                if ((start + 10) < end)  {
                     nameRange.location = start + 1;
                     nameRange.length = 7;
-                    /* THIS IS THE LINE */   
-                    tagString = [text substringWithRange: nameRange];
+                     tagString = [text substringWithRange: nameRange];
                     if ([tagString isEqualToString:@"section"]) {
+                        found = YES;
                         nameRange.location = start + 8;
                         nameRange.length = (end - start - 8);
                         tagString = [NSString stringWithString:@"section: "];
@@ -2117,6 +2223,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                         [tags addItemWithTitle:tagString];
                         }
                     else if ([tagString isEqualToString:@"chapter"]) {
+                        found = YES;
                         nameRange.location = start + 8;
                         nameRange.length = (end - start - 8);
                         tagString = [NSString stringWithString:@"chapter: "];
@@ -2125,16 +2232,46 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                         [tags addItemWithTitle:tagString];
                         }
                     }
+                    
+                if ((! found) && ((start + 13) < end)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 10;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"subsection"]) {
+                        found = YES;
+                        nameRange.location = start + 11;
+                        nameRange.length = (end - start - 11);
+                        tagString = [NSString stringWithString:@"subsection: "];
+                        tagString = [tagString stringByAppendingString: 
+                            [text substringWithRange: nameRange]];
+                        [tags addItemWithTitle:tagString];
+                        }
+                    }
+                    
+                if ((! found) && ((start + 16) < end)) {
+                    nameRange.location = start + 1;
+                    nameRange.length = 13;
+                    tagString = [text substringWithRange: nameRange];
+                    if ([tagString isEqualToString:@"subsubsection"]) {
+                        found = YES;
+                        nameRange.location = start + 14;
+                        nameRange.length = (end - start - 14);
+                        tagString = [NSString stringWithString:@"subsubsection: "];
+                        tagString = [tagString stringByAppendingString: 
+                            [text substringWithRange: nameRange]];
+                        [tags addItemWithTitle:tagString];
+                        }
+                    }
+                }
             }
         }
-        tagLocation = myRange.location;
-        if (tagLocation >= length) 
-        {
-            [tagTimer invalidate];
-            [tagTimer release];
-            tagTimer = nil;
+        
+    tagLocation = myRange.location;
+    if (tagLocation >= length) { 
+        [tagTimer invalidate];
+        [tagTimer release];
+        tagTimer = nil;
         }
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2146,10 +2283,14 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSColor	*commentColor1, *commandColor1, *markerColor1;
     NSColor	*regularColor;
     long	length, limit;
-    int		theChar;
+    int		theChar, texChar;
     unsigned	end;
 
     limit = colorLocation + 5000;
+    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;
+    else
+        texChar = 0x005c;
     regularColor = [NSColor blackColor];
     if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
         commentColor1 = commentColor;
@@ -2191,7 +2332,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [textView setTextColor: regularColor range: colorRange];
             colorLocation = end;
         }
-        else if (theChar == 0x005c) 
+        else if (theChar == texChar) 
         {
             colorRange.location = colorLocation;
             colorRange.length = 1;
@@ -2364,7 +2505,12 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([myData length]) 
         {
-            newOutput = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
+            if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];
+            else
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: NSMacOSRomanStringEncoding];
             if ((makeError) && ([newOutput length] > 2) && (errorNumber < NUMBEROFERRORS)) 
             {
                 myLength = [newOutput length];
@@ -2417,6 +2563,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     return aDictionary;
 }
 
+/* Code by Nicol‡s Ojeda BŠr */
 - (int) textViewCountTabs: (NSTextView *) aTextView
 {
     int startLocation = [aTextView selectedRange].location - 1, tabCount =
@@ -2438,7 +2585,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     return tabCount;
 }
 
-
+/* Code by Nicol‡s Ojeda BŠr */
 - (BOOL) textView: (NSTextView *) aTextView doCommandBySelector: (SEL)
 aSelector
 {
@@ -2491,7 +2638,8 @@ aSelector
 }
 
 
-
+/* Original code */
+/*
 - (void)doCompletion:(NSNotification *)notification
 {
     NSRange		myRange;
@@ -2525,5 +2673,76 @@ aSelector
         [self setupTags];
         }
 }
+*/
+
+/* New Code by Max Horn, to activate #SEL# and #INS# in Panel Strings */
+- (void)doCompletion:(NSNotification *)notification
+{
+    NSRange			oldRange;
+    NSRange			searchRange;
+    NSWindow		*activeWindow;
+    NSMutableString	*newString;
+    NSString		*oldString;
+    unsigned		from, to;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+
+    activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+    if ((activeWindow != nil) && (activeWindow == [self textWindow])) {
+        // Determine the curent selection range & text
+        oldRange = [textView selectedRange];
+        oldString = [[textView string] substringWithRange: oldRange];
+
+        // Fetch the replacement text
+        newString = [[notification object] mutableCopy];
+
+        // Substitute all occurances of #SEL# with the original text
+        searchRange.location = 0;
+        while (searchRange.location != NSNotFound) {
+            searchRange.length = [newString length] - searchRange.location;
+            searchRange = [newString rangeOfString:@"#SEL#" options:NSLiteralSearch range:searchRange];
+            if (searchRange.location != NSNotFound) {
+                [newString replaceCharactersInRange:searchRange withString:oldString];
+                searchRange.location += oldRange.length;
+            }
+        }
+
+        // Now search for #INS#, remember its position, and remove it. We will
+        // Later position the insertion mark there. Defaults to end of string.
+        searchRange = [newString rangeOfString:@"#INS#" options:NSLiteralSearch];
+        if (searchRange.location != NSNotFound)
+            [newString replaceCharactersInRange:searchRange withString:@""];
+        
+        // Insert the new text
+        [textView replaceCharactersInRange:oldRange withString:newString];
+        
+        // Create & register an undo action
+        myManager = [textView undoManager];
+        myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
+        theLocation = [NSNumber numberWithUnsignedInt: oldRange.location];
+        theLength = [NSNumber numberWithUnsignedInt: [newString length]];
+        [myDictionary setObject: oldString forKey: @"oldString"];
+        [myDictionary setObject: theLocation forKey: @"oldLocation"];
+        [myDictionary setObject: theLength forKey: @"oldLength"];
+        [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
+        [myManager setActionName:@"Typing"];
+        from = oldRange.location;
+        to = from + [newString length];
+        [self fixColor:from :to];
+        [self setupTags];
+        [newString release];
+
+        // Place insertion mark
+        if (searchRange.location != NSNotFound)
+        {
+            searchRange.location += oldRange.location;
+            searchRange.length = 0;
+            [textView setSelectedRange:searchRange];
+        }
+    }
+}
+
+
 
 @end

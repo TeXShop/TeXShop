@@ -11,6 +11,11 @@
 
 @implementation MyWindow
 
+- (void) runPageLayout: sender;
+{
+    [myDocument runPageLayout: sender];
+}
+
 - (void) printDocument: sender;
 {
     [myDocument printDocument: sender];

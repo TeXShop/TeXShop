@@ -225,6 +225,8 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         
         case 1: value = [NSString stringWithString:@"IsoLatin"];
                 break;
+                
+        case 2: value = [NSString stringWithString:@"MacJapanese"];
         }
         
     [SUD setObject:value forKey:EncodingKey];
@@ -256,6 +258,19 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 
     [SUD setBool:[sender state] forKey:ParensMatchingEnabledKey];
 }
+
+/*" This method is connected to the 'spell checking' checkbox.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)spellCheckPressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SpellCheckEnabledKey] forKey:SpellCheckEnabledKey];
+
+    [SUD setBool:[sender state] forKey:SpellCheckEnabledKey];
+}
+
 
 //==============================================================================
 // Preview pane
@@ -718,11 +733,14 @@ This method retrieves the application preferences from the defaults object and s
             [_docWindowPosButton setEnabled: NO];
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
+    [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
     if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         myTag = 0;
-    else
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         myTag = 1;
+    else
+        myTag = 2;
     [_defaultEncodeMatrix selectCellWithTag: myTag];
     [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
     [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];

@@ -30,13 +30,21 @@ static id _sharedInstance = nil;
 
 - (void)windowDidLoad
 {
-    int		i;
-    BOOL	result;
-    NSPoint	aPoint;
+    int			i;
+    NSPoint		aPoint;
+    NSString		*completionPath;
+    NSDictionary	*completionDictionary;
 
 NSBundle *myBundle=[NSBundle mainBundle];
-NSDictionary *completionDictionary=[NSDictionary dictionaryWithContentsOfFile:
-[myBundle pathForResource:@"completion" ofType:@"plist"]];
+
+completionPath = [LatexPanelPathKey stringByStandardizingPath];
+completionPath = [completionPath stringByAppendingPathComponent:@"completion"];
+completionPath = [completionPath stringByAppendingPathExtension:@"plist"];
+if ([[NSFileManager defaultManager] fileExistsAtPath: completionPath]) 
+    completionDictionary=[NSDictionary dictionaryWithContentsOfFile:completionPath];
+else
+    completionDictionary=[NSDictionary dictionaryWithContentsOfFile:
+        [myBundle pathForResource:@"completion" ofType:@"plist"]];
 
 [super windowDidLoad];
 
@@ -51,6 +59,7 @@ aPoint.y = [[NSUserDefaults standardUserDefaults] floatForKey:PanelOriginYKey];
 [[self window] setFrameOrigin: aPoint];
 [[self window] setHidesOnDeactivate: YES];
 [[self window] setBecomesKeyOnlyIfNeeded: YES];
+
 arrayFunctions1=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Functions1"]];
 arrayEnvironments=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Environments" ]];
 arrayTypeface=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Typeface" ]];
@@ -72,7 +81,7 @@ if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
     [[functionsbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
     
-    for (i=0;i<11;i++)
+    for (i=0;i<14;i++)
     {
     [[typefacebuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
@@ -96,7 +105,7 @@ if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
     [[greekbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
     
-    for (i=0;i<33;i++)
+    for (i=0;i<35;i++)
     {
     [[intlbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
@@ -110,12 +119,14 @@ if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
 }
 
 - (IBAction)putenvironments:(id)sender
-{ 
+{
+ 
 [notifcenter postNotificationName:@"completionpanel" object:[arrayEnvironments objectAtIndex:[[sender selectedCell] tag]]];
 }
 
 - (IBAction)putfunctions1:(id)sender
 {
+
 [notifcenter postNotificationName:@"completionpanel" object:[arrayFunctions1 objectAtIndex:[[sender selectedCell] tag]]];
 }
 
@@ -129,21 +140,19 @@ if (i>29) i=i-14;
 - (IBAction)putintl:(id)sender
 {
 int i=[[sender selectedCell] tag];
-if (i>32) i=i-11;
+if (i>34) i=i-9;
 [notifcenter postNotificationName:@"completionpanel" object:[arrayInternational objectAtIndex:i]];
 }
 
 - (IBAction)putmath:(id)sender
 {
 int i=[[sender selectedCell] tag];
-
 [notifcenter postNotificationName:@"completionpanel" object:[arrayMath objectAtIndex:i]];
 }
 
 - (IBAction)putsymbols:(id)sender
 {
 int i=[[sender selectedCell] tag];
-
 [notifcenter postNotificationName:@"completionpanel" object:[arraySymbols objectAtIndex:i]];
 }
 

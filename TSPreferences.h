@@ -16,6 +16,7 @@
 
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
+        IBOutlet NSButton	*_spellCheckButton;		/*" connected to "SpellChecking "*/
         IBOutlet NSButton	*_openEmptyButton;		/*" open empty document on start "*/
         IBOutlet NSMatrix	*_defaultEncodeMatrix;		/*" text encoding "*/
 
@@ -59,6 +60,7 @@
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)parensMatchPressed:sender;
+- (IBAction)spellCheckPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
 

@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\vieww12120\viewh13800\viewkind0
+\vieww12060\viewh13920\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -22,6 +22,7 @@
 	Getting and Installing teTeX\
 	Getting and Installing TeXShop\
 	Typesetting Documents\
+	Checking Spelling\
 	Editing Tricks\
 	Including Graphics\
 	Alternate Typesetting Mode\
@@ -37,7 +38,7 @@
                Syntax Colors \
 	More About teTeX\
 	Coexisting with Fink\
-	Coexisting with )ther TeX Distributions:\
+	Coexisting with Other TeX Distributions:\
 	ConTeXt and MetaPost\
 	Sending Bug Reports\
 	License\
@@ -82,7 +83,7 @@ and a copy (which should be up to date) lives on\
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-in a file named "teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
+in a file named "TeXLive-teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
  \
 The complete source for teTeX is available on Wierda's web site. The site also contains instructions for configuring and making the code for Mac OS X: \
 \
@@ -122,9 +123,7 @@ TeXShop remembers the source lines of the first twenty errors. To cycle through 
 \
 When you fix errors and typeset again, the viewer will remember the page you were previously viewing.\
 \
-If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \\section\
-or \\chapter are automatically added to the Tag menu. However, this behavior can be changed by\
-typing the following command in Apple's Terminal program:\
+If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \\section, \\subsection, \\subsubsection, or \\chapter are automatically added to the Tag menu. However, this behavior can be changed by typing the following command in Apple's Terminal program:\
 	\
 	defaults write texshop TagSections NO\
 \
@@ -143,11 +142,31 @@ You can close the pdf window at any time. It will reappear when the document is 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Editing Tricks:\
+\f0\b \cf0 Checking Spelling:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs, new lines will start at the same tab position until the behavior is cancelled by backspacing. This tab behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
+\f2\b0 \cf0 Cocoa programs automatically inherit spell checking technology by Apple, but the Apple spell checker does not understand LaTeX. However, other spelling services can be added to the Apple technology; they then become available in all Cocoa programs. \
+\
+Aspell is "a more intelligent Ispell" for Unix machines written by Kevin Adkinson. His program has been ported to Mac OS X and made into a spelling service by Anton Leuski. The new speller supports LaTeX. To obtain it, go to\
+\
+	http://homepage.mac.com/leuski/cocoaspell/\
+\
+This speller is free and easy to install. To activate it, open the spell panel in TeXShop or any other Cocoa program and select Aspell in the pulldown dictionary panel. \
+\
+In honor of this new spell checker, TeXShop now supports continuous spell checking, which can be toggled on or off with a menu command. A preference item selects the initial position of this toggle.
+\f0\b \
+\
+
+\f2\b0 An alternate LaTeX spell checker named Excalibur is often used on Mac OS 9. This spell checker, written by Rick Zaccone, has been ported to Mac OS X; it can open TeXShop files. To obtain it, go to\
+\
+	http://www.eg.bucknell.edu/~excalibr/excalibur.html
+\f0\b \
+\
+Editing Tricks:\
+\
+
+\f2\b0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs, new lines will start at the same tab position until the behavior is cancelled by backspacing. This tab behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
 \
 Under the Windows menu, there is an item named "Latex Panel..." Choosing this item will open a panel containing a large number of mathematical symbols, Greek letters, international characters, and typesetting environments. Clicking on a symbol will insert the corresponding text into your LaTeX source file. This wonderful panel is the work of Geoffroy Lenglin, who just finished a masters degree in Aeronautics and Astronautics at MIT.  Geoffroy can be reached at geoffroy.lenglin@m4x.org.\
 \
@@ -158,6 +177,8 @@ Some symbols in the panel require the line\
 \
 
 \f2\fs24 at the top of the source file. \
+\
+It is possible to customize the behavior of the panel. The TeXShop distribution folder contains a file named "completion.plist." This file contains all strings inserted into the source code when a Palette item is chosen. If such a string contains #SEL#, then the current selection will replace this expression in the inserted string. If a string contains #INS#, then the cursor will be set to this position when the string is inserted. To customize panel behavior, edit completion.plist. Then find the folder ~/Library/TeXShop/Templates. Add a new folder named ~/Library/TeXShop/LatexPanel and place the edited completion.plist in this folder.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -479,7 +500,11 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, and Martin Kerz, an Italian localization by Giuseppe Carlino, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks! \
+\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, and Martin Kerz, an Italian localization by Giuseppe Carlino, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks!\
+\
+In Japan, modified versions of TeX and LaTeX called ptex and platex are used. These versions require switching the \\ symbol and the yen symbol \'b4, for reasons I do not completely understand. TeXShop can deal with these modifications thanks to detailed suggestions, including actual code, by Makoto Inoue. To activate the modifications, choose the encoding MacJapanese in the Preference Panel. It is also necessary to modify the default Templates and modify the insertions made by the LaTeX Panel. An easy way to do that is to run TeXShop once and then replace the folder ~/Library/TeXShop with the Japanese version now distributed with TeXShop. Notice that TeXShop does not yet have a Japanese localization. \
+\
+Ptex and platex are available at http://www.ascii.co.jp/pb/ptex/. Dvipdfm is available at http://hamilcar.phys.kyushu-u.ac.jp/~hirata/dvipdfm/index.html.ja. A dvi previewer for Japanese is available at http://macptex.appi.keio.ac.jp/~uchiyama/macptex.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -534,11 +559,9 @@ and store "new.sty" inside this misc directory.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mac OS X can also run X-windows applications using free third party software. Fink is a system which can download, compile, and run these applications on Mac OS X, side by side with regular OS X programs. For details, see http://fink.sourceforge.net. In particular, Fink can install ghostview, xdvi, and xemacs.\
+\f2\b0 \cf0 Mac OS X can also run X-windows applications using free third party software. These applications run side by side with regular Mac OS X programs. Fink is a system which can download and compile these applications on Mac OS X. For details, see http://fink.sourceforge.net. In particular, Fink can install ghostview, xdvi, and xemacs.\
 \
-Fink installs software in /sw/bin. One of the packages Fink can install is teTeX. In the past this caused problems because users had duplicate copies of teTeX, configured one of the copies, and then found that the configuration did not affect the other copy. The latest version of Fink gives the option of using Gerben Wierda's teTeX with symbolic links in /sw/bin rather than installing a second copy. Be sure to choose that option.\
-\
-Fink also installs version 7 of Ghostscript rather than the earlier version in Gerben Wierda's distribution. Unfortunately, version 7 creates pdf files which Mac OS X does not render correctly. In the past this caused problems when TeXShop was used in latex + ghostscript mode. The current TeXShop is immune to these problems and will use Wierda's Ghostscript even if the Fink version has been installed.\
+Fink installs software in /sw/bin. One of the packages Fink can install is teTeX. In the past this caused problems because users had duplicate copies of teTeX, configured one of the copies, and then found that the configuration did not affect the other copy. The latest version of Fink gives the option of using Gerben Wierda's teTeX with symbolic links in /sw/bin rather than installing a second copy. We recommend that you choose that option.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -562,6 +585,73 @@ Fink also installs version 7 of Ghostscript rather than the earlier version in G
 \
 MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See http://cm.bell-labs.com/who/hobby/MetaPost.html for more details.  Interesting metapost examples can be found at many web sites; for instance see  http://www.cs.ucc.ie/~dongen/mpost/mpost.html. TeXShop now supports MetaPost.\
 \
+Here is a sample MetaPost file:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\fs20 \cf0 	prologues:=2;\
+	color yellow; yellow = green + red;\
+	def star (expr size, n, pos, color)=\
+		for a=0 step 360/n until 360:\
+			draw (origin -- (size/2,0))\
+			rotatedaround (origin, a)\
+			shifted pos withcolor color;\
+		endfor ;\
+	enddef;\
+\
+	beginfig(-1);\
+	pickup pencircle scaled 2mm; star (2cm,5,origin,red);\
+	endfig;\
+\
+	beginfig(2);\
+	pickup pencircle scaled 2mm; star (2cm,7,origin,yellow);\
+	endfig;\
+\
+	beginfig(3);\
+	pickup pencircle scaled 2mm; star (2cm,11,origin,green);\
+	endfig;\
+\
+	beginfig(4);\
+	pickup pencircle scaled 2mm; star (2cm,13,origin,blue);\
+	endfig;\
+\
+	end\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\fs24 \cf0 Suppose this file is named "metademo.tex." When the file is processed by MetaPost, it will generate four different postscript files, named metademo.ps, metademo.2, metademo.3, metademo.4. These names are determined by the number parameter of "beginfig()." If this number is positive, like beginfig(10), the resulting file will be named metademo.10. If this number is negative, like beginfig(-10), the resulting file will be named metademo.ps, overwriting any earlier metademo.ps file created by the source.\
+\
+TeXShop assumes that one of the beginfig() numbers is negative, and thus that a file named metademo.ps will be generated by MetaPost. TeXShop then calls epstopdf to convert this postscript file to a pdf file, and displays the resulting pdf file. If no beginfig parameter is negative, MetaPost will run to completion without error, but TeXShop will display an error when it tries to convert metademo.ps to a pdf file.\
+\
+When you are editing a MetaPost file, change the number of the figure being edited from positive to negative. TeXShop will then display this figure as it is being debugged. When you are satisfied with this figure, change its number back to positive and change the number of another figure from positive to negative.\
+\
+TeXShop can convert postscript files like metademo.2 to pdf, but first these files must be renamed metademo.2.ps so TeXShop will recognize that they are postscript files. \
+\
+Once MetaPost files have been created, then can be displayed like any other illustration. Pdflatex can be used if the illustrations are converted to pdf form, or TeX and Ghostscript can be used to include the postscript illustrations without conversion. For example, the four illustrations created by the above MetaPost file can be displayed by typesetting the following file with TeX and Ghostscript:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\fs20 \cf0 	\\documentclass[11pt] \{article\}\
+	\\usepackage\{graphicx\}\
+\
+	\\begin\{document\}\
+\
+	Here are some illustrations.\
+	\\vspace\{.2in\}\
+\
+	\\includegraphics[width=1cm]\{metademo.1\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.2\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.3\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.4\}\
+	\\hfill\
+\
+	\\end\{document\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\fs24 \cf0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Sending Bug Reports:\

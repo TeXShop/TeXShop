@@ -1,0 +1,7 @@
+#!/bin/tcsh
+
+set filename = "$argv[1]"
+set outputname = "${filename:r}.pdf"
+
+/usr/local/bin/gs -dCompatibilityLevel=1.2 -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=${outputname}  -c save pop -f "${filename}"
+

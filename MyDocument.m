@@ -71,11 +71,20 @@
 {
     PrintView		*printView;
     NSPrintOperation	*printOperation;
-    NSString		*imagePath;
+    NSString		*imagePath, *projectPath, *nameString;
     NSPDFImageRep	*aRep;
     int			result;
     
-    imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+    
+    
+    projectPath = [[[self fileName] stringByDeletingPathExtension] 	stringByAppendingPathExtension:@"texshop"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
+        nameString = [NSString stringWithContentsOfFile: projectPath];
+        imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+        }
+    else
+        imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
         aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
         printView = [[PrintView alloc] initWithRep: aRep];
@@ -205,6 +214,15 @@
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
             myImageType = isTIFF;
             }
+        else if (([fileExtension isEqualToString: @"dvi"]) || 
+                ([fileExtension isEqualToString: @"ps"]) ||
+                ([fileExtension isEqualToString:@"eps"]))
+            {
+                myImageType = isPDF;
+                [pdfView setImageType: myImageType];
+                [self convertDocument];
+                return;
+            }
                             
         if (imageFound) {
                 [pdfView setImageType: myImageType];
@@ -268,9 +286,10 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
         texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain]; 
         if (texRep) {
-            [pdfWindow setTitle: 
+            /* [pdfWindow setTitle: 
                     [[[[self fileName] lastPathComponent] 
-                    stringByDeletingPathExtension] stringByAppendingString:@".pdf"]];
+                    stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; */
+            [pdfWindow setTitle: [imagePath lastPathComponent]];
             [pdfView setImageRep: texRep]; // this releases old one!
             topLeftRect = [texRep bounds];
             topLeftPoint.x = topLeftRect.origin.x;
@@ -623,6 +642,72 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         [[textView undoManager] removeAllActions];
 }
 
+- (void) convertDocument;
+{
+    NSString		*myFileName;
+    NSMutableArray	*args;
+    NSDictionary	*myAttributes;
+    NSString		*imagePath;
+    NSString		*sourcePath;
+    NSString		*enginePath;
+    NSString		*tetexBinPath;
+    
+    myFileName = [self fileName];
+    if ([myFileName length] > 0) {
+            
+        imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+
+        if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
+            myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+            startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+            }
+        else
+            startDate = nil;
+    
+        args = [NSMutableArray array];
+        sourcePath = myFileName;
+
+        texTask = [[NSTask alloc] init];
+        [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
+        if ([[myFileName pathExtension] isEqualToString:@"dvi"]) {
+            enginePath = [SUD stringForKey:LatexGSCommandKey];
+            if ([SUD boolForKey:SavePSEnabledKey])
+            	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+            }    
+        else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
+            // enginePath = @"/usr/local/bin/ps2pdfwr"; 
+            enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdf1" ofType:nil];
+            [args addObject: [NSString stringWithString:@"-dCompatibilityLevel=1.2"]];
+            }
+        else if  ([[myFileName pathExtension] isEqualToString:@"eps"]) {
+            // enginePath = @"/usr/local/bin/epsit";
+            enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdf1" ofType:nil];
+            }
+
+        [args addObject: [sourcePath lastPathComponent]];
+
+        if (enginePath != nil) {
+            if ([enginePath characterAtIndex:0] != '/') {
+                tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+                enginePath = [tetexBinPath stringByAppendingString:enginePath];
+                }
+            }
+        inputPipe = [[NSPipe pipe] retain];
+        [texTask setStandardInput: inputPipe];
+        if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath]))
+                [texTask setLaunchPath:enginePath];
+        else {
+            [inputPipe release];
+            [texTask release];
+            texTask = nil;
+            }
+        [texTask setArguments:args];
+        [texTask launch];
+        }
+
+}
+
+
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 {
     NSString		*myFileName;
@@ -686,8 +771,10 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         [outputWindow makeFirstResponder: texCommand];
         
         
-        [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
-                stringByAppendingString:@" console"]];
+        /* [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
+                stringByAppendingString:@" console"]]; */
+        [outputWindow setTitle: [[[imagePath lastPathComponent] stringByDeletingPathExtension]
+            stringByAppendingString:@" console"]];
         if ([SUD boolForKey:ConsoleBehaviorKey]) {
             if (![outputWindow isVisible])
                 [outputWindow orderBack: self];
@@ -1500,6 +1587,22 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                         [tags addItemWithTitle:tagString];
                     }
                 }
+                
+                /*
+                else if ((theChar == 0x005c) && (start < length - 10)) {
+                    NSLog(@"hello");
+                    nameRange.location = start + 1;
+                    nameRange.length = 7;
+                    tagString = [text substringWithRange: nameRange];
+                    NSLog(tagString);
+                    if ([tagString isEqualToString:@"section"]) {
+                        nameRange.location = start + 8;
+                        nameRange.length = (end - start - 8);
+                        tagString = [text substringWithRange: nameRange];
+                        [tags addItemWithTitle:tagString];
+                        }
+                    }
+                */
             }
         }
         tagLocation = myRange.location;
@@ -1677,7 +1780,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                     texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain]; 
                     if (texRep) 
                     {
-                        [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]];
+                        /* [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]]; */
+                        [pdfWindow setTitle: [imagePath lastPathComponent]];
                         [pdfView setImageRep: texRep];
                         if (startDate == nil) 
                         {

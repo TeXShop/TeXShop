@@ -100,6 +100,7 @@
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 - (void) updateChangeCount: (NSDocumentChangeType)changeType;
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
+- (void)convertDocument;
 
 //-----------------------------------------------------------------------------
 // Timer methods

@@ -41,14 +41,14 @@
 
 				<li>		c) If one of the first ten lines of the source has the form
 	<p><ul>
-	<li>						%&encoding=UTF-8 Unicode
+	<li>						%!TEX encoding = UTF-8 Unicode
 </ul><p>
 						then that file will be loaded and saved with UTF-8 Unicode encoding,
 						regardless of the default encoding chosen for other documents
 
 		<li>				d) If the first line of the source has the form
 <p><ul>
-<li>							%&program=xetex       or      %&program=xelatex
+<li>							%!TEX TS-program = xetex       or      %!TEX TS-program = xelatex
 </ul><p>
 						then the appropriate program will be used regardless of the
 					typesetting option chosen.
@@ -64,21 +64,38 @@
 <p>					Items in ~/Library/TeXShop/Engines can be chosen as default typesetting method
 					in TeXShop Preferences.
 
-<p>					In previous TeXShop versions, the typesetting program can be set in the first line
-					of the source code by writing %&tex, %&latex, %&pdftex, etc. For compatibility reasons,
-					this still works, but the preferred syntax is now %&program=tex, %&program=latex,
-					%&program=pdftex, etc. This new syntax also works for any new typesetting engine
-					added to ~/Library/TeXShop/Engines. For example, %&program=xelatex chooses
+<p>					The typesetting program can be set in the source code by writing one of the following
+					on any of the first twenty lines of the source:
+<p><dl>
+	<dd>					%!TEX TS-program = tex
+	<dd>					%!TEX TS-program = latex
+	<dd>					%!TEX TS-program = pdftex
+	<dd>					%!TEX TS-program = pdflatex
+	<dd>					%!TEX TS-program = personaltex
+	<dd>					%!TEX TS-program = personallatex
+</dl></p>
+
+<p>					This new syntax also works for any new typesetting engine added to 
+					~/Library/TeXShop/Engines. For example, %!TEX TS-program = xelatex chooses
 					XeLaTeX.
 
-<li>					The encoding used to open or save a file can be set by writing a line of the form
-		<p><ul>			
-		<li>				%&encoding=UTF-8 Unicode
-</ul><p>
-					as one of the first 10 lines of a source document. Any supported encoding is allowed;
+<p>					The encoding used to open or save a file can be set by writing a line of the form
+<dl>					
+<dd>						%!TEX encoding = UTF-8 Unicode
+</dl>
+<p>					as one of the first 20 lines of a source document. Any supported encoding is allowed;
 					TeXShop's Help Files list the string which must appear on the right for each of
 					these encodings. To bypass this behavior, hold down the option key while opening
 					a file.
+
+<p>					The old SourceDoc syntax has been modified to conform with the above changes.
+					For example, to set the root file to ../Main.tex, write
+<dl>
+<dd>						%!TEX root = ../Main.tex
+</dl>
+<p>					(The old syntax is still supported for setting the program, encoding, and SourceDoc,
+					but users are urged to switch to this new syntax.)
+
 
 <li>					TeXShop has a new Find panel by Isao Sonobe. This panel supports regular expressions.
 					Users can switch between the new panel and the original one in Preferences.

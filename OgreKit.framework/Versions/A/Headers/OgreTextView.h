@@ -1,14 +1,20 @@
-//
-//  OgreTextView.h
-//  OgreKit
-//
-//  Created by Isao Sonobe on Sun Jun 13 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/*
+ * Name: OgreTextView.h
+ * Project: OgreKit
+ *
+ * Creation Date: Jun 13 2004
+ * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
+ * License: OgreKit License
+ *
+ * Encoding: UTF8
+ * Tabsize: 4
+ */
 
 #import <AppKit/AppKit.h>
+#import <OgreKit/OgreView.h>
 
-@interface OgreTextView : NSTextView
+@interface OgreTextView : NSTextView <OgreView>
 {
     id          _observableControllerForDataBinding;
     NSString    *_keyPathForDataBinding;

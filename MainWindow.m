@@ -47,6 +47,7 @@
     (([myDocument imageType] == isTeX) || ([myDocument imageType] == isOther))
     )
         [super makeKeyAndOrderFront: sender];
+    [myDocument tryBadEncodingDialog:self];
 }
 
 /*

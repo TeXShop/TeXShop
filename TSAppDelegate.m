@@ -1202,5 +1202,9 @@ necessary */
 // end mitsu 1.29
 #endif
 
+- (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
+{
+    [textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
+}
 
 @end

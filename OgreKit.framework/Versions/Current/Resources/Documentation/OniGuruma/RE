@@ -1,4 +1,4 @@
-Oniguruma Regular Expressions     2004/04/27
+Oniguruma Regular Expressions     2004/08/24
 
 syntax: ONIG_SYNTAX_RUBY (default)
 
@@ -63,8 +63,7 @@ syntax: ONIG_SYNTAX_RUBY (default)
     +?      1 or more times
     {n,m}?  at least n but not more than m times  
     {n,}?   at least n times
-    {,n}?   at least 0 but not more than n times ({0,n}?)
-    {n}?    n times (no meaning, but same as Perl)
+    {,n}?   at least 0 but not more than n times (== {0,n}?)
 
   possessive (greedy and does not backtrack after repeated)
 
@@ -86,7 +85,8 @@ syntax: ONIG_SYNTAX_RUBY (default)
   \A      beginning of string
   \Z      end of string, or before newline at the end
   \z      end of string
-  \G      previous end-of-match position
+  \G      matching start position
+          (Ruby: previous end-of-match position)
 
 
 6. Character class
@@ -296,6 +296,8 @@ A-4. Differences with Japanized GNU regex(version 0.12) of Ruby
      /a{,n}/ == /a{0,n}/
      The simultanious abbreviation of the number of times of the minimum
      and the maximum is not allowed. (/a{,}/)
+   + /a{n}?/ is not a non-greedy operator.
+     /a{n}?/ == /(?:a{n})?/
    + Zero-length match in infinite repeat stops the repeat,
      then changes of the capture group status are checked as stop condition.
      /(?:()|())*\1\2/ =~ ""
@@ -315,13 +317,13 @@ A-5. Disabled functions by default syntax
 
 A-6. Problems
 
-   + Invalid first byte as a character in UTF-8 is allowed.
-     (which is the same as GNU regex of Ruby)
+   + Invalid encoding byte sequence is not checked in UTF-8.
 
+     * Invalid first byte is treated as a character.
        /./u =~ "\xa3"
 
-     Although it is possible to validate,
-     it will become slower than now.
+     * Incomplete byte sequence is not checked.
+       /\w+/ =~ "a\xf3\x8ec"
 
 
    + Character types of multibyte encoded characters are not correct.

@@ -3,25 +3,349 @@
 <HEAD>
 		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
 		<TITLE>What's new?</TITLE>
-		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
 		<META NAME="description" CONTENT="new features; bug fixes">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
 
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>What's new?</B></FONT></TD>
-</TR>
-</TABLE>
+<BODY>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.34 adds extra features to TeXShop and fixes some bugs.
-</font>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
-</font>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">
+
+<div id="content_normal">
+<P><h5>Version 1.35 adds extra features to TeXShop and fixes some bugs.</h5></p>
+<p><h6> New features:</h6></p>
+
+<ul>
+<li> An important recent development is the release of XeTeX and XeLaTeX by
+					Jonathan Kew. See 
+<p><ul>
+<li>						http://scripts.sil.org/xetex
+</ul><p>
+					XeTeX is not part of Gerben Wierda's standard installation, but it is available
+					with Wierda's i-Installer as an optional install directly from Jonathan Kew.
+					XeTeX can access Macintosh fonts directly, so TeX documents can be written
+					with Lucida Grande, Zapfino, and any other Mac font. Moreover, XeTeX
+					understands Unicode, so for example users can type Arabic into the
+					source window from right to left, typeset with TeX, and obtain Arabic
+					in the output window. In particular, XeTeX source documents have
+					UTF-8 Unicode encoding.
+
+<p>					TeXShop 1.35 supports XeTeX directly as follows:
+<p><ul>
+				<li>		a) XeTeX and XeLaTeX are now available in the pull-down typesetting menu
+						on the source window
+
+				<li>		b) Using preferences, a user can make XeTeX or XeLaTeX the default
+						typesetting option
+
+				<li>		c) If one of the first ten lines of the source has the form
+	<p><ul>
+	<li>						%&encoding=UTF-8 Unicode
+</ul><p>
+						then that file will be loaded and saved with UTF-8 Unicode encoding,
+						regardless of the default encoding chosen for other documents
+
+		<li>				d) If the first line of the source has the form
+<p><ul>
+<li>							%&program=xetex       or      %&program=xelatex
+</ul><p>
+						then the appropriate program will be used regardless of the
+					typesetting option chosen.
+</ul>
+<li>					These XeTeX features form a special case of a new general method for adding
+					typesetting engines to TeXShop. There is a now a folder in ~/Library/TeXShop named
+					Engines; the files in this folder are shell scripts which call typesetting programs.
+					When TeXShop first starts, it examines this folder and adds the script names of
+					files it contains to the pull-down typesetting menu. Choosing one of these items and 
+					pushing the Typeset button calls the script. Users can write their own scripts and add
+					them to the Engines folder.
+
+<p>					Items in ~/Library/TeXShop/Engines can be chosen as default typesetting method
+					in TeXShop Preferences.
+
+<p>					In previous TeXShop versions, the typesetting program can be set in the first line
+					of the source code by writing %&tex, %&latex, %&pdftex, etc. For compatibility reasons,
+					this still works, but the preferred syntax is now %&program=tex, %&program=latex,
+					%&program=pdftex, etc. This new syntax also works for any new typesetting engine
+					added to ~/Library/TeXShop/Engines. For example, %&program=xelatex chooses
+					XeLaTeX.
+
+<li>					The encoding used to open or save a file can be set by writing a line of the form
+		<p><ul>			
+		<li>				%&encoding=UTF-8 Unicode
+</ul><p>
+					as one of the first 10 lines of a source document. Any supported encoding is allowed;
+					TeXShop's Help Files list the string which must appear on the right for each of
+					these encodings. To bypass this behavior, hold down the option key while opening
+					a file.
+
+<li>					TeXShop has a new Find panel by Isao Sonobe. This panel supports regular expressions.
+					Users can switch between the new panel and the original one in Preferences.
+					The Find panel depends on OgreKit, a Cocoa framework for handling regular
+					expressions by Sonobe. See
+<p><ul>
+<li>						http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit/
+</ul><p>
+<p>					OgreKit is distributed using a slightly modified version of the BSD license. This
+					license can be found in the Documentation included directly in the OgreKit Framework
+					folder in the TeXShop source distribution. OgreKit requires Panther, so the new panel
+					will only appear on machines running Panther.
+
+<p>					There are many nice features in this new Find panel, which users can discover for
+					themselves. OgreKit modifies the "Find" menu submenu of the TeXShop Edit menu,
+					replacing it with a more extensive menu. This might be confusing to Localizers,
+					because the menu in the TeXShop nib file is not the menu they will see when TeXShop
+					is running. The Find menu in the nib file should not be modified because it will
+					be active in system 10.2. Instead the corresponding menu in OgreKit needs to be
+					localized in the TeXShop source. The Find panel presents buttons controlling how
+					it will find words; the settings of the buttons will be remembered from session to
+					session. Adjust them until Find works as expected and then relax.
+
+<li>					TeXShop 1.35 is distributed with the latest pdfsync.sty by Piero d'Ancona and J. Laurens.
+					This fixes typesetting problems caused by the version distributed with TeXShop 1.34.
+					 TeXShop did not keep up with the changes by d'Ancona and Laurens for several months; sorry!
+
+<p>					In the new version, \include and \input are supported; to use the second, the syntax
+					\input{thisfile} must be used rather than the syntax \input thisfile. The new version
+					supports \pdfsync, \pdfsyncstart, and \pdfsyncstop. Use the first of these commands
+					at any spot where you want to reference a point. If pdfsync breaks your code, enclose
+					the offending section in a \pdfsyncstop, \pdfsyncstart pair.
+
+<li>					Suppose you are typesetting myfile.tex. Pdfsync creates a file named myfile.pdfsync
+					containing synchronization data. Roughly speaking, each data entry describes
+					a synchronization point as follows:
+<p><ul>
+<li>						the page number of the output where the point occurs
+<li>						the location on this page
+<li>						the name of the source file producing this particular output
+<li>						the line number in this source file for this particular output
+</ul><p>
+<p>					There is a way to get TeXShop to display these synchronization points. The preview
+					window toolbar has a new checkbox item called SyncMarks. By default, this item is not
+					shown; use Customize Toolbar in the Window menu to select it. When the checkbox is
+					checked, synchornization points are shown. 
+
+<p>					By default, this item will not be checked when the Preview window first appears. A hidden
+					preference item can change this:
+<p><ul>
+<li>						defaults write TeXShop ShowSyncMarks YES
+</ul><p>
+<li>					TeXShop 1.35 has new matrix code by Jonas Zimmermann. The Matrix Panel now 
+					makes tables. Examine the panel to find all of the new features. There is a hidden preference 
+					to set the default size of the matrix:
+<p><ul>
+<li>						defaults write TeXShop matrixsize 12
+</ul><p>
+<p>					A very small number of users may have modified "matrixpanel.plist" in
+					~/Library/TeXShop/MatrixPanel. This plist has been extended; the new list is
+					called "matrixpanel_1.plist". Please edit this file to add your changes.
+
+<li>					In previous versions of TeXShop, if you clicked elsewhere and then clicked on the
+					edit window to edit, you would need to click twice to correctly position the cursor.
+					This is now changed; the first click in the edit text is recognized and positions the
+					cursor.
+
+<p>					When applescript runs under the Macro menu, it starts a small second application
+					embedded in the TeXShop folder to actually run the script. That is because when a
+					command like "latex" runs, and there is an error on the source, the console appears
+					to accept user input, but the TeXShop event loop is not running during the
+					applescript action, so no user input can occur.
+
+<p>					Many applescripts do not have this problem. TeXShop now allows users to begin
+					applescript macros with the command
+<p><ul>
+<li>						-- applescript direct
+</ul><p>
+					When written this way, the script will be run directly by TeXShop rather than by
+					the second small application.
+
+<li>					Added a menu command "Trash AUX Files" and a button on the console "Trash
+					AUX Files." When involked, these commands move to the trash all files in the
+					current source directory with the same name as the source file and extensions
+					aux, bbl, blg, brf, glo, idx, ilg, ind, ioa, lof, log, lot, mtc, mlf, out, pdfsync, and toc.
+					Thanks to Will Robertson for suggesting this command and producing this list of
+					extensions. 
+
+<p>					Additional extensions can be added to this list with a hidden preference. To add
+					"dvi" to the list
+<p><ul>
+<li>						defaults write TeXShop OtherTrashExtensions -array-add "dvi"
+</ul><p>
+					Several such extensions can be added in this way, one by one. To remove all
+					additions
+<p><ul>
+<li>						defaults write TeXShop OtherTrashExtensions -array
+</ul><p>
+					The original list of extensions above will always remain active. 
+
+
+
+<p>					Suppose a book project has a main.tex file in a folder, and then chapters in subfolders
+					which are accessed using commands like \include{chapter1/chapter1.tex}. When this
+					book is typeset, main.aux and other files will appear in the primary folder, and
+					chapter1.aux will appear in a subfolder. So the "Trash AUX Files" command does
+					not do a complete cleanup. But if the option key is pressed when the menu item
+					is chosen or the button on the console window is pressed, then
+<p><ul>
+<li>						a) SourceDoc and Root File information will be used to find the
+						root document
+
+<li>						b) All files with appropriate extensions listed above will be moved to the
+						trash from this folder and all subfolders, even if the name does not
+						agree with the name of the root file.
+</ul><p>
+<p>					Some users may want to throw caution to the winds and arrange that "Trash AUX Files"
+					always performs this more extensive cleanup. A hidden preference allows this:
+<p><ul>					
+<li>						defaults write TeXShop AggressiveTrashAUX YES
+</ul><p>
+<li>					Added new templates by Will Robertson. These are heavily commented. It is
+					intended that users will edit them to fit their own requirements. The templates are
+					only installed if TeXShop is running for the first time, or if the Templates folder is
+					completely removed from ~/Library/TeXShop. But Will's templates are in a folder named
+					"More" in the TeXShop distribution; old users can obtain them by moving
+					"More" to ~/Library/TeXShop/Templates.
+
+<li>					Added new macros by Will Robertson to create tables and arrays, to insert a reference,
+					and to open other project files quickly. These macros have been praised on
+					the TeX-On-MacOSX mailing list. The macros are available for new users;
+					older users can obtain them by following simple instructions which come with
+					TeXShop 1.35.
+
+<li>					Added a macro to examine files in the teTeX tree. For example, if "article.sty" is
+					typed in the dialog produced by the Macro, kpsewhich is used to find this
+					file in the tree and open it in TeXShop.
+
+<li>					There are hidden preferences to set the color of the text in the source window
+<p><ul>
+<li>						defaults write TeXShop foreground_R  0.3
+<li>						defaults write TeXShop foreground_G  0.3
+<li>						defaults write TeXShop foreground_B  0.3
+</ul><p>					
+					This color will show if syntax coloring is on; otherwise it will be black and then
+					color can be selected in the Font menu.
+
+<p>					When used with existing hidden preferences to set the source window background
+					color, these commands can be used to write source as white on black, or with
+					other color schemes. TeXShop has new macros to set the source window colors,
+					and to reset to default colors.
+
+<li>					There are hidden preferences to make the source, preview, and console windows
+					partly transparent.
+<p><ul>
+<li>						defaults write TeXShop ConsoleWindowAlpha 0.75
+<li>						defaults write TeXShop SourceWindowAlpha 0.75
+<li>						defaults write TeXShop PreviewWindowAlpha 0.75
+</ul><p>
+					Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is
+					completely opaque. Use these commands cautiously!
+
+<li>					TeXShop now has a Statistics panel, which lists the number of words, lines, and
+					characters in a document. This is obtained by calling
+<p><ul>
+<li>						detex  myfile  |  wc
+</ul><p>
+				When first called, the document on disk is tested. After changes are made to the
+					document, the "update" button saves the document and calls detex again. The
+					detex command removes tex commands, but the word count is still only approximate.
+					Input and include files are counted by this command.
+
+<li>					New German Help by Martin Kerz. Kerz also redesigned the TeXShop Help
+					Window to follow Apple's current guidelines. These changes appear in
+					English and German, but may not appear in other localizations.
+
+<li>					When a file is drag-and-dropped, any alias is now resolved. Thus alias graphic
+					files (and other files) can be used provided they are dragged and dropped to the
+					source. Alias files will not work if their names are typed directly because the tex
+					engine does not understand aliases (it does understand symbolic links).
+
+<li>					Several changes were made in the Japanese portions of the code by
+					Seiji Zenitani, with help from Yu Itoh and Koichi Inoue. There is a new Japanese
+					encoding, Shift JIS X0213, which will become a new standard in Japan. There is
+					now utf.sty support for pTeX. Before this change, Japanese pTeX supported only
+					6000 Kanji characters, but utf.sty supports more than 20,300 characters.
+					This support is turned on by a preference item in Misc. When on, TeXShop exports
+					non-ptex chracters as utf.sty codes. For example, unicode characters become
+					\UTF(Hex code) and non-unicode characters become \CID(glyph ID).
+
+	<li>				Zenitani also added new Japanese default settings. Previously, Japanese ptex
+					distributors provided their own "altpdflatex" scripts, which was confusing for
+					beginning users. This new version of TeXShop bundles "altpdflatex-for-ptex"
+					scripts and installs them in ~/Library/TeXShop/bin. The new Japanese default
+					settings in Preferences automatically set up TeXShop to use these new scripts. 
+
+	<li>				Added the following Chinese encodings at the request of Adam Si:
+					Mac Chinese Traditional, Mac Chinese Simplified, DOS Chinese Traditional,
+					DOS Chinese Simplified, GBK, GB 2312, and GB 18030.
+
+<li>				Added a new Japanese help system by Yoshihisa Okazaki.
+
+	<li>				Added new Spanish localization and help.  
+
+	<li>				TeXShop can now open and write files with extension .dn and .engine.
+
+	<li>				There is a hidden preference
+<p><ul>
+<li>						defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
+</ul><p>
+					which causes the pdf window to remain where it is when it automatically updates
+					and is used with an external editor. This preference was requested by a user 
+					with an X11 editor and only seems necessary in this case.
+	<li>				Users sometimes upgrade Mac OS X via "archive and install". After the installation, TeXShop
+					remains but teTeX is blown away. The first time such users typeset a file, they
+					see an error dialog reporting that "pdflatex cannot be found." This error dialog has
+					been revised to explain more clearly the likely cause, and resolution, of the
+					problem.
+
+	<li>				The TeXShop web page now contains a "LaTeX Documentation" section listing
+					recommended books and links to free LaTeX guides on the internet. The web page
+					also makes available a number of short LaTeX example files by Will Robertson.
+</ul>
+
+<p><h6> Bugs fixed:</h6></p>
+		<ul>				
+
+
+<li>	When a large number of windows were open, switching from one window to
+		another took a long time and yielded a spinning disk; TeXShop was completely
+		unresponsive during this time. This slowdown was caused by a bug in the Macro 
+		code. The problem is now fixed.
+
+	<li>		If a dvi file was opened in a directory without write permission, TeXShop could
+		not create and display a corresponding pdf file. Now it will create the pdf file
+		in a temporary directory and display it.
+
+	<li>		If the abort button was pushed in the console and the user later typed and
+		pushed RETURN, the program crashed. Fixed.
+
+<li>				Two minor error dialogs, which should have appeared in a window, instead
+					appeared on the desktop with an inoperable "OK" button. This is fixed.
+
+<li>				In localizations other than English, attempts to get the applescript dictionary
+					crashed TeXShop. Fixed.
+
+<li>				The Bibtex, etc., tools in the source window did not work if a file had a root
+					file. Fixed.
+
+
+
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+<P><h5>Version 1.34 adds extra features to TeXShop and fixes some bugs.</h5></p>
+<p><h6> New features:</h6></p>
+
 <ul>
 
 <li> Added a Matrix Panel by Jonas Zimmermann, zimmerleut@gmx.de. Many
@@ -34,17 +358,22 @@
 <dd>						goto line 15
 <dd>						end tell
 </dl>
-<li>					Added a first cut at pdfsync. Clicking on a spot in the pdf file takes the
-					user to the corresponding point in the source file. Read the appropriate help
-					file for important details. This change depends on pdfsync.sty, a file created
-					by Piero D'Ancona with improvements by Jérôme Laurens.
+<li>					Added a first cut at pdfsync. Clicking on a spot in the pdf file while holding down
+					the command key takes the user to the corresponding point in the source file.
+					If the source file has include files,  this operation will open
+					the appropriate include file and take the user to a point in that file. Read the
+					help file "General Help: Pdfsync" for important details. This change depends
+					on pdfsync.sty, a file create by Piero D'Ancona with improvements by Jérôme 
+					Laurens.
+
+<li> 					Also added pdfsync the other way. Clicking on a spot in the source file (including
+					source files with root files) while holding down the command key will select
+					the corresponding page in the pdf file.
 
 </ul>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
-</font>
+<p><h6> Bugs fixed:</h6></p>
 		<ul>
-<font size="2" face="Lucida Grande,Geneva,Arial">
 
 				<li>	The TeX, Latex, Bibtex, Makeindex, Metapost, Context, and Metafont buttons
 					on the toolbar reset the default typesetting engine. This no longer happens.
@@ -65,17 +394,21 @@
 
 <li>					New Spanish help files by Juan Luis Varona Malumbres. Thanks.
 
-</font>
+<li>			Printing now respects the "scale" setting in Page Setup. It does not respect the
+					"paper size" setting since paper size is set in teTeX. Printing works like this:
+					the dimensions of the printed document are set by tex and encoded in the
+					pdf file; this pdf is resized by the scale factor if this factor is not 100%, but otherwise
+					is placed full size and centered on the printed page; usually the document size
+					and printed page size are the same, but in rare cases when they are not,
+					the edges of the document might be cut off.
+
 </ul>
 
 
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.33 adds extra features to TeXShop and fixes some bugs.
-</font>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
-</font>
+<P><h5> Version 1.33 adds extra features to TeXShop and fixes some bugs.</h5></p>
+<p><h6> New features:</h6></p>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">
 <ul>
 <li> The changes in version 1.33 support improved apple scripting,
 		better macro support, and improved interaction with external editors.
@@ -218,7 +551,7 @@
 					then drag and drop behaves as Zenitani proscribed, so most users won't need to
 					customize the code.
 
-li>		German help has been updated by Martin Kerz, the Italian localization has been
+<li>		German help has been updated by Martin Kerz, the Italian localization has been
 					updated by Nicola Vitacolonna, the Spanish help was updated by Juan Luis Varona
 					Malumbres, the French localization was updated by Hendrik Chaltin, and a
 					Romanian localization was added by Andrei Teleman. Thanks!
@@ -246,10 +579,8 @@ li>		German help has been updated by Martin Kerz, the Italian localization has b
 </ul>
 
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
-</font>
+<p><h6> Bugs fixed:</h6></p>
 		<ul>
-<font size="2" face="Lucida Grande,Geneva,Arial">
 
 				<li>		A few users reported that their printers added a slight yellow background to the page. Only a few printers had that problem. Frank Stengel discovered that it was caused
 					by a NSEraseRect call in the print drawing routine. This call has been removed;
@@ -262,7 +593,7 @@ li>		German help has been updated by Martin Kerz, the Italian localization has b
 					Command completion was broken in Panther, and made it impossible to use
 					this new feature. This is fixed.
 
-			<li>		TextShop has an applescript command to add text, but this command did not
+			<li>		TeXShop has an applescript command to add text, but this command did not
 					update the undo stack.
 					This was fixed by Stefan Walsen; his patch is in version 1.33.
 			
@@ -273,49 +604,44 @@ li>		German help has been updated by Martin Kerz, the Italian localization has b
 					pdf window active, and then reached over and closed the source window, the next menu use would
 					crash the program. This bug did not occur in Panther. It is fixed.
 
-
-</font>
 </ul>
 
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.32 adds two extra features to TeXShop and fixes some bugs.
-</font>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
-</font>
+<P><h5> Version 1.32 adds two extra features to TeXShop and fixes some bugs.</h5></p>
+<p><h6> New features:</h6></p>
 <ul>
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+<li>
 There is a new menu item, "New Tag", which inserts an empty tag in the
 					source text and positions the cursor so the user can add the name of the tag.
 					As a corollary, there is now a keystroke to add a new tag; the keystroke
 					is command-2.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li> 
 In Applescript macros, the terms #LOGPATH#, #AUXPATH#, #INDPATH#,
 					#BBLPATH#, and #HTMLPATH# will now be recognized; this has been added
 					at the request of Claus Gerhardt.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li> 
 There is a new option to set the program called by MetaPost. See the
 					TeXShop help file for an explanation.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li> 
 The drag and drop code has been improved by Seiji Zenitani. Dropping
 					files of types pdf, jpg, jpeg, tif, tiff, eps, or ps on the source document will
 					produce \includegraphics and a reference to the file. Dropping a file of type
 					cls, sty, or bib will \documentclass, \usepackage, or \bibliographystyle and
 					a file reference. Dropping any other text file will produce \input and a file
 					reference.
-</font>
+
 
 </ul>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
-</font>
+<p><h6> Bugs fixed:</h6></p>
 		<ul>
-<font size="2" face="Lucida Grande,Geneva,Arial">
+
 <li> Although the magnification level can increase to 1000 in version 1.31, 
 					the arrow keys next to the magnification control only allowed values up to
 					400. This is fixed.
@@ -338,12 +664,11 @@ The drag and drop code has been improved by Seiji Zenitani. Dropping
 </ul>
 
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.31 adds some extra features to TeXShop and fixes several bugs.
-</font>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> New features:
-</font>
+<P><h5> Version 1.31 adds some extra features to TeXShop and fixes several bugs.</h5></p>
+<p><h6> New features:
+</h6></p>
 <ul>
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+<li> 
 Macros items are now specific to the typesetting engine set in the current
 window. Two default sets are created when TeXShop first starts, one for
 Latex and one for Context. (The Context set was created by Hans Hagen;
@@ -352,36 +677,36 @@ starts, it will have the default Latex macros. But if this set of Macros
 is edited with the Macro editor, the new set will always be associated
 with TeX, while the old Latex macros will continue to be associated
 with Latex. Of course the Latex macros can also be changed.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li> 
 A new preference item allows the first page in the two double page modes
 to be either on the left or on the right. Books usually put this page on
 the right, so that is the default preference.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li> 
 The preference dialog has a new pulldown menu to reset preferences to
 default values. This addition was requested by Seiji Zenitani for users in
 Japan who must cope with three different versions of pTeX. These users can
 now rapidly set preferences without consulting documentation on web sites.
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li>
 The largest possible magnification in the preview window is
 now 1000 (previously it was 400).
-</font>
 
-<li> <font size="2" face="Lucida Grande,Geneva,Arial">
+
+<li>
 Additional French menu translations by Hendrik Chaltin; thanks!
-</font>
+
 
 
 </ul>
-<p><font size="2" face="Lucida Grande,Geneva,Arial"> Bugs fixed:
-</font>
+<p><h6> Bugs fixed:</h6></p>
+
 		<ul>
-<font size="2" face="Lucida Grande,Geneva,Arial">
+
 <li> Three Panther problems are fixed. A few interface changes
 were made to improve appearance in Panther. This
 release is essential for Panther. 
@@ -441,13 +766,16 @@ Thanks to Martin Kerz for the suggestions.
 <li> There is a hidden preference item to turn off tag computation:
 "defaults write TeXShop TagSections NO" but this preference was disabled
 somewhere along the line and certainly in 1.30. It is enabled again.
-<font size="2" face="Lucida Grande,Geneva,Arial">
+
 
 <li> The Preference window is no longer hidden when the program is
 deactivated.
 
 </ul>
-
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_title">What's new?</div>
 
 
 	</BODY>

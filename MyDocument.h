@@ -122,6 +122,8 @@
     BOOL                useTempEngine;
     BOOL                realEngine;
     NSWindow            *callingWindow;
+    int                 badEncoding;
+    BOOL                showBadEncodingDialog;
     
 // end addition
 
@@ -199,6 +201,7 @@
 - (id) pdfWindow;
 - (id) textWindow;
 - (id) textView;
+- (id) rootDocument;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
 - (void) refreshPDFAndBringFront: (BOOL)front;
@@ -222,6 +225,7 @@
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
 - (void)trashAUXFiles: sender;
 - (void)trashAUX;
+- (void)tryBadEncodingDialog: (NSWindow *)theWindow;
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------
@@ -261,11 +265,12 @@
 - (BOOL)checkMasterFile:(NSString *)theSource forTask:(int)task;
 - (BOOL) checkRootFile_forTask:(int)task;
 - (void) checkFileLinks:(NSString *)theSource;
+- (void) checkFileLinksA;
 - (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
         homePath:(NSString *)home job:(NSString *)jobname;
 - (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;
 - (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(unsigned)level; // added by S. Zenitani
-
+- (void)resetMacroButton:(NSNotification *)notification;
 
 @end
 

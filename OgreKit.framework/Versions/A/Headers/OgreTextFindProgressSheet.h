@@ -14,13 +14,16 @@
 #import <Cocoa/Cocoa.h>
 #import <OgreKit/OgreTextFinder.h>
 
-@interface OgreTextFindProgressSheet : NSObject
+@protocol OgreTextFindProgressDelegate;
+
+@interface OgreTextFindProgressSheet : NSObject <OgreTextFindProgressDelegate>
 {
-    IBOutlet NSWindow				*progressWindow;	// 経過表示用シート
-    IBOutlet NSTextField			*titleTextField;	// タイトル
-    IBOutlet NSProgressIndicator	*progressBar;		// バー
-	IBOutlet NSTextField			*progressTextField; // 経過を表す文字列
-	IBOutlet NSButton				*button;			// Cancel/OKボタン
+    IBOutlet NSWindow				*progressWindow;        // 経過表示用シート
+    IBOutlet NSTextField			*titleTextField;        // タイトル
+    IBOutlet NSProgressIndicator	*progressBar;           // バー
+	IBOutlet NSTextField			*progressTextField;     // 経過を表す文字列
+    IBOutlet NSTextField			*donePerTotalTextField; // 処理項目率
+	IBOutlet NSButton				*button;                // Cancel/OKボタン
 	
 	BOOL	_shouldRelease;			// OKボタンが押されたらこのオブジェクトをreleaseするかどうか
 	
@@ -40,21 +43,25 @@
 /* 初期化 */
 - (id)initWithWindow:(NSWindow*)parentWindow title:(NSString*)aTitle didEndSelector:(SEL)aSelector toTarget:(id)aTarget withObject:(id)anObject;
 
-/* 経過表示 */
+- (IBAction)cancel:(id)sender;
+
+/* OgreTextFindProgressObserver protocol */
+/*
+// show progress
 - (void)setProgress:(double)progression message:(NSString*)message;
-// 完了
+- (void)setDonePerTotalMessage:(NSString*)message;
+// finish
 - (void)done:(double)progression message:(NSString*)message;
 
-// 閉じる
+// close sheet
 - (void)close:(id)sender;
-// OKボタンが押されたらこのオブジェクトをreleaseするかどうか。
 - (void)setReleaseWhenOKButtonClicked:(BOOL)shouldRelease;
 
-/* cancel */
-- (IBAction)cancel:(id)sender;
+// cancel
 - (void)setCancelSelector:(SEL)aSelector toTarget:(id)aTarget withObject:(id)anObject;
 
-/* show error alert */
+// show error alert
 - (void)showErrorAlert:(NSString*)title message:(NSString*)errorMessage;
+*/
 
 @end

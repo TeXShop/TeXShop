@@ -1,10 +1,10 @@
-README  2004/05/14
+README  2004/09/17
 
-Oniguruma  ----   (C) K.Kosako <kosako@sofnec.co.jp>
+Oniguruma  ----   (C) K.Kosako <kosako AT sofnec DOT co DOT jp>
 
+http://www.geocities.jp/kosako1/oniguruma/
 http://www.ruby-lang.org/cgi-bin/cvsweb.cgi/oniguruma/
 http://www.freebsd.org/cgi/cvsweb.cgi/ports/devel/oniguruma/
-http://www.geocities.jp/kosako1/oniguruma/
 
 Oniguruma is a regular expressions library.
 The characteristics of this library is that different character encoding
@@ -12,7 +12,7 @@ for every regular expression object can be specified.
 
 Supported character encodings:
 
-  ASCII, UTF-8, UTF-16 BE, UTF-16 LE,
+  ASCII, UTF-8, UTF-16BE, UTF-16LE, UTF-32BE, UTF-32LE,
   EUC-JP, EUC-TW, EUC-KR, EUC-CN,
   Shift_JIS, Big5, KOI8-R, KOI8 (*),
   ISO-8859-1, ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5,
@@ -20,7 +20,7 @@ Supported character encodings:
   ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16
 
 * KOI8 is not included in library archive by default setup.
-  (need to edit Makefile if you want it.)
+  (need to edit Makefile if you want to use it.)
 ------------------------------------------------------------
 
 Install
@@ -90,9 +90,11 @@ Source Files
   regenc.c           character encodings framework.
   regerror.c         error message function
   regex.c            source files wrapper for Ruby
+  regext.c           extended API functions. (deluxe version API)
   regexec.c          search and match functions
   regparse.c         parsing functions.
   regsyntax.c        pattern syntax functions and built-in syntax definitions.
+  regtrav.c          capture history tree data traverse functions.
   regversion.c       version info function.
 
   oniggnu.h          GNU regex API header file. (public)
@@ -100,7 +102,7 @@ Source Files
 
   onigposix.h        POSIX API header file. (public)
   regposerr.c        POSIX error message function.
-  regposix.c         POSIX functions.
+  regposix.c         POSIX API functions.
 
   enc/mktable.c      character type table generator.
   enc/ascii.c        ASCII encoding.
@@ -127,8 +129,12 @@ Source Files
   enc/iso8859_15.c   ISO-8859-15 encoding. (Latin-9 or West European with Euro)
   enc/iso8859_16.c   ISO-8859-16 encoding.
                      (Latin-10 or South-Eastern European with Euro)
-  enc/utf8.c         UTF-8  encoding.
-  enc/utf16.c        UTF-16 BE/LE encoding.
+  enc/utf8.c         UTF-8    encoding.
+  enc/utf16_be.c     UTF-16BE encoding.
+  enc/utf16_le.c     UTF-16LE encoding.
+  enc/utf32_be.c     UTF-32BE encoding.
+  enc/utf32_le.c     UTF-32LE encoding.
+  enc/unicode.c      Unicode information data.
 
 
 
@@ -141,15 +147,12 @@ API differences with Japanized GNU regex(version 0.12) of Ruby 1.8/1.6
 
 ToDo
 
-  ? return capture tree data by capture history.
-  ? support ctype for all code point range.
-  ? add README.ja.
-  ? transmission stopper. (return ONIG_STOP from match_at())
+  ? add ONIG_SYNTAX_ASIS.
+  ? support character type for all code point range.
+  ? \h hexadecimal digit char type ([0-9a-fA-F]).
   ? implement syntax behavior ONIG_SYN_CONTEXT_INDEP_ANCHORS.
   ? better acess to hash table (st.c).
     non null-terminated key version st_lookup().
-  ? grep-like tool 'onigrep'.
- ?? /a{n}?/ should be interpreted as /(?:a{n})?/.
- ?? \h hexadecimal digit char type ([0-9a-fA-F]).
+ ?? transmission stopper. (return ONIG_STOP from match_at())
 
 and I'm thankful to Akinori MUSHA.

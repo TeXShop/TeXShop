@@ -1,0 +1,36 @@
+<HTML><HEAD>			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">			<TITLE>Pdfsync</TITLE>			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">			<META NAME="description" CONTENT="ソースとプレビューを相互に照応">			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<body>	
+
+<div id="content_border"><p>シンクロナイゼーションは Textures の重要な機能です── Textures は Classic Mac 用の商用 TeX ソフトで Blue Sky TeX Systems 社の製品です。この機能があれば、執筆者はプレビューウィンドウをクリックすることで、ソースウィンドウ内の該当部分にすぐに移動できます。 Mac OS X 用ネイティブ・バージョンの Textures が約束されてはいますが、今はまだリリースされていません。 Textures におけるシンクロナイゼーションの実装は、ソースコード内の対応する箇所を正確に突き止めるその能力によって広く賞賛されています。</p><p>この実装より後、多くの TeX システムでもほぼ同じような機能が提供されていますが、これは TeX が dvi ファイルに補足情報を書き込むようにする追加のスタイルファイルを使っています。 2003年に Piero D'Ancona とJ&#x00E9;r&#x00F4;me Laurens  が pdflatex 用に適切なスタイルファイルを作成しました。このパッケージ── pdfsync.sty は、 pdf 出力ファイルとソース入力ファイルとを相互に関連づけるのに必要なデータとともにタイプセットを行なう一方で、追加のファイルを pdftex に生成させます。 D'Ancona と Laurens  の作ったものは pdftex 内部のコマンドに依存していますが、そのコマンドは、正確なタイプセットを行なうためのｘ座標とｙ座標を出力しています。</p><p>TeXShop 1.35 では pdfsync.sty の最新バージョンを利用しています。この最新のファイルを確実にインストールするには「TeXShop の設定はどうすればよいのか？：<a href="configure_correctinstall.htm">きちんとインストールしましたか？</a>」をお読みください。 pdfsync の機能は、 pdflatex においてのみ利用可能です ； 「TeX＋Ghostscript」によるタイプセットでは動作しません。</p><p>LaTeX で pdfsync を使うには、次の１行を TeX ソースコードのプリアンブル── \begin{document} 行よりも前の部分──に付け加えます：
+</p>
+<tt>	<dl>		<dd>\usepackage{pdfsync}	</dl></tt>
+<p>このパッケージは「TeX＋Ghostscript」でタイプセットした場合は無視されますが、 pdflatex でタイプセットを行なうと、.pdfsync という拡張子を持つ追加ファイルを生成します。たとえば、ソースファイルの名前が main.tex だとすると、追加ファイルの名前は main.pdfsync となります。この追加されたファイルには、 pdf における位置とソースファイルにおける位置とを関連づけるのに必要な情報が書き込まれています。 pdfsync を用いたにしても、ほとんどのファイルではエラーなしでタイプセットされるはずですが、ごく少数のケースでは、このパッケージが余計なエラーをもたらすかもしれません。そうした危なげなコードはペアしたコマンド── \pdfsyncstop と \pdfsyncstart との間に挟み込んでおけます。さらに精度を高めるために、コマンド \pdfsync を使って特別にシンクロ・スポットを増やすこともできます。</p><p>いったん pdfsync を使ってファイルをタイプセットしたら、コマンドキーを押したまま pdf プレビューウィンドー内の一点をクリックしてください。ソースウィンドウが前面に来て、該当するソースを含む行が選択されていることでしょう──必要であればウィンドウはこの行までスクロールします。もしプレビューウィンドウ内の位置が、章ごとに分けて組み込んだファイル内のソースと対応するのであれば、そのファイルが開かれて前面に現われ、ソース内の適切な場所までスクロールします。</p><p>このプロセスは逆方向でも同じようにうまくゆきます。コマンドキーを押したままソースファイル内の１行をクリックしてください。該当するページが選択された状態で、プレビューウィンドウが前面に出てきます。これについては、ソースファイルに %SourceDoc 行があるか、ルートファイルが設定されているかすれば、ルートのプレビューウィンドウで該当するページが選択されてうまくゆきます。警告：もしルート文書が \include を使って他のソースファイルを追加してはいるものの、ソースファイルのほうからルート文書に対して %SourceDoc で（もしくはルートファイル設定で）相互参照的にリンクされていない場合には、コマンド＋クリックをすることで、プレビューウィンドウからソースへは移動しますが、ソース行からプレビューへは戻れません。各ファイルの最初に %SourceDoc コメントを書き加えてやることで、これは容易に是正できます。</p><p>この最初の実装では、選択された行はおおよそ合っているでしょう──実際のソースコードより数行ほど高かったり低かったりするかもしれませんが。時とともに TeXShop のシンクロナイゼーション用のコードは洗練されてゆくでしょうし、精度も高まることでしょう。</p>
+
+<p>
+上述したように、 pdfsync は \include{myfile} で読み込まれるファイルには機能します。\input{myfile} という構文が使われていれば input コマンドに対しても機能します ； ほかの構文「\input myfile」では機能しません。
+</p>
+
+<p>
+pdfsync.sty というファイルは、 LaTeX で利用されます ； 同様のファイル pdfsync.tex と pdfsync4context.tex はそれぞれ TeX と ConTeXt でのシンクロナイゼーション用となっています。
+</p>
+
+<p>
+シンクロナイゼーションは、 mysource.pdfsync にデータを書き込み、プレビュー・ウィンドウ内の特定のシンクロ・スポットに照応させることで機能しています。大まかに言えば、それぞれのデータ・エントリには以下のようなものが含まれます──
+</p>
+	<dl>
+		<dd>ポイントの置かれたプレビュー文書のページ番号
+		<dd>このページにおけるポイントの位置
+		<dd>この特定の出力を生成するソースファイルの名前
+		<dd>このソースファイル内の該当する行番号
+	</dl>
+<p>こうしたシンクロナイゼーション・ポイントを TeXShop で表示させる方法があります。プレビュー・ウィンドウのツールバーには Syncマーク というチェックボックスがあります。デフォルトでは見えていません ； 「ウィンドウ」メニューにある「ツールバーをカスタマイズ...」を使って選び取ってください。チェックボックスをチェックすると、シンクロナイゼーション・ポイントが見えるようになります。</p><p>プレビュー・ウィンドウが表示された当初は、この項目にはチェックが入っていません。隠れた環境設定項目でこれを変更できます：</p>
+<tt>
+	<dl>
+		<dd>defaults write TeXShop ShowSyncMarks YES
+	</dl>
+</tt>
+<div id="header_background"></div><div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div><div id="header_chapter">上級向けのヘルプ</div><div id="header_title"> Pdfsync </div>		<div id="menu_border">		<ul>			<li><a href="advanced_personaltetex.htm">スタイルとマクロを teTeX に追加する</a>
+			<li><a href="advanced_addengine.htm">追加のタイプセット・エンジン</a>
+			<li><a href="advanced_removeaux.htm">作業ファイルを削除する</a>			<li><a href="advanced_externaleditor.htm">外部エディタを使用する</a>			<li><a href="advanced_pdfcopypaste.htm">プレビューウィンドウからのコピー＆ペーストおよびドラッグ＆ドロップ </a>			<li><a href="advanced_root.htm">プロジェクトのルートファイルを設定する</a>			<li><a href="advanced_pdfsync.htm">Pdfsync</a>			<li><a href="advanced_unicode.htm">Unicode（ユニコード）</a>			<li><a href="advanced_bibtex.htm">BibTeX</a>			<li><a href="advanced_makeindex.htm">MakeIndex</a>			<li><a href="advanced_otherfiles.htm">その他のファイルを TeXShop で開く</a>			<li><a href="advanced_mathematica.htm">Mathematica</a>			<li><a href="advanced_localization.htm">各国語版へのローカライズ</a>			<li><a href="advanced_syntaxcolor.htm">ソースのカラー表示</a>			<li><a href="advanced_shellescape.htm">Shell-Escape の保護</a>						<li><a href="advanced_coloredtext.htm">TeX における文字の色指定</a>						<li><a href="advanced_moretetex.htm">teTeX についてさらに</a>			<li><a href="advanced_fink.htm">Fink との共存</a>			<li><a href="advanced_otherdistributions.htm">他の TeX ディストリビューションとの共存</a>			<li><a href="advanced_context.htm">ConTeXt と MetaPost</a>			<li><a href="advanced_plist.htm">Plist ファイル</a>			<li><a href="advanced_menushortcuts.htm">メニュー項目のショートカット・キーを再定義する</a>		</UL>	</div>	</body></HTML>

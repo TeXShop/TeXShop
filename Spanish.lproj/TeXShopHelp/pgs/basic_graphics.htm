@@ -1,0 +1,69 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Inclusi&oacute;n de gr&aacute;ficos</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="incluir gr&aacute;ficos; epstopdf; eps; pdf; jpg; tif; tiff; conversi&oacute;n aut&aacute;matica">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Los programas pdftex y pdflatex pueden usar archivos gr&aacute;ficos (previamente producidos por otros programas) que tengan formato pdf, jpg, o tif. Un peculiaridad es que los archivos tiff deben tener extensi&oacute;n &laquo;.tif&raquo; en lugar de &laquo;.tiff&raquo;.  El formato nativo de gr&aacute;ficos de Mac OS X es pdf (portable document format), y tales archivos se imprimen bien en cualquier tama&ntilde;o. Es previsible que la mayor&iacute;a de los futuros programas gr&aacute;ficos para Mac generen archivos pdf.</P>
+		<p>Si usabas TeX en el pasado, tus ilustraciones estar&iacute;an, posiblemente, en formato eps. Pero pdftex y pdflatex no pueden usar tales archivos directamente, sino que las ilustraciones deben ser convertidas a formato pdf. Para convertir un archivo eps con una ilustraci&oacute;n, abrirlo con TeXShop. La ilustraci&oacute;n aparecer&aacute; en una ventana gr&aacute;fica y, simult&aacute;neamente, TeXShop guardar&aacute; el correspondiente archivo pdf en el disco. Tambi&eacute;n Ghostscript contiene un programa (ejecutable desde la l&iacute;nea de comandos) para efectuar tales conversiones; de hecho, TeXShop llama a este programa. Para convertir myfile.eps a myfile.pdf dentro del Terminal, teclea</p>
+		<dl>
+			<dd><tt>epstopdf myfile.eps</tt>   
+		</dl>
+		<p>Los autores de pdflatex y los autores de paquete gr&aacute;fico graphicx han previsto una manera f&aacute;cil de incluir archivos en un documento LaTeX compuesto con pdflatex, incluso si el documento va a ser compuesto m&aacute;s tarde con latex est&aacute;ndar para generar un dvi que se podr&aacute; distribuir a otras personas. Para ello, al comienzo del fichero con c&oacute;digo LaTeX, incluye la l&iacute;nea</p>
+		<dl>
+			<dd><tt>\usepackage{graphicx}</tt>
+		</dl>
+		<p>Cuando desees insertar un archivo gr&aacute;fico, digamos &laquo;f1.pdf&raquo;, usa el comando</p>
+		<dl>
+			<dd><tt>\includegraphics[width=2in]{f1}</tt>
+		</dl>
+		<p>Este comando har&aacute; que tex use el archivo &laquo;f1.pdf&raquo; cuando el c&oacute;digo se compone con pdflatex, pero use el archivo &laquo;f1.eps&raquo; cuando el c&oacute;digo se compone con latex.</p>
+		<p>Si te has actualizado desde una versi&oacute;n previa de TeXShop, y quieres usar la conversi&oacute;n autom&aacute;tica de archivos eps y tif al componer, aseg&uacute;rate de que</p>
+		<ol>
+			<li type="a">Has instalado Ghostscript 8,  Freetype 2,  wmf and iconv conversion support, y ImageMagick con el instalador de Gerben Wierda.
+			<li type="a">La preferencia para el programa pdflatex es &laquo;pdflatex --shell-escape&raquo; (solapa Motor del men&uacute; Preferencias).
+			<li type="a">La cabecera del fichero LaTeX contiene las siguientes l&iacute;neas:
+		</ol>
+		<dl>
+			<dd><tt>\usepackage{graphicx}</tt>
+			<dd><tt>\usepackage{epstopdf}</tt>
+			<dd><tt>\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}</tt>
+		</dl>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda b&aacute;sica</div><div id="header_title">Inclusi&oacute;n de gr&aacute;ficos</div>
+		<div id="menu_border">
+		<ul>
+			<LI><a href="basic_preliminaries.htm">Preliminares</a>
+			<LI><a href="basic_installtetex.htm">C&oacute;mo obtener e instalar teTeX</a>
+			<LI><a href="basic_installtexshop.htm">C&oacute;mo obtener e instalar TeXShop</a>
+			<li><a href="basic_typesetting.htm">Componer (&lsquo;typeset&rsquo;) documentos</a>
+			<li><a href="basic_alternatetypeset.htm">M&eacute;todos alternativos de composici&oacute;n</a>
+			<li><a href="basic_spelling.htm">Correcci&oacute;n ortogr&aacute;fica</a>
+			<li><a href="basic_latexpanel.htm">Panel LaTeX</a>
+			<li><a href="basic_matrixpanel.htm">Panel matrices</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Barra de herramientas y AppleScript</a>
+			<li><a href="basic_graphics.htm">Inclusi&oacute;n de gr&aacute;ficos</a>
+			<li><a href="basic_printing.htm">Imprimir</a>
+			<li><a href="basic_preferences.htm">Establecer preferencias</a>
+			<li><a href="basic_templates.htm">Personalizaci&oacute;n del men&uacute; Plantillas</a>
+			<li><a href="basic_edittricks.htm">Trucos de edici&oacute;n</a>
+			<li><a href="basic_autocompletion.htm">Autocompleci&oacute;n</a>
+			<li><a href="basic_commandcompletion.htm">Compleci&oacute;n de comandos</a>
+			<li><a href="basic_bugs.htm">Notificaci&oacute;n de errores (&lsquo;bugs&rsquo;)</a>
+			<li><a href="basic_websites.htm">Sitios web &uacute;tiles</a>
+			<li><a href="basic_license.htm">Licencia</a>
+			<li><a href="basic_thistranslation.htm">Sobre la traducci&oacute;n a espa&ntilde;ol</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

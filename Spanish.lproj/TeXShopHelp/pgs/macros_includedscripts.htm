@@ -4,34 +4,39 @@
 		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
 		<TITLE>Macros AppleScript predefinidas</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
-		<META NAME="description" CONTENT="applescript; fines de l’nea; bibtex, tex4ht; Metapost">
+		<META NAME="description" CONTENT="applescript; fines de l&iacute;nea; bibtex, tex4ht; Metapost">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
 
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Macros AppleScript predefinidas</B></FONT></TD>
-</TR>
-</TABLE>
-<P><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop 1.33
-contiene una amplia colecci&oacute;n de macros desarrollada por Claus Gerhardt
+<BODY>
+	<div id="content_border">
+<P>TeXShop contiene una amplia colecci&oacute;n de applescripts desarrollada por Will Robertson, Claus Gerhardt
 y otros. Muchos de esos scripts automatizan el flujo de trabajo, pues
 permiten realizar una serie de comandos de composici&oacute;n de una sola vez.
 Copiando y modificando los scripts incorporados, el usuario puede
-construir scripts propios adecuados para su trabajo.</font></P>
+construir scripts propios adecuados para su trabajo.</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">En esta secci&oacute;n
+<P>En esta secci&oacute;n
 describimos algunos de estos scripts.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>Convert to Mac, Convert to Unix, Convert to Windows:</B>
-</font></P>
+<P>
+<h5>Column Macros, Insert Reference, Open Quickly: </h5>
+</P>
+
+<p> Estas macros se deben a Will Robertson. La primera proporciona una manera muy &uacute;til de construir una matriz o tabla arbitraria.
+La segunda busca todos los comandos \label{...} del archivo y los muestra
+en una lista desde la que se puede insertar una referencia a una etiqueta,
+junto con un comando LaTeX opcional que se puede configurar.
+La macro final permite abrir r&aacute;pidamente cualquier archivo que est&eacute;
+en el mismo directorio que el archivo con c&oacute;digo que tengamos abierto.
+
+<P>
+<h5>Convert to Mac, Convert to Unix, Convert to Windows:</h5>
+</P>
 
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 En los primeros tiempos de las comnunicaciones, se usaban terminales de
 teletipo. El juego de caracteres ascii tiene todav&iacute;a
 reminiscencias de esos tiempos; por ejemplo, 0x07 hace sonar la campana
@@ -39,9 +44,9 @@ del teletipo. El car&aacute;cter 0x0a es un avance de l&iacute;nea que
 gira el carro a la siguiente l&iacute;nea, y el car&aacute;cter 0x0d es
 un retorno de carro que lleva el carro al comienzo de la l&iacute;nea.
 Para mover el carro al principio de la siguiente l&iacute;nea se usaba
-la secuencia 0x0d 0x0a.</font></P>
+la secuencia 0x0d 0x0a.</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 Cuando termin&oacute; la era de los teletipos, los fabricantes de
 ordenadores seleccionaron diferentes subconjuntos de estos caracteres
 para indicar el cambio de l&iacute;nea. En el mundo Unix se us&oacute;
@@ -55,9 +60,9 @@ archivo creado con Mac OS Classic y a&ntilde;ades l&iacute;neas extra,
 las porciones antiguas del documento seguir&aacute;n con las
 convenciones del Classic, y las secciones nuevas se guardar&aacute;n con
 las convenciones de Unix.  
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 Esto no causa ning&uacute;n problema hasta que no env&iacute;es un
 archivo a un amigo que use un sistema operativo diferente. Ahora, muchos
 editores comprenden las m&uacute;ltiples convenciones de fines de
@@ -71,34 +76,34 @@ to Unix&raquo; y &laquo;Convert to Windows&raquo; trabajan de la misma
 manera. Todos estos scripts llaman a un programa binario llamado
 &laquo;flip&raquo;, que ha sido dessarrollado por Craig Stuart Sapp.
 Puedes ver los detalles en http://ccrma-www.stanford.edu/~craig/utility/flip/.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>Other Scripts->Bibliography:</B>
-</font></P>
+<P>
+<h5>Other Scripts->Bibliography:</h5>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 Procesar un archivo con bibliograf&iacute;a requiere m&uacute;ltiples
 operaciones de composici&oacute;n. Primero hay que usar LaTeX para crear
 un archivo .aux. Entonces se ejecuta BibTeX, que usa este archivo para
 crear los archivos .bbl y .blg. Luego, de nuevo LaTeX para a&ntilde;adir
 la bibliograf&iacute;a al documento. Y LaTeX una vez m&aacute;s para
 actualizar las referencias del texto a la bibliograf&iacute;a.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 El comando &laquo;Bibliography&raquo; hace todas estas cosas de una sola vez.
 Primero guarda el archivo. Luego ejecuta la secuencia
 latex->bibtex->latex->latex. Finalmente, actualiza la ventana con el pdf
 previsto.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>htlatexc, htlatexr:</B>
-</font></P>
+<P>
+<h5>htlatexc, htlatexr:</h5>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-Tex4ht en un programa que convierte un documento LaTeX en una
+<P>
+Tex4ht es un programa que convierte un documento LaTeX en una
 p&aacute;gina web. El c&oacute;digo fuente tiene que ser un archivo
 LaTeX est&aacute;ndar, y puede incluir ilustraciones en eps. El
 resultado final es una p&aacute;gina html y un gran n&uacute;mero de
@@ -107,51 +112,59 @@ c&oacute;digo, ejecuta htlatex y abre el archivo html resultante con
 Safari. As&iacute;, su comportamiento es como el de un nuevo comando de
 composici&oacute;n de TeXShop, &iexcl;excepto que ha sido construido por
 un usuario sin necesidad de nuevo c&oacute;digo en TeXShop!
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 Al usar estos scripts no es necesario emplear el paquete text4ht, puesto
 que lo cargan autom&aacute;ticamente. El script &laquo;htlatexc&raquo;
 llama a htlatex sin opciones adicionales. El script
 &laquo;htlatexr&raquo; lo llama con la opci&oacute;n &laquo;-r&raquo;,
 que sirve para indicar al programa que reconstruya cualquier .gif que ya
 exista.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>pdfselectc:</B>
-</font></P>
+<P>
+<h5>pdfselectc:</h5>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 Este script ejecuta el comando pdfselect del shell para crear archivos pdf que s&oacute;lo contengan una cierto rango de p&aacute;ginas del documento. Cuando se usa, aparece un di&aacute;logo que pregunta el n&uacute;mero de archivos que queremos crear. Sup&oacute;n que la respuesta es 3. Aparece otro di&aacute;logo que pregunta el rango de p&aacute;ginas del primer documento. Sup&oacute;n que la respuesta es 5:8. Aparece otro di&aacute;logo que pregunta el rango para el segundo documento. Sup&oacute;n que la respuesta es 10. Finalmente, otro di&aacute;logo pregunta el rango para el tercer documento. Sup&oacute;n que la respuesta es 20:30. En estas circunstancias, obtendremos tres documentos, uno con las p&aacute;ginas 5 - 8 del original, otro con la p&aacute;gina 10, y el &uacute;ltimo con las p&aacute;ginas 20 - 30.
-</font></P>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>mpostc, mpostcpl, combination-example:</B>
-</font></P>
+<P>
+<h5>mpostc, mpostcpl, combination-example:</h5>
+</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
+<P>
 El script &laquo;mpostc&raquo; ejecuta mpost y luego pdflatex; el script
 &laquo;mpostcpl&raquo; ejecuta pdflatex, luego mpost, y finalmente
 pdflatex de nuevo. En la ayuda de TeXShop, consulta &laquo;General:
 ConTeXt y MetaPost&raquo; para ver un ejemplo del uso consecutivo de
-estos tres comandos.</font></P>
+estos tres comandos.</P>
 
-<P><font size="2" face="Lucida Grande,Geneva,Arial"> 
+<P> 
 El script &laquo;combination-example&raquo; guarda el c&oacute;digo y
 ejecuta pdflatex, makeindex, mpost, y pdflatex de nuevo; en el proceso
 abre todos los archivos log relevantes. 
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-<B>Others:</B>
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-La carpeta TeXShop_Folder incluida en la distribuci&oacute;n de TeXShop
-contiene una subcarpeta llamada Scripts; en ella hay scripts adicionales
-creados por Claus Gerhardt, as&iacute; como una documentaci&oacute;n muy extensa. Cons&uacute;ltala para obtener m&aacute;s detalles.</font></p>
-
+</P>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda para macros</div><div id="header_title">Macros AppleScript predefinidas</div>
+		<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminares</a>
+			<LI><a href="macros_default.htm">Comprensi&oacute;n de las macros predefinidas</a>
+			<LI><a href="macros_rearrange.htm">Reajuste del men&uacute; Macros</a>
+			<LI><a href="macros_define.htm">Definici&oacute;n de nuevas macros</a>
+			<li><a href="macros_applescript.htm">Macros AppleScript</a>
+			<li><a href="macros_includedscripts.htm">Macros AppleScript predefinidas</a>
+			<li><a href="macros_defapplescript.htm">Definici&oacute;n de macros AppleScript</a>
+			<li><a href="macros_dialogs.htm">Creaci&oacute;n de di&aacute;logos</a>
+			<li><a href="macros_writingcompletescripts.htm">Scripts con comandos de composici&oacute;n de TeXShop</a>
+			<li><a href="macros_writingcommandscripts.htm">Scripts con comandos del Shell</a>
+		</UL>
+	</div>
 	</BODY>
 
 </HTML>

@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "Autrecontroller.h"
 #import "Matrixcontroller.h"
+#import "OgreKit/OgreTextFinder.h"
 // added by mitsu --(H) Macro menu and (G) EncodingSupport
 // #import "MacroMenuController.h"
 #import "EncodingSupport.h"
@@ -47,4 +48,6 @@
 // - (void)showConfiguration:(id)sender;
 // - (void)showMacrosHelp:(id)sender;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
+- (void)configureEngine;
+- (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
 @end

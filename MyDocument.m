@@ -77,6 +77,8 @@
     tryAgain = NO;
     useTempEngine = NO;
     callingWindow = nil;
+    badEncoding = 0;
+    showBadEncodingDialog = NO;
         
     encoding = [[MyDocumentController sharedDocumentController] encoding];
     
@@ -299,7 +301,6 @@
     NSFileManager   *fm;
     NSString        *basePath, *path, *title;
     NSArray         *fileList;
-    NSMenuItem      *newItem;
     BOOL            isDirectory;
     unsigned        i;
 
@@ -342,7 +343,7 @@
     float		r, g, b;
     int			defaultcommand;
     NSSize		contentSize;
-    NSColor		*backgroundColor;
+    NSColor		*backgroundColor, *whiteColor;
     NSDictionary	*myAttributes;
     int                 i;
     BOOL                done;
@@ -382,6 +383,8 @@ NS_ENDHANDLER
     blue: [SUD floatForKey:background_BKey] 
     alpha:1.0];
     
+    //whiteColor = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    
 /*    
     // New
     contentSize = [scrollView contentSize];
@@ -412,6 +415,8 @@ NS_ENDHANDLER
     [textView1 setUsesFontPanel:YES];
     [textView1 setFont:[NSFont userFontOfSize:12.0]];
     [textView1 setBackgroundColor: backgroundColor];
+    
+    //[textView1 setInsertionPointColor: whiteColor];
     [scrollView setDocumentView:textView1];
     [textView1 setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A) 
     [textView1 setDocument: self]; // mitsu 1.29 (T2-4) added 
@@ -432,6 +437,7 @@ NS_ENDHANDLER
         [textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textView2 setFont:[NSFont userFontOfSize:12.0]];
     [textView2 setBackgroundColor: backgroundColor];
+    // [textView1 setInsertionPointColor: whiteColor];
     [scrollView2 setDocumentView:textView2];
     [textView2 setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A) 
     [textView2 setDocument: self]; // mitsu 1.29 (T2-4) added 
@@ -516,6 +522,7 @@ NS_ENDHANDLER
 // end addition
         && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
         && ( ! [fileExtension isEqualToString: @"mf"]) 
+        && ( ! [fileExtension isEqualToString: @"bib"]) 
         && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
@@ -813,6 +820,20 @@ NS_ENDHANDLER
                     [self doTypeset:self];
                 }
         }
+
+}
+
+- (void)tryBadEncodingDialog: (NSWindow *)theWindow
+{
+    if (showBadEncodingDialog) {
+        NSString *theEncoding = [[EncodingSupport sharedInstance] encodingForTag: badEncoding];
+        NSBeginAlertSheet(NSLocalizedString(@"This file was opened with MacOSRoman encoding.", @"This file was opened with MacOSRoman encoding."),
+                nil, nil, nil, theWindow, nil, nil, nil, nil, 
+                NSLocalizedString(@"The file could not be opened with %@ encoding because it was not saved with that encoding. If you wish to open in another encoding, close the window and open again.", 
+                @"The file could not be opened with %@ encoding because it was not saved with that encoding. If you wish to open in another encoding, close the window and open again."), theEncoding);
+        }
+    showBadEncodingDialog = FALSE;
+
 }
 
 // added by mitsu --(K) "Unititled-n" for new window
@@ -1323,7 +1344,7 @@ preference change is cancelled. "*/
 
     NSStringEncoding	theEncoding;
     NSRange             encodingRange, newEncodingRange, myRange, theRange;
-    unsigned            mystart, myend, myContentsEnd, length;
+    unsigned            length;
     NSString            *encodingString, *text, *testString;
     int                 theTag;
     BOOL                done;
@@ -1370,7 +1391,7 @@ preference change is cancelled. "*/
         myRange.location = 0;
         myRange.length = 1;
 
-        while ((myRange.location < length) && (!done) && (linesTested < 10)) {
+        while ((myRange.location < length) && (!done) && (linesTested < 20)) {
             [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
             myRange.location = end;
             myRange.length = 1;
@@ -1378,10 +1399,10 @@ preference change is cancelled. "*/
             
             theRange.location = start; theRange.length = (end - start);
             testString = [text substringWithRange: theRange];
-            encodingRange = [testString rangeOfString:@"%&encoding="];
+            encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
             if (encodingRange.location != NSNotFound) {
                 done = YES;
-                newEncodingRange.location = encodingRange.location + 11;
+                newEncodingRange.location = encodingRange.location + 16;
                 newEncodingRange.length = [testString length] - newEncodingRange.location;
                 if (newEncodingRange.length > 0) {
                     encodingString = [[testString substringWithRange: newEncodingRange] 
@@ -1389,6 +1410,21 @@ preference change is cancelled. "*/
                     theTag = [[EncodingSupport sharedInstance] tagForEncoding:encodingString];
                     encoding = theTag; tempencoding = theTag;
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
+                    }
+                }
+            else {
+                encodingRange = [testString rangeOfString:@"%&encoding="];
+                if (encodingRange.location != NSNotFound) {
+                    done = YES;
+                    newEncodingRange.location = encodingRange.location + 11;
+                    newEncodingRange.length = [testString length] - newEncodingRange.location;
+                    if (newEncodingRange.length > 0) {
+                        encodingString = [[testString substringWithRange: newEncodingRange] 
+                            stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        theTag = [[EncodingSupport sharedInstance] tagForEncoding:encodingString];
+                        encoding = theTag; tempencoding = theTag;
+                        theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
+                        }
                     }
                 }
             }
@@ -1419,7 +1455,6 @@ preference change is cancelled. "*/
     NSStringEncoding	theEncoding;
     NSString            *firstBytes, *encodingString, *testString;
     NSRange             encodingRange, newEncodingRange, myRange, theRange;
-    unsigned            mystart, myend, myContentsEnd;
     unsigned            length, start, end, irrelevant;
     BOOL                done;
     int                 linesTested;
@@ -1438,7 +1473,7 @@ preference change is cancelled. "*/
         myRange.location = 0;
         myRange.length = 1;
 
-        while ((myRange.location < length) && (!done) && (linesTested < 10)) {
+        while ((myRange.location < length) && (!done) && (linesTested < 20)) {
             [firstBytes getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
             myRange.location = end;
             myRange.length = 1;
@@ -1446,10 +1481,10 @@ preference change is cancelled. "*/
             
             theRange.location = start; theRange.length = (end - start);
             testString = [firstBytes substringWithRange: theRange];
-            encodingRange = [testString rangeOfString:@"%&encoding="];
+            encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
             if (encodingRange.location != NSNotFound) {
                 done = YES;
-                newEncodingRange.location = encodingRange.location + 11;
+                newEncodingRange.location = encodingRange.location + 16;
                 newEncodingRange.length = [testString length] - newEncodingRange.location;
                 if (newEncodingRange.length > 0) {
                     encodingString = [[testString substringWithRange: newEncodingRange] 
@@ -1459,13 +1494,37 @@ preference change is cancelled. "*/
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
                     }
                 }
+            else {
+                encodingRange = [testString rangeOfString:@"%&encoding="];
+                if (encodingRange.location != NSNotFound) {
+                    done = YES;
+                    newEncodingRange.location = encodingRange.location + 11;
+                    newEncodingRange.length = [testString length] - newEncodingRange.location;
+                    if (newEncodingRange.length > 0) {
+                        encodingString = [[testString substringWithRange: newEncodingRange] 
+                            stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        theTag = [[EncodingSupport sharedInstance] tagForEncoding:encodingString];
+                        encoding = theTag; tempencoding = theTag;
+                        theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
+                        }
+                    }
+                }
             }
+
         [firstBytes release];
         }
 
     
     
     aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
+    if (! aString) {
+        badEncoding = tag;
+        showBadEncodingDialog = YES;
+        tag = [[EncodingSupport sharedInstance] tagForEncoding: @"MacOSRoman"];
+        encoding = tag; tempencoding = tag;
+        theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: tag];
+        aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
+        }
     return YES;
     
 }
@@ -1714,6 +1773,8 @@ preference change is cancelled. "*/
     whichError = 0;
     makeError = error;
     
+    if (! externalEditor)
+        [self checkFileLinksA];
 
     if ((externalEditor) || (! [self isDocumentEdited])) {
         [self saveFinished: self didSave:YES contextInfo:nil];
@@ -1789,6 +1850,10 @@ preference change is cancelled. "*/
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
         [self fixMacroMenu];
 // end addition
+
+    if (! externalEditor)
+        [self checkFileLinksA];
+
 
     if ((externalEditor) || (! [self isDocumentEdited])) {
         [self saveFinished: self didSave:YES contextInfo:nil];
@@ -1924,12 +1989,19 @@ preference change is cancelled. "*/
         texTask = [[NSTask alloc] init];
         if ((! writeable) && (! [[myFileName pathExtension] isEqualToString:@"dvi"]))
             [texTask setCurrentDirectoryPath: TempOutputKey];
-        else 
+        else
             [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
         [texTask setEnvironment: TSEnvironment];
         
         if ([[myFileName pathExtension] isEqualToString:@"dvi"]) {
-            enginePath = [[SUD stringForKey:LatexGSCommandKey] stringByExpandingTildeInPath];
+            if (! writeable) {
+                enginePath = [[NSBundle mainBundle] pathForResource:@"altpdftex" ofType:nil];
+                argumentString = [[NSString stringWithString:@" --tex-path "] 
+                    stringByAppendingString: [[SUD stringForKey:TetexBinPathKey] stringByExpandingTildeInPath]];
+                enginePath = [enginePath stringByAppendingString: argumentString];
+                }
+            else
+                enginePath = [[SUD stringForKey:LatexGSCommandKey] stringByExpandingTildeInPath];
             if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
                 enginePath = [enginePath stringByAppendingString: @" --distiller /usr/bin/pstopdf"];
  			if (! writeable) {
@@ -2015,10 +2087,18 @@ preference change is cancelled. "*/
     NSString		 *project, *nameString, *projectPath;
 #endif
     NSArray		*myList;
-    NSString		*theSource, *theKey, *myEngine;
-    NSRange		aRange, myRange;
+    NSString		*theSource, *theKey, *myEngine, *testString, *programString;
+    NSRange		aRange, myRange, theRange, programRange, newProgramRange;
     unsigned int	mystart, myend;
+    unsigned int        start, end, irrelevant;
     int                 whichEngineLocal;
+    int                 i, j;
+    BOOL                done;
+    unsigned            length;
+    int                 linesTested;
+    NSData              *myData;
+    
+
     
     if (useTempEngine)
         whichEngineLocal = tempEngine;
@@ -2031,8 +2111,14 @@ preference change is cancelled. "*/
         withLatex = NO;
     theScript = whichScript;
     
-if (! externalEditor) {
-    theSource = [[self textView] string];
+    if (! externalEditor) 
+        theSource = [[self textView] string];
+    else {    
+        myData = [NSData dataWithContentsOfFile:[self fileName]];
+        theSource = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+        }
+    
+{
     if ([self checkMasterFile:theSource forTask:RootForTexing]) {
         useTempEngine = NO;
         return;
@@ -2043,10 +2129,85 @@ if (! externalEditor) {
         return;
         }
 #endif
-    rootDocument = nil;
+
 #ifdef NAIRN
-    [self checkFileLinks:theSource];
+    if (! externalEditor)
+        [self checkFileLinks:theSource];
 #endif
+
+
+// New Stuff
+        length = [theSource length];
+        done = NO;
+        linesTested = 0;
+        myRange.location = 0;
+        myRange.length = 1;
+
+        while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+            [theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+            myRange.location = end;
+            myRange.length = 1;
+            linesTested++;
+            
+            theRange.location = start; theRange.length = (end - start);
+            testString = [theSource substringWithRange: theRange];
+            
+            programRange = [testString rangeOfString:@"%!TEX TS-program ="];
+            if (programRange.location != NSNotFound) {
+                newProgramRange.location = programRange.location + 18;
+                newProgramRange.length = [testString length] - newProgramRange.location;
+                if (newProgramRange.length > 0) {
+                    programString = [[testString substringWithRange: newProgramRange] 
+                        stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    programString = [programString lowercaseString];
+                    if ([programString isEqualToString:@"pdftex"]) {
+                        withLatex = NO;
+                        theScript = 100;
+                        done = YES;
+                        }
+                    else if ([programString isEqualToString:@"pdflatex"]) {
+                        withLatex = YES;
+                        theScript = 100;
+                        done = YES;
+                        }
+                    else if ([programString isEqualToString:@"tex"]) {
+                        withLatex = NO;
+                        theScript = 101;
+                        done = YES;
+                        }
+                    else if ([programString isEqualToString:@"latex"]) {
+                        withLatex = YES;
+                        theScript = 101;
+                        done = YES;
+                        }
+                    else if ([programString isEqualToString:@"personaltex"]) {
+                        withLatex = NO;
+                        theScript = 102;
+                        done = YES;
+                        }
+                    else if ([programString isEqualToString:@"personallatex"]) {
+                        withLatex = YES;
+                        theScript = 102;
+                        done = YES;
+                        }
+                    else {
+                        i = UserEngine;
+                        j = [programButton numberOfItems];
+                        while ((i <= j) && (! done)) {
+                            i++;
+                             if ([[[[programButton itemAtIndex: (i - 2)] title] lowercaseString] isEqualToString:programString]) {
+                                done = YES;
+                                useTempEngine = YES;
+                                tempEngine = i - 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+// Old Stuff
+if (! done) {
     myRange.length = 1;
     myRange.location = 0;
     [theSource getLineStart:&mystart end: &myend contentsEnd: nil forRange:myRange];
@@ -2121,9 +2282,9 @@ if (! externalEditor) {
                 theScript = 102;
                 }
             else {
-                int i = UserEngine;
-                int j = [programButton numberOfItems];
-                BOOL done = NO;
+                i = UserEngine;
+                j = [programButton numberOfItems];
+                done = NO;
                 while ((i <= j) && (! done)) {
                     i++;
                     if ([[[[programButton itemAtIndex: (i - 2)] title] lowercaseString] isEqualToString:[programName lowercaseString]]) {
@@ -2135,6 +2296,9 @@ if (! externalEditor) {
                 }
             }
         }
+    }
+        
+// End Old Stuff
     }
     
     if ((! warningGiven) && ((whichEngineLocal == TexEngine) || (whichEngineLocal == LatexEngine)) && (theScript == 100) && ([SUD boolForKey:WarnForShellEscapeKey])) {
@@ -2238,7 +2402,7 @@ if (! externalEditor) {
     BOOL                fixPath;
     int                 whichEngineLocal;
     
-     if (useTempEngine)
+    if (useTempEngine)
         whichEngineLocal = tempEngine;
     else
         whichEngineLocal = whichEngine;
@@ -4332,9 +4496,9 @@ void report(NSString *itest)
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
 {
     int             pdfPage;
-    BOOL            found;
+    BOOL            found, synclineFound;
     unsigned        start, end, irrelevant, stringlength;
-    NSRange         myRange, testRange;
+    NSRange         myRange;
     NSString        *syncInfo;
     NSFileManager   *fileManager;
     NSRange         searchResultRange, newRange;
@@ -4393,20 +4557,28 @@ void report(NSString *itest)
     // after this line until the matching ")"
 
     if (fileName != nil) {
-        NSString *initialPart = [[self fileName] stringByDeletingLastPathComponent]; //get root complete path, minus root name
+        NSString *initialPart = [[[self fileName] stringByStandardizingPath] stringByDeletingLastPathComponent]; //get root complete path, minus root name
         initialPart = [initialPart stringByAppendingString:@"/"];
-        myRange = [fileName rangeOfString: initialPart]; //see if this forms the first part of the source file's path
-        if ((myRange.location == 0) && (myRange.length < [fileName length])) {
+        myRange = [fileName rangeOfString: initialPart options:NSCaseInsensitiveSearch]; //see if this forms the first part of the source file's path
+        if ((myRange.location == 0) && (myRange.length <= [fileName length])) {
             expectedFileName = [fileName substringFromIndex: myRange.length]; //and remove it, so we have a relative path from root
             expectedFileName = [expectedFileName stringByDeletingPathExtension];
             expectedString = @"(";
             expectedString = [expectedString stringByAppendingString:expectedFileName];
             }
-             
+        else
+            return;
+            
         myRange = [syncInfo rangeOfString: expectedString];
         
         if (myRange.location == NSNotFound) 
-            return;
+            {
+            expectedString = @"(./";
+            expectedString = [expectedString stringByAppendingString:expectedFileName];
+            myRange = [syncInfo rangeOfString: expectedString];
+            if (myRange.location == NSNotFound)
+                return;
+            }
             
         NS_DURING
         [syncInfo getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
@@ -4463,6 +4635,7 @@ void report(NSString *itest)
     myRange.location = 0;
     myRange.length = 1;
     found = NO;
+    synclineFound = NO;
     skipping = NO;
     skipdepth = 0;
     while ((! found) && (myRange.location < stringlength)) {
@@ -4512,14 +4685,17 @@ void report(NSString *itest)
             newRange.length = [keyLine length] - newRange.location;
             keyLine = [keyLine substringWithRange: newRange];
             syncLine = [keyLine intValue]; //line number of entry
+            synclineFound = YES;
             if (syncLine >= line)
                 found = YES;
             }
         myRange.location = end;
         }
         
-    if (!found) 
+    
+    if (!synclineFound) 
         return;
+        
         
     // now syncNumber is the entry number of the item we want. We must next find the
     // entry "p syncNumber * *". This number will follow a page number, "s pageNumber"
@@ -4610,12 +4786,7 @@ void report(NSString *itest)
       
     if (!found)
         return;
-    
-    // go to that page
-    // logInt = pdfPage;
-    // logNumber = [NSNumber numberWithInt: logInt];
-    // NSLog([logNumber stringValue]);
-    
+        
     [pdfView displayPage:pdfPage];
     [pdfWindow makeKeyAndOrderFront: self];
 
@@ -5010,7 +5181,7 @@ void report(NSString *itest)
         detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([detexData length]) 
             {
-            detexString = [[NSString alloc] initWithData: detexData encoding: @"MacOSRoman"];
+            detexString = [[NSString alloc] initWithData: detexData encoding: NSMacOSRomanStringEncoding];
             NSScanner *myScanner = [NSScanner scannerWithString:detexString];
             result = [myScanner scanInt: &lineCount];
             if (result) 
@@ -5474,14 +5645,20 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 - (BOOL)checkMasterFile:(NSString *)theSource forTask:(int)task;
 //-----------------------------------------------------------------------------
 {
-    NSString *home,*jobname=[[self fileName] stringByDeletingLastPathComponent];
-    NSRange aRange,bRange;
-    NSString *saveName;
-    NSArray *wlist;
-    NSEnumerator *en;
-    id obj;
-    NSDocumentController *dc;
-    int theEngine;
+    NSString                *home,*jobname=[[self fileName] stringByDeletingLastPathComponent];
+    NSRange                 aRange, bRange;
+    NSRange                 myRange, theRange, sourcedocRange, newSourceDocRange;
+    NSString                *testString, *sourcedocString;
+    NSString                *saveName;
+    NSArray                 *wlist;
+    NSEnumerator            *en;
+    id                      obj;
+    NSDocumentController    *dc;
+    int                     theEngine;
+    unsigned                length;
+    BOOL                    done;
+    int                     linesTested;
+    unsigned                start, end, irrelevant;
     
     if (theSource == nil)
         return NO;
@@ -5491,12 +5668,53 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     jobname=[[[self fileName] lastPathComponent] stringByDeletingPathExtension];
     
     // see if there is a parent document
+    length = [theSource length];
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
+
+    while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+        [theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        myRange.location = end;
+        myRange.length = 1;
+        linesTested++;
+            
+        theRange.location = start; theRange.length = (end - start);
+        testString = [theSource substringWithRange: theRange];
+        sourcedocRange = [testString rangeOfString:@"%!TEX root ="];
+        if (sourcedocRange.location != NSNotFound) {
+            newSourceDocRange.location = sourcedocRange.location + 12;
+            newSourceDocRange.length = [testString length] - newSourceDocRange.location;
+            if (newSourceDocRange.length > 0) {
+                    done = YES;
+                    sourcedocString = [[testString substringWithRange: newSourceDocRange] 
+                        stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    }
+                }
+            }
+    
+    
+    if (! done) {
+        
     aRange=[theSource rangeOfString:@"%SourceDoc "];
-    if(aRange.location!=NSNotFound)
-    {	bRange=[theSource lineRangeForRange:aRange];
-        if(bRange.length>12 && aRange.location==bRange.location)
-        {   saveName=[self
-                decodeFile:[theSource substringWithRange:NSMakeRange(bRange.location+11,bRange.length-12)]
+    if(aRange.location!=NSNotFound) {
+    	bRange=[theSource lineRangeForRange:aRange];
+        if(bRange.length>12 && aRange.location==bRange.location) {
+            done = YES;
+            sourcedocString = [theSource substringWithRange:NSMakeRange(bRange.location+11,bRange.length-12)];
+            }
+        }
+    }
+            
+   if (done) { 
+    
+//    aRange=[theSource rangeOfString:@"%SourceDoc "];
+//    if(aRange.location!=NSNotFound)
+//    {	bRange=[theSource lineRangeForRange:aRange];
+//        if(bRange.length>12 && aRange.location==bRange.location) {
+           saveName=[self
+                decodeFile:sourcedocString
                 homePath:home job:jobname];
             
             // is the document open?
@@ -5507,6 +5725,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                 {   if([[obj fileName] isEqualToString:saveName]) {
                     if (obj == self)
                         return NO;
+                    rootDocument = obj;
                     if (task == RootForPrinting) 
                         [obj printDocument:nil];
                     else if (task == RootForPdfSync) {
@@ -5517,8 +5736,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                         [obj bringPdfWindowFront];
                         }
                     else if (task == RootForTexing)
-                        {	rootDocument = obj;
-                                if (useTempEngine) 
+                        {	if (useTempEngine) 
                                     theEngine = tempEngine;
                                  else
                                     theEngine = whichEngine;
@@ -5561,7 +5779,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
                     }
                 else if (task == RootForTexing){
-                        rootDocument = obj;
                         if (useTempEngine)
                             theEngine = tempEngine;
                         else
@@ -5598,7 +5815,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             }
             return YES;
         }
-    }
+    
     return NO;
 }
 
@@ -5640,6 +5857,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             if([[obj fileName] isEqualToString:nameString]) {
                 if (obj == self)
                     return NO;
+                rootDocument = obj;
                 if (task == RootForPrinting) {
                     [obj printDocument:nil];
                     }
@@ -5650,8 +5868,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     [obj setCallingWindow: textWindow];
                     [obj bringPdfWindowFront];
                     }
-                else if (task == RootForTexing)
-                    {rootDocument = obj;
+                else if (task == RootForTexing) {
                     if (useTempEngine)
                         theEngine = tempEngine;
                     else
@@ -5695,8 +5912,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
         else if (task == RootForPdfSync) {
             [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
             }
-        else if (task == RootForTexing)
-            {rootDocument = obj;
+        else if (task == RootForTexing) {
             if (useTempEngine)
                 theEngine = tempEngine;
             else
@@ -5730,6 +5946,43 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     return YES;
 }
 
+- (id) rootDocument;
+{
+    return rootDocument;
+}
+
+- (void) checkFileLinksA
+{
+    NSString *home,*jobname=[[self fileName] stringByDeletingLastPathComponent];
+    NSRange aRange,bRange;
+    NSString *saveName, *searchString;
+    NSMutableArray *slist;
+    NSArray *wlist;
+    NSEnumerator *en;
+    id obj;
+    id theRoot;
+    unsigned numFiles,i;
+    
+    // first save all related, open, dirty files
+    if (rootDocument != nil)
+        theRoot = rootDocument;
+    else
+        theRoot = self;
+
+    wlist=[NSApp orderedDocuments];
+    en=[wlist objectEnumerator];
+    while(obj=[en nextObject]) {
+        
+        if (([[obj windowNibName] isEqualToString:@"MyDocument"]) && 
+        (obj != self) && 
+        (([obj rootDocument] == theRoot) || (obj == rootDocument)) && 
+        ([obj isDocumentEdited])) { 
+                [obj saveDocument:self];
+                }
+        }
+
+}
+
 
 - (void) checkFileLinks:(NSString *)theSource
 { 
@@ -5740,15 +5993,16 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     NSArray *wlist;
     NSEnumerator *en;
     id obj;
+    id theRoot;
     unsigned numFiles,i;
-
+    
     if (![SUD boolForKey:SaveRelatedKey])
         return;
     
     // load home path and jobname
     home=[[self fileName] stringByDeletingLastPathComponent];
     jobname=[[[self fileName] lastPathComponent] stringByDeletingPathExtension];
-
+    
     // create list of linked files from \input commands
     aRange=NSMakeRange(0,[theSource length]);
     slist=[[NSMutableArray alloc] init];
@@ -6259,8 +6513,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 - (void)trashAUX;
 {   
     NSString        *path, *path1, *path2;
-    BOOL            isDir;
-    NSString        *fullPath, *extension;
+     NSString       *extension;
     NSString        *fileName, *objectFileName;
     NSMutableArray  *pathsToBeMoved, *fileToBeMoved;
     id              anObject, stringObject;

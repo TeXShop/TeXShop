@@ -78,7 +78,8 @@ NSData *draggedData;
 {
         NSFileManager	*fileManager;
         int             pageNumber;
-        NSString         *syncInfo, *thePageNumber, *pageSearchString, *keyLine;
+        NSNumber        *thePageNumber;
+        NSString         *syncInfo, *pageSearchString, *keyLine;
         NSRange         pageRangeStart, myRange;
         NSRange         pageRangeEnd, smallerRange;
         NSRange         remainingRange, searchResultRange;
@@ -938,7 +939,7 @@ failed. If you change the code below, be sure to test carefully!
 
 - (void)drawRect:(NSRect)aRect 
 {
-    NSRect   pageRect; 
+    NSRect   pageRect, boxRect; 
     NSPoint  p;
     
 	if (myRep == nil) return;
@@ -996,6 +997,12 @@ failed. If you change the code below, be sure to test carefully!
 				if ( i>= 0 && i< [myRep pageCount])
 				{
 					[NSGraphicsContext saveGraphicsState];
+                                        boxRect.origin.x = pageRect.origin.x -2;
+                                        boxRect.origin.y = pageRect.origin.y - 3;
+                                        boxRect.size.width = pageRect.size.width + 5;
+                                        boxRect.size.height = pageRect.size.height + 5;
+                                        NSRectClip(boxRect);
+					NSDrawTiledRects(boxRect, boxRect, mySides, myGrays, 10); // this eats edges 
 					NSRectClip(pageRect);
 					if ([NSGraphicsContext currentContextDrawingToScreen])
 					{
@@ -1005,8 +1012,7 @@ failed. If you change the code below, be sure to test carefully!
 					[myRep setCurrentPage: i];
 					[myRep drawAtPoint: thePoint];
                                         [self drawDotsForPage: i atPoint: thePoint];
-					NSDrawTiledRects(pageRect, pageRect, mySides, myGrays, 10); // this eats edges 
-					[NSGraphicsContext restoreGraphicsState];
+                                        [NSGraphicsContext restoreGraphicsState];
 				}
 			}
 		}
@@ -1795,7 +1801,8 @@ failed. If you change the code below, be sure to test carefully!
 - (void)doSync: (NSEvent *)theEvent
 {
         NSFileManager	*fileManager;
-        NSString        *syncInfo, *thePageNumber, *pageSearchString, *valueString;
+        NSNumber        *thePageNumber;
+        NSString        *syncInfo, *pageSearchString, *valueString;
         NSString        *searchString;
         NSString        *searchOpenString, *searchCloseString;
         NSRange         searchOpenRange, searchCloseRange, myRange;
@@ -1809,10 +1816,11 @@ failed. If you change the code below, be sure to test carefully!
         NSRange         pageRangeEnd;
         NSRange         remainingRange;
         NSRange         thisRange, newRange, foundRange;
+        NSNumber        *anotherNumber;
         int             aNumber;
         int             syncNumber, oldSyncNumber, x, oldx, y, oldy;
         BOOL            found, done;
-        unsigned        theStart, theEnd;
+        unsigned        theStart, theEnd, theContentsEnd;
         NSString        *newFileName, *theExtension;
         MyDocument      *newDocument;
         unsigned        start, end, irrelevant;
@@ -1896,7 +1904,6 @@ failed. If you change the code below, be sure to test carefully!
     NS_ENDHANDLER
     syncInfo = [syncInfo substringFromIndex: end];
 
-   
     // find the page number in syncInfo and return if it is not there
     thePageNumber = [NSNumber numberWithInt: pageNumber];
     pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
@@ -1973,7 +1980,6 @@ failed. If you change the code below, be sure to test carefully!
         NS_ENDHANDLER
         }
         
-
     // Now syncInfo contains exactly the required information for the given page
     // and nothing more. (Also if includeFileName is not nil, it contains the name
     // of the include file being examined --- NOT NOW)
@@ -2066,8 +2072,8 @@ failed. If you change the code below, be sure to test carefully!
     if (oldSyncNumber < 0)
         oldSyncNumber = syncNumber;
         
-    aNumber = [NSNumber numberWithInt: oldSyncNumber];
-    pageSearchString = [[NSString stringWithString:@"l "] stringByAppendingString: [aNumber stringValue]];
+    anotherNumber = [NSNumber numberWithInt: oldSyncNumber];
+    pageSearchString = [[NSString stringWithString:@"l "] stringByAppendingString: [anotherNumber stringValue]];
     /*
     pageRangeStart = [syncInfo rangeOfString: pageSearchString];
     if (pageRangeStart.location == NSNotFound) {
@@ -2105,14 +2111,83 @@ failed. If you change the code below, be sure to test carefully!
     // ( without a matching later ). If we found one, then it will give the name of the
     // file. Otherwise the file is the current file.
     
+    NSRange         lineRange, oneLineRange;
+    NSString        *theLine, *theFile;
+    NSMutableArray  *theStack;
+    int             stackPointer;
+    
+    searchCloseString = [NSString stringWithString:@")"];
+    searchOpenString = [NSString stringWithString:@"("];
+
     done = NO;
+    theStack = [NSMutableArray arrayWithCapacity: 10];
+    stackPointer = -1;
+    
+    lineRange.location = 0;
+    lineRange.length = 1;
+    while ((! done) && (lineRange.location <= foundRange.location)) {
+    
+        searchCloseRange.location = lineRange.location; searchCloseRange.length = foundRange.location - lineRange.location;
+        searchCloseResultRange = [syncInfo rangeOfString: searchCloseString options:0 range: searchCloseRange];
+        searchOpenRange.location = lineRange.location; searchOpenRange.length = foundRange.location - lineRange.location;
+        searchOpenResultRange = [syncInfo rangeOfString: searchOpenString options:0 range: searchOpenRange];
+        if ((searchOpenResultRange.location == NSNotFound) && (searchCloseResultRange.location == NSNotFound))
+            done = YES;
+        else if (searchOpenResultRange.location == NSNotFound)
+            lineRange.location = searchCloseResultRange.location;
+        else if (searchCloseResultRange.location == NSNotFound)
+            lineRange.location = searchOpenResultRange.location;
+        else if (searchOpenResultRange.location <= searchCloseResultRange.location)
+            lineRange.location = searchOpenResultRange.location;
+        else
+            lineRange.location = searchCloseResultRange.location;
+            
+        
+        if (! done) {
+            NS_DURING
+            [syncInfo getLineStart: &theStart end: &theEnd contentsEnd: &theContentsEnd forRange: lineRange];
+            NS_HANDLER
+            return;
+            NS_ENDHANDLER
+        
+            lineRange.location = theEnd;
+            oneLineRange.location = theStart;
+            oneLineRange.length = theContentsEnd - theStart;
+            if (oneLineRange.length >= 1) {
+                theLine = [syncInfo substringWithRange: oneLineRange];
+                if ([theLine characterAtIndex:0] == '(') {
+                    stackPointer++;
+                    oneLineRange.location++;
+                    oneLineRange.length--;
+                    if (oneLineRange.length > 0) {
+                        theFile = [syncInfo substringWithRange: oneLineRange];
+                        [theStack insertObject:theFile atIndex: stackPointer];
+                        }
+                    }
+                else if ([theLine characterAtIndex:0] == ')') {
+                    if (stackPointer >= 0)
+                        stackPointer--;
+                    }
+                
+                }
+            }
+        }
+        
+    includeFileName = nil;
+    if (stackPointer >= 0)
+        includeFileName = [theStack objectAtIndex: stackPointer];
+            
+
+/*    
+    done = NO;
+    searchCloseString = [NSString stringWithString:@")"];
+    searchOpenString = [NSString stringWithString:@"("];
+
     while (! done) {
     
-        searchCloseString = [NSString stringWithString:@")"];
         searchCloseRange.location = 0; searchCloseRange.length = foundRange.location;
         searchCloseResultRange = [syncInfo rangeOfString: searchCloseString options:NSBackwardsSearch range: searchCloseRange];
         
-        searchOpenString = [NSString stringWithString:@"("];
         searchOpenRange.location = 0; searchOpenRange.length = foundRange.location;
         searchOpenResultRange = [syncInfo rangeOfString: searchOpenString options:NSBackwardsSearch range: searchOpenRange];
         
@@ -2142,6 +2217,7 @@ failed. If you change the code below, be sure to test carefully!
             foundRange.location = searchOpenResultRange.location - 1;
             }
         }
+*/
         
     if (includeFileName == nil) {
         [myDocument toLine:aNumber];

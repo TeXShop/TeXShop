@@ -1,16 +1,37 @@
-/**********************************************************************
-
-  oniguruma.h - Oniguruma (regular expression library)
-
-  Copyright (C) 2002-2004  K.Kosako (kosako@sofnec.co.jp)
-
-**********************************************************************/
 #ifndef ONIGURUMA_H
 #define ONIGURUMA_H
+/**********************************************************************
+  oniguruma.h - Oniguruma (regular expression library)
+**********************************************************************/
+/*-
+ * Copyright (c) 2002-2004  K.Kosako  <kosako AT sofnec DOT co DOT jp>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
 
 #define ONIGURUMA
 #define ONIGURUMA_VERSION_MAJOR   3
-#define ONIGURUMA_VERSION_MINOR   0
+#define ONIGURUMA_VERSION_MINOR   3
 #define ONIGURUMA_VERSION_TEENY   0
 
 #ifndef P_
@@ -98,6 +119,16 @@ typedef struct {
   OnigCodePoint to;
 } OnigPairAmbigCodes;
 
+typedef struct {
+  OnigCodePoint esc;
+  OnigCodePoint anychar;
+  OnigCodePoint anytime;
+  OnigCodePoint zero_or_one_time;
+  OnigCodePoint one_or_more_time;
+  OnigCodePoint anychar_anytime;
+} OnigMetaCharTableType;
+
+
 #if defined(RUBY_PLATFORM) && defined(M17N_H)
 
 #define ONIG_RUBY_M17N
@@ -111,6 +142,7 @@ typedef struct {
   int           max_enc_len;
   int           min_enc_len;
   OnigAmbigType support_ambig_flag;
+  OnigMetaCharTableType meta_char_table;
   int    (*is_mbc_newline)(UChar* p, UChar* end);
   OnigCodePoint (*mbc_to_code)(UChar* p, UChar* end);
   int    (*code_to_mbclen)(OnigCodePoint code);
@@ -146,6 +178,8 @@ ONIG_EXTERN OnigEncodingType OnigEncodingISO_8859_16;
 ONIG_EXTERN OnigEncodingType OnigEncodingUTF8;
 ONIG_EXTERN OnigEncodingType OnigEncodingUTF16_BE;
 ONIG_EXTERN OnigEncodingType OnigEncodingUTF16_LE;
+ONIG_EXTERN OnigEncodingType OnigEncodingUTF32_BE;
+ONIG_EXTERN OnigEncodingType OnigEncodingUTF32_LE;
 ONIG_EXTERN OnigEncodingType OnigEncodingEUC_JP;
 ONIG_EXTERN OnigEncodingType OnigEncodingEUC_TW;
 ONIG_EXTERN OnigEncodingType OnigEncodingEUC_KR;
@@ -174,6 +208,8 @@ ONIG_EXTERN OnigEncodingType OnigEncodingBIG5;
 #define ONIG_ENCODING_UTF8         (&OnigEncodingUTF8)
 #define ONIG_ENCODING_UTF16_BE     (&OnigEncodingUTF16_BE)
 #define ONIG_ENCODING_UTF16_LE     (&OnigEncodingUTF16_LE)
+#define ONIG_ENCODING_UTF32_BE     (&OnigEncodingUTF32_BE)
+#define ONIG_ENCODING_UTF32_LE     (&OnigEncodingUTF32_LE)
 #define ONIG_ENCODING_EUC_JP       (&OnigEncodingEUC_JP)
 #define ONIG_ENCODING_EUC_TW       (&OnigEncodingEUC_TW)
 #define ONIG_ENCODING_EUC_KR       (&OnigEncodingEUC_KR)
@@ -399,19 +435,6 @@ int onigenc_str_bytelen_null P_((OnigEncoding enc, UChar* p));
 /* constants */
 #define ONIG_MAX_ERROR_MESSAGE_LEN            90
 
-#if defined(RUBY_PLATFORM) && !defined(ONIG_RUBY_M17N)
-
-ONIG_EXTERN OnigEncoding    OnigEncDefaultCharEncoding;
-#undef ismbchar
-#define ismbchar(c) (mbclen((c)) != 1)
-/* !!! c must be "(unsigned) char" type or little endian. !!!
-   mbclen() should be removed from Ruby code.
- */
-#define mbclen(c)  \
-  ONIGENC_MBC_ENC_LEN(OnigEncDefaultCharEncoding, (UChar* )(&c))
-
-#endif /* defined(RUBY_PLATFORM) && !defined(ONIG_RUBY_M17N) */
-
 typedef unsigned int        OnigOptionType;
 
 #define ONIG_OPTION_DEFAULT            ONIG_OPTION_NONE
@@ -531,6 +554,7 @@ ONIG_EXTERN OnigSyntaxType*   OnigDefaultSyntax;
 #define ONIG_SYN_DIFFERENT_LEN_ALT_LOOK_BEHIND   (1<<6)  /* (?<=a|bc) */
 #define ONIG_SYN_CAPTURE_ONLY_NAMED_GROUP        (1<<7)  /* see doc/RE */
 #define ONIG_SYN_ALLOW_MULTIPLEX_DEFINITION_NAME (1<<8)  /* (?<x>)(?<x>) */
+#define ONIG_SYN_FIXED_INTERVAL_IS_GREEDY_ONLY   (1<<9)  /* a{n}?=(?:a{n})? */
 
 /* syntax (behavior) in char class [...] */
 #define ONIG_SYN_NOT_NEWLINE_IN_NEGATIVE_CC      (1<<20) /* [^...] */
@@ -628,6 +652,15 @@ ONIG_EXTERN OnigSyntaxType*   OnigDefaultSyntax;
 #define ONIG_IS_CAPTURE_HISTORY_GROUP(r, i) \
   ((i) <= ONIG_MAX_CAPTURE_HISTORY_GROUP && (r)->list && (r)->list[i])
 
+typedef struct OnigCaptureTreeNodeStruct {
+  int group;   /* group number */
+  int beg;
+  int end;
+  int allocated;
+  int num_childs;
+  struct OnigCaptureTreeNodeStruct** childs;
+} OnigCaptureTreeNode;
+
 /* match result region type */
 struct re_registers {
   int  allocated;
@@ -635,8 +668,15 @@ struct re_registers {
   int* beg;
   int* end;
   /* extended */
-  struct re_registers** list; /* capture history. list[1]-list[31] */
+  OnigCaptureTreeNode* history_root;  /* capture history tree root */
 };
+
+/* capture tree traverse */
+#define ONIG_TRAVERSE_CALLBACK_AT_FIRST   1
+#define ONIG_TRAVERSE_CALLBACK_AT_LAST    2
+#define ONIG_TRAVERSE_CALLBACK_AT_BOTH \
+  ( ONIG_TRAVERSE_CALLBACK_AT_FIRST | ONIG_TRAVERSE_CALLBACK_AT_LAST )
+
 
 #define ONIG_REGION_NOTPOS            -1
 
@@ -711,6 +751,15 @@ typedef struct re_pattern_buffer {
 } regex_t;
 
 
+typedef struct {
+  int             num_of_elements;
+  OnigEncoding    pattern_enc;
+  OnigEncoding    target_enc;
+  OnigSyntaxType* syntax;
+  OnigOptionType  option;
+  OnigAmbigType   ambig_flag;
+} OnigCompileInfo;
+
 /* Oniguruma Native API */
 ONIG_EXTERN
 int onig_init P_((void));
@@ -723,13 +772,13 @@ void onig_set_verb_warn_func P_((OnigWarnFunc f));
 ONIG_EXTERN
 int onig_new P_((regex_t**, UChar* pattern, UChar* pattern_end, OnigOptionType option, OnigEncoding enc, OnigSyntaxType* syntax, OnigErrorInfo* einfo));
 ONIG_EXTERN
-int onig_new_deluxe P_((regex_t** reg, UChar* pattern, UChar* pattern_end, OnigOptionType option, OnigAmbigType ambig_flag, OnigEncoding pattern_enc, OnigEncoding target_enc, OnigSyntaxType* syntax, OnigErrorInfo* einfo));
+int onig_new_deluxe P_((regex_t** reg, UChar* pattern, UChar* pattern_end, OnigCompileInfo* ci, OnigErrorInfo* einfo));
 ONIG_EXTERN
 void onig_free P_((regex_t*));
 ONIG_EXTERN
 int onig_recompile P_((regex_t*, UChar* pattern, UChar* pattern_end, OnigOptionType option, OnigEncoding enc, OnigSyntaxType* syntax, OnigErrorInfo* einfo));
 ONIG_EXTERN
-int onig_recompile_deluxe P_((regex_t* reg, UChar* pattern, UChar* pattern_end, OnigOptionType option, OnigAmbigType ambig_flag, OnigEncoding pattern_enc, OnigEncoding target_enc, OnigSyntaxType* syntax, OnigErrorInfo* einfo));
+int onig_recompile_deluxe P_((regex_t* reg, UChar* pattern, UChar* pattern_end, OnigCompileInfo* ci, OnigErrorInfo* einfo));
 ONIG_EXTERN
 int onig_search P_((regex_t*, UChar* str, UChar* end, UChar* start, UChar* range, OnigRegion* region, OnigOptionType option));
 ONIG_EXTERN
@@ -754,6 +803,14 @@ int onig_foreach_name P_((regex_t* reg, int (*func)(UChar*,UChar*,int,int*,regex
 ONIG_EXTERN
 int onig_number_of_names P_((regex_t* reg));
 ONIG_EXTERN
+int onig_number_of_captures P_((regex_t* reg));
+ONIG_EXTERN
+int onig_number_of_capture_histories P_((regex_t* reg));
+ONIG_EXTERN
+OnigCaptureTreeNode* onig_get_capture_tree P_((OnigRegion* region));
+ONIG_EXTERN
+int onig_capture_tree_traverse P_((OnigRegion* region, int at, int(*callback_func)(int,int,int,int,int,void*), void* arg));
+ONIG_EXTERN
 OnigEncoding onig_get_encoding P_((regex_t* reg));
 ONIG_EXTERN
 OnigOptionType onig_get_options P_((regex_t* reg));
@@ -766,6 +823,14 @@ int onig_set_default_syntax P_((OnigSyntaxType* syntax));
 ONIG_EXTERN
 void onig_copy_syntax P_((OnigSyntaxType* to, OnigSyntaxType* from));
 ONIG_EXTERN
+unsigned int onig_get_syntax_op P_((OnigSyntaxType* syntax));
+ONIG_EXTERN
+unsigned int onig_get_syntax_op2 P_((OnigSyntaxType* syntax));
+ONIG_EXTERN
+unsigned int onig_get_syntax_behavior P_((OnigSyntaxType* syntax));
+ONIG_EXTERN
+OnigOptionType onig_get_syntax_options P_((OnigSyntaxType* syntax));
+ONIG_EXTERN
 void onig_set_syntax_op P_((OnigSyntaxType* syntax, unsigned int op));
 ONIG_EXTERN
 void onig_set_syntax_op2 P_((OnigSyntaxType* syntax, unsigned int op2));
@@ -774,7 +839,9 @@ void onig_set_syntax_behavior P_((OnigSyntaxType* syntax, unsigned int behavior)
 ONIG_EXTERN
 void onig_set_syntax_options P_((OnigSyntaxType* syntax, OnigOptionType options));
 ONIG_EXTERN
-int onig_set_meta_char P_((unsigned int what, OnigCodePoint code));
+int onig_set_meta_char P_((OnigEncoding enc, unsigned int what, OnigCodePoint code));
+ONIG_EXTERN
+void onig_copy_encoding P_((OnigEncoding to, OnigEncoding from));
 ONIG_EXTERN
 unsigned int onig_get_match_stack_limit_size P_((void));
 ONIG_EXTERN

@@ -1641,16 +1641,16 @@ Version 1.29		July 11, 2003\
 						b) Using preferences, a user can make XeTeX or XeLaTeX the default\
 						typesetting option\
 \
-						c) If one of the first ten lines of the source has the form\
+						c) If one of the first twenty lines of the source has the form\
 	\
-							%&encoding=UTF-8 Unicode\
+							%!TEX encoding = UTF-8 Unicode\
 \
 						then that file will be loaded and saved with UTF-8 Unicode encoding,\
 						regardless of the default encoding chosen for other documents\
 \
 						d) If the first line of the source has the form\
 \
-							%&program=xetex       or      %&program=xelatex\
+							%!TEX TS-program = xetex       or      %!TEX TS-program = xelatex\
 \
 						then the appropriate program will be used regardless of the\
 						typesetting option chosen.\
@@ -1666,21 +1666,36 @@ Version 1.29		July 11, 2003\
 					Items in ~/Library/TeXShop/Engines can be chosen as default typesetting method\
 					in TeXShop Preferences.\
 \
-					In previous TeXShop versions, the typesetting program can be set in the first line\
-					of the source code by writing %&tex, %&latex, %&pdftex, etc. For compatibility reasons,\
-					this still works, but the preferred syntax is now %&program=tex, %&program=latex,\
-					%&program=pdftex, etc. This new syntax also works for any new typesetting engine\
-					added to ~/Library/TeXShop/Engines. For example, %&program=xelatex chooses\
+					The typesetting program can be set in the source code by writing one of the following\
+					on any of the first twenty lines of the source:\
+\
+						%!TEX TS-program = tex\
+						%!TEX TS-program = latex\
+						%!TEX TS-program = pdftex\
+						%!TEX TS-program = pdflatex\
+						%!TEX TS-program = personaltex\
+						%!TEX TS-program = personallatex\
+\
+					This new syntax also works for any new typesetting engine added to \
+					~/Library/TeXShop/Engines. For example, %!TEX TS-program = xelatex chooses\
 					XeLaTeX.\
 \
 					The encoding used to open or save a file can be set by writing a line of the form\
 					\
-						%&encoding=UTF-8 Unicode\
+						%!TEX encoding = UTF-8 Unicode\
 \
-					as one of the first 10 lines of a source document. Any supported encoding is allowed;\
+					as one of the first 20 lines of a source document. Any supported encoding is allowed;\
 					TeXShop's Help Files list the string which must appear on the right for each of\
 					these encodings. To bypass this behavior, hold down the option key while opening\
 					a file.\
+\
+					The earlier SourceDoc syntax has been modified to conform with the above changes.\
+					For example, to set the root file to ../Main.tex, write\
+\
+						%!TEX root =  ../Main.tex\
+\
+					(The old syntax is still supported for setting the program, encoding, and SourceDoc,\
+					but users are urged to switch to this new syntax.)\
 \
 					TeXShop has a new Find panel by Isao Sonobe. This panel supports regular expressions.\
 					Users can switch between the new panel and the original one in Preferences.\

@@ -27,7 +27,7 @@ output. The Arabic and Hebrew
 characters were obtained by accessing the International Panel in System Preferences, selecting the
 Input Menu tab, and checking Arabic and Hebrew; a small flag appeared on the menu bar and a user could
 switch keyboards by selecting an appropriate flag.</p>
-<IMG HEIGHT="355" WIDTH="330" border="0" SRC="../gfx/source.jpg">
+<IMG HEIGHT="356" WIDTH="328" border="0" SRC="../gfx/source.jpg">
 
 <IMG HEIGHT="155" WIDTH="349" border="0" SRC="../gfx/output.jpg">
 
@@ -35,15 +35,15 @@ switch keyboards by selecting an appropriate flag.</p>
 <dl>
 <li> XeTeX and XeLaTeX are available in the pull-down typesetting menu on the source window
 <li> A user can make XeTeX or XeLaTeX the default typesetting option in preferences
-<li> If one of the first ten lines of the source has the form
+<li> If one of the first twenty lines of the source has the form
 <dl>
-<dd> %&encoding=UTF-8 Unicode
+<dd> %!TEX encoding = UTF-8 Unicode
 </dl>
 then that source will be loaded and saved with UTF-8 Unicode encoding regardless of the default encoding
 setting in preferences
-<li> If the first line of the source has the form
+<li> If one of the first twenty lines of the source has the form
 <dl>
-<dd> %&program=xetex or %&program=xelatex
+<dd> %!TEX TS-program = xetex or %!TEX TS-program = xelatex
 </dl>
 then the appropriate program will be used regardless of the typesetting option chosen in the menu
 </dl>
@@ -59,19 +59,19 @@ and have the executable bit set.</p>
 <p> Items in ~/Library/TeXShop/Engines can be chosen as the default typesetting method in TeXShop Preferences.
 Notice that when a method is listed in Preferences, its name is given without the extension.</p>
 
-<p> The default program can be set on the first line of the source code by writing
+<p> The default program can be set on one of the first twenty lines of the source code by writing
 a line like </p>
 <dl>
-<dd> %&program=xelatex
+<dd> %!TEX TS-program = xelatex
 </dl>
 
 <p>The encoding used to open or save any file can be set by writing a line of the following form
-as one of the first 10 lines of a source document. Any supported encoding is allowed. To bypass this
+as one of the first twenty lines of a source document. Any supported encoding is allowed. To bypass this
 behavior, hold down the option key while opening a file. </p>
 <dl>
-<dd> %&encoding=UTF-8 Unicode
+<dd> %!TEX encoding = UTF-8 Unicode
 </dl>
- <p> There cannot be spaces around the equal sign; the spaces in the name of the
+ <p> There must be one space after %!TEX and one space before the equals sign; the spaces in the name of the
 encoding must match the spaces in the name listed below. The name of the encoding is the internal name
 used by Mac OS X. Below is a list of allowed names:</p>
 <dl>

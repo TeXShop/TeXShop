@@ -101,6 +101,10 @@
 #		display a blank page until the new version is ready.
 # 2003/05/21	Joachim's modification used /bin/cp. Gerben made it truly
 #		atomic by using /bin/cp in combination with /bin/mv
+# 2003/11/23	Added supportfor passing flasg to tex at the request of
+#		Dick Koch.
+# 2004/09/05	Bugfix: make it work better with directories with whitespace
+#		in their name
 
 # FEATURE: it seems -u +foo.map -u -foo.map does not work. So --extradvipsopts
 # cannot be used to remove a map from the standard list
@@ -150,7 +154,7 @@ Usage: ${calledas}
 	[--default] [--maxpk] [--maxpfb] [--extendedname] [--no-echo-version]
 	[--tex-path dir] [--keep-psfile] [--distiller-path dir] [--debug]
 	[--distiller prog] [--distiller-filter prog] [--help]
-	[--outdir dir] tex-or-dvi-file
+	[--outdir dir] [--extratexopts texoptsstring] tex-or-dvi-file
 
 ${calledas} is a way to do pdf{e}{la}tex without having pdf{e}{la}tex. It needs a
 working TeX environment and ghostscript. Since pdf{e}{la}tex cannot handle
@@ -222,6 +226,10 @@ Arguments:
 		--dvipsopts "-M"
 		Sets extension for --extendedfilename to .custom. --dvipsopts
 		overrides other flags that set dvipsopts.
+	--extratexopts
+		Give extra arbitrary arguments to tex, e.g.
+		--extratexopts "--interaction=nonstopmode"
+		Sets extra options for the tex command that is used.
 	--extradvipsopts
 		Give extra arbitrary arguments to dvips, e.g.
 		--extradvipsopts "-M"
@@ -292,6 +300,10 @@ do
 	--extradvipsopts)
 		shift
 		extradvipsoptions="$1"
+		;;
+	--extratexopts)
+		shift
+		extratexoptions="$1"
 		;;
 	--tex-path)
 		shift
@@ -402,7 +414,7 @@ main()
 	fi
 
 	startwithdvi="no"
-	basename=`basename ${file}`
+	basename=`basename "${file}"`
 	nosuffixbasename=`echo -n ${basename}|sed 's/\.[^.]*$//'`
 	nodvisuffixbasename=`echo -n ${basename}|sed 's/\.[dD][vV][iI]$//'`
 	if [ "${nodvisuffixbasename}" = "${nosuffixbasename}" -a \
@@ -453,7 +465,7 @@ main()
 	then
 		dvifile="${file}"
 	else
-		texfile="$file"
+		texfile="${file}"
 		dvifile="${outdir}${nosuffixbasename}.dvi"
 	fi
 
@@ -478,7 +490,7 @@ main()
 		echo "### Skipping ${texprogram} ${texfile} [dvi->pdf only]"
 	else
 		echo "### ${texpath}/${texprogram} ${texfile}"
-		"${texpath}/${texprogram}" --interaction=nostopmode  ${texfile} || \
+		"${texpath}/${texprogram}" ${extratexoptions} "${texfile}" || \
 			echo "### WARNING: TeX returned non zero exit status ${status}"
 	fi
 

@@ -1,5 +1,5 @@
 September 3, 2004
-Changes since 1.35
+Beginning of changes since 1.35
 
 1) New German Localization and Help Files
 
@@ -28,11 +28,13 @@ There is one case that still fails:
 	write permission, and there is a space in some folder's name
 	in the path leading to the file
 
+(This was later fixed; see 14 below)
+
 8) In 1.35, it was only possible to switch between the OgreKit Find panel
 and the Apple Find panel in the English localization. This preference now
-always works. To fix this, I had to add a line to the OgreKit Library file
-which modifies a program's Find menu. The code checks the Find Panel preference
-and returns if it is set to the Apple Find panel.
+always works. To fix it, I had to add a line to the OgreKit Library file
+in the routine which modifies a program's Find menu. The code now checks the 
+Find Panel preference first.
 
 9) Trash AUX Files now removes files with more extensions:
 
@@ -47,3 +49,102 @@ request of Lawrence Paulson, Gary Gray, ADITYA TRIVEDI, and Josep Font.
 
 10) I modified the English Help advanced_removeaux.htm to reflect this
 new list.
+
+11) The menu item to bring up the statistics panel was only in the
+English version. Now it is in all versions.
+
+12) Localized the statistics panel in German.
+
+13) If the user tries to open a file with UTF-8 Unicode encoding, but
+the file is not a legal utf8 file, a dialog now appears:
+
+	This file is not encoded in UTF-8 Unicode.
+
+	The file has been opened with MacOSRoman encoding.
+	If that is not correct, close it and open again with an
+	appropriate encoding.
+
+14) With Gerben Wierda's help, fixed the code which opens a dvi
+file. Now this dvi can be in a read-only directory and the path
+leading to that directory can have folders whose names have spaces.
+
+15) If the user tries to open a file, but the file is not a legal file 
+in the chosen encoding, the file will be opened with MacOSRoman encoding 
+and a dialog will appear warning the user of this change. The dialog 
+explains that the window can be closed and the file opened with a 
+different encoding. Note that usually TeXShop cannot tell the 
+correct encoding. For example, a Latin1 file will open fine in 
+MacOSRoman encoding, though some of the letters may be wrong. 
+
+This change is mainly for people trying to open a fine with 
+UTF-8 Encoding when the file was not coded for UTF-8 Unicode. 
+A random collection of bytes will almost never be a legal 
+UTF-8 Unicode file.
+
+16) At this point I started to post this document when making minor
+changes. All corrections above appear in 1.35d. Notice that the
+minor version number appears in the About Box, which reads:
+"TeXShop Version 1.35 (v1.35d)".
+
+In 1.35e:
+
+17) New Japanese Help by Yoshihisa Okazaki with help from Seiji Zenitani.
+
+18) New Japanese localized strings
+
+19) Further pdfsync fixes from source to preview. If a project
+had a SourceDoc ./main.tex line instead of a SourceDoc main.tex line,
+pdfsync could fail. This is fixed.
+
+In 1.35f:
+
+20) A further pdfsync fix in case the user wrote
+
+	\include{./MyChapter/Chapter1} 
+
+rather than 
+
+	\include{MyChapter/Chapter1}
+
+21) Changed the syntax for TeXShop commands as comments within the text.
+The syntax is now uniform:
+
+	%!TEX TS-program = xelatex
+	%!TEX encoding = RTS-8 Unicode
+	%!TEX root = ../Main.tex
+
+The old syntax is still supported for compatibility purposes, but only
+the new syntax is described in the help files and encouraged for future
+use.
+
+Each such line must occur within the first twenty lines of the document.
+
+22) Now when a file is typeset, all open changed files with the same root
+are first saved.
+
+23) New Spanish help files and localization
+
+24) In previous versions, it was possible to add a Macro button to the
+Preview Window Toolbar in English, but not in other localizations. This is
+fixed thanks to Juan Luis Varona.
+
+25) Upgraded to the latest OgreKit, version 2.0.0beta5, released on 9/17/2004.
+
+26) bib files are promoted to full class citizens; text can be dragged in them,
+syntax coloring works, etc.
+
+27) This is a remark rather than a bug fix. Users have reported that they
+can no longer "find" words in the console window. Actually, they can. This
+window has two portions. When typesetting ends, the bottom portion is active,
+so the Find panel searches that portion and beeps when it finds nothing.
+To activate the top, click on it. Now Find works.
+
+28) In all display modes except single page mode, a black border is drawn
+around each pdf page. Previously, this border was slightly inside the page,
+cutting off a slight border around the page. Now it is just outside the
+page. Thanks to Scott Randby for pointing out this error.
+
+29) The "%!TEX TS-program " and "%!TEX root =" commands now work when used
+with an external editor.
+
+30) Made further improvements in sync from Preview window to Source window.

@@ -23,6 +23,12 @@
         IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/ 
 	IBOutlet NSTextField	*_texCommandTextField;		/*" connected to "TeX program" "*/
 	IBOutlet NSTextField	*_latexCommandTextField;	/*" connected to "Latex program" "*/
+        IBOutlet NSTextField	*_texGSCommandTextField;	/*" connected to "Tex + GS" "*/
+        IBOutlet NSTextField	*_latexGSCommandTextField;	/*" connected to "Latex + GS" "*/
+        IBOutlet NSTextField	*_tetexBinPathField;		/*" connected to tetex bin path "*/
+        IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
+        IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/	
+        IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
 	
@@ -55,6 +61,12 @@
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
+- (IBAction)texGSProgramChanged:sender;
+- (IBAction)latexGSProgramChanged:sender;
+- (IBAction)tetexBinPathChanged:sender;
+- (IBAction)texScriptProgramChanged:sender;
+- (IBAction)latexScriptProgramChanged:sender;
+- (IBAction)defaultScriptChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
 - (IBAction)consoleBehaviorChanged:sender;
 

@@ -107,6 +107,9 @@
     [textView setDelegate: self];
     [pdfView resetMagnification]; 
     
+    whichScript = [SUD integerForKey:DefaultScriptKey];
+    [self fixTypesetMenu];
+    
     myImageType = isTeX;
     fileExtension = [[self fileName] pathExtension];
     if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) &&
@@ -139,7 +142,8 @@
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
             myImageType = isJPG;
             }
-        else if ([fileExtension isEqualToString: @"tiff"]) {
+        else if (([fileExtension isEqualToString: @"tiff"]) ||
+                ([fileExtension isEqualToString: @"tif"])) {
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
@@ -190,8 +194,9 @@
     [textWindow setInitialFirstResponder: textView];
     [textWindow makeFirstResponder: textView];
     
-    if (!fileIsTex) return;
-    
+    if (!fileIsTex) 
+        return;
+        
     if ([SUD integerForKey:DefaultCommandKey] == DefaultCommandTeX)
         [typesetButton setTitle: @"Tex"];
     else
@@ -227,6 +232,11 @@
 /*" This method registers all notifications that are necessary to work properly together with the other AppKit and TeXShop objects.
 "*/
 {
+    // register to learn when the document window becomes main so we can fix the Typeset script
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(newMainWindow:)
+        name:NSWindowDidBecomeMainNotification object:nil];
+        
     // register for notifications when the document window becomes key so we can remember which window was
     // the frontmost. This is needed for the preferences.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
@@ -496,7 +506,7 @@ preference change is cancelled. "*/
 
 - (void) doJob: (Boolean) withLatex;
 {
-    SEL	saveFinished;
+    SEL			saveFinished;
     
     errorNumber = 0;
     whichError = 0;
@@ -506,11 +516,23 @@ preference change is cancelled. "*/
         whichEngine= 1;
     else 
         whichEngine = 0;
+        
     saveFinished = @selector(saveFinished:didSave:contextInfo:);
     [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
     
     // dirk test
     // [pdfWindow setNextResponder:pdfView];
+}
+
+/* The default save operations clear the "document edited symbol" but
+do not reset the undo stack, and then later the symbol gets out of sync.
+This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
+
+- (void) updateChangeCount: (NSDocumentChangeType)changeType;
+{
+    [super updateChangeCount: changeType];
+    if (![self isDocumentEdited])
+        [[textView undoManager] removeAllActions];
 }
 
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
@@ -523,13 +545,15 @@ preference change is cancelled. "*/
     NSString		*sourcePath;
     NSString		*bibPath;
     NSString		*indexPath;
+    NSString		*enginePath;
+    NSString		*tetexBinPath;
     BOOL		withLatex;
 
     if (whichEngine == 1)
         withLatex = YES;
     else if (whichEngine == 0)
         withLatex = NO;
-
+        
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
     
@@ -594,10 +618,49 @@ preference change is cancelled. "*/
                 }
             texTask = [[NSTask alloc] init];
             [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
-            if (withLatex)
-                [texTask setLaunchPath:[SUD stringForKey:LatexCommandKey]];
-            else
-                [texTask setLaunchPath: [SUD stringForKey:TexCommandKey]]; 
+            
+            switch (whichScript) {
+            
+                case 100: 
+                
+                    if (withLatex)
+                        enginePath = [SUD stringForKey:LatexCommandKey];
+                    else
+                        enginePath = [SUD stringForKey:TexCommandKey];
+                    break;
+                
+                case 101:
+                
+                    if (withLatex)
+                        enginePath = [SUD stringForKey:LatexGSCommandKey];
+                    else
+                        enginePath = [SUD stringForKey:TexGSCommandKey];
+                    break;
+                
+                case 102:
+                
+                    if (withLatex)
+                        enginePath = [SUD stringForKey:LatexScriptCommandKey];
+                    else
+                        enginePath = [SUD stringForKey:TexScriptCommandKey];
+                    break;
+                
+                }
+                
+            if (enginePath != nil) {
+                if ([enginePath characterAtIndex:0] != '/') {
+                    tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+                    enginePath = [tetexBinPath stringByAppendingString:enginePath];
+                     }
+                }
+            if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath]))
+                [texTask setLaunchPath:enginePath];
+            else {
+                [inputPipe release];
+                [outputPipe release];
+                [texTask release];
+                texTask = nil;
+                }
             [texTask setArguments:args];
             [texTask setStandardOutput: outputPipe];
             [texTask setStandardInput: inputPipe];
@@ -614,7 +677,9 @@ preference change is cancelled. "*/
                 }
             bibTask = [[NSTask alloc] init];
             [bibTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
-            [bibTask setLaunchPath: @"/usr/local/bin/bibtex"];
+            tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+            enginePath = [tetexBinPath stringByAppendingString:@"bibtex"];
+            [bibTask setLaunchPath: enginePath];
             [bibTask setArguments:args];
             [bibTask setStandardOutput: outputPipe];
             [bibTask setStandardInput: inputPipe];
@@ -631,7 +696,9 @@ preference change is cancelled. "*/
                 }
             indexTask = [[NSTask alloc] init];
             [indexTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
-            [indexTask setLaunchPath: @"/usr/local/bin/makeindex"];
+            tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+            enginePath = [tetexBinPath stringByAppendingString:@"makeindex"];
+            [indexTask setLaunchPath: enginePath];
             [indexTask setArguments:args];
             [indexTask setStandardOutput: outputPipe];
             [indexTask setStandardInput: inputPipe];
@@ -639,6 +706,11 @@ preference change is cancelled. "*/
             }
 
         }
+}
+
+- (void) fake:(id)theDictionary
+{
+    ;
 }
 
 - (void) doTex: sender 
@@ -876,6 +948,41 @@ preference change is cancelled. "*/
     tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
 }
 
+- (void) doChooseMethod: sender;
+{
+    [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu] 
+        itemWithTag:100] setState:NSOffState];
+    [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu] 
+        itemWithTag:101] setState:NSOffState];
+    [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu] 
+        itemWithTag:102] setState:NSOffState];
+    [sender setState:NSOnState];
+    whichScript = [sender tag]; 
+}
+
+- (void) fixTypesetMenu;
+{
+    NSMenuItem 	*aMenu;
+    int		i;
+    
+    for (i = 100; i <= 102; i++) {
+        aMenu = [[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] 
+            submenu] itemWithTag:i]; 
+        if (whichScript == i)
+            [aMenu setState:NSOnState];
+        else
+            [aMenu setState:NSOffState];
+        }
+}
+
+- (void)newMainWindow:(NSNotification *)notification
+{
+	id object = [notification object];
+        if ((object == pdfWindow) || (object == textWindow) || (object == outputWindow))
+            [self fixTypesetMenu];
+}
+
+
 
 - (void) doError: sender;
 {
@@ -934,6 +1041,11 @@ preference change is cancelled. "*/
     result = [super validateMenuItem: anItem];
     if (fileIsTex)
         return result;
+        
+      else if ((myImageType == isOther) && 
+            ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")])) {
+        return YES;
+        }
     else if ([[anItem title] isEqualToString:@"Tex"]) {
         return NO;
         }
@@ -946,13 +1058,13 @@ preference change is cancelled. "*/
     else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Print..."]) {
+    else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Set Project Root..."]) {
+    else if ([[anItem title] 
+            isEqualToString: NSLocalizedString(@"Set Project Root...", @"Set Project Root...")]) {
         return NO;
         }
-
     else return result;
 }
 
@@ -965,6 +1077,7 @@ preference change is cancelled. "*/
     colorEnd = 0;
     returnline = NO;
     tagLine = NO;
+   // [self updateChangeCount: NSChangeDone];
 }
 
 - (void)fixColor: (unsigned)from : (unsigned)to

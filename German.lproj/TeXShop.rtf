@@ -2,6 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+\vieww14400\viewh13560\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -22,6 +23,7 @@
 	Getting and Installing TeXShop\
 	Typesetting Documents\
 	Including Graphics\
+	Alternate Typesetting Mode\
 	Modifying the Templates Menu\
 	Setting a Project Root File\
 	Setting Preferences\
@@ -29,8 +31,9 @@
 	BibTeX\
         	MakeIndex\
 	Opening Other Files with TeXShop\
-	Graphic Conversions\
+	Mathematica\
         	Localizations\
+	More About teTeX\
 	Sending Bug Reports\
 	License\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -40,7 +43,7 @@ Preliminaries:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop is a Mac OS X program which can typeset TeX and Latex files and preview the output on the screen. The program typesets using 
+\f2\b0 \cf0 TeXShop is a Mac OS X program which can typeset TeX and Latex files and preview the output on the screen. The program usually typesets using 
 \f1\i pdftex
 \f2\i0  or 
 \f1\i pdflatex
@@ -48,7 +51,7 @@ Preliminaries:\
 \f1\i tex
 \f2\i0  or 
 \f1\i latex
-\f2\i0 ; these programs output pdf files rather than dvi files. Since pdf is the native graphics format of Mac OS X, it is easy to display the output on the screen. 
+\f2\i0 . These programs output pdf files rather than dvi files. Since pdf is the native graphics format of Mac OS X, it is easy to display the output on the screen. 
 \f1\i Pdftex
 \f2\i0  and 
 \f1\i pdflatex
@@ -58,7 +61,7 @@ The pdf files created by TeXShop are standard pdf files which can be given to ot
 \
 TeXShop does not include TeX. Instead it uses the standard TeX distribution 
 \f1\i teTeX
-\f2\i0 , a wonderful collection of the entire suite of TeX programs, files, and utilities created by Thomas Esser. This collection (the standard version of TeX on Linux systems) has been compiled for Mac OS X. Instructions for obtaining it are given below.\
+\f2\i0 , a wonderful collection of the entire suite of TeX programs, files, and utilities created by Thomas Esser. This collection (the standard version of TeX on Linux systems) has been compiled for Mac OS X by Gerben Wierda. Instructions for obtaining it are given below.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -70,48 +73,22 @@ TeXShop does not include TeX. Instead it uses the standard TeX distribution
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-and at\
-\
-	ftp://ftp.nluug.nl/pub/comp/next/MacOSX/teTeX-1.07-fmt-1.02.macosx.tar.gz\
-\
-The file at the Oregon site is named "tetex.tar.gz" and the file in The Netherlands is named "teTeX-1.07-fmt-1.02.macosx.tar.gz". Obtain one of these files and place it in your home directory. Open a terminal and type the following commands, one after another:\
-\
-                
-\f3\fs20 cd\
-        sudo  tcsh\
-        tar  -zpPxvf  tetex.tar.gz\
-        cd  /usr/local\
-        mkdir  bin\
-        cd  /usr/local/teTeX\
-        source  mklinks\
-
-\f2\fs24                \
- If your printer uses letter size paper rather than A4 size paper, as is likely in the US, issue the command\
+in a file named "teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program to install both teTeX and ghostscript.\
  \
-                
-\f3\fs20 texconfig  dvips  paper  letter\
-
-\f2\fs24                \
-These commands must be issued from an Administrator account. The account created when Mac OS X was installed is such an account. The "sudo" command will issue a warning and ask for a password; give your regular user password. The "tar" command will produce a large number of output lines, including warning lines with the message "unable to set uid/guid; no such file or directory." This is normal; ignore the warnings. When you are done, quit the Terminal program. You can throw the file "tetex.tar.gz" away.\
+The complete source for teTeX is on Wierda's web site at \
+\
+	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Getting and Installing TeXShop:
 \f2\b0 \
 \
-In your user account, log onto the following web site:\
+In your user account, log onto the web site\
 \
 	www.uoregon.edu/~koch/texshop/texshop.html\
 \
-Click the link ``TeXShop Program''. This will produce a file titled texshop.tar.gz. In a terminal program, type the following commands:\
-\
-                
-\f3\fs20 gzip  -d  texshop.tar.gz\
-        tar  -xf  texshop.tar\
-        rm  texshop.tar.gz
-\f2\fs24 \
-\
-This will produce a folder titled ``TeXShop Folder.'' The TeXShop Folder contains TeXShop and several files which can be read or discarded. Drag TeXShop to the Applications folder. If you intend to use it often, drag its icon to the Dock.\
+and click the TeXShop link to download the file TeXShop.dmg. Double click on this file; a folder will appear containing TeXShop and other files which can be read or discarded. Drag TeXShop to the Applications folder. If you intend to use it often, drag its icon to the Dock.\
 \
 
 \f0\b Typesetting Documents:\
@@ -124,7 +101,7 @@ This will produce a folder titled ``TeXShop Folder.'' The TeXShop Folder contain
 \f1\i tex
 \f2\i0 . If there are errors, 
 \f1\i pdflatex
-\f2\i0  will halt; type "return" to skip the errors one by one, or one of the standard tex inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file.\
+\f2\i0  will halt; type "return" to skip the errors one by one, or one of the standard tex inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing control-1.\
 \
 To typeset a TeX document, push the "Program" button and select TeX instead of Latex. If you usually use TeX, choose it as your default program in the Preferences Dialog.\
 \
@@ -146,10 +123,10 @@ You can close the pdf window at any time. It will reappear when the document is 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f1\i \cf0 Warning: pdftex
+\f1\i \cf0 pdftex
 \f2\i0  and 
 \f1\i pdflatex
-\f2\i0  are unix programs which do not like spaces in filenames. Source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.  \
+\f2\i0  are unix programs derived from Knuth's TeX program. The syntax of TeX does not allow spaces in filenames, so source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.  \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -157,7 +134,21 @@ You can close the pdf window at any time. It will reappear when the document is 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 It is common to use eps (encapsulated postscript) graphic files in TeX documents because such files print well at any size. The native graphics format of Mac OS X is pdf (postscript display format); these files also print well at any size. Consequently, graphics for TeXShop documents should be created in pdf format. It is likely that most Mac graphics programs will be modified to output pdf over the next few months. Utilities are beginning to appear which can convert from one graphic format to another. Please consult the standard archives.\
+\f2\b0 \cf0 The programs 
+\f1\i pdftex
+\f2\i0  and 
+\f1\i pdflatex
+\f2\i0  can use graphic files produced in pdf, jpg, or tif format. One pecularity is that tiff files must have extension ".tif" rather than ".tiff".  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics program will output pdf.\
+\
+If you used TeX in the past, your illustrations may be in 
+\f1\i eps
+\f2\i0  format. 
+\f1\i pdftex
+\f2\i0  and 
+\f1\i pdflatex
+\f2\i0  cannot use such files directly, but ghostscript can convert eps files to pdf files. Ghostscript is included in Gerben Wierda's teTeX distribution; to convert "myfile.eps", open the Terminal program and type\
+\
+     epstopdf myfile.eps   \
 \
 The authors of 
 \f1\i pdflatex
@@ -189,7 +180,7 @@ The authors of
 \
 	
 \f3\fs20 \\ifpdf\
-	\\DeclareGraphicsExtensions\{.pdf, .jpg\}\
+	\\DeclareGraphicsExtensions\{.pdf, .jpg, .tif\}\
 	\\else\
 	\\DeclareGraphicsExtensions\{.eps, .jpg\}\
 	\\fi\
@@ -208,6 +199,41 @@ This command will cause
 \f2\i0 , but input the file "f1.eps" when the text is typeset with 
 \f1\i latex.\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\i0\b \cf0 Alternate Typesetting Mode:
+\f2\b0 \
+\
+There is another way to typeset with TeXShop; in this alternate mode, 
+\f1\i eps
+\f2\i0  illustrations can be input directly without conversion. To use the alternate method, choose "Tex and Ghostscript" in the Typeset menu. Then TeXShop will typeset by calling 
+\f1\i tex
+\f2\i0  or 
+\f1\i latex
+\f2\i0  to produce a ".dvi" file, calling 
+\f1\i dvips
+\f2\i0  to convert it to a postscript file, and calling 
+\f1\i ps2pdf
+\f2\i0  to convert the postscript file to pdf. The method chosen in the typeset menu will only affect the topmost file; other documents will continue to be typeset with 
+\f1\i pdftex
+\f2\i0  or 
+\f1\i pdflatex
+\f2\i0 . The primary method used, 
+\f1\i pdftex
+\f2\i0  or 
+\f1\i tex and
+\f2\i0  
+\f1\i ghostscript
+\f2\i0 , can be selected in the preference dialog.\
+\
+The "Tex and Ghostscript" method should be used for old projects with many 
+\f1\i eps
+\f2\i0  illustrations, and for tex files with postscript special commands, and for tex files that include bitmapped fonts which do not display correctly when typeset with 
+\f1\i pdflatex
+\f2\i0 . Experimentation will show which is the preferable typesetting engine.  \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i \cf0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\i0\b \cf0 Modifying the Templates Menu:\
@@ -299,7 +325,8 @@ Setting Preferences:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. \
+\f2\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. You can configure the console\
+so it always appears when typesetting, or only appears when there is an error. \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 \
@@ -311,7 +338,7 @@ Setting Preferences:\
 \f1\i pdfetex
 \f2\i0  and 
 \f1\i pdfelatex
-\f2\i0 . It is also useful if the binaries for your teTeX are installed in different locations. Obviously the substituted command must still produce a pdf output file. Write the full path to the new programs in the preference dialog.\
+\f2\i0 . Obviously the substituted command must produce a pdf output file. If the new programs are in the teTeX binary directory, it is enough to name them in the preference dialog; the dialog will also accept fully qualified path names for files which live elsewhere.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -320,46 +347,6 @@ Setting Preferences:\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f2\b0 \cf0 To print a Tex output file, select the "Print" menu item. To print Tex source, select the "Print Source" menu item.\
-\
-Printing can also be done directly within teTeX without using TeXShop. When you want to print, open a terminal window and typeset your document a final time with 
-\f1\i tex
-\f2\i0  or 
-\f1\i latex
-\f2\i0  rather than 
-\f1\i pdftex
-\f2\i0  or 
-\f1\i pdflatex
-\f2\i0 , for instance by using the command\
-\
-	latex myfile\
-\
-This will yield a dvi file. Print the dvi file using the command\
-\
-	dvips myfile\
-\
-There are two problems with this method. First, it only works if you have a postscript printer. Tex experts may know how to get around this problem. Second, even after you define a printer with the Print Center application, it isn't known to the lpr daemon, so dvips will complain that there is no printer available. Mike Najarian posted a note about lpr printing on the macosx-admin mailing list maintained by Omnigroup.  Here are Najarian's instructions:\
-\
-1) Using a text editor, create a file called "myprintcap" with text similar to the following. The entry "My_Printer" at the start can be any name you choose to call the printer within Mac OS X. The entry  "host.domain.edu" should be replaced with the tcp/ip address of your printer, or the tcp/ip address of the computer which is hosting your printer. The entry "HPLaserJet" should be replaced with the name of your printer on the hosting machine. The second two lines of this file begin with tabs.\
-\
-My_Printer: \\\
-	:lp=:rm=host.domain.edu:rp=HPLaserJet:sd=/var/spool/lpd/HPLaserJet: \\\
-	:ty=PostScript:\
-\
-Be sure to save the file in straight text form rather than in rtf form. If your printer is directly connected rather than remotely over ethernet, I don't know what these entries should be.\
-\
-2) Start up Terminal. Enter the command\
-\
-	sudo niload printcap  /  <  myprintcap\
-\
-3) Create the folder /var/spool/lpd/HPLaserJet, replacing "HPLaserJet" with the printer name you entered earlier.\
-\
-4) Start the PrinterCenter app. It will see the new printer created in netinfo. Click to accept the choice and the new printer will become your default printer.\
-\
-5) Using an editor, create a text file in your home directory named ".cshrc" with contents\
-\
-	setenv PRINTER My_Printer\
-\
-replacing "My_Printer" with the name you selected earlier.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -452,7 +439,7 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions ".log", ".aux", etc. Files with extensions ".jpg", ".tiff", and ".pdf" are opened as graphic files.\
+\f2\b0 \cf0 TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions ".log", ".aux", etc. Files with extensions ".jpg", ".tif", and ".pdf" are opened as graphic files.\
 \
 However, it is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it always saves files in 8-bit Ascii format because that is the format which 
 \f1\i tex
@@ -464,26 +451,15 @@ However, it is not a good idea to use TeXShop as a general editor. TeXShop can r
 \f2\b0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Graphic Conversions:\
+\f0\b \cf0 Mathematica :\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeX graphic files are often created as eps or tiff files. These files must be converted to pdf or jpg for screen viewing, and to eps for printing with dvips. \
+\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, it is best to typeset using "Tex and Ghostscript" mode.\
 \
-	1) There is a utility called ``epstopdf'' in ghostscript which can convert \
-	from eps to pdf. To create the file "mygraphics.pdf" from "mygraphics.eps",\
-	type\
+Mathematica eps files are saved with Macintosh line feed conventions, so the epstopdf conversion utility cannot handle them directly. There are many ways to convert to files with Unix line feed conversnions. One such utility is available at\
 \
-		epstopdf myfile.eps\
-\
-	2) Mathematica, which can save images in eps format. But Mathematica\
-	saves files with the Macintosh line feed convention and the files must be\
-        	converted to the Unix line feed convention before using epstopdf.\
-\
-	3) The program ImageMagick has be compiled for MacOSX and can\
-	convert tiff files to eps and pdf formats.\
-        \
-These utilities are available at http://www.uoregon.edu/~koch/texshop/texshop.html.\
+	http://www.uoregon.edu/~koch/texshop/texshop.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -491,11 +467,42 @@ These utilities are available at http://www.uoregon.edu/~koch/texshop/texshop.ht
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Previous versions of TeXShop contained a French localization constructed by Jerome Laurens and a German localization by Keith J. Schultz. Thanks! These localizations are missing in release 1.0 because there wasn't time to create them before the release of Mac OS X. They will return soon.\
-	\
+\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, and an Italian localization by Giuseppe Carlino. Thanks! \
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Sending Bug Reports:\
+\f0\b \cf0 More About teTeX:
+\f2\b0 \
+\
+It is possible to store additional style files, fonts, etc., in teTeX itself. But teTeX is owned by root and lives in /usr/local/teTeX, which isn't visible in the Finder. Moreover, it is a good idea to keep this directory pure so it can be upgraded easily when later versions are released. It is better to construct a mirror image of the teTeX directory structure inside your Library folder and store your personal files there. \
+\
+The files must be in appropriate directories. teTeX uses a directory structure invented by the tex working group. Suppose you want to add a extra style file named new.sty to the style files used by Latex. Look inside teTeX and notice that a natural spot for this file would be\
+\
+	/usr/local/teTeX/share/texmf/tex/latex/misc/\
+\
+So inside your home directory's Library folder, make a series of subdirectories as follows:\
+\
+	Library  -->  texmf  -->  tex  -->  latex  -->  misc\
+\
+and store "new.sty" inside this misc directory.\
+\
+To obtain teTeX documentation, execute the following commands in Terminal (the "Terminal" program is in /Applications/Utilities.)\
+\
+	cd  /usr/local/teTeX/share/texmf/doc/tetex\
+	cp  TETEXDOC.pdf  ~\
+	cp  teTeX-FAQ  ~\
+\
+This will yield two documents in your home directory which can be read by TeXShop or other programs.\
+\
+Some users are annoyed that teTeX is installed in a directory which is not visible in the Finder. There is an easy way around that problem. Open the Terminal program and type the following commands:\
+\
+	cd  ~/Library\
+	ln  -s  /usr/local/teTeX  teTeX\
+\
+The result will be a copy of the entire teTeX tree inside your Library folder. The contents of this folder will be visible to the Finder. Actually it is a symbolic link to the original directory, so it takes no additional space on your disk. \
+\
+
+\f0\b Sending Bug Reports:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -509,9 +516,9 @@ These utilities are available at http://www.uoregon.edu/~koch/texshop/texshop.ht
         	Eugene, Oregon 97403      \
 	koch@math.uoregon.edu\
 \
-	Jerome Laurens\
-	jerome.laurens@u-bourgogne.fr\
-\
+	J\'8er\'99me Laurens\
+       	jerome.laurens@u-bourgogne.fr\
+                             \
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
 \

@@ -11,6 +11,11 @@
 
 @implementation ConsoleWindow : NSWindow
 
+- (void) doChooseMethod: sender;
+{
+    [myDocument doChooseMethod: sender];
+}
+
 - (void) doError: sender;
 {
     [myDocument doError: sender];

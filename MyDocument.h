@@ -33,6 +33,7 @@
     id			lineBox;
     id			typesetButton;
     id			tags;
+    int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
     int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = bibtex "*/
     BOOL		tagLine;
     NSFileHandle	*writeHandle;
@@ -80,6 +81,8 @@
 - (void) doBibJob;
 - (void) doIndexJob;
 - (void) toLine: (int)line;
+- (void) doChooseMethod: sender;
+- (void) fixTypesetMenu;
 - (void) doError: sender;
 - (void) fixColor: (unsigned)from : (unsigned)to;
 - (void) fixColor1: sender;
@@ -92,7 +95,7 @@
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
-
+- (void) updateChangeCount: (NSDocumentChangeType)changeType;
 
 //-----------------------------------------------------------------------------
 // Timer methods

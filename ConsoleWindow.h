@@ -13,7 +13,8 @@
 {
     MyDocument	*myDocument;
 }
-   
+
+- (void) doChooseMethod: sender;
 - (void) doError: sender;
 
 @end

@@ -51,6 +51,11 @@
     [[myDocument pdfView] nextPage: sender];
 }
 
+- (void) doChooseMethod: sender;
+{
+    [myDocument doChooseMethod: sender];
+}
+
 - (void) doError: sender;
 {
     [myDocument doError: sender];

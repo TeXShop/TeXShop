@@ -9,12 +9,15 @@
 
 /*" global defines for TeXShop.app "*/
 extern NSString *DefaultCommandKey;
+extern NSString *DefaultScriptKey;
 extern NSString *ConsoleBehaviorKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
 extern NSString *DocumentWindowPosModeKey;
 extern NSString *LatexCommandKey;
+extern NSString *LatexGSCommandKey;
+extern NSString *LatexScriptCommandKey;
 extern NSString *ParensMatchingEnabledKey;
 extern NSString *PdfMagnificationKey;
 extern NSString *PdfWindowFixedPosKey;
@@ -22,10 +25,14 @@ extern NSString *PdfWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
 extern NSString *SaveDocumentFontKey;
 extern NSString *SyntaxColoringEnabledKey;
+extern NSString *TetexBinPathKey;
 extern NSString *TexCommandKey;
+extern NSString *TexGSCommandKey;
+extern NSString *TexScriptCommandKey;
 extern NSString *TexTemplatePathKey;
 extern NSString *TSHasBeenUsedKey;
 extern NSString *UserInfoPathKey;
+extern NSString *teTeXBinLocation;
 
 /*" Exceptions "*/
 extern NSString *XDirectoryCreation;
@@ -75,4 +82,4 @@ typedef enum _DefaultCommand
 {
     DefaultCommandTeX = 0,
     DefaultCommandLaTeX = 1
-} DefaultCommand;
+} _DefaultCommand;

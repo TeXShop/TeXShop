@@ -28,4 +28,9 @@
     [super sendEvent: theEvent];
 }
 
+- (void) doChooseMethod: sender;
+{
+    [myDocument doChooseMethod: sender];
+}
+
 @end

@@ -309,6 +309,20 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 }
 
 //==============================================================================
+/*" This method is connected to the textField that holds the tetex bin path. 
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)tetexBinPathChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:TetexBinPathKey] 				forKey:TetexBinPathKey];
+
+	[SUD setObject:[_tetexBinPathField stringValue] forKey:TetexBinPathKey];
+}
+
+
+//==============================================================================
 // TeX pane
 //==============================================================================
 /*" This method is connected to the textField that holds the TeX command. It is located on the TeX pane.
@@ -335,6 +349,56 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	[SUD setObject:[_latexCommandTextField stringValue] forKey:LatexCommandKey];
 }
 
+/*" This method is connected to the textField that holds the tex + ghostscript command. It is located on the TeX pane.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)texGSProgramChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:TexGSCommandKey] forKey:TexGSCommandKey];
+
+	[SUD setObject:[_texGSCommandTextField stringValue] forKey:TexGSCommandKey];
+}
+
+/*" This method is connected to the textField that holds the latextex + ghostscript command. It is located on the TeX pane.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)latexGSProgramChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:LatexGSCommandKey] forKey:LatexGSCommandKey];
+
+	[SUD setObject:[_latexGSCommandTextField stringValue] forKey:LatexGSCommandKey];
+}
+
+/*" This method is connected to the textField that holds the tex script command. It is located on the TeX pane.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)texScriptProgramChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:TexScriptCommandKey] forKey:TexScriptCommandKey];
+
+	[SUD setObject:[_texScriptCommandTextField stringValue] forKey:TexScriptCommandKey];
+}
+
+/*" This method is connected to the textField that holds the latex script command. It is located on the TeX pane.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)latexScriptProgramChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:LatexScriptCommandKey] forKey:LatexScriptCommandKey];
+
+	[SUD setObject:[_latexScriptCommandTextField stringValue] forKey:LatexScriptCommandKey];
+}
+
+
+
 /*" This method is connected to the "Default Program" matrix on the TeX pane.
 
 A tag of 0 means use TeX, a tag of 1 means use LaTeX.
@@ -344,12 +408,31 @@ A tag of 0 means use TeX, a tag of 1 means use LaTeX.
 //------------------------------------------------------------------------------
 {
 	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD boolForKey:DefaultCommandKey] forKey:DefaultCommandKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:DefaultCommandKey] forKey:DefaultCommandKey];
 
 	// since the default program values map identically to the tags of the NSButtonCells,
 	// we can use the tag directly here.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultCommandKey];
 }
+
+/*" This method is connected to the "Default Script" matrix on the TeX pane.
+
+A tag of 100 means use pdftex, a tag of 101 means use tex + ghostscript, a tag of 102 means use
+person script.
+
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)defaultScriptChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD boolForKey:DefaultScriptKey] forKey:DefaultScriptKey];
+
+	// since the default program values map identically to the tags of the NSButtonCells,
+	// we can use the tag directly here.
+	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultScriptKey];
+}
+
 
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
@@ -391,6 +474,10 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         
         [self texProgramChanged: self];
         [self latexProgramChanged: self];
+        [self texGSProgramChanged: self];
+        [self latexGSProgramChanged: self];
+        [self texScriptProgramChanged: self];
+        [self latexScriptProgramChanged: self];
 	[SUD synchronize];	
 	// close the window
 	[_prefsWindow performClose:self];
@@ -559,9 +646,17 @@ This method retrieves the application preferences from the defaults object and s
         mag = round(magnification * 100.0);
         [_magTextField setIntValue: mag];
 
-	[_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
+        [_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];
+        [_texGSCommandTextField setStringValue:[defaults stringForKey:TexGSCommandKey]];
+	[_latexGSCommandTextField setStringValue:[defaults stringForKey:LatexGSCommandKey]];
+        [_tetexBinPathField setStringValue:[defaults stringForKey:TetexBinPathKey]];
+        /*
+        [_texScriptCommandTextField setStringValue:[defaults stringForKey:TexScriptCommandKey]];
+	[_latexScriptCommandTextField setStringValue:[defaults stringForKey:LatexScriptCommandKey]];
+        */
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
+        [_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
         [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
 }
 

@@ -19,7 +19,8 @@
 {
     // if this is the first time the app is used, register a set of defaults to make sure
     // that the app is useable.
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO)
+    if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
+        ([[NSUserDefaults standardUserDefaults] objectForKey:TetexBinPathKey] == nil))
     {
         [[TSPreferences sharedInstance] registerFactoryDefaults];
     }

@@ -14,6 +14,7 @@
     MyDocument	*myDocument;
 }
 
+- (void) doChooseMethod: sender;
 - (void) makeKeyAndOrderFront:(id)sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 

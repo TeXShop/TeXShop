@@ -24,6 +24,7 @@
 - (void) previousPage: sender;
 - (void) nextPage: sender;
 - (void) doError: sender;
+- (void) doChooseMethod: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;

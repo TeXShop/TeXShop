@@ -1,0 +1,70 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Bearbeitungstipps</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="Kommentare in Ihren Quelltext einf&uuml;gen, Bilder integrieren oder einfach das Editor-Fenster teilen. Alles ist M&ouml;glich mit dem Editor von TeXShop.">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+<BODY>
+	<div id="content_border">
+			<p>TeXShop hat nun einen neuen Suchdialog von Isao Sonobe. Dieser Suchdialog unterst&uuml;tzt auch regul&auml;re Ausdr&uuml;cke. Sie k&ouml;nnen durch eine Option in den Einstellungen auch zum alten Suchdialog zur&uuml;ckkehren. Der Suchdialog basiert auf OgreKit, ein Cocoa Framework von Sonobe, mit dem regul&auml;re Ausdr&uuml;cke verarbeitet werden k&ouml;nnen. Weiter Informationen finden Sie unter:</p>
+			<dl>
+				<dd><a href="http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit">http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit</a>
+			</dl>
+			<p>OgreKit wird unter eine modifizierten Fassung der BSD-Lizenz verbreitet. Diese Lizenz finden Sie im TeXShop Quellcode-Download. Um OgreKit zu verwenden, m&uuml;ssen Sie mindestens Mac OS X 10.3 (Panther) verwenden. Auf &auml;lteren Systemen erscheint automatisch der alte Suchdialog.</p>
+			<p>Der neue Suchdialog enth&auml;lt viele tolle Funktionen. Durch die Verwendung von OgreKit wird das &bdquo;Suchen&ldquo; Untermn&uuml; in TeXShop erweitert. Im Dialog selbst k&ouml;nnen Sie &uuml;ber verschiedene Kn&ouml;pfe das Suchverhalten beeinflussen. Ihre Einstellungen werden gesichert und stehen ihnen beim n&auml;chsten Start wieder zur Verf&uuml;gung. Passen Sie so die Suche an ihre pers&ouml;nlichen Vorlieben an.</p>
+			<p>Ganze Zeilengruppen k&ouml;nnen mit einem einfachen Men&uuml;-Befehl auskommentiert werden und sp&auml;ter wieder aktiviert werden. Zeilengruppen k&ouml;nnen mit einem Men&uuml;-Befehl einger&uuml;ckt werden und sp&auml;ter wieder zur&uuml;ck. Wenn eine Zeile mit einer Reihe von Tabulatorspr&uuml;ngen oder Leerzeichen beginnt, so werden nachfolgende Zeilen an der selben Stelle beginnen bis dies durch Dr&uuml;cken der R&uuml;ckstelltaste r&uuml;ckg&auml;ngig gemacht wird. Diese Funktion wurde von Nicol&aacute;s Ojeda B&auml;r aus Argentinien hinzugef&uuml;gt. er ist unter <a href="mailto:lojedaortiz@interlink.com.ar">lojedaortiz@interlink.com.ar</a> zu erreichen. Danke!</p>
+			<p>Das Quelltext-Fenster kann mit Hilfe des Aufteilungswerkzeugs in der Werkzeugleiste in zwei Teile aufgeteilt werden. Nach der Auffteilung wird zwei Mal der selbe Quelltext angezeigt. Wenn Sie auf einer Seite etwas &auml;ndern, wird diese &Auml;nderung auf der anderen Seite sogleich &uuml;bernommen. So k&ouml;nnen Sie eine Stelle bearbeiten und gleichzeitig eine andere betrachten.</p>
+		<p>TeXShop kann bei jedem Satzvorgang Sicherungskopien anlegen. Dies kann durch eine versteckte Einstellung erreicht werden. Um diese Funktion zu aktivieren, geben Sie folgenden Befehl im Terminal-Fenster ein:</p>
+		<dl>
+			<dd><tt>defaults write TeXShop SaveBackup YES</tt>
+		</dl>
+			<p>&Auml;ndern Sie &bdquo;YES&ldquo; in &bdquo;NO&ldquo; um das Erstellen von Backups zu verhindern.</p>
+			<p>Eine Statistik-Palette z&auml;hlt die Anzahl der W&ouml;rter, Zeilen und Zeichen im Dokument. Intern ruft diese Funktion den Befehl</p>
+			<dl>
+				<dd>detex myfile | wc
+			</dl>
+			<p>auf. Der &bdquo;detex&ldquo;-Befehl filtert &bdquo;tex&ldquo;-Befehle aus, jedoch bleiben die angegebenen Zahlen nur N&auml;herungswerte. Input- und inlcude-Dateien werden automatisch gez&auml;hlt.</p>
+			<p>Dateisymbole k&ouml;nnen per &bdquo;Drag and Drop&ldquo; in den Quelltext eingef&uuml;gt werden. Ist die einzuf&uuml;gende Datei ein tex-Dokument, wird der &bdquo;\input&ldquo;-Befehl zusammen mit dem relativen Pfad eingef&uuml;gt. Handelt es sich bei der einzuf&uuml;genden Datei um eine Grafik, so wird der Befehl &bdquo;\includegraphics&ldquo; eingef&uuml;gt. Folgende Grafikformate werden unterst&uuml;tzt: pdf, jpg, jpeg, tif, tiff, eps, ps. </p>
+			<p>Wird eine cls-Datei eingef&uuml;gt, so wird der Befehl &bdquo;\documentclass&ldquo; mit einer Dateireferenz hinzugef&uuml;gt. Eine sty-Datei produziert &bdquo;\usepackage&ldquo; eine bib-Datei &bdquo;\bibliographystyle&ldquo; und eine Text-Datei &bdquo;\input&ldquo;.</p>
+			<p>Drag &amp; drop l&ouml;st Aliase auf. Das bedeutet, das eine per drag&amp;drop eingef&uuml;gte Grafik, die eigentlich ein Alias ist, korrekt gesetzt wird und zu keiner Fehlermeldung f&uuml;hrt. TeX selbst kann zwar keine Aliase, jedoch smbolische Verkn&uuml;pfungen aufl&ouml;sen. Wird also der Name der (Alias-)Datei direkt im Quelltext eingegeben, wird beim Setzen ein Fehler angezeigt.</p>
+			<p>Das Verhalten bei &bdquo;Drag and Drop&ldquo; kann an Ihre Bed&uuml;rfnisse angepasst werden. Dies geschieht &uuml;ber das Makro-Men&uuml;. F&uuml;gen Sie hier ein neues Untermen&uuml; mit dem Namen &bdquo;Drag &amp; Drop&ldquo; ein.  In diesem Untermen&uuml; m&uuml;ssen Sie einzelne Objekte mit dem Suffix-Namen der Datei erstellen, deren Verhalten Sie anpassen m&ouml;chten. Erstellen Sie den entsprechenden Code hierzu in diesem Objekt. Ist das Objekt z. B. &bdquo;pdf&ldquo;, so w&auml;re der Code &bdquo;\includegraphics[#INS#]{%r}&ldquo;. Hierbei k&ouml;nnen folgende Abk&uuml;rzungen benutzt werden:</p>
+		<dl>
+			<dd>%F der volle Pfad der einzuf&uuml;genden Datei<dd>%f der Dateiname der einzuf&uuml;genden Datei<dd>%r der relative Pfad der einzuf&uuml;genden Datei<dd>%n der Dateiname der einzuf&uuml;genden Datei ohne Suffix<dd>%e das Suffix der einzuf&uuml;genden Datei</dl>
+		<p>Wird im Makro-Editor ein Suffix nicht aufgef&uuml;hrt, so werden die jeweiligen Dateien wie oben Beschrieben normal behandelt. Daher werden die meisten kein Makro-&bdquo;Drag &amp; Drop&ldquo;-Men&uuml; ben&ouml;tigen.</p>
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Grundlagen</div>
+<div id="header_title">Bearbeitungstipps</div>
+
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="basic_preliminaries.htm">Einf&uuml;hrung</a></li>
+			<LI><a href="basic_installtetex.htm">teTeX beschaffen und installieren</a></li>
+			<LI><a href="basic_installtexshop.htm">TeXShop beschaffen und installieren</a></li>
+			<LI><a href="basic_typesetting.htm">Dokumente setzen</a></li>
+			<li><a href="basic_alternatetypeset.htm">Alternativer Schriftsatzmodus</a></li>
+			<li><a href="basic_spelling.htm">Rechtschreibpr&uuml;fung</a></li>
+			<li><a href="basic_latexpanel.htm">LaTeX Palette</a></li>
+			<li><a href="basic_matrixpanel.htm">Matrix-Palette</a></li>
+			<li><a href="basic_macros.htm">Makros</a></li>
+			<li><a href="basic_toolbar.htm">Werkzeugleiste und AppleScript</a></li>
+			<li><a href="basic_graphics.htm">Grafik einf&uuml;gen</a></li>
+			<li><a href="basic_printing.htm">Drucken</a></li>
+			<li><a href="basic_preferences.htm">Einstellungen &auml;ndern</a></li>
+			<li><a href="basic_templates.htm">&Auml;ndern des Vorlagenmen&uuml;s</a></li>
+			<li><a href="basic_edittricks.htm">Bearbeitungstipps</a></li>
+			<li><a href="basic_autocompletion.htm">Autovervollst&auml;ndigen</a></li>
+			<li><a href="basic_commandcompletion.htm">Vervollst&auml;ndigung von Befehlen</a></li>
+			<li><a href="basic_bugs.htm">Fehlerbericht &uuml;bermitteln</a></li>
+			<li><a href="basic_websites.htm">N&uuml;tzliche Webseiten</a></li>
+			<li><a href="basic_license.htm">Lizenz</a></li>
+		</UL>
+	</div>
+	
+	</BODY>
+</HTML>

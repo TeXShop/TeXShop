@@ -8,13 +8,28 @@
 #import <AppKit/AppKit.h>
 #import "MainWindow.h"
 #import "MyDocument.h" // for the definition of isTeX (move this to a separate file!!)
+#import "globals.h"
+
+#define SUD [NSUserDefaults standardUserDefaults]
+
 
 @implementation MainWindow : NSWindow
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+{
+    id  result;
+    result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
+    float alpha = [SUD floatForKey: SourceWindowAlphaKey];
+    if (alpha < 0.999)
+         [self setAlphaValue:alpha];
+    return result;
+}
+
 
 - (void) becomeMainWindow
 {
     [super becomeMainWindow];
-    [myDocument fixMacroMenu];
+    [myDocument fixMacroMenuForWindowChange];
 }
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window

@@ -65,6 +65,7 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 #ifdef MITSU_PDF
 static NSString*	kMouseModeTID 			= @"MouseMode";
 static NSString*	kMacrosEETID			= @"MacrosEE";
+static NSString*        kSyncMarksTID                    = @"SyncMarks";
 #endif
 
 
@@ -179,6 +180,8 @@ static NSString*	kMacrosEETID			= @"MacrosEE";
 	[mouseModeMatrix retain];
 	[mouseModeMatrix removeFromSuperview];
 #endif
+        [syncBox retain];
+        [syncBox removeFromSuperview];
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 }
 
@@ -551,6 +554,22 @@ static NSString*	kMacrosEETID			= @"MacrosEE";
 // end mitsu 1.29
 #endif
 
+            if ([itemIdent isEqual: kSyncMarksTID]) {
+                NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:syncBox];
+		NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Sync Marks", @"Sync Marks")
+   //                 action: @selector(changeShowSync:) keyEquivalent:@""] autorelease];
+                    action: @selector(flipShowSync:) keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+        }
+
+
 
 //	if ([itemIdent isEqual: SearchDocToolbarItemIdentifier]) {
 	
@@ -709,8 +728,9 @@ static NSString*	kMacrosEETID			= @"MacrosEE";
 #ifdef MITSU_PDF
                                         kMouseModeTID, // mitsu 1.29 (O)
 #endif
-					NSToolbarPrintItemIdentifier, 
-					NSToolbarCustomizeToolbarItemIdentifier,
+                                        kSyncMarksTID,
+					NSToolbarPrintItemIdentifier,
+                                        NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier, 
 					NSToolbarSpaceItemIdentifier, 
 					NSToolbarSeparatorItemIdentifier, 

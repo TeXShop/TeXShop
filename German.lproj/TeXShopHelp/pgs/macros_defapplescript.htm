@@ -5,18 +5,70 @@
 		<TITLE>AppleScript Makros erstellen</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
 		<META NAME="description" CONTENT="Beachten Sie einige Besonderheiten, wenn Sie AppleScript-Makros erstellen wollen.">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
 
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>AppleScript Makros erstellen</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">Die AppleScript Syntax ist ein komplexes Thema. Wenn Sie mehr hier&uuml;ber erfahren m&ouml;chten, so lesen Sie eines der zahlreichen B&uuml;cher hierzu. Wenn TeXShop ein AppleScript Makro interpretiert, so ersetzt es erst die Strings #FILEPATH#, #PDFPATH#, #LOGPATH#, #AUXPATH#, #DVIPATH# und #PSPATH# durch die kompletten Pfade der tex-Datei, der pdf-Datei, der dvi-Datei oder der ps-Datei. Ebenso werden die Strings #INDPATH#, #BBLPATH# und #HTMLPATH# mit dem kompletten Pfad jeweils der ind-Datei, bbl-Datei oder html-Datei ersetzt. </font></P>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript kann Shell-Befehle ausf&uuml;hren. Daher k&ouml;nnen AppleScript Makros komplizierte TeX Projekte ausf&uuml;hren. Diese Funktion ist momentan jedoch noch sehr eingeschr&auml;nkt. TeXShop beherrscht erst einige wenige AppleScript Direktiven. Wir hoffen dies jedoch in Zukunft zu verbessern.</font></p>
-	</BODY>
+<BODY>
 
+<div id="content_border">
+		<P>Die AppleScript Syntax ist ein komplexes Thema. Wenn Sie mehr hier&uuml;ber erfahren m&ouml;chten, so lesen Sie eines der zahlreichen B&uuml;cher hierzu. If you installed the developer tools which come with Mac OS X, there is an online book about AppleScript in the Developer folder.</P>
+		<p>Wenn TeXShop ein AppleScript Makro interpretiert, so ersetzt es erst die Strings #FILEPATH#, #PDFPATH#, #LOGPATH#, #AUXPATH#, #DVIPATH# und #PSPATH# durch die kompletten Pfade der tex-Datei, der pdf-Datei, der dvi-Datei oder der ps-Datei. Ebenso werden die Strings #INDPATH#, #BBLPATH# und #HTMLPATH# mit dem kompletten Pfad jeweils der ind-Datei, bbl-Datei oder html-Datei ersetzt. </p>
+		<p>Dar&uuml;ber hinaus wird jeder String #NAMEPATH# durch den Pfad der TeX-Quelldatei ersetzt. Dabei wird das Dateisuffix abgeschintten. #DOCUMENTNAME# wird durch den Namen des aktuellen Dokuments ersetzt. Diese letzte Ersetzung ist subtil. Normalerweise wird der Dateiname eingesetzt, der in der Titelzeile des Dokuments angezeigt wird. Wurde das Dokument mit der Option &bdquo;Suffix ausblenden&ldquo; gesichert, so wird nur der Dokumentname eingesetzt. Wurd diese Option jedoch nicht gew&auml;hlt, so wird der Dokumentname mit dem entsprechenden Suffix eingesetzt. Diese Information kann auf folgende Weise ausgenutzt werden um das Dokument zu indentifizieren, dass den AppleScript-Code aufgerufen hat:</p>
+		<dl>
+			<dd><tt>tell document #DOCUMENTNAME# of application &quot;TeXShop&quot;</tt>
+			<dd><tt>latex</tt>
+			<dd><tt>end tell</tt>
+		</dl>
+		<p>Es gibt mindestens zwei Arten in AppleScript Befehle einzubnden. AppleScript kann Shell-Befehle ausf&uuml;hren. Damit kann nach einiger &bdquo;Vorarbeit&ldquo; durch das AppleScript die wirkliche Arbeit an einen Shell-Befehl &uuml;bertragen werden. TeXShop beinhaltet einige Beispiele dieser Technik. Einige von diesen werden in sp&auml;teren Hilfe Abschnitten erkl&auml;rt. AppleScript kann jedoch auch direkt TeXShop-Befehle aufrufen. Auch diese Technik wird in einem sp&auml;teren Abschnitt dokumentiert.</p>
+		<p>TeXShop versteht die folgenden Befehle:</p>
+		<dl>
+			<dd><tt>typeset</tt>
+			<dd><tt>latex</tt>
+			<dd><tt>tex</tt>
+			<dd><tt>context</tt>
+			<dd><tt>bibtex</tt>
+			<dd><tt>makeindex</tt>
+			<dd><tt>metapost</tt>
+			<dd><tt>typesetinteractive</tt>
+			<dd><tt>latexinteractive</tt>
+			<dd><tt>texinteractive</tt>
+			<dd><tt>contextinteractive</tt>
+			<dd><tt>bibtexinteractive</tt>
+			<dd><tt>makeindexinteractive</tt>
+			<dd><tt>metapostinteractive</tt>
+			<dd><tt>taskdone</tt>
+			<dd><tt>refreshpdf</tt>
+			<dd><tt>refreshtext</tt>
+			<dd><tt>goto line</tt>
+		</dl>
+		Die ersten sieben Befehle rufen TeXShop-Satzroutinen auf. Diese Befehle werden durchg&auml;ngig ausgef&uuml;hrt, es sei denn, dass sie auf einen Fehler sto&szlig;en. Die n&auml;chsten sieben Befehle rufen auch die Satzroutinen auf, jedoch erh&auml;lt der Benutzer im Falle eines Fehler die M&ouml;glichkeit &uuml;ber die Konsole einzugreifen. Wird ein Satz-Befehl ausgef&uuml;hrt, so k&ouml;nnen Sie mit &bdquo;control&ldquo; sofort zum AppleScript zur&uuml;ckkehren ohne das der Prozess komplett beendet wurde. &bdquo;taskdone&ldquo; gibt als Wert &bdquo;NO&ldquo; zur&uuml;ck, wenn der Prozess noch am Laufen ist. Wird &bdquo;YES&ldquo; zur&uuml;ck gegeben, ist der Prozess beendet. &bdquo;refreshpdf&ldquo; und &bdquo;refreshtext&ldquo; aktualisieren den Quelltext, bzw. das Vorschau-Fenster respektive. Der Befehl &bdquo;goto line&ldquo; erlaubt es direkt zu einer bestimmten Zeile zu springen. Z.B.:
+		<dl>
+			<dd><tt>tell document #DOCUMENTNAME# of application &quot;TeXShop&quot;</tt>
+			<dd><tt>goto line 37</tt>
+			<dd><tt>end tell</tt>
+		</dl>
+</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Hilfe zu Makros</div>
+<div id="header_title">AppleScript Makros erstellen</div>
+
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Einleitung</a></li>
+			
+			<LI><a href="macros_default.htm">Die Standardmakros verstehen</a></li>
+			<LI><a href="macros_rearrange.htm">Das Makromen&uuml; neu anordnen</a></li>
+			<LI><a href="macros_define.htm">Neue Makros erstellen</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Makros</a></li>
+			<li><a href="macros_includedscripts.htm">Standard AppleScript Makros</a></li>
+			<li><a href="macros_defapplescript.htm">AppleScript Makros erstellen</a></li>
+			<li><a href="macros_dialogs.htm">Dialoge erstellen</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Skripte mit TeXShop-Satzkommandos erstellen</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Skripte mit Shell-Befehlen erstellen</a></li>
+		</UL>
+	</div>
+	
+	</BODY>
 </HTML>

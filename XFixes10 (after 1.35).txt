@@ -1,0 +1,49 @@
+September 3, 2004
+Changes since 1.35
+
+1) New German Localization and Help Files
+
+2) Japanese Image Copy Type Preference didn't work, due to incorrect localization.
+Now fixed.
+
+3) Command Completion was repaired; the configuration file is now loaded and
+saved in UTF-8 Unicode, and the first line of the file, opened with
+Format --> Completion --> Open Completion File, is
+
+	%&encoding=UTF-8 Unicode
+
+4) Extensive work on pdfsync in both directions to fix errors.
+
+5) When typesetting engines are called, they are now passed the
+program filename with extension, rather than just the filename
+
+6) Now uses version 1.2.4 of OgreKit
+
+7) Conversion of eps, ps, and dvi files to pdf (caused by opening such a file)
+now works even if the path to the file has folders whose names contain spaces.
+In all three cases, the file can now be in a folder without write permission.
+There is one case that still fails: 
+
+	file is a "dvi" file, containing folder does not have
+	write permission, and there is a space in some folder's name
+	in the path leading to the file
+
+8) In 1.35, it was only possible to switch between the OgreKit Find panel
+and the Apple Find panel in the English localization. This preference now
+always works. To fix this, I had to add a line to the OgreKit Library file
+which modifies a program's Find menu. The code checks the Find Panel preference
+and returns if it is set to the Apple Find panel.
+
+9) Trash AUX Files now removes files with more extensions:
+
+	ccs, idv, 4ct, 4tc, lg, xref (from TeX4ht; request of Bob Kerstetter)
+	
+	ttt, fff, ent (from endfloat and endnotes; request of Herb Schulz)
+
+	wrm (from WARMreader; request of Gary Gray)
+
+The list doesn't contain dvi (never did). I've removed bbl at the
+request of Lawrence Paulson, Gary Gray, ADITYA TRIVEDI, and Josep Font.
+
+10) I modified the English Help advanced_removeaux.htm to reflect this
+new list.

@@ -162,11 +162,15 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	// register defaults
         switch ([sender tag]) {
             case 1: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
+            case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_sjis" ofType:@"plist"]; break;
+            case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_euc" ofType:@"plist"]; break;
+            /*
             case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Inoue" ofType:@"plist"]; break;
             case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Kiriki" ofType:@"plist"]; break;
             case 4: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Ogawa" ofType:@"plist"]; break;
+            */
             default: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
-            } 
+            }
 	NSParameterAssert(fileName != nil);
 	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
     
@@ -266,6 +270,21 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         [_sourceWindowPosMatrix selectCellWithTag:DocumentWindowPosFixed];
     }
 }
+
+/*" Set Find Panel"*/
+//------------------------------------------------------------------------------
+- (IBAction)findPanelChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:UseOgreKitKey] forKey:UseOgreKitKey];
+
+        if ([[sender selectedCell] tag] == 0)
+            [SUD setBool:NO forKey:UseOgreKitKey];
+        else
+            [SUD setBool:YES forKey:UseOgreKitKey];
+}
+
 
 /*" Make Empty Document on Startup "*/
 //------------------------------------------------------------------------------
@@ -618,8 +637,9 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	// uncheck menu item Preview=>Copy Format
 	NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
 						NSLocalizedString(@"Preview", @"Preview")] submenu];
+                                                
 	NSMenu *formatMenu = [[previewMenu itemWithTitle: 
-						NSLocalizedString(@"Copy Format", @"format")] submenu];
+						NSLocalizedString(@"Copy Format", @"Copy Format")] submenu];
 	NSMenuItem *item = [formatMenu itemWithTag: [SUD integerForKey:PdfCopyTypeKey]];
 	if (item)
 		[[_undoManager prepareWithInvocationTarget:[NSApp delegate]] changeImageCopyType: item];
@@ -835,6 +855,24 @@ A tag of 0 means use TeX, a tag of 1 means use LaTeX.
 	// since the default program values map identically to the tags of the NSButtonCells,
 	// we can use the tag directly here.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultCommandKey];
+        if ([[sender selectedCell] tag] == 3) {
+             [_engineTextField setEnabled: YES];
+             [_engineTextField setEditable: YES];
+             [_engineTextField setSelectable: YES];
+             [_engineTextField selectText:self];
+             }
+        else 
+             [_engineTextField setEnabled: NO];
+}
+
+- (IBAction)setEngine:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:DefaultEngineKey] forKey:DefaultEngineKey];
+
+	// since the default program values map identically to the tags of the NSButtonCells,
+	// we can use the tag directly here.
+	[SUD setObject:[sender stringValue] forKey:DefaultEngineKey];
 }
 
 /*" This method is connected to the "Default Script" matrix on the TeX pane.
@@ -883,6 +921,17 @@ person script.
 	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:DistillerCommandKey] forKey:DistillerCommandKey];
 
         [SUD setInteger:[[sender selectedCell] tag] forKey:DistillerCommandKey];
+}
+
+// zenitani 1.35 (C)
+//------------------------------------------------------------------------------
+- (IBAction)ptexUtfOutputPressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ptexUtfOutputEnabledKey] forKey:ptexUtfOutputEnabledKey];
+
+    [SUD setBool:[sender state] forKey:ptexUtfOutputEnabledKey];
 }
 
 
@@ -1148,6 +1197,7 @@ This method retrieves the application preferences from the defaults object and s
     [_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
     [_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
+	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)
     
     myTag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
 /*
@@ -1188,6 +1238,10 @@ This method retrieves the application preferences from the defaults object and s
 */
 
     [_defaultEncodeMatrix selectItemAtIndex: myTag];
+    if ([defaults boolForKey:UseOgreKitKey] == NO)
+        [_findMatrix selectCellWithTag:0];
+    else
+        [_findMatrix selectCellWithTag:1];
     [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
     [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     
@@ -1295,6 +1349,18 @@ This method retrieves the application preferences from the defaults object and s
 	[_latexScriptCommandTextField setStringValue:[defaults stringForKey:LatexScriptCommandKey]];
         
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
+        [_engineTextField setStringValue:[defaults stringForKey:DefaultEngineKey]];
+        if ([defaults integerForKey:DefaultCommandKey] == 3) {
+             [_engineTextField setEnabled: YES];
+             [_engineTextField setEditable: YES];
+             [_engineTextField setSelectable: YES];
+             [_engineTextField selectText:self];
+             }
+        else 
+             [_engineTextField setEnabled: NO];
+
+        if ([defaults integerForKey:DefaultCommandKey] == 3)
+            [_engineTextField setEditable: YES];
         [_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
         [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
         [_saveRelatedButton setState:[defaults boolForKey:SaveRelatedKey]];

@@ -1,0 +1,74 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Setting a Project Root File</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="root file; several smaller files; project">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>It is common to split large input files into several smaller files controlled by a root file. For instance, the root file of a book project might have the form</P>
+		<dl>
+			<dd><tt>\documentclass[11pt]{book}</tt>
+			<dd><tt>\includeonly{Chapter2/two}</tt>
+			<dd><tt>\textwidth = 6.5 in</tt>
+			<dd><tt>\textheight = 9 in</tt>
+			<dd><tt>\begin{document}</tt>
+			<dd><tt>\include{Chapter1/one}</tt>
+			<dd><tt>\include{Chapter2/two}</tt>
+			<dd><tt>\include{Chapter3/three}</tt>
+			<dd><tt>\end{document}</tt>
+		</dl>
+		<p>This root file contains formatting commands for the entire project, but the subject matter is contained in files one.tex, two.tex, and three.tex. The second line above tells TeX to typeset chapter two only, speeding up typesetting while chapter two is being written. When the book is complete, this line can be commented out and the entire book can be typeset a final time.</p>
+		<p>While chapter two is being written, it would be natural to open the file two.tex in TeXShop. But after changes are made to this input file, TeXShop should not typeset two.tex; instead it should typeset the root file. TeXShop can be told to do so in two ways. The first is to indicate the root file in the first line of each chapter file by writing
+	<dl>
+	<dd> %SourceDoc ../Main.tex
+	</dl>
+The second is to use the menu command &quot;Set Project Root...&quot;  This menu command presents a panel with a text box where the name of the root file can be entered. </p>
+		<p>If the root file is in the same folder as the input file, it is enough to give its name, including the &quot;.tex&quot; extension. For instance, if the root file is named Main, you can enter Main.tex in the first source line or the dialog window.</p>
+		<p>If the root file is in a different directory, its name can be given relative to the location of the input file. In the above example, the various chapters are contained in subfolders within the folder containing the root file. In that case, you could enter ../Main.tex in the first source line or dialog window, showing the location of the root file relative to the chapter input file.</p>
+		<p>Finally, the name of the root can be given with an absolute name, as in /Users/me/Main.tex.</p>
+		<p>If the entire TeX source is contained in a single file, it is not necessary to set the root project name.</p>
+		<p>If the "Set Project Root.." command is used to indicate a root file, TeXShop remembers the name of the root file by writing the information to a file with the same name as the input file and the extension &quot;.texshop&quot;. For instance, if the input for chapter two is in two.tex, TeXShop writes the name of the root in two.texshop in the same directory as two.tex.  If the file two.texshop is later thrown away, TeXShop will revert to typesetting two.tex rather than Main.tex. No extra ".texshop" file is required if the root file is specified in the first line of the source file.</p>
+		<p> If a root file is active, typing command-1 when a given source window is at the front will activate the corresponding preview window. Typing command-1 again will activate the source window. Since a preview window may correspond to several source windows, command-1 will activate the source window which previously activated the preview window, or the root source if no previous command-1 was entered.  
+		</p>
+		<ul>
+			
+		</ul>
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">Setting a Project Root File</div>
+
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to teTeX</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About teTeX</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

@@ -1,0 +1,45 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Sincronizaci&oacute;n c&oacute;digo-pdf (pdfsync)</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="pdfsync, sincronizar, sincronizaci&oacute;n">
+	</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Sincronizaci&oacute;n c&oacute;digo-pdf (pdfsync)</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">La sincronizaci&oacute;n es una importante utilidad incorporada en Textures, una implementaci&oacute;n comercial de TeX para Macintosh Classic desarrollada por Blue Sky TeX Systems. Al usar la sincronizaci&oacute;n, un autor puede hacer clic en la ventana del dvi previsto e, inmediatamente, el cursor aparece en el correspondiente lugar de la ventana de c&oacute;digo. Blue Sky ha prometido una versi&oacute;n nativa para MacOS X de Textures, pero todav&iacute;a no la ha lanzado.</font></P>
+
+ <P><font size="2" face="Lucida Grande,Geneva,Arial">La implementaci&oacute;n de la sincronizaci&oacute;n en Textures es admirada por su habilidad para localizar el correspondiente punto en el c&oacute;digo. He o&iacute;do que Blue Sky TeX Systems reescribi&oacute; TeX para proporcionar la informaci&oacute;n necesaria para esta utilidad, pero no conozco detalles de su implementaci&oacute;n.</font></P> 
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Desde entonces, varios sistemas TeX en otras plataformas han incorporado, aproximadamente, la misma utilidad. Para ello han usado estilos adicionales que tambi&eacute;n hac&iacute;an que TeX escribiera informaci&oacute;n extra en el archivo dvi. En verano de 2003, Piero D'Ancona escribi&oacute; un archivo de estilo similar en cierto sentido, pero para pdflatex. Este paquete, pdfsync.sty, hace que pdftex escriba, al componer p&aacute;ginas, un archivo extra, en el cual guarda la informaci&oacute;n necesaria para lograr la correlaci&oacute;n entre los archivos de entrada (c&oacute;digo tex) y salida (pdf). El trabajo de D'Ancona depende de comandos internos de pdftex que sacan las coordenadas x e y de ciertas operaciones de composici&oacute;n.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Recientemente, J&eacute;r&ocirc;me Laurens se uni&oacute; al proyecto de D'Ancona, contribuyendo con cambios al paquete pdfsync. Entonces, Laurens implement&oacute; la sincronizaci&oacute;n con el pdf en iTeXMac; su implementaci&oacute;n es la primera y &mdash;actualmente&mdash; la m&aacute;s robusta que funciona en un interfaz de TeX para Mac OS X.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop 1.34 comienza el proceso de traer estos desarrollos a TeXShop. Para usar pdfsync, hay que buscar el archivo pdfsync.sty y colocarlo en ~/Library/texmf/tex/latex. Con el tiempo, este archivo ser&aacute; parte de la distribuci&oacute;n de TeX de Gerben Wierda. La sincronizaci&oacute;n que proporciona pdfsync s&oacute;lo esta disponible para pdflatex y context; no funciona si componemos por medio del motor opcional tex + ghostscript.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Para usar pdfsync, a&ntilde;ade al preambulo de tu documento con c&oacute;digo tex (antes de la l&iacute;nea con el \begin{document}) la siguiente l&iacute;nea:
+<dl>
+<dd>\usepackage{pdfsync}
+</dl>
+Este paquete ser&aacute; ignorado si est&aacute;s compilando con tex + ghostscript, pero si lo estas haciendo con pdflatex, se crear&aacute; un archivo extra con extansi&oacute;n .pdfsync. Por ejemplo, si el documento con el c&oacute;dido fuente se llama main.tex, el archivo extra se llamar&aacute; main.pdfsync. Este archivo contiene la informaci&oacute;n necesaria para relacionar puntos del archivo pdf con puntos del archivo tex. Cuando se usa pdfsync, la mayor&iacute;a de los archivos se compilan sin errores, pero, en un peque&ntilde;o n&uacute;mero de casos, este paquete introduce errores extra. Por favor, comunica tales casos a D'Ancona, Laurens o a m&iacute;.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Una vez que has compuesto las p&aacute;ginas a partir de un archivo con pdfsync, haz clic en un punto del pdf previsto mientras mantienes pulsada la tecla comando. Aparecer‡ en el frente la ventana con el c&oacute;digo, all&iacute; estar&aacute; seleccionada la l&iacute;nea que contiene el correspondiente c&oacute;digo, y la ventana se desplazar&aacute; hasta mostrar esa l&iacute;nea si fuera necesario. Si un proyecto contiene un archivo ra&iacute;z y cap&iacute;tulos adicionales a&ntilde;adidos con \include, y si el punto en la ventana del pdf corresponde al c&oacute;digo incluido en el archivo de alg&uacute;n cap&iacute;tulo, el archivo se abrir&aacute;, aparecer&aacute; en el frente, y se producir&aacute; el desplazamiento hasta el lugar apropiado en el c&oacute;digo.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">En esta implementaci&oacute;n inicial, la l&iacute;nea de c&oacute;digo que se muestra ser&aacute; aproximadamente la correcta, pero la real puede encontrarse una pocas l&iacute;neas m&aacute;s arriba o m&aacute;s abajo. El archivo pdfsync de D'Ancona contiene informaci&oacute;n adicional para localizar el punto de manera m&aacute;s precisa; TeXShop incorporar&aacute; el c&oacute;digo necesario para usar esta informaci&oacute;n tan pronto como sea posible.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Actuamente, pdfsync no funciona si el c&oacute;digo tex est&aacute; distribuido en varios archivo por medio de comandos \input. Es decir, \include funciona, pero \input no. Es posible que esta restricci&oacute;n sea eliminada en el futuro.</font></P>
+ 
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

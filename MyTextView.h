@@ -16,5 +16,6 @@
 // end mitsu 1.29
 - (NSString *)getDragnDropMacroString: (NSString *)fileExt; // zenitani 1.33
 - (NSString *)readSourceFromEquationEditorPDF: (NSString *)filePath; // zenitani 1.33(2)
-
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
+- (NSString *)resolveAlias: (NSString *)path;
 @end

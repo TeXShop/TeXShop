@@ -14,6 +14,9 @@
 #import "TSWindowManager.h"
 #import "MacroMenuController.h"
 #import "MyDocumentController.h"
+#import "EncodingSupport.h"
+#import "OgreKit/OgreTextFinder.h"
+#import "TextFinder.h"
 
 #ifdef MITSU_PDF
 // mitsu 1.29 (O)
@@ -43,6 +46,8 @@
     NSString *fileName;
     NSMutableString *path;
     NSDictionary *factoryDefaults;
+//	OgreTextFinder *theFinder;
+    id *theFinder;
     
     macroType = LatexEngine;
     
@@ -85,6 +90,7 @@
     [self configureTemplates]; // this call must come first because it creates the TeXShop folder if it does not yet exist
     [self configureScripts];
     [self configureBin];
+    [self configureEngine];
     [self configureMenuShortcutsFolder];
     [self configureAutoCompletion];
     [self configureLatexPanel];
@@ -145,6 +151,16 @@
 	// end mitsu 1.29
 #endif
 
+        long MacVersion;
+        if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
+        
+            if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030) && ([SUD boolForKey:UseOgreKitKey] == TRUE)) 
+                   theFinder = [OgreTextFinder sharedTextFinder];
+                else
+                    theFinder = [TextFinder sharedInstance];
+        }
+        else
+            theFinder = [TextFinder sharedInstance];
 
     // documentsHaveLoaded = NO;
 }
@@ -204,6 +220,35 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
 
 /*" %{This method is not to be called from outside of this class.}
 
+Copies %fileName to ~/Library/TeXShop/Templates/More. This method takes care that no files are overwritten.
+"*/
+//------------------------------------------------------------------------------
+- (void)copyToMoreDirectory:(NSString *)fileName
+//------------------------------------------------------------------------------
+{
+	NSFileManager *fileManager;
+	NSString *destFileName;
+        BOOL result;
+	
+	fileManager = [NSFileManager defaultManager];
+	destFileName = [NSString pathWithComponents:[NSArray arrayWithObjects:[TexTemplateMorePathKey stringByStandardizingPath], 
+                [fileName lastPathComponent], nil]];
+	
+	// check if that file already exists
+	if ([fileManager fileExistsAtPath:destFileName isDirectory:NULL] == NO)
+            {
+            NS_DURING
+            // file doesn't exist -> copy it
+            result = [fileManager copyPath:fileName toPath:destFileName handler:nil];
+            NS_HANDLER
+            ;
+            NS_ENDHANDLER
+            }
+}
+
+
+/*" %{This method is not to be called from outside of this class.}
+
 Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no files are overwritten.
 "*/
 //------------------------------------------------------------------------------
@@ -231,6 +276,36 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
             }
 }
 
+/*" %{This method is not to be called from outside of this class.}
+
+Copies %fileName to ~/Library/TeXShop/Engines. This method takes care that no files are overwritten.
+"*/
+//------------------------------------------------------------------------------
+- (void)copyToEngineDirectory:(NSString *)fileName
+//------------------------------------------------------------------------------
+{
+	NSFileManager *fileManager;
+	NSString *destFileName;
+        BOOL result;
+	
+	fileManager = [NSFileManager defaultManager];
+	destFileName = [NSString pathWithComponents:[NSArray arrayWithObjects:[EnginePathKey stringByStandardizingPath], 
+                [fileName lastPathComponent], nil]];
+        // destFileName = [destFileName stringByDeletingPathExtension];
+	
+	// check if that file already exists
+	if ([fileManager fileExistsAtPath:destFileName isDirectory:NULL] == NO)
+            {
+            NS_DURING
+            // file doesn't exist -> copy it
+            result = [fileManager copyPath:fileName toPath:destFileName handler:nil];
+            NS_HANDLER
+            ;
+            NS_ENDHANDLER
+            }
+}
+
+
 
 // ------------- these routines create ~/Library/TeXShop and folders and files if necessary ----------
 
@@ -239,6 +314,7 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
     	NSArray 	*templates;
 	NSEnumerator 	*templateEnum;
         NSString 	*fileName;
+        NSString        *morePath;
         NSFileManager	*fileManager;
         BOOL		result;
         NSString	*reason;
@@ -285,12 +361,35 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
                 return;
                 }
         // fill in our templates
-            templates = [NSBundle pathsForResourcesOfType:@"tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
+            templates = [NSBundle pathsForResourcesOfType:@".tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
             templateEnum = [templates objectEnumerator];
             while (fileName = [templateEnum nextObject])
             {
                     [self copyToTemplateDirectory:fileName ];
             }
+            
+        // create the subdirectory "More"
+            NS_DURING
+                // create ~/Library/TeXShop/Templates/More
+                morePath = [TexTemplatePathKey stringByAppendingString:@"/More"];
+                result = [fileManager createDirectoryAtPath:[morePath stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+            	result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't create Templates/More Folder", nil, nil);
+                return;
+                }
+        // fill in our templates
+            templates = [NSBundle pathsForResourcesOfType:@"tex" 
+                inDirectory:[[[NSBundle mainBundle] resourcePath] stringByAppendingString: @"/More"]];
+            templateEnum = [templates objectEnumerator];
+            while (fileName = [templateEnum nextObject])
+            {
+                    [self copyToMoreDirectory:fileName ];
+            }
+
         }
 
 
@@ -388,6 +487,47 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
             while (fileName = [binaryEnum nextObject])
                 {
                     [self copyToBinaryDirectory:fileName ];
+                }
+
+            }
+}
+ 
+- (void)configureEngine
+{
+        NSString 	*fileName;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        NSArray 	*engines;
+	NSEnumerator 	*enginesEnum;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Binary folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [EnginePathKey stringByStandardizingPath]]))
+        {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[EnginePathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Engine Folder", nil, nil);
+                    return;
+                    }
+                    
+            // fill in our binaries
+            engines = [NSBundle pathsForResourcesOfType:@"engine" inDirectory:[[NSBundle mainBundle] resourcePath]];
+            enginesEnum = [engines objectEnumerator];
+            while (fileName = [enginesEnum nextObject])
+                {
+                    [self copyToEngineDirectory:fileName ];
                 }
 
             }
@@ -530,13 +670,13 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
     
     // now see if matrixpanel.plist is inside; if not, copy it from the program folder
     matrixPath = [MatrixPanelPathKey stringByStandardizingPath];
-    matrixPath = [matrixPath stringByAppendingPathComponent:@"matrixpanel"];
+    matrixPath = [matrixPath stringByAppendingPathComponent:@"matrixpanel_1"];
     matrixPath = [matrixPath stringByAppendingPathExtension:@"plist"];
     if (! [fileManager fileExistsAtPath: matrixPath]) {
         NS_DURING
         {
             result = NO;
-            fileName = [[NSBundle mainBundle] pathForResource:@"matrixpanel" ofType:@"plist"];
+            fileName = [[NSBundle mainBundle] pathForResource:@"matrixpanel_1" ofType:@"plist"];
             if (fileName) 
                 result = [fileManager copyPath:fileName toPath:matrixPath handler:nil];
         }
@@ -833,8 +973,8 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
 // mitsu 1.29 (P)
 - (void) finishCommandCompletionConfigure 
 {
-    NSString	*completionPath;
-	NSData *myData;
+    NSString            *completionPath;
+    NSData              *myData;
     
 	unichar esc = 0x001B; // configure the key in Preferences?
 	if (!commandCompletionChar)
@@ -852,30 +992,15 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
 			[[NSBundle mainBundle] pathForResource:@"CommandCompletion" ofType:@"txt"]];
 	if (!myData)
 		return;
-	//commandCompletionList = [[[NSString alloc] initWithData:myData 
-	//							encoding: NSUTF8StringEncoding] autorelease];
-    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSMacOSRomanStringEncoding];
-	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSISOLatin1StringEncoding];
-    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSISOLatin2StringEncoding];
-	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];
-    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese)];
-	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP)];
-	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"JISJapanese"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)];
-    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
-    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSUTF8StringEncoding];
-    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSUnicodeStringEncoding];
-    else
-        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSMacOSRomanStringEncoding];
+    
+       int i = [[EncodingSupport sharedInstance] tagForEncoding:@"UTF-8 Unicode"];
+       NSStringEncoding myEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: i];
+       commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
+       if (! commandCompletionList) {
+            i = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+            myEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: i];
+            commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
+            }
 		
 	if (!commandCompletionList)
 		return;

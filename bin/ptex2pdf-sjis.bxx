@@ -1,0 +1,18 @@
+#!/bin/sh
+# iNoue Koich! (modified by S. Zenitani)
+
+export PATH=/usr/local/bin:/usr/bin:/bin:$PATH:/usr/local/teTeX/bin
+
+for d in /usr/local/share/ghostscript $HOME/Library/Ghostscript /Library/Ghostscript
+do
+for v in 7.07 7.05; do GS_LIB=$GS_LIB:$d/$v/lib; done
+GS_LIB=$GS_LIB:$d/fonts
+GS_FONTPATH=$GS_FONTPATH:$d/fonts
+done
+export PATH GS_LIB GS_FONTPATH
+
+JOBNAME=${1##*/}
+JOBNAME=${JOBNAME%.*}
+
+ptex -kanji=sjis -fmt=ptex-sjis -progname=ptex $1 \
+    && dvipdfmx $JOBNAME

@@ -12,13 +12,27 @@
 #import "MyDocument.h"
 #ifdef MITSU_PDF
 #import "MyPDFView.h"
-#import "Globals.h"
+#import "globals.h"
 extern NSPanel *pageNumberWindow;
 #else
 #import "MyView.h"
 #endif
 
+#define SUD [NSUserDefaults standardUserDefaults]
+
 @implementation MyWindow
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+{
+    id  result;
+    result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
+    float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
+    if (alpha < 0.999)
+         [self setAlphaValue:alpha];
+    return result;
+}
+
+
 
 /*
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
@@ -28,6 +42,13 @@ extern NSPanel *pageNumberWindow;
     else return [super makeFirstResponder: aResponder];
 }
 */
+
+- (void) becomeMainWindow
+{
+    [super becomeMainWindow];
+    [myDocument fixMacroMenuForWindowChange];
+}
+
 
 - (void) doTextMagnify: sender
 {
@@ -87,6 +108,12 @@ extern NSPanel *pageNumberWindow;
 {
     [myDocument doTypeset: sender];
 }
+
+- (void) flipShowSync: sender;
+{
+    [myDocument flipShowSync: sender];
+}
+
 - (void) doTex: sender;
 {
     [myDocument doTex: sender];

@@ -114,6 +114,7 @@
 - (int)resizeOption;
 - (void)changePDFViewSize: (id)sender;
 - (void)doSync: (NSEvent *)theEvent;
+- (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
 @end
 
 @interface FlippedClipView : NSClipView {

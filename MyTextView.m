@@ -8,6 +8,7 @@
 #import "EncodingSupport.h"
 #import "TSPreferences.h"
 #import "MacroMenuController.h" // zenitani 1.33
+#import <OgreKit/OgreKit.h>
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -73,6 +74,11 @@
                 }
                 
         [super mouseDown:theEvent];
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
 }
                 
 #pragma mark =====others=====
@@ -186,7 +192,9 @@
         NSString *thisFile = [[[[self window] windowController] document] fileName];
         unsigned i;
         for( i=0; i<cnt; i++ ){
-            NSString *filePath = [ar objectAtIndex:i];
+            // NSString *filePath = [ar objectAtIndex:i];
+            NSString *tempPath = [ar objectAtIndex:i];
+            NSString *filePath = [self resolveAlias:tempPath];
             NSString *fileName = [filePath lastPathComponent];
             NSString *baseName = [fileName stringByDeletingPathExtension];
             NSString *fileExt  = [[fileName pathExtension] lowercaseString];
@@ -255,6 +263,34 @@
     }else{
         [super concludeDragOperation:sender];
     }
+}
+
+/* Koch: this method comes from ADC Reference Library/Cocoa/LowLevelFileManagement */
+- (NSString *)resolveAlias: (NSString *)path
+{
+    NSString *resolvedPath = nil;
+    CFURLRef url;
+    
+    url = CFURLCreateWithFileSystemPath(NULL /*allocator*/, (CFStringRef)path,
+                         kCFURLPOSIXPathStyle, NO /*isDirectory*/);
+    if(url != NULL) {
+        FSRef fsRef;
+        if(CFURLGetFSRef(url, &fsRef)) {
+            Boolean targetIsFolder, wasAliased;
+            if (FSResolveAliasFile (&fsRef, true /*resolveAliasChains*/, 
+                &targetIsFolder, &wasAliased) == noErr && wasAliased) {
+                    CFURLRef resolvedUrl = CFURLCreateFromFSRef(NULL, &fsRef);
+                    if(resolvedUrl != NULL) {
+                        resolvedPath = (NSString*)CFURLCopyFileSystemPath(resolvedUrl, kCFURLPOSIXPathStyle);
+                        CFRelease(resolvedUrl);
+                        }
+                    }
+                }
+            CFRelease(url);
+            }
+    if(resolvedPath==nil)
+        resolvedPath = [[NSString alloc] initWithString:path];
+    return resolvedPath;
 }
 
 - (NSString *)getDragnDropMacroString: (NSString *)fileNameExtension
@@ -475,6 +511,16 @@
 	{
 		newString = filterYenToBackslash(newString);
 	}
+        
+        // zenitani 1.35 (A) -- normalizing newline character for regular expression
+        long MacVersion;
+        if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
+            if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030)) 
+            newString = [OGRegularExpression replaceNewlineCharactersInString:newString 
+                        withCharacter:OgreLfNewlineCharacter];
+            }
+        
+        
 	[super insertText: newString];
 	
 }
@@ -512,6 +558,14 @@
 				string = filterBackslashToYen(string);
 			else if (shouldFilter == filterNSSJIS)
 				string = filterYenToBackslash(string);
+                                
+                        // zenitani 1.35 (A) -- normalizing newline character for regular expression
+                        long MacVersion;
+                        if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
+                        if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030)) 
+                            string = [OGRegularExpression replaceNewlineCharactersInString:string 
+                                    withCharacter:OgreLfNewlineCharacter];
+                            }
 		
 			// Replace the text--imitate what happens in ordinary editing
 			NSRange	selectedRange = [self selectedRange];
@@ -890,8 +944,10 @@
 	NS_ENDHANDLER
 	// save the new list to file
 	//myData = [commandCompletionList dataUsingEncoding: NSUTF8StringEncoding]; // not used
-        theTag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+        
+        // theTag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
         theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
+        theTag = [[EncodingSupport sharedInstance] tagForEncoding: @"UTF-8 Unicode"];
         myData = [commandCompletionList dataUsingEncoding: theEncoding allowLossyConversion:YES];
         
         /*

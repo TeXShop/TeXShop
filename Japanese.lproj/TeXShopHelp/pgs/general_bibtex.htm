@@ -1,68 +1,1 @@
-<HTML>
-
-<HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
-		<TITLE>BibTeX</TITLE>
-		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-		<META NAME="description" CONTENT="bibtex; bibliography; citation">
-	</HEAD>
-
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>BibTeX</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">BibTeX is a tool used to create bibliographies in LaTeX documents. The tool assumes that you have a large database of references which you often quote. Simple commands allow you to cite certain of these references in your LaTeX source, and BibTeX then creates a bibliography for your article containing only the items cited. </font></P>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Here is a brief example taken from The LaTeX Companion by Goossens, Mittelbach, and Samarin. Consult this book for many additional details.  Suppose the database is a file called &quot;mybibliography.bib&quot; containing the text shown below. In this text, the entries &quot;Felici:1991, Knuth:WEB,&quot; and &quot;Liang:1983&quot; are key values used to cite the articles in the LaTeX source.</font></p>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>@article{Felici:1991,</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>author	={James Felici},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>title	={{PostScript versus TrueType}},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>journal	={Macworld},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>volume	=8, pages={195--201},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>month	=sep, year = 1991		}</tt></font>
-			<dd>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>@techreport{Knuth:WEB,</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>title	={{The \textsf{WEB} System of</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Structured Documentation}},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>month	=sep, year = 1983,</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>author	={Donald E. Knuth},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>address	={Stanford, CA 94305},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>number	={STAN-CS-83-980},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>institution={Department of Computer</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Science, Stanford University}  }</tt></font>
-			<dd>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>@phdthesis{Liang:1983,</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>author	={Franklin Mark Liang},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>month	=jun, year = 1983,</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>school	={Stanford University},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>address	={Stanford, CA 94305},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>title	={{Word Hy-phen-a-tion by</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Com-pu-ter}},</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>note	={Also available as Stanford</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>University, Department of</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Computer Science Report</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>No. STAN-CS-83-977}   }</tt></font>
-		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Suppose the LaTeX source file is called &quot;myfile.tex&quot; and contains the following text:</font></p>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\begin{document}</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Consider the  argument of Felici~\cite{Felici:1991} in light of these comments.</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\nocite{Liang:1983} We provide further remarks later.</tt></font>
-			<dd>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\bibliographystyle{plain}</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\bibliography{mybibliography}</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\end{document}</tt></font>
-		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">When this source is typeset, a reference to Felici's article will appear in the text, and a bibliography will be created at the end of the text containing the articles of Felici and Liang, but not the article of Knuth.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop can be used with this example in the following way. First edit and typeset the document &quot;myfile.tex&quot; as usual. Citations will appear in the output as &quot;[?]&quot; and the bibliography will be missing. Then select &quot;BibTeX&quot; under the Program button and run BibTeX. Next select &quot;LaTeX&quot; and typeset again. Citations will still appear as &quot;[?]&quot;, but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">The file &quot;mybibliography.bib&quot; can be opened and edited by TeXShop. If you use TeXShop to create the file &quot;mybibliography.bib&quot; in the first place, use the pulldown tag labeled &quot;file format&quot; to save the file as a bib file rather than as a tex file.</font></p>
-		<ul>
-			
-		</ul>
-	</BODY>
-
-</HTML>
+<HTML><HEAD>			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">			<TITLE>BibTeX</TITLE>			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">			<META NAME="description" CONTENT="ŽQl•¶Œ£–Ú˜^‚Ìì¬‚É‚Â‚¢‚Ä"></HEAD><BODY BGCOLOR="#ffffff" topmargin="20" leftmargin="20"><TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">	<TR HEIGHT="40">		<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>		<TD WIDTH="6" HEIGHT="40"></TD>		<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3" SIZE="4"><B>BibTeX</B></FONT></TD>	</TR></TABLE><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">BibTeX ‚Í LaTeX •¶‘“à‚ÉŽQl•¶Œ£–Ú˜^‚ðì¬‚·‚é‚½‚ß‚Ìƒc[ƒ‹‚Å‚·B‚±‚Ìƒc[ƒ‹‚ÍA‚µ‚Î‚µ‚Îˆø—p‚·‚é•¶Œ£‚ðW¬‚µ‚½ƒf[ƒ^ƒx[ƒX‚ª‚ ‚é‚±‚Æ‚ð‘O’ñ‚Æ‚µ‚Ä‚¢‚Ü‚·BƒVƒ“ƒvƒ‹‚ÈƒRƒ}ƒ“ƒh‚ðŽg‚Á‚Ä LaTeX ƒ\[ƒX“à‚Å•¶Œ£‚Ìˆê•”‚ðŽQÆ‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·„Ÿ„ŸBibTeX ‚ÍA˜_•¶“à‚ÅŽQÆ‚µ‚½€–Ú‚¾‚¯‚ðŠÜ‚ñ‚¾ŽQl•¶Œ£–Ú˜^‚ðì¬‚µ‚Ü‚·B</font></p><BLOCKQUOTE><p><font size="1" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">–ó’FpTeX ƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚É‚Í“ú–{Œê‚É‘Î‰ž‚µ‚½ jBibTeX ‚ªŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚·BTeXShop ‚ÌŠÂ‹«Ý’èƒpƒlƒ‹‚Å‚ÍABibTeX ‚Ì‘ã‚í‚è‚É jBibTeX ‚ðŽg‚¤‚æ‚¤AÝ’è‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·B</font></p></BLOCKQUOTE><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚±‚±‚É Goossens, Mittelbach, Samarin ‚Ì‹¤’˜w The LaTeX Companion x‚©‚çŽæ‚Á‚½’Z‚¢—á‚ª‚ ‚è‚Ü‚·B‚æ‚èÚ‚µ‚¢‚±‚Æ‚É‚Â‚¢‚Ä‚Í‚±‚Ì–{‚Å‚¨’²‚×‚­‚¾‚³‚¢Bƒf[ƒ^ƒx[ƒX‚Íu mybibliography.bib v‚Æ‚¢‚¤–¼‘O‚Ìƒtƒ@ƒCƒ‹‚ÅAˆÈ‰º‚ÉŽ¦‚·ƒeƒLƒXƒg‚ðŠÜ‚Þ‚à‚Ì‚Æ‚µ‚Ü‚·B‚±‚ÌƒeƒLƒXƒg“à‚ÌA“o˜^€–Úu Felici:1991 vu Knuth:WEB vu Liang:1983 v‚ÍALaTeX ƒ\[ƒX“à‚Å˜_•¶‚ðŽQÆ‚·‚é‚Ì‚ÉŽg‚í‚ê‚éŒ®’liŽQÆ–¼j‚Å‚·B</font></p><BLOCKQUOTE><p><font size="1" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">•â‘«Fw The LaTeX ƒRƒ“ƒpƒjƒIƒ“xƒAƒXƒL[‘Ð•ÒW•”ŠÄ–ói1998”Nj</font></p></BLOCKQUOTE><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>		<dl>			<dd>@article{Felici:1991,			<dd>author	={James Felici},			<dd>title	={{PostScript versus TrueType}},			<dd>journal	={Macworld},			<dd>volume	=8, pages={195--201},			<dd>month	=sep, year = 1991		}			<p>			<dd>@techreport{Knuth:WEB,			<dd>title	={{The \textsf{WEB} System of			<dd>Structured Documentation}},			<dd>month	=sep, year = 1983,			<dd>author	={Donald E. Knuth},			<dd>address	={Stanford, CA 94305},			<dd>number	={STAN-CS-83-980},			<dd>institution={Department of Computer			<dd>Science, Stanford University}  }			<p>			<dd>@phdthesis{Liang:1983,			<dd>author	={Franklin Mark Liang},			<dd>month	=jun, year = 1983,			<dd>school	={Stanford University},			<dd>address	={Stanford, CA 94305},			<dd>title	={{Word Hy-phen-a-tion by			<dd>Com-pu-ter}},			<dd>note	={Also available as Stanford			<dd>University, Department of			<dd>Computer Science Report			<dd>No. STAN-CS-83-977}   }		</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">LaTeX ‚Ìƒ\[ƒXƒtƒ@ƒCƒ‹‚Íu myfile.tex v‚Æ‚¢‚¤–¼‘O‚ÅAˆÈ‰º‚ÌƒeƒLƒXƒg‚ðŠÜ‚Þ‚à‚Ì‚Æ‚µ‚Ü‚·F</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>		<dl>			<dd>\begin{document}			<dd>Consider the  argument of Felici~\cite{Felici:1991} in light of these comments.			<dd>\nocite{Liang:1983} We provide further remarks later.			<dd>			<dd>\bibliographystyle{plain}			<dd>\bibliography{mybibliography}			<dd>\end{document}		</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚±‚Ìƒ\[ƒX‚ðƒ^ƒCƒvƒZƒbƒg‚·‚é‚ÆAFelici ‚Ì˜_•¶‚Ö‚ÌŽQÆ‚ª•¶Í“à‚ÉŽ¦‚³‚êAŽQl•¶Œ£–Ú˜^‚ª•¶Í‚ÌÅŒã‚Éì¬‚³‚ê‚Ü‚·„Ÿ„Ÿ‚»‚±‚É‚Í Felici ‚Æ Liang ‚Ì˜_•¶‚Í‚ ‚è‚Ü‚·‚ªAKnuth ‚Ì˜_•¶‚ÍŒ©‚ ‚½‚è‚Ü‚¹‚ñB</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">TeXShop ‚Å‚ÍŽŸ‚ÉŽ¦‚·•û–@‚Å‚±‚Ì—á‚ð—˜—p‚Å‚«‚Ü‚·BÅ‰‚Éu myfile.tex v‚Æ‚¢‚¤•¶‘‚ð‚¢‚Â‚à’Ê‚è‚É•ÒW‚µ‚Äƒ^ƒCƒvƒZƒbƒg‚µ‚Ü‚·BŽQÆ‚Íu [?] v‚Æ‚µ‚Äo—ÍŒ‹‰Ê‚ÉŽ¦‚³‚êAŽQl•¶Œ£–Ú˜^‚ÍŒ‡—Ž‚µ‚Ü‚·B‚»‚Ì‚Ü‚ÜƒvƒƒOƒ‰ƒ€Eƒ{ƒ^ƒ“‚É‚ ‚éu BibTeX v‚ð‘I‘ð‚µ‚ÄŽÀs‚µ‚Ü‚·BŽŸ‚Éu LaTeX v‚ð‘I‚ñ‚ÅÄ“xƒ^ƒCƒvƒZƒbƒg‚µ‚Ü‚·BŽQÆ‚Í‚È‚¨‚àu [?] v‚Æ•\Ž¦‚³‚ê‚Ü‚·‚ªAŽQl•¶Œ£–Ú˜^‚Ío—Í‚É•t‚¯‰Á‚í‚è‚Ü‚·BÅI“I‚Éƒ^ƒCƒvƒZƒbƒg‚·‚é‚ÆAŽQÆ‚à³‚µ‚¢’l‚É‚È‚Á‚Ä‚¢‚Ü‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">u mybibliography.bib v‚Æ‚¢‚¤ƒtƒ@ƒCƒ‹‚ÍATeXShop ‚ÅŠJ‚¢‚½‚è•ÒW‚µ‚½‚è‚Å‚«‚Ü‚·B‚à‚µÅ‰‚©‚ç TeXShop ‚ðŽg‚Á‚Äu mybibliography.bib v‚ðì¬‚·‚é‚Ì‚Å‚ ‚ê‚ÎA•Û‘¶‰æ–Ê‚ÌuƒtƒH[ƒ}ƒbƒgFv‚Æ•\Ž¦‚Ì‚ ‚éƒvƒ‹ƒ_ƒEƒ“Eƒ^ƒO‚ÅAtexƒtƒ@ƒCƒ‹‚Å‚Í‚È‚­ bibƒtƒ@ƒCƒ‹‚Æ‚µ‚Ä•Û‘¶‚µ‚Ü‚·B</font></p></BODY></HTML>

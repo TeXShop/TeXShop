@@ -39,6 +39,8 @@
     id			printRequestPanel;
     id			pagenumberPanel;
     id			magnificationPanel;
+    id                  statisticsPanel;
+    id                  statisticsForm;
     id			openSaveBox;
     id			openSaveView;
     id			linePanel;
@@ -65,6 +67,9 @@
     NSTask		*bibTask;
     NSTask		*indexTask;
     NSTask		*metaFontTask;
+    NSTask              *detexTask;
+    NSPipe              *detexPipe;
+    NSFileHandle        *detexHandle;
     NSDate		*startDate;
     NSPDFImageRep	*texRep;
     NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
@@ -93,6 +98,8 @@
     id			nextButton;
     BOOL                taskDone;
     int                 pdfSyncLine;
+    id                  syncBox;
+    BOOL                aggressiveTrash;
     
     IBOutlet NSMatrix 	*mouseModeMatrix; // mitsu 1.29 (O)
     IBOutlet NSMenu 	*mouseModeMenu; // mitsu 1.29 (O)
@@ -119,6 +126,7 @@
 // end addition
 
 }
+- (void)configureTypesetButton;
 -(void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
 - (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo;
@@ -130,6 +138,8 @@
 - (id) pagenumberPanel;
 - (void) quitMagnificationPanel: sender;
 - (void) quitPagenumberPanel: sender;
+- (void) showStatistics: sender;
+- (void) updateStatistics: sender;
 - (void) doTex: sender;
 - (void) doLatex: sender;
 - (void) doBibtex: sender;
@@ -162,7 +172,7 @@
 - (void) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
-- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath;
+- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (int)theEngine;
 - (void) completeSaveFinished;
 - (id) pdfView;
 - (void) doCompletion:(NSNotification *)notification;
@@ -170,6 +180,7 @@
 - (void) changeAutoComplete: sender;
 - (void) fixAutoMenu;
 - (void) fixMacroMenu;
+- (void) fixMacroMenuForWindowChange;
 - (void) toLine: (int)line;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
@@ -190,7 +201,7 @@
 - (id) textView;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
-- (void) refreshPDF;
+- (void) refreshPDFAndBringFront: (BOOL)front;
 - (void) refreshTEXT;
 - (NSString *)displayName;
 - (NSPDFImageRep *) myTeXRep;
@@ -205,7 +216,12 @@
 - (NSWindow *)getCallingWindow;
 - (void)setCallingWindow: (NSWindow *)thisWindow;
 - (void)setPdfSyncLine:(int)line;
+- (void)showSyncMarks:sender;
+- (BOOL)syncState;
+- (void) flipShowSync: sender;
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
+- (void)trashAUXFiles: sender;
+- (void)trashAUX;
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

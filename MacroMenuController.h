@@ -30,6 +30,7 @@
 - (void)loadMacros;
 - (void)setupMainMacroMenu;
 - (void)reloadMacros: (id)sender;
+- (void)reloadMacrosOnly;
 - (void)addItemsToMenu: (NSMenu *)menu fromArray: (NSArray *)array withKey: (BOOL)flag;
 - (void)addItemsToPopupButton: (NSPopUpButton *)popupButton;
 - (void)doMacro: (id)sender;

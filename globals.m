@@ -8,6 +8,7 @@
 #import "globals.h"
 
 NSString *DefaultCommandKey = @"DefaultCommand";
+NSString *DefaultEngineKey = @"DefaultEngine";
 NSString *DefaultScriptKey = @"DefaultScript";
 NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
 NSString *SaveRelatedKey = @"SaveRelated";
@@ -57,14 +58,18 @@ NSString *TexCommandKey = @"TexCommand";
 NSString *TexGSCommandKey = @"TexGSCommand";
 NSString *TexScriptCommandKey = @"TexScriptCommand";
 NSString *TexTemplatePathKey = @"~/Library/TeXShop/Templates";
+NSString *TexTemplateMorePathKey = @"~/Library/TeXShop/Templates/More";
 NSString *MetaPostCommandKey = @"MetaPostCommand";
 NSString *BibtexCommandKey = @"BibtexCommand";
 NSString *DistillerCommandKey = @"DistillerCommand";
 NSString *LatexPanelPathKey = @"~/Library/TeXShop/LatexPanel";
 NSString *MatrixPanelPathKey = @"~/Library/TeXShop/MatrixPanel"; // Jonas' Matrix addition
+NSString *MatrixSizeKey = @"matrixsize"; // Jonas' Matrix addition
 NSString *BinaryPathKey = @"~/Library/TeXShop/bin";
+NSString *EnginePathKey = @"~/Library/TeXShop/Engines";
 NSString *ScriptsPathKey = @"~/Library/TeXShop/Scripts";
 NSString *TempPathKey = @"/tmp/TeXShop_Applescripts";
+NSString *TempOutputKey = @"/tmp/TeXShop_Output";
 NSString *AutoCompletionPathKey = @"~/Library/TeXShop/Keyboard";
 NSString *MenuShortcutsPathKey = @"~/Library/TeXShop/Menus";
 NSString *MacrosPathKey = @"~/Library/TeXShop/Macros";
@@ -85,7 +90,11 @@ NSString *tabsKey = @"tabs";
 NSString *background_RKey = @"background_R";
 NSString *background_GKey = @"background_G";
 NSString *background_BKey = @"background_B";
+NSString *foreground_RKey = @"foreground_R";
+NSString *foreground_GKey = @"foreground_G";
+NSString *foreground_BKey = @"foreground_B";
 NSString *WarnForShellEscapeKey = @"WarnForShellEscape";
+NSString *ptexUtfOutputEnabledKey = @"ptexUtfOutput"; // zenitani 1.35 (C)
 // mitsu 1.29 (O)
 NSString *PdfColorMapKey = @"PdfColorMap";
 NSString *PdfFore_RKey = @"PdfFore_R";
@@ -102,6 +111,16 @@ NSString *PdfPageBack_RKey = @"Pdfbackground_R";
 NSString *PdfPageBack_GKey = @"Pdfbackground_G";
 NSString *PdfPageBack_BKey = @"Pdfbackground_B";
 NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
+NSString *ConvertLFKey = @"ConvertLF";
+NSString *UseOgreKitKey = @"UseOgreKit";
+NSString *BringPdfFrontOnAutomaticUpdateKey = @"BringPdfFrontOnAutomaticUpdate";
+NSString *SourceWindowAlphaKey = @"SourceWindowAlpha";
+NSString *PreviewWindowAlphaKey = @"PreviewWindowAlpha";
+NSString *ConsoleWindowAlphaKey = @"ConsoleWindowAlpha";
+NSString *OtherTrashExtensionsKey = @"OtherTrashExtensions";
+NSString *AggressiveTrashAUXKey = @"AggressiveTrashAUX";
+NSString *ShowSyncMarksKey = @"ShowSyncMarks";
+
 // end mitsu 1.29
 
 // Exceptions

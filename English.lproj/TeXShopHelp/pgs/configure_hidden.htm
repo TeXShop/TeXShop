@@ -5,74 +5,139 @@
 		<TITLE>Hidden Preference Items</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="hidden preference; syntax coloring; background color; backup file">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
-
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Hidden Preference Items</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop adds lines which begin with the words \section, \subsection, \subsubsection, or \chapter to the Tag menu. To turn this off, run Terminal and type the following command. Change the word NO to YES to turn the behavior back on.</font></P>
+<BODY>
+<div id="content_border">
+		<P>TeXShop adds lines which begin with the words \section, \subsection, \subsubsection, or \chapter to the Tag menu. To turn this off, run Terminal and type the following command. Change the word NO to YES to turn the behavior back on.</P>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop TagSections NO</font>
+			<dd>defaults write TeXShop TagSections NO
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">When syntax coloring is on, comments are colored red, commands are colored blue, and the symbols $, {, and } are colored dark green. These colors can be changed. A color is determined by the red, green, and blue components of the color; each is a number between 0.00 and 1.00. To change the color of $, {, and } to bright green, issue the following commands in Terminal:</font></p>
+		<p>When syntax coloring is on, comments are colored red, commands are colored blue, and the symbols $, {, and } are colored dark green. These colors can be changed. A color is determined by the red, green, and blue components of the color; each is a number between 0.00 and 1.00. To change the color of $, {, and } to bright green, issue the following commands in Terminal:</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markerred 0.0</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markergreen 1.0</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markerblue 0.0</font>
+			<dd>defaults write TeXShop markerred 0.0
+			<dd>defaults write TeXShop markergreen 1.0
+			<dd>defaults write TeXShop markerblue 0.0
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">To change the comment color, replace &quot;marker&quot; with &quot;comment&quot;; to change the command color, replace &quot;marker&quot; with &quot;command&quot;.  </font></p>
-                <p><font size="2" face="Lucida Grande,Geneva,Arial">The background color of the source window can be changed. For example, to set this background to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</font></p>
+		<p>To change the comment color, replace &quot;marker&quot; with &quot;comment&quot;; to change the command color, replace &quot;marker&quot; with &quot;command&quot;.  </p>
+                <p>The background color of the source window can be changed. For example, to set this background to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_R 0.42</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_G 0.39</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_B 0.77</font>
+			<dd>defaults write TeXShop background_R 0.42
+			<dd>defaults write TeXShop background_G 0.39
+			<dd>defaults write TeXShop background_B 0.77
 		</dl>
-<p><font size="2" face="Lucida Grande,Geneva,Arial">The background color of the preview window can also be changed. For example, to set this background to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal. Change these numbers to 1 to convert back to a white background.
+<p>The text color of the source window can be changed. This change requires that syntax coloring be on. For example, to set this foreground color for text to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</p>
+		<dl>
+			<dd>defaults write TeXShop foreground_R 0.42
+			<dd>defaults write TeXShop foreground_G 0.39
+			<dd>defaults write TeXShop foreground_B 0.77
+		</dl>
+<p>By using the previous pairs in combination, the source window can be made to display white text on a black
+background or other coloring schemes as desired.</p>
+<p>The background color of the preview window can also be changed. For example, to set this background to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal. Change these numbers to 1 to convert back to a white background.
 It may be easier to view colored TeX documents with a gray background. The background color will not affect printing.
-</font></p>
+</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_R 0.42</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_G 0.39</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_B 0.77</font>
+			<dd>defaults write TeXShop Pdfbackground_R 0.42
+			<dd>defaults write TeXShop Pdfbackground_G 0.39
+			<dd>defaults write TeXShop Pdfbackground_B 0.77
 		</dl>
-
-
-<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop can be configured to save a backup file whenever it
+<p>The transparency of the source, preview, and console windows can be changed. For example,</p>
+		<dl>
+			<dd>defaults write TeXShop ConsoleWindowAlpha 0.75
+			<dd>defaults write TeXShop SourceWindowAlpha 0.75
+			<dd>defaults write TeXShop PreviewWindowAlpha 0.75
+		</dl>
+<p>Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is completely opaque. Using these commands cautiously.</p>
+<p>TeXShop can be configured to save a backup file whenever it
 saves or typesets a source file. To turn this on, run Terminal and type the following command. Change YES to NO to turn it off.
-</font></p>
+</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop SaveBackup YES</font>
+			<dd>defaults write TeXShop SaveBackup YES
 		</dl>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop can be configured to automatically refresh pdf views when the pdf file changes. To do this, once a second it examines the date and time when the pdf was last written to see if this information has changed. The time interval between these checks can be modified. To do this, run Terminal and type the following command. Change 1.00 to the number of seconds desired.
-</font></p>
+<p>Occasionally during typesetting, the .aux files, .log files, and other files created automatically by TeX become corrupted and must be removed. TeXShop has a "Trash AUX Files" menu item and associated button in the console window. When either item is selected, TeXShop moves to the trash all files in the folder containing the source file
+with the same name as the source name, and extensions .aux, .bbl, .blg, .brf, .glo, .idx, .ilg, .ind, .ioa, .log, .log, .lot, .mtc, .mlf, .out, .pdfsync, and .toc. Other extensions can be added to this list, one by one. For instance, to add .dvi files to this list:
+</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop RefreshTime 1.00</font>
+			<dd>defaults write TeXShop OtherTrashExtensions -array-add "dvi"
+		</dl>
+<p> To remove all added extensions and return to the original list:</p>
+	<dl>
+		<dd> defaults write TeXShop OtherTrashExtensions -array
+	</dl>
+<p> Sometimes a more extensive cleanup is desirable. If the option key is held down while choosing
+"Trash AUX Files," TeXShop uses the %&SourceDoc and "Set Project Root" mechanisms to find the
+root file. It then moves all files in the folder of this file and any subfolders of this folder to
+the trash if they have appropriate extensions, regardless of the names of the files. This behavior can
+be made the default behavior for "Trash AUX Files" without using the option key; issue the command
+</p>
+<dl>
+<dd> defaults write TeXShop AggressiveTrashAUX YES
+</dl> 
+
+
+<p>TeXShop can be configured to automatically refresh pdf views when the pdf file changes. To do this, once a second it examines the date and time when the pdf was last written to see if this information has changed. The time interval between these checks can be modified. To do this, run Terminal and type the following command. Change 1.00 to the number of seconds desired.
+</p>
+		<dl>
+			<dd>defaults write TeXShop RefreshTime 1.00
 		</dl>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">Automatic refresh for pdf views is useful if TeXShop is configured to use an external editor, or if a tex file is opened by "Open For Preview...". In these cases, a .tex file is opened, but TeXShop only shows the associated pdf file. TeXShop also allows pdf files to be opened directly; this is useful for a brief glance at illustrations before embedding them in a TeX document. If you want pdf files opened for an external editor to be refreshed automatically, but pdf files opened for a brief glance to be left alone, run Terminal and type the following command. The default value of this preference is YES.  
-</font></p>
+<p>Automatic refresh for pdf views is useful if TeXShop is configured to use an external editor, or if a tex file is opened by "Open For Preview...". In these cases, a .tex file is opened, but TeXShop only shows the associated pdf file. TeXShop also allows pdf files to be opened directly; this is useful for a brief glance at illustrations before embedding them in a TeX document. If you want pdf files opened for an external editor to be refreshed automatically, but pdf files opened for a brief glance to be left alone, run Terminal and type the following command. The default value of this preference is YES.  
+</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop PdfFileRefresh NO</font>
+			<dd>defaults write TeXShop PdfFileRefresh NO
 		</dl>
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">When TeXShop opens a .tex file for an external editor, it checks the dates of the tex and pdf files to make sure that the pdf output is up to date. If this output is not up to date or does not exist at all, TeXShop typesets the .tex file again. To turn off this behavior, run Terminal and type the following command.
-</font></p>
+<p>When TeXShop opens a .tex file for an external editor, it checks the dates of the tex and pdf files to make sure that the pdf output is up to date. If this output is not up to date or does not exist at all, TeXShop typesets the .tex file again. To turn off this behavior, run Terminal and type the following command.
+</p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop ExternalEditorTypesetAtStart NO</font>
+			<dd>defaults write TeXShop ExternalEditorTypesetAtStart NO
 		</dl>
 
+<p>There is a hidden preference to set the default size of the matrix in the Matrix Panel:
+</p>
+		<dl>
+			<dd>defaults write TeXShop matrixsize 12
+		</dl>
+
+<p>There is a new checkbox tool for the Preview window named "ShowSync." It is not part of the default toolkit
+for this window. When this item is checked, synchronization spots are show in the Preview document. The item
+is not shown when a preview window first appears, but this changed be changed via:
+</p>
+		<dl>
+			<dd>defaults write TeXShop ShowSyncMarks YES
+		</dl>
+
+<p>When the preview window is updated after typesetting, it comes to the front. This behavior causes trouble
+for uses with an X11 editor running in Apple's X11 Window Manager. For these users, the behavior can be turned off via:
+</p>
+		<dl>
+			<dd>defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
+		</dl>
+
+</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">How do I configure TeXShop?</div><div id="header_title">Hidden Preference Items</div>
+
+<div id="menu_border">
 		<ul>
+			<LI><a href="configure_preliminaries.htm">Preliminaries</a>
+<LI><a href="configure_correctinstall.htm">Did You Install TeXShop Correctly?</a>
+			<LI><a href="configure_prefchanges.htm">Recommended Preference Changes</a>
+			<LI><a href="configure_convertgraphics.htm">Converting Graphic Formats Automatically</a>
+			<LI><a href="configure_defaults.htm">Default Preference Items</a>
+			<LI><a href="configure_latextemplate.htm">Default Latex Template</a>
+			<li><a href="configure_hidden.htm">Hidden Preference Items</a>
+			<li><a href="configure_plist.htm">.plist Files</a>
+			<li><a href="configure_panel.htm">Modifying the Latex Panel</a>
+			<li><a href="configure_autocompletion.htm">Modifying Auto Completion</a>
+			<li><a href="configure_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
 			
-		</ul>
-		<ul>
-			
-		</ul>
+			<li><a href="configure_macros.htm">Modifying the Macros Menu</a>
+		</UL>
+	</div>
+	
 	</BODY>
-
 </HTML>

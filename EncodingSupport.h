@@ -27,7 +27,8 @@
 - (int)tagForEncoding: (NSString *)encoding;
 - (NSString *)encodingForTag: (int)tag;
 - (NSStringEncoding)stringEncodingForTag: (int)encoding;
-
+- (BOOL)ptexUtfOutputCheck: (NSString *)dataString withEncoding: (int)tag;  // zenitani 1.35 (C)
+- (NSData *)ptexUtfOutput: (NSTextView *)dataView withEncoding: (int)tag;   // zenitani 1.35 (C)
 @end
 
 NSMutableString *filterBackslashToYen(NSString *aString);

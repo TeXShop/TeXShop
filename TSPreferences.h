@@ -14,7 +14,8 @@
 	IBOutlet NSWindow	*_prefsWindow;			/*" connected to the window "*/
 	IBOutlet NSTextField	*_documentFontTextField;	/*" connected to "Document Font" "*/
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
-        IBOutlet NSButton	*_docWindowPosButton;		/* connect to set current position button */
+        IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
+        IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
 
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
@@ -42,11 +43,13 @@
         IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
         IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
+        IBOutlet NSTextField    *_engineTextField;
         IBOutlet NSMatrix       *_distillerMatrix;              /*" connected to "Distiller" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
         IBOutlet NSTextField	*_tabsTextField;		/*" connected to tab size text field "*/
         IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
         IBOutlet NSButton       *_autoPDFButton;
+        IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
 	
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
         NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -92,6 +95,7 @@
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
 - (IBAction)tabsChanged:sender;
+- (IBAction)findPanelChanged:sender;
 
 
 - (IBAction)pdfWindowPosChanged:sender;
@@ -115,9 +119,11 @@
 - (IBAction)defaultBibtexChanged:sender;
 - (IBAction)distillerChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
+- (IBAction)setEngine:sender;
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
+- (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

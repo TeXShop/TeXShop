@@ -5,34 +5,55 @@
 		<TITLE>AppleScript Macros</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="macros; applescript">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
 
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>AppleScript Macros</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">If a macro begins with the string</font></P>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>--AppleScript</tt></font>
-		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">then the resulting applescript code will run when the Macro is chosen. For example, consider the macro titled &quot;View pdf with Acrobat.&quot; Choosing this macro when the source file is active (and the pdf file has been created) will start Adobe Acrobat Reader and open the output pdf file in that program. The corresponding applescript code reads</font></p>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>--AppleScript</tt></font>
-			<dd>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>tell application &quot;Acrobat Reader 5.0&quot;</tt></font>
-			<dl>
-				<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>activate</tt></font>
-				<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>open POSIX file #PDFPATH#</tt></font>
-			</dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>end tell</tt></font>
-		</dl>
-		<ul>
-			
-		</ul>
+<BODY>
+	<div id="content_border">
+		<P>If a macro begins with the string</P>
+		<div id="source">
+			--AppleScript
+		</div>
+or
+		<div id="source">
+			--AppleScript direct
+		</div>
+		<p>then the resulting applescript code will run when the Macro is chosen. For example, consider the macro titled &quot;View pdf with Acrobat.&quot; Choosing this macro when the source file is active (and the pdf file has been created) will start Adobe Acrobat Reader and open the output pdf file in that program. The corresponding applescript code reads</p>
+		<div id="source">
+			--AppleScript direct <br>
+			tell application &quot;Acrobat Reader 5.0&quot;<br>
+			<br>
+				<dd>activate</dd>
+				<dd>open POSIX file #PDFPATH#</dd>
+			<br>
+			end tell
+		</div>
+<p> Commands beginning with "--AppleScript direct" are run directly by TeXShop. During the time this applescript is running, TeXShop's event loop is not active. Consequently, the script cannot call TeXShop to perform an
+action which might require user input. For example, it cannot ask TeXShop to run LaTeX, because if the
+LaTeX file has an error, the console will appear and wait for user input, but such input would not be recognized.</p>
+<p> Commands beginning with "--AppleScript" are run by a small auxiliary program in the TeXShop application bundle. Such commands can ask TeXShop to perform actions which might require user input, because in that
+case the auxiliary program will temporarily halt but TeXShop will remain active.</p>
+<p> Thus the syntax "--AppleScript direct" is appropriate for routine macros, but "--AppleScript" may be needed for fancy ones.</p>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Macros Help</div>
+<div id="header_title">AppleScript Macros</div>
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminaries</a></li>
+			<LI><a href="macros_default.htm">Understanding Default Macros</a></li>
+			<LI><a href="macros_rearrange.htm">Rearranging the Macro Menu</a></li>
+			<LI><a href="macros_define.htm">Defining New Macros</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Macros</a></li>
+			<LI><a href="macros_includedscripts.htm">Default AppleScript Macros</a></li>
+			<li><a href="macros_defapplescript.htm">Defining AppleScript Macros</a></li>
+			<li><a href="macros_dialogs.htm">Creating Dialogs</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Writing Scripts with TeXShop Typesetting Commands</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Writing Scripts with Shell Commands</a></li>
+		</UL>
+	</div
 	</BODY>
 
 </HTML>

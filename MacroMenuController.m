@@ -201,11 +201,16 @@ static id sharedMacroMenuController = nil;
 // reload
 - (void)reloadMacros: (id)sender
 {
+	[self reloadMacrosOnly];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"ResetMacroButtonNotification" object:self];
+}
+
+- (void)reloadMacrosOnly;
+{
 	[macroDict release];
 	macroDict = nil;
 	[self loadMacros];
 	[self setupMainMacroMenu];
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"ResetMacroButtonNotification" object:self];
 }
 
 
@@ -323,6 +328,7 @@ static id sharedMacroMenuController = nil;
 	if ([macroString length] <14 || 
 		(![[[macroString substringToIndex: 13] lowercaseString] isEqualToString:@"--applescript"] 
 		&& ![[[macroString substringToIndex: 14] lowercaseString] isEqualToString:@"-- applescript"]))
+        
 	{	
 		// do ordinary macro
 		// mitsu 1.29 (T2)
@@ -340,9 +346,10 @@ static id sharedMacroMenuController = nil;
 		//								object: macroString];
 		// end mitsu 1.29
 	}
-	else
-	{
-		// do AppleScript
+        
+       else {
+       
+                // do AppleScript
 		NSMutableString *newString = [NSMutableString stringWithString: macroString];
 		NSString *filePath = [[(MainWindow *)[NSApp mainWindow] document] fileName];
                 NSString *displayName = [[(MainWindow *)[NSApp mainWindow] document] displayName];
@@ -386,6 +393,79 @@ static id sharedMacroMenuController = nil;
                                         [NSString stringWithFormat: @"\"%@\"", displayName]
                                         options: 0 range: NSMakeRange(0, [newString length])];
                                         
+
+               if (([macroString length] >= 20) &&
+                  ( ([[[macroString substringToIndex: 20] lowercaseString] isEqualToString:@"--applescript direct"]) ||
+                    ([[[macroString substringToIndex: 21] lowercaseString] isEqualToString:@"-- applescript direct"]))) 
+                    
+                {
+                
+                 NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: newString];
+		 NSDictionary *errorInfo;
+		 NSAppleEventDescriptor *returnValue = [aScript executeAndReturnError: &errorInfo];
+		 if (returnValue) // successful?
+		 {	// show the result only if the return value is a text
+			if ([returnValue descriptorType] == kAETextSuite)	//kAETextSuite='TEXT'
+				NSRunAlertPanel(@"AppleScript Result", [returnValue stringValue], nil, nil, nil);
+		 }
+		 else
+		 {	// show error message
+			NSRunAlertPanel(@"AppleScript Error", 
+				[errorInfo objectForKey: NSAppleScriptErrorMessage], nil, nil, nil);
+		 }
+		 [aScript release];
+                
+                }
+        
+            else
+         
+                {
+                /*
+		// do AppleScript
+		NSMutableString *newString = [NSMutableString stringWithString: macroString];
+		NSString *filePath = [[(MainWindow *)[NSApp mainWindow] document] fileName];
+                NSString *displayName = [[(MainWindow *)[NSApp mainWindow] document] displayName];
+		if (!filePath) 
+			filePath = @"";
+		[newString replaceOccurrencesOfString: @"#FILEPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+		filePath = [filePath stringByDeletingPathExtension];
+		[newString replaceOccurrencesOfString: @"#PDFPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.pdf\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#DVIPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.dvi\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+		[newString replaceOccurrencesOfString: @"#PSPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.ps\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#LOGPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.log\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#AUXPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.aux\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#INDPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.ind\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#BBLPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.bbl\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#HTMLPATH#" withString: 
+					[NSString stringWithFormat: @"\"%@.html\"", filePath] 
+					options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#NAMEPATH#" withString: 
+                                        [NSString stringWithFormat: @"\"%@\"", filePath]
+                                        options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#TEXPATH#" withString: 
+                                        [NSString stringWithFormat: @"\"%@.tex\"", filePath]
+                                        options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#DOCUMENTNAME#" withString: 
+                                        [NSString stringWithFormat: @"\"%@\"", displayName]
+                                        options: 0 range: NSMakeRange(0, [newString length])];
+                */
+                                        
                 // save newScript in file named scriptFileName in directory scriptFilePath
                 NSFileManager *fileManager = [NSFileManager defaultManager];
                 if (!([fileManager fileExistsAtPath: [TempPathKey stringByStandardizingPath]]))
@@ -428,7 +508,7 @@ static id sharedMacroMenuController = nil;
                // [scriptTask setStandardInput: nil];
                 [scriptTask launch];
 
-                
+               } 
                 /*
 		NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: newString];
 		NSDictionary *errorInfo;

@@ -1,163 +1,1 @@
-<HTML>
-
-<HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
-		<TITLE>Writing Scripts with Shell Commands</TITLE>
-		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-		<META NAME="description" CONTENT="applescript">
-	</HEAD>
-
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Writing Scripts with Shell Commands</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">We will use the AppleScript "pdflatexc" by Claus Gerhardt to illustrate the principles involved in calling a Unix shell script from an Applescript.
-This particular shell script isn't very interesting; it adds the location of the teTeX binary files to the $PATH variable and calls pdflatex to typeset.</font></P>
-
-	<P><font size="2" face="Lucida Grande,Geneva,Arial">The shell script itself is independent of
-TeXShop and can be run from the Terminal by typing "pdflatexc myfile.tex" provided the directory holding pdflatexc is in the search path for binaries. Here is that shell script:
-
-<dl>
-<dd>#!/bin/tcsh
-<dd># pdflatexc
-<dd># Claus Gerhardt
-<dd>#
-<dd># Usage
-<dd># pdflatexc filename.tex
-<p>
-<dd>set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)
-<p>
-<dd>pdflatex --shell-escape "$1"
-</dl>
-
-Of course you are likely to write a more complicated script which performs several operations
-in sequence. That is when these techniques become useful.
- </font></P>
-
- <P><font size="2" face="Lucida Grande,Geneva,Arial">The AppleScript used to call this shell script is more interesting. Here it is:
-
-<dl>
-<dd>--Applescript
-<dd>-- Apply only to an already saved file.
-<dd>-- Claus Gerhardt, Nov. 2003
-<p>
-<dd>set scriptPath to (do shell script "dirname " & "~/Library/TeXShop/Scripts/ex")
-<dd>set scriptPath to scriptPath & "/setname.scpt"
-<dd>set scriptName to POSIX file scriptPath as alias
-<dd>set scriptLiB to (load script scriptName)
-<dd>tell scriptLib
-<dd>set frontName to setname(#NAMEPATH#,#TEXPATH#)
-<dd>end tell
-<p>
-<dd>set fileName to  #TEXPATH#
-<dd>set n to (number of characters of contents of fileName)
-<dd>set fileNamequoted to quoted form of fileName
-<dd>set baseName to do shell script "basename " & fileNamequoted
-<dd>set m to (number of characters of contents of baseName)
-<dd>set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
-<p>
-<dd>set shellScript to "cd " & dirName & ";"
-<dd>set shellScript to shellScript & "~/Library/TeXShop/bin/pdflatexc  " & baseName
-<dd>do shell script shellScript
-<p>
-<dd>tell document frontName
-<dd>	refreshpdf
-<dd>end tell
-</dl>
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-Ignoring the introductory comments, the first seven lines of this script  are a magic recipe 
-by Claus Gerhardt to save the source file and find the name of the document in question, setting
-"frontName" to this name. This recipe uses a compiled script named "setpath.scpt" in
-~/Library/TeXShop/Scripts to do all the hard work. Careful reading shows that these lines
-find the path ~/Library/TeXShop/Scripts/setname.scpt and call this script with parameters
-#NAMEPATH# and #TEXPATH#.
-</font></P>
- 
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-In many AppleScripts all of this could be accomplished in an earier way using
-the commands:
-<dl>
-<dd> set frontName to #DOCUMENTNAME#
-<dd> tell document frontName of application "TeXShop"
-<dd> save
-<dd> end tell
-</dl>
-However, Gerhardt's script has two advantages. First, his script can be
-called when the front document is a log file, say /Users/koch/Examples/myfile.log, that is,
-in a case when the front document is not the document which should receive later commands.
-Second, if the file has never been saved, Gerhardt's script returns an error when trying to
-save, while the
-"save" command would cause TeXShop to hang after it put up a save dialog (see the help document Writing Scripts with TeXShop Typesetting
-Commands for details.)
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-The next six lines of the script define the variables dirName and baseName. If the source
-file is "/Users/koch/This directory/Stuff/myfile.tex", dirName is " '/Users/koch/This directory/Stuff' ",
-including the single and double quotation marks, 
-and baseName is "myfile.tex." A lot of this work is required so spaces can occur in the
-names of folders. As always, tex does not allow spaces in the final file name.
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-The next three line call the shell script. The result is the same as typing "cd dirName; ~/Library/TeXShop/bin/pdflatexc baseName" in a Terminal, although, to be absolutely precise, dirName would have to be replaced by its unquoted form, i.e., if we use the example above, by '/Users/koch/This directory/Stuff' including the single quotes because of the space in the name of one directory.</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
- Shell commands in AppleScript are issued in the form
-<dl>
-<dd>do shell script "cmd input"
-</dl>
-If one wants to combine several shell scripts, it is better to write the command in an equivalent form
-<dl>
-<dd>do shell script "cmd " & "input"
-</dl>
-Notice the space behind cmd and the quotes. The ampersand is a binary concatenation operator, i.e.,
-<dl>
-<dd>"cmd " & "input" = "cmd input"
-</dl>
-
-When the shell is called via an applescript, the default working directory is the root directory. The command
-<dl>
-<dd>do shell script "cd " dirName
-</dl>
-changes the directory to the directory specified in dirName; dirName is already quoted so that additional quotes are not needed. 
-<p>
-If one would like to keep the working directory and issue further commands, then these commands may not be stated in the form "do shell script", since then a new shell would be invoked. In the terminal one would separate consecutive commands by semicolons, in AppleScript one does it by concatenating ";", i.e.,
-<dl>
-<dd>do shell script "cmd(1) " & "input(1)" & ";" & "cmd(2) " & "input(2)"
-</dl>
-This is done in the above example: cmd(1) = cd, "input(1)" = dirName, cmd(2) = ~/Library/TeX/bin/pdflatexc - calling the shell script -, and "input(2)" = baseName.
-<p>
-The lines
-<dl>
-<dd>set shellScript to "cd " & dirName & ";"
-<dd>set shellScript to shellScript & "~/Library/TeX/bin/pdflatexc  " & baseName
-</dl>
-are simply a convenient way to concatenate this sequence of commands and input into one variable. 
-
-</font></P>
-
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-The final three lines update the Preview window.
- </font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
-To be sure, several of these lines are complicated, but these lines can be copied without
-change into new scripts.
- </font></P>
-
-
-
-
-
-
-	</BODY>
-
-</HTML>
+<HTML><HEAD>			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">			<TITLE>ƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ÅƒXƒNƒŠƒvƒg‚ð‘‚­</TITLE>			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">			<META NAME="description" CONTENT="ƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ðŽg‚Á‚½ AppleScript ‚Ìì—á‚Æì–@"></HEAD><BODY BGCOLOR="#ffffff" topmargin="20" leftmargin="20"><TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">	<TR HEIGHT="40">		<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>		<TD WIDTH="6" HEIGHT="40"></TD>		<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3" SIZE="4"><B>ƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ÅƒXƒNƒŠƒvƒg‚ð‘‚­</B></FONT></TD>	</TR></TABLE><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">Claus Gerhardt ‚É‚æ‚é AppleScript u pdflatexc v‚ðŽg‚Á‚ÄAAppleScript ‚©‚ç UNIX ‚ÌƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ðŒÄ‚Ño‚·Œ´—‚ð—áŽ¦‚µ‚Ä‚Ý‚Ü‚µ‚å‚¤B‚±‚ÌƒVƒFƒ‹ƒXƒNƒŠƒvƒgŽ©‘Ì‚Í‘å‚µ‚Ä‚¨‚à‚µ‚ë‚­‚ ‚è‚Ü‚¹‚ñGteTeX ‚ÌƒoƒCƒiƒŠ‚ÌêŠ‚ð $PATH •Ï”‚É‰Á‚¦Apdflatex ‚ðŒÄ‚Ño‚µ‚Äƒ^ƒCƒvƒZƒbƒg‚ðs‚È‚Á‚Ä‚¢‚Ü‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚»‚Ì‚à‚Ì‚ÍATeXShop ‚É‚ÍˆË‘¶‚µ‚Ä‚¢‚Ü‚¹‚ñ‚µApdflatexc ‚ðŠÜ‚ÞƒfƒBƒŒƒNƒgƒŠ‚ªƒoƒCƒiƒŠ‚ÌŒŸõƒpƒX‚É‚ ‚ê‚Îu pdflatexc myfile.tex v‚Æ‘Å‚¿ž‚Þ‚±‚Æ‚Å Terminal ‚©‚ç‚àŽÀs‚Å‚«‚Ü‚·B‚±‚ê‚ª‚»‚ÌƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚Å‚·F</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>#!/bin/tcsh		<dd># pdflatexc		<dd># Claus Gerhardt		<dd>#		<dd># Usage		<dd># pdflatexc filename.tex		<p>		<dd>set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)		<p>		<dd>pdflatex --shell-escape "$1"	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚à‚¿‚ë‚ñA‚¢‚­‚Â‚à‚Ìì‹Æ‚ðŽŸX‚Æ‚±‚È‚µ‚Ä‚ä‚­‚æ‚¤‚ÈA‚æ‚è•¡ŽG‚ÈƒXƒNƒŠƒvƒg‚ð‘‚­‚±‚Æ‚à‚ ‚é‚Å‚µ‚å‚¤B‚»‚¤‚¢‚¤‚Æ‚«‚É‚±‚»A‚±‚¤‚µ‚½‹Z–@‚ª–ð‚É—§‚Â‚æ‚¤‚É‚È‚è‚Ü‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚±‚ÌƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚ðŒÄ‚Ño‚·‚Ì‚ÉŽg‚¤ AppleScript ‚Í‚à‚¤‚¿‚å‚Á‚Æ‚¨‚à‚µ‚ë‚¢‚à‚Ì‚Å‚·B‚Ü‚¸‚Í‚²——‚­‚¾‚³‚¢F</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>--Applescript		<dd>-- Apply only to an already saved file.		<dd>-- ‚·‚Å‚É•Û‘¶Ï‚Ý‚Ìƒtƒ@ƒCƒ‹‚É‚Ì‚Ý“K—p‚·‚é‚±‚ÆB		<dd>-- Claus Gerhardt, Nov. 2003		<p>		<dd>set scriptPath to (do shell script "dirname " & "~/Library/TeXShop/Scripts/ex")		<dd>set scriptPath to scriptPath & "/setname.scpt"		<dd>set scriptName to POSIX file scriptPath as alias		<dd>set scriptLiB to (load script scriptName)		<dd>tell scriptLib		<dd>set frontName to setname(#NAMEPATH#,#TEXPATH#)		<dd>end tell		<p>		<dd>set fileName to  #TEXPATH#		<dd>set n to (number of characters of contents of fileName)		<dd>set fileNamequoted to quoted form of fileName		<dd>set baseName to do shell script "basename " & fileNamequoted		<dd>set m to (number of characters of contents of baseName)		<dd>set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)		<p>		<dd>set shellScript to "cd " & dirName & ";"		<dd>set shellScript to shellScript & "~/Library/TeXShop/bin/pdflatexc  " & baseName		<dd>do shell script shellScript		<p>		<dd>tell document frontName		<dd>	refreshpdf		<dd>end tell	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‘O’u‚«‚ÌƒRƒƒ“ƒg‚Í‚³‚Ä‚¨‚«A‚±‚ÌƒXƒNƒŠƒvƒg‚Ì–`“ª‚Vs‚ÍAClaus Gerhardt ‚Ì–‚–@‚ÌƒŒƒVƒs‚Å‚·„Ÿ„Ÿƒ\[ƒXƒtƒ@ƒCƒ‹‚ð•Û‘¶‚µAˆ—‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚é•¶‘‚Ì–¼‘O‚ðŒ©‚Â‚¯‚Äu frontName v‚ÉƒZƒbƒg‚µ‚Ä‚¢‚Ü‚·B‚±‚ÌƒŒƒVƒs‚Å‚ÍA~/Library/TeXShop/Scripts ‚É‚ ‚éu setpath.scpt v‚Æ‚¢‚¤ƒRƒ“ƒpƒCƒ‹Ï‚Ý‚ÌƒXƒNƒŠƒvƒg‚ðŽg‚Á‚Äƒn[ƒh‚Èì‹Æ‚·‚×‚Ä‚ð‚±‚È‚µ‚Ä‚¢‚Ü‚·B’ˆÓ[‚­“Ç‚Ý‰ð‚¢‚Ä‚Ý‚ê‚ÎA‚±‚Ì”s‚Í ~/Library/TeXShop/Scripts/setname.scpt ‚Æ‚¢‚¤ƒpƒX‚ðŒ©‚Â‚¯Aƒpƒ‰ƒ[ƒ^ #NAMEPATH# ‚Æ #TEXPATH# ‚ÅƒXƒNƒŠƒvƒg‚ðŒÄ‚Ño‚µ‚Ä‚¢‚é‚±‚Æ‚ª‚í‚©‚è‚Ü‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‘½‚­‚Ì AppleScript ‚Å‚ÍA‚±‚ê‚Í‚·‚×‚ÄAŽŸ‚Ì‚æ‚¤‚ÈƒRƒ}ƒ“ƒh‚ðŽg‚¤ŠÈ’P‚È•û–@‚ÅÏ‚Ü‚¹‚ç‚ê‚Ü‚·F</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd> set frontName to #DOCUMENTNAME#		<dd> tell document frontName of application "TeXShop"		<dd> save		<dd> end tell	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚µ‚©‚µ‚È‚ª‚ç Gerhardt ‚ÌƒXƒNƒŠƒvƒg‚É‚Í’·Š‚ª‚Q‚Â‚ ‚è‚Ü‚·B‚Ð‚Æ‚Â‚ÍA‘O–Ê‚É‚ ‚é•¶‘‚ªƒƒOƒtƒ@ƒCƒ‹i‚½‚Æ‚¦‚Î /Users/koch/Examples/myfile.log ‚Ì‚æ‚¤‚È‚à‚Ìj‚Å‚ ‚Á‚Ä‚à„Ÿ„ŸŠ·Œ¾‚·‚ê‚ÎA‚±‚êˆÈ~‚ÌƒRƒ}ƒ“ƒh‚ðŽó‚¯“ü‚ê‚È‚¢‚æ‚¤‚ÈŽí—Þ‚Ì•¶‘‚¾‚Á‚½‚Æ‚µ‚Ä‚à„Ÿ„ŸƒXƒNƒŠƒvƒg‚ðŒÄ‚Ño‚¹‚éA‚Æ‚¢‚¤‚±‚Æ‚Å‚·B‚à‚¤‚Ð‚Æ‚Â‚ÍAƒtƒ@ƒCƒ‹‚ªˆê“x‚à•Û‘¶‚³‚ê‚Ä‚¢‚È‚©‚Á‚½ê‡AGerhardt ‚ÌƒXƒNƒŠƒvƒg‚Í•Û‘¶‚ðs‚È‚¨‚¤‚Æ‚µ‚ÄƒGƒ‰[‚ð•Ô‚µ‚Ü‚·„Ÿ„Ÿ‚»‚Ìˆê•û‚Åu•Û‘¶vƒRƒ}ƒ“ƒh‚É‚æ‚èA•Û‘¶ƒ_ƒCƒAƒƒO‚ðo‚µ‚Ä TeXShop ‚Í•Û—¯ó‘Ô‚É‚È‚è‚Ü‚·iÚ‚µ‚­‚Íƒwƒ‹ƒv‚Ìu <A HREF = "macros_writingcompletescripts.htm">TeXShop ‚Ìƒ^ƒCƒvƒZƒbƒgEƒRƒ}ƒ“ƒh‚ÅƒXƒNƒŠƒvƒg‚ð‘‚­</A>v‚ðŽQÆ‚µ‚Ä‚­‚¾‚³‚¢jB</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚Â‚Ã‚­‚Us‚Å‚ÍA•Ï” dirName ‚Æ baseName ‚ð’è‹`‚µ‚Ä‚¢‚Ü‚·Bƒ\[ƒXƒtƒ@ƒCƒ‹‚ªu /Users/koch/This directory/Stuff/myfile.tex v‚Ìê‡AdirName ‚ÍAƒVƒ“ƒOƒ‹ƒNƒI[ƒg‚Æƒ_ƒuƒ‹ƒNƒI[ƒg‚ðŠÜ‚ß‚Äu " '/Users/koch/This directory/Stuff' " v‚Æ‚È‚èAbaseName ‚Íu myfile.tex v‚Æ‚È‚è‚Ü‚·B‚±‚Ìì‹Æ•”•ª‚ª•K—v‚È‚Ì‚ÍAƒtƒHƒ‹ƒ_–¼‚ÉƒXƒy[ƒX‚ª‚ ‚Á‚Ä‚à‚¢‚¢‚æ‚¤‚É‚Å‚·BˆË‘R‚Æ‚µ‚Ä TeX ‚ÍAÅI“I‚Èƒtƒ@ƒCƒ‹–¼‚É‚ ‚éƒXƒy[ƒX‚ð—e”F‚µ‚Ü‚¹‚ñB</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚»‚Ì‚Ü‚½ŽŸ‚Ì‚Rs‚ªƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚ðŒÄ‚Ño‚µ‚Ä‚¢‚Ü‚·BŒ‹‰Ê“I‚É‚Í Terminal ‚Åu cd dirName; ~/Library/TeXShop/bin/pdflatexc baseName v‚Æ‘Å‚¿ž‚Þ‚Ì‚Æ“¯‚¶‚Æ‚Í‚¢‚¦A‚Í‚é‚©‚É³Šm‚Å‚·„Ÿ„Ÿ‚Æ‚¢‚¤‚Ì‚àAdirName ‚Íˆø—p‚Å‚Í‚È‚¢Œ`i‚Â‚Ü‚èAã‚Ì—á‚ÅŒ¾‚¦‚ÎA“r’†‚ÌƒfƒBƒŒƒNƒgƒŠ‚ÉƒXƒy[ƒX‚ª‚ ‚é‚Ì‚ÅƒVƒ“ƒOƒ‹ƒNƒI[ƒg‚ðŠÜ‚ß‚Äu '/Users/koch/This directory/Stuff' vj‚É’u‚«Š·‚¦‚Ë‚Î‚È‚ç‚È‚¢‚Ì‚Å‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">AppleScript ‚É‚¨‚¯‚éƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚ÍŽŸ‚Ì‚æ‚¤‚ÈŒ`‚Å”­—ß‚³‚ê‚Ü‚·„Ÿ„Ÿ</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>do shell script "cmd input"	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">•¡”‚ÌƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚ðŒ‹‡‚³‚¹‚½‚¢‚Ì‚Å‚ ‚ê‚ÎA‘Î“™‚É‚Â‚È‚®Œ`Ž®‚Å‘‚­‚Ì‚ª‚¢‚¢‚Å‚µ‚å‚¤„Ÿ„Ÿ</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>do shell script "cmd " & "input"	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">cmd ‚Æˆø—p•„‚ÌŠÔ‚Ì”¼ŠpƒXƒy[ƒX‚É’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢BƒAƒ“ƒpƒTƒ“ƒhi•‹L†j‚ÍƒoƒCƒiƒŠ‚Ì˜AŒ‹‰‰ŽZŽq‚Å‚·B‚Â‚Ü‚è‚±‚¤‚¢‚¤‚±‚Æ‚Å‚·„Ÿ„Ÿ</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>"cmd " & "input" = "cmd input"	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ƒVƒFƒ‹‚ª AppleScript ‚ÅŒÄ‚Ño‚³‚ê‚éê‡AƒfƒtƒHƒ‹ƒg‚Ìì‹ÆƒfƒBƒŒƒNƒgƒŠ‚Íƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ‚Å‚·B</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>do shell script "cd " dirName	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ã‚ÌƒRƒ}ƒ“ƒh‚Å‚ÍAƒfƒBƒŒƒNƒgƒŠ‚ð dirName ‚Å’è‚ß‚ç‚ê‚Ä‚¢‚éƒfƒBƒŒƒNƒgƒŠ‚É•ÏX‚µ‚Ä‚¢‚Ü‚·GdirName ‚Í‚·‚Å‚Éˆø—pÏ‚Ý‚È‚Ì‚Åˆø—p•„‚ð‰Á‚¦‚é•K—v‚Í‚ ‚è‚Ü‚¹‚ñB</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ì‹ÆƒfƒBƒŒƒNƒgƒŠ‚ð“®‚©‚³‚¸‚É‚³‚ç‚ÉƒRƒ}ƒ“ƒh‚ð“ü‚ê‚½‚¢‚Ì‚Å‚ ‚ê‚ÎAu do shell script v‚ÌŒ`‚Å‚Í‹Lq‚Å‚«‚Ü‚¹‚ñ„Ÿ„Ÿ‚»‚ê‚¾‚ÆV‹KƒVƒFƒ‹‚ªŒÄ‚Ño‚³‚ê‚Ä‚µ‚Ü‚¢‚Ü‚·BTerminal ‚Å‚Í˜A‘±‚·‚éƒRƒ}ƒ“ƒh‚ðƒZƒ~ƒRƒƒ“‚Å‹æØ‚è‚Ü‚·‚ªAAppleScript ‚Å‚Íu ";" v‚ðŽg‚¢‚Ü‚·B‚Â‚Ü‚è‚±‚¤‚¢‚¤‚Ó‚¤‚É„Ÿ„Ÿ</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>do shell script "cmd(1) " & "input(1)" & ";" & "cmd(2) " & "input(2)"	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ã‹L‚Ì—á‚ÅŒ¾‚¤‚È‚ç‚±‚ê‚ÍA‚±‚¤‚¢‚¤‚±‚Æ‚Å‚·F cmd(1) = cdA"input(1)" = dirNameAcmd(2) = ~/Library/TeX/bin/pdflatexciƒVƒFƒ‹ƒXƒNƒŠƒvƒg‚ðŒÄ‚Ño‚µ‚Ä‚¢‚Ü‚·jA"input(2)" = baseNameB</font></p><font size="3" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3"><tt>	<dl>		<dd>set shellScript to "cd " & dirName & ";"		<dd>set shellScript to shellScript & "~/Library/TeX/bin/pdflatexc  " & baseName	</dl></tt></font><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">„Ÿ„Ÿ‚Æ‚¢‚¤‚Qs‚Í’P‚ÉA‚Ð‚Æ‚Â‚È‚ª‚è‚ÌƒRƒ}ƒ“ƒh‚ð•Ï”‚²‚Æ‚É•ª‚©‚¿‘‚«‚µ‚Ä‚¢‚é‚¾‚¯‚Ì‚±‚Æ‚Å‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">ÅŒã‚Ì‚Rs‚ÅƒvƒŒƒrƒ…[ƒEƒBƒ“ƒhƒE‚ðXV‚µ‚Ä‚¢‚Ü‚·B</font></p><p><font size="2" face="Lucida Grande,Geneva,Arial,ƒqƒ‰ƒMƒmŠpƒS Pro W3">‚½‚µ‚©‚É•¡ŽG‚Ès‚à‚¢‚­‚Â‚©‚ ‚è‚Ü‚·‚ªA‚»‚¤‚µ‚½‚à‚Ì‚Å‚àA‚»‚Ì‚Ü‚ÜƒRƒs[‚µ‚ÄV‚µ‚¢ƒXƒNƒŠƒvƒg‚ÉŽg‚¦‚Ü‚·B</font></p></BODY></HTML>

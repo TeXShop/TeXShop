@@ -5,34 +5,45 @@
 		<TITLE>Understanding Default Macros</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="default macros; placing the cursor">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
 	</HEAD>
 
-<BODY BGCOLOR="#ffffff">
-		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-<TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
-<TD WIDTH="6" HEIGHT="40"></TD>
-<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Understanding Default Macros</B></FONT></TD>
-</TR>
-</TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">The best way to understand default macros is to examine their definition with the Macro Editor. For example, consider the macro titled &quot;Begin/End.&quot; Suppose you wish to use an environment like the theorem environment. Type the word &quot;theorem&quot; and select it. Then choose the &quot;Begin/End&quot; macro. The word &quot;theorem&quot; will be replaced with the text</font></P>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\begin{theorem}</tt></font>
-			<dd>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\end{theorem}</tt></font>
-		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">with the cursor placed on the line between this pair.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Now examine the begin/end macro code:</font></p>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\begin{#SEL#}</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>#INS#</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\end{#SEL#}</tt></font>
-		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Text in the macro will be inserted into the source file. Each occurrence of the string #SEL# will be replaced by the text selected when the macro was invoked. If no text was selected, #SEL# will be replaced with an empty string. The cursor will be placed at the end of the inserted text unless the text contains the string #INS#, in which case the cursor will be placed at that location.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Using this knowledge, it is easy to understand and modify the default macros.</font></p>
-		<ul>
-			
-		</ul>
-	</BODY>
+<BODY>
+		<div id="content_border">
+		<P>The best way to understand default macros is to examine their definition with the Macro Editor. For example, consider the macro titled &quot;Begin/End.&quot; Suppose you wish to use an environment like the theorem environment. Type the word &quot;theorem&quot; and select it. Then choose the &quot;Begin/End&quot; macro. The word &quot;theorem&quot; will be replaced with the text</P>
+		<div id="source">
+			\begin{theorem}<br>
+			\end{theorem}
+		</div>
+		<p>with the cursor placed on the line between this pair.</p>
+		<p>Now examine the begin/end macro code:</p>
+		<div id="source">
+			\begin{#SEL#}<br>
+			#INS#<br>
+			\end{#SEL#}
+		</div>
+		<p>Text in the macro will be inserted into the source file. Each occurrence of the string #SEL# will be replaced by the text selected when the macro was invoked. If no text was selected, #SEL# will be replaced with an empty string. The cursor will be placed at the end of the inserted text unless the text contains the string #INS#, in which case the cursor will be placed at that location.</p>
+		<p>Using this knowledge, it is easy to understand and modify the default macros.</p>
+		
+			</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Macros Help</div>
+<div id="header_title">Understanding Default Macros</div>
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminaries</a></li>
+			<LI><a href="macros_default.htm">Understanding Default Macros</a></li>
+			<LI><a href="macros_rearrange.htm">Rearranging the Macro Menu</a></li>
+			<LI><a href="macros_define.htm">Defining New Macros</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Macros</a></li>
+			<LI><a href="macros_includedscripts.htm">Default AppleScript Macros</a></li>
+			<li><a href="macros_defapplescript.htm">Defining AppleScript Macros</a></li>
+			<li><a href="macros_dialogs.htm">Creating Dialogs</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Writing Scripts with TeXShop Typesetting Commands</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Writing Scripts with Shell Commands</a></li>
+		</UL>
+	</div	</BODY>
 
 </HTML>

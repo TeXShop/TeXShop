@@ -9,6 +9,7 @@
 
 /*" global defines for TeXShop.app "*/
 extern NSString *DefaultCommandKey;
+extern NSString *DefaultEngineKey;
 extern NSString *DefaultScriptKey;
 extern NSString *ConsoleBehaviorKey;
 extern NSString *SaveRelatedKey;
@@ -58,14 +59,18 @@ extern NSString *TexCommandKey;
 extern NSString *TexGSCommandKey;
 extern NSString *TexScriptCommandKey;
 extern NSString *TexTemplatePathKey;
+extern NSString *TexTemplateMorePathKey;
 extern NSString *MetaPostCommandKey;
 extern NSString *BibtexCommandKey;
 extern NSString *DistillerCommandKey;
 extern NSString *LatexPanelPathKey;
 extern NSString *MatrixPanelPathKey; // Jonas' Matrix addition
+extern NSString *MatrixSizeKey; // Jonas' Matrix addition
 extern NSString *BinaryPathKey;
+extern NSString *EnginePathKey;
 extern NSString *ScriptsPathKey;
 extern NSString *TempPathKey;
+extern NSString *TempOutputKey;
 extern NSString *AutoCompletionPathKey;
 extern NSString *MenuShortcutsPathKey;
 extern NSString *MacrosPathKey;
@@ -86,7 +91,11 @@ extern NSString *tabsKey;
 extern NSString *background_RKey;
 extern NSString *background_GKey;
 extern NSString *background_BKey;
+extern NSString *foreground_RKey;
+extern NSString *foreground_BKey;
+extern NSString *foreground_GKey;
 extern NSString *WarnForShellEscapeKey;
+extern NSString *ptexUtfOutputEnabledKey; // zenitani 1.35 (C)
 // mitsu 1.29 (O)
 extern NSString *PdfColorMapKey;
 extern NSString *PdfFore_RKey;
@@ -103,6 +112,15 @@ extern NSString *PdfPageBack_RKey;
 extern NSString *PdfPageBack_GKey;
 extern NSString *PdfPageBack_BKey;
 extern NSString *ExternalEditorTypesetAtStartKey;
+extern NSString *ConvertLFKey;
+extern NSString *UseOgreKitKey;
+extern NSString *BringPdfFrontOnAutomaticUpdateKey;
+extern NSString *SourceWindowAlphaKey;
+extern NSString *PreviewWindowAlphaKey;
+extern NSString *ConsoleWindowAlphaKey;
+extern NSString *OtherTrashExtensionsKey;
+extern NSString *AggressiveTrashAUXKey;
+extern NSString *ShowSyncMarksKey;
 // end mitsu 1.29
 
 
@@ -178,7 +196,7 @@ typedef enum _DefaultCommand
     DefaultCommandTeX = 0,
     DefaultCommandLaTeX = 1,
     DefaultCommandConTEXt = 2,
-    DefaultCommandOmega = 3
+    DefaultCommandUser = 3
 } _DefaultCommand;
 
 
@@ -200,7 +218,8 @@ typedef enum _EngineCommand
     IndexEngine = 4,
     MetapostEngine = 5,
     ContextEngine = 6,
-    MetafontEngine = 7
+    MetafontEngine = 7,
+    UserEngine = 8
 } _EngineCommand;
 
 /*" Symbolic constants for Root File tests "*/
@@ -210,7 +229,8 @@ typedef enum _RootCommand
     RootForTexing = 2,
     RootForPrinting = 3,
     RootForSwitchWindow = 4,
-    RootForPdfSync = 5
+    RootForPdfSync = 5,
+    RootForTrashAUX = 6
 } _RootCommand;
 
 // mitsu 1.29 (O)

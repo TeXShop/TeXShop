@@ -2590,7 +2590,7 @@ if (! externalEditor) {
     NSDate		*endDate;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
-    int			status
+    int			status;
     
     [outputText setSelectable: YES];
 
@@ -2620,7 +2620,7 @@ if (! externalEditor) {
 
     if (inputPipe == [[aNotification object] standardInput]) 
     {
-         status = [[aNotification object] terminationStatus];
+        status = [[aNotification object] terminationStatus];
     
         if ((status == 0) || (status == 1))  
         {
@@ -2667,15 +2667,15 @@ if (! externalEditor) {
                     }
                  }
             }
-            
-            [outputPipe release];
-            [writeHandle closeFile];
-            [inputPipe release];
-            inputPipe = 0;
             [texTask terminate];
             [texTask release];
-            texTask = nil;
-        }
+          }
+            
+        [outputPipe release];
+        [writeHandle closeFile];
+        [inputPipe release];
+        inputPipe = 0;
+        texTask = nil;
     }
 }
 

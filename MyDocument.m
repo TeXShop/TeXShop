@@ -1,36 +1,13 @@
 // MyDocument.m
 
 #import "MyDocument.h"
+#import "Preferences.h"
+#import "globals.h"
+
+#define SUD [NSUserDefaults standardUserDefaults]
 
 @implementation MyDocument
-
- - (void) orderFrontFindPanel: sender;
- {
-    [textFinder orderFrontFindPanel: sender];
- }
  
-  - (void) findNext: sender;
- {
-    [textFinder findNext: sender];
- }
-
- - (void) findPrevious: sender;
- {
-    [textFinder findPrevious: sender];
- }
-
- - (void) enterSelection: sender;
- {
-    [textFinder enterSelection: sender];
- }
-
- - (void) jumpToSelection: sender;
- {
-    [textFinder jumpToSelection: sender];
- }
-
-
-
 - (id) pdfView;
 {
     return pdfView;
@@ -52,7 +29,7 @@
     imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingString:@".pdf"];
     if ([myFileManager fileExistsAtPath: imagePath]) {
         aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
-        printView = [[PrintView alloc] initWithRep: aRep andDisplayPref: myDisplayPref ];
+        printView = [[PrintView alloc] initWithRep: aRep andDisplayPref: [SUD integerForKey:PdfDisplayMethodKey] ];
         printOperation = [NSPrintOperation printOperationWithView:printView
             printInfo: [self printInfo]];
         [printView setPrintOperation: printOperation];
@@ -65,8 +42,8 @@
         }
 }
     
-
-- (void)windowControllerDidLoadNib:(NSWindowController *) aController{
+/*" Overridden from NSDocument. Main entry point when a new Document was created. "*/
+- (void)windowControllerDidLoadNib:(NSWindowController *) aController {
     
     NSString		*imagePath;
     NSString		*projectPath;
@@ -74,45 +51,40 @@
     NSString		*nameString;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
-    NSRange		myRange;
     
     [super windowControllerDidLoadNib:aController];
-    // Add any code here that need to be executed once the windowController has loaded the document's window.
-    
+	[self setupFromPreferencesUsingWindowController:aController];
+	NSLog(@"%@", [[aController window] title]);
+    	
     errorNumber = 0;
     whichError = 0;
     makeError = NO;
 
     fileIsTex = YES;
     myFileManager = [[NSFileManager defaultManager] retain];
-    myTexEngine = nil; myLatexEngine = nil;
     [pdfView setDocument: self];
     [textView setDelegate: self];
 
-    [self readPreferences];
-    if (aString == nil) 
-        ;
-    else {
+    if (aString != nil) 
+	{	
         [textView setString: aString];
         [aString release];
         aString = nil;
         texTask = nil;
         bibTask = nil;
-        indexTask = nil;
-        }
+    }
     
-    myRange.location = 0;
-    myRange.length = 0;
-    [textView setSelectedRange: myRange];
+    [textView setSelectedRange: NSMakeRange(0,0)];
     [textWindow setInitialFirstResponder: textView];
     [textWindow makeFirstResponder: textView];
     
-    if (myProgramPref == 0)
+	// set the correct title for the typeset button
+    if ([SUD integerForKey:DefaultCommandKey] == 0)
         [typesetButton setTitle: @"Tex"];
     else
         [typesetButton setTitle: @"Latex"];
     
-    if (myDisplayPref != 0) {
+    if ([SUD integerForKey:PdfDisplayMethodKey] != 0) {
         [[pdfView slider] setNumberOfTickMarks: 5];
         [[pdfView slider] setAllowsTickMarkValuesOnly: YES];
         }
@@ -162,17 +134,64 @@
                 [pdfView scrollPoint: topLeftPoint];
                 [pdfView display];
                 [pdfWindow makeKeyAndOrderFront: self];
-                if ([self displayPref] != 0) 
+                if ([SUD integerForKey:PdfDisplayMethodKey] != 0) 
                     [pdfView drawWithGhostscript];
                   }
             }
-            
+}
 
-
-    }
+/*" This method reads the NSUserDefaults and restores the settings before the document will actually be displayed.
+"*/
+- (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController
+{
+	BOOL		inhibitWindowCascading = NO;
+	
+	// restore window position for the document and for the pdf window
+	if ([SUD boolForKey:SaveDocumentWindowPosKey] == YES)
+	{
+		[textWindow setFrameAutosaveName:DocumentWindowNameKey];
+		inhibitWindowCascading = YES;
+	}
+	if ([SUD boolForKey:SavePdfWindowPosKey] == YES)
+	{
+		[pdfWindow setFrameAutosaveName:PdfWindowNameKey];
+		inhibitWindowCascading = YES;
+	}
+	
+	// one of our windows should save its position. In this case tell the WindowController not
+	// to cascade windows
+	if (inhibitWindowCascading == YES)
+	{
+		[windowController setShouldCascadeWindows:NO];
+	}
+	
+	// restore the font for document if desired
+	if ([SUD boolForKey:SaveDocumentFontKey] == YES)
+	{
+		NSData	*fontData;
+		NSFont 	*font;
+		
+		fontData = [SUD objectForKey:DocumentFontKey];
+		if (fontData != nil)
+		{
+			font = [NSUnarchiver unarchiveObjectWithData:fontData];
+			[textView setFont:font];
+		}
+	}
+		
+	// slider value of the pdf window
+	if ([SUD boolForKey:SavePdfMagKey] == YES)
+	{
+		[[pdfView slider] setDoubleValue:[SUD floatForKey:PdfMagnificationKey]];
+	}
+	
+	// setup the popUp with all of our template names
+	[popupButton addItemsWithTitles:[[Preferences sharedInstance] allTemplateNames]];
+}
     
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];       
+#warning ** release aString here!?!
     [super dealloc];
 }
 
@@ -184,14 +203,6 @@
     return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
 }
 
-
-/*
-- (BOOL)loadDataRepresentation:(NSData *)data ofType:(NSString *)aType {
-   //  NSString	*myString;
-    // Insert code here to read your document from the given data.  You can also choose to override 	-loadFileWrapperRepresentation:ofType: or -readFromFile:ofType: instead.
-    return YES;
-}
-*/
 
 - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 
@@ -208,7 +219,7 @@
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
 
-if (([aNotification object] == bibTask) || ([aNotification object] == indexTask)) {
+if ([aNotification object] == bibTask) {
 
     if (inputPipe == [[aNotification object] standardInput]) {
     
@@ -220,10 +231,8 @@ if (([aNotification object] == bibTask) || ([aNotification object] == indexTask)
             [writeHandle closeFile];
             [inputPipe release];
             inputPipe = 0;
-            if ([aNotification object] == bibTask)
-                bibTask = nil;
-            else if ([aNotification object] == indexTask)
-                indexTask = nil;
+            bibTask = nil;
+            
             }
             
         }
@@ -264,7 +273,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                         topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
                         [pdfView scrollPoint: topLeftPoint];
                         }
-                    if ([self displayPref] == 0) {
+                    if ([SUD integerForKey:PdfDisplayMethodKey] == 0) {
                         [pdfView display];
                         [pdfWindow makeKeyAndOrderFront: self];
                         }
@@ -285,6 +294,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     }
 }
 
+/*" fill the current document with the contents of the selected template. "*/
 - (void) doTemplate: sender {
  
     NSString	*templateString, *nameString;
@@ -292,16 +302,17 @@ if (inputPipe == [[aNotification object] standardInput]) {
     
     theItem = [sender selectedItem];
     
-    if (theItem) {
-        nameString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates/"];
-        nameString = [nameString stringByAppendingString:[theItem title]]; 
-        nameString = [[nameString stringByAppendingString: @".tex"] stringByExpandingTildeInPath];
+    if (theItem) 
+	{
+		nameString = [TexTemplatePathKey stringByStandardizingPath];
+        nameString = [nameString stringByAppendingPathComponent:[theItem title]]; 
+        nameString = [nameString stringByAppendingPathExtension: @"tex"];
         templateString = [NSString stringWithContentsOfFile: nameString];
-        if (templateString != nil) {
-            [textView replaceCharactersInRange: [textView selectedRange]
-                withString: templateString];
-            }
-        }
+        if (templateString != nil) 
+		{
+            [textView replaceCharactersInRange: [textView selectedRange] withString: templateString];
+		}
+	}
 }
 
 - (void) doBibJob
@@ -316,20 +327,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
     saveFinished = @selector(saveFinished:didSave:contextInfo:);
     [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 }
-
-- (void) doIndexJob
-{
-    SEL	saveFinished;
-    
-    errorNumber = 0;
-    whichError = 0;
-    makeError = NO;
-    
-    whichEngine = 4;
-    saveFinished = @selector(saveFinished:didSave:contextInfo:);
-    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
-}
-
 
 - (void) doJob: (Boolean) withLatex;
 {
@@ -356,7 +353,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
     NSString		*projectPath;
     NSString		*sourcePath;
     NSString		*bibPath;
-    NSString		*indexPath;
     BOOL		withLatex;
 
     if (whichEngine == 1)
@@ -423,9 +419,9 @@ if (inputPipe == [[aNotification object] standardInput]) {
             texTask = [[NSTask alloc] init];
             [texTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
             if (withLatex)
-                [texTask setLaunchPath: myLatexEngine];
+                [texTask setLaunchPath: [SUD stringForKey:LatexCommandKey]];
             else
-                [texTask setLaunchPath: myTexEngine]; 
+                [texTask setLaunchPath: [SUD stringForKey:TexCommandKey]]; 
             [texTask setArguments:args];
             [texTask setStandardOutput: outputPipe];
             [texTask setStandardInput: inputPipe];
@@ -447,23 +443,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [bibTask setStandardInput: inputPipe];
             [bibTask launch];
             }
-        else if (whichEngine == 4) {
-            indexPath = [sourcePath stringByDeletingPathExtension];
-            [args addObject: indexPath];
-        
-            if (indexTask != nil) {
-                [indexTask terminate];
-                indexTask = nil;
-                }
-            indexTask = [[NSTask alloc] init];
-            [indexTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
-            [indexTask setLaunchPath: @"/usr/local/bin/makeindex"];
-            [indexTask setArguments:args];
-            [indexTask setStandardOutput: outputPipe];
-            [indexTask setStandardInput: inputPipe];
-            [indexTask launch];
-            }
-
         }
 }
 
@@ -482,12 +461,10 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [self doBibJob];
 }
 
-- (void) doIndex: sender;
-{
-    [self doIndexJob];
-}
+/*" Action method bound to the typeset button in a document.
 
-
+The command to run should not be derived from the title of the button but from our internal state (I guess that's why we remember it).
+"*/
 - (void) doTypeset: sender;
 {
     NSString	*titleString;
@@ -499,8 +476,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
         [self doLatex: self];
     else if ([titleString isEqualToString: @"Bibtex"])
         [self doBibtex: self];
-    else if ([titleString isEqualToString: @"Index"])
-        [self doIndex: self];
 }
 
 - (void) writeTexOutput: (NSNotification *)aNotification;
@@ -583,113 +558,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 }
 
-- (void) doPreferences: sender;
-{
-    int	result;
-    NSData		*myData;
-    NSMutableArray	*myArray;
-    NSString		*myString, *fullString;
-    NSNumber		*aNumber;
-    NSRect		frameRect;
-    int			i;
-
-    myPrefResult = 2;
-    [fontChange selectCellWithTag: 0];
-    [magChange selectCellWithTag: 0];
-    [pdfWindowChange selectCellWithTag: 0];
-    [pdfDisplayChange selectCellWithTag: myDisplayPref];
-    [gsColor selectCellWithTag: myColorPref];
-    [typesetChoice selectCellWithTag: myProgramPref];
-    [sourceWindowChange selectCellWithTag: 0];
-    [texEngine setStringValue: myTexEngine];
-    [latexEngine setStringValue: myLatexEngine];
-    result = [NSApp runModalForWindow: prefWindow];
-    if (result == 0) {
-        
-        myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/TeXShop Preferences"];
-        fullString = [myString stringByExpandingTildeInPath];
-        myData = [myFileManager contentsAtPath: fullString];
-        myArray = [NSUnarchiver unarchiveObjectWithData: myData];
-
-        if ([[fontChange selectedCell] tag] == 1) {
-            [myArray replaceObjectAtIndex: 1 withObject: [textView font]];
-            } 
-            
-        if ([[magChange selectedCell] tag] == 1) { 
-            aNumber = [NSNumber numberWithDouble: [[pdfView slider] doubleValue]];
-            [myArray replaceObjectAtIndex: 2 withObject: aNumber];
-            } 
-            
-        if ([[sourceWindowChange selectedCell] tag] == 1) {
-            frameRect = [textWindow frame];
-            aNumber = [NSNumber numberWithFloat: frameRect.origin.x];
-            [myArray replaceObjectAtIndex: 3 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.origin.y];
-            [myArray replaceObjectAtIndex: 4 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.width];
-            [myArray replaceObjectAtIndex: 5 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.height];
-            [myArray replaceObjectAtIndex: 6 withObject: aNumber];
-            }
-             
-        if ([[pdfWindowChange selectedCell] tag] == 1) {
-            frameRect = [pdfWindow frame];
-            aNumber = [NSNumber numberWithFloat: frameRect.origin.x];
-            [myArray replaceObjectAtIndex: 7 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.origin.y];
-            [myArray replaceObjectAtIndex: 8 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.width];
-            [myArray replaceObjectAtIndex: 9 withObject: aNumber];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.height];
-            [myArray replaceObjectAtIndex: 10 withObject: aNumber];
-            }
-            
-        [myTexEngine release];
-        myData = [[texEngine stringValue] dataUsingEncoding: NSMacOSRomanStringEncoding];
-        myTexEngine = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
-        [myArray replaceObjectAtIndex: 11 withObject: myTexEngine];
-        
-        [myLatexEngine release];
-        myData = [[latexEngine stringValue] dataUsingEncoding: NSMacOSRomanStringEncoding];
-        myLatexEngine = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
-        [myArray replaceObjectAtIndex: 12 withObject: myLatexEngine];
-        
-        i = [[pdfDisplayChange selectedCell] tag];
-        if (i != myDisplayPref) {
-            myDisplayPref = i;
-            aNumber = [NSNumber numberWithInt: myDisplayPref];
-            [myArray replaceObjectAtIndex: 13 withObject: aNumber];
-            if (myDisplayPref != 0) {
-                [[pdfView slider] setNumberOfTickMarks: 5];
-                [[pdfView slider] setAllowsTickMarkValuesOnly: YES];
-                [pdfView changeSize: self];
-                 }
-            else {
-                [[pdfView slider] setNumberOfTickMarks: 9];
-                [[pdfView slider] setAllowsTickMarkValuesOnly: NO];
-                }
-            }
-
-        i = [[gsColor selectedCell] tag];
-        if (i != myColorPref) {
-            myColorPref = i;
-            aNumber = [NSNumber numberWithInt: myColorPref];
-            [myArray replaceObjectAtIndex: 14 withObject: aNumber];
-            }
-            
-        i = [[typesetChoice selectedCell] tag];
-        if (i != myProgramPref) {
-            myProgramPref = i;
-            aNumber = [NSNumber numberWithInt: myProgramPref];
-            [myArray replaceObjectAtIndex: 15 withObject: aNumber];
-            }
-           
-        myData = [NSArchiver archivedDataWithRootObject: myArray];
-        [myData writeToFile: fullString atomically: YES];
-
-        }
-}
-
 - (void) chooseProgram: sender;
 {
     id		theItem;
@@ -712,25 +580,8 @@ if (inputPipe == [[aNotification object] standardInput]) {
         case 2:
             [typesetButton setTitle: @"Bibtex"];
             break;
-            
-        case 3:
-            [typesetButton setTitle: @"Index"];
-            break;
-
 
         }
-}
-
-- (void) okPreferences: sender;
-{
-    myPrefResult = 0;
-    [prefWindow close];
-}
-
-- (void) quitPreferences: sender;
-{
-    myPrefResult = 1;
-    [prefWindow close];
 }
 
 - (void) okProject: sender;
@@ -772,14 +623,11 @@ if (inputPipe == [[aNotification object] standardInput]) {
 }
 
 
-
-
 - (void) checkPrefClose: (NSNotification *)aNotification;
 {
     int	finalResult;
     
-    if (([aNotification object] == prefWindow) ||
-        ([aNotification object] == projectPanel) ||
+    if (([aNotification object] == projectPanel) ||
         ([aNotification object] == requestWindow) ||
         ([aNotification object] == linePanel) ||
         ([aNotification object] == printRequestPanel)) {
@@ -790,156 +638,8 @@ if (inputPipe == [[aNotification object] standardInput]) {
         }
 }
 
-- (void) readPreferences;
-{
-    BOOL			isDir, success;
-    NSString			*myString, *fullString;
-    NSData			*myData;
-    NSMutableArray		*myArray;
-    NSFont			*aFont;
-    NSNumber			*aNumber;
-    NSRect			frameRect;
-    NSString			*file;
-    NSDirectoryEnumerator	*enumerator;
-    int				versionNumber = 1;
-    
-    myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"];
-    if (! [myFileManager fileExistsAtPath:[myString stringByExpandingTildeInPath] isDirectory: &isDir]) {
-    
-         myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs"];
-         if (! [myFileManager fileExistsAtPath: [myString stringByExpandingTildeInPath]])
-            success = [myFileManager createDirectoryAtPath: [myString stringByExpandingTildeInPath] attributes: nil];
-         myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"]; 
-         fullString = [myString stringByExpandingTildeInPath];
-         success = [myFileManager createDirectoryAtPath: fullString attributes: nil];
-         
-         myData = [NSData dataWithContentsOfFile: [[NSBundle mainBundle]
-                pathForResource: @"TexTemplate" ofType: @"tex"]];
-         [myFileManager createFileAtPath: [fullString stringByAppendingString: @"/TexTemplate.tex"] contents: myData attributes: nil];
-         myData = [NSData dataWithContentsOfFile: [[NSBundle mainBundle]
-                 pathForResource: @"LatexTemplate" ofType: @"tex"]];
-         [myFileManager createFileAtPath: [fullString stringByAppendingString: @"/LatexTemplate.tex"] contents: myData attributes: nil];
-         myData = [NSData dataWithContentsOfFile: [[NSBundle mainBundle]
-                 pathForResource: @"GraphicsTemplate" ofType: @"tex"]];
-         [myFileManager createFileAtPath: [fullString stringByAppendingString: @"/GraphicsTemplate.tex"] contents: myData attributes: nil];
-        }
-        
-    myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/TeXShop Preferences"];
-    fullString = [myString stringByExpandingTildeInPath];
-    
-    if ([myFileManager fileExistsAtPath: fullString])
-        {
-            NSMutableArray	*myArray;
-            NSRect		frameRect;
-            
-            myData = [myFileManager contentsAtPath: fullString];
-            myArray = [NSUnarchiver unarchiveObjectWithData: myData];
-            aNumber = [myArray objectAtIndex: 0];
-            versionNumber = [aNumber intValue];
-            aFont = [myArray objectAtIndex: 1];
-            [textView setFont: aFont];
-            aNumber = [myArray objectAtIndex: 2];
-            [[pdfView slider] setDoubleValue: [aNumber doubleValue]];
-            
-            aNumber = [myArray objectAtIndex: 3];
-            frameRect.origin.x = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 4];
-            frameRect.origin.y = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 5];
-            frameRect.size.width = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 6];
-            frameRect.size.height = [aNumber floatValue];
-            [textWindow setFrame: frameRect display: NO];
-            
-            aNumber = [myArray objectAtIndex: 7];
-            frameRect.origin.x = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 8];
-            frameRect.origin.y = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 9];
-            frameRect.size.width = [aNumber floatValue];
-            aNumber = [myArray objectAtIndex: 10];
-            frameRect.size.height = [aNumber floatValue];
-            [pdfWindow setFrame: frameRect display: NO];
-            myTexEngine = [[myArray objectAtIndex: 11] retain];
-            myLatexEngine = [[myArray objectAtIndex: 12] retain];
-            if (versionNumber == 2) {
-                aNumber = [myArray objectAtIndex: 13];
-                myDisplayPref = [aNumber intValue];
-                aNumber = [myArray objectAtIndex: 14];
-                myColorPref = [aNumber intValue];
-                }
-            else {
-                myDisplayPref = 1;
-                myColorPref = 1;
-                }
-            if (versionNumber > 2) {
-                aNumber = [myArray objectAtIndex:15];
-                myProgramPref = [aNumber intValue];
-                }
-            else
-                myProgramPref = 1;
-        }
-    if (![myFileManager fileExistsAtPath: fullString]) {
-        myDisplayPref = 1;
-        myColorPref = 1;
-        myProgramPref = 1;
-        }
-    if ((![myFileManager fileExistsAtPath: fullString]) || (versionNumber < 3))
-        {
-            myArray = [NSMutableArray arrayWithCapacity: 16];
-            aNumber = [NSNumber numberWithInt: 3];
-            [myArray insertObject: aNumber atIndex: 0];
-            aFont = [textView font];
-            [myArray insertObject: aFont atIndex: 1];
-            aNumber = [NSNumber numberWithDouble: [[pdfView slider] doubleValue]];
-            [myArray insertObject: aNumber atIndex: 2];
-            
-            frameRect = [textWindow frame];
-            aNumber = [NSNumber numberWithFloat: frameRect.origin.x];
-            [myArray insertObject: aNumber atIndex: 3];
-             aNumber = [NSNumber numberWithFloat: frameRect.origin.y];
-            [myArray insertObject: aNumber atIndex: 4];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.width];
-            [myArray insertObject: aNumber atIndex: 5];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.height];
-            [myArray insertObject: aNumber atIndex: 6];
-
-            frameRect = [pdfWindow frame];
-            aNumber = [NSNumber numberWithFloat: frameRect.origin.x];
-            [myArray insertObject: aNumber atIndex: 7];
-             aNumber = [NSNumber numberWithFloat: frameRect.origin.y];
-            [myArray insertObject: aNumber atIndex: 8];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.width];
-            [myArray insertObject: aNumber atIndex: 9];
-             aNumber = [NSNumber numberWithFloat: frameRect.size.height];
-            [myArray insertObject: aNumber atIndex: 10];
-            if (myTexEngine == nil)
-                myTexEngine = [[NSString stringWithString: @"/usr/local/bin/pdftex"] retain];
-            [myArray insertObject: myTexEngine atIndex: 11];
-            if (myLatexEngine == nil)
-                myLatexEngine = [[NSString stringWithString: @"/usr/local/bin/pdflatex"] retain];
-            [myArray insertObject: myLatexEngine atIndex: 12];
-            aNumber = [NSNumber numberWithInt: 1];
-            [myArray insertObject: aNumber atIndex: 13];
-            aNumber = [NSNumber numberWithInt: 1];
-            [myArray insertObject: aNumber atIndex: 14];
-            aNumber = [NSNumber numberWithInt: 1];
-            [myArray insertObject: aNumber atIndex: 15];
-
-            myData = [NSArchiver archivedDataWithRootObject: myArray];
-            [myFileManager createFileAtPath: fullString contents: myData attributes: nil];
-        }
-        
-        myString = [NSString stringWithString: @"~/Library/Preferences/TeXShop Prefs/Templates"];
-    	fullString = [myString stringByExpandingTildeInPath];
-	enumerator = [myFileManager enumeratorAtPath: fullString];
-        while (file = [enumerator nextObject]) 
-            if ([[file pathExtension] isEqualToString: @"tex"]) {
-                myString = [[file lastPathComponent] stringByDeletingPathExtension];
-                [popupButton addItemWithTitle: myString];
-                }
-}
-
+/*" Connected to "File->Set Project Root ..." in main menu.
+"*/
 - (void) setProjectFile: sender;
 {
      int		result;
@@ -1019,20 +719,13 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [textView scrollRangeToVisible: myRange];
 }
 
+/*" Evil!!!
 
-- (int) displayPref;
-{
-   return myDisplayPref;
-}
-
+NSFileManager is always reachable via [NSFileManager defaultManager]. We should use that in order to reduce class dependencies.
+"*/
 - (id) fileManager;
 {
     return myFileManager;
-}
-
-- (int) colorPref;
-{
-    return myColorPref;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem {
@@ -1048,9 +741,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
     else if ([[anItem title] isEqualToString:@"Bibtex"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
-        return NO;
-        }
     else if ([[anItem title] isEqualToString:@"Print..."]) {
         return NO;
         }
@@ -1061,6 +751,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
     else return YES;
 }
 
+/*" This method is part of the "flash-matching-braces" feature.
+
+If I expect right, the method could be changed that all references to %textView use the supplied variable %aTextView. This would allow for putting this code into a separate (singleton) class that would be attached as a delegate to the TextView. This comes in handy if this feature is a settable preference since enabling the feature would be setting a delegate and that's it :-)
+
+I think this leads to a clearer division of code ... 
+"*/
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
     NSRange	matchRange;
@@ -1107,6 +803,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
     return YES;
 }
 
+/*" This method is part of the "flash-matching-braces" feature.
+
+If I expect right, the method could be changed that all references to %textView use the supplied variable %aTextView. This would allow for putting this code into a separate (singleton) class that would be attached as a delegate to the TextView. This comes in handy if this feature is a settable preference since enabling the feature would be setting a delegate and that's it :-)
+
+I think this leads to a clearer division of code ... 
+"*/
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange
 {
     NSRange	replacementRange;
@@ -1149,6 +851,55 @@ if (inputPipe == [[aNotification object] standardInput]) {
         }
         
     return newSelectedCharRange;
+}
+
+/*" MyDocument is registered as delegate for its Text and PDF window so we can record the window positions and the document font if the window closes ...
+
+I know that myDocument is also registered for notifications of NSWindow but I wanted to keep the code separated for easier maintainance. -dirk
+"*/
+- (void)windowWillClose:(NSNotification *)aNotification
+{
+	NSWindow	*window;
+	
+	window = [aNotification object];
+	
+	// do not save for empty
+	if ([[textView string] length] > 0)
+	{
+		if (window == textWindow)
+		{
+			// save position of window and document font
+			if ([SUD boolForKey:SaveDocumentWindowPosKey] == YES)
+			{
+				[textWindow saveFrameUsingName:DocumentWindowNameKey];
+			}
+			
+			if ([SUD boolForKey:SaveDocumentFontKey] == YES)
+			{
+				NSData	*fontData;
+				
+				fontData = [NSArchiver archivedDataWithRootObject:[textView font]];
+				[SUD setObject:fontData forKey:DocumentFontKey];
+			}
+		}
+		else if (window == pdfWindow)
+		{
+			// save position of window
+			if ([SUD boolForKey:SavePdfWindowPosKey] == YES)
+			{
+NSLog(@"save pdf window");
+				[pdfWindow saveFrameUsingName:PdfWindowNameKey];
+			}
+			
+			// save pdf magnification
+			if ([SUD boolForKey:SavePdfMagKey] == YES)
+			{
+NSLog(@"save mag");
+				[SUD setFloat:[[pdfView slider] floatValue] forKey:PdfMagnificationKey];
+			}
+		}
+		[SUD synchronize];
+	}
 }
 
 @end
@@ -1225,7 +976,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [gsTask setCurrentDirectoryPath: [imagePath stringByDeletingLastPathComponent]];
             gsLaunch = [NSString stringWithString:@"/usr/local/bin/gs"];
             [gsTask setLaunchPath: gsLaunch];
-            i = [myDocument colorPref];
+            i = [SUD integerForKey:GsColorModeKey];
             switch (i)  {
                 case 0: theArgs = [NSString stringWithString:@"-sDEVICE=bmpgray"];
                         break;
@@ -1280,7 +1031,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
         [totalPage setIntValue: [myRep pageCount]];
         [currentPage setIntValue: ([myRep currentPage] + 1)]; 
         [currentPage display];
-        if ([myDocument displayPref] == 0) {
+        if ([SUD integerForKey:PdfDisplayMethodKey] == 0) {
             NSEraseRect([self bounds]);
             [myRep draw];
             }
@@ -1307,7 +1058,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                     gsRep = nil;
                     }
                 */
-                if ([myDocument displayPref] == 0)
+                if ([SUD integerForKey:PdfDisplayMethodKey] == 0)
                     [self display];
                 else {
                     [self drawWithGhostscript];
@@ -1332,7 +1083,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                     gsRep = nil;
                     }
                 */
-                if ([myDocument displayPref] == 0)
+                if ([SUD integerForKey:PdfDisplayMethodKey] == 0)
                     [self display];
                 else
                     [self drawWithGhostscript];
@@ -1356,7 +1107,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                     gsRep = nil;
                     }
             */
-            if ([myDocument displayPref] == 0)
+            if ([SUD integerForKey:PdfDisplayMethodKey] == 0)
                 [self display];
             else
                 [self drawWithGhostscript];
@@ -1370,7 +1121,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
         double	thesize, magsize;
         
         thesize = [mySize doubleValue];
-        if ([myDocument displayPref] != 0) {
+        if ([SUD integerForKey:PdfDisplayMethodKey] != 0) {
             if (thesize < -.75)
                 // thesize = -1;
                 magsize = .5;
@@ -1402,7 +1153,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
             gsRep = nil;
             }
         */
-        if ([myDocument displayPref] == 0)
+        if ([SUD integerForKey:PdfDisplayMethodKey] == 0)
             [[self superview] display];
         else {
             fixScroll = YES;
@@ -1420,7 +1171,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     double	magsize;
    
     thesize = [mySize doubleValue];
-    if ([myDocument displayPref] != 0) {
+    if ([SUD integerForKey:PdfDisplayMethodKey] != 0) {
             if (thesize < -.75)
                  magsize = .5;
             else if (thesize < -.25)
@@ -1513,7 +1264,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     id		value;
     
     myRep = aRep;
-    myDisplayPref = displayPref;
+    [SUD setInteger:displayPref forKey:PdfDisplayMethodKey];
     value = [super initWithFrame: [myRep bounds]];
     return self;
 }
@@ -1572,6 +1323,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
 @end
 
 @implementation MyWindow
+/*" This class is possibly obsolete. You shoud rarely need to subclass NSWindow, especially NOT for supplying target-action methods that are bound to user controls. "*/
 
 - (void) printDocument: sender;
 {
@@ -1581,11 +1333,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
 - (void) printSource: sender;
 {
     [myDocument printSource: sender];
-}
-
-- (void) doPreferences: sender;
-{
-    [myDocument doPreferences: sender];
 }
 
 - (void) doTex: sender;
@@ -1603,12 +1350,11 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [myDocument doBibtex: sender];
 }
 
-- (void) doIndex: sender;
+- (void) doPreferences:sender;
 {
-    [myDocument doIndex: sender];
+	NSLog(@"%@: this function has to be redone to honor the new Preferences class");
+//	[myDocument doPreferences:sender];
 }
-
-
 
 - (void) previousPage: sender;
 {
@@ -1630,6 +1376,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 
 @implementation ConsoleWindow
+/*" This class is possibly obsolete. You shoud rarely need to subclass NSWindow, especially NOT for supplying target-action methods that are bound to user controls. "*/
 
 - (void) doError: sender;
 {

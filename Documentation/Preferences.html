@@ -1,0 +1,334 @@
+<HTML><HEAD><TITLE></TITLE></HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+
+<FONT COLOR="#000066"><H1><A NAME="//apple_ref/occ/cl/Preferences">Preferences</A></H1></FONT>
+
+
+
+	<p><B>Inherits From:</B><BR>  
+	NSObject
+
+
+
+
+
+	<p><B>Declared In:</B><BR>
+	Preferences.h 
+
+<p>
+
+
+<H2>Class Description</H2>
+Format of the original prefs file:<P>
+
+<TABLE BORDER="3">
+	<TR><TD><B>position</B></TD><TD><B>value</B></TD></TR>
+
+	<TR><TD>0</TD><TD>version number</TD></TR>
+
+	<TR><TD>1</TD><TD>textView's font</TD></TR>
+
+	<TR><TD>2</TD><TD>pdfView's slider value</TD></TR>
+
+	<TR><TD>3-6</TD><TD>textWindow's frame</TD></TR>
+
+	<TR><TD>7-10</TD><TD>pdfWindow's frame</TD></TR>
+
+	<TR><TD>11</TD><TD>TeX command</TD></TR>
+
+	<TR><TD>12</TD><TD>LaTeX command</TD></TR>
+
+	<TR><TD>13</TD><TD>display method (Apple or GS)</TD></TR>
+
+	<TR><TD>14</TD><TD>GS color</TD></TR>
+
+	<TR><TD>15</TD><TD>preferred TeX command</TD></TR>
+</TABLE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<P><HR WIDTH=50% ALIGN=LEFT>
+	<H2>Instance Variables</H2>
+
+	
+		IBOutlet NSWindow *<CODE>_prefsWindow</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_fontChangeMatrix</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_pdfMagMatrix</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_sourceWindowPosMatrix</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_pdfWindowPosMatrix</CODE>;<BR>
+		IBOutlet NSTextField *<CODE>_texCommandTextField</CODE>;<BR>
+		IBOutlet NSTextField *<CODE>_latexCommandTextField</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_defaultCommandMatrix</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_pdfDisplayMatrix</CODE>;<BR>
+		IBOutlet NSMatrix *<CODE>_gsColorMatrix</CODE>;<BR>
+		NSUndoManager *<CODE>_undoManager</CODE>;<BR>
+	<P><TABLE>
+	
+		<TR><TD>_prefsWindow</TD><TD>connected to the window</TD></TR>
+	
+		<TR><TD>_fontChangeMatrix</TD><TD>connected to &quot;Font for Source&quot;</TD></TR>
+	
+		<TR><TD>_pdfMagMatrix</TD><TD>connected to &quot;PDF Magnification</TD></TR>
+	
+		<TR><TD>_sourceWindowPosMatrix</TD><TD>connected to &quot;Source Window Position&quot;</TD></TR>
+	
+		<TR><TD>_pdfWindowPosMatrix</TD><TD>connected to &quot;PDF Window Position&quot;</TD></TR>
+	
+		<TR><TD>_texCommandTextField</TD><TD>connected to &quot;TeX program&quot;</TD></TR>
+	
+		<TR><TD>_latexCommandTextField</TD><TD>connected to &quot;Latex program&quot;</TD></TR>
+	
+		<TR><TD>_defaultCommandMatrix</TD><TD>connected to &quot;Default Program&quot;</TD></TR>
+	
+		<TR><TD>_pdfDisplayMatrix</TD><TD>connected to &quot;PDF Display&quot;</TD></TR>
+	
+		<TR><TD>_gsColorMatrix</TD><TD>connected to &quot;Ghostscript colors&quot;</TD></TR>
+	
+		<TR><TD>_undoManager</TD><TD>used for discarding all changes when the cancel button was pressed</TD></TR>
+	
+	</TABLE>
+
+
+
+
+	<P><HR WIDTH=50% ALIGN=LEFT>
+	<H2>Method Types</H2>
+
+	
+		
+		<dl><dl><dl><dl>
+		
+			<A HREF="#+ sharedInstance">+ sharedInstance</A><BR>
+		
+			<A HREF="#- showPreferences:">- showPreferences:</A><BR>
+		
+			<A HREF="#- fontForSourceChanged:">- fontForSourceChanged:</A><BR>
+		
+			<A HREF="#- pdfMagnificationChanged:">- pdfMagnificationChanged:</A><BR>
+		
+			<A HREF="#- sourceWindowPosChanged:">- sourceWindowPosChanged:</A><BR>
+		
+			<A HREF="#- pdfWindowPosChanged:">- pdfWindowPosChanged:</A><BR>
+		
+			<A HREF="#- texProgramChanged:">- texProgramChanged:</A><BR>
+		
+			<A HREF="#- latexProgramChanged:">- latexProgramChanged:</A><BR>
+		
+			<A HREF="#- defaultProgramChanged:">- defaultProgramChanged:</A><BR>
+		
+			<A HREF="#- pdfDisplayChanged:">- pdfDisplayChanged:</A><BR>
+		
+			<A HREF="#- ghostscriptColorChanged:">- ghostscriptColorChanged:</A><BR>
+		
+			<A HREF="#- okButtonPressed:">- okButtonPressed:</A><BR>
+		
+			<A HREF="#- cancelButtonPressed:">- cancelButtonPressed:</A><BR>
+		
+			<A HREF="#- allTemplateNames">- allTemplateNames</A><BR>
+		
+			<A HREF="#- registerFactoryDefaults">- registerFactoryDefaults</A><BR>
+		
+			<A HREF="#- createDirectoryAtPath:">- createDirectoryAtPath:</A><BR>
+		
+			<A HREF="#- copyToTemplateDirectory:">- copyToTemplateDirectory:</A><BR>
+		
+			<A HREF="#- updateControlsFromUserDefaults:">- updateControlsFromUserDefaults:</A><BR>
+		
+		</dl></dl></dl></dl>
+	
+
+
+
+
+	<P><HR WIDTH=50% ALIGN=LEFT>
+	<H2>Class Methods</H2>
+ 
+	
+		
+		<H3><A NAME="//apple_ref/occ/clm/Preferences/sharedInstance"></A><A NAME="+ sharedInstance">sharedInstance</A></H3>
+		+ (id)<CODE><B>sharedInstance</B></CODE>
+		<P>
+		This class is implemented as singleton, i.e. there is only one single instance in the runtime. This is the designated accessor method to get the shared instance of the Preferences class.
+	
+
+
+ 
+
+	<HR WIDTH=50% ALIGN=LEFT>
+	<H2>Instance Methods</H2>
+ 
+	
+		
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/allTemplateNames"></A><A NAME="- allTemplateNames">allTemplateNames</A></H3>
+		- (NSArray *)<CODE><B>allTemplateNames</B></CODE>
+		<P>
+		This method looks in ~/Library/TeXShop/Templates and returns the filenames minus the extensions of all of the templates found.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/cancelButtonPressed:"></A><A NAME="- cancelButtonPressed:">cancelButtonPressed:</A></H3>
+		- (IBAction) <CODE><B>cancelButtonPressed:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the Cancel button.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/copyToTemplateDirectory:"></A><A NAME="- copyToTemplateDirectory:">copyToTemplateDirectory:</A></H3>
+		- (void) <CODE><B>copyToTemplateDirectory:</B></CODE>(NSString *)<EM>fileName</EM>
+			
+		<P>
+		<I>This method is not to be called from outside of this class.</I><P>
+
+Copies <I><I>fileName</I></I> to ~/Library/TeXShop/Templates. This method takes care that no files are overwritten.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/createDirectoryAtPath:"></A><A NAME="- createDirectoryAtPath:">createDirectoryAtPath:</A></H3>
+		- (void) <CODE><B>createDirectoryAtPath:</B></CODE>(NSString *)<EM>path</EM>
+			
+		<P>
+		<I>This method is not to be called from outside of this class.</I><P>
+
+Creates the directory at <I><I>path</I></I> making sure that <I><I>path</I></I> does not already exist (which is no problem) and if it exists it is a directory (throws an exception if not).
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/defaultProgramChanged:"></A><A NAME="- defaultProgramChanged:">defaultProgramChanged:</A></H3>
+		- (IBAction) <CODE><B>defaultProgramChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;Default Program&quot; Matrix.<P>
+
+A tag of 0 means use TeX, a tag of 1 means use LaTeX.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/fontForSourceChanged:"></A><A NAME="- fontForSourceChanged:">fontForSourceChanged:</A></H3>
+		- (IBAction) <CODE><B>fontForSourceChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;Font for Source&quot; Matrix.<P>
+
+A tag of 0 means don't change the font, a tag of 1 means save the font.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/ghostscriptColorChanged:"></A><A NAME="- ghostscriptColorChanged:">ghostscriptColorChanged:</A></H3>
+		- (IBAction) <CODE><B>ghostscriptColorChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;Ghostscript Colors&quot; Matrix.<P>
+
+<TABLE BORDER="3">
+	<TR><TD><B>tag</B></TD><TD><B>meaning</B></TD></TR>
+
+	<TR><TD>0</TD><TD>Grayscale</TD></TR>
+
+	<TR><TD>1</TD><TD>256 Colors</TD></TR>
+
+	<TR><TD>2</TD><TD>Thousands of Colors</TD></TR>
+</TABLE>
+
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/latexProgramChanged:"></A><A NAME="- latexProgramChanged:">latexProgramChanged:</A></H3>
+		- (IBAction) <CODE><B>latexProgramChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the textField that holds the LaTeX command.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/okButtonPressed:"></A><A NAME="- okButtonPressed:">okButtonPressed:</A></H3>
+		- (IBAction) <CODE><B>okButtonPressed:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the OK button.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/pdfDisplayChanged:"></A><A NAME="- pdfDisplayChanged:">pdfDisplayChanged:</A></H3>
+		- (IBAction) <CODE><B>pdfDisplayChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;PDF Display&quot; Matrix.<P>
+
+A tag of 0 means use Apple's NSPDFImageRep, a tag of 1 means use Ghostscript.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/pdfMagnificationChanged:"></A><A NAME="- pdfMagnificationChanged:">pdfMagnificationChanged:</A></H3>
+		- (IBAction) <CODE><B>pdfMagnificationChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;PDF Magnification&quot; Matrix.<P>
+
+A tag of 0 means don't change the magnification, a tag of 1 to save the setting.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/pdfWindowPosChanged:"></A><A NAME="- pdfWindowPosChanged:">pdfWindowPosChanged:</A></H3>
+		- (IBAction) <CODE><B>pdfWindowPosChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;PDF Window Position&quot; Matrix.<P>
+
+A tag of 0 means don't save the window position, a tag of 1 to save the setting. This should only flag the request to save the position, the actual saving of position and size can be left to [NSWindow setAutoSaveFrameName].
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/registerFactoryDefaults"></A><A NAME="- registerFactoryDefaults">registerFactoryDefaults</A></H3>
+		- (void)<CODE><B>registerFactoryDefaults</B></CODE>
+		<P>
+		<I>This method is not to be called from outside of this class.</I><P>
+
+This method will be called when no defaults were registered so far. Since this is the first time that TeXShop runs, we register a standard defaults set (from the FactorDefaults.plist) and fill ~/Library/TeXShop/Templates with our templates.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/showPreferences:"></A><A NAME="- showPreferences:">showPreferences:</A></H3>
+		- (IBAction) <CODE><B>showPreferences:</B></CODE><EM>sender</EM>
+			
+		<P>
+		Connected to the &quot;Preferences...&quot; menu item in Application's main menu.<P>
+
+Loads the .nib file if necessary, fills all the controls with the values from the user defaults and makes the window visible.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/sourceWindowPosChanged:"></A><A NAME="- sourceWindowPosChanged:">sourceWindowPosChanged:</A></H3>
+		- (IBAction) <CODE><B>sourceWindowPosChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the &quot;Source Window Position&quot; Matrix.<P>
+
+A tag of 0 means don't save the window position, a tag of 1 to save the setting. This should only flag the request to save the position, the actual saving of position and size can be left to [NSWindow setAutoSaveFrameName].
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/texProgramChanged:"></A><A NAME="- texProgramChanged:">texProgramChanged:</A></H3>
+		- (IBAction) <CODE><B>texProgramChanged:</B></CODE><EM>sender</EM>
+			
+		<P>
+		This method is connected to the textField that holds the TeX command.
+	
+		<P><HR WIDTH=25% ALIGN=LEFT>
+		<H3><A NAME="//apple_ref/occ/instm/Preferences/updateControlsFromUserDefaults:"></A><A NAME="- updateControlsFromUserDefaults:">updateControlsFromUserDefaults:</A></H3>
+		- (void) <CODE><B>updateControlsFromUserDefaults:</B></CODE>(NSUserDefaults *)<EM>defaults</EM>
+			
+		<P>
+		<I>This method is not to be called from outside of this class.</I><P>
+
+This method retrieves the application preferences from the <I>defaults</I> object and sets the controls in the window accordingly.
+	
+
+
+
+
+<P><HR>
+Version 1.1 Copyright &copy;2000.  All Rights Reserved.  
+<P>
+</BODY></HTML>

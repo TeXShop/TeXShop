@@ -564,11 +564,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
         project = [[[self fileName] stringByDeletingPathExtension]
             stringByAppendingString: @".texshop"];
-        if ([myFileManager fileExistsAtPath: project])
+            
+       if ([myFileManager fileExistsAtPath: project])
             sourcePath = [NSString stringWithContentsOfFile: project];
         else
             sourcePath = myFileName;
-            
+        
         if (whichEngine < 3)
             {
             [args addObject: [sourcePath lastPathComponent]];
@@ -1588,7 +1589,7 @@ BOOL isText(long aChar);
 {
     NSRange	matchRange, tagRange;
     NSString	*textString;
-    int		i, count, uchar, leftpar, rightpar;
+    int		i, j, count, uchar, leftpar, rightpar;
     BOOL	done;
     NSDate	*myDate;
     unsigned 	start, end, end1;
@@ -1632,10 +1633,12 @@ BOOL isText(long aChar);
     
     textString = [textView string];    
     i = affectedCharRange.location;
+    j = 1;
     count = 1;
     done = NO;
-    while ((i > 0) && (! done)) {
-        i--;
+    /* modified Jan 26, 2001, so we don't search entire text */
+    while ((i > 0) && (j < 5000) && (! done)) {
+        i--; j++;
         uchar = [textString characterAtIndex:i];
         if (uchar == rightpar)
             count++;
@@ -1649,7 +1652,8 @@ BOOL isText(long aChar);
             [textView setSelectedRange: matchRange affinity: NSSelectByCharacter stillSelecting: YES];
             [textView display];
             myDate = [NSDate date];
-            while ([myDate timeIntervalSinceNow] > - 0.15);
+            /* Jan 26, 2001: changed -0.15 to -0.075 to speed things up */
+            while ([myDate timeIntervalSinceNow] > - 0.075);
             [textView setSelectedRange: affectedCharRange];
             }
         }

@@ -14,6 +14,8 @@
     id			magChange;
     id			pdfWindowChange;
     id			sourceWindowChange;
+    id			pdfDisplayChange;
+    id			gsColor;
     id			popupButton;
     id			projectPanel;
     id			projectName;
@@ -24,8 +26,11 @@
     id			texEngine;
     id			latexEngine;
     id			textFinder;
+    int			whichEngine; /* 0 = tex, 1 = latex */
     NSString		*myTexEngine;
     NSString		*myLatexEngine;
+    int			myDisplayPref; /* 0 = apple, 1 = ghostscript */
+    int			myColorPref; /* 0 = gray, 1 = 256, 2 = thousands */
     NSTextField		*texCommand;
     NSPipe		*outputPipe;
     NSPipe		*inputPipe;
@@ -51,7 +56,11 @@
 - (void) okForPrintRequest: sender;
 - (void) readPreferences;
 - (void) doLine: sender;
+- (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
+- (int) displayPref;
+- (id) fileManager;
+- (int) colorPref;
 @end
 
 
@@ -59,7 +68,10 @@
     id			currentPage;
     id			totalPage;
     id			mySize;
+    BOOL		fixScroll;
     NSPDFImageRep	*myRep;
+    NSBitmapImageRep	*gsRep;
+    NSTask		*gsTask;
     MyDocument		*myDocument;
     }
     
@@ -70,6 +82,9 @@
 - (void) changeSize: sender;
 - (void) printDocument: sender;
 - (id) slider;
+- (void) setDocument: (id) theDocument;
+- (void) drawWithGhostscript;
+- (void) disposeGsRep;
 @end
 
 @interface PrintView : NSView {

@@ -78,6 +78,8 @@
     // Add any code here that need to be executed once the windowController has loaded the document's window.
     
     myFileManager = [[NSFileManager defaultManager] retain];
+    myTexEngine = nil; myLatexEngine = nil;
+    [pdfView setDocument: self];
 
     [self readPreferences];
     if (aString == nil) 
@@ -161,7 +163,9 @@
     NSDate		*endDate;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
-    
+
+if ([aNotification object] != texTask) return;
+
 if (inputPipe == [[aNotification object] standardInput]) {
 
     int status = [[aNotification object] terminationStatus];
@@ -187,16 +191,23 @@ if (inputPipe == [[aNotification object] standardInput]) {
                     [pdfWindow setTitle: 
                         [[[[self fileName] lastPathComponent] 
                         stringByDeletingPathExtension] stringByAppendingString:@".pdf"]];
-                    [pdfView setImageRep: texRep];
+                    if ([self displayPref] == 0)
+                        [pdfView setImageRep: texRep];
                     if (startDate == nil) {
                         topLeftRect = [texRep bounds];
                         topLeftPoint.x = topLeftRect.origin.x;
                         topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
                         [pdfView scrollPoint: topLeftPoint];
                         }
-                    [pdfView display];
-                    [pdfWindow makeKeyAndOrderFront: self];
-                    }
+                    if ([self displayPref] == 0) {
+                        [pdfView display];
+                        [pdfWindow makeKeyAndOrderFront: self];
+                        }
+                    else {
+                        [pdfView disposeGsRep];
+                        [pdfView drawWithGhostscript];
+                        }
+                     }
                 }
             }
             
@@ -228,15 +239,34 @@ if (inputPipe == [[aNotification object] standardInput]) {
         }
 }
 
-- (void) doJob: (Boolean) withLatex {
+
+- (void) doJob: (Boolean) withLatex;
+{
+    SEL	saveFinished;
+    
+    if (withLatex)
+        whichEngine= 1;
+    else 
+        whichEngine = 0;
+    saveFinished = @selector(saveFinished:didSave:contextInfo:);
+    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+}
+
+- (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
+{
     NSString		*myFileName;
     NSMutableArray	*args;
     NSDictionary	*myAttributes;
     NSString		*imagePath, *project, *nameString;
     NSString		*projectPath;
     NSString		*sourcePath;
-    
-    [self saveDocument: self]; 
+    BOOL		withLatex;
+
+    if (whichEngine == 1)
+        withLatex = YES;
+    else
+        withLatex = NO;
+
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
     
@@ -373,11 +403,14 @@ if (inputPipe == [[aNotification object] standardInput]) {
     NSString		*myString, *fullString;
     NSNumber		*aNumber;
     NSRect		frameRect;
+    int			i;
 
     myPrefResult = 2;
     [fontChange selectCellWithTag: 0];
     [magChange selectCellWithTag: 0];
     [pdfWindowChange selectCellWithTag: 0];
+    [pdfDisplayChange selectCellWithTag: myDisplayPref];
+    [gsColor selectCellWithTag: myColorPref];
     [sourceWindowChange selectCellWithTag: 0];
     [texEngine setStringValue: myTexEngine];
     [latexEngine setStringValue: myLatexEngine];
@@ -431,6 +464,20 @@ if (inputPipe == [[aNotification object] standardInput]) {
         myData = [[latexEngine stringValue] dataUsingEncoding: NSASCIIStringEncoding];
         myLatexEngine = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
         [myArray replaceObjectAtIndex: 12 withObject: myLatexEngine];
+        
+        i = [[pdfDisplayChange selectedCell] tag];
+        if (i != myDisplayPref) {
+            myDisplayPref = i;
+            aNumber = [NSNumber numberWithInt: myDisplayPref];
+            [myArray replaceObjectAtIndex: 13 withObject: aNumber];
+            }
+            
+        i = [[gsColor selectedCell] tag];
+        if (i != myColorPref) {
+            myColorPref = i;
+            aNumber = [NSNumber numberWithInt: myColorPref];
+            [myArray replaceObjectAtIndex: 14 withObject: aNumber];
+            }
 
            
         myData = [NSArchiver archivedDataWithRootObject: myArray];
@@ -519,6 +566,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     NSRect			frameRect;
     NSString			*file;
     NSDirectoryEnumerator	*enumerator;
+    int				versionNumber = 1;
     
     myString = [NSString stringWithString: @"~/Library/Preferences/TexShop Prefs/Templates"];
     if (! [myFileManager fileExistsAtPath:[myString stringByExpandingTildeInPath] isDirectory: &isDir]) {
@@ -548,7 +596,6 @@ if (inputPipe == [[aNotification object] standardInput]) {
         {
             NSMutableArray	*myArray;
             NSRect		frameRect;
-            int			versionNumber;
             
             myData = [myFileManager contentsAtPath: fullString];
             myArray = [NSUnarchiver unarchiveObjectWithData: myData];
@@ -580,11 +627,25 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [pdfWindow setFrame: frameRect display: NO];
             myTexEngine = [[myArray objectAtIndex: 11] retain];
             myLatexEngine = [[myArray objectAtIndex: 12] retain];
+            if (versionNumber > 1) {
+                aNumber = [myArray objectAtIndex: 13];
+                myDisplayPref = [aNumber intValue];
+                aNumber = [myArray objectAtIndex: 14];
+                myColorPref = [aNumber intValue];
+                }
+            else {
+                myDisplayPref = 0;
+                myColorPref = 1;
+                }
         }
-    else
+    if (![myFileManager fileExistsAtPath: fullString]) {
+        myDisplayPref = 0;
+        myColorPref = 1;
+        }
+    if ((![myFileManager fileExistsAtPath: fullString]) || (versionNumber == 1))
         {
-            myArray = [NSMutableArray arrayWithCapacity: 13];
-            aNumber = [NSNumber numberWithInt: 1];
+            myArray = [NSMutableArray arrayWithCapacity: 15];
+            aNumber = [NSNumber numberWithInt: 2];
             [myArray insertObject: aNumber atIndex: 0];
             aFont = [textView font];
             [myArray insertObject: aFont atIndex: 1];
@@ -610,10 +671,16 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [myArray insertObject: aNumber atIndex: 9];
              aNumber = [NSNumber numberWithFloat: frameRect.size.height];
             [myArray insertObject: aNumber atIndex: 10];
-            myTexEngine = [[NSString stringWithString: @"/usr/local/bin/pdftex"] retain];
+            if (myTexEngine == nil)
+                myTexEngine = [[NSString stringWithString: @"/usr/local/bin/pdftex"] retain];
             [myArray insertObject: myTexEngine atIndex: 11];
-            myLatexEngine = [[NSString stringWithString: @"/usr/local/bin/pdflatex"] retain];
+            if (myLatexEngine == nil)
+                myLatexEngine = [[NSString stringWithString: @"/usr/local/bin/pdflatex"] retain];
             [myArray insertObject: myLatexEngine atIndex: 12];
+            aNumber = [NSNumber numberWithInt: 0];
+            [myArray insertObject: aNumber atIndex: 13];
+            aNumber = [NSNumber numberWithInt: 1];
+            [myArray insertObject: aNumber atIndex: 14];
 
             myData = [NSArchiver archivedDataWithRootObject: myArray];
             [myFileManager createFileAtPath: fullString contents: myData attributes: nil];
@@ -690,6 +757,23 @@ if (inputPipe == [[aNotification object] standardInput]) {
         }
 }
 
+- (int) displayPref;
+{
+   return myDisplayPref;
+}
+
+- (id) fileManager;
+{
+    return myFileManager;
+}
+
+- (int) colorPref;
+{
+    return myColorPref;
+}
+
+
+
 @end
 
 @implementation MyView
@@ -699,18 +783,131 @@ if (inputPipe == [[aNotification object] standardInput]) {
     id		value;
     
     value = [super initWithFrame: frameRect];
+    gsRep = nil;
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+            selector:@selector(checkATaskStatus:) 
+            name:NSTaskDidTerminateNotification 
+            object:nil];
+    fixScroll = NO;
     return value;
 }
 
+- (void)checkATaskStatus:(NSNotification *)aNotification {
+    
+    if ([aNotification object] != gsTask) return;
+    gsTask = nil;
+    
+  if ([[myDocument fileManager] fileExistsAtPath: @"/tmp/texshoptemp.bmp"]) {
+        gsRep = [[NSBitmapImageRep imageRepWithContentsOfFile: @"/tmp/texshoptemp.bmp"] retain];
+        [[myDocument fileManager] removeFileAtPath: @"/tmp/texshoptemp.bmp" handler: nil];
+        if (fixScroll) {
+            [[self superview] display];
+            fixScroll = NO;
+            }
+        else
+            [self display];
+        }
+}
+
+- (void) drawWithGhostscript;
+{
+    NSString		*imagePath;
+    NSMutableArray	*args;
+    NSString		*gsLaunch;
+    NSString		*theArgs;
+    NSString		*aPage;
+    NSString		*startPage;
+    NSString		*endPage;
+    NSString		*nameString;
+    NSString		*projectPath;
+    NSNumber		*aNumber;
+    double		magsize, thesize;
+    int			intsize, i;
+    
+    if (gsRep != nil) {
+        NSEraseRect([self bounds]);
+        [gsRep draw];
+        }
+    else {
+        projectPath = [[[myDocument fileName] stringByDeletingPathExtension] stringByAppendingString:@".texshop"];
+        if ([[myDocument fileManager] fileExistsAtPath: projectPath]) {
+            nameString = [NSString stringWithContentsOfFile: projectPath];
+            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingString:@".pdf"];
+            }
+        else
+            imagePath = [[[myDocument fileName] stringByDeletingPathExtension] stringByAppendingString:@".pdf"];
+        
+
+        if ([[myDocument fileManager] fileExistsAtPath: imagePath]) {
+            args = [NSMutableArray array];
+            if (gsTask != nil) {
+                [gsTask terminate];
+                gsTask = nil;
+                }
+            gsTask = [[NSTask alloc] init];
+            [gsTask setCurrentDirectoryPath: [imagePath stringByDeletingLastPathComponent]];
+            gsLaunch = [NSString stringWithString:@"/usr/local/bin/gs"];
+            [gsTask setLaunchPath: gsLaunch];
+            i = [myDocument colorPref];
+            switch (i)  {
+                case 0: theArgs = [NSString stringWithString:@"-sDEVICE=bmpgray"];
+                        break;
+                case 1:	theArgs = [NSString stringWithString:@"-sDEVICE=bmp256"];
+                        break;
+                case 2: theArgs = [NSString stringWithString:@"-sDEVICE=bmp16m"];
+                        break;
+                }
+            [args addObject: theArgs];
+        
+            thesize = [mySize doubleValue];
+            if (thesize < -.75)
+                magsize = 38.0;
+            else if (thesize < -.25)
+                magsize = 52.0;
+            else if (thesize < .25)
+                magsize = 144.0;
+            else if (thesize < .75)
+                magsize = 108.0;
+            else
+                magsize = 144.0;
+            intsize = magsize;
+            aNumber = [NSNumber numberWithInt:intsize];
+            aPage = [NSString stringWithString:@"-r"];
+            theArgs = [aPage stringByAppendingString:[aNumber stringValue]]; 
+            [args addObject: theArgs];
+            theArgs = [NSString stringWithString:@"-dNOPAUSE"];
+            [args addObject: theArgs];
+            theArgs = [NSString stringWithString:@"-dBATCH"];
+            [args addObject: theArgs];
+            theArgs = [NSString stringWithString:@"-sOutputFile=/tmp/texshoptemp.bmp"];
+            [args addObject: theArgs];
+            aPage = [NSString stringWithString:@"-dFirstPage="];
+            aNumber = [NSNumber numberWithInt:([myRep currentPage] + 1)];
+            startPage = [aPage stringByAppendingString:[aNumber stringValue]];
+            [args addObject: startPage];
+            aPage = [NSString stringWithString:@"-dLastPage="];
+            endPage = [aPage stringByAppendingString:[aNumber stringValue]];
+            [args addObject: endPage];
+            [args addObject: imagePath];
+            [gsTask setArguments:args];
+            [gsTask launch];
+            }
+    }
+}
 
 - (void)drawRect:(NSRect)aRect 
 {
-    NSEraseRect([self bounds]);
+    
     if (myRep != nil) {
         [totalPage setIntValue: [myRep pageCount]];
         [currentPage setIntValue: ([myRep currentPage] + 1)]; 
-        [currentPage display];   
-        [myRep draw];
+        [currentPage display];
+        if ([myDocument displayPref] == 0) {
+            NSEraseRect([self bounds]);
+            [myRep draw];
+            }
+        else
+            [self drawWithGhostscript];
         }
 }
 
@@ -724,7 +921,15 @@ if (inputPipe == [[aNotification object] standardInput]) {
                 [currentPage setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
-                [self display];
+                if (gsRep != nil) {
+                    [gsRep release];
+                    gsRep = nil;
+                    }
+                if ([myDocument displayPref] == 0)
+                    [self display];
+                else {
+                    [self drawWithGhostscript];
+                    }
                 }
             }
 }
@@ -739,7 +944,14 @@ if (inputPipe == [[aNotification object] standardInput]) {
                 [currentPage setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
-                [self display];
+                if (gsRep != nil) {
+                    [gsRep release];
+                    gsRep = nil;
+                    }
+                if ([myDocument displayPref] == 0)
+                    [self display];
+                else
+                    [self drawWithGhostscript];
                 }
             }
 }
@@ -754,7 +966,14 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [currentPage setIntValue: pagenumber];
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
-            [self display];
+            if (gsRep != nil) {
+                    [gsRep release];
+                    gsRep = nil;
+                    }
+            if ([myDocument displayPref] == 0)
+                [self display];
+            else
+                [self drawWithGhostscript];
             }
 }
 
@@ -762,16 +981,45 @@ if (inputPipe == [[aNotification object] standardInput]) {
 {
     
         NSRect	myBounds, newBounds;
+        double	thesize, magsize;
         
-        double	thesize = [mySize doubleValue];
-        double	magsize = pow(2, thesize); 
+        thesize = [mySize doubleValue];
+        if ([myDocument displayPref] != 0) {
+            if (thesize < -.75)
+                // thesize = -1;
+                magsize = .5;
+            else if (thesize < -.25)
+                //thesize = -.5;
+                magsize = .75;
+            else if (thesize < .25)
+                // thesize = 0;
+                magsize = 1.0;
+            else if (thesize < .75)
+                // thesize = .5;
+                magsize = 1.5;
+            else
+                // thesize = 1.0;
+                magsize = 2.0;
+           /*  [mySize setDoubleValue: thesize]; */
+            }
+        else
+            magsize = pow(2, thesize); 
 
         myBounds = [self bounds];
         newBounds.size.width = myBounds.size.width * (magsize);
         newBounds.size.height = myBounds.size.height * (magsize);
         [self setFrame: newBounds];
         [self setBounds: myBounds];
-        [[self superview] display];
+        if (gsRep != nil) {
+            [gsRep release];
+            gsRep = nil;
+            }
+        if ([myDocument displayPref] == 0)
+            [[self superview] display];
+        else {
+            fixScroll = YES;
+            [self drawWithGhostscript];
+            }
 }
 
 
@@ -782,7 +1030,11 @@ if (inputPipe == [[aNotification object] standardInput]) {
     
     double	thesize = [mySize doubleValue];
     double	magsize = pow(2, thesize);
-        
+   
+    if (gsRep != nil) {
+            [gsRep release];
+            gsRep = nil;
+            }
     if (theRep != nil)
      
         {
@@ -810,6 +1062,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 - (void) printDocument: sender;
 {
+    NSLog(@"here");
     [myDocument printDocument: sender];
 }	
 
@@ -822,6 +1075,28 @@ if (inputPipe == [[aNotification object] standardInput]) {
 {
     return mySize;
 }
+
+- (void) setDocument: (id) theDocument;
+{
+    myDocument = theDocument;
+}
+
+- (void)dealloc {
+    if (gsTask != nil)
+            [gsTask terminate];
+    [super dealloc];
+}
+
+- (void) disposeGsRep;
+{
+    if (gsRep != nil) {
+        [gsRep release];
+        gsRep = nil;
+        }
+}
+
+
+
 
 @end
 

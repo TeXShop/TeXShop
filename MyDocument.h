@@ -60,6 +60,7 @@
     int			whichError;
     int			theScript;		/*" script currently executing; 100, 101, 102 "*/
     unsigned		colorStart, colorEnd;
+    BOOL		fastColor;
     NSTimer		*syntaxColoringTimer;	/*" Timer that repeatedly handles syntax coloring "*/
     unsigned		colorLocation;
     NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
@@ -106,7 +107,8 @@
 - (void) fixTypesetMenu;
 - (void) doError: sender;
 - (void) fixColor: (unsigned)from : (unsigned)to;
-- (void) fixColor1: sender;
+// - (void) fixColor1: sender;
+- (void) fixColor2: (unsigned)from :(unsigned)to;
 - (void) fixColorBlack: sender;
 - (void) textDidChange:(NSNotification *)aNotification;
 - (void) setupTags;

@@ -22,11 +22,11 @@
 #define Mindent 3
 #define Munindent 4
 
-// #define COLORTIME  0
-// #define COLORLENGTH 5000
+#define COLORTIME  0.02
+#define COLORLENGTH 5000
 
-#define COLORTIME  .02
-#define COLORLENGTH 500000
+// #define COLORTIME  .02
+// #define COLORLENGTH 500000
 
 
 /* Code by Anton Leuski */
@@ -73,6 +73,7 @@ static NSArray*	kTaggedTagSections = nil;
     texRep = nil;
     fileIsTex = YES;
     mSelection = nil;
+    fastColor = NO;
     
     return self;
 }
@@ -353,7 +354,7 @@ static NSArray*	kTaggedTagSections = nil;
         if (([SUD boolForKey:SyntaxColoringEnabledKey]) && (fileIsTex)) 
         {
             colorLocation = 0;
-            [self fixColor:0 :length];
+            [self fixColor2:0 :length];
            // syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
         }
 
@@ -1883,11 +1884,11 @@ if (! externalEditor) {
    // [self updateChangeCount: NSChangeDone];
 }
 
-- (void)fixColor: (unsigned)from : (unsigned)to
+// fixColor2 is the old fixColor, now used only when opening documents
+- (void)fixColor2: (unsigned)from : (unsigned)to
 {
     NSRange	colorRange;
     NSString	*textString;
-    // NSColor	*commentColor, *commandColor, *markerColor;
     NSColor	*regularColor;
     long	length, location, final;
     unsigned	start1, end1;
@@ -1901,9 +1902,6 @@ if (! externalEditor) {
     else
         texChar = 0x005c;
    
-    // commentColor = [NSColor redColor];
-    // commandColor = [NSColor blueColor];
-    // markerColor = [NSColor purpleColor];
     regularColor = [NSColor blackColor];
  
     textString = [textView string];
@@ -1984,9 +1982,9 @@ if (! externalEditor) {
             else
                 location++;
             }
-        // NSLog(@"end");
         
 }
+
 
 - (void)fixColorBlack: sender;
 {
@@ -2027,6 +2025,11 @@ if (! externalEditor) {
     BOOL	done;
     NSDate	*myDate;
     unsigned 	start, end, end1;
+    
+    if (affectedCharRange.length == 0)
+        fastColor = YES;
+    else
+        fastColor = NO;
     
     colorStart = affectedCharRange.location;
     colorEnd = colorStart;
@@ -2282,6 +2285,166 @@ if (! externalEditor) {
     
 }
 
+// This is the main syntax coloring routine, used for everything except opening documents
+- (void)fixColor: (unsigned)from : (unsigned)to
+{
+    NSRange			colorRange, cutRange, modifiedRange, selectedRange, newRange;
+    NSString			*textString;
+    NSColor			*regularColor, *theColor;
+    long			length, location, final;
+    unsigned			start1, end1;
+    int				theChar, texChar, previousChar;
+    unsigned			end;
+    NSMutableAttributedString 	*myAttribString;
+    NSDictionary		*myAttributes;
+    
+    
+    if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
+    
+    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
+        texChar = 165;
+    else
+        texChar = 0x005c;
+   
+    regularColor = [NSColor blackColor];
+ 
+    textString = [textView string];
+    if (textString == nil) return;
+    length = [textString length];
+    
+    if (returnline) {
+        colorRange.location = from + 1;
+        colorRange.length = 0;
+        }
+    
+    else {
+    
+    if (from < length)
+        colorRange.location = from;
+    else
+        colorRange.location = 0;
+        
+    if (to < length)
+        colorRange.length = to - colorRange.location;
+    else
+        colorRange.length = length - colorRange.location;
+    }
+    
+    // First we try to color single character changes without work
+    if ( fastColor && (colorRange.length == 1) && (colorRange.location > 0)) {
+        theChar = [textString characterAtIndex: colorRange.location];
+        previousChar = [textString characterAtIndex: (colorRange.location - 1)];
+        if ((theChar != texChar) && (theChar != 0x007b) && (theChar != 0x007d) && (theChar != 0x0024) &&
+            (theChar != 0x0025) && (theChar != 0x0020) && (previousChar != 0x007d) && (previousChar != 0x007b)
+            && (previousChar >= 0x0020)) {
+                newRange.location = colorRange.location - 1;
+                newRange.length = colorRange.length;
+                myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 			attributedSubstringFromRange: newRange]] autorelease];
+                myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
+                theColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
+                [textView setTextColor: theColor range: colorRange];
+                fastColor = NO;
+                return;
+                }
+        }
+        
+    fastColor = NO;
+    // If that trick fails, we work harder. The key speedup in this routine uses
+    // NSMutableAttributedString, so the various recolorings do not cause screen updates
+    // Only one update is required at the end. This ingenious code was written by
+    // Martin Heusse. Many, many thanks!!!
+
+    [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+    
+    location = start1;
+    final = end1;
+
+    colorRange.location = start1;
+    colorRange.length = end1 - start1;
+   // [textView setTextColor: regularColor range: colorRange];
+   cutRange.location = colorRange.location;
+   cutRange.length = colorRange.length;
+   selectedRange = [textView selectedRange];
+    myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 		attributedSubstringFromRange: cutRange]] autorelease];
+    modifiedRange.location = cutRange.location - start1;
+    modifiedRange.length = cutRange.length;
+    [myAttribString setAttributes:  [NSDictionary dictionaryWithObject:regularColor
+        forKey:NSForegroundColorAttributeName] range: modifiedRange];
+        
+    // NSLog(@"begin");
+    while (location < final) {
+            theChar = [textString characterAtIndex: location];
+            
+             if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
+                colorRange.location = location;
+                colorRange.length = 1;
+                modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:markerColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                // [textView setTextColor: markerColor range: colorRange];
+                colorRange.location = colorRange.location + colorRange.length - 1;
+                colorRange.length = 0;
+                // [textView setTextColor: regularColor range: colorRange];
+                modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+
+                location++;
+                }
+                
+             else if (theChar == 0x0025) {
+                colorRange.location = location;
+                colorRange.length = 0;
+                [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
+                colorRange.length = (end - location);
+                modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                //[textView setTextColor: commentColor range: colorRange];
+                colorRange.location = colorRange.location + colorRange.length - 1;
+                colorRange.length = 0;
+               // [textView setTextColor: regularColor range: colorRange];
+               modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                location = end;
+                }
+                
+             else if (theChar == texChar) {
+                colorRange.location = location;
+                colorRange.length = 1;
+                location++;
+                if ((location < final) && ([textString characterAtIndex: location] == 0x0025)) {
+                    colorRange.length = location - colorRange.location;
+                    location++;
+                    }
+                else while ((location < final) && (isText([textString characterAtIndex: location]))) {
+                    location++;
+                    colorRange.length = location - colorRange.location;
+                    }
+                modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+               [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commandColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                //[textView setTextColor: commandColor range: colorRange];
+                colorRange.location = location;
+                colorRange.length = 0;
+               // [textView setTextColor: regularColor range: colorRange];
+               modifiedRange.location = colorRange.location - start1;
+                modifiedRange.length = colorRange.length;
+                [myAttribString setAttributes: [NSDictionary dictionaryWithObject: regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                }
+
+            else
+                location++;
+            }
+        // NSLog(@"end");
+        [[textView textStorage] replaceCharactersInRange: cutRange withAttributedString:myAttribString];
+        [textView setSelectedRange:selectedRange];
+
+        
+}
+
+/*
 //-----------------------------------------------------------------------------
 - (void)fixColor1:(NSTimer *)timer;
 //-----------------------------------------------------------------------------
@@ -2385,114 +2548,8 @@ if (! externalEditor) {
     }
 }
 
-// #define COLORTIME  .3
-// #define COLORLENGTH 500000
-
-
-/*
-- (void)fixColor1:(NSTimer *)timer;
-{
-    NSRange	colorRange, cutRange;
-    NSString	*textString;
-    NSColor	*commentColor1, *commandColor1, *markerColor1;
-    NSColor	*regularColor;
-    long	length, limit;
-    int		theChar, texChar;
-    unsigned	end, currentLocation=0;
-    NSMutableAttributedString *myAttribString;
-
-    if(colorLocation==0){
-        NSLog(@"start color");
-        [textView setEditable:NO];
-    }
-    limit = colorLocation + COLORLENGTH;
-    if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
-        texChar = 165;
-    else
-        texChar = 0x005c;
-    regularColor = [NSColor blackColor];
-    if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
-        commentColor1 = commentColor;
-        commandColor1 = commandColor;
-        markerColor1 = markerColor;
-    }
-    else {
-        commentColor1 = regularColor;
-        commandColor1 = regularColor;
-        markerColor1 = regularColor;
-    }
-
-    textString = [textView string];
-    // je coupe un nombre de lignes avec lesquelles je vais travailler.
-    cutRange=NSMakeRange(colorLocation,(limit<[textString length]?limit:[textString length])-colorLocation);
-    [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:cutRange];
-    cutRange.length= (end>colorLocation)?end-colorLocation:0;
-    colorLocation = end+1;
-    colorRange=NSMakeRange(0,0);
-    myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView attributedSubstringFromRange:cutRange]] autorelease];
-    length = [textString length];
-    while (currentLocation < cutRange.length)
-        {
-        theChar = [[myAttribString string] characterAtIndex: currentLocation];
-        if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
-            colorRange.location = currentLocation;
-            colorRange.length = 1;
-            //[textView setTextColor: markerColor1 range: colorRange];
-            [myAttribString setAttributes: [NSDictionary dictionaryWithObject:markerColor1 forKey:NSForegroundColorAttributeName] range:colorRange];
-            //colorRange.location = colorRange.location + colorRange.length - 1;
-            //colorRange.length = 0;
-            //[textView setTextColor: regularColor range: colorRange];
-            currentLocation++;
-        }
-
-        else if (theChar == 0x0025)
-            {
-            colorRange.location = currentLocation;
-            colorRange.length = 0;
-            [[myAttribString string] getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
-            colorRange.length = (end - currentLocation);
-            [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commentColor1 forKey:NSForegroundColorAttributeName] range:colorRange];
-            //colorRange.location = colorRange.location + colorRange.length - 1;
-            //colorRange.length = 0;
-            //[textView setTextColor: regularColor range: colorRange];
-            currentLocation = end;
-            }
-        else if (theChar == texChar)
-            {
-            colorRange.location = currentLocation;
-            colorRange.length = 1;
-            currentLocation++;
-            if ((currentLocation < cutRange.length) && ([[myAttribString string] characterAtIndex: currentLocation] == 0x0025))
-                {
-                colorRange.length = currentLocation - colorRange.location;
-                currentLocation++;
-                }
-            else while ((currentLocation < cutRange.length) && (isText([[myAttribString string] characterAtIndex: currentLocation])))
-                {
-                currentLocation++;
-                colorRange.length = currentLocation - colorRange.location;
-                }
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commandColor1 forKey:NSForegroundColorAttributeName] range:colorRange];
-            //colorRange.location = colorLocation;
-            //colorRange.length = 0;
-            //[textView setTextColor: regularColor range: colorRange];
-            }
-        else
-            currentLocation++;
-        }// endWhile
-    // je substitue...
-    //NSLog(@"done while");
-    [[textView textStorage] replaceCharactersInRange: cutRange withAttributedString:myAttribString];
-    if (colorLocation >= length)
-        {
-        [syntaxColoringTimer invalidate];
-        [syntaxColoringTimer release];
-        syntaxColoringTimer = nil;
-        NSLog(@"done color");
-        [textView setEditable:YES];
-        }
-}
 */
+
 
 //-----------------------------------------------------------------------------
 - (void)reColor:(NSNotification *)notification;
@@ -2500,6 +2557,7 @@ if (! externalEditor) {
 {
     NSString	*textString;
     long	length;
+    NSRange	theRange;
     
     if (syntaxColoringTimer != nil) {
         [syntaxColoringTimer invalidate];
@@ -2509,7 +2567,14 @@ if (! externalEditor) {
         
     textString = [textView string];
     length = [textString length];
-    [self fixColor :0 :length];
+    if ([SUD boolForKey:SyntaxColoringEnabledKey]) 
+        [self fixColor :0 :length];
+    else {
+        theRange.location = 0;
+        theRange.length = length;
+        [textView setTextColor: [NSColor blackColor] range: theRange];
+        }
+        
     
     // colorLocation = 0;
     // syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) 	userInfo:nil repeats:YES] retain];
@@ -2525,6 +2590,7 @@ if (! externalEditor) {
     NSDate		*endDate;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
+    int			status
     
     [outputText setSelectable: YES];
 
@@ -2554,7 +2620,7 @@ if (! externalEditor) {
 
     if (inputPipe == [[aNotification object] standardInput]) 
     {
-        int status = [[aNotification object] terminationStatus];
+         status = [[aNotification object] terminationStatus];
     
         if ((status == 0) || (status == 1))  
         {

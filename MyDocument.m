@@ -74,25 +74,43 @@
     NSString		*nameString;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
+    NSRange		myRange;
     
     [super windowControllerDidLoadNib:aController];
     // Add any code here that need to be executed once the windowController has loaded the document's window.
     
+    errorNumber = 0;
+    whichError = 0;
+    makeError = NO;
+
+    fileIsTex = YES;
     myFileManager = [[NSFileManager defaultManager] retain];
     myTexEngine = nil; myLatexEngine = nil;
     [pdfView setDocument: self];
+    [textView setDelegate: self];
 
     [self readPreferences];
     if (aString == nil) 
         ;
     else {
-       [textView setString: aString];
-       [aString release];
-       aString = nil;
-       texTask = nil;
-       }
-       
+        [textView setString: aString];
+        [aString release];
+        aString = nil;
+        texTask = nil;
+        bibTask = nil;
+        indexTask = nil;
+        }
+    
+    myRange.location = 0;
+    myRange.length = 0;
+    [textView setSelectedRange: myRange];
     [textWindow setInitialFirstResponder: textView];
+    [textWindow makeFirstResponder: textView];
+    
+    if (myProgramPref == 0)
+        [typesetButton setTitle: @"Tex"];
+    else
+        [typesetButton setTitle: @"Latex"];
     
     if (myDisplayPref != 0) {
         [[pdfView slider] setNumberOfTickMarks: 5];
@@ -116,8 +134,14 @@
             
         
         fileExtension = [[self fileName] pathExtension];
-        if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]))
+        if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) &&
+            ([myFileManager fileExistsAtPath: [self fileName]]))
+            {
+            [self setFileType: fileExtension];
+            [typesetButton setEnabled: NO];
+            fileIsTex = NO;
             return;
+            }
         projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingString:@".texshop"];
         if ([myFileManager fileExistsAtPath: projectPath]) {
             nameString = [NSString stringWithContentsOfFile: projectPath];
@@ -142,6 +166,8 @@
                     [pdfView drawWithGhostscript];
                   }
             }
+            
+
 
     }
     
@@ -182,6 +208,27 @@
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
 
+if (([aNotification object] == bibTask) || ([aNotification object] == indexTask)) {
+
+    if (inputPipe == [[aNotification object] standardInput]) {
+    
+        int status = [[aNotification object] terminationStatus];
+        
+        if ((status == 0) || (status == 1)) {
+        
+            [outputPipe release];
+            [writeHandle closeFile];
+            [inputPipe release];
+            inputPipe = 0;
+            if ([aNotification object] == bibTask)
+                bibTask = nil;
+            else if ([aNotification object] == indexTask)
+                indexTask = nil;
+            }
+            
+        }
+    }
+    
 if ([aNotification object] != texTask) return;
 
 if (inputPipe == [[aNotification object] standardInput]) {
@@ -257,10 +304,40 @@ if (inputPipe == [[aNotification object] standardInput]) {
         }
 }
 
+- (void) doBibJob
+{
+    SEL	saveFinished;
+    
+    errorNumber = 0;
+    whichError = 0;
+    makeError = NO;
+    
+    whichEngine = 3;
+    saveFinished = @selector(saveFinished:didSave:contextInfo:);
+    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+}
+
+- (void) doIndexJob
+{
+    SEL	saveFinished;
+    
+    errorNumber = 0;
+    whichError = 0;
+    makeError = NO;
+    
+    whichEngine = 4;
+    saveFinished = @selector(saveFinished:didSave:contextInfo:);
+    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+}
+
 
 - (void) doJob: (Boolean) withLatex;
 {
     SEL	saveFinished;
+    
+    errorNumber = 0;
+    whichError = 0;
+    makeError = YES;
     
     if (withLatex)
         whichEngine= 1;
@@ -278,11 +355,13 @@ if (inputPipe == [[aNotification object] standardInput]) {
     NSString		*imagePath, *project, *nameString;
     NSString		*projectPath;
     NSString		*sourcePath;
+    NSString		*bibPath;
+    NSString		*indexPath;
     BOOL		withLatex;
 
     if (whichEngine == 1)
         withLatex = YES;
-    else
+    else if (whichEngine == 0)
         withLatex = NO;
 
     myFileName = [self fileName];
@@ -333,23 +412,58 @@ if (inputPipe == [[aNotification object] standardInput]) {
         else
             sourcePath = myFileName;
             
-                
-        [args addObject: sourcePath];
+        if (whichEngine < 3)
+            {
+            [args addObject: sourcePath];
         
-        if (texTask != nil) {
-            [texTask terminate];
-            texTask = nil;
+            if (texTask != nil) {
+                [texTask terminate];
+                texTask = nil;
+                }
+            texTask = [[NSTask alloc] init];
+            [texTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            if (withLatex)
+                [texTask setLaunchPath: myLatexEngine];
+            else
+                [texTask setLaunchPath: myTexEngine]; 
+            [texTask setArguments:args];
+            [texTask setStandardOutput: outputPipe];
+            [texTask setStandardInput: inputPipe];
+            [texTask launch];
             }
-        texTask = [[NSTask alloc] init];
-        [texTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
-        if (withLatex)
-            [texTask setLaunchPath: myLatexEngine];
-        else
-            [texTask setLaunchPath: myTexEngine]; 
-        [texTask setArguments:args];
-        [texTask setStandardOutput: outputPipe];
-        [texTask setStandardInput: inputPipe];
-        [texTask launch];
+        else if (whichEngine == 3) {
+            bibPath = [sourcePath stringByDeletingPathExtension];
+            [args addObject: bibPath];
+        
+            if (bibTask != nil) {
+                [bibTask terminate];
+                bibTask = nil;
+                }
+            bibTask = [[NSTask alloc] init];
+            [bibTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            [bibTask setLaunchPath: @"/usr/local/bin/bibtex"];
+            [bibTask setArguments:args];
+            [bibTask setStandardOutput: outputPipe];
+            [bibTask setStandardInput: inputPipe];
+            [bibTask launch];
+            }
+        else if (whichEngine == 4) {
+            indexPath = [sourcePath stringByDeletingPathExtension];
+            [args addObject: indexPath];
+        
+            if (indexTask != nil) {
+                [indexTask terminate];
+                indexTask = nil;
+                }
+            indexTask = [[NSTask alloc] init];
+            [indexTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            [indexTask setLaunchPath: @"/usr/local/bin/makeindex"];
+            [indexTask setArguments:args];
+            [indexTask setStandardOutput: outputPipe];
+            [indexTask setStandardInput: inputPipe];
+            [indexTask launch];
+            }
+
         }
 }
 
@@ -363,10 +477,40 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [self doJob: YES];
 }
 
+- (void) doBibtex: sender;
+{
+    [self doBibJob];
+}
+
+- (void) doIndex: sender;
+{
+    [self doIndexJob];
+}
+
+
+- (void) doTypeset: sender;
+{
+    NSString	*titleString;
+    
+    titleString = [sender title];
+    if ([titleString isEqualToString: @"Tex"]) 
+        [self doTex:self];
+    else if ([titleString isEqualToString: @"Latex"])
+        [self doLatex: self];
+    else if ([titleString isEqualToString: @"Bibtex"])
+        [self doBibtex: self];
+    else if ([titleString isEqualToString: @"Index"])
+        [self doIndex: self];
+}
+
 - (void) writeTexOutput: (NSNotification *)aNotification;
 {
-    NSString	*newOutput;
-    NSData	*myData;
+    NSString		*newOutput, *numberOutput, *searchString, *tempString;
+    NSData		*myData;
+    NSRange		myRange, lineRange, searchRange;
+    int			error;
+    unsigned int	myLength;
+    unsigned		start, end, irrelevant;
     
     NSFileHandle *myFileHandle = [aNotification object];
     if (myFileHandle == readHandle) {
@@ -374,6 +518,32 @@ if (inputPipe == [[aNotification object] standardInput]) {
             objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([myData length]) {
             newOutput = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
+            if ((makeError) && ([newOutput length] > 2) && (errorNumber < NUMBEROFERRORS)) {
+                    myLength = [newOutput length];
+                    searchString = [NSString stringWithString:@"l."];
+                    lineRange.location = 0;
+                    lineRange.length = 1;
+                    while (lineRange.location < myLength) {
+                            [newOutput getLineStart: &start end: &end contentsEnd: &irrelevant 
+                                forRange: lineRange];
+                            lineRange.location = end;
+                            searchRange.location = start;
+                            searchRange.length = end - start;
+                            tempString = [newOutput substringWithRange: searchRange];
+                            myRange = [tempString rangeOfString: searchString];
+                            if ((myRange.location = 1) && (myRange.length > 0)) {
+                                numberOutput = [tempString substringFromIndex:(myRange.location + 1)];
+                                error = [numberOutput intValue];
+                                if ((error > 0) && (errorNumber < NUMBEROFERRORS)) {
+                                    errorLine[errorNumber] = error;
+                                    errorNumber++;
+                                    }
+                                }
+                            }
+                     }
+                    
+                    
+                    
             [outputText replaceCharactersInRange: [outputText selectedRange]
                 withString: newOutput];
             [outputText scrollRangeToVisible: [outputText selectedRange]];
@@ -429,6 +599,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [pdfWindowChange selectCellWithTag: 0];
     [pdfDisplayChange selectCellWithTag: myDisplayPref];
     [gsColor selectCellWithTag: myColorPref];
+    [typesetChoice selectCellWithTag: myProgramPref];
     [sourceWindowChange selectCellWithTag: 0];
     [texEngine setStringValue: myTexEngine];
     [latexEngine setStringValue: myLatexEngine];
@@ -505,10 +676,47 @@ if (inputPipe == [[aNotification object] standardInput]) {
             aNumber = [NSNumber numberWithInt: myColorPref];
             [myArray replaceObjectAtIndex: 14 withObject: aNumber];
             }
-
+            
+        i = [[typesetChoice selectedCell] tag];
+        if (i != myProgramPref) {
+            myProgramPref = i;
+            aNumber = [NSNumber numberWithInt: myProgramPref];
+            [myArray replaceObjectAtIndex: 15 withObject: aNumber];
+            }
            
         myData = [NSArchiver archivedDataWithRootObject: myArray];
         [myData writeToFile: fullString atomically: YES];
+
+        }
+}
+
+- (void) chooseProgram: sender;
+{
+    id		theItem;
+    int		which;
+    
+    theItem = [sender selectedItem];
+    which = [theItem tag];
+    
+    switch (which) {
+    
+        case 0:
+            [typesetButton setTitle: @"Tex"];
+            break;
+        
+        case 1:
+            [typesetButton setTitle: @"Latex"];
+            break;
+
+        
+        case 2:
+            [typesetButton setTitle: @"Bibtex"];
+            break;
+            
+        case 3:
+            [typesetButton setTitle: @"Index"];
+            break;
+
 
         }
 }
@@ -654,25 +862,32 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [pdfWindow setFrame: frameRect display: NO];
             myTexEngine = [[myArray objectAtIndex: 11] retain];
             myLatexEngine = [[myArray objectAtIndex: 12] retain];
-            if (versionNumber > 1) {
+            if (versionNumber == 2) {
                 aNumber = [myArray objectAtIndex: 13];
                 myDisplayPref = [aNumber intValue];
                 aNumber = [myArray objectAtIndex: 14];
                 myColorPref = [aNumber intValue];
                 }
             else {
-                myDisplayPref = 0;
+                myDisplayPref = 1;
                 myColorPref = 1;
                 }
+            if (versionNumber > 2) {
+                aNumber = [myArray objectAtIndex:15];
+                myProgramPref = [aNumber intValue];
+                }
+            else
+                myProgramPref = 1;
         }
     if (![myFileManager fileExistsAtPath: fullString]) {
-        myDisplayPref = 0;
+        myDisplayPref = 1;
         myColorPref = 1;
+        myProgramPref = 1;
         }
-    if ((![myFileManager fileExistsAtPath: fullString]) || (versionNumber == 1))
+    if ((![myFileManager fileExistsAtPath: fullString]) || (versionNumber < 3))
         {
-            myArray = [NSMutableArray arrayWithCapacity: 15];
-            aNumber = [NSNumber numberWithInt: 2];
+            myArray = [NSMutableArray arrayWithCapacity: 16];
+            aNumber = [NSNumber numberWithInt: 3];
             [myArray insertObject: aNumber atIndex: 0];
             aFont = [textView font];
             [myArray insertObject: aFont atIndex: 1];
@@ -704,10 +919,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
             if (myLatexEngine == nil)
                 myLatexEngine = [[NSString stringWithString: @"/usr/local/bin/pdflatex"] retain];
             [myArray insertObject: myLatexEngine atIndex: 12];
-            aNumber = [NSNumber numberWithInt: 0];
+            aNumber = [NSNumber numberWithInt: 1];
             [myArray insertObject: aNumber atIndex: 13];
             aNumber = [NSNumber numberWithInt: 1];
             [myArray insertObject: aNumber atIndex: 14];
+            aNumber = [NSNumber numberWithInt: 1];
+            [myArray insertObject: aNumber atIndex: 15];
 
             myData = [NSArchiver archivedDataWithRootObject: myArray];
             [myFileManager createFileAtPath: fullString contents: myData attributes: nil];
@@ -761,28 +978,47 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 - (void) doLine: sender;
 {
-    int		result, line, i;
-    NSString	*text;
-    unsigned	start, end, irrelevant;
-    NSRange	myRange;
+    int		result, line;
 
     myPrefResult = 2;
     result = [NSApp runModalForWindow: linePanel];
     if (result == 0) {
         line = [lineBox intValue];
-        text = [textView string];
-        myRange.location = 1;
-        myRange.length = 1;
-        for (i = 1; i <= line; i++) {
-            [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
-            myRange.location = end;
-            }
-        myRange.location = start;
-        myRange.length = 0;
-        [textView setSelectedRange: myRange];
-        [textView scrollRangeToVisible: myRange];
+        [self toLine: line];
         }
 }
+
+- (void) doError: sender;
+{
+   if (errorNumber > 0) {
+        [textWindow makeKeyAndOrderFront: self];
+        [self toLine: errorLine[whichError]];
+        whichError++;
+        if (whichError >= errorNumber)
+            whichError = 0;
+        }
+}
+
+- (void) toLine: (int) line;
+{
+    int		i;
+    NSString	*text;
+    unsigned	start, end, irrelevant;
+    NSRange	myRange;
+
+    text = [textView string];
+    myRange.location = 0;
+    myRange.length = 1;
+    for (i = 1; i <= line; i++) {
+        [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        myRange.location = end;
+        }
+    myRange.location = start;
+    myRange.length = (end - start);
+    [textView setSelectedRange: myRange];
+    [textView scrollRangeToVisible: myRange];
+}
+
 
 - (int) displayPref;
 {
@@ -799,7 +1035,121 @@ if (inputPipe == [[aNotification object] standardInput]) {
     return myColorPref;
 }
 
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem {
+    
+    if (fileIsTex)
+        return YES;
+    else if ([[anItem title] isEqualToString:@"Tex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"Latex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"Bibtex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"Print..."]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"Set Project Root..."]) {
+        return NO;
+        }
 
+    else return YES;
+}
+
+- (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
+{
+    NSRange	matchRange;
+    NSString	*textString;
+    int		i, count, uchar, leftpar, rightpar;
+    BOOL	done;
+    NSDate	*myDate;
+    
+    if (replacementString == nil) return YES;
+    if ([replacementString length] != 1) return YES;
+    
+    rightpar = [replacementString characterAtIndex:0];
+    if ((rightpar != 0x007D) &&  (rightpar != 0x0029) &&  (rightpar != 0x005D)) return YES;
+    
+    if (rightpar == 0x007D) 
+        leftpar = 0x007B;
+    else if (rightpar == 0x0029) 
+        leftpar = 0x0028;
+    else 
+        leftpar = 0x005B;
+        
+    textString = [textView string];
+    i = affectedCharRange.location;
+    count = 1;
+    done = NO;
+    while ((i > 0) && (! done)) {
+        i--;
+        uchar = [textString characterAtIndex:i];
+        if (uchar == rightpar)
+            count++;
+        else if (uchar == leftpar)
+            count--;
+        if (count == 0) {
+            done = YES;
+            matchRange.location = i;
+            matchRange.length = 1;
+            [textView setSelectedRange: matchRange];
+            [textView display];
+            myDate = [NSDate date];
+            while ([myDate timeIntervalSinceNow] > - 0.15);
+            [textView setSelectedRange: affectedCharRange];
+            }
+        }
+    return YES;
+}
+
+- (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange
+{
+    NSRange	replacementRange;
+    NSString	*textString;
+    int		length, i, j;
+    BOOL	done;
+    int		leftpar, rightpar, count, uchar;
+
+    if (newSelectedCharRange.length != 1) return newSelectedCharRange;
+    textString = [textView string];
+    if (textString == nil) return newSelectedCharRange;
+    length = [textString length];
+    i = newSelectedCharRange.location;
+    if (i >= length) return newSelectedCharRange;
+    rightpar = [textString characterAtIndex: i];
+    if ((rightpar != 0x007D) && (rightpar != 0x0029) && (rightpar != 0x005D)) return newSelectedCharRange;
+    
+    j = i;
+    if (rightpar == 0x007D) 
+        leftpar = 0x007B;
+    else if (rightpar == 0x0029) 
+        leftpar = 0x0028;
+    else 
+        leftpar = 0x005B;
+    count = 1;
+    done = NO;
+    while ((i > 0) && (! done)) {
+        i--;
+        uchar = [textString characterAtIndex:i];
+        if (uchar == rightpar)
+            count++;
+        else if (uchar == leftpar)
+            count--;
+        if (count == 0) {
+            done = YES;
+            replacementRange.location = i;
+            replacementRange.length = j - i + 1;
+            return replacementRange;
+            }
+        }
+        
+    return newSelectedCharRange;
+}
 
 @end
 
@@ -1248,6 +1598,18 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [myDocument doLatex: sender];
 }
 
+- (void) doBibtex: sender;
+{
+    [myDocument doBibtex: sender];
+}
+
+- (void) doIndex: sender;
+{
+    [myDocument doIndex: sender];
+}
+
+
+
 - (void) previousPage: sender;
 {
     [[myDocument pdfView] previousPage: sender];
@@ -1258,8 +1620,24 @@ if (inputPipe == [[aNotification object] standardInput]) {
     [[myDocument pdfView] nextPage: sender];
 }
 
+- (void) doError: sender;
+{
+    [myDocument doError: sender];
+}
 
 
 @end
+
+
+@implementation ConsoleWindow
+
+- (void) doError: sender;
+{
+    [myDocument doError: sender];
+}
+
+
+@end
+
 
 

@@ -2,6 +2,8 @@
 
 #import <AppKit/AppKit.h>
 
+#define NUMBEROFERRORS	20
+
 @interface MyDocument : NSDocument {
     id			textView;
     id			pdfView;
@@ -26,11 +28,14 @@
     id			texEngine;
     id			latexEngine;
     id			textFinder;
-    int			whichEngine; /* 0 = tex, 1 = latex */
+    id			typesetButton;
+    id			typesetChoice;
+    int			whichEngine; /* 0 = tex, 1 = latex, 2 = bibtex */
     NSString		*myTexEngine;
     NSString		*myLatexEngine;
     int			myDisplayPref; /* 0 = apple, 1 = ghostscript */
     int			myColorPref; /* 0 = gray, 1 = 256, 2 = thousands */
+    int			myProgramPref; /* 0 = tex, 1 = latex */
     NSTextField		*texCommand;
     NSPipe		*outputPipe;
     NSPipe		*inputPipe;
@@ -38,14 +43,24 @@
     NSFileHandle	*readHandle;
     NSString		*aString;
     NSTask		*texTask;
+    NSTask		*bibTask;
+    NSTask		*indexTask;
     NSDate		*startDate;
     NSFileManager	*myFileManager;
     NSPDFImageRep	*texRep;
     int			myPrefResult;
+    BOOL		fileIsTex;
+    int			errorLine[NUMBEROFERRORS];
+    int			errorNumber;
+    int			whichError;
+    BOOL		makeError;
     }
     
 - (void) doTex: sender;
 - (void) doLatex: sender;
+- (void) doBibtex: sender;
+- (void) doIndex: sender;
+- (void) doTypeset: sender;
 - (void) doTemplate: sender;
 - (void) doTexCommand: sender;
 - (void) printSource: sender;
@@ -56,11 +71,19 @@
 - (void) okForPrintRequest: sender;
 - (void) readPreferences;
 - (void) doLine: sender;
+- (void) chooseProgram: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
 - (int) displayPref;
 - (id) fileManager;
 - (int) colorPref;
+- (void) doBibJob;
+- (void) doIndexJob;
+- (void) toLine: (int)line;
+- (void) doError: sender;
+- (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
+- (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
+
 @end
 
 
@@ -108,7 +131,19 @@
 - (void) doPreferences: sender;
 - (void) doTex: sender;
 - (void) doLatex: sender;
+- (void) doBibtex: sender;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
+- (void) doError: sender;
 
 @end
+
+@interface ConsoleWindow : NSWindow {
+
+    MyDocument	*myDocument;
+    }
+   
+- (void) doError: sender;
+
+@end
+

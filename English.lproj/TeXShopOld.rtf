@@ -1,5 +1,6 @@
 {\rtf1\mac\ansicpg10000{\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+\paperw12620\paperh14400
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -16,8 +17,7 @@
 
 \i\b0\fs24 \cf0 \
 	Preliminaries\
-	Getting and Installing teTeX\
-	Alternate Source for teTeX\
+	Getting and Installing teTex\
 	Getting and Installing ghostscript\
 	Getting and Installing TeXShop\
 	Running TeXShop for the First Time\
@@ -30,10 +30,8 @@
 	Setting Preferences\
 	Printing\
 	BibTeX\
-        	MakeIndex\
 	Opening Other Files with TeXShop\
 	Graphic Conversions\
-        	Localizations\
 	Tasks for the Future\
 	Sending Bug Reports\
 	License\
@@ -80,36 +78,7 @@ Ghostscript is able to display TeX fonts and jpg and pdf images on the screen. T
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \b \cf0 \
-Getting and Installing teTeX:\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version is on my website\
-\
-	http://www.uoregon.edu/~koch/texshop/texshop.html\
-\
-and at\
-\
-	ftp://ftp.nluug.nl/pub/comp/next/MacOSX/teTeX-1.07-fmt-1.02.macosx.tar.gz\
-\
-The file at my site is named "tetex.tar.gz" and the file in The Netherlands is named "teTeX-1.07-fmt-1.02.macosx.tar.gz". Obtain one of these files. In a terminal, type "su" and give the root password to become the superuser. Then uncompress and install the file by typing\
-	\
-     gnutar  zpPxvf  tetex.tar.gz        or        gnutar  zpPxvf  teTeX-1.07-fmt-1.02.macosx.tar.gz\
-\
-This command will create a folder "/usr/local/teTeX" containing the complete distribution. \
-\
-Next create symbolic links to the teTeX binaries in /usr/local/bin by issuing the commands\
-\
-	cd   /usr/local/teTeX\
-	source mklinks\
-\
-Finally, if your printer uses letter size paper rather than A4 size paper, as is likely in the US, issue the command\
-\
-	texconfig dvips paper letter\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\b \cf0 Alternate Source for teTeX:\
+Getting and Installing teTex:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -121,11 +90,63 @@ Several tar files must be obtained and installed, as explained at the site.\
 \
 Later versions of the distribution can be obtained and installed at any time; TeXShop does not install any configuration files in the teTeX tree.\
 \
-The instructions for installing teTeX at the above site tell users to either add the TeX binary path to their PATH variable or else create symbolic links to the TeX binaries in /usr/local/bin. TeXShop assumes that you have created symbolic links. If this is not the case with your installation, create symbolic links for the three programs used by TeXShop by typing the following commands as root:\
+The instructions for installing teTeX at the above site tell users to either add the TeX binary path to their PATH variable or else create symbolic links to the TeX binaries in /usr/local/bin. TeXShop assumes that the binaries 
+\i pdftex, pdflatex, 
+\i0 and 
+\i bibtex
+\i0  will be in /usr/local/bin. If this is not the case with your installation, create symbolic links by typing the following commands as root\
 \
 	ln   -s   your_location_for_binaries/pdftex   /usr/local/bin\
 	ln   -s   your_location_for_binaries/pdflatex   /usr/local/bin\
 	ln   -s   your_location_for_binaries/bibtex   /usr/local/bin\
+\
+There is another way to obtain the distribution which is somewhat easier, and I'll give complete instructions for that method. Go to the TeXShop web site\
+\
+	http://www.uoregon.edu/~koch/texshop.texshop.html\
+\
+and click on the "teTeX" link to download the file "teTeX-full-1.0.2a-P-b.tgz.tar.gz". This is\
+a 38.8 meg file.\
+\
+In a terminal window, type the command\
+\
+	gzip -d teTeX-full-1.0.2a-P-b.tgz.tar.gz\
+\
+and then the command\
+\
+	gnutar -xf teTeX-full-1.0.2a-P-b.tgz.tar\
+\
+These will produce a file titled teTeX-full.pkg with an icon showing an open box (together with a file "teTeX-full-1.0.2a-P-b.tgz.tar", which can be thrown away). The file teTeX-full.pkg is a package file which is recognized by the installer. 
+\i However, the installer will not install in the correct spot,  so do not double click this file.
+\i0 \
+\
+Log out and log in as 
+\i root
+\i0 . In a terminal window, type the following commands to create the directory "/Local/Library":\
+\
+	cd /\
+	mkdir Local\
+	cd Local\
+	mkdir Library\
+\
+Drag the file teTeX-full.pkg to the directory /Local/Library.  Then type the following commands in a terminal window:\
+\
+	cd /Local/Library/teTeX-full.pkg\
+	mv teTeX-full.pax.gz  /Local/Library\
+	cd /Local/Library\
+	gzip -d teTeX-full.pax.gz\
+	pax -r -f teTeX-full.pax\
+\
+This will create a new folder named "teTeX" inside the folder "/Local/Library". The file "teTeX-full.pax" can be thrown away. The folder teTeX contains the complete teTeX distribution.\
+\
+While still logged in as 
+\i root
+\i0 , create symbolic links to the binary files for teTeX in the following manner. Create the directory "/usr/local/bin" if it does not exist. In a terminal window, type and execute the command\
+\
+	ln    -s    /Local/Library/teTeX/bin/powerpc-apple-rhapsody5.3/*    /usr/local/bin \
+\
+When you are done, log out and log in as yourself. You can immediately use the standard command line programs in TeX: 
+\i tex, latex, dvips,
+\i0  etc.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -133,19 +154,36 @@ The instructions for installing teTeX at the above site tell users to either add
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b0 \cf0 Gerben Wierda has also compiled the latest ghostscript. His version is on my website\
+\b0 \cf0 In your user account, go to the TeXShop web site\
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-and at\
+and click on the "Ghostscript" link to download the file "ghostscript.tar.Z". This is\
+a 4.77 meg file.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Log out and log in as 
+\i root
+\i0 . Create the directory /usr/local/share if it does not exist.\
+Copy the file ghostscript.tar.Z to this directory.\
 \
-	ftp://ftp.nluug.nl/pub/comp/next/MacOSX/gs6.01.macosx.tar.gz\
-        \
-The file at my site is named "gs.tar.gz" and the file in The Netherlands is named "gs6.01.macosx.tar.gz".  Obtain one of these files. In a terminal, type "su" and give the root password to become the superuser. Then uncompress and install the file by typing\
-	\
-     gnutar  zpPxvf  gs.tar.gz        or        gnutar  zpPxvf  gs6.01.macosx.tar.gz\
+Type the command\
 \
-This command will create a folder "/usr/local/share/ghostscript" containing the distribution, and will install binaries in "/usr/local/bin". \
+	uncompress ghostscript.tar.Z\
+\
+and then the command\
+\
+	gnutar -xf ghostscript.tar\
+\
+This will create a folder named ghostscript inside /usr/local/share, together with a file\
+ghostscript.tar which can be thrown away.\
+\
+Create the directory /usr/local/bin if it does not already exist. Copy the ghostscript binaries to this directory by typing the following command:\
+\
+	cp /usr/local/share/ghostscript/6.21/bin/*    /usr/local/bin\
 \
 Log out and log in as yourself.\
 \
@@ -158,11 +196,15 @@ In your user account, log onto the following web site:\
 \
 	www.uoregon.edu/~koch/texshop/texshop.html\
 \
-Click the link ``TeXShop Program''. This will produce a file titled texshop.tar.gz. In a terminal program, type the following commands:\
+Click the link ``TeXShop Program''. This will produce a file titled texshop.tar.Z. In a terminal program, type the following commands:\
 \
-	gnutar  zpPxvf  texshop.tar.gz\
+	uncompress texshop.tar.Z\
 \
-This will produce a folder titled ``TeXShop Folder,'' together with a file ``texshop.tar.gz'' which can be thrown away. The TeXShop Folder contains several files which can be read or discarded and the TeXShop program. Drag TeXShop to the Applications folder. If you intend to use it often, drag its icon to the Dock.\
+and then\
+\
+	gnutar -xf texshop.tar\
+\
+This will produce a folder titled ``TeXShop Folder,'' together with a file ``texshop.tar'' which can be thrown away. The TeXShop Folder contains several files which can be read or discarded and the TeXShop program. Drag TeXShop to the Applications folder. If you intend to use it often, drag its icon to the Dock.\
 \
 
 \b Running TeXShop for the First Time\
@@ -191,9 +233,7 @@ usually use TeX, choose it as your default program in the Preferences Dialog.\
 \
 If you notice an error, you can immediately fix it in the editing window and push the "TeX" or "Latex" button again without halting the first invocation of 
 \i pdflatex
-\i0 . The program will kill that invocation and run another. \
-\
-TeXShop remembers the source lines of the first twenty errors. To cycle through these lines in the source file, choose "Go To Error" in the Edit menu or type the keyboard shortcut for this menu item.\
+\i0 . The program will kill that invocation and run another.\
 \
 When you fix errors and typeset again, the viewer will remember the page you were previously viewing.\
 \
@@ -511,31 +551,6 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b \cf0 MakeIndex:\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\b0 \cf0 MakeIndex is a tool used to add an index to a LaTeX document. To create such an index, you should\
-\
-	a) Add the command "\\usepackage\{makeidx\}" to the top of the source file\
-        \
-        	b) Put a "\\makeindex" command in the document preamble\
-                \
-               c) Put a "\\printindex" command where the index should appear, often just before "\\end\{document\}"\
-               \
-               d) Put index references in the source document, as in the example below:\
-               \
-               "There are many animals in the world \\index\{animal\}. Examples include bears and tigers \\index\{bear|tiger\}\
-               and various insects \\index\{insect|see\{animal\}\}."\
-               \
- To create the index, typeset the document as usual. Then run MakeIndex. Then typeset again.\
- \
- Many additional details can be found in 
-\i The Latex Companion
-\i0  by Goossens, Mittelbach, and Samarin.\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
 \b \cf0 Opening Other Files with TeXShop:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -584,14 +599,6 @@ However, it is not a good idea to use TeXShop as a general editor. TeXShop can r
 		tiff -> pdf\
 \
 I'm not an expert in Unix shell scripts; if you have scripts for these conversions or have already made drag-and-drop convertor boxes, please let me know about them.\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\b \cf0 Localizations:\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\b0 \cf0 TeXShop contains a French localization constructed by Jerome Laurens. Thanks!\
 	\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -634,6 +641,7 @@ I'm not an expert in Unix shell scripts; if you have scripts for these conversio
         	University of Oregon\
         	Eugene, Oregon 97403      \
 	koch@math.uoregon.edu\
+\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 

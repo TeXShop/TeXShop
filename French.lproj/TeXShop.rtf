@@ -1,0 +1,1028 @@
+{\rtf1\mac\ansicpg10000{\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fnil\fcharset78 HiraMinDS-W3;\f2\fnil\fcharset77 Monaco;
+\f3\fnil\fcharset77 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;\red170\green170\blue170;\red128\green128\blue128;}
+\paperw12500\paperh11460
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs48 \cf0 Aide TeXShop\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs28 \cf0 Contenu\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i\b0\fs24 \cf0 \
+	Pr\'8eliminaires\
+	Obtenir et installer 
+\f1\i0 teTex
+\f0\i \
+	Obtenir et installer ghostscript\
+	Obtenir et installer TeXShop\
+	Premi\'8fre utilisation de TeXShop\
+	Composer des documents\
+	Utiliser Apple pour le rendu pdf\
+	Utiliser Ghostscript pour le rendu pdf\
+	Inclure des graphiques\
+	Personnaliser le menu Gabarit\
+	Choisir un document principal\
+	R\'8egler les pr\'8ef\'8erences\
+	Imprimer\
+	BibTeX\
+	Ouvrir d'autres fichiers avec TeXShop\
+	Conversions graphiques\
+	Le futur de TeXShop\
+	Rapport de bugs\
+	Licence d'utilisation\
+	\'cb propos de cette traduction\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i0\b \cf0 \
+Pr\'8eliminaires :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 TeXShop est un programme Mac OS X qui permet de compiler des fichiers 
+\f1 TeX
+\f0  et 
+\f1 LaTeX
+\f0  et de visualiser le r\'8esultat \'88 l'\'8ecran. Le programme compose les pages avec 
+\f2 pdftex
+\f0  ou 
+\f2 pdflatex
+\f0  plut\'99t que 
+\f2 tex
+\f0  et 
+\f2 latex
+\f0\i  
+\i0 ; ces programmes produisent des fichiers 
+\i pdf
+\i0  plut\'99t que 
+\i dvi
+\i0 . Puisque 
+\i pdf
+\i0  est le format graphique interne \'88  Mac OS X, il est plus facile d'afficher le r\'8esultat \'88 l'\'8ecran. 
+\f2 pdftex
+\f0  et 
+\f2 pdflatex
+\f0  sont d\'9es \'88  Han The Thanh, Petr Sojka, et Jiri Zlatuska.\
+\
+Les fichiers 
+\i pdf
+\i0  cr\'8e\'8es par TeXShop ont un format 
+\i pdf
+\i0  standard, ils peuvent \'90tre communiqu\'8es \'88 des tiers qui pourront les lire sur la plupart des syst\'8fmes informatiques. Ils peuvent \'90tre lus avec Adobe Acrobat Reader sous Mac OS 9, par exemple. \
+\
+TeXShop n'inclut pas 
+\f1 TeX
+\f0 . En fait, il utilise la distribution 
+\f1 TeX
+\f0  standard 
+\f1 teTeX
+\f0\i  
+\i0 cr\'8e\'8ee par Thomas Esser, une excellente collection de programmes, fichiers et utilitaires concernant 
+\f1 TeX
+\f0 . Cette collection (livr\'8ee en standard avec les syst\'8fmes Linux) a \'8et\'8e compil\'8ee pour Mac OS X. Les instructions pour l'obtenir sont donn\'8ees ci-apr\'8fs.\
+\
+TeXShop is \'8ecrit avec Cocoa et repose sur la classe NSPDFImageRep pour afficher les fichiers 
+\i pdf
+\i0 . Dans la version b\'8eta publique de Mac OS X, cette classe est incompl\'8fte : les fonctionnalit\'8es suivantes ne sont pas support\'8ees\
+\
+\pard\li1420\ql\qnatural
+\cf0 	a) la classe n'interpr\'8fte pas les polices incluses dans les fichiers 
+\i pdf
+\i0 , aussi leur substitue-t-elle 	la police syst\'8fme.\
+\
+	b) la classe n'interpr\'8fte pas non plus les graphiques inclus dans les fichiers 
+\i pdf
+\i0 , la r\'8egion qui 	devrait \'90tre ocupp\'8ee par le graphique est laiss\'8ee vide..\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+Pour pallier \'88 ces restrictions, on peut r\'8egler les pr\'8ef\'8erences de TeXShop pour qu'il utilise le programme UNIX GhostScript
+\i  
+\i0 pour le rendu des fichiers 
+\i pdf
+\i0 . GhostScript est un programme \'8ecrit par L. Peter Deutsch pour manipuler les fichiers 
+\i postscript
+\i0  et 
+\i pdf
+\i0 ; il est souvent utiliser sur les syst\'8fmes Linux. Des instructions pour obtenir ce programme compil\'8e pour Mac OS X par John Hornkvist sont d\'8ecrites plus loin.\
+\
+Ghostscript affiche \'88 l'\'8ecran les polices 
+\f1 TeX
+\f0  ainsi que les images aux formats 
+\i jpeg
+\i0  et 
+\i pdf
+\i0 . Pour la qualit\'8e de rendu des images, GhostScript n'atteint pas NSPDFImageRep, mais c'est suffisant pour que le programme soit d\'8ecemment utilisable. D\'8fs que Apple aura termin\'8e NSPDFImageRep, il ne sera plus n\'8ecessaire d'utiliser GhostScript puisque TeXShop fonctionnera correctement, sans m\'90me n\'8ecessiter de mise \'88 jour.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+Obtenir et installer 
+\f1 teTex
+\f0  :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Un utilisateur des Pays Bas a compil\'8e pour Mac OS X la derni\'8fre version de 
+\f1 teTeX
+\f0 . Elle est disponible sur mon site web\
+\
+\
+\pard\li2160\ql\qnatural
+\cf0 http://www.uoregon.edu/~koch/texshop/texshop.html\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+ainsi qu'\'88\
+\
+\pard\li2160\ql\qnatural
+\cf0 	ftp://ftp.nluug.nl/pub/comp/next/MacOSX/teTeX-1.07-fmt-1.02.macosx.tar.gz\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+Le fichier de mon a pout nom 
+\f2 tetex.tar.gz
+\f0  alors que le fichier aux Pays-Bas s'appelle 
+\f2 teTeX-1.07-fmt-1.02.macosx.tar.gz
+\f0 . T\'8el\'8echarger un de ces fichiers. Dans un Terminal, entrer 
+\f2 su
+\f0  et valider le mot de passe pour devenir administrateur (root). D\'8ecompressez et installez la distribution en entrant\
+	\
+\pard\li2160\ql\qnatural
+
+\f2 \cf2 	\cf3 [root] #\cf0  gnutar  zpPxvf  tetex.tar.gz\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+ou\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf2 	\cf3 [root] #\cf0  gnutar zpPxvf teTeX-1.07-fmt-1.02.macosx.tar.gz
+\f0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+selon le cas. Cette commande cr\'8eera le dossier 
+\f2 /usr/local/teTeX
+\f0  avec toute la distribution. \
+\
+Ensuite cr\'8eer dans /usr/local/bin les liens symboliques vers les binaires TeX avec les commandes\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf2 	\cf3 [root] #\cf0  cd /usr/local/teTeX\
+\cf2 	\cf3 [root] #\cf0  source mklinks\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Pour finir, si votre imprimante utilise le papier au format letter plut\'99t que A4, comme scela se produit au USA,entrer la commande\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\cf2 	\cf3 [root] #\cf0  texconfig dvips paper letter\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Autre source pour teTeX:
+\b0 \
+
+\b \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 La distribution compl\'8fte de 
+\f1 teTeX
+\f0  compil\'8ee pour Mac OS X (rhapsody) est disponible sur le site web de 
+\f1 teTeX
+\f0  :\
+\
+\pard\li2160\ql\qnatural
+\cf0 	http://www.tug.org/tetex\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+On doit rapatrier plusieurs fichiers tar et les installer selon les instructions officielles fournies sur le site.\
+\
+On peut installer de nouvelles versions de 
+\f1 teTeX
+\f0  ind\'8ependamment de TeXShop puisque ce dernier n'installe aucun fichier dans l'arborescence 
+\f1 teTeX
+\f0 .\
+\
+Les instructions officielles d'installation de 
+\f1 teTeX
+\f0  pr\'8econisent d'ajouter \'88 la variable d'environnement PATH le chemin d'acc\'8fs vers les binaires 
+\f1 TeX
+\f0  ou de cr\'8eer dans /usr/local/bin des liens symboliques vers ces binaires. TeXShop consid\'8fre que les binaires 
+\f2 pdftex
+\f0\i , 
+\f2\i0 pdflatex
+\f0\i , 
+\i0 and 
+\f2 bibtex
+\f0  sont dans 
+\f2 /usr/local/bin
+\f0 . Si ce n'est pas le cas pour votre installation, cr\'8eer les lines symboliques en entrant ces commandes dans un terminal, en tant qu'administrateur (root)\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf2 	\cf3 [root] #\cf0  ln -s chemin_vers_les_binaires_TeX/pdftex /usr/local/bin\
+\cf2 	\cf3 [root] #\cf0  ln -s chemin_vers_les_binaires_TeX/pdflatex /usr/local/bin\cf2 	\cf3 [root] #\cf0  ln -s chemin_vers_les_binaires_TeX/bibtex /usr/local/bin\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Obtenir et installer Ghostscript :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 En tant qu'utilisateur, aller sur le site web de TeXShop\
+\
+\pard\li2160\ql\qnatural
+\cf0 	http://www.uoregon.edu/~koch/texshop/texshop.html\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+et cliquer le lien "Ghostscript" pour rapatrier le fichier "ghostscript.tar.Z". Il p\'8fse 4.77 MO.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 En tant qu'administrateur (root), cr\'8eer le dossier "/usr/local/share" s'il n'existe pas, y d\'8eplacer le fichier ghostscript.tar.Z.\
+\
+Dans une fen\'90tre Terminal, entrer\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf3 [root] # \cf0 cd /usr/local/share\
+\cf3 [root] # \cf0 uncompress ghostscript.tar.Z\
+\cf3 [root] # \cf0 gnutar -xf ghostscript.tar\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Cela cr\'8ee le dossier ghostscript dans /usr/local/share. Le fichier interm\'8ediaire ghostscript.tar peut \'90tre \'8elimin\'8e.\
+\
+En tant qu'administrateur (root), cr\'8eer le dossier "/usr/local/bin" s'il n'existe pas, y copier les binaires ghostscript en entrant dans la fen\'90tre Terminal:\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf3 [root] # \cf0 cp /usr/local/share/ghostscript/6.21/bin/* /usr/local/bin\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 Quitter la session et se connecter en tant qu'utilisateur. Les commandes ghostscript 
+\f2 gs
+\f0 ,... sont imm\'8ediatement disponibles.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Obtenir et installer TeXShop:
+\b0 \
+\
+En tant qu'utilisateur, aller sur le site web de TeXShop\
+\
+	http://www.uoregon.edu/~koch/texshop/texshop.html\
+\
+et cliquer le lien "TeXShop Program" pour rapatrier le fichier "texshop.tar.Z". Dans une fen\'90tre Terminal, entrer les commandes en tant qu'administrateur :\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf3 [root] # \cf0 cd dossier_qui_contient_texshop.tar.Z\
+\cf3 [root] # \cf0 uncompress texshop.tar.Z\
+\cf3 [root] # \cf0 gnutar -xf texshop.tar\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Le r\'8esultat est le dossier "TeXShop Folder'' qui contient plusieurs fichiers d'information non indispensables et le programme TeXShop lui-m\'90me. D\'8eplacer TeXShop dans le dossier Applications et si vous voulez l'avoir toujours sous la main, placer son ic\'99ne dans le dock.\
+\
+Le fichier auxiliaire "texshop.tar'' peut \'90tre \'8elimin\'8e.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Utiliser TeXShop pour la premi\'8fre fois :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Il y a quelques d\'8esagr\'8ements dus au fait que Mac OS X est encore en version b\'8eta et la classe NSPDFImageRep est incompl\'8fte. Au premier d\'8emarrage de TeXShop, ouvrir l'item "
+\f3 Pr\'8ef\'8erences"
+\f0  du menu "
+\f3\b TeXShop
+\b0 "
+\f0 , et cocher "
+\f3 GhostScript
+\f0 '' de la section "
+\f3 Rendre pdf avec
+\f0 ". Cela forcera TeXShop \'88 rendre les sorties 
+\i pdf
+\i0  en utilisant GhostScript plut\'99t que le code Apple, faisant appara\'94tre les symboles math\'8ematiques notamment. D'autres am\'8enagements pour les illustrations graphiques et l'impression sont d\'8ecrits ci-dessous. \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Composer des documents :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Pour utiliser TeXShop, taper vos commandes 
+\f1 LaTeX
+\f0  dans la fen\'90tre d'\'8edition, puis cliquer le bouton "
+\f3 Latex
+\f0 " en haut de la fen\'90tre. Le contenu sera sauvegard\'8e et la commande 
+\i pdflatex
+\i0  execut\'8ee. Une deuxi\'8fme fen\'90tre appara\'94t qui affiche les message de 
+\i tex
+\i0  et une console. En cas d'erreur, 
+\f2 pdflatex
+\f0  stoppe; valider pour passer les erreurs l'une apr\'8fs l'autre ou entrer l'une des instructions 
+\f2 tex
+\f0  standard  pour quitter, continuer en silence, etc. Une fois que la compilation est achev\'8ee avec un minimum de succ\'8fs, le r\'8esultat appara\'94t dans une nouvelle fen\'90tre.\
+\
+Pour compiler un document 
+\f1 TeX
+\f0 , s\'8electionner "
+\f3 Tex"
+\f0  dans le menu d\'8eroulant program "
+\f3 Program
+\f0 ". Si vous utilisez habituellement 
+\f1 TeX
+\f0  (Plain), cocher la case dans la section "
+\f3 Format par d\'8efaut
+\f0 " des "
+\f3 Pr\'8ef\'8erences"
+\f0 . \
+\
+Si vous voyez une erreur dans votre source, vous pouvez la corriger imm\'8ediatement dans la fen\'90tre d'\'8edition et cliquer le bouton  "
+\f3 TeX
+\f0 " ou "
+\f3 Latex
+\f0 ". Cela interrompra la compilation en cours, s'il y en a une, et compilera la version corrig\'8ee sans d\'8elai.\
+\
+Quand on corrige la source et on compile de nouveau, la fen\'90tre 
+\i pdf
+\i0  pointe sur la m\'90me page.\
+\
+TeXShop peut g\'8erer plusieurs documents. Si vous choisissez "
+\f3 Nouveau
+\f0 " ou "
+\f3 Ouvrir
+\f0 ,"  les documents pr\'8ec\'8edents restent et de nouvelles fen\'90tres s'ouvrent. Si vous ouvrez un fichier tex dans un dossier qui contient un fichier 
+\i pdf
+\i0  de m\'90me nom, ce fichier appara\'94tra aussi dans la fen\'90tre de rendu.\
+\
+On peut lancer TeXShop en double cliquant un document \'88 l'extension 
+\f2 .tex
+\f0 . L'application ouvre ce document ainsi que le fichier 
+\i pdf
+\i0  associ\'8e, s'il y en a un.\
+\
+On peut fermer la fen\'90tre 
+\i pdf
+\i0  \'88 tout moment. Elle r\'8eappara\'94tra en fin de compilation.Si on ferme la fen\'90tre d'\'8edition, cela ferme aussi la fen\'90tre 
+\i pdf
+\i0  associ\'8ee (celles des autres documents restent ouvertes). Aussi, quand une fen\'90tre d'\'8edition encombre l'\'8ecran, la minimiser plut\'99t que la fermer.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i \cf0 Attention: 
+\f2\i0 pdftex
+\f0  et 
+\f2 pdflatex
+\f0  sont des programmes unix qui n'aiment pas les espaces dans les noms de fichiers. Les fichiers source cr\'8ees avec TeXShop devraient avoir des nom sans espace. Si ces sources sont dans des sous dossier de votre dossier de d\'8epart, leurs noms aussi ne devraient pas sontenir d'espaces. TeXShop lui n'a pas de probl\'8fmes d'espaces dans les noms de fichiers.  \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Utiliser Apple pour le rendu pdf :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 On peut \'8evaluer le rendu 
+\i pdf
+\i0  avec Apple en cochant "
+\f3 Mac OS X
+\f0 " dans les pr\'8ef\'8erences. Vitesse et qualit\'8e de rendu sont am\'8elior\'8ees, mais les symboles sont mal affich\'8es puisque la police Helvetica remplace toutes les polices 
+\f1 TeX
+\f0  \'88 l'\'8ecran. \
+\
+Si vous voulez utiliser la police Times Roman, utiliser dans le pr\'8eambule 
+\f1 LaTeX
+\f0  la commande\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\usepackage\{times\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Cela rend TeXShop utilisable pour les documents qui ne contiennent que du texte. L'impression fonctionne correctement. 
+\b \
+\
+Utiliser GhostScript pour le rendu pdf :\
+\
+
+\b0 Pour utiliser le rendu ghostscript, selectionner "
+\f3 Ghostscript
+\f0 '' dans les pr\'8ef\'8erences. Le polices 
+\f1 TeX
+\f0  seront affich\'8ees correctement, mais les images ne seront pas aussi nettes que pr\'8ec\'8edemment.\
+\
+En mode Ghostscrip, le curseur d'agrandissement en bas de la fen\'90tre 
+\i pdf
+\i0  n'accepte que cinq niveaux d'\'8echelle. Au niveau 3, avec le curseur au milieu de sa course, une pleine page est affich\'8ee. Aux niveaux 4 et 5, avec le curseur vers la droite, les pages sont agrandies.
+\b \
+\
+Inclure des graphiques :\
+\
+
+\b0 Il est fr\'8equent d'utiliser dans le documents 
+\f1 TeX
+\f0  des fichiers graphiques en PostScript encapsul\'8e (
+\i eps
+\i0 ) \
+car ils s'impriment bien quelle que soit la taille. Le format graphique natif de Mac OS X est 
+\i pdf
+\i0  (postscript display format); ce dernier s'imprimen bien aussi \'88 toute taille. Aussi, les graphiques pour les documents TeXShop devraient \'90tre au format 
+\i pdf
+\i0 . Il est clair que la plupart des aplications graphiques sous Mac OS seront modifi\'8ees dans les prochains mois pour exporter au format 
+\i pdf
+\i0 . En attendant, il existe plusieurs utilitaires qui permettent de transformer un fichier graphique d'un format en un autre. Consulter \'88 ce sujet les archives habituelles.\
+\
+Les auteurs de 
+\f2 pdflatex
+\f0  ont rendu facile l'inclusion de fichiers graphiques dans un document 
+\f1 LaTeX
+\f0  compil\'8e avec 
+\f2 pdflatex
+\f0 , m\'90me si celui-ci sera compil\'8e avec 
+\f2 latex
+\f0  et converti en fichier 
+\i dvi
+\i0  pour le distribuer \'88 des tiers. Au d\'8ebut d'un tel fichier source 
+\f1 LaTeX
+\f0 , inclure :\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\newif\\ifpdf\
+	\\ifx\\pdfoutput\\undefined\
+	\\pdffalse % we are not running PDFLaTeX\
+	\\else\
+	\\pdfoutput=1 % we are running PDFLaTeX\
+	\\pdftrue\
+	\\fi\
+\
+	\\ifpdf\
+	\\usepackage[pdftex]\{graphicx\}\
+	\\else\
+	\\usepackage\{graphicx\}\
+	\\fi\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0  
+\b \
+
+\b0 Apr\'8fs le 
+\f2 \\begin\{document\}
+\f0 , inclure les lignes\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\ifpdf\
+	\\DeclareGraphicsExtensions\{.pdf, .jpg\}\
+	\\else\
+	\\DeclareGraphicsExtensions\{.eps, .jpg\}\
+	\\fi\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\fs20 \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\fs24 \cf0 Quand on veut inclure un fichier graphique, par exemple "f1.pdf ", utiliser\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\includegraphics[width=2in]\{f1\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Avec cette commande, 
+\f1 TeX
+\f0  inclut le fichier graphique 
+\f2 f1.pdf
+\f0  quand on compile avec 
+\f2 pdflatex
+\f0 , mais le fichier 
+\f2 f1.eps
+\f0  quand on compile avec 
+\f2 latex
+\f0\i .\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\i0\b \cf0 Personnaliser le menu Gabarit :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 La premi\'8fre fois queTeXShop est lanc\'8e , il cr\'8ee le dossier\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	~/Library/Preferences/TeXShop Prefs/Templates\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+dans lequel il place les fichiers 
+\f2 Graphics.tex
+\f0\i , 
+\f2\i0 TexTemplate.tex
+\f0\i ,
+\i0  et 
+\f2 LatexTemplate.tex
+\f0 . Les noms de ces fichiers apparaissent dans le menu d\'8eroulant "
+\f3 Gabarit"
+\f0  de la fen\'90tre d'\'8edition. S\'8electionner un de ces articles permet d'ins\'8erer le contenu du fichier correspondant \'88 l'endroit du curseur.\
+\
+Ces trois fichiers mod\'8fles ont un format tex standard et peuvent \'90tre lus par TeXShop. D'autres fichiers tex peuvent \'90tre ajout\'8es au dossier Templates ci-dessus ; ils appara\'94tront dans le menu d\'8eroulant, pourvu que leur extension soit 
+\f2 .tex
+\f0 . Les fichiers originaux sont donn\'8es \'88 titre d'exemple et peuvent \'90tre effac\'8es.\
+\
+Pour retrouver les fichiers Gabarit originaux, effacer le dossier Templates ci-dessus et lancer TeXShop : il cr\'8ee le dossier dans sa forme initiale.  
+\b \
+\
+Choisir un document principal :\
+\
+
+\b0 Il est fr\'8equent de scinder un gros document en plusieurs parties contr\'99l\'8ees par un fichier principal. Par exemple, le fichier principal d'un livre serait 
+\f2 monLivre.tex
+\f0 \
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\documentclass[11pt]\{book\}\
+	\\includeonly\{Chapitre2/deux.tex\}\
+	\\textwidth = 6.5 in\
+	\\textheight = 9 in\
+	\\begin\{document\}\
+	\\include\{Chapitre1/un.tex\}\
+	\\include\{Chapitre2/deux.tex\}\
+	\\include\{Chapitre3/trois.tex\}\
+	\\end\{document\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 	\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Le fichier principal contient les commandes de mise en page et autres pour la totalit\'8e du projet, mais le contenu figure dans les fichiers 
+\f2 un.tex
+\f0\i , 
+\f2\i0 deux.tex
+\f0\i ,
+\i0  
+\f2 trois.tex
+\f0 . La deuxi\'8fme ligne ci-dessus informe 
+\f1 LaTeX
+\f0  de ne compiler que le chapitre 2, augmentant la vitesse de compilation \'88 la r\'8edaction de ce chapitre. Quand la r\'8edaction est termin\'8ee, cette ligne peut \'90tre supprim\'8ee (ou comment\'8ee) pour que la compilation produise la totalit\'8e du livre.\
+\
+Quand on r\'8edige le chapitre 2, on \'8edite dans TeXShop le fichier 
+\f2 deux.tex
+\f0 . Mais TeXShop ne doit pas compiler ce fichier (au demeurant incorrect) mais le fichier 
+\f2 monLivre.tex
+\f0 . On peut informer TeXShop d'agir ainsi, sans avoir \'88 ouvrir le fichier 
+\f2 monLivre.tex
+\f0  en utilisant l'article "Document principal..." du menu "Fichier". Il appara\'94t un dialogue permettant d'entrer le nom du document principal. \
+\
+Si le document principal r\'8eside dans le m\'90me dossier que le document \'8edit\'8e, il suffit de donner son nom, exension 
+\f2 .tex
+\f0  incluse. Par exemple, on entrera 
+\f2 monLivre.tex
+\f0  dans la fen\'90tre de dialogue Document principal.\
+\
+Si le document principal r\'8eside dans un autre dossier que le document \'8edit\'8e, on donnera son chemin d'acc\'8es relativement au document \'8edit\'8e. Dans l'exemple, les diff\'8erents chapitres sont \'88 l'int\'8erieur des dossiers 
+\f2 chapitre?
+\f0  eux-m\'90mes dans le dossier qui contient 
+\f2 monLivre.tex
+\f0 . Dans ce cas, on entrera 
+\f2 ../monLivre.tex
+\f0\i  
+\i0 dans la fen\'90tre de dialogue Document principal, explicitant la position de monLivre.tex par rapport \'88 
+\f2 deux.tex
+\f0 .\
+\
+Pour finir, le document principal peut \'90tre d\'8ecrit par son chemin d'acc\'8fs absolu, par exemple 
+\f2 /MonDisque/MonDossier/MesDocuments/monLivre.tex
+\f0 .\
+\
+Si le source 
+\f1 TeX
+\f0  ou 
+\f1 LaTeX
+\f0  tient en un seul fichier, il est inutile d'utiliser un document principal : c'est le fichier lui m\'90me par d\'8efaut.\
+\
+TeXShop enregistre l'information sur le document principal dans un fichier au m\'90me nom et dans le m\'90me dossier que le fichier \'8edit\'8e mais avec l'extension 
+\f2 .texshop
+\f0 . Ainsi, si les sources du chapitre 2 sont dans 
+\f2 deux.tex
+\f0 , TeXShop \'8ecrit le nom du document principal dans 
+\f2 deux.texshop
+\f0\i  
+\i0 dans le m\'90me dossier que 
+\f2 deux.tex
+\f0 .  Si on supprime 
+\f2 deux.texshop
+\f0 , TeXShop compilera 
+\f2 deux.tex
+\f0  plut\'99t que 
+\f2 monLivre.tex
+\f0 . \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+R\'8egler les Pr\'8ef\'8erences :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 On peut r\'8egler plusieurs choses avec l'article "
+\f3 Pr\'8ef\'8erences...
+\f0 " du menu "
+\f3\b TeXShop
+\f0\b0 " : la police par d\'8efaut pour la fen\'90tre d'\'8edition, l'agrandissement par d\'8efaut dans la fen\'90tre 
+\i pdf
+\i0 , et les positions respectives de ces fen\'90tres quand elles sont ouvertes. Pour un tel choix, ajuster leurs positions \'88 l'\'8ecran et rendre la configuration permanente dans le dialogue des pr\'8ef\'8erences.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Le dialogue des pr\'8ef\'8erences permet aussi de modifier les commandes ex\'8ecut\'8ees en cliquant sur les boutons "
+\f3 Tex
+\f0 " and "
+\f3 Latex
+\f0 ". Cela permet d'utiliser plut\'99t 
+\f2 etex
+\f0 , et ses versions 
+\i pdf
+\i0  
+\f2 pdfetex
+\f0  et 
+\f2 pdfelatex
+\f0 . C'est utile si les binaires 
+\f1 TeX
+\f0  ne sont pas situ\'8es dans le dossier attendu. Bien s\'9er, les commandes de remplacement doivent produire un r\'8esultat sous forme de fichier 
+\i pdf
+\i0 . Entrer le chemin absolu des nouvelles commandes.\
+\
+Pour finir, le dialogue des pr\'8ef\'8erences permet de choisir entre le rendu 
+\i pdf
+\i0  par Mac OS X ou par GhostScript, et de r\'8egler le nombre de couleurs utilis\'8ees par GhostScript, s'il est s\'8electionn\'8e.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Imprimer :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Quand la classe NSPDFImageRep sera compl\'8fte, l'impression depuis TeXShop sera simple. Pour imprimer la sortie 
+\i pdf
+\i0 , amener la fen\'90tre 
+\i pdf
+\i0  au premier plan et choisir l'article "Print" du menu "Fichier". Pour imprimer le source, c'est la fen\'90tre d'\'8edition qu'on am\'8fne au premier plan avant de choisir l'article "
+\f3 Imprimer
+\f0 " du menu "
+\f3 Fichier
+\f0 ".\
+\
+Dans la version b\'8eta actuelle du syst\'8fme, TeXShop peut imprimer le source mais pas la sortie 
+\i pdf
+\i0 . La raison en est que GhostScript produit une image Bitmap, et TeXShop devraient conna\'94tre des informations pr\'8ecises sur l'imprimante pour choisir la r\'8esolution correcte du bitmap.\
+\
+On peut r\'8esoudre le probl\'8fme de deux fa\'8dons. La premi\'8fre est d'utiliser Adobe Acrobat sous Classic pour ouvrir le document 
+\i pdf
+\i0  et l'imprimer. Le r\'8esultat est tr\'8fs lisible, mais les dimensions de la page sont un peu r\'8eduites. Un autre inconv\'8enient est que Classic doit \'90tre lanc\'8e pour imprimer.\
+\
+On peut aussi imprimer avec une commande en ligne. Si cette m\'8ethode marche chez vous, le r\'8esultat est parfait... Pour imprimer, dans une fen\'90tre Terminal qui pointe dans votre dossier document, compiler le document en utilisant 
+\f2 tex
+\f0  ou 
+\f2 latex
+\f0  plut\'99t que 
+\f2 pdftex
+\f0  or 
+\f2 pdflatex
+\f0  :\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf3  #\cf0  latex monfichier
+\f0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+Cela produit un fichier 
+\i dvi
+\i0  qu'on imprime avec\
+\
+\pard\li2160\ql\qnatural
+\cf0 	
+\f2 \cf3  #\cf0  dvips monfichier\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Il y deux probl\'8fmes avec cette m\'8ethode. D'abord, cela ne marche qu'avec les imprimantes PostScript. Les gourous 
+\f1 TeX
+\f0  et UNIX doivent savoir comment r\'8esoudre \'8da, pas moi. Ensuite, m\'90me si vous avez d\'8eclar\'8e une imprimante avec l'application Print Center, le d\'8emon 
+\f2 lpr
+\f0  ne la reconna\'94t pas, c'est pourquoi 
+\f2 dvips
+\f0  se plaint de ne pas trouver d'imprimante. Je ne savais pas comment r\'8esoudre ce probl\'8fme jusqu'\'88 ce que Mike Najarian poste une note \'88 ce sujet sur la liste macosx-admin maintenue par Omnigroup.  Voici les instructions de Najarian :\
+\
+1) Dans un \'8editeur de texte, cr\'8eer un fichier 
+\f2 autre_printcap
+\f0  avec le texte suivant.\
+\
+\pard\tx2160\li1420\fi20\ql\qnatural
+
+\f2 \cf0 Mon_Imprimante: \\\
+	:lp=:rm=machine.domaine.fr:rp=HPLaserJet:sd=/var/spool/lpd/HPLaserJet: \\\
+	:ty=PostScript:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+L'entr\'8ee 
+\f2 Mon_Imprimante
+\f0  du d\'8ebut est le nom de l'imprimante telle qu'elle sera appel\'8ee depuis Mac OS X. L'entr\'8ee  
+\f2 machine.domaine.fr
+\f0  doit contenir l'adresse tcp/ip de l'imprimante, ou de la machine qui partage l'imprimante. L'entr\'8ee 
+\f2 HPLaserJet
+\f0  est le nom de l'imprimante ou de la machine. Les lignes en retrait commencent imp\'8erativement par un caract\'8fre de tabulation.\
+\
+Enregistrer le fichier en 
+\f2 texte
+\f0  seul, pas en 
+\f2 rtf
+\f0 . Si l'imprimante est connect\'8ee directement \'88 l'ordinateur sans utiliser tcp/ip, cela ne convient pas.\
+\
+2) Dans une fen\'90tre Terminal, passer en mode administrateur en entrant 
+\f2 su
+\f0  et le bon mot de passe. Entrer\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\cf3 [root] #\cf0  niload printcap / < myprintcap\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+3) Cr\'8eer le dossier 
+\f2 /var/spool/lpd/HPLaserJet
+\f0 , en rempla\'8dant "
+\f2 HPLaserJet
+\f0 " par le nom choisi plus haut.\
+\
+4) Lancer l'application Printer Center : il voit la nouvelle machine cr\'8ee dans 
+\f2 netinfo
+\f0 . Cliquer pour la s\'8electionner comme imprimante par d\'8efaut.\
+\
+5) Dans un \'8editeur de texte, cr\'8eer dans son dossier de d\'8epart un fichier texte 
+\f2 .cshrc
+\f0  s'il n'existe pas d\'8ej\'88. Entrer ou ajouter la ligne\
+\
+\pard\li2160\ql\qnatural
+\cf0 	
+\f2 setenv PRINTER Mon_Imprimante\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+en rempla\'8dant 
+\f2  Mon_Imprimante
+\f0  par le nom qui fut choisi en 1).\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 BibTeX:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 BibTeX est un outil pour g\'8erer les r\'8ef\'8erences bibliographiques dans un document 
+\f1 LaTeX
+\f0 . Il suppose que vous disposez d'une base de donn\'8ees bibliographiques. Des commandes 
+\f1 LaTeX
+\f0  simples premettent de citer certaines sources bibliographiques, et BibTeX cr\'8ee la bibliographie avec seulement les r\'8ef\'8erences utilis\'8ees. \
+\
+Voici un exemple simple tir\'8e du livre 
+\i The Latex Companion
+\i0  de Goossens, Mittelbach, et Samarin. Le consulter pour des d\'8etails suppl\'8ementaires. La base de donn\'8ees est 
+\f2 maBibliographie.bib
+\f0 , fichier qui contient le texte ci-dessous. Dans ce texte, les entr\'8ees "
+\f2 Felici:1991
+\f0 ", "
+\f2 Knuth:WEB
+\f0 ," and "
+\f2 Liang:1983
+\f0 "\
+sont les mots cl\'8es pour citer les r\'8ef\'8erences dans le source 
+\f1 LaTeX
+\f0 .\
+	\
+\pard\tx2880\tx3600\li2160\ql\qnatural
+
+\f2 \cf0 @article\{Felici:1991,\
+	author=\{James Felici\},\
+	title=\{\{PostScript versus TrueType\}\},\
+	journal=\{Macworld\},\
+	volume=8, pages=\{195--201\},\
+	month=sep, year = 1991	\}\
+@techreport\{Knuth:WEB,\
+	title=\{\{The \\textsf\{WEB\} System of		Structured Documentation\}\},\
+	month=sep, year = 1983,\
+	author=\{Donald E. Knuth\},\
+	address=\{Stanford, CA 94305\},\
+	number=\{STAN-CS-83-980\},\
+	institution=\{Department of Computer	Science, Stanford University\}\
+	\}\
+@phdthesis\{Liang:1983,\
+	author=\{Franklin Mark Liang\},\
+	month=jun, year = 1983,\
+	school=\{Stanford University\},\
+	address=\{Stanford, CA 94305\},\
+	title=\{\{Word Hy-phen-a-tion by		Com-pu-ter\}\},\
+	note=\{Also available as Stanford		University, Department of		Computer Science Report		No. STAN-CS-83-977\}\
+	\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+\
+Supposons que le fichier source 
+\f2 monFichier.tex
+\f0  contient le code 
+\f1 LaTeX
+\f0  suivant :\
+\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\\begin\{document\}\
+	Consider the  argument of Felici~\\cite\{Felici:1991\} in light of these 	comments.\
+	\\nocite\{Liang:1983\} We provide further remarks later.\
+\
+	\\bibliographystyle\{plain\}\
+	\\bibliography\{maBibliographie\}\
+	\\end\{document\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+Lorsque ce fichier est compil\'8e, une r\'8ef\'8erence \'88 l'article de Felici appara\'94t dans le texte, et une bibliographie est cr\'8e\'8ee \'88 la fin du corps de texte avec les articles de Liang et celui de Felici aussi, mais pas celui de Knuth.\
+\
+On peut utiliser TeXShop sur cet exemple comme suit. D'abord on \'8edite et compile normalement 
+\f2 monfichier.tex
+\f0 . Les citations apparaissent dans le r\'8esultat comme "[?]" et il n'y a pas de bibliographie. Ensuite, on s\'8electionne "Bibtex" dans le menu d\'8eroulant "Program" et on compile avec BibTeX. Puis on revient \'88 "Latex" et on compile encore. Les citations sont toujours comme "[?]", mais la bibliographie est pr\'8esente. Tout rentre dans l'ordre apr\'8fs une derni\'8fre compilation "Latex".\
+\
+On peut \'8editer le fichier 
+\f2 maBibliographie.bib
+\f0  sous TeXShop. Quand TeXShop ouvre un fichier qui n'a pas l'extension 
+\f2 .tex
+\f0  ou 
+\f2 .TEX
+\f0 , il d\'8esactive le bouton de compilation. Quand le fichier est sauv\'8e en utilisant "Enregistrer" ou "Enregistrer sous...", le fichier garde exactement le m\'90me nom, sans ajouter d'extension 
+\f2 .tex
+\f0 . Ainsi, on peut ajouter des entr\'8ees dans la base de donn\'8ees bibliographiques tout en modifiant l'article, sans quitter TeXShop.\
+\
+Toutefois, si on utilise TeXShop pour cr\'8eer le fichier 
+\f2 maBibliographie.bib
+\f0 , il aura l'extension 
+\f2 .tex
+\f0  \'88 la sauvegarde. C'est un bug qui sera \'8elimin\'8e, peut-\'90tre. Uutiliser le Finder pour supprimer le 
+\f2 .tex
+\f0  superflu.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Ouvrir d'autres fichiers avec TeXShop :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 TeXShop peut ouvrir la plupart des fichiers pour l'\'8edition. Cette possibilit\'8e permet de lire les fichiers avec les extensions 
+\f2 .log
+\f0 , 
+\f2 .aux
+\f0 , 
+\f2 .bib
+\f0 , etc. relatifs \'88 
+\f1 TeX
+\f0  et 
+\f1 LaTeX
+\f0 .\
+\
+N\'8eanmoins, il est d\'8econseill\'8e d'utiliser TeXShop comme un \'8editeur de texte normal. TeXShop peeut lire les fichiers au format UniCode ou autre, mais il enregistre toujours au format ASCII \'8etendu 8-bit car c'est celui que 
+\i tex
+\i0 , 
+\i latex
+\i0  et autres comprennent. Par cons\'8equent, de l'information peut dispara\'94tre si TeXShop est utilis\'8e pour \'8editer des fichier sans rapport avec 
+\f1 TeX
+\f0 .  
+\b \
+
+\b0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Conversions graphiques :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Les fichiers graphiques sont fr\'8equemment cr\'8e\'8es aux formats tiff ou eps. Ces fichiers doivent \'90tre convertis aux formats pdf ou jpg pour l'affichage \'8ecran, et eps pour l'impression avec dvips. \
+\
+\pard\li1440\ql\qnatural
+\cf0 	1) L'utilitaire epstopdf en GhostScript peut convertir l'eps en pdf. Pour convertir monDessin.eps 	en monDessin.pdf, dans une fen\'90tre Terminal, entrer\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 	\
+\pard\li2160\ql\qnatural
+
+\f2 \cf0 	\cf3  # \cf0 epstopdf myfile.eps\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0 \cf0 \
+\pard\li1440\ql\qnatural
+\cf0 	2) Mathematica permet de cr\'8eer des graphiques et de les sauver au format eps. Mais 	Mathematica utilise la convention Macintosh pour la fin des lignes et le r\'8esultat doit \'90tre converti 	\'88 la sauce UNIX avant que d'utiliser epstopdf.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+\pard\li1440\ql\qnatural
+\cf0 	3) Il existe une version de ImageMagick compil\'8ee pour Mac OS X. Elle peut convertir les fichiers 	tiff aux formats eps ou pdf.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0  \
+\pard\li1440\ql\qnatural
+\cf0 	4) \'cb la Conf\'8erence des D\'8eveloppeurs Apple ce printemps, Wilfredo Sanchez de chez Apple a exhib\'8e une application qui convertit les script shell UNIX en boites convertisseurs par glisser-d\'8eposer. J'esp\'8fre trouver le temps de cr\'8eer de tels convertisseurs pour\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+\pard\li2160\ql\qnatural
+\cf0 		eps->pdf\
+	mathematica_eps -> regular_eps\
+	mathematica_eps -> pdf\
+	tiff -> eps\
+	tiff -> pdf\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\cf0 \
+Je ne suis pas un expert en script shell Unix; si vous disposez d\'8ej\'88 de tels scripts ou convertisseurs par glisser-d\'8eposer, de grace, faites le moi savoir.\
+	\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Le futur de TeXShop :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Voici une liste d'am\'8eliorations que des utilisateurs ont sugg\'8er\'8ees. Certaines sont en haut de la liste et seront int\'8egr\'8ees bient\'99t. Les autres sont importantes et seraient int\'8egr\'8ees si je savais comment. Je ne jure de rien.\
+\
+	1) Acc\'8el\'8erer le rendu GhostScript pour que les sorties pdf soient affich\'8ees plus rapidement.\
+\
+	2) Rendre l'affcihage GhostScript plus propre.\
+\
+	3) Permettre l'impression depuis TeXShop des pdf rendus avec GhostScript.\
+\
+	4) Dans l'\'8editeur, quand on entre ), ], ou \} faire clignoter le caract\'8fre appari\'8e correspondant.\
+	S\'8electionner le texte entre accolades, crochets, parenth\'8fses quand on double clique ), \}, ou \}.\
+\
+	5) \'83laborer une proc\'8edure plus conviviale pour le "Document principal"\
+\
+	6) Permettre l'enregistrement de nouveaux documents avec l'extension "
+\i dvi
+\i0 " ou autre, sans 	ajouter automatiquement ".tex" \'88 la fin.\
+\
+	7) Modifier le programme en sorte que cliquer \'88 un endroit du la fen\'90tre pdf renvoie 	automatiquement sur le texte correspondant du document source. \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Rapports de Bugs :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Pour communiquer des rapport de bugs et sugg\'8erer des am\'8eliorations, contacter\
+\
+	Richard Koch\
+        	Mathematics Department\
+        	University of Oregon\
+        	Eugene, Oregon 97403      \
+	koch@math.uoregon.edu\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Licence d'utilisation :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 TeXShop est distribu\'8e sous la licence GNU General Public License (GPL). Cela signifie que chacun est libre d'utiliser, copier et modifier le programme. Si on transmet les modification \'88 un tiers, celles-ci doivent imp\'8erativement rester sous licence GPL. \
+\
+Le code source est disponible sur le site web de R. Koch \'88 :\
+\
+	http://darkwing.uoregon.edu/~koch\
+ \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \'cb propos de cette traduction :\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Ce fichier d'aide est une traduction assez fid\'8fle du fichier original\
+\
+	TexShop_Folder/TeXShop.app/Contents/Resources/French.lproj/TeXShop.rtf\
+\
+propos\'8ee par J. Laurens (19/11/00). Pour proposer des corrections, contacter\
+\
+	jerome.laurens@u-bourgogne.fr\
+\
+}

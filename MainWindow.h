@@ -6,8 +6,8 @@
 //
 
 #import <AppKit/NSWindow.h>
+#import "MyDocument.h"
 
-@class MyDocument;
 
 @interface MainWindow : NSWindow 
 {

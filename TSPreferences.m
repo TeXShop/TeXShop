@@ -210,6 +210,27 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [SUD setBool:[sender state] forKey:MakeEmptyDocumentKey];
 }
 
+/*" Change Encoding "*/
+//------------------------------------------------------------------------------
+- (IBAction)encodingChanged:sender;
+//------------------------------------------------------------------------------
+{
+    NSString	*value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:EncodingKey] forKey:EncodingKey];
+
+    switch ([[sender selectedCell] tag]) {
+        case 0: value = [NSString stringWithString:@"MacOSRoman"];
+                break;
+        
+        case 1: value = [NSString stringWithString:@"IsoLatin"];
+                break;
+        }
+        
+    [SUD setObject:value forKey:EncodingKey];
+}
+
+
 /*" This method is connected to the 'syntax coloring' checkbox. 
 "*/
 //------------------------------------------------------------------------------
@@ -680,6 +701,7 @@ This method retrieves the application preferences from the defaults object and s
     NSData	*fontData;
     double	magnification;
     int		mag;
+    int		myTag;
 	
 	fontData = [defaults objectForKey:DocumentFontKey];
 	if (fontData != nil)
@@ -697,6 +719,11 @@ This method retrieves the application preferences from the defaults object and s
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
+    if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
+        myTag = 0;
+    else
+        myTag = 1;
+    [_defaultEncodeMatrix selectCellWithTag: myTag];
     [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
     [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     

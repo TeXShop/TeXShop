@@ -9,8 +9,8 @@
 
 @interface TSWindowManager : NSObject 
 {
-    NSWindow	*_activeDocumentWindow;
-    NSWindow 	*_activePdfWindow;
+    NSWindow		*_activeDocumentWindow;
+    NSWindow 		*_activePdfWindow;
 }
 
 + (id)sharedInstance;

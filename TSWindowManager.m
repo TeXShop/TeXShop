@@ -103,4 +103,5 @@ static id _sharedInstance = nil;
     return _activePdfWindow;
 }
 
+
 @end

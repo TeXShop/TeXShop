@@ -55,6 +55,7 @@
     int			errorLine[NUMBEROFERRORS];
     int			errorNumber;
     int			whichError;
+    int			theScript;		/*" script currently executing; 100, 101, 102 "*/
     unsigned		colorStart, colorEnd;
     NSTimer		*syntaxColoringTimer;	/*" Timer that repeatedly handles syntax coloring "*/
     unsigned		colorLocation;

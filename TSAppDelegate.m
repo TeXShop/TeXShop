@@ -10,6 +10,7 @@
 #import "TSAppDelegate.h"
 #import "TSPreferences.h"
 #import "globals.h"
+#import "TSWindowManager.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -49,6 +50,43 @@
 	
     documentsHaveLoaded = NO;
 }
+
+- (IBAction)displayLatexPanel:(id)sender
+{
+    if ([[sender title] isEqualToString:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")]) {
+        [[Autrecontroller sharedInstance] showWindow:self];
+        [sender setTitle:NSLocalizedString(@"Close LaTeX Panel", @"Close LaTeX Panel")];
+        }
+    else {
+        [[Autrecontroller sharedInstance] hideWindow:self];
+        [sender setTitle:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")];
+        }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+{
+    id		documentWindow;
+    
+    if ([[anItem title] isEqualToString:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")]) {
+        documentWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+        if (documentWindow == nil)
+            return NO;
+        else if ([documentWindow isKeyWindow])
+            return YES;
+        else
+            return NO;
+        }
+    else 
+        return YES;
+}
+
+
+- (void)dealloc
+{
+    [super dealloc];
+}
+
+
 
 
 @end

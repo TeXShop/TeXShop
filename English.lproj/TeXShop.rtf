@@ -2,6 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+\vieww12120\viewh13800\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -21,6 +22,7 @@
 	Getting and Installing teTeX\
 	Getting and Installing TeXShop\
 	Typesetting Documents\
+	Editing Tricks\
 	Including Graphics\
 	Alternate Typesetting Mode\
 	Modifying the Templates Menu\
@@ -35,6 +37,7 @@
                Syntax Colors \
 	More About teTeX\
 	Coexisting with Fink\
+	Coexisting with )ther TeX Distributions:\
 	ConTeXt and MetaPost\
 	Sending Bug Reports\
 	License\
@@ -45,9 +48,7 @@ Preliminaries:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop is a Mac OS X program which consists of an editor for TeX sources, an interface to an underlying TeX setup and a preview window for PDF output. \
-\
-The program usually typesets using 
+\f2\b0 \cf0 TeXShop is a Mac OS X program which can typeset TeX and LaTeX files and preview the output on the screen. The program usually typesets using 
 \f1\i pdftex
 \f2\i0  or 
 \f1\i pdflatex
@@ -55,13 +56,11 @@ The program usually typesets using
 \f1\i tex
 \f2\i0  or 
 \f1\i latex
-\f2\i0 , followed by 
-\f1\i dvips
-\f2\i0  and a PDF distiller (which produces PDF from PostScript), normally 
-\f1\i ghostscript
 \f2\i0 . These programs output pdf files rather than dvi files. Since pdf is the native graphics format of Mac OS X, it is easy to display the output on the screen. 
-\f1\i pdfTeX
-\f2\i0  was written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
+\f1\i Pdftex
+\f2\i0  and 
+\f1\i pdflatex
+\f2\i0  were written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
 \
 The pdf files created by TeXShop are standard pdf files which can be given to other people and displayed on a variety of computer systems. For example, they can be displayed by Adobe Acrobat on Mac OS 9. \
 \
@@ -105,17 +104,17 @@ and click the TeXShop link to download the file TeXShop.dmg. Double click on thi
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 To use TeXShop, type your Latex input in the editing window it provides. Then push the "Latex" button at the top of the window. The input will be saved and 
+\f2\b0 \cf0 To use TeXShop, type your LaTeX input in the editing window it provides. Then push the "LaTeX" button at the top of the window. The input will be saved and 
 \f1\i pdflatex
 \f2\i0  will run. A second window will open displaying messages from 
 \f1\i tex
 \f2\i0 . If there are errors, 
 \f1\i pdflatex
-\f2\i0  will halt; type "return" to skip the errors one by one, or one of the standard tex inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing control-1.\
+\f2\i0  will halt; type "return" to skip the errors one by one, or one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing control-1.\
 \
-To typeset a TeX document, push the "Program" button and select TeX instead of Latex. If you usually use TeX, choose it as your default program in the Preferences Dialog.\
+To typeset a TeX document, push the "Program" button and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.\
 \
-If you notice an error, you can immediately fix it in the editing window and push the "TeX" or "Latex" button again without halting the first invocation of 
+If you notice an error, you can immediately fix it in the editing window and push the "TeX" or "LaTeX" button again without halting the first invocation of 
 \f1\i pdflatex
 \f2\i0 . The program will kill that invocation and run another. \
 \
@@ -123,19 +122,42 @@ TeXShop remembers the source lines of the first twenty errors. To cycle through 
 \
 When you fix errors and typeset again, the viewer will remember the page you were previously viewing.\
 \
-If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. \
+If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \\section\
+or \\chapter are automatically added to the Tag menu. However, this behavior can be changed by\
+typing the following command in Apple's Terminal program:\
+	\
+	defaults write texshop TagSections NO\
 \
-TeXShop can show handle multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a tex file in a folder which contains a pdf file with the same name, this pdf will also appear.\
+TeXShop can show handle multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.\
 \
 You can start TeXShop by double clicking on a document with extension ".tex". The program will open that input document and (if it exists) the associated pdf document.\
 \
-You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other tex documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.\
+You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other TeX documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f1\i pdftex
+\f1\i \cf0 pdftex
 \f2\i0  and 
 \f1\i pdflatex
 \f2\i0  are unix programs derived from Knuth's TeX program. The syntax of TeX does not allow spaces in filenames, so source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.  \
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Editing Tricks:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs, new lines will start at the same tab position until the behavior is cancelled by backspacing. This tab behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
+\
+Under the Windows menu, there is an item named "Latex Panel..." Choosing this item will open a panel containing a large number of mathematical symbols, Greek letters, international characters, and typesetting environments. Clicking on a symbol will insert the corresponding text into your LaTeX source file. This wonderful panel is the work of Geoffroy Lenglin, who just finished a masters degree in Aeronautics and Astronautics at MIT.  Geoffroy can be reached at geoffroy.lenglin@m4x.org.\
+\
+Some symbols in the panel require the line\
+\
+	
+\f3\fs20 \\usepackage\{amssymb\}\
+\
+
+\f2\fs24 at the top of the source file. \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -161,41 +183,20 @@ If you used TeX in the past, your illustrations may be in
 \
 The authors of 
 \f1\i pdflatex
-\f2\i0  have made it easy to include graphic files in a Latex document typeset with 
-\f1\i pdflatex
+\f2\i0  and the authors of the graphics package 
+\f1\i graphicx
+\f2\i0  have made it easy to include graphic files in a LaTeX document typeset with 
+\f1\i pedlatex
 \f2\i0 , even if the document will later be typeset by standard 
 \f1\i latex
-\f2\i0  and converted to a dvi file for distribution to other people. At the top of such a Latex input file, include the following lines:\
+\f2\i0  and converted to a dvi file for distribution to other people. At the top of such a LaTeX input file, include the line:\
 \
 	
-\f3\fs20 \\newif\\ifpdf\
-	\\ifx\\pdfoutput\\undefined\
-	\\pdffalse % we are not running PDFLaTeX\
-	\\else\
-	\\pdfoutput=1 % we are running PDFLaTeX\
-	\\pdftrue\
-	\\fi\
-\
-	\\ifpdf\
-	\\usepackage[pdftex]\{graphicx\}\
-	\\else\
-	\\usepackage\{graphicx\}\
-	\\fi\
-
-\f2\fs24  
-\f0\b \
-
-\f2\b0 After the "\\begin\{document\}" command, include the lines\
-\
+\f3\fs20 \\usepackage\{graphicx\}\
 	
-\f3\fs20 \\ifpdf\
-	\\DeclareGraphicsExtensions\{.pdf, .jpg, .tif\}\
-	\\else\
-	\\DeclareGraphicsExtensions\{.eps, .jpg\}\
-	\\fi\
-\
+\f0\b\fs24 \
 
-\f2\fs24 When you wish to include a graphic file, say "f1.pdf ", use the command\
+\f2\b0 When you wish to include a graphic file, say "f1.pdf ", use the command\
 \
 	
 \f3\fs20 \\includegraphics[width=2in]\{f1\}
@@ -208,16 +209,6 @@ This command will cause
 \f2\i0 , but input the file "f1.eps" when the text is typeset with 
 \f1\i latex.\
 \
-[Note (Nov 2001 - GW): the graphicx package is pdfTeX-aware and of all the above, just entering\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f3\i0\fs20 \cf0 	\\usepackage\{graphicx\}\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f1\i\fs24 \cf0 \
-in the preamble suffices as far as I know. More and more packages are pdfTeX vs TeX aware these days, e.g. texinfo.]\
-\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\i0\b \cf0 Alternate Typesetting Mode:
@@ -225,7 +216,7 @@ in the preamble suffices as far as I know. More and more packages are pdfTeX vs 
 \
 There is another way to typeset with TeXShop; in this alternate mode, 
 \f1\i eps
-\f2\i0  illustrations can be input directly without conversion. To use the alternate method, choose "Tex and Ghostscript" in the Typeset menu. Then TeXShop will typeset by calling 
+\f2\i0  illustrations can be input directly without conversion. To use the alternate method, choose "TeX and Ghostscript" in the Typeset menu. Then TeXShop will typeset by calling 
 \f1\i tex
 \f2\i0  or 
 \f1\i latex
@@ -239,14 +230,13 @@ There is another way to typeset with TeXShop; in this alternate mode,
 \f1\i pdflatex
 \f2\i0 . The primary method used when a document is first opened can be selected in the preference dialog.\
 \
-The "Tex and Ghostscript" method should be used for old projects with many 
+The "TeX and Ghostscript" method should be used for old projects with many 
 \f1\i eps
-\f2\i0  illustrations, and for tex files with postscript special commands, and for tex files that include bitmapped fonts which do not display correctly when typeset with 
+\f2\i0  illustrations, and for TeX files with postscript special commands, and for TeX files that include bitmapped fonts which do not display correctly when typeset with 
 \f1\i pdflatex
 \f2\i0 . Experimentation will show which is the preferable typesetting engine.\
 \
-There is a way to permanently set the typesetting method of a document regardless of preference choices.\
-If the first line of a document is %&tex, with no initial spaces on the line, then tex + ghostscript will be used. If the first line is %&latex, then latex + ghostscript will be used. If the first line is %&pdftex or %&pdflatex, then pdftex or pdflatex will be used.  If the first line is %&personaltex or %&personallatex, then the personal script will be used as set in the preference dialog.\
+There is a way to permanently set the typesetting method of a document regardless of preference choices. If the first line of a document is %&tex, with no initial spaces on the line, then tex + ghostscript will be used. If the first line is %&latex, then latex + ghostscript will be used. If the first line is %&pdftex or %&pdflatex, then pdftex or pdflatex will be used.  If the first line is %&personaltex or %&personallatex, then the personal script will be used as set in the preference dialog.\
 \
 
 \f0\b Modifying the Templates Menu:\
@@ -263,9 +253,11 @@ and places the files
 \f1\i LatexTemplate.tex
 \f2\i0  in this folder. The names of these files are shown under the Templates pull down menu at the top of the input window. Choosing one of these items inserts the contents of the template file at the current cursor position in the source.\
 \
-The three template files are standard tex files which can be opened and edited by TeXShop. Additional tex files can be inserted into the Templates folder; they will also appear under the Templates pull down menu provided their names end with the extension ".tex". The original template files can be removed if desired.\
+The three template files are standard TeX files which can be opened and edited by TeXShop. Additional TeX files can be inserted into the Templates folder; they will also appear under the Templates pull down menu provided their names end with the extension ".tex". The original template files can be removed if desired.\
 \
-To restore the original template files after they have been edited, delete the Templates folder and run TeXShop again. It will recreate the folder and restore its original contents.  
+To restore the original template files after they have been edited, delete the Templates folder and run TeXShop again. It will recreate the folder and restore its original contents. \
+\
+The commands \\usepackage\{amssymb\} and \\usepackage\{graphicx\} mentioned earlier are included in the default LatexTemplate. However, when users upgrade TeXShop, this template is not upgraded since the user may have modified it. 
 \f0\b \
 \
 Setting a Project Root File:\
@@ -346,7 +338,7 @@ Setting Preferences:\
 \f0\b \cf0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 The preference dialog can also be used to change the commands executed when the "TeX" and "Latex" buttons are pushed. This is useful because some users prefer a version of TeX called 
+\f2\b0 \cf0 The preference dialog can also be used to change the commands executed when the "TeX" and "LaTeX" buttons are pushed. This is useful because some users prefer a version of TeX called 
 \f1\i etex
 \f2\i0 , and there are pdf versions of etex called 
 \f1\i pdfetex
@@ -354,13 +346,15 @@ Setting Preferences:\
 \f1\i pdfelatex
 \f2\i0 . Obviously the substituted command must produce a pdf output file. If the new programs are in the teTeX binary directory, it is enough to name them in the preference dialog; the dialog will also accept fully qualified path names for files which live elsewhere.\
 \
+TeXShop editing is done with Apple's Cocoa editing class, which uses Unicode for internal work. When TeXShop files are written to disk, they are converted to 8-bit ascii because TeX expects to receive such a file. There are two ways to do the conversion, called Mac OS Roman and Iso Latin, and a preference item selects the method used. For many users, the choice will make no difference. Some TeX packages allow users to type accented European characters directly on the keyboard; these packages require the Iso Latin conversion. Thanks to Martin Heusse for providing code for this preference. Previous versions of TeXShop always used Mac OS Roman conversion.\
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Printing:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 To print a Tex output file, select the "Print" menu item. To print Tex source, select the "Print Source" menu item.\
+\f2\b0 \cf0 To print a TeX output file, select the "Print" menu item. To print TeX source, select the "Print Source" menu item.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -368,13 +362,14 @@ Setting Preferences:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 BibTeX is a tool used to create bibliographies in Latex documents. The tool assumes that you have a large database of references which you often quote. Simple commands allow you to cite certain of these references in your latex source, and BibTeX then creates a bibliography for your article containing only the items cited. \
+\f2\b0 \cf0 BibTeX is a tool used to create bibliographies in LaTeX documents. The tool assumes that you have a large database of references which you often quote. Simple commands allow you to cite certain of these references in your LaTeX source, and BibTeX then creates a bibliography for your article containing only the items cited. \
 \
 Here is a brief example taken from 
-\f1\i The Latex Companion
-\f2\i0  by Goossens, Mittelbach, and Samarin. Consult this book for many additional details.  Suppose the database is a file called "mybibliography.bib" containing the text shown below. In this text, the entries "Felici:1991, Knuth:WEB," and "Liang:1983" are key values used to cite the articles in the latex source.\
+\f1\i The LaTeX Companion
+\f2\i0  by Goossens, Mittelbach, and Samarin. Consult this book for many additional details.  Suppose the database is a file called "mybibliography.bib" containing the text shown below. In this text, the entries "Felici:1991, Knuth:WEB," and "Liang:1983" are key values used to cite the articles in the LaTeX source.\
 	\
-	@article\{Felici:1991,\
+	
+\f3\fs20 @article\{Felici:1991,\
 	author	=\{James Felici\},\
 	title	=\{\{PostScript versus TrueType\}\},\
 	journal	=\{Macworld\},\
@@ -401,22 +396,25 @@ Here is a brief example taken from
 	note	=\{Also available as Stanford\
 		University, Department of\
 		Computer Science Report\
-		No. STAN-CS-83-977\}   \}\
+		No. STAN-CS-83-977\}   \}
+\f2\fs24 \
 \
 \
-Suppose the latex source file is called "myfile.tex" and contains the following text:\
+Suppose the LaTeX source file is called "myfile.tex" and contains the following text:\
 \
-	\\begin\{document\}\
+	
+\f3\fs20 \\begin\{document\}\
 	Consider the  argument of Felici~\\cite\{Felici:1991\} in light of these comments.\
 	\\nocite\{Liang:1983\} We provide further remarks later.\
 \
 	\\bibliographystyle\{plain\}\
 	\\bibliography\{mybibliography\}\
 	\\end\{document\}\
-\
+
+\f2\fs24 \
 When this source is typeset, a reference to Felici's article will appear in the text, and a bibliography will be created at the end of the text containing the articles of Felici and Liang, but not the article of Knuth.\
 \
-TeXShop can be used with this example in the following way. First edit and typeset the document "myfile.tex" as usual. Citations will appear in the output as "[?]" and the bibliography will be missing. Then select "Bibtex" under the Program button and run Bibtex. Next select "Latex" and typeset again. Citations will still appear as "[?]", but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.\
+TeXShop can be used with this example in the following way. First edit and typeset the document "myfile.tex" as usual. Citations will appear in the output as "[?]" and the bibliography will be missing. Then select "BibTeX" under the Program button and run BibTeX. Next select "LaTeX" and typeset again. Citations will still appear as "[?]", but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.\
 \
 The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop opens a file whose name does not end with the extension ".tex" or ".TEX", it dims the typesetting buttons. When the file is later saved using "Save" or "Save As ...", the file will be saved with exactly the selected name, without adding a  ".tex" extension to the name. So items can be added to the bibliography database at the same time that a new article is being written.\
 \
@@ -444,7 +442,7 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
  To create the index, typeset the document as usual. Then run MakeIndex. Then typeset again.\
  \
  Many additional details can be found in 
-\f1\i The Latex Companion
+\f1\i The LaTeX Companion
 \f2\i0  by Goossens, Mittelbach, and Samarin.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -471,10 +469,9 @@ It is not a good idea to use TeXShop as a general editor. TeXShop can read files
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, you may prefer to typeset using "Tex and Ghostscript" mode.\
+\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, you may prefer to typeset using "TeX and Ghostscript" mode.\
 \
-The eps files produced by Mathematica use the Macintosh line feed conventions. Earlier versions of TeXShop and teTeX required that these files be converted to use Unix line feeds before converting them to pdf format, but that is no longer necessary in the latest TeXShop/teTeX.\
-\
+The eps files produced by Mathematica use the Macintosh line feed conventions. Earlier versions of TeXShop and teTeX required that these files be converted to use Unix line feeds before converting them to pdf format, but that is no longer necessary.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -482,7 +479,7 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz and Sascha Beverungen, an Italian localization by Giuseppe Carlino, and a Spanish localization by Juan L. Varona. Thanks! \
+\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, and Martin Kerz, an Italian localization by Giuseppe Carlino, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks! \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -497,7 +494,6 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
                defaults write TeXShop markerblue 0.0\
                \
 The corresponding preference items for comments are commentred, commentgreen, commentblue; the items for commands are commandred, commandgreen, commandblue. \
- \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -522,7 +518,7 @@ Additional documentation for Gerben Wierda's Mac OSX compilation is in\
 \
 It is possible to store additional style files, fonts, etc., in teTeX itself. But teTeX is owned by root and lives in /usr/local/teTeX, which isn't visible in the Finder. Moreover, it is a good idea to keep this directory pure so it can be upgraded easily when later versions are released. It is better to construct a mirror image of the teTeX directory structure inside your Library folder and store your personal files there. \
 \
-The files must be in appropriate directories. teTeX uses a directory structure invented by the tex working group. Suppose you want to add a extra style file named new.sty to the style files used by Latex. Look inside teTeX and notice that a natural spot for this file would be\
+The files must be in appropriate directories. teTeX uses a directory structure invented by the TeX working group. Suppose you want to add a extra style file named new.sty to the style files used by LaTeX. Look inside teTeX and notice that a natural spot for this file would be\
 \
 	/usr/local/teTeX/share/texmf/tex/latex/misc/\
 \
@@ -538,55 +534,33 @@ and store "new.sty" inside this misc directory.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mac OS X can also run X-windows using third party software, some of which is free. Fink is a system which can download, compile, and run X-windows applications on Mac OS X. For details, see http://fink.sourceforge.net.\
+\f2\b0 \cf0 Mac OS X can also run X-windows applications using free third party software. Fink is a system which can download, compile, and run these applications on Mac OS X, side by side with regular OS X programs. For details, see http://fink.sourceforge.net. In particular, Fink can install ghostview, xdvi, and xemacs.\
 \
-Fink installs applications in /sw/bin. So far, so good. But it also resets the PATH variable so this location is searched first for applications. Unfortunately, Fink users sometimes install a second Fink copy of ghostscript, or a second Fink copy of teTeX. The ghostscript installed is version 7 rather than version 6, but currently version 7 creates pdf files which Mac OS X cannot properly render. The teTeX lacks scripts used by TeXShop and is not configured to search for include files in ~/Library.\
+Fink installs software in /sw/bin. One of the packages Fink can install is teTeX. In the past this caused problems because users had duplicate copies of teTeX, configured one of the copies, and then found that the configuration did not affect the other copy. The latest version of Fink gives the option of using Gerben Wierda's teTeX with symbolic links in /sw/bin rather than installing a second copy. Be sure to choose that option.\
 \
-The latest versions of TeXShop and teTeX are 
-\f1\i probably
-\f2\i0  immune to problems created by Fink. They use the Wierda distributions of teTeX and ghostscript even if Fink versions are installed. Users who install Ghostscript or teTeX under Fink should be aware that the Fink versions will be used from the Terminal, which may lead to unexplained behavior. There are reasons that users may still want the Fink version of Ghostscript, but the Wierda distribution of teTeX should work fine with X-windows applications like xdvi, so there is little reason to install the Fink version.
-\f0\b \
-
-\f2\b0 \
+Fink also installs version 7 of Ghostscript rather than the earlier version in Gerben Wierda's distribution. Unfortunately, version 7 creates pdf files which Mac OS X does not render correctly. In the past this caused problems when TeXShop was used in latex + ghostscript mode. The current TeXShop is immune to these problems and will use Wierda's Ghostscript even if the Fink version has been installed.\
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Coexisting with other TeX distributions:\
+\f0\b \cf0 Coexisting with Other TeX Distributions:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f2\b0 \cf0 Problems 
 \f1\i may
-\f2\i0  arise when multiple TeX distributions are available on a system, especially if they set environment variables. This may lead to hard to detect problems where other files are used than you would expect.\
-\
+\f2\i0  arise when multiple TeX distributions are available on a system, especially if they set environment variables. This may lead to hard to detect problems where other files are used than the ones you expect. 
+\f0\b \
+
+\f2\b0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 ConTeXt and MetaPost:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to Latex. See www.ntg.nl/context/ for details. A useful introduction can be found at http://berend.gameren.nl/tex/ in the document "LaTeX in proper ConTeXt." TeXShop now supports ConTeXt. \
+\f2\b0 \cf0 ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to LaTeX. See www.ntg.nl/context/ for details. A useful introduction can be found at http://berend.gameren.nl/tex/ in the document "LaTeX in proper ConTeXt." TeXShop now supports ConTeXt. \
 \
 MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See http://cm.bell-labs.com/who/hobby/MetaPost.html for more details.  Interesting metapost examples can be found at many web sites; for instance see  http://www.cs.ucc.ie/~dongen/mpost/mpost.html. TeXShop now supports MetaPost.\
-\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f0\b \cf0 Release Notes\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f2\b0 \cf0 \
-1.13b\
-	- [GW] Fixed setting of path before running commands. Automatically creating missing fonts now works\
-        	- [GW] Project root is now really relative\
-1.13c\
-	- [GW] Script settings are now retrieved from the stored defaults\
-        \
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f0\b \cf0 Known bugs and omissions\
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f2\b0 \cf0 \
-- A lot of localization is missing or out of date (including this file)\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -610,7 +584,7 @@ MetaPost is a MetaFont like system by John Hobby which can output postscript and
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
 	\
-	Gerben Wierda (for teTeX only)\
+	Gerben Wierda\
 	Gerben_Wierda@rna.nl\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural

@@ -12,6 +12,7 @@
 #import "TSWindowManager.h"
 #import "extras.h"
 #import "globals.h"
+#import "Autrecontroller.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
 #define Mcomment 1
@@ -309,9 +310,9 @@
        
     defaultcommand = [SUD integerForKey:DefaultCommandKey];
     switch (defaultcommand) {
-        case DefaultCommandTeX: [typesetButton setTitle: @"Tex"]; break;
-        case DefaultCommandLaTeX: [typesetButton setTitle: @"Latex"]; break;
-        case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTEXt"]; break;
+        case DefaultCommandTeX: [typesetButton setTitle: @"TeX"]; break;
+        case DefaultCommandLaTeX: [typesetButton setTitle: @"LaTeX"]; break;
+        case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTeXt"]; break;
         }
     
     projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
@@ -362,10 +363,12 @@
     // register for notifications when the document window becomes key so we can remember which window was
     // the frontmost. This is needed for the preferences.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
 
     // register for notifications when the pdf window becomes key so we can remember which window was the frontmost.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:pdfWindow];
     
     // register for notification when the document font changes in preferences
@@ -387,6 +390,9 @@
         
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
         name:NSFileHandleReadCompletionNotification object:nil];
+        
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doCompletion:)
+        name:@"completionpanel" object:nil];
 }
 
 //-----------------------------------------------------------------------------
@@ -549,7 +555,10 @@ preference change is cancelled. "*/
     // Insert code here to write your document from the given data.
     // The following is line has been changed to fix the bug from Geoff Leyland 
     // return [[textView string] dataUsingEncoding: NSASCIIStringEncoding];
-    return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
+    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
+        return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
+    else
+        return [[textView string] dataUsingEncoding: NSISOLatin1StringEncoding allowLossyConversion:YES];
 }
 
 
@@ -563,7 +572,14 @@ preference change is cancelled. "*/
 
 - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 
-    aString = [[NSString stringWithContentsOfFile:fileName] retain];
+    id myData;
+    
+    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"]) 
+        aString = [[NSString stringWithContentsOfFile:fileName] retain];
+    else {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: NSISOLatin1StringEncoding] retain];
+        }
     return YES;
 }
 
@@ -657,7 +673,11 @@ preference change is cancelled. "*/
     NSDocument makes a backup in /tmp which is never removed. */
     
     if (texTask != nil) {
-                [texTask terminate];
+                if (theScript == 101) {
+                    kill( -[texTask processIdentifier], SIGTERM);
+                    }
+                else
+                    [texTask terminate];
                 myDate = [NSDate date];
                 while (([texTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
                 [texTask release];
@@ -847,7 +867,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString		*enginePath;
     NSString		*tetexBinPath;
     BOOL		withLatex;
-    int			theScript;
     NSArray		*myList;
     NSString		*theSource, *theKey;
     NSRange		myRange;
@@ -1169,15 +1188,15 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString	*titleString;
     
     titleString = [sender title];
-    if ([titleString isEqualToString: @"Tex"]) 
+    if ([titleString isEqualToString: @"TeX"]) 
         [self doTex:self];
-    else if ([titleString isEqualToString: @"Latex"])
+    else if ([titleString isEqualToString: @"LaTeX"])
         [self doLatex: self];
     else if ([titleString isEqualToString: @"MetaPost"])
         [self doMetapost: self];
-    else if ([titleString isEqualToString: @"ConTEXt"])
+    else if ([titleString isEqualToString: @"ConTeXt"])
         [self doContext: self];
-    else if ([titleString isEqualToString: @"Bibtex"])
+    else if ([titleString isEqualToString: @"BibTeX"])
         [self doBibtex: self];
     else if ([titleString isEqualToString: @"Index"])
         [self doIndex: self];
@@ -1222,15 +1241,15 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     switch (which) {
     
         case 0:
-            [typesetButton setTitle: @"Tex"];
+            [typesetButton setTitle: @"TeX"];
             break;
         
         case 1:
-            [typesetButton setTitle: @"Latex"];
+            [typesetButton setTitle: @"LaTeX"];
             break;
 
         case 2:
-            [typesetButton setTitle: @"Bibtex"];
+            [typesetButton setTitle: @"BibTeX"];
             break;
             
         case 3:
@@ -1242,7 +1261,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             break;
             
         case 5:
-            [typesetButton setTitle: @"ConTEXt"];
+            [typesetButton setTitle: @"ConTeXt"];
             break;
             
         }
@@ -1494,14 +1513,34 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 
 - (void) doTag: sender;
 {
-    NSString	*text, *tagString, *title;
+    NSString	*text, *tagString, *title, *mainTitle, *first;
     unsigned	start, end, irrelevant;
     NSRange	myRange, nameRange, gotoRange;
     unsigned	length;
     int		theChar;
     BOOL	done;
+    BOOL	section, chapter;
     
     title = [tags titleOfSelectedItem];
+    
+    section = NO; chapter = NO;
+    if ([SUD boolForKey: TagSectionsKey]) { 
+        if ([title length] >= 9) {
+            myRange.location = 0;
+            myRange.length = 8;
+            first = [title substringWithRange: myRange];
+            if ([first isEqualToString:@"section:"])
+                section = YES;
+            else if ([first isEqualToString:@"chapter:"])
+                chapter = YES;
+            if (section || chapter) {
+                myRange.location = 9;
+                myRange.length = [title length] - 9;
+                mainTitle = [title substringWithRange: myRange];
+                }
+            }
+        }
+        
     text = [textView string];
     length = [text length];
     myRange.location = 0;
@@ -1520,6 +1559,26 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                     tagString = [text substringWithRange: nameRange];
                     if ([title isEqualToString:tagString]) {
                         done = YES;
+                        gotoRange.location = start;
+                        gotoRange.length = (end - start);
+                        [textView setSelectedRange: gotoRange];
+                        [textView scrollRangeToVisible: gotoRange];
+                        }
+                    }
+                }
+            else if ((theChar == 0x005c) && (start < length - 8) && (section || chapter)) {
+                nameRange.location = start + 1;
+                nameRange.length = 7;
+                tagString = [text substringWithRange: nameRange];
+                if (
+                    (([tagString isEqualToString:@"section"]) && section) ||
+                    (([tagString isEqualToString:@"chapter"]) && chapter)
+                   ) {
+                   nameRange.location = start + 8;
+                   nameRange.length = (end - start - 8);
+                   tagString = [text substringWithRange: nameRange];
+                   if ([mainTitle isEqualToString:tagString]) {
+                    done = YES;
                         gotoRange.location = start;
                         gotoRange.length = (end - start);
                         [textView setSelectedRange: gotoRange];
@@ -1657,16 +1716,22 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         else
             return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Tex"]) {
+    else if ([[anItem title] isEqualToString:@"Plain TeX"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Latex"]) {
+    else if ([[anItem title] isEqualToString:@"LaTeX"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Bibtex"]) {
+    else if ([[anItem title] isEqualToString:@"BibTeX"]) {
         return NO;
         }
     else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"MetaPost"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"ConTeXt"]) {
         return NO;
         }
     else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {
@@ -1846,8 +1911,32 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     matchRange = [textString rangeOfString:@"%:" options:0 range:tagRange];
     if (matchRange.length != 0)
         tagLine = YES;
-
-    
+        
+    if ([SUD boolForKey: TagSectionsKey]) {
+        tagRange = [replacementString rangeOfString:@"\section"];
+        if (tagRange.length != 0)
+            tagLine = YES;
+            
+        tagRange = [replacementString rangeOfString:@"\chapter"];
+        if (tagRange.length != 0)
+            tagLine = YES;
+            
+        textString = [textView string];
+        [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
+        tagRange.location = start;
+        tagRange.length = end - start;
+        matchRange = [textString rangeOfString:@"\section" options:0 range:tagRange];
+        if (matchRange.length != 0)
+            tagLine = YES;
+            
+        textString = [textView string];
+        [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
+        tagRange.location = start;
+        tagRange.length = end - start;
+        matchRange = [textString rangeOfString:@"\chapter" options:0 range:tagRange];
+        if (matchRange.length != 0)
+            tagLine = YES;
+        }
     
     if (replacementString == nil) 
         return YES;
@@ -1998,7 +2087,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         {
             [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
             myRange.location = end;
-            if (start < length - 3) 
+            if ((start + 3) < end) 
             {
                 theChar = [text characterAtIndex: start];
                 if (theChar == 0x0025) 
@@ -2013,21 +2102,29 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                     }
                 }
                 
-                /*
-                else if ((theChar == 0x005c) && (start < length - 10)) {
-                    NSLog(@"hello");
+                else if ((theChar == 0x005c) && ((start + 10) < end) &&
+                    ([SUD boolForKey: TagSectionsKey])) {
                     nameRange.location = start + 1;
                     nameRange.length = 7;
+                    /* THIS IS THE LINE */   
                     tagString = [text substringWithRange: nameRange];
-                    NSLog(tagString);
                     if ([tagString isEqualToString:@"section"]) {
                         nameRange.location = start + 8;
                         nameRange.length = (end - start - 8);
-                        tagString = [text substringWithRange: nameRange];
+                        tagString = [NSString stringWithString:@"section: "];
+                        tagString = [tagString stringByAppendingString: 
+                            [text substringWithRange: nameRange]];
+                        [tags addItemWithTitle:tagString];
+                        }
+                    else if ([tagString isEqualToString:@"chapter"]) {
+                        nameRange.location = start + 8;
+                        nameRange.length = (end - start - 8);
+                        tagString = [NSString stringWithString:@"chapter: "];
+                        tagString = [tagString stringByAppendingString: 
+                            [text substringWithRange: nameRange]];
                         [tags addItemWithTitle:tagString];
                         }
                     }
-                */
             }
         }
         tagLocation = myRange.location;
@@ -2310,7 +2407,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 {
     NSDictionary	*myDictionary;
     NSMutableDictionary	*aDictionary;
-    id			theValue;
     NSNumber		*myNumber;
     
     myDictionary = [super fileAttributesToWriteToFile: fullDocumentPath ofType: documentTypeName
@@ -2319,6 +2415,115 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     myNumber = [NSNumber numberWithLong:'TEXT'];
     [aDictionary setObject: myNumber forKey: NSFileHFSTypeCode]; 
     return aDictionary;
+}
+
+- (int) textViewCountTabs: (NSTextView *) aTextView
+{
+    int startLocation = [aTextView selectedRange].location - 1, tabCount =
+0;
+
+    if (startLocation < 0)
+    return 0;
+
+    while ([[aTextView string] characterAtIndex: startLocation] != '\n') {
+    if (startLocation < 0)
+        break;
+
+    if ([[aTextView string] characterAtIndex: startLocation --] != '\t')
+        tabCount = 0;
+    else
+        ++ tabCount;
+    }
+
+    return tabCount;
+}
+
+
+- (BOOL) textView: (NSTextView *) aTextView doCommandBySelector: (SEL)
+aSelector
+{
+    if (aSelector == @selector (insertNewline:)) {
+    int n, indent = [self textViewCountTabs: textView];
+
+    [aTextView insertNewline: self];
+
+    for (n = 0; n < indent; ++ n)
+        [aTextView insertText: @"\t"];
+
+    return YES;
+    }
+
+    return NO;
+}
+
+//-----------------------------------------------------------------------------
+- (void) fixTyping: (id) theDictionary;
+//-----------------------------------------------------------------------------
+
+{
+    NSRange		oldRange;
+    NSString		*oldString, *newString;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+    unsigned		from, to;
+    
+    oldRange.location = [[theDictionary objectForKey: @"oldLocation"] unsignedIntValue];
+    oldRange.length = [[theDictionary objectForKey: @"oldLength"] unsignedIntValue];
+    newString = [theDictionary objectForKey: @"oldString"];
+    oldString = [[textView string] substringWithRange: oldRange];
+    [textView replaceCharactersInRange: oldRange withString: newString];
+
+    myManager = [textView undoManager];
+    myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
+    theLocation = [NSNumber numberWithInt: oldRange.location];
+    theLength = [NSNumber numberWithInt: [newString length]];
+    [myDictionary setObject: oldString forKey: @"oldString"];
+    [myDictionary setObject: theLocation forKey: @"oldLocation"];
+    [myDictionary setObject: theLength forKey: @"oldLength"];
+    [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
+    [myManager setActionName:@"Typing"];
+    from = oldRange.location;
+    to = from + [newString length];
+    [self fixColor: from :to];
+    [self setupTags];
+
+}
+
+
+
+- (void)doCompletion:(NSNotification *)notification
+{
+    NSRange		myRange;
+    NSWindow		*activeWindow;
+    NSString		*newString, *oldString;
+    unsigned		from, to;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+
+    
+    activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+    if ((activeWindow != nil) && (activeWindow == [self textWindow])) { 
+        myRange = [textView selectedRange];
+        oldString = [[textView string] substringWithRange: myRange];
+        newString = [notification object];
+        [textView replaceCharactersInRange:myRange withString:newString];
+        
+        myManager = [textView undoManager];
+        myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
+        theLocation = [NSNumber numberWithUnsignedInt: myRange.location];
+        theLength = [NSNumber numberWithUnsignedInt: [newString length]];
+        [myDictionary setObject: oldString forKey: @"oldString"];
+        [myDictionary setObject: theLocation forKey: @"oldLocation"];
+        [myDictionary setObject: theLength forKey: @"oldLength"];
+        [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
+        [myManager setActionName:@"Typing"];
+        from = myRange.location;
+        to = from + [newString length];
+        [self fixColor:from :to];
+        [self setupTags];
+        }
 }
 
 @end

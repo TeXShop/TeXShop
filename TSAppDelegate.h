@@ -6,9 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Autrecontroller.h"
 
 @interface TSAppDelegate : NSObject 
 {
 }
 
+- (IBAction)displayLatexPanel:(id)sender;
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+- (void)dealloc;
 @end

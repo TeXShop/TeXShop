@@ -87,7 +87,9 @@
     BOOL  result;
     
     result = [super validateMenuItem: anItem];
-    if ([myDocument imageType] == isTeX)
+    if ([[anItem title] isEqualToString:@"Latex Panel..."])
+        return NO;
+    else if ([myDocument imageType] == isTeX)
         return result;
     else if ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")]) {
         if ([myDocument imageType] == isOther)
@@ -101,16 +103,22 @@
         else
             return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Tex"]) {
+    else if ([[anItem title] isEqualToString:@"Plain TeX"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Latex"]) {
+    else if ([[anItem title] isEqualToString:@"LaTeX"]) {
         return NO;
         }
-    else if ([[anItem title] isEqualToString:@"Bibtex"]) {
+    else if ([[anItem title] isEqualToString:@"BibTeX"]) {
         return NO;
         }
     else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
+        return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"MetaPost"]) {
+        return NO;
+        }
+     else if ([[anItem title] isEqualToString:@"ConTeXt"]) {
         return NO;
         }
     else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {

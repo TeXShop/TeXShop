@@ -28,6 +28,7 @@
     colorEnd = 0; 
     returnline = NO; 
     tagLine = NO;
+    texRep = nil;
     fileIsTex = YES;
     
     return self;
@@ -106,18 +107,19 @@
     [textView setDelegate: self];
     [pdfView resetMagnification]; 
     
+    myImageType = isTeX;
     fileExtension = [[self fileName] pathExtension];
     if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) &&
         ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
         [typesetButton setEnabled: NO];
+        myImageType = isOther;
         fileIsTex = NO;
     }
             
 /* handle images */
-    myImageType = isTeX;
-    [pdfView setImageType: isTeX];
+    [pdfView setImageType: myImageType];
         
     if (! fileIsTex) {
         imageFound = NO;
@@ -566,7 +568,13 @@ preference change is cancelled. "*/
         [outputText setSelectable: NO];
         [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
                 stringByAppendingString:@" console"]];
-        [outputWindow makeKeyAndOrderFront: self];
+        if ([SUD boolForKey:ConsoleBehaviorKey]) {
+            if (![outputWindow isVisible])
+                [outputWindow orderBack: self];
+            [outputWindow makeKeyWindow];
+            }
+        else
+            [outputWindow makeKeyAndOrderFront: self];
 
         project = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension: @"texshop"];
         if ([[NSFileManager defaultManager] fileExistsAtPath: project])
@@ -863,7 +871,8 @@ preference change is cancelled. "*/
     }
     tagLocation = 0;
     [tags removeAllItems];
-    [tags addItemWithTitle:@"Tags"];
+    // [tags addItemWithTitle:@"Tags"];
+    [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
     tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
 }
 
@@ -899,12 +908,25 @@ preference change is cancelled. "*/
     [textView scrollRangeToVisible: myRange];
 }
 
+- (id) pdfWindow;
+{
+    return pdfWindow;
+}
+
+- (id) textWindow;
+{
+    return textWindow;
+}
+
 - (int) imageType;
 {
     return myImageType;
 }
 
-
+- (NSPDFImageRep *) myTeXRep;
+{
+    return texRep;
+}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem {
     BOOL  result;
@@ -1486,6 +1508,7 @@ preference change is cancelled. "*/
                         {
                             errorLine[errorNumber] = error;
                             errorNumber++;
+                            [outputWindow makeKeyAndOrderFront: self];
                         }
                     }
                 }

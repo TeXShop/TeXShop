@@ -8,6 +8,7 @@
 #import "globals.h"
 
 NSString *DefaultCommandKey = @"DefaultCommand";
+NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
 NSString *DocumentFontKey = @"DocumentFont";
 NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";
 NSString *DocumentWindowNameKey = @"DocumentWindow";

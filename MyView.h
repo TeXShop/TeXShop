@@ -14,6 +14,7 @@
     id			currentPage;
     id			totalPage;
     id			myScale;
+    id			myStepper;
     int			imageType;
     double		oldMagnification;
     BOOL		fixScroll;
@@ -25,6 +26,7 @@
 - (void) previousPage: sender;
 - (void) nextPage: sender;
 - (void) goToPage: sender;
+- (void) doStepper: sender;
 - (void) setImageRep: (NSPDFImageRep *)theRep;
 - (void) changeScale: sender;
 - (double) magnification;

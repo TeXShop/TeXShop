@@ -288,8 +288,8 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
     {
         [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfMagnificationKey] 				forKey:PdfMagnificationKey];
         mag = [_magTextField doubleValue];
-        if (mag < 25.0) {
-            mag = 25;
+        if (mag < 20.0) {
+            mag = 20;
             [_magTextField setDoubleValue:mag];
             [_magTextField display];
             }
@@ -350,6 +350,24 @@ A tag of 0 means use TeX, a tag of 1 means use LaTeX.
 	// we can use the tag directly here.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultCommandKey];
 }
+
+
+/*" This method is connected to the "Console" matrix on the TeX pane.
+
+A tag of 0 means "always", a tag of 1 means "when errors occur".
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)consoleBehaviorChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD boolForKey:ConsoleBehaviorKey] forKey:ConsoleBehaviorKey];
+
+	// since the default program values map identically to the tags of the NSButtonCells,
+	// we can use the tag directly here.
+	[SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleBehaviorKey];
+}
+
 
 //==============================================================================
 // other target/action methods
@@ -538,12 +556,13 @@ This method retrieves the application preferences from the defaults object and s
             [_pdfWindowPosButton setEnabled: NO];
             
         magnification = [defaults floatForKey:PdfMagnificationKey];
-        mag = magnification * 100.0;
+        mag = round(magnification * 100.0);
         [_magTextField setIntValue: mag];
 
 	[_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
+        [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
 }
 
 /*" %{This method is not to be called from outside of this class}

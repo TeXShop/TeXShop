@@ -14,6 +14,7 @@
     MyDocument	*myDocument;
 }
 
-- (void)makeKeyAndOrderFront:(id)sender;
-    
+- (void) makeKeyAndOrderFront:(id)sender;
+- (void) sendEvent:(NSEvent *)theEvent;
+
 @end

@@ -25,6 +25,7 @@
 - (void) nextPage: sender;
 - (void) doError: sender;
 - (void) orderOut: sender;
+- (void) sendEvent:(NSEvent *)theEvent;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (MyDocument *)document;
 @end

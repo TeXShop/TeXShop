@@ -7,23 +7,24 @@
 #define NUMBEROFERRORS	20
 
 
-#define	isTeX	0
-#define isPDF	1
-#define isEPS	2
-#define isJPG	3
-#define isTIFF	4
+#define	isTeX		0
+#define isOther		1
+#define isPDF		2
+#define isEPS		3
+#define isJPG		4
+#define isTIFF		5
 
 
 @interface MyDocument : NSDocument 
 {
-    id			textView;				/*" textView displaying the current TeX source "*/
-    id			pdfView;				/*" view displaying the current preview "*/
-    id			textWindow;				/*" window displaying the current document "*/
-    id			pdfWindow;				/*" window displaying the current pdf preview "*/
-    id			outputWindow;			/*" window displaying the output of the running TeX process "*/
-    id			outputText;				/*" text displaying the output of the running TeX process "*/
+    id			textView;		/*" textView displaying the current TeX source "*/
+    id			pdfView;		/*" view displaying the current preview "*/
+    id			textWindow;		/*" window displaying the current document "*/
+    id			pdfWindow;		/*" window displaying the current pdf preview "*/
+    id			outputWindow;		/*" window displaying the output of the running TeX process "*/
+    id			outputText;		/*" text displaying the output of the running TeX process "*/
     NSTextField		*texCommand;		/*" connected to the command textField on the errors panel "*/
-    id			popupButton;			/*" popupButton displaying all the TeX templates "*/
+    id			popupButton;		/*" popupButton displaying all the TeX templates "*/
     id			projectPanel;
     id			projectName;
     id			requestWindow;
@@ -32,30 +33,30 @@
     id			lineBox;
     id			typesetButton;
     id			tags;
-    int			whichEngine;			/*" 0 = tex, 1 = latex, 2 = bibtex "*/
+    int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = bibtex "*/
     BOOL		tagLine;
     NSFileHandle	*writeHandle;
     NSFileHandle	*readHandle;
     NSPipe		*inputPipe;
     NSPipe		*outputPipe;
-    NSString		*aString;			/*" holds the content of the tex document "*/
+    NSString		*aString;		/*" holds the content of the tex document "*/
     NSTask		*texTask;
     NSTask		*bibTask;
     NSTask		*indexTask;
     NSDate		*startDate;
     NSPDFImageRep	*texRep;
-    NSData		*previousFontData;		/*" holds font data in case preferences change is cancelled "*/
+    NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
     int			myPrefResult;
     BOOL		fileIsTex;
     int			myImageType;
     int			errorLine[NUMBEROFERRORS];
     int			errorNumber;
     int			whichError;
-    unsigned	colorStart, colorEnd;
-    NSTimer		*syntaxColoringTimer;		/*" Timer that repeatedly handles syntax coloring "*/
-    unsigned	colorLocation;
-    NSTimer		*tagTimer;					/*" Timer that repeatedly handles tag updates "*/
-    unsigned	tagLocation;
+    unsigned		colorStart, colorEnd;
+    NSTimer		*syntaxColoringTimer;	/*" Timer that repeatedly handles syntax coloring "*/
+    unsigned		colorLocation;
+    NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+    unsigned		tagLocation;
     BOOL		makeError;
     BOOL		returnline;
 }
@@ -86,6 +87,9 @@
 - (void) textDidChange:(NSNotification *)aNotification;
 - (void) setupTags;
 - (int) imageType;
+- (id) pdfWindow;
+- (id) textWindow;
+- (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 

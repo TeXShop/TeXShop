@@ -13,8 +13,19 @@
 
 - (void)makeKeyAndOrderFront:(id)sender;
 {
-   if ([myDocument imageType] == isTeX)
+   if (([myDocument imageType] == isTeX) || ([myDocument imageType] == isOther))
         [super makeKeyAndOrderFront: sender];
+}
+
+- (void)sendEvent:(NSEvent *)theEvent
+{
+    if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSControlKeyMask))
+    if ([[theEvent charactersIgnoringModifiers] isEqualToString:@"1"]) {
+            if (([myDocument imageType] == isTeX) && ([myDocument myTeXRep] != nil))
+                [[myDocument pdfWindow] makeKeyAndOrderFront: self];
+            return;
+            }
+    [super sendEvent: theEvent];
 }
 
 @end

@@ -9,6 +9,7 @@
 
 /*" global defines for TeXShop.app "*/
 extern NSString *DefaultCommandKey;
+extern NSString *ConsoleBehaviorKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;

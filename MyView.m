@@ -34,6 +34,7 @@
             selector:@selector(revertMagnification:) 
             name:MagnificationRevertNotification object:nil];
     fixScroll = NO;
+    myRep = nil;
     
     return value;
 }
@@ -41,11 +42,15 @@
 - (void)resetMagnification;
 {
     double	theMagnification;
+    int		mag;
     
     theMagnification = [SUD floatForKey:PdfMagnificationKey];
     
     if (theMagnification != [self magnification]) 
         [self setMagnification: theMagnification];
+    
+    mag = round(theMagnification * 100.0);
+    [myStepper setIntValue: mag];
 }
 
 - (void)changeMagnification:(NSNotification *)aNotification;
@@ -140,28 +145,38 @@
 
 - (void) changeScale: sender;
 {
-    double	scale, magSize;
+    int		scale;
+    double	magSize;
     
-    scale = [myScale doubleValue];
-    if (scale < 25) {
-        scale = 25;
-        [myScale setDoubleValue: scale];
+    scale = [myScale intValue];
+    if (scale < 20) {
+        scale = 20;
+        [myScale setIntValue: scale];
         [myScale display];
         }
     if (scale > 400) {
         scale = 400;
-        [myScale setDoubleValue: scale];
+        [myScale setIntValue: scale];
         [myScale display];
         }
+    [myStepper setIntValue: scale];
     magSize = [self magnification];
     [self setMagnification: magSize];
 }
+
+- (void) doStepper: sender;
+{
+    [myScale setIntValue: [myStepper intValue]];
+    [myScale display];
+    [self changeScale: self];
+}
+
 
 - (double)magnification;
 {
     double	magsize;
    
-    magsize = [myScale doubleValue] / 100.0;
+    magsize = [myScale intValue] / 100.0;
     return magsize;
 }
 
@@ -176,8 +191,11 @@
         newBounds.size.height = myBounds.size.height * (magSize);
         [self setFrame: newBounds];
         [self setBounds: myBounds];
-        mag = magSize * 100;
-        [myScale setIntValue: mag];
+        mag = round(magSize * 100.0);
+        /* Warning: if the next line is changed to setIntValue, the magnification
+            fails! */
+        [myScale setDoubleValue: mag];
+        [myStepper setIntValue: mag];
         
         [[self superview] setNeedsDisplay:YES];
         [self setNeedsDisplay:YES];
@@ -189,6 +207,8 @@
             [self setNeedsDisplay:YES];
         */
 }
+
+
 
 
 - (void) setImageRep: (NSPDFImageRep *)theRep;
@@ -250,11 +270,11 @@
     myDocument = theDocument;
 }
 
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];       
     [super dealloc];
 }
-
 
 
 @end

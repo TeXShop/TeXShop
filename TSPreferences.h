@@ -24,6 +24,7 @@
 	IBOutlet NSTextField	*_texCommandTextField;		/*" connected to "TeX program" "*/
 	IBOutlet NSTextField	*_latexCommandTextField;	/*" connected to "Latex program" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
+        IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
 	
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
         NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -55,6 +56,7 @@
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
+- (IBAction)consoleBehaviorChanged:sender;
 
 - (IBAction)okButtonPressed:sender;
 - (IBAction)cancelButtonPressed:sender;

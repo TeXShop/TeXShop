@@ -1,6 +1,6 @@
 // MyDocument.h
 
-// Created by dick in July, 2000.
+// Created by koch in July, 2000.
 
 #import <AppKit/NSDocument.h>
 

@@ -361,6 +361,18 @@ A tag of 0 means use TeX, a tag of 1 means use LaTeX.
 //------------------------------------------------------------------------------
 {
 	// save everything to the user defaults
+        
+        /* WARNING: the next two commands were added by koch on March 17.
+        They are needed because the TextBox fields do not send a command
+        until the return key is pressed. But pressing the return key also
+        closes preferences. Users will instead modify the text and then
+        click elsewhere to modify other preferences, only to discover that
+        these preferences weren't changed. A user sent email asking how to
+        activate pdfelatex in the old TeXShop, so I tried it on
+        the new program and couldn't! */
+        
+        [self texProgramChanged: self];
+        [self latexProgramChanged: self];
 	[SUD synchronize];	
 	// close the window
 	[_prefsWindow performClose:self];

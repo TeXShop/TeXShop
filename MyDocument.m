@@ -1500,14 +1500,14 @@ if (! externalEditor) {
             theChar = [text characterAtIndex: start];
         switch (type) {
         
-            case Mcomment:	if ((end1 == start) || (theChar != 0x0025)) {
+            case Mcomment:	// if ((end1 == start)  || (theChar != 0x0025) */) {
                                     tempRange.location = start;
                                     tempRange.length = 0;
                                     [textView replaceCharactersInRange:tempRange withString:@"%"];
                                     myRange.length++; oldRange.length++;
                                     changeEnd++;
                                     end++;
-                                    }
+                                //    }
                                 break;
                                             
             case Muncomment:	if ((end1 != start) && (theChar == 0x0025)) {
@@ -2297,6 +2297,9 @@ if (! externalEditor) {
     unsigned			end;
     NSMutableAttributedString 	*myAttribString;
     NSDictionary		*myAttributes;
+    NSData			*fontData;
+    NSFont 			*font;
+
     
     
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
@@ -2336,7 +2339,7 @@ if (! externalEditor) {
         previousChar = [textString characterAtIndex: (colorRange.location - 1)];
         if ((theChar != texChar) && (theChar != 0x007b) && (theChar != 0x007d) && (theChar != 0x0024) &&
             (theChar != 0x0025) && (theChar != 0x0020) && (previousChar != 0x007d) && (previousChar != 0x007b)
-            && (previousChar >= 0x0020)) {
+            && (previousChar != 0x0024)  && (previousChar >= 0x0020)) {
                 newRange.location = colorRange.location - 1;
                 newRange.length = colorRange.length;
                 myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 			attributedSubstringFromRange: newRange]] autorelease];
@@ -2353,7 +2356,7 @@ if (! externalEditor) {
     // NSMutableAttributedString, so the various recolorings do not cause screen updates
     // Only one update is required at the end. This ingenious code was written by
     // Martin Heusse. Many, many thanks!!!
-
+    
     [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
     
     location = start1;
@@ -2370,6 +2373,7 @@ if (! externalEditor) {
     modifiedRange.length = cutRange.length;
     [myAttribString setAttributes:  [NSDictionary dictionaryWithObject:regularColor
         forKey:NSForegroundColorAttributeName] range: modifiedRange];
+ 
         
     // NSLog(@"begin");
     while (location < final) {
@@ -2439,6 +2443,20 @@ if (! externalEditor) {
             }
         // NSLog(@"end");
         [[textView textStorage] replaceCharactersInRange: cutRange withAttributedString:myAttribString];
+        
+// The code below fixes a strange bug: if the user has picked a different font or size, 
+// changes in the first line will have 12 pt Helvetica font, but changes in other lines will work.!!??
+
+    if (cutRange.location == 0) {
+        
+        fontData = [SUD objectForKey:DocumentFontKey];
+        if (fontData != nil)
+            {
+            font = [NSUnarchiver unarchiveObjectWithData:fontData];
+            [textView setFont: font];
+            }
+    }
+        
         [textView setSelectedRange:selectedRange];
 
         

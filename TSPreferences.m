@@ -56,15 +56,15 @@ static id _sharedInstance = nil;
         [super dealloc];
         return _sharedInstance;
     }
-	_sharedInstance = self;
-	_undoManager = [[NSUndoManager alloc] init];
+    _sharedInstance = self;
+    _undoManager = [[NSUndoManager alloc] init];
     // setup the default font here so it's defined when we run for the first time.
     _documentFont = [NSFont userFontOfSize:12.0];
 	
-	// register for changes in the user defaults
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:)     name:NSUserDefaultsDidChangeNotification object:nil];
-	
-	return self;
+    // register for changes in the user defaults
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:)     	name:NSUserDefaultsDidChangeNotification object:nil];
+
+    return self;
 }
 
 //------------------------------------------------------------------------------
@@ -338,12 +338,24 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 - (IBAction)tetexBinPathChanged:sender
 //------------------------------------------------------------------------------
 {
-	// register the undo message first
+	// register the undo messages first
 	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:TetexBinPathKey] 				forKey:TetexBinPathKey];
 
 	[SUD setObject:[_tetexBinPathField stringValue] forKey:TetexBinPathKey];
 }
 
+//==============================================================================
+/*" This method is connected to the textField that holds the gs bin path. 
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)gsBinPathChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:GSBinPathKey] 				forKey:GSBinPathKey];
+
+	[SUD setObject:[_gsBinPathField stringValue] forKey:GSBinPathKey];
+}
 
 //==============================================================================
 // TeX pane
@@ -499,6 +511,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 - (IBAction)okButtonPressed:sender
 //------------------------------------------------------------------------------
 {
+        NSMutableString *path;
 	// save everything to the user defaults
         
         /* WARNING: the next two commands were added by koch on March 17.
@@ -516,7 +529,18 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         [self latexGSProgramChanged: self];
         [self texScriptProgramChanged: self];
         [self latexScriptProgramChanged: self];
-	[SUD synchronize];	
+	[SUD synchronize];
+
+        // re-Set the environment for subtasks
+        [TSEnvironment release];
+        TSEnvironment = [[NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]] retain];
+        path = [NSMutableString stringWithString: [TSEnvironment objectForKey:@"PATH"]];
+        [path appendString:@":"];
+        [path appendString:[SUD stringForKey:TetexBinPathKey]];
+        [path appendString:@":"];
+        [path appendString:[SUD stringForKey:GSBinPathKey]];
+        [TSEnvironment setObject: path forKey: @"PATH"];
+
 	// close the window
 	[_prefsWindow performClose:self];
 }
@@ -616,9 +640,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
 
-    // also register the default font. _documentFont was set in -init, dump it here to
-    // the user defaults
-    [SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
+        // also register the default font. _documentFont was set in -init, dump it here to
+        // the user defaults
+        [SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
 	[SUD synchronize];
 	
 	// create the necessary directories
@@ -692,10 +716,11 @@ This method retrieves the application preferences from the defaults object and s
         [_texGSCommandTextField setStringValue:[defaults stringForKey:TexGSCommandKey]];
 	[_latexGSCommandTextField setStringValue:[defaults stringForKey:LatexGSCommandKey]];
         [_tetexBinPathField setStringValue:[defaults stringForKey:TetexBinPathKey]];
-        /*
+        [_gsBinPathField setStringValue:[defaults stringForKey:GSBinPathKey]];
+        
         [_texScriptCommandTextField setStringValue:[defaults stringForKey:TexScriptCommandKey]];
 	[_latexScriptCommandTextField setStringValue:[defaults stringForKey:LatexScriptCommandKey]];
-        */
+        
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
         [_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
         [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];

@@ -80,17 +80,24 @@
     id			aRep;
     int			result;
     
-    
-    
     projectPath = [[[self fileName] stringByDeletingPathExtension] 	stringByAppendingPathExtension:@"texshop"];
     if (myImageType == isTeX) {
         if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
-            nameString = [NSString stringWithContentsOfFile: projectPath];
-            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath];
+            if ([projectRoot isAbsolutePath]) {
+                nameString = [NSString stringWithString:projectRoot];
             }
+            else {
+                nameString = [[self fileName] stringByDeletingLastPathComponent];
+                nameString = [[nameString stringByAppendingString:@"/"] 
+                    stringByAppendingString: [NSString stringWithContentsOfFile: projectPath]];
+                nameString = [nameString stringByStandardizingPath];
+            }
+            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+        }
         else
             imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
-        }
+    }
     else if (myImageType == isPDF)
         imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
     else if ((myImageType == isJPG) || (myImageType == isTIFF))
@@ -205,8 +212,9 @@
     
     myImageType = isTeX;
     fileExtension = [[self fileName] pathExtension];
-    if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) &&
-        ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
+    if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) 
+        && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
+        && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
         [typesetButton setEnabled: NO];
@@ -304,12 +312,20 @@
         case DefaultCommandTeX: [typesetButton setTitle: @"Tex"]; break;
         case DefaultCommandLaTeX: [typesetButton setTitle: @"Latex"]; break;
         case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTEXt"]; break;
-        case DefaultCommandOmega: [typesetButton setTitle: @"Omega"]; break;
         }
     
     projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
     if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
-        nameString = [NSString stringWithContentsOfFile: projectPath];
+        NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath];
+        if ([projectRoot isAbsolutePath]) {
+            nameString = [NSString stringWithString:projectRoot];
+        }
+        else {
+            nameString = [[self fileName] stringByDeletingLastPathComponent];
+            nameString = [[nameString stringByAppendingString:@"/"] 
+                stringByAppendingString: [NSString stringWithContentsOfFile: projectPath]];
+            nameString = [nameString stringByStandardizingPath];
+        }
         imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
         }
     else
@@ -485,6 +501,16 @@ preference change is cancelled. "*/
     The routine below saves the file and then sets the document type to TEXT. 
     Setting the type must be done with Carbon. This is
     the only piece of Carbon code in TeXShop.
+    
+    January 15, 2002. This routine no longer works in 10.1.2. It is called,
+    and the Carbon code sets the TYPE for new files, but doesn't set it when
+    files are REWRITTEN for reasons I do not understand. The AppKit now has a 
+    direct method to set types, so the entire method below is obsolete and will be
+    eliminated. Currently it does nothing. It has been replaced with 
+    
+        - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath 
+        ofType:(NSString *)documentTypeName 
+        saveOperation:(NSSaveOperationType)saveOperationType 
 */
 
  - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
@@ -495,20 +521,25 @@ preference change is cancelled. "*/
     OSErr		myError;
     NSURL		*myURL;
     
-    myValue = [super writeToFile:fileName ofType:type];
     
+    myValue = [super writeToFile:fileName ofType:type];
+   
+    /*
     if (fileName) {
         myURL = [NSURL fileURLWithPath:fileName];
-        /* the remaining code is Carbon */
+        // the remaining code is Carbon
         CFURLGetFSRef((CFURLRef)myURL, &myFileRef);
         myError = FSGetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo, 
             NULL, NULL, NULL);
+        // if (myError == 0)
+        //            NSLog(@"yes"); 
         myCatalogInfo.finderInfo[0] = 'T';
         myCatalogInfo.finderInfo[1] = 'E';
         myCatalogInfo.finderInfo[2] = 'X';
         myCatalogInfo.finderInfo[3] = 'T';
         myError = FSSetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo);
         }
+    */
 
     return myValue;
  }
@@ -617,7 +648,37 @@ preference change is cancelled. "*/
 
 - (void) doJob:(int)type withError:(BOOL)error;
 {
-    SEL	saveFinished;
+    SEL		saveFinished;
+    NSDate	*myDate;
+    
+    /* The lines of code below kill previously running tasks. This is
+    necessary because otherwise the source file will be open when the
+    system tries to save a new version. If the source file is open,
+    NSDocument makes a backup in /tmp which is never removed. */
+    
+    if (texTask != nil) {
+                [texTask terminate];
+                myDate = [NSDate date];
+                while (([texTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+                [texTask release];
+                texTask = nil;
+            }
+            
+    if (bibTask != nil) {
+                [bibTask terminate];
+                myDate = [NSDate date];
+                while (([bibTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+                [bibTask release];
+                bibTask = nil;
+            }
+            
+    if (indexTask != nil) {
+                [indexTask terminate];
+                myDate = [NSDate date];
+                while (([indexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+                [indexTask release];
+                indexTask = nil;
+            }
     
     errorNumber = 0;
     whichError = 0;
@@ -709,6 +770,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString		*sourcePath;
     NSString		*enginePath;
     NSString		*tetexBinPath;
+    NSString		*epstopdfPath;
     
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
@@ -727,6 +789,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         
         texTask = [[NSTask alloc] init];
         [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
+        [texTask setEnvironment: TSEnvironment];
+        
         if ([[myFileName pathExtension] isEqualToString:@"dvi"]) {
             enginePath = [SUD stringForKey:LatexGSCommandKey];
             enginePath = [self separate:enginePath into: args];
@@ -738,7 +802,11 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             }
         else if  ([[myFileName pathExtension] isEqualToString:@"eps"]) {
             enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdfwrap" ofType:nil];
-            [args addObject: [[NSBundle mainBundle] pathForResource:@"epstopdf" ofType:nil]];
+            
+            tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+            epstopdfPath = [tetexBinPath stringByAppendingString:@"epstopdf"];
+            // [args addObject: [[NSBundle mainBundle] pathForResource:@"epstopdf" ofType:nil]];
+            [args addObject: epstopdfPath];
             }
 
         [args addObject: [sourcePath lastPathComponent]];
@@ -755,14 +823,13 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 [texTask setLaunchPath:enginePath];
                 [texTask setArguments:args];
                 [texTask launch];
-              }
+        }
         else {
             [inputPipe release];
             [texTask release];
             texTask = nil;
-            }
         }
-
+    }
 }
 
 
@@ -842,16 +909,25 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             
         projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
         if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
-            nameString = [NSString stringWithContentsOfFile: projectPath];
-            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath];
+            if ([projectRoot isAbsolutePath]) {
+                nameString = [NSString stringWithString:projectRoot];
             }
+            else {
+                nameString = [[self fileName] stringByDeletingLastPathComponent];
+                nameString = [[nameString stringByAppendingString:@"/"] 
+                    stringByAppendingString: [NSString stringWithContentsOfFile: projectPath]];
+                nameString = [nameString stringByStandardizingPath];
+            }
+            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+        }
         else
             imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
         if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
             myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
             startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
-            }
+        }
         else
             startDate = nil;
     
@@ -889,14 +965,25 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [outputWindow makeKeyAndOrderFront: self];
 
         project = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension: @"texshop"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath: project])
-            sourcePath = [NSString stringWithContentsOfFile: project];
+        if ([[NSFileManager defaultManager] fileExistsAtPath: project]) {
+            NSString *projectRoot = [NSString stringWithContentsOfFile: project];
+            if ([projectRoot isAbsolutePath]) {
+                sourcePath = [NSString stringWithString:projectRoot];
+            }
+            else {
+                sourcePath = [[self fileName] stringByDeletingLastPathComponent];
+                sourcePath = [[sourcePath stringByAppendingString:@"/"] 
+                    stringByAppendingString: projectRoot];
+                sourcePath = [sourcePath stringByStandardizingPath];
+            }
+        }
         else
             sourcePath = myFileName;
             
         if (whichEngine < 5)
         {
-            if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey])) 
+            if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey]) 
+                && (whichEngine != 2)   && (whichEngine != 4)) 
             	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
                 
             if (texTask != nil) {
@@ -906,6 +993,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 }
             texTask = [[NSTask alloc] init];
             [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
+            [texTask setEnvironment: TSEnvironment];
             
             if (whichEngine == 2) {
                 if (theScript == 100) {
@@ -915,16 +1003,23 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 else {
                     enginePath = [[NSBundle mainBundle] pathForResource:@"contextdviwrap" ofType:nil];
                     [args addObject: [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"]];
-                    if ([SUD boolForKey:SavePSEnabledKey]) 
-                        [args addObject: [NSString stringWithString:@"--keep-psfile"]];
+                     if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey])) 
+                        [args addObject: @"yes"];
+                     else
+                        [args addObject: @"no"];
+                   // if ([SUD boolForKey:SavePSEnabledKey]) 
+                   //     [args addObject: [NSString stringWithString:@"--keep-psfile"]];
                     }
                  }
                 
             else if (whichEngine == 3)
-                myEngine = @"omega";
+                myEngine = @"omega"; // currently this should never occur
                 
             else if (whichEngine == 4)
-                myEngine = @"metapost";
+                {
+                enginePath = [[NSBundle mainBundle] pathForResource:@"metapostwrap" ofType:nil];
+                [args addObject: [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"]];
+                 }
                 
             else switch (theScript) {
             
@@ -954,7 +1049,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 
                 }
                 
-            if (whichEngine != 2) {
+            if ((whichEngine != 2) && (whichEngine != 3) && (whichEngine != 4)) {
                 
             myEngine = [self separate:myEngine into:args];
                 
@@ -975,20 +1070,21 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             file name itself */
             [args addObject: [sourcePath lastPathComponent]];
         
-
-            if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath]))
+            if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
                 [texTask setLaunchPath:enginePath];
+                [texTask setArguments:args];
+                [texTask setStandardOutput: outputPipe];
+                [texTask setStandardError: outputPipe];
+                [texTask setStandardInput: inputPipe];
+                [texTask launch];
+            }
             else {
                 [inputPipe release];
                 [outputPipe release];
                 [texTask release];
                 texTask = nil;
-                }
-            [texTask setArguments:args];
-            [texTask setStandardOutput: outputPipe];
-            [texTask setStandardInput: inputPipe];
-            [texTask launch];
             }
+        }
         else if (whichEngine == 5) {
             bibPath = [sourcePath stringByDeletingPathExtension];
             /* Koch: ditto; allow spaces in path */
@@ -998,17 +1094,19 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 [bibTask terminate];
                 [bibTask release];
                 bibTask = nil;
-                }
+            }
             bibTask = [[NSTask alloc] init];
             [bibTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            [bibTask setEnvironment: TSEnvironment];
             tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
             enginePath = [tetexBinPath stringByAppendingString:@"bibtex"];
             [bibTask setLaunchPath: enginePath];
             [bibTask setArguments:args];
             [bibTask setStandardOutput: outputPipe];
+            [bibTask setStandardError: outputPipe];
             [bibTask setStandardInput: inputPipe];
             [bibTask launch];
-            }
+        }
         else if (whichEngine == 6) {
             indexPath = [sourcePath stringByDeletingPathExtension];
             /* Koch: ditto, spaces in path */
@@ -1018,19 +1116,20 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 [indexTask terminate];
                 [indexTask release];
                 indexTask = nil;
-                }
+            }
             indexTask = [[NSTask alloc] init];
             [indexTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            [indexTask setEnvironment: TSEnvironment];
             tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
             enginePath = [tetexBinPath stringByAppendingString:@"makeindex"];
             [indexTask setLaunchPath: enginePath];
             [indexTask setArguments:args];
             [indexTask setStandardOutput: outputPipe];
+            [indexTask setStandardError: outputPipe];
             [indexTask setStandardInput: inputPipe];
             [indexTask launch];
-            }
-
         }
+    }
 }
 
 
@@ -1047,11 +1146,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 - (void) doContext: sender;
 {
     [self doJob:2 withError:YES];
-}
-
-- (void) doOmega: sender;
-{
-    [self doJob:3 withError:YES];
 }
 
 - (void) doMetapost: sender;
@@ -1083,8 +1177,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         [self doMetapost: self];
     else if ([titleString isEqualToString: @"ConTEXt"])
         [self doContext: self];
-    else if ([titleString isEqualToString: @"Omega"])
-        [self doOmega: self];
     else if ([titleString isEqualToString: @"Bibtex"])
         [self doBibtex: self];
     else if ([titleString isEqualToString: @"Index"])
@@ -1153,10 +1245,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [typesetButton setTitle: @"ConTEXt"];
             break;
             
-        case 6:
-            [typesetButton setTitle: @"Omega"];
-            break;
-
         }
 }
 
@@ -1201,7 +1289,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 - (void) setProjectFile: sender;
 {
      int		result;
-     NSString		*project, *nameString, *anotherString;
+     NSString		*project, *nameString; //, *anotherString;
      
      if (! [self fileName]) {
         result = [NSApp runModalForWindow: requestWindow];
@@ -1221,15 +1309,15 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         result = [NSApp runModalForWindow: projectPanel];
         if (result == 0) {
             nameString = [projectName stringValue];
-            if ([nameString isAbsolutePath])
+//            if ([nameString isAbsolutePath])
                 [nameString writeToFile: project atomically: YES];
-            else {
-                anotherString = [[self fileName] stringByDeletingLastPathComponent];
-                anotherString = [[anotherString stringByAppendingString:@"/"] 
-                        stringByAppendingString: nameString];
-                nameString = [anotherString stringByStandardizingPath];
-                [nameString writeToFile: project atomically: YES];
-                } 
+//           else {
+//                anotherString = [[self fileName] stringByDeletingLastPathComponent];
+//                anotherString = [[anotherString stringByAppendingString:@"/"] 
+//                        stringByAppendingString: nameString];
+//                nameString = [anotherString stringByStandardizingPath];
+//                [nameString writeToFile: project atomically: YES];
+//                } 
             }
     }
 }
@@ -2097,7 +2185,16 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
             if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) 
             {
-                nameString = [NSString stringWithContentsOfFile: projectPath];
+                NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath];
+                if ([projectRoot isAbsolutePath]) {
+                    nameString = [NSString stringWithString:projectRoot];
+                }
+                else {
+                    nameString = [[self fileName] stringByDeletingLastPathComponent];
+                    nameString = [[nameString stringByAppendingString:@"/"] 
+                        stringByAppendingString: [NSString stringWithContentsOfFile: projectPath]];
+                    nameString = [nameString stringByStandardizingPath];
+                }
                 imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
             }
             else
@@ -2207,6 +2304,21 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [readHandle readInBackgroundAndNotify];
         }
     }
+}
+
+- (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType
+{
+    NSDictionary	*myDictionary;
+    NSMutableDictionary	*aDictionary;
+    id			theValue;
+    NSNumber		*myNumber;
+    
+    myDictionary = [super fileAttributesToWriteToFile: fullDocumentPath ofType: documentTypeName
+                    saveOperation: saveOperationType];
+    aDictionary = [NSMutableDictionary dictionaryWithDictionary: myDictionary];
+    myNumber = [NSNumber numberWithLong:'TEXT'];
+    [aDictionary setObject: myNumber forKey: NSFileHFSTypeCode]; 
+    return aDictionary;
 }
 
 @end

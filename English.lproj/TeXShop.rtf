@@ -2,7 +2,6 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\vieww12500\viewh13660\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -36,6 +35,7 @@
                Syntax Colors \
 	More About teTeX\
 	Coexisting with Fink\
+	ConTeXt and MetaPost\
 	Sending Bug Reports\
 	License\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -45,7 +45,9 @@ Preliminaries:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop is a Mac OS X program which can typeset TeX and Latex files and preview the output on the screen. The program usually typesets using 
+\f2\b0 \cf0 TeXShop is a Mac OS X program which consists of an editor for TeX sources, an interface to an underlying TeX setup and a preview window for PDF output. \
+\
+The program usually typesets using 
 \f1\i pdftex
 \f2\i0  or 
 \f1\i pdflatex
@@ -53,11 +55,13 @@ Preliminaries:\
 \f1\i tex
 \f2\i0  or 
 \f1\i latex
+\f2\i0 , followed by 
+\f1\i dvips
+\f2\i0  and a PDF distiller (which produces PDF from PostScript), normally 
+\f1\i ghostscript
 \f2\i0 . These programs output pdf files rather than dvi files. Since pdf is the native graphics format of Mac OS X, it is easy to display the output on the screen. 
-\f1\i Pdftex
-\f2\i0  and 
-\f1\i pdflatex
-\f2\i0  were written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
+\f1\i pdfTeX
+\f2\i0  was written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
 \
 The pdf files created by TeXShop are standard pdf files which can be given to other people and displayed on a variety of computer systems. For example, they can be displayed by Adobe Acrobat on Mac OS 9. \
 \
@@ -71,7 +75,11 @@ TeXShop does not include TeX. Instead it uses the standard TeX distribution
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version is on the website\
+\f2\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version is on the ftp site:\
+\
+	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/teTeX.dmg (50MB)\
+\
+and a copy (which should be up to date) lives on\
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
@@ -123,9 +131,8 @@ You can start TeXShop by double clicking on a document with extension ".tex". Th
 \
 You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other tex documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.\
 \
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f1\i \cf0 pdftex
+\f1\i pdftex
 \f2\i0  and 
 \f1\i pdflatex
 \f2\i0  are unix programs derived from Knuth's TeX program. The syntax of TeX does not allow spaces in filenames, so source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.  \
@@ -155,7 +162,7 @@ If you used TeX in the past, your illustrations may be in
 The authors of 
 \f1\i pdflatex
 \f2\i0  have made it easy to include graphic files in a Latex document typeset with 
-\f1\i pedlatex
+\f1\i pdflatex
 \f2\i0 , even if the document will later be typeset by standard 
 \f1\i latex
 \f2\i0  and converted to a dvi file for distribution to other people. At the top of such a Latex input file, include the following lines:\
@@ -200,6 +207,16 @@ This command will cause
 \f1\i pdflatex
 \f2\i0 , but input the file "f1.eps" when the text is typeset with 
 \f1\i latex.\
+\
+[Note (Nov 2001 - GW): the graphicx package is pdfTeX-aware and of all the above, just entering\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\i0\fs20 \cf0 	\\usepackage\{graphicx\}\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i\fs24 \cf0 \
+in the preamble suffices as far as I know. More and more packages are pdfTeX vs TeX aware these days, e.g. texinfo.]\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -465,7 +482,7 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz and Sascha Beverungen, and an Italian localization by Giuseppe Carlino. Thanks! \
+\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz and Sascha Beverungen, an Italian localization by Giuseppe Carlino, and a Spanish localization by Juan L. Varona. Thanks! \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -525,10 +542,52 @@ and store "new.sty" inside this misc directory.\
 \
 Fink installs applications in /sw/bin. So far, so good. But it also resets the PATH variable so this location is searched first for applications. Unfortunately, Fink users sometimes install a second Fink copy of ghostscript, or a second Fink copy of teTeX. The ghostscript installed is version 7 rather than version 6, but currently version 7 creates pdf files which Mac OS X cannot properly render. The teTeX lacks scripts used by TeXShop and is not configured to search for include files in ~/Library.\
 \
-The latest versions of TeXShop and teTeX are immune to problems created by Fink. They use the Wierda distributions of teTeX and ghostscript even if Fink versions are installed. Users who install Ghostscript or teTeX under Fink should be aware that the Fink versions will be used from the Terminal, which may lead to unexplained behavior. There are reasons that users may still want the Fink version of Ghostscript, but the Wierda distribution of teTeX should work fine with X-windows applications like xdvi, so there is little reason to install the Fink version.  
+The latest versions of TeXShop and teTeX are 
+\f1\i probably
+\f2\i0  immune to problems created by Fink. They use the Wierda distributions of teTeX and ghostscript even if Fink versions are installed. Users who install Ghostscript or teTeX under Fink should be aware that the Fink versions will be used from the Terminal, which may lead to unexplained behavior. There are reasons that users may still want the Fink version of Ghostscript, but the Wierda distribution of teTeX should work fine with X-windows applications like xdvi, so there is little reason to install the Fink version.
 \f0\b \
 
 \f2\b0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Coexisting with other TeX distributions:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Problems 
+\f1\i may
+\f2\i0  arise when multiple TeX distributions are available on a system, especially if they set environment variables. This may lead to hard to detect problems where other files are used than you would expect.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 ConTeXt and MetaPost:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to Latex. See www.ntg.nl/context/ for details. A useful introduction can be found at http://berend.gameren.nl/tex/ in the document "LaTeX in proper ConTeXt." TeXShop now supports ConTeXt. \
+\
+MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See http://cm.bell-labs.com/who/hobby/MetaPost.html for more details.  Interesting metapost examples can be found at many web sites; for instance see  http://www.cs.ucc.ie/~dongen/mpost/mpost.html. TeXShop now supports MetaPost.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Release Notes\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+1.13b\
+	- [GW] Fixed setting of path before running commands. Automatically creating missing fonts now works\
+        	- [GW] Project root is now really relative\
+1.13c\
+	- [GW] Script settings are now retrieved from the stored defaults\
+        \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Known bugs and omissions\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
+- A lot of localization is missing or out of date (including this file)\
+\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Sending Bug Reports:\
@@ -551,7 +610,7 @@ The latest versions of TeXShop and teTeX are immune to problems created by Fink.
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
 	\
-	Gerben Wierda\
+	Gerben Wierda (for teTeX only)\
 	Gerben_Wierda@rna.nl\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural

@@ -70,7 +70,6 @@
 - (void) doLatex: sender;
 - (void) doBibtex: sender;
 - (void) doMetapost: sender;
-- (void) doOmega: sender;
 - (void) doContext: sender;
 - (void) doIndex: sender;
 - (void) doTypeset: sender;
@@ -107,6 +106,7 @@
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 - (void) updateChangeCount: (NSDocumentChangeType)changeType;
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
+- (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
 
 //-----------------------------------------------------------------------------

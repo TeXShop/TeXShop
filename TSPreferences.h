@@ -17,6 +17,7 @@
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
         IBOutlet NSButton	*_openEmptyButton;		/*" open empty document on start "*/
+        IBOutlet NSMatrix	*_defaultEncodeMatrix;		/*" text encoding "*/
 
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
         IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
@@ -29,6 +30,7 @@
         IBOutlet NSTextField	*_latexGSCommandTextField;	/*" connected to "Latex + GS" "*/
         IBOutlet NSButton	*_savePSButton;			/*" connect to save postscript "*/
         IBOutlet NSTextField	*_tetexBinPathField;		/*" connected to tetex bin path "*/
+        IBOutlet NSTextField	*_gsBinPathField;		/*" connected to tetex bin path "*/
         IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
         IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/	
         IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
@@ -58,6 +60,7 @@
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
+- (IBAction)encodingChanged:sender;
 
 - (IBAction)pdfWindowPosChanged:sender;
 - (IBAction)currentPdfWindowPosDefault:sender;
@@ -70,6 +73,7 @@
 - (IBAction)latexGSProgramChanged:sender;
 - (IBAction)savePSPressed:sender;
 - (IBAction)tetexBinPathChanged:sender;
+- (IBAction)gsBinPathChanged:sender;
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;
 - (IBAction)defaultScriptChanged:sender;

@@ -1,15 +1,17 @@
 #!/bin/tcsh
 
-# This short script calls epstopdf in the source code
-# Richard Koch; August 5, 2001
+# A wrapper to call epstopdf in the correct folder.
+# By Richard Koch, Oct 4, 2001, following similar code by
+# Gerben Wierda
 
-if ("$#argv" == "0") then
-	echo "$0 Missing argument: eps-file-name"
-	exit 1
+set mygspath = "/usr/local/bin"
+if (-x ${mygspath}/gs) then
+	setenv PATH "${mygspath}:${PATH}"
+	rehash
 endif
 
 set filename = "$argv[2]"
+set epstopdfname = "$argv[1]"
 set outputname = "${filename:r}.pdf"
-set epstopdf = "$argv[1]"
+"${epstopdfname}" -o="${outputname}" "${filename}"
 
-"${epstopdf}" -o="${outputname}" "${filename}"

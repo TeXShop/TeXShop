@@ -1,0 +1,21 @@
+#!/bin/tcsh
+
+# This short script calls texexec to run a conTeXt job
+# Richard Koch; September 14, 2001
+
+set mygspath = "/usr/local/bin"
+if (-x ${mygspath}/ps2pdf) then
+	setenv PATH "${mygspath}:${PATH}"
+	rehash
+endif
+
+set mytexexecpath = "$argv[1]"
+if (-x ${mytexexecpath}mpost) then
+	setenv PATH "${mytexexecpath}:${PATH}"
+	rehash
+endif
+
+set filename = "$argv[2]"
+
+mpost "${filename}"
+ps2pdf "${filename:r}.ps"

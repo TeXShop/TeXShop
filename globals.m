@@ -15,6 +15,7 @@ NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";
 NSString *DocumentWindowNameKey = @"DocumentWindow";
 NSString *DocumentWindowPosModeKey = @"DocumentWindowPositionMode";
 NSString *MakeEmptyDocumentKey = @"MakeEmptyDocument";
+NSString *EncodingKey = @"Encoding";
 NSString *LatexCommandKey = @"LatexCommand";
 NSString *LatexGSCommandKey = @"LatexGSCommand";
 NSString *SavePSEnabledKey = @"SavePSEnabled";
@@ -28,6 +29,7 @@ NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
 NSString *SaveDocumentFontKey = @"SaveDocumentFont";
 NSString *SyntaxColoringEnabledKey = @"SyntaxColoringEnabled";
 NSString *TetexBinPathKey = @"TetexBinPath";
+NSString *GSBinPathKey = @"GSBinPath";
 NSString *TexCommandKey = @"TexCommand";
 NSString *TexGSCommandKey = @"TexGSCommand";
 NSString *TexScriptCommandKey = @"TexScriptCommand";
@@ -43,7 +45,6 @@ NSString *commandblueKey = @"commandblue";
 NSString *markerredKey = @"markerred";
 NSString *markergreenKey = @"markergreen";
 NSString *markerblueKey = @"markerblue";
-NSString *teTeXBinLocation = @"/usr/local/teTeX/bin/powerpc-apple-darwin1.3.3/";
 
 // Exceptions
 NSString *XDirectoryCreation = @"DirectoryCreationException";
@@ -60,4 +61,5 @@ NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
 
 /*" Other variables "*/
 BOOL documentsHaveLoaded;
+NSMutableDictionary *TSEnvironment;
 

@@ -29,6 +29,7 @@ extern NSString *PdfWindowPosModeKey;
 extern NSString *SaveDocumentFontKey;
 extern NSString *SyntaxColoringEnabledKey;
 extern NSString *TetexBinPathKey;
+extern NSString *GSBinPathKey;
 extern NSString *TexCommandKey;
 extern NSString *TexGSCommandKey;
 extern NSString *TexScriptCommandKey;
@@ -44,7 +45,6 @@ extern NSString *commandblueKey;
 extern NSString *markerredKey;
 extern NSString *markergreenKey;
 extern NSString *markerblueKey;
-extern NSString *teTeXBinLocation;
 
 /*" Exceptions "*/
 extern NSString *XDirectoryCreation;
@@ -61,6 +61,7 @@ extern NSString *DocumentSyntaxColorNotification;
 
 /*" Other variables "*/
 extern BOOL documentsHaveLoaded;
+extern NSMutableDictionary *TSEnvironment;	/*" Store for environment for subtasks, set in TSPreferences "*/
 
 
 /*" Symbolic constants for the matrix used in 'Source window Position' of the TSPreferences. "*/

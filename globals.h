@@ -15,11 +15,14 @@ extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
 extern NSString *DocumentWindowPosModeKey;
+extern NSString *MakeEmptyDocumentKey;
 extern NSString *LatexCommandKey;
 extern NSString *LatexGSCommandKey;
+extern NSString *SavePSEnabledKey;
 extern NSString *LatexScriptCommandKey;
 extern NSString *ParensMatchingEnabledKey;
 extern NSString *PdfMagnificationKey;
+extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
@@ -32,6 +35,15 @@ extern NSString *TexScriptCommandKey;
 extern NSString *TexTemplatePathKey;
 extern NSString *TSHasBeenUsedKey;
 extern NSString *UserInfoPathKey;
+extern NSString *commentredKey;
+extern NSString *commentgreenKey;
+extern NSString *commentblueKey;
+extern NSString *commandredKey;
+extern NSString *commandgreenKey;
+extern NSString *commandblueKey;
+extern NSString *markerredKey;
+extern NSString *markergreenKey;
+extern NSString *markerblueKey;
 extern NSString *teTeXBinLocation;
 
 /*" Exceptions "*/
@@ -46,6 +58,9 @@ extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
 extern NSString *MagnificationRevertNotification;
 extern NSString *DocumentSyntaxColorNotification;
+
+/*" Other variables "*/
+extern BOOL documentsHaveLoaded;
 
 
 /*" Symbolic constants for the matrix used in 'Source window Position' of the TSPreferences. "*/

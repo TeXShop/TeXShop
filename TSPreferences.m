@@ -200,6 +200,16 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     }
 }
 
+/*" Make Empty Document on Startup "*/
+//------------------------------------------------------------------------------
+- (IBAction)emptyButtonPressed:sender;
+//------------------------------------------------------------------------------
+{
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:MakeEmptyDocumentKey] forKey:MakeEmptyDocumentKey];
+
+    [SUD setBool:[sender state] forKey:MakeEmptyDocumentKey];
+}
+
 /*" This method is connected to the 'syntax coloring' checkbox. 
 "*/
 //------------------------------------------------------------------------------
@@ -308,6 +318,19 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 
 }
 
+/*" This method is connected to the 'scroll' checkbox. 
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)scrollPressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:NoScrollEnabledKey] forKey:NoScrollEnabledKey];
+
+    [SUD setBool:[sender state] forKey:NoScrollEnabledKey];
+}
+
+
 //==============================================================================
 /*" This method is connected to the textField that holds the tetex bin path. 
 "*/
@@ -372,6 +395,21 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 
 	[SUD setObject:[_latexGSCommandTextField stringValue] forKey:LatexGSCommandKey];
 }
+
+/*" This method is connected to the 'save postscript' checkbox. 
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)savePSPressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SavePSEnabledKey] forKey:SavePSEnabledKey];
+
+    [SUD setBool:[sender state] forKey:SavePSEnabledKey];
+}
+
+
+
 
 /*" This method is connected to the textField that holds the tex script command. It is located on the TeX pane.
 "*/
@@ -634,6 +672,9 @@ This method retrieves the application preferences from the defaults object and s
             [_docWindowPosButton setEnabled: NO];
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
+    [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
+    [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
+    [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     
 	[_pdfWindowPosMatrix selectCellWithTag:[defaults integerForKey:PdfWindowPosModeKey]];
         /* koch: */

@@ -89,11 +89,14 @@
 
 - (void) previousPage: sender
 {	
-    int	pagenumber;
+    int		pagenumber;
+    NSRect	myBounds, myVisible, newVisible;
 
-        if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) return;
+    if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) return;
         
-        if (myRep != nil) {
+    if (myRep != nil) {
+            
+        if ([SUD boolForKey:NoScrollEnabledKey]) {
             pagenumber = [myRep currentPage];
             if (pagenumber > 0) {
                 pagenumber--;
@@ -103,15 +106,42 @@
                 [self display];
                 }
             }
+        
+        else {
+            myBounds = [self bounds];
+            myVisible = [self visibleRect];
+            newVisible = myVisible;
+            newVisible.origin.y = myVisible.origin.y + myVisible.size.height;
+            if (newVisible.origin.y > (myBounds.size.height - myVisible.size.height)) 
+                newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
+            if (! [self scrollRectToVisible:newVisible]) {
+                pagenumber = [myRep currentPage];
+                if (pagenumber > 0) {
+                    pagenumber--;
+                    [currentPage setIntValue: (pagenumber + 1)];
+                    [myRep setCurrentPage: pagenumber];
+                    [currentPage display];
+                    newVisible = myVisible;
+                    newVisible.origin.y = 0;
+                    [self scrollRectToVisible:newVisible];
+                        // [self display];
+                    }
+                }
+            [self display];
+            }
+        }
 }
 
 - (void) nextPage: sender;
 {	
-    int	pagenumber;
+    int		pagenumber;
+    NSRect	myBounds, myVisible, newVisible;
 
-        if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) return;
-
-        if (myRep != nil) {
+    if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) return;
+        
+    if (myRep != nil) {
+            
+        if ([SUD boolForKey:NoScrollEnabledKey]) {
             pagenumber = [myRep currentPage];
             if (pagenumber < ([myRep pageCount]) - 1) {
                 pagenumber++;
@@ -120,11 +150,34 @@
                 [currentPage display];
                 [self display];
                 }
+            } 
+        
+        else {
+            myBounds = [self bounds];
+            myVisible = [self visibleRect];
+            newVisible = myVisible;
+            newVisible.origin.y = myVisible.origin.y - myVisible.size.height;
+            if (newVisible.origin.y < 0) newVisible.origin.y = 0;
+            if (! [self scrollRectToVisible:newVisible]) {
+                pagenumber = [myRep currentPage];
+                if (pagenumber < ([myRep pageCount]) - 1) {
+                    pagenumber++;
+                    [currentPage setIntValue: (pagenumber + 1)];
+                    [myRep setCurrentPage: pagenumber];
+                    [currentPage display];
+                    newVisible = myVisible;
+                    newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
+                    [self scrollRectToVisible:newVisible];
+                    }
+                }
+            [self display];
             }
+        }
 }
 
 - (void) goToPage: sender;
-{	int	pagenumber;
+{	int		pagenumber;
+        NSRect		myBounds, myVisible, newVisible;
 
         if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) {
             [currentPage setIntValue: 1];
@@ -139,6 +192,13 @@
             [currentPage setIntValue: pagenumber];
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
+            if (![SUD boolForKey:NoScrollEnabledKey]) {
+                myBounds = [self bounds];
+                myVisible = [self visibleRect];
+                newVisible = myVisible;
+                newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
+                [self scrollRectToVisible:newVisible];
+                }
             [self display];
             }
 }

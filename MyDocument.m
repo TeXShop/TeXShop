@@ -3,6 +3,7 @@
 // Created by koch in July, 2000.
 
 #import <AppKit/AppKit.h>
+#import <Carbon/Carbon.h>
 #import "MyDocument.h"
 #import "PrintView.h"
 #import "MyView.h"
@@ -49,6 +50,10 @@
         [tagTimer invalidate];
         [tagTimer release];
     }
+    [commentColor release];
+    [commandColor release];
+    [markerColor release];
+    
     [super dealloc];
 }
 
@@ -98,8 +103,59 @@
     NSRange		myRange;
     unsigned		length;
     BOOL		imageFound;
+    NSString		*theFileName;
+    BOOL		thePreference;
+    float		r, g, b;
+/*
+    NSCharacterSet	*mySet;
+    NSScanner		*myScanner;
+    NSString		*resultNumber;
+    NSString		*finalName;
+*/
     
     [super windowControllerDidLoadNib:aController];
+   
+    theFileName = [self fileName];
+    thePreference = [SUD boolForKey:MakeEmptyDocumentKey];
+    
+    r = [SUD floatForKey:commandredKey];
+    g = [SUD floatForKey:commandgreenKey];
+    b = [SUD floatForKey:commandblueKey];
+    commandColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
+    r = [SUD floatForKey:commentredKey];
+    g = [SUD floatForKey:commentgreenKey];
+    b = [SUD floatForKey:commentblueKey];
+    commentColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
+    r = [SUD floatForKey:markerredKey];
+    g = [SUD floatForKey:markergreenKey];
+    b = [SUD floatForKey:markerblueKey];
+    markerColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
+    
+    if (! documentsHaveLoaded) {
+        documentsHaveLoaded = YES;
+        if ((theFileName == nil) && (! thePreference))
+            {
+                myImageType = isJPG;
+                return;
+            }
+         }
+ 
+    /* this code is an attempt to make "untitled-1" be a name without spaces,
+        but it does not work */
+    /*
+    if ([self fileName] == nil) {
+        mySet = [NSCharacterSet decimalDigitCharacterSet];
+        myScanner = [NSScanner scannerWithString:[self displayName]];
+        [myScanner scanUpToCharactersFromSet:mySet intoString:nil];
+        if ([myScanner scanCharactersFromSet:mySet intoString:&resultNumber]) {
+            finalName = [[NSLocalizedString(@"Untitled-", @"Untitled-") 		stringByAppendingString:resultNumber]
+                stringByAppendingString:@".tex"];
+           [self setLastComponentOfFileName: finalName ];
+            }
+        }
+    */
+    
+        
     [self registerForNotifications];    
 	[self setupFromPreferencesUsingWindowController:aController];
 
@@ -374,7 +430,39 @@ preference change is cancelled. "*/
     }
     [super close];
 }
+
+/* 
+    The routine below saves the file and then sets the document type to TEXT. 
+    Setting the type must be done with Carbon. This is
+    the only piece of Carbon code in TeXShop.
+*/
+
+ - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
+ {
+    BOOL		myValue;
+    FSCatalogInfo	myCatalogInfo;
+    FSRef		myFileRef;
+    OSErr		myError;
+    NSURL		*myURL;
     
+    myValue = [super writeToFile:fileName ofType:type];
+    
+    if (fileName) {
+        myURL = [NSURL fileURLWithPath:fileName];
+        /* the remaining code is Carbon */
+        CFURLGetFSRef((CFURLRef)myURL, &myFileRef);
+        myError = FSGetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo, 
+            NULL, NULL, NULL);
+        myCatalogInfo.finderInfo[0] = 'T';
+        myCatalogInfo.finderInfo[1] = 'E';
+        myCatalogInfo.finderInfo[2] = 'X';
+        myCatalogInfo.finderInfo[3] = 'T';
+        myError = FSSetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo);
+        }
+
+    return myValue;
+ }
+ 
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
     // Insert code here to write your document from the given data.
@@ -548,7 +636,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString		*enginePath;
     NSString		*tetexBinPath;
     BOOL		withLatex;
-
+    
     if (whichEngine == 1)
         withLatex = YES;
     else if (whichEngine == 0)
@@ -582,14 +670,22 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         outputPipe = [[NSPipe pipe] retain];
         readHandle = [outputPipe fileHandleForReading];
         [readHandle readInBackgroundAndNotify];
-        
         inputPipe = [[NSPipe pipe] retain];
         writeHandle = [inputPipe fileHandleForWriting];
-        
+
         [outputText setSelectable: YES];
         [outputText selectAll:self];
         [outputText replaceCharactersInRange: [outputText selectedRange] withString:@""];
+        [texCommand setStringValue:@""];
         [outputText setSelectable: NO];
+        typesetStart = NO; 
+        /* The following command produces an unwanted tex input event for reasons
+            I do not understand; the event will be discarded because typesetStart = NO
+            and it is received before tex output to the console occurs.
+            RMK; 7/3/2001. */
+        [outputWindow makeFirstResponder: texCommand];
+        
+        
         [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
                 stringByAppendingString:@" console"]];
         if ([SUD boolForKey:ConsoleBehaviorKey]) {
@@ -608,12 +704,16 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             
         if (whichEngine < 3)
         {
-            /* Koch: Feb 20; this allows spaces everywhere in path except
+            if ((whichScript == 101) && ([SUD boolForKey:SavePSEnabledKey]))
+            	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+                
+             /* Koch: Feb 20; this allows spaces everywhere in path except
             file name itself */
             [args addObject: [sourcePath lastPathComponent]];
         
             if (texTask != nil) {
                 [texTask terminate];
+                [texTask release];
                 texTask = nil;
                 }
             texTask = [[NSTask alloc] init];
@@ -673,6 +773,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         
             if (bibTask != nil) {
                 [bibTask terminate];
+                [bibTask release];
                 bibTask = nil;
                 }
             bibTask = [[NSTask alloc] init];
@@ -692,6 +793,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         
             if (indexTask != nil) {
                 [indexTask terminate];
+                [indexTask release];
                 indexTask = nil;
                 }
             indexTask = [[NSTask alloc] init];
@@ -753,8 +855,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 {
     NSData *myData;
     NSString *command;
-
-    if (inputPipe) {
+    
+    if ((typesetStart) && (inputPipe)) {
         command = [[texCommand stringValue] stringByAppendingString:@"\n"];
         myData = [command dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
             [writeHandle writeData: myData];
@@ -1084,7 +1186,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 {
     NSRange	colorRange;
     NSString	*textString;
-    NSColor	*commentColor, *commandColor, *regularColor;
+    // NSColor	*commentColor, *commandColor, *markerColor;
+    NSColor	*regularColor;
     long	length, location, final;
     unsigned	start1, end1;
     int		theChar;
@@ -1092,8 +1195,9 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
    
-    commentColor = [NSColor redColor];
-    commandColor = [NSColor blueColor];
+    // commentColor = [NSColor redColor];
+    // commandColor = [NSColor blueColor];
+    // markerColor = [NSColor purpleColor];
     regularColor = [NSColor blackColor];
  
     textString = [textView string];
@@ -1130,7 +1234,17 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     while (location < final) {
             theChar = [textString characterAtIndex: location];
             
-             if (theChar == 0x0025) {
+             if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
+                colorRange.location = location;
+                colorRange.length = 1;
+                [textView setTextColor: markerColor range: colorRange];
+                colorRange.location = colorRange.location + colorRange.length - 1;
+                colorRange.length = 0;
+                [textView setTextColor: regularColor range: colorRange];
+                location++;
+                }
+                
+             else if (theChar == 0x0025) {
                 colorRange.location = location;
                 colorRange.length = 0;
                 [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
@@ -1404,21 +1518,23 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 {
     NSRange	colorRange;
     NSString	*textString;
-    NSColor	*commentColor, *commandColor, *regularColor;
+    NSColor	*commentColor1, *commandColor1, *markerColor1;
+    NSColor	*regularColor;
     long	length, limit;
     int		theChar;
     unsigned	end;
 
     limit = colorLocation + 5000;
+    regularColor = [NSColor blackColor];
     if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
-        commentColor = [NSColor redColor];
-        commandColor = [NSColor blueColor];
-        regularColor = [NSColor blackColor];
+        commentColor1 = commentColor;
+        commandColor1 = commandColor;
+        markerColor1 = markerColor;
         }
     else {
-        commentColor = [NSColor blackColor];
-        commandColor = [NSColor blackColor];
-        regularColor = [NSColor blackColor];
+        commentColor1 = regularColor;
+        commandColor1 = regularColor;
+        markerColor1 = regularColor;
         }
  
     textString = [textView string];
@@ -1428,13 +1544,23 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     {
         theChar = [textString characterAtIndex: colorLocation];
             
-        if (theChar == 0x0025) 
+        if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
+                colorRange.location = colorLocation;
+                colorRange.length = 1;
+                [textView setTextColor: markerColor1 range: colorRange];
+                colorRange.location = colorRange.location + colorRange.length - 1;
+                colorRange.length = 0;
+                [textView setTextColor: regularColor range: colorRange];
+                colorLocation++;
+                }
+
+        else if (theChar == 0x0025) 
         {
             colorRange.location = colorLocation;
             colorRange.length = 0;
             [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
             colorRange.length = (end - colorLocation);
-            [textView setTextColor: commentColor range: colorRange];
+            [textView setTextColor: commentColor1 range: colorRange];
             colorRange.location = colorRange.location + colorRange.length - 1;
             colorRange.length = 0;
             [textView setTextColor: regularColor range: colorRange];
@@ -1455,7 +1581,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 colorLocation++;
                 colorRange.length = colorLocation - colorRange.location;
             }
-            [textView setTextColor: commandColor range: colorRange];
+            [textView setTextColor: commandColor1 range: colorRange];
             colorRange.location = colorLocation;
             colorRange.length = 0;
             [textView setTextColor: regularColor range: colorRange];
@@ -1495,6 +1621,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSDate		*endDate;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
+    
+    [outputText setSelectable: YES];
 
     if (([aNotification object] == bibTask) || ([aNotification object] == indexTask)) 
     {
@@ -1508,10 +1636,16 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 [writeHandle closeFile];
                 [inputPipe release];
                 inputPipe = 0;
-                if ([aNotification object] == bibTask)
+                if ([aNotification object] == bibTask) {
+                    [bibTask terminate];
+                    [bibTask release];
                     bibTask = nil;
-                else if ([aNotification object] == indexTask)
+                    }
+                else if ([aNotification object] == indexTask) {
+                    [indexTask terminate];
+                    [indexTask release];
                     indexTask = nil;
+                    }
             }
         }
     }
@@ -1563,6 +1697,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [writeHandle closeFile];
             [inputPipe release];
             inputPipe = 0;
+            [texTask terminate];
+            [texTask release];
             texTask = nil;
         }
     }
@@ -1627,6 +1763,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                 }
             }
 
+            typesetStart = YES;
+            
             [outputText replaceCharactersInRange: [outputText selectedRange] withString: newOutput];
             [outputText scrollRangeToVisible: [outputText selectedRange]];
             [newOutput release];

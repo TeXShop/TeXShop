@@ -16,15 +16,18 @@
 
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
+        IBOutlet NSButton	*_openEmptyButton;		/*" open empty document on start "*/
 
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
         IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
 
-        IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/ 
+        IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/
+        IBOutlet NSButton	*_scrollButton;			/*" connected to scroll button "*/ 
 	IBOutlet NSTextField	*_texCommandTextField;		/*" connected to "TeX program" "*/
 	IBOutlet NSTextField	*_latexCommandTextField;	/*" connected to "Latex program" "*/
         IBOutlet NSTextField	*_texGSCommandTextField;	/*" connected to "Tex + GS" "*/
         IBOutlet NSTextField	*_latexGSCommandTextField;	/*" connected to "Latex + GS" "*/
+        IBOutlet NSButton	*_savePSButton;			/*" connect to save postscript "*/
         IBOutlet NSTextField	*_tetexBinPathField;		/*" connected to tetex bin path "*/
         IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
         IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/	
@@ -54,15 +57,18 @@
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)parensMatchPressed:sender;
+- (IBAction)emptyButtonPressed:sender;
 
 - (IBAction)pdfWindowPosChanged:sender;
 - (IBAction)currentPdfWindowPosDefault:sender;
 - (IBAction)magChanged:sender;
+- (IBAction)scrollPressed:sender;
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
 - (IBAction)texGSProgramChanged:sender;
 - (IBAction)latexGSProgramChanged:sender;
+- (IBAction)savePSPressed:sender;
 - (IBAction)tetexBinPathChanged:sender;
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;

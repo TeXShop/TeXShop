@@ -36,6 +36,7 @@
     int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
     int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = bibtex "*/
     BOOL		tagLine;
+    BOOL		typesetStart;		/*" YES if tex output "*/
     NSFileHandle	*writeHandle;
     NSFileHandle	*readHandle;
     NSPipe		*inputPipe;
@@ -60,6 +61,8 @@
     unsigned		tagLocation;
     BOOL		makeError;
     BOOL		returnline;
+    SEL			tempSEL;
+    NSColor		*commandColor, *commentColor, *markerColor;
 }
  
 - (void) doTex: sender;
@@ -96,6 +99,7 @@
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 - (void) updateChangeCount: (NSDocumentChangeType)changeType;
+- (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
 
 //-----------------------------------------------------------------------------
 // Timer methods

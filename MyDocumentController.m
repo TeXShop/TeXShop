@@ -29,9 +29,16 @@
     return encoding;
 }
 
+- (IBAction)newDocument:(id)sender{
+    
+    encoding = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+    [super newDocument: sender];
+}
+
 - (IBAction)openDocument:(id)sender{
+    
     [super openDocument: sender];
-    encoding = [[EncodingSupport sharedInstance] tagForEncodingPreference]; 
+    encoding = [[EncodingSupport sharedInstance] tagForEncodingPreference];
 }
 
 

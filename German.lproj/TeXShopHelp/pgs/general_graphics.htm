@@ -3,37 +3,40 @@
 	<HEAD>
 <META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
 <TITLE>Grafik einf&uuml;gen</TITLE>
+<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="So f&uuml;gen Sie Grafiken in Ihr Dokument ein.">
 </HEAD>
 
 	<body bgcolor="#ffffff">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%">
 			<tr height="40">
-				<td width="40" height="40"><a href="../TeXShop%20Help.htm"><img height="40" width="40" border="0" src="../gfx/xicnsc.gif"></a></td>
+				<td width="40" height="40"><a href="../TeXShop%20Help.html"><img height="40" width="40" border="0" src="../gfx/xicnsc.gif"></a></td>
 				<td width="6" height="40"></td>
 				<td height="40" valign="middle"><font face="Lucida Grande,Helvetica,Arial" size="4"><b>Grafik einf&uuml;gen</b></font></td>
 			</tr>
 		</table>
 		<p><font size="2" face="Lucida Grande,Geneva,Arial">Die Programme pdftex und pdflatex erlauben es Grafiken in den Formaten pdf, jpg oder tiff einzuf&uuml;gen. Zu beachten ist jedoch, dass tiff-Grafiken die Endung &#132;.tif&#147; anstelle von &#132;.tiff&#147; haben m&uuml;ssen. Das native Ausgabeformat von Mac OS X ist pdf. (portable document format) Diese Dateien k&ouml;nnen in jeder Gr&ouml;&szlig;e in guter Qualit&auml;t ausgedruckt werden. Sehr wahrscheinlich werden die meisten Programme f&uuml;r Mac OS X in Zukunft pdf-Dateien erstellen k&ouml;nnen.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Sollten Sie schon fr&uuml;her TeX benutzt haben, liegen Ihre Grafiken vielleicht im eps-Format vor. Pdftex und pdflatex k&ouml;nnen diese Dateien nicht direkt verarbeiten. Sie m&uuml;ssen erst in das pdf-Format umgewandelt werden. Um eine eps-Datei zu konvertieren, &ouml;ffnen Sie sie in TeXShop. Sobald die Datei im Anzeigefenster erscheint wird eine eine pdf-Datei des selben Inhalts erstellt und gespeichert. Es existiert auch ein Kommandzeilen-Programm, mit dem die Konvertierung vollzogen werden kann. (TeXShop selbst benutzt auch dieses Programm im Hintergrund). Um die Datei meinedatei.eps in meinedatei.pdf umzuwandeln, geben Sie im Terminal-Fenster</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Sollten Sie schon fr&uuml;her TeX benutzt haben, liegen Ihre Grafiken vielleicht im eps-Format vor. Pdftex und pdflatex k&ouml;nnen diese Dateien nicht direkt verarbeiten. Sie m&uuml;ssen erst in das pdf-Format umgewandelt werden. Um eine eps-Datei zu konvertieren, &ouml;ffnen Sie sie in TeXShop. Sobald die Datei im Anzeigefenster erscheint wird eine eine pdf-Datei des selben Inhalts erstellt und gesichert. Es existiert auch ein Kommandzeilen-Programm, mit dem die Konvertierung vollzogen werden kann. (TeXShop selbst benutzt auch dieses Programm im Hintergrund). Um die Datei &#132;meinedatei.eps&#147; in &#132;meinedatei.pdf&#147; umzuwandeln, geben Sie im Terminal-Fenster</font></p>
 		<dl>
 			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>epstopdf myfile.eps</tt> </font>
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">ein und d&uuml;cken Enter. Die Autoren von pdflatex und die Autoren des Grafikpakets &quot;graphics&quot; haben es vereinacht Grafiken in ein LaTeX Dokument einzuf&uuml;gen und mit pdflatex zu setzen, selbst wenn das Dokument sp&auml;ter mit Standard LaTeX gesetzt wird und in eine dvi Datei konvertiert wird f&uuml;r die Weitergabe an andere. F&uuml;gen Sie am Anfang der LaTeX-Quelldatei folgende Zeile ein:</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">ein und d&uuml;cken die Eingabetaste. Die Autoren von pdflatex und die Autoren des Grafikpakets &#132;graphics&#147; haben es vereinfacht Grafiken in ein LaTeX Dokument einzuf&uuml;gen und mit pdflatex zu setzen. Selbst wenn das Dokument sp&auml;ter mit Standard LaTeX gesetzt wird und, f&uuml;r die Weitergabe an andere, in eine dvi-Datei konvertiert wird. F&uuml;gen Sie am Anfang der LaTeX-Quelldatei folgende Zeile ein:</font></p>
 		<dl>
 			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{graphicx}</tt></font>
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Wenn sie dann eine Grafik einf&uuml;gen wollen beispielsweise  &quot;f1.pdf&quot; dann benutzten sie den Befehl</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Wenn sie jetzt eine Grafik einf&uuml;gen wollen, beispielsweise &quot;f1.pdf&quot;, dann benutzten sie den Befehl</font></p>
 		<dl>
 			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=2in]{f1}</tt></font>
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Dieser Befehl l&auml;&szlig;t tex die Grafik &quot;f1.pdf&quot; beim n&auml;chsten Setzen mit pdflatex einf&uuml;gen, jedoch &quot;f1.eps&quot; wenn der Text mit latex gesetzt wird.</font></p>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Wenn Sie von eine &auml;ltere Version aktualisiert haben und die automatische Umwandlung von eps und tif Dateien w&auml;hrend des Setzen m&ouml;chten, dann stellen Sie sicher, dass</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Dieser Befehl l&auml;sst TeX die Grafik &quot;f1.pdf&quot; beim n&auml;chsten Setzen mit pdflatex einf&uuml;gen, jedoch  erst wenn der Text mit latex gesetzt wird.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Wenn Sie von einer &auml;lteren Version aktualisiert haben und die automatische Umwandlung von eps und tif Dateien w&auml;hrend des Setzen m&ouml;chten, dann stellen Sie sicher, dass</font></p>
 		<ol>
-			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">Sie folgende Programme installiert haben: Ghostscript 8, Freetype 2, wmf und iconv conversion Unterst&uuml;tzung, au&szlig;erdem<br>
+			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">sie folgende Programme installiert haben: Ghostscript 8, Freetype 2, wmf und iconv conversion Unterst&uuml;tzung, au&szlig;erdem<br>
+					
 					
 					ImageMagick mit Gerben Wierda's Installationsprogramm</font>
 			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">die Einstellung von pdflatex &quot;pdflatex --shell-escape&quot; ist</font>
-			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">Die Kopfzeile Ihres Quelltextes folgende Zeileen enth&auml;lt:</font>
+			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">die Kopfzeile Ihres Quelltextes folgende Zeilen enth&auml;lt:</font>
 		</ol>
 		<dl>
 			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{graphicx}</tt></font>

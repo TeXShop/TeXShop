@@ -34,7 +34,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
 {
-    [[myDocument magnificationPanel] orderOut: self];
+    [sheet close];
+    [sheet orderOut: self];
 }
 
 - (void) doTextPage: sender      // for toolbar in text mode
@@ -51,7 +52,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
 {
-    [[myDocument pagenumberPanel] orderOut: self];
+    [sheet close];
+    [sheet orderOut: self];
 }
 
 

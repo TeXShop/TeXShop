@@ -651,17 +651,17 @@
         // to catch up. Strangely, in splitscreen mode, this only affected the top half.
         // The bottom half scrolled immediately, and typing in the bottom screen scrolled
         // both halves immediately. Explain that.
-        layoutManager = [textView1 layoutManager];
-        [textStorage removeLayoutManager:layoutManager];
-        [textStorage addLayoutManager:layoutManager];
+     //   layoutManager = [textView1 layoutManager];
+     //   [textStorage removeLayoutManager:layoutManager];
+     //   [textStorage addLayoutManager:layoutManager];
         theRange = [textView2 selectedRange];
         theRange.length = 0;
         [textView2 setSelectedRange: theRange];
         }
     else {
-        layoutManager = [textView2 layoutManager];
-        [textStorage removeLayoutManager:layoutManager];
-        [textStorage addLayoutManager:layoutManager];
+     //   layoutManager = [textView2 layoutManager];
+    //    [textStorage removeLayoutManager:layoutManager];
+    //    [textStorage addLayoutManager:layoutManager];
         theRange = [textView1 selectedRange];
         theRange.length = 0;
         [textView1 setSelectedRange: theRange];
@@ -675,12 +675,49 @@
     tempencoding = [[sender selectedCell] tag];
 }
 
+- (void)runModalSavePanelForSaveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
+{
+    tempencoding = encoding;
+    [super runModalSavePanelForSaveOperation:saveOperation delegate:delegate didSaveSelector:didSaveSelector contextInfo:contextInfo];
+}
+
+/*
+-(void)document:(NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo
+ {
+    if ((didSave) && (encoding != tempencoding))
+        NSRunAlertPanel(nil, nil, nil, NSLocalizedString(@"Cancel", @"Cancel"), 
+                    textWindow, self, @selector(encodingSheetEnd:returnCode:contextInfo:), NULL, nil, 
+                    NSLocalizedString(@"The file encoding changed; characters can be lost if the wrong encoding is used.",
+            @"The file encoding changed; characters can be lost if the wrong encoding is used."));
+ }
+ 
+ -(void)encodingSheetEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+   switch(returnCode) {
+   
+    case NSAlertDefaultReturn:
+        encodingChangeOK = YES;
+        break;
+        
+    case NSAlertAlternateReturn: // cancel
+        encodingChangeOK = NO;
+        break;
+        
+    case NSAlertOtherReturn:
+        encodingChangeOK = NO;
+        break;
+    }
+}
+
+*/
+ 
 - (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
 {
-    if (fileName != nil)
-        encoding = tempencoding;
-    [super saveToFile: fileName saveOperation: saveOperation delegate: delegate didSaveSelector: didSaveSelector contextInfo: contextInfo];
+        if (fileName != nil)
+            encoding = tempencoding;
+        [super saveToFile: fileName saveOperation: saveOperation delegate: delegate didSaveSelector: didSaveSelector contextInfo: contextInfo];
 }
+
 
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
 {
@@ -1603,7 +1640,7 @@ preference change is cancelled. "*/
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 // end addition
 
-    if (externalEditor) {
+    if ((externalEditor) || (! [self isDocumentEdited])) {
         [self saveFinished: self didSave:YES contextInfo:nil];
         }
     else {
@@ -2163,7 +2200,6 @@ if (! externalEditor) {
         break;
     }
 }
-
 
 - (void) doTex: sender 
 {

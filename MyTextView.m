@@ -41,6 +41,7 @@
     }
     return NSDragOperationNone;
 }
+
 - (unsigned int) draggingEntered : (id <NSDraggingInfo>) sender
 {
     return [self dragOperationForDraggingInfo:sender];
@@ -53,6 +54,7 @@
 {
     return;
 }
+
 - (BOOL) prepareForDragOperation : (id <NSDraggingInfo>) sender
 {
     return YES;
@@ -61,17 +63,13 @@
 {
     return YES;
 }
+
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
     NSPasteboard *pb = [ sender draggingPasteboard ];
     NSString *type = [ pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
-    if( type ){
-
-        if ([type isEqualToString: NSStringPboardType]) {
-            NSString *str = [ pb stringForType : NSStringPboardType ];
-            [ self insertText: str ];
-        } else if ([type isEqualToString: NSFilenamesPboardType]) {
-            NSArray *ar = [pb propertyListForType:NSFilenamesPboardType];
+    if ((type) && ([type isEqualToString:NSFilenamesPboardType])) {
+         NSArray *ar = [pb propertyListForType:NSFilenamesPboardType];
             unsigned cnt = [ar count];
             if( cnt == 0 ) return;
             NSString *thisFile = [[[[self window] windowController] document] fileName];
@@ -104,15 +102,13 @@
                 }else{
                     [ self insertText:
                         [NSString stringWithFormat: @"%cinput{%@}\n", texChar, rPath ]];
+                    }
                 }
+            [ self display ];
             }
-        }
+        else  [super concludeDragOperation:sender];
     }
-    [ self display ];
-    return;
-}
 // end addition
-
 
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
 {
@@ -326,6 +322,22 @@
 	document = doc;
 }
 
+/*
+- (void)rightMouseDown: (NSEvent *)theEvent
+{
+    [super rightMouseDown:theEvent];
+  //  [[document textWindow] rightMouseDown:theEvent];
+    [[self nextResponder] rightMouseDown:theEvent];
+}
+
+
+- (void)rightMouseUp: (NSEvent *)theEvent
+{
+  //  [super rightMouseDown:theEvent];
+  //  [[document textWindow] rightMouseUp:theEvent];
+    [[self nextResponder] rightMouseDown:theEvent];
+}
+*/
 
 // Command Completion!!
 

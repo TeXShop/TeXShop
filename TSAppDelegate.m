@@ -2,7 +2,7 @@
 //  TSAppDelegate.m
 //  TeXShop
 //
-//  Created by dirk on Tue Jan 23 2001.
+//  Created by dirk on Tue Jan 23 2001.g
 //
 
 #import "UseMitsu.h"

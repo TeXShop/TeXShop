@@ -1023,7 +1023,7 @@ Version 1.28		January 29, 2003\
 		which f1.texshop points to f2.tex and f2.texshop points to f1.tex will still create \
 		an infinite loop. \
 \
-Version 1.29		July 8, 2003\
+Version 1.29		July 11, 2003\
 \
 		New PDF display options have been provided by Mitsuhiro Shishikura. The original\
 		page by page option is still available, but it is now also possible to scroll through the\
@@ -1071,20 +1071,6 @@ Version 1.29		July 8, 2003\
 \
 		The source and preview window toolbars now work in text only mode. \
 \
-		It was necessary to change the name of the TeXShop preference file, so this\
-		version will start with default preferences and your personal preferences will need to be\
-		set again. This change will not affect the Templates folder; changes made there\
-		will be preserved. I apologize for this change. System 10 allows lab managers to\
-		create accounts with access to a limited number of applications; the preference\
-		change was required so TeXShop could be one of these applications. \
-\
-		As a result of this change, hidden defaults set from the Terminal require a slightly different\
-		syntax. Instead of calling the program "TeXShop", the command must call the program\
-		"edu.uoregon.math.koch.TeXShop". For instance, the old command\
-		"defaults write TeXShop background_R .42" would now be written\
-\
-			defaults write edu.uoregon.math.koch.TeXShop background_R .42\
-\
 		Added support for ISO Latin 5 as required for Turkish, and for several\
 		Russian formats. Vladimir Novikov was helpful providing information\
 		about which formats to support.\
@@ -1104,7 +1090,7 @@ Version 1.29		July 8, 2003\
 		TeXShop to save a backup file when saving or typesetting. To turn this on, type the\
 		following command in Terminal:\
 \
-			defaults write edu.uoregon.math.koch.TeXShop SaveBackup YES\
+			defaults write TeXShop SaveBackup YES\
 \
 		Support for epsi files was added.\
 \
@@ -1158,18 +1144,18 @@ Version 1.29		July 8, 2003\
 		This background color will not appear when the document is printed. To set the\
 		background to gray, issue the following commands in Terminal:\
 \
-			defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_R 0.5\
-			defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_G 0.5\
-			defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_B 0.5\
+			defaults write TeXShop Pdfbackground_R 0.5\
+			defaults write TeXShop Pdfbackground_G 0.5\
+			defaults write TeXShop Pdfbackground_B 0.5\
 \
 		Change 0.5 to 1 to get back to white. If you find yourself changing the background often,\
 		create an Applescript macro named "PDF background gray" with the Macro Editor\
 		using the following text:\
 \
 		     --AppleScript\
-		     do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_R 0.5"\
-		     do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_G 0.5"\
-		     do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_B 0.5"\
+		     do shell script "defaults write TeXShop Pdfbackground_R 0.5"\
+		     do shell script "defaults write TeXShop Pdfbackground_G 0.5"\
+		     do shell script "defaults write TeXShop Pdfbackground_B 0.5"\
 \
 		and create a similar macro named "PDF background white". \
 \
@@ -1206,7 +1192,27 @@ Version 1.29		July 8, 2003\
 		In German, the latex panel initially required two clicks to open. This is fixed.\
  \
 				\
+	Version 1.30		July 16, 2003\
 \
+	Bugs Fixed:\
+\
+		When TeXShop was hidden and later shown, the source window scrolled to the\
+		top. This is fixed.\
+\
+		Other bugs in split window were fixed.\
+\
+		The right mouse again works in the source window.\
+\
+		When the toolbar was displayed in text only mode, menus behaved strangely.\
+		This is fixed.\
+\
+		When a document is typeset, it is no longer saved first if it has not been changed\
+		since the last save.\
+\
+		TeXShop Help has better indexing; clicking on the TeXShop icon in help brings\
+		you back to the main page.\
+\
+		Additional localizations in German and Spanish.\
   \
 \
 		}

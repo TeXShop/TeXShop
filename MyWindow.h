@@ -53,4 +53,6 @@
 - (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
 - (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)
 #endif MITSU_PDF
+- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 @end

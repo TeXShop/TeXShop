@@ -1,0 +1,70 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>Texto coloreado</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Texto coloreado en TeX</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	Siempre ha sido posible colorear la salida que proporciona LaTeX. Para hacerlo, a&ntilde;ade la l&iacute;nea
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{color}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	en el pre&aacute;mbulo, e inserta una l&iacute;nea como
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\color{blue}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	antes de que LaTeX comience a componer p&aacute;ginas. Para colorear una secci&oacute;n limitada de texto, usa un comando como
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>{\color{red} `!Esto es muy importante!}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	Para definir colores a medida, usa un comando como
+</font></P>
+<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\definecolor{mycolor}{rgb}{0.2, 0.7, 0.8}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+    Cuando coloreamos la salida, puede ser dif&iacute;cil leerla en la ventana con el pdf previsto. Por otra parte, TeXShop tiene preferencias ocultas para ponerle color de fondo a esa ventana. Este color de fondo no aparecer&aacute; cuando imprimamos el documento. Para establecer color de fondo gris, teclea los siguientes comandos en la Terminal:
+</font></P>
+<dl>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_R 0.5</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_G 0.5</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_B 0.5</tt>   </font>
+	</dl>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	Cambia 0.5 por 1 para obtener blanco y negro. Si vas a cambiar el color de fondo muy a menudo, puedes crear, con el editor de macros, una macro AppleScript llamada &laquo;PDF con fondo gris&raquo; que contenga el siguiente texto:
+</font></P>
+<dl>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt> --AppleScript</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_R 0.5"
+</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_G 0.5"
+</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_B 0.5"
+</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	y crea una macro similar llamada &laquo;PDF con fondo blanco&raquo;. 
+</font></P>
+
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

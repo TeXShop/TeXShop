@@ -3,42 +3,44 @@
 <HEAD>
 		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
 		<TITLE>Versteckte Einstellungen</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="Passen Sie TeXShop noch weiter an, indem Sie versteckte Einstellungen ver&auml;ndern.">
 	</HEAD>
 
 <BODY BGCOLOR="#ffffff">
 		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
 <TR HEIGHT="40">
-<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.htm"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
 <TD WIDTH="6" HEIGHT="40"></TD>
 <TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Versteckte Einstellungen</B></FONT></TD>
 </TR>
 </TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop f&uuml;gt Zeilen, die mit den Begriffen &#132;\section&#147;, &#132;\subsection&#147;, &#132;\subsubsection&#147; oder &#132;\chapter&#147; beginnen zum Men&uuml; &#132;Markierungen&#147; hinzu. Um dieses Verhalten auszuschalten, starten Sie das Terminal-Programm und geben Sie die folgenden Befehle ein. Ersetzen Sie &#132;NO&#147; durch &#132;YES&#147; um die alte Einstellung wieder zu aktivieren.</font></P>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop f&uuml;gt Zeilen, die mit den Begriffen &#132;\section&#147;, &#132;\subsection&#147;, &#132;\subsubsection&#147; oder &#132;\chapter&#147; beginnen zum Men&uuml; &#132;Markierungen&#147; hinzu. Um dieses Verhalten auszuschalten, starten Sie das Terminal-Programm und geben Sie die folgende Befehle ein. Ersetzen Sie &#132;NO&#147; durch &#132;YES&#147; um die alte Einstellung wieder zu aktivieren.</font></P>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop TagSections NO</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop TagSections NO</font>
 		</dl>
 		<p><font size="2" face="Lucida Grande,Geneva,Arial">Wenn die Syntaxf&auml;rbung eingeschaltet ist, werden Kommentare rot , Befehle blau und die Symbole &#132;$&#147;, &#132;{&#147; und &#132;}&#147; dunkelgr&uuml;n eingef&auml;rbt. Diese Farben k&ouml;nnen ge&auml;ndert werden. Eine Farbe wird durch ihre Rot-, Gr&uuml;n- und Blauanteile festgelegt. Jeder dieser Anteile wird durch eine Zahl zwischen 0.00 und 1.00 dargestellt. Um die Farbe f&uuml;r &#132;$&#147;, &#132;{&#147; und &#132;}&#147; auf hellgr&uuml;n zu &auml;ndern, geben Sie folgende Befehle im Terminal ein:</font></p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop markerred 0.0</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop markergreen 1.0</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop markerblue 0.0</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markerred 0.0</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markergreen 1.0</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop markerblue 0.0</font>
 		</dl>
 		<p><font size="2" face="Lucida Grande,Geneva,Arial">Um die Kommentarfarbe zu &auml;ndern ersetzen Sie &#132;marker&#147; durch &#132;comment&#147; und um die Befehlsfarbe zu &auml;ndern ersetzen Sie &#132;marker&#147; durch &#132;command&#147;. </font></p>
 		<p><font size="2" face="Lucida Grande,Geneva,Arial">Die Hintergrundfarbe des Quelltext-Fensters kann ge&auml;ndert werden. Zum Beispiel m&uuml;ssen, um den Hintergrund auf die Farbwerte (r, g, b) = (.42, .39, .77) zu setzen, folgende Befehle im Terminal eingegeben werden:</font></p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop background_R 0.42</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop background_G 0.39</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop background_B 0.77</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_R 0.42</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_G 0.39</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop background_B 0.77</font>
 		</dl>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">Auch der Hintergrund des Vorschau-Fensters kann ge&auml;ndert werden. Um diesenHintergrund auf die Werte (r, g, b) = (.42, .39, .77) zu setzen, m&uuml;ssen Sie folgende Befehle im Terminal eingeben. Wenn Sie die Werte wieder auf &#132;1&#147; setzen, erhalten Sie wieder einen wei&szlig;en Hintergrund. Manchmal kann man farbige TeX-Dokumente auf grauem Hintergrund besser erkennen. Die Hintergrundfarbe hat keinen Einfluss auf den sp&auml;teren Ausdruck.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Auch der Hintergrund des Vorschau-Fensters kann ge&auml;ndert werden. Um diesen Hintergrund auf die Werte (r, g, b) = (.42, .39, .77) zu setzen, m&uuml;ssen Sie die folgenden Befehle im Terminal eingeben. Wenn Sie die Werte wieder auf &#132;1&#147; setzen, erhalten Sie wieder einen wei&szlig;en Hintergrund. Manchmal kann man farbige TeX-Dokumente auf grauem Hintergrund besser erkennen. Die Hintergrundfarbe hat keinen Einfluss auf den sp&auml;teren Ausdruck.</font></p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_R 0.42</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_G 0.39</font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop Pdfbackground_B 0.77</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_R 0.42</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_G 0.39</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop Pdfbackground_B 0.77</font>
 		</dl>
 		<p><font size="2" face="Lucida Grande,Geneva,Arial">Schlie&szlig;lich kann man TeXShop so konfigurieren, dass es eine Sicherungskopie bei jedem Satzvorgang anlegt. Um diese Funktion einzuschalten, geben Sie folgende Befehle im Terminal-Fenster ein (ersetzen Sie &#132;YES&#147; durch &#132;NO&#147; um die Funktion auszuschalten):</font></p>
 		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write edu.uoregon.math.koch.TeXShop SaveBackup YES</font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop SaveBackup YES</font>
 		</dl>
 	</BODY>
 

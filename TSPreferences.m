@@ -244,9 +244,10 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 - (IBAction)encodingChanged:sender;
 //------------------------------------------------------------------------------
 {
-    NSString	*value;
+    NSString	*oldValue, *value;
     int		tag;
     
+    oldValue = [SUD stringForKey:EncodingKey];
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:EncodingKey] forKey:EncodingKey];
 
     tag = [[sender selectedCell] tag];
@@ -305,11 +306,16 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
                 break;
         }
 */
-        
     [SUD setObject:value forKey:EncodingKey];
-// added by mitsu --(G) EncodingSupport
+    // added by mitsu --(G) EncodingSupport
     [[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object:self];
     encodingTouched = YES;
+    NSWindow	*activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+
+    if ((activeWindow != nil) && (! [value isEqualToString:oldValue]))
+        NSBeginCriticalAlertSheet(nil, nil, nil, nil, 
+                    _prefsWindow, self, nil, NULL, nil, 
+                    NSLocalizedString(@"Currently open files retain their old encoding.", @"Currently open files retain their old encoding."));
 // end addition
 
 }
@@ -969,7 +975,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	NSParameterAssert(fileName != nil);
 	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
     
-	[SUD setPersistentDomain:factoryDefaults forName:@"edu.uoregon.math.koch.TeXShop"];
+	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
 
         // also register the default font. _documentFont was set in -init, dump it here to

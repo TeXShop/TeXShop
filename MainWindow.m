@@ -30,6 +30,7 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+    
     if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSControlKeyMask))
     if ([[theEvent charactersIgnoringModifiers] isEqualToString:@"1"]) {
             if (([myDocument imageType] == isTeX) && ([myDocument myTeXRep] != nil))

@@ -9,6 +9,7 @@
         {
             ACTIONS = {
                 changeAutoComplete = id; 
+                chooseEncoding = id; 
                 chooseProgram = id; 
                 chooseProgramEE = id; 
                 doBibtex = id; 
@@ -26,6 +27,8 @@
                 okPreferences = id; 
                 okProject = id; 
                 quitLine = id; 
+                quitMagnificationPanel = id; 
+                quitPagenumberPanel = id; 
                 quitPreferences = id; 
                 quitProject = id; 
             }; 
@@ -38,9 +41,15 @@
                 linePanel = id; 
                 macroButton = id; 
                 magnificationOutlet = id; 
+                magnificationPanel = id; 
+                mouseModeMatrix = id; 
+                mouseModeMenu = id; 
                 nextButton = id; 
+                openSaveBox = id; 
+                openSaveView = id; 
                 outputText = id; 
                 outputWindow = id; 
+                pagenumberPanel = id; 
                 pdfView = id; 
                 pdfWindow = id; 
                 popupButton = id; 
@@ -52,9 +61,13 @@
                 projectPanel = id; 
                 requestWindow = id; 
                 scrollView = id; 
+                scrollView2 = id; 
+                splitView = id; 
                 tags = id; 
                 texCommand = id; 
                 textView = id; 
+                textView1 = id; 
+                textView2 = id; 
                 textWindow = id; 
                 typesetButton = id; 
                 typesetButtonEE = id; 
@@ -62,11 +75,54 @@
             SUPERCLASS = NSDocument; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = FlippedClipView; LANGUAGE = ObjC; SUPERCLASS = NSClipView; }, 
         {
             CLASS = MainWindow; 
             LANGUAGE = ObjC; 
             OUTLETS = {myDocument = id; }; 
             SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {
+                bottom = id; 
+                changeMouseMode = id; 
+                changePDFViewSize = id; 
+                changePageStyle = id; 
+                changeScale = id; 
+                chooseExportImageType = id; 
+                doStepper = id; 
+                down = id; 
+                firstPage = id; 
+                goToPage = id; 
+                lastPage = id; 
+                left = id; 
+                nextPage = id; 
+                previousPage = id; 
+                printDocument = id; 
+                right = id; 
+                rotateClockwise = id; 
+                rotateCounterclockwise = id; 
+                saveSelectionToFile = id; 
+                top = id; 
+                up = id; 
+            }; 
+            CLASS = MyPDFView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                currentPage = id; 
+                currentPage1 = id; 
+                imageTypePopup = NSPopUpButton; 
+                imageTypeView = NSView; 
+                mouseModeMatrix = NSMatrix; 
+                mouseModeMenu = NSMenu; 
+                myScale = id; 
+                myScale1 = id; 
+                myStepper = id; 
+                myStepper1 = id; 
+                totalPage = id; 
+                totalPage1 = id; 
+            }; 
+            SUPERCLASS = NSView; 
         }, 
         {CLASS = MySound; LANGUAGE = ObjC; SUPERCLASS = Sound; }, 
         {
@@ -80,7 +136,16 @@
             }; 
             CLASS = MyView; 
             LANGUAGE = ObjC; 
-            OUTLETS = {currentPage = id; myScale = id; myStepper = id; totalPage = id; }; 
+            OUTLETS = {
+                currentPage = id; 
+                currentPage1 = id; 
+                myScale = id; 
+                myScale1 = id; 
+                myStepper = id; 
+                myStepper1 = id; 
+                totalPage = id; 
+                totalPage1 = id; 
+            }; 
             SUPERCLASS = NSView; 
         }, 
         {
@@ -89,6 +154,7 @@
             OUTLETS = {myDocument = id; }; 
             SUPERCLASS = NSWindow; 
         }, 
+        {CLASS = NSCursor; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = TextFinder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 

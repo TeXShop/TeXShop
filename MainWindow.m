@@ -44,4 +44,16 @@
     [myDocument doChooseMethod: sender];
 }
 
+// forsplit
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder
+{
+    BOOL	result;
+    
+    result = [super makeFirstResponder:aResponder];
+    if (result && [[aResponder className] isEqualTo:@"MyTextView"])
+        [myDocument setTextView:aResponder];
+    return result;
+}
+// end forsplit
+
 @end

@@ -5,13 +5,22 @@
 //  Created by dirk on Thu Dec 07 2000.
 //
 
+#import "UseMitsu.h"
+
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
+#import "EncodingSupport.h"
 #import "globals.h"
 #import "extras.h"
 #import "MyWindow.h"
-#import "MyView.h"
+#import "TSAppDelegate.h" // mitsu 1.29 (O)
 #import "MyDocument.h"
+
+#ifdef MITSU_PDF
+#import "MyPDFView.h" // mitsu 1.29 (O)
+#else
+#import "MyView.h"
+#endif
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -236,9 +245,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 //------------------------------------------------------------------------------
 {
     NSString	*value;
+    int		tag;
     
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:EncodingKey] forKey:EncodingKey];
 
+    tag = [[sender selectedCell] tag];
+    value = [[EncodingSupport sharedInstance] encodingForTag: tag];
+ 
+/*
     switch ([[sender selectedCell] tag]) {
         case 0: value = [NSString stringWithString:@"MacOSRoman"];
                 break;
@@ -272,9 +286,25 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         case 9: value = [NSString stringWithString:@"Standard Unicode"];
                 break;
                 
+        case 10: value = [NSString stringWithString:@"Mac Cyrillic"];
+                break;
+                
+        case 11: value = [NSString stringWithString:@"DOS Cyrillic"];
+                break;
+                
+        case 12: value = [NSString stringWithString:@"DOS Russian"];
+                break;
+                
+        case 13: value = [NSString stringWithString:@"Windows Cyrillic"];
+                break;
+                
+        case 14: value = [NSString stringWithString:@"KOI8_R"];
+                break;
+                
         default: value = [NSString stringWithString:@"MacOSRoman"];
                 break;
         }
+*/
         
     [SUD setObject:value forKey:EncodingKey];
 // added by mitsu --(G) EncodingSupport
@@ -346,6 +376,19 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 
     [SUD setBool:[sender state] forKey:SpellCheckEnabledKey];
 }
+
+/*" This method is connected to the 'shell escape warning' checkbox.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)escapeWarningChanged:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:WarnForShellEscapeKey] forKey:WarnForShellEscapeKey];
+
+    [SUD setBool:[sender state] forKey:WarnForShellEscapeKey];
+}
+
 
 /*" This method is connected to the 'auto complete' checkbox.
 "*/
@@ -458,6 +501,126 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 
     [SUD setBool:[sender state] forKey:NoScrollEnabledKey];
 }
+
+#ifdef MITSU_PDF
+
+// mitsu 1.29 (O)
+/*" This method is connected to page style popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)pageStyleChanged:sender;
+//------------------------------------------------------------------------------
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfPageStyleKey] forKey:PdfPageStyleKey];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfPageStyleKey];
+}
+
+
+/*" This method is connected to resize option popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)resizeOptionChanged:sender;
+//------------------------------------------------------------------------------
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfFitSizeKey] forKey:PdfFitSizeKey];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfFitSizeKey];
+}
+
+
+/*" This method is connected to image copy type popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)imageCopyTypeChanged:sender;
+//------------------------------------------------------------------------------
+{
+	// mitsu 1.29b
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD 
+integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
+	// uncheck menu item Preview=>Copy Format
+	NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
+						NSLocalizedString(@"Preview", @"Preview")] submenu];
+	NSMenu *formatMenu = [[previewMenu itemWithTitle: 
+						NSLocalizedString(@"Copy Format", @"format")] submenu];
+	NSMenuItem *item = [formatMenu itemWithTag: [SUD integerForKey:PdfCopyTypeKey]];
+	if (item)
+		[[_undoManager prepareWithInvocationTarget:[NSApp delegate]] changeImageCopyType: item];
+
+	item = [formatMenu itemWithTag: [[sender selectedCell] tag]];
+	if (item)
+		[[NSApp delegate] changeImageCopyType: item];
+	// end mitsu 1.29b
+}
+
+// mitsu 1.29b
+- (NSPopUpButton *)imageCopyTypePopup
+{
+	return _imageCopyTypePopup;
+}
+// end mitsu 1.29b
+
+
+/*" This method is connected to default mouse mode popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)mouseModeChanged:sender;
+//------------------------------------------------------------------------------
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfMouseModeKey] forKey:PdfMouseModeKey];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfMouseModeKey];
+}
+
+/*" This method is connected to default mouse mode popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)colorMapChanged:sender;
+//------------------------------------------------------------------------------
+{
+       	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD integerForKey:PdfColorMapKey] forKey:PdfColorMapKey];
+
+    [SUD setBool:([sender state]==NSOnState) forKey:PdfColorMapKey];
+}
+
+/*" This method is connected to default mouse mode popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)copyForeColorChanged:sender;
+//------------------------------------------------------------------------------
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_RKey] forKey:PdfFore_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_GKey] forKey:PdfFore_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_BKey] forKey:PdfFore_BKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_AKey] forKey:PdfFore_AKey];
+
+	NSColor *aColor = [[sender color] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+    [SUD setFloat:[aColor redComponent] forKey:PdfFore_RKey];
+    [SUD setFloat:[aColor greenComponent] forKey:PdfFore_GKey];
+    [SUD setFloat:[aColor blueComponent] forKey:PdfFore_BKey];
+    [SUD setFloat:[aColor alphaComponent] forKey:PdfFore_AKey];
+}
+
+/*" This method is connected to default mouse mode popup button. "*/
+//------------------------------------------------------------------------------
+- (IBAction)copyBackColorChanged:sender;
+//------------------------------------------------------------------------------
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_RKey] forKey:PdfBack_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_GKey] forKey:PdfBack_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_BKey] forKey:PdfBack_BKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_AKey] forKey:PdfBack_AKey];
+
+    NSColor *aColor = [[sender color] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+    [SUD setFloat:[aColor redComponent] forKey:PdfBack_RKey];
+    [SUD setFloat:[aColor greenComponent] forKey:PdfBack_GKey];
+    [SUD setFloat:[aColor blueComponent] forKey:PdfBack_BKey];
+    [SUD setFloat:[aColor alphaComponent] forKey:PdfBack_AKey];
+}
+
+- (IBAction)colorParam1Changed:sender
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfColorParam1Key] forKey:PdfColorParam1Key];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfColorParam1Key];
+}
+
+// end mitsu 1.29
+#endif
 
 
 //==============================================================================
@@ -760,59 +923,37 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 //==============================================================================
 // API used by other TeXShop classes
 //==============================================================================
-/*" This method looks in ~/Library/TeXShop/Templates and returns the filenames minus the extensions of all of the templates found.
-"*/
+
+/*" This method returns a relative path name of 'path', based on fromFile: file. If the second argument 'file' is nil, it will return an absolute path of 'path'. Added by zenitani, Feb 13, 2003. "*/
 //------------------------------------------------------------------------------
-- (NSArray *)allTemplateNames
+- (NSString *)relativePath: (NSString *)path fromFile: (NSString *)file
 //------------------------------------------------------------------------------
 {
-	NSString	*templatePath;
-	NSEnumerator	*templateEnum;
-	NSMutableArray	*returnArray;
-	
-	returnArray = [NSMutableArray array];
-        
-       // The next section is omitted to make changes suggested by Sarah Childers. Thanks!! 
-       /*
-        if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey 		stringByDeletingLastPathComponent]])
-            {
-            NS_DURING
-                [self createDirectoryAtPath:[TexTemplatePathKey stringByDeletingLastPathComponent]];
-            NS_HANDLER
-                {
-		NSRunAlertPanel(@"Error", [localException reason], 
-                @"Couldn't create Templates Folder",  nil, nil);
-		return nil;
-                }
-            NS_ENDHANDLER
-            }
-        */
-        
-        // The code below was slightly changed by Sarah Childers
-            
-        // if (! [[NSFileManager defaultManager] fileExistsAtPath: TexTemplatePathKey] )
-        //    [self createTemplates];
-        
-        // this was moved to TSAppDelegate
-        // if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]] )
-        //    [self createTemplates];
-            
-        // end of changes
-	
-	templatePath = [TexTemplatePathKey stringByStandardizingPath];
-	templateEnum = [[NSFileManager defaultManager] enumeratorAtPath:templatePath];
-	while (templatePath = [templateEnum nextObject])
-	{ 
-		if ([[[templatePath pathExtension] lowercaseString] isEqualToString: @"tex"]) 
-		{
-			NSString	*title;
-			
-			title = [[templatePath lastPathComponent] stringByDeletingPathExtension];
-			[returnArray addObject:title];
-		}
-	}
-	return returnArray;
+    NSArray *a, *b;
+    NSString *rpath = @"", *astr, *bstr;
+
+    a = [[ file stringByDeletingLastPathComponent ] pathComponents ];
+    b = [ path pathComponents ];
+    unsigned ai = [a count], bi = [b count], i, j;
+    if( ai == 0 ) return path;
+    for( i=0; ((i<ai)&&(i<bi)); i++ ){
+        astr = [a objectAtIndex: i];
+        bstr = [b objectAtIndex: i];
+        if( [astr compare: bstr] != NSOrderedSame )  break;
+    }
+//    NSLog( @"%d %d %d", ai, bi, i );
+    for( j=0; j<(ai-i); j++ ){
+        rpath = [rpath stringByAppendingString: @"../"];
+//        NSLog( @"%@\n", rpath );
+    }
+    for( j=i; j<bi-1; j++ ){
+        rpath = [rpath stringByAppendingFormat: @"%@/", [b objectAtIndex: j]];
+//        NSLog( @"%@\n", rpath );
+    }
+    rpath = [rpath stringByAppendingFormat: @"%@", [b objectAtIndex: (bi-1)]];
+    return rpath;
 }
+
 
 /*" This method will be called when no defaults were registered so far. Since this is the first time that TeXShop runs, we register a standard defaults set (from the FactoryDefaults.plist) and fill ~/Library/TeXShop/Templates with our templates.
 "*/
@@ -828,7 +969,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	NSParameterAssert(fileName != nil);
 	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
     
-	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
+	[SUD setPersistentDomain:factoryDefaults forName:@"edu.uoregon.math.koch.TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
 
         // also register the default font. _documentFont was set in -init, dump it here to
@@ -890,10 +1031,14 @@ This method retrieves the application preferences from the defaults object and s
             [_docWindowPosButton setEnabled: NO];
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
+    [_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
     [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
     [_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
     [_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
+    
+    myTag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+/*
     if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         myTag = 0;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
@@ -916,8 +1061,20 @@ This method retrieves the application preferences from the defaults object and s
         myTag = 8;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
         myTag = 9;
+     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Mac Cyrillic"])
+        myTag = 10;
+     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"DOS Cyrillic"])
+        myTag = 11;
+     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"DOS Russian"])
+        myTag = 12;
+     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Windows Cyrillic"])
+        myTag = 13;
+     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"KOI8_R"])
+        myTag = 14;
     else
         myTag = 0;
+*/
+
     [_defaultEncodeMatrix selectItemAtIndex: myTag];
     [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
     [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
@@ -932,6 +1089,65 @@ This method retrieves the application preferences from the defaults object and s
         magnification = [defaults floatForKey:PdfMagnificationKey];
         mag = round(magnification * 100.0);
         [_magTextField setIntValue: mag];
+        
+#ifdef MITSU_PDF
+        // mitsu 1.29 (O)
+	int itemIndex;
+	myTag = [defaults integerForKey:PdfPageStyleKey];
+	if (!myTag) myTag = PDF_SINGLE_PAGE_STYLE; // default PdfPageStyleKey
+	itemIndex = [_pageStylePopup indexOfItemWithTag: myTag];
+	if (itemIndex == -1) itemIndex = 2; // default PdfPageStyleKey
+    [_pageStylePopup selectItemAtIndex: itemIndex];
+
+	myTag = [defaults integerForKey:PdfFitSizeKey];
+	if (!myTag) myTag = PDF_FIT_TO_NONE; // default PdfFitSizeKey
+	itemIndex = [_resizeOptionPopup indexOfItemWithTag: myTag];
+	if (itemIndex == -1) itemIndex = 0; // default PdfFitSizeKey
+    [_resizeOptionPopup selectItemAtIndex: itemIndex];
+
+	myTag = [defaults integerForKey:PdfCopyTypeKey];
+	if (!myTag) myTag = IMAGE_TYPE_JPEG_MEDIUM; // default PdfCopyTypeKey
+	itemIndex = [_imageCopyTypePopup indexOfItemWithTag: myTag];
+	if (itemIndex == -1) itemIndex = 1; // default PdfCopyTypeKey
+    [_imageCopyTypePopup selectItemAtIndex: itemIndex];
+
+	myTag = [defaults integerForKey:PdfMouseModeKey];
+	if (!myTag) myTag = MOUSE_MODE_MAG_GLASS; // default PdfMouseModeKey
+	itemIndex = [_mouseModePopup indexOfItemWithTag: myTag];
+	if (itemIndex == -1) itemIndex = 1; // default PdfMouseModeKey
+    [_mouseModePopup selectItemAtIndex: itemIndex];
+        
+    [_colorMapButton setState: [SUD boolForKey:PdfColorMapKey]?NSOnState:NSOffState];
+	NSColor *aColor;
+	if ([SUD stringForKey:PdfFore_RKey])
+	{
+		aColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfFore_RKey] 
+			green: [SUD floatForKey:PdfFore_GKey] blue: [SUD floatForKey:PdfFore_BKey] 
+			alpha: [SUD floatForKey:PdfFore_AKey]];
+	}
+	else
+		aColor = [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1];
+	[_copyForeColorWell setColor: aColor];
+	[_copyForeColorWell setContinuous: YES];
+	
+	if ([SUD stringForKey:PdfBack_RKey])
+	{
+		aColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfBack_RKey] 
+			green: [SUD floatForKey:PdfBack_GKey] blue: [SUD floatForKey:PdfBack_BKey] 
+			alpha: [SUD floatForKey:PdfBack_AKey]];
+	}
+	else
+		aColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1];
+	[_copyBackColorWell setColor: aColor];
+	[_copyBackColorWell setContinuous: YES];
+	
+	myTag = [defaults integerForKey:PdfColorParam1Key];
+	itemIndex = [_colorParam1Popup indexOfItemWithTag: myTag];
+	if (itemIndex == -1) itemIndex = 2; // default index = 2
+    [_colorParam1Popup selectItemAtIndex: itemIndex];
+    
+	// end mitsu 1.29
+#endif
         
         tabSize = [defaults integerForKey: tabsKey];
         [_tabsTextField setIntValue: tabSize]; 

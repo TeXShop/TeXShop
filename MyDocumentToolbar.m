@@ -13,8 +13,16 @@
 //
 // ================================================================================
 
+#import "UseMitsu.h"
+
 #import "MyDocumentToolbar.h"
+
+#ifdef MITSU_PDF
+#import "MyPDFView.h"
+#else
 #import "MyView.h"
+#endif
+
 // added by mitsu --(H) Macro menu; macroButton
 #import "MacroMenuController.h"
 // end addition
@@ -36,7 +44,10 @@ static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 			= @"Templates";
-static NSString*	kAutoCompleteID			= @"AutoComplete";
+static NSString*	kAutoCompleteID			= @"AutoComplete";  //warning: used in MyDocument's fixAutoMenu
+// forsplit
+static NSString*	kSplitID			= @"Split";
+// end forsplit
 // added by mitsu --(H) Macro menu; macroButton
 static NSString*	kMacrosTID			= @"Macros";
 // end addition
@@ -51,6 +62,9 @@ static NSString*	kNextPageButtonTID		= @"NextPageButton";
 static NSString*	kNextPageTID 			= @"NextPage";
 static NSString*	kGotoPageTID 			= @"GotoPage";
 static NSString*	kMagnificationTID 		= @"Magnification";
+#ifdef MITSU_PDF
+static NSString*	kMouseModeTID 			= @"MouseMode";
+#endif
 
 
 @implementation MyDocument (ToolbarSupport)
@@ -158,6 +172,10 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 	[gotopageOutlet removeFromSuperview];
 	[magnificationOutlet retain];
 	[magnificationOutlet removeFromSuperview];
+#ifdef MITSU_PDF
+	[mouseModeMatrix retain];
+	[mouseModeMatrix removeFromSuperview];
+#endif
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 }
 
@@ -186,7 +204,11 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 - (void)doPreviousPage:(id)sender
 {
+#ifdef MITSU_PDF
+    [((MyPDFView*)[self pdfView]) previousPage: sender];
+#else
     [((MyView*)[self pdfView]) previousPage: sender];
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -195,7 +217,11 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 - (void)doNextPage:(id)sender
 {
+#ifdef MITSU_PDF
+    [((MyPDFView*)[self pdfView]) nextPage: sender];
+#else
     [((MyView*)[self pdfView]) nextPage: sender];
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -213,16 +239,45 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 // Source toolbar
 
+/*
     if ([itemIdent isEqual: kTypesetTID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:typesetButton];
 	}
+*/
 
+     if ([itemIdent isEqual: kTypesetTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:typesetButton];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+
+
+/*
     if ([itemIdent isEqual: kProgramTID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:programButton];
 	}
+*/
 	
+    if ([itemIdent isEqual: kProgramTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButton];
+		NSMenuItem*	menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+
+		[menuFormRep setSubmenu: [programButton menu]];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+
     if ([itemIdent isEqual: kTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				imageName:@"TeXAction" target:self action:@selector(doTex:)];
@@ -253,6 +308,14 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 				imageName:@"ConTeXAction" target:self action:@selector(doContext:)];
 	}
         
+// forsplit        
+    if ([itemIdent isEqual: kSplitID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				imageName:@"split1" target:self action:@selector(splitWindow:)];
+	}
+// end forsplit
+
+        
     if ([itemIdent isEqual: kMetaFontID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				imageName:@"MetaFontAction" target:self action:@selector(doMetaFont:)];
@@ -280,8 +343,17 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 	}
         
     if ([itemIdent isEqual: kAutoCompleteID]) {
-        return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:autoCompleteButton];
+		NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"AutoComplete", @"AutoComplete")
+                    action: @selector(changeAutoComplete:) keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
         }
         
 // added by mitsu --(H) Macro menu; macroButton
@@ -301,17 +373,45 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 // PDF toolbar
 
+/*
     if ([itemIdent isEqual: kTypesetEETID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:typesetButtonEE];
 	}
+*/
 
+    if ([itemIdent isEqual: kTypesetEETID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:typesetButtonEE];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) 				keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+
+/*
     if ([itemIdent isEqual: kProgramEETID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:programButtonEE];
 	}
+*/
+        
+    if ([itemIdent isEqual: kProgramEETID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButtonEE];
+		NSMenuItem*	menuFormRep = [[[NSMenuItem alloc] init] autorelease];
 
+		[menuFormRep setSubmenu: [programButtonEE menu]];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
 
+		return toolbarItem;
+	}
+
+/*
     if ([itemIdent isEqual: kPreviousPageButtonTID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:previousButton];
@@ -321,6 +421,28 @@ static NSString*	kMagnificationTID 		= @"Magnification";
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				customView:nextButton];
 	}
+*/
+
+    if ([itemIdent isEqual: kPreviousPageButtonTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:previousButton];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                [menuFormRep setTitle: [toolbarItem label]];
+                [menuFormRep setAction: @selector(previousPage:)];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+        
+    if ([itemIdent isEqual: kNextPageButtonTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:nextButton];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                [menuFormRep setTitle: [toolbarItem label]];
+                [menuFormRep setAction: @selector(nextPage:)];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+
 
     if ([itemIdent isEqual: kPreviousPageTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -332,6 +454,7 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 				imageName:@"NextPageAction" target:self action:@selector(doNextPage:)];
 	}
 
+/*
     if ([itemIdent isEqual: kGotoPageTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:gotopageOutlet];
 	}
@@ -339,6 +462,78 @@ static NSString*	kMagnificationTID 		= @"Magnification";
     if ([itemIdent isEqual: kMagnificationTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:magnificationOutlet];
 	}
+*/
+    if ([itemIdent isEqual: kGotoPageTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:gotopageOutlet];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+				/*
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];*/
+                [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
+               [toolbarItem setMenuFormRepresentation: menuFormRep];
+				[menuFormRep setAction: @selector(doTextPage:)];
+				[menuFormRep setTarget: pdfWindow];
+                return toolbarItem;
+                }
+                
+    if ([itemIdent isEqual: kMagnificationTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:magnificationOutlet];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                /* NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];*/
+                [menuFormRep setTitle: [toolbarItem label]];
+                [toolbarItem setMenuFormRepresentation: menuFormRep];
+				[menuFormRep setAction: @selector(doTextMagnify:)];
+				[menuFormRep setTarget: pdfWindow];
+                return toolbarItem;
+                }
+                
+#ifdef MITSU_PDF
+// mitsu 1.29 (O)
+    if ([itemIdent isEqual: kMouseModeTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrix];
+		NSMenuItem*		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		[menuFormRep setSubmenu: mouseModeMenu];
+		
+		/* or one can set up menu by hand
+		NSMenu *		menu = [[[NSMenu alloc] initWithTitle: [toolbarItem label]] autorelease];
+		[menuFormRep setTarget: pdfView];
+		[menuFormRep setAction: @selector(changeMouseMode:)];
+		NSMenuItem*	item = [menu addItemWithTitle: NSLocalizedString(@"Scroll", @"Scroll")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_SCROLL];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"MagnifyingGlass", @"MagnifyingGlass")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_MAG_GLASS];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"MagnifyingGlass Large", @"MagnifyingGlass Large")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_MAG_GLASS_L];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"Select", @"Select")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_SELECT];
+
+		[menuFormRep setSubmenu: menu];*/
+		
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+// end mitsu 1.29
+#endif
 
 
 //	if ([itemIdent isEqual: SearchDocToolbarItemIdentifier]) {
@@ -401,8 +596,12 @@ static NSString*	kMagnificationTID 		= @"Magnification";
                                         // end addition
 					kTagsTID,
 					kTemplatesID,
+                                         // forsplit
 					NSToolbarFlexibleSpaceItemIdentifier, 
-					NSToolbarSpaceItemIdentifier, 
+					kSplitID,
+                                        // forsplit
+					// NSToolbarFlexibleSpaceItemIdentifier, 
+					// NSToolbarSpaceItemIdentifier, 
 				nil];
 	}
 	
@@ -419,6 +618,9 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 					// NSToolbarSeparatorItemIdentifier,
                                         kMagnificationTID, 
 					kGotoPageTID,
+#ifdef MITSU_PDF
+                                        kMouseModeTID, // mitsu 1.29 (O)
+#endif
 					NSToolbarFlexibleSpaceItemIdentifier, 
 					NSToolbarSpaceItemIdentifier, 
 				nil];
@@ -454,6 +656,9 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 					kTagsTID,
 					kTemplatesID,
                                         kAutoCompleteID,
+                                         // forsplit
+                                        kSplitID,
+                                        // end forsplit
                                         // added by mitsu --(H) Macro menu; macroButton
 					kMacrosTID,
                                         // end addition
@@ -484,6 +689,9 @@ static NSString*	kMagnificationTID 		= @"Magnification";
                                         kMetaFontID,
  					kGotoPageTID,
 					kMagnificationTID,
+#ifdef MITSU_PDF
+                                        kMouseModeTID, // mitsu 1.29 (O)
+#endif
 					NSToolbarPrintItemIdentifier, 
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier, 

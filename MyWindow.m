@@ -5,12 +5,57 @@
 //  Originally part of MyDocument. Broken out by dirk on Tue Jan 09 2001.
 //
 
+#import "UseMitsu.h"
+
 #import <AppKit/AppKit.h>
 #import "MyWindow.h"
 #import "MyDocument.h"
+#ifdef MITSU_PDF
+#import "MyPDFView.h"
+#import "Globals.h"
+extern NSPanel *pageNumberWindow;
+#else
 #import "MyView.h"
+#endif
 
 @implementation MyWindow
+
+- (void) doTextMagnify: sender
+{
+    id	thePanel;
+    
+    thePanel = [myDocument magnificationPanel];
+    [NSApp beginSheet: thePanel
+            modalForWindow: self
+            modalDelegate: self
+            didEndSelector: @selector(magnificationDidEnd:returnCode:contextInfo:) 
+            contextInfo: nil];
+}
+
+- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+{
+    [[myDocument magnificationPanel] orderOut: self];
+}
+
+- (void) doTextPage: sender      // for toolbar in text mode
+{
+        id	thePanel;
+    
+    thePanel = [myDocument pagenumberPanel];
+    [NSApp beginSheet: thePanel
+            modalForWindow: self
+            modalDelegate: self
+            didEndSelector:  @selector(pagenumberDidEnd:returnCode:contextInfo:)
+            contextInfo: nil];
+}
+
+- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+{
+    [[myDocument pagenumberPanel] orderOut: self];
+}
+
+
+
 
 - (void) runPageLayout: sender;
 {
@@ -104,7 +149,11 @@
 
 - (void) rotateClockwise: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -113,7 +162,11 @@
 
 - (void) rotateCounterclockwise: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -122,7 +175,11 @@
 
 - (void) up: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -131,7 +188,11 @@
 
 - (void) down: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -140,7 +201,11 @@
 
 - (void) top: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -149,7 +214,11 @@
 
 - (void) bottom: sender;
 {
+#ifdef MITSU_PDF
+    MyPDFView *theView;
+#else
     MyView *theView;
+#endif
     
     theView = [myDocument pdfView];
     if (theView != nil)
@@ -191,9 +260,19 @@
             
             case NSDownArrowFunctionKey: [self down:self]; return;
             
+#ifdef MITSU_PDF
+
+            case NSLeftArrowFunctionKey: [self left: self]; return;// mitsu 1.29 (O) changed from previousPage
+            
+            case NSRightArrowFunctionKey: [self right: self]; return;// mitsu 1.29 (O) changed from nextPage
+
+#else
+            
             case NSLeftArrowFunctionKey: [self previousPage: self]; return;
             
             case NSRightArrowFunctionKey: [self nextPage: self]; return;
+            
+#endif
             
             case NSPageUpFunctionKey: [self top:self]; return;
             
@@ -213,7 +292,52 @@
 
             
             }
-       } 
+       }
+       
+#ifdef MITSU_PDF
+
+    else if ([theEvent type] == NSFlagsChanged) // mitsu 1.29 (S2)
+	{
+		[[myDocument pdfView] flagsChanged: theEvent];
+		return;
+	}
+	else if ([theEvent type] == NSLeftMouseDown) // mitsu 1.29 (O) resize PDF view
+	{
+		// check if mouse was in vertical scroller's knob
+		MyPDFView *pdfView = [myDocument pdfView];
+		NSScroller *scroller = [[pdfView enclosingScrollView] verticalScroller];
+		if (([scroller testPart: [theEvent locationInWindow]] == NSScrollerKnob) && 
+			([myDocument imageType] == isTeX || [myDocument imageType] == isPDF) && 
+			([pdfView pageStyle] == PDF_MULTI_PAGE_STYLE || 
+				[pdfView pageStyle] == PDF_DOUBLE_MULTI_PAGE_STYLE) && 
+			([pdfView rotationAmount] == 0 || [pdfView rotationAmount] == 180))
+		{
+			// create a small window displaying page number
+			NSRect aRect = [scroller rectForPart: NSScrollerKnob];
+			aRect = [scroller convertRect: aRect toView: nil]; // use rect not point
+			aRect.origin = [self convertBaseToScreen: aRect.origin];
+			aRect.origin.x -= PAGE_WINDOW_H_OFFSET;
+			aRect.origin.y += aRect.size.height/2 + PAGE_WINDOW_V_OFFSET;
+			aRect.size.width = PAGE_WINDOW_WIDTH;
+			aRect.size.height = PAGE_WINDOW_HEIGHT;
+			pageNumberWindow = [[NSPanel alloc] initWithContentRect: aRect 
+					styleMask: NSBorderlessWindowMask | NSUtilityWindowMask 
+					backing: NSBackingStoreBuffered //NSBackingStoreRetained 
+					defer: NO];
+                        [pageNumberWindow setHasShadow: PAGE_WINDOW_HAS_SHADOW];
+			[pageNumberWindow orderFront: nil];
+			[pageNumberWindow setFloatingPanel: YES];
+			[[myDocument pdfView] updateCurrentPage]; // darw page number
+			
+			[super sendEvent: theEvent]; // let the scroller handle the situation
+
+			[pageNumberWindow close];
+			pageNumberWindow = nil;
+			return;
+		}
+	}
+        
+#endif
         
     [super sendEvent: theEvent];
 }
@@ -310,9 +434,12 @@
     if ([anItem action] == @selector(displayLatexPanel:))
         return NO;
 
+#ifdef MITSU_PDF
+#else
     if ([anItem action] == @selector(rotateClockwise:) || 
     	[anItem action] == @selector(rotateCounterclockwise:))
         return (([myDocument imageType] == isTeX) || ([myDocument imageType] == isPDF));
+#endif
 
     if ([anItem action] == @selector(doError:) || 
     	[anItem action] == @selector(printSource:))
@@ -339,6 +466,18 @@
 					([myDocument imageType] == isJPG) ||
 					([myDocument imageType] == isTIFF));
 	}
+        
+#ifdef MITSU_PDF
+
+    	// mitsu 1.29 (O)
+    if ([anItem action] == @selector(changePageStyle:)) // @selector(changePDFViewSize:)) 
+        return (([myDocument imageType] == isTeX) || ([myDocument imageType] == isPDF));
+
+    if ([anItem action] == @selector(copy:) || [anItem action] == @selector(saveSelectionToFile:))
+        return ([[myDocument pdfView] hasSelection]);
+	// end mitsu 1.29 (O)
+
+#endif
 		
     return [super validateMenuItem: anItem];
 }
@@ -348,5 +487,51 @@
 {
     return myDocument;
 }
+
+#ifdef MITSU_PDF
+
+// mitsu 1.29 (O)
+- (void) left: sender;
+{
+    MyPDFView *theView; 
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView left: sender];
+}
+
+- (void) right: sender;
+{
+    MyPDFView *theView; 
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView right: sender];
+}
+
+// mitsu 1.29 (O)
+- (void)changePageStyle: (id)sender
+{
+	[[myDocument pdfView] changePageStyle: sender];
+}
+
+- (void)changePDFViewSize: (id)sender
+{
+	[[myDocument pdfView] changePDFViewSize: sender];
+}
+
+- (void)copy: (id)sender
+{
+	[[myDocument pdfView] copy: sender];
+}
+
+-(void)saveSelectionToFile: (id)sender
+{
+	[[myDocument pdfView] saveSelectionToFile: sender];
+}
+// end mitsu 1.29 (O)
+// end mitsu 1.29
+
+#endif
 
 @end

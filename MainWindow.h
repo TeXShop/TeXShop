@@ -20,5 +20,7 @@
 - (void) doChooseMethod: sender;
 - (void) makeKeyAndOrderFront:(id)sender;
 - (void) sendEvent:(NSEvent *)theEvent;
-
+// forsplit
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder;
+// end forsplit
 @end

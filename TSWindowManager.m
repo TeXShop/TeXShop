@@ -5,12 +5,17 @@
 //  Created by dirk on Sat Feb 17 2001.
 //
 
+#import "UseMitsu.h"
+
 #import "TSWindowManager.h"
 #import "globals.h"
 #import "extras.h"
 // added by mitsu --(J+) Check mark in "Typeset" menu
 #import "MyDocument.h"
 // end addition
+#ifdef MITSU_PDF
+#import "MyPDFView.h"
+#endif
 
 @implementation TSWindowManager
 /*"
@@ -99,6 +104,25 @@ static id _sharedInstance = nil;
 		[self checkProgramMenuItem: [[[note object] document] whichEngine] checked: YES];
 // end addition
 
+#ifdef MITSU_PDF
+	// mitsu 1.29b check menu item Preview=>Display Format/Magnification
+	MyDocument *doc = [[note object] document];
+    if ([doc imageType] == isTeX || [doc imageType] == isPDF)
+	{
+		NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
+				NSLocalizedString(@"Preview", @"Preview")] submenu];
+		NSMenu *menu = [[previewMenu itemWithTitle:
+				NSLocalizedString(@"Display Format", @"Display Format")] submenu];
+		NSMenuItem *item = [menu itemWithTag:[[doc pdfView] pageStyle]];
+		[item setState: NSOnState];
+		menu = [[previewMenu itemWithTitle:
+				NSLocalizedString(@"Magnification", @"Magnification")] submenu];
+		item = [menu itemWithTag:[[doc pdfView] resizeOption]];
+		[item setState: NSOnState];
+	}
+	//[[doc pdfView] recacheMarquee]; // cache it for quick drawing
+	// end mitsu 1.29b
+#endif
 }
 
 /*" This method is registered with the NotificationCenter and will be called when a document window will be closed. 
@@ -133,6 +157,26 @@ static id _sharedInstance = nil;
 {    
     if ([[[note object] document] imageType] == isTeX)
 		[self checkProgramMenuItem: [[[note object] document] whichEngine] checked: NO];
+                
+#ifdef MITSU_PDF
+	// mitsu 1.29b (O) uncheck menu item Preview=>Display Format/Magnification
+	MyDocument *doc = [[note object] document];
+    if ([doc imageType] == isTeX || [doc imageType] == isPDF)
+	{
+		NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
+				NSLocalizedString(@"Preview", @"Preview")] submenu];
+		NSMenu *menu = [[previewMenu itemWithTitle:
+				NSLocalizedString(@"Display Format", @"Display Format")] submenu];
+		NSMenuItem *item = [menu itemWithTag:[[doc pdfView] pageStyle]];
+		[item setState: NSOffState];
+		menu = [[previewMenu itemWithTitle:
+				NSLocalizedString(@"Magnification", @"Magnification")] submenu];
+		item = [menu itemWithTag:[[doc pdfView] resizeOption]];
+		[item setState: NSOffState];
+	}
+	//[[doc pdfView] cleanupMarquee: NO]; // erase marquee?
+	// end mitsu 1.29b
+#endif
 }
 
 

@@ -12,9 +12,13 @@
 @interface MyView : NSView 
 {
     id			currentPage;
+    id			currentPage1;
     id			totalPage;
+    id			totalPage1;
     id			myScale;
+    id			myScale1;
     id			myStepper;
+    id			myStepper1;
     int			imageType;
     double		oldMagnification;
     double		oldWidth, oldHeight;

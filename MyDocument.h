@@ -16,6 +16,14 @@
 
 @interface MyDocument : NSDocument 
 {
+    // forsplit
+    id			textView1;
+    id			textView2;
+    id			scrollView2;
+    id			splitView;
+    NSTextStorage 	*textStorage;
+    BOOL		windowIsSplit;
+// endforsplit
     id			textView;		/*" textView displaying the current TeX source "*/
     id			scrollView;		/*" scrollView for textView"*/
     id			pdfView;		/*" view displaying the current preview "*/
@@ -29,6 +37,10 @@
     id			projectName;
     id			requestWindow;
     id			printRequestPanel;
+    id			pagenumberPanel;
+    id			magnificationPanel;
+    id			openSaveBox;
+    id			openSaveView;
     id			linePanel;
     id			lineBox;
     id			typesetButton;
@@ -36,9 +48,12 @@
     id			programButton;
     id			programButtonEE;
     id			tags;
+    int			encoding;		/*" using tags of encoding matrix; changing tags does not change preference "*/
+    int			tempencoding;
     int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
     int			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
                                                     7 = metafont "*/
+    id			rootDocument;
     BOOL		tagLine;
     BOOL		typesetStart;		/*" YES if tex output "*/
     NSFileHandle	*writeHandle;
@@ -76,15 +91,33 @@
     id			magnificationOutlet;
     id			previousButton;
     id			nextButton;
+    
+    IBOutlet NSMatrix 	*mouseModeMatrix; // mitsu 1.29 (O)
+    IBOutlet NSMenu 	*mouseModeMenu; // mitsu 1.29 (O)
+    IBOutlet NSMenu 	*magnificationMenu; // mitsu 1.29 test
+    
     BOOL		externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
     id			macroButton;		/*" pull-down list for macros "*/
     id			autoCompleteButton;
     BOOL		doAutoComplete;
+    BOOL		warningGiven;
+    BOOL		omitShellEscape;
+    BOOL		withLatex;
 // end addition
 
 }
- 
+-(void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
+- (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo;
+// forsplit
+- (void) splitWindow: sender;
+- (void) setTextView: (id)aView;
+// endforsplit
+- (id) magnificationPanel;
+- (id) pagenumberPanel;
+- (void) quitMagnificationPanel: sender;
+- (void) quitPagenumberPanel: sender;
 - (void) doTex: sender;
 - (void) doLatex: sender;
 - (void) doBibtex: sender;
@@ -98,6 +131,7 @@
 - (void) doTexCommand: sender;
 - (void) printSource: sender;
 - (void) okForRequest: sender;
+- (void) chooseEncoding: sender;
 - (void) okForPrintRequest: sender;
 - (void) close;
 - (void) setProjectFile: sender;
@@ -106,24 +140,24 @@
 - (void) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
+- (void) completeSaveFinished;
 - (id) pdfView;
 - (void) doCompletion:(NSNotification *)notification;
 - (void) changeAutoComplete: sender;
-- (void) doComment: sender;
-- (void) doUncomment: sender;
-- (void) doIndent: sender;
-- (void) doUnindent: sender;
+- (void) fixAutoMenu;
 - (void) toLine: (int)line;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
 - (void) doError: sender;
+- (int) errorLineFor: (int)theError;
+- (int) totalErrors;
 - (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces;
 - (void) fixColor: (unsigned)from : (unsigned)to;
 // - (void) fixColor1: sender;
 - (void) fixColor2: (unsigned)from :(unsigned)to;
-- (void) fixColorBlack: sender;
 - (void) textDidChange:(NSNotification *)aNotification;
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType;
+- (BOOL)keepBackupFile;
 - (void) setupTags;
 - (int) imageType;
 - (id) pdfWindow;
@@ -138,6 +172,7 @@
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
 - (BOOL)isDocumentEdited;
+- (BOOL)fileIsTex; // added by zenitani, Feb 13, 2003
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------
@@ -152,6 +187,20 @@
 - (int)whichEngine;
 // end addition
 
+// mitsu 1.29
+- (void)showInfo: (id)sender; // mitsu 1.29 (Q)
+- (BOOL)isDoAutoCompleteEnabled; // mitsu 1.29 (T4)
+- (void)insertSpecial:(NSString *)theString undoKey:(NSString *)key;
+- (void)insertSpecialNonStandard:(NSString *)theString undoKey:(NSString *)key;
+- (void)registerUndoWithString:(NSString *)oldString location:(unsigned)oldLocation 
+	length: (unsigned)newLength key:(NSString *)key;
+- (void)undoSpecial:(id)theDictionary;
+- (void)doCommentOrIndent: (id)sender;
+- (void)saveDocument: (id)sender;
+// end mitsu 1.29
+
+
+
 //-----------------------------------------------------------------------------
 // private API
 //-----------------------------------------------------------------------------
@@ -165,6 +214,7 @@
 - (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
         homePath:(NSString *)home job:(NSString *)jobname;
 - (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;
+- (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(unsigned)level; // added by S. Zenitani
 
 
 @end

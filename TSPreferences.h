@@ -5,6 +5,8 @@
 //  Created by dirk on Thu Dec 07 2000.
 //
 
+#import "UseMitsu.h"
+
 #import <AppKit/AppKit.h>
 
 @interface TSPreferences : NSObject 
@@ -28,6 +30,7 @@
         IBOutlet NSButton	*_scrollButton;			/*" connected to scroll button "*/ 
 	IBOutlet NSTextField	*_texCommandTextField;		/*" connected to "TeX program" "*/
 	IBOutlet NSTextField	*_latexCommandTextField;	/*" connected to "Latex program" "*/
+        IBOutlet NSButton	*_escapeWarningButton;		/*" connected to "Shell Escape Warning" "*/
         IBOutlet NSTextField	*_texGSCommandTextField;	/*" connected to "Tex + GS" "*/
         IBOutlet NSTextField	*_latexGSCommandTextField;	/*" connected to "Latex + GS" "*/
         IBOutlet NSButton	*_savePSButton;			/*" connect to save postscript "*/
@@ -55,6 +58,15 @@
 // added by mitsu --(G) EncodingSupport
         BOOL			encodingTouched;
 // end addition
+
+        IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/ 
+        IBOutlet NSPopUpButton	*_resizeOptionPopup;// mitsu 1.29 (O) /*" connected to resize option popup button "*/ 
+        IBOutlet NSPopUpButton	*_imageCopyTypePopup;// mitsu 1.29 (O) /*" connected to image copy type popup button "*/ 
+        IBOutlet NSPopUpButton	*_mouseModePopup;// mitsu 1.29 (O) /*" connected to default mouse mode popup button "*/
+        IBOutlet NSButton	*_colorMapButton;// mitsu 1.29 (O) 
+        IBOutlet NSColorWell	*_copyForeColorWell;// mitsu 1.29 (O) 
+        IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O) 
+        IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)  
 }
 
 + (id)sharedInstance;
@@ -84,6 +96,7 @@
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
+- (IBAction)escapeWarningChanged:sender;
 - (IBAction)texGSProgramChanged:sender;
 - (IBAction)latexGSProgramChanged:sender;
 - (IBAction)savePSPressed:sender;
@@ -96,13 +109,26 @@
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;
 
+#ifdef MITSU_PDF
+- (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)
+- (IBAction)resizeOptionChanged:sender; // mitsu 1.29 (O)
+- (IBAction)imageCopyTypeChanged:sender; // mitsu 1.29 (O)
+- (NSPopUpButton *)imageCopyTypePopup; // mitsu 1.29b
+- (IBAction)mouseModeChanged:sender; // mitsu 1.29 (O)
+- (IBAction)colorMapChanged:sender; // mitsu 1.29 (O)
+- (IBAction)copyForeColorChanged:sender; // mitsu 1.29 (O)
+- (IBAction)copyBackColorChanged:sender; // mitsu 1.29 (O)
+- (IBAction)colorParam1Changed:sender; // mitsu 1.29 (O)
+#endif
+
 - (IBAction)okButtonPressed:sender;
 - (IBAction)cancelButtonPressed:sender;
 
 //------------------------------------------------------------------------------
 // API used by other TeXShop classes
 //------------------------------------------------------------------------------
-- (NSArray *)allTemplateNames;
+- (NSString *)relativePath: (NSString *)path fromFile: (NSString *)file; // added by zenitani, Feb 13, 2003
+
 - (void)registerFactoryDefaults;
 
 //------------------------------------------------------------------------------

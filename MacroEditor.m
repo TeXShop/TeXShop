@@ -16,7 +16,6 @@
 #define SUD [NSUserDefaults standardUserDefaults]
 
 extern int shouldFilter;
-extern BOOL utf8MacroFile;
 
 @implementation MacroEditor
 
@@ -170,6 +169,17 @@ static int savedFilter = filterNone;
 	[self reflectChangesInEditor: YES];
 	if (dataTouched)	// save only if data was touched
 	{
+		// mitsu 1.29 (U)-- back up old macro file, so that you can recover it manually if needed
+		NS_DURING
+			NSString *backupPath = [pathStr stringByDeletingPathExtension];
+				backupPath = [backupPath stringByAppendingString:@"~"];
+				backupPath = [backupPath stringByAppendingPathExtension:@"plist"];
+			[[NSFileManager defaultManager] removeFileAtPath:backupPath handler:nil];
+			[[NSFileManager defaultManager] copyPath:pathStr toPath:backupPath handler:nil];
+		NS_HANDLER
+		NS_ENDHANDLER
+		// end mitsu 1.29
+		// save the node data to a file
 		[self saveNodes: [outlineController rootOfTree] toFile: pathStr];
 		// reload macros
 		[[MacroMenuController sharedInstance] reloadMacros: self];
@@ -527,6 +537,7 @@ static int savedFilter = filterNone;
 	NS_HANDLER
 		NSRunAlertPanel(@"Error", [NSString stringWithFormat: 
 			@"failed to save macros to %@\n%@", filePath, error], nil, nil, nil);
+                if (error) [error release]; // mitsu 1.29 (U) added 
 	NS_ENDHANDLER
 }
 

@@ -53,6 +53,7 @@
     
     mag = round(theMagnification * 100.0);
     [myStepper setIntValue: mag];
+    [myStepper1 setIntValue: mag];
 }
 
 - (void)changeMagnification:(NSNotification *)aNotification;
@@ -69,14 +70,17 @@
 {
     if (oldMagnification != [self magnification])
         [self setMagnification: oldMagnification];
-} 
+}
+
 
 - (void)drawRect:(NSRect)aRect 
 {
     if (myRep != nil) {
         if ((imageType == isTeX) || (imageType == isPDF)) {
             [totalPage setIntValue: [myRep pageCount]];
+            [totalPage1 setIntValue: [myRep pageCount]];
             [currentPage setIntValue: ([myRep currentPage] + 1)]; /* dirk; yes, this line is correct */
+            [currentPage1 setIntValue: ([myRep currentPage] + 1)]; /* dirk; yes, this line is correct */
             [currentPage display];
             NSEraseRect([self bounds]);
             [myRep draw];
@@ -104,6 +108,7 @@
             if (pagenumber > 0) {
                 pagenumber--;
                 [currentPage setIntValue: (pagenumber + 1)];
+                [currentPage1 setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
                 [self display];
@@ -122,6 +127,7 @@
                 if (pagenumber > 0) {
                     pagenumber--;
                     [currentPage setIntValue: (pagenumber + 1)];
+                    [currentPage1 setIntValue: (pagenumber + 1)];
                     [myRep setCurrentPage: pagenumber];
                     [currentPage display];
                     newVisible = myVisible;
@@ -145,6 +151,7 @@
             
             pagenumber = 0;
             [currentPage setIntValue: (pagenumber + 1)];
+            [currentPage1 setIntValue: (pagenumber + 1)];
             [myRep setCurrentPage: pagenumber];
             [currentPage display];
             [self display];
@@ -205,6 +212,7 @@
             if (pagenumber < ([myRep pageCount]) - 1) {
                 pagenumber++;
                 [currentPage setIntValue: (pagenumber + 1)];
+                [currentPage1 setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
                 [self display];
@@ -222,6 +230,7 @@
                 if (pagenumber < ([myRep pageCount]) - 1) {
                     pagenumber++;
                     [currentPage setIntValue: (pagenumber + 1)];
+                    [currentPage1 setIntValue: (pagenumber + 1)];
                     [myRep setCurrentPage: pagenumber];
                     [currentPage display];
                     newVisible = myVisible;
@@ -244,6 +253,7 @@
             
             pagenumber = [myRep pageCount] - 1;
             [currentPage setIntValue: (pagenumber + 1)];
+            [currentPage1 setIntValue: (pagenumber + 1)];
             [myRep setCurrentPage: pagenumber];
             [currentPage display];
             [self display];
@@ -292,18 +302,23 @@
 - (void) goToPage: sender;
 {	int		pagenumber;
         NSRect		myBounds, myVisible, newVisible;
-
+        
         if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) {
             [currentPage setIntValue: 1];
+            [currentPage1 setIntValue: 1];
             [currentPage display];
             return;
             }
 
         if (myRep != nil) {
-            pagenumber = [currentPage intValue];
+            if (sender == currentPage1)
+                pagenumber = [currentPage1 intValue];
+            else
+                pagenumber = [currentPage intValue];
             if (pagenumber < 1) pagenumber = 1;
             if (pagenumber > [myRep pageCount]) pagenumber = [myRep pageCount];
             [currentPage setIntValue: pagenumber];
+            [currentPage1 setIntValue: pagenumber];
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
             if (![SUD boolForKey:NoScrollEnabledKey]) {
@@ -322,25 +337,35 @@
     int		scale;
     double	magSize;
     
+    if (sender == myScale1)
+        [myScale setIntValue: [myScale1 intValue]];
     scale = [myScale intValue];
+    [myScale1 setIntValue: scale];
     if (scale < 20) {
         scale = 20;
         [myScale setIntValue: scale];
+        [myScale1 setIntValue: scale];
         [myScale display];
         }
     if (scale > 400) {
         scale = 400;
         [myScale setIntValue: scale];
+        [myScale1 setIntValue: scale];
         [myScale display];
         }
     [myStepper setIntValue: scale];
+    [myStepper1 setIntValue: scale];
     magSize = [self magnification];
     [self setMagnification: magSize];
 }
 
 - (void) doStepper: sender;
 {
-    [myScale setIntValue: [myStepper intValue]];
+    if (sender == myStepper) 
+        [myScale setIntValue: [myStepper intValue]];
+    else
+        [myScale setIntValue: [myStepper1 intValue]];
+    
     [self changeScale: self];
 }
 
@@ -390,6 +415,7 @@ failed. If you change the code below, be sure to test carefully!
         /* Warning: if the next line is changed to setIntValue, the magnification
             fails! */
         [myScale setDoubleValue: mag];
+        [myScale1 setDoubleValue: mag];
         // [myStepper setIntValue: mag];
 
         [[self superview] setNeedsDisplay:YES];
@@ -514,9 +540,11 @@ scroller position.
             newWidth = myBounds.size.width;
             newHeight = myBounds.size.height;
             [totalPage setIntValue: [myRep pageCount]];
+            [totalPage1 setIntValue: [myRep pageCount]];
             if (pagenumber < 1) pagenumber = 1;
             if (pagenumber > [myRep pageCount]) pagenumber = [myRep pageCount];
             [currentPage setIntValue: pagenumber];
+            [currentPage1 setIntValue: pagenumber];
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
             if (! modifiedRep) {
@@ -546,7 +574,9 @@ scroller position.
             }
         else {
             [totalPage setIntValue: 1];
+            [totalPage1 setIntValue: 1];
             [currentPage setIntValue: 1];
+            [currentPage1 setIntValue: 1];
             [currentPage display];
             }
             
@@ -575,11 +605,15 @@ scroller position.
 
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];       
+    [[NSNotificationCenter defaultCenter] removeObserver:self]; 
+// the next two lines are by Wolfgang Lux, fixing the bug that pdf files are still open in the finder after closing
+     if (myRep != nil)
+	[myRep release];      
     [super dealloc];
 }
 
 // added by mitsu --(I) Magnifying Glass
+/*
 - (void)mouseDown:(NSEvent *)theEvent
 {
     NSPoint mouseLocWindow, mouseLocView;
@@ -727,6 +761,220 @@ scroller position.
 	[NSCursor unhide];
 	//[self unlockFocus];
 	[self setPostsBoundsChangedNotifications: postNote];
+	[self setNeedsDisplayInRect: oldRect];
+}
+// end addition
+*/
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+        NSPoint		mouseLocWindow, mouseLocView;
+	NSRect 		oldBounds, newBounds, magRectWindow, magRectView, oldRect, diffRect;
+	float 		minY, maxY;
+	BOOL 		postNote, postNote1, cursorVisible, commandDown = NO;
+        NSPoint		aPoint, originalPoint;
+        NSRect		newBounds1, originalBounds;
+        double		width, height;
+        NSScrollView 	*enclosingScrollView = [self enclosingScrollView];
+        NSView 		*documentView = [enclosingScrollView documentView];
+     
+        // koch
+        int	magWidth = 150;
+        int	magHeight = 100;
+        int	magOffsetX = magWidth/2;
+        int	magOffsetY = magHeight/2;
+        // end koch
+	
+#define magScale 	0.4	// you may want to change this
+
+	// you may want to restrict the magnification
+	//if (!([theEvent modifierFlags] & NSCommandKeyMask))
+	//	return;
+        
+        postNote1 = [documentView postsBoundsChangedNotifications];
+	[documentView setPostsBoundsChangedNotifications: NO];
+	postNote = [self postsBoundsChangedNotifications];
+	[self setPostsBoundsChangedNotifications: NO];	// block the view from sending notification
+	//[self lockFocus]; // the view is already focused, so it is not necessary to lock?
+	
+        
+        oldBounds = [self bounds];
+        width = oldBounds.size.width;
+        height = oldBounds.size.height;
+     
+        originalPoint.x = 0;
+        originalPoint.y = 0;
+        originalBounds.size.width = width * theMagSize;
+        originalBounds.size.height = height * theMagSize;
+        
+        switch (rotationAmount) {
+            case 0: aPoint.x = 0; aPoint.y = 0;
+                    newBounds1.size.width = width * theMagSize;
+                    newBounds1.size.height = height * theMagSize;
+                    break;
+            case 90: aPoint.x = 0; aPoint.y = height; 
+                    newBounds1.size.width = height * theMagSize;
+                    newBounds1.size.height = width * theMagSize;
+                    break;
+            case 180: aPoint.x = width; aPoint.y = height; 
+                    newBounds1.size.width = width * theMagSize;
+                    newBounds1.size.height = height * theMagSize;
+                    break;
+            case -90: aPoint.x = width; aPoint.y = 0;
+                    newBounds1.size.width = height * theMagSize;
+                    newBounds1.size.height = width * theMagSize;
+                    break;
+            }
+            
+	oldRect.origin = [self convertPoint: [theEvent locationInWindow] fromView:nil];
+	oldRect.size = NSMakeSize(0,0);
+	cursorVisible = YES;
+	
+	do {
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) 
+                    {	
+                        // koch
+                         if (([theEvent modifierFlags] & NSCommandKeyMask)) {
+                            if (! commandDown) {
+                                largeMagnify = !largeMagnify;
+                                if (largeMagnify) {
+                                    magWidth = 380; magHeight = 250;}
+                                else {
+                                    magWidth = 150; magHeight = 100;}
+                                commandDown = YES;
+                            }
+                        }
+                        else 
+                            commandDown = NO;
+                        if (([theEvent modifierFlags] & NSAlternateKeyMask) && (! commandDown)) {
+                            if (largeMagnify) {
+                                magWidth = 150; magHeight = 100;}
+                            else {
+                                magWidth = 380; magHeight = 250;}
+                            }
+                        else {
+                            if (largeMagnify) {
+                                magWidth = 380; magHeight = 250;}
+                            else {
+                                magWidth = 150; magHeight = 100;}
+                            }
+                        magOffsetX = magWidth/2;
+                        magOffsetY = magHeight/2;
+                        // end koch
+            
+			// get Mouse location and check if it is with the view's rect
+                        if (!([theEvent type]==NSFlagsChanged))
+                            mouseLocWindow = [theEvent locationInWindow];
+			mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+			// check if the mouse is in the rect
+			if([self mouse:mouseLocView inRect:[self visibleRect]])
+			{
+				if (cursorVisible)
+				{
+					[NSCursor hide];
+					cursorVisible = NO;
+				}
+				// define rect for magnification in window coordinate
+				magRectWindow = NSMakeRect(mouseLocWindow.x-magOffsetX, mouseLocWindow.y-magOffsetY, 
+											magWidth, magHeight);
+				// resize bounds around mouseLocView
+				newBounds = NSMakeRect(mouseLocView.x+magScale*(oldBounds.origin.x-mouseLocView.x), 
+								mouseLocView.y+magScale*(oldBounds.origin.y-mouseLocView.y),
+								magScale*(oldBounds.size.width), magScale*(oldBounds.size.height));
+                                                                
+                               // [documentView setBoundsRotation: 0];
+                               // [documentView setBoundsOrigin: originalPoint];
+                               // [documentView setFrameSize: originalBounds.size];
+                                
+				[self setBounds: newBounds];
+                                
+                              //  [documentView setBoundsRotation: rotationAmount];
+                              //  [documentView setBoundsOrigin: aPoint];
+                              //  [documentView setFrameSize: newBounds.size];
+
+                                
+				// draw it in the rect
+				magRectView = [self convertRect:magRectWindow fromView:nil];
+				[self displayRect: magRectView];
+                                [self lockFocus];
+                                [[NSColor grayColor] set];
+                               NSFrameRect(magRectView);
+                               // NSRectFill(magRectView);
+                               [self unlockFocus];
+                                
+				// reset bounds
+                                [documentView setBoundsRotation: 0];
+                                [documentView setBoundsOrigin: originalPoint];
+                                [documentView setFrameSize: originalBounds.size];
+                                
+				[self setBounds: oldBounds];
+                                
+                                [documentView setBoundsRotation: rotationAmount];
+                                [documentView setBoundsOrigin: aPoint];
+                                [documentView setFrameSize: newBounds1.size];
+
+				magRectView = [self convertRect:magRectWindow fromView:nil];
+				// clean up the trace
+				diffRect.origin.x = oldRect.origin.x;
+				diffRect.size.width = oldRect.size.width;
+				if ((diffRect.size.height = magRectView.origin.y-oldRect.origin.y) > 0)
+				{	// erase bottom
+					diffRect.origin.y = oldRect.origin.y;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+					minY = magRectView.origin.y;
+				}
+				else
+					minY = oldRect.origin.y;
+				if ((diffRect.size.height = oldRect.origin.y+oldRect.size.height
+									-magRectView.origin.y-magRectView.size.height) > 0)
+				{	// erase top
+					diffRect.origin.y = magRectView.origin.y+magRectView.size.height;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+					maxY = magRectView.origin.y+magRectView.size.height;
+				}
+				else
+					maxY = oldRect.origin.y+oldRect.size.height;
+				diffRect.origin.y = minY;
+				diffRect.size.height = maxY-minY;
+				if ((diffRect.size.width = magRectView.origin.x-oldRect.origin.x) > 0)
+				{	// erase left
+					diffRect.origin.x = oldRect.origin.x;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+				}
+				if ((diffRect.size.width = oldRect.origin.x+oldRect.size.width
+											-magRectView.origin.x-magRectView.size.width) > 0)
+				{	// erase right
+					diffRect.origin.x = magRectView.origin.x+magRectView.size.width;
+					[self displayRect: diffRect]; //NSIntegralRect()?
+				}
+				// remember the current rect
+				oldRect = magRectView;
+			}
+			else
+			{
+				// mouse is not in the rect, show cursor and reset old rect
+				if (!cursorVisible)
+				{
+					[NSCursor unhide];
+					cursorVisible = YES;
+				}
+				[self displayRect: oldRect];
+				oldRect.origin = mouseLocView;
+				oldRect.size = NSMakeSize(0,0);
+			}
+		}
+		else if ([theEvent type]==NSLeftMouseUp)
+		{
+			break;
+		}
+        theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+                NSLeftMouseDraggedMask | NSFlagsChangedMask];
+	} while (YES);
+	
+	[NSCursor unhide];
+	//[self unlockFocus];
+	[self setPostsBoundsChangedNotifications: postNote];
+        [documentView setPostsBoundsChangedNotifications: postNote1];
 	[self setNeedsDisplayInRect: oldRect];
 }
 // end addition

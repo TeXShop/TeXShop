@@ -23,6 +23,10 @@
 - (void)setupForEncoding;
 - (void)encodingChanged: (NSNotification *)note;
 - (IBAction)toggleTeXCharConversion:(id)sender;
+- (int)tagForEncodingPreference;
+- (int)tagForEncoding: (NSString *)encoding;
+- (NSString *)encodingForTag: (int)tag;
+- (NSStringEncoding)stringEncodingForTag: (int)encoding;
 
 @end
 

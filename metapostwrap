@@ -5,17 +5,17 @@
 
 set mygspath = "/usr/local/bin"
 if (-x ${mygspath}/ps2pdf) then
-	setenv PATH "${mygspath}:${PATH}"
-	rehash
+        setenv PATH "${mygspath}:${PATH}"
+        rehash
 endif
 
 set mytexexecpath = "$argv[1]"
 if (-x ${mytexexecpath}mpost) then
-	setenv PATH "${mytexexecpath}:${PATH}"
-	rehash
+        setenv PATH "${mytexexecpath}:${PATH}"
+        rehash
 endif
 
 set filename = "$argv[2]"
 
-mpost "${filename}"
-ps2pdf "${filename:r}.ps"
+mptopdf "${filename:r}.mp"
+mv "${filename:r}-0.pdf" "${filename:r}.pdf"

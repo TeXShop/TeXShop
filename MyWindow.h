@@ -5,6 +5,8 @@
 //  Originally part of MyDocument. Broken out by dirk on Tue Jan 09 2001.
 //
 
+#import "UseMitsu.h"
+
 #import <AppKit/NSWindow.h>
 
 @class MyDocument;
@@ -13,8 +15,13 @@
 {
     MyDocument	*myDocument;
     BOOL	firstClose;
+
 }
-   
+ 
+- (void) doTextMagnify: sender;   // for toolbar in text mode
+- (void) doTextPage: sender;      // for toolbar in text mode
+- (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 - (void) printDocument: sender;
 - (void) printSource: sender;
 - (void) doTypeset: sender;
@@ -39,4 +46,11 @@
 - (void) sendEvent:(NSEvent *)theEvent;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (MyDocument *)document;
+#ifdef MITSU_PDF
+- (void) left: sender; // mitsu 1.29 (O)
+- (void) right: sender; // mitsu 1.29 (O)
+- (void)changePageStyle: (id)sender; // mitsu 1.29 (O)
+- (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
+- (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)
+#endif MITSU_PDF
 @end

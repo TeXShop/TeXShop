@@ -1,0 +1,21 @@
+Suppose you have English and German nib files which are equivalent.
+Suppose you then add items and connections to the English nib.
+The following commands will update the German nib files while
+keeping existing translations and translating new items:
+
+Make a folder named TransferGerman. Put all English nib files to
+be converted in this folder.
+
+Make a subfolder named "g". Put all old German nib versions in
+this folder.
+
+For each English nib, issue the command 
+
+	nibtool -I g/MainMenu.nib -O -L MainMenu.nib > MainMenu.strings
+
+Then issue the command
+
+	nibtool -I g/MainMenu.nib -O -w MainMenuNew.nib -d MainMenu.strings MainMenu.nib
+
+Change MainMenu as appropriate. Put MainMenuNew in the German localization folder and
+rename it MainMenu.nib.

@@ -10,6 +10,10 @@
 #import "MainWindow.h"
 #import "globals.h"
 #import "EncodingSupport.h"
+// mistu 1.29
+#import "TSWindowManager.h" 
+#import "MyTextView.h" 
+// end mistu 1.29
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -57,7 +61,8 @@ static id sharedMacroMenuController = nil;
 {
 	NSString *pathStr;
 	NSData *myData;
-        NSString *aString;
+	NSString *error = nil; // mitsu 1.29 (U) added
+    //    NSString *aString; // mitsu 1.29 (U) removed
 
         pathStr = [MacrosPathKey stringByStandardizingPath];
         pathStr = [pathStr stringByAppendingPathComponent:@"Macros"];
@@ -104,12 +109,21 @@ static id sharedMacroMenuController = nil;
 	NS_DURING
 	// macroDict = [NSDictionary dictionaryWithContentsOfFile: pathStr]; // this crashes when the file is not a proper UTF8
 	myData = [NSData dataWithContentsOfFile:pathStr];
-	aString = [[[NSString alloc] initWithData:myData encoding: NSUTF8StringEncoding] autorelease];
+
+	// mitsu 1.29 (U) changed-- follow Apple's example in documentation "Using XML Property Lists"
+	NSPropertyListFormat format;
+	macroDict = [NSPropertyListSerialization propertyListFromData:myData
+                                mutabilityOption:NSPropertyListImmutable
+                                format:&format
+                                errorDescription:&error];
+	// old code was:
+/*	aString = [[[NSString alloc] initWithData:myData encoding: NSUTF8StringEncoding] autorelease];
 	if (!aString)
 		[NSException raise: @"non-UTF-8 format for Macros.plist" format: @""];
 	macroDict = (NSDictionary *)[aString propertyList];
 	if (!macroDict)
 		[NSException raise: @"non-UTF-8 format for Macros.plist" format: @""];
+*/	// end mitsu 1.29
 	NS_HANDLER
 		macroDict = nil;
 	NS_ENDHANDLER
@@ -118,6 +132,7 @@ static id sharedMacroMenuController = nil;
 	{	// alert: failed to parse Macros.plist
 		NSRunAlertPanel(@"Error", @"failed to parse ~/Library/TeXShop/Macros/Macros.plist", 
 						nil, nil, nil);
+		if (error) [error release]; // mitsu 1.29 (U) added 
 		macroDict = nil;
 		return;
 	}
@@ -288,8 +303,20 @@ static id sharedMacroMenuController = nil;
 		&& ![[[macroString substringToIndex: 14] lowercaseString] isEqualToString:@"-- applescript"]))
 	{	
 		// do ordinary macro
-		[[NSNotificationCenter defaultCenter] postNotificationName: @"completionpanel" 
-										object: macroString];
+		// mitsu 1.29 (T2)
+		NSWindow *activeDocWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+		if (activeDocWindow != nil)
+		{
+			[[(MainWindow *)activeDocWindow document] insertSpecial: macroString 
+						undoKey: NSLocalizedString(@"Macro", @"Macro")];
+			//[(MyTextView *)[[(MainWindow *)activeDocWindow document] textView] 
+			//			insertSpecial: macroString 
+			//			undoKey: NSLocalizedString(@"Macro", @"Macro")];
+		}
+		// original was:
+		//[[NSNotificationCenter defaultCenter] postNotificationName: @"completionpanel" 
+		//								object: macroString];
+		// end mitsu 1.29
 	}
 	else
 	{

@@ -5,12 +5,22 @@
 //  Created by dirk on Tue Jan 23 2001.
 //
 
+#import "UseMitsu.h"
+
 #import <Foundation/Foundation.h>
 #import "TSAppDelegate.h"
 #import "TSPreferences.h"
 #import "globals.h"
 #import "TSWindowManager.h"
 #import "MacroMenuController.h"
+#import "MyDocumentController.h"
+
+#ifdef MITSU_PDF
+// mitsu 1.29 (O)
+#import "MyPDFView.h"
+// extern int imageCopyType; // already in globals.h
+// end mitsu 1.29
+#endif
 
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -70,6 +80,7 @@
     [self configureAutoCompletion];
     [self configureLatexPanel];
     [self configureMacro];
+    [self prepareConfiguration: CommandCompletionPathKey]; // mitsu 1.29 (P)
     
 // Finish configuration of various pieces
     [[MacroMenuController sharedInstance] loadMacros];
@@ -85,11 +96,67 @@
 // added by mitsu --(H) Macro menu and (G) EncodingSupport
     [[EncodingSupport sharedInstance] setupForEncoding];        // this must come after
     [[MacroMenuController sharedInstance] setupMainMacroMenu];
+    [[MyDocumentController sharedDocumentController] initializeEncoding];  // so when first document is created, it has correct default
 // end addition
+
+    [self finishCommandCompletionConfigure]; // mitsu 1.29 (P) need to call after setupForEncoding
+
+#ifdef MITSU_PDF
+	// mitsu 1.29b check menu item for image format for copying and exporting
+	int imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
+        if (!imageCopyType) 
+		imageCopyType = IMAGE_TYPE_JPEG_MEDIUM; // default PdfCopyTypeKey
+	NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
+							NSLocalizedString(@"Preview", @"Preview")] submenu];
+	NSMenuItem *item = [previewMenu itemWithTitle: 
+							NSLocalizedString(@"Copy Format", @"format")];
+	if (item)
+	{
+		NSMenu *formatMenu = [item submenu];
+		item = [formatMenu itemWithTag: imageCopyType];
+		if (item)
+			[item setState: NSOnState];
+	}
+        
+	[NSColor setIgnoresAlpha:NO]; // it seesm necessary to call this to activate alpha
+	// end mitsu 1.29b
+        
+	// mitsu 1.29 drag & drop
+	NSFileManager	*fileManager = [NSFileManager defaultManager];
+	NSString *draggedImageFolder = [[DraggedImagePathKey stringByStandardizingPath] 
+										stringByDeletingLastPathComponent];
+    if (!([fileManager fileExistsAtPath: draggedImageFolder]))
+    {
+		NS_DURING
+			[fileManager createDirectoryAtPath: draggedImageFolder attributes:nil];
+		NS_HANDLER
+		NS_ENDHANDLER
+	}
+	// end mitsu 1.29
+#endif
 
 
     // documentsHaveLoaded = NO;
 }
+
+// mitsu 1.29 drag & drop
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+	NSString *folderPath, *filename;
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	folderPath = [[DraggedImagePathKey stringByStandardizingPath] 
+								stringByDeletingLastPathComponent];
+	NSEnumerator *enumerator = [[fileManager directoryContentsAtPath: folderPath] 
+								objectEnumerator];
+	while (filename = [enumerator nextObject]) 
+	{
+		if ([filename characterAtIndex: 0] != '.') 
+			[fileManager removeFileAtPath:[folderPath stringByAppendingPathComponent: 
+								filename] handler: nil];
+	}
+}
+// end mitsu 1.29
+
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
@@ -402,6 +469,58 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
         }
 }
 
+// mitsu 1.29 (P) --this can be used universally, make sure to give full path to the file
+- (void)prepareConfiguration: (NSString *)filePath
+{
+	NSString 	*completionPath, *folderPath, *fileName, *extension, *bundlePath, *reason;
+	NSFileManager	*fileManager;
+	BOOL		result;
+        
+	completionPath = [filePath stringByStandardizingPath];
+	folderPath = [completionPath stringByDeletingLastPathComponent];
+	fileName = [[filePath lastPathComponent] stringByDeletingPathExtension];
+	extension = [filePath pathExtension];
+	
+	fileManager = [NSFileManager defaultManager];
+    if (!([fileManager fileExistsAtPath: folderPath]))
+    {
+        // create the necessary directories
+		NS_DURING
+			result = [fileManager createDirectoryAtPath: folderPath attributes:nil];
+		NS_HANDLER
+			result = NO;
+			reason = [localException reason];
+		NS_ENDHANDLER
+		if (!result) 
+		{
+			NSRunAlertPanel(@"Error", reason, 
+				[NSString stringWithFormat: @"Couldn't Create folder:\n%@", folderPath], nil, nil);
+			return;
+		}
+    }
+    // now see if the file is inside; if not, copy it from the program folder
+    if (! [fileManager fileExistsAtPath: completionPath]) 
+	{
+        NS_DURING
+            result = NO;
+			bundlePath = [[NSBundle mainBundle] pathForResource:fileName ofType:extension];
+            if (bundlePath) 
+                result = [fileManager copyPath:bundlePath toPath:completionPath handler:nil];
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+		if (!result) 
+		{
+			NSRunAlertPanel(@"Error", reason, 
+				[NSString stringWithFormat: @"Couldn't Create file:\n%@", filePath], nil, nil);
+			return;
+		}
+	}
+}
+// end mitsu 1.29
+
+
 // ------------ end of folder and file creation routines  ---------------------
 
     // Added by Greg Landweber to load the autocompletion dictionary
@@ -502,6 +621,63 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
         }
 
 }
+
+// mitsu 1.29 (P)
+- (void) finishCommandCompletionConfigure 
+{
+    NSString	*completionPath;
+	NSData *myData;
+    
+	unichar esc = 0x001B; // configure the key in Preferences?
+	if (!commandCompletionChar)
+		commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+	
+	if (commandCompletionList)
+		[commandCompletionList release];
+	commandCompletionList = nil;
+	canRegisterCommandCompletion = NO;
+    completionPath = [CommandCompletionPathKey stringByStandardizingPath];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: completionPath]) 
+		myData = [NSData dataWithContentsOfFile:completionPath];
+    else
+		myData = [NSData dataWithContentsOfFile:
+			[[NSBundle mainBundle] pathForResource:@"CommandCompletion" ofType:@"txt"]];
+	if (!myData)
+		return;
+	//commandCompletionList = [[[NSString alloc] initWithData:myData 
+	//							encoding: NSUTF8StringEncoding] autorelease];
+    if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSMacOSRomanStringEncoding];
+	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSISOLatin1StringEncoding];
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSISOLatin2StringEncoding];
+	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese)];
+	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP)];
+	else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"JISJapanese"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)];
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSUTF8StringEncoding];
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSUnicodeStringEncoding];
+    else
+        commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: NSMacOSRomanStringEncoding];
+		
+	if (!commandCompletionList)
+		return;
+	[commandCompletionList insertString: @"\n" atIndex: 0];	
+	if ([commandCompletionList characterAtIndex: [commandCompletionList length]-1] != '\n')
+		[commandCompletionList appendString: @"\n"];
+	canRegisterCommandCompletion = YES;
+}
+// end mitsu 1.29
+
 
 - (void)configureExternalEditor
 {
@@ -626,6 +802,46 @@ necessary */
 }
 */
 
+// mitsu 1.29 (P) 
+- (void)openCommandCompletionList: (id)sender
+{
+	if ([[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:
+			[CommandCompletionPathKey stringByStandardizingPath] display: YES] != nil)
+		canRegisterCommandCompletion = NO;
+}
+// end mitsu 1.29
+
+#ifdef MITSU_PDF
+// mitsu 1.29 (O)
+- (void)changeImageCopyType: (id)sender
+{
+	NSMenuItem *item;
+	int imageCopyType = [SUD integerForKey:PdfCopyTypeKey]; // mitsu 1.29b
+	
+	if ([sender isKindOfClass: [NSMenuItem class]])
+	{
+		item = [[sender menu] itemWithTag: imageCopyType];
+		if (item)
+			[item setState: NSOffState];
+		imageCopyType = [sender tag];
+		item = [[sender menu] itemWithTag: imageCopyType];
+		if (item)
+			[item setState: NSOnState];
+		// mitsu 1.29b
+		NSPopUpButton *popup = [[TSPreferences sharedInstance] imageCopyTypePopup];
+		if (popup)
+		{
+			int index = [popup indexOfItemWithTag: imageCopyType];
+			if (index != -1)
+				[popup selectItemAtIndex: index];
+		}
+		// end mitsu 1.29b
+		// save this to User Defaults
+		[SUD setInteger:imageCopyType forKey:PdfCopyTypeKey];
+	}	
+}
+// end mitsu 1.29
+#endif
 
 
 @end

@@ -1,0 +1,79 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>ConTeXt y MetaPost</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.htm"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>ConTeXt y MetaPost</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">ConTeXt es un paquete de macros de prop&oacute;sito general para TeX, desarrollado por Hans Hagen; para algunos es una alternativa seria a LaTeX. Ver detalles en <a href="http://www.pragma-ade.com/">http://www.pragma-ade.com/</a>. Se puede encontrar una &uacute;til introducci&oacute;n en <a href="http://berend.gameren.nl/tex/">http://berend.gameren.nl/tex/</a>, en el documento &laquo;LaTeX in proper ConTeXt&raquo;. TeXShop soporta ConTeXt.</font></P>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">MetaPost es un sistema similar a MetaFont, desarrollado por John Hobby, y que obtiene como salida archivos postscript y pdf. Se puede usar para producir detalladas ilustraciones en PostScript. Ver detalles en <a href="http://cm.bell-labs.com/who/hobby/MetaPost.html">http://cm.bell-labs.com/who/hobby/MetaPost.html</a>.  Adem&aacute;s, se pueden encontrar interesantes ejemplos elaborados con MetaPost en muchos sitios: ver <a href="http://www.cs.ucc.ie/%7edongen/mpost/mpost.html">http://www.cs.ucc.ie/~dongen/mpost/mpost.html</a>. TeXShop soporta MetaPost.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">He aqu&iacute; un ejemplo de un archivo MetaPost:</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>prologues:=2;</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>color yellow; yellow = green + red;</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>def star (expr size, n, pos, color)=</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>for a=0 step 360/n until 360:</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>draw (origin -- (size/2,0))</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>rotatedaround (origin, a)</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>shifted pos withcolor color;</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>endfor ;</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>enddef;</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>beginfig(-1);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>pickup pencircle scaled 2mm; star (2cm,5,origin,red);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>endfig;</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>beginfig(2);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>pickup pencircle scaled 2mm; star (2cm,7,origin,yellow);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>endfig;</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>beginfig(3);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>pickup pencircle scaled 2mm; star (2cm,11,origin,green);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>endfig;</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>beginfig(4);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>pickup pencircle scaled 2mm; star (2cm,13,origin,blue);</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>endfig;</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>end</tt></font>
+		</dl>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Sup&oacute;n que este archivo se llama &laquo;metademo.tex&raquo;. Al procesarlo con MetaPost, generar&aacute; cuatro archivos postscript diferentes, llamados metademo.ps, metademo.2, metademo.3, metademo.4. Estos nombres est&aacute;n determinados por el par&aacute;metro num&eacute;rico de &laquo;beginfig()&raquo;. Si este n&uacute;mero es positivo, como beginfig(10), el archivo resultante se llamar&aacute; metademo.10. Si este n&uacute;mero es negativo, como beginfig(-10), el archivo resultante se llamar&aacute; metademo.ps, sobreescribiendo cualquier archivo metademo.ps creado previamente.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop asume que uno de los n&uacute;meros en beginfig() es negativo, y as&iacute; que MetaPost generar&aacute; un archivo llamado metademo.ps. Entonces, TeXShop llama a epstopdf para convertir este archivo postscript en un archivo pdf, y muestra el archivo pdf resultante. Si ning&uacute;n par&aacute;metro de beginfig es negativo, MetaPost se ejecutar&aacute; hasta el final sin error, pero TeXShop mostrar&aacute; un error cuando intente convertir metademo.ps en un archivo pdf.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Cuando est&eacute;s editando un archivo MetaPost, cambia el n&uacute;mero de la figura que est&eacute;s editando de positivo a negativo. TeXShop mostrar&aacute; esta figura como si estuviera siendo depurada (&lsquo;debugged&rsquo;). Cuando est&eacute;s satisfecho con la figura, vuelve a poner el n&uacute;mero positivo, y cambia el n&uacute;mero de otra figura de positivo a negativo.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop puede convertir archivos postscript como metademo.2 a pdf, pero primero hay que renombrar estos archivos como metademo.2.ps, para que TeXShop reconozca que son archivos postscript.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Una vez que los archivos MetaPost est&aacute;n creados, pueden usarse y visualizarse como cualquier otra ilustraci&oacute;n. Se puede usar Pdflatex si las ilustraciones est&aacute;n ya en formato pdf, o TeX y Ghostscript para incluir ilustraciones postscript sin convertir. Por ejemplo, podremos ver las cuatro ilustraciones creadas con el c&oacute;digo MetaPost anterior compilando el siguiente archivo mediante TeX y Ghostscript:</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\documentclass[11pt] {article}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{graphicx}</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\begin{document}</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>Here are some illustrations.</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\vspace{.2in}</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=1cm]{metademo.1}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\hfill</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=1cm]{metademo.2}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\hfill</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=1cm]{metademo.3}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\hfill</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=1cm]{metademo.4}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\hfill</tt></font>
+			<dd><br>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\end{document}</tt></font>
+		</dl>
+		<p></p>
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

@@ -5,12 +5,20 @@
 #define NAIRN  // if this is commented out, Nairn's additions are not added
 #define ROOTFILE  // if this is commented out, the old ROOTFILE behavior applies
 
+#import "UseMitsu.h"
+
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 #import "MyDocument.h"
+
+#ifdef MITSU_PDF
+#import "MyPDFView.h"
+#else
+#import "MyView.h"
+#endif
+
 #import "PrintView.h"
 #import "PrintBitmapView.h"
-#import "MyView.h"
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 #import "extras.h"
@@ -21,6 +29,8 @@
 #import "MyTextView.h"
 #import "EncodingSupport.h"
 #import "MacroMenuController.h"
+#import "MyDocumentController.h"
+
 
 #define SUD [NSUserDefaults standardUserDefaults]
 #define Mcomment 1
@@ -54,7 +64,12 @@
     mSelection = nil;
     fastColor = NO;
     fastColorBackTeX = NO;
-    
+    rootDocument = nil;
+    warningGiven = NO;
+    omitShellEscape = NO;
+        
+    encoding = [[MyDocumentController sharedDocumentController] encoding];
+
     return self;
 }
 
@@ -63,6 +78,9 @@
 //-----------------------------------------------------------------------------
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+#ifdef MITSU_PDF
+     [[NSNotificationCenter defaultCenter] removeObserver:pdfView];// mitsu 1.29 (O) need to remove here, otherwise updateCurrentPage fails 
+#endif
     if (syntaxColoringTimer != nil) 
     {
         [syntaxColoringTimer invalidate];
@@ -77,6 +95,7 @@
     [commandColor release];
     [markerColor release];
     [mSelection release];
+    [textStorage release];
     
 /* toolbar stuff */
     [typesetButton release];
@@ -89,6 +108,11 @@
     [nextButton release];
     [gotopageOutlet release];
     [magnificationOutlet release];
+    [macroButton release]; // mitsu 1.29 -- I for got this
+    
+#ifdef MITSU_PDF
+    [mouseModeMatrix release]; // mitsu 1.29 (O)
+#endif
     
 /* others */
 
@@ -196,8 +220,10 @@
     NSString		*theSource;
 #endif
     NSString		*fileExtension;
+#ifndef MITSU_PDF
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
+#endif
     NSRange		myRange;
     unsigned		length;
     BOOL		imageFound;
@@ -230,7 +256,8 @@
     blue: [SUD floatForKey:background_BKey] 
     alpha:1.0];
     
-    /* New */
+/*    
+    // New
     contentSize = [scrollView contentSize];
     textView = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
     [textView setAutoresizingMask: NSViewWidthSizable];
@@ -243,7 +270,58 @@
     [textView setBackgroundColor: backgroundColor];
     [scrollView setDocumentView:textView];
     [textView release];
+*/
     /* End of New */
+    
+        /* New forsplit */
+        
+    
+    contentSize = [scrollView contentSize];
+    textView1 = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
+    [textView1 setAutoresizingMask: NSViewWidthSizable];
+    [[textView1 textContainer] setWidthTracksTextView:YES];
+    [textView1 setDelegate:self];
+    [textView1 setAllowsUndo:YES];
+    [textView1 setRichText:NO];
+    [textView1 setUsesFontPanel:YES];
+    [textView1 setFont:[NSFont userFontOfSize:12.0]];
+    [textView1 setBackgroundColor: backgroundColor];
+    [scrollView setDocumentView:textView1];
+    [textView1 setDocument: self]; // mitsu 1.29 (T2-4) added 
+    [textView1 release];
+    textView = textView1;
+    /* End of New */
+// forsplit
+    contentSize = [scrollView2 contentSize];
+    textView2 = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
+    [textView2 setAutoresizingMask: NSViewWidthSizable];
+    [[textView2 textContainer] setWidthTracksTextView:YES];
+    [textView2 setDelegate:self];
+    [textView2 setAllowsUndo:YES];
+    [textView2 setRichText:NO];
+    [textView2 setUsesFontPanel:YES];
+    [textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+    [textView2 setFont:[NSFont userFontOfSize:12.0]];
+    [textView2 setBackgroundColor: backgroundColor];
+    [scrollView2 setDocumentView:textView2];
+    [textView2 setDocument: self]; // mitsu 1.29 (T2-4) added 
+    [textView2 release];
+
+    textStorage = [textView1 textStorage];
+    
+    NSLayoutManager *layoutManager = [textView2 layoutManager];
+    [textStorage addLayoutManager:layoutManager];
+    // For an explanation of the three lines below, see 'setTextView' below
+    layoutManager = [textView1 layoutManager];
+    [textStorage removeLayoutManager:layoutManager];
+    [textStorage addLayoutManager:layoutManager];
+    [textStorage retain];
+    
+    [scrollView2 retain];
+    [scrollView2 removeFromSuperview];
+    windowIsSplit = NO;
+//  endforsplit
+
     
     externalEditor = [[[NSApplication sharedApplication] delegate] forPreview];
     theFileName = [self fileName];
@@ -263,7 +341,7 @@
     markerColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
 
   doAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
-  [autoCompleteButton setState: doAutoComplete];
+  [self fixAutoMenu];
 
 
 /* when opening an empty document, must open the source editor */         
@@ -291,8 +369,10 @@
         ([fileExtension isEqualToString: @"tif"]) ||
         ([fileExtension isEqualToString: @"tiff"]))
             ;
+#ifndef MITSU_PDF
     else
         [pdfView resetMagnification];
+#endif
         
     if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"])
      && ( ! [fileExtension isEqualToString: @"dtx"]) && ( ! [fileExtension isEqualToString: @"ins"])
@@ -313,6 +393,28 @@
     }
             
 /* handle images */
+
+#ifdef MITSU_PDF
+	// mitsu 1.29 (S4)-- flipped clip view
+	// the following code allows the window to be anchored at top left when scrolled
+	[pdfView retain]; // hold it when clipView is released
+	NSScrollView *pdfScrollView = [pdfView enclosingScrollView];
+	NSClipView *pdfClipView = [pdfScrollView contentView];
+	NSRect clipFrame = [pdfClipView frame];
+    pdfClipView = [[FlippedClipView alloc] initWithFrame: clipFrame];	// it returns YES for isFlipped
+	[pdfScrollView setContentView: pdfClipView];
+	[pdfClipView setBackgroundColor: [NSColor windowBackgroundColor]];
+	[pdfClipView setDrawsBackground: YES];
+	[pdfClipView release];
+	[pdfScrollView setDocumentView: pdfView];
+	[pdfView release];
+        [pdfView setAutoresizingMask: NSViewNotSizable];
+	// notofication for scroll
+	[[NSNotificationCenter defaultCenter] addObserver:pdfView selector:@selector(wasScrolled:) 
+				name:NSViewBoundsDidChangeNotification object:[pdfView superview]];
+	// end mitsu 1.29
+#endif
+
     [pdfView setImageType: myImageType];
         
     if (! fileIsTex)
@@ -324,6 +426,8 @@
             imageFound = YES;
             texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
+            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4; 
+            // supposed to allow command click of window title to lead to file, but doesn't
             myImageType = isPDF;
             }
         else if (([fileExtension isEqualToString: @"jpg"]) || 
@@ -332,6 +436,7 @@
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
              [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
+             // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isJPG;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -341,6 +446,7 @@
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
+            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isTIFF;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -351,23 +457,29 @@
             {
                 myImageType = isPDF;
                 [pdfView setImageType: myImageType];
+                // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
                 [self convertDocument];
                 return;
             }
-                            
+            
         if (imageFound) {
                 [pdfView setImageType: myImageType];
                 [pdfView setImageRep: texRep]; // this releases old one!
+#ifndef MITSU_PDF
                 if (myImageType == isPDF) {
                     topLeftRect = [texRep bounds];
                     topLeftPoint.x = topLeftRect.origin.x;
                     topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
                     [pdfView scrollPoint: topLeftPoint];
                     }
+#endif
+
                 if (texRep != nil) 
                     [pdfView display];
+#ifndef MITSU_PDF
                 if ((myImageType == isJPG) || (myImageType == isTIFF))
-                    [pdfView resetMagnification];
+                [pdfView resetMagnification];
+#endif
                 [pdfWindow makeKeyAndOrderFront: self];
                 return;
                 }
@@ -393,7 +505,7 @@
            // syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
         }
 
-        [aString release];
+        // [aString release];  // mitsu 1.29 memory leak fix; aString is autoreleased
         aString = nil;
         texTask = nil;
         bibTask = nil;
@@ -479,12 +591,16 @@
                     [[[[self fileName] lastPathComponent] 
                     stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; */
             [pdfWindow setTitle: [imagePath lastPathComponent]];
+            // [pdfWindow setRepresentedFilename: [[[[self fileName] lastPathComponent] 
+            //        stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; //mitsu July4
             [pdfView setImageRep: texRep]; // this releases old one!
+#ifndef MITSU_PDF
             topLeftRect = [texRep bounds];
             topLeftPoint.x = topLeftRect.origin.x;
             topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
             [pdfView scrollPoint: topLeftPoint];
             [pdfView display];
+#endif
             [pdfWindow makeKeyAndOrderFront: self];
             }
         }
@@ -507,11 +623,129 @@
 		NSMutableString *newString = [NSMutableString stringWithString: [super displayName]];
 		[newString replaceOccurrencesOfString: @" " withString: @"-"
 						options: 0 range: NSMakeRange(0, [newString length])];
+                // mitsu 1.29 (V)
+		if ([[[[[NSBundle mainBundle] pathForResource:@"MainMenu" ofType:@"nib"] 
+				stringByDeletingLastPathComponent] lastPathComponent] 
+				isEqualToString: @"Japanese.lproj"] && [newString length]==5)
+				[newString appendString: @"-1"];
+		// end mitsu 1.29
 		return newString;
 	}
 	return [super displayName];
 }
 // end addition
+
+// forsplit
+
+- (void) setTextView: (id)aView
+{
+    NSRange		theRange;
+    NSLayoutManager	*layoutManager;
+    
+    textView = aView;
+    if (textView == textView1) {
+        // Koch: June 20, 2003:
+        // WARNING: This strange code fixes a bug when syntax coloring is on/
+        // When the bug is active and the return key is pressed on an empty line,
+        // the first nonempty line below it scrolls down, but remaining lines take a second
+        // to catch up. Strangely, in splitscreen mode, this only affected the top half.
+        // The bottom half scrolled immediately, and typing in the bottom screen scrolled
+        // both halves immediately. Explain that.
+        layoutManager = [textView1 layoutManager];
+        [textStorage removeLayoutManager:layoutManager];
+        [textStorage addLayoutManager:layoutManager];
+        theRange = [textView2 selectedRange];
+        theRange.length = 0;
+        [textView2 setSelectedRange: theRange];
+        }
+    else {
+        layoutManager = [textView2 layoutManager];
+        [textStorage removeLayoutManager:layoutManager];
+        [textStorage addLayoutManager:layoutManager];
+        theRange = [textView1 selectedRange];
+        theRange.length = 0;
+        [textView1 setSelectedRange: theRange];
+        }
+}
+
+// The next three methods implement the encoding button in the save panel
+
+- (void) chooseEncoding: sender;
+{
+    tempencoding = [[sender selectedCell] tag];
+}
+
+- (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
+{
+    if (fileName != nil)
+        encoding = tempencoding;
+    [super saveToFile: fileName saveOperation: saveOperation delegate: delegate didSaveSelector: didSaveSelector contextInfo: contextInfo];
+}
+
+- (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
+{
+    NSView	*accessoryView;
+    
+    [openSaveBox selectItemAtIndex: encoding];
+    accessoryView = [savePanel accessoryView];
+    [openSaveView retain];
+    NSEnumerator *enumerator = [[accessoryView subviews] objectEnumerator];
+    id	anObject;
+    while (anObject = [enumerator nextObject])
+        [openSaveView addSubview: anObject];
+    [savePanel setAccessoryView: openSaveView];
+    return YES;
+}
+
+- (void) splitWindow: sender;
+{
+    NSSize		newSize;
+    NSRect		theFrame;
+    NSRange		selectedRange;
+    
+    selectedRange = [textView selectedRange];
+    newSize.width = 100;
+    newSize.height = 100;
+    if (windowIsSplit) {
+        [scrollView2 retain];
+        [scrollView2 removeFromSuperview];
+        windowIsSplit = NO;
+        textView = textView1;
+        [textView scrollRangeToVisible: selectedRange];
+        [textView setSelectedRange: selectedRange];
+        }
+    else {
+        theFrame = [scrollView frame];
+        newSize.width = theFrame.size.width;
+        newSize.height = 100;
+        [scrollView setFrameSize:newSize];
+        [scrollView2 setFrameSize:newSize];
+        [splitView addSubview: scrollView2];
+        [splitView adjustSubviews];
+        [textView1 scrollRangeToVisible: selectedRange];
+        [textView2 scrollRangeToVisible: selectedRange];
+        selectedRange.length = 0;
+        [textView2 setSelectedRange: selectedRange];
+
+/*        
+        sourceRange.location = 0;
+        sourceRange.length = [[textView string] length];
+        destRange.location = 0;
+        destRange.length = [[textView2 string] length];
+        myAttribString = [[[NSAttributedString alloc] initWithAttributedString:[textView attributedSubstringFromRange: sourceRange]] autorelease];
+        [[textView2 textStorage] replaceCharactersInRange:destRange withAttributedString:myAttribString];
+*/
+ //     [textView2 setString: [textView string]];
+    
+//      [textView2 setTextContainer: [textView textContainer]];
+        windowIsSplit = YES;
+        textView = textView1;
+        }
+}
+
+
+// endforsplit
+
 
 
 /* A user reported that while working with an external editor, he quit TeXShop and was
@@ -645,8 +879,91 @@ in other code when an external editor is being used. */
         [self setDocumentFontFromPreferences:nil];
 	}
 
-	// setup the popUp with all of our template names
-	[popupButton addItemsWithTitles:[[TSPreferences sharedInstance] allTemplateNames]];
+/*
+    // setup the popUp with all of our template names
+    [popupButton addItemsWithTitles:[[TSPreferences sharedInstance] allTemplateNames]];
+*/
+
+    // new template menu (by S. Zenitani, Jan 31, 2003)
+    NSFileManager *fm;
+    NSString      *basePath, *path, *title;
+    NSArray       *fileList;
+    NSMenuItem	  *newItem;
+    NSMenu 	  *submenu;
+    BOOL	   isDirectory;
+    unsigned i;
+    unsigned lv = 3;
+    
+    fm       = [ NSFileManager defaultManager ];
+    basePath = [ TexTemplatePathKey stringByStandardizingPath ];
+    fileList = [ fm directoryContentsAtPath: basePath ];
+
+    for( i=0; i<[fileList count]; i++ ) {
+        title = [ fileList objectAtIndex: i ];
+        path  = [ basePath stringByAppendingPathComponent: title ];
+        if( [fm fileExistsAtPath:path isDirectory: &isDirectory] ){
+            if( isDirectory ){
+                [popupButton addItemWithTitle: @""];
+                newItem = [popupButton lastItem];
+                [newItem setTitle: title];
+                submenu = [[[NSMenu alloc] init] autorelease];
+                [self makeMenuFromDirectory: submenu basePath: path
+                    action: @selector(doTemplate:) level: lv];
+                [newItem setSubmenu: submenu];
+            }else if ( [ [[title pathExtension] lowercaseString] isEqualToString: @"tex"] ) {
+                title = [title stringByDeletingPathExtension];
+                [popupButton addItemWithTitle: @""];
+                newItem = [popupButton lastItem];
+                [newItem setTitle: title];
+                // begin addition
+                [newItem setAction: @selector(doTemplate:)];
+		[newItem setTarget: self];
+                [newItem setRepresentedObject: path];
+                // end addition
+
+            }
+        }
+    }
+    // end of addition
+}
+
+//-----------------------------------------------------------------------------
+- (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(unsigned)level;
+//-----------------------------------------------------------------------------
+/* build a submenu from the specified directory (by S. Zenitani, Jan 31, 2003) */
+{
+    NSFileManager *fm;
+    NSArray       *fileList;
+    NSString      *path, *title;
+    NSMenuItem	  *newItem;
+    NSMenu 	  *submenu;
+    BOOL	   isDirectory;
+    unsigned i;
+
+    level--;
+    fm       = [ NSFileManager defaultManager ];
+    fileList = [ fm directoryContentsAtPath: basePath ];
+
+    for( i=0; i<[fileList count]; i++ ) {
+        title = [ fileList objectAtIndex: i ];
+        path  = [ basePath stringByAppendingPathComponent: title ];
+        if( [fm fileExistsAtPath:path isDirectory: &isDirectory] ){
+            if( isDirectory ){
+                newItem=[menu addItemWithTitle: title action: nil keyEquivalent: @""];
+                if( level > 0 ){
+                    submenu = [[[NSMenu alloc] init] autorelease];
+                    [self makeMenuFromDirectory: submenu basePath: path
+                            action: action level: level];
+                    [newItem setSubmenu: submenu];
+                }
+            }else if ([[[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
+                title = [title stringByDeletingPathExtension];
+                newItem = [menu addItemWithTitle: title action: action keyEquivalent: @""];
+                [newItem setTarget: self];
+                [newItem setRepresentedObject: path];
+            }
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -726,6 +1043,13 @@ preference change is cancelled. "*/
         tagTimer = nil;
     }
     [pdfWindow close];
+    	
+    // mitsu 1.29 (P)
+    if (!fileIsTex && [[self fileName] isEqualToString: 
+            [CommandCompletionPathKey stringByStandardizingPath]])
+        canRegisterCommandCompletion = YES;
+    // end mitsu 1.29
+
     [super close];
 }
 
@@ -737,6 +1061,8 @@ preference change is cancelled. "*/
 }
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
+
+    NSStringEncoding	theEncoding;
     // Insert code here to write your document from the given data.
 
 //    NSUndoManager		*myManager;
@@ -764,6 +1090,11 @@ preference change is cancelled. "*/
     
     // The following is line has been changed to fix the bug from Geoff Leyland 
     // return [[textView string] dataUsingEncoding: NSASCIIStringEncoding];
+    
+   theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: encoding];
+   return [[textView string] dataUsingEncoding: theEncoding allowLossyConversion:YES];
+    
+/*    
     if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
@@ -786,16 +1117,36 @@ preference change is cancelled. "*/
         return [[textView string] dataUsingEncoding: NSUTF8StringEncoding allowLossyConversion:YES];
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
         return [[textView string] dataUsingEncoding: NSUnicodeStringEncoding allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"Mac Cyrillic"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Cyrillic"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Russian"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"Windows Cyrillic"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"KOI8_R"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R) allowLossyConversion:YES];
     else 
          return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
+*/
 }
 
 
 
 - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
-
-    id myData;
+    int			tag;
+    id 			myData;
+    NSStringEncoding	theEncoding;
     
+//    tag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+    tag = encoding;
+    theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: tag];
+    myData = [NSData dataWithContentsOfFile:fileName];
+    aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
+    return YES;
+    
+/*    
     if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         aString = [[NSString stringWithContentsOfFile:fileName] retain];
     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"]) {
@@ -836,9 +1187,30 @@ preference change is cancelled. "*/
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: NSUnicodeStringEncoding] retain];
         }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Mac Cyrillic"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic)] retain];
+        }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Cyrillic"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic)] retain];
+        }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Russian"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian)] retain];
+        }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Windows Cyrillic"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic)] retain];
+        }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"KOI8_R"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R)] retain];
+        }
     else
         aString = [[NSString stringWithContentsOfFile:fileName] retain];
     return YES;
+*/
 }
 
 // The default save operations clear the "document edited symbol" but
@@ -855,12 +1227,43 @@ preference change is cancelled. "*/
 
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType
 {
-    BOOL	result;
-    
+    BOOL		result;
+    NSUndoManager	*myManager;
+
     result = [super writeToFile:fileName ofType:docType];
-    if (result)
-        [[textView undoManager] removeAllActions];
+    if (result) {
+//      [[textView undoManager] removeAllActions];
+         myManager = [self undoManager];
+        [myManager registerUndoWithTarget:self selector:@selector(doNothing:) object: nil];
+        [myManager setActionName:NSLocalizedString(@"Save Spot", @"Save Spot")];
+        [[textWindow undoManager] undo];
+        }
     return result;
+}
+
+- (BOOL)keepBackupFile
+{
+    return [SUD boolForKey:KeepBackupKey];
+}
+
+- (id) magnificationPanel;
+{
+    return magnificationPanel;
+}
+
+- (id) pagenumberPanel;
+{
+    return pagenumberPanel;
+}
+
+- (void) quitMagnificationPanel: sender;
+{
+    [NSApp endSheet: magnificationPanel returnCode: 0];
+}
+
+- (void)quitPagenumberPanel: sender;
+{
+    [NSApp endSheet: pagenumberPanel returnCode: 0];
 }
 
 //-----------------------------------------------------------------------------
@@ -889,7 +1292,7 @@ preference change is cancelled. "*/
     [myDictionary setObject: theLocation forKey: @"oldLocation"];
     [myDictionary setObject: theLength forKey: @"oldLength"];
     [myManager registerUndoWithTarget:self selector:@selector(fixTemplate:) object: myDictionary];
-    [myManager setActionName:@"Template"];
+    [myManager setActionName:NSLocalizedString(@"Template", @"Template")];
     from = oldRange.location;
     to = from + [newString length];
     [self fixColor: from :to];
@@ -963,6 +1366,7 @@ preference change is cancelled. "*/
 */
 
 // Modified by Martin Heusse
+// Modified by Seiji Zenitani (Jan 31, 2003)
 //==================================================================
 - (void) doTemplate: sender
 //-----------------------------------------------------------------------------
@@ -975,19 +1379,50 @@ preference change is cancelled. "*/
     NSMutableDictionary	*myDictionary;
     NSNumber		*theLocation, *theLength;
     id			myData;
-
+    NSStringEncoding	theEncoding;
+    int			tag;
+    
     NSRange 		NewlineRange;
     int 		i, numTabs, numSpaces=0;
     NSMutableString	*templateString, *indentString = [NSMutableString stringWithString:@"\n"];
 
+/*
     theItem = [sender selectedItem];
-
-    if (theItem != nil)
+*/
+    // for submenu items
+    if ([sender isKindOfClass: [NSMenuItem class]])
     {
+        nameString = [(NSMenuItem *)sender representedObject];
+    }
+    // for popup button
+    else
+    {
+        theItem = [sender selectedItem];
+        if ( theItem != nil ){
+            nameString = [TexTemplatePathKey stringByStandardizingPath];
+            nameString = [nameString stringByAppendingPathComponent:[theItem title]];
+            nameString = [nameString stringByAppendingPathExtension:@"tex"];
+        }else{
+            return;
+        }
+    }
+
+    // if ( theItem != nil )
+    if ( [[NSFileManager defaultManager] fileExistsAtPath: nameString] )
+    {
+/*
+        // The lines are moved (S. Zenitani, Jan 31, 2003)
         nameString = [TexTemplatePathKey stringByStandardizingPath];
         nameString = [nameString stringByAppendingPathComponent:[theItem title]];
         nameString = [nameString stringByAppendingPathExtension:@"tex"];
+*/
+        tag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+        theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: tag];
+        myData = [NSData dataWithContentsOfFile:nameString];
+        templateString = [[[NSMutableString alloc] initWithData:myData encoding:theEncoding] autorelease];
 
+
+/*
         if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
             templateString = [NSMutableString stringWithContentsOfFile:nameString];
         else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"]) {
@@ -1033,8 +1468,34 @@ preference change is cancelled. "*/
             templateString = [[NSMutableString alloc] initWithData:myData
                                                    encoding: NSUnicodeStringEncoding];
         }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Mac Cyrillic"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic)];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Cyrillic"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic)];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Russian"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian)];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Windows Cyrillic"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic)];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"KOI8_R"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R)];
+        }
         else
             templateString = [NSMutableString stringWithContentsOfFile:nameString];
+*/
 
         // check and rebuild the trailing string...
         numTabs = [self textViewCountTabs:textView andSpaces:(int *)&numSpaces];
@@ -1067,7 +1528,7 @@ preference change is cancelled. "*/
             [myDictionary setObject: theLocation forKey: @"oldLocation"];
             [myDictionary setObject: theLength forKey: @"oldLength"];
             [myManager registerUndoWithTarget:self selector:@selector(fixTemplate:) object: myDictionary];
-            [myManager setActionName:@"Template"];
+             [myManager setActionName:NSLocalizedString(@"Template", @"Template")];
 
             from = myRange.location;
             to = from + [templateString length];
@@ -1283,27 +1744,14 @@ preference change is cancelled. "*/
     }
 }
 
-
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 {
-    NSString		*myFileName;
-    NSMutableArray	*args;
-    NSDictionary	*myAttributes;
-    NSString		*imagePath;
 #ifndef ROOTFILE
     NSString		 *project, *nameString, *projectPath;
 #endif
-    NSString		*sourcePath;
-    NSString		*bibPath;
-    NSString		*indexPath;
-    NSString		*metaFontPath;
-    NSString		*myEngine;
-    NSString		*enginePath;
-    NSString		*tetexBinPath;
-    BOOL		withLatex;
     NSArray		*myList;
-    NSString		*theSource, *theKey;
-    NSRange		myRange;
+    NSString		*theSource, *theKey, *myEngine;
+    NSRange		aRange, myRange;
     unsigned int	mystart, myend;
     
     if (whichEngine == LatexEngine)
@@ -1318,6 +1766,7 @@ if (! externalEditor) {
 #ifdef ROOTFILE
     if ([self checkRootFile_forTask:RootForTexing]) return;
 #endif
+    rootDocument = nil;
 #ifdef NAIRN
     [self checkFileLinks:theSource];
 #endif
@@ -1361,6 +1810,49 @@ if (! externalEditor) {
         }
     }
     
+    if ((! warningGiven) && ((whichEngine == TexEngine) || (whichEngine == LatexEngine)) && (theScript == 100) && ([SUD boolForKey:WarnForShellEscapeKey])) {
+        if (withLatex)
+            myEngine = [SUD stringForKey:LatexCommandKey];
+        else
+            myEngine = [SUD stringForKey:TexCommandKey];
+             
+        // search for --shell-escape
+        aRange = [myEngine rangeOfString:@"--shell-escape"];
+        if (aRange.location == NSNotFound) 
+            warningGiven = YES;
+        else {
+            NSBeginCriticalAlertSheet(nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"), 
+                    textWindow, self, @selector(sheetDidEnd:returnCode:contextInfo:), NULL, nil, 
+                    NSLocalizedString(@"Warning: Using Shell Escape", @"Warning: Using Shell Escape"));
+            return;
+            }
+        }
+        
+    [self completeSaveFinished];
+}
+
+- (void) completeSaveFinished
+{
+    NSString		*myFileName;
+    NSMutableArray	*args;
+    NSDictionary	*myAttributes;
+    NSString		*imagePath;
+#ifndef ROOTFILE
+    NSString		 *project, *nameString, *projectPath;
+#endif
+    NSString		*sourcePath;
+    NSString		*bibPath;
+    NSString		*indexPath;
+    NSString		*metaFontPath;
+    NSString		*myEngine;
+    NSString		*myEngineFirst, *myEngineLast;
+    NSString		*enginePath;
+    NSString		*tetexBinPath;
+    NSRange		aRange;
+    unsigned		here;
+    
+
+    
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
     
@@ -1396,39 +1888,6 @@ if (! externalEditor) {
         else
             startDate = nil;
     
-        args = [NSMutableArray array];
-        
-        outputPipe = [[NSPipe pipe] retain];
-        readHandle = [outputPipe fileHandleForReading];
-        [readHandle readInBackgroundAndNotify];
-        inputPipe = [[NSPipe pipe] retain];
-        writeHandle = [inputPipe fileHandleForWriting];
-
-        [outputText setSelectable: YES];
-        [outputText selectAll:self];
-        [outputText replaceCharactersInRange: [outputText selectedRange] withString:@""];
-        [texCommand setStringValue:@""];
-        [outputText setSelectable: NO];
-        typesetStart = NO; 
-        /* The following command produces an unwanted tex input event for reasons
-            I do not understand; the event will be discarded because typesetStart = NO
-            and it is received before tex output to the console occurs.
-            RMK; 7/3/2001. */
-        [outputWindow makeFirstResponder: texCommand];
-        
-        
-        /* [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
-                stringByAppendingString:@" console"]]; */
-        [outputWindow setTitle: [[[imagePath lastPathComponent] stringByDeletingPathExtension]
-            stringByAppendingString:@" console"]];
-        if ([SUD boolForKey:ConsoleBehaviorKey]) {
-            if (![outputWindow isVisible])
-                [outputWindow orderBack: self];
-            [outputWindow makeKeyWindow];
-            }
-        else
-            [outputWindow makeKeyAndOrderFront: self];
-
 #ifndef ROOTFILE
         project = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension: @"texshop"];
         if ([[NSFileManager defaultManager] fileExistsAtPath: project]) {
@@ -1447,6 +1906,43 @@ if (! externalEditor) {
 #endif
             sourcePath = myFileName;
             
+            
+            
+        args = [NSMutableArray array];
+        
+        outputPipe = [[NSPipe pipe] retain];
+        readHandle = [outputPipe fileHandleForReading];
+        [readHandle readInBackgroundAndNotify];
+        inputPipe = [[NSPipe pipe] retain];
+        writeHandle = [inputPipe fileHandleForWriting];
+
+        [outputText setSelectable: YES];
+        [outputText selectAll:self];
+        [outputText replaceCharactersInRange: [outputText selectedRange] withString:@""];
+        [texCommand setStringValue:@""];
+        [outputText setSelectable: NO];
+        typesetStart = NO; 
+       // The following command produces an unwanted tex input event for reasons
+       //     I do not understand; the event will be discarded because typesetStart = NO
+       //     and it is received before tex output to the console occurs.
+       //     RMK; 7/3/2001. 
+        [outputWindow makeFirstResponder: texCommand];
+        
+        
+       // [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 
+       //         stringByAppendingString:@" console"]];
+        [outputWindow setTitle: [[[imagePath lastPathComponent] stringByDeletingPathExtension]
+            stringByAppendingString:@" console"]];
+        if ([SUD boolForKey:ConsoleBehaviorKey]) {
+            if (![outputWindow isVisible])
+                [outputWindow orderBack: self];
+            [outputWindow makeKeyWindow];
+            }
+        else
+            [outputWindow makeKeyAndOrderFront: self];
+
+
+ 
      //   if (whichEngine < 5)
         if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
         {
@@ -1481,10 +1977,10 @@ if (! externalEditor) {
                     }
                  }
            
-        /*
-            else if (whichEngine == 3)
-                myEngine = @"omega"; // currently this should never occur
-        */
+        
+        //    else if (whichEngine == 3)
+        //        myEngine = @"omega"; // currently this should never occur
+        
                 
             else if (whichEngine == MetapostEngine)
                 {
@@ -1500,6 +1996,18 @@ if (! externalEditor) {
                         myEngine = [SUD stringForKey:LatexCommandKey];
                     else
                         myEngine = [SUD stringForKey:TexCommandKey];
+                        
+                    if (omitShellEscape) {
+                        aRange = [myEngine rangeOfString:@"--shell-escape"];
+                        if (aRange.location == NSNotFound) 
+                            warningGiven = YES;
+                        else {
+                            myEngineFirst = [myEngine substringToIndex: aRange.location];
+                            here = aRange.location + aRange.length;
+                            myEngineLast = [myEngine substringFromIndex: here];
+                            myEngine = [myEngineFirst stringByAppendingString: myEngineLast];
+                            }
+                        }
                     break;
                 
                 case 101:
@@ -1516,10 +2024,19 @@ if (! externalEditor) {
                         myEngine = [SUD stringForKey:LatexScriptCommandKey];
                     else
                         myEngine = [SUD stringForKey:TexScriptCommandKey];
+                        
+                    if ([myEngine length] == 0) {
+                        if (withLatex)
+                            myEngine = [SUD stringForKey:LatexCommandKey];
+                        else
+                            myEngine = [SUD stringForKey:TexCommandKey];
+                        }
+                        
                     break;
                 
                 }
                 
+                       
           //  if ((whichEngine != 2) && (whichEngine != 3) && (whichEngine != 4)) {
             if ((whichEngine != MetapostEngine) && (whichEngine != ContextEngine)) {
                 
@@ -1538,8 +2055,8 @@ if (! externalEditor) {
                 
             }
             
-            /* Koch: Feb 20; this allows spaces everywhere in path except
-            file name itself */
+            // Koch: Feb 20; this allows spaces everywhere in path except
+            // file name itself 
             [args addObject: [sourcePath lastPathComponent]];
         
             if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
@@ -1559,7 +2076,7 @@ if (! externalEditor) {
         }
         else if (whichEngine == BibtexEngine) {
             bibPath = [sourcePath stringByDeletingPathExtension];
-            /* Koch: ditto; allow spaces in path */
+            // Koch: ditto; allow spaces in path 
             [args addObject: [bibPath lastPathComponent]];
         
             if (bibTask != nil) {
@@ -1581,7 +2098,7 @@ if (! externalEditor) {
         }
         else if (whichEngine == IndexEngine) {
             indexPath = [sourcePath stringByDeletingPathExtension];
-            /* Koch: ditto, spaces in path */
+            // Koch: ditto, spaces in path 
             [args addObject: [indexPath lastPathComponent]];
         
             if (indexTask != nil) {
@@ -1603,7 +2120,7 @@ if (! externalEditor) {
         }
         else if (whichEngine == MetafontEngine) {
             metaFontPath = [sourcePath stringByDeletingPathExtension];
-            /* Koch: ditto, spaces in path */
+            // Koch: ditto, spaces in path 
             [args addObject: [metaFontPath lastPathComponent]];
         
             if (metaFontTask != nil) {
@@ -1623,6 +2140,27 @@ if (! externalEditor) {
             [metaFontTask setStandardInput: inputPipe];
             [metaFontTask launch];
         }
+    }
+}
+
+
+-(void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+   switch(returnCode) {
+   
+    case NSAlertDefaultReturn:
+        warningGiven = YES;
+        [self completeSaveFinished];
+        break;
+        
+    case NSAlertAlternateReturn: // this says omit --shell-escape
+        warningGiven = YES;
+        omitShellEscape = YES;
+        [self completeSaveFinished];
+        break;
+        
+    case NSAlertOtherReturn:
+        break;
     }
 }
 
@@ -1931,166 +2469,6 @@ if (! externalEditor) {
         }
 }
 
-- (void) doModify: (int)type;
-{
-    NSString		*text, *oldString;
-    NSRange		myRange, modifyRange, tempRange, oldRange;
-    unsigned		start, end, end1, changeStart, changeEnd;
-    int			theChar;
-    NSUndoManager	*myManager;
-    NSMutableDictionary	*myDictionary;
-    NSNumber		*theLocation, *theLength, *theType;
-
-    text = [textView string];
-    myRange = [textView selectedRange];
-    // get old string for Undo
-    [text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
-    oldRange.location = start;
-    oldRange.length = end1 - start;
-    oldString = [[textView string] substringWithRange: oldRange];
-
-    changeStart = start;
-    changeEnd = start;
-    end = start;
-    while (end < (myRange.location + myRange.length)) {
-        modifyRange.location = end;
-        modifyRange.length = 0;
-        [text getLineStart:&start end:&end contentsEnd:&end1 forRange:modifyRange];
-        changeEnd = end1;
-        if ((end1 - start) > 0)
-            theChar = [text characterAtIndex: start];
-        switch (type) {
-        
-            case Mcomment:	// if ((end1 == start)  || (theChar != 0x0025) */) {
-                                    tempRange.location = start;
-                                    tempRange.length = 0;
-                                    [textView replaceCharactersInRange:tempRange withString:@"%"];
-                                    myRange.length++; oldRange.length++;
-                                    changeEnd++;
-                                    end++;
-                                //    }
-                                break;
-                                            
-            case Muncomment:	if ((end1 != start) && (theChar == 0x0025)) {
-                                    tempRange.location = start;
-                                    tempRange.length = 1;
-                                    [textView replaceCharactersInRange:tempRange withString:@""];
-                                    myRange.length--; oldRange.length--;
-                                    changeEnd--;
-                                    end--;
-                                    }
-                                break;
-            
-            // Originally this was a space; Greg Landweber correctly suggested a tab!
-            case Mindent: 	if (0 == 0) /* (end1 == start) || (theChar != 0x0025)) */ {
-                                    tempRange.location = start;
-                                    tempRange.length = 0;
-                                    [textView replaceCharactersInRange:tempRange withString:@"\t"];
-                                    myRange.length++; oldRange.length++;
-                                    changeEnd++;
-                                    end++;
-                                    }
-                                break;
-
-            
-            case Munindent: 	if ((end1 != start) && (theChar == '\t')) {
-                                    tempRange.location = start;
-                                    tempRange.length = 1;
-                                    [textView replaceCharactersInRange:tempRange withString:@""];
-                                    myRange.length--; oldRange.length--;
-                                    changeEnd--;
-                                    end--;
-                                    }
-                                break;
-
-            }
-        end++;
-        }
-    [self fixColor:changeStart :changeEnd];
-    tempRange.location = changeStart;
-    tempRange.length = (changeEnd - changeStart);
-    [textView setSelectedRange: tempRange];
-
-    myManager = [textView undoManager];
-    myDictionary = [NSMutableDictionary dictionaryWithCapacity: 4];
-    theLocation = [NSNumber numberWithUnsignedInt: oldRange.location];
-    theLength = [NSNumber numberWithUnsignedInt: oldRange.length];
-    theType = [NSNumber numberWithInt: type];
-    [myDictionary setObject: oldString forKey: @"oldString"];
-    [myDictionary setObject: theLocation forKey: @"oldLocation"];
-    [myDictionary setObject: theLength forKey: @"oldLength"];
-    [myDictionary setObject: theType forKey: @"theType"];
-    [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
-    switch (type) {
-        case Mcomment: 	[myManager setActionName:NSLocalizedString(@"Comment", @"Comment")]; break;
-        case Muncomment:[myManager setActionName:NSLocalizedString(@"Uncomment", @"Uncomment")]; break;
-        case Mindent:	[myManager setActionName:NSLocalizedString(@"Indent", @"Indent")]; break;
-        case Munindent:	[myManager setActionName:NSLocalizedString(@"Unindent", @"Unindent")]; break;
-        }
-}
-
-- (void) doComment: sender;
-{
-    
-    [self doModify:Mcomment];
-    
-}
-
-- (void) doUncomment: sender;
-{
-    [self doModify:Muncomment];
-}
-
-- (void) doIndent: sender;
-{
-    [self doModify:Mindent];
-}
-
-- (void) doUnindent: sender;
-{
-    [self doModify:Munindent];
-}
-
-
-//-----------------------------------------------------------------------------
-- (void) fixModify: (id) theDictionary;
-//-----------------------------------------------------------------------------
-
-{
-    NSRange		oldRange;
-    NSString		*oldString, *newString;
-    NSUndoManager	*myManager;
-    NSMutableDictionary	*myDictionary;
-    NSNumber		*theLocation, *theLength;
-    unsigned		from, to;
-    int			type;
-    
-    oldRange.location = [[theDictionary objectForKey: @"oldLocation"] unsignedIntValue];
-    oldRange.length = [[theDictionary objectForKey: @"oldLength"] unsignedIntValue];
-    type = [[theDictionary objectForKey:@"theType"] intValue];
-    newString = [theDictionary objectForKey: @"oldString"];
-    oldString = [[textView string] substringWithRange: oldRange];
-    [textView replaceCharactersInRange: oldRange withString: newString];
-
-    myManager = [textView undoManager];
-    myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
-    theLocation = [NSNumber numberWithInt: oldRange.location];
-    theLength = [NSNumber numberWithInt: [newString length]];
-    [myDictionary setObject: oldString forKey: @"oldString"];
-    [myDictionary setObject: theLocation forKey: @"oldLocation"];
-    [myDictionary setObject: theLength forKey: @"oldLength"];
-    [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
-    switch (type) {
-        case Mcomment: [myManager setActionName:NSLocalizedString(@"Comment", @"Comment")]; break;
-        case Muncomment:[myManager setActionName:NSLocalizedString(@"Uncomment", @"Uncomment")]; break;
-        case Mindent:	[myManager setActionName:NSLocalizedString(@"Indent", @"Indent")]; break;
-        case Munindent:	[myManager setActionName:NSLocalizedString(@"Unindent", @"Unindent")]; break;
-        }
-    from = oldRange.location;
-    to = from + [newString length];
-    [self fixColor: from :to];
-    [self setupTags];
-}
 
 - (void) doTag: sender;
 {
@@ -2103,9 +2481,13 @@ if (! externalEditor) {
     unsigned	lineNumber = 0;
     unsigned	lineNumber2;
     BOOL	done;
-    
-    title = [tags titleOfSelectedItem];
-    lineNumber2 = [[tags selectedItem] tag];
+
+// Minor Zenitani fix
+//  title = [tags titleOfSelectedItem];
+//  lineNumber2 = [[tags selectedItem] tag];
+
+    title = [sender title];
+    lineNumber2 = [sender tag];
     
     /* code by Anton Leuski */
     if ([SUD boolForKey: TagSectionsKey]) { 
@@ -2233,17 +2615,68 @@ if (! externalEditor) {
             [self fixTypesetMenu];
 }
 
+- (int) errorLineFor: (int)theError{
+    if (theError < errorNumber)
+        return errorLine[theError];
+    else
+        return -1;
+}
 
+- (int) totalErrors{
+    return errorNumber;
+}
 
 
 - (void) doError: sender;
 {
-    if ((!externalEditor) && (fileIsTex) && (errorNumber > 0)) {
-            [textWindow makeKeyAndOrderFront: self];
-            [self toLine: errorLine[whichError]];
+    NSDocument		*myRoot;
+    NSArray 		*wlist;
+    NSEnumerator	*en;
+    id			obj;
+    BOOL		doError;
+    int			myErrorNumber;
+    int			myErrorLine;
+    
+    myRoot = nil;
+    doError = NO;
+    
+    if (rootDocument != nil) {
+        wlist=[NSApp orderedDocuments];
+        en=[wlist objectEnumerator];
+        while(obj=[en nextObject]) {
+            if (obj == rootDocument)
+                myRoot = rootDocument;
+            }
+        }
+        
+    if (rootDocument == nil) {
+        if (errorNumber > 0) {
+            doError = YES;
+            if (whichError >= errorNumber)
+                whichError = 0;			// warning; main.tex could be closed in the middle of error processing
+            myErrorLine = errorLine[whichError];
             whichError++;
             if (whichError >= errorNumber)
                 whichError = 0;
+            }
+        }
+    else {
+        myErrorNumber = [rootDocument totalErrors];
+        if (myErrorNumber > 0) {
+            doError = YES;
+            if (whichError >= myErrorNumber)
+                whichError = 0;
+            myErrorLine = [rootDocument errorLineFor: whichError];
+            whichError++;
+            if (whichError >= myErrorNumber)
+                whichError = 0;
+            }
+        }
+    
+    
+    if ((!externalEditor) && (fileIsTex) && (doError)) {
+            [textWindow makeKeyAndOrderFront: self];
+            [self toLine: myErrorLine];
             }
 }
 
@@ -2292,6 +2725,12 @@ if (! externalEditor) {
 {
     return texRep;
 }
+
+- (BOOL)fileIsTex
+{
+    return fileIsTex;
+}
+
 
 /*
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem {
@@ -2365,7 +2804,19 @@ if (! externalEditor) {
 					(myImageType == isTIFF));
 		if ([anItem action] == @selector(setProjectFile:))
 			return NO;
+                        
 	}
+        
+        // forsplit        
+        if ([anItem action] == @selector(splitWindow:)) {
+            if (windowIsSplit)
+                [anItem setState:NSOnState];
+            else
+                [anItem setState:NSOffState];
+            return YES;
+            }
+        // end forsplit
+
 	
 	return [super validateMenuItem: anItem];
 }
@@ -2374,7 +2825,7 @@ if (! externalEditor) {
 
 - (void)textDidChange:(NSNotification *)aNotification;
 {
-   [self fixColor :colorStart :colorEnd];
+  [self fixColor :colorStart :colorEnd];
     if (tagLine) 
         [self setupTags];
     colorStart = 0;
@@ -2393,7 +2844,7 @@ BOOL isText1(int c) {
         return NO;
     }
 
-// fixColor2 is the old fixColor, now used only when opening documents
+// fixColor2 is the old fixcolor, now only used when opening documents
 - (void)fixColor2: (unsigned)from : (unsigned)to
 {
     NSRange	colorRange;
@@ -2411,32 +2862,18 @@ BOOL isText1(int c) {
     textString = [textView string];
     if (textString == nil) return;
     length = [textString length];
-    
-    if (returnline) {
-        colorRange.location = from + 1;
-        colorRange.length = 0;
-        }
-    
-    else {
-    
-    if (from < length)
-        colorRange.location = from;
-    else
-        colorRange.location = 0;
-        
-    if (to < length)
-        colorRange.length = to - colorRange.location;
-    else
-        colorRange.length = length - colorRange.location;
-    }
+    // [[textView textStorage] beginEditing];
+    [textStorage beginEditing];
 
-    [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
     
+    colorRange.location = 0;
+    colorRange.length = length;
+    [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
     location = start1;
     final = end1;
-
     colorRange.location = start1;
     colorRange.length = end1 - start1;
+    
     [textView setTextColor: regularColor range: colorRange];
         
     // NSLog(@"begin");
@@ -2486,36 +2923,11 @@ BOOL isText1(int c) {
             else
                 location++;
             }
+            
+        // [[textView textStorage] endEditing];
+        [textStorage endEditing];
+
         
-}
-
-
-- (void)fixColorBlack: sender;
-{
-    NSRange	colorRange;
-    NSString	*textString;
-    NSColor	*regularColor;
-    unsigned	length, limit, start, end;
-
-     limit = colorLocation + 5000;
-    regularColor = [NSColor blackColor];
-    textString = [textView string];
-    length = [textString length];
-    
-    while ((colorLocation < length) && (colorLocation < limit))  {
-            colorRange.location = colorLocation;
-            colorRange.length = 0;
-            [textString getLineStart:&start end:&end contentsEnd:NULL forRange:colorRange];
-            colorRange.length = (end - start);
-            [textView setTextColor: regularColor range: colorRange];
-            colorLocation = colorRange.location + colorRange.length;
-            }
-             
-    if (colorLocation >= length) {
-        [syntaxColoringTimer invalidate];
-        [syntaxColoringTimer release];
-        syntaxColoringTimer = nil;
-        }
 }
 
 
@@ -2543,6 +2955,10 @@ BOOL isText1(int c) {
             fastColor = YES;
             myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: affectedCharRange]] autorelease];
             myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
+            // mitsu 1.29 parhaps this (and several others below) can be replaced by
+            // myAttributes = [[textView textStorage] attributesAtIndex: 
+            // 					affectedCharRange.location effectiveRange: NULL];
+            // end mitsu 1.29 and myAttribString is not necessary
             previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
             if (previousColor != commentColor) 
                 fastColorBackTeX = YES;
@@ -2617,6 +3033,12 @@ BOOL isText1(int c) {
     if ([replacementString length] != 1) return YES;
     rightpar = [replacementString characterAtIndex:0];
     
+// mitsu 1.29 (T4) compare with "inserText:" in MyTextView.m
+#define AUTOCOMPLETE_IN_INSERTTEXT
+#ifndef AUTOCOMPLETE_IN_INSERTTEXT
+// end mitsu 1.29
+
+    
     // Code added by Greg Landweber for auto-completions of '^', '_', etc.
     // Should provide a preference setting for users to turn it off!
     // First, avoid completing \^, \_, \"
@@ -2624,7 +3046,7 @@ BOOL isText1(int c) {
         if (doAutoComplete) {
         if ( rightpar >= 128 ||
             [textView selectedRange].location == 0 ||
-            [textString characterAtIndex:[textView selectedRange].location - 1 ] != /*'\\' */ texChar ) {
+            [textString characterAtIndex:[textView selectedRange].location - 1 ] != texChar ) {
         
                 NSString *completionString = [autocompletionDictionary objectForKey:replacementString];
                 if ( completionString && (shouldFilter != filterMacJ || [replacementString
@@ -2632,14 +3054,25 @@ BOOL isText1(int c) {
                     // should really send this as a notification, instead of calling it directly,
                     // or should separate out the code that actually performs the completion
                     // from the code that responds to the notification sent by the LaTeX panel.
-                    [self doCompletion:[NSNotification notificationWithName:@"" object:completionString]];
+                    // mitsu 1.29 (T4)
+                    [self insertSpecialNonStandard:completionString 
+                                undoKey: NSLocalizedString(@"Autocompletion", @"Autocompletion")];
+                    //[textView insertSpecialNonStandard:completionString 
+                    //			undoKey: NSLocalizedString(@"Autocompletion", @"Autocompletion")];
+                    // original was
+                    //    [self doCompletion:[NSNotification notificationWithName:@"" object:completionString]];
+                    // end mitsu 1.29
                     return NO;
                 }
             }
         }
    
     // End of code added by Greg Landweber
-    
+// mitsu 1.29 (T4)
+#endif
+// end mitsu 1.29
+
+
     if (rightpar == 0x000a)
         returnline = YES;
         
@@ -2867,9 +3300,10 @@ void report(NSString *itest)
 
 
 // This is the main syntax coloring routine, used for everything except opening documents
+
 - (void)fixColor: (unsigned)from : (unsigned)to
 {
-    NSRange			colorRange, cutRange, modifiedRange, selectedRange, newRange, newRange1, lineRange, wordRange;
+    NSRange			colorRange, newRange, newRange1, lineRange, wordRange;
     NSString			*textString;
     NSColor			*regularColor, *previousColor;
     long			length, location, final;
@@ -2877,10 +3311,10 @@ void report(NSString *itest)
     int				theChar, previousChar, aChar, i;
     BOOL			found;
     unsigned			end;
+    unsigned long		itest;
     NSMutableAttributedString 	*myAttribString;
     NSDictionary		*myAttributes;
-    unsigned long		itest;
-    
+
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
     
     regularColor = [NSColor blackColor];
@@ -2889,7 +3323,7 @@ void report(NSString *itest)
     if (textString == nil) return;
     length = [textString length];
     if (length == 0) return;
-    
+
     if (returnline) {
         colorRange.location = from + 1;
         colorRange.length = 0;
@@ -2910,6 +3344,7 @@ void report(NSString *itest)
         colorRange.length = length - colorRange.location;
     }
 
+   if ([SUD boolForKey:FastColoringKey]) {
 // We try to color simple character changes directly.
     
 // Look first at backspaces over anything except a comment character or line feed
@@ -2939,7 +3374,7 @@ void report(NSString *itest)
         else if (colorRange.location > start1) {
             newRange.location = colorRange.location - 1;
             newRange.length = 1;
-            myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: newRange]] autorelease];
+            myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView attributedSubstringFromRange: newRange]] autorelease];
             myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
             previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
             if (previousColor == commandColor) { //color rest of word blue
@@ -2981,7 +3416,7 @@ void report(NSString *itest)
         previousChar = [textString characterAtIndex: (colorRange.location - 1)];
         newRange.location = colorRange.location - 1;
         newRange.length = colorRange.length;
-        myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: newRange]] autorelease];
+        myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView attributedSubstringFromRange: newRange]] autorelease];
         myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
         previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
         if ((!isText1(theChar)) && (previousChar == texChar)) {
@@ -3150,12 +3585,12 @@ void report(NSString *itest)
         }
         
     fastColor = NO;
+}
 
-    // If that trick fails, we work harder. The key speedup in this routine uses
-    // NSMutableAttributedString, so the various recolorings do not cause screen updates
-    // Only one update is required at the end. This ingenious code was written by
-    // Martin Heusse. Many, many thanks!!!
-    
+    // If that trick fails, we work harder.
+    // [[textView textStorage] beginEditing];
+    [textStorage beginEditing];
+
     [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
     location = start1;
     final = end1;
@@ -3172,21 +3607,11 @@ void report(NSString *itest)
         newRange1.length = end1 - start1 + 1;
     else
         newRange1.length = end1 - start1;
-      [textView setTextColor: regularColor range: newRange1];
+    [textView setTextColor: regularColor range: newRange1];
 // End of fix
 
-   // [textView setTextColor: regularColor range: colorRange]; 
-   cutRange.location = colorRange.location;
-   cutRange.length = colorRange.length;
-   selectedRange = [textView selectedRange];
-    myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView attributedSubstringFromRange: cutRange]] autorelease];
-    modifiedRange.location = cutRange.location - start1;
-    modifiedRange.length = cutRange.length;
+   [textView setTextColor: regularColor range: colorRange]; 
     
-    [myAttribString addAttributes:  [NSDictionary dictionaryWithObject:regularColor
-        forKey:NSForegroundColorAttributeName] range: modifiedRange];
-        
-    // NSLog(@"begin");
     while (location < final) {
             itest = location; if ((itest < 0) || (itest >= length)) {report(@"bug11"); return;}
             theChar = [textString characterAtIndex: location];
@@ -3194,17 +3619,10 @@ void report(NSString *itest)
              if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
                 colorRange.location = location;
                 colorRange.length = 1;
-                modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:markerColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
-                // [textView setTextColor: markerColor range: colorRange];
+                [textView setTextColor: markerColor range: colorRange];
                 colorRange.location = colorRange.location + colorRange.length - 1;
                 colorRange.length = 0;
-                // [textView setTextColor: regularColor range: colorRange];
-                modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
-
+               [textView setTextColor: regularColor range: colorRange];
                 location++;
                 }
                 
@@ -3213,16 +3631,10 @@ void report(NSString *itest)
                 colorRange.length = 0;
                 [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
                 colorRange.length = (end - location);
-                modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-               [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange]; 
-                //[textView setTextColor: commentColor range: colorRange];
+                [textView setTextColor: commentColor range: colorRange];
                 colorRange.location = colorRange.location + colorRange.length - 1;
                 colorRange.length = 0;
-               // [textView setTextColor: regularColor range: colorRange];
-               modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+               [textView setTextColor: regularColor range: colorRange];
                 location = end;
                 }
                 
@@ -3230,12 +3642,10 @@ void report(NSString *itest)
                 colorRange.location = location;
                 colorRange.length = 1;
                 location++;
-               //  if ((location < final) && ([textString characterAtIndex: location] == 0x0025)) {
                itest = location; if (location < final) if ((itest < 0) || (itest >= length)) {report(@"bug12"); return;}
                if ((location < final) && (!isText1([textString characterAtIndex: location]))) {
                     location++;
                     colorRange.length = location - colorRange.location;
-              //     location++;
                     }
                 else {
                     itest = location; if (location < final) if ((itest < 0) || (itest >= length)) {report(@"bug13"); return;}
@@ -3244,145 +3654,23 @@ void report(NSString *itest)
                     colorRange.length = location - colorRange.location;
                     itest = location; if (location < final) if ((itest < 0) || (itest >= length)) {report(@"bug14"); return;}
                     }}
-                modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-               [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commandColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
-                //[textView setTextColor: commandColor range: colorRange];
+                [textView setTextColor: commandColor range: colorRange];
                 colorRange.location = location;
                 colorRange.length = 0;
-               // [textView setTextColor: regularColor range: colorRange];
-               modifiedRange.location = colorRange.location - start1;
-                modifiedRange.length = colorRange.length;
-                [myAttribString addAttributes: [NSDictionary dictionaryWithObject: regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+               [textView setTextColor: regularColor range: colorRange];
                 }
 
             else
                 location++;
             }
-        // NSLog(@"end");
-        
-        [[textView textStorage] replaceCharactersInRange: cutRange withAttributedString:myAttribString];
-        
-// The code below fixes a strange bug: if the user has picked a different font or size, 
-// changes in the first line will have 12 pt Helvetica font, but changes in other lines will work.!!??
+         // [[textView textStorage] endEditing];
+         [textStorage endEditing];
 
-/*
-    if (cutRange.location == 0) {
-        
-        fontData = [SUD objectForKey:DocumentFontKey];
-        if (fontData != nil)
-            {
-            font = [NSUnarchiver unarchiveObjectWithData:fontData];
-            [textView setFont: font];
-            }
-    }
-*/
-        
-        [textView setSelectedRange:selectedRange];
 
-        
+       
 }
 
-/*
-//-----------------------------------------------------------------------------
-- (void)fixColor1:(NSTimer *)timer;
-//-----------------------------------------------------------------------------
-{
-    NSRange	colorRange;
-    NSString	*textString;
-    NSColor	*commentColor1, *commandColor1, *markerColor1;
-    NSColor	*regularColor;
-    long	length, limit;
-    int		theChar;
-    unsigned	end;
-    
-// This is very slow on Jaguar. Experimentation shows that the only slow command is setTextColor
-// It is FAR slower when called here than when called in fixColor!!
 
-//    limit = colorLocation + 5000;
-    limit = colorLocation + COLORLENGTH;
-
-    regularColor = [NSColor blackColor];
-    if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
-        commentColor1 = commentColor;
-        commandColor1 = commandColor;
-        markerColor1 = markerColor;
-        }
-    else {
-        commentColor1 = regularColor;
-        commandColor1 = regularColor;
-        markerColor1 = regularColor;
-        }
- 
-    textString = [textView string];
-    length = [textString length];
-    
-    // NSLog(@"begin");
-    while ((colorLocation < length) && (colorLocation < limit))  
-    {
-        theChar = [textString characterAtIndex: colorLocation];
- 
-
-        if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
-                colorRange.location = colorLocation;
-                colorRange.length = 1;
-                [textView setTextColor: markerColor1 range: colorRange];
-                colorRange.location = colorRange.location + colorRange.length - 1;
-               	colorRange.length = 0;
-               	[textView setTextColor: regularColor range: colorRange];
-                colorLocation++;
-                }
-
-        else 
-        if (theChar == 0x0025) 
-        {
-            colorRange.location = colorLocation;
-            colorRange.length = 0;
-            [textString getLineStart:NULL end:NULL contentsEnd:&end forRange:colorRange];
-            colorRange.length = (end - colorLocation);
-            [textView setTextColor: commentColor1 range: colorRange];
-            colorRange.location = colorRange.location + colorRange.length - 1;
-            colorRange.length = 0;
-            [textView setTextColor: regularColor range: colorRange];
-            colorLocation = end;
-        }
-        else 
-        
-        if (theChar == texChar) 
-        {
-            colorRange.location = colorLocation;
-            colorRange.length = 1;
-            colorLocation++;
-            if ((colorLocation < length) && ([textString characterAtIndex: colorLocation] == 0x0025)) 
-            {
-                colorRange.length = colorLocation - colorRange.location;
-                colorLocation++;
-            }
-            else while ((colorLocation < length) && (isText([textString characterAtIndex: colorLocation]))) 
-            {
-                colorLocation++;
-                colorRange.length = colorLocation - colorRange.location;
-            }
-            [textView setTextColor: commandColor1 range: colorRange];
-             colorRange.location = colorLocation;
-             colorRange.length = 0;
-             [textView setTextColor: regularColor range: colorRange];
-        }
-    
-        else 
-            colorLocation++;
-    }
-   //  NSLog(@"end");
-    
-    if (colorLocation >= length) 
-    {
-        [syntaxColoringTimer invalidate];
-        [syntaxColoringTimer release];
-        syntaxColoringTimer = nil;
-    }
-}
-
-*/
 
 
 //-----------------------------------------------------------------------------
@@ -3425,8 +3713,10 @@ void report(NSString *itest)
 #endif
     NSDictionary	*myAttributes;
     NSDate		*endDate;
+#ifndef MITSU_PDF
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
+#endif
     int			status;
     
     [outputText setSelectable: YES];
@@ -3498,6 +3788,7 @@ void report(NSString *itest)
                         /* [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]]; */
                         [pdfWindow setTitle: [imagePath lastPathComponent]];
                         [pdfView setImageRep: texRep];
+#ifndef MITSU_PDF
                         if (startDate == nil) 
                         {
                             topLeftRect = [texRep bounds];
@@ -3505,6 +3796,7 @@ void report(NSString *itest)
                             topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
                             [pdfView scrollPoint: topLeftPoint];
                         }
+#endif
                         
                         [pdfView setNeedsDisplay:YES];
                         [pdfWindow makeKeyAndOrderFront: self];
@@ -3543,9 +3835,10 @@ void report(NSString *itest)
     NSString		*newOutput, *numberOutput, *searchString, *tempString;
     NSData		*myData;
     NSRange		myRange, lineRange, searchRange;
-    int			error;
+    int			error, tag;
     unsigned int	myLength;
     unsigned		start, end, irrelevant;
+    NSStringEncoding	theEncoding;
     
     NSFileHandle *myFileHandle = [aNotification object];
     if (myFileHandle == readHandle) 
@@ -3553,6 +3846,11 @@ void report(NSString *itest)
         myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([myData length]) 
         {
+            tag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
+            theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: tag];
+            newOutput = [[NSString alloc] initWithData: myData encoding: theEncoding];
+        
+/*
             if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: NSISOLatin1StringEncoding]; 
@@ -3582,9 +3880,25 @@ void report(NSString *itest)
             else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: NSUnicodeStringEncoding];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Mac Cyrillic"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Cyrillic"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOS Russian"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Windows Cyrillic"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"KOI8_R"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R)];
             else
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: NSMacOSRomanStringEncoding];
+*/
             if ((makeError) && ([newOutput length] > 2) && (errorNumber < NUMBEROFERRORS)) 
             {
                 myLength = [newOutput length];
@@ -3763,7 +4077,7 @@ aSelector
     [myDictionary setObject: theLocation forKey: @"oldLocation"];
     [myDictionary setObject: theLength forKey: @"oldLength"];
     [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
-    [myManager setActionName:@"Typing"];
+    [myManager setActionName:NSLocalizedString(@"Typing", @"Typing")];
     from = oldRange.location;
     to = from + [newString length];
     [self fixColor: from :to];
@@ -3774,6 +4088,19 @@ aSelector
 /* New Code by Max Horn, to activate #SEL# and #INS# in Panel Strings */
 - (void)doCompletion:(NSNotification *)notification
 {
+// mitsu 1.29 (T2) use "insertSpecial:undoKey:" 
+    NSWindow		*activeWindow;
+    activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+    if ((activeWindow != nil) && (activeWindow == [self textWindow])) 
+	{
+		[self insertSpecial: [notification object] 
+					undoKey: NSLocalizedString(@"LaTeX Panel", @"LaTeX Panel")];
+		//[textView insertSpecial: [notification object] 
+		//			undoKey: NSLocalizedString(@"LaTeX Panel", @"LaTeX Panel")];
+	}
+        
+// old code was:
+/*
     NSRange			oldRange;
     NSRange			searchRange;
     NSWindow		*activeWindow;
@@ -3830,7 +4157,7 @@ aSelector
         [myDictionary setObject: theLocation forKey: @"oldLocation"];
         [myDictionary setObject: theLength forKey: @"oldLength"];
         [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
-        [myManager setActionName:@"Typing"];
+        [myManager setActionName:NSLocalizedString(@"Typing", @"Typing")];
         from = oldRange.location;
         to = from + [newString length];
         [self fixColor:from :to];
@@ -3844,12 +4171,30 @@ aSelector
             [textView setSelectedRange:searchRange];
         }
     }
+*/
 }
 
 - (void) changeAutoComplete: sender
 {
     doAutoComplete = ! doAutoComplete;
-    [autoCompleteButton setState: doAutoComplete];
+    [self fixAutoMenu];
+}
+
+- (void) fixAutoMenu
+{
+      [autoCompleteButton setState: doAutoComplete];
+      NSEnumerator* enumerator = [[[textWindow toolbar] items] objectEnumerator];
+      id anObject;
+      while (anObject = [enumerator nextObject]) {
+        if ([[anObject itemIdentifier] isEqual: @"AutoComplete"]) {
+            if (doAutoComplete)
+//                [[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setTitle: NSLocalizedString(@"Turn off", @"Turn off")];
+                  [[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setState: NSOnState];
+            else
+//                [[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setTitle: NSLocalizedString(@"Turn on", @"Turn on")];
+                  [[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setState: NSOffState];
+            }
+        }
 }
 
 //-----------------------------------------------------------------------------
@@ -3906,7 +4251,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     NSFont			*font = nil;
     NSData			*fontData;
 
-    NSTextStorage *textStorage = [textView textStorage];
+//     NSTextStorage *textStorage = [textView textStorage];
     NSString *string = [textStorage string];
     
     if ([SUD boolForKey:SaveDocumentFontKey] == NO) {
@@ -3927,7 +4272,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     if ([string length] == 0) {
         empty = YES;
         myRange.location = 0; myRange.length = 0;
-        [[textView textStorage] replaceCharactersInRange: myRange withString:@" "];
+        // empty files have a space, but the cursor is at the start
+        // [[textView textStorage] replaceCharactersInRange: myRange withString:@" "];
+        [textStorage replaceCharactersInRange: myRange withString:@" "]; 
+        
         }
         
     
@@ -3939,12 +4287,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     newStyle = [paraStyle mutableCopyWithZone:[textStorage zone]];
     [newStyle setTabStops:desiredTabStops];
     theRange.location = 0; theRange.length = [string length];
-    [textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:theRange];
+    [textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range: theRange];
     [newStyle release];
         
     if (empty) {
         myRange.location = 0; myRange.length = 1;
-        [[textView textStorage] replaceCharactersInRange: myRange withString:@""]; //was "\b"
+//        [[textView textStorage] replaceCharactersInRange: myRange withString:@""]; //was "\b"
         }
         
    [textView setFont:font];
@@ -4021,7 +4369,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     if (task == RootForPrinting) 
                         [obj printDocument:nil];
                     else if (task == RootForTexing)
-                        {	switch(whichEngine) {
+                        {	rootDocument = obj;
+                                switch(whichEngine) {
                                 case TexEngine: [obj doTex:nil]; break;
                                 case LatexEngine: [obj doLatex:nil]; break;
                                 case ContextEngine: [obj doContext:nil]; break;
@@ -4051,7 +4400,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             	if (task == RootForPrinting)
                     [obj printDocument:nil];
                 else if (task == RootForTexing){
-                    switch(whichEngine) {
+                        rootDocument = obj;
+                        switch(whichEngine) {
                             case TexEngine: [obj doTex:nil]; break;
                             case LatexEngine: [obj doLatex:nil]; break;
                             case ContextEngine: [obj doContext:nil]; break;
@@ -4121,7 +4471,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     [obj printDocument:nil];
                     }
                 else if (task == RootForTexing)
-                    {switch(whichEngine) {
+                    {rootDocument = obj;
+                    switch(whichEngine) {
                         case TexEngine: [obj doTex:nil]; break;
                         case LatexEngine: [obj doLatex:nil]; break;
                         case ContextEngine: [obj doContext:nil]; break;
@@ -4152,7 +4503,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             [obj printDocument:nil];
             }
         else if (task == RootForTexing)
-            {switch(whichEngine) {
+            {rootDocument = obj;
+             switch(whichEngine) {
                 case TexEngine: [obj doTex:nil]; break;
                 case LatexEngine: [obj doLatex:nil]; break;
                 case ContextEngine: [obj doContext:nil]; break;
@@ -4350,6 +4702,306 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     return [NSString stringWithString:saveTemp];
 }
 
+// mitsu 1.29 (Q)
+- (void)showInfo: (id)sender
+{
+	NSString *filePath, *fileInfo, *infoTitle, *infoText;
+	NSDictionary *fileAttrs;
+	NSNumber *fsize;
+	NSDate *creationDate, *modificationDate;
+
+	filePath = [self fileName];
+	if (filePath && 
+		(fileAttrs = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES]))
+	{
+		fsize = [fileAttrs objectForKey:NSFileSize];
+		creationDate = [fileAttrs objectForKey:NSFileCreationDate];
+		modificationDate = [fileAttrs objectForKey:NSFileModificationDate];
+		fileInfo = [NSString stringWithFormat: 
+					NSLocalizedString(@"Path: %@\nFile size: %d bytes\nCreation date: %@\nModification date: %@", @"File Info"), 
+		filePath, 
+		fsize?[fsize intValue]:0, 
+		creationDate?[creationDate description]:@"", 
+		modificationDate?[modificationDate description]:@""];
+	}
+	else
+		fileInfo = @"Not saved";
+
+	infoTitle = [NSString stringWithFormat: 
+					NSLocalizedString(@"Info: %@", @"Info: %@"),
+					[self displayName]];
+	infoText = [NSString stringWithFormat: 
+					NSLocalizedString(@"%@\n\nCharacters: %d", @"InfoText"),
+					fileInfo, 
+					[[textView string] length]];
+	NSRunAlertPanel(infoTitle, infoText, nil, nil, nil);
+}
+// end mitsu 1.29
+
+// mitsu 1.29 (T4)
+- (BOOL)isDoAutoCompleteEnabled
+{
+	return doAutoComplete;
+}
+
+// end mitsu 1.29
+
+// mitsu 1.29 (P) if CommandCompletion List is being saved, reload it.  
+- (void)saveDocument: (id)sender
+{
+	[super saveDocument: sender];
+	// reload CommandCompletion List
+	if (!fileIsTex && [[self fileName] isEqualToString: 
+				[CommandCompletionPathKey stringByStandardizingPath]])
+		[[NSApp delegate] finishCommandCompletionConfigure];
+}
+
+// end mitsu 1.29
+
+
+// mitsu 1.29 (T)
+// to be used in LaTeX Panel/Macro/...
+- (void)insertSpecial:(NSString *)theString undoKey:(NSString *)key
+{
+	NSRange		oldRange, searchRange;
+    NSMutableString	*newString;
+	NSString *oldString;
+
+	// mutably copy the replacement text
+	newString = [NSMutableString stringWithString: theString];
+
+	// Determine the curent selection range and text
+	oldRange = [textView selectedRange];
+	oldString = [[textView string] substringWithRange: oldRange];
+
+	// Substitute all occurances of #SEL# with the original text
+	[newString replaceOccurrencesOfString: @"#SEL#" withString: oldString
+					options: 0 range: NSMakeRange(0, [newString length])];
+
+	// Now search for #INS#, remember its position, and remove it. We will
+	// Later position the insertion mark there. Defaults to end of string.
+	searchRange = [newString rangeOfString:@"#INS#" options:NSLiteralSearch];
+	if (searchRange.location != NSNotFound)
+		[newString replaceCharactersInRange:searchRange withString:@""];
+
+	// Filtering for Japanese
+	if (shouldFilter == filterMacJ)
+		newString = filterBackslashToYen(newString);
+
+	// Replace the text--
+		// Follow Apple's guideline "Subclassing NSTextView/Notifying About Changes to the Text" 
+		// in "Text System User Interface Layer". 
+		// This means bracketing each batch of potential changes with 
+		// "shouldChangeTextInRange:replacementString:" and "didChangeText" messages
+	if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) 
+	{
+		[textView replaceCharactersInRange:oldRange withString:newString];
+		[textView didChangeText];
+		
+		if (key)
+			[[textView undoManager] setActionName: key];
+		
+		// Place insertion mark
+		if (searchRange.location != NSNotFound)
+		{
+			searchRange.location += oldRange.location;
+			searchRange.length = 0;
+			[textView setSelectedRange:searchRange];
+		}
+	}
+}
+
+
+// to be used in AutoCompletion
+- (void)insertSpecialNonStandard:(NSString *)theString undoKey:(NSString *)key
+{
+	NSRange		oldRange, searchRange;
+    NSMutableString	*newString;
+	NSString *oldString;
+	unsigned from, to;
+
+	// mutably copy the replacement text
+	newString = [NSMutableString stringWithString: theString];
+
+	// Determine the curent selection range and text
+	oldRange = [textView selectedRange];
+	oldString = [[textView string] substringWithRange: oldRange];
+
+	// Substitute all occurances of #SEL# with the original text
+	[newString replaceOccurrencesOfString: @"#SEL#" withString: oldString
+					options: 0 range: NSMakeRange(0, [newString length])];
+
+	// Now search for #INS#, remember its position, and remove it. We will
+	// Later position the insertion mark there. Defaults to end of string.
+	searchRange = [newString rangeOfString:@"#INS#" options:NSLiteralSearch];
+	if (searchRange.location != NSNotFound)
+		[newString replaceCharactersInRange:searchRange withString:@""];
+
+	// Filtering for Japanese
+	if (shouldFilter == filterMacJ)
+		newString = filterBackslashToYen(newString);
+
+	// Insert the new text
+	[textView replaceCharactersInRange:oldRange withString:newString];
+	
+	// register undo
+	[self registerUndoWithString:oldString location:oldRange.location 
+						length:[newString length] key:key];
+	//[textView registerUndoWithString:oldString location:oldRange.location 
+	//					length:[newString length] key:key];
+	
+	from = oldRange.location;
+	to = from + [newString length];
+	[self fixColor:from :to];
+	[self setupTags];
+
+	// Place insertion mark
+	if (searchRange.location != NSNotFound)
+	{
+		searchRange.location += oldRange.location;
+		searchRange.length = 0;
+		[textView setSelectedRange:searchRange];
+	}
+}
+
+
+- (void)registerUndoWithString:(NSString *)oldString location:(unsigned)oldLocation 
+	length: (unsigned)newLength key:(NSString *)key
+{
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+
+	// Create & register an undo action
+	myManager = [textView undoManager];
+	myDictionary = [NSMutableDictionary dictionaryWithCapacity: 4];
+	theLocation = [NSNumber numberWithUnsignedInt: oldLocation];
+	theLength = [NSNumber numberWithUnsignedInt: newLength];
+	[myDictionary setObject: oldString forKey: @"oldString"];
+	[myDictionary setObject: theLocation forKey: @"oldLocation"];
+	[myDictionary setObject: theLength forKey: @"oldLength"];
+	[myDictionary setObject: key forKey: @"undoKey"];
+	[myManager registerUndoWithTarget:self selector:@selector(undoSpecial:) object: myDictionary];
+	[myManager setActionName:key];
+}
+
+- (void)undoSpecial:(id)theDictionary
+{
+    NSRange		undoRange;
+    NSString	*oldString, *newString, *undoKey;
+	unsigned	from, to;
+
+    // Retrieve undo info
+    undoRange.location = [[theDictionary objectForKey: @"oldLocation"] unsignedIntValue];
+    undoRange.length = [[theDictionary objectForKey: @"oldLength"] unsignedIntValue];
+    newString = [theDictionary objectForKey: @"oldString"];
+    undoKey = [theDictionary objectForKey: @"undoKey"];
+	
+	if (undoRange.location+undoRange.length > [[textView string] length])
+		return; // something wrong happened
+		
+	oldString = [[textView string] substringWithRange: undoRange];
+
+	// Replace the text
+	[textView replaceCharactersInRange:undoRange withString:newString];
+	[self registerUndoWithString:oldString location:undoRange.location 
+						length:[newString length] key:undoKey];
+	
+	from = undoRange.location;
+	to = from + [newString length];
+	[self fixColor:from :to];
+	[self setupTags];
+}
+
+// end mitsu 1.29
+
+// mitsu 1.29 (T3)
+- (void) doCommentOrIndent: (id)sender
+{
+    NSString		*text, *oldString;
+    NSRange		myRange, modifyRange, tempRange, oldRange;
+    unsigned		start, end, end1, changeStart, changeEnd;
+    int			theChar;
+    //NSUndoManager	*myManager;
+    //NSMutableDictionary	*myDictionary;
+    //NSNumber		*theLocation, *theLength, *theType;
+
+    text = [textView string];
+    myRange = [textView selectedRange];
+    // get old string for Undo
+    [text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
+    oldRange.location = start;
+    oldRange.length = end1 - start;
+    oldString = [[textView string] substringWithRange: oldRange];
+
+    changeStart = start;
+    changeEnd = start;
+    end = start;
+    while (end < (myRange.location + myRange.length)) {
+        modifyRange.location = end;
+        modifyRange.length = 0;
+        [text getLineStart:&start end:&end contentsEnd:&end1 forRange:modifyRange];
+        changeEnd = end1;
+        if ((end1 - start) > 0)
+            theChar = [text characterAtIndex: start];
+        switch ([sender tag]) {
+        
+            case Mcomment:	// if ((end1 == start)  || (theChar != 0x0025) ) {
+                                    tempRange.location = start;
+                                    tempRange.length = 0;
+                                    [textView replaceCharactersInRange:tempRange withString:@"%"];
+                                    myRange.length++; oldRange.length++;
+                                    changeEnd++;
+                                    end++;
+                                //    }
+                                break;
+                                            
+            case Muncomment:	if ((end1 != start) && (theChar == 0x0025)) {
+                                    tempRange.location = start;
+                                    tempRange.length = 1;
+                                    [textView replaceCharactersInRange:tempRange withString:@""];
+                                    myRange.length--; oldRange.length--;
+                                    changeEnd--;
+                                    end--;
+                                    }
+                                break;
+            
+            // Originally this was a space; Greg Landweber correctly suggested a tab!
+            case Mindent: 	if (0 == 0) // (end1 == start) || (theChar != 0x0025))  
+							{
+                                    tempRange.location = start;
+                                    tempRange.length = 0;
+                                    [textView replaceCharactersInRange:tempRange withString:@"\t"];
+                                    myRange.length++; oldRange.length++;
+                                    changeEnd++;
+                                    end++;
+                                    }
+                                break;
+
+            
+            case Munindent: 	if ((end1 != start) && (theChar == '\t')) {
+                                    tempRange.location = start;
+                                    tempRange.length = 1;
+                                    [textView replaceCharactersInRange:tempRange withString:@""];
+                                    myRange.length--; oldRange.length--;
+                                    changeEnd--;
+                                    end--;
+                                    }
+                                break;
+
+            }
+        end++;
+        }
+    [self fixColor:changeStart :changeEnd];
+    tempRange.location = changeStart;
+    tempRange.length = (changeEnd - changeStart);
+    [textView setSelectedRange: tempRange];
+
+	[self registerUndoWithString:oldString location:oldRange.location 
+						length:oldRange.length key: [sender title]];
+}
+
+// end mitsu 1.29
 
 
 @end

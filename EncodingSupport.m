@@ -6,7 +6,7 @@
 //
 
 #import "EncodingSupport.h"
-
+#import "MyDocument.h" // mitsu 1.29 (P)
 #import "globals.h"
 #define SUD [NSUserDefaults standardUserDefaults]
 
@@ -101,6 +101,7 @@ static id sharedEncodingSupport = nil;
 	NSMenu *editMenu;
 	NSMenuItem *item;
 	NSMutableString *menuTitle;
+        MyDocument *theDoc;
 	
 	currentEncoding = [SUD stringForKey:EncodingKey];
         
@@ -147,6 +148,17 @@ static id sharedEncodingSupport = nil;
 							filterBackslashToYen(@"\\subsection"),
 							filterBackslashToYen(@"\\subsubsection"),
 							nil];
+                // mitsu 1.29 (P)
+		if (shouldFilter != filterMacJ && commandCompletionList)
+		{
+			[commandCompletionList replaceOccurrencesOfString: @"\\" withString: yenString
+						options: 0 range: NSMakeRange(0, [commandCompletionList length])];
+			theDoc = [[NSDocumentController sharedDocumentController] 
+				documentForFileName: [CommandCompletionPathKey stringByStandardizingPath]];
+			if (theDoc)
+				[[theDoc textView] setString: filterBackslashToYen([[theDoc textView] string])];
+		}
+		// end mitsu 1.29
 		shouldFilter = filterMacJ;
 		// set up menu item
 		if (editMenu)
@@ -173,6 +185,17 @@ static id sharedEncodingSupport = nil;
 							@"\\subsection",
 							@"\\subsubsection",
 							nil];
+                // mitsu 1.29 (P)
+		if (shouldFilter == filterMacJ && commandCompletionList)
+		{
+			[commandCompletionList replaceOccurrencesOfString: yenString withString: @"\\"
+						options: 0 range: NSMakeRange(0, [commandCompletionList length])];
+			theDoc = [[NSDocumentController sharedDocumentController] 
+				documentForFileName: [CommandCompletionPathKey stringByStandardizingPath]];
+			if (theDoc)
+				[[theDoc textView] setString: filterYenToBackslash([[theDoc textView] string])];
+		}
+		// end mitsu 1.29
 	
 		if ([currentEncoding isEqualToString:@"DOSJapanese"] ||
 				[currentEncoding isEqualToString:@"EUC_JP"] || 
@@ -234,6 +257,183 @@ static id sharedEncodingSupport = nil;
 	[SUD synchronize];
 	[(NSMenuItem *)sender setState: [SUD boolForKey: theKey]?NSOnState:NSOffState];
 }
+
+- (int)tagForEncodingPreference
+{
+    NSString	*currentEncoding;
+    
+    currentEncoding = [SUD stringForKey:EncodingKey];
+    return [self tagForEncoding: currentEncoding];
+}
+
+- (int)tagForEncoding: (NSString *)encoding
+{
+
+    if ([encoding isEqualToString:@"MacOSRoman"])
+        return 0;
+    else if ([encoding isEqualToString:@"IsoLatin"])
+        return 1;
+    else if ([encoding isEqualToString:@"IsoLatin2"])
+        return 2;
+    else if ([encoding isEqualToString:@"IsoLatin5"])
+        return 3;
+    else if ([encoding isEqualToString:@"MacJapanese"])
+        return 4;
+     // S. Zenitani Dec 13, 2002:
+    else if ([encoding isEqualToString:@"DOSJapanese"])
+        return 5;
+    else if ([encoding isEqualToString:@"EUC_JP"])
+        return 6;
+    else if ([encoding isEqualToString:@"JISJapanese"])
+        return 7;
+    else if ([encoding isEqualToString:@"MacKorean"])
+        return 8;
+    // --- end
+    else if ([encoding isEqualToString:@"UTF-8 Unicode"])
+        return 9;
+    else if ([encoding isEqualToString:@"Standard Unicode"])
+        return 10;
+     else if ([encoding isEqualToString:@"Mac Cyrillic"])
+        return 11;
+     else if ([encoding isEqualToString:@"DOS Cyrillic"])
+        return 12;
+     else if ([encoding isEqualToString:@"DOS Russian"])
+        return 13;
+     else if ([encoding isEqualToString:@"Windows Cyrillic"])
+        return 14;
+     else if ([encoding isEqualToString:@"KOI8_R"])
+        return 15;
+    else
+        return 0;
+}
+
+- (NSString *)encodingForTag: (int)tag
+{
+    NSString *value;
+    
+    switch (tag) {
+        case 0: value = [NSString stringWithString:@"MacOSRoman"];
+                break;
+        
+        case 1: value = [NSString stringWithString:@"IsoLatin"];
+                break;
+                
+        case 2: value = [NSString stringWithString:@"IsoLatin2"];
+                break;
+                
+        case 3: value = [NSString stringWithString:@"IsoLatin5"];
+                break;
+                
+        case 4: value = [NSString stringWithString:@"MacJapanese"];
+                break;
+                
+        // S. Zenitani Dec 13, 2002:
+        case 5: value = [NSString stringWithString:@"DOSJapanese"];
+                break;
+                
+        case 6: value = [NSString stringWithString:@"EUC_JP"];
+                break;
+                
+        // Mitsuhiro Shishikura Jan 4, 2003:
+        case 7: value = [NSString stringWithString:@"JISJapanese"];
+                break;
+                
+        case 8: value = [NSString stringWithString:@"MacKorean"];
+                break;
+        
+        case 9: value = [NSString stringWithString:@"UTF-8 Unicode"];
+                break;
+                
+        case 10: value = [NSString stringWithString:@"Standard Unicode"];
+                break;
+                
+        case 11: value = [NSString stringWithString:@"Mac Cyrillic"];
+                break;
+                
+        case 12: value = [NSString stringWithString:@"DOS Cyrillic"];
+                break;
+                
+        case 13: value = [NSString stringWithString:@"DOS Russian"];
+                break;
+                
+        case 14: value = [NSString stringWithString:@"Windows Cyrillic"];
+                break;
+                
+        case 15: value = [NSString stringWithString:@"KOI8_R"];
+                break;
+                
+        default: value = [NSString stringWithString:@"MacOSRoman"];
+                break;
+        }
+        
+        [value retain];
+        return value;
+}
+
+- (NSStringEncoding)stringEncodingForTag: (int)encoding
+{
+    NSStringEncoding	theEncoding;
+    
+    switch (encoding) {
+
+        case 0: theEncoding =  NSMacOSRomanStringEncoding;
+                break;
+        
+        case 1: theEncoding =  NSISOLatin1StringEncoding;
+                break;
+                
+        case 2: theEncoding =  NSISOLatin2StringEncoding;
+                break;
+                
+        case 3: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin5);
+                break;
+                
+        case 4: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
+                break;
+                
+        // S. Zenitani Dec 13, 2002:
+        case 5: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese);
+                break;
+                
+        case 6: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP);
+                break;
+                
+        // Mitsuhiro Shishikura Jan 4, 2003:
+        case 7: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP);
+                break;
+                
+        case 8: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean);
+                break;
+        
+        case 9: theEncoding =  NSUTF8StringEncoding;
+                break;
+                
+        case 10: theEncoding =  NSUnicodeStringEncoding;
+                break;
+                
+        case 11: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic);
+                 break;
+                
+        case 12: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic);
+                 break;
+                
+        case 13: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian);
+                 break;
+                
+        case 14: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic);
+                 break;
+                
+        case 15: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R);
+                break;
+                
+        default: theEncoding =  NSMacOSRomanStringEncoding;
+                 break;
+        }
+        
+    return theEncoding;
+}
+
+
 @end
 
 // replace backslashes by yens
@@ -253,3 +453,4 @@ NSMutableString *filterYenToBackslash(NSString *aString)
 						options: 0 range: NSMakeRange(0, [newString length])];
 	return newString;
 }
+

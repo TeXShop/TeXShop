@@ -15,8 +15,46 @@
 <TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Definici&oacute;n de macros AppleScript</B></FONT></TD>
 </TR>
 </TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript tiene su propia sintaxis: para aprender m&aacute;s sobre ella, lee uno de los diversos libros que hay sobre el tema. Cuando TeXShop interpreta una macro AppleScript, lo primero que hace es reemplazar cada palabra #FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#, #LOGPATH#, #AUXPATH# con la ruta (&lsquo;path&rsquo;) completa de los correspondientes archivos tex, pdf, dvi, ps, log o aux.  De modo similar, reemplaza las palabras #INDPATH#, #BBLPATH# y #HTMLPATH# con la ruta completa de los archivos ind, bbl o html. </font></P>
-		<p><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript puede ejecutar comandos del shell de Unix. Por tanto, las macros AppleScript pueden llevar a cabo complejas tareas dedicadas a procesar proyectos relacionados con TeX. Sin embargo, esta habilidad est&aacute; actualmente limitada porque TeXShop en s&iacute; mismo entiende muy pocas directivas AppleScript. Espero que esto mejorar&aacute; en el futuro.</font></p>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript tiene su propia sintaxis: para aprender m&aacute;s sobre ella, lee uno de los diversos libros que hay sobre el tema. Si has instalado las herramientas de desarrollo de Mac OS X, hay un gran documentación (un libro &lsquo;online&rsquo;) sobre AppleScript en la carpeta Developers.</font></p>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">Cuando TeXShop interpreta una macro AppleScript, lo primero que hace es reemplazar cada palabra #FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#, #LOGPATH#, #AUXPATH# con la ruta (&lsquo;path&rsquo;) completa de los correspondientes archivos tex, pdf, dvi, ps, log o aux.  De modo similar, reemplaza las palabras #INDPATH#, #BBLPATH# y #HTMLPATH# con la ruta completa de los archivos ind, bbl o html. </font></P>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">Adem&aacute;s, reemplaza cada cadena #NAMEPATH# con la ruta completa al archivo tex sin su extensi&oacute;n, y cada cadena #DOCUMENTNAME# con el nombre del documento que se est&aacute; usando.
+Ese reemplazamienteo es a veces sutil; da el nombre del documento tal como aparece en el t&iacute;tulo de la ventana de c&oacute;digo. Si hemos guardado un documento con la preferencia &laquo;ocultar extensi&oacute;n&raquo; activada, #DOCUMENTNAME# contendr&aacute; s&oacute;lo el nombre del documento. Pero si lo hemos guardado sin &laquo;ocultar extensi&oacute;n&raquo;, #DOCUMENTNAME# contendr&aacute; el nombre del documento y su extensi&oacute;n. Esta informaci&oacute;n se puede usar para localizar el documento con c&oacute;digo Applescript como sigue:
+<dl> 
+<dd>tell document #DOCUMENTNAME# of application "TeXShop"
+<dd> latex
+<dd> end tell
+</dl>
+</font></P>
+
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">Hay al menos dos maneras de escribir comandos Applescript. Se pueden ejecutar comandos del shell de unix, as&iacute; que, tras un proceso preliminar con un Applescript, se puede llamar a un comando del shell para que haga el trabajo. TeXShop viene con varios ejemplos de esta t&eacute;cnica; algunos de estos ejemplos se explican en una secci&oacute;n posterior de esta ayuda. Tambi&eacute;n se pueden usar comandos Applescript que llamen a otros comandos Applescript ya incluidos en TeXShop. Otra secci&oacute;n posterior muestra ejemplos de esta t&eacute;cnica.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+TeXShop entiende los siguientes comandos:
+<dl>
+<dd> typeset
+<dd> latex
+<dd> tex
+<dd> context
+<dd> bibtex
+<dd> makeindex
+<dd> metapost
+<dd> typesetinteractive
+<dd> latexinteractive
+<dd> texinteractive
+<dd> contextinteractive
+<dd> bibtexinteractive
+<dd> makeindexinteractive
+<dd> metapostinteractive
+<dd> taskdone
+<dd> refreshpdf
+<dd> refreshtext
+</dl>
+Los primeros siete comandos llaman a las rutinas de TeXShop para componer c&oacute;digo tex.
+Lo hacen de manera continua, sin detenerse en los errores. Los siguientes siete comandos llaman a las mismas rutinas, pero, esta vez, si hay un error, el usuario puede interactuar con la consola. Cuando se llama a cualqueira de estos comandos, el control vuelve al Applescript inmediatamente, sin esperar a que la operaci&oacute;n haya acabado. La llamada &laquo;taskdone&raquo; devuelve NO si a&uacute;n se est&aacute;n componiendo las p&aacute;ginas, y YES si ya ha acabado. Las llamadas &laquo;refreshpdf&raquo; y &laquo;refreshtext&raquo; fuerzan a que las ventanas muestren las &uacute;ltimas versiones de los achivos pdf y text.
+ </font></P>
+
+
+
 	</BODY>
 
 </HTML>

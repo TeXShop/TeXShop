@@ -50,8 +50,11 @@
 
 - (void)associatedWindow:(id)sender;
 {
-    if (([myDocument imageType] == isTeX) && ([myDocument myTeXRep] != nil))
-                [[myDocument pdfWindow] makeKeyAndOrderFront: self];
+//  if (([myDocument imageType] == isTeX) && ([myDocument myTeXRep] != nil))
+//                [[myDocument pdfWindow] makeKeyAndOrderFront: self];
+    if ([myDocument imageType] == isTeX) {
+        [myDocument bringPdfWindowFront];
+        }
 }
 
 - (void) doChooseMethod: sender;
@@ -71,5 +74,23 @@
     return result;
 }
 // end forsplit
+
+- (void)close;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]]; // this fixes a bug; the application crashed when closing
+    // the last window in multi-page mode; investigation shows that the
+    // myPDFView "wasScrolled" method was called from the notification center before dealloc, but after other items in the window
+    // were released
+    NSArray *myDocuments = [[NSDocumentController sharedDocumentController] documents];
+    if (myDocuments != nil) {
+        NSEnumerator *enumerator = [myDocuments objectEnumerator];
+        id anObject;
+        while (anObject = [enumerator nextObject]) {
+            if ([anObject getCallingWindow] == self)
+                [anObject setCallingWindow: nil];
+            }
+        }
+    [super close];
+}
 
 @end

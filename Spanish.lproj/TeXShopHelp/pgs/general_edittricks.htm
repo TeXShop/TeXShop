@@ -25,6 +25,36 @@
 <P><font size="2" face="Lucida Grande,Geneva,Arial">Cambia YES por NO para dejar de hacer copias de respaldo.
 </font></P>
 
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Podemos arrastrar y soltar iconos de archivos en la ventana de c&oacute;digo.
+Si el archivo es un archivo TeX, TeXShop a&ntilde;ade un comando \input con la
+ruta (relativa) al archivo. Si el archivo es un gr&aacute;fico, en lugar de un \input lo que se a&ntilde;ade es un \includegraphics. TeXShop reconoce los siguientes tipos de gr&aacute;ficos: pdf, jpg, jpeg, tif, tiff, eps, ps.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Arrastrar un archivo cls produce un \documentclass y una referencia al
+archivo; arrastrar un sty produce un \usepackage; arrastar un bib produce un \bibliographystyle; cualqueir otro arcivo de texto produce un \input.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+El usuario puede configurar el comportamiento del arrastar y soltar.
+Se hace mediante el men&uacute; Macro. Inserta un nuevo submen&uacute; titulado &laquo;Drag &amp; Drop&raquo;.
+Dentro de este submen&uacute; coloca &iacute;tems cuyo nombre sea el de la extensi&oacute;n cuyo comportamiento quieras describir, y pon el c&oacute;digo que TeXShop debe insertar con archivos de este tipo.
+Por ejemplo, si el &iacute;tem es .pdf, el c&oacute;digo podr&iacute;a ser
+\includegraphics[#INS#]{%r}. En estas inclusiones, puedes usar las siguientes abreviaturas:
+
+<dl>
+<dd>	%F ruta completa (&lsquo;full path&rsquo;) del archivo soltado
+<dd>	%f nombre (&lsquo;filename&rsquo;) del archivo
+<dd>	%r ruta relativa (&lsquo;relative path&rsquo;) del archivo
+<dd>	%n nombre del archivo sin extensi&oacute;n
+<dd>	%e extensi&oacute;n.
+</dl>
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Cualquier extensi&oacute;n que no aparezca expresamente en el Editor de Macros ser&aacute; tratada de la manera predeterminda descrita anteriormente. As&iacute;, la mayor&iacute;a de los usuarios no necesitar&aacute;n el submen&uacute; &laquo;Drag &amp; Drop&raquo;.
+</font></P>
 
 		<ul>
 			

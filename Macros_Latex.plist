@@ -15,7 +15,7 @@
 					<key>content</key>
 					<string>--AppleScript
 
-tell application "Acrobat Reader 5.0"
+tell application "Acrobat Reader 6.0"
   activate
   open POSIX file #PDFPATH#
 end tell
@@ -60,6 +60,668 @@ open location "http://www.rna.nl/tex.html"</string>
 					<key>name</key>
 					<string>teTeX/TeXLive home page</string>
 				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- If front file is named "Test.tex", write a copy as "Test_Mac.tex", changing all line feeds to
+-- Macintosh Classic line feeds
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+set backupTexName to baseName &amp; "_Mac.tex"
+
+set shellScript to  "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupTexName &amp;";"
+set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -m  " &amp; backupTexName &amp; "'"
+do shell script shellScript
+
+
+</string>
+					<key>name</key>
+					<string>Convert to MAC</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- If front file is named "Test.tex", write a copy as "Test_Unix.tex", changing all line feeds to
+-- Unix line feeds
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+set backupTexName to baseName &amp; "_Unix.tex"
+
+set shellScript to  "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupTexName &amp;";"
+set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -u  " &amp; backupTexName &amp; "'"
+do shell script shellScript
+</string>
+					<key>name</key>
+					<string>Convert to Unix</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- If front file is named "Test.tex", write a copy as "Test_Windows.tex", changing all line feeds to
+-- Windows line feeds
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+set backupTexName to baseName &amp; "_Windows.tex"
+
+set shellScript to  "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupTexName &amp;";"
+set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -d  " &amp; backupTexName &amp; "'"
+do shell script shellScript
+</string>
+					<key>name</key>
+					<string>Convert to Windows</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Claus Gerhardt Macros</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/bibtexc  " &amp; baseName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+
+set fileLog to fileName &amp; ".blg"
+set theFile to alias (POSIX file fileLog)
+set logName to baseName &amp;".blg"
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+
+tell application "TeXShop"
+open theFile
+end tell
+
+tell document logName of application "TeXShop"
+refreshtext
+end tell
+
+
+
+
+</string>
+					<key>name</key>
+					<string>bibtexc</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/bibtexc  " &amp; baseName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+
+set fileLog to fileName &amp; ".blg"
+set theFile to alias (POSIX file fileLog)
+set logName to baseName &amp;".blg"
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+
+tell application "TeXShop"
+open theFile
+end tell
+
+tell document logName of application "TeXShop"
+refreshtext
+end tell
+
+
+
+
+</string>
+					<key>name</key>
+					<string>bibtexcpl</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/mpostc  " &amp; baseName
+do shell script shellScript
+
+set fileLog to fileName &amp; ".log"
+set theFile to alias (POSIX file fileLog)
+set logName to baseName &amp;".log"
+
+tell application "TeXShop"
+open theFile
+end tell
+
+tell document logName of application "TeXShop"
+refreshtext
+end tell
+
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+
+ </string>
+					<key>name</key>
+					<string>mpostc</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/mpostc  " &amp; baseName
+do shell script shellScript
+
+set fileLog to fileName &amp; ".log"
+set theFile to alias (POSIX file fileLog)
+set logName to baseName &amp;".log"
+
+tell application "TeXShop"
+open theFile
+end tell
+
+tell document logName of application "TeXShop"
+refreshtext
+end tell
+
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+
+ </string>
+					<key>name</key>
+					<string>mpostcpl</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/htlatexc  " &amp; baseName
+do shell script shellScript
+
+set theHTML to #HTMLPATH#
+set htmlFile to alias POSIX file theHTML
+
+tell application "Safari"
+  activate
+  open htmlFile
+end tell
+</string>
+					<key>key</key>
+					<string></string>
+					<key>name</key>
+					<string>htlatexc</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/htlatexr  " &amp; baseName
+do shell script shellScript
+
+set theHTML to #HTMLPATH#
+set htmlFile to alias POSIX file theHTML
+
+tell application "Safari"
+  activate
+  open htmlFile
+end tell
+</string>
+					<key>name</key>
+					<string>htlatexr</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file.
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #TEXPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/altpdflatexc  " &amp; baseName
+do shell script shellScript
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+</string>
+					<key>key</key>
+					<string></string>
+					<key>name</key>
+					<string>altpdflatexc</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file.
+-- Claus Gerhardt, Nov. 2003
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #TEXPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; baseName
+do shell script shellScript
+
+tell document frontName of application "TeXShop"
+	refreshpdf
+end tell
+</string>
+					<key>name</key>
+					<string>pdflatexc</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--AppleScript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+-- In the first dialog enter the number of pdf files you want to create.
+-- In each of the following dialogs enter your selection of pages like
+-- 3:4,6,8:12 This would be the selection for one output file
+-- It would contain the pages 3-4, 6, and 8-12
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+
+set dialogName to "The original file is " &amp; fileNamequoted &amp; ".pdf. How many files do you want?"
+activate
+set k to the text returned of (display dialog dialogName default answer "" buttons {"Cancel", "Next"} default button "Next") as number
+set dialogSelection to "Your selection for  file # 1. The file will be saved as " &amp; baseName &amp; "-1.pdf."
+set i to 1 as number
+
+set input to the text returned of (display dialog dialogSelection default answer "" buttons {"Cancel", "Next"} default button "Next")
+
+repeat while i ≤ k - 1
+set j to i + 1 as number
+set selectionName to "Selection for file #" &amp; j &amp; ". The file will be saved as " &amp; baseName &amp; "-" &amp; j &amp; ".pdf."
+set input to input &amp; " " &amp; the text returned of (display dialog selectionName default answer "" buttons {"Cancel", "Next"} default button "Next")
+set i to i + 1
+end repeat
+
+set input to input &amp; " " &amp; baseName
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdfselectc  " &amp; input
+do shell script shellScript
+
+
+</string>
+					<key>name</key>
+					<string>pdfselectc</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file.
+
+
+set thePDF to  #PDFPATH#
+set pdfFile to alias POSIX file thePDF
+  tell application "TeXShop"
+    activate
+  open pdfFile
+  end tell
+</string>
+					<key>key</key>
+					<string></string>
+					<key>name</key>
+					<string>openpdf</string>
+				</dict>
+				<dict>
+					<key>name</key>
+					<string>Separator</string>
+				</dict>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+-- Apply only to an already saved file
+-- Claus Gerhardt, Nov. 2003
+
+
+set scriptPath to (do shell script "dirname " &amp; "~/Library/TeXShop/Scripts/ex")
+set scriptPath to scriptPath &amp; "/setname.scpt"
+set scriptName to POSIX file scriptPath as alias
+set scriptLiB to (load script scriptName)
+tell scriptLib
+set frontName to setname(#NAMEPATH#,#TEXPATH#)
+end tell
+
+set fileName to  #NAMEPATH#
+set n to (number of characters of contents of fileName)
+set fileNamequoted to quoted form of fileName
+set baseName to do shell script "basename " &amp; fileNamequoted
+set m to (number of characters of contents of baseName)
+set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+set texName to baseName &amp; ".tex"
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/makeindexk  " &amp; baseName
+do shell script shellScript
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/mpostc  " &amp; baseName
+do shell script shellScript
+
+set fileLog to fileName &amp; ".log"
+set theFile to alias (POSIX file fileLog)
+set logName to baseName &amp;".log"
+
+tell application "TeXShop"
+open theFile
+end tell
+
+tell document logName of application "TeXShop"
+refreshtext
+end tell
+
+set shellScript to "cd " &amp; dirName &amp; ";"
+set shellScript to shellScript &amp; "~/Library/TeXShop/bin/pdflatexc  " &amp; texName
+do shell script shellScript
+
+tell document frontName of application "TeXShop"
+refreshpdf
+end tell
+
+
+</string>
+					<key>name</key>
+					<string>latex-makeindex-mpost</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Other Scripts</string>
+			<key>submenu</key>
+			<array>
+				<dict>
+					<key>content</key>
+					<string>--Applescript
+
+set fileName to #FILEPATH#
+if fileName is equal to  ""
+activate
+display dialog "Please save the file first"  buttons {"OK"} default button "OK"
+return
+end if
+
+set frontName to #DOCUMENTNAME#
+tell application "TeXShop"
+save document frontName
+end tell
+
+tell document frontName of application "TeXShop"
+
+	latexinteractive
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	bibtex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	latex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	latex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+end tell
+
+</string>
+					<key>name</key>
+					<string>Bibliography</string>
+				</dict>
 			</array>
 		</dict>
 		<dict>
@@ -96,7 +758,17 @@ open location "http://www.rna.nl/tex.html"</string>
 					<array>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[11pt]{article}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[11pt]{article}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>key</key>
 							<string></string>
 							<key>name</key>
@@ -104,13 +776,33 @@ open location "http://www.rna.nl/tex.html"</string>
 						</dict>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[11pt]{book}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[11pt]{book}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[11pt]{report}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[11pt]{report}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
@@ -123,19 +815,49 @@ open location "http://www.rna.nl/tex.html"</string>
 					<array>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[12pt]{article}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[12pt]{article}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>name</key>
 							<string>article</string>
 						</dict>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[12ptj]{book}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[12ptj]{book}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
 						<dict>
 							<key>content</key>
-							<string>\documentclass[12pt]{report}\begin{document}\title{#INS#}\author{}\date{}\maketitle\end{document}</string>
+							<string>\documentclass[12pt]{report}
+\begin{document}
+
+\title{#INS#}
+\author{}
+\date{}
+\maketitle
+
+
+\end{document}
+</string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
@@ -150,37 +872,43 @@ open location "http://www.rna.nl/tex.html"</string>
 			<array>
 				<dict>
 					<key>content</key>
-					<string>\chapter{#SEL##INS#}</string>
+					<string>\chapter{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>chapter</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\paragraph{#SEL##INS#}</string>
+					<string>\paragraph{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>paragraph</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\subparagraph{#SEL##INS#}</string>
+					<string>\subparagraph{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>subparagraph</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\section{#SEL##INS#}</string>
+					<string>\section{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>section</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\subsection{#SEL##INS#}</string>
+					<string>\subsection{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>subsection</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\subsubsection{#SEL##INS#}</string>
+					<string>\subsubsection{#SEL##INS#}
+</string>
 					<key>name</key>
 					<string>subsubsection</string>
 				</dict>
@@ -193,31 +921,52 @@ open location "http://www.rna.nl/tex.html"</string>
 			<array>
 				<dict>
 					<key>content</key>
-					<string>\[\left(\begin{array}{ccc}  &amp;   &amp;   \\  &amp;   &amp;   \\  &amp;   &amp;   \end{array}\right)\]</string>
+					<string>\[
+\left(
+\begin{array}{ccc}
+  &amp;   &amp;   \\
+  &amp;   &amp;   \\
+  &amp;   &amp;   
+\end{array}
+\right)
+\]
+</string>
 					<key>name</key>
 					<string>array</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{equation}#INS#\end{equation}</string>
+					<string>\begin{equation}
+#INS#
+\end{equation}
+</string>
 					<key>name</key>
 					<string>equation</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{equation*}#INS#\end{equation*}</string>
+					<string>\begin{equation*}
+#INS#
+\end{equation*}
+</string>
 					<key>name</key>
 					<string>equation*</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{eqnarray}#INS#\end{eqnarray}</string>
+					<string>\begin{eqnarray}
+#INS#
+\end{eqnarray}
+</string>
 					<key>name</key>
 					<string>eqnarray</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{eqnarray*}#INS#\end{eqnarray*}</string>
+					<string>\begin{eqnarray*}
+#INS#
+\end{eqnarray*}
+</string>
 					<key>name</key>
 					<string>eqnarray*</string>
 				</dict>
@@ -420,19 +1169,28 @@ open location "http://www.rna.nl/tex.html"</string>
 			<array>
 				<dict>
 					<key>content</key>
-					<string>\begin{description}\item[ ] #SEL##INS#\end{description}</string>
+					<string>\begin{description}
+\item[ ] #SEL##INS#
+\end{description}
+</string>
 					<key>name</key>
 					<string>description</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{enumerate}\item #SEL##INS#\end{enumerate}</string>
+					<string>\begin{enumerate}
+\item #SEL##INS#
+\end{enumerate}
+</string>
 					<key>name</key>
 					<string>enumerate</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{itemize}\item #SEL##INS#\end{itemize}</string>
+					<string>\begin{itemize}
+\item #SEL##INS#
+\end{itemize}
+</string>
 					<key>name</key>
 					<string>itemize</string>
 				</dict>
@@ -464,25 +1222,34 @@ open location "http://www.rna.nl/tex.html"</string>
 			<array>
 				<dict>
 					<key>content</key>
-					<string>\begin{quotation}#SEL##INS#\end{quotation}</string>
+					<string>\begin{quotation}
+#SEL##INS#
+\end{quotation}</string>
 					<key>name</key>
 					<string>quotation</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{quote}#SEL##INS#\end{quote}</string>
+					<string>\begin{quote}
+#SEL##INS#
+\end{quote}</string>
 					<key>name</key>
 					<string>quote</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{verbatim}#SEL##INS#\end{verbatim}</string>
+					<string>\begin{verbatim}
+#SEL##INS#
+\end{verbatim}
+</string>
 					<key>name</key>
 					<string>verbatim</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{verse}#SEL##INS#\end{verse}</string>
+					<string>\begin{verse}
+#SEL##INS#
+\end{verse}</string>
 					<key>name</key>
 					<string>verse</string>
 				</dict>
@@ -501,7 +1268,16 @@ open location "http://www.rna.nl/tex.html"</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{table}[htdp]\caption{default}\begin{center}\begin{tabular}{|c|c|}#SEL##INS#\end{tabular}\end{center}\label{default}\end{table}%</string>
+					<string>\begin{table}[htdp]
+\caption{default}
+\begin{center}
+\begin{tabular}{|c|c|}
+#SEL##INS#
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+</string>
 					<key>name</key>
 					<string>table</string>
 				</dict>
@@ -514,13 +1290,27 @@ open location "http://www.rna.nl/tex.html"</string>
 			<array>
 				<dict>
 					<key>content</key>
-					<string>\begin{figure}[htbp]\begin{center}#SEL##INS#\caption{default}\label{default}\end{center}\end{figure}</string>
+					<string>\begin{figure}[htbp]
+\begin{center}
+#SEL##INS#
+\caption{default}
+\label{default}
+\end{center}
+\end{figure}
+</string>
 					<key>name</key>
 					<string>regular</string>
 				</dict>
 				<dict>
 					<key>content</key>
-					<string>\begin{figure}[htbp]\begin{center}\epsfile{file=#SEL##INS#,scale=0.8}\caption{{\bf default}}\label{default}\end{center}\end{figure}</string>
+					<string>\begin{figure}[htbp]
+\begin{center}
+\epsfile{file=#SEL##INS#,scale=0.8}
+\caption{{\bf default}}
+\label{default}
+\end{center}
+\end{figure}
+</string>
 					<key>name</key>
 					<string>epsfile</string>
 				</dict>

@@ -24,6 +24,8 @@ extern NSString *TagSectionsKey;
 extern NSString *LPanelOutlinesKey;
 extern NSString *PanelOriginXKey;
 extern NSString *PanelOriginYKey;
+extern NSString *MPanelOriginXKey; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
+extern NSString *MPanelOriginYKey; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
 extern NSString *LatexCommandKey;
 extern NSString *LatexGSCommandKey;
 extern NSString *SavePSEnabledKey;
@@ -60,6 +62,10 @@ extern NSString *MetaPostCommandKey;
 extern NSString *BibtexCommandKey;
 extern NSString *DistillerCommandKey;
 extern NSString *LatexPanelPathKey;
+extern NSString *MatrixPanelPathKey; // Jonas' Matrix addition
+extern NSString *BinaryPathKey;
+extern NSString *ScriptsPathKey;
+extern NSString *TempPathKey;
 extern NSString *AutoCompletionPathKey;
 extern NSString *MenuShortcutsPathKey;
 extern NSString *MacrosPathKey;
@@ -96,6 +102,7 @@ extern NSString *PdfColorParam2Key;
 extern NSString *PdfPageBack_RKey;
 extern NSString *PdfPageBack_GKey;
 extern NSString *PdfPageBack_BKey;
+extern NSString *ExternalEditorTypesetAtStartKey;
 // end mitsu 1.29
 
 
@@ -201,7 +208,9 @@ typedef enum _RootCommand
 {
     RootForOpening = 1,
     RootForTexing = 2,
-    RootForPrinting = 3
+    RootForPrinting = 3,
+    RootForSwitchWindow = 4,
+    RootForPdfSync = 5
 } _RootCommand;
 
 // mitsu 1.29 (O)
@@ -233,6 +242,7 @@ typedef enum _PDFSizeOption
 /*" Mouse mode for MyPDFView"*/
 typedef enum _MouseMode
 {
+        MOUSE_MODE_NULL = 0,
 	MOUSE_MODE_SCROLL = 1, 
 	MOUSE_MODE_MAG_GLASS = 2, 
 	MOUSE_MODE_MAG_GLASS_L = 3, 

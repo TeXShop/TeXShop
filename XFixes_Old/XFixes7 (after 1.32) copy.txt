@@ -79,6 +79,8 @@ If an extension is not mentioned in the Macro Editor, then it is
 handled in the default manner Zenitani previously defined. Thus for
 most people, no macro "Drag & Drop" submenu is needed.
 
+If the dropped pdf file is originally exported from LaTeX Equation Editor, and if its file size is not too large (less than 1MB), TeXShop reads back equations from the file. If you don't like this, option-drag the file.
+
 4) Some users report that tex pages appear with slightly colored
 background --- yellow, bluish, or whatever. Frank Stengel discovered that
 removing a NSEraseRect call from the print drawing routine fixed this
@@ -257,7 +259,7 @@ us to experiment with the correct value.
 If continuous refreshing is set to on in preference and this is set
 to YES, then when pdf files are opened, they also automatically
 refresh. Previously, only files "opened for Preview" refreshed.
-The default value for this is NO.
+The default value for this is YES.
 
 25) Added a new document script command
 
@@ -278,4 +280,20 @@ that they should only be called from an applescript running from a
 program other than TeXShop, and when they are called the typesetting commands do NOT run continuously, so the user has a change to inspect errors, push return, etc. The point is that when applescript is called 
 from another application, then the event loop is still running
 in TeXShop and user interaction is possible.
+
+27) At the request of Joachim Kock, changed the behavior of TeXShop when it opens a file for Preview, or is in external editor mode and opens a file. The program now compares the dates of the source and preview files for the project. If the preview does not exist, or if it is out of date, the tex program is automatically typeset (using the user's current typesetting settings). There is a hidden
+preference to turn this behavior off:
+
+	defaults write TeXShop ExternalEditorTypesetAtStart NO
+
+but the preference is set to YES by default.
+
+28) Later discovered how to run Applescripts interactively from TeXShop. The trick is
+to write an entirely new application, ScriptRunner, and add it to the TeXShop
+bundle. When TeXShop runs an applescript, it sends the script on to ScriptRunner.
+Thus during user interaction, ScriptRunner hangs waiting for user actions, but
+TeXShop continues running.
+
+28) At the last possible moment, fixed a printing bug. If the user printed
+the source and then printed the typeset document, the document would appear lower on the page. This no longer happens.
 

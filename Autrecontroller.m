@@ -204,7 +204,7 @@ int i=[[sender selectedCell] tag];
 - (IBAction)showWindow:(id)sender
 {
     shown = YES;
-    return [super showWindow:sender];
+    [super showWindow:sender];
 }
 
 - (void)hideWindow:(id)sender

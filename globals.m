@@ -23,6 +23,8 @@ NSString *TagSectionsKey = @"TagSections";
 NSString *LPanelOutlinesKey = @"LPanelOutlines";
 NSString *PanelOriginXKey = @"PanelOriginX";
 NSString *PanelOriginYKey = @"PanelOriginY";
+NSString *MPanelOriginXKey = @"MPanelOriginX"; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
+NSString *MPanelOriginYKey = @"MPanelOriginY"; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
 NSString *LatexCommandKey = @"LatexCommand";
 NSString *LatexGSCommandKey = @"LatexGSCommand";
 NSString *SavePSEnabledKey = @"SavePSEnabled";
@@ -59,6 +61,10 @@ NSString *MetaPostCommandKey = @"MetaPostCommand";
 NSString *BibtexCommandKey = @"BibtexCommand";
 NSString *DistillerCommandKey = @"DistillerCommand";
 NSString *LatexPanelPathKey = @"~/Library/TeXShop/LatexPanel";
+NSString *MatrixPanelPathKey = @"~/Library/TeXShop/MatrixPanel"; // Jonas' Matrix addition
+NSString *BinaryPathKey = @"~/Library/TeXShop/bin";
+NSString *ScriptsPathKey = @"~/Library/TeXShop/Scripts";
+NSString *TempPathKey = @"/tmp/TeXShop_Applescripts";
 NSString *AutoCompletionPathKey = @"~/Library/TeXShop/Keyboard";
 NSString *MenuShortcutsPathKey = @"~/Library/TeXShop/Menus";
 NSString *MacrosPathKey = @"~/Library/TeXShop/Macros";
@@ -95,6 +101,7 @@ NSString *PdfColorParam2Key = @"PdfColorParam2";
 NSString *PdfPageBack_RKey = @"Pdfbackground_R";
 NSString *PdfPageBack_GKey = @"Pdfbackground_G";
 NSString *PdfPageBack_BKey = @"Pdfbackground_B";
+NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
 // end mitsu 1.29
 
 // Exceptions

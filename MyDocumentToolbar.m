@@ -283,32 +283,32 @@ static NSString*	kMacrosEETID			= @"MacrosEE";
 
     if ([itemIdent isEqual: kTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"TeXAction" target:self action:@selector(doTex:)];
+				imageName:@"TeXAction" target:self action:@selector(doTexTemp:)];
 	}
 
     if ([itemIdent isEqual: kLaTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"LaTeXAction" target:self action:@selector(doLatex:)];
+				imageName:@"LaTeXAction" target:self action:@selector(doLatexTemp:)];
 	}
 
     if ([itemIdent isEqual: kBibTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"BibTeXAction" target:self action:@selector(doBibtex:)];
+				imageName:@"BibTeXAction" target:self action:@selector(doBibtexTemp:)];
 	}
 
     if ([itemIdent isEqual: kMakeIndexTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"MakeIndexAction" target:self action:@selector(doIndex:)];
+				imageName:@"MakeIndexAction" target:self action:@selector(doIndexTemp:)];
 	}
 
     if ([itemIdent isEqual: kMetaPostTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"MetaPostAction" target:self action:@selector(doMetapost:)];
+				imageName:@"MetaPostAction" target:self action:@selector(doMetapostTemp:)];
 	}
 
     if ([itemIdent isEqual: kConTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"ConTeXAction" target:self action:@selector(doContext:)];
+				imageName:@"ConTeXAction" target:self action:@selector(doContextTemp:)];
 	}
         
 // forsplit        
@@ -321,7 +321,7 @@ static NSString*	kMacrosEETID			= @"MacrosEE";
         
     if ([itemIdent isEqual: kMetaFontID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-				imageName:@"MetaFontAction" target:self action:@selector(doMetaFont:)];
+				imageName:@"MetaFontAction" target:self action:@selector(doMetaFontTemp:)];
 	}
 
     if ([itemIdent isEqual: kTagsTID]) {

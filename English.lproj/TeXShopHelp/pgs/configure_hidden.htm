@@ -42,11 +42,29 @@ It may be easier to view colored TeX documents with a gray background. The backg
 		</dl>
 
 
-<p><font size="2" face="Lucida Grande,Geneva,Arial">Finally, TeXShop can be configured to save a backup file whenever it
+<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop can be configured to save a backup file whenever it
 saves or typesets a source file. To turn this on, run Terminal and type the following command. Change YES to NO to turn it off.
 </font></p>
 		<dl>
 			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop SaveBackup YES</font>
+		</dl>
+
+<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop can be configured to automatically refresh pdf views when the pdf file changes. To do this, once a second it examines the date and time when the pdf was last written to see if this information has changed. The time interval between these checks can be modified. To do this, run Terminal and type the following command. Change 1.00 to the number of seconds desired.
+</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop RefreshTime 1.00</font>
+		</dl>
+
+<p><font size="2" face="Lucida Grande,Geneva,Arial">Automatic refresh for pdf views is useful if TeXShop is configured to use an external editor, or if a tex file is opened by "Open For Preview...". In these cases, a .tex file is opened, but TeXShop only shows the associated pdf file. TeXShop also allows pdf files to be opened directly; this is useful for a brief glance at illustrations before embedding them in a TeX document. If you want pdf files opened for an external editor to be refreshed automatically, but pdf files opened for a brief glance to be left alone, run Terminal and type the following command. The default value of this preference is YES.  
+</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop PdfFileRefresh NO</font>
+		</dl>
+
+<p><font size="2" face="Lucida Grande,Geneva,Arial">When TeXShop opens a .tex file for an external editor, it checks the dates of the tex and pdf files to make sure that the pdf output is up to date. If this output is not up to date or does not exist at all, TeXShop typesets the .tex file again. To turn off this behavior, run Terminal and type the following command.
+</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial">defaults write TeXShop ExternalEditorTypesetAtStart NO</font>
 		</dl>
 
 		<ul>

@@ -24,6 +24,7 @@
 #import "extras.h"
 #import "globals.h"
 #import "Autrecontroller.h"
+#import "Matrixcontroller.h" // Matrix panel addition by Jonas
 #import "MyDocumentToolbar.h"
 #import "TSAppDelegate.h"
 #import "MyTextView.h"
@@ -74,6 +75,7 @@
     typesetContinuously = NO;
     tryAgain = NO;
     useTempEngine = NO;
+    callingWindow = nil;
         
     encoding = [[MyDocumentController sharedDocumentController] encoding];
     
@@ -433,7 +435,7 @@ NS_ENDHANDLER
 	NSScrollView *pdfScrollView = [pdfView enclosingScrollView];
 	NSClipView *pdfClipView = [pdfScrollView contentView];
 	NSRect clipFrame = [pdfClipView frame];
-    pdfClipView = [[FlippedClipView alloc] initWithFrame: clipFrame];	// it returns YES for isFlipped
+        pdfClipView = [[FlippedClipView alloc] initWithFrame: clipFrame];	// it returns YES for isFlipped
 	[pdfScrollView setContentView: pdfClipView];
 	[pdfClipView setBackgroundColor: [NSColor windowBackgroundColor]];
 	[pdfClipView setDrawsBackground: YES];
@@ -604,6 +606,7 @@ NS_ENDHANDLER
         }
     */
 
+    
 #ifndef ROOTFILE    
     projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
     if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
@@ -666,6 +669,17 @@ NS_ENDHANDLER
     
          pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
          
+        }
+        
+    if (externalEditor && [SUD boolForKey: ExternalEditorTypesetAtStartKey]) {
+    
+        NSString *texName = [self fileName];
+        if (texName && [[NSFileManager defaultManager] fileExistsAtPath:texName]) {
+                myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: texName traverseLink:NO];
+                NSDate *texDate = [myAttributes objectForKey:NSFileModificationDate];
+                if ((pdfDate == nil) || ([texDate compare:pdfDate] == NSOrderedDescending)) 
+                    [self doTypeset:self];
+                }
         }
 }
 
@@ -876,6 +890,7 @@ in other code when an external editor is being used. */
     // the frontmost. This is needed for the preferences.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Matrixcontroller sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:textWindow];
@@ -885,6 +900,7 @@ in other code when an external editor is being used. */
     // register for notifications when the pdf window becomes key so we can remember which window was the frontmost.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Matrixcontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:pdfWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:pdfWindow];
@@ -919,6 +935,9 @@ in other code when an external editor is being used. */
         
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doCompletion:)
         name:@"completionpanel" object:nil];
+        
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doMatrix:)
+                                                 name:@"matrixpanel" object:nil]; // Matrix addition by Jonas
         
 // added by mitsu --(D) reset tags when the encoding is switched
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetTagsMenu:) 
@@ -1147,7 +1166,7 @@ preference change is cancelled. "*/
     [pdfWindow close];
     /* The next line fixes a crash bug in Jaguar; see closeActiveDocument for
     a description. */
-    [[TSWindowManager sharedInstance] closeActiveDocument];
+   [[TSWindowManager sharedInstance] closeActiveDocument];
     	
     // mitsu 1.29 (P)
     if (!fileIsTex && [[self fileName] isEqualToString: 
@@ -2359,6 +2378,41 @@ if (! externalEditor) {
     [self doJob:MetafontEngine withError:NO runContinuously:NO];
 }
 
+// The temp forms which follow do not reset the default typeset buttons
+- (void) doTexTemp: sender;
+{
+    [self doJob:TexEngine withError:YES runContinuously:NO];
+}
+
+- (void) doLatexTemp: sender;
+{
+    [self doJobForScript:LatexEngine withError:YES runContinuously:NO];
+}
+
+- (void) doBibtexTemp: sender;
+{
+    [self doJobForScript:BibtexEngine withError:YES runContinuously:NO];
+}
+
+- (void) doMetapostTemp: sender;
+{
+    [self doJobForScript:MetapostEngine withError:YES runContinuously:NO];
+}
+- (void) doContextTemp: sender;
+{
+    [self doJobForScript:ContextEngine withError:YES runContinuously:NO];
+}
+
+- (void) doIndexTemp: sender;
+{
+    [self doJobForScript:IndexEngine withError:YES runContinuously:NO];
+}
+
+- (void) doMetaFontTemp: sender;
+{
+    [self doJobForScript:MetafontEngine withError:YES runContinuously:NO];
+}
+
 - (void) doTypesetEE: sender;
 {
     [self doTypeset: sender];
@@ -2442,16 +2496,23 @@ if (! externalEditor) {
 - (void) printSource: sender;
 {
    
-    NSPrintOperation	*printOperation;
-    NSPrintInfo		*myPrintInfo;
+    NSPrintOperation            *printOperation;
+    NSPrintInfo                 *myPrintInfo;
+    NSPrintingPaginationMode    originalPaginationMode;
+    BOOL                        originalVerticallyCentered;
     
     myPrintInfo = [self printInfo];
+    originalPaginationMode = [myPrintInfo horizontalPagination];
+    originalVerticallyCentered = [myPrintInfo isVerticallyCentered];
+    
     [myPrintInfo setHorizontalPagination: NSFitPagination];
     [myPrintInfo setVerticallyCentered:NO];
-
     printOperation = [NSPrintOperation printOperationWithView:textView printInfo: myPrintInfo];
     [printOperation setShowPanels:YES];
     [printOperation runOperation];
+    
+    [myPrintInfo setHorizontalPagination: originalPaginationMode];
+    [myPrintInfo setVerticallyCentered:originalVerticallyCentered];
 
 }
 
@@ -3909,6 +3970,255 @@ void report(NSString *itest)
     
 }
 
+- (void)bringPdfWindowFront{
+    NSString		*theSource;
+    
+    if (! externalEditor) {
+        theSource = [[self textView] string]; 
+        if ([self checkMasterFile:theSource forTask:RootForSwitchWindow]) 
+            return;
+        if ([self checkRootFile_forTask:RootForSwitchWindow]) 
+            return;
+        if ([self myTeXRep] != nil)
+            [[self pdfWindow] makeKeyAndOrderFront: self];
+        }
+}
+
+// Explanation: When this document is the root document for a chapter of a project and the user switched to
+// the document pdf window from the chapter window using Command-1, the Calling Window is that window. Thus
+// command-1 will take us back to the calling text window. If the calling text window is closed, any document
+// with that calling window will have its calling window reset to nil. When the calling window is nil, command-1
+// takes us to the text window of the document, usually the Main source
+
+- (NSWindow *)getCallingWindow
+{
+    return callingWindow;
+}
+
+- (void)setCallingWindow: (NSWindow *)thisWindow 
+{
+    callingWindow = thisWindow;
+}
+
+- (void)setPdfSyncLine:(int)line
+{
+    pdfSyncLine = line;
+}
+
+- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
+{
+    int             pdfPage;
+    BOOL            found;
+    unsigned        start, end, irrelevant, stringlength;
+    NSRange         myRange;
+    NSDate          *pdfDate, *pdfsyncDate;
+    NSString        *syncInfo;
+    NSFileManager   *fileManager;
+    NSRange         searchResultRange, newRange;
+    NSString        *keyLine;
+    int             syncNumber, syncLine;
+    BOOL            skipping;
+    NSString        *expectedFileName, *expectedString;
+    
+    NSNumber        *logNumber;
+    int             logInt;
+    
+    // get .sync file
+    fileManager = [NSFileManager defaultManager];
+    NSString *fileName1 = [self fileName];
+    NSString *infoFile = [[fileName1 stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
+    if (![fileManager fileExistsAtPath: infoFile])
+        return;
+
+/*        
+    // worry that the user has tex + ghostscript and the sync file is out of date
+    // to do that, test the date of mydoc.pdf and mydoc.pdfsync
+    NSString *pdfName = [[fileName stringByDeletingPathExtension] stringByAppendingString: @".pdf"];
+    NSDictionary *fattrs = [fileManager fileAttributesAtPath: pdfName traverseLink:NO];
+    pdfDate = [fattrs objectForKey:NSFileModificationDate];
+    fattrs = [fileManager fileAttributesAtPath: infoFile traverseLink:NO];
+    pdfsyncDate = [fattrs objectForKey:NSFileModificationDate];
+    if ([pdfDate timeIntervalSince1970] > [pdfsyncDate timeIntervalSince1970])
+        return;
+*/
+        
+    // get the contents of the sync file as a string
+    NS_DURING
+        syncInfo = [NSString stringWithContentsOfFile:infoFile];
+    NS_HANDLER
+        return;
+    NS_ENDHANDLER
+
+    if (! syncInfo) 
+        return;
+        
+    // if fileName != nil, then find "(filename" in syncInfo and replace syncInfo by everything
+    // after this line until the matching ")"
+    
+    if (fileName != nil) {
+        NSString *initialPart = [[self fileName] stringByDeletingLastPathComponent];
+        initialPart = [initialPart stringByAppendingString:@"/"];
+        myRange = [fileName rangeOfString: initialPart];
+        if ((myRange.location == 0) && (myRange.length < [fileName length])) {
+            expectedFileName = [fileName substringFromIndex: myRange.length];
+            expectedFileName = [expectedFileName stringByDeletingPathExtension];
+            expectedString = @"(";
+            expectedString = [expectedString stringByAppendingString:expectedFileName];
+            }
+        else 
+            return;
+            
+        myRange = [syncInfo rangeOfString: expectedString];
+        if (myRange.location == NSNotFound)
+            return;
+            
+        NS_DURING
+        [syncInfo getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        syncInfo = [syncInfo substringFromIndex: end];
+        myRange = [syncInfo rangeOfString: @")"];
+        if (myRange.location == NSNotFound)
+            return;
+        myRange.length = myRange.location;
+        myRange.location = 0;
+        syncInfo = [syncInfo substringWithRange: myRange];
+        }
+
+    // Search through syncInfo to find the first "l" line greater than or equal
+    // to our line; set syncNumber to the "pdfsync"-number of this entry
+    // In this search, ignore any "(" and all lines between that and the matching
+    // ")" 
+    
+    stringlength = [syncInfo length];
+    
+    myRange.location = 0;
+    myRange.length = 1;
+    found = NO;
+    skipping = NO;
+    while ((! found) && (myRange.location < stringlength)) {
+        NS_DURING
+        [syncInfo getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        if (skipping) {
+            if ([syncInfo characterAtIndex: start] == ')') {
+                skipping = NO;
+                }
+            }
+        else if ([syncInfo characterAtIndex: start] == '(') {
+            skipping = YES;
+            }
+        else if ([syncInfo characterAtIndex:start] == 'l') {
+            newRange.location = start;
+            newRange.length = end - start;
+            keyLine = [syncInfo substringWithRange: newRange];
+    
+            searchResultRange = [keyLine rangeOfCharacterFromSet: [NSCharacterSet decimalDigitCharacterSet]];
+            if (searchResultRange.location == NSNotFound)
+                return;
+            newRange.location = searchResultRange.location;
+            newRange.length = [keyLine length] - newRange.location;
+            keyLine = [keyLine substringWithRange: newRange];
+            syncNumber = [keyLine intValue]; // number of entry
+    
+            searchResultRange = [keyLine rangeOfString: @" "];
+            if (searchResultRange.location == NSNotFound)
+                return;
+            newRange.location = searchResultRange.location;
+            newRange.length = [keyLine length] - newRange.location;
+            keyLine = [keyLine substringWithRange: newRange];
+            searchResultRange = [keyLine rangeOfCharacterFromSet: [NSCharacterSet decimalDigitCharacterSet]];
+            if (searchResultRange.location == NSNotFound)
+                return;
+            newRange.location = searchResultRange.location;
+            newRange.length = [keyLine length] - newRange.location;
+            keyLine = [keyLine substringWithRange: newRange];
+            syncLine = [keyLine intValue]; //line number of entry
+            if (syncLine >= line)
+                found = YES;
+            }
+        myRange.location = end;
+        }
+        
+    if (!found)
+        return;
+        
+    
+    // now syncNumber is the entry number of the item we want. We must next find the
+    // entry "p syncNumber * *". This number will follow a page number, "s pageNumber"
+    // and this pageNumber is the number we want
+    
+    // the technique is to go through the .pdfsync file line by line. If a line starts with "s" we
+    // record that page number. If a line starts with "p number *  *" we see if number = syncNumber.
+    // If so, then the current page number is the one we want. If we don't find it, we just return
+
+    // But if the entry comes at the start of the file, it will not follow a page number.
+    // So we must search for the first page in the syncInfo file and then back up one page
+    
+    // Debugging has caused me to discover that some "l" lines in the pdfsync file have no matching
+    // "p" lines. So this code starts with an "l" line with a given syncNumber, and then iterates
+    // the search 20 times with higher and higher syncNumbers before giving up
+
+
+    found = NO;
+    int i = 0;
+    while ((!found) && (i < 20))    {
+        i++;
+        pdfPage = -1;
+        stringlength = [syncInfo length];
+        myRange.location = 0;
+        myRange.length = 1;
+        line = 0;
+        found = NO;
+        while ((! found) && (myRange.location < stringlength)) {
+            NS_DURING
+            [syncInfo getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+            NS_HANDLER
+            return;
+            NS_ENDHANDLER
+            if ([syncInfo characterAtIndex: start] == 's') {
+                newRange.location = start + 1;
+                newRange.length = end - start - 1;
+                NS_DURING
+                keyLine = [syncInfo substringWithRange: newRange];
+                NS_HANDLER
+                return;
+                NS_ENDHANDLER
+                pdfPage = [keyLine intValue];
+                pdfPage--;
+                }
+            else if ([syncInfo characterAtIndex:start] == 'p') {
+                newRange.location = start + 1;
+                newRange.length = end - start - 1;
+                NS_DURING
+                keyLine = [syncInfo substringWithRange: newRange];
+                NS_HANDLER
+                return;
+                NS_ENDHANDLER
+                if ([keyLine intValue] == syncNumber)
+                    found = YES;
+                }
+            myRange.location = end;
+            }
+        syncNumber++;
+        }
+        
+    if (!found)
+        return;
+    
+    // go to that page
+    // logInt = pdfPage;
+    // logNumber = [NSNumber numberWithInt: logInt];
+    // NSLog([logNumber stringValue]);
+    
+    [pdfView displayPage:pdfPage];
+    [pdfWindow makeKeyAndOrderFront: self];
+
+}
+
 //=============================================================================
 // nofification methods
 //=============================================================================
@@ -4037,10 +4347,10 @@ void report(NSString *itest)
         if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath] && [[NSFileManager defaultManager] isReadableFileAtPath: imagePath]) {
             myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
             newDate = [myAttributes objectForKey:NSFileModificationDate];
-            if (([newDate compare:pdfDate] == NSOrderedDescending) || tryAgain) {
+            if ((pdfDate == nil) || ([newDate compare:pdfDate] == NSOrderedDescending) || tryAgain) {
             
                 tryAgain = NO;
-                [pdfDate release];
+                if (pdfDate != nil) [pdfDate release];
                 [newDate retain];
                 pdfDate = newDate;
                 
@@ -4082,10 +4392,10 @@ void report(NSString *itest)
         if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath] && [[NSFileManager defaultManager] isReadableFileAtPath: imagePath]) {
             myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
             newDate = [myAttributes objectForKey:NSFileModificationDate];
-            if (([newDate compare:pdfDate] == NSOrderedDescending) || tryAgain) {
+            if ((pdfDate == nil) || ([newDate compare:pdfDate] == NSOrderedDescending) || tryAgain) {
             
                 tryAgain = NO;
-                [pdfDate release];
+                if (pdfDate != nil) [pdfDate release];
                 [newDate retain];
                 pdfDate = newDate;
                 
@@ -4546,6 +4856,22 @@ aSelector
 */
 }
 
+- (void)doMatrix:(NSNotification *)notification
+{
+    // mitsu 1.29 (T2) use "insertSpecial:undoKey:" 
+    NSWindow		*activeWindow;
+    activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+    if ((activeWindow != nil) && (activeWindow == [self textWindow])) 
+    {
+        [self insertSpecial: [notification object] 
+                    undoKey: NSLocalizedString(@"Matrix Panel", @"Matrix Panel")];
+        //[textView insertSpecial: [notification object] 
+        //			undoKey: NSLocalizedString(@"LaTeX Panel", @"LaTeX Panel")];
+    }
+    
+}
+
+
 - (void) changeAutoComplete: sender
 {
     doAutoComplete = ! doAutoComplete;
@@ -4753,6 +5079,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                         return NO;
                     if (task == RootForPrinting) 
                         [obj printDocument:nil];
+                    else if (task == RootForPdfSync) {
+                        [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                        }
+                    else if (task == RootForSwitchWindow) {
+                        [obj setCallingWindow: textWindow];
+                        [obj bringPdfWindowFront];
+                        }
                     else if (task == RootForTexing)
                         {	rootDocument = obj;
                                 switch(whichEngine) {
@@ -4784,6 +5117,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     return NO;
             	if (task == RootForPrinting)
                     [obj printDocument:nil];
+                else if (task == RootForPdfSync) {
+                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                    }
                 else if (task == RootForTexing){
                         rootDocument = obj;
                         switch(whichEngine) {
@@ -4855,6 +5191,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                 if (task == RootForPrinting) {
                     [obj printDocument:nil];
                     }
+                else if (task == RootForPdfSync) {
+                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                    }
+                else if (task == RootForSwitchWindow) {
+                    [obj setCallingwindow: textWindow];
+                    [obj bringPdfWindowFront];
+                    }
                 else if (task == RootForTexing)
                     {rootDocument = obj;
                     switch(whichEngine) {
@@ -4886,6 +5229,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             return NO;
         if (task == RootForPrinting) {
             [obj printDocument:nil];
+            }
+        else if (task == RootForPdfSync) {
+            [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
             }
         else if (task == RootForTexing)
             {rootDocument = obj;
@@ -5393,7 +5739,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     NSString		*text;
     NSRange		myRange, tempRange;
     unsigned		start, end, end1, changeStart, changeEnd;
-    int			theChar;
 
     text = [textView string];
     myRange = [textView selectedRange];

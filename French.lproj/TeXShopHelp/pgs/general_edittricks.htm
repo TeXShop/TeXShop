@@ -24,12 +24,6 @@ source while reading a second part of the source.
 </font></P>
 
 <P><font size="2" face="Lucida Grande,Geneva,Arial">
-File icons can be dragged and dropped onto the source text. If the file is a tex file, an \input command will be
-added with a relative path to the file. If the file is a graphic file, an \includegraphics command will be
-added instead.
-</font></P>
-
-<P><font size="2" face="Lucida Grande,Geneva,Arial">
 TeXShop can be instructed to create a backup file every time a file is saved or typeset. This is set using a hidden preference.
 To create backup files, open Terminal and type the following command:
 </font></P>
@@ -38,6 +32,41 @@ To create backup files, open Terminal and type the following command:
 		</dl>
 <P><font size="2" face="Lucida Grande,Geneva,Arial"> Change YES to NO to stop creating backups.
 </font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+File icons can be dragged and dropped onto the source text. If the file is a tex file, an \input command will be
+added with a relative path to the file. If the file is a graphic file, an \includegraphics command will be
+added instead. The following graphic types are recognized: pdf, jpg, jpeg, tif, tiff, eps, ps.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Dropping a cls file produces \documentclass and a file reference, dropping a sty file produces
+\usepackage, dropping a bib file produces \bibliographystyle, and dropping other text files
+produces \input.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+The behavior of drag and drop is user customizable. Customization is done with the Macro menu. Insert a new submenu
+titled "Drag & Drop". Inside this submenu place items named with the extension whose behavior
+you wish to customize, and place the code that should be inserted in the body of this item.
+For instance, if the item is .pdf, the code might be \includegraphics[#INS#]{%r}. In these inclusions,
+the following abbreviations may be used:
+
+<dl>
+<dd>	%F full path of an dropped file
+<dd>	%f dropped filename
+<dd>	%r relative path of the dropped file
+<dd>	%n filename without extension
+<dd>	%e extension.
+</dl>
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+If an extension is not mentioned in the Macro Editor, then it is
+handled in the default manner mentioned earlier. Thus for
+most people, no macro "Drag & Drop" submenu is needed.
+</font></P>
+
 
 		<ul>
 			

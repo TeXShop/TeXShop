@@ -83,9 +83,12 @@
 
 // Set up ~/Library/TeXShop; must come before dealing with EncodingSupport and MacoMenuController below    
     [self configureTemplates]; // this call must come first because it creates the TeXShop folder if it does not yet exist
+    [self configureScripts];
+    [self configureBin];
     [self configureMenuShortcutsFolder];
     [self configureAutoCompletion];
     [self configureLatexPanel];
+    [self configureMatrixPanel];  //Matrix addition by Jonas
     [self configureMacro];
     [self prepareConfiguration: CommandCompletionPathKey]; // mitsu 1.29 (P)
     
@@ -199,6 +202,36 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
             }
 }
 
+/*" %{This method is not to be called from outside of this class.}
+
+Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no files are overwritten.
+"*/
+//------------------------------------------------------------------------------
+- (void)copyToBinaryDirectory:(NSString *)fileName
+//------------------------------------------------------------------------------
+{
+	NSFileManager *fileManager;
+	NSString *destFileName;
+        BOOL result;
+	
+	fileManager = [NSFileManager defaultManager];
+	destFileName = [NSString pathWithComponents:[NSArray arrayWithObjects:[BinaryPathKey stringByStandardizingPath], 
+                [fileName lastPathComponent], nil]];
+        destFileName = [destFileName stringByDeletingPathExtension];
+	
+	// check if that file already exists
+	if ([fileManager fileExistsAtPath:destFileName isDirectory:NULL] == NO)
+            {
+            NS_DURING
+            // file doesn't exist -> copy it
+            result = [fileManager copyPath:fileName toPath:destFileName handler:nil];
+            NS_HANDLER
+            ;
+            NS_ENDHANDLER
+            }
+}
+
+
 // ------------- these routines create ~/Library/TeXShop and folders and files if necessary ----------
 
 - (void)configureTemplates
@@ -263,6 +296,101 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
 
 // end of changes
 
+}
+
+- (void)configureScripts
+{
+        NSString 	*fileName, *scriptPath;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Scripts folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [ScriptsPathKey stringByStandardizingPath]]))
+        {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[ScriptsPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Scripts Folder", nil, nil);
+                    return;
+                    }
+            }
+    
+    // now see if setname.scpt is inside; if not, copy it from the program folder
+    scriptPath = [ScriptsPathKey stringByStandardizingPath];
+    scriptPath = [scriptPath stringByAppendingPathComponent:@"setname"];
+    scriptPath = [scriptPath stringByAppendingPathExtension:@"scpt"];
+    if (! [fileManager fileExistsAtPath: scriptPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"setname" ofType:@"scpt"];
+            if (fileName) {
+                result = [fileManager copyPath:fileName toPath:scriptPath handler:nil];
+                }
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create setname.scpt", nil, nil);
+                return;
+                }
+        }
+
+}
+
+- (void)configureBin
+{
+        NSString 	*fileName;
+        NSFileManager	*fileManager;
+        BOOL		result;
+        NSString	*reason;
+        NSArray 	*binaries;
+	NSEnumerator 	*binaryEnum;
+        
+        fileManager = [NSFileManager defaultManager];
+
+    // The code below is copied from Sarah Chambers' code
+    
+     // if Binary folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [BinaryPathKey stringByStandardizingPath]]))
+        {
+    
+        // create the necessary directories
+            NS_DURING
+                // create ~/Library/TeXShop/Templates
+                result = [fileManager createDirectoryAtPath:[BinaryPathKey stringByStandardizingPath] attributes:nil];
+            NS_HANDLER
+                result = NO;
+                reason = [localException reason];
+            NS_ENDHANDLER
+                if (!result) {
+                    NSRunAlertPanel(@"Error", reason, @"Couldn't Create Binary Folder", nil, nil);
+                    return;
+                    }
+                    
+            // fill in our binaries
+            binaries = [NSBundle pathsForResourcesOfType:@"bxx" inDirectory:[[NSBundle mainBundle] resourcePath]];
+            binaryEnum = [binaries objectEnumerator];
+            while (fileName = [binaryEnum nextObject])
+                {
+                    [self copyToBinaryDirectory:fileName ];
+                }
+
+            }
 }
 
 
@@ -370,6 +498,59 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
                 }
         }
 }
+
+- (void)configureMatrixPanel
+{
+    NSString 	*fileName, *matrixPath;
+    NSFileManager	*fileManager;
+    BOOL		result;
+    NSString	*reason;
+    
+    fileManager = [NSFileManager defaultManager];
+    
+    // The code below is copied from Sarah Chambers' code
+    
+    // if Keyboard folder doesn't exist already...
+    if (!([fileManager fileExistsAtPath: [MatrixPanelPathKey stringByStandardizingPath]]))
+    {
+        
+        // create the necessary directories
+        NS_DURING
+            // create ~/Library/TeXShop/Templates
+            result = [fileManager createDirectoryAtPath:[MatrixPanelPathKey stringByStandardizingPath] attributes:nil];
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+        if (!result) {
+            NSRunAlertPanel(@"Error", reason, @"Couldn't Create Matrix Panel Folder", nil, nil);
+            return;
+        }
+    }
+    
+    // now see if matrixpanel.plist is inside; if not, copy it from the program folder
+    matrixPath = [MatrixPanelPathKey stringByStandardizingPath];
+    matrixPath = [matrixPath stringByAppendingPathComponent:@"matrixpanel"];
+    matrixPath = [matrixPath stringByAppendingPathExtension:@"plist"];
+    if (! [fileManager fileExistsAtPath: matrixPath]) {
+        NS_DURING
+        {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"matrixpanel" ofType:@"plist"];
+            if (fileName) 
+                result = [fileManager copyPath:fileName toPath:matrixPath handler:nil];
+        }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+        if (!result) {
+            NSRunAlertPanel(@"Error", reason, @"Couldn't Create Matrix Panel plist", nil, nil);
+            return;
+        }
+    }
+}
+
 
 - (void)configureMenuShortcutsFolder;
 {
@@ -781,6 +962,21 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
         }
 }
 
+// begin MatrixPanel Addition by Jonas 1.32 Nov 28 03
+- (IBAction)displayMatrixPanel:(id)sender
+{
+    if ([[sender title] isEqualToString:NSLocalizedString(@"Matrix Panel...", @"Matrix Panel...")]) {
+        [[Matrixcontroller sharedInstance] showWindow:self];
+        [sender setTitle:NSLocalizedString(@"Close Matrix Panel", @"Close Matrix Panel")];
+    }
+    else {
+        [[Matrixcontroller sharedInstance] hideWindow:self];
+        [sender setTitle:NSLocalizedString(@"Matrix Panel...", @"Matrix Panel...")];
+    }
+}
+// end MatrixPanel Addition by Jonas 1.32 Nov 28 03
+
+
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 {
     id		documentWindow;
@@ -794,6 +990,15 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
         else
             return NO;
         }
+     else if ([anItem action] == @selector(displayMatrixPanel:)) {
+        documentWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
+        if (documentWindow == nil)
+            return NO;
+        else if ([documentWindow isKeyWindow])
+            return YES;
+        else
+            return NO;
+    }
     else 
         return YES;
 }

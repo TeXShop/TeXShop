@@ -24,5 +24,6 @@
 - (void) associatedWindow:(id)sender;
 // forsplit
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
+- (void)close;
 // end forsplit
 @end

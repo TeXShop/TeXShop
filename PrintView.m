@@ -25,8 +25,18 @@
 - (void)drawRect:(NSRect)aRect 
 {
 //    NSEraseRect([self bounds]);
+    NSRect  myRect;
+    
+    myRect = [self bounds];
+    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
+    float scale = [[[pi dictionary] objectForKey:NSPrintScalingFactor]
+                    floatValue];
+    myRect.size.height = myRect.size.height * scale;
+    myRect.size.width = myRect.size.width * scale;
+    
     if (myRep != nil) {
-        [myRep draw];
+//        [myRep draw];
+          [myRep drawInRect: myRect];
         }
 }
 
@@ -62,10 +72,15 @@
     // aRect = [myRep bounds];
     aRect.origin.x = 0; aRect.origin.y = 0;
     aRect.size = [myRep bounds].size;
-    // end
+    
+    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
+    float scale = [[[pi dictionary] objectForKey:NSPrintScalingFactor]
+                    floatValue];
+    aRect.size.height = aRect.size.height * scale;
+    aRect.size.width = aRect.size.width * scale;
+    
     return aRect;
 }
-
 
 - (void)dealloc {
     [myRep release];

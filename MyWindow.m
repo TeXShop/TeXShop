@@ -251,8 +251,13 @@ extern NSPanel *pageNumberWindow;
 
 - (void)associatedWindow:(id)sender;
 {
-    if ([myDocument imageType] == isTeX)
-        [[myDocument textWindow] makeKeyAndOrderFront: self];
+    if ([myDocument imageType] == isTeX) {
+        if ([myDocument getCallingWindow] == nil)
+            [[myDocument textWindow] makeKeyAndOrderFront: self];
+        else
+            [[myDocument getCallingWindow] makeKeyAndOrderFront: self];
+        
+        }
 }
 
 - (void)sendEvent:(NSEvent *)theEvent
@@ -451,6 +456,8 @@ extern NSPanel *pageNumberWindow;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 {
     if ([anItem action] == @selector(displayLatexPanel:))
+        return NO;
+    if ([anItem action] == @selector(displayMatrixPanel:))
         return NO;
 
 #ifdef MITSU_PDF

@@ -1,10 +1,11 @@
 /* MyTextView */
 
 #import <Cocoa/Cocoa.h>
+#import "MyDocument.h"
 
 @interface MyTextView : NSTextView
 {
-    NSDocument *document; 
+    MyDocument *document; 
 }
 
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity;

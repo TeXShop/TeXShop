@@ -92,6 +92,7 @@
     id			previousButton;
     id			nextButton;
     BOOL                taskDone;
+    int                 pdfSyncLine;
     
     IBOutlet NSMatrix 	*mouseModeMatrix; // mitsu 1.29 (O)
     IBOutlet NSMenu 	*mouseModeMenu; // mitsu 1.29 (O)
@@ -113,6 +114,7 @@
     int                 tempEngine;
     BOOL                useTempEngine;
     BOOL                realEngine;
+    NSWindow            *callingWindow;
     
 // end addition
 
@@ -135,9 +137,17 @@
 - (void) doContext: sender;
 - (void) doIndex: sender;
 - (void) doMetaFont: sender;
+- (void) doTexTemp: sender;
+- (void) doLatexTemp: sender;
+- (void) doBibtexTemp: sender;
+- (void) doMetapostTemp: sender;
+- (void) doContextTemp: sender;
+- (void) doIndexTemp: sender;
+- (void) doMetaFontTemp: sender;
 - (void) doTypeset: sender;
 - (void) doTypesetForScriptContinuously:(BOOL)method;
 - (void) doJob:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous;
+- (void) doJobForScript:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous;
 - (void) doTypesetEE: sender;
 - (void) doTemplate: sender;
 - (void) doTexCommand: sender;
@@ -156,6 +166,7 @@
 - (void) completeSaveFinished;
 - (id) pdfView;
 - (void) doCompletion:(NSNotification *)notification;
+- (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
 - (void) fixAutoMenu;
 - (void) fixMacroMenu;
@@ -190,8 +201,11 @@
 - (BOOL)isDocumentEdited;
 - (BOOL)fileIsTex; // added by zenitani, Feb 13, 2003
 - (void)abort:sender;
-
-
+- (void)bringPdfWindowFront;
+- (NSWindow *)getCallingWindow;
+- (void)setCallingWindow: (NSWindow *)thisWindow;
+- (void)setPdfSyncLine:(int)line;
+- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

@@ -113,7 +113,7 @@
 - (void)changePageStyle: (id)sender;
 - (int)resizeOption;
 - (void)changePDFViewSize: (id)sender;
-
+- (void)doSync: (NSEvent *)theEvent;
 @end
 
 @interface FlippedClipView : NSClipView {

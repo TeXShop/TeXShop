@@ -15,6 +15,67 @@
 
 @implementation MyTextView
 
+#pragma mark =====pdfSync=====
+- (void)doSync:(NSEvent *)theEvent
+{
+    int             line;
+    NSString        *text;
+    BOOL            found;
+    unsigned        start, end, irrelevant, stringlength, theIndex;
+    NSRange         myRange;
+    NSPoint         screenPosition;
+    NSString        *theSource;
+    
+    // find the line number
+    screenPosition = [NSEvent  mouseLocation];
+    theIndex = [self characterIndexForPoint: screenPosition];
+    text = [[document textView] string];
+    stringlength = [text length];
+    myRange.location = 0;
+    myRange.length = 1;
+    line = 0;
+    found = NO;
+    while ((! found) && (myRange.location < stringlength)) {
+        [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        if (end >= theIndex)
+            found = YES;
+        myRange.location = end;
+        line++;
+        }
+    if (!found)
+        return;
+    [document setPdfSyncLine:line];
+        
+    // see if there is a root file; if so, call the root file's doPreviewSync
+    // code with the filename of this file and this line number
+    // see if there is a %SourceDoc file; if so, call the root file's doPreviewSync
+    // code with the filename of this file and this line number
+    // otherwise call this document's doPreviewSync with nil for filename and
+    // this line number
+    
+     theSource = [[document textView] string];
+     if (theSource == nil)
+        return;
+     if ([document checkMasterFile:theSource forTask:RootForPdfSync]) 
+            return;
+     if ([document checkRootFile_forTask:RootForPdfSync]) 
+            return;
+            
+     [document doPreviewSyncWithFilename:nil andLine:line];
+}
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+        // koch; Dec 13, 2003
+        if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+                [self doSync: theEvent];
+                return;
+                }
+                
+        [super mouseDown:theEvent];
+}
+                
+#pragma mark =====others=====
 
 // drag & drop support --- added by zenitani, Feb 13, 2003
 - (unsigned int) dragOperationForDraggingInfo : (id <NSDraggingInfo>) sender

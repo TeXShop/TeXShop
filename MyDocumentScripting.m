@@ -355,6 +355,15 @@ TeXShop's undo manager just wasn't informed of the change in the document / sele
     return theResult;
 }
 
+- (id)handleGotoLineCommand:(NSScriptCommand*)command
+{
+    int line;
+    
+    NSDictionary* args = [command evaluatedArguments];
+    line = [[args objectForKey:@"LineNumber"] unsignedIntValue];
+    [self toLine:line];
+}
+
 
 @end
 

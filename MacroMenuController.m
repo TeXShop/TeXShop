@@ -306,7 +306,11 @@ static id sharedMacroMenuController = nil;
 // now simply call doCompletion routine via notification center
 - (void)doMacro: (id)sender
 {
-	NSString *macroString;
+        BOOL            result;
+        NSString        *reason;
+        NSMutableArray  *args;
+        NSString        *macroString;
+        
 	if ([sender isKindOfClass: [NSMenuItem class]])
 		macroString = [(NSMenuItem *)sender representedObject];
 	else if ([sender isKindOfClass: [NSString class]])
@@ -381,6 +385,51 @@ static id sharedMacroMenuController = nil;
                 [newString replaceOccurrencesOfString: @"#DOCUMENTNAME#" withString: 
                                         [NSString stringWithFormat: @"\"%@\"", displayName]
                                         options: 0 range: NSMakeRange(0, [newString length])];
+                                        
+                // save newScript in file named scriptFileName in directory scriptFilePath
+                NSFileManager *fileManager = [NSFileManager defaultManager];
+                if (!([fileManager fileExistsAtPath: [TempPathKey stringByStandardizingPath]]))
+                     {
+                    // create the necessary directories
+                    NS_DURING
+                    // create ~/Library/TeXShop/Temp
+                    result = [fileManager createDirectoryAtPath:[TempPathKey stringByStandardizingPath] attributes:nil];
+                    NS_HANDLER
+                    result = NO;
+                    reason = [localException reason];
+                    NS_ENDHANDLER
+                    if (!result) {
+                        NSRunAlertPanel(@"Error", reason, @"Couldn't Create Temp Folder", nil, nil);
+                        return;
+                        }
+                    }
+                NSString *scriptFilePath = [TempPathKey stringByStandardizingPath];
+                NSString *scriptFileName = [scriptFilePath stringByAppendingString: @"/tempscript"];
+                
+                NS_DURING
+               // [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
+               [newString writeToFile: scriptFileName atomically: NO];
+                NS_HANDLER
+                    return;
+                NS_ENDHANDLER
+                 
+                NSTask *scriptTask =  [[NSTask alloc] init];
+                NSString *runnerPath = [[NSBundle mainBundle] pathForResource:@"ScriptRunner" ofType:nil inDirectory:@"ScriptRunner.app/Contents/MacOS"];
+               //  runnerPath = [runnerPath stringByAppendingString:@"/Contents/MacOS/ScriptRunner"];
+                args = [NSMutableArray array];
+                [args addObject: scriptFileName];
+                
+                [scriptTask setLaunchPath: runnerPath];
+                [scriptTask setArguments: args];
+                [scriptTask setCurrentDirectoryPath: scriptFilePath];
+               // [scriptTask setEnvironment: nil];
+               // [scriptTask setStandardOutput: nil];
+               // [scriptTask setStandardError: nil];
+               // [scriptTask setStandardInput: nil];
+                [scriptTask launch];
+
+                
+                /*
 		NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: newString];
 		NSDictionary *errorInfo;
 		NSAppleEventDescriptor *returnValue = [aScript executeAndReturnError: &errorInfo];
@@ -395,6 +444,7 @@ static id sharedMacroMenuController = nil;
 				[errorInfo objectForKey: NSAppleScriptErrorMessage], nil, nil, nil);
 		}
 		[aScript release];
+                */
 	}
 }
 

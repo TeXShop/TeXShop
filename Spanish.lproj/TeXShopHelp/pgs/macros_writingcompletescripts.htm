@@ -1,0 +1,102 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Scripts con comandos de composici&oacute;n de TeXShop</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="applescript; bibliograf&iacute;a">
+	</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Scripts con comandos de composici&oacute;n de TeXShop</B></FONT></TD>
+</TR>
+</TABLE>
+	<P><font size="2" face="Lucida Grande,Geneva,Arial">Si un proyecto LaTeX contiene una bibliograf&iacute;a, se requieren varios pasos para actualizar la bibliograf&iacute;a. Primero hay que usar LaTeX para crear un archivo .aux. Entonces se ejecuta BibTeX, que usa este archivo crear los archivos .bbl y .blg. Luego, de nuevo LaTeX para a&ntilde;adir la bibliograf&iacute;a al documento.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Tu proyecto concreto puede requerir otras secuencias similares de comandos de composici&oacute;n. Es una buena idea usar AppleScript para automatizar estas secuencias.
+</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Para ver c&oacute;mo hacerlo, examinemos el script OtherScripts->Bibliography que viene con TeXShop. &Eacute;ste es el c&oacute;digo del script:
+<dl>
+<dd>--Applescript
+<p>
+<dd>set fileName to #FILEPATH#
+<dd>if fileName is equal to  ""
+<dd>display dialog "Please save the file first"  buttons {"OK"} default button "OK"
+<dd>return
+<dd>end if
+<p>
+<dd>set frontName to #DOCUMENTNAME#
+<dd>tell application "TeXShop"
+<dd>save document frontName
+<dd>end tell
+
+<p>
+<dd>tell document frontName of application "TeXShop" 
+<p>
+<dl>
+<dd>	latex
+<p>
+<dd>	repeat
+<dl>
+<dd>		delay 2
+<dd>		if taskdone
+<dd>			exit repeat
+<dd>		end if
+</dl>
+<dd>	end repeat
+<p>
+<dd>
+<dd>	bibtex
+<p>
+<dd>	repeat
+<dl>
+<dd>		delay 2
+<dd>		if taskdone
+<dd>			exit repeat
+<dd>		end if
+</dl>
+<dd>	end repeat
+<p>
+<dd>	latex
+<p>
+<dd>	repeat
+<dl>
+<dd>		delay 2
+<dd>		if taskdone
+<dd>			exit repeat
+<dd>		end if
+</dl>
+<dd>	end repeat
+<p>
+<dd> latex
+<p>
+<dd>	repeat
+<dl>
+<dd>		delay 2
+<dd>		if taskdone
+<dd>			exit repeat
+<dd>		end if
+</dl>
+<dd>	end repeat
+<p>
+</dl>
+end tell
+</dl>
+</font></P>
+
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">La primera l&iacute;nea indica que esto es una macro AppleScript. Las siguientes l&iacute;neas comprueban #FILEPATH#, un par&aacute;metro que da la ruta completa al archivo con el c&oacute;digo tex. Cuando se crea un documento nuevo, este par&aacute;metro es una cadena vac&iacute;a, hasta que guardamos el documento por primera vez. Si el documento a&uacute;n no est&aacute; guardado, el script pregunta al usuario si lo quiere guardar, y entonces termina.</font></P>
+
+ <P><font size="2" face="Lucida Grande,Geneva,Arial">La siguiente l&iacute;nea manda a TeXShop que guarde el documento. N&oacute;tese que usamos #DOCUMENTNAME# para referirnos al documento en cuesti&oacute;n.</font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">Los siguientes comandos ejecutan latex, bibtex, latex, y latex. Recuerda que el control vuelve a applescript inmediamente tras cada llamada a un comando de composici&oacute;n, sin esperar a que la composici&oacute;n de p&aacute;ginas termine. El bucle que se repite le dice al script que compruebe si cada proceso de composici&oacute;n ha concluido ya, antes de empezar la siguiente tarea. La l&iacute;nea &laquo;delay 2&raquo; hace que applescript haga una pausa en lugar de estar preguntando continuamente si la tarea ha acabado, lo que ralentizar&iacute;a todo el ordenador.
+</font></P>
+
+	</BODY>
+
+</HTML>

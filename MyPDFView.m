@@ -1463,14 +1463,15 @@ failed. If you change the code below, be sure to test carefully!
 	}
 }
 
-// receive notification from clip view when pdfView is scolled
+// receive notification from clip view when pdfView is scrolled
 - (void)wasScrolled: (NSNotification *)aNotification
-{
-	if (((imageType == isTeX) || (imageType == isPDF)) && 
+{ 
+        if (((imageType == isTeX) || (imageType == isPDF)) && 
 		((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle ==
                         PDF_DOUBLE_MULTI_PAGE_STYLE)
 			|| (pageStyle == PDF_TWO_PAGE_STYLE))) 
 		[self updateCurrentPage];
+  
 }
 
 
@@ -1591,6 +1592,349 @@ failed. If you change the code below, be sure to test carefully!
     [myDocument printSource: sender];
 }
 
+#pragma mark =====sync=====
+
+
+- (void)doSync: (NSEvent *)theEvent
+{
+        NSFileManager	*fileManager;
+        NSString        *syncInfo, *thePageNumber, *pageSearchString, *valueString;
+        NSString        *searchString;
+        NSRange         searchRange, searchResultRange;
+        NSRange         smallerRange;
+        NSString        *includeFileName;
+        NSString        *keyLine;
+        int             pageNumber;
+        NSRange         pageRangeStart;
+        NSRange         pageRangeEnd;
+        NSRange         remainingRange;
+        NSRange         thisRange, newRange;
+        NSNumber        *logNumber;
+        int             logInt, aNumber;
+        int             syncNumber, oldSyncNumber, x, oldx, y, oldy;
+        BOOL            found;
+        unsigned        theStart, theEnd;
+        NSDate          *pdfDate, *pdfsyncDate;
+        NSString        *newFileName;
+        MyDocument      *newDocument;
+    
+
+    includeFileName = nil;
+        
+    // The code below finds the page number, and the position of the click
+    // in view coordinates. 
+        
+    NSPoint windowPosition = [theEvent locationInWindow];
+    NSPoint viewPosition = [self convertPoint: windowPosition fromView:nil];
+    if (pageStyle == PDF_SINGLE_PAGE_STYLE) 
+        pageNumber = [myRep currentPage];
+    else { 
+        pageNumber = [self pageNumberForPoint:viewPosition];
+        NSPoint originPoint = [self pointForPage: pageNumber];
+        viewPosition.x = viewPosition.x - originPoint.x;
+        viewPosition.y = viewPosition.y - originPoint.y;
+        if (viewPosition.x < 0)
+            viewPosition.x = 0;
+        if (viewPosition.y < 0)
+            viewPosition.y = 0;
+        }
+    pageNumber++;
+    
+    // logInt = viewPosition.x;
+    // logNumber = [NSNumber numberWithInt: logInt];
+    // NSLog([logNumber stringValue]);
+    
+    // logInt = viewPosition.y;
+    // logNumber = [NSNumber numberWithInt: logInt];
+    // NSLog([logNumber stringValue]);
+    
+    // now convert to pdf coordinates
+    int xValue = viewPosition.x * 65536; 
+    int yValue = viewPosition.y * 65536;
+    
+    // now see if the sync file exists
+    fileManager = [NSFileManager defaultManager];
+    NSString *fileName = [myDocument fileName];
+    NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
+    if (![fileManager fileExistsAtPath: infoFile])
+        return;
+
+/*    
+    // worry that the user has tex + ghostscript and the sync file is out of date
+    // to do that, test the date of mydoc.pdf and mydoc.pdfsync
+    NSString *pdfName = [[fileName stringByDeletingPathExtension] stringByAppendingString: @".pdf"];
+    NSDictionary *fattrs = [fileManager fileAttributesAtPath: pdfName traverseLink:NO];
+    pdfDate = [fattrs objectForKey:NSFileModificationDate];
+    fattrs = [fileManager fileAttributesAtPath: infoFile traverseLink:NO];
+    pdfsyncDate = [fattrs objectForKey:NSFileModificationDate];
+    if ([pdfDate timeIntervalSince1970] > [pdfsyncDate timeIntervalSince1970])
+        return;
+*/
+        
+    // get the contents of the sync file as a string
+    NS_DURING
+        syncInfo = [NSString stringWithContentsOfFile:infoFile];
+    NS_HANDLER
+        return;
+    NS_ENDHANDLER
+
+    if (! syncInfo) 
+        return;
+    
+    // find the page number in syncInfo and return if it is not there
+    thePageNumber = [NSNumber numberWithInt: pageNumber];
+    pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+    pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+    if (pageRangeStart.location == NSNotFound)
+        return;
+        
+    // search backward for ); if found, replace syncInfo with everything after the character
+    searchString = [NSString stringWithString:@")"];
+    searchRange.location = 0; searchRange.length = pageRangeStart.location;
+    searchResultRange = [syncInfo rangeOfString: searchString options:NSBackwardsSearch range: searchRange];
+    if (searchResultRange.location != NSNotFound) {
+        smallerRange.location = searchResultRange.location + 1;
+        smallerRange.length = [syncInfo length] - searchResultRange.location - 1;
+        NS_DURING
+        syncInfo = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        }
+        
+    // search backward for (; if found, record the filename and then search forward for ) and replace syncInfo by
+    // everything between these spots
+    pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+    pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+    if (pageRangeStart.location == NSNotFound)
+        return;
+    searchString = [NSString stringWithString:@"("];
+    searchRange.location = 0; searchRange.length = pageRangeStart.location;
+    searchResultRange = [syncInfo rangeOfString: searchString options:NSBackwardsSearch range: searchRange];
+    if (searchResultRange.location != NSNotFound) {
+        NS_DURING
+        [syncInfo getLineStart: &theStart end: &theEnd contentsEnd: nil forRange: searchResultRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        smallerRange.location = theStart + 1;
+        smallerRange.length = theEnd - theStart - 2;
+        NS_DURING
+        includeFileName = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        smallerRange.location = theEnd;
+        smallerRange.length = [syncInfo length] - smallerRange.location - 1;
+        
+        // logInt = [syncInfo length];
+        // logNumber = [NSNumber numberWithInt: logInt];
+        // NSLog([logNumber stringValue]);
+       
+        NS_DURING 
+        syncInfo = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        searchString = [NSString stringWithString:@")"];
+        searchResultRange = [syncInfo rangeOfString: searchString];
+        if (searchResultRange.location != NSNotFound) {
+            smallerRange.location = 0;
+            smallerRange.length = searchResultRange.location + 1;
+            NS_DURING
+            syncInfo = [syncInfo substringWithRange: smallerRange];
+            NS_HANDLER
+            return;
+            NS_ENDHANDLER
+            }
+        }
+        
+    // Search backward to the previous page number, if one exists
+    // Search forward to the next page number, if one exists
+    // Replace syncInfo by the information between these two numbers
+    pageNumber = pageNumber - 1;
+    thePageNumber = [NSNumber numberWithInt: pageNumber];
+    pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+    pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+    if (pageRangeStart.location != NSNotFound) {
+        smallerRange.location = pageRangeStart.location;
+        smallerRange.length = [syncInfo length] - pageRangeStart.location;
+        NS_DURING
+        syncInfo = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        }
+    pageNumber = pageNumber + 2;
+    thePageNumber = [NSNumber numberWithInt: pageNumber];
+    pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+    pageRangeEnd = [syncInfo rangeOfString: pageSearchString];
+    if (pageRangeEnd.location != NSNotFound) {
+        smallerRange.location = 0;
+        smallerRange.length = pageRangeEnd.location;
+        NS_DURING
+        syncInfo = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        }
+    
+    // Search backwards to any line starting with "p". Remove this first stuff
+    pageNumber = pageNumber - 1;
+    thePageNumber = [NSNumber numberWithInt: pageNumber];
+    pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+    pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+    
+    if (pageRangeStart.location == NSNotFound)
+        return;
+    searchString = [NSString stringWithString:@"p"];
+    searchRange.location = 0; searchRange.length = pageRangeStart.location;
+    
+    searchResultRange = [syncInfo rangeOfString: searchString options:NSBackwardsSearch range: searchRange];
+    if (!(searchResultRange.location == NSNotFound)) {
+        NS_DURING
+        [syncInfo getLineStart: &theStart end: &theEnd contentsEnd: nil forRange: searchResultRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        smallerRange.location = theEnd;
+        smallerRange.length = [syncInfo length] - theEnd;
+        NS_DURING
+        syncInfo = [syncInfo substringWithRange: smallerRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        }
+
+        
+    // Now syncInfo contains exactly the required information for the given page
+    // and nothing more. Also if includeFileName is not nil, it contains the name
+    // of the include file being examined
+    
+    // Search  for "p 15 683402 6834958" to find the first
+    // element whose y-coordinate is lower than the y-coordinate of the click
+    // Back up one element and use the first number to find the corresponding
+    // line number; select that line
+    
+    found = YES;
+    syncNumber = -1;
+    x = 0; y = 0;
+    remainingRange.location = 0;
+    remainingRange.length = [syncInfo length];
+    do {
+        oldSyncNumber = syncNumber;
+        oldx = x; oldy = y;
+        if (remainingRange.length < 0) 
+            {found = NO; break;}
+        searchResultRange = [syncInfo rangeOfString: @"p" options: NSLiteralSearch range: remainingRange];
+        if (searchResultRange.location == NSNotFound)
+            {found = NO; break;}
+        
+        NS_DURING
+        [syncInfo getLineStart: &theStart end: &theEnd contentsEnd: nil forRange: searchResultRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        remainingRange.location = theEnd + 1;
+        remainingRange.length = [syncInfo length] - remainingRange.location;
+        newRange.location = theStart;
+        newRange.length = theEnd - theStart;
+        NS_DURING
+        keyLine = [syncInfo substringWithRange: newRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+    
+        searchResultRange = [keyLine rangeOfCharacterFromSet: [NSCharacterSet decimalDigitCharacterSet]];
+        newRange.location = searchResultRange.location;
+        newRange.length = [keyLine length] - newRange.location;
+        NS_DURING
+        keyLine = [keyLine substringWithRange: newRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        syncNumber = [keyLine intValue]; // number of entry
+    
+        searchResultRange = [keyLine rangeOfString: @" "];
+        if (searchResultRange.location == NSNotFound)
+            return;
+        newRange.location = searchResultRange.location;
+        newRange.length = [keyLine length] - newRange.location;
+        NS_DURING
+        keyLine = [keyLine substringWithRange: newRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        searchResultRange = [keyLine rangeOfCharacterFromSet: [NSCharacterSet decimalDigitCharacterSet]];
+        newRange.location = searchResultRange.location;
+        newRange.length = [keyLine length] - newRange.location;
+        NS_DURING
+        keyLine = [keyLine substringWithRange: newRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        x = [keyLine intValue];
+    
+        searchResultRange = [keyLine rangeOfString: @" "];
+        if (searchResultRange.location == NSNotFound)
+            return;
+        newRange.location = searchResultRange.location;
+        newRange.length = [keyLine length] - newRange.location;
+        NS_DURING
+        keyLine = [keyLine substringWithRange: newRange];
+        NS_HANDLER
+        return;
+        NS_ENDHANDLER
+        y = [keyLine intValue];
+        }
+    while (found && (y > yValue));
+    
+    if ((oldSyncNumber < 0) && (syncNumber < 0))
+        return;
+        
+    if (oldSyncNumber < 0)
+        oldSyncNumber = syncNumber;
+        
+    aNumber = [NSNumber numberWithInt: oldSyncNumber];
+    pageSearchString = [[NSString stringWithString:@"l "] stringByAppendingString: [aNumber stringValue]];
+    pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+    if (pageRangeStart.location == NSNotFound) {
+        syncInfo = [NSString stringWithContentsOfFile:infoFile];
+        pageRangeStart = [syncInfo rangeOfString: pageSearchString];
+        }
+    NS_DURING
+    [syncInfo getLineStart: &theStart end: &theEnd contentsEnd: nil forRange: pageRangeStart];
+    NS_HANDLER
+    return;
+    NS_ENDHANDLER
+    newRange.location = theStart;
+    newRange.length = (theEnd - theStart);
+    thisRange = [syncInfo rangeOfString: @" " options: NSLiteralSearch range: newRange];
+    newRange.location = thisRange.location + 1;
+    newRange.length = theEnd - newRange.location;
+    thisRange = [syncInfo rangeOfString: @" " options: NSLiteralSearch range: newRange];
+    newRange.location = thisRange.location + 1;
+    newRange.length = theEnd - newRange.location;
+    NS_DURING
+    valueString = [syncInfo substringWithRange: newRange];
+    NS_HANDLER
+    return;
+    NS_ENDHANDLER
+    aNumber = [valueString intValue];
+    if (includeFileName == nil) {
+        [myDocument toLine:aNumber];
+        [[myDocument  textWindow] makeKeyAndOrderFront:self];
+        }
+    else {
+        newFileName = [[[myDocument fileName] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+        newFileName = [newFileName stringByAppendingString: includeFileName];
+        includeFileName = [[newFileName stringByStandardizingPath] stringByAppendingPathExtension: @"tex"];
+        newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:includeFileName display:YES];
+        [newDocument toLine:aNumber];
+        [[newDocument textWindow] makeKeyAndOrderFront:self];
+        }
+}
+
 
 #pragma mark =====mouse down=====
 
@@ -1620,6 +1964,15 @@ failed. If you change the code below, be sure to test carefully!
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+        // koch; Dec 5, 2003
+        if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+                currentMouseMode = mouseMode;
+                [[self window] invalidateCursorRectsForView: self];
+                [self doSync: theEvent];
+                return;
+                }
+                
+
 //	[[self window] makeFirstResponder: [self window]]; // mitsu 1.29b
         [[self window] makeFirstResponder: self];
 
@@ -1699,7 +2052,9 @@ failed. If you change the code below, be sure to test carefully!
 // change mouse mode when a modifier key is pressed
 - (void)flagsChanged:(NSEvent *)theEvent
 {
-	if ([theEvent modifierFlags] & NSControlKeyMask)
+        if (([theEvent modifierFlags] & NSCommandKeyMask) && (!([theEvent modifierFlags] & NSAlternateKeyMask)))
+                currentMouseMode = MOUSE_MODE_NULL; 
+	else if ([theEvent modifierFlags] & NSControlKeyMask)
 		currentMouseMode = MOUSE_MODE_SCROLL;
 	else if ([theEvent modifierFlags] & NSCommandKeyMask)
 		currentMouseMode = MOUSE_MODE_SELECT;
@@ -1725,6 +2080,7 @@ failed. If you change the code below, be sure to test carefully!
 			if (selRectTimer)
 				[self addCursorRect:selectedRect cursor:[NSCursor arrowCursor]];
 			break;
+                case MOUSE_MODE_NULL:
 		case MOUSE_MODE_MAG_GLASS: // want magnifying glass cursor?
 		case MOUSE_MODE_MAG_GLASS_L: 
 			[self addCursorRect:[self visibleRect] cursor:[NSCursor arrowCursor]];

@@ -15,20 +15,25 @@
 <TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Creaci&oacute;n de di&aacute;logos</B></FONT></TD>
 </TR>
 </TABLE>
-		<P><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript puede crear di&aacute;logos y servir para que el usuario introduzca datos. Por ejemplo, inserta el siguiente script y comprueba su comportamiento:</font></P>
-		<dl>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>--AppleScript</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>--Si introduces una cadena de texto, se mostrar&aacute; en un di&aacute;logo. </tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>-- Se ignorar&aacute; cualquier otro tipo de entrada.</tt></font>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>-- ejemplo: di&aacute;logo y texto que devuelve</tt></font>
-			<dd><br>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>display dialog "Di&aacute;logo de prueba: teclea algo abajo" default answer "&iexcl;Hola, mundo!" buttons {"A", "B", "C"} default button "B"</tt></font>
-			<dd><br>
-			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>return "La entrada ha sido:" &amp; return &amp; (the text returned of the result) &amp; return &amp; "y el bot&oacute;n pulsado ha sido " &amp; (the button returned of the result)</tt></font>
-		</dl>
-		<ul>
-			
-		</ul>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">AppleScript puede crear di&aacute;logos y servir para que el usuario introduzca datos. Por ejemplo, inserta el siguiente script y comprueba su comportamiento:
+<dl><tt>
+<dd>-- AppleScript
+<dd>-- Uso de un diálogo para que el usuario introduzca información en un applescript.
+<dd>-- Se puede hacer con contestaciones tipo 'texto' o "elección de botones".
+<dd>-- La información devuelta se puede usar para definir las correspondientes variables.
+<dd>-- El número de botones no puede exceder de tres.
+<dd>-- En los tres ejemplos que siguen mostramos cómo devolver texto, una elección de botones, o ambas.
+<p>
+<dd>display dialog "Di&aacute;logo de prueba: teclea algo abajo" default answer "&iexcl;Hola, mundo!" buttons {"A", "B", "C"} default button "B"
+<dd>set theText to (the text returned of the result)
+<p>
+<dd>display dialog "Di&aacute;logo de prueba: teclea algo abajo" default answer "&iexcl;Hola, mundo!" buttons {"A", "B", "C"} default button "B"
+<dd>set theButton to (the button returned of the result)
+<p>
+<dd>display dialog "Di&aacute;logo de prueba: teclea algo abajo" default answer "&iexcl;Hola, mundo!" buttons {"A", "B", "C"} default button "B"
+<dd>set {theText, theButton} to {the text returned of the result, the button returned of the result}
+</dl></tt>
+</font></P>
 	</BODY>
 
 </HTML>

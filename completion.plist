@@ -5,17 +5,17 @@
 	<key>Environments</key>
 	<array>
 		<string>\begin{itemize}
-  \item 
+  \item #SEL##INS#
   \item 
   \item 
 \end{itemize}</string>
 		<string>\begin{enumerate}
-  \item 
+  \item #SEL##INS#
   \item 
   \item 
 \end{enumerate}</string>
 		<string>\begin{description}
-  \item[ ]
+  \item[#SEL#] #INS#
   \item[ ]
   \item[ ]
 \end{description}</string>
@@ -23,10 +23,6 @@
       &amp; \text{ }, \\
       &amp; \text{otherwise}.
 \end{cases}</string>
-		<string>\begin{equation}
-\label{ }
-
-\end{equation}</string>
 		<string>\begin{figure}
 \begin{center}
 \includegraphics[width=2in]{file_path}
@@ -34,9 +30,12 @@
 \label{ }
 \end{center}
 \end{figure}</string>
+		<string>\begin{center}
+#SEL#
+\end{center}</string>
 		<string>\begin{align}
 \label{}
-    &amp;   \\
+   #SEL# &amp;   \\
     &amp;  
 \end{align}</string>
 		<string>\begin{tabbing}
@@ -45,15 +44,15 @@
     \&gt;   \&gt;  
 \end{tabbing}</string>
 		<string>\begin{table}
-  \centering
+  \centering #SEL#
   \caption{ }\label{ }
 \end{table}</string>
 		<string>\begin{tabular}{||}
 \hline
 % after \\ : \hline or \cline{col1-col2} \cline{col3-col4} ...
+  #SEL##INS# &amp;  &amp;  \\
    &amp;  &amp;  \\
    &amp;  &amp;  \\
-   &amp;  &amp;  \\ 
 \hline
 \end{tabular}</string>
 		<string>\begin{array}{ }
@@ -64,14 +63,20 @@
       &amp;    \\
       &amp;  
 \end{pmatrix}</string>
-		<string>\begin{center}
-\end{center}</string>
+		<string>\begin{equation}
+\label{ }
+#SEL#
+\end{equation}</string>
 		<string>\begin{displaymath}
-  \end{displaymath}</string>
+#SEL#
+\end{displaymath}</string>
 		<string>\begin{eqnarray}
 A &amp; = &amp; B \\
 C &amp; = &amp; D 
 \end{eqnarray}</string>
+		<string>\begin{#SEL#}
+#INS#
+\end{#SEL#}</string>
 	</array>
 	<key>Functions1</key>
 	<array>
@@ -229,7 +234,7 @@ C &amp; = &amp; D
 		<string>\bigoplus</string>
 		<string>\bigotimes</string>
 		<string>\bigodot</string>
-		<string>\mathbf{#SEL##INS#}</string>
+		<string>\mathbf{ #SEL##INS#}</string>
 		<string>\mathcal{#SEL##INS#}</string>
 		<string>\mathbb{#SEL##INS#}</string>
 		<string>\mathrm{#SEL##INS#}</string>
@@ -255,6 +260,7 @@ C &amp; = &amp; D
 		<string>\vec{#SEL##INS#}</string>
 		<string>\dot{#SEL##INS#}</string>
 		<string>\ddot{#SEL##INS#}</string>
+		<string>#SEL#^{\prime}</string>
 	</array>
 	<key>Symbols</key>
 	<array>

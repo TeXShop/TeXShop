@@ -1,6 +1,5 @@
 //
 //  Autrecontroller.m
-//  test3
 //
 //  Created by lenglin on Sun Aug 26 2001.
 //  Copyright (c) 2001 __NorignalSoft__. All rights reserved.
@@ -74,7 +73,7 @@ arraySymbols=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@
 notifcenter=[NSNotificationCenter defaultCenter];
 if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
 
-    for (i=0;i<15;i++)
+    for (i=0;i<16;i++)
     {
     [[environbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
@@ -84,12 +83,12 @@ if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
     [[functionsbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
     
-    for (i=0;i<14;i++)
+    for (i=0;i<15;i++)
     {
     [[typefacebuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
     
-    for (i=0;i<54;i++)
+    for (i=0;i<55;i++)
     {
     [[mathbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }

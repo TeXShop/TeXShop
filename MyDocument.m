@@ -22,6 +22,9 @@
 #define Mindent 3
 #define Munindent 4
 
+#define COLORTIME  .01
+#define COLORLENGTH 50
+
 /* Code by Anton Leuski */
 static NSArray*	kTaggedTeXSections = nil;
 static NSArray*	kTaggedTagSections = nil;
@@ -262,6 +265,7 @@ static NSArray*	kTaggedTagSections = nil;
     fileExtension = [[self fileName] pathExtension];
     if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"])
      && ( ! [fileExtension isEqualToString: @"dtx"]) && ( ! [fileExtension isEqualToString: @"ins"])
+     && ( ! [fileExtension isEqualToString: @"sty"]) && ( ! [fileExtension isEqualToString: @"cls"])
         && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
         && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
@@ -348,7 +352,7 @@ static NSArray*	kTaggedTagSections = nil;
              /*
             [self fixColor:0 :length];
             */
-            syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
+            syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
         }
 
         [aString release];
@@ -689,6 +693,7 @@ preference change is cancelled. "*/
 {
     NSString		*templateString, *nameString, *oldString;
     id			theItem;
+    id			myData;
     unsigned		from, to;
     NSRange		myRange;
     NSUndoManager	*myManager;
@@ -696,13 +701,31 @@ preference change is cancelled. "*/
     NSNumber		*theLocation, *theLength;
     
     theItem = [sender selectedItem];
-    
     if (theItem != nil) 
     {
         nameString = [TexTemplatePathKey stringByStandardizingPath];
         nameString = [nameString stringByAppendingPathComponent:[theItem title]];
         nameString = [nameString stringByAppendingPathExtension:@"tex"];
-        templateString = [NSString stringWithContentsOfFile:nameString];
+        
+        if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
+            templateString = [NSString stringWithContentsOfFile:nameString];
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSString alloc] initWithData:myData 
+                encoding: NSISOLatin1StringEncoding];
+            }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSString alloc] initWithData:myData 
+            encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];         	   }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSString alloc] initWithData:myData 
+            encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
+            }
+        else
+            templateString = [NSString stringWithContentsOfFile:nameString];
+
         if (templateString != nil) 
         {
             myRange = [textView selectedRange];
@@ -2268,7 +2291,8 @@ if (! externalEditor) {
     int		theChar, texChar;
     unsigned	end;
 
-    limit = colorLocation + 5000;
+//    limit = colorLocation + 5000;
+    limit = colorLocation + COLORLENGTH;
     if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
         texChar = 165;
     else
@@ -2356,7 +2380,7 @@ if (! externalEditor) {
         syntaxColoringTimer = nil;
         }
     colorLocation = 0;
-    syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixColor1:) 	userInfo:nil repeats:YES] retain];
+    syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) 	userInfo:nil repeats:YES] retain];
 }
 
 //=============================================================================

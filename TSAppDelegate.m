@@ -53,6 +53,7 @@
     [path appendString:[SUD stringForKey:GSBinPathKey]];
     [TSEnvironment setObject: path forKey: @"PATH"];
     
+    [self configureMenuKeyEquivalents];
     [self configureExternalEditor];
 	
     // documentsHaveLoaded = NO;
@@ -61,6 +62,83 @@
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
     return [SUD boolForKey:MakeEmptyDocumentKey];
+}
+
+- (void)configureMenuKeyEquivalents
+{
+    NSString		*shortcutsPath, *theChar;
+    NSDictionary	*shortcutsDictionary, *menuDictionary;
+    NSEnumerator	*mainMenuEnumerator, *menuItemsEnumerator, *subMenuItemsEnumerator;
+    NSMenu		*mainMenu, *theMenu, *subMenu;
+    NSMenuItem		*theMenuItem;
+    id			key, key1, key2, object;
+    unsigned int	mask;
+    int			value;
+    
+    shortcutsPath = [MenuShortcutsPathKey stringByStandardizingPath];
+    shortcutsPath = [shortcutsPath stringByAppendingPathComponent:@"KeyEquivalents"];
+    shortcutsPath = [shortcutsPath stringByAppendingPathExtension:@"plist"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: shortcutsPath]) 
+        shortcutsDictionary=[NSDictionary dictionaryWithContentsOfFile:shortcutsPath];
+    else
+    	return;
+    mainMenu = [NSApp mainMenu];
+    mainMenuEnumerator = [shortcutsDictionary keyEnumerator];
+    while ((key = [mainMenuEnumerator nextObject])) {
+        menuDictionary = [shortcutsDictionary objectForKey: key];
+        value = [key intValue];
+        if (value == 0)
+            theMenu = [[mainMenu itemWithTitle: key] submenu];
+        else
+            theMenu = [[mainMenu itemAtIndex: (value - 1)] submenu];
+        
+        if (theMenu && menuDictionary) {
+            menuItemsEnumerator = [menuDictionary keyEnumerator];
+            while ((key1 = [menuItemsEnumerator nextObject])) {
+                value = [key1 intValue];
+                if (value == 0)
+                    theMenuItem = [theMenu itemWithTitle: key1];
+                else
+                    theMenuItem = [theMenu itemAtIndex: (value - 1)];
+                object = [menuDictionary objectForKey: key1];
+                if (([object isKindOfClass: [NSDictionary class]]) && ([theMenuItem hasSubmenu])) {
+                    subMenu = [theMenuItem submenu];
+                    subMenuItemsEnumerator = [object keyEnumerator];
+                    while ((key2 = [subMenuItemsEnumerator nextObject])) {
+                        value = [key2 intValue];
+                        if (value == 0)
+                            theMenuItem = [subMenu itemWithTitle: key2];
+                        else
+                            theMenuItem = [subMenu itemAtIndex: (value - 1)];
+                        object = [object objectForKey: key2];
+                        if ([object isKindOfClass: [NSArray class]])
+                            {
+                            theChar = [object objectAtIndex: 0];
+                            mask = NSCommandKeyMask;
+                            if ([[object objectAtIndex: 1] boolValue])
+                                mask = (mask | NSAlternateKeyMask);
+                            if ([[object objectAtIndex: 2] boolValue])
+                                mask = (mask | NSControlKeyMask);
+                            [theMenuItem setKeyEquivalent: theChar];
+                            [theMenuItem setKeyEquivalentModifierMask: mask];
+                            }
+                        }
+                    }
+                else if ([object isKindOfClass: [NSArray class]]) 
+                    { 
+                    theChar = [object objectAtIndex: 0];
+                    mask = (NSCommandKeyMask | NSFunctionKeyMask);
+                    if ([[object objectAtIndex: 1] boolValue])
+                        mask = (mask | NSAlternateKeyMask);
+                    if ([[object objectAtIndex: 2] boolValue])
+                  	mask = (mask | NSControlKeyMask);
+                    [theMenuItem setKeyEquivalent: theChar];
+                    [theMenuItem setKeyEquivalentModifierMask: mask];
+                    }
+                }
+            }
+        }
+
 }
 
 - (void)configureExternalEditor
@@ -102,6 +180,7 @@
                                         @"mp",
                                         @"ins",
                                         @"dtx",
+                                        @"mf",
 					nil];
     i = [myController runModalOpenPanel: myPanel forTypes: myArray];
     fileArray = [myPanel filenames];
@@ -139,7 +218,7 @@
 {
     id		documentWindow;
     
-    if ([[anItem title] isEqualToString:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")]) {
+    if ([anItem action] == @selector(displayLatexPanel:)) {
         documentWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
         if (documentWindow == nil)
             return NO;
@@ -152,6 +231,13 @@
         return YES;
 }
 
+- (void)showConfiguration:(id)sender
+{
+    NSString	*configFilePath;
+    
+    configFilePath = [[NSBundle mainBundle] pathForResource:@"Configuration" ofType:@"rtf"];
+   [[NSWorkspace sharedWorkspace] openFile:configFilePath  withApplication:@"TextEdit"];
+}
 
 /* I interprete comments from Anton Leuski as saying that this is not
 necessary */

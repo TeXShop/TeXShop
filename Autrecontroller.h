@@ -17,6 +17,10 @@
     IBOutlet id mathbuttonmatrix;
     IBOutlet id symbolsbuttonmatrix;
     IBOutlet id typefacebuttonmatrix;
+    // added by Georg Klein
+    IBOutlet id custombuttonmatrix;
+    NSArray *arrayCustomized;
+    // end add
     NSArray *arrayFunctions1,*arrayFunctions2,*arrayEnvironments,*arrayTypeface,*arrayInternational,*arrayGreek,*arrayMath,*arraySymbols;
     NSNotificationCenter *notifcenter;
     BOOL shown; //YES if user has chosen to display panel

@@ -18,5 +18,7 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (BOOL)forPreview;
 - (void)configureExternalEditor;
+- (void)configureMenuKeyEquivalents;
+- (void)showConfiguration:(id)sender;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 @end

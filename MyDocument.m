@@ -112,6 +112,9 @@ static NSArray*	kTaggedTagSections = nil;
     [gotopageOutlet release];
     [magnificationOutlet release];
     
+/* others */
+    [autocompletionDictionary release];
+
     [super dealloc];
 }
 
@@ -212,6 +215,21 @@ static NSArray*	kTaggedTagSections = nil;
     
     [super windowControllerDidLoadNib:aController];
     
+    // Added by Greg Landweber to load the autocompletion dictionary
+    // This code is modified from the code to load the LaTeX panel
+    NSString	*autocompletionPath;
+    
+    autocompletionPath = [AutoCompletionPathKey stringByStandardizingPath];
+    autocompletionPath = [autocompletionPath stringByAppendingPathComponent:@"autocompletion"];
+    autocompletionPath = [autocompletionPath stringByAppendingPathExtension:@"plist"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]) 
+	autocompletionDictionary=[NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
+    else
+	autocompletionDictionary=[NSDictionary dictionaryWithContentsOfFile:
+	 [[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
+    [autocompletionDictionary retain];
+    // end of code added by Greg Landweber
+    
     /* New */
     contentSize = [scrollView contentSize];
     textView = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
@@ -292,6 +310,7 @@ static NSArray*	kTaggedTagSections = nil;
      && ( ! [fileExtension isEqualToString: @"dtx"]) && ( ! [fileExtension isEqualToString: @"ins"])
      && ( ! [fileExtension isEqualToString: @"sty"]) && ( ! [fileExtension isEqualToString: @"cls"])
         && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
+        && ( ! [fileExtension isEqualToString: @"mf"]) 
         && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
@@ -364,6 +383,7 @@ static NSArray*	kTaggedTagSections = nil;
     texTask = nil;
     bibTask = nil;
     indexTask = nil;
+    metaFontTask = nil;
     }
   else if (aString != nil) 
     {	
@@ -383,6 +403,7 @@ static NSArray*	kTaggedTagSections = nil;
         texTask = nil;
         bibTask = nil;
         indexTask = nil;
+        metaFontTask = nil;
     }
     
   if (! externalEditor) {
@@ -644,10 +665,22 @@ preference change is cancelled. "*/
         return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         return [[textView string] dataUsingEncoding: NSISOLatin1StringEncoding allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"])
+        return [[textView string] dataUsingEncoding: NSISOLatin2StringEncoding allowLossyConversion:YES];
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
         return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese) allowLossyConversion:YES];
+     // S. Zenitani Dec 13, 2002:
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP) allowLossyConversion:YES];
+    // --- end
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) 
         return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"]) 
+        return [[textView string] dataUsingEncoding: NSUTF8StringEncoding allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
+        return [[textView string] dataUsingEncoding: NSUnicodeStringEncoding allowLossyConversion:YES];
     else 
          return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
 }
@@ -664,13 +697,35 @@ preference change is cancelled. "*/
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: NSISOLatin1StringEncoding] retain];
         }
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: NSISOLatin2StringEncoding] retain];
+        }
      else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)] retain];
         }
+    // S. Zenitani Dec 13, 2002:
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese)] retain];
+        }
+     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP)] retain];
+        }
+    // --- end
     else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) {
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)] retain];
+        }
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: NSUTF8StringEncoding] retain];
+        }
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: NSUnicodeStringEncoding] retain];
         }
     else
         aString = [[NSString stringWithContentsOfFile:fileName] retain];
@@ -809,14 +864,39 @@ preference change is cancelled. "*/
             templateString = [[NSMutableString alloc] initWithData:myData
                                                    encoding: NSISOLatin1StringEncoding];
         }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: NSISOLatin2StringEncoding];
+        }
         else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
             myData = [NSData dataWithContentsOfFile:nameString];
             templateString = [[NSMutableString alloc] initWithData:myData
                                                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];         	   }
+         // S. Zenitani Dec 13, 2002:
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese)];         	   }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP)];         	   }
+        // --- end
         else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) {
             myData = [NSData dataWithContentsOfFile:nameString];
             templateString = [[NSMutableString alloc] initWithData:myData
                                                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: NSUTF8StringEncoding];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: NSUnicodeStringEncoding];
         }
         else
             templateString = [NSMutableString stringWithContentsOfFile:nameString];
@@ -903,6 +983,15 @@ preference change is cancelled. "*/
                 [indexTask release];
                 indexTask = nil;
             }
+            
+    if (metaFontTask != nil) {
+                [metaFontTask terminate];
+                myDate = [NSDate date];
+                while (([metaFontTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+                [metaFontTask release];
+                metaFontTask = nil;
+            }
+
     
     errorNumber = 0;
     whichError = 0;
@@ -919,15 +1008,19 @@ preference change is cancelled. "*/
 }
 
 
-/* The default save operations clear the "document edited symbol" but
-do not reset the undo stack, and then later the symbol gets out of sync.
-This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
+// The default save operations clear the "document edited symbol" but
+// do not reset the undo stack, and then later the symbol gets out of sync.
+// This seems like a bug; it is fixed by the code below. RMK: 6/22/01 
+
+// On December 30, 2002, Max Horn complained about this fix. I removed it,
+// and things seem to be fine. So for now I'll stick with eliminating the
+// fix!
 
 - (void) updateChangeCount: (NSDocumentChangeType)changeType;
 {
     [super updateChangeCount: changeType];
-    if (![self isDocumentEdited])
-        [[textView undoManager] removeAllActions];
+//    if (![self isDocumentEdited])
+//        [[textView undoManager] removeAllActions];
 }
 
 - (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args;
@@ -1072,6 +1165,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString		*sourcePath;
     NSString		*bibPath;
     NSString		*indexPath;
+    NSString		*metaFontPath;
     NSString		*myEngine;
     NSString		*enginePath;
     NSString		*tetexBinPath;
@@ -1359,6 +1453,28 @@ if (! externalEditor) {
             [indexTask setStandardInput: inputPipe];
             [indexTask launch];
         }
+        else if (whichEngine == 7) {
+            metaFontPath = [sourcePath stringByDeletingPathExtension];
+            /* Koch: ditto, spaces in path */
+            [args addObject: [metaFontPath lastPathComponent]];
+        
+            if (metaFontTask != nil) {
+                [metaFontTask terminate];
+                [metaFontTask release];
+                metaFontTask = nil;
+            }
+            metaFontTask = [[NSTask alloc] init];
+            [metaFontTask setCurrentDirectoryPath: [sourcePath  stringByDeletingLastPathComponent]];
+            [metaFontTask setEnvironment: TSEnvironment];
+            tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
+            enginePath = [tetexBinPath stringByAppendingString:@"mf"];
+            [metaFontTask setLaunchPath: enginePath];
+            [metaFontTask setArguments:args];
+            [metaFontTask setStandardOutput: outputPipe];
+            [metaFontTask setStandardError: outputPipe];
+            [metaFontTask setStandardInput: inputPipe];
+            [metaFontTask launch];
+        }
     }
 }
 
@@ -1393,6 +1509,11 @@ if (! externalEditor) {
     [self doJob:6 withError:NO];
 }
 
+- (void) doMetaFont: sender;
+{
+    [self doJob:7 withError:NO];
+}
+
 - (void) doTypesetEE: sender;
 {
     [self doTypeset: sender];
@@ -1415,6 +1536,8 @@ if (! externalEditor) {
         [self doBibtex: self];
     else if ([titleString isEqualToString: @"Index"])
         [self doIndex: self];
+    else if ([titleString isEqualToString: @"MetaFont"])
+        [self doMetaFont: self];
 }
 
 - (void) doTexCommand: sender;
@@ -1489,6 +1612,11 @@ if (! externalEditor) {
         case 5:
             [typesetButton setTitle: @"ConTeXt"];
             [typesetButtonEE setTitle: @"ConTeXt"];
+            break;
+            
+        case 6:
+            [typesetButton setTitle: @"MetaFont"];
+            [typesetButtonEE setTitle: @"MetaFont"];
             break;
             
         }
@@ -1630,10 +1758,11 @@ if (! externalEditor) {
                                     }
                                 break;
             
+            // Originally this was a space; Greg Landweber correctly suggested a tab!
             case Mindent: 	if (0 == 0) /* (end1 == start) || (theChar != 0x0025)) */ {
                                     tempRange.location = start;
                                     tempRange.length = 0;
-                                    [textView replaceCharactersInRange:tempRange withString:@" "];
+                                    [textView replaceCharactersInRange:tempRange withString:@"\t"];
                                     myRange.length++; oldRange.length++;
                                     changeEnd++;
                                     end++;
@@ -1641,7 +1770,7 @@ if (! externalEditor) {
                                 break;
 
             
-            case Munindent: 	if ((end1 != start) && (theChar == 0x0020)) {
+            case Munindent: 	if ((end1 != start) && (theChar == '\t')) {
                                     tempRange.location = start;
                                     tempRange.length = 1;
                                     [textView replaceCharactersInRange:tempRange withString:@""];
@@ -1670,20 +1799,15 @@ if (! externalEditor) {
     [myDictionary setObject: theType forKey: @"theType"];
     [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
     switch (type) {
-        case Mcomment: 	[myManager setActionName:@"Comment"]; break;
-        case Muncomment:[myManager setActionName:@"Uncomment"]; break;
-        case Mindent:	[myManager setActionName:@"Indent"]; break;
-        case Munindent:	[myManager setActionName:@"Unindent"]; break;
+        case Mcomment: 	[myManager setActionName:NSLocalizedString(@"Comment", @"Comment")]; break;
+        case Muncomment:[myManager setActionName:NSLocalizedString(@"Uncomment", @"Uncomment")]; break;
+        case Mindent:	[myManager setActionName:NSLocalizedString(@"Indent", @"Indent")]; break;
+        case Munindent:	[myManager setActionName:NSLocalizedString(@"Unindent", @"Unindent")]; break;
         }
 }
 
 - (void) doComment: sender;
 {
-    id		myArray;
-    float	myFloat;
-    NSNumber	*myNumber;
-    NSRulerView	*myRuler;
-    NSData	*myData;
     
     [self doModify:Mcomment];
     
@@ -1734,10 +1858,10 @@ if (! externalEditor) {
     [myDictionary setObject: theLength forKey: @"oldLength"];
     [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
     switch (type) {
-        case Mcomment: 	[myManager setActionName:@"Comment"]; break;
-        case Muncomment:[myManager setActionName:@"Uncomment"]; break;
-        case Mindent:	[myManager setActionName:@"Indent"]; break;
-        case Munindent:	[myManager setActionName:@"Unindent"]; break;
+        case Mcomment: [myManager setActionName:NSLocalizedString(@"Comment", @"Comment")]; break;
+        case Muncomment:[myManager setActionName:NSLocalizedString(@"Uncomment", @"Uncomment")]; break;
+        case Mindent:	[myManager setActionName:NSLocalizedString(@"Indent", @"Indent")]; break;
+        case Munindent:	[myManager setActionName:NSLocalizedString(@"Unindent", @"Unindent")]; break;
         }
     from = oldRange.location;
     to = from + [newString length];
@@ -1941,6 +2065,7 @@ if (! externalEditor) {
     return texRep;
 }
 
+/*
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem {
     BOOL  result;
     
@@ -1989,6 +2114,35 @@ if (! externalEditor) {
         }
     else return result;
 }
+*/
+
+// Revised code by Max Horn
+
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem {
+
+    if (!fileIsTex) {
+		if ([anItem action] == @selector(saveDocument:) || 
+			[anItem action] == @selector(printSource:))
+			return (myImageType == isOther);
+		if ([anItem action] == @selector(doTex:) ||
+			[anItem action] == @selector(doLatex:) ||
+			[anItem action] == @selector(doBibtex:) ||
+			[anItem action] == @selector(doIndex:) ||
+			[anItem action] == @selector(doMetapost:) ||
+			[anItem action] == @selector(doContext:))
+			return NO;
+		if ([anItem action] == @selector(printDocument:))
+			return ((myImageType == isPDF) ||
+					(myImageType == isJPG) ||
+					(myImageType == isTIFF));
+		if ([anItem action] == @selector(setProjectFile:))
+			return NO;
+	}
+	
+	return [super validateMenuItem: anItem];
+}
+
+
 
 - (void)textDidChange:(NSNotification *)aNotification;
 {
@@ -2002,6 +2156,15 @@ if (! externalEditor) {
     tagLine = NO;
    // [self updateChangeCount: NSChangeDone];
 }
+
+BOOL isText1(int c) {
+    if ((c >= 0x0041) && (c <= 0x005a))
+        return YES;
+    else if ((c >= 0x0061) && (c <= 0x007a))
+        return YES;
+    else
+        return NO;
+    }
 
 // fixColor2 is the old fixColor, now used only when opening documents
 - (void)fixColor2: (unsigned)from : (unsigned)to
@@ -2219,6 +2382,28 @@ if (! externalEditor) {
     
     if ([replacementString length] != 1) return YES;
     rightpar = [replacementString characterAtIndex:0];
+    
+    // Code added by Greg Landweber for auto-completions of '^', '_', etc.
+    // Should provide a preference setting for users to turn it off!
+    // First, avoid completing \^, \_, \"
+    if ([SUD boolForKey:AutoCompleteEnabledKey]) {
+        if ( rightpar >= 128 ||
+            [textView selectedRange].location == 0 ||
+            [textString characterAtIndex:[textView selectedRange].location - 1 ] != '\\' ) {
+        
+                NSString *completionString = [autocompletionDictionary objectForKey:replacementString];
+                if ( completionString ) {
+                    // should really send this as a notification, instead of calling it directly,
+                    // or should separate out the code that actually performs the completion
+                    // from the code that responds to the notification sent by the LaTeX panel.
+                    [self doCompletion:[NSNotification notificationWithName:@"" object:completionString]];
+                    return NO;
+                }
+            }
+        }
+   
+    // End of code added by Greg Landweber
+    
     if (rightpar == 0x000a)
         returnline = YES;
         
@@ -2422,21 +2607,12 @@ if (! externalEditor) {
     
 }
 
-BOOL isText1(int c) {
-    if ((c >= 0x0041) && (c <= 0x005a))
-        return YES;
-    else if ((c >= 0x0061) && (c <= 0x007a))
-        return YES;
-    else
-        return NO;
-    }
-
 // This is the main syntax coloring routine, used for everything except opening documents
 - (void)fixColor: (unsigned)from : (unsigned)to
 {
     NSRange			colorRange, cutRange, modifiedRange, selectedRange, newRange, lineRange, wordRange;
     NSString			*textString;
-    NSColor			*regularColor, *theColor, *previousColor;
+    NSColor			*regularColor, *previousColor;
     long			length, location, final;
     unsigned			start1, end1;
     int				theChar, texChar, previousChar, aChar, i;
@@ -2444,8 +2620,6 @@ BOOL isText1(int c) {
     unsigned			end;
     NSMutableAttributedString 	*myAttribString;
     NSDictionary		*myAttributes;
-    NSData			*fontData;
-    NSFont 			*font;
    
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
     
@@ -2681,7 +2855,7 @@ BOOL isText1(int c) {
 
     colorRange.location = start1;
     colorRange.length = end1 - start1;
-   // [textView setTextColor: regularColor range: colorRange];
+   // [textView setTextColor: regularColor range: colorRange]; 
    cutRange.location = colorRange.location;
    cutRange.length = colorRange.length;
    selectedRange = [textView selectedRange];
@@ -2720,7 +2894,7 @@ BOOL isText1(int c) {
                 colorRange.length = (end - location);
                 modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+               [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange]; 
                 //[textView setTextColor: commentColor range: colorRange];
                 colorRange.location = colorRange.location + colorRange.length - 1;
                 colorRange.length = 0;
@@ -2932,7 +3106,7 @@ BOOL isText1(int c) {
     
     [outputText setSelectable: YES];
 
-    if (([aNotification object] == bibTask) || ([aNotification object] == indexTask)) 
+    if (([aNotification object] == bibTask) || ([aNotification object] == indexTask) || ([aNotification object] == metaFontTask)) 
     {
         if (inputPipe == [[aNotification object] standardInput]) 
         {
@@ -2949,6 +3123,11 @@ BOOL isText1(int c) {
                 [indexTask terminate];
                 [indexTask release];
                 indexTask = nil;
+                }
+            else if ([aNotification object] == metaFontTask) {
+                [metaFontTask terminate];
+                [metaFontTask release];
+                metaFontTask = nil;
                 }
         }
     }
@@ -3047,12 +3226,32 @@ BOOL isText1(int c) {
         myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([myData length]) 
         {
-            if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
+            if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: NSISOLatin1StringEncoding]; 
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: NSISOLatin2StringEncoding];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];
+            // S. Zenitani Dec 13, 2002:
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"EUC_JP"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP)];
+            // --- end
             else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: NSUTF8StringEncoding];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: NSUnicodeStringEncoding];
             else
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: NSMacOSRomanStringEncoding];
@@ -3188,6 +3387,7 @@ aSelector
 - (BOOL) textView: (NSTextView *) aTextView doCommandBySelector: (SEL)
     aSelector
 {
+  
     if (aSelector == @selector (insertNewline:))
         {
         int n, indentTab, indentSpace = 0;
@@ -3391,7 +3591,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
         
     if (empty) {
         myRange.location = 0; myRange.length = 1;
-        [[textView textStorage] replaceCharactersInRange: myRange withString:@"\b"];
+        [[textView textStorage] replaceCharactersInRange: myRange withString:@""]; //was "\b"
         }
         
    [textView setFont:font];

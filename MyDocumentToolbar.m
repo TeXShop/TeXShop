@@ -29,6 +29,7 @@ static NSString*	kBibTeXTID 			= @"BibTeX";
 static NSString*	kMakeIndexTID 			= @"MakeIndex";
 static NSString*	kMetaPostTID 			= @"MetaPost";
 static NSString*	kConTeXTID 			= @"ConTeX";
+static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 			= @"Templates";
 
@@ -235,6 +236,11 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				imageName:@"ConTeXAction" target:self action:@selector(doContext:)];
 	}
+        
+    if ([itemIdent isEqual: kMetaFontID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				imageName:@"MetaFontAction" target:self action:@selector(doMetaFont:)];
+	}
 
     if ([itemIdent isEqual: kTagsTID]) {
 		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:tags];
@@ -405,6 +411,7 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 					kMakeIndexTID,
 					kMetaPostTID,
 					kConTeXTID,
+                                        kMetaFontID,
 					kTagsTID,
 					kTemplatesID,
 					NSToolbarPrintItemIdentifier, 
@@ -431,6 +438,7 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 					kMakeIndexTID,
 					kMetaPostTID,
 					kConTeXTID,
+                                        kMetaFontID,
  					kGotoPageTID,
 					kMagnificationTID,
 					NSToolbarPrintItemIdentifier, 

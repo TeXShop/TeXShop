@@ -17,10 +17,10 @@
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
         IBOutlet NSButton	*_spellCheckButton;		/*" connected to "SpellChecking "*/
+        IBOutlet NSButton	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
         IBOutlet NSButton	*_openEmptyButton;		/*" open empty document on start "*/
         IBOutlet NSButton	*_externalEditorButton;		/*" use external editor "*/
-        IBOutlet NSMatrix	*_defaultEncodeMatrix;		/*" text encoding "*/
-
+        IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
         IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
 
@@ -64,6 +64,7 @@
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
+- (IBAction)autoCompletePressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;

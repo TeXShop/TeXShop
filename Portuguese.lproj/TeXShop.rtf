@@ -1,8 +1,8 @@
-{\rtf1\mac\ansicpg10000\cocoartf100
+{\rtf1\mac\ansicpg10000\cocoartf102
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\margl1440\margr1440\vieww13720\viewh13940\viewkind0
+\vieww12560\viewh13900\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -22,12 +22,17 @@
 	Getting and Installing teTeX\
 	Getting and Installing TeXShop\
 	Typesetting Documents\
+	Checking Spelling\
 	Editing Tricks\
+	Latex Panel\
+	Toolbar and Applescript\
+	Using an External Editor\
 	Including Graphics\
 	Alternate Typesetting Mode\
 	Modifying the Templates Menu\
 	Setting a Project Root File\
 	Setting Preferences\
+	Unicode\
 	Printing\
 	BibTeX\
         	MakeIndex\
@@ -37,8 +42,11 @@
                Syntax Colors \
 	More About teTeX\
 	Coexisting with Fink\
-	Coexisting with )ther TeX Distributions:\
+	Coexisting with Other TeX Distributions:\
 	ConTeXt and MetaPost\
+	Plist Files\
+	Auto Completion\
+	Redefining Keyboard Menu Shortcuts\
 	Sending Bug Reports\
 	License\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -74,19 +82,23 @@ TeXShop does not include TeX. Instead it uses the standard TeX distribution
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version is on the ftp site:\
+\f2\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version also includes updated programs from the TeX User's Group's distribution TeXLive. To obtain these files and programs, go to Wierda's site\
 \
-	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/teTeX.dmg (50MB)\
+	http://www.rna.nl/tex.html\
 \
-and a copy (which should be up to date) lives on\
+and obtain i-Installer, the TeX installer. You'll find it in the downloadable package II2.dmg. Run the installer and install the following packages:\
 \
-	http://www.uoregon.edu/~koch/texshop/texshop.html\
+	TeX Foundation\
+	TeX Programs\
+	Ghostscript 7\
+	Freetype 2\
+	wmf and iconv conversion support\
+	ImageMagick\
+	CM Super for TeX\
 \
-in a file named "teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
- \
-The complete source for teTeX is available on Wierda's web site. The site also contains instructions for configuring and making the code for Mac OS X: \
-\
-	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/\
+The first two packages are essential for TeX. The third package is necessary to use the TeX + Ghostscript option of TeXShop described below. The fourth, fifth, and sixth packages are used to convert graphic formats into formats which TeX understands. The final package contains an optional set of additional fonts. \
+	 \
+More detailed installation instructions can be found on Wierda's site, and on the TeXShop web site listed below.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -122,13 +134,11 @@ TeXShop remembers the source lines of the first twenty errors. To cycle through 
 \
 When you fix errors and typeset again, the viewer will remember the page you were previously viewing.\
 \
-If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \\section\
-or \\chapter are automatically added to the Tag menu. However, this behavior can be changed by\
-typing the following command in Apple's Terminal program:\
+If a line in the source begins with the characters "%:", TeXShop interprets the remaining word or words on the line as a "tag" and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \\section, \\subsection, \\subsubsection, or \\chapter are automatically added to the Tag menu. However, this behavior can be changed by typing the following command in Apple's Terminal program:\
 	\
 	defaults write texshop TagSections NO\
 \
-TeXShop can show handle multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.\
+TeXShop can show multiple documents. If you choose "New" or "Open,"  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.\
 \
 You can start TeXShop by double clicking on a document with extension ".tex". The program will open that input document and (if it exists) the associated pdf document.\
 \
@@ -143,12 +153,34 @@ You can close the pdf window at any time. It will reappear when the document is 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f0\b \cf0 Editing Tricks:\
+\f0\b \cf0 Checking Spelling:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs, new lines will start at the same tab position until the behavior is cancelled by backspacing. This tab behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
+\f2\b0 \cf0 Cocoa programs automatically inherit spell checking technology by Apple, but the Apple spell checker does not understand LaTeX. However, other spelling services can be added to the Apple technology; they then become available in all Cocoa programs. \
 \
+TeXShop supports continuous spell checking, which can be toggled on or off with a menu command. A preference item selects the initial position of this toggle.\
+\
+Aspell is "a more intelligent Ispell" for Unix machines written by Kevin Adkinson. His program has been ported to Mac OS X and made into a spelling service by Anton Leuski. The new speller supports LaTeX. To obtain it, go to\
+\
+	http://www-ciir.cs.umass.edu/~leouski/cocoaspell/\
+\
+An alternate LaTeX spell checker named Excalibur is often used on Mac OS 9. This spell checker, written by Rick Zaccone, has been ported to Mac OS X; it can open TeXShop files. To obtain it, go to\
+\
+	http://www.eg.bucknell.edu/~excalibr/excalibur.html
+\f0\b \
+\
+Editing Tricks:\
+\
+
+\f2\b0 Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can also be indented with a menu command, and later moved back. If a line starts with a series of tabs or spaces, new lines will start at the same position until the behavior is cancelled by backspacing. This behavior was added to TeXShop by Nicol\'87s Ojeda B\'8ar in Argentina, who can be reached at lojedaortiz@interlink.com.ar. Thanks!\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Latex Panel:\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 \
 Under the Windows menu, there is an item named "Latex Panel..." Choosing this item will open a panel containing a large number of mathematical symbols, Greek letters, international characters, and typesetting environments. Clicking on a symbol will insert the corresponding text into your LaTeX source file. This wonderful panel is the work of Geoffroy Lenglin, who just finished a masters degree in Aeronautics and Astronautics at MIT.  Geoffroy can be reached at geoffroy.lenglin@m4x.org.\
 \
 Some symbols in the panel require the line\
@@ -158,6 +190,32 @@ Some symbols in the panel require the line\
 \
 
 \f2\fs24 at the top of the source file. \
+\
+It is possible to customize the behavior of the panel. The TeXShop distribution folder contains a file named "completion.plist." This file contains all strings inserted into the source code when a Palette item is chosen. If such a string contains #SEL#, then the current selection will replace this expression in the inserted string. If a string contains #INS#, then the cursor will be set to this position when the string is inserted. To customize panel behavior, edit completion.plist. Then find the folder ~/Library/TeXShop. Add a new folder named ~/Library/TeXShop/LatexPanel and place the edited completion.plist in this folder. \
+\
+Editing plist files is slightly tricky; see the item about them at the end of this help file.\
+\
+Users can add up to sixteen additional items to the Latex Panel by editing completion.plist. These are displayed on the "Custom" subpanel of the Latex Panel. See comments in completion.plist for details about adding such items.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Toolbar and AppleScript:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 The selection and location of tools at the top of the TeX Source and PDF Preview windows can be modified using the menu item "Customize Toolbar." This toolbar support is entirely the work of Anton Leuski. Thanks!\
+\
+TeXShop supports Applescript. This is also the work of Anton Leuski. Applescript support will improve in the future.
+\f0\b \
+\
+Using an External Editor:\
+\
+
+\f2\b0 TeXShop can be configured for an external editor. There is a new menu item named "Open for Preview..." When this item is chosen, you will be asked to select a tex source file. But only the associated pdf preview window opens (if the source has not yet been typeset, this preview window will be blank). Thanks to Leuski's toolbars, the preview window can be configured to contain a typesetting button. You can open you source file in any editor. When it is time to typeset, save the changes in your editor, switch to the preview window, and typeset. In this mode, TeXShop will never open or modify the source file. It will simply pass this file to the Unix TeX or LaTeX process.\
+\
+For users who prefer external editors most of the time, there is a preference item called "Configure for External Editor." When this preference is chosen, the "Open" and "Open Recent..." menus open tex source files in the above manner for editing with an external editor. Moreover, the  "Open for Preview..." menu becomes "Open for Editing..." and opens the source file in TeXShop's internal editor for those rare occasions when the internal editor is desired. The "Open" and "Open Recent..." menus can also open jpg, tiff, ps, pdf, dvi, log, and other files; selecting the new preference does not change this behavior.\
+\
+Applescript support for the "external editor option" is still weak; it will improve in a future version, making it possible to typeset entirely from within an applescript-capable editor.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -169,15 +227,15 @@ Some symbols in the panel require the line\
 \f1\i pdftex
 \f2\i0  and 
 \f1\i pdflatex
-\f2\i0  can use graphic files produced in pdf, jpg, or tif format. One pecularity is that tiff files must have extension ".tif" rather than ".tiff".  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics programs will output pdf.\
+\f2\i0  can use graphic files produced in pdf, jpg, png, or mps format. If you are using the default latex template and installed the graphic conversion packages from Gerben Wierda's distribution, you can also use graphic files produced in eps or tif format; they will automatically be converted to pdf or png formats during typesetting. One pecularity is that tiff files must have extension ".tif" rather than ".tiff".  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics programs will output pdf.\
 \
 If you used TeX in the past, your illustrations may be in 
 \f1\i eps
-\f2\i0  format. 
+\f2\i0  format. These files must be converted to pdf format before being typeset with 
 \f1\i pdftex
 \f2\i0  and 
 \f1\i pdflatex
-\f2\i0  cannot use such files directly, but the illustrations can be converted to pdf format. To convert an eps illustration, open it in TeXShop. The illustration will appear in a graphic window and TeXShop will simultaneously write the corresponding pdf file to disk. Ghostscript also contains a command line program to convert; indeed TeXShop calls this program. To convert myfile.eps to myfile.pdf within Terminal, type\
+\f2\i0 . As explained above, this will happen automatically if you use the default latex template. You can also convert an eps illustration by opening it in TeXShop. The illustration will appear in a graphic window and TeXShop will simultaneously write the corresponding pdf file to disk. Ghostscript also contains a command line program to convert; indeed TeXShop calls this program. To convert myfile.eps to myfile.pdf within Terminal, type\
 \
      epstopdf myfile.eps   \
 \
@@ -186,7 +244,7 @@ The authors of
 \f2\i0  and the authors of the graphics package 
 \f1\i graphicx
 \f2\i0  have made it easy to include graphic files in a LaTeX document typeset with 
-\f1\i pedlatex
+\f1\i pdflatex
 \f2\i0 , even if the document will later be typeset by standard 
 \f1\i latex
 \f2\i0  and converted to a dvi file for distribution to other people. At the top of such a LaTeX input file, include the line:\
@@ -209,6 +267,24 @@ This command will cause
 \f2\i0 , but input the file "f1.eps" when the text is typeset with 
 \f1\i latex.\
 \
+
+\f2\i0 If you upgraded from a previous version of TeXShop and want to use automatic conversion of eps and tif files during typesetting, make certain that\
+\
+	a) You have installed Ghostscript 7,  Freetype 2,  wmf and iconv conversion support, and\
+	ImageMagick with Gerben Wierda's installer\
+\
+	b) The pdflatex program preference is "pdflatex --shell-escape"\
+\
+	c) The Latex header contains the following lines\
+\
+	
+\f3\fs20 \\usepackage\{graphicx\}\
+	\\usepackage\{epstopdf\}\
+	\\DeclareGraphicsRule\{.tif\}\{png\}\{.png\}\{`convert #1 `basename #1 .tif`.png\}
+\f2\fs24 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f1\i \cf0 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\i0\b \cf0 Alternate Typesetting Mode:
@@ -346,7 +422,25 @@ Setting Preferences:\
 \f1\i pdfelatex
 \f2\i0 . Obviously the substituted command must produce a pdf output file. If the new programs are in the teTeX binary directory, it is enough to name them in the preference dialog; the dialog will also accept fully qualified path names for files which live elsewhere.\
 \
-TeXShop editing is done with Apple's Cocoa editing class, which uses Unicode for internal work. When TeXShop files are written to disk, they are converted to 8-bit ascii because TeX expects to receive such a file. There are two ways to do the conversion, called Mac OS Roman and Iso Latin, and a preference item selects the method used. For many users, the choice will make no difference. Some TeX packages allow users to type accented European characters directly on the keyboard; these packages require the Iso Latin conversion. Thanks to Martin Heusse for providing code for this preference. Previous versions of TeXShop always used Mac OS Roman conversion.\
+TeXShop editing is done with Apple's Cocoa editing class, which uses Unicode for internal work. When TeXShop files are written to disk, they are usually converted to 8-bit ascii because TeX expects to receive such a file. There are three ways to do the conversion, called Mac OS Roman, Iso Latin 1, and Iso Latin 2. A preference item selects the method used. For many users, the choice will make no difference. Some TeX packages allow users to type accented European characters directly on the keyboard; these packages require the Iso Latin conversion. Thanks to Martin Heusse for providing code for this preference. Earlier versions of TeXShop always used Mac OS Roman conversion.\
+\
+Users in Japan and Korea with use other conversion preferences, also provided.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Unicode:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Unicode is a format which can simultaneously encode characters from languages across the world: Arabic, Chinese, Greek, Hebrew, Japanese, Roman, Russian, and a host of others. Cocoa can produce Unicode, so TeXShop can as well. To experiment, open the International preference in the System Preferences program, choose the Input Menu tab, and add additional selections to the items already selected. It is illuminating to select Greek (because it is familiar), Hebrew (because it is written from right to left), Arabic (because it is written from right to left and makes extensive use of ligatures, so characters have different shapes at the ends of words than in the middle) and Chinese. A new menu item will appear with a flag indicating the current input language.\
+\
+Type some characters, switch to another language, and type some more.\
+\
+There are several formats for Unicode files. A preference item allows users to select two of them. Standard OSX Unicode is the usual code used by Mac OSX, but I do not know if this is useful in the TeX world. UTF-8 Unicode is a popular format because ordinary ascii characters appear as they usually do. If a file is saved in UTF-8 format, TeX can process it, but it will convert Unicode characters to question marks. \
+\
+There is a TeX package which accepts UTF-8 Unicode input files; see\
+\
+	http://www.ctan.org/tex-archive/macros/latex/contrib/supported/unicode/\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -416,9 +510,7 @@ When this source is typeset, a reference to Felici's article will appear in the 
 \
 TeXShop can be used with this example in the following way. First edit and typeset the document "myfile.tex" as usual. Citations will appear in the output as "[?]" and the bibliography will be missing. Then select "BibTeX" under the Program button and run BibTeX. Next select "LaTeX" and typeset again. Citations will still appear as "[?]", but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.\
 \
-The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop opens a file whose name does not end with the extension ".tex" or ".TEX", it dims the typesetting buttons. When the file is later saved using "Save" or "Save As ...", the file will be saved with exactly the selected name, without adding a  ".tex" extension to the name. So items can be added to the bibliography database at the same time that a new article is being written.\
-\
-(However, if you use TeXShop to create the file "mybibliography.bib" in the first place, it will have a ".tex"  extension when saved. This is a bug we hope to fix eventually. Remove the ".tex" in the Finder and open the file again to continue editing.)\
+The file "mybibliography.bib" can be opened and edited by TeXShop. If you use TeXShop to create the file "mybibliography.bib" in the first place, use the pulldown tag labeled "file format" to save the file as a bib file rather than as a tex file.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -455,11 +547,9 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
 \
 TeXShop can also open ".dvi" and ".ps" files. In these cases, it converts the file to pdf and displays this pdf file.\
 \
-It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it always saves files in 8-bit Ascii format because that is the format which 
-\f1\i tex
-\f2\i0  and 
-\f1\i latex
-\f2\i0  understand. Consequently, information may be lost if TeXShop is used to edit files which really aren't related to TeX.  
+TeXShop can open ".ins", ".dts", ".sty", ".cls", "mf", and "mp" files for processing. It can open any text file.\
+\
+It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it saves files in the format chosen in Preferences. Consequently, information may be lost if TeXShop is used to edit files which really aren't related to TeX.  
 \f0\b \
 
 \f2\b0 \
@@ -469,7 +559,7 @@ It is not a good idea to use TeXShop as a general editor. TeXShop can read files
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, you may prefer to typeset using "TeX and Ghostscript" mode.\
+\f2\b0 \cf0 Mathematica can save images in eps format. These files can be used by either typesetting option; as explained above, they are automatically converted to pdf if typeset with pdflatex.\
 \
 The eps files produced by Mathematica use the Macintosh line feed conventions. Earlier versions of TeXShop and teTeX required that these files be converted to use Unix line feeds before converting them to pdf format, but that is no longer necessary.\
 \
@@ -479,7 +569,11 @@ The eps files produced by Mathematica use the Macintosh line feed conventions. E
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, and Martin Kerz, an Italian localization by Giuseppe Carlino, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks! \
+\f2\b0 \cf0 TeXShop contains a Dutch localization Maarten Sneep, a  French localization by Jerome Laurens, a German localization by Keith J. Schultz, Sascha Beverungen, Martin Kerz, and Max Horn, an Italian localization by Giuseppe Carlino, a Japanese localization by Seiji Zenitani, a Spanish localization by Juan L. Varona, and a Portuguese localization by Paulo T. Abreu. Thanks!\
+\
+In Japan, modified versions of TeX and LaTeX called ptex and platex are sometimes used. TeXShop has been modified by Makoto Inoue and Seiji Zenitani to deal with these versions. See files in the TeXShop distribution folder on my web site for further details.\
+\
+See http://home.att.ne.jp/alpha/z123/texshop-j.html for further details. Ptex and platex are available at http://www.ascii.co.jp/pb/ptex/. Dvipdfm is available at http://hamilcar.phys.kyushu-u.ac.jp/~hirata/dvipdfm/index.html.ja. A dvi previewer for Japanese is available at http://macptex.appi.keio.ac.jp/~uchiyama/macptex.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -534,11 +628,9 @@ and store "new.sty" inside this misc directory.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mac OS X can also run X-windows applications using free third party software. Fink is a system which can download, compile, and run these applications on Mac OS X, side by side with regular OS X programs. For details, see http://fink.sourceforge.net. In particular, Fink can install ghostview, xdvi, and xemacs.\
+\f2\b0 \cf0 Mac OS X can also run X-windows applications using free third party software. These applications run side by side with regular Mac OS X programs. Fink is a system which can download and compile these applications on Mac OS X. For details, see http://fink.sourceforge.net. In particular, Fink can install ghostview, xdvi, and xemacs.\
 \
-Fink installs software in /sw/bin. One of the packages Fink can install is teTeX. In the past this caused problems because users had duplicate copies of teTeX, configured one of the copies, and then found that the configuration did not affect the other copy. The latest version of Fink gives the option of using Gerben Wierda's teTeX with symbolic links in /sw/bin rather than installing a second copy. Be sure to choose that option.\
-\
-Fink also installs version 7 of Ghostscript rather than the earlier version in Gerben Wierda's distribution. Unfortunately, version 7 creates pdf files which Mac OS X does not render correctly. In the past this caused problems when TeXShop was used in latex + ghostscript mode. The current TeXShop is immune to these problems and will use Wierda's Ghostscript even if the Fink version has been installed.\
+Fink installs software in /sw/bin. One of the packages Fink can install is teTeX. In the past this caused problems because users had duplicate copies of teTeX, configured one of the copies, and then found that the configuration did not affect the other copy. The latest version of Fink gives the option of using Gerben Wierda's teTeX with symbolic links in /sw/bin rather than installing a second copy. We recommend that you choose that option.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -558,10 +650,113 @@ Fink also installs version 7 of Ghostscript rather than the earlier version in G
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to LaTeX. See www.ntg.nl/context/ for details. A useful introduction can be found at http://berend.gameren.nl/tex/ in the document "LaTeX in proper ConTeXt." TeXShop now supports ConTeXt. \
+\f2\b0 \cf0 ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to LaTeX. See http://www.pragma-ade.com/ for details. \
 \
 MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See http://cm.bell-labs.com/who/hobby/MetaPost.html for more details.  Interesting metapost examples can be found at many web sites; for instance see  http://www.cs.ucc.ie/~dongen/mpost/mpost.html. TeXShop now supports MetaPost.\
 \
+Here is a sample MetaPost file:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\fs20 \cf0 	prologues:=2;\
+	color yellow; yellow = green + red;\
+	def star (expr size, n, pos, color)=\
+		for a=0 step 360/n until 360:\
+			draw (origin -- (size/2,0))\
+			rotatedaround (origin, a)\
+			shifted pos withcolor color;\
+		endfor ;\
+	enddef;\
+\
+	beginfig(-1);\
+	pickup pencircle scaled 2mm; star (2cm,5,origin,red);\
+	endfig;\
+\
+	beginfig(2);\
+	pickup pencircle scaled 2mm; star (2cm,7,origin,yellow);\
+	endfig;\
+\
+	beginfig(3);\
+	pickup pencircle scaled 2mm; star (2cm,11,origin,green);\
+	endfig;\
+\
+	beginfig(4);\
+	pickup pencircle scaled 2mm; star (2cm,13,origin,blue);\
+	endfig;\
+\
+	end\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\fs24 \cf0 Suppose this file is named "metademo.tex." When the file is processed by MetaPost, it will generate four different postscript files, named metademo.ps, metademo.2, metademo.3, metademo.4. These names are determined by the number parameter of "beginfig()." If this number is positive, like beginfig(10), the resulting file will be named metademo.10. If this number is negative, like beginfig(-10), the resulting file will be named metademo.ps, overwriting any earlier metademo.ps file created by the source.\
+\
+TeXShop assumes that one of the beginfig() numbers is negative, and thus that a file named metademo.ps will be generated by MetaPost. TeXShop then calls epstopdf to convert this postscript file to a pdf file, and displays the resulting pdf file. If no beginfig parameter is negative, MetaPost will run to completion without error, but TeXShop will display an error when it tries to convert metademo.ps to a pdf file.\
+\
+When you are editing a MetaPost file, change the number of the figure being edited from positive to negative. TeXShop will then display this figure as it is being debugged. When you are satisfied with this figure, change its number back to positive and change the number of another figure from positive to negative.\
+\
+TeXShop can convert postscript files like metademo.2 to pdf, but first these files must be renamed metademo.2.ps so TeXShop will recognize that they are postscript files. \
+\
+Once MetaPost files have been created, then can be displayed like any other illustration. Pdflatex can be used if the illustrations are converted to pdf form, or TeX and Ghostscript can be used to include the postscript illustrations without conversion. For example, the four illustrations created by the above MetaPost file can be displayed by typesetting the following file with TeX and Ghostscript:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f3\fs20 \cf0 	\\documentclass[11pt] \{article\}\
+	\\usepackage\{graphicx\}\
+\
+	\\begin\{document\}\
+\
+	Here are some illustrations.\
+	\\vspace\{.2in\}\
+\
+	\\includegraphics[width=1cm]\{metademo.1\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.2\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.3\}\
+	\\hfill\
+	\\includegraphics[width=1cm]\{metademo.4\}\
+	\\hfill\
+\
+	\\end\{document\}\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b\fs24 \cf0 Plist Files:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Mac OS X makes extensive use of xml files; xml is a structured language closely related to html. \
+\
+TeXShop uses three xml files for configuration: completion.plist, autocompletion.plist, and KeyEquivalents.plist. Copies of these files are in the TeXShop distribution folder. If you do not have this folder, you can retrieve a copy of the files from TeXShop itself. Hold down the command key and click on the TeXShop icon. A menu will appear; choose "Show Package Contents." A folder will appear. Search through various subfolders until you find the files. Copy them to the desktop by dragging them while holding down the option key. Be sure to leave the originals behind in the TeXShop folder!\
+\
+These files are used to configure the Latex Panel, Auto Completion, and the Keyboard Menu Shortcuts. Details are given elsewhere in this document. \
+\
+Files of type plist are ordinary text files, so they can be opened and edited with TeXShop, TextEdit, or other text editors. Editing the file is straightforward, but somewhat tedious.\
+\
+If you installed the Developer distribution of Mac OS X and you double click a .plist file, it will open in a program named Property List Editor. This program is useful for editing plist files, but it is buggy and does not display all file information. In particular, comments are missing. It is better to use TeXShop.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Auto Completion:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Greg Landweber has added auto completion to the TeXShop editor. Typing a double quote will produce a pair of double quotes with the cursor positioned between them. Typing the ^ symbol will produce ^\{  \}  with the cursor positioned between the brackets. Etc. Thirty-nine such completions are currently available.\
+\
+Auto completion can be turned off or on with a preference item. The default preference is off. To try auto completion, turn it on.\
+\
+Auto completion is user configurable. The TeXShop distribution folder contains a file called "autocompletion.plist". To configure autocompletion, find the folder ~/Library/TeXShop and add a new folder named ~/Library/TeXShop/Keyboard. Place a copy of autocompletion.plist in this folder. Then edit the file to redefine Landweber's choices and add your own. You can examine the autocompletion.plist file to find a complete list of the default completions. \
+\
+See the earlier section on plist files for details.
+\f0\b \
+\
+Redefining Keyboard Menu Shortcuts:\
+\
+
+\f2\b0 It is possible to redefine all keyboard menu shortcuts used by TeXShop. The TeXShop distribution folder contains a file called "KeyEquivalents.plist". Find the folder ~/Library/TeXShop and add a new folder named ~/Library/TeXShop/Menus. Place a copy of KeyEquivalents.plist in this folder. Then edit the file to redefine selected menu shortcuts. See the documentation at the top of the file for details. The original KeyEquivalents.plist file is a sample which illustrates the format of the file, but it produces awful keyboard alternates. So you will not want to use it without editing!
+\f3\fs20 \
+
+\f2\fs24 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 Sending Bug Reports:\
@@ -581,6 +776,8 @@ MetaPost is a MetaFont like system by John Hobby which can output postscript and
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
 	\
+But reports for teTeX/TeXLive should go to\
+\
 	Gerben Wierda\
 	Gerben_Wierda@rna.nl\
 \

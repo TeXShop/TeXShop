@@ -241,10 +241,27 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         case 1: value = [NSString stringWithString:@"IsoLatin"];
                 break;
                 
-        case 2: value = [NSString stringWithString:@"MacJapanese"];
+        case 2: value = [NSString stringWithString:@"IsoLatin2"];
                 break;
                 
-        case 3: value = [NSString stringWithString:@"MacKorean"];
+        case 3: value = [NSString stringWithString:@"MacJapanese"];
+                break;
+                
+        // S. Zenitani Dec 13, 2002:
+        case 4: value = [NSString stringWithString:@"DOSJapanese"];
+                break;
+                
+        case 5: value = [NSString stringWithString:@"EUC_JP"];
+                break;
+                
+        case 6: value = [NSString stringWithString:@"MacKorean"];
+                break;
+        // --- end 
+        
+        case 7: value = [NSString stringWithString:@"UTF-8 Unicode"];
+                break;
+                
+        case 8: value = [NSString stringWithString:@"Standard Unicode"];
                 break;
                 
         default: value = [NSString stringWithString:@"MacOSRoman"];
@@ -315,6 +332,18 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SpellCheckEnabledKey] forKey:SpellCheckEnabledKey];
 
     [SUD setBool:[sender state] forKey:SpellCheckEnabledKey];
+}
+
+/*" This method is connected to the 'auto complete' checkbox.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)autoCompletePressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoCompleteEnabledKey] forKey:AutoCompleteEnabledKey];
+
+    [SUD setBool:[sender state] forKey:AutoCompleteEnabledKey];
 }
 
 
@@ -874,16 +903,29 @@ This method retrieves the application preferences from the defaults object and s
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
     [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
+    [_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
     [_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
     if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         myTag = 0;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         myTag = 1;
-    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin2"])
         myTag = 2;
-    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
         myTag = 3;
+     // S. Zenitani Dec 13, 2002:
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"DOSJapanese"])
+        myTag = 4;
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"EUC_JP"])
+        myTag = 5;
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+        myTag = 6;
+    // --- end
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"UTF-8 Unicode"])
+        myTag = 7;
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"Standard Unicode"])
+        myTag = 8;
     else
         myTag = 0;
     [_defaultEncodeMatrix selectItemAtIndex: myTag];

@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
 <plist version="0.9">
+
+<!--  
+	Advanced users can change the behavior of the Latex Panel with this file.
+
+	The first portion of this file configures the standard buttons on the
+	panel. The button names for this part of the panel should not be changed, but the
+	text that is inserted when they are pressed can be changed.
+
+	The file contains keys labeled
+
+		Environments
+		Functions1
+		Greek
+		International
+		Math
+		Symbols
+		Typeface
+
+	corresponding to various tabs in the Latex Panel. Each key is followed by an array 
+	of strings which contain the text to be inserted by the appropriate button. In this
+	text, the symbol #SEL# means that the text should replace the current selection
+	rather than being added to it, and the symbol #INS# means that the cursor should
+	be placed at that spot after the insertion.
+
+	The final key is labeled
+
+		Customized
+
+	This is for user additions in the Custom tab of the panel. Up to sixteen
+	additions are allowed. This file contains twelve additions. Each addition
+	is determined by two strings. The first is the name of the button, and the
+	second is the text to be inserted when the button is pressed. For example, the
+	entry
+
+		<string>Section</string>
+		<string>\section{#SEL##INS#}</string>
+
+	yields a button named "Section." When this button is pressed, the text
+
+		\section{ }
+
+	will be inserted in the source, and the cursor will be placed inside the
+	brackets. 
+	 
+--> 
+
 <dict>
 	<key>Environments</key>
 	<array>
@@ -337,5 +383,32 @@ C &amp; = &amp; D
 		<string>\texttt{#SEL##INS#}</string>
 		<string>\verb"#SEL##INS#"</string>
 	</array>
+        <key>Customized</key>
+	<array>
+			<string>Section</string>
+			<string>\section{#SEL##INS#}</string>
+			<string>Subsection</string>
+			<string>\subsection{#SEL##INS#}</string>
+			<string>Subsubscn.</string>
+			<string>\subsubsection{#SEL##INS#}</string>
+			<string>Section*</string>
+			<string>\section*{#SEL##INS#}</string>
+			<string>Subsection*</string>
+			<string>\subsection*{#SEL##INS#}</string>
+			<string>Subsubscn.*</string>
+			<string>\subsubsection*{#SEL##INS#}</string>
+			<string>Href</string>
+			<string>\href{#SEL#}{#INS#}</string>
+			<string>Footnote</string>
+			<string>\footnote{#SEL##INS#}</string>
+			<string>Author</string>
+			<string>\author{#SEL##INS#}</string>
+			<string>Title</string>
+			<string>\title{#SEL##INS#}</string>
+			<string>Date</string>
+			<string>\date{#SEL##INS#}</string>
+			<string>Maketitle</string>
+			<string>\maketitle</string>
+   </array>
 </dict>
 </plist>

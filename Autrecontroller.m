@@ -35,6 +35,9 @@ static id _sharedInstance = nil;
     NSPoint		aPoint;
     NSString		*completionPath;
     NSDictionary	*completionDictionary;
+    // added by G.K. (Georg Klein)
+    int			aButtons;
+    //
 
 NSBundle *myBundle=[NSBundle mainBundle];
 
@@ -69,6 +72,9 @@ arrayInternational=[[NSArray alloc] initWithArray:[completionDictionary objectFo
 arrayGreek=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Greek" ]];
 arrayMath=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Math" ]];
 arraySymbols=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Symbols" ]];
+// added by G.K.
+arrayCustomized=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Customized" ]];
+// end add
 
 notifcenter=[NSNotificationCenter defaultCenter];
 if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
@@ -115,6 +121,17 @@ if ([[NSUserDefaults standardUserDefaults] boolForKey:LPanelOutlinesKey]) {
     {
     [[intlbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
     }
+    
+    // added by G.K.
+    aButtons = [arrayCustomized count]/2;
+    for (i=0;i<aButtons;i++) {
+        [[custombuttonmatrix cellWithTag:i] setEnabled:YES];   
+        [[custombuttonmatrix cellWithTag:i] setBordered:YES];
+        [[custombuttonmatrix cellWithTag:i] setTitle:[arrayCustomized objectAtIndex:(i*2)]];
+        [[custombuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
+        }
+    [custombuttonmatrix setNeedsDisplay:YES];
+// end add    
 }
 
 // this adjust the look of buttons at startup
@@ -162,6 +179,13 @@ int i=[[sender selectedCell] tag];
 {
 [notifcenter postNotificationName:@"completionpanel" object:[arrayTypeface objectAtIndex:[[sender selectedCell] tag]]];
 }
+
+// added by G.K.
+- (IBAction)putcustomized:(id)sender
+{
+[notifcenter postNotificationName:@"completionpanel" object:[arrayCustomized objectAtIndex:([[sender selectedCell] tag]*2)+1]];
+}
+// end add
 
 - (void)documentWindowDidBecomeKey:(NSNotification *)note
 {    
@@ -218,6 +242,9 @@ int i=[[sender selectedCell] tag];
     [arrayInternational release];
     [arrayMath release];
     [arraySymbols release];
+    // added by G.K.
+    [arrayCustomized release];
+    // end add
     [super dealloc];
 }
 

@@ -5,11 +5,11 @@
     NSAppVersion = "1.25";
     NSHumanReadableShortName = "TeXShop";
     NSHumanReadableCompleteName = "TeXShop"; 
-    NSHumanReadableCopyright = "Copyright (c) 2001-2002, Eugene Algorithms";
+    NSHumanReadableCopyright = "Copyright (c) 2001-2003, Eugene Algorithms \n http://www.uoregon.edu/~koch/texshop";
     CFBundleDocumentTypes = (
      {
         CFBundleTypeName = "tex";
-        CFBundleTypeReadableName = "TeX Document";
+        CFBundleTypeReadableName = "TeX Dokument";
         CFBundleTypeExtensions = ("tex", "TEX", "txt", "TXT");
         CFBundleOSTypes = ("TEXT", "????");
         CFBundleDOSNames = ("tex");
@@ -18,7 +18,7 @@
       }
       {
         CFBundleTypeName = "NSPDFPboardType";
-        CFBundleTypeReadableName = "PDF Document";
+        CFBundleTypeReadableName = "PDF Dokument";
         CFBundleTypeExtensions = ("pdf");
         CFBundleOSTypes = ("PDF");
         CFBundleDOSNames = ("pdf");
@@ -27,7 +27,7 @@
       }
       {
         CFBundleTypeName = "NSTIFFPboardType";
-        CFBundleTypeReadableName = "TIFF Document";
+        CFBundleTypeReadableName = "TIFF Dokument";
         CFBundleTypeExtensions = ("tiff", "tif");
         CFBundleOSTypes = ("TIFF");
         CFBundleDOSNames = ("tiff");
@@ -36,7 +36,7 @@
       }
        {
         CFBundleTypeName = "NSEPSPboardType";
-        CFBundleTypeReadableName = "EPS Document";
+        CFBundleTypeReadableName = "EPS Dokument";
         CFBundleTypeExtensions = ("eps");
         CFBundleOSTypes = ("EPS");
         CFBundleDOSNames = ("eps");
@@ -45,7 +45,7 @@
       }
     {
         CFBundleTypeName = "LogFile";
-        CFBundleTypeReadableName = "TeX Log File";
+        CFBundleTypeReadableName = "TeX Log Datei";
         CFBundleTypeExtensions = ("log");
         CFBundleOSTypes = ("LOG");
         CFBundleDOSNames = ("eps");
@@ -54,7 +54,7 @@
       }
       {
         CFBundleTypeName = "AuxFile";
-        CFBundleTypeReadableName = "TeX Aux File";
+        CFBundleTypeReadableName = "TeX Aux Datei";
         CFBundleTypeExtensions = ("aux");
         CFBundleOSTypes = ("AUX");
         CFBundleDOSNames = ("aux");
@@ -63,7 +63,7 @@
       }
        {
         CFBundleTypeName = "DVIFile";
-        CFBundleTypeReadableName = "TeX DVI File";
+        CFBundleTypeReadableName = "TeX DVI Datei";
         CFBundleTypeExtensions = ("dvi");
         CFBundleOSTypes = ("DVI");
         CFBundleDOSNames = ("dvi");
@@ -72,7 +72,7 @@
       }
       {
         CFBundleTypeName = "bib";
-        CFBundleTypeReadableName = "TeX bib File";
+        CFBundleTypeReadableName = "TeX bib Datei";
         CFBundleTypeExtensions = ("bib");
         CFBundleOSTypes = ("BIB");
         CFBundleDOSNames = ("bib");
@@ -81,7 +81,7 @@
       }
       {
         CFBundleTypeName = "PostscriptFile";
-        CFBundleTypeReadableName = "Postscript File";
+        CFBundleTypeReadableName = "Postscript Datei";
         CFBundleTypeExtensions = ("ps");
         CFBundleOSTypes = ("PS");
         CFBundleDOSNames = ("ps");
@@ -90,23 +90,31 @@
       }
       {
         CFBundleTypeName = "TexshopFile";
-        CFBundleTypeReadableName = "TeXShop Root File";
+        CFBundleTypeReadableName = "TeXShop Root Datei";
         CFBundleTypeExtensions = ("texshop");
         CFBundleDOSNames = ("texshop");
         CFBundleTypeRole = Viewer;
         NSDocumentClass = MyDocument;
       }
-      {
-        CFBundleTypeName = "MetapostFile";
-        CFBundleTypeReadableName = "MetaPost File";
+       {
+        CFBundleTypeName = "mp";
+        CFBundleTypeReadableName = "mp";
         CFBundleTypeExtensions = ("mp");
         CFBundleDOSNames = ("MP");
-        CFBundleTypeRole = Viewer;
+        CFBundleTypeRole = Editor;
+        NSDocumentClass = MyDocument;
+      }
+      {
+        CFBundleTypeName = "mf";
+        CFBundleTypeReadableName = "mf";
+        CFBundleTypeExtensions = ("mf");
+        CFBundleDOSNames = ("MF");
+        CFBundleTypeRole = Editor;
         NSDocumentClass = MyDocument;
       }
        {
         CFBundleTypeName = "ins";
-        CFBundleTypeReadableName = "INS File";
+        CFBundleTypeReadableName = "INS Datei";
         CFBundleTypeExtensions = ("ins");
         CFBundleDOSNames = ("INS");
         CFBundleTypeRole = Editor;
@@ -114,7 +122,7 @@
       }
         {
         CFBundleTypeName = "dtx";
-        CFBundleTypeReadableName = "DTX File";
+        CFBundleTypeReadableName = "DTX Datei";
         CFBundleTypeExtensions = ("dtx");
         CFBundleDOSNames = ("DTX");
         CFBundleTypeRole = Editor;
@@ -122,7 +130,7 @@
       }
         {
         CFBundleTypeName = "sty";
-        CFBundleTypeReadableName = "STY File";
+        CFBundleTypeReadableName = "STY Datei";
         CFBundleTypeExtensions = ("sty");
         CFBundleDOSNames = ("STY");
         CFBundleTypeRole = Editor;
@@ -130,9 +138,17 @@
       }
         {
         CFBundleTypeName = "cls";
-        CFBundleTypeReadableName = "CLS File";
+        CFBundleTypeReadableName = "CLS Datei";
         CFBundleTypeExtensions = ("cls");
         CFBundleDOSNames = ("CLS");
+        CFBundleTypeRole = Editor;
+        NSDocumentClass = MyDocument;
+      }
+        {
+        CFBundleTypeName = "Plain Text";
+        CFBundleTypeReadableName = "Plain Text";
+        CFBundleTypeExtensions = ("txt", "text", "*");
+        CFBundleDOSNames = ("text/plain");
         CFBundleTypeRole = Editor;
         NSDocumentClass = MyDocument;
       }

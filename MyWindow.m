@@ -202,6 +202,7 @@
 }
 
 
+/*
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 {
     BOOL  result;
@@ -283,6 +284,45 @@
         }
     else return result;
 }
+*/
+
+// Above code rewritten by Max Horn
+
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+{
+    if ([anItem action] == @selector(displayLatexPanel:))
+        return NO;
+
+    if ([anItem action] == @selector(rotateClockwise:) || 
+    	[anItem action] == @selector(rotateCounterclockwise:))
+        return (([myDocument imageType] == isTeX) || ([myDocument imageType] == isPDF));
+
+    if ([anItem action] == @selector(doError:) || 
+    	[anItem action] == @selector(printSource:))
+        return ((![myDocument externalEditor]) && ([myDocument imageType] == isTeX));
+
+    if ([anItem action] == @selector(setProjectFile:))
+        return ([myDocument imageType] == isTeX);
+
+    if ([myDocument imageType] != isTeX) {
+		if ([anItem action] == @selector(saveDocument:))
+			return ([myDocument imageType] == isOther);
+		if ([anItem action] == @selector(doTex:) ||
+			[anItem action] == @selector(doLatex:) ||
+			[anItem action] == @selector(doBibtex:) ||
+			[anItem action] == @selector(doIndex:) ||
+			[anItem action] == @selector(doMetapost:) ||
+			[anItem action] == @selector(doContext:))
+			return NO;
+		if ([anItem action] == @selector(printDocument:))
+			return (([myDocument imageType] == isPDF) ||
+					([myDocument imageType] == isJPG) ||
+					([myDocument imageType] == isTIFF));
+	}
+		
+    return [super validateMenuItem: anItem];
+}
+
 
 - (MyDocument *)document;
 {

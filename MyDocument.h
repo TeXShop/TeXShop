@@ -50,6 +50,7 @@
     NSTask		*texTask;
     NSTask		*bibTask;
     NSTask		*indexTask;
+    NSTask		*metaFontTask;
     NSDate		*startDate;
     NSPDFImageRep	*texRep;
     NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
@@ -76,6 +77,8 @@
     id			previousButton;
     id			nextButton;
     BOOL		externalEditor;
+    NSDictionary	*autocompletionDictionary;  // added by Greg Landweber
+
 }
  
 - (void) doTex: sender;
@@ -99,6 +102,7 @@
 - (void) chooseProgramEE: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
+- (void) doCompletion:(NSNotification *)notification;
 - (void) doComment: sender;
 - (void) doUncomment: sender;
 - (void) doIndent: sender;
@@ -107,6 +111,7 @@
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
 - (void) doError: sender;
+- (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces;
 - (void) fixColor: (unsigned)from : (unsigned)to;
 // - (void) fixColor1: sender;
 - (void) fixColor2: (unsigned)from :(unsigned)to;
@@ -117,7 +122,6 @@
 - (id) pdfWindow;
 - (id) textWindow;
 - (id) textView;
-- (void)fixUpTabsInRange:(NSRange)editedRange;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
 - (NSPDFImageRep *) myTeXRep;
@@ -132,7 +136,7 @@
 // Timer methods
 //-----------------------------------------------------------------------------
 - (void)fixTags:(NSTimer *)timer;
-- (void)fixColor1:(NSTimer *)timer;
+// - (void)fixColor1:(NSTimer *)timer;
 
 //-----------------------------------------------------------------------------
 // private API

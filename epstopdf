@@ -40,12 +40,15 @@ use strict;
 #      correct the first white space to '...Box:\s*$bb...'
 #    * corrected first line (one line instead of two before 'if 0;';
 #
+#  2001/08/03 v2.6 (Gerben Wierda)
+#    * Made it end-of-line type independent (output eol is \n)
+#    * Handle documents-in-documents-in-documents-etc
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="1999/05/06";
-my $fileversion="2.5";
-my $copyright = "Copyright 1998,1999 by Sebastian Rahtz et al.";
+my $filedate="2001/08/03";
+my $fileversion="2.6";
+my $copyright = "Copyright 1998--2001 by Sebastian Rahtz et al.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -174,6 +177,11 @@ open(IN,"<$InputFilename") or error "Cannot open",
   ($::opt_filter) ? "standard input" : "'$InputFilename'";
 binmode IN;
 
+### slurp IN in scalar
+undef $/;
+$::infile = <IN>;
+close( IN);
+
 ### open output file
 if ($::opt_gs) {
   my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS " .
@@ -185,16 +193,14 @@ else {
   open(OUT,">$OutputFilename") or error "Cannot write '$OutputFilename";
 }
 
-### scan first line
+### Look for header, remove binary junk before header
 my $header = 0;
-$_ = <IN>;
-if (/%!/) {
-  # throw away binary junk before %!
-  s/(.*)%!/%!/o;
+if ($::infile =~ /%!/s and not $::infile =~ /^%!/s) {
+  debug "Binary junk removed" if not $::infile =~ /^%!/;
+  # throw away binary junk before first %!
+  $::infile =~ s/^.*?%!/%!/s;
 }
-$header = 1 if /^%/;
-debug "Scanning header for BoundingBox";
-print OUT;
+$header = 1 if $::infile =~ /^%/;
 
 ### variables and pattern for BoundingBox search
 my $bbxpatt = '[0-9eE\.\-]';
@@ -215,66 +221,69 @@ sub CorrectBoundingBox {
   print OUT "gsave $xoffset $yoffset translate\n";
 }
 
-### scan header
+### scan header and replace BB
+my @infile;
 if ($header) {
-  while (<IN>) {
+  debug "Scanning header for BoundingBox";
+  ### We move to lf as eol standard
+  $::infile =~ s/(\r\n|[\r\n])/\n/g;
+  @infile = split( /\n/, $::infile);
 
+  HEADER: while (defined( $_ = shift @infile)) {
     ### end of header
     if (!/^%/ or /^%%EndComments/) {
-      print OUT;
-      last;
+      print OUT "$_\n";
+      last HEADER;
     }
 
     ### BoundingBox with values
     if (/^$BBName$BBValues/) {
       CorrectBoundingBox $1, $2, $3, $4;
       $BBCorrected = 1;
-      last;
+      last HEADER;
     }
 
     ### BoundingBox with (atend)
     if (/^$BBName\s*\(atend\)/) {
+      # looking for %%BoundingBox at the end
       debug $BBName, "(atend)";
-      if ($::opt_filter) {
-        warning "Cannot look for BoundingBox in the trailer",
-                "with option --filter";
-        last;
-      }
-      my $pos = tell(IN);
-      debug "Current file position:", $pos;
 
-      # looking for %%BoundingBox
-      while (<IN>) {
+      my $skiplevel = 0;
+      ATEND: foreach my $line (@infile) {
         # skip over included documents
-        if (/^%%BeginDocument/) {
-          while (<IN>) {
-            last if /^%%EndDocument/;
-          }
-        }
-        if (/^$BBName$BBValues/) {
+	if (/^%%BeginDocument/) {
+	  $skiplevel++;
+	  next ATEND;
+	}
+	if (/^%%EndDocument/) {
+	  $skiplevel--;
+	  next ATEND;
+	}
+	if ($skiplevel) {
+	  # We're in an included document
+	  next ATEND;
+	}
+
+	# Found a BB in the master document
+	if (/^$BBName$BBValues/) {
           CorrectBoundingBox $1, $2, $3, $4;
           $BBCorrected = 1;
-          last;
-        }
+          last HEADER;
+	}
       }
-
-      # go back
-      seek(IN, $pos, 0) or error "Cannot go back to line '$BBName (atend)'";
-      last;
     }
     
-    # print header line
-    print OUT;
+    # print non-BB header line
+    print OUT "$_\n";
   }
 }
 
-### print rest of file
-while (<IN>) {
-  print OUT;
+### write rest of input to output
+while (defined ($_ = shift @infile)) {
+  print OUT "$_\n";
 }
 
 ### close files
-close(IN);
 print OUT "grestore\n" if $BBCorrected;
 close(OUT);
 warning "BoundingBox not found" unless $BBCorrected;

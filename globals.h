@@ -96,5 +96,7 @@ typedef enum _GsColorMode
 typedef enum _DefaultCommand
 {
     DefaultCommandTeX = 0,
-    DefaultCommandLaTeX = 1
+    DefaultCommandLaTeX = 1,
+    DefaultCommandConTEXt = 2,
+    DefaultCommandOmega = 3
 } _DefaultCommand;

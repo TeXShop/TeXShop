@@ -34,7 +34,8 @@
     id			typesetButton;
     id			tags;
     int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
-    int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = bibtex "*/
+    int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = context, 3 = omega, 4 = megapost, 5 = bibtex,
+                                                    6 = makeindex "*/
     BOOL		tagLine;
     BOOL		typesetStart;		/*" YES if tex output "*/
     NSFileHandle	*writeHandle;
@@ -68,6 +69,9 @@
 - (void) doTex: sender;
 - (void) doLatex: sender;
 - (void) doBibtex: sender;
+- (void) doMetapost: sender;
+- (void) doOmega: sender;
+- (void) doContext: sender;
 - (void) doIndex: sender;
 - (void) doTypeset: sender;
 - (void) doTemplate: sender;
@@ -81,8 +85,10 @@
 - (void) chooseProgram: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
-- (void) doBibJob;
-- (void) doIndexJob;
+- (void) doComment: sender;
+- (void) doUncomment: sender;
+- (void) doIndent: sender;
+- (void) doUnindent: sender;
 - (void) toLine: (int)line;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
@@ -95,6 +101,7 @@
 - (int) imageType;
 - (id) pdfWindow;
 - (id) textWindow;
+- (id) textView;
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;

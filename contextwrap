@@ -1,0 +1,14 @@
+#!/bin/tcsh
+
+# This short script calls texexec to run a conTeXt job
+# Richard Koch; September 14, 2001
+
+set mytexexecpath = "$argv[1]"
+if (-x ${mytexexecpath}texexec) then
+	setenv PATH "${mytexexecpath}:${PATH}"
+	rehash
+endif
+
+set filename = "$argv[2]"
+
+texexec --pdf "${filename}"

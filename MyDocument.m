@@ -6,6 +6,7 @@
 #import <Carbon/Carbon.h>
 #import "MyDocument.h"
 #import "PrintView.h"
+#import "PrintBitmapView.h"
 #import "MyView.h"
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
@@ -13,6 +14,10 @@
 #import "globals.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
+#define Mcomment 1
+#define Muncomment 2
+#define Mindent 3
+#define Munindent 4
 
 @implementation MyDocument : NSDocument
 
@@ -69,35 +74,57 @@
 
 - (void)printShowingPrintPanel:(BOOL)flag 
 {
-    PrintView		*printView;
+    id			printView;
     NSPrintOperation	*printOperation;
     NSString		*imagePath, *projectPath, *nameString;
-    NSPDFImageRep	*aRep;
+    id			aRep;
     int			result;
     
     
     
     projectPath = [[[self fileName] stringByDeletingPathExtension] 	stringByAppendingPathExtension:@"texshop"];
-    if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
-        nameString = [NSString stringWithContentsOfFile: projectPath];
-        imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+    if (myImageType == isTeX) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
+            nameString = [NSString stringWithContentsOfFile: projectPath];
+            imagePath = [[nameString stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            }
+        else
+            imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
         }
-    else
+    else if (myImageType == isPDF)
         imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+    else if ((myImageType == isJPG) || (myImageType == isTIFF))
+        imagePath = [self fileName];
+    else
+        imagePath = [self fileName];
 
+    aRep = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-        aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
-        printView = [[PrintView alloc] initWithRep: aRep];
+        if ((myImageType == isTeX) || (myImageType == isPDF))
+            aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
+        else if (myImageType == isJPG)
+            aRep = [[NSImageRep imageRepWithContentsOfFile: imagePath] retain];
+        else if (myImageType == isTIFF)
+            aRep = [[NSImageRep imageRepWithContentsOfFile: imagePath] retain];
+        else
+            return;
+        if (aRep == nil) return;
+        if ((myImageType == isJPG) || (myImageType == isTIFF)) 
+            printView = [[PrintBitmapView alloc] initWithBitmapRep: aRep];
+        else
+            printView = [[PrintView alloc] initWithRep: aRep];
         printOperation = [NSPrintOperation printOperationWithView:printView
             printInfo: [self printInfo]];
-        [printView setPrintOperation: printOperation];
+        if ((myImageType == isJPG) || (myImageType == isTIFF))
+            [printView setBitmapPrintOperation: printOperation]; 
+        else
+            [printView setPrintOperation: printOperation];
         [printOperation setShowPanels:flag];
         [printOperation runOperation];
         [printView release];
 	}
-    else { 
+    else if (myImageType == isTeX)
         result = [NSApp runModalForWindow: printRequestPanel];
-        }
 }
     
 
@@ -115,6 +142,7 @@
     NSString		*theFileName;
     BOOL		thePreference;
     float		r, g, b;
+    int			defaultcommand;
 /*
     NSCharacterSet	*mySet;
     NSScanner		*myScanner;
@@ -270,11 +298,14 @@
     
     if (!fileIsTex) 
         return;
-        
-    if ([SUD integerForKey:DefaultCommandKey] == DefaultCommandTeX)
-        [typesetButton setTitle: @"Tex"];
-    else
-        [typesetButton setTitle: @"Latex"];
+       
+    defaultcommand = [SUD integerForKey:DefaultCommandKey];
+    switch (defaultcommand) {
+        case DefaultCommandTeX: [typesetButton setTitle: @"Tex"]; break;
+        case DefaultCommandLaTeX: [typesetButton setTitle: @"Latex"]; break;
+        case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTEXt"]; break;
+        case DefaultCommandOmega: [typesetButton setTitle: @"Omega"]; break;
+        }
     
     projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
     if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
@@ -584,52 +615,19 @@ preference change is cancelled. "*/
     }
 }
 
-- (void) doBibJob
+- (void) doJob:(int)type withError:(BOOL)error;
 {
     SEL	saveFinished;
     
     errorNumber = 0;
     whichError = 0;
-    makeError = NO;
+    makeError = error;
     
-    whichEngine = 3;
+    whichEngine = type;
     saveFinished = @selector(saveFinished:didSave:contextInfo:);
     [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 }
 
-- (void) doIndexJob
-{
-    SEL	saveFinished;
-    
-    errorNumber = 0;
-    whichError = 0;
-    makeError = NO;
-    
-    whichEngine = 4;
-    saveFinished = @selector(saveFinished:didSave:contextInfo:);
-    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
-}
-
-
-- (void) doJob: (Boolean) withLatex;
-{
-    SEL			saveFinished;
-    
-    errorNumber = 0;
-    whichError = 0;
-    makeError = YES;
-    
-    if (withLatex)
-        whichEngine= 1;
-    else 
-        whichEngine = 0;
-        
-    saveFinished = @selector(saveFinished:didSave:contextInfo:);
-    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
-    
-    // dirk test
-    // [pdfWindow setNextResponder:pdfView];
-}
 
 /* The default save operations clear the "document edited symbol" but
 do not reset the undo stack, and then later the symbol gets out of sync.
@@ -640,6 +638,66 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     [super updateChangeCount: changeType];
     if (![self isDocumentEdited])
         [[textView undoManager] removeAllActions];
+}
+
+- (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args;
+{   
+    NSArray		*myList;
+    NSString		*myString, *middleString;
+    int			size, i, pos;
+    BOOL		programFound, inMiddle;
+    NSString		*theEngine;
+    NSRange		aRange;
+
+    if (myEngine != nil) {
+        myList = [myEngine componentsSeparatedByString:@" "];
+        programFound = NO;
+        inMiddle = NO;
+        size = [myList count];
+        i = 0;
+        while (i < size) {
+            myString = [myList objectAtIndex:i];
+            if ((myString != nil) && ([myString length] > 0)) {
+                if (! programFound) {
+                    theEngine = myString;
+                    programFound = YES;
+                    }
+                else if (inMiddle) {
+                    middleString = [middleString stringByAppendingString:@" "];
+                    middleString = [middleString stringByAppendingString:myString];
+                    pos = [myString length] - 1;
+                    if ([myString characterAtIndex:pos] == '"') {
+                        aRange.location = 1;
+                        aRange.length = [middleString length] - 2;
+                        middleString = [middleString substringWithRange: aRange];
+                        [args addObject: middleString];
+                        inMiddle = NO;
+                        }
+                    }
+                else if ([myString characterAtIndex:0] == '"') {
+                    pos = [myString length] - 1;
+                    if ([myString characterAtIndex:pos] == '"') {
+                        aRange.location = 1;
+                        aRange.length = [myString length] - 2;
+                        myString = [myString substringWithRange: aRange];
+                        [args addObject: myString];
+                        }
+                    else {
+                        middleString = [NSString stringWithString: myString];
+                        inMiddle = YES;
+                        }
+                    }
+                else {
+                    [args addObject: myString];
+                    } 
+                }
+            i = i + 1;
+            }
+        if (! programFound)
+            theEngine = nil;
+        }
+    
+    return (theEngine);
 }
 
 - (void) convertDocument;
@@ -666,22 +724,21 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     
         args = [NSMutableArray array];
         sourcePath = myFileName;
-
+        
         texTask = [[NSTask alloc] init];
         [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
         if ([[myFileName pathExtension] isEqualToString:@"dvi"]) {
             enginePath = [SUD stringForKey:LatexGSCommandKey];
+            enginePath = [self separate:enginePath into: args];
             if ([SUD boolForKey:SavePSEnabledKey])
             	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
             }    
         else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
-            // enginePath = @"/usr/local/bin/ps2pdfwr"; 
-            enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdf1" ofType:nil];
-            [args addObject: [NSString stringWithString:@"-dCompatibilityLevel=1.2"]];
+            enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
             }
         else if  ([[myFileName pathExtension] isEqualToString:@"eps"]) {
-            // enginePath = @"/usr/local/bin/epsit";
-            enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdf1" ofType:nil];
+            enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdfwrap" ofType:nil];
+            [args addObject: [[NSBundle mainBundle] pathForResource:@"epstopdf" ofType:nil]];
             }
 
         [args addObject: [sourcePath lastPathComponent]];
@@ -694,15 +751,16 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             }
         inputPipe = [[NSPipe pipe] retain];
         [texTask setStandardInput: inputPipe];
-        if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath]))
+        if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
                 [texTask setLaunchPath:enginePath];
+                [texTask setArguments:args];
+                [texTask launch];
+              }
         else {
             [inputPipe release];
             [texTask release];
             texTask = nil;
             }
-        [texTask setArguments:args];
-        [texTask launch];
         }
 
 }
@@ -718,15 +776,62 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSString		*sourcePath;
     NSString		*bibPath;
     NSString		*indexPath;
+    NSString		*myEngine;
     NSString		*enginePath;
     NSString		*tetexBinPath;
     BOOL		withLatex;
+    int			theScript;
+    NSArray		*myList;
+    NSString		*theSource, *theKey;
+    NSRange		myRange;
+    unsigned int	mystart, myend;
     
     if (whichEngine == 1)
         withLatex = YES;
     else if (whichEngine == 0)
         withLatex = NO;
+    theScript = whichScript;
+    
+    theSource = [[self textView] string];
+    myRange.length = 1;
+    myRange.location = 0;
+    [theSource getLineStart:&mystart end: &myend contentsEnd: nil forRange:myRange];
+    if (myend > (mystart + 2)) {
+        myRange.location = 0;
+        myRange.length = myend - mystart - 1;
+        theKey = [theSource substringWithRange:myRange];
+        myList = [theKey componentsSeparatedByString:@" "];
+        if ((theKey) && ([myList count] > 0)) 
+            theKey = [myList objectAtIndex:0];
+        }
+    else
+        theKey = nil;
         
+    if ((theKey) && ([theKey isEqualToString:@"%&pdftex"])) {
+        withLatex = NO;
+        theScript = 100;
+        }
+    else if ((theKey) && ([theKey isEqualToString:@"%&pdflatex"])) {
+        withLatex = YES;
+        theScript = 100;
+        }
+    else if ((theKey) && ([theKey isEqualToString:@"%&tex"])) {
+        withLatex = NO;
+        theScript = 101;
+        }
+    else if ((theKey) && ([theKey isEqualToString:@"%&latex"])) {
+        withLatex = YES;
+        theScript = 101;
+        }
+    else if ((theKey) && ([theKey isEqualToString:@"%&personaltex"])) {
+        withLatex = NO;
+        theScript = 102;
+        }
+    else if ((theKey) && ([theKey isEqualToString:@"%&personallatex"])) {
+        withLatex = YES;
+        theScript = 102;
+        }
+
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
     
@@ -789,15 +894,11 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         else
             sourcePath = myFileName;
             
-        if (whichEngine < 3)
+        if (whichEngine < 5)
         {
-            if ((whichScript == 101) && ([SUD boolForKey:SavePSEnabledKey]))
+            if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey])) 
             	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
                 
-             /* Koch: Feb 20; this allows spaces everywhere in path except
-            file name itself */
-            [args addObject: [sourcePath lastPathComponent]];
-        
             if (texTask != nil) {
                 [texTask terminate];
                 [texTask release];
@@ -806,40 +907,75 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             texTask = [[NSTask alloc] init];
             [texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
             
-            switch (whichScript) {
+            if (whichEngine == 2) {
+                if (theScript == 100) {
+                    enginePath = [[NSBundle mainBundle] pathForResource:@"contextwrap" ofType:nil];
+                    [args addObject: [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"]];
+                    }
+                else {
+                    enginePath = [[NSBundle mainBundle] pathForResource:@"contextdviwrap" ofType:nil];
+                    [args addObject: [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"]];
+                    if ([SUD boolForKey:SavePSEnabledKey]) 
+                        [args addObject: [NSString stringWithString:@"--keep-psfile"]];
+                    }
+                 }
+                
+            else if (whichEngine == 3)
+                myEngine = @"omega";
+                
+            else if (whichEngine == 4)
+                myEngine = @"metapost";
+                
+            else switch (theScript) {
             
                 case 100: 
                 
                     if (withLatex)
-                        enginePath = [SUD stringForKey:LatexCommandKey];
+                        myEngine = [SUD stringForKey:LatexCommandKey];
                     else
-                        enginePath = [SUD stringForKey:TexCommandKey];
+                        myEngine = [SUD stringForKey:TexCommandKey];
                     break;
                 
                 case 101:
                 
                     if (withLatex)
-                        enginePath = [SUD stringForKey:LatexGSCommandKey];
+                        myEngine = [SUD stringForKey:LatexGSCommandKey];
                     else
-                        enginePath = [SUD stringForKey:TexGSCommandKey];
+                        myEngine = [SUD stringForKey:TexGSCommandKey];
                     break;
                 
                 case 102:
                 
                     if (withLatex)
-                        enginePath = [SUD stringForKey:LatexScriptCommandKey];
+                        myEngine = [SUD stringForKey:LatexScriptCommandKey];
                     else
-                        enginePath = [SUD stringForKey:TexScriptCommandKey];
+                        myEngine = [SUD stringForKey:TexScriptCommandKey];
                     break;
                 
                 }
                 
-            if (enginePath != nil) {
-                if ([enginePath characterAtIndex:0] != '/') {
+            if (whichEngine != 2) {
+                
+            myEngine = [self separate:myEngine into:args];
+                
+              enginePath = nil;
+              
+              if ((myEngine != nil) && ([myEngine length] > 0)) {       
+                if ([myEngine characterAtIndex:0] != '/') {
                     tetexBinPath = [[SUD stringForKey:TetexBinPathKey] stringByAppendingString:@"/"];
-                    enginePath = [tetexBinPath stringByAppendingString:enginePath];
+                    enginePath = [tetexBinPath stringByAppendingString:myEngine];
                      }
+                else
+                    enginePath = myEngine;
                 }
+                
+            }
+            
+            /* Koch: Feb 20; this allows spaces everywhere in path except
+            file name itself */
+            [args addObject: [sourcePath lastPathComponent]];
+        
+
             if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath]))
                 [texTask setLaunchPath:enginePath];
             else {
@@ -853,7 +989,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [texTask setStandardInput: inputPipe];
             [texTask launch];
             }
-        else if (whichEngine == 3) {
+        else if (whichEngine == 5) {
             bibPath = [sourcePath stringByDeletingPathExtension];
             /* Koch: ditto; allow spaces in path */
             [args addObject: [bibPath lastPathComponent]];
@@ -873,7 +1009,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [bibTask setStandardInput: inputPipe];
             [bibTask launch];
             }
-        else if (whichEngine == 4) {
+        else if (whichEngine == 6) {
             indexPath = [sourcePath stringByDeletingPathExtension];
             /* Koch: ditto, spaces in path */
             [args addObject: [indexPath lastPathComponent]];
@@ -897,29 +1033,40 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         }
 }
 
-- (void) fake:(id)theDictionary
-{
-    ;
-}
 
 - (void) doTex: sender 
 {
-    [self doJob: NO];
+    [self doJob:0 withError:YES];
 }
 
 - (void) doLatex: sender;
 {
-    [self doJob: YES];
+    [self doJob:1 withError:YES];
+}
+
+- (void) doContext: sender;
+{
+    [self doJob:2 withError:YES];
+}
+
+- (void) doOmega: sender;
+{
+    [self doJob:3 withError:YES];
+}
+
+- (void) doMetapost: sender;
+{
+    [self doJob:4 withError:YES];
 }
 
 - (void) doBibtex: sender;
 {
-    [self doBibJob];
+    [self doJob:5 withError:NO];
 }
 
 - (void) doIndex: sender;
 {
-    [self doIndexJob];
+    [self doJob:6 withError:NO];
 }
 
 
@@ -932,6 +1079,12 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         [self doTex:self];
     else if ([titleString isEqualToString: @"Latex"])
         [self doLatex: self];
+    else if ([titleString isEqualToString: @"MetaPost"])
+        [self doMetapost: self];
+    else if ([titleString isEqualToString: @"ConTEXt"])
+        [self doContext: self];
+    else if ([titleString isEqualToString: @"Omega"])
+        [self doOmega: self];
     else if ([titleString isEqualToString: @"Bibtex"])
         [self doBibtex: self];
     else if ([titleString isEqualToString: @"Index"])
@@ -984,7 +1137,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
             [typesetButton setTitle: @"Latex"];
             break;
 
-        
         case 2:
             [typesetButton setTitle: @"Bibtex"];
             break;
@@ -992,7 +1144,18 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         case 3:
             [typesetButton setTitle: @"Index"];
             break;
-
+            
+        case 4:
+            [typesetButton setTitle: @"MetaPost"];
+            break;
+            
+        case 5:
+            [typesetButton setTitle: @"ConTEXt"];
+            break;
+            
+        case 6:
+            [typesetButton setTitle: @"Omega"];
+            break;
 
         }
 }
@@ -1081,6 +1244,164 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         line = [lineBox intValue];
         [self toLine: line];
         }
+}
+
+- (void) doModify: (int)type;
+{
+    NSString		*text, *oldString;
+    NSRange		myRange, modifyRange, tempRange, oldRange;
+    unsigned		start, end, end1, changeStart, changeEnd;
+    int			theChar;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength, *theType;
+
+    text = [textView string];
+    myRange = [textView selectedRange];
+    // get old string for Undo
+    [text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
+    oldRange.location = start;
+    oldRange.length = end1 - start;
+    oldString = [[textView string] substringWithRange: oldRange];
+
+    changeStart = start;
+    changeEnd = start;
+    end = start;
+    while (end < (myRange.location + myRange.length)) {
+        modifyRange.location = end;
+        modifyRange.length = 0;
+        [text getLineStart:&start end:&end contentsEnd:&end1 forRange:modifyRange];
+        changeEnd = end1;
+        if ((end1 - start) > 0)
+            theChar = [text characterAtIndex: start];
+        switch (type) {
+        
+            case Mcomment:	if ((end1 == start) || (theChar != 0x0025)) {
+                                    tempRange.location = start;
+                                    tempRange.length = 0;
+                                    [textView replaceCharactersInRange:tempRange withString:@"%"];
+                                    myRange.length++; oldRange.length++;
+                                    changeEnd++;
+                                    end++;
+                                    }
+                                break;
+                                            
+            case Muncomment:	if ((end1 != start) && (theChar == 0x0025)) {
+                                    tempRange.location = start;
+                                    tempRange.length = 1;
+                                    [textView replaceCharactersInRange:tempRange withString:@""];
+                                    myRange.length--; oldRange.length--;
+                                    changeEnd--;
+                                    end--;
+                                    }
+                                break;
+            
+            case Mindent: 	if (0 == 0) /* (end1 == start) || (theChar != 0x0025)) */ {
+                                    tempRange.location = start;
+                                    tempRange.length = 0;
+                                    [textView replaceCharactersInRange:tempRange withString:@" "];
+                                    myRange.length++; oldRange.length++;
+                                    changeEnd++;
+                                    end++;
+                                    }
+                                break;
+
+            
+            case Munindent: 	if ((end1 != start) && (theChar == 0x0020)) {
+                                    tempRange.location = start;
+                                    tempRange.length = 1;
+                                    [textView replaceCharactersInRange:tempRange withString:@""];
+                                    myRange.length--; oldRange.length--;
+                                    changeEnd--;
+                                    end--;
+                                    }
+                                break;
+
+            }
+        end++;
+        }
+    [self fixColor:changeStart :changeEnd];
+    tempRange.location = changeStart;
+    tempRange.length = (changeEnd - changeStart);
+    [textView setSelectedRange: tempRange];
+
+    myManager = [textView undoManager];
+    myDictionary = [NSMutableDictionary dictionaryWithCapacity: 4];
+    theLocation = [NSNumber numberWithUnsignedInt: oldRange.location];
+    theLength = [NSNumber numberWithUnsignedInt: oldRange.length];
+    theType = [NSNumber numberWithInt: type];
+    [myDictionary setObject: oldString forKey: @"oldString"];
+    [myDictionary setObject: theLocation forKey: @"oldLocation"];
+    [myDictionary setObject: theLength forKey: @"oldLength"];
+    [myDictionary setObject: theType forKey: @"theType"];
+    [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
+    switch (type) {
+        case Mcomment: 	[myManager setActionName:@"Comment"]; break;
+        case Muncomment:[myManager setActionName:@"Uncomment"]; break;
+        case Mindent:	[myManager setActionName:@"Indent"]; break;
+        case Munindent:	[myManager setActionName:@"Unindent"]; break;
+        }
+}
+
+- (void) doComment: sender;
+{
+    [self doModify:Mcomment];
+}
+
+- (void) doUncomment: sender;
+{
+    [self doModify:Muncomment];
+}
+
+- (void) doIndent: sender;
+{
+    [self doModify:Mindent];
+}
+
+- (void) doUnindent: sender;
+{
+    [self doModify:Munindent];
+}
+
+
+//-----------------------------------------------------------------------------
+- (void) fixModify: (id) theDictionary;
+//-----------------------------------------------------------------------------
+
+{
+    NSRange		oldRange;
+    NSString		*oldString, *newString;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+    unsigned		from, to;
+    int			type;
+    
+    oldRange.location = [[theDictionary objectForKey: @"oldLocation"] unsignedIntValue];
+    oldRange.length = [[theDictionary objectForKey: @"oldLength"] unsignedIntValue];
+    type = [[theDictionary objectForKey:@"theType"] intValue];
+    newString = [theDictionary objectForKey: @"oldString"];
+    oldString = [[textView string] substringWithRange: oldRange];
+    [textView replaceCharactersInRange: oldRange withString: newString];
+
+    myManager = [textView undoManager];
+    myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
+    theLocation = [NSNumber numberWithInt: oldRange.location];
+    theLength = [NSNumber numberWithInt: [newString length]];
+    [myDictionary setObject: oldString forKey: @"oldString"];
+    [myDictionary setObject: theLocation forKey: @"oldLocation"];
+    [myDictionary setObject: theLength forKey: @"oldLength"];
+    [myManager registerUndoWithTarget:self selector:@selector(fixModify:) object: myDictionary];
+    switch (type) {
+        case Mcomment: 	[myManager setActionName:@"Comment"]; break;
+        case Muncomment:[myManager setActionName:@"Uncomment"]; break;
+        case Mindent:	[myManager setActionName:@"Indent"]; break;
+        case Munindent:	[myManager setActionName:@"Unindent"]; break;
+        }
+    from = oldRange.location;
+    to = from + [newString length];
+    [self fixColor: from :to];
+    [self setupTags];
 }
 
 - (void) doTag: sender;
@@ -1214,6 +1535,12 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     return textWindow;
 }
 
+- (id) textView;
+{
+    return textView;
+}
+
+
 - (int) imageType;
 {
     return myImageType;
@@ -1230,10 +1557,17 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     result = [super validateMenuItem: anItem];
     if (fileIsTex)
         return result;
-        
-      else if ((myImageType == isOther) && 
-            ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")])) {
-        return YES;
+    else if ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")]) {
+        if (myImageType == isOther)
+            return YES;
+        else
+            return NO;
+        }
+    else if([[anItem title] isEqualToString:NSLocalizedString(@"Print Source...", @"Print Source...")]) {
+        if (myImageType == isOther)
+            return YES;
+        else
+            return NO;
         }
     else if ([[anItem title] isEqualToString:@"Tex"]) {
         return NO;
@@ -1248,7 +1582,10 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         return NO;
         }
     else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {
-        return NO;
+        if ((myImageType == isPDF) || (myImageType == isJPG) || (myImageType == isTIFF))
+            return YES;
+        else
+            return NO;
         }
     else if ([[anItem title] 
             isEqualToString: NSLocalizedString(@"Set Project Root...", @"Set Project Root...")]) {
@@ -1731,25 +2068,20 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     {
         if (inputPipe == [[aNotification object] standardInput]) 
         {
-            int status = [[aNotification object] terminationStatus];
-        
-            if ((status == 0) || (status == 1)) 
-            {
-                [outputPipe release];
-                [writeHandle closeFile];
-                [inputPipe release];
-                inputPipe = 0;
-                if ([aNotification object] == bibTask) {
-                    [bibTask terminate];
-                    [bibTask release];
-                    bibTask = nil;
-                    }
-                else if ([aNotification object] == indexTask) {
-                    [indexTask terminate];
-                    [indexTask release];
-                    indexTask = nil;
-                    }
-            }
+            [outputPipe release];
+            [writeHandle closeFile];
+            [inputPipe release];
+            inputPipe = 0;
+            if ([aNotification object] == bibTask) {
+                [bibTask terminate];
+                [bibTask release];
+                bibTask = nil;
+                }
+            else if ([aNotification object] == indexTask) {
+                [indexTask terminate];
+                [indexTask release];
+                indexTask = nil;
+                }
         }
     }
     

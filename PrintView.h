@@ -9,7 +9,7 @@
 
 @interface PrintView : NSView 
 {
-    NSPDFImageRep		*myRep;
+    NSPDFImageRep	*myRep;
     NSPrintOperation	*myPrintOperation;
 }
     

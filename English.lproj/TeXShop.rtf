@@ -2,6 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+\vieww12500\viewh13660\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -34,6 +35,7 @@
         	Localizations\
                Syntax Colors \
 	More About teTeX\
+	Coexisting with Fink\
 	Sending Bug Reports\
 	License\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -73,7 +75,7 @@ TeXShop does not include TeX. Instead it uses the standard TeX distribution
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-in a file named "teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program to install both teTeX and ghostscript.\
+in a file named "teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
  \
 The complete source for teTeX is available on Wierda's web site. The site also contains instructions for configuring and making the code for Mac OS X: \
 \
@@ -138,7 +140,7 @@ You can close the pdf window at any time. It will reappear when the document is 
 \f1\i pdftex
 \f2\i0  and 
 \f1\i pdflatex
-\f2\i0  can use graphic files produced in pdf, jpg, or tif format. One pecularity is that tiff files must have extension ".tif" rather than ".tiff".  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics program will output pdf.\
+\f2\i0  can use graphic files produced in pdf, jpg, or tif format. One pecularity is that tiff files must have extension ".tif" rather than ".tiff".  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics programs will output pdf.\
 \
 If you used TeX in the past, your illustrations may be in 
 \f1\i eps
@@ -146,7 +148,7 @@ If you used TeX in the past, your illustrations may be in
 \f1\i pdftex
 \f2\i0  and 
 \f1\i pdflatex
-\f2\i0  cannot use such files directly, but ghostscript can convert eps files to pdf files. Ghostscript is included in Gerben Wierda's teTeX distribution; to convert "myfile.eps", open the Terminal program and type\
+\f2\i0  cannot use such files directly, but the illustrations can be converted to pdf format. To convert an eps illustration, open it in TeXShop. The illustration will appear in a graphic window and TeXShop will simultaneously write the corresponding pdf file to disk. Ghostscript also contains a command line program to convert; indeed TeXShop calls this program. To convert myfile.eps to myfile.pdf within Terminal, type\
 \
      epstopdf myfile.eps   \
 \
@@ -218,25 +220,19 @@ There is another way to typeset with TeXShop; in this alternate mode,
 \f1\i pdftex
 \f2\i0  or 
 \f1\i pdflatex
-\f2\i0 . The primary method used, 
-\f1\i pdftex
-\f2\i0  or 
-\f1\i tex and
-\f2\i0  
-\f1\i ghostscript
-\f2\i0 , can be selected in the preference dialog.\
+\f2\i0 . The primary method used when a document is first opened can be selected in the preference dialog.\
 \
 The "Tex and Ghostscript" method should be used for old projects with many 
 \f1\i eps
 \f2\i0  illustrations, and for tex files with postscript special commands, and for tex files that include bitmapped fonts which do not display correctly when typeset with 
 \f1\i pdflatex
-\f2\i0 . Experimentation will show which is the preferable typesetting engine.  \
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+\f2\i0 . Experimentation will show which is the preferable typesetting engine.\
+\
+There is a way to permanently set the typesetting method of a document regardless of preference choices.\
+If the first line of a document is %&tex, with no initial spaces on the line, then tex + ghostscript will be used. If the first line is %&latex, then latex + ghostscript will be used. If the first line is %&pdftex or %&pdflatex, then pdftex or pdflatex will be used.  If the first line is %&personaltex or %&personallatex, then the personal script will be used as set in the preference dialog.\
+\
 
-\f1\i \cf0 \
-\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
-
-\f0\i0\b \cf0 Modifying the Templates Menu:\
+\f0\b Modifying the Templates Menu:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -317,7 +313,9 @@ TeXShop remembers the name of the root file by writing this information to a fil
 \f1\i two.tex
 \f2\i0  rather than 
 \f1\i Main.tex
-\f2\i0 . \
+\f2\i0 .\
+\
+When a file is typeset using the root system, the file is saved, but the root file is not automatically saved. Save the root file manually if you make changes. Similarly the %!latex command for setting the typesetting method automatically must be set in files themselves, not just in the root file.  \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 \
@@ -325,8 +323,7 @@ Setting Preferences:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. You can configure the console\
-so it always appears when typesetting, or only appears when there is an error. \
+\f2\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. You can configure the console so it always appears when typesetting, or only appears when there is an error. \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b \cf0 \
@@ -439,9 +436,11 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions ".log", ".aux", etc. Files with extensions ".jpg", ".tif", and ".pdf" are opened as graphic files.\
+\f2\b0 \cf0 TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions ".log", ".aux", etc. Files with extensions ".jpg", ".tif", ".eps", or ".pdf" are opened as graphic files.\
 \
-However, it is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it always saves files in 8-bit Ascii format because that is the format which 
+TeXShop can also open ".dvi" and ".ps" files. In these cases, it converts the file to pdf and displays this pdf file.\
+\
+It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it always saves files in 8-bit Ascii format because that is the format which 
 \f1\i tex
 \f2\i0  and 
 \f1\i latex
@@ -455,11 +454,10 @@ However, it is not a good idea to use TeXShop as a general editor. TeXShop can r
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, it is best to typeset using "Tex and Ghostscript" mode.\
+\f2\b0 \cf0 Mathematica can save images in eps format. If most of your illustrations come from Mathematica, you may prefer to typeset using "Tex and Ghostscript" mode.\
 \
-Mathematica eps files are saved with Macintosh line feed conventions, so the epstopdf conversion utility cannot handle them directly. There are many ways to convert to files with Unix line feed conversnions. One such utility is available at\
+The eps files produced by Mathematica use the Macintosh line feed conventions. Earlier versions of TeXShop and teTeX required that these files be converted to use Unix line feeds before converting them to pdf format, but that is no longer necessary in the latest TeXShop/teTeX.\
 \
-	http://www.uoregon.edu/~koch/texshop/texshop.html.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -475,10 +473,7 @@ Mathematica eps files are saved with Macintosh line feed conventions, so the eps
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 When syntax coloring turned on in the source window, comments will be colored red, commands will be colored blue, and the symbols $, \{, and \} will be colored dark green. A few users may wish to change these colors. Each color is determined by\
-setting its red, green, and blue components; these components are real numbers between 0.0 and 1.0. Suppose we\
-wish to change the color of $, \{, and \} to bright green, a color with components (r, g, b) = (0.0, 1.0, 0.0). To do so,\
-open the Terminal window and type the following commands\
+\f2\b0 \cf0 When syntax coloring turned on in the source window, comments will be colored red, commands will be colored blue, and the symbols $, \{, and \} will be colored dark green. A few users may wish to change these colors. Each color is determined by setting its red, green, and blue components; these components are real numbers between 0.0 and 1.0. Suppose we wish to change the color of $, \{, and \} to bright green, a color with components (r, g, b) = (0.0, 1.0, 0.0). To do so, open the Terminal window and type the following commands\
 \
 	defaults write TeXShop markerred 0.0\
         	defaults write TeXShop markergreen 1.0\
@@ -522,6 +517,20 @@ and store "new.sty" inside this misc directory.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
+\f0\b \cf0 Coexisting with Fink:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Mac OS X can also run X-windows using third party software, some of which is free. Fink is a system which can download, compile, and run X-windows applications on Mac OS X. For details, see http://fink.sourceforge.net.\
+\
+Fink installs applications in /sw/bin. So far, so good. But it also resets the PATH variable so this location is searched first for applications. Unfortunately, Fink users sometimes install a second Fink copy of ghostscript, or a second Fink copy of teTeX. The ghostscript installed is version 7 rather than version 6, but currently version 7 creates pdf files which Mac OS X cannot properly render. The teTeX lacks scripts used by TeXShop and is not configured to search for include files in ~/Library.\
+\
+The latest versions of TeXShop and teTeX are immune to problems created by Fink. They use the Wierda distributions of teTeX and ghostscript even if Fink versions are installed. Users who install Ghostscript or teTeX under Fink should be aware that the Fink versions will be used from the Terminal, which may lead to unexplained behavior. There are reasons that users may still want the Fink version of Ghostscript, but the Wierda distribution of teTeX should work fine with X-windows applications like xdvi, so there is little reason to install the Fink version.  
+\f0\b \
+
+\f2\b0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
 \f0\b \cf0 Sending Bug Reports:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
@@ -541,9 +550,8 @@ and store "new.sty" inside this misc directory.\
                              \
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
-\
-Gerben Wierda can be contacted at the email address below; Wierda asks that you contact him only if all else fails. \
-\
+	\
+	Gerben Wierda\
 	Gerben_Wierda@rna.nl\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural

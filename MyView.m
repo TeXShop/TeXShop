@@ -227,7 +227,6 @@
 - (void) doStepper: sender;
 {
     [myScale setIntValue: [myStepper intValue]];
-    [myScale display];
     [self changeScale: self];
 }
 

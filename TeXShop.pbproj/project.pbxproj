@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		00C86224FF221B217F000001 = {
 			isa = PBXFileReference;
@@ -474,6 +474,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -1565,6 +1566,7 @@
 				2A37F4B8FDCFA73011CA2CEA,
 				0273C927FF23CC9B80DF2474,
 				2A37F4C3FDCFA73011CA2CEA,
+				F52CDF5C0114BBEB01000001,
 				19C28FB0FE9D524F11CA2CBB,
 			);
 			isa = PBXGroup;
@@ -1586,6 +1588,8 @@
 				00CFF0F2000AD1547F000001,
 				00CFF0F5000AD1F27F000001,
 				00CFF0F6000AD1F27F000001,
+				66EF66260147C62B00000001,
+				66EF66270147C62B00000001,
 				0192B4E7FF29F9CE7F000001,
 				0192B4E8FF29F9CE7F000001,
 				00E7EAC1001D35FA7F000001,
@@ -1670,8 +1674,10 @@
 				01590A11FFC746C880DF2474,
 				00C86226FF221B217F000001,
 				00C86228FF221B217F000001,
-				F5241EFB0113660601000001,
-				F5241EFD0113671501000001,
+				66A63DCE0114947700000001,
+				66A63DCF0114947700000001,
+				66A63DD00114947700000001,
+				F50B193D0152A11D01000001,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1729,7 +1735,6 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = TeXShop;
@@ -1787,7 +1792,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.11</string>
+	<string>1.12</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -1812,6 +1817,7 @@
 				0AC768C90010B25E7F000001,
 				00E7EAC3001D35FA7F000001,
 				00E5E43B003E251B7F000001,
+				66EF66280147C62B00000001,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -1883,8 +1889,10 @@
 				F54C1DE100E285B501000001,
 				66F0F3A800F412FD00000001,
 				F53B8ADD00F62CEA01000001,
-				F5241EFC0113660601000001,
-				F5241EFE0113671501000001,
+				66A63DD20114947700000001,
+				66A63DD30114947700000001,
+				66A63DD40114947700000001,
+				F50B193E0152A11D01000001,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -1905,6 +1913,7 @@
 				0AC768CA0010B25E7F000001,
 				00E7EAC4001D35FA7F000001,
 				00E5E43C003E251B7F000001,
+				66EF66290147C62B00000001,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -1944,6 +1953,61 @@
 //662
 //663
 //664
+		66A63DCE0114947700000001 = {
+			isa = PBXFileReference;
+			path = epstopdf;
+			refType = 4;
+		};
+		66A63DCF0114947700000001 = {
+			isa = PBXExecutableFileReference;
+			path = epstopdfwrap;
+			refType = 4;
+		};
+		66A63DD00114947700000001 = {
+			isa = PBXExecutableFileReference;
+			path = ps2pdfwrap;
+			refType = 4;
+		};
+		66A63DD20114947700000001 = {
+			fileRef = 66A63DCE0114947700000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		66A63DD30114947700000001 = {
+			fileRef = 66A63DCF0114947700000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		66A63DD40114947700000001 = {
+			fileRef = 66A63DD00114947700000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		66EF66260147C62B00000001 = {
+			isa = PBXFileReference;
+			path = PrintBitmapView.h;
+			refType = 4;
+		};
+		66EF66270147C62B00000001 = {
+			isa = PBXFileReference;
+			path = PrintBitmapView.m;
+			refType = 4;
+		};
+		66EF66280147C62B00000001 = {
+			fileRef = 66EF66260147C62B00000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		66EF66290147C62B00000001 = {
+			fileRef = 66EF66270147C62B00000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		66F0F3A600F412FD00000001 = {
 			children = (
 				66F0F3A700F412FD00000001,
@@ -1987,27 +2051,35 @@
 			settings = {
 			};
 		};
+		F50B193D0152A11D01000001 = {
+			isa = PBXExecutableFileReference;
+			path = contextwrap;
+			refType = 4;
+		};
+		F50B193E0152A11D01000001 = {
+			fileRef = F50B193D0152A11D01000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5241EFB0113660601000001 = {
 			isa = PBXExecutableFileReference;
 			path = epstopdf1;
 			refType = 4;
-		};
-		F5241EFC0113660601000001 = {
-			fileRef = F5241EFB0113660601000001;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5241EFD0113671501000001 = {
 			isa = PBXExecutableFileReference;
 			path = ps2pdf1;
 			refType = 4;
 		};
-		F5241EFE0113671501000001 = {
-			fileRef = F5241EFD0113671501000001;
-			isa = PBXBuildFile;
-			settings = {
-			};
+		F52CDF5C0114BBEB01000001 = {
+			children = (
+				F5241EFD0113671501000001,
+				F5241EFB0113660601000001,
+			);
+			isa = PBXGroup;
+			name = Obsolete;
+			refType = 4;
 		};
 		F53B8ADB00F62CEA01000001 = {
 			children = (

@@ -1,0 +1,16 @@
+#!/bin/tcsh
+
+# A wrapper to call ghostscript in the correct folder.
+# By Richard Koch, July 29, 2001, following similar code by
+# Gerben Wierda
+
+set mygspath = "/usr/local/bin"
+if (-x ${mygspath}/ps2pdf) then
+	setenv PATH "${mygspath}:${PATH}"
+	rehash
+endif
+
+set filename = "$argv[1]"
+ps2pdf ${filename}
+
+

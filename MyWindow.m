@@ -84,20 +84,47 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 {
-  if ([myDocument imageType] == isTeX)
-    return YES;
-  else if ([[anItem title] isEqualToString:@"Tex"]) 
+    BOOL  result;
+    
+    result = [super validateMenuItem: anItem];
+    if ([myDocument imageType] == isTeX)
+        return result;
+    else if ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")]) {
+        if ([myDocument imageType] == isOther)
+            return YES;
+        else
+            return NO;
+        }
+    else if([[anItem title] isEqualToString:NSLocalizedString(@"Print Source...", @"Print Source...")]) {
+        if ([myDocument imageType] == isOther)
+            return YES;
+        else
+            return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"Tex"]) {
         return NO;
-  else if ([[anItem title] isEqualToString:@"Latex"]) 
+        }
+    else if ([[anItem title] isEqualToString:@"Latex"]) {
         return NO;
-  else if ([[anItem title] isEqualToString:@"Bibtex"]) 
+        }
+    else if ([[anItem title] isEqualToString:@"Bibtex"]) {
         return NO;
-  else if ([[anItem title] isEqualToString:@"MakeIndex"]) 
+        }
+    else if ([[anItem title] isEqualToString:@"MakeIndex"]) {
         return NO;
-  else if ([[anItem title] isEqualToString:@"Print..."]) 
+        }
+    else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {
+        if (([myDocument imageType] == isPDF) || ([myDocument imageType] == isJPG) ||
+        ([myDocument imageType] == isTIFF)) 
+            return YES;
+        else
+            return NO;
+        }
+    else if ([[anItem title] 
+            isEqualToString: NSLocalizedString(@"Set Project Root...", @"Set Project Root...")]) {
         return NO;
-  else
-    return YES;
+        }
+    else return result;
 }
 
 - (MyDocument *)document;

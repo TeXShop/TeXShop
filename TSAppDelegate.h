@@ -37,6 +37,7 @@
 #endif
 - (void)finishAutoCompletionConfigure;
 - (void)finishMenuKeyEquivalentsConfigure;
+- (void)setForPreview: (BOOL)value;
 // - (void)showConfiguration:(id)sender;
 // - (void)showMacrosHelp:(id)sender;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;

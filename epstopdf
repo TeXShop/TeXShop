@@ -185,6 +185,7 @@ close( IN);
 ### open output file
 if ($::opt_gs) {
   my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS " .
+        "-dAutoRotatePages=/None " .
           "-sOutputFile=$OutputFilename - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";

@@ -9,6 +9,14 @@ if (-x ${mytexexecpath}texexec) then
 	rehash
 endif
 
-set filename = "$argv[2]"
+set filename = "$argv[3]"
+
+if ("$argv[2]" == "YES") then
+
+texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
+
+else
 
 texexec --pdf "${filename}"
+
+endif

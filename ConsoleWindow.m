@@ -21,5 +21,11 @@
     [myDocument doError: sender];
 }
 
+// for scripting
+- (MyDocument *)document
+{
+	return myDocument;
+}
+// end addition
 
 @end

@@ -42,9 +42,11 @@
         IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
         IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
+        IBOutlet NSMatrix       *_distillerMatrix;              /*" connected to "Distiller" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
         IBOutlet NSTextField	*_tabsTextField;		/*" connected to tab size text field "*/
         IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
+        IBOutlet NSButton       *_autoPDFButton;
 	
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
         NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -111,9 +113,11 @@
 - (IBAction)defaultScriptChanged:sender;
 - (IBAction)defaultMetaPostChanged:sender;
 - (IBAction)defaultBibtexChanged:sender;
+- (IBAction)distillerChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;
+- (IBAction)autoPDFChanged:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

@@ -3,20 +3,46 @@
 # This short script calls texexec to run a conTeXt job
 # Richard Koch; September 14, 2001
 
-set mytexexecpath = "$argv[1]"
+set mygspath = "$argv[2]"
+if (-x ${mygspath}/ps2pdf) then
+        setenv PATH "${mygspath}:${PATH}"
+        rehash
+endif
+ 
+set mytexexecpath = "$argv[4]"
 if (-x ${mytexexecpath}texexec) then
 	setenv PATH "${mytexexecpath}:${PATH}"
 	rehash
 endif
 
-set pstest = $argv[2]
-set filename = "$argv[3]"
+set pstest = $argv[5]
+set filename = "$argv[6]"
+
+if ("$argv[1]" == "YES") then
+
+texexec --passon=" --interaction=nonstopmode " "${filename}"
+
+else    
 
 texexec "${filename}"
 
-if ("$pstest" == "no") then
-	altpdflatex "${filename:r}.dvi"
+endif
+
+if ("$argv[3]" == "Panther") then
+    
+    if ("$pstest" == "no") then
+	altpdflatex --distiller /usr/bin/pstopdf "${filename:r}.dvi"
+    else
+	altpdflatex --distiller /usr/bin/pstopdf --keep-psfile "${filename:r}.dvi"
+    endif
+    
 else
+
+    if ("$pstest" == "no") then
+	altpdflatex "${filename:r}.dvi"
+    else
 	altpdflatex --keep-psfile "${filename:r}.dvi"
+    endif
+
 endif
 

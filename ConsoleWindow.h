@@ -16,5 +16,6 @@
 
 - (void) doChooseMethod: sender;
 - (void) doError: sender;
+- (MyDocument *)document;
 
 @end

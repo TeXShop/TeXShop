@@ -24,7 +24,7 @@
 
 - (void)drawRect:(NSRect)aRect 
 {
-    NSEraseRect([self bounds]);
+//    NSEraseRect([self bounds]);
     if (myRep != nil) {
         [myRep draw];
         }

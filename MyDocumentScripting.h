@@ -51,15 +51,30 @@
 - (void)setTextStorage:(id)ts;
 - (id)coerceValueForTextStorage:(id)value;
 - (id)handleSearchCommand:(NSScriptCommand*)command;
-
+- (id)handleLatexCommand:(NSScriptCommand*)command;
+- (id)handleLatexInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleTexCommand:(NSScriptCommand*)command;
+- (id)handleTexInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleBibtexCommand:(NSScriptCommand*)command;
+- (id)handleBibtexInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleContextCommand:(NSScriptCommand*)command;
+- (id)handleContextInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleMetapostCommand:(NSScriptCommand*)command;
+- (id)handleMetapostInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleMakeindexCommand:(NSScriptCommand*)command;
+- (id)handleMakeindexInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleTypesetCommand:(NSScriptCommand*)command;
+- (id)handleTypesetInteractiveCommand:(NSScriptCommand*)command;
+- (id)handleRefreshPDFCommand:(NSScriptCommand*)command;
+- (id)handleTaskDoneCommand:(NSScriptCommand*)command;
 @end
 
 // Scripting support for TSAppDelegate
-@interface TSAppDelegate (ScriptingSupport)
+@interface NSApplication (ScriptingSupport)
 
 - (NSArray *)orderedDocuments;
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key;
 - (void)insertInOrderedDocuments:(MyDocument *)doc atIndex:(int)index;
-
+- (id)handleOpenForExternalEditorCommand:(NSScriptCommand*)command;
 @end
 

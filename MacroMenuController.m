@@ -341,6 +341,7 @@ static id sharedMacroMenuController = nil;
 		// do AppleScript
 		NSMutableString *newString = [NSMutableString stringWithString: macroString];
 		NSString *filePath = [[(MainWindow *)[NSApp mainWindow] document] fileName];
+                NSString *displayName = [[(MainWindow *)[NSApp mainWindow] document] displayName];
 		if (!filePath) 
 			filePath = @"";
 		[newString replaceOccurrencesOfString: @"#FILEPATH#" withString: 
@@ -371,9 +372,15 @@ static id sharedMacroMenuController = nil;
                 [newString replaceOccurrencesOfString: @"#HTMLPATH#" withString: 
 					[NSString stringWithFormat: @"\"%@.html\"", filePath] 
 					options: 0 range: NSMakeRange(0, [newString length])];
-                [newString replaceOccurrencesOfString: @"#NAMEPATH#" withString: filePath];
+                [newString replaceOccurrencesOfString: @"#NAMEPATH#" withString: 
+                                        [NSString stringWithFormat: @"\"%@\"", filePath]
                                         options: 0 range: NSMakeRange(0, [newString length])];
-		
+                [newString replaceOccurrencesOfString: @"#TEXPATH#" withString: 
+                                        [NSString stringWithFormat: @"\"%@.tex\"", filePath]
+                                        options: 0 range: NSMakeRange(0, [newString length])];
+                [newString replaceOccurrencesOfString: @"#DOCUMENTNAME#" withString: 
+                                        [NSString stringWithFormat: @"\"%@\"", displayName]
+                                        options: 0 range: NSMakeRange(0, [newString length])];
 		NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: newString];
 		NSDictionary *errorInfo;
 		NSAppleEventDescriptor *returnValue = [aScript executeAndReturnError: &errorInfo];
@@ -478,7 +485,18 @@ static id sharedMacroMenuController = nil;
 {
 	if ([anItem action] == @selector(reloadMacros:))
 		return YES;
-	return [[NSApp mainWindow] isMemberOfClass: [MainWindow class]];
+                        
+        NSString *macroString = [anItem representedObject];
+        if( macroString == nil ) 
+            return YES;
+		
+	if ([macroString length] <14 || 
+		(![[[macroString substringToIndex: 13] lowercaseString] isEqualToString:@"--applescript"] 
+		&& ![[[macroString substringToIndex: 14] lowercaseString] isEqualToString:@"-- applescript"]))
+            return [[NSApp mainWindow] isMemberOfClass: [MainWindow class]];
+	else
+            return YES;
+
 }
 
 // list key equivalents which are already assigned

@@ -36,7 +36,10 @@ extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
-extern NSString *PdfPageStyleKey; // mitsu 1.29 (O) 
+extern NSString *PdfPageStyleKey; // mitsu 1.29 (O)
+extern NSString *PdfRefreshKey; 
+extern NSString *RefreshTimeKey;
+extern NSString *PdfFileRefreshKey; 
 extern NSString *PdfFirstPageStyleKey;
 extern NSString *PdfFitSizeKey; // mitsu 1.29 (O)
 extern NSString *PdfCopyTypeKey; // mitsu 1.29 (O) 
@@ -55,6 +58,7 @@ extern NSString *TexScriptCommandKey;
 extern NSString *TexTemplatePathKey;
 extern NSString *MetaPostCommandKey;
 extern NSString *BibtexCommandKey;
+extern NSString *DistillerCommandKey;
 extern NSString *LatexPanelPathKey;
 extern NSString *AutoCompletionPathKey;
 extern NSString *MenuShortcutsPathKey;

@@ -1,0 +1,81 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>Colored Text</TITLE>
+<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+<META NAME="description" CONTENT="colored text; pdf background color">
+</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Colored Text in TeX</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	It has always been possible to color TeX output. To do so, add the line
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{color}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	to the preamble, and insert a line like
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\color{blue}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	before typesetting begins. To color a limited section of text, use a command like
+</font></P>
+	<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>{\color{red} This is very important!}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	To define custom colors, use a command like
+</font></P>
+<dl>
+	<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\definecolor{mycolor}{rgb}{0.2, 0.7, 0.8}</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	When output is colored, the output may be difficult to read on the preview screen.
+		TeXShop has hidden preferences to set the background color of the preview window.
+		This background color will not appear when the document is printed. To set the
+		background to gray, issue the following commands in Terminal:
+</font></P>
+<dl>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write TeXShop Pdfbackground_R 0.5</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write TeXShop Pdfbackground_G 0.5</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>defaults write TeXShop Pdfbackground_B 0.5</tt>   </font>
+	</dl>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	Change 0.5 to 1 to get back to white. If you find yourself changing the background often,
+		create an Applescript macro named "PDF background gray" with the Macro Editor
+		using the following text:
+</font></P>
+<dl>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt> --AppleScript</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write TeXShop Pdfbackground_R 0.5"
+</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write TeXShop Pdfbackground_G 0.5"
+</tt>   </font>
+<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>do shell script "defaults write TeXShop Pdfbackground_B 0.5"
+</tt>   </font>
+	</dl>
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+	and create a similar macro named "PDF background white". 
+</font></P>
+
+
+
+
+
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

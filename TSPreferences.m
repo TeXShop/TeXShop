@@ -562,6 +562,12 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
     [SUD setBool:[sender state] forKey:NoScrollEnabledKey];
 }
 
+- (IBAction)autoPDFChanged:sender;
+{
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:PdfRefreshKey] forKey:PdfRefreshKey];
+    [SUD setBool:[sender state] forKey:PdfRefreshKey];
+}
+
 #ifdef MITSU_PDF
 
 // mitsu 1.29 (O)
@@ -869,6 +875,17 @@ person script.
         [SUD setInteger:[[sender selectedCell] tag] forKey:BibtexCommandKey];
 }
 
+//------------------------------------------------------------------------------
+- (IBAction)distillerChanged:sender
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:DistillerCommandKey] forKey:DistillerCommandKey];
+
+        [SUD setInteger:[[sender selectedCell] tag] forKey:DistillerCommandKey];
+}
+
+
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
 
@@ -1128,6 +1145,7 @@ This method retrieves the application preferences from the defaults object and s
     [_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
     [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
     [_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
+    [_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
     [_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
     
@@ -1253,6 +1271,9 @@ This method retrieves the application preferences from the defaults object and s
         
         myTag = [defaults integerForKey:BibtexCommandKey];
         [_defaultBibtexMatrix selectCellWithTag: myTag];
+        
+        myTag = [defaults integerForKey:DistillerCommandKey];
+        [_distillerMatrix selectCellWithTag: myTag];
 
     
 	// end mitsu 1.29

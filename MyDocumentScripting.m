@@ -12,7 +12,9 @@
 // ================================================================================
 
 #import "MyDocumentScripting.h"
+#import "globals.h"
 
+#define SUD [NSUserDefaults standardUserDefaults]
 
 @implementation MyDocument (ScriptingSupport)
 
@@ -69,6 +71,7 @@
 // -----------------------------------------------------------------------------
 // We already have a textStorage() method implemented above.
 
+/* This is the original routine; it was later replaced, as below 
 - (void)setSelection:(id)ts 
 {
     // ts can actually be a string or an attributed string.
@@ -82,6 +85,54 @@
 	range.length	= 0;
 	[[self firstTextView] setSelectedRange:range];
 }
+*/
+
+
+// New version by Stefan Walsen; November 17, 2003
+/* Here is the email explaining the problem and its cause:
+
+JŽr™me Laurens wrote:
+Le 17 nov. 03, ˆ 15:00, Stefan Walsen a Žcrit :
+[...]
+    set (content of selection of front document) to cmdOutput
+Beware, this last line breaks the undo stack and can lead to weird|dangerous 
+things unless the replacement string has exactly the same length as the replaced one...
+
+I noticed this, too. That's what I meant with the last line of my email.
+
+To keep me from doing important stuff, I looked into TeXShop's source and found the reason for this behaviour:
+TeXShop's undo manager just wasn't informed of the change in the document / selection.
+*/
+- (void)setSelection:(id)ts 
+{
+    // ts can actually be a string or an attributed string.
+
+	NSRange		range = [[self firstTextView] selectedRange];
+	NSString *oldString, *key= @"AppleEvent";
+	unsigned newStringLen, from, to;
+
+	// Determine the current selection
+	oldString = [[textView string] substringWithRange: range];
+
+	// Insert the new text
+    if ([ts isKindOfClass:[NSAttributedString class]]) {
+        [[self textStorage] replaceCharactersInRange:range withAttributedString:ts];
+        newStringLen = [(NSAttributedString*)ts length];
+    } else {
+        [[self textStorage] replaceCharactersInRange:range withString:ts];
+        newStringLen = [(NSString*)ts length];
+    }
+
+	// register undo
+	[self registerUndoWithString:oldString location:range.location 
+						length:newStringLen key:key];
+	
+	from = range.location;
+	to = from + newStringLen;
+	[self fixColor:from :to];
+	[self setupTags];
+}
+
 
 // -----------------------------------------------------------------------------
 //
@@ -171,6 +222,139 @@
 	}
 }
 
+- (id)handleLatexCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:LatexEngine withError:YES runContinuously:YES];
+    
+    return nil;
+}
+
+- (id)handleLatexInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:LatexEngine withError:YES runContinuously:NO];
+    
+    return nil;
+}
+
+- (id)handleTexCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:TexEngine withError:YES runContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleTexInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:TexEngine withError:YES runContinuously:NO];
+ 
+    return nil;
+}
+
+- (id)handleBibtexCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:BibtexEngine withError:YES runContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleBibtexInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:BibtexEngine withError:YES runContinuously:NO];
+ 
+    return nil;
+}
+
+
+- (id)handleContextCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:ContextEngine withError:YES runContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleContextInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:ContextEngine withError:YES runContinuously:NO];
+ 
+    return nil;
+}
+
+- (id)handleMetapostCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:MetapostEngine withError:YES runContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleMetapostInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:MetapostEngine withError:YES runContinuously:NO];
+ 
+    return nil;
+}
+
+- (id)handleMakeindexCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:IndexEngine withError:YES runContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleMakeindexInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doJobForScript:IndexEngine withError:YES runContinuously:NO];
+ 
+    return nil;
+}
+
+- (id)handleTypesetCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doTypesetForScriptContinuously:YES];
+ 
+    return nil;
+}
+
+- (id)handleTypesetInteractiveCommand:(NSScriptCommand*)command
+{
+    taskDone = NO;
+    [self doTypesetForScriptContinuously:NO];
+ 
+    return nil;
+}
+
+- (id)handleRefreshPDFCommand:(NSScriptCommand*)command
+{
+    [self refreshPDF];
+ 
+    return nil;
+}
+
+- (id)handleRefreshTEXTCommand:(NSScriptCommand*)command
+{
+    [self refreshTEXT];
+ 
+    return nil;
+}
+
+- (id)handleTaskDoneCommand:(NSScriptCommand*)command
+{
+    NSNumber *theResult = [NSNumber numberWithBool:taskDone];
+    return theResult;
+}
+
 
 @end
 
@@ -221,7 +405,7 @@
 	if ((range.location + range.length) > textLength)
 		range.length = textLength - range.location;
 	
-	return [[mDocument firstTextView] setSelectedRange:range];
+        [[mDocument firstTextView] setSelectedRange:range];
 }
 
 // -----------------------------------------------------------------------------
@@ -237,7 +421,7 @@
 	if ((range.location + range.length) > textLength)
 		range.length = textLength - range.location;
 
-	return [[mDocument firstTextView] setSelectedRange:range];
+        [[mDocument firstTextView] setSelectedRange:range];
 }
 
 // -----------------------------------------------------------------------------
@@ -280,7 +464,7 @@
 
 
 
-@implementation TSAppDelegate (ScriptingSupport)
+@implementation NSApplication (ScriptingSupport)
 
 // Scripting support.
 
@@ -324,6 +508,40 @@
 //	[doc setPotentialSaveDirectory:[MyDocument openSavePanelDirectory]];
     [[doc window] makeKeyAndOrderFront:nil];
 }
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+
+- (id)handleOpenForExternalEditorCommand:(NSScriptCommand*)command;
+{
+    NSDocumentController	*myController;
+    BOOL			externalEditor;
+    id                          result;
+    
+    NSDictionary *args = [command evaluatedArguments];
+    NSString *myName = [args objectForKey:@"FileName"];
+    if (!myName || [myName isEqualToString:@""])
+        return [NSNumber numberWithBool:NO];
+    
+    externalEditor = [SUD boolForKey:UseExternalEditorKey];
+    myController = [NSDocumentController sharedDocumentController];
+  //  forPreview = YES;
+    [[self delegate] setForPreview:YES];
+        
+    result = [myController openDocumentWithContentsOfFile: myName display: YES];
+
+    if (externalEditor)
+        [[self delegate] setForPreview:YES];
+    else
+        [[self delegate] setForPreview:NO];
+        
+    if (result == nil)
+        return [NSNumber numberWithBool:NO];
+    else
+        return [NSNumber numberWithBool:YES];
+}
+
 
 @end
 

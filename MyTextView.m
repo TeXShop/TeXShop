@@ -139,8 +139,12 @@
                 ((sourceDragMask & NSDragOperationLink) || (sourceDragMask & NSDragOperationGeneric)) ){
                 insertString = [self readSourceFromEquationEditorPDF: filePath];
                 if( insertString != nil ){
-                    [self insertText:insertString];
-                    [[self undoManager] setActionName: NSLocalizedString(@"Drag && Drop", @"Drag && Drop")];
+                    // [self insertText:insertString];
+                    // [[self undoManager] setActionName: NSLocalizedString(@"Drag && Drop", @"Drag && Drop")];
+                    // 1.33(fix) for undo
+                    [[[[self window] windowController] document] insertSpecial: insertString
+                                                        undoKey: NSLocalizedString(@"Drag && Drop", @"Drag && Drop")];
+                    // end 1.33(fix)
                     return;
                 }
             }
@@ -156,6 +160,21 @@
             }
 
             insertString = [self getDragnDropMacroString: fileExt];
+            
+            // Koch fix for missing methods
+            if ( insertString == nil ) {
+                if ( [fileExt  isEqualToString: @"cls"] ) insertString = @"\\documentclass{%n}\n";
+                else if ( [fileExt  isEqualToString: @"sty"] ) insertString = @"\\usepackage{%n}\n";
+                else if ( [fileExt  isEqualToString: @"bib"] ) insertString = @"\\bibliography{%n}\n";
+                else if ( [fileExt  isEqualToString: @"bst"] ) insertString = @"\\bibliographystyle{%n}\n";
+                else if (( [fileExt  isEqualToString: @"pdf"] ) || 
+                        ( [fileExt isEqualToString: @"jpeg"] ) || ( [fileExt isEqualToString: @"jpg"] ) ||
+                        ( [fileExt isEqualToString: @"tiff"] ) || ( [fileExt isEqualToString: @"tif"] ) ||
+                        ( [fileExt isEqualToString: @"eps"] ) || ( [fileExt isEqualToString: @"ps"] ))
+                            insertString = @"\\includegraphics[]{%r}\n";
+                }
+            // end of Koch fix
+            
             if( insertString == nil )    insertString = [self getDragnDropMacroString: @"*"];
             if( insertString == nil )    insertString = @"\\input{%r}\n";
 
@@ -529,12 +548,11 @@
 	NSCharacterSet *charSet;
 	unichar c;
 	
-        /*
-	if ([[theEvent characters] isEqualToString: commandCompletionChar] && 
-			([theEvent modifierFlags] & ~NSShiftKeyMask) == 0 && 
+        if ([[theEvent characters] isEqualToString: commandCompletionChar] && 
+			(([theEvent modifierFlags] & NSAlternateKeyMask) == 0) && 
 			![self hasMarkedText] && commandCompletionList)
-        */
-        if ([[theEvent characters] isEqualToString: commandCompletionChar] && (![self hasMarkedText]) && commandCompletionList)
+        
+      //  if ([[theEvent characters] isEqualToString: commandCompletionChar] && (![self hasMarkedText]) && commandCompletionList)
 	{
                 textString = [self string]; // this will change during operations (such as undo)
 		selectedLocation = [self selectedRange].location;

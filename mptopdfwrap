@@ -3,19 +3,28 @@
 # This short script calls texexec to run a conTeXt job
 # Richard Koch; September 14, 2001
 
-set mygspath = "/usr/local/bin"
+set mygspath = "$argv[2]"
 if (-x ${mygspath}/ps2pdf) then
         setenv PATH "${mygspath}:${PATH}"
         rehash
 endif
 
-set mytexexecpath = "$argv[1]"
+set mytexexecpath = "$argv[3]"
 if (-x ${mytexexecpath}mpost) then
         setenv PATH "${mytexexecpath}:${PATH}"
         rehash
 endif
 
-set filename = "$argv[2]"
+set filename = "$argv[4]"
+
+if ("$argv[1]" == "YES") then
+
+mptopdf "${filename:r}.mp"  # want to call it in continuous mode but don't know how
+
+else
 
 mptopdf "${filename:r}.mp"
+
+endif
+
 mv "${filename:r}-0.pdf" "${filename:r}.pdf"

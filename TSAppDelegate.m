@@ -33,6 +33,11 @@
     return [super init];
 }
 
+- (void)setForPreview: (BOOL)value;
+{
+    forPreview = value;
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     NSString *fileName;
@@ -756,6 +761,8 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
     else
         forPreview = NO;
 }
+
+
 
 - (BOOL)forPreview
 {

@@ -91,6 +91,7 @@
     id			magnificationOutlet;
     id			previousButton;
     id			nextButton;
+    BOOL                taskDone;
     
     IBOutlet NSMatrix 	*mouseModeMatrix; // mitsu 1.29 (O)
     IBOutlet NSMenu 	*mouseModeMenu; // mitsu 1.29 (O)
@@ -99,11 +100,20 @@
     BOOL		externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
     id			macroButton;		/*" pull-down list for macros "*/
+    id                  macroButtonEE;          /*" same in pdf window "*/
     id			autoCompleteButton;
     BOOL		doAutoComplete;
     BOOL		warningGiven;
     BOOL		omitShellEscape;
     BOOL		withLatex;
+    NSDate              *pdfDate;
+    NSTimer             *pdfRefreshTimer;
+    BOOL                typesetContinuously;
+    BOOL                tryAgain;
+    int                 tempEngine;
+    BOOL                useTempEngine;
+    BOOL                realEngine;
+    
 // end addition
 
 }
@@ -126,6 +136,8 @@
 - (void) doIndex: sender;
 - (void) doMetaFont: sender;
 - (void) doTypeset: sender;
+- (void) doTypesetForScriptContinuously:(BOOL)method;
+- (void) doJob:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous;
 - (void) doTypesetEE: sender;
 - (void) doTemplate: sender;
 - (void) doTexCommand: sender;
@@ -140,6 +152,7 @@
 - (void) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
+- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath;
 - (void) completeSaveFinished;
 - (id) pdfView;
 - (void) doCompletion:(NSNotification *)notification;
@@ -166,6 +179,8 @@
 - (id) textView;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
+- (void) refreshPDF;
+- (void) refreshTEXT;
 - (NSString *)displayName;
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
@@ -174,6 +189,9 @@
 - (void)convertDocument;
 - (BOOL)isDocumentEdited;
 - (BOOL)fileIsTex; // added by zenitani, Feb 13, 2003
+- (void)abort:sender;
+
+
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

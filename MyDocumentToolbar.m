@@ -64,6 +64,7 @@ static NSString*	kGotoPageTID 			= @"GotoPage";
 static NSString*	kMagnificationTID 		= @"Magnification";
 #ifdef MITSU_PDF
 static NSString*	kMouseModeTID 			= @"MouseMode";
+static NSString*	kMacrosEETID			= @"MacrosEE";
 #endif
 
 
@@ -160,6 +161,8 @@ static NSString*	kMouseModeTID 			= @"MouseMode";
 // added by mitsu --(H) Macro menu; macroButton
 	[macroButton retain];
 	[macroButton removeFromSuperview];
+        [macroButtonEE retain];
+        [macroButtonEE removeFromSuperview];
 // end addition
 	[[self textWindow] setToolbar: [self makeToolbar: kSourceToolbarIdentifier]];
 
@@ -410,6 +413,19 @@ static NSString*	kMouseModeTID 			= @"MouseMode";
 
 		return toolbarItem;
 	}
+        
+    if ([itemIdent isEqual: kMacrosEETID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButtonEE];
+		NSMenuItem*		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+
+		[menuFormRep setSubmenu: [macroButtonEE menu]];
+		[[MacroMenuController sharedInstance] addItemsToPopupButton: macroButtonEE];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+
 
 /*
     if ([itemIdent isEqual: kPreviousPageButtonTID]) {
@@ -680,6 +696,7 @@ static NSString*	kMouseModeTID 			= @"MouseMode";
 					kNextPageTID,
                                         kTypesetEETID,
                                         kProgramEETID,
+                                        kMacrosEETID,
                                         kTeXTID,
 					kLaTeXTID,
 					kBibTeXTID,

@@ -36,6 +36,7 @@
     fixScroll = NO;
     myRep = nil;
     rotationAmount = 0;
+    largeMagnify = NO;
     
     return value;
 }
@@ -584,7 +585,7 @@ scroller position.
     NSPoint mouseLocWindow, mouseLocView;
 	NSRect oldBounds, newBounds, magRectWindow, magRectView, oldRect, diffRect;
 	float minY, maxY;
-	BOOL postNote, cursorVisible;
+	BOOL postNote, cursorVisible, commandDown = NO;
         
         // koch
         int	magWidth = 150;
@@ -612,18 +613,32 @@ scroller position.
 		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) 
                     {	
                         // koch
-                         if (([theEvent modifierFlags] & NSAlternateKeyMask)) {
-                            magWidth = 380;
-                            magHeight = 250;
-                            magOffsetX = magWidth/2;
-                            magOffsetY = magHeight/2;
+                         if (([theEvent modifierFlags] & NSCommandKeyMask)) {
+                            if (! commandDown) {
+                                largeMagnify = !largeMagnify;
+                                if (largeMagnify) {
+                                    magWidth = 380; magHeight = 250;}
+                                else {
+                                    magWidth = 150; magHeight = 100;}
+                                commandDown = YES;
+                            }
+                        }
+                        else 
+                            commandDown = NO;
+                        if (([theEvent modifierFlags] & NSAlternateKeyMask) && (! commandDown)) {
+                            if (largeMagnify) {
+                                magWidth = 150; magHeight = 100;}
+                            else {
+                                magWidth = 380; magHeight = 250;}
                             }
                         else {
-                            magWidth = 150;
-                            magHeight = 100;
-                            magOffsetX = magWidth/2;
-                            magOffsetY = magHeight/2;
+                            if (largeMagnify) {
+                                magWidth = 380; magHeight = 250;}
+                            else {
+                                magWidth = 150; magHeight = 100;}
                             }
+                        magOffsetX = magWidth/2;
+                        magOffsetY = magHeight/2;
                         // end koch
             
 			// get Mouse location and check if it is with the view's rect

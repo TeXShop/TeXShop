@@ -48,6 +48,8 @@
         BOOL			syntaxColorTouched;		/*" if user fiddled with syntax and then cancelled,
                                                                     we restore the old one "*/
         BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
+        BOOL			autoCompleteTouched;
+        BOOL			oldAutoComplete;
         BOOL			magnificationTouched;
         BOOL			externalEditorTouched;
 // added by mitsu --(G) EncodingSupport

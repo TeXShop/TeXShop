@@ -36,6 +36,7 @@ static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 			= @"Templates";
+static NSString*	kAutoCompleteID			= @"AutoComplete";
 // added by mitsu --(H) Macro menu; macroButton
 static NSString*	kMacrosTID			= @"Macros";
 // end addition
@@ -140,6 +141,8 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 	[tags removeFromSuperview];
 	[popupButton retain];
 	[popupButton removeFromSuperview];
+        [autoCompleteButton retain];
+        [autoCompleteButton removeFromSuperview];
 // added by mitsu --(H) Macro menu; macroButton
 	[macroButton retain];
 	[macroButton removeFromSuperview];
@@ -275,6 +278,11 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 
 		return toolbarItem;
 	}
+        
+    if ([itemIdent isEqual: kAutoCompleteID]) {
+        return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:autoCompleteButton];
+        }
         
 // added by mitsu --(H) Macro menu; macroButton
     if ([itemIdent isEqual: kMacrosTID]) {
@@ -445,6 +453,7 @@ static NSString*	kMagnificationTID 		= @"Magnification";
                                         kMetaFontID,
 					kTagsTID,
 					kTemplatesID,
+                                        kAutoCompleteID,
                                         // added by mitsu --(H) Macro menu; macroButton
 					kMacrosTID,
                                         // end addition

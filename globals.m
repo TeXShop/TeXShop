@@ -59,6 +59,9 @@ NSString *markerredKey = @"markerred";
 NSString *markergreenKey = @"markergreen";
 NSString *markerblueKey = @"markerblue";
 NSString *tabsKey = @"tabs";
+NSString *background_RKey = @"background_R";
+NSString *background_GKey = @"background_G";
+NSString *background_BKey = @"background_B";
 
 // Exceptions
 NSString *XDirectoryCreation = @"DirectoryCreationException";
@@ -72,6 +75,7 @@ NSString *MagnificationChangedNotification = @"MagnificationChangedNotification"
 NSString *MagnificationRememberNotification = @"MagnificationRememberNotification";
 NSString *MagnificationRevertNotification = @"MagnificationRevertNotification";
 NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
+NSString *DocumentAutoCompleteNotification = @"DocumentAutoCompleteNotification";
 NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 
 /*" Other variables "*/

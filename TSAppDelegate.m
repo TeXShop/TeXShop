@@ -593,6 +593,7 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
         return YES;
 }
 
+/*
 - (void)showConfiguration:(id)sender
 {
     NSString	*configFilePath;
@@ -608,6 +609,7 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
     configFilePath = [[NSBundle mainBundle] pathForResource:@"MacrosHelp" ofType:@"rtf"];
    [[NSWorkspace sharedWorkspace] openFile:configFilePath  withApplication:@"TextEdit"];
 }
+*/
 
 - (void)dealloc
 {

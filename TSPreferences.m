@@ -107,11 +107,13 @@ Loads the .nib file if necessary, fills all the controls with the values from th
         fontTouched = NO; 
         externalEditorTouched = NO;
         syntaxColorTouched = NO;
+        oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
+        autoCompleteTouched = NO;
+        oldAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
         magnificationTouched = NO;
 // added by mitsu --(G) EncodingSupport
         encodingTouched = NO;
 // end addition
-        oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
 	[_undoManager beginUndoGrouping];
@@ -355,6 +357,9 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoCompleteEnabledKey] forKey:AutoCompleteEnabledKey];
 
     [SUD setBool:[sender state] forKey:AutoCompleteEnabledKey];
+    autoCompleteTouched = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
+
 }
 
 
@@ -717,6 +722,10 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         if (syntaxColorTouched) {
             [SUD setBool:oldSyntaxColor forKey:SyntaxColoringEnabledKey];
             [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
+            }
+        if (autoCompleteTouched) {
+            [SUD setBool:oldAutoComplete forKey:AutoCompleteEnabledKey];
+            [[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
             }
 // added by mitsu --(G) EncodingSupport
         if (encodingTouched) {

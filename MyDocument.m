@@ -122,10 +122,10 @@
     
     if (! externalEditor) {
         theSource = [[self textView] string]; 
-        if ([self checkMasterFile:theSource forPrinting:YES]) 
+        if ([self checkMasterFile:theSource forTask:RootForPrinting]) 
             return;
 #ifdef ROOTFILE
-        if ([self checkRootFile_forPrinting:YES]) 
+        if ([self checkRootFile_forTask:RootForPrinting]) 
             return;
 #endif
         }
@@ -192,6 +192,9 @@
 #ifndef ROOTFILE
     NSString		*projectPath, *nameString;
 #endif
+#ifdef ROOTFILE
+    NSString		*theSource;
+#endif
     NSString		*fileExtension;
     NSRect		topLeftRect;
     NSPoint		topLeftPoint;
@@ -202,6 +205,7 @@
     float		r, g, b;
     int			defaultcommand;
     NSSize		contentSize;
+    NSColor		*backgroundColor;
     
     [super windowControllerDidLoadNib:aController];
     
@@ -221,6 +225,10 @@
     [autocompletionDictionary retain];
     // end of code added by Greg Landweber
 */
+    backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
+    green:  [SUD floatForKey:background_GKey]
+    blue: [SUD floatForKey:background_BKey] 
+    alpha:1.0];
     
     /* New */
     contentSize = [scrollView contentSize];
@@ -232,6 +240,7 @@
     [textView setRichText:NO];
     [textView setUsesFontPanel:YES];
     [textView setFont:[NSFont userFontOfSize:12.0]];
+    [textView setBackgroundColor: backgroundColor];
     [scrollView setDocumentView:textView];
     [textView release];
     /* End of New */
@@ -252,6 +261,9 @@
     g = [SUD floatForKey:markergreenKey];
     b = [SUD floatForKey:markerblueKey];
     markerColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
+
+  doAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
+  [autoCompleteButton setState: doAutoComplete];
 
 
 /* when opening an empty document, must open the source editor */         
@@ -451,6 +463,14 @@
         }
     else
 #endif
+
+#ifdef ROOTFILE
+    theSource = [[self textView] string];
+    if ([self checkMasterFile: theSource forTask:RootForOpening])
+        return;
+    if ([self checkRootFile_forTask: RootForOpening])
+        return;
+#endif
         imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
         texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain]; 
@@ -550,6 +570,9 @@ in other code when an external editor is being used. */
     // register for notification when the syntax coloring changes in preferences
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reColor:) name:DocumentSyntaxColorNotification object:nil];
     
+    // register for notification when auto completion changes in preferences
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changePrefAutoComplete:) name:DocumentAutoCompleteNotification object:nil];
+    
     // externalEditChange
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ExternalEditorChange:) name:ExternalEditorNotification object:nil];
     
@@ -572,7 +595,15 @@ in other code when an external editor is being used. */
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetMacroButton:) 
 		name:@"ResetMacroButtonNotification" object:nil];
-// end addition 
+// end addition
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+        selector:@selector(resetTagsMenu:)
+        name:@"NSUndoManagerDidRedoChangeNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+        selector:@selector(resetTagsMenu:)
+        name:@"NSUndoManagerDidUndoChangeNotification" object:nil];
+
 
 }
 
@@ -1283,9 +1314,9 @@ preference change is cancelled. "*/
     
 if (! externalEditor) {
     theSource = [[self textView] string];
-    if ([self checkMasterFile:theSource forPrinting:NO]) return;
+    if ([self checkMasterFile:theSource forTask:RootForTexing]) return;
 #ifdef ROOTFILE
-    if ([self checkRootFile_forPrinting:NO]) return;
+    if ([self checkRootFile_forTask:RootForTexing]) return;
 #endif
 #ifdef NAIRN
     [self checkFileLinks:theSource];
@@ -1764,6 +1795,8 @@ if (! externalEditor) {
     
     theItem = [sender selectedItem];
     which = [theItem tag];
+    [programButton selectItemAtIndex: (which - 1)];
+    [programButtonEE selectItemAtIndex: (which - 1)];
  
  // added by mitsu --(J) Typeset command
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
@@ -2067,9 +2100,12 @@ if (! externalEditor) {
     unsigned	length;
     int		theChar;
     int		sectionIndex = -1;
+    unsigned	lineNumber = 0;
+    unsigned	lineNumber2;
     BOOL	done;
     
     title = [tags titleOfSelectedItem];
+    lineNumber2 = [[tags selectedItem] tag];
     
     /* code by Anton Leuski */
     if ([SUD boolForKey: TagSectionsKey]) { 
@@ -2092,48 +2128,55 @@ if (! externalEditor) {
     myRange.location = 0;
     myRange.length = 1;
     done = NO;
+
     while ((myRange.location < length) && (!done)) {
         [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
         myRange.location = end;
-        if (start < length - 3) {
-            theChar = [text characterAtIndex: start];
-            if (theChar == 0x0025) {
-                theChar = [text characterAtIndex: (start + 1)];
-                if (theChar == 0x003a) {
-                    nameRange.location = start + 2;
-                    nameRange.length = (end - start - 2);
-                    tagString = [text substringWithRange: nameRange];
-                    if ([title isEqualToString:tagString]) {
-                        done = YES;
-                        gotoRange.location = start;
-                        gotoRange.length = (end - start);
-                        [textView setSelectedRange: gotoRange];
-                        [textView scrollRangeToVisible: gotoRange];
+        lineNumber++;
+        
+        if ( lineNumber == lineNumber2 ){
+
+            if (start < length - 3) {
+                theChar = [text characterAtIndex: start];
+                if (theChar == 0x0025) {
+                    theChar = [text characterAtIndex: (start + 1)];
+                    if (theChar == 0x003a) {
+                        nameRange.location = start + 2;
+                        nameRange.length = (end - start - 2);
+                        tagString = [text substringWithRange: nameRange];
+                        if ([title isEqualToString:tagString]) {
+                            done = YES;
+                            gotoRange.location = start;
+                            gotoRange.length = (end - start);
+                            [textView setSelectedRange: gotoRange];
+                            [textView scrollRangeToVisible: gotoRange];
+                            }
                         }
                     }
-                }
-
-            /* code by Anton Leuski */
-            else if ((theChar == texChar) && (start < length - 8) && (sectionIndex >= 0)) {
-			
-                NSString*  tag		= [kTaggedTeXSections objectAtIndex:sectionIndex];
-                nameRange.location	= start;
-                nameRange.length	= [tag length];
-                tagString 		= [text substringWithRange: nameRange];
-
-                if ([tagString isEqualToString:tag]) {
-				
-                    nameRange.location = start + nameRange.length;
-                    nameRange.length = (end - start - nameRange.length);
-                    tagString = [text substringWithRange: nameRange];
-					
-                    if ([mainTitle isEqualToString:tagString]) {
-                        done = YES;
-                        gotoRange.location = start;
-                        gotoRange.length = (end - start);
-                        [textView setSelectedRange: gotoRange];
-                        [textView scrollRangeToVisible: gotoRange];
+    
+                /* code by Anton Leuski */
+                else if ((theChar == texChar) && (start < length - 8) && (sectionIndex >= 0)) {
+                            
+                    NSString*  tag	= [kTaggedTeXSections objectAtIndex:sectionIndex];
+                    nameRange.location	= start;
+                    nameRange.length	= [tag length];
+                    tagString 		= [text substringWithRange: nameRange];
+    
+                    if ([tagString isEqualToString:tag]) {
+                                    
+                        nameRange.location = start + nameRange.length;
+                        nameRange.length = (end - start - nameRange.length);
+                        tagString = [text substringWithRange: nameRange];
+                                            
+                        if ([mainTitle isEqualToString:tagString]) {
+                            done = YES;
+                            gotoRange.location = start;
+                            gotoRange.length = (end - start);
+                            [textView setSelectedRange: gotoRange];
+                            [textView scrollRangeToVisible: gotoRange];
+                            }
                         }
+                    
                     }
                 }
             }
@@ -2150,6 +2193,7 @@ if (! externalEditor) {
         tagTimer = nil;
     }
     tagLocation = 0;
+    tagLocationLine = 0;
     [tags removeAllItems];
     [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
     tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
@@ -2513,6 +2557,13 @@ BOOL isText1(int c) {
     if (tagRange.length != 0)
         tagLine = YES;
         
+    // added by S. Zenitani -- "\n" increments tagLocationLine
+    tagRange = [replacementString rangeOfString:@"\n"];
+    if (tagRange.length != 0)
+        tagLine = YES;
+    // end
+
+        
     textString = [textView string];
     [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
     tagRange.location = start;
@@ -2521,6 +2572,10 @@ BOOL isText1(int c) {
     if (matchRange.length != 0)
         tagLine = YES;
 
+    // for tagLocationLine (2) Zenitani
+    matchRange = [textString rangeOfString:@"\n" options:0 range:tagRange];
+    if (matchRange.length != 0)
+        tagLine = YES;
 
 /* code by Anton Leuski */
  if ([SUD boolForKey: TagSectionsKey]) {
@@ -2565,7 +2620,8 @@ BOOL isText1(int c) {
     // Code added by Greg Landweber for auto-completions of '^', '_', etc.
     // Should provide a preference setting for users to turn it off!
     // First, avoid completing \^, \_, \"
-    if ([SUD boolForKey:AutoCompleteEnabledKey]) {
+   //  if ([SUD boolForKey:AutoCompleteEnabledKey]) {
+        if (doAutoComplete) {
         if ( rightpar >= 128 ||
             [textView selectedRange].location == 0 ||
             [textString characterAtIndex:[textView selectedRange].location - 1 ] != /*'\\' */ texChar ) {
@@ -2718,18 +2774,24 @@ BOOL isText1(int c) {
     NSRange	myRange, nameRange;
     unsigned	length, index;
     int		theChar;
+    // added by S. Zenitani Jan 25, 2003
+    unsigned	lineNumber;
+    NSMenuItem *newItem;
+    // end add
 
     if (!fileIsTex) return;
      
     text = [textView string];
     length = [text length];
     index = tagLocation + 10000;
+    lineNumber = tagLocationLine; // added
     myRange.location = tagLocation;
     myRange.length = 1;
     
     while ((myRange.location < length) && (myRange.location < index)) { 
         [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
         myRange.location = end;
+        lineNumber++;
         
         if ((start + 3) < end) {
             theChar = [text characterAtIndex: start];
@@ -2737,12 +2799,20 @@ BOOL isText1(int c) {
             if (theChar == 0x0025) {
              
                 theChar = [text characterAtIndex: (start + 1)];
-                if (theChar == 0x003a) { 
+                if (theChar == 0x003a) {
                     nameRange.location = start + 2;
                     nameRange.length = (end - start - 2);
                     tagString = [text substringWithRange: nameRange];
-                    [tags addItemWithTitle:tagString];
+                    // [tags addItemWithTitle: tagString];
+                    [tags addItemWithTitle: @""];
+		    newItem = [tags lastItem];
+                    [newItem setAction: @selector(doTag:)];
+                    [newItem setTarget: self];
+                    [newItem setTag: lineNumber];
+                    [newItem setTitle: tagString];
                     }
+                    // If an item with the name title already exists in the menu,
+                    // it will be overwrited by addItemWithTitle. -- S. Zenitani Jan 25, 2003
                 }
                 
                 /* code by Anton Leuski */
@@ -2765,7 +2835,12 @@ BOOL isText1(int c) {
                                 [kTaggedTagSections objectAtIndex:i]];
                             tagString = [tagString stringByAppendingString: 
                             [text substringWithRange: nameRange]];
-                            [tags addItemWithTitle:tagString];
+                            [tags addItemWithTitle: @""];
+                            newItem = [tags lastItem];
+                            [newItem setAction: @selector(doTag:)];
+                            [newItem setTarget: self];
+                            [newItem setTag: lineNumber];
+                            [newItem setTitle: tagString];
                             }
                         }
 					
@@ -2773,6 +2848,7 @@ BOOL isText1(int c) {
             }
         }
         tagLocation = myRange.location;
+        tagLocationLine = lineNumber;
         if (tagLocation >= length) 
         {
             [tagTimer invalidate];
@@ -3770,6 +3846,22 @@ aSelector
     }
 }
 
+- (void) changeAutoComplete: sender
+{
+    doAutoComplete = ! doAutoComplete;
+    [autoCompleteButton setState: doAutoComplete];
+}
+
+//-----------------------------------------------------------------------------
+- (void)changePrefAutoComplete:(NSNotification *)notification;
+//-----------------------------------------------------------------------------
+{
+    doAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
+    [autoCompleteButton setState: doAutoComplete];
+}
+
+
+
 // The code below is copied directly from Apple's TextEdit Example 
 
 static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) {
@@ -3891,7 +3983,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 //	If \input commands, save those documents if opened and changed
 
 //-----------------------------------------------------------------------------
-- (BOOL)checkMasterFile:(NSString *)theSource forPrinting:(BOOL)toPrint;
+- (BOOL)checkMasterFile:(NSString *)theSource forTask:(int)task;
 //-----------------------------------------------------------------------------
 {
     NSString *home,*jobname=[[self fileName] stringByDeletingLastPathComponent];
@@ -3901,6 +3993,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     NSEnumerator *en;
     id obj;
     NSDocumentController *dc;
+    
+    if (theSource == nil)
+        return NO;
     
     // load home path and jobname
     home=[[self fileName] stringByDeletingLastPathComponent];
@@ -3921,9 +4016,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             while(obj=[en nextObject])
             {	if([[obj windowNibName] isEqualToString:@"MyDocument"])
                 {   if([[obj fileName] isEqualToString:saveName]) {
-                    if (toPrint) 
+                    if (obj == self)
+                        return NO;
+                    if (task == RootForPrinting) 
                         [obj printDocument:nil];
-                    else
+                    else if (task == RootForTexing)
                         {	switch(whichEngine) {
                                 case TexEngine: [obj doTex:nil]; break;
                                 case LatexEngine: [obj doLatex:nil]; break;
@@ -3937,7 +4034,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                                     @"Path Name: %@",saveName);
                                 }
                             }
-                         return YES;
+                    else if (task == RootForOpening) {
+                        ;
+                        }
+                    return YES;
                     }
                 }
             }
@@ -3946,9 +4046,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             dc=[NSDocumentController sharedDocumentController];
             obj=[dc openDocumentWithContentsOfFile:saveName display:YES];
             if(obj) {
-            	if (toPrint)
+                if (obj == self)
+                    return NO;
+            	if (task == RootForPrinting)
                     [obj printDocument:nil];
-                else {
+                else if (task == RootForTexing){
                     switch(whichEngine) {
                             case TexEngine: [obj doTex:nil]; break;
                             case LatexEngine: [obj doLatex:nil]; break;
@@ -3962,6 +4064,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                                 @"Path Name: %@",saveName);
                             }
                         }
+                else if (task == RootForOpening) {
+                    [[obj textWindow] miniaturize:self];
+                    }
                 return YES;
                 }
             else
@@ -3976,7 +4081,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 }
 
 //-----------------------------------------------------------------------------
-- (BOOL) checkRootFile_forPrinting:(BOOL)toPrint
+- (BOOL) checkRootFile_forTask:(int)task
 //-----------------------------------------------------------------------------
 {
     NSString			*projectPath, *nameString;
@@ -4010,10 +4115,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     while(obj=[en nextObject]) {
         if([[obj windowNibName] isEqualToString:@"MyDocument"]) {
             if([[obj fileName] isEqualToString:nameString]) {
-                if (toPrint) {
+                if (obj == self)
+                    return NO;
+                if (task == RootForPrinting) {
                     [obj printDocument:nil];
                     }
-                else
+                else if (task == RootForTexing)
                     {switch(whichEngine) {
                         case TexEngine: [obj doTex:nil]; break;
                         case LatexEngine: [obj doLatex:nil]; break;
@@ -4025,10 +4132,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                         default: NSBeginAlertSheet(@"Typesetting engine cannot be found.",
                             nil,nil,nil,[textView window],nil,nil,nil,nil,
                             @"Path Name: %@",nameString);
+                        }
                     }
+                else if (task == RootForOpening) {
+                    ;
+                    }
+                return YES;
                 }
-            return YES;
-            }
         }
     }
         
@@ -4036,10 +4146,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     dc=[NSDocumentController sharedDocumentController];
     obj=[dc openDocumentWithContentsOfFile:nameString display:YES];
     if(obj) {
-        if (toPrint) {
+        if (obj == self)
+            return NO;
+        if (task == RootForPrinting) {
             [obj printDocument:nil];
             }
-        else
+        else if (task == RootForTexing)
             {switch(whichEngine) {
                 case TexEngine: [obj doTex:nil]; break;
                 case LatexEngine: [obj doLatex:nil]; break;
@@ -4052,6 +4164,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     nil,nil,nil,[textView window],nil,nil,nil,nil,
                     @"Path Name: %@",nameString);
                 }
+            }
+        else if (task == RootForOpening) {
+            [[obj textWindow] miniaturize:self];
             }
         return YES;
         }

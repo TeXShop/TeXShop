@@ -244,8 +244,13 @@ static id sharedMacroMenuController = nil;
 		NSArray *childlenArray = [dict objectForKey: SUBMENU_KEY];
 		if (childlenArray)	// submenu item
 		{
-			[popupButton addItemWithTitle: nameStr]; // this method does not return the item
-			newItem = [popupButton lastItem];
+			// [popupButton addItemWithTitle: nameStr]; // this method does not return the item
+			// newItem = [popupButton lastItem];
+                        // Revision on January 28 by Mitsuhiro Shishikura
+                        [popupButton addItemWithTitle: @""]; // this method does not return the item
+                        newItem = [popupButton lastItem];
+                        [newItem setTitle: nameStr];
+        
 			submenu = [[[NSMenu alloc] init] autorelease];
             [self addItemsToMenu: submenu fromArray: childlenArray withKey: NO];
             [newItem setSubmenu: submenu];

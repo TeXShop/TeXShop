@@ -66,6 +66,7 @@
     unsigned		colorLocation;
     NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
     unsigned		tagLocation;
+    unsigned		tagLocationLine;
     BOOL		makeError;
     BOOL		returnline;
     SEL			tempSEL;
@@ -78,6 +79,8 @@
     BOOL		externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
     id			macroButton;		/*" pull-down list for macros "*/
+    id			autoCompleteButton;
+    BOOL		doAutoComplete;
 // end addition
 
 }
@@ -105,6 +108,7 @@
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
 - (void) doCompletion:(NSNotification *)notification;
+- (void) changeAutoComplete: sender;
 - (void) doComment: sender;
 - (void) doUncomment: sender;
 - (void) doIndent: sender;
@@ -155,8 +159,8 @@
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
 // added by John Nairn
-- (BOOL)checkMasterFile:(NSString *)theSource forPrinting:(BOOL)toPrint;
-- (BOOL) checkRootFile_forPrinting:(BOOL)toPrint;
+- (BOOL)checkMasterFile:(NSString *)theSource forTask:(int)task;
+- (BOOL) checkRootFile_forTask:(int)task;
 - (void) checkFileLinks:(NSString *)theSource;
 - (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
         homePath:(NSString *)home job:(NSString *)jobname;

@@ -1,0 +1,44 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Setting a Project Root File</TITLE>
+	</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.htm"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Setting a Project Root File</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">It is common to split large input files into several smaller files controlled by a root file. For instance, the root file of a book project might have the form</font></P>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\documentclass[11pt]{book}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includeonly{Chapter2/two.tex}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\textwidth = 6.5 in</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\textheight = 9 in</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\begin{document}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\include{Chapter1/one.tex}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\include{Chapter2/two.tex}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\include{Chapter3/three.tex}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\end{document}</tt></font>
+		</dl>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">This root file contains formatting commands for the entire project, but the subject matter is contained in files one.tex, two.tex, and three.tex. The second line above tells TeX to typeset chapter two only, speeding up typesetting while chapter two is being written. When the book is complete, this line can be commented out and the entire book can be typeset a final time.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">While chapter two is being written, it would be natural to open the file two.tex in TeXShop. But after changes are made to this input file, TeXShop should not typeset two.tex; instead it should typeset the root file. TeXShop can be told to do so using the menu command &quot;Set Project Root...&quot;  This menu command presents a panel with a text box where the name of the root file can be entered. </font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">If the root file is in the same folder as the input file, it is enough to give its name, including the &quot;.tex&quot; extension. For instance, if the root file is named Main, you can enter Main.tex in the dialog window.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">If the root file is in a different directory, its name can be given relative to the location of the input file. In the above example, the various chapters are contained in subfolders within the folder containing the root file. In that case, you could enter ../Main.tex in the dialog window, showing the location of the root file relative to the chapter input file.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">Finally, the name of the root can be given with an absolute name, as in /Users/me/Main.tex.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">If the entire TeX source is contained in a single file, it is not necessary to set the root project name.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">TeXShop remembers the name of the root file by writing this information to a file with the same name as the input file and the extension &quot;.texshop&quot;. For instance, if the input for chapter two is in two.tex, TeXShop writes the name of the root in two.texshop in the same directory as two.tex.  If the file two.texshop is later thrown away, TeXShop will revert to typesetting two.tex rather than Main.tex.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">There is an alternate method to set the root file. Instead of setting a root file, including a line like the one below in the chapter source file:</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>%SourceDoc ../Main.tex</tt></font>
+		</dl>
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

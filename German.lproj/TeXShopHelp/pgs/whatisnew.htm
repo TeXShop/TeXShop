@@ -1,0 +1,185 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>What's new?</TITLE>
+	</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.htm"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Was ist neu?</B></FONT></TD>
+</TR>
+</TABLE>
+<P><font size="2" face="Lucida Grande,Geneva,Arial"> Version 1.28 fixes some minor bugs in 1.27 and adds a few extra features:
+</font>
+<ul>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	TeXShop finally uses the Apple Help System. This change is entirely due
+to Martin Kerz, who wrote all of the html code. Much easier to use than the
+old version!</font>
+		<li><font size="2" face="Lucida Grande,Geneva,Arial">	The magnification glass has additional behavior. Holding down the command key while
+mousing sets magnification level much as the option key does, except that this
+level is then remembered until the window closes. If it is set to large mode, then
+holding down the option key temporarily magnifies in small mode.
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	 There is a new preference to set the background color of the source window.
+This preference has no interface. To reset it to (r, g, b) = (.42, .39, .77), 
+issue the commands
+<ul>
+<li>	defaults write TeXShop background_R .42
+<li>	defaults write TeXShop background_G .39
+<li>	defaults write TeXShop background_B .77
+</ul>
+
+The values should be between 0.00 = black and 1.00 = white. Default is
+r = g = b = 1.00.
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	A bug reported by Michael Murray has been fixed: the program selection
+tabs in the source and pdf windows weren't synchronized, so
+the typeset command sometimes did something unexpected.
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	Richard Hazeltine ran into a bug in which his main.tex file
+had an associated root file main.texshop which contained "main.tex".
+In the past this would be harmless, but in TeXShop 1.27 it created
+an infinite loop.
+TeXShop is now protected against this simple kind of infinite loop;
+in this special case, the file will typeset normally. Cases in which
+f1.texshop points to f2.tex and f2.texshop points to f1.tex will
+still create an infinite loop. 	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	There is a new German localization by Martin Kerz, and a new Spanish
+localization by Juan Luis Varona Malumbres.
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	The "root file" behavior was slightly modified as requested by Gary Gray.
+If the user opens a file which has a root file set by the "%SourceDoc" mechanism or by the "Set Root File" mechanism, then the root file is also opened. This means, in particular, that the pdf preview window opens. If the file is already open, then nothing unusual happens. But if the root file is not open, then after it is opened the source file of the root file is miniaturized. This is done by the zoom mechanism
+(mainly because I don't know how to turn that zoom off). The zoom is a little surprising, but after a while it makes sense; TeXShop is saying "there is a root file and it is down here in the dock if you ever need it."
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	A new toolbar item allows users to turn autocompletion on or off rapidly on a document by document basis. This idea (with sample code) comes from
+Maarten Sneep.
+	</font>
+<li><font size="2" face="Lucida Grande,Geneva,Arial">	In the past, if more than one item in the tags menu had the same text, only
+the first item was shown. This bug is fixed in 1.28 by Seiji Zenitani.	</font>
+</ul>
+
+		<P><font size="2" face="Lucida Grande,Geneva,Arial"> The majority of new features in version 1.27 are due to Mitsuhiro Shishikura. The TeXShop 
+		source code contains a folder with the email messages sent by Shishikura; 
+		they provide an excellent model of the correct way to suggest changes. 
+		Shishikura sent revised source code, a description of what the changes 
+		were supposed to accomplish, and a description of exactly where the 
+		source code changed.
+</font>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial"> Shishikura additions:
+</font>
+		<ul>
+		<li><font size="2" face="Lucida Grande,Geneva,Arial">	Pressing the mouse in the pdf display magnifies a small surrounding
+		region. Pressing the option key enlarges
+		the section being magnified.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	A macros menu and marcos button in the toolbar have been added. They provide an alternate way
+		to insert text into the source document. Items in this menu behave 
+		like buttons in the existing Latex Panel. In addition, AppleScript items
+		in the menu run user defined scripts. For example, a default script opens
+		the pdf output in Adobe Acrobat. </font>
+
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">The macros menu can be edited with a Macro Editor accessed through the Macros
+menu. New macros can be created and existing macros can be redefined and rearranged.
+The help menu contains
+		an item explaining how to use this editor.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	User inputs in the console window are added in red to the display at the
+		top of this window, so this display has a complete record of interaction with
+		TeX during typesetting. </font>
+
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	Support was added for file types .def, fd, .ltx, .clo
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	A  "Typeset" menu was added, with keyboard shortcut command-T. This typesets the
+		file with the currently chosen program. To make this change, the typeset
+		menu and toolbar items have been rearranged to behave in a more
+		rational way.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	Extensive support was added for users in Japan. An additional encoding,
+		Japanese (JIS), is added to those defined by Seiji Zenitani in verison 1.26.
+		Earlier versions required special versions of completion.plist when using the
+		Japanese "yen" encoding; this is no longer necessary. (Explanation for users
+		not in Japan: Japanese keyboards often omit the \ character, replacing it with
+		the "yen" character ´. A special version of tex is available which uses ´
+		rather than \ as a TeX escape character. TeXShop recognizes this 
+		substitution when using the encoding Japanese (ShiftJIS ´).) </font>
+
+	<li><font size="2" face="Lucida Grande,Geneva,Arial"><B> Note for Japanese users of TeXShop 1.26 or earlier. </B> As part of this change, a special Japanese version of ~/Library/TeXShop/LatexPanel/completion.plist is no longer needed. Japanese users of TeXShop 1.26 or earlier should remove
+this file when they upgrade; the default file will be recreated the next time TeXShop starts.
+Please read the Japanese documentation for details.
+</font>
+</ul>
+<p><font size="2" face="Lucida Grande,Geneva,Arial"> Changes by John Nairn:
+</font><ul>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	The following change was inspired by a contribution from John Nairn listed next.
+		The "Set Project Root" behavior of TeXShop has changed. Users writing
+		books often organize the project as follows:  a master source file, perhaps
+		called "Main.tex," is created. This file defines global macros and inputs
+		the sources for individual chapters. The source files for these chapters are
+		contained in subfolders, one for each chapter. In TeXShop, it is possible to
+		associate a "root file" with each chapter file. In previous versions, when the chapter
+		was typeset, TeXShop actually typeset Main.tex but added the resulting pdf
+		file to the chapter project. If several chapters were open at once, several copies of the
+		book pdf file would appear. In the new program, this does not happen. Instead, when
+		the chapter is typeset, TeXShop opens Main.tex if it is not already open and typesets
+		that file. So only one pdf file is displayed, even if several chapter files are open.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	It is no longer necessary to set the project root for each chapter. Instead, include
+		a line of code in the chapter source of the form "%SourceDoc ../Main.tex" without
+		the quotations to achieve the same effect. (Nairn's code behaved as described in
+		the previous paragraph; TeXShop has been revised so root files can be set in
+		two different ways and both ways produce the same effect.)
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	A new preference item has been added called "During File Save, Save Related
+		Files." When a document is typeset, it is first saved. If this item is checked, the
+		document will also be searched for \Input lines, and if the resulting files are also
+		open in TeXShop, they will also be saved.
+</font>	</ul>
+
+<p><font size="2" face="Lucida Grande,Geneva,Arial"> Other changes:
+</font><ul>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	Localization support Italian is improved.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">  The Japanese localization by Seiji Zenitani was updated for this release.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	TeXShop now keeps configuration files for Templates, the Latex Panel, the
+		Macros Menu, possible redefinition of menu keyboard shortcuts, and possible
+		autocompletion codes in subfolders of the folder ~/Library/TeXShop. These
+		folders are created with default configuration files when TeXShop first starts.
+		To move TeXShop to a different machine preserving these configurations,
+		copy the ~/Library/TeXShop folder to the new machine.
+</font>	</ul>
+<p><font size="2" face="Lucida Grande,Geneva,Arial">  Bugs Fixed:
+</font>
+		<ul>
+
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	New documents are now titled "Untitled", "Untitled-1", "Unititled-2", etc. 
+		In TeXShop 1.26 and earlier, these names contained spaces even though TeX
+		cannot process file names with spaces. I tried to fix this bug several times 
+		without success; the fix is due to Shishikura.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial"> In the past, preference items entered by typing strings were sometimes not
+accepted. This is fixed.
+</font>		
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	Several users wrote that their preference changes of default pdf magnification
+		were not accepted when they pressed "OK." Until recently, I could not reproduce
+		this bug. It turns out that the pdf window had to be open when making the
+		preference change or else the change would appear to work but wouldn't. This
+		is fixed.
+</font>
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	TeXShop can display jpg and tiff files. In 1.26 and earlier, the display window
+		was blank if the default pdf magnification was not 1. This is fixed. </font>
+		
+	<li><font size="2" face="Lucida Grande,Geneva,Arial">	When syntax coloring, TeXShop interpreted the sequence \% as the beginning
+		of a comment. This is fixed.
+</font>		
+</ul>
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

@@ -29,7 +29,7 @@
 - (void)configureMacro;
 - (void)finishAutoCompletionConfigure;
 - (void)finishMenuKeyEquivalentsConfigure;
-- (void)showConfiguration:(id)sender;
-- (void)showMacrosHelp:(id)sender;
+// - (void)showConfiguration:(id)sender;
+// - (void)showMacrosHelp:(id)sender;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 @end

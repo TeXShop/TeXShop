@@ -23,6 +23,7 @@
     MyDocument		*myDocument;
     int			rotationAmount;  // will be 0, 90, -90, 180
     double		theMagSize;
+    BOOL		largeMagnify; // for magnifying glass
 }
 
 - (void) setImageType: (int)theType;    

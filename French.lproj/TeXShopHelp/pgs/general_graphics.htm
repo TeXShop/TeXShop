@@ -1,0 +1,47 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>Including Graphics</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.htm"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Including Graphics</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">The programs pdftex and pdflatex can use graphic files produced in pdf, jpg, png, or mps format. If you are using the default latex template and installed the graphic conversion packages from Gerben Wierda's distribution, you can also use graphic files produced in eps or tif format; they will automatically be converted to pdf or png formats during typesetting. One pecularity is that tiff files must have extension &quot;.tif&quot; rather than &quot;.tiff&quot;.  The native graphics format of Mac OS X is pdf (portable document format) and such files print well at any size. It is likely that most future Mac graphics programs will output pdf.</font></P>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">If you used TeX in the past, your illustrations may be in eps format. These files must be converted to pdf format before being typeset with pdftex and pdflatex. As explained above, this will happen automatically if you use the default latex template. You can also convert an eps illustration by opening it in TeXShop. The illustration will appear in a graphic window and TeXShop will simultaneously write the corresponding pdf file to disk. Ghostscript also contains a command line program to convert; indeed TeXShop calls this program. To convert myfile.eps to myfile.pdf within Terminal, type</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>epstopdf myfile.eps</tt>   </font>
+		</dl>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">The authors of pdflatex and the authors of the graphics package graphicx have made it easy to include graphic files in a LaTeX document typeset with pdflatex, even if the document will later be typeset by standard latex and converted to a dvi file for distribution to other people. At the top of such a LaTeX input file, include the line:</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{graphicx}</tt></font>
+		</dl>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">When you wish to include a graphic file, say &quot;f1.pdf &quot;, use the command</font></p>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\includegraphics[width=2in]{f1}</tt></font>
+		</dl>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">This command will cause tex to input the graphic file &quot;f1.pdf&quot; when the text is typeset with pdflatex, but input the file &quot;f1.eps&quot; when the text is typeset with latex.</font></p>
+		<p><font size="2" face="Lucida Grande,Geneva,Arial">If you upgraded from a previous version of TeXShop and want to use automatic conversion of eps and tif files during typesetting, make certain that</font></p>
+		<ol>
+			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">You have installed Ghostscript 7,  Freetype 2,  wmf and iconv conversion support, and<br>
+						ImageMagick with Gerben Wierda's installer</font>
+			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">The pdflatex program preference is &quot;pdflatex --shell-escape&quot;</font>
+			<li type="a"><font size="2" face="Lucida Grande,Geneva,Arial">The Latex header contains the following lines</font>
+		</ol>
+		<dl>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{graphicx}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\usepackage{epstopdf}</tt></font>
+			<dd><font size="2" face="Lucida Grande,Geneva,Arial"><tt>\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}</tt></font>
+		</dl>
+		<ul>
+			
+		</ul>
+	</BODY>
+
+</HTML>

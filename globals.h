@@ -60,6 +60,9 @@ extern NSString *markerredKey;
 extern NSString *markergreenKey;
 extern NSString *markerblueKey;
 extern NSString *tabsKey;
+extern NSString *background_RKey;
+extern NSString *background_GKey;
+extern NSString *background_BKey;
 
 /*" Exceptions "*/
 extern NSString *XDirectoryCreation;
@@ -73,6 +76,7 @@ extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
 extern NSString *MagnificationRevertNotification;
 extern NSString *DocumentSyntaxColorNotification;
+extern NSString *DocumentAutoCompleteNotification;
 extern NSString *ExternalEditorNotification;
 
 
@@ -148,4 +152,13 @@ typedef enum _EngineCommand
     ContextEngine = 6,
     MetafontEngine = 7
 } _EngineCommand;
+
+/*" Symbolic constants for Root File tests "*/
+typedef enum _RootCommand
+{
+    RootForOpening = 1,
+    RootForTexing = 2,
+    RootForPrinting = 3
+} _RootCommand;
+
 

@@ -1,5 +1,7 @@
 #import <AppKit/AppKit.h>
 
+// from Apple
+
 #define Forward YES
 #define Backward NO
 

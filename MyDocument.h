@@ -1,6 +1,8 @@
 // MyDocument.h
 
-#import <AppKit/AppKit.h>
+// Created by dick in July, 2000.
+
+#import <AppKit/NSDocument.h>
 
 #define NUMBEROFERRORS	20
 
@@ -12,70 +14,51 @@
 #define isTIFF	4
 
 
-@interface MyDocument : NSDocument {
-    id			textView;
-    id			pdfView;
-    id			textWindow;
-    id			pdfWindow;
-    id			outputWindow;
-    id			outputText;
-    id			prefWindow;
-    id			fontChange;
-    id			magChange;
-    id			pdfWindowChange;
-    id			sourceWindowChange;
-    id			pdfDisplayChange;
-    id			gsColor;
-    id			popupButton;
+@interface MyDocument : NSDocument 
+{
+    id			textView;				/*" textView displaying the current TeX source "*/
+    id			pdfView;				/*" view displaying the current preview "*/
+    id			textWindow;				/*" window displaying the current document "*/
+    id			pdfWindow;				/*" window displaying the current pdf preview "*/
+    id			outputWindow;			/*" window displaying the output of the running TeX process "*/
+    id			outputText;				/*" text displaying the output of the running TeX process "*/
+    NSTextField		*texCommand;		/*" connected to the command textField on the errors panel "*/
+    id			popupButton;			/*" popupButton displaying all the TeX templates "*/
     id			projectPanel;
     id			projectName;
     id			requestWindow;
     id			printRequestPanel;
     id			linePanel;
     id			lineBox;
-    id			texEngine;
-    id			latexEngine;
-    id			textFinder;
     id			typesetButton;
-    id			typesetChoice;
-    id			syntaxColor;
     id			tags;
-    id			parenMatch;
-    int			whichEngine; /* 0 = tex, 1 = latex, 2 = bibtex */
-    NSString		*myTexEngine;
-    NSString		*myLatexEngine;
-    int			myDisplayPref; /* 0 = apple, 1 = ghostscript */
-    int			myColorPref; /* 0 = gray, 1 = 256, 2 = thousands */
-    int			myProgramPref; /* 0 = tex, 1 = latex */
-    BOOL		colorSyntax;
-    BOOL		matchParen;
+    int			whichEngine;			/*" 0 = tex, 1 = latex, 2 = bibtex "*/
     BOOL		tagLine;
-    NSTextField		*texCommand;
-    NSPipe		*outputPipe;
-    NSPipe		*inputPipe;
     NSFileHandle	*writeHandle;
     NSFileHandle	*readHandle;
-    NSString		*aString;
+    NSPipe		*inputPipe;
+    NSPipe		*outputPipe;
+    NSString		*aString;			/*" holds the content of the tex document "*/
     NSTask		*texTask;
     NSTask		*bibTask;
     NSTask		*indexTask;
     NSDate		*startDate;
-    NSFileManager	*myFileManager;
     NSPDFImageRep	*texRep;
+    NSData		*previousFontData;		/*" holds font data in case preferences change is cancelled "*/
     int			myPrefResult;
     BOOL		fileIsTex;
     int			myImageType;
     int			errorLine[NUMBEROFERRORS];
     int			errorNumber;
     int			whichError;
-    unsigned		colorStart, colorEnd;
-    NSTimer		*colorTE;
-    unsigned		colorLocation;
-    NSTimer		*tagTE;
-    unsigned		tagLocation;
+    unsigned	colorStart, colorEnd;
+    NSTimer		*syntaxColoringTimer;		/*" Timer that repeatedly handles syntax coloring "*/
+    unsigned	colorLocation;
+    NSTimer		*tagTimer;					/*" Timer that repeatedly handles tag updates "*/
+    unsigned	tagLocation;
     BOOL		makeError;
     BOOL		returnline;
-    }
+}
  
 - (void) doTex: sender;
 - (void) doLatex: sender;
@@ -85,22 +68,14 @@
 - (void) doTemplate: sender;
 - (void) doTexCommand: sender;
 - (void) printSource: sender;
-- (void) doPreferences: sender;
-- (void) quitPreferences: sender;
-- (void) okPreferences: sender;
 - (void) okForRequest: sender;
 - (void) okForPrintRequest: sender;
-- (void) readPreferences;
 - (void) close;
 - (void) doLine: sender;
 - (void) doTag: sender;
-- (void) fixTags: sender;
 - (void) chooseProgram: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
-- (int) displayPref;
-- (id) fileManager;
-- (int) colorPref;
 - (void) doBibJob;
 - (void) doIndexJob;
 - (void) toLine: (int)line;
@@ -114,82 +89,24 @@
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
 
-@end
 
+//-----------------------------------------------------------------------------
+// Timer methods
+//-----------------------------------------------------------------------------
+- (void)fixTags:(NSTimer *)timer;
+- (void)fixColor1:(NSTimer *)timer;
 
-@interface MyView : NSView {
-    id			currentPage;
-    id			totalPage;
-    id			mySize;
-    int			imageType;
-    BOOL		fixScroll;
-    NSPDFImageRep	*myRep;
-    NSBitmapImageRep	*gsRep;
-    NSTask		*gsTask;
-    MyDocument		*myDocument;
-    }
-
-- (void) setImageType: (int)theType;    
-- (void) previousPage: sender;
-- (void) nextPage: sender;
-- (void) goToPage: sender;
-- (void) setImageRep: (NSPDFImageRep *)theRep;
-- (void) changeSize: sender;
-- (void) printDocument: sender;
-- (id) slider;
-- (void) destroyGSRep;
-- (void) setDocument: (id) theDocument;
-- (void) drawWithGhostscript;
-@end
-
-@interface PrintView : NSView {
-    NSPDFImageRep	*myRep;
-    NSPrintOperation	*myPrintOperation;
-    int			myDisplayPref;
-    }
-    
-- (PrintView *) initWithRep: (NSPDFImageRep *) aRep andDisplayPref: (int) displayPref;
-- (void) setPrintOperation: (NSPrintOperation *)aPrintOperation;
-    
-@end
-
-@interface MyWindow : NSWindow {
-
-    MyDocument	*myDocument;
-    BOOL	firstClose;
-    }
-   
-- (void) printDocument: sender;
-- (void) printSource: sender;
-- (void) doPreferences: sender;
-- (void) doTex: sender;
-- (void) doLatex: sender;
-- (void) doBibtex: sender;
-- (void) doIndex: sender;
-- (void) previousPage: sender;
-- (void) nextPage: sender;
-- (void) doError: sender;
-- (void) orderOut: sender;
-- (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+//-----------------------------------------------------------------------------
+// private API
+//-----------------------------------------------------------------------------
+- (void)registerForNotifications;
+- (void)setDocumentFontFromPreferences:(NSNotification *)notification;
+- (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
 
 @end
 
-@interface MainWindow : NSWindow {
-
-    MyDocument	*myDocument;
-    }
-
-- (void)makeKeyAndOrderFront:(id)sender;
-    
-@end
 
 
-@interface ConsoleWindow : NSWindow {
 
-    MyDocument	*myDocument;
-    }
-   
-- (void) doError: sender;
 
-@end
 

@@ -52,7 +52,7 @@
     imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingString:@".pdf"];
     if ([myFileManager fileExistsAtPath: imagePath]) {
         aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
-        printView = [[PrintView alloc] initWithRep: aRep];
+        printView = [[PrintView alloc] initWithRep: aRep andDisplayPref: myDisplayPref ];
         printOperation = [NSPrintOperation printOperationWithView:printView
             printInfo: [self printInfo]];
         [printView setPrintOperation: printOperation];
@@ -128,10 +128,18 @@
                 [pdfView scrollPoint: topLeftPoint];
                 [pdfView display];
                 [pdfWindow makeKeyAndOrderFront: self];
-                 }
+                if ([self displayPref] != 0) 
+                    [pdfView drawWithGhostscript];
+                  }
             }
 
     }
+    
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];       
+    [super dealloc];
+}
+
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
     // Insert code here to write your document from the given data.
@@ -191,7 +199,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                     [pdfWindow setTitle: 
                         [[[[self fileName] lastPathComponent] 
                         stringByDeletingPathExtension] stringByAppendingString:@".pdf"]];
-                    if ([self displayPref] == 0)
+                    /* if ([self displayPref] == 0) */
                         [pdfView setImageRep: texRep];
                     if (startDate == nil) {
                         topLeftRect = [texRep bounds];
@@ -204,7 +212,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
                         [pdfWindow makeKeyAndOrderFront: self];
                         }
                     else {
-                        [pdfView disposeGsRep];
+                        [pdfWindow makeKeyAndOrderFront: self];
                         [pdfView drawWithGhostscript];
                         }
                      }
@@ -796,8 +804,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
     
     if ([aNotification object] != gsTask) return;
     gsTask = nil;
-    
+
   if ([[myDocument fileManager] fileExistsAtPath: @"/tmp/texshoptemp.bmp"]) {
+        if (gsRep != nil) {
+            [gsRep release];
+            gsRep = nil;
+            }
         gsRep = [[NSBitmapImageRep imageRepWithContentsOfFile: @"/tmp/texshoptemp.bmp"] retain];
         [[myDocument fileManager] removeFileAtPath: @"/tmp/texshoptemp.bmp" handler: nil];
         if (fixScroll) {
@@ -824,11 +836,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
     double		magsize, thesize;
     int			intsize, i;
     
-    if (gsRep != nil) {
-        NSEraseRect([self bounds]);
-        [gsRep draw];
-        }
-    else {
+        {
         projectPath = [[[myDocument fileName] stringByDeletingPathExtension] stringByAppendingString:@".texshop"];
         if ([[myDocument fileManager] fileExistsAtPath: projectPath]) {
             nameString = [NSString stringWithContentsOfFile: projectPath];
@@ -860,6 +868,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [args addObject: theArgs];
         
             thesize = [mySize doubleValue];
+            
             if (thesize < -.75)
                 magsize = 38.0;
             else if (thesize < -.25)
@@ -906,8 +915,10 @@ if (inputPipe == [[aNotification object] standardInput]) {
             NSEraseRect([self bounds]);
             [myRep draw];
             }
-        else
-            [self drawWithGhostscript];
+        else if (gsRep != nil) {
+            NSEraseRect([self bounds]);
+            [gsRep draw];
+            }
         }
 }
 
@@ -921,10 +932,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
                 [currentPage setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
-                if (gsRep != nil) {
+                /*
+                 if (gsRep != nil) {
                     [gsRep release];
                     gsRep = nil;
                     }
+                */
                 if ([myDocument displayPref] == 0)
                     [self display];
                 else {
@@ -944,10 +957,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
                 [currentPage setIntValue: (pagenumber + 1)];
                 [myRep setCurrentPage: pagenumber];
                 [currentPage display];
+                /*
                 if (gsRep != nil) {
                     [gsRep release];
                     gsRep = nil;
                     }
+                */
                 if ([myDocument displayPref] == 0)
                     [self display];
                 else
@@ -966,10 +981,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
             [currentPage setIntValue: pagenumber];
             [currentPage display];
             [myRep setCurrentPage: (pagenumber - 1)];
+            /*
             if (gsRep != nil) {
                     [gsRep release];
                     gsRep = nil;
                     }
+            */
             if ([myDocument displayPref] == 0)
                 [self display];
             else
@@ -1010,10 +1027,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
         newBounds.size.height = myBounds.size.height * (magsize);
         [self setFrame: newBounds];
         [self setBounds: myBounds];
+        /*
         if (gsRep != nil) {
             [gsRep release];
             gsRep = nil;
             }
+        */
         if ([myDocument displayPref] == 0)
             [[self superview] display];
         else {
@@ -1028,13 +1047,31 @@ if (inputPipe == [[aNotification object] standardInput]) {
     int		pagenumber;
     NSRect	myBounds, newBounds;
     
-    double	thesize = [mySize doubleValue];
-    double	magsize = pow(2, thesize);
+    double	thesize;
+    double	magsize;
    
+    thesize = [mySize doubleValue];
+    if ([myDocument displayPref] != 0) {
+            if (thesize < -.75)
+                 magsize = .5;
+            else if (thesize < -.25)
+                magsize = .75;
+            else if (thesize < .25)
+                magsize = 1.0;
+            else if (thesize < .75)
+                magsize = 1.5;
+            else
+                magsize = 2.0;
+            }
+        else
+            magsize = pow(2, thesize); 
+
+    /*
     if (gsRep != nil) {
             [gsRep release];
             gsRep = nil;
             }
+    */
     if (theRep != nil)
      
         {
@@ -1062,7 +1099,7 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 - (void) printDocument: sender;
 {
-    NSLog(@"here");
+    /* NSLog(@"here"); */
     [myDocument printDocument: sender];
 }	
 
@@ -1084,17 +1121,9 @@ if (inputPipe == [[aNotification object] standardInput]) {
 - (void)dealloc {
     if (gsTask != nil)
             [gsTask terminate];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];       
     [super dealloc];
 }
-
-- (void) disposeGsRep;
-{
-    if (gsRep != nil) {
-        [gsRep release];
-        gsRep = nil;
-        }
-}
-
 
 
 
@@ -1102,11 +1131,12 @@ if (inputPipe == [[aNotification object] standardInput]) {
 
 @implementation PrintView
 
-- (PrintView *) initWithRep: (NSPDFImageRep *) aRep;
+- (PrintView *) initWithRep: (NSPDFImageRep *) aRep  andDisplayPref: (int) displayPref;
 {
     id		value;
     
     myRep = aRep;
+    myDisplayPref = displayPref;
     value = [super initWithFrame: [myRep bounds]];
     return self;
 }

@@ -1,5 +1,6 @@
 {\rtf1\mac\ansicpg10000{\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+\paperw11280\paperh13180
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -17,12 +18,17 @@
 \i\b0\fs24 \cf0 \
 	Preliminaries\
 	Getting and Installing teTex\
+	Getting and Installing ghostscript\
+	Getting and Installing TexShop\
 	Typesetting Documents\
+	Using Apple pdf Rendering\
+	Using Ghostscript pdf Rendering\
 	Including Graphics\
 	Modifying the Templates Menu\
 	Setting a Project Root File\
 	Setting Preferences\
 	Sending Bug Reports\
+	Tasks for the Future\
 	License\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -45,13 +51,13 @@ Preliminaries:\
 \i pdflatex
 \i0  were written by  Han The Thanh, Petr Sojka, and Jiri Zlatuska.\
 \
-The pdf files created by TexShop are standard pdf files which can be given to other people and displayed on a variety of computer systems.\
+The pdf files created by TexShop are standard pdf files which can be given to other people and displayed on a variety of computer systems. For example, they can be displayed by Adobe Acrobat on Mac OS 9. \
 \
 TexShop does not include TeX. Instead it uses the standard TeX distribution 
 \i teTeX
-\i0 , a wonderful collection of the entire suite of TeX programs, files, and utilities created by Thomas Esser. This collection (the standard version of TeX on Linux systems) has been compiled for Mac OS X. Instructions on obtaining it are given below.\
+\i0 , a wonderful collection of the entire suite of TeX programs, files, and utilities created by Thomas Esser. This collection (the standard version of TeX on Linux systems) has been compiled for Mac OS X. Instructions for obtaining it are given below.\
 \
-TexShop is written in Cocoa and relies on the NSPDFImageRep class to display output files. This class is not complete as of Developer Release 4; the following ingredients are missing:\
+TexShop is written in Cocoa and relies on the NSPDFImageRep class to display output files. This class is not complete as of the beta release of Mac OS X; the following ingredients are missing:\
 \
 	a) the class cannot interpret embedded fonts, so it substitutes standard \
 	system fonts in displays.\
@@ -59,14 +65,22 @@ TexShop is written in Cocoa and relies on the NSPDFImageRep class to display out
 	b) the class cannot interpret embedded graphic objects, so it shows an\
 	empty region where the graphic would be.\
 \
-Thus TexShop is not immediately useful. But the current binary will work correctly once Apple completes the NSPDFImageRep class.
-\b \
+\pard\tx1440\tx2180\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 To overcome these restrictions, TexShop contains a preference item instructing the program to image the pdf output using the unix program 
+\i ghostscript
+\i0 . Ghostscript is a program written by L. Peter Deutsch to manipulate postscript and pdf files; it often used on Linux systems. The program has been compiled for Mac OS X by John Hornkvist. Instructions for obtaining it are given below.\
 \
+Ghostscript is able to display TeX fonts and jpg images on the screen. Curiously it cannot display pdf images. The quality of the image obtained from ghostscript is not as high as the quality obtained from NSPDFImageRep, but it is sufficient to make the program useable. As soon as Apple completes NSPDFImageRep, the ghostscript preference item can be turned off and the current binary should work correctly.\
 \
+In this release, printing is done by NSPDFImageRep, so files with mathematical symbols do not print correctly. One workaround is to write the document natively with TexShop under MacOS X, and then open the pdf output with Adobe Acrobat under Classic to print.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
 Getting and Installing teTex:\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b0 The full teTeX distribution compiled for Mac OS X is available at the teTeX web site:\
+\b0 \cf0 The full teTeX distribution compiled for Mac OS X is available at the teTeX web site:\
 \
 	http://www.tug.org/tetex\
 \
@@ -74,11 +88,12 @@ Several tar files must be obtained and installed, as explained at the site.\
 \
 Later versions of the distribution can be obtained and installed at any time; TexShop does not install any configuration files in the teTeX tree.\
 \
-There is another way to obtain the distribution which is somewhat easier, and I'll give complete instructions for that method. Using a web server, connect to\
+There is another way to obtain the distribution which is somewhat easier, and I'll give complete instructions for that method. Go to the TexShop web site\
 \
-	http://next-ftp.peak.org\
+	http://www.uoregon.edu/~koch/texshop.texshop.html\
 \
-The version of teTeX on this site was compiled for Mac OS X Server, but works equally well on the latest Mac OS X. On the left panel of the screen, push "NeXT Archive." At the bottom of the resulting page, push "Mac OSX Server". On the resulting page, select "All." Scroll down on the resulting page and download the file "teTeX-full-1.0.2a-P-b.tgz." This is a 38.4 MB file, which will arrive with the name "teTeX-full-1.0.2a-P-b.tgz.tar.gz".\
+and click on the "teTeX" link to download the file "teTeX-full-1.0.2a-P-b.tgz.tar.gz". This is\
+a 38.8 meg file.\
 \
 In a terminal window, type the command\
 \
@@ -88,18 +103,31 @@ and then the command\
 \
 	gnutar -xf teTeX-full-1.0.2a-P-b.tgz.tar\
 \
-These will produce a folder named teTeX-full.pkg (together with a file "teTeX-full-1.0.2a-P-b.tgz.tar", which can be thrown away).\
-\
-Inside the folder teTeX-full.pkg, there are five files, but only "teTeX-full.pax.gz" matters; it contains a compressed version of teTeX. \
+These will produce a file titled teTeX-full.pkg with an icon showing an open box (together with a file "teTeX-full-1.0.2a-P-b.tgz.tar", which can be thrown away). The file teTeX-full.pkg is a package file which is recognized by the installer. 
+\i However, the installer will not install in the correct spot,  so do not double click this file.
+\i0 \
 \
 Log out and log in as 
 \i root
-\i0 . Create the directory "/Local/Library" if it does not exist. Move the file "teTeX-full.pax.gz" to this directory. In a terminal window, change to this directory and type the command\
+\i0 . In a terminal window, type the following commands to create the directory "/Local/Library":\
 \
+	cd /\
+	mkdir Local\
+	cd Local\
+	mkdir Library\
+\
+Move the file teTeX-full.pkg to the directory /Local/Library by typing the following commands,\
+where "yourname" is replaced by your login name:\
+\
+	cd /Local/Library\
+	cp /Users/yourname/teTeX-full.pkg    teTeX-full.pkg \
+\
+and type the following commands in a terminal window:\
+\
+	cd /Local/Library/teTeX-full.pkg\
+	mv teTeX-full.pax.gz  /Local/Library\
+	cd /Local/Library\
 	gzip -d teTeX-full.pax.gz\
-\
-and then the command\
-\
 	pax -r -f teTeX-full.pax\
 \
 This will create a new folder named "teTeX" inside the folder "/Local/Library". The file "teTeX-full.pax" can be thrown away. The folder teTeX contains the complete teTeX distribution.\
@@ -110,14 +138,70 @@ While still logged in as
 \
 	ln    -s    /Local/Library/teTeX/bin/powerpc-apple-rhapsody5.3/*    /usr/local/bin \
 \
-You can immediately use the standard command line programs in TeX: 
+When you are done, log out and log in as yourself. You can immediately use the standard command line programs in TeX: 
 \i tex, latex, dvips,
 \i0  etc.\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Getting and Installing Ghostscript:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b \cf0 Typesetting Documents:\
+\b0 \cf0 In your user account, go to the TexShop web site\
+\
+	http://www.uoregon.edu/~koch/texshop/texshop.html\
+\
+and click on the "Ghostscript" link to download the file "ghostscript.tar.Z". This is\
+a 2.75 meg file.\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 Log out and log in as 
+\i root
+\i0 . Create the directory /usr/local/share if it does not exist.\
+Copy the file ghostscript.tar.Z to this directory.\
+\
+Type the command\
+\
+	uncompress ghostscript.tar.Z\
+\
+and then the command\
+\
+	gnutar -xf ghostscript.tar\
+\
+This will create a folder named ghostscript inside /usr/local/share, together with a file\
+ghostscript.tar which can be thrown away.\
+\
+Create the directory /usr/local/bin if it does not already exist. Copy the ghostscript binaries to this directory by typing the following command:\
+\
+	cp /usr/local/share/ghostscript/6.21/bin/*    /usr/local/bin\
+\
+Log out and log in as yourself.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Getting and Installing TexShop:
+\b0 \
+\
+In your user account, log onto the following web site:\
+\
+	www.uoregon.edu/~koch/texshop/texshop.html\
+\
+Click the link ``TexShop Program''. This will produce a file titled TexShop.tar.Z. In a terminal program, type the following commands:\
+\
+	uncompress TexShop.tar.Z\
+\
+and then\
+\
+	gnutar -xf TexShop.tar\
+\
+This will produce a folder titled ``TexShop Folder,'' together with a file ``TexShop.tar'' which can be thrown away. The TexShop Folder contains several files which can be read or discarded and the TexShop program. Drag TexShop to the Applications folder. If you intend to use it often, drag its icon to the Dock.\
+\
+
+\b Typesetting Documents:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -125,7 +209,7 @@ You can immediately use the standard command line programs in TeX:
 \i pdftex
 \i0  or 
 \i pdflatex
-\i0  will run. A second window will open displaying the messages from 
+\i0  will run. A second window will open displaying messages from 
 \i tex
 \i0 . If there are errors, 
 \i pdftex
@@ -152,16 +236,33 @@ You can close the pdf window at any time. It will reappear when the document is 
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b \cf0 \
-Including Graphics:\
+\b \cf0 Using Apple pdf Rendering:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b0 \cf0 It is common to use eps (encapsulated postscript) graphic files in TeX documents because such files print well at any size. The native graphics format of Mac OS X is pdf (postscript display format); these files also print well at any size. Consequently, graphics for TexShop documents should be created in pdf format. It is likely that most Mac graphics programs will be modified to output pdf over the next few months.\
+\b0 \cf0 The default TexShop preference uses Apple pdf Rendering. In OS X beta, symbols are displayed incorrectly because Helvetic is substituted for all Tex fonts in the output. \
 \
-The public domain package 
-\i Ghostscript
-\i0  runs on Mac OS X and contains commands which convert eps files to pdf format. Utilities are beginning to appear which make this conversion process simple. Please consult the standard archives.\
+If you want to use Times Roman as a font, add the command\
+\
+	\\usepackage\{times\}\
+\
+to the top of your latex document immediately following the \\documentclass command. This makes TexShop usable for documents which only contain standard text. Printing will work correctly. 
+\b \
+\
+Using Ghostscript pdf Rendering:\
+\
+
+\b0 To switch to ghostscript rendering, find the Preferences item under the Apple menu, select it, and choose ``Use Ghostscript.'' Tex fonts will display correctly, although the image will not be as crisp as before.\
+\
+In Ghostscript mode, the magnification scroller at the bottom of the page will only accept five levels of magnification. Level three, with the scroll knob in the middle of its range, will display a full page. Levels four and five, with the scroll knob further right, will produce magnified images.
+\b \
+\
+Including Graphics:\
+\
+
+\b0 It is common to use eps (encapsulated postscript) graphic files in TeX documents because such files print well at any size. The native graphics format of Mac OS X is pdf (postscript display format); these files also print well at any size. Consequently, graphics for TexShop documents should be created in pdf format (but see below if you are rendering with ghostscript). It is likely that most Mac graphics programs will be modified to output pdf over the next few months.\
+\
+Utilities are beginning to appear which can convert from one graphic format to another. Please consult the standard archives.\
 \
 The authors of 
 \i pdflatex
@@ -210,9 +311,16 @@ This command will cause
 \i0  to input the graphic file "f1.pdf" when the text is typeset with 
 \i pdflatex
 \i0 , but input the file "f1.eps" when the text is typeset with 
-\i latex. 
-\i0 \
+\i latex.\
 \
+
+\i0 If you are rendering using ghostscript, you should know that the current version of ghostscript has trouble with pdf image files, but no trouble with jpg files. In that case, convert the first ``DeclareGraphics'' line above to\
+\
+	\\DeclareGraphicsExtensions\{.jpg\}\
+\
+and use jpg images.
+\i  
+\i0 \
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -298,7 +406,6 @@ TexShop remembers the name of the root file by writing this information to a fil
 \i0  rather than 
 \i Main.tex
 \i0 . \
-\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \b \cf0 \
@@ -306,7 +413,7 @@ Setting Preferences:\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. To set these items, readjust them as desired and then make the choices permanent with the preferences dialog.\
+\b0 \cf0 Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appea. To set these items, readjust them as desired and then make the choices permanent with the preferences dialog.\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \b \cf0 \
@@ -318,11 +425,57 @@ Setting Preferences:\
 \i pdfetex
 \i0  and 
 \i pdfelatex
-\i0 . \
+\i0 . Obviously the substituted command must still produce a pdf output file. Write the full path to the new programs in the preference dialog.\
 \
-Obviously the substituted command must still produce a pdf output file. Write the full path to the new programs in the preference dialog.\
+Finally, the preference dialog can be used to switch between Apple rendering and Ghostscript rendering of pdf files, and to choose the number of colors which are used when Ghostscript renders.\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b \cf0 Tasks for the Future:\
 \
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\b0 \cf0 The goal of TexShop is to provide a complete native TeX environment for Mac OS X, so typesetting can be done without reverting to programs in MacOS Classic. Several gaps stand in the way of a full realization of this goal. I'd be interested in hearing of projects to fill these gaps.\
+\
+	1) Graphic conversion utilities are needed to convert one \
+	graphic format to another. The following conversions are particularly\
+	desirable:\
+\
+		a) eps -> pdf\
+		b) eps -> jpg\
+		c) tiff -> pdf\
+		d) tiff -> jpg\
+\
+	2) There is a utility called ``epstopdf'' which can do the first conversion,\
+	and it runs on Mac OS X after teTeX and ghostscript are installed.\
+	Unfortunately, I have not gotten this utility to correctly convert eps\
+	files created by Mathematica, even though the same utility on our\
+	mainframe Unix machines works correctly.\
+\
+	3) At the Apple Developer Conference this spring, Wilfredo Sanchez\
+	of Apple  demonstrated a nifty application which converts Unix shell \
+	scripts into drag-and-drop convertor boxes. I don't know if he has\
+	released that application. It would be wonderful to have drag-and-drop\
+	boxes which implement each conversion listed in 1).\
+\
+	4) TexShop prints correctly if Apple rendering is used, but printed output\
+	has the flaws associated with NSPDFImageRep. Currently TexShop\
+	does not print correctly if ghostscript rendering is used. I may add that\
+	feature in the future, but I am not confident that output quality will be\
+	satisfactory.\
+\
+	5) An alternate approach (in the interval before NSPDFImageRep is\
+	complete) is to let TexShop call the standard 
+\i tex
+\i0  or 
+\i latex
+\i0  when printing,\
+	and then print the resulting dvi file using dvips.\
+\
+	6) However, I have not been able to make dvips work from the \
+	command line.  Command line Unix doesn't seem to see\
+	Mac OS X printers. Help.\
+ \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \b \cf0 Sending Bug Reports:\

@@ -84,17 +84,15 @@
 - (id) slider;
 - (void) setDocument: (id) theDocument;
 - (void) drawWithGhostscript;
-- (void) disposeGsRep;
 @end
 
 @interface PrintView : NSView {
     NSPDFImageRep	*myRep;
     NSPrintOperation	*myPrintOperation;
-
-    
+    int			myDisplayPref;
     }
     
-- (PrintView *) initWithRep: (NSPDFImageRep *) aRep;
+- (PrintView *) initWithRep: (NSPDFImageRep *) aRep andDisplayPref: (int) displayPref;
 - (void) setPrintOperation: (NSPrintOperation *)aPrintOperation;
     
 @end

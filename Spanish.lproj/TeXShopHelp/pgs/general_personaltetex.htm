@@ -1,0 +1,49 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>A–adir archivos personales a teTeX</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="tetex; a&ntilde;adir archivos sty">
+	</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<TR HEIGHT="40">
+<TD WIDTH="40" HEIGHT="40"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></TD>
+<TD WIDTH="6" HEIGHT="40"></TD>
+<TD HEIGHT="40" VALIGN="middle"><FONT FACE="Lucida Grande,Helvetica,Arial" SIZE="4"><B>Adici&oacute;n de estilos personales y archivos de macros a teTeX</B></FONT></TD>
+</TR>
+</TABLE>
+		<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Es habitual que los usuarios creen archivos sty, cls, bib y tex para utilizarlos en varios proyectos. Seguro que tex y latex los encuentran si est&aacute;n en la misma carpeta que el documento con c&oacute;digo tex que se est&aacute; componiendo, pero de esta manera hay que tener m&uacute;ltiples copias de estos archivos en el ordenador.
+ </font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Si lo deseamos, podemos hacer que estos archivos sean visibles para todos los proyectos de teTeX, tanto si componemos con TeXShop o desde el Terminal. Para ello, en la carpeta Library de tu directorio personal, crea una subcarpeta y ll&aacute;mala textfm. Crea en ella subcarpetas llamadas tex y bibtex. Y, dentro de tex, crea otra subcarpeta llamada latex. Almacena tus archivos personales en estas carpetas.
+ </font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+Tex encontrar&aacute; cualquier archivo que est&eacute; en ~/Library/texmf/tex o en una subcarpeta de este directorio. Latex encontrar&aacute; cualquier archivo en ~/Library/texmf/tex/latex o en una subcarpeta de este directorio, y bibtex encontrar&aacute; cualquier archivo en ~/Library/texmf/bibtex o una subcarpeta. No es necesario ejecutar texhash despu&eacute;s de a&ntilde;adir estas carpetas.
+ </font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+En otras m&aacute;quinas Unix, suele ser com&uacute;n que haya que notificar a tex la localizaci&oacute;n de los archivos personales por medio de las variables de entorno TEXINPUTS, BSTINPUTS, and BIBINPUTS. Habitualmente, esto no es necesario en la distribuci&oacute;n de teTeX de Gerben Wierda, pero se puede hacer en algunas circunstancias. Mac OS X permite que los usuarios notifiquen a los programas el valor de las variables de entorno creando en el directorio ra&iacute;z (del usuario) un archivo llamado ~/.MacOSX/environment.plist.
+Estas variables de entorno tienen efecto en cualquier shell, y las usan todos los programas Carbon y Cocoa, o sea que hay que ser cuidadoso al crear este archivo.
+ </font></P>
+
+<P><font size="2" face="Lucida Grande,Geneva,Arial">
+A continuaci&oacute;n mostramos un ejemplo de archivo environment.plist que me ha enviado Nathan Potter; &iexcl;gracias! 
+Para m&aacute;s detalles, cons&uacute;ltese
+<a href="http://developer.apple.com/qa/qa2001/qa1067.html">http://developer.apple.com/qa/qa2001/qa1067.html</a>.
+
+ </font></P>
+<br>
+
+
+<center><img align=center src="environment.tiff" border=3></center>
+
+
+</BODY>
+
+</HTML>

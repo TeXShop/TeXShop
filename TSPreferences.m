@@ -131,6 +131,58 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 }
 
 //==============================================================================
+// Entire panel
+//==============================================================================
+/*" This method is connected to the 'Set Defaults' menu
+
+
+"*/
+
+//-----------------------------------
+- (void)undoDefaultPrefs:(NSDictionary *)oldDefaults;
+//-----------------------------------
+{
+    [SUD setPersistentDomain:oldDefaults forName:@"TeXShop"];
+    [SUD synchronize];
+    [self updateControlsFromUserDefaults:SUD];
+}
+
+ 
+//------------------------------------------------------------------------------
+- (IBAction)setDefaults:sender;
+//------------------------------------------------------------------------------
+{
+
+    	NSString *fileName;
+	NSDictionary *factoryDefaults, *oldDefaults;
+
+        oldDefaults = [SUD dictionaryRepresentation];
+        [_undoManager registerUndoWithTarget:self selector:@selector(undoDefaultPrefs:) object:oldDefaults];
+        
+	// register defaults
+        switch ([sender tag]) {
+            case 1: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
+            case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Inoue" ofType:@"plist"]; break;
+            case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Kiriki" ofType:@"plist"]; break;
+            case 4: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Ogawa" ofType:@"plist"]; break;
+            default: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
+            } 
+	NSParameterAssert(fileName != nil);
+	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
+    
+	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
+	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
+
+        // also register the default font. _documentFont was set in -init, dump it here to
+        // the user defaults
+        [SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
+	[SUD synchronize];
+        
+        [self updateControlsFromUserDefaults:SUD];
+}
+
+
+//==============================================================================
 // Document pane
 //==============================================================================
 /*" This method is connected to the 'Set...' button on the 'Document' pane.
@@ -496,6 +548,8 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 
 }
 
+
+
 /*" This method is connected to the 'scroll' checkbox. 
 "*/
 //------------------------------------------------------------------------------
@@ -516,10 +570,24 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 - (IBAction)pageStyleChanged:sender;
 //------------------------------------------------------------------------------
 {
-	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfPageStyleKey] forKey:PdfPageStyleKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfPageStyleKey] forKey:PdfPageStyleKey];
 
     [SUD setInteger:[[sender selectedCell] tag] forKey:PdfPageStyleKey];
 }
+
+/*" This method is connect to the 'first double page' radio buttons.
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)firstDoublePageChanged:sender;
+//------------------------------------------------------------------------------
+{
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfFirstPageStyleKey] forKey:PdfFirstPageStyleKey];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfFirstPageStyleKey];  
+}
+
+
+
 
 
 /*" This method is connected to resize option popup button. "*/
@@ -1096,7 +1164,13 @@ This method retrieves the application preferences from the defaults object and s
         mag = round(magnification * 100.0);
         [_magTextField setIntValue: mag];
         
+        
 #ifdef MITSU_PDF
+
+        myTag = [defaults integerForKey:PdfFirstPageStyleKey];
+        if (!myTag) myTag = PDF_FIRST_RIGHT;
+        [_firstPageMatrix selectCellWithTag:myTag];
+        
         // mitsu 1.29 (O)
 	int itemIndex;
 	myTag = [defaults integerForKey:PdfPageStyleKey];

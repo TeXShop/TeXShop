@@ -1,11 +1,97 @@
-July 18, 2003
+October 17, 2003
 
 Changes since 1.30
 
-1) Fixed a bug reported by Luis Sequeira: when text was dragged within
+1) Fixed three problems with Panther (this release is essential for
+Panther use). Also made a few interface changes. 
+
+	a) In Panther, older versions of TeXShop refuse to create
+	new files, although they can open existing files. This is fixed 
+	by adding two lines to the "displayName" code.
+
+	b) In Panther, the small yellow tags which display the current
+	page when scrolling in multipage and double multipage display
+	formats were blank. Also, the small yellow tags which display
+	the size of a selection rectangle as it is created to copy
+	a portion of the pdf window were blank. This is fixed.
+
+	c) On my system, Panther spellchecking often fails for all
+	Cocoa programs. This happens at boot time; the computer boots
+	up, but even if the first program is TextEdit or Mail, it refuses
+	to "spell check as you type" and the "Spelling dialog" refuses
+	to appear.
+
+	I suspect this is due to a defective third party program on my
+	disk, since other Panther users haven't seen the program. But
+	I haven't been able to isolate the problem.
+
+	Once the problem occurs, TextEdit and Mail have minor text
+	input glitches which are cured by turning off continuous spell
+	checking. TeXShop had more serious glitches in this situation.
+	So in 1.31, extra code has been added to turn off continuous
+	spell checking at start time if the spell checker is not
+	available.
+
+	d) A small number of interface changes were made
+	to the preference dialog to make appearance more attractive
+	in Panthr.
+
+2) Fixed a bug reported by Luis Sequeira: when text was dragged within
 the source window, it was always copied and pasted. It should have been cut and
 pasted unless the option key was down. This is fixed. 
 
-2) Slightly improved Spanish help by Juan Luis Varona Malumbres (small
+3) Slightly improved Spanish help by Juan Luis Varona Malumbres (small
 icon for the list of help files in the drawer).
 
+4) In two page mode, typesetting no longer scrolls to the first
+page.
+
+5) The new page and magnification buttons retain firstResponder
+status (as before 1.29) so users can experiment with several
+settings without clicking again for each experiment.
+
+6) The largest possible magnification in the preview window is
+now 1000 (previously it was 400).
+
+7) In version 1.30 and before, if the user inputs an impossible line 
+into the "Go To Line" dialog, the program could crash; this is fixed. 
+Thanks to Eric Seidel for the bug report.
+
+8) Kevin Ballard, kevin@sb.org, contributed a new English.lproj folder
+with revised placement of interface items in preferences, slightly revised
+menu items, and other changes to improve the look of the interface
+in Panther. Many thanks!
+
+9) Made spacing changes for Panther in the German preference panel.
+Thanks to Martin Kerz for the suggestions.
+
+10) Additional French menu translations by Hendrik Chaltin; thanks!
+
+11) The Macros are now specific to the engine being used in the current
+window. Two default sets are created when TeXShop first starts, one for
+Latex and one for Context. (The Context set was created by Hans Hagen;
+thanks!). Suppose a different engine is selected, say TeX. When it
+starts, it will have the default Latex macros. But if this set of Macros
+is edited with the Macro editor, the new set will always be associated
+with TeX, while the old Latex macros will continue to be associated
+with Latex.
+
+12) There is a hidden preference item to turn off tag computation:
+"defaults write TeXShop TagSections NO" but this preference was disabled
+somewhere along the line and certainly in 1.30. It is enabled again.
+
+13) A new preference item allows the first page in the two double page modes
+to be either on the left or on the right. Books usually put this page on
+the right, so that is the default preference.
+
+14) The preference dialog has a new pulldown menu to reset preferences to
+default values. This addition was requested by Seiji Zenitani for users in
+Japan who must cope with three different versions of pTeX. These users can
+now rapidly set preferences without consulting documentation on web sites.
+
+15) At Kevin Ballard's suggestion, the Preferences Panel is no longer
+hidden when TeXShop is deactivated.
+
+16) The keystroke to switch between source and preview windows was changed
+from control-1 to command-1 and a menu was provided for this task. (In the
+past, users often did not know this feature was available.)

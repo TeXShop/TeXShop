@@ -17,7 +17,7 @@
     BOOL	firstClose;
 
 }
- 
+
 - (void) doTextMagnify: sender;   // for toolbar in text mode
 - (void) doTextPage: sender;      // for toolbar in text mode
 - (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
@@ -44,6 +44,7 @@
 - (void) rotateCounterclockwise: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
+- (void) associatedWindow: sender;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (MyDocument *)document;
 #ifdef MITSU_PDF

@@ -37,6 +37,7 @@ extern NSString *PdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
 extern NSString *PdfPageStyleKey; // mitsu 1.29 (O) 
+extern NSString *PdfFirstPageStyleKey;
 extern NSString *PdfFitSizeKey; // mitsu 1.29 (O)
 extern NSString *PdfCopyTypeKey; // mitsu 1.29 (O) 
 extern NSString *PdfExportTypeKey; // mitsu 1.29 (O) 
@@ -114,6 +115,7 @@ extern NSMutableDictionary 	*TSEnvironment;	/*" Store for environment for subtas
 extern int			shouldFilter;   /*" Used for Japanese yen conversion "*/
 extern int			texChar;	/*" The tex command character; usually \ but yen in Japanese yen "*/
 extern NSDictionary		*autocompletionDictionary;  // added by Greg Landweber
+extern int			macroType; // = EngineCommand for current window
 /* Code by Anton Leuski */
 extern NSArray*			kTaggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			kTaggedTagSections; /*" Used by Tag menu; "*/
@@ -205,6 +207,12 @@ typedef enum _PDFPageStyle
 	PDF_MULTI_PAGE_STYLE = 3, 
 	PDF_DOUBLE_MULTI_PAGE_STYLE = 4
 } _PDFPageStyle;
+
+typedef enum _PDFFirstPageStyle
+{
+        PDF_FIRST_LEFT = 1,
+        PDF_FIRST_RIGHT = 2
+} _PDFFirstPageStyle;
 
 /*" Size option for MyPDFView"*/
 typedef enum _PDFSizeOption

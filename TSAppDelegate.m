@@ -39,6 +39,8 @@
     NSMutableString *path;
     NSDictionary *factoryDefaults;
     
+    macroType = LatexEngine;
+    
     kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
 					@"\\section",
 					@"\\subsection",
@@ -448,13 +450,13 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
     
     // now see if autocompletion.plist is inside; if not, copy it from the program folder
     macrosPath = [MacrosPathKey stringByStandardizingPath];
-    macrosPath = [macrosPath stringByAppendingPathComponent:@"Macros"];
+    macrosPath = [macrosPath stringByAppendingPathComponent:@"Macros_Latex"];
     macrosPath = [macrosPath stringByAppendingPathExtension:@"plist"];
     if (! [fileManager fileExistsAtPath: macrosPath]) {
         NS_DURING
             {
             result = NO;
-            fileName = [[NSBundle mainBundle] pathForResource:@"Macros" ofType:@"plist"];
+            fileName = [[NSBundle mainBundle] pathForResource:@"Macros_Latex" ofType:@"plist"];
             if (fileName) 
                 result = [fileManager copyPath:fileName toPath:macrosPath handler:nil];
             }
@@ -463,7 +465,27 @@ Copies %fileName to ~/Library/TeXShop/Templates. This method takes care that no 
             reason = [localException reason];
         NS_ENDHANDLER
             if (!result) {
-                NSRunAlertPanel(@"Error", reason, @"Couldn't Create Macros plist", nil, nil);
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create Macros_Latex plist", nil, nil);
+                return;
+                }
+        }
+    macrosPath = [MacrosPathKey stringByStandardizingPath];
+    macrosPath = [macrosPath stringByAppendingPathComponent:@"Macros_Context"];
+    macrosPath = [macrosPath stringByAppendingPathExtension:@"plist"];
+    if (! [fileManager fileExistsAtPath: macrosPath]) {
+        NS_DURING
+            {
+            result = NO;
+            fileName = [[NSBundle mainBundle] pathForResource:@"Macros_Context" ofType:@"plist"];
+            if (fileName) 
+                result = [fileManager copyPath:fileName toPath:macrosPath handler:nil];
+            }
+        NS_HANDLER
+            result = NO;
+            reason = [localException reason];
+        NS_ENDHANDLER
+            if (!result) {
+                NSRunAlertPanel(@"Error", reason, @"Couldn't Create Macros_Context plist", nil, nil);
                 return;
                 }
         }

@@ -42,6 +42,7 @@ NSData *draggedData;
 	// mitsu 1.29 (O)
 	myDocument = nil; // can be connected in InterfaceBuilder
 	pageStyle = [SUD integerForKey: PdfPageStyleKey]; // set in "initWithFrame:"
+        firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
 	if (!pageStyle) pageStyle = PDF_MULTI_PAGE_STYLE; // should be single? set also in "updateControlsFromUserDefaults"
 	mouseMode = [SUD integerForKey:PdfMouseModeKey];
 	if (!mouseMode) mouseMode = MOUSE_MODE_MAG_GLASS;
@@ -304,10 +305,11 @@ scroller position.
         [totalPage1 setIntValue: [myRep pageCount]];
 	if (pagenumber < 0) pagenumber = 0;
 	if (pagenumber >= [myRep pageCount]) pagenumber = [myRep pageCount]-1;
+        [myRep setCurrentPage: pagenumber];
 	// set up page size--pageWidth, pageHeight, totalWidth, totalHeight
 	if (newPageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
-		[myRep setCurrentPage: pagenumber];
+		// [myRep setCurrentPage: pagenumber];
 		totalWidth = pageWidth = [myRep size].width;
 		totalHeight = pageHeight = [myRep size].height;
 		[[self superview] setPostsBoundsChangedNotifications: NO];
@@ -321,7 +323,7 @@ scroller position.
 	}
 	else // PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 	{
-		pageWidth = [myRep size].width; 
+                pageWidth = [myRep size].width; 
 		if ([myRep pageCount] > 1)
 			totalWidth = 2*pageWidth + PAGE_SPACE_H;
 		else
@@ -382,7 +384,8 @@ scroller position.
 	{
 		[self updateCurrentPage];	
 	}
-	[(NSClipView *)[self superview] setCopiesOnScroll: copiesOnScroll]; 
+	[(NSClipView *)[self superview] setCopiesOnScroll: copiesOnScroll];
+        
 }
 
 // this is the routine which set up frame and bounds of the view, 
@@ -607,12 +610,13 @@ failed. If you change the code below, be sure to test carefully!
         [myScale1 setIntValue: scale];
         [myScale display];
         }
-    if (scale > 400) {
-        scale = 400;
+    if (scale > 1000) {
+        scale = 1000;
         [myScale setIntValue: scale];
         [myScale1 setIntValue: scale];
         [myScale display];
         }
+    [[self window] makeFirstResponder: myScale];
     [myStepper setIntValue: scale];
     [myStepper1 setIntValue: scale];
     magSize = [self magnification];
@@ -655,6 +659,7 @@ failed. If you change the code below, be sure to test carefully!
 	// return/enter.)  MyPDFView should be the delegate of the text fields. 
 	// if we use [currentPage setIntValue: ...], it sometimes fails.  
 	// set the string directly to the field editor.  
+                
 	if ([[[self window] currentEvent] type] != NSKeyDown ||
 		[[[[self window] currentEvent] characters] isEqualToString: @"\t"])
 	{
@@ -683,6 +688,14 @@ failed. If you change the code below, be sure to test carefully!
 	return YES;
 }
 // end 1.29b
+
+
+/*
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+{
+    // [[self window] makeFirstResponder:[[aNotification userInfo] objectForKey:@"NSFieldEditor"]];
+}
+*/ 
 
 - (void)resetMagnification;
 {
@@ -810,13 +823,28 @@ failed. If you change the code below, be sure to test carefully!
 	}
 	else if (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)
 	{
-		return (2 * floor((totalHeight - aPoint.y)/(pageHeight + PAGE_SPACE_V)) 
-				+ floor(aPoint.x/(pageWidth + PAGE_SPACE_H)));
+                switch (firstPageStyle) {
+                
+                    case PDF_FIRST_LEFT:
+                        return (2 * floor((totalHeight - aPoint.y)/(pageHeight + PAGE_SPACE_V)) 
+		 		+ floor(aPoint.x/(pageWidth + PAGE_SPACE_H)));
+                                
+                    case PDF_FIRST_RIGHT:
+                         return (2 * floor((totalHeight - aPoint.y)/(pageHeight + PAGE_SPACE_V)) 
+		 		+ floor(aPoint.x/(pageWidth + PAGE_SPACE_H)) - 1);
+                    }
+                    
 	}
 	else if (pageStyle == PDF_TWO_PAGE_STYLE)
 	{
-		return  (2 * ([myRep currentPage]/2)
+		switch (firstPageStyle) { 
+                
+                    case PDF_FIRST_LEFT: return  (2 * ([myRep currentPage]/2)
+		 	+ ((aPoint.x >= pageWidth + PAGE_SPACE_H/2)?1:0));
+                        
+                    case PDF_FIRST_RIGHT: return  (2 * (([myRep currentPage] + 1)/2) - 1
 			+ ((aPoint.x >= pageWidth + PAGE_SPACE_H/2)?1:0));
+                    }
 	}
 	return 0;
 }
@@ -832,13 +860,28 @@ failed. If you change the code below, be sure to test carefully!
 	}
 	else if (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)
 	{
-		thePoint.x = (pageWidth + PAGE_SPACE_H)*(aPage % 2);
-		thePoint.y = totalHeight - (pageHeight + PAGE_SPACE_V)*(aPage/2) - pageHeight;
+                switch (firstPageStyle) {
+                
+                    case PDF_FIRST_LEFT:
+                        thePoint.x = (pageWidth + PAGE_SPACE_H)*(aPage % 2);
+                        thePoint.y = totalHeight - (pageHeight + PAGE_SPACE_V)*(aPage/2) - pageHeight;
+                        break;
+                        
+                    case PDF_FIRST_RIGHT:
+                        thePoint.x = (pageWidth + PAGE_SPACE_H)*((aPage + 1) % 2);
+                        thePoint.y = totalHeight - (pageHeight + PAGE_SPACE_V)*((aPage + 1)/2) - pageHeight;
+                        break;
+                    }
 	}
 	else // PDF_TWO_PAGE_STYLE
 	{
 		[myRep setCurrentPage: aPage];
-		thePoint.x = (pageWidth + PAGE_SPACE_H)*(aPage % 2);
+                switch (firstPageStyle) {
+                    case PDF_FIRST_LEFT:   thePoint.x = (pageWidth + PAGE_SPACE_H)*(aPage % 2);
+                                            break;
+                    case PDF_FIRST_RIGHT:   thePoint.x = (pageWidth + PAGE_SPACE_H)*((aPage + 1) % 2);
+                                            break;
+                    }
 		thePoint.y = 0;
 	}
 	return thePoint;
@@ -942,11 +985,33 @@ failed. If you change the code below, be sure to test carefully!
 	{
 	//	pagenumber = [myRep currentPage];
                 pagenumber = [currentPage intValue] - 1;
-		if ((pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE || 
-				pageStyle == PDF_TWO_PAGE_STYLE) && 
-				(pagenumber % 2 == 1) && 
+		if (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE )
+                    switch (firstPageStyle) {
+                        case PDF_FIRST_LEFT: 
+                            if ((pagenumber % 2 == 1) && 
 				NSMinX([self visibleRect]) < 1)
-			pagenumber--;
+                            pagenumber--;
+                            break;
+                        case PDF_FIRST_RIGHT: 
+                            if (((pagenumber + 1) % 2 == 1) && 
+				NSMinX([self visibleRect]) < 1)
+                            pagenumber--;
+                            break;
+                        }
+                if (pageStyle == PDF_TWO_PAGE_STYLE) {
+                    switch (firstPageStyle) {
+                        case PDF_FIRST_LEFT: 
+                            if ((pagenumber % 2 == 1) && 
+				NSMinX([self visibleRect]) < 1)
+                            pagenumber--;
+                            break;
+                        case PDF_FIRST_RIGHT:
+                            if (((pagenumber + 1) % 2 == 1) && 
+				NSMinX([self visibleRect]) < 1)
+                            pagenumber--;
+                            break;
+                        }
+                    }
 		if (pagenumber > 0) 
 		{
 			pagenumber--;
@@ -1064,11 +1129,20 @@ failed. If you change the code below, be sure to test carefully!
 	{
 		// pagenumber = [myRep currentPage];
                 pagenumber = [currentPage intValue] - 1;
-		if ((pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE || 
-				pageStyle == PDF_TWO_PAGE_STYLE) && 
-				(pagenumber % 2 == 0) && 
+                if ((pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE || 
+				pageStyle == PDF_TWO_PAGE_STYLE))
+                    switch (firstPageStyle) {
+                        case PDF_FIRST_LEFT:
+                            if ((pagenumber % 2 == 0) && 
 				NSMaxX([self visibleRect]) > totalWidth - 1)
-			pagenumber++;
+                            pagenumber++;
+                            break;
+                        case PDF_FIRST_RIGHT:
+                            if (((pagenumber + 1) % 2 == 0) && 
+				NSMaxX([self visibleRect]) > totalWidth - 1)
+                            pagenumber++;
+                            break;
+                        }
 		if (pagenumber < ([myRep pageCount]) - 1) 
 		{
 			pagenumber++;
@@ -1241,8 +1315,8 @@ failed. If you change the code below, be sure to test carefully!
 
 
 - (void) goToPage: sender;
-{	
-	int		pagenumber;
+{
+        int		pagenumber;
 	NSRect		myBounds, myVisible, newVisible;
 
 	if ((imageType == isTIFF) || (imageType == isJPG) || (imageType == isEPS)) 
@@ -1263,6 +1337,7 @@ failed. If you change the code below, be sure to test carefully!
 	[currentPage setIntValue: pagenumber];
         [currentPage1 setIntValue: pagenumber];
 	[currentPage display];
+        [[self window] makeFirstResponder: currentPage];
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		if (pagenumber != [myRep currentPage])
@@ -1296,15 +1371,19 @@ failed. If you change the code below, be sure to test carefully!
 	[currentPage display];
 	myBounds = [self bounds];
 	newVisible.size = [self visibleRect].size;
-	thePoint = [self pointForPage: pagenumber];;
+	thePoint = [self pointForPage: pagenumber];
 	newVisible.origin.x = thePoint.x;
 	newVisible.origin.y = thePoint.y + pageHeight - newVisible.size.height;
 	if ((pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE || pageStyle == PDF_TWO_PAGE_STYLE) &&
-		(pagenumber%2) && 
 		(newVisible.origin.x+newVisible.size.width > myBounds.origin.x+myBounds.size.width))
-	{
-		newVisible.origin.x = myBounds.origin.x+myBounds.size.width-newVisible.size.width;
-	}
+            switch (firstPageStyle) {
+                case PDF_FIRST_LEFT: if (pagenumber % 2)
+                    newVisible.origin.x = myBounds.origin.x+myBounds.size.width-newVisible.size.width;
+                    break;
+                case PDF_FIRST_RIGHT: if ((pagenumber + 1) % 2)
+                    newVisible.origin.x = myBounds.origin.x+myBounds.size.width-newVisible.size.width;
+                    break;
+                }
 	[self scrollRectToVisible: newVisible];
 	[[self enclosingScrollView] setNeedsDisplay: YES]; // mitsu 1.29b
 }
@@ -1341,13 +1420,16 @@ failed. If you change the code below, be sure to test carefully!
 		[pageNumberWindow setFrameOrigin: aPoint];
 		
 		NSString *pageString = [NSString stringWithFormat: @"%d/%d", pageNumber, [myRep pageCount]];
+                
+                
 		NSView *theView = [pageNumberWindow contentView];
 		[theView lockFocus];
-		[[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.6 alpha:1.0] set]; // change color?
+ 		[[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.6 alpha:1.0] set]; // change color?
 				NSRectFill([theView bounds]);
 		[pageString drawAtPoint: NSMakePoint(PAGE_WINDOW_DRAW_X,PAGE_WINDOW_DRAW_Y) 
 							withAttributes: [NSDictionary dictionary]];
-		[theView unlockFocus];
+                [[NSGraphicsContext currentContext] flushGraphics];                                        
+ 		[theView unlockFocus];
 	}
 }
 
@@ -2236,6 +2318,7 @@ failed. If you change the code below, be sure to test carefully!
 			[[self window] flushWindow];
 			
 #ifndef DO_NOT_SHOW_SELECTION_SIZE
+
 			// update the size window
 			// first compute where to show the window
 			NSRect contentRect = [[[self window] contentView] bounds];
@@ -2249,15 +2332,17 @@ failed. If you change the code below, be sure to test carefully!
 			aPoint.y += SIZE_WINDOW_V_OFFSET;
 			[sizeWindow setFrameOrigin: aPoint]; // set the position
 			// do the drawing
-			NSString *sizeString = [NSString stringWithFormat: @"%d x %d", 
+                        NSString *sizeString = [NSString stringWithFormat: @"%d x %d", 
 				(int)floor(selRectWindow.size.width), (int)floor(selRectWindow.size.height)];
-			NSView *sizeView = [sizeWindow contentView];
+                        NSView *sizeView = [sizeWindow contentView];
 			[sizeView lockFocus];
-			[[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.5 alpha:0.8] set];//change color?
+                        [[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.5 alpha:0.8] set];//change color?
 			NSRectFill([sizeView bounds]);
-			[sizeString drawAtPoint: NSMakePoint(SIZE_WINDOW_DRAW_X,SIZE_WINDOW_DRAW_Y) 
+                        [sizeString drawAtPoint: NSMakePoint(SIZE_WINDOW_DRAW_X,SIZE_WINDOW_DRAW_Y) 
 								withAttributes: [NSDictionary dictionary]];
+                        [[NSGraphicsContext currentContext] flushGraphics];
 			[sizeView unlockFocus];
+                        
 #endif
 		}
 		else if ([theEvent type]==NSLeftMouseUp)

@@ -30,7 +30,8 @@
     //BOOL		largeMagnify; // for magnifying glass // mitsu 1.29 (O) not used
 	
 	// mitsu 1.29 (O)
-	int 	pageStyle; 
+	int 	pageStyle;
+        int     firstPageStyle;
 	float 	pageWidth; 
 	float 	pageHeight;
 	float 	totalWidth;

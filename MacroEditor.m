@@ -158,10 +158,23 @@ static int savedFilter = filterNone;
 // action for Save button
 - (IBAction)savePressed:(id)sender
 {	
-        NSString *pathStr;
-
-	pathStr = [MacrosPathKey stringByStandardizingPath];
-        pathStr = [pathStr stringByAppendingPathComponent:@"Macros"];
+        NSString *pathStr, *defaultPathStr;
+        
+        defaultPathStr = [MacrosPathKey stringByStandardizingPath];
+        defaultPathStr = [defaultPathStr stringByAppendingPathComponent:@"Macros_Latex"];
+        defaultPathStr = [defaultPathStr stringByAppendingPathExtension:@"plist"];
+        
+        pathStr = [MacrosPathKey stringByStandardizingPath];
+        switch (macroType) {
+            case TexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Tex"]; break;
+            case LatexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Latex"]; break;
+            case BibtexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Bibtex"]; break;
+            case IndexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Index"]; break;
+            case MetapostEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Metapost"]; break;
+            case ContextEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Context"]; break;
+            case MetafontEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Metafont"]; break;
+            default: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Latex"]; break;
+            }
         pathStr = [pathStr stringByAppendingPathExtension:@"plist"];
         
         [window makeFirstResponder: window];// finish editing fields
@@ -171,11 +184,13 @@ static int savedFilter = filterNone;
 	{
 		// mitsu 1.29 (U)-- back up old macro file, so that you can recover it manually if needed
 		NS_DURING
+                if ([[NSFileManager defaultManager] fileExistsAtPath:pathStr]) {
 			NSString *backupPath = [pathStr stringByDeletingPathExtension];
 				backupPath = [backupPath stringByAppendingString:@"~"];
 				backupPath = [backupPath stringByAppendingPathExtension:@"plist"];
 			[[NSFileManager defaultManager] removeFileAtPath:backupPath handler:nil];
 			[[NSFileManager defaultManager] copyPath:pathStr toPath:backupPath handler:nil];
+                        }
 		NS_HANDLER
 		NS_ENDHANDLER
 		// end mitsu 1.29

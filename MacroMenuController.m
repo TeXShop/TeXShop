@@ -59,13 +59,26 @@ static id sharedMacroMenuController = nil;
 // load macros from Macros.plist
 - (void)loadMacros
 {
-	NSString *pathStr;
+	NSString *pathStr, *defaultPathStr;
 	NSData *myData;
 	NSString *error = nil; // mitsu 1.29 (U) added
     //    NSString *aString; // mitsu 1.29 (U) removed
 
+        defaultPathStr = [MacrosPathKey stringByStandardizingPath];
+        defaultPathStr = [defaultPathStr stringByAppendingPathComponent:@"Macros_Latex"];
+        defaultPathStr = [defaultPathStr stringByAppendingPathExtension:@"plist"];
+        
         pathStr = [MacrosPathKey stringByStandardizingPath];
-        pathStr = [pathStr stringByAppendingPathComponent:@"Macros"];
+        switch (macroType) {
+            case TexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Tex"]; break;
+            case LatexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Latex"]; break;
+            case BibtexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Bibtex"]; break;
+            case IndexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Index"]; break;
+            case MetapostEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Metapost"]; break;
+            case ContextEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Context"]; break;
+            case MetafontEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Metafont"]; break;
+            default: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Latex"]; break;
+            }
         pathStr = [pathStr stringByAppendingPathExtension:@"plist"];
 
 
@@ -108,7 +121,10 @@ static id sharedMacroMenuController = nil;
 
 	NS_DURING
 	// macroDict = [NSDictionary dictionaryWithContentsOfFile: pathStr]; // this crashes when the file is not a proper UTF8
-	myData = [NSData dataWithContentsOfFile:pathStr];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:pathStr])
+            myData = [NSData dataWithContentsOfFile:pathStr];
+        else
+            myData = [NSData dataWithContentsOfFile:defaultPathStr];
 
 	// mitsu 1.29 (U) changed-- follow Apple's example in documentation "Using XML Property Lists"
 	NSPropertyListFormat format;

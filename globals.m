@@ -35,7 +35,8 @@ NSString *NoScrollEnabledKey = @"NoScrollEnabled";
 NSString *PdfWindowFixedPosKey = @"PdfWindowFixedPosition";
 NSString *PdfWindowNameKey = @"PdfWindow";
 NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
-NSString *PdfPageStyleKey = @"PdfPageStyle"; // mitsu 1.29 (O) 
+NSString *PdfPageStyleKey = @"PdfPageStyle"; // mitsu 1.29 (O)
+NSString *PdfFirstPageStyleKey = @"PdfFirstPageStyle"; 
 NSString *PdfFitSizeKey = @"PdfFitSize"; // mitsu 1.29 (O)
 NSString *PdfCopyTypeKey = @"PdfCopyType"; // mitsu 1.29 (O) 
 NSString *PdfExportTypeKey = @"PdfExportType"; // mitsu 1.29 (O) 
@@ -121,3 +122,6 @@ NSMutableString *commandCompletionList = nil;
 BOOL canRegisterCommandCompletion = NO;
 // end mitsu 1.29
 //int imageCopyType; // was defined in MyPDFView.m // mitsu 1.29b not used
+
+// Koch 8/24/03
+int	macroType;

@@ -60,6 +60,7 @@
 // end addition
 
         IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/ 
+        IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
         IBOutlet NSPopUpButton	*_resizeOptionPopup;// mitsu 1.29 (O) /*" connected to resize option popup button "*/ 
         IBOutlet NSPopUpButton	*_imageCopyTypePopup;// mitsu 1.29 (O) /*" connected to image copy type popup button "*/ 
         IBOutlet NSPopUpButton	*_mouseModePopup;// mitsu 1.29 (O) /*" connected to default mouse mode popup button "*/
@@ -93,6 +94,7 @@
 - (IBAction)currentPdfWindowPosDefault:sender;
 - (IBAction)magChanged:sender;
 - (IBAction)scrollPressed:sender;
+- (IBAction)firstDoublePageChanged:sender;
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
@@ -123,6 +125,7 @@
 
 - (IBAction)okButtonPressed:sender;
 - (IBAction)cancelButtonPressed:sender;
+- (IBAction)setDefaults:sender;
 
 //------------------------------------------------------------------------------
 // API used by other TeXShop classes

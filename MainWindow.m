@@ -11,6 +11,12 @@
 
 @implementation MainWindow : NSWindow
 
+- (void) becomeMainWindow
+{
+    [super becomeMainWindow];
+    [myDocument fixMacroMenu];
+}
+
 // added by mitsu --(H) Macro menu; used to detect the document from a window
 - (MyDocument *)document
 {
@@ -28,6 +34,7 @@
         [super makeKeyAndOrderFront: sender];
 }
 
+/*
 - (void)sendEvent:(NSEvent *)theEvent
 {
     
@@ -38,6 +45,13 @@
             return;
             }
     [super sendEvent: theEvent];
+}
+*/
+
+- (void)associatedWindow:(id)sender;
+{
+    if (([myDocument imageType] == isTeX) && ([myDocument myTeXRep] != nil))
+                [[myDocument pdfWindow] makeKeyAndOrderFront: self];
 }
 
 - (void) doChooseMethod: sender;
@@ -51,8 +65,9 @@
     BOOL	result;
     
     result = [super makeFirstResponder:aResponder];
-    if (result && [[aResponder className] isEqualTo:@"MyTextView"])
+    if (result && [[aResponder className] isEqualTo:@"MyTextView"]) {
         [myDocument setTextView:aResponder];
+        }
     return result;
 }
 // end forsplit

@@ -69,7 +69,7 @@
     omitShellEscape = NO;
         
     encoding = [[MyDocumentController sharedDocumentController] encoding];
-
+    
     return self;
 }
 
@@ -212,6 +212,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {    
+    BOOL                spellExists;
     NSString		*imagePath;
 #ifndef ROOTFILE
     NSString		*projectPath, *nameString;
@@ -234,6 +235,17 @@
     NSColor		*backgroundColor;
     
     [super windowControllerDidLoadNib:aController];
+    
+// the code below exists because the spell checker sometimes did not exist
+// in Panther developer releases; it is probably not necessary for
+// the final release
+NS_DURING
+    spellExists = YES;
+    NSSpellChecker *myChecker = [NSSpellChecker sharedSpellChecker];
+NS_HANDLER
+    spellExists = NO;
+NS_ENDHANDLER
+
     
 /*
     // Added by Greg Landweber to load the autocompletion dictionary
@@ -292,6 +304,7 @@
     textView = textView1;
     /* End of New */
 // forsplit
+
     contentSize = [scrollView2 contentSize];
     textView2 = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
     [textView2 setAutoresizingMask: NSViewWidthSizable];
@@ -300,7 +313,8 @@
     [textView2 setAllowsUndo:YES];
     [textView2 setRichText:NO];
     [textView2 setUsesFontPanel:YES];
-    [textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+    if (spellExists) 
+        [textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textView2 setFont:[NSFont userFontOfSize:12.0]];
     [textView2 setBackgroundColor: backgroundColor];
     [scrollView2 setDocumentView:textView2];
@@ -517,7 +531,8 @@
     myRange.location = 0;
     myRange.length = 0;
     [textView setSelectedRange: myRange];
-    [textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+    if (spellExists)
+        [textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textWindow setInitialFirstResponder: textView];
     [textWindow makeFirstResponder: textView];
     }
@@ -541,6 +556,8 @@
 									whichEngine = ContextEngine;	// just remember the default command
                                     break;
         }
+    [self fixMacroMenu];
+    
 // end change
 
 /* old code       
@@ -620,16 +637,21 @@
 {
 	if ([self fileName] == nil) // file is a new one
 	{
-		NSMutableString *newString = [NSMutableString stringWithString: [super displayName]];
-		[newString replaceOccurrencesOfString: @" " withString: @"-"
+                NSString *displayString = [super displayName];
+                if (displayString == nil) // these two lines fix a Panther problem
+                    return displayString;
+                else {
+                    NSMutableString *newString = [NSMutableString stringWithString: displayString];
+                    [newString replaceOccurrencesOfString: @" " withString: @"-"
 						options: 0 range: NSMakeRange(0, [newString length])];
-                // mitsu 1.29 (V)
-		if ([[[[[NSBundle mainBundle] pathForResource:@"MainMenu" ofType:@"nib"] 
+                    // mitsu 1.29 (V)
+                    if ([[[[[NSBundle mainBundle] pathForResource:@"MainMenu" ofType:@"nib"] 
 				stringByDeletingLastPathComponent] lastPathComponent] 
 				isEqualToString: @"Japanese.lproj"] && [newString length]==5)
 				[newString appendString: @"-1"];
-		// end mitsu 1.29
-		return newString;
+                    // end mitsu 1.29
+                    return newString;
+                    }
 	}
 	return [super displayName];
 }
@@ -640,7 +662,7 @@
 - (void) setTextView: (id)aView
 {
     NSRange		theRange;
-    NSLayoutManager	*layoutManager;
+//  NSLayoutManager	*layoutManager;
     
     textView = aView;
     if (textView == textView1) {
@@ -1638,6 +1660,7 @@ preference change is cancelled. "*/
     whichEngine = type;
 // added by mitsu --(J+) check mark in "Typeset" menu
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+        [self fixMacroMenu];
 // end addition
 
     if ((externalEditor) || (! [self isDocumentEdited])) {
@@ -2376,6 +2399,7 @@ if (! externalEditor) {
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
 	whichEngine = which;  // remember it
 	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+        [self fixMacroMenu];
 // end addition
 
     /*   
@@ -2604,17 +2628,19 @@ if (! externalEditor) {
 
 - (void) setupTags;
 {
-    if (tagTimer != nil) 
-    {
-        [tagTimer invalidate];
-        [tagTimer release];
-        tagTimer = nil;
-    }
-    tagLocation = 0;
-    tagLocationLine = 0;
-    [tags removeAllItems];
-    [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
-    tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
+    if ([SUD boolForKey: TagSectionsKey]) {
+        if (tagTimer != nil) 
+            {
+            [tagTimer invalidate];
+            [tagTimer release];
+            tagTimer = nil;
+            }
+        tagLocation = 0;
+        tagLocationLine = 0;
+        [tags removeAllItems];
+        [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
+        tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
+        }
 }
 
 - (void) doChooseMethod: sender;
@@ -2720,20 +2746,27 @@ if (! externalEditor) {
 {
     int		i;
     NSString	*text;
-    unsigned	start, end, irrelevant;
+    unsigned	start, end, irrelevant, stringlength;
     NSRange	myRange;
 
+    if (line < 1) return;
     text = [textView string];
+    stringlength = [text length];
     myRange.location = 0;
     myRange.length = 1;
-    for (i = 1; i <= line; i++) {
+    i = 1;
+    while ((i <= line) && (myRange.location < stringlength)) {
         [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
         myRange.location = end;
+        i++;
         }
-    myRange.location = start;
-    myRange.length = (end - start);
-    [textView setSelectedRange: myRange];
-    [textView scrollRangeToVisible: myRange];
+    if (i == (line + 1)) {
+        myRange.location = start;
+        myRange.length = (end - start);
+        [textView setSelectedRange: myRange];
+        [textView scrollRangeToVisible: myRange];
+        }
+    
 }
 
 - (id) pdfWindow;
@@ -3380,9 +3413,10 @@ void report(NSString *itest)
         colorRange.length = length - colorRange.location;
     }
 
-   if ([SUD boolForKey:FastColoringKey]) {
+//   if ([SUD boolForKey:FastColoringKey]) 
+   {
 // We try to color simple character changes directly.
-    
+   
 // Look first at backspaces over anything except a comment character or line feed
     if (fastColor && (colorRange.length == 0)) {
         [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
@@ -4214,6 +4248,18 @@ aSelector
 {
     doAutoComplete = ! doAutoComplete;
     [self fixAutoMenu];
+}
+
+- (void) fixMacroMenu;
+{
+/*
+    if (whichEngine == 6)
+        macroType = 1;
+    else
+        macroType = 0;
+*/
+    macroType = whichEngine;
+    [[MacroMenuController sharedInstance] reloadMacros: self];
 }
 
 - (void) fixAutoMenu

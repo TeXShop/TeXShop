@@ -20,6 +20,15 @@ extern NSPanel *pageNumberWindow;
 
 @implementation MyWindow
 
+/*
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder
+{
+    if (aResponder == self)
+        return NO;
+    else return [super makeFirstResponder: aResponder];
+}
+*/
+
 - (void) doTextMagnify: sender
 {
     id	thePanel;
@@ -240,12 +249,19 @@ extern NSPanel *pageNumberWindow;
         [super orderOut: sender];
 }
 
+- (void)associatedWindow:(id)sender;
+{
+    if ([myDocument imageType] == isTeX)
+        [[myDocument textWindow] makeKeyAndOrderFront: self];
+}
+
 - (void)sendEvent:(NSEvent *)theEvent
 {
     unichar	theChar;
     
     if ([theEvent type] == NSKeyDown) {
-    
+ 
+    /*   
         if (([theEvent modifierFlags] & NSControlKeyMask) &&
          ([myDocument imageType] == isTeX) &&
          ([[theEvent charactersIgnoringModifiers] isEqualToString:@"1"])) {
@@ -253,6 +269,7 @@ extern NSPanel *pageNumberWindow;
             [[myDocument textWindow] makeKeyAndOrderFront: self];
             return;
             }
+    */
     
         theChar = [[theEvent characters] characterAtIndex:0];
         

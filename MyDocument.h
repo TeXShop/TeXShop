@@ -145,6 +145,7 @@
 - (void) doCompletion:(NSNotification *)notification;
 - (void) changeAutoComplete: sender;
 - (void) fixAutoMenu;
+- (void) fixMacroMenu;
 - (void) toLine: (int)line;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;

@@ -38,6 +38,7 @@
         IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
         IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
+        IBOutlet NSTextField	*_tabsTextField;		/*" connected to tab size text field "*/
 	
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
         NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -66,6 +67,8 @@
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
+- (IBAction)tabsChanged:sender;
+
 
 - (IBAction)pdfWindowPosChanged:sender;
 - (IBAction)currentPdfWindowPosDefault:sender;

@@ -53,6 +53,7 @@ NSString *commandblueKey = @"commandblue";
 NSString *markerredKey = @"markerred";
 NSString *markergreenKey = @"markergreen";
 NSString *markerblueKey = @"markerblue";
+NSString *tabsKey = @"tabs";
 
 // Exceptions
 NSString *XDirectoryCreation = @"DirectoryCreationException";
@@ -69,6 +70,6 @@ NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
 NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 
 /*" Other variables "*/
-BOOL documentsHaveLoaded;
+// BOOL documentsHaveLoaded;
 NSMutableDictionary *TSEnvironment;
 

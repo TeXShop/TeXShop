@@ -54,6 +54,7 @@ extern NSString *commandblueKey;
 extern NSString *markerredKey;
 extern NSString *markergreenKey;
 extern NSString *markerblueKey;
+extern NSString *tabsKey;
 
 /*" Exceptions "*/
 extern NSString *XDirectoryCreation;
@@ -71,7 +72,7 @@ extern NSString *ExternalEditorNotification;
 
 
 /*" Other variables "*/
-extern BOOL documentsHaveLoaded;
+// extern BOOL documentsHaveLoaded;
 extern NSMutableDictionary *TSEnvironment;	/*" Store for environment for subtasks, set in TSPreferences "*/
 
 

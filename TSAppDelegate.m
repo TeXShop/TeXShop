@@ -55,7 +55,12 @@
     
     [self configureExternalEditor];
 	
-    documentsHaveLoaded = NO;
+    // documentsHaveLoaded = NO;
+}
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
+{
+    return [SUD boolForKey:MakeEmptyDocumentKey];
 }
 
 - (void)configureExternalEditor

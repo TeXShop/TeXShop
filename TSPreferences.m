@@ -254,6 +254,30 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [SUD setObject:value forKey:EncodingKey];
 }
 
+/*" Change tab size "*/
+//------------------------------------------------------------------------------
+- (IBAction)tabsChanged:sender;
+//------------------------------------------------------------------------------
+{
+    int		value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:tabsKey] forKey:tabsKey];
+
+    value = [_tabsTextField intValue];
+    if (value < 2) {
+        value = 2;
+        [_tabsTextField setIntValue:2];
+        }
+    else if (value > 50) {
+        value = 50;
+        [_tabsTextField setIntValue:50];
+        }
+        
+    [SUD setInteger:value forKey:tabsKey];
+}
+
+
+
 
 /*" This method is connected to the 'syntax coloring' checkbox. 
 "*/
@@ -581,6 +605,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         activate pdfelatex in the old TeXShop, so I tried it on
         the new program and couldn't! */
         
+        [self tabsChanged: self];
         [self texProgramChanged: self];
         [self latexProgramChanged: self];
         [self texGSProgramChanged: self];
@@ -666,6 +691,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	
 	returnArray = [NSMutableArray array];
         
+       // The next section is omitted to make changes suggested by Sarah Childers. Thanks!! 
+       /*
         if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey 		stringByDeletingLastPathComponent]])
             {
             NS_DURING
@@ -678,9 +705,17 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
                 }
             NS_ENDHANDLER
             }
+        */
+        
+        // The code below was slightly changed by Sarah Childers
             
-        if (! [[NSFileManager defaultManager] fileExistsAtPath: TexTemplatePathKey] )
+        // if (! [[NSFileManager defaultManager] fileExistsAtPath: TexTemplatePathKey] )
+        //    [self createTemplates];
+        
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]] )
             [self createTemplates];
+            
+        // end of changes
 	
 	templatePath = [TexTemplatePathKey stringByStandardizingPath];
 	templateEnum = [[NSFileManager defaultManager] enumeratorAtPath:templatePath];
@@ -719,6 +754,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
         [SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
 	[SUD synchronize];
 	
+        // The code below was replaced by Sarah Childers
+        /*
 	// create the necessary directories
         NS_DURING
 		// create ~/Library/TeXShop
@@ -730,6 +767,12 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	}
 	NS_ENDHANDLER
         [self createTemplates];
+        */
+        
+        // create necessary directories and template files
+        [self createTemplates];
+        
+        // end of change
         
 }
 
@@ -743,7 +786,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	NSEnumerator 	*templateEnum;
         NSString 	*fileName;
 
-
+    // The code below is replaced by new code written by Sarah Chambers
+    /*
     // create the necessary directories
 	NS_DURING
 		// create ~/Library/TeXShop/Templates
@@ -761,6 +805,43 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	{
 		[self copyToTemplateDirectory:fileName];
 	}
+    */
+    
+     // if preferences folder doesn't exist already...
+    if (!([[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey stringByStandardizingPath]]))
+    {
+        // create the necessary directories
+            NS_DURING
+                    // create ~/Library/TeXShop
+                    [self createDirectoryAtPath:[TexTemplatePathKey stringByDeletingLastPathComponent]];
+            NS_HANDLER
+            {
+                    NSRunAlertPanel(@"Error", [localException reason], @"Couldn't create TeXShop Folder", nil, nil);
+                    return;
+            }
+            NS_ENDHANDLER
+    
+        // create the necessary directories
+            NS_DURING
+                    // create ~/Library/TeXShop/Templates
+                    [self createDirectoryAtPath:TexTemplatePathKey];
+            NS_HANDLER
+            {
+                    NSRunAlertPanel(@"Error", [localException reason], @"Couldn't Create Templates Folder", nil, nil);
+                    return;
+            }
+            NS_ENDHANDLER
+    
+        // fill in our templates
+            templates = [NSBundle pathsForResourcesOfType:@"tex" inDirectory:[[NSBundle mainBundle] resourcePath]];
+            templateEnum = [templates objectEnumerator];
+            while (fileName = [templateEnum nextObject])
+            {
+                    [self copyToTemplateDirectory:fileName];
+            }
+    }
+
+// end of changes
 
 }
 
@@ -774,7 +855,7 @@ This method retrieves the application preferences from the defaults object and s
 {
     NSData	*fontData;
     double	magnification;
-    int		mag;
+    int		mag, tabSize;
     int		myTag;
 	
 	fontData = [defaults objectForKey:DocumentFontKey];
@@ -819,6 +900,9 @@ This method retrieves the application preferences from the defaults object and s
         magnification = [defaults floatForKey:PdfMagnificationKey];
         mag = round(magnification * 100.0);
         [_magTextField setIntValue: mag];
+        
+        tabSize = [defaults integerForKey: tabsKey];
+        [_tabsTextField setIntValue: tabSize]; 
 
         [_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];

@@ -18,6 +18,7 @@
 @interface MyDocument : NSDocument 
 {
     id			textView;		/*" textView displaying the current TeX source "*/
+    id			scrollView;		/*" scrollView for textView"*/
     id			pdfView;		/*" view displaying the current preview "*/
     id			textWindow;		/*" window displaying the current document "*/
     id			pdfWindow;		/*" window displaying the current pdf preview "*/
@@ -60,7 +61,7 @@
     int			whichError;
     int			theScript;		/*" script currently executing; 100, 101, 102 "*/
     unsigned		colorStart, colorEnd;
-    BOOL		fastColor;
+    BOOL		fastColor, fastColorBackTeX;
     NSTimer		*syntaxColoringTimer;	/*" Timer that repeatedly handles syntax coloring "*/
     unsigned		colorLocation;
     NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
@@ -116,6 +117,8 @@
 - (id) pdfWindow;
 - (id) textWindow;
 - (id) textView;
+- (void)fixUpTabsInRange:(NSRange)editedRange;
+- (void)fixUpTabs;
 - (BOOL) externalEditor;
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;

@@ -15,6 +15,7 @@
 #import "Autrecontroller.h"
 #import "MyDocumentToolbar.h"
 #import "TSAppDelegate.h"
+#import "MyTextView.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
 #define Mcomment 1
@@ -74,6 +75,7 @@ static NSArray*	kTaggedTagSections = nil;
     fileIsTex = YES;
     mSelection = nil;
     fastColor = NO;
+    fastColorBackTeX = NO;
     
     return self;
 }
@@ -200,6 +202,7 @@ static NSArray*	kTaggedTagSections = nil;
     NSString		*theFileName;
     float		r, g, b;
     int			defaultcommand;
+    NSSize		contentSize;
 /*
     NSCharacterSet	*mySet;
     NSScanner		*myScanner;
@@ -208,6 +211,20 @@ static NSArray*	kTaggedTagSections = nil;
 */
     
     [super windowControllerDidLoadNib:aController];
+    
+    /* New */
+    contentSize = [scrollView contentSize];
+    textView = [[MyTextView alloc] initWithFrame: NSMakeRect(0, 0, contentSize.width, contentSize.height)];
+    [textView setAutoresizingMask: NSViewWidthSizable];
+    [[textView textContainer] setWidthTracksTextView:YES];
+    [textView setDelegate:self];
+    [textView setAllowsUndo:YES];
+    [textView setRichText:NO];
+    [textView setUsesFontPanel:YES];
+    [textView setFont:[NSFont userFontOfSize:12.0]];
+    [scrollView setDocumentView:textView];
+    [textView release];
+    /* End of New */
     
     externalEditor = [[[NSApplication sharedApplication] delegate] forPreview];
     theFileName = [self fileName];
@@ -225,7 +242,8 @@ static NSArray*	kTaggedTagSections = nil;
     g = [SUD floatForKey:markergreenKey];
     b = [SUD floatForKey:markerblueKey];
     markerColor = [[NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0] retain];
-    
+
+/*    
     if (! documentsHaveLoaded) {
         documentsHaveLoaded = YES;
         if ((theFileName == nil) && (! [SUD boolForKey:MakeEmptyDocumentKey]))
@@ -234,6 +252,8 @@ static NSArray*	kTaggedTagSections = nil;
                 return;
             }
          }
+*/
+         
 
 /* when opening an empty document, must open the source editor */         
     if ((theFileName == nil) && (externalEditor))
@@ -454,7 +474,7 @@ in other code when an external editor is being used. */
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(newMainWindow:)
         name:NSWindowDidBecomeMainNotification object:nil];
-        
+                
     // register for notifications when the document window becomes key so we can remember which window was
     // the frontmost. This is needed for the preferences.
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
@@ -550,6 +570,7 @@ in other code when an external editor is being used. */
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
 		[textView setFont:font];
 	}
+        [self fixUpTabs];
 }
 
 - (void)ExternalEditorChange:(NSNotification *)notification
@@ -591,6 +612,7 @@ preference change is cancelled. "*/
 		font = [NSUnarchiver unarchiveObjectWithData:previousFontData];
 		[textView setFont:font];
 	}
+        [self fixUpTabs];
 }
 
     
@@ -689,7 +711,7 @@ preference change is cancelled. "*/
 
 }
 
-
+/* This code was modified by Martin Heusse; see below
 //-----------------------------------------------------------------------------
 - (void) doTemplate: sender 
 //-----------------------------------------------------------------------------
@@ -752,6 +774,94 @@ preference change is cancelled. "*/
         }
     }
 }
+*/
+
+// Modified by Martin Heusse
+//==================================================================
+- (void) doTemplate: sender
+//-----------------------------------------------------------------------------
+{
+    NSString		*nameString, *oldString;
+    id			theItem;
+    unsigned		from, to;
+    NSRange		myRange;
+    NSUndoManager	*myManager;
+    NSMutableDictionary	*myDictionary;
+    NSNumber		*theLocation, *theLength;
+    id			myData;
+
+    NSRange 		NewlineRange;
+    int 		i, numTabs, numSpaces=0;
+    NSMutableString	*templateString, *indentString = [NSMutableString stringWithString:@"\n"];
+
+    theItem = [sender selectedItem];
+
+    if (theItem != nil)
+    {
+        nameString = [TexTemplatePathKey stringByStandardizingPath];
+        nameString = [nameString stringByAppendingPathComponent:[theItem title]];
+        nameString = [nameString stringByAppendingPathExtension:@"tex"];
+
+        if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
+            templateString = [NSMutableString stringWithContentsOfFile:nameString];
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: NSISOLatin1StringEncoding];
+        }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];         	   }
+        else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) {
+            myData = [NSData dataWithContentsOfFile:nameString];
+            templateString = [[NSMutableString alloc] initWithData:myData
+                                                   encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
+        }
+        else
+            templateString = [NSMutableString stringWithContentsOfFile:nameString];
+
+        // check and rebuild the trailing string...
+        numTabs = [self textViewCountTabs:textView andSpaces:(int *)&numSpaces];
+        for(i=0 ; i<numTabs ; i++) [indentString appendString:@"\t"];
+        for(i=0 ; i<numSpaces ; i++) [indentString appendString:@" "];
+
+        // modify the template string and add the tabs & spaces...
+        NewlineRange = [templateString rangeOfString: @"\n"
+                                             options: NSBackwardsSearch
+                                               range: NSMakeRange(0,[templateString length])];
+        while(NewlineRange.location > 0 && NewlineRange.location != NSNotFound){
+            // NSLog(@"%d", NewlineRange.location);
+            [templateString replaceCharactersInRange: NewlineRange withString: indentString];
+            NewlineRange = [templateString rangeOfString:@"\n"
+                                                 options: NSBackwardsSearch
+                                                   range: NSMakeRange(0,NewlineRange.location)];
+        }
+
+        if (templateString != nil)
+        {
+            myRange = [textView selectedRange];
+            oldString = [[textView string] substringWithRange: myRange];
+            [textView replaceCharactersInRange:myRange withString:templateString];
+
+            myManager = [textView undoManager];
+            myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
+            theLocation = [NSNumber numberWithUnsignedInt: myRange.location];
+            theLength = [NSNumber numberWithUnsignedInt: [templateString length]];
+            [myDictionary setObject: oldString forKey: @"oldString"];
+            [myDictionary setObject: theLocation forKey: @"oldLocation"];
+            [myDictionary setObject: theLength forKey: @"oldLength"];
+            [myManager registerUndoWithTarget:self selector:@selector(fixTemplate:) object: myDictionary];
+            [myManager setActionName:@"Template"];
+
+            from = myRange.location;
+            to = from + [templateString length];
+            [self fixColor:from :to];
+            [self setupTags];
+        }
+    }
+}
+
 
 - (void) doJob:(int)type withError:(BOOL)error;
 {
@@ -1569,7 +1679,14 @@ if (! externalEditor) {
 
 - (void) doComment: sender;
 {
+    id		myArray;
+    float	myFloat;
+    NSNumber	*myNumber;
+    NSRulerView	*myRuler;
+    NSData	*myData;
+    
     [self doModify:Mcomment];
+    
 }
 
 - (void) doUncomment: sender;
@@ -1766,6 +1883,7 @@ if (! externalEditor) {
 
 
 
+
 - (void) doError: sender;
 {
     if ((!externalEditor) && (fileIsTex) && (errorNumber > 0)) {
@@ -1874,6 +1992,7 @@ if (! externalEditor) {
 
 - (void)textDidChange:(NSNotification *)aNotification;
 {
+
    [self fixColor :colorStart :colorEnd];
     if (tagLine) 
         [self setupTags];
@@ -1969,7 +2088,7 @@ if (! externalEditor) {
                     colorRange.length = location - colorRange.location;
                     location++;
                     }
-                else while ((location < final) && (isText([textString characterAtIndex: location]))) {
+                else while ((location < final) && (isText1([textString characterAtIndex: location]))) {
                     location++;
                     colorRange.length = location - colorRange.location;
                     }
@@ -1993,7 +2112,7 @@ if (! externalEditor) {
     NSColor	*regularColor;
     unsigned	length, limit, start, end;
 
-    limit = colorLocation + 5000;
+     limit = colorLocation + 5000;
     regularColor = [NSColor blackColor];
     textString = [textView string];
     length = [textString length];
@@ -2006,8 +2125,7 @@ if (! externalEditor) {
             [textView setTextColor: regularColor range: colorRange];
             colorLocation = colorRange.location + colorRange.length;
             }
-                
-            
+             
     if (colorLocation >= length) {
         [syntaxColoringTimer invalidate];
         [syntaxColoringTimer release];
@@ -2019,17 +2137,32 @@ if (! externalEditor) {
 
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
-    NSRange	matchRange, tagRange;
-    NSString	*textString;
-    int		i, j, count, uchar, leftpar, rightpar;
-    BOOL	done;
-    NSDate	*myDate;
-    unsigned 	start, end, end1;
-    
+    NSRange			matchRange, tagRange;
+    NSString			*textString;
+    int				i, j, count, uchar, leftpar, rightpar, aChar;
+    BOOL			done;
+    NSDate			*myDate;
+    unsigned 			start, end, end1;
+    NSMutableAttributedString 	*myAttribString;
+    NSDictionary		*myAttributes;
+    NSColor			*previousColor;
+   
+    fastColor = NO;
     if (affectedCharRange.length == 0)
         fastColor = YES;
-    else
-        fastColor = NO;
+    else if (affectedCharRange.length == 1) {
+        aChar = [[textView string] characterAtIndex: affectedCharRange.location];
+        if (/* (aChar >= 0x0020) && */ (aChar != 165) && (aChar != 0x005c) && (aChar != 0x0025))
+            fastColor = YES;
+        if (aChar == 0x005c) {
+            fastColor = YES;
+            myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: affectedCharRange]] autorelease];
+            myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
+            previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
+            if (previousColor != commentColor) 
+                fastColorBackTeX = YES;
+            }
+        }
     
     colorStart = affectedCharRange.location;
     colorEnd = colorStart;
@@ -2130,8 +2263,11 @@ if (! externalEditor) {
     return YES;
 }
 
+
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange
 {
+    return newSelectedCharRange;
+/*
     NSRange	replacementRange;
     NSString	*textString;
     int		length, i, j;
@@ -2184,7 +2320,7 @@ if (! externalEditor) {
                 rightpar = 0x005D;
             count = 1;
             done = NO;
-            while ((i < length) && (! done)) {
+            while ((i < (length - 1)) && (! done)) {
                 i++;
                 uchar = [textString characterAtIndex:i];
                 if (uchar == leftpar)
@@ -2202,6 +2338,7 @@ if (! externalEditor) {
             }
 
     else return newSelectedCharRange;
+*/
 }
 
 //=============================================================================
@@ -2285,23 +2422,31 @@ if (! externalEditor) {
     
 }
 
+BOOL isText1(int c) {
+    if ((c >= 0x0041) && (c <= 0x005a))
+        return YES;
+    else if ((c >= 0x0061) && (c <= 0x007a))
+        return YES;
+    else
+        return NO;
+    }
+
 // This is the main syntax coloring routine, used for everything except opening documents
 - (void)fixColor: (unsigned)from : (unsigned)to
 {
-    NSRange			colorRange, cutRange, modifiedRange, selectedRange, newRange;
+    NSRange			colorRange, cutRange, modifiedRange, selectedRange, newRange, lineRange, wordRange;
     NSString			*textString;
-    NSColor			*regularColor, *theColor;
+    NSColor			*regularColor, *theColor, *previousColor;
     long			length, location, final;
     unsigned			start1, end1;
-    int				theChar, texChar, previousChar;
+    int				theChar, texChar, previousChar, aChar, i;
+    BOOL			found;
     unsigned			end;
     NSMutableAttributedString 	*myAttribString;
     NSDictionary		*myAttributes;
     NSData			*fontData;
     NSFont 			*font;
-
-    
-    
+   
     if ((! [SUD boolForKey:SyntaxColoringEnabledKey]) || (! fileIsTex)) return;
     
     if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
@@ -2333,25 +2478,197 @@ if (! externalEditor) {
         colorRange.length = length - colorRange.location;
     }
     
-    // First we try to color single character changes without work
+
+// We try to color simple character changes directly.
+    
+// Look first at backspaces over anything except a comment character or line feed
+    if (fastColor && (colorRange.length == 0)) {
+        [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+        if (fastColorBackTeX) {
+            wordRange.location = colorRange.location;
+            wordRange.length = end - wordRange.location;
+            i = colorRange.location + 1;
+            found = NO;
+            while ((i <= end) && (! found)) {
+            aChar = [textString characterAtIndex: i];
+            if (! isText1(aChar)) {
+                found = YES;
+                wordRange.length = i - wordRange.location;
+                }
+            i++;
+            }
+
+            [textView setTextColor: regularColor range: wordRange];
+            
+            fastColor = NO;
+            fastColorBackTeX = NO;
+            return;
+            }
+        else if (colorRange.location > start1) {
+            newRange.location = colorRange.location - 1;
+            newRange.length = 1;
+            myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: newRange]] autorelease];
+            myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
+            previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
+            if (previousColor == commandColor) { //color rest of word blue
+                wordRange.location = colorRange.location;
+                wordRange.length = end - wordRange.location;
+                i = colorRange.location;
+                found = NO;
+                while ((i <= end) && (! found)) {
+                    aChar = [textString characterAtIndex: i];
+                    if (! isText1(aChar)) {
+                        found = YES;
+                        wordRange.length = i - wordRange.location;
+                        }
+                    i++;
+                    }
+                [textView setTextColor: commandColor range: wordRange];
+                }
+            else if (previousColor == commentColor) { //color rest of line red
+                newRange.location = colorRange.location;
+                newRange.length = (end - colorRange.location);
+                [textView setTextColor: commentColor range: newRange];
+                }
+            fastColor = NO;
+            fastColorBackTeX = NO;
+            return;
+            }
+        fastColor = NO;
+        fastColorBackTeX = NO;
+        }
+        
+    fastColorBackTeX = NO;
+
+// Look next at cases when a single character is added
+    
     if ( fastColor && (colorRange.length == 1) && (colorRange.location > 0)) {
         theChar = [textString characterAtIndex: colorRange.location];
         previousChar = [textString characterAtIndex: (colorRange.location - 1)];
+        newRange.location = colorRange.location - 1;
+        newRange.length = colorRange.length;
+        myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 					attributedSubstringFromRange: newRange]] autorelease];
+        myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
+        previousColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
+        if ((theChar == 0x007b) || (theChar == 0x007d) || (theChar == 0x0024)) {
+            if (previousColor == commentColor)
+                [textView setTextColor: commentColor range: colorRange];
+            else if (previousColor == commandColor) {
+            	[textView setTextColor: markerColor range: colorRange];
+                [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+                wordRange.location = colorRange.location + 1;
+                wordRange.length = end - wordRange.location;
+                i = colorRange.location + 1;
+                found = NO;
+                while ((i <= end) && (! found)) {
+                    aChar = [textString characterAtIndex: i];
+                    if (! isText1(aChar)) {
+                        found = YES;
+                        wordRange.length = i - wordRange.location;
+                        }
+                    i++;
+                    }
+                // rest of word black; (word range is range AFTER this char to end of word)
+                [textView setTextColor: regularColor range: wordRange];
+                }
+            else
+                [textView setTextColor: markerColor range: colorRange];
+            fastColor = NO;
+            return;
+            }
+        if (theChar == 0x0020) {
+            if (previousColor == commentColor)
+                [textView setTextColor: commentColor range: colorRange];
+            else if (previousColor == markerColor)
+                [textView setTextColor: regularColor range: colorRange];
+            else if (previousColor == commandColor) {
+                // rest of word black; (wordRange is range to end of word INCLUDING this char)
+                [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+                wordRange.location = colorRange.location;
+                wordRange.length = end - wordRange.location;
+                i = colorRange.location + 1;
+                found = NO;
+                while ((i <= end) && (! found)) {
+                    aChar = [textString characterAtIndex: i];
+                    if (! isText1(aChar)) {
+                        found = YES;
+                        wordRange.length = i - wordRange.location;
+                        }
+                    i++;
+                    }
+
+                [textView setTextColor: regularColor range: wordRange];
+                }
+            else
+                [textView setTextColor: regularColor range: colorRange];
+            fastColor = NO;
+            return;
+            }
+        if (theChar == 0x0025) {
+            [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+            lineRange.location = colorRange.location;
+            lineRange.length = end - colorRange.location;
+            [textView setTextColor: commentColor range: lineRange];
+            fastColor = NO;
+            return;
+            }
+        if (theChar == texChar) {
+            if (previousColor == commentColor)
+                [textView setTextColor: commentColor range: colorRange];
+            else {
+                // word Range is rest of word, including this
+                [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+                wordRange.location = colorRange.location;
+                wordRange.length = end - wordRange.location;
+                i = colorRange.location + 1;
+                found = NO;
+                while ((i <= end) && (! found)) {
+                    aChar = [textString characterAtIndex: i];
+                    if (! isText1(aChar)) {
+                        found = YES;
+                        wordRange.length = i - wordRange.location;
+                        }
+                    i++;
+                    }
+
+                [textView setTextColor: commandColor range: wordRange];
+                }
+            fastColor = NO;
+            return;
+            }
+            
+            
         if ((theChar != texChar) && (theChar != 0x007b) && (theChar != 0x007d) && (theChar != 0x0024) &&
             (theChar != 0x0025) && (theChar != 0x0020) && (previousChar != 0x007d) && (previousChar != 0x007b)
-            && (previousChar != 0x0024)  && (previousChar >= 0x0020)) {
-                newRange.location = colorRange.location - 1;
-                newRange.length = colorRange.length;
-                myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 			attributedSubstringFromRange: newRange]] autorelease];
-                myAttributes = [myAttribString attributesAtIndex: 0 effectiveRange: NULL];
-                theColor = [myAttributes objectForKey:NSForegroundColorAttributeName];
-                [textView setTextColor: theColor range: colorRange];
+            && (previousChar != 0x0024) ) {
+                if ((previousColor == commandColor) && (! isText1(theChar))) {
+                    [textString getLineStart:&start1 end:&end1 contentsEnd:&end forRange:colorRange];
+                    wordRange.location = colorRange.location;
+                    wordRange.length = end - wordRange.location;
+                    i = colorRange.location + 1;
+                    found = NO;
+                    while ((i <= end) && (! found)) {
+                        aChar = [textString characterAtIndex: i];
+                        if (! isText1(aChar)) {
+                            found = YES;
+                            wordRange.length = i - wordRange.location;
+                            }
+                        i++;
+                        }
+
+                    [textView setTextColor: regularColor range: wordRange];
+                     }
+                else if (previousChar >= 0x0020)
+                    [textView setTextColor: previousColor range: colorRange];
+                else
+                    [textView setTextColor: regularColor range: colorRange];
                 fastColor = NO;
                 return;
                 }
         }
         
     fastColor = NO;
+
     // If that trick fails, we work harder. The key speedup in this routine uses
     // NSMutableAttributedString, so the various recolorings do not cause screen updates
     // Only one update is required at the end. This ingenious code was written by
@@ -2371,9 +2688,9 @@ if (! externalEditor) {
     myAttribString = [[[NSMutableAttributedString alloc] initWithAttributedString:[textView 		attributedSubstringFromRange: cutRange]] autorelease];
     modifiedRange.location = cutRange.location - start1;
     modifiedRange.length = cutRange.length;
-    [myAttribString setAttributes:  [NSDictionary dictionaryWithObject:regularColor
+    
+    [myAttribString addAttributes:  [NSDictionary dictionaryWithObject:regularColor
         forKey:NSForegroundColorAttributeName] range: modifiedRange];
- 
         
     // NSLog(@"begin");
     while (location < final) {
@@ -2384,14 +2701,14 @@ if (! externalEditor) {
                 colorRange.length = 1;
                 modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:markerColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:markerColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
                 // [textView setTextColor: markerColor range: colorRange];
                 colorRange.location = colorRange.location + colorRange.length - 1;
                 colorRange.length = 0;
                 // [textView setTextColor: regularColor range: colorRange];
                 modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
 
                 location++;
                 }
@@ -2403,14 +2720,14 @@ if (! externalEditor) {
                 colorRange.length = (end - location);
                 modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commentColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
                 //[textView setTextColor: commentColor range: colorRange];
                 colorRange.location = colorRange.location + colorRange.length - 1;
                 colorRange.length = 0;
                // [textView setTextColor: regularColor range: colorRange];
                modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                [myAttribString addAttributes: [NSDictionary dictionaryWithObject:regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
                 location = end;
                 }
                 
@@ -2422,31 +2739,33 @@ if (! externalEditor) {
                     colorRange.length = location - colorRange.location;
                     location++;
                     }
-                else while ((location < final) && (isText([textString characterAtIndex: location]))) {
+                else while ((location < final) && (isText1([textString characterAtIndex: location]))) {
                     location++;
                     colorRange.length = location - colorRange.location;
                     }
                 modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-               [myAttribString setAttributes: [NSDictionary dictionaryWithObject:commandColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+               [myAttribString addAttributes: [NSDictionary dictionaryWithObject:commandColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
                 //[textView setTextColor: commandColor range: colorRange];
                 colorRange.location = location;
                 colorRange.length = 0;
                // [textView setTextColor: regularColor range: colorRange];
                modifiedRange.location = colorRange.location - start1;
                 modifiedRange.length = colorRange.length;
-                [myAttribString setAttributes: [NSDictionary dictionaryWithObject: regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
+                [myAttribString addAttributes: [NSDictionary dictionaryWithObject: regularColor	forKey:NSForegroundColorAttributeName] range:modifiedRange];
                 }
 
             else
                 location++;
             }
         // NSLog(@"end");
+        
         [[textView textStorage] replaceCharactersInRange: cutRange withAttributedString:myAttribString];
         
 // The code below fixes a strange bug: if the user has picked a different font or size, 
 // changes in the first line will have 12 pt Helvetica font, but changes in other lines will work.!!??
 
+/*
     if (cutRange.location == 0) {
         
         fontData = [SUD objectForKey:DocumentFontKey];
@@ -2456,6 +2775,7 @@ if (! externalEditor) {
             [textView setFont: font];
             }
     }
+*/
         
         [textView setSelectedRange:selectedRange];
 
@@ -2790,7 +3110,10 @@ if (! externalEditor) {
     return aDictionary;
 }
 
-/* Code by Nicol‡s Ojeda BŠr */
+// The code below was slightly modified by Martin Heusse to count trailing spaces; see below
+
+/*
+// Code by Nicol‡s Ojeda BŠr 
 - (int) textViewCountTabs: (NSTextView *) aTextView
 {
     int startLocation = [aTextView selectedRange].location - 1, tabCount = 0;
@@ -2812,7 +3135,7 @@ if (! externalEditor) {
     return tabCount;
 }
 
-/* Code by Nicol‡s Ojeda BŠr */
+// Code by Nicol‡s Ojeda BŠr
 - (BOOL) textView: (NSTextView *) aTextView doCommandBySelector: (SEL)
 aSelector
 {
@@ -2829,6 +3152,60 @@ aSelector
 
     return NO;
 }
+*/
+
+// Code by Nicol‡s Ojeda BŠr, modified by Martin Heusse
+- (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces
+{
+    int startLocation = [aTextView selectedRange].location - 1, tabCount = 0;
+    unichar currentChar;
+
+    if (startLocation < 0)
+        return 0;
+
+    while ((currentChar = [[aTextView string] characterAtIndex: startLocation]) != '\n') {
+
+        if (currentChar != '\t' && currentChar != ' '){
+            tabCount = 0;
+            *spaces = 0;
+        }
+        else{
+            if (currentChar == '\t')
+                ++ tabCount;
+
+            if (currentChar == ' ' && tabCount == 0)
+                ++ *spaces;
+        }
+        startLocation --;
+        if (startLocation < 0)
+            break;
+    }
+
+    return tabCount;
+}
+
+// Code by Nicol‡s Ojeda BŠr, slightly modified by Martin Heusse
+- (BOOL) textView: (NSTextView *) aTextView doCommandBySelector: (SEL)
+    aSelector
+{
+    if (aSelector == @selector (insertNewline:))
+        {
+        int n, indentTab, indentSpace = 0;
+
+        indentTab = [self textViewCountTabs: textView andSpaces: &indentSpace];
+        [aTextView insertNewline: self];
+
+        for (n = 0; n < indentTab; ++ n)
+            [aTextView insertText: @"\t"];
+        for (n = 0; n < indentSpace; ++ n)
+            [aTextView insertText: @" "];
+
+        return YES;
+        }
+
+    return NO;
+}
+
 
 //-----------------------------------------------------------------------------
 - (void) fixTyping: (id) theDictionary;
@@ -2932,6 +3309,94 @@ aSelector
     }
 }
 
+// The code below is copied directly from Apple's TextEdit Example 
+
+static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) {
+    static NSMutableArray *array = nil;
+    static float currentWidthOfTab = -1;
+    float charWidth;
+    float widthOfTab;
+    unsigned i;
+
+    if ([font glyphIsEncoded:(NSGlyph)' ']) {
+        charWidth = [font advancementForGlyph:(NSGlyph)' '].width;
+    } else {
+        charWidth = [font maximumAdvancement].width;
+    }
+    widthOfTab = (charWidth * tabWidth);
+
+    if (!array) {
+        array = [[NSMutableArray allocWithZone:NULL] initWithCapacity:100];
+    }
+
+    if (widthOfTab != currentWidthOfTab) {
+        [array removeAllObjects];
+        for (i = 1; i <= 100; i++) {
+            NSTextTab *tab = [[NSTextTab alloc] initWithType:NSLeftTabStopType location:widthOfTab * i];
+            [array addObject:tab];
+            [tab release];
+        }
+        currentWidthOfTab = widthOfTab;
+    }
+
+    return array;
+}
+
+// The code below is a modification of code from Apple's TextEdit example
+
+- (void)fixUpTabs {
+    BOOL			empty = NO;
+    NSRange			myRange, theRange;
+    unsigned			tabWidth;
+    NSParagraphStyle 		*paraStyle;
+    NSMutableParagraphStyle 	*newStyle;
+    NSFont			*font = nil;
+    NSData			*fontData;
+
+    NSTextStorage *textStorage = [textView textStorage];
+    NSString *string = [textStorage string];
+    
+    if ([SUD boolForKey:SaveDocumentFontKey] == NO) {
+        font = [NSFont userFontOfSize:12.0];
+        }
+    else {
+        fontData = [SUD objectForKey:DocumentFontKey];
+        if (fontData != nil) {
+            font = [NSUnarchiver unarchiveObjectWithData:fontData];
+            [textView setFont:font];
+            }
+        else
+            font = [NSFont userFontOfSize:12.0];
+        }
+
+    // I cannot figure out how to set the tabs if there is no text, so in that
+    // case I insert text and later remove it; Koch, 11/28/2002
+    if ([string length] == 0) {
+        empty = YES;
+        myRange.location = 0; myRange.length = 0;
+        [[textView textStorage] replaceCharactersInRange: myRange withString:@" "];
+        }
+        
+    
+    tabWidth = [SUD integerForKey: tabsKey];
+            
+    NSArray *desiredTabStops = tabStopArrayForFontAndTabWidth(font, tabWidth);
+ 
+    paraStyle = [NSParagraphStyle defaultParagraphStyle];
+    newStyle = [paraStyle mutableCopyWithZone:[textStorage zone]];
+    [newStyle setTabStops:desiredTabStops];
+    theRange.location = 0; theRange.length = [string length];
+    [textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:theRange];
+    [newStyle release];
+        
+    if (empty) {
+        myRange.location = 0; myRange.length = 1;
+        [[textView textStorage] replaceCharactersInRange: myRange withString:@"\b"];
+        }
+        
+   [textView setFont:font];
+
+}
 
 
 @end

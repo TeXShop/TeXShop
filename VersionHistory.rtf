@@ -784,4 +784,42 @@ Version 1.24		November 12, 2002\
 \
 		In version 1.23, if the user set a different font or size in preferences, modifications\
 		of the first text line would change that line of text to Helvetica 12 point type. This is fixed.\
+\
+Version 1.25		November 30, 2002\
+\
+		For a long time, it has been possible to configure TeXShop so it will not open an\
+		empty document on startup.  If so configured, TeXShop no longer opens empty \
+		documents when activated from the Dock. Thanks to Gerben Wierda for pointing out \
+		the correct Cocoa call to implement this.\
+\
+		There is now a preference to set the width of tab stops.\
+\
+		Selection of text between matching parentheses has been improved. In earlier versions, \
+		when a user selected a parenthesis, the entire text to the matching parenthesis would \
+		also be selected. In the new version, nothing unusual happens when a parenthesis is\
+		selected. If a user clicks once on a parenthesis, the cursor will be placed at that spot.\
+		If a user clicks twice on a parenthesis, the parenthesis will be selected. If a user clicks\
+		three times on a parenthesis, the entire text to the matching parenthesis will be\
+		selected. If there is no match, the line containing the parenthesis will be selected.\
+\
+		Martin Heusse has modified Nicol\'87s Ojeda B\'8ar's code so it also respects initial\
+		spaces on lines. If a line starts with several tabs or spaces, the following lines will also \
+		start with these tabs or spaces until they are canceled. 		\
+\
+	Bugs Fixed:\
+\
+		The color syntax code for Jaguar has been improved. Earlier versions created bugs\
+		in continuous spell checking; these are fixed. Earlier versions also caused the editor to\
+		forget the current font occasionally; this is fixed.\
+\
+		A week ago, Bruno Voisin reported a crashing bug when a left parenthesis toward the\
+		end of text was selected and the parenthesis had no match. This is fixed.\
+\
+		Sarah Childers reported (and fixed!) a bug involving Templates. TeXShop was supposed\
+		to allow users to remove or rename files in ~/Library/TeXShop/Templates. In that way,\
+		the Templates menu could be customized. However, TeXShop actually recreated files which\
+		were renamed or removed. This is fixed. Childers sent the appropriate repair code, which is\
+		used unchanged in version 1.25. (Incidentally, the default templates can be recreated\
+		by removing the entire folder ~/Library/TeXShop/Templates)  \
+\
 		}

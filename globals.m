@@ -16,6 +16,7 @@ NSString *DocumentWindowNameKey = @"DocumentWindow";
 NSString *DocumentWindowPosModeKey = @"DocumentWindowPositionMode";
 NSString *LatexPanelNameKey = @"LatexPanel";
 NSString *MakeEmptyDocumentKey = @"MakeEmptyDocument";
+NSString *UseExternalEditorKey = @"UseExternalEditor";
 NSString *EncodingKey = @"Encoding";
 NSString *TagSectionsKey = @"TagSections";
 NSString *LPanelOutlinesKey = @"LPanelOutlines";
@@ -65,6 +66,7 @@ NSString *MagnificationChangedNotification = @"MagnificationChangedNotification"
 NSString *MagnificationRememberNotification = @"MagnificationRememberNotification";
 NSString *MagnificationRevertNotification = @"MagnificationRevertNotification";
 NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
+NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 
 /*" Other variables "*/
 BOOL documentsHaveLoaded;

@@ -17,6 +17,7 @@ extern NSString *DocumentWindowNameKey;
 extern NSString *DocumentWindowPosModeKey;
 extern NSString *LatexPanelNameKey;
 extern NSString *MakeEmptyDocumentKey;
+extern NSString *UseExternalEditorKey;
 extern NSString *EncodingKey;
 extern NSString *TagSectionsKey;
 extern NSString *LPanelOutlinesKey;
@@ -66,6 +67,8 @@ extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
 extern NSString *MagnificationRevertNotification;
 extern NSString *DocumentSyntaxColorNotification;
+extern NSString *ExternalEditorNotification;
+
 
 /*" Other variables "*/
 extern BOOL documentsHaveLoaded;

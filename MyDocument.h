@@ -32,6 +32,9 @@
     id			linePanel;
     id			lineBox;
     id			typesetButton;
+    id			typesetButtonEE;
+    id			programButton;
+    id			programButtonEE;
     id			tags;
     int			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
     int			whichEngine;		/*" 0 = tex, 1 = latex, 2 = context, 3 = omega, 4 = megapost, 5 = bibtex,
@@ -65,6 +68,12 @@
     BOOL		returnline;
     SEL			tempSEL;
     NSColor		*commandColor, *commentColor, *markerColor;
+    id			mSelection;
+    id			gotopageOutlet;
+    id			magnificationOutlet;
+    id			previousButton;
+    id			nextButton;
+    BOOL		externalEditor;
 }
  
 - (void) doTex: sender;
@@ -74,15 +83,18 @@
 - (void) doContext: sender;
 - (void) doIndex: sender;
 - (void) doTypeset: sender;
+- (void) doTypesetEE: sender;
 - (void) doTemplate: sender;
 - (void) doTexCommand: sender;
 - (void) printSource: sender;
 - (void) okForRequest: sender;
 - (void) okForPrintRequest: sender;
 - (void) close;
+- (void) setProjectFile: sender;
 - (void) doLine: sender;
 - (void) doTag: sender;
 - (void) chooseProgram: sender;
+- (void) chooseProgramEE: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (id) pdfView;
 - (void) doComment: sender;
@@ -102,6 +114,7 @@
 - (id) pdfWindow;
 - (id) textWindow;
 - (id) textView;
+- (BOOL) externalEditor;
 - (NSPDFImageRep *) myTeXRep;
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
 - (NSRange)textView:(NSTextView *)aTextView willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange toCharacterRange:(NSRange)newSelectedCharRange;
@@ -109,7 +122,6 @@
 // - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type; /* no longer used; see .m file */
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (void)convertDocument;
-
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

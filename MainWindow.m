@@ -13,7 +13,10 @@
 
 - (void)makeKeyAndOrderFront:(id)sender;
 {
-   if (([myDocument imageType] == isTeX) || ([myDocument imageType] == isOther))
+   if (
+   (! [myDocument externalEditor]) &&
+    (([myDocument imageType] == isTeX) || ([myDocument imageType] == isOther))
+    )
         [super makeKeyAndOrderFront: sender];
 }
 

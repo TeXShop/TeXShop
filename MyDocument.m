@@ -13,6 +13,8 @@
 #import "extras.h"
 #import "globals.h"
 #import "Autrecontroller.h"
+#import "MyDocumentToolbar.h"
+#import "TSAppDelegate.h"
 
 #define SUD [NSUserDefaults standardUserDefaults]
 #define Mcomment 1
@@ -20,7 +22,33 @@
 #define Mindent 3
 #define Munindent 4
 
+/* Code by Anton Leuski */
+static NSArray*	kTaggedTeXSections = nil;
+static NSArray*	kTaggedTagSections = nil;
+
 @implementation MyDocument : NSDocument
+
+/* Code by Anton Leuski */
+//-----------------------------------------------------------------------------
++ (void)initialize
+//-----------------------------------------------------------------------------
+{
+	if (!kTaggedTeXSections) {
+		kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+					@"\\section",
+					@"\\subsection",
+					@"\\subsubsection",
+					nil];
+					
+		kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+					@"section: ",
+					@"subsection: ",
+					@"subsubsection: ",
+					nil];
+	}
+}
+
+
 
 //-----------------------------------------------------------------------------
 - (id)init
@@ -37,6 +65,7 @@
     tagLine = NO;
     texRep = nil;
     fileIsTex = YES;
+    mSelection = nil;
     
     return self;
 }
@@ -59,6 +88,19 @@
     [commentColor release];
     [commandColor release];
     [markerColor release];
+    [mSelection release];
+    
+/* toolbar stuff */
+    [typesetButton release];
+    [programButton release];
+    [typesetButtonEE release];
+    [programButtonEE release];
+    [tags release];
+    [popupButton release];
+    [previousButton release];
+    [nextButton release];
+    [gotopageOutlet release];
+    [magnificationOutlet release];
     
     [super dealloc];
 }
@@ -148,7 +190,6 @@
     unsigned		length;
     BOOL		imageFound;
     NSString		*theFileName;
-    BOOL		thePreference;
     float		r, g, b;
     int			defaultcommand;
 /*
@@ -159,9 +200,10 @@
 */
     
     [super windowControllerDidLoadNib:aController];
-   
+    
+    externalEditor = [[[NSApplication sharedApplication] delegate] forPreview];
     theFileName = [self fileName];
-    thePreference = [SUD boolForKey:MakeEmptyDocumentKey];
+    [self setupToolbar];
     
     r = [SUD floatForKey:commandredKey];
     g = [SUD floatForKey:commandgreenKey];
@@ -178,12 +220,16 @@
     
     if (! documentsHaveLoaded) {
         documentsHaveLoaded = YES;
-        if ((theFileName == nil) && (! thePreference))
+        if ((theFileName == nil) && (! [SUD boolForKey:MakeEmptyDocumentKey]))
             {
                 myImageType = isJPG;
                 return;
             }
          }
+
+/* when opening an empty document, must open the source editor */         
+    if ((theFileName == nil) && (externalEditor))
+        externalEditor = NO;
  
     /* this code is an attempt to make "untitled-1" be a name without spaces,
         but it does not work */
@@ -208,17 +254,20 @@
     [textView setDelegate: self];
     [pdfView resetMagnification]; 
     
+   
     whichScript = [SUD integerForKey:DefaultScriptKey];
     [self fixTypesetMenu];
     
     myImageType = isTeX;
     fileExtension = [[self fileName] pathExtension];
-    if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"]) 
+    if (( ! [fileExtension isEqualToString: @"tex"]) && ( ! [fileExtension isEqualToString: @"TEX"])
+     && ( ! [fileExtension isEqualToString: @"dtx"]) && ( ! [fileExtension isEqualToString: @"ins"])
         && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
         && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
         [typesetButton setEnabled: NO];
+        [typesetButtonEE setEnabled: NO];
         myImageType = isOther;
         fileIsTex = NO;
     }
@@ -243,6 +292,8 @@
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
             myImageType = isJPG;
+            [previousButton setEnabled:NO];
+            [nextButton setEnabled:NO];
             }
         else if (([fileExtension isEqualToString: @"tiff"]) ||
                 ([fileExtension isEqualToString: @"tif"])) {
@@ -250,6 +301,8 @@
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
             myImageType = isTIFF;
+            [previousButton setEnabled:NO];
+            [nextButton setEnabled:NO];
             }
         else if (([fileExtension isEqualToString: @"dvi"]) || 
                 ([fileExtension isEqualToString: @"ps"]) ||
@@ -270,14 +323,19 @@
                     topLeftPoint.y = topLeftRect.origin.y + topLeftRect.size.height - 1;
                     [pdfView scrollPoint: topLeftPoint];
                     }
-                [pdfView display];
+                if (texRep != nil) 
+                    [pdfView display];
                 [pdfWindow makeKeyAndOrderFront: self];
                 return;
                 }
         }
  /* end of images */
-            
-    if (aString != nil) 
+ if (externalEditor) {
+    texTask = nil;
+    bibTask = nil;
+    indexTask = nil;
+    }
+  else if (aString != nil) 
     {	
         [textView setString: aString];
         length = [aString length];
@@ -299,21 +357,29 @@
         indexTask = nil;
     }
     
+  if (! externalEditor) {
     myRange.location = 0;
     myRange.length = 0;
     [textView setSelectedRange: myRange];
     [textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textWindow setInitialFirstResponder: textView];
     [textWindow makeFirstResponder: textView];
+    }
     
     if (!fileIsTex) 
         return;
        
     defaultcommand = [SUD integerForKey:DefaultCommandKey];
     switch (defaultcommand) {
-        case DefaultCommandTeX: [typesetButton setTitle: @"TeX"]; break;
-        case DefaultCommandLaTeX: [typesetButton setTitle: @"LaTeX"]; break;
-        case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTeXt"]; break;
+        case DefaultCommandTeX: [typesetButton setTitle: @"TeX"]; 
+                                [typesetButtonEE setTitle: @"TeX"];
+                                break;
+        case DefaultCommandLaTeX:   [typesetButton setTitle: @"LaTeX"]; 
+                                    [typesetButtonEE setTitle: @"LaTeX"];
+                                    break;
+        case DefaultCommandConTEXt: [typesetButton setTitle: @"ConTeXt"]; 
+                                    [typesetButtonEE setTitle: @"ConTeXt"];
+                                    break;
         }
     
     projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
@@ -348,6 +414,10 @@
             [pdfWindow makeKeyAndOrderFront: self];
             }
         }
+    else if (externalEditor) {
+            [pdfWindow setTitle: [imagePath lastPathComponent]];
+            [pdfWindow makeKeyAndOrderFront: self];
+        }
 }
 
 //-----------------------------------------------------------------------------
@@ -381,6 +451,9 @@
     
     // register for notification when the syntax coloring changes in preferences
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reColor:) name:DocumentSyntaxColorNotification object:nil];
+    
+    // externalEditChange
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ExternalEditorChange:) name:ExternalEditorNotification object:nil];
     
     // notifications for pdftex and pdflatex
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkATaskStatus:) 
@@ -455,6 +528,17 @@
 	}
 }
 
+- (void)ExternalEditorChange:(NSNotification *)notification
+{
+    [[[NSApplication sharedApplication] delegate] configureExternalEditor];
+}
+
+
+- (BOOL) externalEditor
+{
+    return (externalEditor);
+}
+
 //-----------------------------------------------------------------------------
 - (void)rememberFont:(NSNotification *)notification
 //-----------------------------------------------------------------------------
@@ -505,55 +589,6 @@ preference change is cancelled. "*/
     [super close];
 }
 
-/* 
-    The routine below saves the file and then sets the document type to TEXT. 
-    Setting the type must be done with Carbon. This is
-    the only piece of Carbon code in TeXShop.
-    
-    January 15, 2002. This routine no longer works in 10.1.2. It is called,
-    and the Carbon code sets the TYPE for new files, but doesn't set it when
-    files are REWRITTEN for reasons I do not understand. The AppKit now has a 
-    direct method to set types, so the entire method below is obsolete and will be
-    eliminated. Currently it does nothing. It has been replaced with 
-    
-        - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath 
-        ofType:(NSString *)documentTypeName 
-        saveOperation:(NSSaveOperationType)saveOperationType 
-*/
-
-/* This is the old way to set the type of files to TEXT. It has
-been replaced by a method introduced in system 10.1. */
-/*
- - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)type;
- {
-    BOOL		myValue;
-    FSCatalogInfo	myCatalogInfo;
-    FSRef		myFileRef;
-    OSErr		myError;
-    NSURL		*myURL;
-    
-    
-    myValue = [super writeToFile:fileName ofType:type];
-   
-    if (fileName) {
-        myURL = [NSURL fileURLWithPath:fileName];
-        // the remaining code is Carbon
-        CFURLGetFSRef((CFURLRef)myURL, &myFileRef);
-        myError = FSGetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo, 
-            NULL, NULL, NULL);
-        // if (myError == 0)
-        //            NSLog(@"yes"); 
-        myCatalogInfo.finderInfo[0] = 'T';
-        myCatalogInfo.finderInfo[1] = 'E';
-        myCatalogInfo.finderInfo[2] = 'X';
-        myCatalogInfo.finderInfo[3] = 'T';
-        myError = FSSetCatalogInfo(&myFileRef, kFSCatInfoFinderInfo, &myCatalogInfo);
-        }
-
-    return myValue;
- }
- */
- 
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
     // Insert code here to write your document from the given data.
@@ -568,13 +603,6 @@ been replaced by a method introduced in system 10.1. */
 }
 
 
-/*
-- (BOOL)loadDataRepresentation:(NSData *)data ofType:(NSString *)aType {
-   //  NSString	*myString;
-    // Insert code here to read your document from the given data.  You can also choose to override 	-loadFileWrapperRepresentation:ofType: or -readFromFile:ofType: instead.
-    return YES;
-}
-*/
 
 - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 
@@ -679,6 +707,9 @@ been replaced by a method introduced in system 10.1. */
     SEL		saveFinished;
     NSDate	*myDate;
     
+    if (! fileIsTex)
+        return;
+    
     /* The lines of code below kill previously running tasks. This is
     necessary because otherwise the source file will be open when the
     system tries to save a new version. If the source file is open,
@@ -717,8 +748,13 @@ been replaced by a method introduced in system 10.1. */
     makeError = error;
     
     whichEngine = type;
-    saveFinished = @selector(saveFinished:didSave:contextInfo:);
-    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+    if (externalEditor) {
+        [self saveFinished: self didSave:YES contextInfo:nil];
+        }
+    else {
+        saveFinished = @selector(saveFinished:didSave:contextInfo:);
+        [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+        }
 }
 
 
@@ -890,6 +926,7 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         withLatex = NO;
     theScript = whichScript;
     
+if (! externalEditor) {
     theSource = [[self textView] string];
     myRange.length = 1;
     myRange.location = 0;
@@ -929,7 +966,8 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
         withLatex = YES;
         theScript = 102;
         }
-
+    }
+    
     myFileName = [self fileName];
     if ([myFileName length] > 0) {
     
@@ -1194,6 +1232,10 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     [self doJob:6 withError:NO];
 }
 
+- (void) doTypesetEE: sender;
+{
+    [self doTypeset: sender];
+}
 
 - (void) doTypeset: sender;
 {
@@ -1242,6 +1284,12 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 
 }
 
+- (void) chooseProgramEE: sender;
+{
+    [self chooseProgram: sender];
+}
+
+
 - (void) chooseProgram: sender;
 {
     id		theItem;
@@ -1254,26 +1302,32 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     
         case 0:
             [typesetButton setTitle: @"TeX"];
+            [typesetButtonEE setTitle: @"TeX"];
             break;
         
         case 1:
             [typesetButton setTitle: @"LaTeX"];
+            [typesetButtonEE setTitle: @"LaTeX"];
             break;
 
         case 2:
             [typesetButton setTitle: @"BibTeX"];
+            [typesetButtonEE setTitle: @"BibTeX"];
             break;
             
         case 3:
             [typesetButton setTitle: @"Index"];
+            [typesetButtonEE setTitle: @"Index"];
             break;
             
         case 4:
             [typesetButton setTitle: @"MetaPost"];
+            [typesetButtonEE setTitle: @"MetaPost"];
             break;
             
         case 5:
             [typesetButton setTitle: @"ConTeXt"];
+            [typesetButtonEE setTitle: @"ConTeXt"];
             break;
             
         }
@@ -1525,64 +1579,37 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 
 - (void) doTag: sender;
 {
-    NSString	*text, *tagString, *title, *mainTitle, *first;
+    NSString	*text, *tagString, *title, *mainTitle;
     unsigned	start, end, irrelevant;
     NSRange	myRange, nameRange, gotoRange;
     unsigned	length;
     int		theChar;
     int		texChar;
-    BOOL	done, tagfound;
-    BOOL	section, subsection, subsubsection, chapter;
+    int		sectionIndex = -1;
+    BOOL	done;
     
     title = [tags titleOfSelectedItem];
+    
+    /* code by Anton Leuski */
+    if ([SUD boolForKey: TagSectionsKey]) { 
+		unsigned  i;
+		for(i = 0; i < [kTaggedTeXSections count]; ++i) {
+			NSString*  tag = [kTaggedTagSections objectAtIndex:i];
+			if ([title hasPrefix:tag]) {
+				sectionIndex = i;
+                                myRange.location = [tag length];
+                                myRange.length = [title length] - myRange.location;
+                                mainTitle = [title substringWithRange: myRange];
+				break;
+			}
+		}
+	}
     
     if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
         texChar = 165;
     else
         texChar = 0x005c;
-    
-    section = NO; chapter = NO;
-    subsection = NO; subsubsection = NO;
-    if ([SUD boolForKey: TagSectionsKey]) { 
-        if ([title length] >= 9) {
-            myRange.location = 0;
-            myRange.length = 8;
-            first = [title substringWithRange: myRange];
-            if ([first isEqualToString:@"section:"])
-                section = YES;
-            else if ([first isEqualToString:@"chapter:"])
-                chapter = YES;
-            }
-        if ([title length] >= 12) {
-            myRange.location = 0;
-            myRange.length = 11;
-            first = [title substringWithRange: myRange];
-            if ([first isEqualToString:@"subsection:"])
-                subsection = YES;
-            }
-       if ([title length] >= 15) {
-            myRange.location = 0;
-            myRange.length = 14;
-            first = [title substringWithRange: myRange];
-            if ([first isEqualToString:@"subsubsection:"])
-                subsubsection = YES;
-            }     
-        if (section || chapter) {
-            myRange.location = 9;
-            myRange.length = [title length] - 9;
-            mainTitle = [title substringWithRange: myRange];
-            }
-        if (subsection) {
-            myRange.location = 12;
-            myRange.length = [title length] - 12;
-            mainTitle = [title substringWithRange: myRange];
-            }
-        if (subsubsection) {
-            myRange.location = 15;
-            myRange.length = [title length] - 15;
-            mainTitle = [title substringWithRange: myRange];
-            }
-        }
+
         
     text = [textView string];
     length = [text length];
@@ -1609,65 +1636,34 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                         }
                     }
                 }
-                
-            else if (theChar == texChar) {
-                tagfound = NO;
-                if (section  && (start < length - 8)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 7;
+
+            /* code by Anton Leuski */
+            else if ((theChar == texChar) && (start < length - 8) && (sectionIndex >= 0)) {
+			
+                NSString*  tag		= [kTaggedTeXSections objectAtIndex:sectionIndex];
+                nameRange.location	= start;
+                nameRange.length	= [tag length];
+                tagString 		= [text substringWithRange: nameRange];
+
+                if ([tagString isEqualToString:tag]) {
+				
+                    nameRange.location = start + nameRange.length;
+                    nameRange.length = (end - start - nameRange.length);
                     tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"section"]) {
-                        tagfound = YES;
-                        nameRange.location = start + 8;
-                        nameRange.length = (end - start - 8);
-                        tagString = [text substringWithRange: nameRange];
-                        }
-                    }
-                else if (chapter  && (start < length - 8)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 7;
-                    tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"chapter"]) {
-                        tagfound = YES;
-                        nameRange.location = start + 8;
-                        nameRange.length = (end - start - 8);
-                        tagString = [text substringWithRange: nameRange];
-                        }
-                    }
-                else if (subsection && (start < length - 11)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 10;
-                    tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"subsection"]) {
-                        tagfound = YES;
-                        nameRange.location = start + 11;
-                        nameRange.length = (end - start - 11);
-                        tagString = [text substringWithRange: nameRange];
-                        }
-                    }
-                else if (subsubsection && (start < length - 14)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 13;
-                    tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"subsubsection"]) {
-                        tagfound = YES;
-                        nameRange.location = start + 14;
-                        nameRange.length = (end - start - 14);
-                        tagString = [text substringWithRange: nameRange];
-                        }
-                    }
-                    
-                if (tagfound && ([mainTitle isEqualToString:tagString])) {
+					
+                    if ([mainTitle isEqualToString:tagString]) {
                         done = YES;
                         gotoRange.location = start;
                         gotoRange.length = (end - start);
                         [textView setSelectedRange: gotoRange];
                         [textView scrollRangeToVisible: gotoRange];
                         }
+                    }
                 }
             }
-        }
+	}
 }
+
 
 - (void) setupTags;
 {
@@ -1679,7 +1675,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     }
     tagLocation = 0;
     [tags removeAllItems];
-    // [tags addItemWithTitle:@"Tags"];
     [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
     tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
 }
@@ -1722,13 +1717,13 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
 
 - (void) doError: sender;
 {
-   if (errorNumber > 0) {
-        [textWindow makeKeyAndOrderFront: self];
-        [self toLine: errorLine[whichError]];
-        whichError++;
-        if (whichError >= errorNumber)
-            whichError = 0;
-        }
+    if ((!externalEditor) && (fileIsTex) && (errorNumber > 0)) {
+            [textWindow makeKeyAndOrderFront: self];
+            [self toLine: errorLine[whichError]];
+            whichError++;
+            if (whichError >= errorNumber)
+                whichError = 0;
+            }
 }
 
 - (void) toLine: (int) line;
@@ -1995,48 +1990,41 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     matchRange = [textString rangeOfString:@"%:" options:0 range:tagRange];
     if (matchRange.length != 0)
         tagLine = YES;
-        
-    if ([SUD boolForKey: TagSectionsKey]) {
-        tagRange = [replacementString rangeOfString:@"\\section"];
-        if (tagRange.length != 0)
+
+
+/* code by Anton Leuski */
+ if ([SUD boolForKey: TagSectionsKey]) {
+	
+    unsigned	i;
+    for(i = 0; i < [kTaggedTeXSections count]; ++i) {
+        tagRange = [replacementString rangeOfString:[kTaggedTeXSections objectAtIndex:i]];
+        if (tagRange.length != 0) {
             tagLine = YES;
-            
-        tagRange = [replacementString rangeOfString:@"\\chapter"];
-        if (tagRange.length != 0)
-            tagLine = YES;
-            
-        tagRange = [replacementString rangeOfString:@"\\subsection"];
-        if (tagRange.length != 0)
-            tagLine = YES;
-            
-        tagRange = [replacementString rangeOfString:@"\\subsubsection"];
-        if (tagRange.length != 0)
-            tagLine = YES;
-            
-        textString = [textView string];
-        [textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
-        tagRange.location = start;
-        tagRange.length = end - start;
-        
-        matchRange = [textString rangeOfString:@"\\section" options:0 range:tagRange];
-        if (matchRange.length != 0)
-            tagLine = YES;
-            
-        matchRange = [textString rangeOfString:@"\\chapter" options:0 range:tagRange];
-        if (matchRange.length != 0)
-            tagLine = YES;
-            
-        matchRange = [textString rangeOfString:@"\\subsection" options:0 range:tagRange];
-        if (matchRange.length != 0)
-            tagLine = YES;
-            
-        matchRange = [textString rangeOfString:@"\\subsubsection" options:0 range:tagRange];
-        if (matchRange.length != 0)
-            tagLine = YES;
-            
+            break;
+            }
         }
+            
+    if (!tagLine) {
+
+        textString = [textView string];
+        [textString getLineStart:&start end:&end 
+            contentsEnd:&end1 forRange:affectedCharRange];
+        tagRange.location	= start;
+        tagRange.length		= end - start;
+
+        for(i = 0; i < [kTaggedTeXSections count]; ++i) {
+            matchRange = [textString rangeOfString:
+                [kTaggedTeXSections objectAtIndex:i] options:0 range:tagRange];
+            if (matchRange.length != 0) {
+                tagLine = YES;
+                break;
+                }
+            }
+
+        }
+    }
     
-    if (replacementString == nil) 
+   if (replacementString == nil) 
         return YES;
     else
         colorEnd = colorStart + [replacementString length];
@@ -2173,7 +2161,6 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
     NSRange	myRange, nameRange;
     unsigned	length, index;
     int		theChar, texChar;
-    BOOL	found;
 
     if (!fileIsTex) return;
      
@@ -2205,74 +2192,41 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                     [tags addItemWithTitle:tagString];
                     }
                 }
-            
-            else if ((theChar == texChar) && ([SUD boolForKey: TagSectionsKey])) {
-            
-                found = NO;
-                if ((start + 10) < end)  {
-                    nameRange.location = start + 1;
-                    nameRange.length = 7;
-                     tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"section"]) {
-                        found = YES;
-                        nameRange.location = start + 8;
-                        nameRange.length = (end - start - 8);
-                        tagString = [NSString stringWithString:@"section: "];
-                        tagString = [tagString stringByAppendingString: 
+                
+                /* code by Anton Leuski */
+                else if ((theChar == texChar) && ((start + 10) < end) &&
+                    ([SUD boolForKey: TagSectionsKey])) {
+					
+                    unsigned	i;
+                    for(i = 0; i < [kTaggedTeXSections count]; ++i) {
+                        NSString* tag = [kTaggedTeXSections objectAtIndex:i];
+                        nameRange.location	= start;
+                        nameRange.length	= [tag length];
+                        tagString 		= [text substringWithRange: nameRange];
+                        if ([tagString isEqualToString:tag]) {
+                            nameRange.location = start + [tag length];
+                            nameRange.length = (end - start - [tag length]);
+                            tagString = [NSString stringWithString:
+                                [kTaggedTagSections objectAtIndex:i]];
+                            tagString = [tagString stringByAppendingString: 
                             [text substringWithRange: nameRange]];
-                        [tags addItemWithTitle:tagString];
+                            [tags addItemWithTitle:tagString];
+                            }
                         }
-                    else if ([tagString isEqualToString:@"chapter"]) {
-                        found = YES;
-                        nameRange.location = start + 8;
-                        nameRange.length = (end - start - 8);
-                        tagString = [NSString stringWithString:@"chapter: "];
-                        tagString = [tagString stringByAppendingString: 
-                            [text substringWithRange: nameRange]];
-                        [tags addItemWithTitle:tagString];
-                        }
-                    }
-                    
-                if ((! found) && ((start + 13) < end)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 10;
-                    tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"subsection"]) {
-                        found = YES;
-                        nameRange.location = start + 11;
-                        nameRange.length = (end - start - 11);
-                        tagString = [NSString stringWithString:@"subsection: "];
-                        tagString = [tagString stringByAppendingString: 
-                            [text substringWithRange: nameRange]];
-                        [tags addItemWithTitle:tagString];
-                        }
-                    }
-                    
-                if ((! found) && ((start + 16) < end)) {
-                    nameRange.location = start + 1;
-                    nameRange.length = 13;
-                    tagString = [text substringWithRange: nameRange];
-                    if ([tagString isEqualToString:@"subsubsection"]) {
-                        found = YES;
-                        nameRange.location = start + 14;
-                        nameRange.length = (end - start - 14);
-                        tagString = [NSString stringWithString:@"subsubsection: "];
-                        tagString = [tagString stringByAppendingString: 
-                            [text substringWithRange: nameRange]];
-                        [tags addItemWithTitle:tagString];
-                        }
-                    }
+					
                 }
             }
         }
-        
-    tagLocation = myRange.location;
-    if (tagLocation >= length) { 
-        [tagTimer invalidate];
-        [tagTimer release];
-        tagTimer = nil;
+        tagLocation = myRange.location;
+        if (tagLocation >= length) 
+        {
+            [tagTimer invalidate];
+            [tagTimer release];
+            tagTimer = nil;
         }
+    
 }
+
 
 //-----------------------------------------------------------------------------
 - (void)fixColor1:(NSTimer *)timer;
@@ -2559,27 +2513,29 @@ This seems like a bug; it is fixed by the code below. RMK: 6/22/01 */
                     saveOperation: saveOperationType];
     aDictionary = [NSMutableDictionary dictionaryWithDictionary: myDictionary];
     myNumber = [NSNumber numberWithLong:'TEXT'];
-    [aDictionary setObject: myNumber forKey: NSFileHFSTypeCode]; 
+    [aDictionary setObject: myNumber forKey: NSFileHFSTypeCode];
+    myNumber = [NSNumber numberWithLong:'TeXs'];
+    [aDictionary setObject: myNumber forKey: NSFileHFSCreatorCode]; 
     return aDictionary;
 }
 
 /* Code by Nicol‡s Ojeda BŠr */
 - (int) textViewCountTabs: (NSTextView *) aTextView
 {
-    int startLocation = [aTextView selectedRange].location - 1, tabCount =
-0;
+    int startLocation = [aTextView selectedRange].location - 1, tabCount = 0;
 
     if (startLocation < 0)
     return 0;
 
     while ([[aTextView string] characterAtIndex: startLocation] != '\n') {
-    if (startLocation < 0)
-        break;
-
-    if ([[aTextView string] characterAtIndex: startLocation --] != '\t')
-        tabCount = 0;
-    else
-        ++ tabCount;
+    
+        if ([[aTextView string] characterAtIndex: startLocation --] != '\t')
+            tabCount = 0;
+        else
+            ++ tabCount;
+            
+        if (startLocation < 0)
+            break;
     }
 
     return tabCount;
@@ -2636,44 +2592,6 @@ aSelector
     [self setupTags];
 
 }
-
-
-/* Original code */
-/*
-- (void)doCompletion:(NSNotification *)notification
-{
-    NSRange		myRange;
-    NSWindow		*activeWindow;
-    NSString		*newString, *oldString;
-    unsigned		from, to;
-    NSUndoManager	*myManager;
-    NSMutableDictionary	*myDictionary;
-    NSNumber		*theLocation, *theLength;
-
-    
-    activeWindow = [[TSWindowManager sharedInstance] activeDocumentWindow];
-    if ((activeWindow != nil) && (activeWindow == [self textWindow])) { 
-        myRange = [textView selectedRange];
-        oldString = [[textView string] substringWithRange: myRange];
-        newString = [notification object];
-        [textView replaceCharactersInRange:myRange withString:newString];
-        
-        myManager = [textView undoManager];
-        myDictionary = [NSMutableDictionary dictionaryWithCapacity: 3];
-        theLocation = [NSNumber numberWithUnsignedInt: myRange.location];
-        theLength = [NSNumber numberWithUnsignedInt: [newString length]];
-        [myDictionary setObject: oldString forKey: @"oldString"];
-        [myDictionary setObject: theLocation forKey: @"oldLocation"];
-        [myDictionary setObject: theLength forKey: @"oldLength"];
-        [myManager registerUndoWithTarget:self selector:@selector(fixTyping:) object: myDictionary];
-        [myManager setActionName:@"Typing"];
-        from = myRange.location;
-        to = from + [newString length];
-        [self fixColor:from :to];
-        [self setupTags];
-        }
-}
-*/
 
 /* New Code by Max Horn, to activate #SEL# and #INS# in Panel Strings */
 - (void)doCompletion:(NSNotification *)notification

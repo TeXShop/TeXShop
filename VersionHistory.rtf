@@ -581,10 +581,114 @@ Version 1.15		February 7, 2002\
 \
 \
 		\
+Version 1.16		March 1, 2002\
 \
+		TeXShop can process .ins and .dtx files. Thanks to Niccola\
+		Vitacolonna for suggesting this addition.\
 \
-	\
-		\
+		TeXShop has configurable toolbars. This is entirely the work of\
+		Anton Leuski, who send code and nib files implementing the change.\
+		Thanks for this crucial addition!\
 \
-		\
+		TeXShop supports Applescript. This is also the work of Anton\
+		Leuski. Applescript support will improve gradually over the new few\
+		versions of TeXShop.\
+\
+		TeXShop can rotate the pdf image for previewing. This is necessary \
+		for certain slide packages. Thanks to Robert Love for requesting\
+		this change (several times!).\
+\
+		The arrow keys now work in the preview window. The left arrow\
+		gives the previous page, the home key gives the first page, the up arrow\
+		scrolls upward a couple of lines, etc. Thanks to Hanspeter Schaub for\
+		this suggestion. \
+\
+		Finally, TeXShop can be configured for an external editor. There is\
+		a new menu item named "Open for Preview..." When this item is\
+		chosen, the user is asked to select a tex source file. But only the\
+		associated pdf preview window opens (if the source has not yet been\
+		typeset, this preview window will be blank). Thanks to Leuski's toolbars,\
+		the preview window can be configured to contain a typesetting button. \
+		Users can open their source file in any editor. When it is time to typeset, they\
+		save the changes in their editor, switch to the preview window,\
+		and typeset. In this mode, TeXShop itself never opens or modifies the\
+		source file. It simply passes this file to the Unix TeX or LaTeX process.\
+\
+		For users who prefer external editors most of the time, there is a new \
+		preference item called "Configure for External Editor."\
+		When this preference is chosen, the "Open" and "Open Recent..."\
+		menus open tex source files in the above manner for editing with\
+		an external editor. Moreover, the  "Open for Preview..." menu \
+		becomes "Open for Editing..." and opens the source file in \
+		TeXShop's internal editor for those rare occasions when the internal\
+		editor is desired. Recall that the "Open" and "Open Recent..."\
+		menus can also open jpg, tiff, ps, pdf, dvi, log, and other files; selecting\
+		the new preference does not change this behavior.\
+\
+		Applescript support for the "external editor option" is still weak; it\
+		will improve in the next version, making it possible to typeset entirely\
+		from within an applescript-capable editor.\
+		 \
+	Bugs Fixed:\
+\
+		The encoding preference was broken in some internationalized versions\
+		due to a missing tag. This was silently fixed in 1.15 and now officially fixed.\
+		Thanks to Juan Luis Varona Malumbres for pointing it out.\
+\
+		Small changes were made in the Italian localization, as suggested by\
+		Nicola Vitacolonna.\
+\
+		If the source document has serious errors, LaTeX may become confused and\
+		generate a defective pdf file. Obviously TeXShop cannot display this\
+		faulty preview image. But in past versions, TeXShop would then refuse\
+		to preview the document after the errors had been corrected. The\
+		document would have to be closed and reopened or TeXShop would\
+		have to be restarted. This bug is now fixed. Thanks to my colleague \
+		Jim Isenberg for complaining loudly.\
+\
+		While supplying the Spanish translation for TeXShop 1.16, Juan Luis Varona \
+		Malumbres gave an alternate translation of the phrase "File format" in the\
+		save dialog. However, we provided no such phrase. We investigated where\
+		it came from, and it turns out that Apple automatically added an item to\
+		the save dialog allowing users to choose between the extensions "tex,"\
+		"ins," and "dtx." That is because TeXShop now declares that it is an \
+		EDITOR of ins and dtx files. So we made TeXShop an editor of bib files \
+		as well and now users can create a bib file from scratch and give it the \
+		extension "bib" without going into the Finder. This fixes an earlier bug.\
+\
+Version 1.17		March 8, 2002\
+\
+	Bugs Fixed:\
+\
+		Previously, TeXShop could occasionally crash the first time the user pushed \
+		the RETURN key after opening a new document. The problem is fixed.\
+		Thanks to Nicolas Boccard for reporting the bug and sending a crash log. \
+\
+		In the "Engine" Preferences for "TeX + dvips + distiller", the defaults are now\
+		set to\
+\
+			altpdftex  --dvipsopts "-Ppdf"\
+\
+		and\
+\
+			altpdflatex  --dvipsopts "-Ppdf"\
+\
+		rather than just "altpdftex" and "altpdflatex". Old users should change these\
+		preferences by hand to obtain best results with the TeX + Ghostscript\
+		typesetting option.\
+\
+		There are two Cocoa bugs that users must fix themselves by making slight\
+		adjustments in window size:\
+\
+		 If the bottom of the editing window is slightly below the toolbar or slightly \
+		below the bottom of the screen, Cocoa will not automatically scroll \
+		the window when text is being selected. Resize the window slightly. If\
+		new windows are positioned to make this problem occur always, reset the\
+		initial window position in Preferences.\
+\
+		If a window refuses to be dragged down so portions lie behind the toolbar\
+		and instead always snaps back to its original position,  resize the window \
+		slightly and try again. If new windows are positioned to make this problem\
+		occur always, reset the initial window position in Preferences.\
+\
 }

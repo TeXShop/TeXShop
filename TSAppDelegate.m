@@ -18,6 +18,11 @@
 "*/
 @implementation TSAppDelegate
 
+- (id)init
+{
+    return [super init];
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     NSString *fileName;
@@ -47,8 +52,70 @@
     [path appendString:@":"];
     [path appendString:[SUD stringForKey:GSBinPathKey]];
     [TSEnvironment setObject: path forKey: @"PATH"];
+    
+    [self configureExternalEditor];
 	
     documentsHaveLoaded = NO;
+}
+
+- (void)configureExternalEditor
+{
+    NSString	*menuTitle;
+    
+    forPreview =  [SUD boolForKey:UseExternalEditorKey];
+    if (forPreview)
+        menuTitle = NSLocalizedString(@"Open for Editing...", @"Open for Editing...");
+    else
+        menuTitle = NSLocalizedString(@"Open for Preview...", @"Open for Preview...");
+    [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"File", @"File")] submenu] 
+        itemWithTag:110] setTitle:menuTitle];
+}
+
+- (IBAction)openForPreview:(id)sender
+{
+    int				i;
+    NSArray			*myArray, *fileArray;
+    NSDocumentController	*myController;
+    BOOL			externalEditor;
+    NSOpenPanel			*myPanel;
+    
+    externalEditor = [SUD boolForKey:UseExternalEditorKey];
+    myController = [NSDocumentController sharedDocumentController];
+    myPanel = [NSOpenPanel openPanel];
+    
+    if (externalEditor)
+        forPreview = NO;
+    else
+        forPreview = YES;
+        
+/* This code restricts files to tex files */
+    myArray = [[NSArray alloc] initWithObjects:@"tex",
+                                        @"TEX",
+                                        @"txt",
+                                        @"TXT",
+                                        @"bib",
+                                        @"mp",
+                                        @"ins",
+                                        @"dtx",
+					nil];
+    i = [myController runModalOpenPanel: myPanel forTypes: myArray];
+    fileArray = [myPanel filenames];
+    if (fileArray) {
+        for(i = 0; i < [fileArray count]; ++i) {
+            NSString*  myName = [fileArray objectAtIndex:i];
+            [myController openDocumentWithContentsOfFile: myName display: YES];
+            }
+        }
+
+    if (externalEditor)
+        forPreview = YES;
+    else
+        forPreview = NO;
+}
+
+- (BOOL)forPreview
+{
+    return forPreview;
 }
 
 - (IBAction)displayLatexPanel:(id)sender
@@ -81,11 +148,14 @@
 }
 
 
+/* I interprete comments from Anton Leuski as saying that this is not
+necessary */
+/*
 - (void)dealloc
 {
     [super dealloc];
 }
-
+*/
 
 
 

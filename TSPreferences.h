@@ -18,6 +18,7 @@
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
         IBOutlet NSButton	*_spellCheckButton;		/*" connected to "SpellChecking "*/
         IBOutlet NSButton	*_openEmptyButton;		/*" open empty document on start "*/
+        IBOutlet NSButton	*_externalEditorButton;		/*" use external editor "*/
         IBOutlet NSMatrix	*_defaultEncodeMatrix;		/*" text encoding "*/
 
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
@@ -46,6 +47,7 @@
                                                                     we restore the old one "*/
         BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
         BOOL			magnificationTouched;
+        BOOL			externalEditorTouched;
 }
 
 + (id)sharedInstance;
@@ -62,6 +64,7 @@
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
+- (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
 
 - (IBAction)pdfWindowPosChanged:sender;
@@ -98,5 +101,6 @@
 - (void)copyToTemplateDirectory:(NSString *)fileName;
 - (void)updateControlsFromUserDefaults:(NSUserDefaults *)defaults;
 - (void)updateDocumentFontTextField;
+- (void)createTemplates;
 
 @end

@@ -22,10 +22,12 @@ static id _sharedInstance = nil;
 	return _sharedInstance;
 }
 
-- (void)init
+- (id)init
 {
-    [super init];
+    id result;
+    result = [super init];
     shown = NO;
+    return result;
 }
 
 - (void)windowDidLoad
@@ -58,6 +60,7 @@ aPoint.x = [[NSUserDefaults standardUserDefaults] floatForKey:PanelOriginXKey];
 aPoint.y = [[NSUserDefaults standardUserDefaults] floatForKey:PanelOriginYKey];
 [[self window] setFrameOrigin: aPoint];
 [[self window] setHidesOnDeactivate: YES];
+// [self window] is actually an NSPanel, so it responds to the message below
 [[self window] setBecomesKeyOnlyIfNeeded: YES];
 
 arrayFunctions1=[[NSArray alloc] initWithArray:[completionDictionary objectForKey:@"Functions1"]];

@@ -17,14 +17,19 @@
     id			myStepper;
     int			imageType;
     double		oldMagnification;
+    double		oldWidth, oldHeight;
     BOOL		fixScroll;
     NSPDFImageRep	*myRep;
     MyDocument		*myDocument;
+    int			rotationAmount;  // will be 0, 90, -90, 180
+    double		theMagSize;
 }
 
 - (void) setImageType: (int)theType;    
 - (void) previousPage: sender;
 - (void) nextPage: sender;
+- (void) firstPage: sender;
+- (void) lastPage: sender;
 - (void) goToPage: sender;
 - (void) doStepper: sender;
 - (void) setImageRep: (NSPDFImageRep *)theRep;
@@ -34,4 +39,11 @@
 - (void) resetMagnification;
 - (void) printDocument: sender;
 - (void) setDocument: (id) theDocument;
+- (void) rotateClockwise:sender;
+- (void) rotateCounterclockwise:sender;
+- (void) fixRotation;
+- (void) up: sender;
+- (void) down: sender;
+- (void) top: sender;
+- (void) bottom: sender;
 @end

@@ -62,7 +62,7 @@ static id _sharedInstance = nil;
     _documentFont = [NSFont userFontOfSize:12.0];
 	
     // register for changes in the user defaults
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:)     	name:NSUserDefaultsDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
 
     return self;
 }
@@ -105,6 +105,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
         [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRememberNotification object:self];
         [[NSNotificationCenter defaultCenter] postNotificationName:MagnificationRememberNotification object:self];
         fontTouched = NO; 
+        externalEditorTouched = NO;
         syntaxColorTouched = NO;
         magnificationTouched = NO;
         oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
@@ -210,6 +211,20 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [SUD setBool:[sender state] forKey:MakeEmptyDocumentKey];
 }
 
+/*" Configure for External Editor "*/
+//------------------------------------------------------------------------------
+- (IBAction)externalEditorButtonPressed:sender;
+//------------------------------------------------------------------------------
+{
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:UseExternalEditorKey] forKey:UseExternalEditorKey];
+
+    [SUD setBool:[sender state] forKey:UseExternalEditorKey];
+     // post a notification so the system will learn about this change
+    [[NSNotificationCenter defaultCenter] postNotificationName:ExternalEditorNotification object:self];
+    externalEditorTouched = YES;
+}
+
+
 /*" Change Encoding "*/
 //------------------------------------------------------------------------------
 - (IBAction)encodingChanged:sender;
@@ -227,6 +242,10 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
                 break;
                 
         case 2: value = [NSString stringWithString:@"MacJapanese"];
+                break;
+                
+        default: value = [NSString stringWithString:@"MacOSRoman"];
+                break;
         }
         
     [SUD setObject:value forKey:EncodingKey];
@@ -594,6 +613,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	// close the window
 	[_prefsWindow performClose:self];
         /* koch: undo font changes */
+        if (externalEditorTouched)
+            [[NSNotificationCenter defaultCenter] postNotificationName:ExternalEditorNotification object:self];
         if (fontTouched)
          [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRevertNotification object:self];
         if (magnificationTouched)
@@ -636,11 +657,27 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 - (NSArray *)allTemplateNames
 //------------------------------------------------------------------------------
 {
-	NSString		*templatePath;
+	NSString	*templatePath;
 	NSEnumerator	*templateEnum;
 	NSMutableArray	*returnArray;
 	
 	returnArray = [NSMutableArray array];
+        
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: [TexTemplatePathKey 		stringByDeletingLastPathComponent]])
+            {
+            NS_DURING
+                [self createDirectoryAtPath:[TexTemplatePathKey stringByDeletingLastPathComponent]];
+            NS_HANDLER
+                {
+		NSRunAlertPanel(@"Error", [localException reason], 
+                @"Couldn't create Templates Folder",  nil, nil);
+		return nil;
+                }
+            NS_ENDHANDLER
+            }
+            
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: TexTemplatePathKey] )
+            [self createTemplates];
 	
 	templatePath = [TexTemplatePathKey stringByStandardizingPath];
 	templateEnum = [[NSFileManager defaultManager] enumeratorAtPath:templatePath];
@@ -665,8 +702,6 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 {
 	NSString *fileName;
 	NSDictionary *factoryDefaults;
-	NSArray *templates;
-	NSEnumerator *templateEnum;
 
 	// register defaults
 	fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
@@ -682,14 +717,37 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD synchronize];
 	
 	// create the necessary directories
-	NS_DURING
+        NS_DURING
 		// create ~/Library/TeXShop
 		[self createDirectoryAtPath:[TexTemplatePathKey stringByDeletingLastPathComponent]];
+	NS_HANDLER
+	{
+		NSRunAlertPanel(@"Error", [localException reason], @"Couldn't create TeXShop Folder", 	nil, nil);
+		return;
+	}
+	NS_ENDHANDLER
+        [self createTemplates];
+        
+}
+
+//==============================================================================
+// helpers
+//==============================================================================
+
+- (void)createTemplates
+{
+    	NSArray 	*templates;
+	NSEnumerator 	*templateEnum;
+        NSString 	*fileName;
+
+
+    // create the necessary directories
+	NS_DURING
 		// create ~/Library/TeXShop/Templates
 		[self createDirectoryAtPath:TexTemplatePathKey];
 	NS_HANDLER
 	{
-		NSRunAlertPanel(@"Error", [localException reason], @"shit happens", nil, nil);
+		NSRunAlertPanel(@"Error", [localException reason], @"Couldn't Create Templates Folder", nil, nil);
 		return;
 	}
 	NS_ENDHANDLER
@@ -700,11 +758,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	{
 		[self copyToTemplateDirectory:fileName];
 	}
+
 }
 
-//==============================================================================
-// helpers
-//==============================================================================
 /*"  %{This method is not to be called from outside of this class.}
 
 This method retrieves the application preferences from the defaults object and sets the controls in the window accordingly.
@@ -735,6 +791,7 @@ This method retrieves the application preferences from the defaults object and s
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
     [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
     [_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
+    [_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
     if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacOSRoman"])
         myTag = 0;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])

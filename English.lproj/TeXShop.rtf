@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\vieww12060\viewh13920\viewkind0
+\vieww9020\viewh7500\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -24,6 +24,8 @@
 	Typesetting Documents\
 	Checking Spelling\
 	Editing Tricks\
+	Toolbar and Applescript\
+	Using an External Editor\
 	Including Graphics\
 	Alternate Typesetting Mode\
 	Modifying the Templates Menu\
@@ -77,13 +79,13 @@ TeXShop does not include TeX. Instead it uses the standard TeX distribution
 
 \f2\b0 \cf0 Gerben Wierda has compiled the latest teTeX for MacOSX. His version is on the ftp site:\
 \
-	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/teTeX.dmg (50MB)\
+	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/TeX.dmg (53MB)\
 \
 and a copy (which should be up to date) lives on\
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-in a file named "TeXLive-teTeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
+in a file named "TeX.dmg". Obtain this file and double click on it in an Administrator account, like the one created when Mac OS X was installed. A folder will open containing the program "TeXGSInstaller." Run this program. Be sure to install both teTeX and ghostscript because TeXShop also uses ghostscript commands.\
  \
 The complete source for teTeX is available on Wierda's web site. The site also contains instructions for configuring and making the code for Mac OS X: \
 \
@@ -179,6 +181,26 @@ Some symbols in the panel require the line\
 \f2\fs24 at the top of the source file. \
 \
 It is possible to customize the behavior of the panel. The TeXShop distribution folder contains a file named "completion.plist." This file contains all strings inserted into the source code when a Palette item is chosen. If such a string contains #SEL#, then the current selection will replace this expression in the inserted string. If a string contains #INS#, then the cursor will be set to this position when the string is inserted. To customize panel behavior, edit completion.plist. Then find the folder ~/Library/TeXShop/Templates. Add a new folder named ~/Library/TeXShop/LatexPanel and place the edited completion.plist in this folder.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Toolbar and AppleScript:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 The selection and location of tools at the top of the TeX Source and PDF Preview windows can be modified using the menu item "Customize Toolbar." This toolbar support is entirely the work of Anton Leuski. Thanks!\
+\
+TeXShop supports Applescript. This is also the work of Anton Leuski. Applescript support will improve in the future.
+\f0\b \
+\
+Using an External Editor:\
+\
+
+\f2\b0 TeXShop can be configured for an external editor. There is a new menu item named "Open for Preview..." When this item is chosen, you will be asked to select a tex source file. But only the associated pdf preview window opens (if the source has not yet been typeset, this preview window will be blank). Thanks to Leuski's toolbars, the preview window can be configured to contain a typesetting button. You can open you source file in any editor. When it is time to typeset, save the changes in your editor, switch to the preview window, and typeset. In this mode, TeXShop will never open or modify the source file. It will simply pass this file to the Unix TeX or LaTeX process.\
+\
+For users who prefer external editors most of the time, there is a preference item called "Configure for External Editor." When this preference is chosen, the "Open" and "Open Recent..." menus open tex source files in the above manner for editing with an external editor. Moreover, the  "Open for Preview..." menu becomes "Open for Editing..." and opens the source file in TeXShop's internal editor for those rare occasions when the internal editor is desired. The "Open" and "Open Recent..." menus can also open jpg, tiff, ps, pdf, dvi, log, and other files; selecting the new preference does not change this behavior.\
+\
+Applescript support for the "external editor option" is still weak; it will improve in the next version, making it possible to typeset entirely from within an applescript-capable editor.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -437,9 +459,7 @@ When this source is typeset, a reference to Felici's article will appear in the 
 \
 TeXShop can be used with this example in the following way. First edit and typeset the document "myfile.tex" as usual. Citations will appear in the output as "[?]" and the bibliography will be missing. Then select "BibTeX" under the Program button and run BibTeX. Next select "LaTeX" and typeset again. Citations will still appear as "[?]", but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.\
 \
-The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop opens a file whose name does not end with the extension ".tex" or ".TEX", it dims the typesetting buttons. When the file is later saved using "Save" or "Save As ...", the file will be saved with exactly the selected name, without adding a  ".tex" extension to the name. So items can be added to the bibliography database at the same time that a new article is being written.\
-\
-(However, if you use TeXShop to create the file "mybibliography.bib" in the first place, it will have a ".tex"  extension when saved. This is a bug we hope to fix eventually. Remove the ".tex" in the Finder and open the file again to continue editing.)\
+The file "mybibliography.bib" can be opened and edited by TeXShop. If you use TeXShop to create the file "mybibliography.bib" in the first place, use the pulldown tag labeled "file format" to save the file as a bib file rather than as a tex file.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -475,6 +495,8 @@ The file "mybibliography.bib" can be opened and edited by TeXShop. When TeXShop 
 \f2\b0 \cf0 TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions ".log", ".aux", etc. Files with extensions ".jpg", ".tif", ".eps", or ".pdf" are opened as graphic files.\
 \
 TeXShop can also open ".dvi" and ".ps" files. In these cases, it converts the file to pdf and displays this pdf file.\
+\
+TeXShop can open ".ins" and ".dts" files for processing.\
 \
 It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it always saves files in 8-bit Ascii format because that is the format which 
 \f1\i tex
@@ -668,9 +690,6 @@ Once MetaPost files have been created, then can be displayed like any other illu
         	Eugene, Oregon 97403      \
 	koch@math.uoregon.edu\
 \
-	J\'8er\'99me Laurens\
-       	jerome.laurens@u-bourgogne.fr\
-                             \
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\
 	\

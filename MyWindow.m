@@ -8,6 +8,7 @@
 #import <AppKit/AppKit.h>
 #import "MyWindow.h"
 #import "MyDocument.h"
+#import "MyView.h"
 
 @implementation MyWindow
 
@@ -46,6 +47,16 @@
     [myDocument doIndex: sender];
 }
 
+- (void) doMetapost: sender;
+{
+    [myDocument doMetapost: sender];
+}
+
+- (void) doContext: sender;
+{
+    [myDocument doContext: sender];
+}
+
 - (void) previousPage: sender;
 {
     [[myDocument pdfView] previousPage: sender];
@@ -55,6 +66,17 @@
 {
     [[myDocument pdfView] nextPage: sender];
 }
+
+- (void) firstPage: sender;
+{
+    [[myDocument pdfView] firstPage: sender];
+}
+
+- (void) lastPage: sender;
+{
+    [[myDocument pdfView] lastPage: sender];
+}
+
 
 - (void) doChooseMethod: sender;
 {
@@ -66,9 +88,72 @@
     [myDocument doError: sender];
 }
 
+- (void) setProjectFile: sender;
+{
+    [myDocument setProjectFile: sender];
+}
+
+- (void) rotateClockwise: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView rotateClockwise: sender];
+}
+
+- (void) rotateCounterclockwise: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView rotateCounterclockwise: sender];
+}
+
+- (void) up: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView up: sender];
+}
+
+- (void) down: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView down: sender];
+}
+
+- (void) top: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView top: sender];
+}
+
+- (void) bottom: sender;
+{
+    MyView *theView;
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView bottom: sender];
+}
+
+
+
 - (void) orderOut:sender;
 {
-    if (([myDocument imageType] != isTeX) && ([myDocument imageType] != isOther)) {
+    if ([myDocument externalEditor])
+        [myDocument close];
+    else if (([myDocument imageType] != isTeX) && ([myDocument imageType] != isOther)) {
         [myDocument close];
         }
     else
@@ -77,12 +162,42 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSControlKeyMask))
-    if ([[theEvent charactersIgnoringModifiers] isEqualToString:@"1"]) {
-            if ([myDocument imageType] == isTeX)
-                [[myDocument textWindow] makeKeyAndOrderFront: self];
+    unichar	theChar;
+    
+    if ([theEvent type] == NSKeyDown) {
+    
+        if (([theEvent modifierFlags] & NSControlKeyMask) &&
+         ([myDocument imageType] == isTeX) &&
+         ([[theEvent charactersIgnoringModifiers] isEqualToString:@"1"])) {
+         
+            [[myDocument textWindow] makeKeyAndOrderFront: self];
             return;
             }
+    
+        theChar = [[theEvent characters] characterAtIndex:0];
+        
+        switch (theChar) {
+        
+            case NSUpArrowFunctionKey: [self up:self]; return;
+            
+            case NSDownArrowFunctionKey: [self down:self]; return;
+            
+            case NSLeftArrowFunctionKey: [self previousPage: self]; return;
+            
+            case NSRightArrowFunctionKey: [self nextPage: self]; return;
+            
+            case NSPageUpFunctionKey: [self top:self]; return;
+            
+            case NSPageDownFunctionKey: [self bottom:self]; return;
+            
+            case NSHomeFunctionKey: [self firstPage: self]; return;
+            
+            case NSEndFunctionKey: [self lastPage: self]; return;
+
+            
+            }
+       } 
+        
     [super sendEvent: theEvent];
 }
 
@@ -92,9 +207,35 @@
     BOOL  result;
     
     result = [super validateMenuItem: anItem];
-    if ([[anItem title] isEqualToString:@"Latex Panel..."])
-        return NO;
-    else if ([myDocument imageType] == isTeX)
+    if ([[anItem title] isEqualToString:
+                NSLocalizedString(@"Latex Panel...", @"Latex Panel...")])
+            return NO;
+    if (([[anItem title] isEqualToString:
+                NSLocalizedString(@"Rotate Clockwise", @"Rotate Clockwise")]) ||
+        ([[anItem title] isEqualToString:
+                NSLocalizedString(@"Rotate Counterclockwise", @"Rotate Counterclockwise")])) {
+            if (([myDocument imageType] == isTeX) || ([myDocument imageType] == isPDF))
+                return YES;
+            else
+                return NO;
+            }
+    if (([[anItem title] isEqualToString:
+                NSLocalizedString(@"Goto Error", @"Goto Error")]) ||
+        ([[anItem title] isEqualToString:
+                NSLocalizedString(@"Print Source...", @"Print Source...")])) {
+        if ((![myDocument externalEditor]) && ([myDocument imageType] == isTeX))
+            return YES;
+        else
+            return NO;
+        }
+    if ([[anItem title] isEqualToString:
+                NSLocalizedString(@"Set Project Root...", @"Set Project Root...")]) {
+        if ([myDocument imageType] == isTeX)
+            return YES;
+        else
+            return NO;
+        }
+    if ([myDocument imageType] == isTeX)
         return result;
     else if ([[anItem title] isEqualToString:NSLocalizedString(@"Save", @"Save")]) {
         if ([myDocument imageType] == isOther)
@@ -107,6 +248,9 @@
             return YES;
         else
             return NO;
+        }
+    else if ([[anItem title] isEqualToString:@"TeX"]) {
+        return NO;
         }
     else if ([[anItem title] isEqualToString:@"Plain TeX"]) {
         return NO;
@@ -123,7 +267,7 @@
     else if ([[anItem title] isEqualToString:@"MetaPost"]) {
         return NO;
         }
-     else if ([[anItem title] isEqualToString:@"ConTeXt"]) {
+    else if ([[anItem title] isEqualToString:@"ConTeXt"]) {
         return NO;
         }
     else if ([[anItem title] isEqualToString: NSLocalizedString(@"Print...", @"Print...")]) {

@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\fswiss\fcharset77 Helvetica;
 \f3\fnil\fcharset77 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\margl1440\margr1440\vieww11940\viewh13900\viewkind0
+\margl1440\margr1440\vieww8640\viewh13680\viewkind0
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
 \f0\b\fs24 \cf0 \
@@ -24,6 +24,8 @@
 	Componer (\'d4typeset\'d5) documentos\
 	Correcci\'97n ortogr\'87fica\
 	Trucos de edici\'97n\
+	Barra de herramientas y Applescript\
+	Uso de un editor externo\
 	Incluir gr\'87ficos\
 	Otros modos de composici\'97n\
 	Personalizaci\'97n del men\'9c Plantillas\
@@ -76,13 +78,13 @@ TeXShop no incluye TeX. En su lugar usa la distribuci\'97n est\'87ndar de TeX ll
 
 \f2\b0 \cf0 Gerben Wierda ha compilado el \'9cltimo teTeX para Mac OS X. Su versi\'97n est\'87 en la p\'87gina web\
 \
-	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/teTeX.dmg (50MB)\
+	ftp://ftp.nluug.nl/pub/comp/macosx/tex-gs/TeX.dmg (53MB)\
 \
 y hay una copia (que deber\'92a estar actualizada) en\
 \
 	http://www.uoregon.edu/~koch/texshop/texshop.html\
 \
-en un archivo llamado \'c7TeXLive-teTeX.dmg\'c8. Descargar este archivo y hacer doble click en \'8el desde una cuenta con permisos de Administrador, como la que se crea cuando se instala Mac OS X. Se abrir\'87 una carpeta conteniendo el programa \'c7TeXGSInstaller\'c8. Ejecutar este programa. Asegurarse de instalar tanto teTeX como ghostscript, ya que TeXShop tambi\'8en utiliza comandos de ghostscript.\
+en un archivo llamado \'c7TeX.dmg\'c8. Descargar este archivo y hacer doble click en \'8el desde una cuenta con permisos de Administrador, como la que se crea cuando se instala Mac OS X. Se abrir\'87 una carpeta conteniendo el programa \'c7TeXGSInstaller\'c8. Ejecutar este programa. Asegurarse de instalar tanto teTeX como ghostscript, ya que TeXShop tambi\'8en utiliza comandos de ghostscript.\
  \
 El c\'97digo fuente completo para teTeX est\'87 disponible en la p\'87gina web de Wierda. Esta p\'87gina contiene tambi\'8en instrucciones para adaptar y configurar el c\'97digo para Mac OS X:\
 \
@@ -177,6 +179,26 @@ Algunos s\'92mbolos del panel requieren la l\'92nea\
 \
 Es posible personalizar el comportamiento del panel. La carpeta con la distirbuci\'97n deTeXShop contiene un archivo llamado \'c7completion.plist\'c8. Este archivo contiene todas las cadenas de caracteres que se insertan en el c\'97digo fuente cuando se elige el correspondiente \'92tem del panel.\
 Si la cadena de caracteres contiene #SEL#, entonces lo que est\'8e seleccionado reemplazar\'87 a esta expresi\'97n en la cadena que se inserta. Si contiene #INS#, entonces el cursor se colocar\'87 en esa posici\'97n tras insertar la cadena. Para personalizar el comportamiento del panel, hay que editar completion.plist. Seguidamente, buscar la carpeta ~/Library/TeXShop/Templates. A\'96adir una nueva carpeta llamada ~/Library/TeXShop/LatexPanel y colocar el archivo completion.plist editado en esta carpeta.\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f0\b \cf0 Barra de herramientas y AppleScript:\
+\
+\pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
+
+\f2\b0 \cf0 Podemos configurar a nuestro gusto las herramientas que aparecen en la parte de arriba de las ventanas del c\'97digo TeX y del PDF previsto. Para ello, basta usar el men\'9c \'c7Personalizar barra de herramientas...\'c8. Esta posibilidad ha sido implementada completamente por Anton Leuski. \'c1Gracias!\
+\
+TeXShop soporta Applescript. Esto tambi\'8en ha sido implementado por Anton Leuski. Esta previsto mejorar el soporte Applescript en el futuro.
+\f0\b \
+\
+Uso de un editor externo:\
+\
+
+\f2\b0 Podemos configurar TeXShop para ser usado con un editor externo. Cuando \'8este es  el caso, aparece un nuevo men\'9c llamado \'c7Abrir para previsualizar...\'c8. Al usarlo, el programa nos indicar\'87 que elijamos un archivo con c\'97digo fuente tex. Pero s\'97lo se abrir\'87 el archivo pdf asociado, en su correpondiente ventana (si no hemos compilado a\'9cn el c\'97digo, la ventana con el pdf estar\'87 en blanco). Gracias a la barra de herramientas de Leuski, la ventana con el pdf previsto se puede configurar de manera que contenga un bot\'97n para componer. Puedes abrir el c\'97digo fuente con cualquier editor. Cuando quieras componer lo escrito, guarda los cambios en tu editor, vuelve a la ventana del pdf previsto y compila. De este modo, TeXShop nunca abrir\'87 ni modificar\'87 el archivo con el c\'97digo. Simplemente har\'87 de intermediario para enviarlo al correspondiente proceso TeX o LaTeX en Unix.\
+\
+Para los usuarios que prefieran usar, generalmente, un editor externo, existe en las preferencias un \'92tem llamado \'c7Configurar para editor externo\'c8. Si hemos elegido esta opci\'97n, los men\'9cs \'c7Abrir...\'c8 y \'c7Documentos recientes\'c8 abren los archivos de la manera anteriormente descrita, para editarlos con un editor externo. Adem\'87s, \'c7Abrir para previsualizar...\'c8 se sustituye por \'c7Abrir para editar...\'c8, y sirve para abrir el c\'97digo con el editor interno de TeXShop, para las raras ocasiones en que queramos usar el editor interno. Los men\'9cs \'c7Abrir...\'c8 y \'c7Documentos  recientes\'c8 tambi\'8en pueden abrir archivos jpg, tiff, ps, pdf, dvi y log, entre otros; tener seleccionada la preferencia \'c7Abrir para previsualizar...\'c8 no cambia el comportamiento de TeXShop con estos archivos.\
+\
+El soporte Applescript para la opci\'97n de editor externo es todav\'92a d\'8ebil; ser\'87 mejorado en la pr\'97xima versi\'97n, haciendo posible componer completamente el documento desde un editor que maneje applescript.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -384,11 +406,11 @@ TeXShop edita archivos utilizando las clases Cocoa de Apple, que usan Unicode pa
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 BibTeX es una herramienta usada para crear bibliograf\'92as en documentos LaTeX. BibTeX asume que tienes una base de datos de referencias previamente construida (su mayor utilidad es cuando dispones de una gran cantidad de referencias que citas a menudo). As\'92, comandos sencillos te permiten citar algunas de estas referencias en el c\'97digo latex que est\'8es escribiendo, y BibTeX, entonces, crea en tu art\'92culo una bibliograf\'92a que contiene s\'97lo las referencias citadas.\
+\f2\b0 \cf0 BibTeX es una herramienta usada para crear bibliograf\'92as en documentos LaTeX. BibTeX asume que tienes una base de datos de referencias previamente construida (su mayor utilidad es cuando dispones de una gran cantidad de referencias que citas a menudo). As\'92, comandos sencillos te permiten citar algunas de estas referencias en el c\'97digo LaTeX que est\'8es escribiendo, y BibTeX, entonces, crea en tu art\'92culo una bibliograf\'92a que contiene s\'97lo las referencias citadas.\
 \
 He aqu\'92 un breve ejemplo extra\'92do de 
 \f1\i The LaTeX Companion
-\f2\i0 , de Goossens, Mittelbach y Samarin. Puedes consultar este libro para conocer muchos detalles adicionales. Sup\'97n que la base de datos es un archivo llamado \'c7mybibliography.bib\'c8 que contiene el texto mostrado un poco m\'87s abajo. En este texto, las entradas \'c7Felici:1991\'c8, \'c7Knuth:WEB\'c8 y \'c7Liang:1983\'c8 son los valores de las claves que hay que usar para citar los art\'92culos en el c\'97digo fuente latex.\
+\f2\i0 , de Goossens, Mittelbach y Samarin. Puedes consultar este libro para conocer muchos detalles adicionales. Sup\'97n que la base de datos es un archivo llamado \'c7mybibliography.bib\'c8 que contiene el texto mostrado un poco m\'87s abajo. En este texto, las entradas \'c7Felici:1991\'c8, \'c7Knuth:WEB\'c8 y \'c7Liang:1983\'c8 son los valores de las claves que hay que usar para citar los art\'92culos en el c\'97digo fuente LaTeX.\
 	\
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -422,7 +444,7 @@ He aqu\'92 un breve ejemplo extra\'92do de
 		No. STAN-CS-83-977\}   \}
 \f2\fs24 \
 \
-Sup\'97n que el c\'97digo latex es el archivo \'c7myfile.tex\'c8, que contiene el siguiente texto:\
+Sup\'97n que el c\'97digo LaTeX es el archivo \'c7myfile.tex\'c8, que contiene el siguiente texto:\
 \
 
 \f3\fs20 	\\begin\{document\}\
@@ -439,9 +461,7 @@ A partir de este c\'97digo, en el texto resultante aparecer\'87 una referencia a
 \
 Con este ejemplo, TeXShop se usar\'92a de la siguiente manera. Primero edita y compila el documento \'c7myfile.tex\'c8 con el m\'8etodo usual. Las citas aparecer\'87n en la salida como \'c7[?]\'c8, y no habr\'87 bibliograf\'92a. Entonces, selecciona \'c7BibTeX\'c8 en el men\'9c desplegable Programa; aparece (en el lugar que habitualmente ocupa el bot\'97n LaTeX) el bot\'97n BibTeX: ejec\'9ctalo. Ahora, selecciona LaTeX (vuelve el bot\'97n LaTeX) y compila de nuevo. Las citas continuar\'87n siendo \'c7[?]\'c8, pero ya habr\'87 aparecido la bibliograf\'92a al final de la salida. Compila con el bot\'97n LaTeX una \'9cltima vez, y las citas tomar\'87n su valores correctos.\
 \
-El archivo \'c7mybibliography.bib\'c8 se puede abrir y editar con TeXShop. Cuando TeXShop abre una archivo cuyo nombre no acaba con la extensi\'97n \'c7.tex\'c8 o \'c7.TEX\'c8, desactiva los botones para componer. Cuando guardamos el archivo usando \'c7Guardar\'c8 o \'c7Guardar como...\'c8, se guarda exactamente con el mismo nombre, sin a\'96adirle al nombre la extensi\'97n \'c7.tex\'c8. As\'92, se pueden a\'96adir art\'92culos a la base de datos con la bibliograf\'92a al mismo tiempo que estamos escribiendo un art\'92culo.\
-\
-(Sin embargo, si usas TeXShop para crear el archivo \'c7mybibliography.bib\'c8, se le a\'96adir\'87 la extensi\'97n \'c7.tex\'c8 cuando lo guardes. \'83ste es un error que esperamos solucionar en el futuro. Por el momento, basta borrar el \'c7.tex\'c8 desde el Finder; si abres el archivo de nuevo, podr\'87s seguir edit\'87ndolo si lo deseas, ya sin problemas.)\
+El archivo \'c7mybibliography.bib\'c8 se puede abrir y editar con TeXShop. Si usas TeXShop para crear el archivo \'c7mybibliography.bib\'c8, selecciona el formato de archivo \'c7bib\'c8 (en vez de \'c7tex\'c8) en el men\'9c deplegable que aparece al usar el men\'9c \'c7Guardar\'c8 o \'c7Guardar como...\'c8.\
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
@@ -504,7 +524,7 @@ Los archivos eps generados por Mathematica usan las convenciones de Macintosh pa
 \
 \pard\tx560\tx1940\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1040\ql\qnatural
 
-\f2\b0 \cf0 TeXShop incluye una localizaci\'97n en holand\'8es (\'d4Dutch\'d5) realizada por Maarten Sneep, una en franc\'8es  (\'d4French\'d5) por J\'8er\'99me Laurens, una en alem\'87n (\'d4German\'d5) por Keith J. Schultz y Sascha Beverungen, una en italiano (\'d4Italian\'d5) por Giuseppe Carlino, una en espa\'96ol (\'d4Spanish\'d5) por Juan L. Varona, y una en portugu\'8es (\'d4Portuguese\'d5) por Paulo T. Abreu. \'c1Gracias!\
+\f2\b0 \cf0 TeXShop incluye una localizaci\'97n en holand\'8es (\'d4Dutch\'d5) realizada por Maarten Sneep, una en franc\'8es  (\'d4French\'d5) por J\'8er\'99me Laurens, una en alem\'87n (\'d4German\'d5) por Keith J. Schultz, Sascha Beverungen y Martin Kerz, una en italiano (\'d4Italian\'d5) por Giuseppe Carlino, una en espa\'96ol (\'d4Spanish\'d5) por Juan L. Varona, y una en portugu\'8es (\'d4Portuguese\'d5) por Paulo T. Abreu. \'c1Gracias!\
 \
 En Jap\'97n, se usan versiones modificadas de TeX y LaTeX llamadas ptex y platex. Estas versiones requieren intercambiar el s\'92mbolo \\ y el s\'92mbolo del yen \'b4, por razones que no comprendo completamente. TeXShop puede manejar estas modificacinoes gracias a detalladas sugerencias, incluyendo el c\'97digo, efectuadas por Makoto Inoue. Para activar tales modificaciones, elegir la codificaci\'97n MacJapanese en el panel de preferencias. Tambi\'8en es necesario modificar las Plantillas por defecto y modificar las inserciones que efect\'9ca el Panel LaTeX. Un manera sencilla de hacerlo es ejecutar TeXShop una vez y reemplazar la carpeta ~/Library/TeXShop con la versi\'97n japonesa incluida en la distribuci\'97n actual de TeXShop. N\'97tese, sin embargo, que TeXShop a\'9cn no est\'87 localizado al japon\'8es.\
 \
@@ -662,9 +682,6 @@ Una vez que los archivos MetaPost est\'87n creados, pueden usarse y visualizarse
         	University of Oregon\
         	Eugene, Oregon 97403      \
 	koch@math.uoregon.edu\
-\
-	J\'8er\'99me Laurens\
-       	jerome.laurens@u-bourgogne.fr\
 \
 	Dirk Olmes\
 	dirk@xanthippe.ping.de\

@@ -10,9 +10,12 @@
 
 @interface TSAppDelegate : NSObject 
 {
+    BOOL	forPreview;
 }
 
+- (IBAction)openForPreview:(id)sender;
 - (IBAction)displayLatexPanel:(id)sender;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
-- (void)dealloc;
+- (BOOL)forPreview;
+- (void)configureExternalEditor;
 @end

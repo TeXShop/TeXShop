@@ -23,8 +23,16 @@
 - (void) doIndex: sender;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
+- (void) firstPage: sender;
+- (void) lastPage: sender;
+- (void) up: sender;
+- (void) down: sender;
+- (void) top: sender;
+- (void) bottom: sender;
 - (void) doError: sender;
 - (void) doChooseMethod: sender;
+- (void) rotateClockwise: sender;
+- (void) rotateCounterclockwise: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;

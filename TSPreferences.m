@@ -244,6 +244,9 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         case 2: value = [NSString stringWithString:@"MacJapanese"];
                 break;
                 
+        case 3: value = [NSString stringWithString:@"MacKorean"];
+                break;
+                
         default: value = [NSString stringWithString:@"MacOSRoman"];
                 break;
         }
@@ -796,9 +799,13 @@ This method retrieves the application preferences from the defaults object and s
         myTag = 0;
     else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         myTag = 1;
-    else
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
         myTag = 2;
-    [_defaultEncodeMatrix selectCellWithTag: myTag];
+    else if ([[defaults stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+        myTag = 3;
+    else
+        myTag = 0;
+    [_defaultEncodeMatrix selectItemAtIndex: myTag];
     [_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
     [_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     

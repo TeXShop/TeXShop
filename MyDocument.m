@@ -598,8 +598,12 @@ preference change is cancelled. "*/
         return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
     else if([[SUD stringForKey:EncodingKey] isEqualToString:@"IsoLatin"])
         return [[textView string] dataUsingEncoding: NSISOLatin1StringEncoding allowLossyConversion:YES];
-    else
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) 
         return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese) allowLossyConversion:YES];
+    else if([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) 
+        return [[textView string] dataUsingEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean) allowLossyConversion:YES];
+    else 
+         return [[textView string] dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
 }
 
 
@@ -617,6 +621,10 @@ preference change is cancelled. "*/
      else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"]) {
         myData = [NSData dataWithContentsOfFile:fileName];
         aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)] retain];
+        }
+    else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"]) {
+        myData = [NSData dataWithContentsOfFile:fileName];
+        aString = [[[NSString alloc] initWithData:myData encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)] retain];
         }
     else
         aString = [[NSString stringWithContentsOfFile:fileName] retain];
@@ -2194,16 +2202,19 @@ if (! externalEditor) {
                 }
                 
                 /* code by Anton Leuski */
-                else if ((theChar == texChar) && ((start + 10) < end) &&
-                    ([SUD boolForKey: TagSectionsKey])) {
+                else if ((theChar == texChar) &&  ([SUD boolForKey: TagSectionsKey])) {
 					
                     unsigned	i;
                     for(i = 0; i < [kTaggedTeXSections count]; ++i) {
                         NSString* tag = [kTaggedTeXSections objectAtIndex:i];
                         nameRange.location	= start;
                         nameRange.length	= [tag length];
-                        tagString 		= [text substringWithRange: nameRange];
-                        if ([tagString isEqualToString:tag]) {
+                        /* change by Koch to fix tag bug in 1.16 and 1.17 */
+                        if ((start + nameRange.length) < end)
+                            tagString = [text substringWithRange: nameRange];
+                        else
+                            tagString = nil;
+                        if ((tagString != nil) && ([tagString isEqualToString:tag])) {
                             nameRange.location = start + [tag length];
                             nameRange.length = (end - start - [tag length]);
                             tagString = [NSString stringWithString:
@@ -2462,6 +2473,9 @@ if (! externalEditor) {
             if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese)];
+            else if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacKorean"])
+                newOutput = [[NSString alloc] initWithData: myData 
+                    encoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean)];
             else
                 newOutput = [[NSString alloc] initWithData: myData 
                     encoding: NSMacOSRomanStringEncoding];

@@ -691,4 +691,31 @@ Version 1.17		March 8, 2002\
 		slightly and try again. If new windows are positioned to make this problem\
 		occur always, reset the initial window position in Preferences.\
 \
-}
+Version 1.18		March 18, 2002\
+\
+		TeXShop now has the option of loading and saving files using the\
+		MacKorean encoding.\
+\
+		In version 1.17, the default script for tex + ghostscript was changed\
+		from "altpdftex" to "altpdftex --dvipsopts "-Ppdf". But Gerben Wierda informs\
+		me that a better default would be\
+\
+		     altpdftex --dvipsopts "-u +pdftex.map -u +Ttbbold.map -u +wolfram.map"\
+\
+		and a better default for latex + ghostscript would be\
+\
+		     altpdflatex --dvipsopts "-u +pdftex.map -u +Ttbbold.map -u +wolfram.map"\
+\
+		TeXShop now uses these defaults. Since new versions do not change\
+		already chosen preferences, old users should change these\
+		preferences by hand to obtain best results with the TeX + Ghostscript\
+		typesetting option.\
+		\
+	Bugs Fixed:\
+\
+		A bug introduced in 1.16 caused the tag code to occasionally output\
+		a huge number of error messages to the system log. A few users ran\
+		out of memory and had to reboot. Version 1.18 was released mainly \
+		to cure this bug. Thanks to Stuart Midgley for the error report. \
+\
+		}

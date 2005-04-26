@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Jun 24 2004
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -96,9 +96,11 @@ static NSString *const calcRegex = @"\\g<e>(?<e>\\g<t>(?:(?@<e1>\\+\\g<t>)|(?@<e
  *********/
 // マッチの対象になった文字列
 - (NSString*)targetString;
+- (NSAttributedString*)targetAttributedString;
 
 // マッチした文字列
 - (NSString*)string;
+- (NSAttributedString*)attributedString;
 
 /*******
  * 範囲 *

@@ -50,4 +50,5 @@
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 - (void)configureEngine;
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
+- (IBAction)checkForUpdate:(id)sender; // Update checker
 @end

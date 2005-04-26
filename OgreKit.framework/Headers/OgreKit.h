@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 7 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -29,6 +29,8 @@
 #import <OgreKit/OGRegularExpressionFormatter.h>
 #import <OgreKit/OGReplaceExpression.h>
 #import <OgreKit/NSString_OgreKitAdditions.h>
+#import <OgreKit/OGString.h>
+#import <OgreKit/OGMutableString.h>
 /* Find Panel */
 // Models
 #import <OgreKit/OgreTextFinder.h>

@@ -94,6 +94,9 @@ extern NSString *background_BKey;
 extern NSString *foreground_RKey;
 extern NSString *foreground_BKey;
 extern NSString *foreground_GKey;
+extern NSString *insertionpoint_RKey;
+extern NSString *insertionpoint_GKey;
+extern NSString *insertionpoint_BKey;
 extern NSString *WarnForShellEscapeKey;
 extern NSString *ptexUtfOutputEnabledKey; // zenitani 1.35 (C)
 // mitsu 1.29 (O)
@@ -121,6 +124,8 @@ extern NSString *ConsoleWindowAlphaKey;
 extern NSString *OtherTrashExtensionsKey;
 extern NSString *AggressiveTrashAUXKey;
 extern NSString *ShowSyncMarksKey;
+extern NSString *AcceptFirstMouseKey;
+extern NSString *UseOldHeadingCommandsKey;
 // end mitsu 1.29
 
 

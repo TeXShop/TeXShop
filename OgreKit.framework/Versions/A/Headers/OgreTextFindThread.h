@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 26 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -44,38 +44,38 @@
 
 @interface OgreTextFindThread : NSObject <OgreTextFindVisitor>
 {
-    /* implementors */
-    NSObject <OgreTextFindComponent, OgreTextFindTargetAdapter>    *_targetAdapter;
-    OgreTextFindLeaf                    *_leafProcessing;
-    NSEnumerator                        *_enumeratorProcessing;
-    NSMutableArray                      *_enumeratorStack;
-    NSMutableArray                      *_branchStack;
-    OgreTextFindRoot                    *_rootAdapter;
-    
-    /* Parameters */
-    OGRegularExpression *_regex;                // regular expression
-    OGReplaceExpression *_repex;                // replace expression
-    NSColor             *_highlightColor;       // highlight color
-    unsigned            _searchOptions;         // search option
-    BOOL                _inSelection;           // find scope
-    BOOL                _asynchronous;          // synchronous or asynchronous 
-    SEL                 _didEndSelector;        // selector for sending a finish message
-    id                  _didEndTarget;          // target for sending a finish message
-    
-    NSObject <OgreTextFindProgressDelegate> *_progressDelegate;      // progress checker
-    
-    volatile BOOL       _shouldFinish;          // finish flag
-    
-    /* state */
-    volatile BOOL       _terminated;   // two-phase termination
-    BOOL                _exceptionRaised;
-    unsigned            _numberOfMatches;   // number of matches
-    OgreTextFindResult  *_textFindResult;   // result
-    int                 _numberOfDoneLeaves,
-                        _numberOfTotalLeaves;
-    
-    NSDate              *_processTime;      // process time
-    NSDate              *_metronome;        // metronome
+	/* implementors */
+	NSObject <OgreTextFindComponent, OgreTextFindTargetAdapter>	*_targetAdapter;
+	OgreTextFindLeaf	*_leafProcessing;
+	NSEnumerator		*_enumeratorProcessing;
+	NSMutableArray		*_enumeratorStack;
+	NSMutableArray		*_branchStack;
+	OgreTextFindRoot	*_rootAdapter;
+	
+	/* Parameters */
+	OGRegularExpression *_regex;			// regular expression
+	OGReplaceExpression *_repex;			// replace expression
+	NSColor				*_highlightColor;	// highlight color
+	unsigned			_searchOptions;		// search option
+	BOOL				_inSelection;		// find scope
+	BOOL				_asynchronous;		// synchronous or asynchronous 
+	SEL					_didEndSelector;	// selector for sending a finish message
+	id					_didEndTarget;		// target for sending a finish message
+	
+	NSObject <OgreTextFindProgressDelegate>	*_progressDelegate;	// progress checker
+	
+	volatile BOOL		_shouldFinish;		// finish flag
+	
+	/* state */
+	volatile BOOL		_terminated;		// two-phase termination
+	BOOL				_exceptionRaised;
+	unsigned			_numberOfMatches;	// number of matches
+	OgreTextFindResult	*_textFindResult;	// result
+	int					_numberOfDoneLeaves,
+						_numberOfTotalLeaves;
+	
+	NSDate				*_processTime;		// process time
+	NSDate				*_metronome;		// metronome
 }
 
 /* Creating and initializing */
@@ -115,8 +115,8 @@
 - (NSTimeInterval)processTime;
 
 /* Protected methods */
-- (unsigned)numberOfMatches;         // number of matches
-- (void)incrementNumberOfMatches;    // _numberofMatches++
+- (unsigned)numberOfMatches;		 // number of matches
+- (void)incrementNumberOfMatches;	// _numberofMatches++
 - (void)finishingUp:(id)sender;
 - (void)exceptionRaised:(NSException*)exception;
 
@@ -148,6 +148,6 @@
 - (NSString*)progressMessage;
 - (NSString*)doneMessage;
 - (double)progressPercentage;   // percentage of completion
-- (double)donePercentage;       // percentage of completion
+- (double)donePercentage;	   // percentage of completion
 
 @end

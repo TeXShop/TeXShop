@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 26 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -12,6 +12,7 @@
  */
 
 #import <OgreKit/OgreTextFindComponent.h>
+#import <OgreKit/OGString.h>
 
 @class OgreFindResultLeaf, OgreTextFindThread;
 
@@ -36,9 +37,9 @@
 - (void)setSelectedRange:(NSRange)aRange;
 - (void)jumpToSelection;
 
-- (NSString*)string;
-- (void)setString:(NSString*)aString;
-- (void)replaceCharactersInRange:(NSRange)aRange withString:(NSString*)aString;
+- (NSObject<OGStringProtocol>*)ogString;
+- (void)setOGString:(NSObject<OGStringProtocol>*)aString;
+- (void)replaceCharactersInRange:(NSRange)aRange withOGString:(NSObject<OGStringProtocol>*)aString;
 
 - (void)unhighlight;
 - (void)highlightCharactersInRange:(NSRange)aRange color:(NSColor*)highlightColor;

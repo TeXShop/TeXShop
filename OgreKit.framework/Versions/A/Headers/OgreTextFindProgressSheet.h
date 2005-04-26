@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Oct 01 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -45,7 +45,7 @@
 
 - (IBAction)cancel:(id)sender;
 
-/* OgreTextFindProgressObserver protocol */
+/* OgreTextFindProgressDelegate protocol */
 /*
 // show progress
 - (void)setProgress:(double)progression message:(NSString*)message;

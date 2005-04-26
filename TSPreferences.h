@@ -18,6 +18,7 @@
         IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
 
         IBOutlet NSButton	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
+        IBOutlet NSButton       *_selectActivateButton;         /*" connected to "Select on Activate" "*/
         IBOutlet NSButton	*_parensMatchButton;		/*" connected to "Parens Matching "*/
         IBOutlet NSButton	*_spellCheckButton;		/*" connected to "SpellChecking "*/
         IBOutlet NSButton	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
@@ -88,6 +89,7 @@
 - (IBAction)sourceWindowPosChanged:sender;
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
+- (IBAction)selectActivatePressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;

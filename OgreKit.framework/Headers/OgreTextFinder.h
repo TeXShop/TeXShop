@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 20 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -14,6 +14,7 @@
 #import <Cocoa/Cocoa.h>
 #import <OgreKit/OGRegularExpression.h>
 #import <OgreKit/OGReplaceExpression.h>
+#import <OgreKit/OGString.h>
 
 // OgreTextFinderLocalizable.stringsを使用したローカライズ
 #define OgreTextFinderLocalizedString(key)	[[OgreTextFinder ogreKitBundle] localizedStringForKey:(key) value:(key) table:@"OgreTextFinderLocalizable"]
@@ -41,6 +42,7 @@
 	NSDictionary	*_history;				// 検索履歴等
 	BOOL			_saved;					// 履歴等が保存されたかどうか
 	BOOL			_shouldHackFindMenu;	// FindメニューをOgreKitのものに置き換えるかどうか
+	BOOL			_useStylesInFindPanel;	// 検索パネルでStyleを使用するかどうか。
     
     NSMutableArray  *_targetClassArray,     // 検索可能なクラスを収めた配列
                     *_adapterClassArray;    // 検索対象クラスのアダプタクラスを収めた配列
@@ -57,6 +59,11 @@
 
 /* Show Find Panel */
 - (IBAction)showFindPanel:(id)sender;
+
+/* Startup time configurations */
+- (void)setShouldHackFindMenu:(BOOL)hack;
+- (void)setUseStylesInFindPanel:(BOOL)use;
+- (BOOL)useStylesInFindPanel;
 
 /*************
  * Accessors *
@@ -95,15 +102,39 @@
 - (OgreTextFindResult*)replace:(NSString*)expressionString 
 	withString:(NSString*)replaceString
 	options:(unsigned)options;
+- (OgreTextFindResult*)replace:(NSString*)expressionString 
+	withAttributedString:(NSAttributedString*)replaceString
+	options:(unsigned)options;
+- (OgreTextFindResult*)replace:(NSObject<OGStringProtocol>*)expressionString 
+	withOGString:(NSObject<OGStringProtocol>*)replaceString
+	options:(unsigned)options;
 
 - (OgreTextFindResult*)replaceAndFind:(NSString*)expressionString 
 	withString:(NSString*)replaceString
 	options:(unsigned)options 
     replacingOnly:(BOOL)replacingOnly 
 	wrap:(BOOL)isWrap;
+- (OgreTextFindResult*)replaceAndFind:(NSString*)expressionString 
+	withAttributedString:(NSAttributedString*)replaceString
+	options:(unsigned)options 
+    replacingOnly:(BOOL)replacingOnly 
+	wrap:(BOOL)isWrap;
+- (OgreTextFindResult*)replaceAndFind:(NSObject<OGStringProtocol>*)expressionString 
+	withOGString:(NSObject<OGStringProtocol>*)replaceString
+	options:(unsigned)options 
+    replacingOnly:(BOOL)replacingOnly 
+	wrap:(BOOL)isWrap;
 
 - (OgreTextFindResult*)replaceAll:(NSString*)expressionString 
 	withString:(NSString*)replaceString
+	options:(unsigned)options
+	inSelection:(BOOL)inSelection;
+- (OgreTextFindResult*)replaceAll:(NSString*)expressionString 
+	withAttributedString:(NSAttributedString*)replaceString
+	options:(unsigned)options
+	inSelection:(BOOL)inSelection;
+- (OgreTextFindResult*)replaceAll:(NSObject<OGStringProtocol>*)expressionString 
+	withOGString:(NSObject<OGStringProtocol>*)replaceString
 	options:(unsigned)options
 	inSelection:(BOOL)inSelection;
 
@@ -115,6 +146,9 @@
 - (OgreTextFindResult*)unhightlight;
 
 - (NSString*)selectedString;
+- (NSAttributedString*)selectedAttributedString;
+- (NSObject<OGStringProtocol>*)selectedOGString;
+
 - (BOOL)isSelectionEmpty;
 
 - (BOOL)jumpToSelection;
@@ -143,7 +177,6 @@
 - (void)makeTargetFree:(id)target;
 
 /* hack Find Menu */
-- (void)setShouldHackFindMenu:(BOOL)hack;
 - (void)hackFindMenu;
 
 - (void)didEndThread:(OgreTextFindThread*)aTextFindThread;

@@ -343,7 +343,7 @@
     float		r, g, b;
     int			defaultcommand;
     NSSize		contentSize;
-    NSColor		*backgroundColor, *whiteColor;
+    NSColor		*backgroundColor, *whiteColor, *insertionpointColor;
     NSDictionary	*myAttributes;
     int                 i;
     BOOL                done;
@@ -383,6 +383,11 @@ NS_ENDHANDLER
     blue: [SUD floatForKey:background_BKey] 
     alpha:1.0];
     
+    insertionpointColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:insertionpoint_RKey]
+    green:  [SUD floatForKey:insertionpoint_GKey]
+    blue: [SUD floatForKey:insertionpoint_BKey] 
+    alpha:1.0];
+    
     //whiteColor = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
     
 /*    
@@ -415,7 +420,7 @@ NS_ENDHANDLER
     [textView1 setUsesFontPanel:YES];
     [textView1 setFont:[NSFont userFontOfSize:12.0]];
     [textView1 setBackgroundColor: backgroundColor];
-    
+    [textView1 setInsertionPointColor: insertionpointColor];
     //[textView1 setInsertionPointColor: whiteColor];
     [scrollView setDocumentView:textView1];
     [textView1 setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A) 
@@ -437,7 +442,8 @@ NS_ENDHANDLER
         [textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
     [textView2 setFont:[NSFont userFontOfSize:12.0]];
     [textView2 setBackgroundColor: backgroundColor];
-    // [textView1 setInsertionPointColor: whiteColor];
+    [textView2 setInsertionPointColor: insertionpointColor];
+    // [textView2 setInsertionPointColor: whiteColor];
     [scrollView2 setDocumentView:textView2];
     [textView2 setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A) 
     [textView2 setDocument: self]; // mitsu 1.29 (T2-4) added 
@@ -572,7 +578,7 @@ NS_ENDHANDLER
                 
             texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4; 
+            [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4; 
             // supposed to allow command click of window title to lead to file, but doesn't
             myImageType = isPDF;
             }
@@ -582,7 +588,7 @@ NS_ENDHANDLER
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
              [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-             // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+             [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isJPG;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -592,7 +598,7 @@ NS_ENDHANDLER
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+            [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isTIFF;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -603,7 +609,7 @@ NS_ENDHANDLER
             {
                 myImageType = isPDF;
                 [pdfView setImageType: myImageType];
-                // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+                [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
                 [self convertDocument];
                 return;
             }
@@ -783,6 +789,7 @@ NS_ENDHANDLER
                     [[[[self fileName] lastPathComponent] 
                     stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; */
             [pdfWindow setTitle: [imagePath lastPathComponent]];
+            [pdfWindow setRepresentedFilename: imagePath];
             // [pdfWindow setRepresentedFilename: [[[[self fileName] lastPathComponent] 
             //        stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; //mitsu July4
             [pdfView setImageRep: texRep]; // this releases old one!
@@ -1412,7 +1419,7 @@ preference change is cancelled. "*/
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
                     }
                 }
-            else {
+            else if ([SUD boolForKey: UseOldHeadingCommandsKey]) {
                 encodingRange = [testString rangeOfString:@"%&encoding="];
                 if (encodingRange.location != NSNotFound) {
                     done = YES;
@@ -1494,7 +1501,7 @@ preference change is cancelled. "*/
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
                     }
                 }
-            else {
+            else if ([SUD boolForKey: UseOldHeadingCommandsKey]) {
                 encodingRange = [testString rangeOfString:@"%&encoding="];
                 if (encodingRange.location != NSNotFound) {
                     done = YES;
@@ -2207,7 +2214,7 @@ preference change is cancelled. "*/
             }
 
 // Old Stuff
-if (! done) {
+if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
     myRange.length = 1;
     myRange.location = 0;
     [theSource getLineStart:&mystart end: &myend contentsEnd: nil forRange:myRange];
@@ -4883,6 +4890,7 @@ void report(NSString *itest)
                     {
                         /* [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]]; */
                         [pdfWindow setTitle: [imagePath lastPathComponent]];
+                        [pdfWindow setRepresentedFilename: imagePath];
                         [pdfView setImageRep: texRep];
 #ifndef MITSU_PDF
                         if (startDate == nil) 
@@ -4909,6 +4917,7 @@ void report(NSString *itest)
                      if (texRep) 
                         {
                         [pdfWindow setTitle: [imagePath lastPathComponent]];
+                        [pdfWindow setRepresentedFilename: imagePath];
                         [pdfView setImageRep: texRep];
                         [pdfView setNeedsDisplay:YES];
                         [pdfWindow makeKeyAndOrderFront: self];
@@ -5041,6 +5050,7 @@ void report(NSString *itest)
             texRep = tempRep;
             [texRep retain];
             [pdfWindow setTitle: [imagePath lastPathComponent]];
+            [pdfWindow setRepresentedFilename: imagePath];
             [pdfView setImageRep: texRep];
             [pdfView setNeedsDisplay:YES];
             if (front) {
@@ -5695,7 +5705,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             }
     
     
-    if (! done) {
+    if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
         
     aRange=[theSource rangeOfString:@"%SourceDoc "];
     if(aRange.location!=NSNotFound) {

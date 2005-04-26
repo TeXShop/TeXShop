@@ -93,6 +93,9 @@ NSString *background_BKey = @"background_B";
 NSString *foreground_RKey = @"foreground_R";
 NSString *foreground_GKey = @"foreground_G";
 NSString *foreground_BKey = @"foreground_B";
+NSString *insertionpoint_RKey = @"insertionpoint_R";
+NSString *insertionpoint_GKey = @"insertionpoint_G";
+NSString *insertionpoint_BKey = @"insertionpoint_B";
 NSString *WarnForShellEscapeKey = @"WarnForShellEscape";
 NSString *ptexUtfOutputEnabledKey = @"ptexUtfOutput"; // zenitani 1.35 (C)
 // mitsu 1.29 (O)
@@ -120,7 +123,8 @@ NSString *ConsoleWindowAlphaKey = @"ConsoleWindowAlpha";
 NSString *OtherTrashExtensionsKey = @"OtherTrashExtensions";
 NSString *AggressiveTrashAUXKey = @"AggressiveTrashAUX";
 NSString *ShowSyncMarksKey = @"ShowSyncMarks";
-
+NSString *AcceptFirstMouseKey = @"AcceptFirstMouse";
+NSString *UseOldHeadingCommandsKey = @"UseOldHeadingCommands";
 // end mitsu 1.29
 
 // Exceptions

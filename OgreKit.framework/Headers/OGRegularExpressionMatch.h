@@ -3,7 +3,7 @@
  * Project: OgreKit
  *
  * Creation Date: Aug 30 2003
- * Author: Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+ * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
  * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
@@ -26,16 +26,16 @@ extern NSString	* const OgreMatchException;
 
 
 @class OGRegularExpression, OGRegularExpressionEnumerator, OGRegularExpressionCapture;
+@protocol OGStringProtocol;
 
 @interface OGRegularExpressionMatch : NSObject <NSCopying, NSCoding>
 {
 	OnigRegion		*_region;						// match result region
-	OGRegularExpressionEnumerator*	_enumerator;	// matcher
+	OGRegularExpressionEnumerator	*_enumerator;	// matcher
 	unsigned		_terminalOfLastMatch;           // 前回にマッチした文字列の終端位置 (_region->end[0] / sizeof(unichar))
 	
-	NSString		*_swappedTargetString;			// 検索対象文字列。\が入れ替わっている(ことがある)ので注意
+	NSObject<OGStringProtocol>	*_targetString;		// 検索対象文字列
 	NSRange			_searchRange;					// 検索範囲
-	NSString		*_escapeCharacter;				// \の代替文字
 	unsigned		_index;							// マッチした順番
 }
 
@@ -56,27 +56,41 @@ extern NSString	* const OgreMatchException;
  * 文字列 *
  *********/
 // マッチの対象になった文字列
+- (NSObject<OGStringProtocol>*)targetOGString;
 - (NSString*)targetString;
+- (NSAttributedString*)targetAttributedString;
 
 // マッチした文字列 \&, \0
+- (NSObject<OGStringProtocol>*)matchedOGString;
 - (NSString*)matchedString;
+- (NSAttributedString*)matchedAttributedString;
 
 // index番目のsubstring \index
 //  index番目のsubstringが存在しない時には nil を返す。
+- (NSObject<OGStringProtocol>*)ogSubstringAtIndex:(unsigned)index;
 - (NSString*)substringAtIndex:(unsigned)index;
+- (NSAttributedString*)attributedSubstringAtIndex:(unsigned)index;
 
 // マッチした部分より前の文字列 \`
+- (NSObject<OGStringProtocol>*)prematchOGString;
 - (NSString*)prematchString;
+- (NSAttributedString*)prematchAttributedString;
 
 // マッチした部分より後ろの文字列 \'
+- (NSObject<OGStringProtocol>*)postmatchOGString;
 - (NSString*)postmatchString;
+- (NSAttributedString*)postmatchAttributedString;
 
 // 最後にマッチした部分文字列 \+
 // 存在しないときには nil を返す。
+- (NSObject<OGStringProtocol>*)lastMatchOGSubstring;
 - (NSString*)lastMatchSubstring;
+- (NSAttributedString*)lastMatchAttributedSubstring;
 
 // マッチした部分と一つ前にマッチした部分の間の文字列 \- (独自に追加)
+- (NSObject<OGStringProtocol>*)ogStringBetweenMatchAndLastMatch;
 - (NSString*)stringBetweenMatchAndLastMatch;
+- (NSAttributedString*)attributedStringBetweenMatchAndLastMatch;
 
 
 /*******
@@ -109,7 +123,9 @@ extern NSString	* const OgreMatchException;
 // 名前(ラベル)がnameの部分文字列
 // 存在しない名前の場合は nil を返す。
 // 同一の名前を持つ部分文字列が複数ある場合は例外を発生させる。
+- (NSObject<OGStringProtocol>*)ogSubstringNamed:(NSString*)name;
 - (NSString*)substringNamed:(NSString*)name;
+- (NSAttributedString*)attributedSubstringNamed:(NSString*)name;
 
 // 名前がnameの部分文字列の範囲
 // 存在しない名前の場合は {-1, 0} を返す。

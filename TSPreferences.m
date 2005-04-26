@@ -425,10 +425,23 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SyntaxColoringEnabledKey] forKey:SyntaxColoringEnabledKey];
 
-    [SUD setBool:[sender state] forKey:SyntaxColoringEnabledKey];
+    [SUD setBool:[[sender selectedCell] state] forKey:SyntaxColoringEnabledKey];
     syntaxColorTouched = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 }
+
+/*" This method is connected to the 'select on activate' checkbox. 
+"*/
+//------------------------------------------------------------------------------
+- (IBAction)selectActivatePressed:sender;
+//------------------------------------------------------------------------------
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AcceptFirstMouseKey] forKey:AcceptFirstMouseKey];
+
+    [SUD setBool:[[sender selectedCell] state] forKey:AcceptFirstMouseKey];
+}
+
 
 /*" This method is connected to the 'parens matching' checkbox.
 "*/
@@ -439,7 +452,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ParensMatchingEnabledKey] forKey:ParensMatchingEnabledKey];
 
-    [SUD setBool:[sender state] forKey:ParensMatchingEnabledKey];
+    [SUD setBool:[[sender selectedCell] state] forKey:ParensMatchingEnabledKey];
 }
 
 /*" This method is connected to the 'spell checking' checkbox.
@@ -451,7 +464,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SpellCheckEnabledKey] forKey:SpellCheckEnabledKey];
 
-    [SUD setBool:[sender state] forKey:SpellCheckEnabledKey];
+    [SUD setBool:[[sender selectedCell] state] forKey:SpellCheckEnabledKey];
 }
 
 /*" This method is connected to the 'shell escape warning' checkbox.
@@ -476,7 +489,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoCompleteEnabledKey] forKey:AutoCompleteEnabledKey];
 
-    [SUD setBool:[sender state] forKey:AutoCompleteEnabledKey];
+    [SUD setBool:[[sender selectedCell] state] forKey:AutoCompleteEnabledKey];
     autoCompleteTouched = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
 
@@ -1190,6 +1203,7 @@ This method retrieves the application preferences from the defaults object and s
         else
             [_docWindowPosButton setEnabled: NO];
     [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
+    [_selectActivateButton setState:[defaults boolForKey:AcceptFirstMouseKey]];
     [_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
     [_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
     [_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];

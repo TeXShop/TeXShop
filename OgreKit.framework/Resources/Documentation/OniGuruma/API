@@ -1,4 +1,4 @@
-Oniguruma API   2004/07/01
+Oniguruma API   2004/11/12
 
 #include <oniguruma.h>
 
@@ -228,6 +228,8 @@ Oniguruma API   2004/07/01
   3 end:    terminate address of target string
   4 start:  search start address of target string
   5 range:  search terminate address of target string
+    in forward search  (start <= searched string head < range)
+    in backward search (range <= searched string head <= start)
   6 region: address for return group match range info (NULL is allowed)
   7 option: search time option
 
@@ -564,6 +566,9 @@ Oniguruma API   2004/07/01
   The use of this library is finished.
 
   normal return: ONIG_NORMAL
+
+  It is not allowed to use regex objects which created
+  before onig_end() call.
 
 
 # const char* onig_version(void)

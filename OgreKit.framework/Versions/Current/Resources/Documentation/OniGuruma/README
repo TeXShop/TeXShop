@@ -1,8 +1,8 @@
-README  2004/09/17
+README  2004/12/24
 
-Oniguruma  ----   (C) K.Kosako <kosako AT sofnec DOT co DOT jp>
+Oniguruma  ----   (C) K.Kosako <sndgk393 AT ybb DOT ne DOT jp>
 
-http://www.geocities.jp/kosako1/oniguruma/
+http://www.geocities.jp/kosako3/oniguruma/     (NEW! 2004/11/28)
 http://www.ruby-lang.org/cgi-bin/cvsweb.cgi/oniguruma/
 http://www.freebsd.org/cgi/cvsweb.cgi/ports/devel/oniguruma/
 
@@ -31,10 +31,16 @@ Install
    2. make
    3. make install
 
-   (* uninstall:  make uninstall)
+     library file: libonig.a
 
-  * test (ASCII/EUC-JP)
-   4. make ctest
+   test (ASCII/EUC-JP)
+
+     make ctest
+
+   uninstall
+
+     make uninstall
+
 
 
  Case 2: Win32 platform (VC++)
@@ -65,6 +71,16 @@ Regular Expressions
   See doc/RE (or doc/RE.ja for Japanese).
 
 
+Usage
+
+  Include oniguruma.h in your program. (native API)
+  See doc/API for native API.
+
+  If you want to use static link library(onig_s.lib) in Win32,
+  add option -DONIG_EXTERN=extern to C compiler.
+
+
+
 Sample Programs
 
   sample/simple.c    example of the minimum (native API)
@@ -80,8 +96,6 @@ Sample Programs
 Source Files
 
   oniguruma.h        Oniguruma API header file. (public)
-  onigcmpt200.h      Oniguruma API backward compatibility header file. (public)
-                     (for 2.0.0 or more older version)
 
   regenc.h           character encodings framework header file.
   regint.h           internal definitions
@@ -89,13 +103,14 @@ Source Files
   regcomp.c          compiling and optimization functions
   regenc.c           character encodings framework.
   regerror.c         error message function
-  regex.c            source files wrapper for Ruby
   regext.c           extended API functions. (deluxe version API)
   regexec.c          search and match functions
   regparse.c         parsing functions.
   regsyntax.c        pattern syntax functions and built-in syntax definitions.
   regtrav.c          capture history tree data traverse functions.
   regversion.c       version info function.
+  st.h               hash table functions header file
+  st.c               hash table functions
 
   oniggnu.h          GNU regex API header file. (public)
   reggnu.c           GNU regex API functions
@@ -147,12 +162,17 @@ API differences with Japanized GNU regex(version 0.12) of Ruby 1.8/1.6
 
 ToDo
 
+  ? ignore case in full code point range of Unicode.
+  ? Unicode Property.
+  ? \X (== \PM\pM*)
+  ? ambig-flag Katakana <-> Hiragana.
+  ? add ONIG_OPTION_NOTBOS/NOTEOS. (\A, \z, \Z)
   ? add ONIG_SYNTAX_ASIS.
-  ? support character type for all code point range.
-  ? \h hexadecimal digit char type ([0-9a-fA-F]).
-  ? implement syntax behavior ONIG_SYN_CONTEXT_INDEP_ANCHORS.
-  ? better acess to hash table (st.c).
-    non null-terminated key version st_lookup().
+ ?? implement syntax behavior ONIG_SYN_CONTEXT_INDEP_ANCHORS.
+ ?? variable line separator.
  ?? transmission stopper. (return ONIG_STOP from match_at())
 
 and I'm thankful to Akinori MUSHA.
+
+
+Mail Address: K.Kosako <sndgk393 AT ybb DOT ne DOT jp>

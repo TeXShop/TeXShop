@@ -1,11 +1,13 @@
 {
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = OgreAFPCComboBox; LANGUAGE = ObjC; SUPERCLASS = NSComboBox; }, 
+        {CLASS = OgreAFPCOptionButton; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
         {CLASS = OgreAdvancedFindPanel; LANGUAGE = ObjC; SUPERCLASS = NSPanel; }, 
         {
             ACTIONS = {
                 clearFindReplaceHistories = id; 
+                clearFindStringStyles = id; 
+                clearReplaceStringStyles = id; 
                 findAll = id; 
                 findNext = id; 
                 findNextAndOrderOut = id; 
@@ -16,6 +18,9 @@
                 replace = id; 
                 replaceAll = id; 
                 replaceAndFind = id; 
+                selectFindHistory = id; 
+                selectReplaceHistory = id; 
+                toggleStyleOptions = id; 
                 unhighlight = id; 
                 updateEscapeCharacter = id; 
                 updateOptions = id; 
@@ -26,24 +31,21 @@
             CLASS = OgreAdvancedFindPanelController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                closeWhenDoneCheckBox = NSButton; 
                 escapeCharacterPopUpButton = NSPopUpButton; 
-                findComboBox = NSComboBox; 
                 findNextButton = NSButton; 
+                findPopUpButton = NSPopUpButton; 
+                findReplaceTextBox = NSView; 
+                findTextView = NSTextView; 
                 highlightColorWell = NSColorWell; 
                 maxNumOfFindHistoryTextField = NSTextField; 
                 maxNumOfReplaceHistoryTextField = NSTextField; 
                 moreOptionsButton = NSButton; 
                 moreOptionsDrawer = NSDrawer; 
-                moreOptionsMatrix = NSMatrix; 
-                optionDelimitCheckBox = NSButtonCell; 
-                optionIgnoreCaseCheckBox = NSButtonCell; 
-                optionRegexCheckBox = NSButtonCell; 
-                optionWrapCheckBox = NSButtonCell; 
-                originMatrix = NSMatrix; 
-                replaceComboBox = NSComboBox; 
-                scopeMatrix = NSMatrix; 
+                replacePopUpButton = NSPopUpButton; 
+                replaceTextView = NSTextView; 
+                styleOptionsBox = NSView; 
                 syntaxPopUpButton = NSPopUpButton; 
+                toggleStyleOptionsButton = NSButton; 
             }; 
             SUPERCLASS = OgreFindPanelController; 
         }, 
@@ -51,8 +53,21 @@
             ACTIONS = {showFindPanel = id; }; 
             CLASS = OgreFindPanelController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {findPanel = NSPanel; textFinder = OgreTextFinder; }; 
+            OUTLETS = {findPanel = NSWindow; textFinder = OgreTextFinder; }; 
             SUPERCLASS = NSResponder; 
+        }, 
+        {
+            ACTIONS = {updateLiveUpdate = id; }; 
+            CLASS = OgreFindResultWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                findStringField = NSTextField; 
+                grepOutlineView = NSOutlineView; 
+                liveUpdateCheckBox = NSButton; 
+                messageField = NSTextField; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             ACTIONS = {showFindPanel = id; }; 

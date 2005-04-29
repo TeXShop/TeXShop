@@ -22,6 +22,7 @@
 #else
 #import "MyView.h"
 #endif
+#import "MyPDFKitView.h"
 
 // added by mitsu --(H) Macro menu; macroButton
 #import "MacroMenuController.h"
@@ -30,6 +31,7 @@
 
 static NSString* 	kSourceToolbarIdentifier 	= @"Source Toolbar Identifier";
 static NSString* 	kPDFToolbarIdentifier 		= @"PDF Toolbar Identifier";
+static NSString*	kPDFKitToolbarIdentifier	= @"PDFKit Toolbar Identifier";
 static NSString*	kSaveDocToolbarItemIdentifier 	= @"Save Document Item Identifier";
 
 // Source window toolbar items
@@ -56,7 +58,7 @@ static NSString*	kMacrosTID			= @"Macros";
 // PDF Window toolbar items
 static NSString*	kTypesetEETID			= @"TypesetEE";
 static NSString*	kProgramEETID			= @"ProgramEE";
-static NSString*	kPreviousPageButtonTID 		= @"PreviousPageButton";
+static NSString*	kPreviousPageButtonTID 	= @"PreviousPageButton";
 static NSString*	kPreviousPageTID 		= @"PreviousPage";
 static NSString*	kNextPageButtonTID		= @"NextPageButton";
 static NSString*	kNextPageTID 			= @"NextPage";
@@ -65,7 +67,20 @@ static NSString*	kMagnificationTID 		= @"Magnification";
 #ifdef MITSU_PDF
 static NSString*	kMouseModeTID 			= @"MouseMode";
 static NSString*	kMacrosEETID			= @"MacrosEE";
-static NSString*        kSyncMarksTID                    = @"SyncMarks";
+static NSString*    kSyncMarksTID			= @"SyncMarks";
+#endif
+
+// PDFKit Window toolbar items
+static NSString*	kPreviousPageButtonKKTID 	= @"PreviousPageButtonKIT";
+static NSString*	kPreviousPageKKTID 		= @"PreviousPageKIT";
+static NSString*	kNextPageButtonKKTID	= @"NextPageButtonKIT";
+static NSString*	kNextPageKKTID 			= @"NextPageKIT";
+static NSString*	kGotoPageKKTID 			= @"GotoPageKIT";
+static NSString*	kMagnificationKKTID 	= @"MagnificationKIT";
+#ifdef MITSU_PDF
+static NSString*	kMouseModeKKTID 		= @"MouseModeKIT";
+static NSString*	kBackForthKKTID			= @"BackForthKIT";
+static NSString*	kDrawerKKTID			= @"DrawerKIT";
 #endif
 
 
@@ -172,17 +187,33 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
         [previousButton removeFromSuperview];
         [nextButton retain];
         [nextButton removeFromSuperview];
+		[previousButtonKK retain];
+        [previousButtonKK removeFromSuperview];
+        [nextButtonKK retain];
+        [nextButtonKK removeFromSuperview];
 	[gotopageOutlet retain];
 	[gotopageOutlet removeFromSuperview];
 	[magnificationOutlet retain];
 	[magnificationOutlet removeFromSuperview];
+	[gotopageOutletKK retain];
+	[gotopageOutletKK removeFromSuperview];
+	[magnificationOutletKK retain];
+	[magnificationOutletKK removeFromSuperview];
 #ifdef MITSU_PDF
 	[mouseModeMatrix retain];
 	[mouseModeMatrix removeFromSuperview];
+	[mouseModeMatrixKK retain];
+	[mouseModeMatrixKK removeFromSuperview];
 #endif
         [syncBox retain];
         [syncBox removeFromSuperview];
+		[backforthKK retain];
+		[backforthKK removeFromSuperview];
+		[drawerKK retain];
+		[drawerKK removeFromSuperview];
+		
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
+	[[self pdfKitWindow] setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
 }
 
 /* This is all done automatically by MyDocument. I've left it temporarily
@@ -217,6 +248,11 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 #endif
 }
 
+- (void)doPreviousPageKK:(id)sender
+{
+    [((MyPDFKitView*)[self pdfKitView]) previousPage: sender];
+}
+
 // -----------------------------------------------------------------------------
 //
 // -----------------------------------------------------------------------------
@@ -229,6 +265,18 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
     [((MyView*)[self pdfView]) nextPage: sender];
 #endif
 }
+
+- (void)doNextPageKK:(id)sender
+{
+    [((MyPDFKitView*)[self pdfKitView]) nextPage: sender];
+}
+
+- (void)toggleTheDrawer:(id)sender
+{
+    [((MyPDFKitView*)[self pdfKitView]) toggleDrawer: sender];
+}
+
+
 
 // -----------------------------------------------------------------------------
 //
@@ -321,6 +369,13 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 	}
 // end forsplit
 
+// for drawer        
+    if ([itemIdent isEqual: kDrawerKKTID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				imageName:@"DrawerToggleToolbarImage" target:self action:@selector(toggleTheDrawer:)];
+	}
+// end for drawer
+
         
     if ([itemIdent isEqual: kMetaFontID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -399,6 +454,21 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
                 return toolbarItem;
 	}
 
+/*	
+	if ([itemIdent isEqual: kTypesetKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:TypesetButtonKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) 				keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+*/
+
 /*
     if ([itemIdent isEqual: kProgramEETID]) {
                 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -408,14 +478,47 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
         
     if ([itemIdent isEqual: kProgramEETID]) {
 		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButtonEE];
+		
+		NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+			[menuFormRep setTitle: [toolbarItem label]];
+				
+		NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem *submenuItem, *tempsubmenuItem;
+		NSString *tempString;
+		id *tempTarget;
+		SEL tempAction;	
+		int i;
+		int j = [[programButtonEE menu] numberOfItems]; 
+		for (i = 0; i < j; i++) {
+			tempsubmenuItem = [[programButtonEE menu] itemAtIndex: i];
+			tempString = [tempsubmenuItem title];
+			tempTarget = [tempsubmenuItem target];
+			tempAction = [tempsubmenuItem action];
+			submenuItem = [[[NSMenuItem alloc] initWithTitle: tempString action:@selector(chooseProgramFF:)  keyEquivalent:@""] autorelease];
+			[submenuItem setTarget: self];
+			[submenuItem setTag: i];
+			[submenu addItem: submenuItem];
+			}
+		
+		
+		[menuFormRep setSubmenu: submenu];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
+/*	
+	 if ([itemIdent isEqual: kProgramKKTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:ProgramButtonKK];
 		NSMenuItem*	menuFormRep = [[[NSMenuItem alloc] init] autorelease];
 
-		[menuFormRep setSubmenu: [programButtonEE menu]];
+		[menuFormRep setSubmenu: [ProgramButtonKK menu]];
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 
 		return toolbarItem;
 	}
+*/
+
         
     if ([itemIdent isEqual: kMacrosEETID]) {
 		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButtonEE];
@@ -428,6 +531,20 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 
 		return toolbarItem;
 	}
+	
+/*
+	 if ([itemIdent isEqual: kMacrosKKTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButtonKK];
+		NSMenuItem*		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+
+		[menuFormRep setSubmenu: [macroButtonKK menu]];
+		[[MacroMenuController sharedInstance] addItemsToPopupButton: macroButtonKK];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+*/
 
 
 /*
@@ -472,6 +589,60 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 				imageName:@"NextPageAction" target:self action:@selector(doNextPage:)];
 	}
+	
+	 if ([itemIdent isEqual: kBackForthKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:backforthKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                [menuFormRep setTitle: [toolbarItem label]];
+				
+				NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+				NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: @"Back" action: @selector(doBack:) keyEquivalent:@""] autorelease];
+				[submenuItem setTarget: self];
+                [submenu addItem: submenuItem];
+				submenuItem = [[[NSMenuItem alloc] initWithTitle: @"Forward" action: @selector(doForward:) keyEquivalent:@""] autorelease];
+				[submenuItem setTarget: self];
+                [submenu addItem: submenuItem];
+				[menuFormRep setSubmenu: submenu];
+				
+				
+				
+                // [menuFormRep setAction: @selector(doBackForth:)];
+				[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+	
+	
+	if ([itemIdent isEqual: kPreviousPageButtonKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:previousButtonKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                [menuFormRep setTitle: [toolbarItem label]];
+                [menuFormRep setAction: @selector(previousPage:)];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+        
+    if ([itemIdent isEqual: kNextPageButtonKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:nextButtonKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                [menuFormRep setTitle: [toolbarItem label]];
+                [menuFormRep setAction: @selector(nextPage:)];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+                return toolbarItem;
+	}
+
+
+    if ([itemIdent isEqual: kPreviousPageKKTID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				imageName:@"PreviousPageAction" target:self action:@selector(doPreviousPageKK:)];
+	}
+
+    if ([itemIdent isEqual: kNextPageKKTID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				imageName:@"NextPageAction" target:self action:@selector(doNextPageKK:)];
+	}
 
 /*
     if ([itemIdent isEqual: kGotoPageTID]) {
@@ -497,6 +668,23 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 				[menuFormRep setTarget: pdfWindow];
                 return toolbarItem;
                 }
+				
+	 if ([itemIdent isEqual: kGotoPageKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:gotopageOutletKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+				/*
+                NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];*/
+                [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
+               [toolbarItem setMenuFormRepresentation: menuFormRep];
+				[menuFormRep setAction: @selector(doTextPage:)];
+				[menuFormRep setTarget: pdfKitWindow];
+                return toolbarItem;
+                }
+
                 
     if ([itemIdent isEqual: kMagnificationTID]) {
                 NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -510,6 +698,22 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
                 [toolbarItem setMenuFormRepresentation: menuFormRep];
 				[menuFormRep setAction: @selector(doTextMagnify:)];
 				[menuFormRep setTarget: pdfWindow];
+                return toolbarItem;
+                }
+				
+	             
+    if ([itemIdent isEqual: kMagnificationKKTID]) {
+                NSToolbarItem* toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+				customView:magnificationOutletKK];
+                NSMenuItem* menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+                /* NSMenu* submenu = [[[NSMenu alloc] init] autorelease];
+		NSMenuItem* submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
+                [submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];*/
+                [menuFormRep setTitle: [toolbarItem label]];
+                [toolbarItem setMenuFormRepresentation: menuFormRep];
+				[menuFormRep setAction: @selector(doTextMagnify:)];
+				[menuFormRep setTarget: pdfKitWindow];
                 return toolbarItem;
                 }
                 
@@ -551,6 +755,46 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 
 		return toolbarItem;
 	}
+	
+	
+	// mitsu 1.29 (O)
+    if ([itemIdent isEqual: kMouseModeKKTID]) {
+		NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrixKK];
+		NSMenuItem*		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		[menuFormRep setSubmenu: mouseModeMenuKit];
+		
+		/* or one can set up menu by hand
+		NSMenu *		menu = [[[NSMenu alloc] initWithTitle: [toolbarItem label]] autorelease];
+		[menuFormRep setTarget: pdfView];
+		[menuFormRep setAction: @selector(changeMouseMode:)];
+		NSMenuItem*	item = [menu addItemWithTitle: NSLocalizedString(@"Scroll", @"Scroll")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_SCROLL];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"MagnifyingGlass", @"MagnifyingGlass")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_MAG_GLASS];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"MagnifyingGlass Large", @"MagnifyingGlass Large")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_MAG_GLASS_L];
+
+		item = [menu addItemWithTitle: NSLocalizedString(@"Select", @"Select")
+			action: @selector(changeMouseMode:) keyEquivalent:@""];
+		[item setTarget: pdfView];
+		[item setTag: MOUSE_MODE_SELECT];
+
+		[menuFormRep setSubmenu: menu];*/
+		
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+
+		return toolbarItem;
+	}
+
 // end mitsu 1.29
 #endif
 
@@ -661,6 +905,30 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 				nil];
 	}
 	
+		if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+
+		return [NSArray arrayWithObjects:
+                                        // kPreviousPageButtonTID,
+                                        // kNextPageButtonTID,
+					kPreviousPageKKTID,
+					kNextPageKKTID,
+					kBackForthKKTID,
+					kDrawerKKTID,
+                   // kTypesetEETID,
+                    // kProgramEETID,
+					NSToolbarPrintItemIdentifier, 
+					// NSToolbarSeparatorItemIdentifier,
+					kMagnificationKKTID, 
+					kGotoPageKKTID,
+#ifdef MITSU_PDF
+					kMouseModeKKTID, // mitsu 1.29 (O)
+#endif
+					NSToolbarFlexibleSpaceItemIdentifier, 
+					NSToolbarSpaceItemIdentifier, 
+				nil];
+	}
+
+	
 	return [NSArray array];
 }
 
@@ -737,6 +1005,42 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 				nil];
 
 	}
+	
+		if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+
+		return [NSArray arrayWithObjects: 	
+//					kSaveDocToolbarItemIdentifier,
+                                        kPreviousPageButtonKKTID,
+                                        kNextPageButtonKKTID,
+                                        kPreviousPageKKTID,
+					kNextPageKKTID,
+					kBackForthKKTID,
+					kDrawerKKTID,
+                                        kTypesetEETID,
+                                        kProgramEETID,
+                                        kMacrosEETID,
+                                        kTeXTID,
+					kLaTeXTID,
+					kBibTeXTID,
+					kMakeIndexTID,
+					kMetaPostTID,
+					kConTeXTID,
+                                        kMetaFontID,
+ 					kGotoPageKKTID,
+					kMagnificationKKTID,
+#ifdef MITSU_PDF
+                                        kMouseModeKKTID, // mitsu 1.29 (O)
+#endif
+                                        kSyncMarksTID,
+					NSToolbarPrintItemIdentifier,
+                                        NSToolbarCustomizeToolbarItemIdentifier,
+					NSToolbarFlexibleSpaceItemIdentifier, 
+					NSToolbarSpaceItemIdentifier, 
+					NSToolbarSeparatorItemIdentifier, 
+				nil];
+
+	}
+
 
 	return [NSArray array];
 }
@@ -774,6 +1078,13 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 									@"ToolbarItems",  @"Print the document")];
 			[addedItem setTarget: self];
 		}
+		
+		 else if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+	
+			[addedItem setToolTip: NSLocalizedStringFromTable(@"tiToolTipPrint", 
+									@"ToolbarItems",  @"Print the document")];
+			[addedItem setTarget: self];
+		}
 
 	}
 }  
@@ -805,10 +1116,10 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
     BOOL 		enable 		= NO;
 	NSString*	toolbarID	= [[toolbarItem toolbar] identifier];
 	
+	enable =  [super validateMenuItem: toolbarItem];
+	
 	if (fileIsTex) {
 
-		enable = YES;
-		
 		if ([[toolbarItem itemIdentifier] isEqual: kSaveDocToolbarItemIdentifier]) {
 		// We will return YES (ie  the button is enabled) only when the document is dirty and needs saving 
 			enable = [self isDocumentEdited];
@@ -829,6 +1140,8 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
 			enable = (myImageType == isOther);
 		} else if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
 			enable = ((myImageType == isPDF) || (myImageType == isJPG) || (myImageType == isTIFF));
+		} else if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+			enable = ((myImageType == isPDF) || (myImageType == isJPG) || (myImageType == isTIFF));
 		}
 
 	}
@@ -836,7 +1149,11 @@ static NSString*        kSyncMarksTID                    = @"SyncMarks";
         else if (([[toolbarItem itemIdentifier] isEqual: kPreviousPageButtonTID]) ||
                 ([[toolbarItem itemIdentifier] isEqual: kPreviousPageTID]) ||
                 ([[toolbarItem itemIdentifier] isEqual: kNextPageButtonTID]) ||
-                ([[toolbarItem itemIdentifier] isEqual: kNextPageTID])) 
+                ([[toolbarItem itemIdentifier] isEqual: kNextPageTID]) ||
+				([[toolbarItem itemIdentifier] isEqual: kPreviousPageButtonKKTID]) ||
+                ([[toolbarItem itemIdentifier] isEqual: kPreviousPageKKTID]) ||
+                ([[toolbarItem itemIdentifier] isEqual: kNextPageButtonKKTID]) ||
+                ([[toolbarItem itemIdentifier] isEqual: kNextPageKKTID])) 
                         enable = (myImageType == isPDF);  
 
     return enable;

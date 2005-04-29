@@ -13,6 +13,186 @@
 
 
 <div id="content_normal">
+
+<P><h5>Versions 1.37 and 2.00 add extra features to TeXShop and fix some bugs.</h5></p>
+<p><h6> New features in 2.00:</h6></p>
+
+
+<ul>
+
+<li> A new synchronization method has been added to TeXShop, using the ability in Tiger
+				to search for strings in pdf files. The new method does not require including a
+				pdfsync.sty file, so it works out of the box on files typeset using any engine:
+				pdftex or pdflatex, TeX + ghoscript or LaTeX + ghostscript, XeTeX, and other engines.
+<p>
+<li>				Click on a word or phrase in the source file. TeXShop will scroll the preview window to the
+				corresponding phrase and circle it in red. Click on a word or phrase in the
+				preview window. TeXShop will open the corresponding source file if it is not already
+				open, scroll the source to the appropriate spot, and highlight the source phrase 
+				in yellow. 
+<p>
+<li>				A new TeXShop preference item selects the synchronization method to be used:
+				the old pdfsync method, the new search method, or a combination in which the
+				new search is used, but the program falls back on pdfsync if the new search does not
+				succeed. 
+
+
+<p>
+<li>	TeXShop 2.00 uses Apple's PDFKit to display the pdf preview window. This software
+	is introduced in system 10.4.0 (Tiger), so TeXShop 2.00 requires Tiger. PDFKit makes
+	the following new features possible:</li>
+	<p>
+	<ul>
+	<li> TeXShop supports hyperlinks. To activate this feature, add the line
+	<ul>
+	<li>\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue]{hyperref}</li> 
+	</ul>
+	to the heading of the source document. Links to external web sites can then be added
+	to tex documents using commands like
+	<ul>
+	<li>  \href{http://www.uoregon.edu/~koch/}{Koch homepage} </li>
+	</ul>
+	Links to other portions of the tex document can be added using commands like
+	<ul>
+	<li> \hyperlink{lemniscate}{Graph of Lemniscate}</li>
+	</ul>
+	where the tag "lemniscate" is created using a command like
+	<ul>
+	<li> \hypertarget{lemniscate}{}</li>
+	</ul>
+	<p>
+	To navigate with these links, choose the new "text" tool and clink
+	on the colored links.
+<p>
+<li> The preview window toolbar contains "Back" and "Forward" buttons so one can jump to a spot using a link, and then jump back.
+
+<p>
+<li> Hyperref.sty automatically adds links to citations, so readers can rapidly jump from a citation to
+the corresponding bibliography entry.
+<p>
+<li> The hyperref package also creates a document outline. For example, the main outline of
+a book is a list of chapters; each chapter entry contains a list of sections, and so forth. To see this outline
+and navigate through the document with it, use the new "drawer" tool to display the pdf window's
+drawer.</li>
+
+	<p>
+	<li> The text tool can be used to select a portion of text in the preview window and copy
+	this selection to an editor. This differs from the "pdf selection tool" which copies a portion
+	of the document as a pdf illustration --- the text tool copies editable text. </li>
+	<p>
+	<li> Searching the pdf preview is supported. Use the search tools in the bottom half of
+	the window's drawer.
+	<p>
+	<li> PDFKit brings additional polish to the display of pdf documents. It supports documents with isolated rotated pages, and correctly prints rotated pages in landscape mode. It supports liveupdate of
+window resizing if the magnification preference is set to "fit to window." Etc.</li>
+	<p>
+	</ul>
+	</ul>
+<p><h6> New features in 2.00 and 1.37:</h6></p>
+
+<p>
+The remaining new features are available in both new versions.
+<ul>
+<li> Earlier versions of TeXShop allowed users to set the typesetting engine of a file, its 
+encoding, and its root file by adding appropriate comments to the top of the source file. For example,
+the following commands set the typesetting engine to xelatex, the encoding to UTF-8 Unicode,
+and the root file to ../Main.tex:
+<p>
+<ul>
+<li> %&xelatex </li>
+<li> %&encoding= UTF-8 Unicode </li>
+<li> %SourceDoc ../Main.tex </li>
+</ul>
+<p>
+But this syntax was a mistake because the symbols "%&" are reserved for the use of TeX.</li>
+<p>
+<li> In versions 1.37 and 2.00 of TeXShop, the syntax has been changed to the following:
+<p> 
+<ul>
+<li> %!TEX TS-program = xelatex </li>
+<li> %!TEX encoding = UTF-8 Unicode </li>
+<li> %!TEX root = ../Main.tex </li>
+</ul>
+<p>
+It you used the earlier facility, you need to change your old source files to the new syntax. I'm
+very sorry to cause this work, but the change is really necessary. </li>
+
+<p>
+<li> If you are in the middle of a project and cannot make the change now, you can temporarily
+set a hidden preference to revert to the old syntax. To do so, open Apple's Terminal program and
+type 
+<p>
+<ul>
+<li> defaults write TeXShop UseOldHeadingCommands YES </li>
+</ul>
+<p>
+Once this is done, the new commands will be recognized but the old commands will also work.
+However, I recommend turning this preference off as soon as possible.</li>
+<p> 
+<li> Commands have been added to the default Macros menu which insert the symbols "%!TEX TS-program = "
+and "%!TEX encoding = " and "%!TEX root = " into the source document; new users will see these entries. Users who are upgrading can easily add these symbols as well. To add the program entry, choose "Open Macro Editor" under the Macro menu. Click the "New Item" button, name the item "Program" and set its content to
+<p>
+<ul>
+<li> %!TEX TS-program =  #INS# 
+</ul>
+<p>
+Repeat for the "Encoding" and "Root" items. </li>
+<p>
+<li> Martin Kerz added a "Check for Updates..." command to TeXShop. He also designed the new TeXShop
+	web page. Thanks! </li>
+<p>
+<li>	OgreKit for searching has been upgraded to the latest 2.0.1 version. </li>
+
+<p>
+<li> Additional filetypes can be edited, including files with extensions "abc", "bst", "bib", "lp", and
+"pdf". The addition of "pdf" allows TeXShop to be chosen as the default pdf viewer. A new pdf icon
+has been created so the system can use it on pdf files it will display in TeXShop. </li>
+
+<p>
+<li> TeXShop has always had a "Revert To Saved" item under the File menu, but it has never worked!
+Sorry. This is fixed. </li>
+
+<p> 
+<li> David Reitter modified the selection code so if the uses clicks on a control word like
+\gamma, the initial "\" symbol will also be chosen. </li>
+
+<p>
+<li> A new preference item "Select on Activate" was added. When this item is checked, a mouse click
+on the text window will select this window and also place the cursor at the spot that was clicked. If
+the item is not checked, the initial mouse click will only activate the window. A separate click is then
+needed to position the cursor.</li>
+
+<p>
+<li> New hidden preferences were added for users who change the default foreground and background colors of the editing window. These preferences set the color of the insertion point (without these preferences, the insertion point could become invisible). To set the insertion point to white, for example,</li>
+<p>
+<ul>
+<li> defaults write TeXShop insertionpoint_R 1.0 </li>
+<li>	defaults write TeXShop insertionpoint_G 1.0 </li>
+<li>	defaults write TeXShop insertionpoint_B 1.0 </li>
+</ul>
+<p>
+<li> When a file is typeset, all open changed files with the same root
+are first saved.</li>
+<p>
+<li> Improvements were made in the pdfsync code.</li>
+<p>
+<li> In previous versions, it was possible to add a Macro button to the
+Preview Window Toolbar in English, but not in other localizations. This is
+fixed thanks to Juan Luis Varona.</li>
+<p>
+<li> New Japanese Help by Yoshihisa Okazaki with help from Seiji Zenitani. </li>
+<p>
+<li> A proxy icon is now added to the title of the preview window. This icon can be dragged to the desktop or other folders to create a copy of the pdf file. The source window has always had a proxy icon. Thanks to Rene Donner for suggesting this feature and explaining how to implement it. </li>
+
+</ul> 
+
+
+
+
+
+<P><h5>Version 1.36 was never released.</h5></p>
+
 <P><h5>Version 1.35 adds extra features to TeXShop and fixes some bugs.</h5></p>
 <p><h6> New features:</h6></p>
 

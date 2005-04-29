@@ -30,6 +30,7 @@
     // find the line number
     screenPosition = [NSEvent  mouseLocation];
     theIndex = [self characterIndexForPoint: screenPosition];
+	[document setCharacterIndex: theIndex];
     text = [[document textView] string];
     stringlength = [text length];
     myRange.location = 0;
@@ -62,17 +63,25 @@
      if ([document checkRootFile_forTask:RootForPdfSync]) 
             return;
             
-     [document doPreviewSyncWithFilename:nil andLine:line];
+     [document doPreviewSyncWithFilename:nil andLine:line andCharacterIndex: theIndex andTextView: [document textView]];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+		NSMutableDictionary	*mySelectedTextAttributes;
+	
         // koch; Dec 13, 2003
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 [self doSync: theEvent];
                 return;
                 }
-                
+        
+		if ([document textSelectionYellow]) {
+			[document setTextSelectionYellow: NO];
+			mySelectedTextAttributes = [NSMutableDictionary dictionaryWithDictionary: [[document textView] selectedTextAttributes]];
+			[mySelectedTextAttributes setObject:[NSColor colorWithCatalogName: @"System" colorName: @"selectedTextBackgroundColor"]  forKey:@"NSBackgroundColor"];
+			[[document textView] setSelectedTextAttributes: mySelectedTextAttributes];
+			}
         [super mouseDown:theEvent];
 }
 
@@ -374,7 +383,8 @@
 }
 // zenitani 1.33(2) end
 
-// code modified by David Reitter so when selecting \int, etc., the beginning "\" is also selected
+
+// New version by David Reitter selects beginning backslash with words as in "\int"
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
 {
     NSRange	replacementRange;
@@ -464,11 +474,8 @@
             }
 
     else return replacementRange;
-}
 
 /*
-- (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
-{
     NSRange	replacementRange;
     NSString	*textString;
     int		length, i, j;
@@ -541,8 +548,8 @@
             }
 
     else return replacementRange;
-}
 */
+}
 
 // added by mitsu --(A) TeXChar filtering
 - (void)insertText:(id)aString
@@ -1030,7 +1037,7 @@
 	// back up old list
 	backupPath = [completionPath stringByDeletingPathExtension];
 	backupPath = [backupPath stringByAppendingString:@"~"];
-	backupPath = [backupPath stringByAppendingPathExtension:@"plist"];
+	backupPath = [backupPath stringByAppendingPathExtension:@"txt"];
 	NS_DURING
 		[[NSFileManager defaultManager] removeFileAtPath:backupPath handler:nil];
 		[[NSFileManager defaultManager] copyPath:completionPath toPath:backupPath handler:nil];
@@ -1040,8 +1047,8 @@
 	//myData = [commandCompletionList dataUsingEncoding: NSUTF8StringEncoding]; // not used
         
         // theTag = [[EncodingSupport sharedInstance] tagForEncodingPreference];
-        theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
         theTag = [[EncodingSupport sharedInstance] tagForEncoding: @"UTF-8 Unicode"];
+		theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
         myData = [commandCompletionList dataUsingEncoding: theEncoding allowLossyConversion:YES];
         
         /*

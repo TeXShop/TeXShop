@@ -9,6 +9,7 @@
 
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
+#import <Quartz/Quartz.h>
 #import "MyDocument.h"
 #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
 
@@ -79,6 +80,8 @@
     callingWindow = nil;
     badEncoding = 0;
     showBadEncodingDialog = NO;
+	PDFfromKit = NO;
+	textSelectionYellow = NO;
         
     encoding = [[MyDocumentController sharedDocumentController] encoding];
     
@@ -144,6 +147,11 @@
 - (id) pdfView;
 {
     return pdfView;
+}
+
+- (id) pdfKitView;
+{
+    return myPDFKitView;
 }
 
 - (NSString *)windowNibName {
@@ -320,6 +328,44 @@
     }
 }
 
+- (void)installStringIntoTextEdit
+{
+        // zenitani 1.35 (A) -- normalizing newline character for regular expression
+        long			MacVersion;
+		unsigned		length;
+
+        if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
+            if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030)) 
+            aString = [OGRegularExpression replaceNewlineCharactersInString:aString 
+                    withCharacter:OgreLfNewlineCharacter];
+            }
+	
+        [textView setString: aString];
+        length = [aString length];
+        [self setupTags];
+        
+        if (([SUD boolForKey:SyntaxColoringEnabledKey]) && (fileIsTex)) 
+        {
+            colorLocation = 0;
+            [self fixColor2:0 :length];
+           // syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
+        }
+
+        // [aString release];  // mitsu 1.29 memory leak fix; aString is autoreleased
+        aString = nil;
+}
+
+- (BOOL)revertToContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
+{
+	BOOL	value;
+	
+	value = [super revertToContentsOfURL:absoluteURL ofType:typeName error:outError];
+	if ((value) && (aString != nil))
+		[self installStringIntoTextEdit];
+	[textView setNeedsDisplayInRect: [textView bounds]];
+	return value;
+}
+
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {    
@@ -337,7 +383,6 @@
     NSPoint		topLeftPoint;
 #endif
     NSRange		myRange;
-    unsigned		length;
     BOOL		imageFound;
     NSString		*theFileName;
     float		r, g, b;
@@ -350,6 +395,7 @@
     NSString            *defaultCommand;
     
     [super windowControllerDidLoadNib:aController];
+	
     
 // the code below exists because the spell checker sometimes did not exist
 // in Panther developer releases; it is probably not necessary for
@@ -467,6 +513,8 @@ NS_ENDHANDLER
     
     externalEditor = [[[NSApplication sharedApplication] delegate] forPreview];
     theFileName = [self fileName];
+	
+	[self configureTypesetButton];
     [self setupToolbar];
     
     if ([SUD boolForKey:ShowSyncMarksKey])
@@ -529,6 +577,7 @@ NS_ENDHANDLER
         && ( ! [fileExtension isEqualToString: @""]) && ( ! [fileExtension isEqualToString: @"mp"]) 
         && ( ! [fileExtension isEqualToString: @"mf"]) 
         && ( ! [fileExtension isEqualToString: @"bib"]) 
+		 && ( ! [fileExtension isEqualToString: @"ly"]) 
         && ([[NSFileManager defaultManager] fileExistsAtPath: [self fileName]]))
     {
         [self setFileType: fileExtension];
@@ -576,9 +625,10 @@ NS_ENDHANDLER
                 pdfDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
                 }
                 
-            texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
-            [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-            [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4; 
+            // texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
+            // [pdfWindow setTitle: [[self fileName] lastPathComponent]];
+			[pdfKitWindow setTitle: [[self fileName] lastPathComponent]]; 
+            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4; 
             // supposed to allow command click of window title to lead to file, but doesn't
             myImageType = isPDF;
             }
@@ -588,7 +638,7 @@ NS_ENDHANDLER
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
              [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-             [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+             // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isJPG;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -598,7 +648,7 @@ NS_ENDHANDLER
             imageFound = YES;
             texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
             [pdfWindow setTitle: [[self fileName] lastPathComponent]]; 
-            [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+            // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
             myImageType = isTIFF;
             [previousButton setEnabled:NO];
             [nextButton setEnabled:NO];
@@ -609,12 +659,27 @@ NS_ENDHANDLER
             {
                 myImageType = isPDF;
                 [pdfView setImageType: myImageType];
-                [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
+                // [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
                 [self convertDocument];
                 return;
             }
+			
+		if ((imageFound) && (myImageType == isPDF)) {
+		
+			PDFfromKit = YES;
+			[myPDFKitView showWithPath: imagePath];
+			[pdfKitWindow setRepresentedFilename: imagePath];
+			[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+			[pdfKitWindow makeKeyAndOrderFront: self];
+			if ((myImageType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
+                    pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] 
+                    target:self selector:@selector(refreshPDFGraphicWindow:) userInfo:nil repeats:YES] retain];
+                }
+			return;
+			}
             
         if (imageFound) {
+				// pdf part here is irrelevant after pdfkit use above
                 [pdfView setImageType: myImageType];
                 [pdfView setImageRep: texRep]; // this releases old one!
 #ifndef MITSU_PDF
@@ -654,27 +719,8 @@ NS_ENDHANDLER
     }
   else if (aString != nil) 
     {
-        // zenitani 1.35 (A) -- normalizing newline character for regular expression
-        long MacVersion;
-        if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
-            if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030)) 
-            aString = [OGRegularExpression replaceNewlineCharactersInString:aString 
-                    withCharacter:OgreLfNewlineCharacter];
-            }
-	
-        [textView setString: aString];
-        length = [aString length];
-        [self setupTags];
+        [self installStringIntoTextEdit];
         
-        if (([SUD boolForKey:SyntaxColoringEnabledKey]) && (fileIsTex)) 
-        {
-            colorLocation = 0;
-            [self fixColor2:0 :length];
-           // syntaxColoringTimer = [[NSTimer scheduledTimerWithTimeInterval: COLORTIME target:self selector:@selector(fixColor1:) userInfo:nil repeats:YES] retain];
-        }
-
-        // [aString release];  // mitsu 1.29 memory leak fix; aString is autoreleased
-        aString = nil;
         texTask = nil;
         bibTask = nil;
         indexTask = nil;
@@ -695,8 +741,6 @@ NS_ENDHANDLER
     
     if (!fileIsTex) 
         return;
-        
-    [self configureTypesetButton];
         
 // changed by mitsu --(J) Typeset command and (J++) Program popup button indicating Program name
     defaultcommand = [SUD integerForKey:DefaultCommandKey];
@@ -779,17 +823,30 @@ NS_ENDHANDLER
 #endif
         imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-    
+	
+		PDFfromKit = YES;
+		myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+        pdfDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+
+		[myPDFKitView showWithPath: imagePath];
+		[pdfKitWindow setRepresentedFilename: imagePath];
+		[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+
+	
+	
+	
+	
+	
+/*    
         myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
         pdfDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 
         texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain]; 
-        if (texRep) {
-            /* [pdfWindow setTitle: 
-                    [[[[self fileName] lastPathComponent] 
-                    stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; */
+
+            // [pdfWindow setTitle: 
+            //        [[[[self fileName] lastPathComponent] 
+            //        stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; 
             [pdfWindow setTitle: [imagePath lastPathComponent]];
-            [pdfWindow setRepresentedFilename: imagePath];
             // [pdfWindow setRepresentedFilename: [[[[self fileName] lastPathComponent] 
             //        stringByDeletingPathExtension] stringByAppendingString:@".pdf"]]; //mitsu July4
             [pdfView setImageRep: texRep]; // this releases old one!
@@ -801,11 +858,21 @@ NS_ENDHANDLER
             [pdfView display];
 #endif
             [pdfWindow makeKeyAndOrderFront: self];
-            }
+*/			
+			
+			
+			
+            
         }
     else if (externalEditor) {
-            [pdfWindow setTitle: [imagePath lastPathComponent]];
-            [pdfWindow makeKeyAndOrderFront: self];
+	
+			PDFfromKit = YES;
+			[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+			[pdfKitWindow makeKeyAndOrderFront: self];
+	
+	
+           // [pdfWindow setTitle: [imagePath lastPathComponent]];
+           // [pdfWindow makeKeyAndOrderFront: self];
         }
 // added by mitsu --(A) TeXChar filtering
 	[texCommand setDelegate: [EncodingSupport sharedInstance]];
@@ -907,6 +974,11 @@ NS_ENDHANDLER
 - (void) chooseEncoding: sender;
 {
     tempencoding = [[sender selectedCell] tag];
+}
+
+- (int) encoding;
+{
+	return encoding;
 }
 
 - (void)runModalSavePanelForSaveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
@@ -1058,12 +1130,12 @@ in other code when an external editor is being used. */
 
 
     // register for notifications when the pdf window becomes key so we can remember which window was the frontmost.
-    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
-    [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
-    [[NSNotificationCenter defaultCenter] addObserver:[Matrixcontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfWindow];
-    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:pdfWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Autrecontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[Matrixcontroller sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:pdfKitWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
-    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:pdfWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:pdfKitWindow];
 // end addition 
 
     
@@ -1146,10 +1218,12 @@ in other code when an external editor is being used. */
     {
         case PdfWindowPosSave:
             [pdfWindow setFrameAutosaveName:PdfWindowNameKey];
+			[pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
             break;
             
         case PdfWindowPosFixed:
             [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
+			[pdfKitWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
     }
     
 	// restore the font for document if desired
@@ -1419,7 +1493,7 @@ preference change is cancelled. "*/
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
                     }
                 }
-            else if ([SUD boolForKey: UseOldHeadingCommandsKey]) {
+            else if ([SUD boolForKey:UseOldHeadingCommandsKey]) {
                 encodingRange = [testString rangeOfString:@"%&encoding="];
                 if (encodingRange.location != NSNotFound) {
                     done = YES;
@@ -1501,7 +1575,7 @@ preference change is cancelled. "*/
                     theEncoding = [[EncodingSupport sharedInstance] stringEncodingForTag: theTag];
                     }
                 }
-            else if ([SUD boolForKey: UseOldHeadingCommandsKey]) {
+            else if ([SUD boolForKey:UseOldHeadingCommandsKey]) {
                 encodingRange = [testString rangeOfString:@"%&encoding="];
                 if (encodingRange.location != NSNotFound) {
                     done = YES;
@@ -1578,6 +1652,17 @@ preference change is cancelled. "*/
 {
     return pagenumberPanel;
 }
+
+- (id) magnificationKitPanel;
+{
+    return magnificationKitPanel;
+}
+
+- (id) pagenumberKitPanel;
+{
+    return pagenumberKitPanel;
+}
+
 
 - (void) quitMagnificationPanel: sender;
 {
@@ -2214,7 +2299,7 @@ preference change is cancelled. "*/
             }
 
 // Old Stuff
-if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
+if ((! done) && ([SUD boolForKey:UseOldHeadingCommandsKey])) {
     myRange.length = 1;
     myRange.location = 0;
     [theSource getLineStart:&mystart end: &myend contentsEnd: nil forRange:myRange];
@@ -3006,6 +3091,22 @@ if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
     [self chooseProgram: sender];
 }
 
+- (void) chooseProgramFF: sender;
+{
+	int i = [sender tag];
+	[programButton selectItemAtIndex: i];
+    [programButtonEE selectItemAtIndex: i];
+	
+	// added by mitsu --(J) Typeset command
+	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+	whichEngine = i + 1;  // remember it
+	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+        [self fixMacroMenu];
+// end addition
+
+
+}
+
 
 - (void) chooseProgram: sender;
 {
@@ -3395,6 +3496,11 @@ if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
 - (id) pdfWindow;
 {
     return pdfWindow;
+}
+
+- (id) pdfKitWindow;
+{
+    return pdfKitWindow;
 }
 
 - (id) textWindow;
@@ -4474,8 +4580,9 @@ void report(NSString *itest)
             return;
         if ([self checkRootFile_forTask:RootForSwitchWindow]) 
             return;
-        if ([self myTeXRep] != nil)
-            [[self pdfWindow] makeKeyAndOrderFront: self];
+        //if ([self myTeXRep] != nil)
+		if ([self fromKit]) 
+            [[self pdfKitWindow] makeKeyAndOrderFront: self];
         }
 }
 
@@ -4500,7 +4607,12 @@ void report(NSString *itest)
     pdfSyncLine = line;
 }
 
-- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
+- (void)setCharacterIndex:(unsigned int)index
+{
+	pdfCharacterIndex = index;
+}
+
+- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)index andTextView:(id)textView;
 {
     int             pdfPage;
     BOOL            found, synclineFound;
@@ -4514,7 +4626,15 @@ void report(NSString *itest)
     BOOL            skipping;
     int             skipdepth;
     NSString        *expectedFileName, *expectedString;
+	BOOL			result;
     
+	int syncMethod = [SUD integerForKey:SyncMethodKey];
+	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
+		result = [self doNewPreviewSyncWithFilename:fileName andLine:line andCharacterIndex:index andTextView:textView];
+		if (result) return;
+		}
+	if (syncMethod == SEARCHONLY)
+		return;
     // get .sync file
     fileManager = [NSFileManager defaultManager];
     NSString *fileName1 = [self fileName];
@@ -4794,8 +4914,131 @@ void report(NSString *itest)
     if (!found)
         return;
         
-    [pdfView displayPage:pdfPage];
-    [pdfWindow makeKeyAndOrderFront: self];
+   // [pdfView displayPage:pdfPage];
+   // [pdfWindow makeKeyAndOrderFront: self];
+   pdfPage++;
+   [myPDFKitView goToKitPageNumber: pdfPage];
+   [pdfKitWindow makeKeyAndOrderFront: self];
+
+}
+
+
+- (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)index andTextView:(id)theTextView;
+{
+	NSString			*theText, *searchText;
+	unsigned int		theIndex;
+	int					startIndex, endIndex, testIndex;
+	NSRange				theRange;
+	unsigned int		searchWindow, length;
+	int					numberOfTests;
+	NSArray				*searchResults;
+	PDFSelection		*mySelection;
+	NSArray				*myPages;
+	PDFPage				*thePage;
+	NSRect				selectionBounds;
+	BOOL				found;
+	
+// I now try a new method. We will pick a string of length 10, first surrounding the text where
+// the click occurred. If it isn't found, we'll back up 5 characters at a time for 20 times, repeating
+// the search. If that fails, we'll go forward 5 characters at a time for 20 times, repeating the
+// search. If we still get nothing, we'll declare a failure.
+	
+	searchWindow = 10;
+	found = NO;
+	
+	theText = [theTextView string];
+	length = [theText length];
+	
+	theIndex = index;
+	testIndex = theIndex;
+	numberOfTests = 1;
+	
+	while ((! found) && (numberOfTests < 20) && (testIndex >= 0)) {
+	
+		// get surrounding letters back and forward
+		if (testIndex >= searchWindow)
+			startIndex = testIndex - searchWindow;
+		else
+			startIndex = 0;
+		if (testIndex < (length - (searchWindow + 1)))
+			endIndex = testIndex + searchWindow;
+		else
+			endIndex = length - 1;
+			
+		theRange.location = startIndex;
+		theRange.length = endIndex - startIndex;
+		searchText = [theText substringWithRange: theRange];
+		testIndex = testIndex - 5;
+		numberOfTests++;
+		
+	// search for this in the pdf
+		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		if ([searchResults count] > 0) {
+			if ([searchResults count] == 1)
+				found = YES;
+			}
+			
+		if (found) {
+			mySelection = [searchResults objectAtIndex:0];
+			myPages = [mySelection pages];
+			if ([myPages count] == 0)
+				return NO;
+			thePage = [myPages objectAtIndex:0];
+			selectionBounds = [mySelection boundsForPage: thePage];
+			[myPDFKitView setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[myPDFKitView setBoundsForMark: selectionBounds];
+			[myPDFKitView setDrawMark: YES];
+			[myPDFKitView goToPage: thePage];
+			[myPDFKitView display];
+			[pdfKitWindow makeKeyAndOrderFront:self];
+			return YES;
+		}
+	}
+	
+	testIndex = theIndex + 5;
+	numberOfTests = 2;
+	while ((! found) && (numberOfTests < 20) && (testIndex < length)) {
+	
+		// get surrounding letters back and forward
+		if (testIndex > searchWindow)
+			startIndex = testIndex - searchWindow;
+		else
+			startIndex = 0;
+		if (testIndex < (length - (searchWindow + 1)))
+			endIndex = testIndex + searchWindow;
+		else
+			endIndex = length - 1;
+		
+		theRange.location = startIndex;
+		theRange.length = endIndex - startIndex;
+		searchText = [theText substringWithRange: theRange];
+		testIndex = testIndex + 5;
+		numberOfTests++;
+		
+	// search for this in the pdf
+		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		if ([searchResults count] > 0) {
+			if ([searchResults count] == 1)
+				found = YES;
+			}
+			
+		if (found) {
+			mySelection = [searchResults objectAtIndex:0];
+			myPages = [mySelection pages];
+			if ([myPages count] == 0)
+				return NO;
+			thePage = [myPages objectAtIndex:0];
+			selectionBounds = [mySelection boundsForPage: thePage];
+			[myPDFKitView setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[myPDFKitView setBoundsForMark: selectionBounds];
+			[myPDFKitView setDrawMark: YES];
+			[myPDFKitView goToPage: thePage];
+			[myPDFKitView display];
+			return YES;
+		}
+	}
+	
+	return NO;
 
 }
 
@@ -4884,13 +5127,22 @@ void report(NSString *itest)
                 endDate = [myAttributes objectForKey:NSFileModificationDate];
                 if ((startDate == nil) || ! [startDate isEqualToDate: endDate]) 
                 {
-                    alreadyFound = YES;
+					alreadyFound = YES;
+					PDFfromKit = YES;
+					[myPDFKitView reShowWithPath: imagePath];
+					[pdfKitWindow setRepresentedFilename: imagePath];
+					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+					[pdfKitWindow makeKeyAndOrderFront: self];
+					
+					
+					
+					
+					/*
                     texRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain]; 
                     if (texRep) 
                     {
-                        /* [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]]; */
+                        // [pdfWindow setTitle:[[[[self fileName] lastPathComponent] stringByDeletingPathExtension] 					stringByAppendingPathExtension:@"pdf"]]; 
                         [pdfWindow setTitle: [imagePath lastPathComponent]];
-                        [pdfWindow setRepresentedFilename: imagePath];
                         [pdfView setImageRep: texRep];
 #ifndef MITSU_PDF
                         if (startDate == nil) 
@@ -4905,6 +5157,7 @@ void report(NSString *itest)
                         [pdfView setNeedsDisplay:YES];
                         [pdfWindow makeKeyAndOrderFront: self];
                     }
+					*/
                  }
             }
             
@@ -4917,7 +5170,6 @@ void report(NSString *itest)
                      if (texRep) 
                         {
                         [pdfWindow setTitle: [imagePath lastPathComponent]];
-                        [pdfWindow setRepresentedFilename: imagePath];
                         [pdfView setImageRep: texRep];
                         [pdfView setNeedsDisplay:YES];
                         [pdfWindow makeKeyAndOrderFront: self];
@@ -5047,17 +5299,28 @@ void report(NSString *itest)
     if ((tempRep == nil) || ([tempRep pageCount] == 0))
         tryAgain = YES;
     else {
+			/*
             texRep = tempRep;
             [texRep retain];
             [pdfWindow setTitle: [imagePath lastPathComponent]];
-            [pdfWindow setRepresentedFilename: imagePath];
             [pdfView setImageRep: texRep];
             [pdfView setNeedsDisplay:YES];
             if (front) {
                 [pdfWindow makeKeyAndOrderFront: self];
                 }
+			*/
+			PDFfromKit = YES;
+			[myPDFKitView reShowWithPath: imagePath];
+			[pdfKitWindow setRepresentedFilename: imagePath];
+			[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+			if (front) {
+				[pdfKitWindow makeKeyAndOrderFront: self];
+				}
             }
+		
+		
         }
+		
 
 }
 
@@ -5473,7 +5736,7 @@ aSelector
 {
     int theState = [syncBox state];
     [syncBox setState: (1 - theState)];
-    [pdfView display];
+    [myPDFKitView display];
 }
 
 
@@ -5705,7 +5968,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             }
     
     
-    if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
+    if ((! done) && ([SUD boolForKey:UseOldHeadingCommandsKey])) {
         
     aRange=[theSource rangeOfString:@"%SourceDoc "];
     if(aRange.location!=NSNotFound) {
@@ -5739,7 +6002,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     if (task == RootForPrinting) 
                         [obj printDocument:nil];
                     else if (task == RootForPdfSync) {
-                        [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                        [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
                         }
                     else if (task == RootForSwitchWindow) {
                         [obj setCallingWindow: textWindow];
@@ -5786,7 +6049,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             	if (task == RootForPrinting)
                     [obj printDocument:nil];
                 else if (task == RootForPdfSync) {
-                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
                     }
                 else if (task == RootForTexing){
                         if (useTempEngine)
@@ -5872,7 +6135,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
                     [obj printDocument:nil];
                     }
                 else if (task == RootForPdfSync) {
-                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+                    [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
                     }
                 else if (task == RootForSwitchWindow) {
                     [obj setCallingWindow: textWindow];
@@ -5920,7 +6183,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
             [obj printDocument:nil];
             }
         else if (task == RootForPdfSync) {
-            [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine];
+            [obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
             }
         else if (task == RootForTexing) {
             if (useTempEngine)
@@ -6627,7 +6890,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 
 - (void) showSyncMarks: sender;
 {
-   [pdfView display]; 
+   [myPDFKitView display]; 
 }
 
 - (BOOL)syncState;
@@ -6637,5 +6900,53 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
     else
         return NO;
 }
+
+- (BOOL)fromKit;
+{
+	return PDFfromKit;
+}
+
+- (void)doBackForward:(id)sender
+{
+	switch ([sender selectedSegment]) {
+		case 0:	[[self pdfKitView] goBack:sender];
+				break;
+				
+		case 1: [[self pdfKitView] goForward:sender];
+				break;
+		}
+}
+
+- (void)doForward:(id)sender
+{
+	[[self pdfKitView] goForward:sender];
+}
+
+- (void)doBack:(id)sender
+{
+	[[self pdfKitView] goBack:sender];
+}
+
+- (id) mousemodeMenu;
+{
+	return mouseModeMenuKit;
+}
+
+- (id) mousemodeMatrix;
+{
+	return mouseModeMatrixKK;
+}
+
+- (BOOL) textSelectionYellow;
+{
+	return textSelectionYellow;
+}
+
+- (void) setTextSelectionYellow:(BOOL)value;
+{
+	textSelectionYellow = value;
+}
+
+
 
 @end

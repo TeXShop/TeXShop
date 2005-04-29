@@ -177,20 +177,40 @@ best approximation I can make; edited improved versions are desired.
 36) Martin Kerz added code to check for updates and ask Safari to download
 an update if available.
 
-37) Added Lilypond, abc, and bst as extensions which can be edited.
+37)) Fixed  RevertToSaved
 
-38) Added code by David Reitter so when the user selects the word
-\int, etc., the beginning "\" is also selected.
+38) New code by David Reitter to select the backslash symbol in situations
+like "\this is \int"
 
-39) Revised Japanese Help by Yoshihisa Okazaki
+39) Ogrekit upgraded to 2.0.1 version
 
-40) Some changes in Japanese localization and in ~/TeXShop/bin files by
-Zenitani
+40) Added bst, abc as editing types
 
-41) Modified Martin Kerz' code to check for updates. The new version first
-checks to see if the user is running Tiger or higher. If so, it checks against
-the currently available version number. If not, it checks against a new
-field named "TeXShopPanther" which should hold the latest currently available
-version which runs on 10.2 or 10.3.
+41) Version number 2.0
 
-42) Now using OgreKit 2.0.1, the latest version.
+42) There is a new hidden default:
+
+	UseOldHeadingCommands
+
+By default, it is NO. If it is set to YES, then the old style
+%&tex
+can still be used. The program will search for the new style first,
+but if it is not found and the old style is found, then the old
+style will be used.
+
+Recall that the old style was %&encoding= or %&SourceDoc or %&pdflatex, etc.
+
+43) At the suggestion of Rene Donner, added a "proxy-icon" to the Preview window
+so the user can drag and drop the pdf file to a directory.
+
+44) Added code "windowControllerWillLoadNib" which checks that
+Mac OS X is version 10.4 or higher and reports an error message
+otherwise. Later removed this code because it didn't help; TeXShop 2.00
+quits in system 10.3.8 before it tries to load the document nib file,
+even though all of the 2.00 changes occur there. This may be related to
+using GCC 4.0.
+
+45) Added a new sync method which does not require pdfsync.sty. This method requires
+Tiger, and uses the Tiger pdf search methods to directly compare strings in the
+source and preview documents. Therefore it works with latex + ghostscript and
+with xetex.

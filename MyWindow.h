@@ -14,8 +14,7 @@
 @interface MyWindow : NSWindow 
 {
     MyDocument	*myDocument;
-    BOOL	firstClose;
-
+    BOOL		firstClose;
 }
 
 - (void) doTextMagnify: sender;   // for toolbar in text mode
@@ -32,12 +31,17 @@
 - (void) doIndex: sender;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
+
 - (void) firstPage: sender;
 - (void) lastPage: sender;
 - (void) up: sender;
 - (void) down: sender;
 - (void) top: sender;
 - (void) bottom: sender;
+- (void) left: sender; // mitsu 1.29 (O)
+- (void) right: sender; // mitsu 1.29 (O)
+
+
 - (void) doError: sender;
 - (void) doChooseMethod: sender;
 - (void) rotateClockwise: sender;
@@ -48,8 +52,6 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (MyDocument *)document;
 #ifdef MITSU_PDF
-- (void) left: sender; // mitsu 1.29 (O)
-- (void) right: sender; // mitsu 1.29 (O)
 - (void)changePageStyle: (id)sender; // mitsu 1.29 (O)
 - (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
 - (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)

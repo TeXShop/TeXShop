@@ -48,6 +48,10 @@
     NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;
     id *theFinder;
+	long	MacVersion;
+	
+    // documentsHaveLoaded = NO;
+
     
     macroType = LatexEngine;
     
@@ -159,7 +163,6 @@
 	// end mitsu 1.29
 #endif
 
-        long MacVersion;
         if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
         
             if (([SUD boolForKey:ConvertLFKey]) && (MacVersion >= 0x1030) && ([SUD boolForKey:UseOgreKitKey] == TRUE)) 
@@ -1215,37 +1218,17 @@ necessary */
     [textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
 }
 
-
+// begin Update Checker Nov 05 04; Martin Kerz
 - (IBAction)checkForUpdate:(id)sender
 {
-	SInt32	MacVersion;
-	BOOL	hasTiger;
-	int	MajorVersion, MinorVersion, MinorMinorVersion;
-
-	if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr) {
-		
-		MajorVersion = ((MacVersion & 0xF000)/0xF00) * 10 +
-                    (MacVersion & 0xF00)/0xF0;
-		MinorVersion = (MacVersion & 0xF0)/0xF;
-		MinorMinorVersion = MacVersion & 0xF;
-		
-		if ((MajorVersion >= 10) && (MinorVersion >= 4))
-			hasTiger = YES;
-		else
-			hasTiger = NO;
-		}
-	else 
-		hasTiger = NO;
-
     NSString *currentVersion = [[[NSBundle bundleForClass:[self class]]
         infoDictionary] objectForKey:@"CFBundleVersion"];
-
+		
 	NSDictionary *texshopVersionDictionary = [NSDictionary dictionaryWithContentsOfURL:
         [NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop-current.txt"]];
 		
 	NSString *latestVersion = [texshopVersionDictionary valueForKey:@"TeXShop"];
-	NSString *latestPantherVersion = [texshopVersionDictionary valueForKey:@"TeXShopPanther"];
-	
+
     int button;
     if(latestVersion == nil){
         NSRunAlertPanel(NSLocalizedString(@"Error",
@@ -1255,12 +1238,8 @@ necessary */
                                           @"OK", nil, nil);
         return;
     }
-    
-    if (
-		( hasTiger && ([latestVersion caseInsensitiveCompare: currentVersion] != NSOrderedDescending))
-		||
-		( (! hasTiger) && ([latestPantherVersion caseInsensitiveCompare: currentVersion] != NSOrderedDescending))
-		)
+
+    if([latestVersion caseInsensitiveCompare: currentVersion] != NSOrderedDescending)
     {
         NSRunAlertPanel(NSLocalizedString(@"Your copy of TeXShop is up-to-date",
                                           @"Your copy of TeXShop is up-to-date"),
@@ -1270,19 +1249,11 @@ necessary */
     }
     else
     {
-		if (hasTiger)
-			button = NSRunAlertPanel(NSLocalizedString(@"New version available",
+        button = NSRunAlertPanel(NSLocalizedString(@"New version available",
                                                        @"New version available"),
                                      [NSString stringWithFormat:
                                          NSLocalizedString(@"A new version of TeXShop is available (version %@). Would you like to download it now?",
                                                            @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestVersion],
-                                     @"OK", @"Cancel", nil);
-		else
-			button = NSRunAlertPanel(NSLocalizedString(@"New version available",
-                                                       @"New version available"),
-                                     [NSString stringWithFormat:
-                                         NSLocalizedString(@"A new version of TeXShop is available (version %@). Would you like to download it now?",
-                                                           @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestPantherVersion],
                                      @"OK", @"Cancel", nil);
         if (button == NSOKButton) {
             [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.dmg"]];

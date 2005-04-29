@@ -12,6 +12,7 @@
 #import "MyDocument.h"
 #ifdef MITSU_PDF
 #import "MyPDFView.h"
+#import "MyPDFKitView.h"
 #import "globals.h"
 extern NSPanel *pageNumberWindow;
 #else
@@ -24,11 +25,18 @@ extern NSPanel *pageNumberWindow;
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
-    id  result;
+    id		result;
+	NSColor	*backColor;
+	
     result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
-    float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
-    if (alpha < 0.999)
-         [self setAlphaValue:alpha];
+	
+		
+	[self setBackgroundColor: [NSColor whiteColor]];
+	
+	float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
+	if (alpha < 0.999)
+		[self setAlphaValue:alpha];
+		
     return result;
 }
 
@@ -53,8 +61,12 @@ extern NSPanel *pageNumberWindow;
 - (void) doTextMagnify: sender
 {
     id	thePanel;
+	
+	if ([myDocument fromKit])
+		 thePanel = [myDocument magnificationKitPanel];	
+	else
+		thePanel = [myDocument magnificationPanel];
     
-    thePanel = [myDocument magnificationPanel];
     [NSApp beginSheet: thePanel
             modalForWindow: self
             modalDelegate: self
@@ -64,15 +76,19 @@ extern NSPanel *pageNumberWindow;
 
 - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
 {
-    [sheet close];
+    // [sheet close];
     [sheet orderOut: self];
 }
 
 - (void) doTextPage: sender      // for toolbar in text mode
 {
-        id	thePanel;
-    
-    thePanel = [myDocument pagenumberPanel];
+	id	thePanel;
+		 
+    if ([myDocument fromKit]) 
+		 thePanel = [myDocument pagenumberKitPanel];
+	else 
+		thePanel = [myDocument pagenumberPanel];
+
     [NSApp beginSheet: thePanel
             modalForWindow: self
             modalDelegate: self
@@ -82,7 +98,7 @@ extern NSPanel *pageNumberWindow;
 
 - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
 {
-    [sheet close];
+    // [sheet close];
     [sheet orderOut: self];
 }
 
@@ -151,22 +167,17 @@ extern NSPanel *pageNumberWindow;
 
 - (void) previousPage: sender;
 {
-    [[myDocument pdfView] previousPage: sender];
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] previousPage: sender];
+	else
+		[[myDocument pdfView] previousPage: sender];
 }
 
 - (void) nextPage: sender;
-{
-    [[myDocument pdfView] nextPage: sender];
-}
-
-- (void) firstPage: sender;
-{
-    [[myDocument pdfView] firstPage: sender];
-}
-
-- (void) lastPage: sender;
-{
-    [[myDocument pdfView] lastPage: sender];
+{	if ([myDocument fromKit])
+		[[myDocument pdfKitView] nextPage: sender];
+	else
+		[[myDocument pdfView] nextPage: sender];
 }
 
 
@@ -187,32 +198,57 @@ extern NSPanel *pageNumberWindow;
 
 - (void) rotateClockwise: sender;
 {
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] rotateClockwise: sender];
+	else {
 #ifdef MITSU_PDF
-    MyPDFView *theView;
+			MyPDFView *theView;
 #else
-    MyView *theView;
+			MyView *theView;
 #endif
     
-    theView = [myDocument pdfView];
-    if (theView != nil)
-        [theView rotateClockwise: sender];
+			theView = [myDocument pdfView];
+			if (theView != nil)
+				[theView rotateClockwise: sender];
+		}
 }
 
 - (void) rotateCounterclockwise: sender;
 {
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] rotateCounterclockwise: sender];
+	else {
 #ifdef MITSU_PDF
-    MyPDFView *theView;
+			MyPDFView *theView;
 #else
-    MyView *theView;
+			MyView *theView;
 #endif
     
-    theView = [myDocument pdfView];
-    if (theView != nil)
-        [theView rotateCounterclockwise: sender];
+			theView = [myDocument pdfView];
+			if (theView != nil)
+				[theView rotateCounterclockwise: sender];
+		}
+}
+
+////////////////////// key movement ///////////////////////////////////
+
+- (void) firstPage: sender;
+{	if ([myDocument fromKit])
+		[[myDocument pdfKitView] firstPage: sender];
+	else
+		[[myDocument pdfView] firstPage: sender];
+}
+
+- (void) lastPage: sender;
+{
+    if ([myDocument fromKit])
+		[[myDocument pdfKitView] lastPage: sender];
+	else
+		[[myDocument pdfView] lastPage: sender];
 }
 
 - (void) up: sender;
-{
+{	if (![myDocument fromKit]) {
 #ifdef MITSU_PDF
     MyPDFView *theView;
 #else
@@ -222,10 +258,11 @@ extern NSPanel *pageNumberWindow;
     theView = [myDocument pdfView];
     if (theView != nil)
         [theView up: sender];
+	}
 }
 
 - (void) down: sender;
-{
+{	if (![myDocument fromKit]) {
 #ifdef MITSU_PDF
     MyPDFView *theView;
 #else
@@ -235,10 +272,11 @@ extern NSPanel *pageNumberWindow;
     theView = [myDocument pdfView];
     if (theView != nil)
         [theView down: sender];
+	}
 }
 
 - (void) top: sender;
-{
+{	if (![myDocument fromKit]) {
 #ifdef MITSU_PDF
     MyPDFView *theView;
 #else
@@ -248,10 +286,11 @@ extern NSPanel *pageNumberWindow;
     theView = [myDocument pdfView];
     if (theView != nil)
         [theView top: sender];
+	}
 }
 
 - (void) bottom: sender;
-{
+{	if (![myDocument fromKit]) {
 #ifdef MITSU_PDF
     MyPDFView *theView;
 #else
@@ -261,9 +300,33 @@ extern NSPanel *pageNumberWindow;
     theView = [myDocument pdfView];
     if (theView != nil)
         [theView bottom: sender];
+	}
 }
 
+// mitsu 1.29 (O)
+- (void) left: sender;
+{
+if (![myDocument fromKit]) {
+    MyPDFView *theView; 
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView left: sender];
+	}
+}
 
+- (void) right: sender;
+{
+if (![myDocument fromKit]) {
+    MyPDFView *theView; 
+    
+    theView = [myDocument pdfView];
+    if (theView != nil)
+        [theView right: sender];
+	}
+}
+
+////////// end key movement /////////////////////////
 
 - (void) orderOut:sender;
 {
@@ -289,6 +352,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+if (![myDocument fromKit]) {
+
     unichar	theChar;
     
     if ([theEvent type] == NSKeyDown) {
@@ -344,10 +409,11 @@ extern NSPanel *pageNumberWindow;
             
             }
        }
+
        
 #ifdef MITSU_PDF
 
-    else if ([theEvent type] == NSFlagsChanged) // mitsu 1.29 (S2)
+	else if ([theEvent type] == NSFlagsChanged) // mitsu 1.29 (S2)
 	{
 		[[myDocument pdfView] flagsChanged: theEvent];
 		return;
@@ -389,7 +455,7 @@ extern NSPanel *pageNumberWindow;
 	}
         
 #endif
-        
+}        
     [super sendEvent: theEvent];
 }
 
@@ -482,6 +548,7 @@ extern NSPanel *pageNumberWindow;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 {
+
     if ([anItem action] == @selector(displayLatexPanel:))
         return NO;
     if ([anItem action] == @selector(displayMatrixPanel:))
@@ -531,7 +598,7 @@ extern NSPanel *pageNumberWindow;
 	// end mitsu 1.29 (O)
 
 #endif
-		
+			
     return [super validateMenuItem: anItem];
 }
 
@@ -543,44 +610,36 @@ extern NSPanel *pageNumberWindow;
 
 #ifdef MITSU_PDF
 
-// mitsu 1.29 (O)
-- (void) left: sender;
-{
-    MyPDFView *theView; 
-    
-    theView = [myDocument pdfView];
-    if (theView != nil)
-        [theView left: sender];
-}
-
-- (void) right: sender;
-{
-    MyPDFView *theView; 
-    
-    theView = [myDocument pdfView];
-    if (theView != nil)
-        [theView right: sender];
-}
 
 // mitsu 1.29 (O)
 - (void)changePageStyle: (id)sender
 {
-	[[myDocument pdfView] changePageStyle: sender];
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] changePageStyle: sender];
+	else
+		[[myDocument pdfView] changePageStyle: sender];
 }
 
 - (void)changePDFViewSize: (id)sender
-{
-	[[myDocument pdfView] changePDFViewSize: sender];
+{	if ([myDocument fromKit])
+		[[myDocument pdfKitView] changePDFViewSize: sender];
+	else
+		[[myDocument pdfView] changePDFViewSize: sender];
 }
 
 - (void)copy: (id)sender
 {
-	[[myDocument pdfView] copy: sender];
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] copy: sender];
+	else
+		[[myDocument pdfView] copy: sender];
 }
 
 -(void)saveSelectionToFile: (id)sender
-{
-	[[myDocument pdfView] saveSelectionToFile: sender];
+{	if ([myDocument fromKit])
+		[[myDocument pdfKitView] saveSelectionToFile: sender];
+	else
+		[[myDocument pdfView] saveSelectionToFile: sender];
 }
 // end mitsu 1.29 (O)
 // end mitsu 1.29

@@ -37,6 +37,7 @@ NSString *PdfMagnificationKey = @"PdfMagnification";
 NSString *NoScrollEnabledKey = @"NoScrollEnabled";
 NSString *PdfWindowFixedPosKey = @"PdfWindowFixedPosition";
 NSString *PdfWindowNameKey = @"PdfWindow";
+NSString *PdfKitWindowNameKey = @"PdfKitWindow";
 NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
 NSString *PdfPageStyleKey = @"PdfPageStyle"; // mitsu 1.29 (O)
 NSString *PdfRefreshKey = @"PdfRefresh";
@@ -44,9 +45,11 @@ NSString *RefreshTimeKey = @"RefreshTime";
 NSString *PdfFileRefreshKey = @"PdfFileRefresh";
 NSString *PdfFirstPageStyleKey = @"PdfFirstPageStyle"; 
 NSString *PdfFitSizeKey = @"PdfFitSize"; // mitsu 1.29 (O)
+NSString *PdfKitFitSizeKey = @"PdfKitFitSize"; // mitsu 1.29 (O)
 NSString *PdfCopyTypeKey = @"PdfCopyType"; // mitsu 1.29 (O) 
 NSString *PdfExportTypeKey = @"PdfExportType"; // mitsu 1.29 (O) 
 NSString *PdfMouseModeKey = @"PdfMouseMode"; // mitsu 1.29 (O)
+NSString *PdfKitMouseModeKey = @"PdfKitMouseMode"; // mitsu 1.29 (O)
 NSString *PdfQuickDragKey = @"PdfQuickDrag"; // mitsu 1.29 drag & drop
 NSString *SaveDocumentFontKey = @"SaveDocumentFont";
 NSString *SyntaxColoringEnabledKey = @"SyntaxColoringEnabled";
@@ -125,6 +128,9 @@ NSString *AggressiveTrashAUXKey = @"AggressiveTrashAUX";
 NSString *ShowSyncMarksKey = @"ShowSyncMarks";
 NSString *AcceptFirstMouseKey = @"AcceptFirstMouse";
 NSString *UseOldHeadingCommandsKey = @"UseOldHeadingCommands";
+NSString *SyncMethodKey = @"SyncMethod";
+NSString *UseOutlineKey = @"UseOutline";
+
 // end mitsu 1.29
 
 // Exceptions

@@ -11,13 +11,34 @@
 <BODY>
 	<div id="content_border">
 		<P>Synchronization is an important feature of Textures, a commercial implementation of TeX for
-Mac Classic by Blue Sky TeX Systems. Using this feature,  an author can click in the preview window and immediately be taken to the corresponding spot in the source window. A native version of Textures for MacOS X is promised but has not yet been released. The implementation of synchronization in Textures is widely admired for its ability to precisely locate the corresponding spot in the source code.</P> 
+Mac Classic by Blue Sky TeX Systems. Using this feature,  an author can click in the preview window and immediately be taken to the corresponding spot in the source window, or click in the source window and be taken to the preview window. A native version of Textures for MacOS X is promised but has not yet been released. The implementation of synchronization in Textures is widely admired for its ability to precisely locate the corresponding spot in the source code.</P> 
 
-<P>Since this implementation, a number of TeX systems have provided approximately the same feature using an additional style file which causes TeX to write extra information to the dvi file. In 2003, Piero D'Ancona and Jérôme Laurens wrote an appropriate style file for pdflatex.
-This package, pdfsync.sty, causes pdftex to write an extra file during typesetting with information needed to correlate the output pdf and input source files. D'Ancona and Laurens' work depends on internal pdftex commands which output the x and y coordinates of certain typesetting operations. </P>
+<P>Since this implementation, a number of TeX systems have provided a roughly similar feature using an additional style file which causes TeX to write extra information to the dvi file. None of these approximations (including the TeXShop methods to be described next) is as accurate as the Textures method.</P>
 
-<P>TeXShop 1.35 uses the latest version of pdfsync.sty. Read "How do I configure TeXShop?: Did You Install TeXShop Correctly" to make certain that you installed this latest file. 
-The pdfsync feature is only available in pdftex, pdflatex, and context; it does not work with the tex + ghostscript typesetting option.</P>
+<P> TeXShop can provide synchronization in two ways. The default method uses a new ability in Mac OSX 10.4 to search for strings in pdf files. No special style files need be included to use this method. Click on a word or phrase in the source window while holding down the Apple control key; the preview window will scroll to the appropriate spot and the corresponding typeset phrase will be circled in red. Similarly, click on a word or phrase in the preview window. The appropriate source file will open (if necessary) and scroll to the corresponding source phrase, which will be highlighted in yellow.</P>
+
+<P> This method is independent of the engine used to typeset the file, so it will work with pdftex and pdflatex, with TeX + Ghostscript and LaTeX + Ghostscript, with XeTeX, and with other engines.</P>
+
+<P> When using this facility, it helps to know the underlying mechanism. Suppose you click on a spot in the source file. TeXShop obtains the string 20 characters wide centered about the click, and searches for the corresponding string in the pdf file. If it finds this string exactly once, it circles the pdf string in red and declares success. But often, source strings contain formatting commands and do not match output strings; this is certainly true when typesetting mathematics. So if the search fails, TeXShop backs up 5 characters, obtains a new string 20 characters wide, and tries again. It repeats this operation 20 times if necessary, and if none of the tries succeeds it repeats the operation 20 more times looking forward past the original string rather than backward. If none of these search operations succeeds, TeXShop gives up.
+
+<P>Obviously, then, it is best to click on sentences rather than formulas. Paragraphs
+with heavy markup may not synchronize well. Experiments show, however, that searches usually
+succeed and clicking can be done without really thinking about selecting an appropriate spot.     
+
+<P> Synchronizing from the preview window to the source window works the same way, but there is an additional complication. Projects may contain several source files, inserted using the \include or
+\input methods. TeXShop handles this complication by assuming that all \include and \input statements occur in the root file, using one of the commands \include{this file}, \input{this file}, or
+\import{this file}. In the initial implementation, it makes a list of the first twenty such files
+and searches all of them, declaring success if a string occurs exactly once in exactly one of the files. If the string is found in a file which is not yet open, TeXShop opens the file. Then it scrolls to the appropriate spot and highlights the resulting phrase in yellow. (In future implementations, the
+number twenty may be raised; write if you need more files searched.)</P>
+
+<P> Previous versions of TeXShop used an alternate synchronization method, invented in 2003 by
+Jérôme Laurens and Piero D'Ancona. They  wrote a style file for pdflatex; their package, pdfsync.sty, causes pdftex to write an extra file during typesetting with information needed to correlate the output pdf and input source files. Laurens' and D'Ancona's  work depends on internal pdftex commands which output the x and y coordinates of certain typesetting operations, so it only works with pdftex, pdflatex, and context. </P>
+
+<P> TeXShop can still use this method. A preference is available in the Misc tab to select the
+synchronization method; "pdfsync" is the original method and "pdfsearch" is the new method. It is also
+possible to choose to use "pdfsearch" but fall back on "pdfsync" when "pdfsearch" fails to find a match. </P>
+
+<P>The "pdfsync" method requires that you install the latest version of pdfsync.sty and related files. Read "How do I configure TeXShop?: Did You Install TeXShop Correctly" to make certain that you installed these files.</P>
 
 <P>To use pdfsync with LaTeX, add the following line to the
 preamble of your tex source code before the \begin{document} line:</P>
@@ -26,17 +47,12 @@ preamble of your tex source code before the \begin{document} line:</P>
 </dl>
 <P>The package will be ignored if you typeset with tex + ghostscript, but if you typeset with pdflatex, an extra file will be created with extension .pdfsync. For example, if the
 source file is named main.tex, the extra file will be named main.pdfsync. This extra file contains the information needed to correlate spots in the pdf file with spots in the source file. Most files should typeset without errors using pdfsync, but in a small number of cases, this package might introduce extra errors. Such dangerous code
-can be enclosed between a pair of commands \pdfsyncstop and \pdfsyncstart. For added accuracy, extra synchronization points can be added using the command \pdfsync.  
+can be enclosed between a pair of commands \pdfsyncstop and \pdfsyncstart. For added accuracy, extra synchronization points can be added using the command \pdfsync. The pdfsync style files sometimes changes line breaks in a document, so the standard recommendation is to typeset using it and then typeset a final time without it.  
 </P>
 
-<P> Once a file has been typeset with pdfsync, click on a spot in the pdf preview window while holding down the command key. The source window will be brought to the front, the line containing the corresponding source will be selected, and the window will scroll to this line if necessary. If the spot in the preview window corresponds to source code from an included chapter file, the chapter file will open, appear at the front, and scroll to the appropriate spot in the source.
-</P>
+<P> Once a file has been typeset with pdfsync, synchronization works exactly as with "pdfsearch" described above. Note that if you include pdfsync.sty but choose "pdfsearch" as the TeXShop synchronization preference, then the .pdfsync file will just be ignored.</P>
 
-<P> This process also works in reverse. Click on a line in
-the source file while holding down the command key. The preview window will be brought to the front, with the appropriate page selected. This process works if the source file has a %SourceDoc line or a root file, selecting the appropriate page in the root preview window. Warning: if a root document uses \include to add other source files but these files are not linked back to the root document with a %SourceDoc line or a root file, then command-click will move from the preview window to an included source, but not from the included source back to the preview. It is easy to remedy this by adding a %SourceDoc comment to the top of each source file.
-</P>
-
-<P> In this initial implementation, the selected line will be roughly correct but the actual source code may be a few lines lower or higher. Over time, TeXShop synchronization code will be polished and accuracy will improve. 
+<P> Warning: if a root document uses \include to add other source files but these files are not linked back to the root document with a "%!TEX root" line or a root file, then command-click will move from the preview window to an included source, but not from the included source back to the preview. It is easy to remedy this by adding a "%!TEX root" comment to the top of each source file.
 </P>
 
 <P> As explained above, pdfsync works with files read by \include{myfile}. It also works with the input

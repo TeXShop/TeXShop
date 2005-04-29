@@ -1,8 +1,9 @@
-{\rtf1\mac\ansicpg10000\cocoartf102
+{\rtf1\mac\ansicpg10000\cocoartf823
 {\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fswiss\fcharset77 Helvetica-Oblique;\f2\froman\fcharset77 Times-Roman;
 }
-{\colortbl;\red255\green255\blue255;\red74\green0\blue0;}
-\vieww14640\viewh14680\viewkind0
+{\colortbl;\red255\green255\blue255;\red74\green0\blue0;\red33\green9\blue0;\red199\green255\blue205;
+}
+\vieww19900\viewh19440\viewkind0
 \pard\tx1440\tx2180\tx4320\tx5760\tx7200\li1480\fi-20\qc
 
 \f0\fs48 \cf0 TeXShop\
@@ -1695,7 +1696,13 @@ Version 1.29		July 11, 2003\
 						%!TEX root =  ../Main.tex\
 \
 					(The old syntax is still supported for setting the program, encoding, and SourceDoc,\
-					but users are urged to switch to this new syntax.)\
+					but users are urged to switch to this new syntax.) (In 1.37 and 2.00, the old syntax is not\
+					supported by default. But there is a hidden preference to turn it back on:\
+\
+						defaults write TeXShop UseOldHeadingCommands YES\
+\
+					If this default is activated, the new syntax will be recognized, but the old syntax will also\
+					be recognized.)\
 \
 					TeXShop has a new Find panel by Isao Sonobe. This panel supports regular expressions.\
 					Users can switch between the new panel and the original one in Preferences.\
@@ -1943,4 +1950,272 @@ Version 1.29		July 11, 2003\
 \
 					The Bibtex, etc., tools in the source window did not work if a file had a root\
 					file. Fixed.\
+\
+\
+\pard\tx1440\tx2180\tx2800\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 Version 1.36		This version was never released.\
+\
+\
+Versions 1.37 and 2.00		April 29, 2005\
+\
+	Version 2.00 uses PDFKit, which is new in system 10.4 (Tiger). Consequently it \
+	requires Tiger. Version 1.37 contains all changes in 2.00 except those which depend on\
+	PDFKit. If serious bugs are found in 1.37, they will be fixed in updates: 1.38, 1.39, etc.\
+	However, TeXShop development from this point on will build from the 2.00 version,\
+	and updates to 1.37 beyond bug fixes are unlikely.\
+\
+New Features in 2.00:\
+						A new synchronization method has been added to TeXShop, using the ability in Tiger\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 				to search for strings in pdf files. The new method does not require including a\
+				pdfsync.sty file, so it works out of the box on files typeset using any engine:\
+				pdftex or pdflatex, TeX + ghoscript or LaTeX + ghostscript, XeTeX, and other engines.\
+\
+				Click on a word or phrase in the source file. TeXShop will scroll the preview window to the\
+				corresponding phrase and circle it in red. Click on a word or phrase in the\
+				preview window. TeXShop will open the corresponding source file if it is not already\
+				open, scroll the source to the appropriate spot, and highlight the source phrase \
+				in yellow. \
+\
+				A new TeXShop preference item selects the synchronization method to be used:\
+				the old pdfsync method, the new search method, or a combination in which the\
+				new search is used, but the program falls back on pdfsync if the new search does not\
+				succeed. \
+\pard\tx1440\tx2180\tx2800\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 \
+	PDFKit also makes the following features possible:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 						\
+					TeXShop supports hyperlinks. To activate this feature, add the line\
+\
+	\cf2 					\cf0 \\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, \
+							citecolor=blue, urlcolor=blue]\{hyperref\} \
+	\cf2 \
+					\cf0 to the heading of the source document. Links to external web sites can then be added\
+					to tex documents using commands like\
+	\cf2 \
+						\cf0 \\href\{http://www.uoregon.edu/~koch/\}\{Koch homepage\} \
+	\cf2 \
+					\cf0 Links to other portions of the tex document can be added using commands like\
+	\cf2 						\
+						\cf0 \\hyperlink\{lemniscate\}\{Graph of Lemniscate\}\
+\
+					where the tag "lemniscate" is created using a command like\
+\
+						 \\hypertarget\{lemniscate\}\{\}\cf2 \\\cf0 \
+	\cf2 \
+					\cf0 To navigate with these links, choose the new "text" tool and clink\
+					on the colored links.\
+\cf2 \
+				\cf0 The preview window toolbar contains "Back" and "Forward" buttons so one \
+				can jump to a spot using a link, and then jump back.\
+\
+\cf2 				\cf0 Hyperref.sty automatically adds links to citations, so readers can rapidly jump from a citation to\
+				the corresponding bibliography entry.\
+\cf2 \
+				\cf0 The hyperref package also creates a document outline. For example, the main outline of\
+				a book is a list of chapters; each chapter entry contains a list of sections, and so forth. \
+				To see this outline and navigate through the document with it, use the new "drawer" tool to \
+				display the pdf window's drawer.\
+\
+	\cf2 			\cf0 The text tool can be used to select a portion of text in the preview window and copy\
+				this selection to an editor. This differs from the "pdf selection tool" which copies a portion\
+				of the document as a pdf illustration --- the text tool copies editable text.\
+	\cf2 				\
+				\cf0 Searching the pdf preview is supported. Use the search tools in the bottom half of\
+				the window's drawer.\
+	\cf2 \
+				\cf0 PDFKit brings additional polish to the display of pdf documents. It supports documents with \
+				isolated rotated pages, and correctly prints rotated pages in landscape mode. It supports \
+				liveupdate of window resizing if the magnification preference is set to "fit to window." Etc.\
+\
+\
+			New Features in 2.00 and 1.37\cf2 :\cf0 \
+\cf2 \
+				\cf0 The remaining new features are available in both new versions.\
+\cf2 \
+				\cf0 Earlier versions of TeXShop allowed users to set the typesetting engine of a file, its \
+				encoding, and its root file by adding appropriate comments to the top of the source file. For example,\
+				the following commands set the typesetting engine to xelatex, the encoding to UTF-8 Unicode,\
+				and the root file to ../Main.tex:\
+\cf2 \
+					\cf0  %\cf3 &xelatex\cf0 \
+\cf2 					\cf0 %\cf3 &encoding\cf0 = UTF-8 Unicode\
+\cf2 					\cf0 %SourceDoc ../Main.tex\
+\cf2 \
+				\cf0 But this syntax was a mistake because the symbols "%\cf3 &\cf0 " are reserved for the use of TeX.\
+\cf2 				\cf0 In versions 1.37 and 2.00 of TeXShop, the syntax has been changed to the following.\
+				Each such line must occur within the first twenty lines of the document.\
+\cf2 \
+					\cf0 %!TEX TS-program = xelatex\
+\cf2 					\cf0 %!TEX encoding = UTF-8 Unicode\
+\cf2 					\cf0 %!TEX root = ../Main.tex\
+\cf2 \
+				\cf0 It you used the earlier facility, you need to change your old source files to the new syntax. I'm\
+				very sorry to cause this work, but the change is really necessary. This syntax is mentioned in the\
+				description of version 1.35, but this change was not actually released until this version.\
+\
+				If you are in the middle of a project and cannot make the change now, you can temporarily\
+				set a hidden preference to revert to the old syntax. To do so, open Apple's Terminal program and\
+				type \
+\cf2 \
+					\cf0 defaults write TeXShop UseOldHeadingCommands YES\
+\cf2 \
+				\cf0 Once this is done, the new commands will be recognized but the old commands will also work.\
+				However, I recommend turning this preference off as soon as possible.\
+\cf2 \
+				\cf0 Commands have been added to the default Macros menu which insert the symbols \
+				"%!TEX TS-program = " and "%!TEX encoding = " and "%!TEX root = " into the source document; \
+				new users will see these entries. Users who are upgrading can easily add these symbols as well. \
+				To add the program entry, choose "Open Macro Editor" under the Macro menu. Click the "New Item" \
+				button, name the item "Program" and set its content to\
+\cf2 \
+					\cf0 %!TEX TS-program =  #INS# \
+\cf2 \
+				\cf0 Repeat for the "Encoding" and "Root" items. \cf2 <\cb4 /li\cb1 >\cf0 \
+\cf2 \
+				\cf0 Martin Kerz added a "Check for Updates..." command to TeXShop. \
+\
+				Martin Kerz also designed the new TeXShop web page. Thanks! \
+\cf2 	\
+				\cf0 OgreKit for searching has been upgraded to the latest 2.0.1 version.\
+\
+\cf2 				\cf0 Additional filetypes can be edited, including files with extensions "abc", "bst", "bib", "lp", and\
+				"pdf". The addition of "pdf" allows TeXShop to be chosen as the default pdf viewer. A new pdf icon\
+				has been created so the system can use it on pdf files it will display in TeXShop. \
+\
+\cf2 				\cf0 David Reitter modified the selection code so if the uses clicks on a control word like\
+				\\gamma, the initial "\\" symbol will also be chosen. \
+\
+				A new preference item "Select on Activate" was added. When this item is checked, a mouse click\
+				on the text window will select this window and also place the cursor at the spot that was clicked. If\
+				the item is not checked, the initial mouse click will only activate the window. A separate click is then\
+				needed to position the cursor.\
+\
+\cf2 				\cf0 New hidden preferences were added for users who change the default foreground and background \
+				colors of the editing window. These preferences set the color of the insertion point (without these \
+				preferences, the insertion point could become invisible). To set the insertion point to white, for example,\
+\cf2 					\
+					\cf0 defaults write TeXShop insertionpoint_R 1.0 \
+\cf2 					\cf0 defaults write TeXShop insertionpoint_G 1.0 \
+\cf2 					\cf0 defaults write TeXShop insertionpoint_B 1.0 \
+\
+				Recall the defaults to set the text foreground color in the editing window (introduced already in 1.35)\
+\
+					defaults write TeXShop foreground_R  0.3\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 					defaults write TeXShop foreground_G  0.3\
+					defaults write TeXShop foreground_B  0.3\
+\
+				Also recall the defaults to set the text background color in the editing window (introduced already\
+				in 1.28)\
+\
+					defaults write TeXShop background_R .42\
+\pard\tx1440\tx2180\tx2800\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 		defaults write TeXShop background_G .39\
+		defaults write TeXShop background_B .77\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+				\cf0 When a file is typeset, all open changed files with the same root\
+				are first saved.\
+\
+				New Japanese Help by Yoshihisa Okazaki with help from Seiji Zenitani.\
+\
+				A proxy icon is now added to the title of the preview window. This icon can be \
+				dragged to the desktop or other folders to create a copy of the pdf file. The source \
+				window has always had a proxy icon. Thanks to Rene Donner for suggesting this \
+				feature and explaining how to implement it.\
+\
+				If the user tries to open a file with UTF-8 Unicode encoding, but\
+				the file is not a legal utf8 file, a dialog now appears:\
+\
+					This file is not encoded in UTF-8 Unicode.\
+\
+					The file has been opened with MacOSRoman encoding.\
+					If that is not correct, close it and open again with an\
+					appropriate encoding.\
+\
+				This change is mainly for people trying to open a fine with \
+				UTF-8 Encoding when the file was not coded for UTF-8 Unicode. \
+				A random collection of bytes will almost never be a legal \
+				UTF-8 Unicode file. Note that usually TeXShop cannot tell the \
+				correct encoding for other encoding defaults. For example, a Latin1 file will open fine in \
+				MacOSRoman encoding, though some of the letters may be wrong. \
+\
+				New Spanish help files and localization\
+\
+				bib files are promoted to full class citizens; text can be dragged in them,\
+				syntax coloring works, etc.\
+\
+				This is a remark rather than a bug fix. Users have reported that they\
+				can no longer "find" words in the console window. Actually, they can. This\
+				window has two portions. When typesetting ends, the bottom portion is active,\
+				so the Find panel searches that portion and beeps when it finds nothing.\
+				To activate the top, click on it. Now Find works.\
+\cf2 \
+\
+			Bugs Fixed:\cf0 \
+				\
+				TeXShop has always had a "Revert To Saved" item under the File menu, but it has never worked!\
+				Sorry. This is fixed. \
+\
+\cf2 				\cf0 Improvements were made in the pdfsync code.\
+\
+				In previous versions, it was possible to add a Macro button to the\
+				Preview Window Toolbar in English, but not in other localizations. This is\
+				fixed thanks to Juan Luis Varona.\
+\
+				Japanese Image Copy Type Preference didn't work, due to incorrect localization.\
+				Now fixed.\
+\
+				 Command Completion was repaired; the configuration file is now loaded and\
+				saved in UTF-8 Unicode, and the first line of the file, opened with\
+				Format --> Completion --> Open Completion File, is\
+\
+					%!TEX encoding = UTF-8 Unicode\
+\
+				Users who are upgrading and work with unicode scripts should select the menu item\
+				Format --> Completion --> Open Completion File... and add this line to the\
+				top of the file. \
+\
+				When typesetting engines are called, they are now passed the\
+				program filename with extension, rather than just the filename\
+\
+				Conversion of eps, ps, and dvi files to pdf (caused by opening such a file)\
+				now works even if the path to the file has folders whose names contain spaces.\
+				In all three cases, the file can now be in a folder without write permission.\
+\
+				In 1.35, it was only possible to switch between the OgreKit Find panel\
+				and the Apple Find panel in the English localization. This preference now\
+				always works.\
+		\
+				Trash AUX Files now removes files with more extensions:\
+\
+					ccs, idv, 4ct, 4tc, lg, xref (from TeX4ht; request of Bob Kerstetter)\
+					ttt, fff, ent (from endfloat and endnotes; request of Herb Schulz)\
+					wrm (from WARMreader; request of Gary Gray)\
+\
+\pard\tx1440\tx2180\tx2800\tx4320\tx5760\tx7200\li1480\fi-20\ql\qnatural
+\cf0 	The list doesn't contain dvi (never did). I've removed bbl at the\
+	request of Lawrence Paulson, Gary Gray, ADITYA TRIVEDI, and Josep Font.\
+\
+	The menu item to bring up the statistics panel was only in the\
+	English version. Now it is in all versions.\
+\
+	Further pdfsync fixes from source to preview. If a project\
+	had a SourceDoc ./main.tex line instead of a SourceDoc main.tex line,\
+	pdfsync could fail. This is fixed.\
+\
+	A further pdfsync fix in case the user wrote\
+\
+		\\include\{./MyChapter/Chapter1\} \
+\
+	rather than \
+\
+		\\include\{MyChapter/Chapter1\}\
+	\
+	Now when a file is typeset, all open changed files with the same root\
+	are first saved.\
+\
+\
 }

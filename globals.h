@@ -38,6 +38,7 @@ extern NSString *PdfMagnificationKey;
 extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
+extern NSString *PdfKitWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
 extern NSString *PdfPageStyleKey; // mitsu 1.29 (O)
 extern NSString *PdfRefreshKey; 
@@ -45,9 +46,11 @@ extern NSString *RefreshTimeKey;
 extern NSString *PdfFileRefreshKey; 
 extern NSString *PdfFirstPageStyleKey;
 extern NSString *PdfFitSizeKey; // mitsu 1.29 (O)
+extern NSString *PdfKitFitSizeKey; // mitsu 1.29 (O)
 extern NSString *PdfCopyTypeKey; // mitsu 1.29 (O) 
 extern NSString *PdfExportTypeKey; // mitsu 1.29 (O) 
 extern NSString *PdfMouseModeKey; // mitsu 1.29 (O)
+extern NSString *PdfKitMouseModeKey; // mitsu 1.29 (O)
 extern NSString *PdfQuickDragKey; // mitsu 1.29 drag & drop
 extern NSString *SaveDocumentFontKey;
 extern NSString *SyntaxColoringEnabledKey;
@@ -126,6 +129,8 @@ extern NSString *AggressiveTrashAUXKey;
 extern NSString *ShowSyncMarksKey;
 extern NSString *AcceptFirstMouseKey;
 extern NSString *UseOldHeadingCommandsKey;
+extern NSString *SyncMethodKey;
+extern NSString *UseOutlineKey;
 // end mitsu 1.29
 
 
@@ -267,12 +272,33 @@ typedef enum _PDFSizeOption
 /*" Mouse mode for MyPDFView"*/
 typedef enum _MouseMode
 {
-        MOUSE_MODE_NULL = 0,
+	MOUSE_MODE_NULL = 0,
 	MOUSE_MODE_SCROLL = 1, 
 	MOUSE_MODE_MAG_GLASS = 2, 
 	MOUSE_MODE_MAG_GLASS_L = 3, 
 	MOUSE_MODE_SELECT = 4
 } _MouseMode;
+
+/*" Size option for MyPDFKitView"*/
+typedef enum _NewPDFSizeOption
+{
+	NEW_PDF_ACTUAL_SIZE = 1, // PDF_ACTUAL_SIZE = -100, 
+	NEW_PDF_FIT_TO_NONE = 2, // PDF_FIT_TO_NONE = -101, 
+	NEW_PDF_FIT_TO_WINDOW = 3, // PDF_FIT_TO_WINDOW = -104
+	NEW_PDF_FIT_TO_WIDTH = 4, // PDF_FIT_TO_WIDTH = -102, 
+	NEW_PDF_FIT_TO_HEIGHT = 5 // PDF_FIT_TO_HEIGHT = -103, 
+
+} _NewPDFSizeOption;
+
+/*" Mouse mode for MyPDFKitView"*/
+typedef enum _NewMouseMode
+{
+	NEW_MOUSE_MODE_SCROLL = 1,
+	NEW_MOUSE_MODE_SELECT_TEXT = 2,
+	NEW_MOUSE_MODE_MAG_GLASS = 3, 
+	NEW_MOUSE_MODE_MAG_GLASS_L = 4, 
+	NEW_MOUSE_MODE_SELECT_PDF = 5
+} _NewMouseMode;
 
 /*" Image copy/export types for MyPDFView"*/
 typedef enum _ImageCopyType
@@ -292,4 +318,13 @@ typedef enum _ImageCopyType
 } _ImageCopyType;
 
 // end mitsu 1.29
+
+/*" Sync Methods"*/
+typedef enum _SyncMethodType
+{
+	PDFSYNC = 0, // original PDF sync
+	SEARCHONLY = 1, // new pdf search method
+	SEARCHFIRST = 2 // new pdf search first, but fall back on PDF sync if necessary
+} _SyncMethodType;
+
 

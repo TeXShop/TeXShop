@@ -13,6 +13,7 @@
                 chooseEncoding = id; 
                 chooseProgram = id; 
                 chooseProgramEE = id; 
+                doBackForward = id; 
                 doBibtex = id; 
                 doError = id; 
                 doLatex = id; 
@@ -39,26 +40,41 @@
             CLASS = Document; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                ProgramButtonKK = id; 
+                TypesetButtonKK = id; 
                 autoCompleteButton = id; 
+                backforthKK = id; 
+                drawerKK = id; 
                 gotopageOutlet = id; 
+                gotopageOutletKK = id; 
                 lineBox = id; 
                 linePanel = id; 
                 macroButton = id; 
                 macroButtonEE = id; 
+                macroButtonKK = id; 
+                magnificationKitPanel = id; 
                 magnificationOutlet = id; 
+                magnificationOutletKK = id; 
                 magnificationPanel = id; 
                 mouseModeMatrix = id; 
+                mouseModeMatrixKK = id; 
                 mouseModeMenu = id; 
+                mouseModeMenuKit = id; 
+                myPDFKitView = id; 
                 nextButton = id; 
+                nextButtonKK = id; 
                 openSaveBox = id; 
                 openSaveView = id; 
                 outputText = id; 
                 outputWindow = id; 
+                pagenumberKitPanel = id; 
                 pagenumberPanel = id; 
+                pdfKitWindow = id; 
                 pdfView = id; 
                 pdfWindow = id; 
                 popupButton = id; 
                 previousButton = id; 
+                previousButtonKK = id; 
                 printRequestPanel = id; 
                 programButton = id; 
                 programButtonEE = id; 
@@ -71,6 +87,7 @@
                 statisticsForm = id; 
                 statisticsPanel = id; 
                 syncBox = id; 
+                syncBoxKK = id; 
                 tags = id; 
                 texCommand = id; 
                 textView = id; 
@@ -82,13 +99,55 @@
             }; 
             SUPERCLASS = NSDocument; 
         }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {takeDestinationFromOutline = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
         {CLASS = FlippedClipView; LANGUAGE = ObjC; SUPERCLASS = NSClipView; }, 
         {
             CLASS = MainWindow; 
             LANGUAGE = ObjC; 
             OUTLETS = {myDocument = id; }; 
             SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {
+                changeMouseMode = id; 
+                changeScale = id; 
+                doFind = id; 
+                doStepper = id; 
+                goToKitPage = id; 
+                myAction = id; 
+                nextPage = id; 
+                previousPage = id; 
+                takeDestinationFromOutline = id; 
+            }; 
+            CLASS = MyPDFKitView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_drawer" = id; 
+                "_noOutlineText" = id; 
+                "_outlineView" = id; 
+                "_searchProgress" = id; 
+                "_searchTable" = id; 
+                currentPage = id; 
+                currentPage1 = id; 
+                imageTypePopup = id; 
+                imageTypeView = id; 
+                mouseModeMatrix = id; 
+                mouseModeMenu = id; 
+                myDocument = id; 
+                myPDFWindow = id; 
+                myScale = id; 
+                myScale1 = id; 
+                myStepper = id; 
+                myStepper1 = id; 
+                totalPage = id; 
+                totalPage1 = id; 
+            }; 
+            SUPERCLASS = PDFView; 
         }, 
         {
             ACTIONS = {
@@ -163,6 +222,7 @@
             SUPERCLASS = NSWindow; 
         }, 
         {CLASS = NSCursor; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
         {CLASS = TextFinder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 

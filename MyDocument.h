@@ -29,6 +29,7 @@
     id			pdfView;		/*" view displaying the current preview "*/
     id			textWindow;		/*" window displaying the current document "*/
     id			pdfWindow;		/*" window displaying the current pdf preview "*/
+	id			pdfKitWindow;
     id			outputWindow;		/*" window displaying the output of the running TeX process "*/
     id			outputText;		/*" text displaying the output of the running TeX process "*/
     NSTextField		*texCommand;		/*" connected to the command textField on the errors panel "*/
@@ -38,7 +39,9 @@
     id			requestWindow;
     id			printRequestPanel;
     id			pagenumberPanel;
+	id			pagenumberKitPanel;
     id			magnificationPanel;
+	id			magnificationKitPanel;
     id                  statisticsPanel;
     id                  statisticsForm;
     id			openSaveBox;
@@ -49,6 +52,15 @@
     id			typesetButtonEE;
     id			programButton;
     id			programButtonEE;
+	
+	id			previousButtonKK;
+	id			nextButtonKK;
+	id			gotopageOutletKK;
+	id			magnificationOutletKK;
+	id			mouseModeMatrixKK;
+	id			backforthKK;
+	id			drawerKK;
+	
     id			tags;
     int			encoding;		/*" using tags of encoding matrix; changing tags does not change preference "*/
     int			tempencoding;
@@ -103,6 +115,7 @@
     
     IBOutlet NSMatrix 	*mouseModeMatrix; // mitsu 1.29 (O)
     IBOutlet NSMenu 	*mouseModeMenu; // mitsu 1.29 (O)
+	IBOutlet NSMenu 	*mouseModeMenuKit; // mitsu 1.29 (O)
     IBOutlet NSMenu 	*magnificationMenu; // mitsu 1.29 test
     
     BOOL		externalEditor;
@@ -124,6 +137,10 @@
     NSWindow            *callingWindow;
     int                 badEncoding;
     BOOL                showBadEncodingDialog;
+	id					*myPDFKitView;
+	BOOL				PDFfromKit;
+	unsigned int		pdfCharacterIndex;
+	BOOL				textSelectionYellow;
     
 // end addition
 
@@ -137,7 +154,9 @@
 - (void) setTextView: (id)aView;
 // endforsplit
 - (id) magnificationPanel;
+- (id) magnificationKitPanel;
 - (id) pagenumberPanel;
+- (id) pagenumberKitPanel;
 - (void) quitMagnificationPanel: sender;
 - (void) quitPagenumberPanel: sender;
 - (void) showStatistics: sender;
@@ -166,6 +185,7 @@
 - (void) printSource: sender;
 - (void) okForRequest: sender;
 - (void) chooseEncoding: sender;
+- (int) encoding;
 - (void) okForPrintRequest: sender;
 - (void) close;
 - (void) setProjectFile: sender;
@@ -173,10 +193,12 @@
 - (void) doTag: sender;
 - (void) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
+- (void) chooseProgramFF: sender;
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 - (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (int)theEngine;
 - (void) completeSaveFinished;
 - (id) pdfView;
+- (id) pdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
@@ -199,6 +221,7 @@
 - (void) setupTags;
 - (int) imageType;
 - (id) pdfWindow;
+- (id) pdfKitWindow;
 - (id) textWindow;
 - (id) textView;
 - (id) rootDocument;
@@ -222,10 +245,23 @@
 - (void)showSyncMarks:sender;
 - (BOOL)syncState;
 - (void) flipShowSync: sender;
-- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line;
+- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)index andTextView:(id)textView;
+- (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)index andTextView:(id)theTextView;
 - (void)trashAUXFiles: sender;
 - (void)trashAUX;
 - (void)tryBadEncodingDialog: (NSWindow *)theWindow;
+- (BOOL)fromKit;
+- (void)installStringIntoTextEdit;
+- (BOOL)revertToContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError;
+- (void)doBackForward: (id)sender;
+- (void)doBack: (id)sender;
+- (void)doForward: (id)sender;
+- (id) mousemodeMenu;
+- (id) mousemodeMatrix;
+- (void) setCharacterIndex:(unsigned int)index;
+- (BOOL) textSelectionYellow;
+- (void) setTextSelectionYellow:(BOOL)value;
+
 //-----------------------------------------------------------------------------
 // Timer methods
 //-----------------------------------------------------------------------------

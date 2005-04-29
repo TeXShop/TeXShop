@@ -43,6 +43,7 @@
         IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
         IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
         IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/
+		IBOutlet NSMatrix	*_syncMatrix;			/*" connected to "Sync Method" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
         IBOutlet NSTextField    *_engineTextField;
         IBOutlet NSMatrix       *_distillerMatrix;              /*" connected to "Distiller" "*/
@@ -117,6 +118,7 @@
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;
 - (IBAction)defaultScriptChanged:sender;
+- (IBAction)syncChanged:sender;
 - (IBAction)defaultMetaPostChanged:sender;
 - (IBAction)defaultBibtexChanged:sender;
 - (IBAction)distillerChanged:sender;

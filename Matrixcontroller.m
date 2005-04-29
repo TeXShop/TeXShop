@@ -211,7 +211,7 @@ static id _sharedInstance = nil;
     [pboard declareTypes:[NSArray arrayWithObject:MatPboardType] owner:self];
     //[pboard setData:[NSData data] forType:MatPboardType];
     for (i=0;i<[rows count];i++) {
-	[j addObject:[myMatrix rowAtIndex:[[rows objectAtIndex:i] intValue]]];
+	[j addObject:[myMatrix myRowAtIndex:[[rows objectAtIndex:i] intValue]]];
 	}    
     [pboard setPropertyList:j forType:MatPboardType];
     draggedRows=j;
@@ -576,22 +576,24 @@ static id _sharedInstance = nil;
 -(void)setActCols:(int)num {
     activeCols=num;
 }
--(NSMutableArray *)rowAtIndex:(unsigned)row {
+
+-(NSMutableArray *)myRowAtIndex:(unsigned)row {
     return [[rows objectAtIndex:row]retain];
 }
+
 -(int)rowCount {
     return [rows count];
 }
 -(int)colCount {
     if ([self rowCount]==0) return 0; else
-    return [[self rowAtIndex:0] count];
+    return [[self myRowAtIndex:0] count];
 }
 
 -(id)objectInRow:(unsigned)row inCol:(unsigned)col{
-    return [[self rowAtIndex:row] objectAtIndex:col];
+    return [[self myRowAtIndex:row] objectAtIndex:col];
 }
 -(void)replaceObjectInRow:(unsigned)row inCol:(unsigned)col withObject:(id) anObj{
-    [[self rowAtIndex:row] replaceObjectAtIndex:col withObject:anObj];
+    [[self myRowAtIndex:row] replaceObjectAtIndex:col withObject:anObj];
 }
 -(void)addRow{
     int i;
@@ -622,14 +624,14 @@ static id _sharedInstance = nil;
 -(void)addCol{
     int i;
     for (i=0;i<[self rowCount];i++) {
-        [[self rowAtIndex:i] addObject:@"0"];
+        [[self myRowAtIndex:i] addObject:@"0"];
     }
     activeCols++;
 }
 -(void)removeLastCol{
     int i;
     for (i=0;i<[self rowCount];i++) {
-        [[self rowAtIndex:i] removeLastObject];
+        [[self myRowAtIndex:i] removeLastObject];
     }
     activeCols--;
 }

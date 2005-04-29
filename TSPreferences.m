@@ -633,9 +633,9 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 - (IBAction)resizeOptionChanged:sender;
 //------------------------------------------------------------------------------
 {
-	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfFitSizeKey] forKey:PdfFitSizeKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfKitFitSizeKey] forKey:PdfKitFitSizeKey];
 
-    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfFitSizeKey];
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfKitFitSizeKey];
 }
 
 
@@ -676,9 +676,9 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 - (IBAction)mouseModeChanged:sender;
 //------------------------------------------------------------------------------
 {
-	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfMouseModeKey] forKey:PdfMouseModeKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfKitMouseModeKey] forKey:PdfKitMouseModeKey];
 
-    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfMouseModeKey];
+    [SUD setInteger:[[sender selectedCell] tag] forKey:PdfKitMouseModeKey];
 }
 
 /*" This method is connected to default mouse mode popup button. "*/
@@ -904,6 +904,16 @@ person script.
 	// since the default program values map identically to the tags of the NSButtonCells,
 	// we can use the tag directly here.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultScriptKey];
+}
+
+- (IBAction)syncChanged: sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:SyncMethodKey] forKey:SyncMethodKey];
+
+	// since the default program values map identically to the tags of the NSButtonCells,
+	// we can use the tag directly here.
+	[SUD setInteger:[[sender selectedCell] tag] forKey:SyncMethodKey];
 }
 
 //------------------------------------------------------------------------------
@@ -1287,10 +1297,10 @@ This method retrieves the application preferences from the defaults object and s
 	if (itemIndex == -1) itemIndex = 2; // default PdfPageStyleKey
     [_pageStylePopup selectItemAtIndex: itemIndex];
 
-	myTag = [defaults integerForKey:PdfFitSizeKey];
-	if (!myTag) myTag = PDF_FIT_TO_NONE; // default PdfFitSizeKey
+	myTag = [defaults integerForKey:PdfKitFitSizeKey];
+	if (!myTag) myTag = NEW_PDF_FIT_TO_WINDOW; // default PdfKitFitSizeKey
 	itemIndex = [_resizeOptionPopup indexOfItemWithTag: myTag];
-	if (itemIndex == -1) itemIndex = 0; // default PdfFitSizeKey
+	if (itemIndex == -1) itemIndex = 2; // default PdfKitFitSizeKey
     [_resizeOptionPopup selectItemAtIndex: itemIndex];
 
 	myTag = [defaults integerForKey:PdfCopyTypeKey];
@@ -1299,10 +1309,10 @@ This method retrieves the application preferences from the defaults object and s
 	if (itemIndex == -1) itemIndex = 1; // default PdfCopyTypeKey
     [_imageCopyTypePopup selectItemAtIndex: itemIndex];
 
-	myTag = [defaults integerForKey:PdfMouseModeKey];
-	if (!myTag) myTag = MOUSE_MODE_MAG_GLASS; // default PdfMouseModeKey
+	myTag = [defaults integerForKey:PdfKitMouseModeKey];
+	if (!myTag) myTag = NEW_MOUSE_MODE_SELECT_TEXT; // default PdfKitMouseModeKey
 	itemIndex = [_mouseModePopup indexOfItemWithTag: myTag];
-	if (itemIndex == -1) itemIndex = 1; // default PdfMouseModeKey
+	if (itemIndex == -1) itemIndex = 1; // default PdfKitMouseModeKey
     [_mouseModePopup selectItemAtIndex: itemIndex];
         
     [_colorMapButton setState: [SUD boolForKey:PdfColorMapKey]?NSOnState:NSOffState];
@@ -1376,6 +1386,7 @@ This method retrieves the application preferences from the defaults object and s
         if ([defaults integerForKey:DefaultCommandKey] == 3)
             [_engineTextField setEditable: YES];
         [_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
+		[_syncMatrix selectCellWithTag:[defaults integerForKey:SyncMethodKey]];
         [_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
         [_saveRelatedButton setState:[defaults boolForKey:SaveRelatedKey]];
 }

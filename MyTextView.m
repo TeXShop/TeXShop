@@ -130,7 +130,8 @@
 }
 - (BOOL) performDragOperation : (id <NSDraggingInfo>) sender
 {
-    return YES;
+    // return YES; // this fix is needed for Tiger; koch; May 1, 2005
+    return [super performDragOperation: sender];
 }
 
 /*

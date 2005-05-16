@@ -75,6 +75,8 @@
 #define SIZE_WINDOW_DRAW_Y		3
 #define SIZE_WINDOW_HAS_SHADOW	NO
 
+#define NUMBER_OF_SOURCE_FILES	60
+
 
 
 #define SUD [NSUserDefaults standardUserDefaults]
@@ -96,6 +98,8 @@
 {
 
 	NSColor	*backColor;
+	
+	downOverLink = NO;
 	
 	drawMark = NO;
 	pageStyle = [SUD integerForKey: PdfPageStyleKey]; 
@@ -255,7 +259,7 @@
 		NSRect	tempRect;
 		
 		sourceFiles = nil;
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease];
+		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
 		[self setDocument: pdfDoc];
 		[self setup];
 		totalPages = [[self document] pageCount];
@@ -299,11 +303,15 @@
 		theindex++;
 		if ([[self document] isFinding])
 			[[self document] cancelFindString];
-		[_searchResults removeAllObjects];
-		[_searchTable reloadData];
-		[_searchResults release];
-		_searchResults = NULL;
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease];
+		if (_searchResults != NULL) {
+			[_searchResults removeAllObjects];
+			[_searchTable reloadData];
+			[_searchResults release];
+			_searchResults = NULL;
+			}
+		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
+		[self setDocument: pdfDoc];
+		[[self document] setDelegate: self];
 		totalPages = [[self document] pageCount];
 		[totalPage setIntValue:totalPages];
 		[totalPage1 setIntValue: totalPages];
@@ -312,8 +320,6 @@
 		if (theindex > totalPages)
 			theindex = totalPages;
 		theindex--;
-		[self setDocument: pdfDoc];
-		[[self document] setDelegate: self];
 		if (needsInitialization)
 			[self setup];
 		if (totalRotation != 0) {
@@ -960,7 +966,9 @@
 {
 	NSRect	mySelectedRect;
 	
-	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
+	if (selRectTimer)
+		mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
+		
 	switch (currentMouseMode)
 	{
 		case NEW_MOUSE_MODE_SCROLL: 
@@ -1125,13 +1133,21 @@ switch (rotation)
 {
 
 		// koch; Dec 5, 2003
+		
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 currentMouseMode = mouseMode;
                 [[self window] invalidateCursorRectsForView: self];
                 [self doSync: theEvent];
                 return;
                 }
-                
+		
+		if (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0) {
+				[self cleanupMarquee: YES];
+				downOverLink = YES;
+				[super mouseDown: theEvent];
+				return;
+				}
+	              
 
 //	[[self window] makeFirstResponder: [self window]]; // mitsu 1.29b
         [[self window] makeFirstResponder: self];
@@ -1199,6 +1215,37 @@ switch (rotation)
 
 - (void) mouseMoved: (NSEvent *) theEvent
 {
+	if (mouseMode == NEW_MOUSE_MODE_SELECT_TEXT) {
+		[super mouseMoved: theEvent];
+		return;
+		}
+		
+	if (downOverLink) {
+		[super mouseMoved: theEvent];
+		return;
+		}
+
+	if (([self areaOfInterestForMouse: theEvent] & kPDFLinkArea) != 0)
+			[[NSCursor pointingHandCursor] set];
+	else if (([self areaOfInterestForMouse: theEvent] & kPDFPageArea) != 0)
+			switch (mouseMode) {
+				case NEW_MOUSE_MODE_SCROLL:
+							[[NSCursor openHandCursor] set];
+							break;
+							
+				case NEW_MOUSE_MODE_SELECT_PDF:
+							[[NSCursor _crosshairCursor] set];
+							break;
+				case NEW_MOUSE_MODE_MAG_GLASS:
+				case NEW_MOUSE_MODE_MAG_GLASS_L: 
+							[[NSCursor arrowCursor] set];
+							break;
+				}
+	else 
+		[super mouseMoved: theEvent];
+		
+	/*
+	
 	switch (mouseMode) {
 	
 		case NEW_MOUSE_MODE_SCROLL:				break;
@@ -1213,6 +1260,7 @@ switch (rotation)
 		case NEW_MOUSE_MODE_SELECT_PDF:			break;
 		
 		}
+	*/
 
 
 /*
@@ -1262,6 +1310,11 @@ switch (rotation)
 
 - (void) mouseDragged: (NSEvent *) theEvent
 {
+
+	if (downOverLink) {
+		[super mouseDragged: theEvent];
+		return;
+		}
 
 	switch (mouseMode) {
 	
@@ -1348,6 +1401,14 @@ switch (rotation)
 
 - (void) mouseUp: (NSEvent *) theEvent
 {
+
+	if (downOverLink) {
+		downOverLink = NO;
+		if (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0) 
+				[super mouseUp: theEvent];
+		return;
+		}
+	
 
 	switch (mouseMode) {
 	
@@ -3333,7 +3394,7 @@ done:
 	int				currentIndex;
 	
 	rootPath = [[myDocument fileName] stringByDeletingLastPathComponent];
-	sourceFiles = [[NSMutableArray arrayWithCapacity: 20] retain];
+	sourceFiles = [[NSMutableArray arrayWithCapacity: NUMBER_OF_SOURCE_FILES] retain];
 	currentIndex = 0;
 	sourceText = [[myDocument textView] string];
 	sourceLength = [sourceText length];
@@ -3343,7 +3404,7 @@ done:
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
 	
-	while ((!done) && (maskRange.length > 0) && (currentIndex < 20)) {
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
 		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
 		if (searchRange.location == NSNotFound) 
 			done = YES;
@@ -3374,7 +3435,7 @@ done:
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
 
-	while ((!done) && (maskRange.length > 0) && (currentIndex < 20)) {
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
 		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
 		if (searchRange.location == NSNotFound) 
 			done = YES;
@@ -3405,7 +3466,7 @@ done:
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
 
-	while ((!done) && (maskRange.length > 0) && (currentIndex < 20)) {
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
 		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
 		if (searchRange.location == NSNotFound) 
 			done = YES;
@@ -3441,11 +3502,11 @@ done:
 	int						pageNumber, numberOfTests;
 	int						searchWindow;
 	unsigned int			searchlength;
-	unsigned int			sourcelength[21];
+	unsigned int			sourcelength[NUMBER_OF_SOURCE_FILES + 1];
 	int						startIndex, endIndex;
 	NSRange					searchRange, newSearchRange, maskRange, theRange;
 	NSString				*searchText;
-	NSString				*sourceText[21];
+	NSString				*sourceText[NUMBER_OF_SOURCE_FILES + 1];
 	BOOL					found;
 	int						length;
 	int						numberOfFiles;
@@ -4864,6 +4925,38 @@ done:
         [self setMagnification: oldMagnification];
 } 
 
+
+// Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+- (void)keyDown:(NSEvent *)theEvent;
+{
+	NSString	*theKey;
+	
+	theKey = [theEvent characters];
+	
+	if (([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) && ([theEvent modifierFlags] & NSCommandKeyMask))
+		{
+		[self previousPage:self];
+		return;
+		}
+		
+	if (([theKey characterAtIndex:0] == NSRightArrowFunctionKey) && ([theEvent modifierFlags] & NSCommandKeyMask))
+		{
+		[self nextPage:self];
+		return;
+		}
+	
+	if ((([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) || ([theKey characterAtIndex:0] == NSRightArrowFunctionKey)) 
+		&& (! [[[[self documentView] enclosingScrollView] horizontalScroller] isEnabled])
+		) {
+		if ([theKey characterAtIndex:0] == NSLeftArrowFunctionKey)
+			[self previousPage:self];
+		else
+			[self nextPage:self];
+		return;
+		}
+	else 
+		[super keyDown:theEvent];
+}
 
 
 @end

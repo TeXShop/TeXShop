@@ -71,10 +71,12 @@
 		NSMutableDictionary	*mySelectedTextAttributes;
 	
         // koch; Dec 13, 2003
+		
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 [self doSync: theEvent];
                 return;
                 }
+		
         
 		if ([document textSelectionYellow]) {
 			[document setTextSelectionYellow: NO];
@@ -128,6 +130,7 @@
 {
     return [self dragOperationForDraggingInfo:sender];
 }
+
 - (void) draggingExited : (id <NSDraggingInfo>) sender
 {
     return;
@@ -139,8 +142,10 @@
 }
 - (BOOL) performDragOperation : (id <NSDraggingInfo>) sender
 {
-    return YES;
+   // return YES;    this fix, by Koch on May 1, 2005, seems required in Tiger when dragging text from one spot to another
+   return [super performDragOperation: sender];
 }
+
 
 /*
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
@@ -190,8 +195,10 @@
 // end addition
 */
 
+
 // zenitani 1.33 begin
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
+
     NSPasteboard *pb = [ sender draggingPasteboard ];
     NSString *type = [ pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
@@ -392,7 +399,7 @@
     int		length, i, j;
     BOOL	done;
     int		leftpar, rightpar, count, uchar;
-
+	
     replacementRange = [super selectionRangeForProposedRange: proposedSelRange granularity: granularity];
 
 	textString = [self string]; // moved up here reitter 12/2004

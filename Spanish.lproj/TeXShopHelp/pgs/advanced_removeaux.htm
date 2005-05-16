@@ -10,8 +10,9 @@
 
 <BODY>
 	<div id="content_border">
-		<p>Al componer p&aacute;ginas, TeX crea archivos auxiliares con extensiones .log, .bbl, etc. Ocasionalmente, estos ficheros se corrompen y se producen errores inexplicables al componer. TeXShop tiene un men&uacute; &laquo;Borrar archivos aux&raquo; que permite borrar todos estos archivos. Hay un bot&oacute;n similar en la ventana de la Consola. Al usar cualquiera de los dos, TeXShop pone en la papelera todos los ficheros con el mismo nombre (descartada la extensi&oacute;n), y situados en la misma carpeta, que el archivo con el c&oacute;digo fuente, siempre que su extensi&oacute;n sea .aux, .bbl, .blg, .brf, .glo, .idx, .ilg, .ind, .ioa, .log, .log, .lot, .mtc, .mlf, .out, .pdfsync, .toc, .ttt, .wrm, .xref, .4ct o .4tc.
-Se pueden a&ntilde;adir m&aacute;s extensiones a esta lista. Por ejemplo, para a&ntilde;adir los archivos .dvi a la lista, activa el Terminal y teclea
+		<p>Al componer p&aacute;ginas, TeX crea archivos auxiliares con extensiones .log, .bbl, etc. Ocasionalmente, estos ficheros se corrompen y se producen errores inexplicables al componer. TeXShop tiene un men&uacute; &laquo;Borrar archivos aux&raquo; que permite borrar todos estos archivos. Hay un bot&oacute;n similar en la ventana de la Consola. Al usar cualquiera de los dos, TeXShop pone en la papelera todos los ficheros con el mismo nombre (descartada la extensi&oacute;n), y situados en la misma carpeta, que el archivo con el c&oacute;digo fuente, siempre que su extensi&oacute;n sea .aux, .blg, .brf, .ccs, .ent, .fff, .glo, .idx, .idv, .ilg, .ind, .ioa, .lg, .log, .lot, .mte, .mlf, .out, .pdfsync, .toc, .ttt, .wrm, .xref, .4ct o .4tc.</p>
+
+<p>Se pueden a&ntilde;adir m&aacute;s extensiones a esta lista. Por ejemplo, para a&ntilde;adir los archivos .dvi a la lista, activa el Terminal y teclea
 </p>
 		<dl>
 			<dd>defaults write TeXShop OtherTrashExtensions -array-add "dvi"
@@ -24,7 +25,7 @@ Se pueden a&ntilde;adir m&aacute;s extensiones a esta lista. Por ejemplo, para a
 Por ejemplo, si el documento ra&iacute;z de un libro es main.tex y los cap&iacute;tulos est&aacute;n en subcarpetas a las que se accede con comandos del tipo \include{chapter1/chapter1}, al componer el libro aparecen los archivos main.aux, main.pdfsync y main.log en la carpeta principal, y chapter1.aux en la carpeta chapter1.</p>
 <p>La limpieza extensiva requerida se logra pulsando la tecla opci&oacute;n al usar &laquo;Borrar archivos aux&raquo;. En este caso:
 <dl>
-<li> TeXShop usa los mecanismos de %&amp;SourceDoc y &laquo;Documento ra&iacute;z...&raquo; para encontrar el documento ra&iacute;z y su carpeta.
+<li> TeXShop usa los mecanismos de &laquo;%!TEX root&raquo; y &laquo;Documento ra&iacute;z...&raquo; para encontrar el documento ra&iacute;z y su carpeta.
 <li> Lleva a la papelera todos los archivos de esa carpeta y sus subcarpetas, siempre que tengan las extensiones adecuadas, y sin tener en cuenta su nombre.
 </dl>
 Hay una manera de hacer que &eacute;ste sea el comportamiento predeterminado de &laquo;Borrar archivos aux&raquo;, incluso sin pulsar la tecla opci&oacute;n:

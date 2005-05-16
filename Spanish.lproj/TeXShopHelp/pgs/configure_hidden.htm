@@ -27,13 +27,19 @@
 			<dd>defaults write TeXShop background_G 0.39
 			<dd>defaults write TeXShop background_B 0.77
 		</dl>
-<p>Tambi&eacute;n se puede configurar el color del texto en la ventana con el c&oacute;digo fuente. Aunque esto s&oacute;lo tiene efecto si los colores para sintaxis est&aacute;n activados. Para asignar al texto el color (r, g, b) = (.42, .39, .77), ejecuta en el Terminal los siguientes comandos:</p>
+<p>As&iacute; mismo, se puede configurar el color del texto en la ventana con el c&oacute;digo fuente. Aunque esto s&oacute;lo tiene efecto si los colores para sintaxis est&aacute;n activados. Para asignar al texto el color (r, g, b) = (.42, .39, .77), ejecuta en el Terminal los siguientes comandos:</p>
 		<dl>
 			<dd>defaults write TeXShop foreground_R 0.42
 			<dd>defaults write TeXShop foreground_G 0.39
 			<dd>defaults write TeXShop foreground_B 0.77
 		</dl>
-<p>Usando los dos conjuntos de preferencias anteriores de manera simult&aacute;nea, se puede escribir texto blanco sobre un fondo negro, o usar en el editor cualquier otra combinaci&oacute;n de colores.</p> 
+<p>Y tambi&eacute;n se puede modificar el color del punto de inserci&oacute;n de la ventana de c&oacute;digo. Por ejemplo, para asignar al punto de inserci&oacute;n el color (r, g, b) = (.42, .39, .77), ejecuta en el Terminal los siguientes comandos:</p>
+		<dl>
+			<dd>defaults write TeXShop insertionpoint_R 0.42
+			<dd>defaults write TeXShop insertionpoint_G 0.39
+			<dd>defaults write TeXShop insertionpoint_B 0.77
+		</dl>
+<p>Usando los tres conjuntos de preferencias anteriores de manera simult&aacute;nea, se puede escribir texto blanco sobre fondo negro, o usar en el editor cualquier otra combinaci&oacute;n de colores.</p> 
 	<p>Podemos cambiar el color de fondo de la ventana con el pdf previsto. Por ejmplo, para ponerle el fondo con color (r, g, b) = (.42, .39, .77), ejecuta lo que sigue en el Terminal. Es posible que los documentos de TeX coloreados se vean mejor sobre fondo gris. Este color de fondo no afecta a lo que se obtiene al imprimir.</p>
 		<dl>
 			<dd>defaults write TeXShop Pdfbackground_R 0.42
@@ -110,6 +116,15 @@ Cuando la ventana con el pdf aparece por primera vez, este &lsquo;checkbox&rsquo
 		<dl>
 			<dd>defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
 		</dl>
+
+<p>En versiones anteriores, TeXShop usaba una juego diferente de comandos para especificar el motor de composici&oacute;n, el c&oacute;digo de caracteres y el archivo ra&iacute;z;
+por ejemplo, %&amp;latex, %&amp;encoding= UTF-8 Unicode o %SourceDoc ../Main.tex.
+Esta sintaxis no era adecuada, y se ha cambiado (la nueva se explica en otra parte de la ayuda). Si tienes muchos documentos antiguos, puedes volver a activar temporalmente este tipo de comandos, y lograr que tanto la sintaxis antigua como la nueva funcionen. Este cambio, que deber&iacute;as efectuar s&oacute;lo en caso de emergencia, se logra con
+</p>
+		<dl>
+			<dd>defaults write TeXShop UseOldHeadingCommands YES
+		</dl>
+
 
 </div>
 <div id="header_background"></div>

@@ -98,6 +98,8 @@
 	NSMutableArray					*sourceFiles;
 	
 	double							oldMagnification;
+	
+	BOOL							downOverLink;
 }
 
 - (void) setup;
@@ -159,7 +161,7 @@
 - (void)setBoundsForMark: (NSRect)bounds;
 - (void)setDrawMark: (BOOL)value;
 - (void)setupSourceFiles;
-
+- (void)keyDown:(NSEvent *)theEvent;
 @end
 
 #define JPEG_COMPRESSION_HIGH	1.0

@@ -342,6 +342,13 @@ TeXShop's undo manager just wasn't informed of the change in the document / sele
     return nil;
 }
 
+- (id)handleRefreshPDFBackgroundCommand:(NSScriptCommand*)command
+{
+    [self refreshPDFAndBringFront: NO];
+ 
+    return nil;
+}
+
 - (id)handleRefreshTEXTCommand:(NSScriptCommand*)command
 {
     [self refreshTEXT];

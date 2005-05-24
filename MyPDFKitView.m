@@ -3387,11 +3387,15 @@ done:
 
 - (void)setupSourceFiles;
 {
-	NSString		*sourceText, *searchText, *filePath, *rootPath;
+	NSString		*sourceText, *searchText, *filePath, *filePathNew, *rootPath;
 	unsigned int	sourceLength;
 	BOOL			done;
 	NSRange			maskRange, searchRange, newSearchRange, fileRange;
 	int				currentIndex;
+	NSFileManager	*manager;
+	BOOL			isDir;
+	
+	manager = [NSFileManager defaultManager];
 	
 	rootPath = [[myDocument fileName] stringByDeletingLastPathComponent];
 	sourceFiles = [[NSMutableArray arrayWithCapacity: NUMBER_OF_SOURCE_FILES] retain];
@@ -3404,6 +3408,7 @@ done:
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
 	
+	// experiments show that the syntax is \include{file} where "file" cannot include ".tex" but the name must be "file.tex"
 	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
 		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
 		if (searchRange.location == NSNotFound) 
@@ -3420,12 +3425,15 @@ done:
 				fileRange.location = searchRange.location + 8;
 				fileRange.length = newSearchRange.location - fileRange.location;
 				filePath = [sourceText substringWithRange: fileRange];
-				if ([[filePath pathExtension] length] == 0)
+				// if ([[filePath pathExtension] length] == 0)
 					filePath = [filePath stringByAppendingPathExtension: @"tex"];
 				filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+				filePath = [filePath stringByStandardizingPath];
 				// add this to the array
-				[sourceFiles insertObject: filePath atIndex: currentIndex];
-				currentIndex++;
+				if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					currentIndex++;
+					}
 				}
 			}
 		}
@@ -3434,7 +3442,11 @@ done:
 	done = NO;
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
-
+	
+	// experiments show that the syntax is \input{file} where "file" may or may not end in ".tex" even if the actual file has
+	// extension ".tex" and where "file" can also have no extension, or can have some other extension like ".ltx"
+	// To handle this, the syntax below first adds ".tex" and looks for the file. If not found, it takes the name as presented
+	// and looks for that
 	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
 		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
 		if (searchRange.location == NSNotFound) 
@@ -3448,15 +3460,27 @@ done:
 			else {
 				maskRange.location = newSearchRange.location + 1;
 				maskRange.length = sourceLength - maskRange.location;
-				fileRange.location = searchRange.location + 8;
+				fileRange.location = searchRange.location + 6;
 				fileRange.length = newSearchRange.location - fileRange.location;
 				filePath = [sourceText substringWithRange: fileRange];
-				if ([[filePath pathExtension] length] == 0)
-					filePath = [filePath stringByAppendingPathExtension: @"tex"];
-				filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+				// if ([[filePath pathExtension] length] == 0)
+					filePathNew = [filePath stringByAppendingPathExtension: @"tex"];
+				filePathNew = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePathNew];
+				filePathNew = [filePathNew stringByStandardizingPath];
 				// add this to the array
-				[sourceFiles insertObject: filePath atIndex: currentIndex];
-				currentIndex++;
+				if (([manager fileExistsAtPath: filePathNew isDirectory:&isDir]) && (!isDir)) {
+					[sourceFiles insertObject: filePathNew atIndex: currentIndex];
+					currentIndex++;
+					}
+				else {
+					filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+					filePath = [filePath stringByStandardizingPath];
+					// add this to the array
+					if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+						[sourceFiles insertObject: filePath atIndex: currentIndex];
+						currentIndex++;
+						}
+					}
 				}
 			}
 		}
@@ -3479,18 +3503,28 @@ done:
 			else {
 				maskRange.location = newSearchRange.location + 1;
 				maskRange.length = sourceLength - maskRange.location;
-				fileRange.location = searchRange.location + 8;
+				fileRange.location = searchRange.location + 7;
 				fileRange.length = newSearchRange.location - fileRange.location;
 				filePath = [sourceText substringWithRange: fileRange];
-				if ([[filePath pathExtension] length] == 0)
+				// if ([[filePath pathExtension] length] == 0)
 					filePath = [filePath stringByAppendingPathExtension: @"tex"];
 				filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+				filePath = [filePath stringByStandardizingPath];
 				// add this to the array
-				[sourceFiles insertObject: filePath atIndex: currentIndex];
-				currentIndex++;
+				if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					currentIndex++;
+					}
 				}
 			}
 		}
+		
+// These last lines are for debugging only
+//	int numberOfFiles = [sourceFiles count];
+//	int	i;
+//	for (i = 0; i < numberOfFiles; i++) {
+//		NSLog([sourceFiles objectAtIndex:i]);
+//		}
 
 }
 

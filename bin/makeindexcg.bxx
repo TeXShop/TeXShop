@@ -1,0 +1,11 @@
+#!/bin/tcsh
+# makeindexcg
+# Claus Gerhardt
+#
+# This script will produce one index for  file.tex. Use it by calling
+# makeindexcg file (without the suffix)
+# The option -g is used so that the babel package with the language german,
+# can be used.
+
+set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)
+makeindex -gc -s german.ist "$1.idx"

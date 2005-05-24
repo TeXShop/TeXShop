@@ -1,0 +1,133 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Versteckte Einstellungen</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="Passen Sie TeXShop noch weiter an, indem Sie versteckte Einstellungen ver&auml;ndern.">
+				<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+
+<div id="content_border">
+		<P>TeXShop f&uuml;gt Zeilen, die mit den Begriffen &bdquo;\section&ldquo;, &bdquo;\subsection&ldquo;, &bdquo;\subsubsection&ldquo; oder &bdquo;\chapter&ldquo; beginnen zum Men&uuml; &bdquo;Markierungen&ldquo; hinzu. Um dieses Verhalten auszuschalten, starten Sie das Terminal-Programm und geben Sie die folgende Befehle ein. Ersetzen Sie &bdquo;NO&ldquo; durch &bdquo;YES&ldquo; um die alte Einstellung wieder zu aktivieren.</P>
+		<dl>
+			<dd>defaults write TeXShop TagSections NO
+		</dl>
+		<p>Wenn die Syntaxf&auml;rbung eingeschaltet ist, werden Kommentare rot , Befehle blau und die Symbole &bdquo;$&ldquo;, &bdquo;{&ldquo; und &bdquo;}&ldquo; dunkelgr&uuml;n eingef&auml;rbt. Diese Farben k&ouml;nnen ge&auml;ndert werden. Eine Farbe wird durch ihre Rot-, Gr&uuml;n- und Blauanteile festgelegt. Jeder dieser Anteile wird durch eine Zahl zwischen 0.00 und 1.00 dargestellt. Um die Farbe f&uuml;r &bdquo;$&ldquo;, &bdquo;{&ldquo; und &bdquo;}&ldquo; auf hellgr&uuml;n zu &auml;ndern, geben Sie folgende Befehle im Terminal ein:</p>
+		<dl>
+			<dd>defaults write TeXShop markerred 0.0
+			<dd>defaults write TeXShop markergreen 1.0
+			<dd>defaults write TeXShop markerblue 0.0
+		</dl>
+		<p>Um die Kommentarfarbe zu &auml;ndern ersetzen Sie &bdquo;marker&ldquo; durch &bdquo;comment&ldquo; und um die Befehlsfarbe zu &auml;ndern ersetzen Sie &bdquo;marker&ldquo; durch &bdquo;command&ldquo;. </p>
+		<p>Die Hintergrundfarbe des Quelltext-Fensters kann ge&auml;ndert werden. Zum Beispiel m&uuml;ssen, um den Hintergrund auf die Farbwerte (r, g, b) = (.42, .39, .77) zu setzen, folgende Befehle im Terminal eingegeben werden:</p>
+			<dl>
+			<dd>defaults write TeXShop background_R 0.42
+			<dd>defaults write TeXShop background_G 0.39
+			
+				<dd>defaults write TeXShop background_B 0.77
+		
+			</dl>
+			<p>Auch die Texfarbe des Quelltext-Fensters kann ge&auml;ndert werden. Hierf&uuml;r muss allerdings die Syntx-F&auml;rbung eingschaltet sein. Zum Beispiel m&uuml;ssen, um die Vordergrund-/Textfarbe  auf die Farbwerte (r, g, b) = (.42, .39, .77) zu setzen, folgende Befehle im Terminal eingegeben werden:</p>
+			<dl>
+				<dd>defaults write TeXShop foreground_R 0.42
+				<dd>defaults write TeXShop foreground_G 0.39
+				<dd>defaults write TeXShop foreground_B 0.77
+			</dl>
+			<p>Sie k&ouml;nnen auch die Farbe des Einf&uuml;gepunktes &auml;ndern. Um diesen Einf&uuml;gepunkt zum Beispiel auf (r, g, b) = (.42, .39, .77), zu setzen, m&uuml;ssen Sie folgendes im Terminal eingeben:</p>
+		<dl>
+			<dd>defaults write TeXShop insertionpoint_R 0.42
+			<dd>defaults write TeXShop insertionpoint_G 0.39
+			<dd>defaults write TeXShop insertionpoint_B 0.77
+		</dl>
+			<p>Indem man die Einstellungen f&uuml;r Vorder- und Hintergrund kombiniert, kann man sich zum Beispiel wei&szlig;en Text auf schwarzem Hintergrund oder andere Farbschemata anzeigen lassen.</p>
+			<p>Auch der Hintergrund des Vorschau-Fensters kann ge&auml;ndert werden. Um diesen Hintergrund auf die Werte (r, g, b) = (.42, .39, .77) zu setzen, m&uuml;ssen Sie die folgenden Befehle im Terminal eingeben. Wenn Sie die Werte wieder auf &bdquo;1&ldquo; setzen, erhalten Sie wieder einen wei&szlig;en Hintergrund. Manchmal kann man farbige TeX-Dokumente auf grauem Hintergrund besser erkennen. Die Hintergrundfarbe hat keinen Einfluss auf den sp&auml;teren Ausdruck.</p>
+			<dl>
+			<dd>defaults write TeXShop Pdfbackground_R 0.42
+			<dd>defaults write TeXShop Pdfbackground_G 0.39
+			
+				<dd>defaults write TeXShop Pdfbackground_B 0.77
+		
+			</dl>
+			<p>Die Transparenz des Vorschau-, Quelltext- und Konsolenfensters k&ouml;nnen ge&auml;ndert werden. Zum Beispiel:</p>
+			<dl>
+				<dd>defaults write TeXShop ConsoleWindowAlpha 0.75
+				<dd>defaults write TeXShop SourceWindowAlpha 0.75
+				<dd>defaults write TeXShop PreviewWindowAlpha 0.75
+			</dl>
+			<p>Hierbei bedeutet ein Alphawert von 0.00 vollst&auml;ndige Transparenz und 1.00 vollst&auml;ndig deckend. Sie sollten diese Einstellungen nur mit Vorsicht ver&auml;ndern.</p>
+			<p>Man kann TeXShop so konfigurieren, dass es eine Sicherungskopie bei jedem Satzvorgang anlegt. Um diese Funktion einzuschalten, geben Sie folgende Befehle im Terminal-Fenster ein (ersetzen Sie &bdquo;YES&ldquo; durch &bdquo;NO&ldquo; um die Funktion auszuschalten):</p>
+			<dl>
+			<dd>defaults write TeXShop SaveBackup YES
+		</dl>
+			<p>Es kann vorkommen, dass w&auml;hrend des Setzens &bdquo;.aux&ldquo;, &bdquo;.log&ldquo; und andere Dateien die automaitsch von TeX erstellt werden, besch&auml;digt werden und entfernt werden m&uuml;ssen.  TeXShop bietet diese M&ouml;glichkeit mit dem Men&uuml;pukt &bdquo;AUX-Dateien l&ouml;schen&ldquo; und dem Knopf im Konsolenfenster. W&auml;hlt man diese Funktion aus, werden alle Dateien, die in ihrem Namen den selben Namen wie die Quelldatei und eine der folgenden Dateiendungen haben, in den Papierkorb verschoben: .aux, .bbl, .blg, .brf, .glo, .idx, .ilg, .ind, .ioa, .log, .log, .lot, .mtc, .mlf, .out, .pdfsync und .toc. Andere Dateiendungen k&ouml;nnen zus&auml;tzlich gel&ouml;scht werden. Um z.B. &bdquo;.dvi&ldquo;-Dateien mit aufzunehmen m&uuml;ssen Sie folgendes Kommando ausf&uuml;hren:</p>
+			<dl>
+				<dd>defaults write TeXShop OtherTrashExtensions -array-add &quot;dvi&quot;
+			</dl>
+			<p>Um wieder zur urspr&uuml;nglichen Liste zur&uuml;ckzukehren, geben Sie folgendes ein:</p>
+			<dl>
+				<dd>defaults write TeXShop OtherTrashExtensions -array
+			</dl>
+			<p>Manchmal soll etwas gr&uuml;ndlicher aufger&auml;umt werden. Wird die Wahltaste gedr&uuml;ckt, w&auml;hrend man den Befehl &bdquo;AUX-Dateien l&ouml;schen&ldquo; ausf&uuml;hrt. TeXShop benutzt dann %&amp;SourceDoc und den &bdquo;Hauptdatei-Mechanisms&ldquo; um die Hauptdatei zu finden. Daraufhin werden alle Dateien mit den entsprechenden Endungen, unabh&auml;ngig von deren Namen, rekursiv in allen Unterverzeichnissen in den Papierkorb geschoben. Dies kann auch als Standardfunktion festgelegt werden. F&uuml;hren Sie hierzu folgendes Kommando aus:</p>
+			<dl>
+				<dd>defaults write TeXShop AggressiveTrashAUX YES
+			</dl>
+			<p>TeXShop kann so konfiguriert werden, dass die pdf-Ansicht jedesmal aktualisiert wird, wenn eine pdf-Datei ge&auml;ndert wird. Um dies zu erreichen untersucht TeXShop jede Sekunde ob die jeweilgen Dateien ge&auml;ndert wurden. Der Intervall der &Uuml;berpr&uuml;fung kann ge&auml;ndert werden. Um dies zu erreichen, geben Sie folgenden Befehl im Terminal-Fenster ein (&Auml;ndern Sie 1.00 in die gew&uuml;nschte Sekundenzahl): </p>
+			<dl>
+			<dd>defaults write TeXShop RefreshTime 1.00
+		</dl>
+		<p>Die PDF-Vorschau automatisch zu aktualisieren ist vor allem dann sinnvoll, wenn Sie mit einem externen Editor arbeiten oder wenn eine tex-Datei &bdquo;zur Vorschau&ldquo; ge&ouml;ffnet wurde. In diesen F&auml;llen wird zwar die tex-Datei ge&ouml;ffnet, TeXShop zeigt allerdings nur die zugeh&ouml;rige pdf-Datei an. In TeXShop ist es auch m&ouml;glich pdf-Dateien direkt anzuzeigen. Hierdurch kann z. B. ein kurzer Blick auf Illustrationen geworfen werden bevor man sie in das Dokument einbindet. Wenn zur Arbeit mir einem externen Editor die pdf-Dateien automatisch aktualisiert, jedoch pdf-Dateien, die nur kurz ge&ouml;ffnet werden nicht aktualisiert werden sollen, so k&ouml;nnen Sie dies mit dem folgenden Terminal Befehl einstellen (Der Standardwert dieser Einstellung ist &bdquo;YES&ldquo;):</p>
+		<dl>
+			<dd>defaults write TeXShop PdfFileRefresh NO
+		</dl>
+		<p>Wenn TeXShop eine tex-Datei in einem externen Editor &ouml;ffnet &uuml;berpr&uuml;ft es die &Auml;nderungsdaten der Dateien um die aktuelle Version anzuzeigen. Ist die Datei nicht auf dem neuesten Stand oder sogar &uuml;berhaupt nicht vorhanden, so setzt TeXShop diese Datei neu. Um dieses Verhalten auszuschalten geben Sie im Terminal folgenden Befehl ein:</p>
+		<dl>
+			<dd>defaults write TeXShop ExternalEditorTypesetAtStart NO
+		</dl>
+				<dd>
+				<p>Die Standardgr&ouml;&szlig;e von Matizen der Matrix-Palette kann folgenderma&szlig;en ge&auml;ndert werden:</p>
+				<dl>
+					<dd>defaults write TeXShop matrixsize 12
+				</dl>
+				<p>Im Vorschau-Fenster gibt es eine neue Funktion mit dem Namen &bdquo;ShowSync&ldquo;. Sie geh&ouml;rt jedoch nicht zum Standard-Toolkit dieses Fensters. Wird die Funktion eingeschaltet, werden Synchronisationspunkte im Vorschau-Fenster angezeigt. Erscheint das Vorchau-Fenster zum ersten Mal wird diese Funktion nicht angezeigt. Dies kann jedoch mit folgendem Kommando ge&auml;ndert werden:</p>
+				<dl>
+					<dd>defaults write TeXShop ShowSyncMarks YES
+				</dl>
+				<p>Wird das Vorschau-Fenster nach dem Setzen aktualisiert, erscheint es im Vordergrund. Dies f&uuml;hrt bei Benutzern, die einen X11-Editor unter Apples X11-Fenstermanager benutzen, zu Problemen. Diese sollten das Verhalten mit folgendem Befehl &auml;ndern:</p>
+				<dl>
+					<dd>defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
+				</dl>
+				<p>In fr&uuml;heren Versionen unterst&uuml;tzte TeXShop andere Quelltext-Befehle um das Satzprogramm, Dateikodierung, und die Hauptdatei festzulegen. Das sah zum Beispiel so aus: %&amp;latex, %&amp;encoding= UTF-8 Unicode, %SourceDoc ../Main.tex. Diese Syntax war schlecht gew&auml;hlt und wurde daher ge&auml;ndert. Wenn Sie jedoch viele alte Dokumente haben, k&ouml;nnen Sie die alten Befehle mit folgenden Kommande vor&uuml;bergehend wieder aktivieren, wodurch die alten und die neuen Befehle erkannt werden (Nutzen Sie diese Funktion nur im Notfall):
+</p>
+		<dl>
+			<dd>defaults write TeXShop UseOldHeadingCommands YES
+		</dl>
+			
+</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Wie konfiguriere ich TeXShop?</div>
+<div id="header_title">Versteckte Einstellungen</div>
+
+
+	<div id="menu_border">
+		<ul>
+			<LI><a href="configure_preliminaries.htm">Einleitung</a>
+			<li><a href="configure_correctinstall.htm">Alles richtig installiert?</a>
+			<li><a href="configure_prefchanges.htm">Empfohlene &Auml;nderung von Einstellungen</a>
+			<LI><a href="configure_convertgraphics.htm">Grafikformate automatisch konvertieren</a>
+			<LI><a href="configure_defaults.htm">Standardeinstellungen</a>
+			<LI><a href="configure_latextemplate.htm">Die Standard-LaTeX-Vorlage</a>
+			<li><a href="configure_hidden.htm">Versteckte Einstellungen</a>
+			<li><a href="configure_plist.htm">.plist-Dateien</a>
+			<li><a href="configure_panel.htm">Die LaTeX Palette anpassen</a>
+			<li><a href="configure_autocompletion.htm">Die automatische Vervollst&auml;ndigung anpassen</a>
+			<li><a href="configure_menushortcuts.htm">Tastaturk&uuml;rzel neu festlegen</a>
+			<li><a href="configure_macros.htm">Das Makro-Men&uuml; ver&auml;ndern</a>
+		</ul>
+	</div>
+	
+	</BODY>
+</HTML>

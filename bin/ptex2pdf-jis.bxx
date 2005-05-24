@@ -1,0 +1,14 @@
+#!/bin/sh
+# iNoue Koich! (modified by S. Zenitani)
+
+export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:$PATH:/usr/local/teTeX/bin:$HOME/Library/TeXShop/bin
+
+COMMAND=${0##*/}
+PTEX=${COMMAND%2pdf-*}
+ENCODE=${COMMAND#*-}
+JOBNAME=${1##*/}
+JOBNAME=${JOBNAME%.*}
+
+ptex -kanji=$ENCODE -fmt=$PTEX-$ENCODE -progname=$PTEX $1 && \
+dvipdfmx $JOBNAME 
+

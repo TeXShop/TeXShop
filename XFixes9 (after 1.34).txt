@@ -1,0 +1,334 @@
+Decemeber 17, 2003
+
+Changes since 1.34
+
+1) New Spanish localization and help. Notice that the web briefly
+contained a broken Spanish version before the fixed one.
+
+2) Two error dialogs were supposed to appear in a window, but instead
+appeared on the desktop with an inoperable "OK" button. This is fixed,
+and the dialogs are now localizable.
+
+3) Attempts to get the applescript dictionary crashed TeXShop in
+localizations other than English. This is fixed.
+
+4) Now distributed with a newer version of pdfsync.sty which fixes
+some but not all typesetting errors.
+
+5) The Bibtex, etc., tools in the source window did not work if a 
+file had a root file. This is fixed. 
+
+6) Added the following Chinese encodings at the request of Adam Si:
+Mac Chinese Traditional, Mac Chinese Simplified, DOS Chinese
+Traditional, DOS Chinese Simplified, GBK, GB 2312, and GB 18030.
+
+7) Added new matrix code by Jonas Zimmermann; the new code also makes
+tables. Examine the matrix window to see all of the new features.
+There is a hidden preference to set the default size of the matrix:
+
+	defaults write TeXShop matrixsize 12
+
+A very small number of users might have modified the matrixpanel.plist
+in ~/Library/TeXShop/MatrixPanel. This plist has been extended; the
+new list is called matrixpanel_1.plist. Please edit this file to add
+your changes.
+
+8) In previous versions, if you clicked on the preview window or
+elsewhere, and then clicked on the edit window to edit, you would
+need to click twice to correctly position the cursor. This is now
+changed; the first click in the edit text is recognized and
+positions the cursor.
+
+9) New German Help by Martin Kerz. Also new translations of other items
+in the TeXShop_Folder and distribution by Sebastian Siedentopf. Sebastian
+is working on a new version of the initial help page designed along the
+lines of Apple's Panther applications, but that is not ready and thus not in this beta version of TeXShop.
+
+10) There are several changes from Seiji Zenitani and through him from others in Japan. The most important of these additions is a new Find panel which can search using regular expressions. The find panel depends on OgreKit, a Cocoa framework for handling regular expressions due to Isao Sonobe.
+See
+
+	 http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit/ 
+
+OgreKit is a Framework included in the TeXShop source code. Notice that this framework folder contains lproj folders which need to be localized. 
+
+OgreKit is distributed using a slightly modified version of the BSD
+license. This license can be found in the Documentation included directly in the Framework folder.
+
+We believe that OgreKit requires Panther, so code in OgreKit and in TeXShop calls it only if Panther is active. Otherwise the old Find panel will appear. (I have not yet tested this code on a system 10.2 machine).
+
+There are many nice features of this new Find panel, which users can discover for themselves. OgreKit directly modifies the "Find" menu submenu of the TeXShop Edit menu, replacing it by a more extensive menu. This might be confusing to Localizers, because the menu in the TeXShop nib file is not the menu they will see when TeXShop is running. The Find menu in the nib file should not be modified because it will still be active in system 10.2. The corresponding menu in OgreKit needs to be localized. 
+
+11) Added a new Japanese encoding: Shift JIS X0213. This encoding will be
+a new standard in Japan.
+
+12) Added utf.sty support for pTeX. Currently Japanese pTeX supports only
+6000 Kanji characters. But utf.sty supports more than 20,300 characters.
+This support is turned on by a preference item in Misc. When on,
+TeXShop exports non-ptex characters as utf.sty codes. For example,
+unicode characters become \UTF(Hex code) and non-unicode characters
+become \CID(glyph ID)
+
+13) Added new Japanese default settings. Currently, Japanese ptex
+distributors provide their own "altpdflatex" scripts. This is very
+confusing for beginning users. This new version of TeXShop bundles
+"altpdflatex-for-ptex" scripts and installs them in the 
+~/Library/TeXShop/bin directory. The new Japanese default settings
+in Preferences automatically set up TeXShop to use these new
+scripts. 
+
+14) These last few changes have input from Yu Itoh, who
+provided the code to access unencoded glyphs. His nicely-done application "Sasakia" extensively influenced japanese special character support.
+Also from Koichi Inoue <inoue@ma.ns.musashi-tech.ac.jp>,
+wrote shell scripts to typeset using ptex and dvipdfmx. And from
+Isao Sonobe <sonobe@gauge.scphys.kyoto-u.ac.jp>
+provided "OgreKit", an excellent Cocoa framework for Regular Expression.
+
+15) Statistics panel lists the number of words, lines, and characters
+in a document. This is obtained by calling
+	
+	detex myfile | wc
+
+When first called, the document on disk is tested; this document may
+not be up to date if changes were made since it was saved. The "update"
+button saves the document and then calls detex again. The command
+detex removes tex commands, but the word count is still only approximate.
+Input and include files are counted as well by this command.
+
+16) TeXShop can now open and write files with extension .dn
+
+17) There is a hidden preference to set the color of the text in the
+source window:
+
+	defaults write TeXShop foreground_R .3
+	defaults write TeXShop foreground_B .3
+
+and the third is foreground_G. This color will show if syntax coloring
+is on; otherwise it will be black but then color can be selected in the Font menu.
+
+18) Bugs fixed with pdfsync, so now works with the latest version.
+
+19) There is a hidden preference
+
+	defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
+
+which causes the pdf window to remain where it is when it automatically
+updates (and is used with an external editor). This preference only
+seems necessary when the user is using an X11 editor and terminal
+with TeXShop.
+
+20) Added to preferences radio buttons to switch between the OgreKit
+Find Panel and the Apple Find Panel.
+
+21) There are hidden preferences to make the source, preview, and
+console windows partially transparent. These preferences are called
+SourceWindowAlpha, PreviewWindowAlpha, and ConsoleWindowAlpha. For
+example
+
+	defaults write TeXShop ConsoleWindowAlpha 0.75
+
+makes the console window partly transparent, and
+
+	defaults write TeXShop ConsoleWindowAlpha 1.00
+
+restores it to the default non-transparent value.
+
+22) When applescript runs under the Macro menu, it starts a second small
+application embedded in the TeXShop folder to actually run the script. That
+is because when a script command like "latex" runs and there is an error
+on the source, the console comes up and waits for user input, but when
+TeXShop runs applescript, its event loop is not running and this user
+input cannot occur. 
+
+Many applescripts do not have this problem. TeXShop now allows users to
+begin applescript macros with the command
+
+	--applescript direct
+
+When written this way, the script will be run directly by TeXShop 
+rather than by the second small application.
+
+23) If one of the first ten lines of a source file has the form
+
+%&encoding=MacOSRoman
+
+(notice that spaces are not allowed around the equals sign, but are
+allowed in the encoding name
+
+then loading or saving the file will use that encoding rather than
+the default encoding or any encoding chosen in the load or save dialog.
+This behavior can be bypassed by pressing the option key during loading or 
+saving. This addition was influenced by the appearance of XeTeX.
+Users can maintain their current encoding defaults and put
+
+%&encoding=UTF-8 Unicode
+
+at the start of any XeTeX document.
+
+Possible Encodings are
+
+MacOSRoman
+IsoLatin
+IsoLatin2
+IsoLatin5
+MacJapanese
+DOSJapanese
+SJIS_X0213
+EUC_JP
+JISJapanese
+MacKorean
+UTF-8 Unicode
+Standard Unicode
+Mac Cyrillic
+DOS Cyrillic
+DOS Russian
+Windows Cyrillic
+KO18_R
+Mac Chinese Traditional
+Mac Chinese Simplified
+DOS Chinese Traditional
+DOS Chinese Simplified
+GBK
+GB 2313
+GB 18030
+
+24) If a dvi file is opened in a directory without write permission,
+TeXShop will now create the pdf file in a temporary directory.
+
+25) Users sometimes upgrade via "archive and install"; TeXShop remains
+but teTeX is blown away. The first time they typeset a file, an error
+dialog reports that "pdflatex cannot be found." This error message was
+revised to explain more clearly the likely cause (and resolution) of
+this problem.
+
+26) Users have complained that when a large number of windows are open,
+switching from one window to another can take a long time and yield a
+spinning disk. This slowdown was caused by code for Macros --- the new
+window might have a different typesetting engine with new macros. The
+macro code has been improved and this slowdown eliminated.
+
+27) When a file is dragged and dropped, any alias is now resolved. Thus
+alias graphic files (and other files) can be used provided they are
+dragged and dropped to the source, rather than just typed into the source.
+
+28) Now supports XeLaTeX and XeTeX. These programs can be chosen in the
+pulldown menu. Moreover, if the FIRST line of source is
+
+%&program=XeLaTeX
+
+and one of the first ten lines is
+
+%&encoding=UTF-8 Unicode
+
+then the source will automatically be saved as unicode regardless of
+default encoding preference, and will automatically be typeset with XeLaTeX
+regardless of the pulldown menu setting.
+
+Ditto for XeTeX.
+
+29) But these features are just a special case of a new mechanism for
+adding user typesetting engines to the pulldown menu. When TeXShop first
+starts, it creates ~/Library/TeXShop/Engines and populates it with XeLaTeX.engine
+and XeTeX.engine. To add new commands, write a shell script and add it to
+~/Library/TeXShop/Engines. The new command's filename should have no spaces
+and end with extension ".engine". The file should be executable. When TeXShop
+starts, all such commands will be added to the pulldown menu. When typesetting
+after choosing such an item, the shell script will be called with argument
+the source file's name and path. After the command runs, TeXShop assumes that
+a pdf file was created or changed, and attempts to load it.
+
+A new preference item allows users to choose a new command as default (if the
+command is later removed, the default will revert to LaTeX).
+
+If the first line of a source file is
+
+%&program=command
+
+(without the ".engine exension), then it will be typeset with command even
+if a different program is chosen in the pulldown menu. Notice that no spaces
+are allowed in this command. On the other hand, case is irrelevant.
+
+The %&program=command syntax also works with existing commands, but the previous
+syntax still works. Thus the first line can be %&pdflatex or %&prgram=pdflatex. The
+second is preferable. The previous syntax cannot be used for new user commands,
+so %&program=xelatex works, but %&xelatex doesn't. 
+
+30) Added ".engine" as a filetype which TeXShop can create and edit.
+
+31) Added menu item "Trash Aux Files" and console button "Trash Aux Files". This
+command moves all files with the following extensions in the directory containing
+the source file to the trash: aux, bbl, blg, brf, glo, idx, ilg, ind, loa, lof,
+log, lot, mtc, mlf, out, pdfsync, toc. The name of the file moved to the trash
+must be the same as the name of the source up to the extension. A macro 
+written by Will Robertson was very helpful in the design of this feature!
+
+If a book project has a Main.tex file, and then individual chapter files in
+subfolders, say chapter 1 in chapter1/chapter1.tex, referenced in main by
+\include{chapter1/chapter1.tex}, then typesetting main will produce
+chapter1.aux in the folder chapter1. Consequently the default behavior of the
+"Trash Aux Files" command will not remove all .aux files associated with the
+typesetting job. If the option key is held down while "Trahs Aux Files" is
+chosen, then a more extensive trash operation is done: files moved to the trash
+need not have names equal to the name of the source file, and subfolders of the
+folder containing the source will be searched. Moreover, SourceDoc or
+Root File references will be noticed and the search will begin in the
+folder containing the root file.
+
+A hidden preference governs the exact behavior of this operation. The preference
+is AggressiveTrashAUX and its default value is NO. When this value is NO, then only files
+in the same directory as the current source are trashed, and then only if their name
+is the same as the name of the current source modulo the extension. If the preference is
+YES, then TeXShop looks at SourceDoc or file.texshop to find the root file,
+and then trashes all files with appropriate extensions in the folder containing this
+root file, or any subfolders. In short, changing the hidden preference will remove
+the need to hold down the option key.
+
+32) If the abort button was pushed in the console, and then the user pushed return while
+the console was active, the program crashed. This is fixed.
+
+33) Sync works as follows: during typesetting, a pdfsync file is created containing
+various entries. Roughly speaking, each entry contains
+
+	(
+		page number in final document, 
+		location on this page, 
+		name of source file generating information at this spot,
+		line number in this source file where the information is generated
+	)
+
+A new toolbar item named SyncMarks has been created for the Preview Window, although it
+is not added to the window by default. This item is a check box; when it is checked,
+small gray squares will appear at all locations in the preview window corresponding
+to sync marks. These marks show users the information used for syncing. Obviously it
+is not necessary to show them if you just want to use sync.
+
+When a preview window first appears, the toolbar item is not checked. 
+A new hidden preference, ShowSyncMarks, has default value NO. If the user types
+
+	defaults write TeXShop ShowSyncMarks YES
+
+then the toolbar item will be checked when preview windows first appear.
+
+34) Added new Japanese help by Yoshihisa Okazaki
+
+35) Added new templates by Will Robertson; these are heavily commented; it is intended
+that users will edit them to fit their own requirements. The templates are only installed
+if TeXShop has not run before or if the Templates folder is completely removed from
+~/Library/TeXShop, but instructions which come with TeXShop explain how to obtain the
+new template files easily.
+
+36) Added important Macros by Will Robertson to the default LaTeX macros
+
+37) Revised these macros to use Applescript direct when possible, and added three minor
+macros (change source window coloring, change it back, open teTeX file)
+
+38) Added a hidden preference to extend the list of extensions removed by TrashAUX.
+To add another extension
+
+	defaults write TeXShop OtherTrashExtensions -array-add "dvi"
+
+To remove all additions
+
+	defaults write TeXShop OtherTrashExtensions -array
+
+
+

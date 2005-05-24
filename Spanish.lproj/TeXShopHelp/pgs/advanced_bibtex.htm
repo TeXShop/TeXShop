@@ -1,0 +1,89 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>BibTeX</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="bibtex; bibliography; citation">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>BibTeX es una herramienta usada para crear bibliograf&iacute;as en documentos LaTeX. BibTeX asume que tienes una base de datos de referencias previamente construida (su mayor utilidad es cuando dispones de una gran cantidad de referencias que citas a menudo). As&iacute;, comandos sencillos te permiten citar algunas de estas referencias en el c&oacute;digo LaTeX que est&eacute;s escribiendo, y BibTeX, entonces, crea en tu art&iacute;culo una bibliograf&iacute;a que contiene s&oacute;lo las referencias citadas.</P>
+		<p>He aqu&iacute; un breve ejemplo extra&iacute;do de The LaTeX Companion, de Goossens, Mittelbach y Samarin. Puedes consultar este libro para conocer muchos detalles adicionales. Sup&oacute;n que la base de datos es un archivo llamado &laquo;mybibliography.bib&raquo; que contiene el texto mostrado un poco m&aacute;s abajo. En este texto, las entradas &laquo;Felici:1991&raquo;, &laquo;Knuth:WEB&raquo; y &laquo;Liang:1983&raquo; son los valores de las claves que hay que usar para citar los art&iacute;culos en el c&oacute;digo fuente LaTeX.</p>
+		<dl>
+			<dd><tt>@article{Felici:1991,</tt>
+			<dd><tt>author	={James Felici},</tt>
+			<dd><tt>title	={{PostScript versus TrueType}},</tt>
+			<dd><tt>journal	={Macworld},</tt>
+			<dd><tt>volume	=8, pages={195--201},</tt>
+			<dd><tt>month	=sep, year = 1991		}</tt>
+			<dd><br>
+			<dd><tt>@techreport{Knuth:WEB,</tt>
+			<dd><tt>title	={{The \textsf{WEB} System of</tt>
+			<dd><tt>Structured Documentation}},</tt>
+			<dd><tt>month	=sep, year = 1983,</tt>
+			<dd><tt>author	={Donald E. Knuth},</tt>
+			<dd><tt>address	={Stanford, CA 94305},</tt>
+			<dd><tt>number	={STAN-CS-83-980},</tt>
+			<dd><tt>institution={Department of Computer</tt>
+			<dd><tt>Science, Stanford University}  }</tt>
+			<dd><br>
+			<dd><tt>@phdthesis{Liang:1983,</tt>
+			<dd><tt>author	={Franklin Mark Liang},</tt>
+			<dd><tt>month	=jun, year = 1983,</tt>
+			<dd><tt>school	={Stanford University},</tt>
+			<dd><tt>address	={Stanford, CA 94305},</tt>
+			<dd><tt>title	={{Word Hy-phen-a-tion by</tt>
+			<dd><tt>Com-pu-ter}},</tt>
+			<dd><tt>note	={Also available as Stanford</tt>
+			<dd><tt>University, Department of</tt>
+			<dd><tt>Computer Science Report</tt>
+			<dd><tt>No. STAN-CS-83-977}   }</tt>
+		</dl>
+		<p>Sup&oacute;n que el c&oacute;digo LaTeX es el archivo &laquo;myfile.tex&raquo;, que contiene el siguiente texto:</p>
+		<dl>
+			<dd><tt>\begin{document}</tt>
+			<dd><tt>Consider the  argument of Felici~\cite{Felici:1991} in light of these comments.</tt>
+			<dd><tt>\nocite{Liang:1983} We provide further remarks later.</tt>
+			<dd>
+			<dd><tt>\bibliographystyle{plain}</tt>
+			<dd><tt>\bibliography{mybibliography}</tt>
+			<dd><tt>\end{document}</tt>
+		</dl>
+		<p>A partir de este c&oacute;digo, en el texto resultante al componer, aparecer&aacute; una referencia al art&iacute;culo de Felici; y se a&ntilde;adir&aacute;, al final del texto, una bibliograf&iacute;a que contendr&aacute; los art&iacute;culos de Felici y Liang, pero no el de Knuth.</p>
+		<p>Con este ejemplo, TeXShop se usar&iacute;a de la siguiente manera. Primero edita y compila el documento &laquo;myfile.tex&raquo; con el m&eacute;todo usual. Las citas aparecer&aacute;n en la salida como &laquo;[?]&raquo;, y no habr&aacute; bibliograf&iacute;a. Entonces, selecciona &laquo;BibTeX&raquo; en el men&uacute; desplegable Programa; aparece (en el lugar que habitualmente ocupa el bot&oacute;n LaTeX) el bot&oacute;n BibTeX: ejec&uacute;talo. Ahora, selecciona LaTeX (vuelve el bot&oacute;n LaTeX) y compila de nuevo. Las citas continuar&aacute;n siendo &laquo;[?]&raquo;, pero ya habr&aacute; aparecido la bibliograf&iacute;a al final de la salida. Compila con el bot&oacute;n LaTeX una &uacute;ltima vez, y las citas tomar&aacute;n su valores correctos.</p>
+		<p>El archivo &laquo;mybibliography.bib&raquo; se puede abrir y editar con TeXShop. Si usas TeXShop para crear el archivo &laquo;mybibliography.bib&raquo;, selecciona el formato de archivo &laquo;bib&raquo; (en vez de &laquo;tex&raquo;) en el men&uacute; deplegable que aparece al usar el men&uacute; &laquo;Guardar&raquo; o &laquo;Guardar como...&raquo;.</p></div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda avanzada</div><div id="header_title">BibTeX</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adici&oacute;n de estilos personales y men&uacute;s de macros a teTeX</a>
+			<LI><a href="advanced_addengine.htm">Motores de composici&oacute;n adicionales</a>
+			<LI><a href="advanced_removeaux.htm">Borrado de archivos AUX</a>
+			<li><a href="advanced_externaleditor.htm">Uso de un editor externo</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copiar-pegar y arrastrar-soltar desde la ventana del PDF</a>
+			<li><a href="advanced_root.htm">Establecer un documento ra&iacute;z</a>
+			<li><a href="advanced_pdfsync.htm">Sincronizaci&oacute;n c&oacute;digo-pdf (pdfsync)</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_otherfiles.htm">Abrir otros archivos con TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizaciones</a>
+			<li><a href="advanced_syntaxcolor.htm">Colores para sintaxis</a>
+			<li><a href="advanced_shellescape.htm">Protecci&oacute;n ante shell-escape</a>
+			<li><a href="advanced_coloredtext.htm">Texto coloreado en TeX</a>
+			<li><a href="advanced_moretetex.htm">M&aacute;s sobre teTeX</a>
+			<li><a href="advanced_fink.htm">Coexistencia con Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexistencia con otras distribuciones de TeX</a>
+			<li><a href="advanced_context.htm">ConTeXt y MetaPost</a>
+			<li><a href="advanced_plist.htm">Archivos .plist</a>
+			<li><a href="advanced_menushortcuts.htm">Redefinici&oacute;n de atajos de teclado de men&uacute;s</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

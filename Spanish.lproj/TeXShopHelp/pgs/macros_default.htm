@@ -1,0 +1,47 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Comprensi&oacute;n de las macros predefinidas</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="macros predefinidas; posici&oacute;n del cursor">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>La mejor manera de comprender las macros predefinidas es examinar su definici&oacute;n con el editor de macros. Por ejemplo, considera la macro titulada &laquo;Begin/End&raquo;. Sup&oacute;n que deseas usar un entorno de tipo theorem. Teclea la palabra &laquo;theorem&raquo; y selecci&oacute;nala. Entonces elige la macro &laquo;Begin/End&raquo;. La palabra &laquo;theorem&raquo; es reemplazada por el texto</P>
+		<div id="source">
+			\begin{theorem}<br>
+			\end{theorem}
+		</div>
+		<p>y el cursor se coloca entre este par de l&iacute;neas.</p>
+		<p>Ahora, examina el c&oacute;digo de la macro Begin/End:</p>
+		<div id="source">
+			\begin{#SEL#}<br>
+			#INS#<br>
+			\end{#SEL#}
+		</div>
+		<p>El texto de la macro se inserta en el archivo con el c&oacute;digo fuente. Cada aparici&oacute;n de la palabra #SEL# es reemplazada por el texto seleccionado al invocar la macro. Si no hay texto seleccionado, #SEL# es reemplazada por una cadena vac&iacute;a. El cursor se coloca al final de del texto insertado, salvo que la macro contenga la palabra #INS#, en cuyo caso el cursor se coloca en esa posici&oacute;n.</p>
+		<p>Extrapolando con l&oacute;gica, es f&aacute;cil comprender y modificar las macros predefinidas.</p>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda para macros</div><div id="header_title">Comprensi&oacute;n de las macros predefinidas</div>
+		<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminares</a>
+			<LI><a href="macros_default.htm">Comprensi&oacute;n de las macros predefinidas</a>
+			<LI><a href="macros_rearrange.htm">Reajuste del men&uacute; Macros</a>
+			<LI><a href="macros_define.htm">Definici&oacute;n de nuevas macros</a>
+			<li><a href="macros_applescript.htm">Macros AppleScript</a>
+			<li><a href="macros_includedscripts.htm">Macros AppleScript predefinidas</a>
+			<li><a href="macros_defapplescript.htm">Definici&oacute;n de macros AppleScript</a>
+			<li><a href="macros_dialogs.htm">Creaci&oacute;n de di&aacute;logos</a>
+			<li><a href="macros_writingcompletescripts.htm">Scripts con comandos de composici&oacute;n de TeXShop</a>
+			<li><a href="macros_writingcommandscripts.htm">Scripts con comandos del Shell</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

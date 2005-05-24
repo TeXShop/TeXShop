@@ -1,0 +1,340 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>ConTeXt and MetaPost</TITLE>
+<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+<META NAME="description" CONTENT="context; metapost; examples of context; examples of metapost">
+<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<BODY>
+		<div id="content_border">
+		<P>ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to LaTeX. See <a href="http://www.pragma-ade.com/">http://www.pragma-ade.com/</a> for details. </P>
+		<p>MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See <a href="http://cm.bell-labs.com/who/hobby/MetaPost.html">http://cm.bell-labs.com/who/hobby/MetaPost.html</a> for more details.  Interesting metapost examples can be found at many web sites; for instance see  <a href="http://www.cs.ucc.ie/%7edongen/mpost/mpost.html">http://www.cs.ucc.ie/~dongen/mpost/mpost.html</a>. TeXShop now supports MetaPost.</p>
+		<p>Here is a sample MetaPost file:</p>
+		<dl>
+			<dd><tt>prologues:=2;</tt>
+			<dd><tt>color yellow; yellow = green + red;</tt>
+			<dd><p>
+			<dd><tt>def star (expr size, n, pos, color)=</tt>
+			<dd><tt>for a=0 step 360/n until 360:</tt>
+			<dd><tt>draw (origin -- (size/2,0))</tt>
+			<dd><tt>rotatedaround (origin, a)</tt>
+			<dd><tt>shifted pos withcolor color;</tt>
+			<dd><tt>endfor ;</tt>
+			<dd><tt>enddef;</tt>
+			<dd><p>
+			<dd><tt>beginfig(1);</tt>
+			<dd><tt>pickup pencircle scaled 2mm; star (2cm,5,origin,red);</tt>
+			<dd><tt>endfig;</tt>
+			<dd><p>
+			<dd><tt>beginfig(2);</tt>
+			<dd><tt>pickup pencircle scaled 2mm; star (2cm,7,origin,yellow);</tt>
+			<dd><tt>endfig;</tt>
+			<dd><p>
+			<dd><tt>beginfig(3);</tt>
+			<dd><tt>pickup pencircle scaled 2mm; star (2cm,11,origin,green);</tt>
+			<dd><tt>endfig;</tt>
+			<dd><p>
+			<dd><tt>beginfig(4);</tt>
+			<dd><tt>pickup pencircle scaled 2mm; star (2cm,13,origin,blue);</tt>
+			<dd><tt>endfig;</tt>
+			<dd><p>
+			<dd><tt>end</tt>
+		</dl>
+		<p>Suppose this file is named &quot;metademo.mp.&quot; When the file is processed by MetaPost, it will generate four different postscript files, named metademo.1, metademo.2, metademo.3, metademo.4. These names are determined by the number parameter of &quot;beginfig().&quot; If this number is nonnegative, like beginfig(0) or beginfig(10), the resulting file will be named metademo.0 or metademo.10. If this number is negative, like beginfig(-10), the resulting file will be named metademo.ps, overwriting any earlier metademo.ps file created by the source.</p>
+		<p>In its default configuration, TeXShop assumes that one of the numbers is zero. TeXShop calls the script pstopdf, which runs MetaPost and thus creates all of these postscript files. The script then converts each postscript file to a pdf file. Finally, the script renames the zeroth pdf file to the name of the source with extension "pdf", for instance metademo.pdf and displays this figure in the preview screen. 
+
+</p>
+		<p>When you are editing a MetaPost file, change the number of the figure being edited from positive to zero. TeXShop will then display this figure as it is being debugged. When you are satisfied with this figure, change its number back to positive and change the number of another figure from positive to zero.</p>
+		<p>Once MetaPost files have been created, then can be displayed like any other illustration. Pdflatex can be used if the illustrations are converted to pdf form, or TeX and Ghostscript can be used to include the postscript illustrations without conversion. For example, the four illustrations created by the above MetaPost file can be displayed by typesetting the following file with TeX and Ghostscript:</p>
+		<dl>
+			<dd><tt>\documentclass[11pt] {article}</tt>
+			<dd><tt>\usepackage{graphicx}</tt>
+			<dd>
+			<dd><tt>\begin{document}</tt>
+			<dd>
+			<dd><tt>Here are some illustrations.</tt>
+			<dd><tt>\vspace{.2in}</tt>
+			<dd>
+			<dd><tt>\includegraphics[width=1cm]{metademo.1}</tt>
+			<dd><tt>\hfill</tt>
+			<dd><tt>\includegraphics[width=1cm]{metademo.2}</tt>
+			<dd><tt>\hfill</tt>
+			<dd><tt>\includegraphics[width=1cm]{metademo.3}</tt>
+			<dd><tt>\hfill</tt>
+			<dd><tt>\includegraphics[width=1cm]{metademo.4}</tt>
+			<dd><tt>\hfill</tt>
+			<dd>
+			<dd><tt>\end{document}</tt>
+		</dl>
+		<p></p>
+		<ul>
+			
+		</ul>
+
+		<p>It is also possible to embed MetaPost source code directly in a Latex document using the package mfpic.
+When this method is used, the MetaPost preference should be set to "mpost" rather than "mptopdf" in the Preferences dialog so MetaPost will run directly when the MetaPost engine is selected.
+A document containing MetaPost source code is first typeset with pdflatex or latex, creating a mp source file with all of the document's illustrations. This file is then compiled with MetaPost. Finally, the document is typeset again with pdflatex or latex to show the resulting illustrations.  </p>
+
+<p>Below is an example created by  Claus Gerhardt. Save this example as "MetaPostTest". Notice the line
+"\opengraphsfile{MetaPostTest}" in the source. Although the mfpic package permits any name for this graph file, its name must be the same as the document name to use the following procedure in TeXShop. 
+Typeset the document once, switch to MetaPost and typeset again, switch back to LaTeX and typeset a final time. In this process, either pdflatex or latex + ghostscript can be used for the first and third steps.
+
+</p>
+
+
+<tt>
+<dl>
+<dd>% This example is a shortened version of an example provided by
+<dd>% Claus Gerhardt.
+<dd><p> 
+<dd>\documentclass[11pt]{article}
+<dd>\usepackage[metapost]{mfpic}
+<dd>\usepackage{amsmath}
+<dd>\opengraphsfile{MetaPostTest}
+<dd><p>
+<dd>\title{Brief Article}
+<dd>\author{The Author}
+<dd>\begin{document}
+<dd>\maketitle
+<dd><p>
+<dd>\begin{mfpic}[20]{-0.5}{11}{-0.5}{11}
+<dd>{\drawcolor{red}\function{0,10,0.05}{10-x}}
+<dd>{\drawcolor{blue}\function{0.99,10,0.05}{10/x}}
+<dd>{\drawcolor{green}\dashed\lines{(0.0,4),(10,4)}}
+<dd>\tlabelcolor{black}
+<dd>\drawcolor{black}\ymarks[4pt]{4}
+<dd>\headcolor{black}
+<dd>\drawcolor{2*black}\axes
+<dd>\tlabel{(4,6.5)}{$P_{\negthickspace c}$}
+<dd>\tlabel{(6,6.5)}{$P_{c}$}
+<dd>\tlabel(5,3.5){$A$}
+<dd>\tlabel{(-.6,3.9)}{$4$}
+<dd>\end{mfpic}
+<dd><p>
+<dd>\begin{center}
+<dd>\begin{mfpic}[15]{-2.2}{5}{-2.2}{2.2}
+<dd>\store{a}{\circle{(0,0),2}}
+<dd>\store{b}{\circle{(2 *sqrt 2,0),2}}
+<dd>\store{c}{\arc[p]{(0,0),-45,45,2}}
+<dd>\gfill[0.7white]\lclosed\mfobj{a}
+<dd>\gfill[white]\lclosed\mfobj{b}
+<dd>\draw\mfobj{a}\draw\mfobj{b}
+<dd>\tlabel(-1,-0.3){ $A$ }
+<dd>\tlabel(3,-0.3){ $B$ }
+<dd>\end{mfpic}
+<dd>\end{center}
+<dd><p>
+ <dd>\closegraphsfile
+<dd>\end{document}
+
+		</dl>
+</tt>
+
+
+		<p> The following example, also provided
+by Claus Gerhardt, shows the power of MetaPost. </p>
+
+
+<tt>
+<dl>
+
+<dd>% This example was provided by Claus Gerhardt
+<dd>% Most of the figures and the text are taken from G.'s book
+<dd>% "Analysis I" published by International Press, Boston,
+<dd>% which will appear at the beginning of 2004.
+<dd><p>
+<dd>\documentclass[11pt]{amsart}
+<dd>\usepackage[metapost]{mfpic}
+<dd>\usepackage{amsmath}
+<dd>\usepackage{amsthm}
+<dd>\RequirePackage{amssymb}
+<dd>\RequirePackage[mathscr]{eucal}
+<dd>\opengraphsfile{MetaPostTest}
+<dd><p>
+<dd>\DeclareMathOperator*{\Au}{\forall}
+<dd>\DeclareMathOperator*{\Eu}{\exists}
+<dd>\newcommand{\msc}{\protect\mathscr}
+<dd>\newcommand\su{\subset}
+<dd>\newcommand{\pri}[1]{#1^\prime}
+
+<dd>\newcommand{\tit}[1]{\textit{\ignorespaces #1\ignorespaces}}
+<dd>\newcommand{\Cc}{{\protect\mathbb C}}
+<dd>\newcommand\ra{\rightarrow}
+<dd>\newcommand{\abs}[1]{\lvert#1\rvert}
+<dd>\newcommand{\fv}[2]{#1\hspace{0pt}_{|_{#2}}}
+<dd>\newcommand{\set}[2]{\{\,#1\colon #2\,\}}
+<dd>\newcommand\inn[1]{{\overset{\msp[9]\circ}{#1}}}
+<dd>\newcommand{\msp}[1][1]{\mspace{#1mu}}
+<dd>\newcommand{\Si}{\varSigma}
+<dd><p>
+<dd>\theoremstyle{remark}
+<dd>\newtheorem*{definition}{\bf Definition}
+<dd>\theoremstyle{theorem}
+<dd>\newtheorem*{theorem}{Theorem}
+<dd><p>
+<dd>\title{An Example of Using MetaPost with mfpic}
+<dd>%\author{The Author}
+<dd><p>
+<dd>\begin{document}
+<dd>\maketitle
+<dd>\thispagestyle{empty}
+<dd><p>
+<dd>\bigskip
+<dd>\begin{mfpic}[20]{-0.5}{11}{-0.5}{11}
+<dd>{\drawcolor{red}\function{0,10,0.05}{10-x}}
+<dd>{\drawcolor{blue}\function{0.99,10,0.05}{10/x}}
+<dd>{\drawcolor{green}\dashed\lines{(0.0,4),(10,4)}}
+<dd>\tlabelcolor{black}
+<dd>\drawcolor{black}\ymarks[4pt]{4}
+<dd>\headcolor{black}
+<dd>\drawcolor{2*black}\axes
+<dd>\tlabel{(4,6.5)}{$P_{\negthickspace c}$}
+<dd>\tlabel(5,3.5){$A$}
+<dd>\tlabel{(-.6,3.9)}{$4$}
+<dd>\end{mfpic}
+<dd><p>
+<dd>\bigskip
+<dd>\begin{definition}
+<dd>Let $E,\pri E$ be metric spaces  and $f:E\rightarrow \pri E$ a map. $f$ is called \tit{continuous} at $x_0\in E$ if
+<dd>\begin{equation}\notag
+<dd>\Au_{\pri U\in \msc U(f(x_0))}\; \Eu_{U\in \msc U(x_0)}\quad f(U)\su \pri U.
+<dd>\end{equation}
+<dd>$f$ is called continuous in $E$ if $f$ is continuous at every point of $E$.
+<dd>\end{definition}
+<dd><p>
+
+<dd>\bigskip
+<dd>\begin{center}
+<dd>\begin{mfpic}[15]{-4.2}{16}{-4.2}{4.2}
+<dd>\store{R}{\rect{(-4,-4),(4,4)}}
+<dd>\store{U}{\cyclic[.75]{(-2,-2),(0,-1.5),(2,-2.4),(1.8,2),(0.5,1.8),(-2.3,1.7)}}
+<dd>\store{FU}{\shiftpath{(12,0)}\cyclic[.75]{(-1.5,-1.5),(0,-1.2),(2,-1.7),(1.8,2),(0,1.6),(-2,1)}}
+<dd>\store{UU}{\shiftpath{(12,0)}\cyclic[.75]{(-2.8,-3),(0,-2),(3,-2.4),(2.8,2.8),(0.5,2.4),(-2.9,1.7)}}
+<dd>\gfill[0.6white]\mfobj{U}
+<dd>\gfill[0.8white]\mfobj{UU}
+<dd>\gfill[0.6white]\mfobj{FU}
+<dd>\draw\mfobj{U}
+<dd>\draw\mfobj{UU}
+<dd>\draw\mfobj{R}
+<dd>\draw\mfobj{FU}
+<dd>\arrow\curve[1]{(3,2),(6,3),(9,2)}
+<dd>\point{(0,0),(12,0)}
+<dd>\shiftpath{(12,0)}\mfobj{R}
+<dd>\tlabel[tc](0,3.5){$E$}
+<dd>\tlabel[tc](12,3.5){$E'$}
+<dd>\tlabel[tl](-2,0){$U$}
+<dd>\tlabel[tl](10.1,1){$f(U)$}
+<dd>\tlabel[tl](9,-1){$U'$}
+<dd>\tlabel[tl](0.1,0){ $x_0$ }
+<dd>\tlabel[tl](12.1,0){ $f(x_0)$ }
+<dd>\tlabel[tc](6.1,3.8){$f$}
+<dd>\end{mfpic}
+<dd>\end{center}
+
+<dd><p>
+<dd>\noindent
+<dd>\parbox[c]{7.51cm}
+<dd>{The picture on the right shows the intersection of two
+<dd>sets $A$ and $B$. Notice that this intersection consists of
+<dd>all points which belong to both sets.}
+<dd>\hfill
+<dd>\begin{minipage}{40mm}
+<dd>\begin{mfpic}[15]{-2.2}{5}{-2.2}{2.2}
+<dd>\store{a}{\circle{(0,0),2}}
+<dd>\store{b}{\circle{(2 *sqrt 2,0),2}}
+<dd>\store{c}{\arc[p]{(0,0),-45,45,2}}
+<dd>\store{de}{ \arc[p]{(2 *sqrt 2,0),135,225,2}}
+<dd>\store{dd}{\lclosed\connect\mfobj{de}\mfobj{c}\endconnect}
+<dd>\gfill[0.7white]\mfobj{dd}
+<dd>\draw\mfobj{a}\draw\mfobj{b}
+<dd>\tlabel(-1,-0.3){ $A$ }
+<dd>\tlabel(3,-0.3){ $B$ }
+<dd>\end{mfpic}
+<dd>\end{minipage}
+<dd><p>
+<dd>\bigskip
+<dd>\begin{definition}[Complex logarithm\index{complex logarithm}]
+<dd>The \tit{complex logarithm},  $\log: \Cc^* \ra S_l$, is defined by
+<dd>\begin{equation}\notag
+<dd>\log z=\log\abs z+i\arg_lz.
+<dd>\end{equation}
+<dd>It is the inverse of $\fv\exp{S_l}$, the so-called \tit{ main branch}
+<dd>of the exponential function.
+<dd>\end{definition}
+<dd><p>
+<dd>The region of discontinuity 
+<dd>is now the axis
+<dd>$\set{z\in\Cc^*}{\arg z=\pi}$. Thus, the exponential function 
+<dd>is not only bijective in the
+<dd>open strip
+<dd>$\inn S_l$,
+<dd>but also a differentiable homeomorphism onto
+<dd>$\Si=\set{z\in\Cc^*}{\arg z\neq \pi}$ with
+<dd>$\pri\exp z=\exp z\neq 0$, and therefore, in view of the previous theorem, we may conclude 
+<dd><p>
+<dd>\begin{theorem}
+<dd>The complex logarithm is  infinitely often  differentiable in $\Si$
+<dd>and
+<dd>$\pri\log z=\frac{1}{z}$.
+<dd>\end{theorem}
+<dd><p>
+<dd>\begin{mfpic}[15]{0}{20}{-2.5}{3}
+<dd>\gfill[0.6white]\rect{(12,-2),(20,2)}
+<dd>\gfill[0.6white]\circle{(4,0),2}
+<dd>\arrow[l 5pt]\lines{(4,0),(8,0)}
+<dd>\arrow[l 5pt]\lines{(4,-2.5),(4,3)}
+<dd>\arrow[l 5pt]\lines{(12,0),(20,0)}
+<dd>\gfill[white]\circle{(4,0),0.05}
+<dd>\arrow\curve[1]{(7,2.5),(10,3.5),(13,2.5)}
+<dd>\penwd{1pt}
+<dd>\draw[white]\lines{(0,0),(4,0)}
+<dd>\penwd{0.5pt}
+<dd>\arrow[l 5pt]\lines{(16,-2.5),(16,3)}
+<dd>\tlabel[cr](17.2,2.3){$\pi$}
+<dd>\tlabel[cr](17.2,-2.3){$-\pi$}
+<dd>\tlabel[cc](10,4){ log}
+<dd>\tlabel[cc](2,2.5){ $\Si$}
+<dd>\end{mfpic}%
+
+<dd><p>
+<dd>\closegraphsfile
+<dd>\end{document}
+
+</dl>
+</tt>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">ConTeXt and MetaPost</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to teTeX</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About teTeX</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

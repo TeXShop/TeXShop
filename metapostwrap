@@ -1,0 +1,28 @@
+#!/bin/tcsh
+
+# This short script calls mpost
+# Richard Koch; November 1, 2003
+
+set mygspath = "$argv[2]"
+if (-x ${mygspath}/ps2pdf) then
+        setenv PATH "${mygspath}:${PATH}"
+        rehash
+endif
+
+set mytexexecpath = "$argv[3]"
+if (-x ${mytexexecpath}mpost) then
+        setenv PATH "${mytexexecpath}:${PATH}"
+        rehash
+endif
+
+set filename = "$argv[4]"
+
+if ("$argv[1]" == "YES") then
+
+mpost --interaction=nonstopmode "${filename:r}.mp"
+
+else
+
+mpost "${filename:r}.mp"
+
+endif

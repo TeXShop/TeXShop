@@ -66,6 +66,7 @@
 - (id)handleTypesetCommand:(NSScriptCommand*)command;
 - (id)handleTypesetInteractiveCommand:(NSScriptCommand*)command;
 - (id)handleRefreshPDFCommand:(NSScriptCommand*)command;
+- (id)handleRefreshPDFBackgroundCommand:(NSScriptCommand*)command;
 - (id)handleTaskDoneCommand:(NSScriptCommand*)command;
 @end
 

@@ -1932,6 +1932,55 @@ preference change is cancelled. "*/
     return (theEngine);
 }
 
+- (void) testGSCommandKey;
+{
+    NSString	    *gsTeXCommand, *path;
+    NSRange			theRange;
+    NSString	    *binaryLocation;
+    NSFileManager   *fileManager;
+    NSString	    *newGSTeXCommand;
+    BOOL			changed;
+	int				locationOfRest;
+    
+    changed = NO;
+    gsTeXCommand = [SUD stringForKey:TexGSCommandKey];
+    theRange = [gsTeXCommand rangeOfString: @"altpdftex"];
+    if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
+    locationOfRest = theRange.location + 9;
+	binaryLocation = [SUD stringForKey:TetexBinPathKey];
+	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
+	fileManager = [NSFileManager defaultManager];
+	if ([fileManager fileExistsAtPath:path]) {
+		newGSTeXCommand = [NSString stringWithString: @"simpdftex tex"];
+		if ([gsTeXCommand length] > locationOfRest)
+		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
+		[SUD setObject:newGSTeXCommand forKey:TexGSCommandKey];
+		changed = YES;
+		}
+	}
+	
+    gsTeXCommand = [SUD stringForKey:LatexGSCommandKey];
+    theRange = [gsTeXCommand rangeOfString: @"altpdflatex"];
+    if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
+    locationOfRest = theRange.location + 11;
+	binaryLocation = [SUD stringForKey:TetexBinPathKey];
+	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
+	fileManager = [NSFileManager defaultManager];
+	if ([fileManager fileExistsAtPath:path]) {
+		newGSTeXCommand = [NSString stringWithString: @"simpdftex latex"];
+		if ([gsTeXCommand length] > locationOfRest)
+		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
+		[SUD setObject:newGSTeXCommand forKey:LatexGSCommandKey];
+		changed = YES;
+		}
+	}
+	
+    if (changed)
+	[SUD synchronize];
+    
+}
+
+
 - (void) convertDocument;
 {
     NSFileManager       *fileManager;
@@ -2007,8 +2056,10 @@ preference change is cancelled. "*/
                     stringByAppendingString: [[SUD stringForKey:TetexBinPathKey] stringByExpandingTildeInPath]];
                 enginePath = [enginePath stringByAppendingString: argumentString];
                 }
-            else
+            else {
+		[self testGSCommandKey];
                 enginePath = [[SUD stringForKey:LatexGSCommandKey] stringByExpandingTildeInPath];
+		}
             if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
                 enginePath = [enginePath stringByAppendingString: @" --distiller /usr/bin/pstopdf"];
  			if (! writeable) {
@@ -2513,10 +2564,10 @@ if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
         {
             NSString* enginePath;
             NSString* myEngine;
-            if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey]) 
+        //    if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey]) 
         //        && (whichEngine != 2)   && (whichEngine != 4))
-                && (whichEngineLocal != MetapostEngine) && (whichEngineLocal != ContextEngine))
-            	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+        //        && (whichEngineLocal != MetapostEngine) && (whichEngineLocal != ContextEngine))
+        //    	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
                 
             if (texTask != nil) {
                 [texTask terminate];
@@ -2621,6 +2672,7 @@ if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
                             }
                         }
                     else {
+			[self testGSCommandKey];
                         if (withLatex)
                             myEngine = [[SUD stringForKey:LatexGSCommandKey] stringByExpandingTildeInPath]; // 1.35 (D)
                         else
@@ -2655,6 +2707,10 @@ if ((! done) && ([SUD boolForKey: UseOldHeadingCommandsKey])) {
             if ((whichEngineLocal != MetapostEngine) && (whichEngineLocal != ContextEngine)) {
             
             enginePath = [self separate:myEngine into:args];
+	    
+	    if ((theScript == 101) && ([SUD boolForKey:SavePSEnabledKey])) 
+             	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+
             } 
             
             // Koch: Feb 20; this allows spaces everywhere in path except

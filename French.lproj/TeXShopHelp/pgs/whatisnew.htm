@@ -13,6 +13,104 @@
 
 
 <div id="content_normal">
+
+<P><h5>Versions 1.35a through 1.42 add extra features to TeXShop and fix some bugs.</h5></p>
+<p><h6> New features:</h6></p>
+
+<ul>
+<li> The commands "altpdftex" and "altpdflatex" in Gerben Wierda's TeX distribution
+have changed to "simpdftex tex" and "simpdftex latex". These are now the default preference
+values for new TeXShop installations.
+
+<li>  Moreover, the first time a user tries to typeset in the "tex + ghostscript" mode,
+TeXShop will check these preference items, and change them if necessary. It does this by
+determining whether "simpdftex" is in the TeX binary directory. If so, and if the command
+in the TeX + dvips + distiller "TeX Program" field in the TeXShop Engine Preferences is "altpdftex", then
+this field is changed to "simpdftex tex". Any additional flags in the preference field are retained.
+At the same time, the "Latex Program" field is changed. If it is "altpdflatex", it is changed
+to "simpdftex latex", retaining any additional flags.
+<li> Added ISO Latin 9 encoding
+<li> New German localization and help files.
+<li> New Japanese Help by Yoshihisa Okazaki with help from Seiji Zenitani.
+<li> New Spanish help files and localization.
+<li> Uses version 1.2.4 of OgreKit.
+<li> Conversion of eps, ps, and dvi files to pdf (caused by opening such a file)
+now works even if the path to the file has folders whose names contain spaces.
+In all three cases, the file can now be in a folder without write permission.
+<li> Trash AUX files now removes files with more extensions: cos, idv, 4ct, 4tc, lg, xref, ttt, fff, ent, wrm.
+<li> If the user tries to open a file with UTF-8 Unicode encoding, but the file is not
+a legal utf8 file, a dialog now appears warning of the problem, and the file is opened with
+MacOSXRoman encoding.
+<li> Bib files are promoted to full class citizens; text can be dragged to them,
+syntax coloring works, etc.
+<li> A remark: users have reported that they can no longer "find" words in the console
+window. Actually, they can. This window has two portions. When typesetting ends, the
+bottom portion is active, so the find panel searches that portion. To activate the top,
+click on it. Then "find" works.
+<li> Added hidden preferences to set the insertion point color; this is needed for
+users who change the default foreground color. For instance
+<ul>
+<li> defaults write TeXShop insertionpoint_R 1.0
+<li> defaults write TeXShop insertionpoint_G 1.0
+<li> defaults write TeXShop insertionpoint_B 1.0
+</ul>
+change the insertion point to white. The default values for black text on white should
+be 0.0.
+<li> Added a preference to control first mouse behavior: "Select on Activate."
+When this is YES, 
+a click in the source window will also
+set the insertion point to the click point. If it is NO, a second click is required
+to change the insertion point. 
+<li> Added pdf to the types of files TeXShop can edit, and added a pdf icon.
+This allows TeXShop to be chosen as the default pdf viewer.
+<li> Martin Kerz added code to check for updates and ask Safari to download
+an update if one is available.This code first determines whether the user is running
+Tiger or higher. If so, it checks against the currently available version number.
+If not, it checks against a field named "TeXShopPanther" which will hold the latest
+currently available version which runs on 10.2 and 10.3.
+<li> Added the appletalk command RefreshPDFBackground, which refreshes the pdf window
+without bringing it forward.
+<li> Added Lilypond, abc, and bst as extensions that can be edited.
+<li> Added code by David Reitter so that selecting the word
+\int, etc., selects the beginning "\" as well.
+
+</ul>
+
+<p><h6> Bugs fixed:</h6></p>
+		<ul>				
+
+
+<li>	Japanese Image Copy Type Preference failed due to incorrect localization. Now fixed.
+
+<li> Command Completion's configuration file is now loaded and saved in UTF-8 Unicode.
+
+<li> Errors fixed in pdfsync.
+
+<li> When typesetting engines are called, they are now passed the program filename with
+extension, rather than just the filename.
+
+<li> In 1.35, it was only possible to switch between the OgreKit Find panel and the
+Apple Find panel in the English localization. This is fixed.
+
+<li> The menu item to bring up the statistics panel was only in the English version.
+Now it is in all versions.
+
+<li> In previous versions, the Macro button could be added to the Preview Window Toolbar
+in English, but not in other localization. This is now fixed.
+
+<li> In all display modes except single page mode, a black border is drawn around each
+pdf page. Previously this border was slightly inside the page, cutting off a slight border
+around the page. Now it is just outside the page. Thanks to Scott Ranby for pointing out
+this error.
+
+<li> The "%!TEX TS-program" and "%!TEX root =" commands now when when used with an
+external editor.
+
+
+</ul>
+
+
+
 <P><h5>Version 1.35 adds extra features to TeXShop and fixes some bugs.</h5></p>
 <p><h6> New features:</h6></p>
 

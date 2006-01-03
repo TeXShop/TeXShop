@@ -61,7 +61,7 @@
 - (int)rowCount;
 - (int)colCount;
 - (id)objectInRow:(unsigned)row inCol:(unsigned)col;
-- (id)rowAtIndex:(unsigned)row;
+// - (id)rowAtIndex:(unsigned)row;
 -(void)replaceObjectInRow:(unsigned)row inCol:(unsigned)col withObject:(id) anObj;
 - (void)addRow;
 - (void)insertRow:(NSMutableArray*)row atIndex:(int)ind;

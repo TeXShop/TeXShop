@@ -98,58 +98,18 @@
 
     
     macroType = LatexEngine;
-	
-	// WARNING: kTaggedTeXSections may be reset in EncodingSupport
-	
-	if ([SUD boolForKey: ConTeXtTagsKey]) {
-
-		kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
-					@"\\section",
-					@"\\subsection",
-					@"\\subsubsection",
-					@"\\subsubsubsection",
-					@"\\subsubsubsubsection",
-					@"\\part",
-					@"\\title",
-					@"\\subject",
-					@"\\subsubject",
-					@"\\subsubsubject",
-					@"\\subsubsubsubject",
-					@"\\subsubsubsubsubject",
-					nil];
-					
-		kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
-					@"section: ",
-					@"subsection: ",
-					@"subsubsection: ",
-					@"subsubsubsection: ",
-					@"subsubsubsubsection: ",
-					@"part: ",
-					@"title: ",
-					@"subject: ",
-					@"subsubject: ",
-					@"subsubsubject: ",
-					@"subsubsubsubject: ",
-					@"subsubsubsubsubject: ",
-					nil];
-		}
-		
-	else {
-	
-		
-		kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+    
+    kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
 					@"\\section",
 					@"\\subsection",
 					@"\\subsubsection",
 					nil];
 					
-		kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+    kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
 					@"section: ",
 					@"subsection: ",
 					@"subsubsection: ",
 					nil];
-		}
-		
     // if this is the first time the app is used, register a set of defaults to make sure
     // that the app is useable.
     if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||

@@ -143,36 +143,12 @@ static id sharedEncodingSupport = nil;
 		texChar = 0x00a5; // yen
 		if (kTaggedTeXSections)
 			[kTaggedTeXSections release];
-			
-		if ([SUD boolForKey: ConTeXtTagsKey]) {
-
-			kTaggedTeXSections = [[NSArray alloc] initWithObjects:
-					filterBackslashToYen(@"\\chapter"),
-					filterBackslashToYen(@"\\section"),
-					filterBackslashToYen(@"\\subsection"),
-					filterBackslashToYen(@"\\subsubsection"),
-					filterBackslashToYen(@"\\subsubsubsection"),
-					filterBackslashToYen(@"\\subsubsubsubsection"),
-					filterBackslashToYen(@"\\part"),
-					filterBackslashToYen(@"\\title"),
-					filterBackslashToYen(@"\\subject"),
-					filterBackslashToYen(@"\\subsubject"),
-					filterBackslashToYen(@"\\subsubsubject"),
-					filterBackslashToYen(@"\\subsubsubsubject"),
-					filterBackslashToYen(@"\\subsubsubsubsubject"),
-					nil];
-			}
-			
-		else {
-			
-			kTaggedTeXSections = [[NSArray alloc] initWithObjects:
+		kTaggedTeXSections = [[NSArray alloc] initWithObjects:
 							filterBackslashToYen(@"\\chapter"),
 							filterBackslashToYen(@"\\section"),
 							filterBackslashToYen(@"\\subsection"),
 							filterBackslashToYen(@"\\subsubsection"),
 							nil];
-			}
-			
                 // mitsu 1.29 (P)
 		if (shouldFilter != filterMacJ && commandCompletionList)
 		{
@@ -202,8 +178,6 @@ static id sharedEncodingSupport = nil;
 	else 
 	{
 		texChar = 0x005c; // backslash
-		
-		/*
 		if (kTaggedTeXSections)
 			[kTaggedTeXSections release];
 		kTaggedTeXSections = [[NSArray alloc] initWithObjects:
@@ -212,7 +186,6 @@ static id sharedEncodingSupport = nil;
 							@"\\subsection",
 							@"\\subsubsection",
 							nil];
-		*/
                 // mitsu 1.29 (P)
 		if (shouldFilter == filterMacJ && commandCompletionList)
 		{
@@ -469,7 +442,6 @@ static id sharedEncodingSupport = nil;
                 break;
                 
         case 4: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
-				break;
                 
         case 5: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
                 break;
@@ -650,7 +622,6 @@ static id sharedEncodingSupport = nil;
 // replace backslashes by yens
 NSMutableString *filterBackslashToYen(NSString *aString)
 {
-	NSLog(@"did filter");
 	NSMutableString *newString = [NSMutableString stringWithString: aString];
 	[newString replaceOccurrencesOfString: @"\\" withString: yenString
 						options: 0 range: NSMakeRange(0, [newString length])];

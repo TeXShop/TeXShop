@@ -135,8 +135,6 @@ extern NSString *UseOutlineKey;
 extern NSString *LeftRightArrowsAlwaysPageKey;
 extern NSString *ReleaseDocumentClassesKey;
 extern NSString *RedConsoleAfterErrorKey;
-extern NSString *PreviewDrawerOpenKey;
-extern NSString *ConTeXtTagsKey;
 // end mitsu 1.29
 
 

@@ -134,8 +134,6 @@ NSString *UseOutlineKey = @"UseOutline";
 NSString *LeftRightArrowsAlwaysPageKey = @"LeftRightArrowsAlwaysPage";
 NSString *ReleaseDocumentClassesKey = @"ReleaseDocumentClasses"; // 0 = if 10.4.3 or higher; 1 = no; 2 = yes
 NSString *RedConsoleAfterErrorKey = @"RedConsoleAfterError"; // NO or YES
-NSString *PreviewDrawerOpenKey = @"PreviewDrawerOpen"; // NO or YES
-NSString *ConTeXtTagsKey = @"ConTeXtTags"; // NO or YES
 
 // end mitsu 1.29
 

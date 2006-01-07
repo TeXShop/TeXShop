@@ -91,6 +91,12 @@
  	
 	// Clean up.
 	[_searchResults release];
+	if (sourceFiles != nil) {
+			[sourceFiles release];
+			sourceFiles = nil;
+			}
+			
+	[super dealloc];
 }
 
 
@@ -251,16 +257,48 @@
 		[self initializeDisplay];
 }
 
+- (BOOL) doReleaseDocument
+{
+	long	MacVersion;
+	int		result;
+
+	result = [SUD integerForKey:ReleaseDocumentClassesKey];
+	if (result == 1)
+		return NO;
+	else if (result == 2)
+		return YES;
+	else {
+        if ((Gestalt(gestaltSystemVersion, &MacVersion) == noErr) && (MacVersion >= 0x1043)) 
+			return YES;
+		else
+			return NO;
+		}
+}
+
+
 - (void) showWithPath: (NSString *)imagePath;
 {
 
 		PDFDocument	*pdfDoc;
 		PDFPage	*aPage;
 		NSRect	tempRect;
+		NSData	*theData;
 		
 		sourceFiles = nil;
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
-		[self setDocument: pdfDoc];
+		
+		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
+		if ([self doReleaseDocument]) {
+			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+			[self setDocument: pdfDoc];
+			// [pdfDoc release];
+			}
+			
+		else {
+			theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+			pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+			[self setDocument: pdfDoc];
+			}
+		
 		[self setup];
 		totalPages = [[self document] pageCount];
 		[totalPage setIntValue:totalPages];
@@ -278,12 +316,13 @@
 - (void) reShowWithPath: (NSString *)imagePath;
 {
 
-		PDFDocument	*pdfDoc;
+		PDFDocument	*pdfDoc, *oldDoc;
 		PDFPage		*aPage;
-		int			theindex, oldindex;
+		int		theindex, oldindex;
 		BOOL		needsInitialization;
-		int			i, amount, newAmount;
+		int		i, amount, newAmount;
 		PDFPage		*myPage;
+		NSData		*theData;
 		
 		[self cleanupMarquee: YES];
 		
@@ -309,8 +348,27 @@
 			[_searchResults release];
 			_searchResults = NULL;
 			}
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
-		[self setDocument: pdfDoc];
+			
+		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
+		if ([self doReleaseDocument]) {
+			NSLog(@"texshop release");
+			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+			[self setDocument: pdfDoc];
+			// [pdfDoc release];
+			}
+			
+		else {
+			oldDoc = [self document];
+			theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+			pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+			// pdfDoc = [[PDFDocument alloc] initWithData: theData];
+			[self setDocument: pdfDoc];
+			if (oldDoc != NULL) {
+				[oldDoc setDelegate: NULL];
+				[oldDoc release];
+				}
+			}
+
 		[[self document] setDelegate: self];
 		totalPages = [[self document] pageCount];
 		[totalPage setIntValue:totalPages];
@@ -3387,13 +3445,14 @@ done:
 
 - (void)setupSourceFiles;
 {
-	NSString		*sourceText, *searchText, *filePath, *filePathNew, *rootPath;
+	NSString	*sourceText, *searchText, *filePath, *filePathNew, *rootPath;
 	unsigned int	sourceLength;
-	BOOL			done;
-	NSRange			maskRange, searchRange, newSearchRange, fileRange;
-	int				currentIndex;
+	BOOL		done;
+	NSRange		maskRange, searchRange, newSearchRange, fileRange;
+	int		currentIndex;
 	NSFileManager	*manager;
-	BOOL			isDir;
+	BOOL		isDir;
+	unsigned	startIndex, lineEndIndex, contentsEndIndex;
 	
 	manager = [NSFileManager defaultManager];
 	
@@ -3402,6 +3461,39 @@ done:
 	currentIndex = 0;
 	sourceText = [[myDocument textView] string];
 	sourceLength = [sourceText length];
+	
+	searchText = @"%!TEX projectfile =";
+	done = NO;
+	maskRange.location = 0;
+	maskRange.length = sourceLength;
+	
+	// experiments show that the syntax is \include{file} where "file" cannot include ".tex" but the name must be "file.tex"
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
+		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
+		if (searchRange.location == NSNotFound) 
+			done = YES;
+		else {
+			maskRange.location = searchRange.location + 1;
+			maskRange.length = sourceLength - maskRange.location;
+			[sourceText getLineStart: &startIndex end: &lineEndIndex contentsEnd: &contentsEndIndex forRange: searchRange];
+			newSearchRange.location = searchRange.location + 19;
+			newSearchRange.length = contentsEndIndex - newSearchRange.location;
+			filePath = [sourceText substringWithRange: newSearchRange];
+			if (filePath)
+			    filePath = [filePath stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]]; 
+			if (filePath && ([filePath length] > 0)) {
+			    if ([filePath characterAtIndex: 0] != '/')
+				filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+			    filePath = [filePath stringByStandardizingPath];
+			    // add this to the array
+			    if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+				[sourceFiles insertObject: filePath atIndex: currentIndex];
+				currentIndex++;
+				}
+			    }
+			}
+		}
+
 	
 	searchText = @"\include{";
 	done = NO;
@@ -4979,6 +5071,17 @@ done:
 		return;
 		}
 	
+	if (
+		(([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) || ([theKey characterAtIndex:0] == NSRightArrowFunctionKey)) 
+		&& ([SUD boolForKey: LeftRightArrowsAlwaysPageKey])
+		) {
+		if ([theKey characterAtIndex:0] == NSLeftArrowFunctionKey)
+			[self previousPage:self];
+		else
+			[self nextPage:self];
+		return;
+		}
+
 	if ((([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) || ([theKey characterAtIndex:0] == NSRightArrowFunctionKey)) 
 		&& (! [[[[self documentView] enclosingScrollView] horizontalScroller] isEnabled])
 		) {

@@ -1102,6 +1102,22 @@
 	return [super validateMenuItem: anItem];
 }
 
+#pragma mark ========Ruler==========
+
+//mfwitten@mit.edu: delegate methods for rulers"
+- (void)rulerView: (NSRulerView*)aRulerView didMoveMarker: (NSRulerMarker*)aMarker
+{
+    NSRange selectedRange = [self selectedRange];
+    NSObject* representedObject = [aMarker representedObject];
+    
+	if ([representedObject isKindOfClass: [NSString class]] && [(NSString*)representedObject isEqualToString: @"NSTailIndentRulerMarkerTag"])
+        [self selectAll: self];
+    
+    [super rulerView: aRulerView didMoveMarker: aMarker];
+    [self setSelectedRange: selectedRange];
+}
+
+
 // end mitsu 1.29
  
         

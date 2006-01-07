@@ -58,4 +58,5 @@
 #endif MITSU_PDF
 - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void) configurePaperSize: sender;
 @end

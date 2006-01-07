@@ -20,6 +20,7 @@ NSString *LatexPanelNameKey = @"LatexPanel";
 NSString *MakeEmptyDocumentKey = @"MakeEmptyDocument";
 NSString *UseExternalEditorKey = @"UseExternalEditor";
 NSString *EncodingKey = @"Encoding";
+NSString *LineBreakModeKey = @"LineBreakMode";
 NSString *TagSectionsKey = @"TagSections";
 NSString *LPanelOutlinesKey = @"LPanelOutlines";
 NSString *PanelOriginXKey = @"PanelOriginX";
@@ -130,6 +131,9 @@ NSString *AcceptFirstMouseKey = @"AcceptFirstMouse";
 NSString *UseOldHeadingCommandsKey = @"UseOldHeadingCommands";
 NSString *SyncMethodKey = @"SyncMethod";
 NSString *UseOutlineKey = @"UseOutline";
+NSString *LeftRightArrowsAlwaysPageKey = @"LeftRightArrowsAlwaysPage";
+NSString *ReleaseDocumentClassesKey = @"ReleaseDocumentClasses"; // 0 = if 10.4.3 or higher; 1 = no; 2 = yes
+NSString *RedConsoleAfterErrorKey = @"RedConsoleAfterError"; // NO or YES
 
 // end mitsu 1.29
 

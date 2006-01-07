@@ -108,6 +108,8 @@ Loads the .nib file if necessary, fills all the controls with the values from th
                     when showing preferences: [self updateControlsFromUserDefaults:SUD]; */
 	}
 	
+	[SUD synchronize];
+	
         [self updateControlsFromUserDefaults:SUD];
         /* the next command causes windows to remember their font in case it is changed, and then
         the change is cancelled */
@@ -261,13 +263,13 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     {
         [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:DocumentWindowFixedPosKey] forKey:DocumentWindowFixedPosKey];
         [SUD setObject:[activeWindow stringWithSavedFrame] forKey:DocumentWindowFixedPosKey];
-    
+	
         // just in case: the radio button must be checked as well.
         /* koch: the code below is harmless but probably unnecessary since the button can only
             be pressed if the radio button is in the fixed position mode */
-        [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:DocumentWindowPosModeKey] forKey:DocumentWindowPosModeKey];
-        [SUD setInteger:DocumentWindowPosFixed forKey:DocumentWindowPosModeKey];
-        [_sourceWindowPosMatrix selectCellWithTag:DocumentWindowPosFixed];
+         [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:DocumentWindowPosModeKey] forKey:DocumentWindowPosModeKey];
+         [SUD setInteger:DocumentWindowPosFixed forKey:DocumentWindowPosModeKey];
+         [_sourceWindowPosMatrix selectCellWithTag:DocumentWindowPosFixed];
     }
 }
 
@@ -533,11 +535,11 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
     {
         [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:PdfWindowFixedPosKey] forKey:PdfWindowFixedPosKey];
         [SUD setObject:[activeWindow stringWithSavedFrame] forKey:PdfWindowFixedPosKey];
-    
+	
         // just in case: the radio button must be checked as well.
-        [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfWindowPosModeKey] forKey:PdfWindowPosModeKey];
-        [SUD setInteger:DocumentWindowPosFixed forKey:PdfWindowPosModeKey];
-        [_sourceWindowPosMatrix selectCellWithTag:PdfWindowPosFixed];
+        // [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:PdfWindowPosModeKey] forKey:PdfWindowPosModeKey];
+         [SUD setInteger:DocumentWindowPosFixed forKey:PdfWindowPosModeKey];
+         [_sourceWindowPosMatrix selectCellWithTag:PdfWindowPosFixed];
     }
 }
 
@@ -1027,8 +1029,29 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[_prefsWindow makeFirstResponder: _prefsWindow];
 // end addition
 
-	[SUD synchronize];
+/*
+	 if ([SUD integerForKey: DocumentWindowPosModeKey] == 0)
+	    NSLog(@"3OK");
+	    else NSLog(@"3bad");
+	 if ([SUD integerForKey: PdfWindowPosModeKey] == 0)
+	    NSLog(@"3pdfOK");
+	else
+	    NSLog(@"3pdfbad");
+*/
 
+	 BOOL result = [SUD synchronize];
+	 // if (result == NO)
+	 //     NSLog(@"aha");
+	
+/*
+	 if ([SUD integerForKey: DocumentWindowPosModeKey] == 0)
+	    NSLog(@"4OK");
+	    else NSLog(@"4bad");
+	 if ([SUD integerForKey: PdfWindowPosModeKey] == 0)
+	    NSLog(@"4pdfOK");
+	else
+	    NSLog(@"4pdfbad");
+*/
 
         // re-Set the environment for subtasks
         [TSEnvironment release];

@@ -108,6 +108,7 @@
 - (void) reShowWithPath: (NSString *)imagePath;
 - (void) setupPageStyle;
 - (void) setupMagnificationStyle;
+- (BOOL) doReleaseDocument;
 
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;

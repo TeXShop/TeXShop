@@ -21,6 +21,7 @@ extern NSString *LatexPanelNameKey;
 extern NSString *MakeEmptyDocumentKey;
 extern NSString *UseExternalEditorKey;
 extern NSString *EncodingKey;
+extern NSString *LineBreakModeKey;
 extern NSString *TagSectionsKey;
 extern NSString *LPanelOutlinesKey;
 extern NSString *PanelOriginXKey;
@@ -131,6 +132,9 @@ extern NSString *AcceptFirstMouseKey;
 extern NSString *UseOldHeadingCommandsKey;
 extern NSString *SyncMethodKey;
 extern NSString *UseOutlineKey;
+extern NSString *LeftRightArrowsAlwaysPageKey;
+extern NSString *ReleaseDocumentClassesKey;
+extern NSString *RedConsoleAfterErrorKey;
 // end mitsu 1.29
 
 
@@ -326,5 +330,14 @@ typedef enum _SyncMethodType
 	SEARCHONLY = 1, // new pdf search method
 	SEARCHFIRST = 2 // new pdf search first, but fall back on PDF sync if necessary
 } _SyncMethodType;
+
+/*" Comment and Indent Methods"*/
+typedef enum _CommentIndentType
+{
+	Mcomment = 1,
+	Muncomment = 2,
+	Mindent = 3,
+	Munindent = 4
+} _CommentIndentType;
 
 

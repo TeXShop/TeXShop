@@ -137,10 +137,17 @@
     NSWindow            *callingWindow;
     int                 badEncoding;
     BOOL                showBadEncodingDialog;
-	id					*myPDFKitView;
-	BOOL				PDFfromKit;
-	unsigned int		pdfCharacterIndex;
-	BOOL				textSelectionYellow;
+    id			*myPDFKitView;
+    BOOL		PDFfromKit;
+    unsigned int	pdfCharacterIndex;
+    BOOL		textSelectionYellow;
+    NSPanel		*PaperSizePanel;
+    id			*PaperSizeChoice;
+	//Michael Witten: mfwitten@mit.edu
+	NSLineBreakMode	lineBreakMode;
+	// end witten
+
+
     
 // end addition
 
@@ -261,6 +268,7 @@
 - (void) setCharacterIndex:(unsigned int)index;
 - (BOOL) textSelectionYellow;
 - (void) setTextSelectionYellow:(BOOL)value;
+- (void) configurePaperSize: sender;
 
 //-----------------------------------------------------------------------------
 // Timer methods
@@ -285,9 +293,18 @@
 	length: (unsigned)newLength key:(NSString *)key;
 - (void)undoSpecial:(id)theDictionary;
 - (void)doCommentOrIndent: (id)sender;
+- (void) doCommentOrIndentForTag: (int)tag;
 - (void)newTag: (id)sender;
 - (void)saveDocument: (id)sender;
 // end mitsu 1.29
+
+// Michael Witten: mfwitten@mit.edu
+- (void)insertNewlinesFromSelectionUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;	//mfwitten@mit.edu 22 June 2005
+- (void)removeNewlinesUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;				//mfwitten@mit.edu 22 June 2005
+- (void)setLineBreakMode: (id)sender;																		//mfwitten@mit.edu 31 May 2005
+- (void)hardWrapSelection: (id)sender;																		//mfwitten@mit.edu 7 June 2005
+- (void)removeNewLinesFromSelection: (id)sender;															//mfwitten@mit.edu 22 June 2005
+// end witten
 
 
 

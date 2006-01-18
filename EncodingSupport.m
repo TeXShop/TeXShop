@@ -443,6 +443,7 @@ static id sharedEncodingSupport = nil;
                 break;
                 
         case 4: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
+                break;
                 
         case 5: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
                 break;

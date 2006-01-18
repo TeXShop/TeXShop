@@ -1285,7 +1285,13 @@ necessary */
                                                            @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestPantherVersion],
                                      @"OK", @"Cancel", nil);
         if (button == NSOKButton) {
-            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.dmg"]];
+            if (hasTiger)
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.dmg"]];
+            else {
+                NSString * htmlString = @"http://www.uoregon.edu/~koch/texshop/texshop_";
+                NSString * html1String = [[htmlString stringByAppendingString: latestPantherVersion] stringByAppendingString: @".dmg"];
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString: html1String]];
+                }
         }
     }
 

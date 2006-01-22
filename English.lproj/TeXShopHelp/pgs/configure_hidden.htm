@@ -17,6 +17,15 @@
 				<dd>
 					defaults write TeXShop TagSections NO
 			</dl>
+<p> ConTeXt users may want additional words to be recognized and added to the Tag menu. The
+following preferences adds the words \subsubsubsection, \subsubsubsubsection, \part, \title,
+\subject, \subsubject, \subsubsubject, \subsubsubsubject, and \subsubsubsubsubject. 
+</p>
+<dl>
+<dd>
+					defaults write TeXShop ConTeXtTags YES
+			</dl>
+
 			<p>
 				When syntax coloring is on, comments are colored red, commands are colored blue, and the symbols $, {, and } are colored dark green. These colors can be changed. A color is determined by the red, green, and blue components of the color; each is a number between 0.00 and 1.00. To change the color of $, {, and } to bright green, issue the following commands in Terminal:
 			</p>
@@ -97,7 +106,7 @@
 			</p>
 			<dl>
 				<dd>
-					defaults write TeXShop SaveBackup YES
+					defaults write TeXShop KeepBackup YES
 			</dl>
 			<p>
 				Occasionally during typesetting, the .aux files, .log files, and other files created automatically by TeX become corrupted and must be removed. TeXShop has a "Trash AUX Files" menu item and associated button in the console window. When either item is selected, TeXShop moves to the trash all files in the folder containing the source file with the same name as the source name, and extensions .aux, .bbl, .blg, .brf, .glo, .idx, .ilg, .ind, .ioa, .log, .log, .lot, .mtc, .mlf, .out, .pdfsync, and .toc. Other extensions can be added to this list, one by one. For instance, to add .dvi files to this list:
@@ -190,17 +199,26 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 <dd>
 					defaults write TeXShop LineBreakMode 1
 			</dl>
-<p> hen TeXShop was first released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. So the bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.</p>
-<p>  A side effect was that memory gradually filled up and some users learned that they needed to quit TeXShop and restart after each day's work.</p>
-<p>  Recent investigation seems to show that this bug is fixed in Tiger 10.4.3. Consequently the latest version of TeXShop tests which system is running and releases the old data structures when the system is at least 10.4.3, but not otherwise.
-<p>   This behavior is controlled by a new hidden Preference item. </p>
- The default value is 0, causing the program to behave as just described. If the value is 1, the old data structures are never released and the program behaves exactly as earlier versions of TeXShop 2. If the value is 2, old data structures are always released.</p>
+<p> When the Preview window first appears, its drawer is hidden. A hidden preference changes this behavior so the drawer is visible when the Preview window first appears.
+</p>
+<dl>
+<dd>
+					defaults write TeXShop PreviewDrawerOpen YES
+			</dl>
+
+<p> When TeXShop was first released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. So the bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.</p>
+<p>  Recent investigation seems to show that this bug is not as severe in Tiger 10.4.4. Consequently a hidden preference has been added to release the data if desired. The values of this preference are</p>
+<dl>
+<dd> 0 to release the data on system 10.4.3 or higher
+<dd> 1 to never release the data
+<dd> 2 to always release the data
+</dl>
+<p> The default value is 1, causing the program to behave as previous versions behave.</p>
 <dl>
 <dd>
 					defaults write TeXShop ReleaseDocumentClasses 1
 			</dl>
 
- <p> If you find that the program becomes sluggish after several typesetting jobs, change ReleaseDocumentClasses to 1 and then report the behavior to me with as many details as possible.</p>
 		</div>
 		<div id="header_background">
 		</div>

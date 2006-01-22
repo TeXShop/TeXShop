@@ -309,6 +309,8 @@
 		[self setupOutline];
 		
 		[myPDFWindow makeKeyAndOrderFront: self];
+		if ([SUD boolForKey:PreviewDrawerOpenKey]) 
+			[self toggleDrawer: self];
 	
 
 }
@@ -351,7 +353,7 @@
 			
 		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 		if ([self doReleaseDocument]) {
-			NSLog(@"texshop release");
+			// NSLog(@"texshop release");
 			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
 			[self setDocument: pdfDoc];
 			// [pdfDoc release];
@@ -1192,6 +1194,16 @@ switch (rotation)
 
 		// koch; Dec 5, 2003
 		
+		// The next lines fix a strange bug. Suppose the user has chosen the select tool,
+		// but then changes to the source window with command-1 and typesets to get back
+		// to the preview. Then the select tool is not active. The reason is that
+		// pushing the command key calls "flags changed" but releasing it doesn't call
+		// "flags changed" because now another window is active. Koch Jan 11, 2006
+		if (!([theEvent modifierFlags] & NSAlternateKeyMask) &&
+			!([theEvent modifierFlags] & NSCommandKeyMask) &&
+			!([theEvent modifierFlags] & NSControlKeyMask))
+			currentMouseMode = mouseMode;
+		
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 currentMouseMode = mouseMode;
                 [[self window] invalidateCursorRectsForView: self];
@@ -1221,7 +1233,7 @@ switch (rotation)
 			((mouseMode==NEW_MOUSE_MODE_MAG_GLASS_L)?1:((mouseMode==NEW_MOUSE_MODE_MAG_GLASS)?0:(-1)))];
 	}
 	else
-	{
+	{	
 		switch (currentMouseMode)
 		{
 			case NEW_MOUSE_MODE_SCROLL:
@@ -1242,7 +1254,7 @@ switch (rotation)
                                 #endif
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
-			case NEW_MOUSE_MODE_SELECT_PDF: 
+			case NEW_MOUSE_MODE_SELECT_PDF:
 				if(selRectTimer && [self mouse: [self convertPoint: 
 					[theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
 				{
@@ -3303,8 +3315,8 @@ done:
 		NSData *data = nil;
 		NSNumber *aNumber;
 		
-		aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
-		NSLog([aNumber stringValue]);
+		// aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
+		// NSLog([aNumber stringValue]);
 		
 		data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
 		
@@ -4981,6 +4993,7 @@ done:
 // change mouse mode when a modifier key is pressed
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+	
 	if (([theEvent modifierFlags] & NSCommandKeyMask) && (!([theEvent modifierFlags] & NSAlternateKeyMask)))
                 currentMouseMode = NEW_MOUSE_MODE_SELECT_TEXT; 
 	else if ([theEvent modifierFlags] & NSControlKeyMask)
@@ -4989,8 +5002,9 @@ done:
 		currentMouseMode = NEW_MOUSE_MODE_SELECT_PDF;
 	else if ([theEvent modifierFlags] & NSAlternateKeyMask)
 		currentMouseMode = MOUSE_MODE_MAG_GLASS;
-	else
+	else {
 		currentMouseMode = mouseMode;
+		}
 		
 	[[self window] invalidateCursorRectsForView: self]; // this updates the cursor rects
 }

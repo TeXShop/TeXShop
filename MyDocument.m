@@ -2183,7 +2183,7 @@ preference change is cancelled. "*/
             	[args addObject: [NSString stringWithString:@"--keep-psfile"]];
 		}
             }    
-        else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
+		else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
             enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
             if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
                 [args addObject: [NSString stringWithString:@"Panther"]];
@@ -2202,8 +2202,7 @@ preference change is cancelled. "*/
             [args addObject: gsPath];
             tetexBinPath = [[[SUD stringForKey:TetexBinPathKey] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
             epstopdfPath = [tetexBinPath stringByAppendingString:@"epstopdf"];
-            [args addObject: epstopdfPath];
-            // [args addObject: [[NSBundle mainBundle] pathForResource:@"epstopdf" ofType:nil]];
+			[args addObject: epstopdfPath];
             }
 
             if ((! writeable) && ([[myFileName pathExtension] isEqualToString:@"dvi"])) 
@@ -4158,6 +4157,7 @@ BOOL isText1(int c) {
                 else if ((theChar == texChar) &&  ([SUD boolForKey: TagSectionsKey])) {
 					
                     unsigned	i;
+					
                     for(i = 0; i < [kTaggedTeXSections count]; ++i) {
                         NSString* tag = [kTaggedTeXSections objectAtIndex:i];
                         nameRange.location	= start;

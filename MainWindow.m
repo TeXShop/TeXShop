@@ -109,4 +109,23 @@
     [super close];
 }
 
+- (void)sendEvent:(NSEvent *)theEvent
+{
+	if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+		
+		if  ([[theEvent characters] characterAtIndex:0] == '[') {
+			[myDocument doCommentOrIndentForTag:Munindent];
+			return;
+			} 
+	
+		if  ([[theEvent characters] characterAtIndex:0] == ']') {
+			[myDocument doCommentOrIndentForTag:Mindent];
+			return;
+			} 
+		}
+	
+	[super sendEvent: theEvent];
+}
+
+
 @end

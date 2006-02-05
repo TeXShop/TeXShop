@@ -91,6 +91,12 @@
  	
 	// Clean up.
 	[_searchResults release];
+	if (sourceFiles != nil) {
+			[sourceFiles release];
+			sourceFiles = nil;
+			}
+			
+	[super dealloc];
 }
 
 
@@ -251,16 +257,48 @@
 		[self initializeDisplay];
 }
 
+- (BOOL) doReleaseDocument
+{
+	long	MacVersion;
+	int		result;
+
+	result = [SUD integerForKey:ReleaseDocumentClassesKey];
+	if (result == 1)
+		return NO;
+	else if (result == 2)
+		return YES;
+	else {
+        if ((Gestalt(gestaltSystemVersion, &MacVersion) == noErr) && (MacVersion >= 0x1043)) 
+			return YES;
+		else
+			return NO;
+		}
+}
+
+
 - (void) showWithPath: (NSString *)imagePath;
 {
 
 		PDFDocument	*pdfDoc;
 		PDFPage	*aPage;
 		NSRect	tempRect;
+		NSData	*theData;
 		
 		sourceFiles = nil;
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
-		[self setDocument: pdfDoc];
+		
+		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
+		if ([self doReleaseDocument]) {
+			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+			[self setDocument: pdfDoc];
+			// [pdfDoc release];
+			}
+			
+		else {
+			theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+			pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+			[self setDocument: pdfDoc];
+			}
+		
 		[self setup];
 		totalPages = [[self document] pageCount];
 		[totalPage setIntValue:totalPages];
@@ -271,6 +309,8 @@
 		[self setupOutline];
 		
 		[myPDFWindow makeKeyAndOrderFront: self];
+		if ([SUD boolForKey:PreviewDrawerOpenKey]) 
+			[self toggleDrawer: self];
 	
 
 }
@@ -278,12 +318,13 @@
 - (void) reShowWithPath: (NSString *)imagePath;
 {
 
-		PDFDocument	*pdfDoc;
+		PDFDocument	*pdfDoc, *oldDoc;
 		PDFPage		*aPage;
-		int			theindex, oldindex;
+		int		theindex, oldindex;
 		BOOL		needsInitialization;
-		int			i, amount, newAmount;
+		int		i, amount, newAmount;
 		PDFPage		*myPage;
+		NSData		*theData;
 		
 		[self cleanupMarquee: YES];
 		
@@ -295,6 +336,9 @@
 			needsInitialization = YES;
 		else
 			needsInitialization = NO;
+		
+		NSRect visibleRect = [[self documentView] visibleRect];
+		NSRect fullRect = [[self documentView] bounds];
 		
 		drawMark = NO;
 		aPage = [self currentPage];
@@ -309,8 +353,27 @@
 			[_searchResults release];
 			_searchResults = NULL;
 			}
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] retain];
-		[self setDocument: pdfDoc];
+			
+		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
+		if ([self doReleaseDocument]) {
+			// NSLog(@"texshop release");
+			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+			[self setDocument: pdfDoc];
+			// [pdfDoc release];
+			}
+			
+		else {
+			oldDoc = [self document];
+			theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+			pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+			// pdfDoc = [[PDFDocument alloc] initWithData: theData];
+			[self setDocument: pdfDoc];
+			if (oldDoc != NULL) {
+				[oldDoc setDelegate: NULL];
+				[oldDoc release];
+				}
+			}
+
 		[[self document] setDelegate: self];
 		totalPages = [[self document] pageCount];
 		[totalPage setIntValue:totalPages];
@@ -332,8 +395,23 @@
 			[self layoutDocumentView];
 			}
 		[self setupOutline];
+		
+		// WARNING: The next 9 lines of code are very fragile. Inigially I used
+		// NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+		// and works on Intel but not on PowerPC.
+		// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+		// but it doesn't seem to work there. If changes are made, be sure to test on
+		// Intel and on PowerPC.
 		aPage = [[self document] pageAtIndex: theindex];
 		[self goToPage: aPage];
+		
+		NSRect newFullRect = [[self documentView] bounds];
+		int difference = newFullRect.size.height - fullRect.size.height;
+		visibleRect.origin.y = visibleRect.origin.y + difference;
+		[[self window] disableFlushWindow];
+		[self display];
+		[[self documentView] scrollRectToVisible: visibleRect];
+		[[self window] enableFlushWindow];
 }
 
 
@@ -1134,6 +1212,16 @@ switch (rotation)
 
 		// koch; Dec 5, 2003
 		
+		// The next lines fix a strange bug. Suppose the user has chosen the select tool,
+		// but then changes to the source window with command-1 and typesets to get back
+		// to the preview. Then the select tool is not active. The reason is that
+		// pushing the command key calls "flags changed" but releasing it doesn't call
+		// "flags changed" because now another window is active. Koch Jan 11, 2006
+		if (!([theEvent modifierFlags] & NSAlternateKeyMask) &&
+			!([theEvent modifierFlags] & NSCommandKeyMask) &&
+			!([theEvent modifierFlags] & NSControlKeyMask))
+			currentMouseMode = mouseMode;
+		
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 currentMouseMode = mouseMode;
                 [[self window] invalidateCursorRectsForView: self];
@@ -1163,7 +1251,7 @@ switch (rotation)
 			((mouseMode==NEW_MOUSE_MODE_MAG_GLASS_L)?1:((mouseMode==NEW_MOUSE_MODE_MAG_GLASS)?0:(-1)))];
 	}
 	else
-	{
+	{	
 		switch (currentMouseMode)
 		{
 			case NEW_MOUSE_MODE_SCROLL:
@@ -1184,7 +1272,7 @@ switch (rotation)
                                 #endif
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
-			case NEW_MOUSE_MODE_SELECT_PDF: 
+			case NEW_MOUSE_MODE_SELECT_PDF:
 				if(selRectTimer && [self mouse: [self convertPoint: 
 					[theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
 				{
@@ -3245,8 +3333,8 @@ done:
 		NSData *data = nil;
 		NSNumber *aNumber;
 		
-		aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
-		NSLog([aNumber stringValue]);
+		// aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
+		// NSLog([aNumber stringValue]);
 		
 		data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
 		
@@ -3387,13 +3475,14 @@ done:
 
 - (void)setupSourceFiles;
 {
-	NSString		*sourceText, *searchText, *filePath, *filePathNew, *rootPath;
+	NSString	*sourceText, *searchText, *filePath, *filePathNew, *rootPath;
 	unsigned int	sourceLength;
-	BOOL			done;
-	NSRange			maskRange, searchRange, newSearchRange, fileRange;
-	int				currentIndex;
+	BOOL		done;
+	NSRange		maskRange, searchRange, newSearchRange, fileRange;
+	int		currentIndex;
 	NSFileManager	*manager;
-	BOOL			isDir;
+	BOOL		isDir;
+	unsigned	startIndex, lineEndIndex, contentsEndIndex;
 	
 	manager = [NSFileManager defaultManager];
 	
@@ -3402,6 +3491,39 @@ done:
 	currentIndex = 0;
 	sourceText = [[myDocument textView] string];
 	sourceLength = [sourceText length];
+	
+	searchText = @"%!TEX projectfile =";
+	done = NO;
+	maskRange.location = 0;
+	maskRange.length = sourceLength;
+	
+	// experiments show that the syntax is \include{file} where "file" cannot include ".tex" but the name must be "file.tex"
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
+		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
+		if (searchRange.location == NSNotFound) 
+			done = YES;
+		else {
+			maskRange.location = searchRange.location + 1;
+			maskRange.length = sourceLength - maskRange.location;
+			[sourceText getLineStart: &startIndex end: &lineEndIndex contentsEnd: &contentsEndIndex forRange: searchRange];
+			newSearchRange.location = searchRange.location + 19;
+			newSearchRange.length = contentsEndIndex - newSearchRange.location;
+			filePath = [sourceText substringWithRange: newSearchRange];
+			if (filePath)
+			    filePath = [filePath stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]]; 
+			if (filePath && ([filePath length] > 0)) {
+			    if ([filePath characterAtIndex: 0] != '/')
+				filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+			    filePath = [filePath stringByStandardizingPath];
+			    // add this to the array
+			    if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+				[sourceFiles insertObject: filePath atIndex: currentIndex];
+				currentIndex++;
+				}
+			    }
+			}
+		}
+
 	
 	searchText = @"\include{";
 	done = NO;
@@ -4889,6 +5011,7 @@ done:
 // change mouse mode when a modifier key is pressed
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+	
 	if (([theEvent modifierFlags] & NSCommandKeyMask) && (!([theEvent modifierFlags] & NSAlternateKeyMask)))
                 currentMouseMode = NEW_MOUSE_MODE_SELECT_TEXT; 
 	else if ([theEvent modifierFlags] & NSControlKeyMask)
@@ -4897,8 +5020,9 @@ done:
 		currentMouseMode = NEW_MOUSE_MODE_SELECT_PDF;
 	else if ([theEvent modifierFlags] & NSAlternateKeyMask)
 		currentMouseMode = MOUSE_MODE_MAG_GLASS;
-	else
+	else {
 		currentMouseMode = mouseMode;
+		}
 		
 	[[self window] invalidateCursorRectsForView: self]; // this updates the cursor rects
 }
@@ -4979,6 +5103,17 @@ done:
 		return;
 		}
 	
+	if (
+		(([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) || ([theKey characterAtIndex:0] == NSRightArrowFunctionKey)) 
+		&& ([SUD boolForKey: LeftRightArrowsAlwaysPageKey])
+		) {
+		if ([theKey characterAtIndex:0] == NSLeftArrowFunctionKey)
+			[self previousPage:self];
+		else
+			[self nextPage:self];
+		return;
+		}
+
 	if ((([theKey characterAtIndex:0] == NSLeftArrowFunctionKey) || ([theKey characterAtIndex:0] == NSRightArrowFunctionKey)) 
 		&& (! [[[[self documentView] enclosingScrollView] horizontalScroller] isEnabled])
 		) {

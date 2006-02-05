@@ -352,9 +352,33 @@ if (![myDocument fromKit]) {
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+	MyPDFKitView *aView;
+
+if ([myDocument fromKit]) {
+
+	if (([theEvent type] == NSKeyDown) && ([[theEvent characters] characterAtIndex:0] == '[')
+		&& ([theEvent modifierFlags] & NSCommandKeyMask))
+		{
+		aView = [myDocument pdfKitView];
+		if (aView != nil)
+			[aView goBack: self];
+		return;
+		} 
+	
+	if (([theEvent type] == NSKeyDown) && ([[theEvent characters] characterAtIndex:0] == ']')
+		&& ([theEvent modifierFlags] & NSCommandKeyMask))
+		{
+		aView = [myDocument pdfKitView];
+		if (aView != nil)
+			[aView goForward: self];
+		return;
+		} 
+	
+	}
+
 if (![myDocument fromKit]) {
 
-    unichar	theChar;
+	unichar	theChar;
     
     if ([theEvent type] == NSKeyDown) {
  
@@ -643,6 +667,11 @@ if (![myDocument fromKit]) {
 }
 // end mitsu 1.29 (O)
 // end mitsu 1.29
+
+- (void) configurePaperSize: sender
+{
+    [myDocument configurePaperSize: self];
+}
 
 #endif
 

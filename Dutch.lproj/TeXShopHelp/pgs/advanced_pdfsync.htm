@@ -27,10 +27,23 @@ succeed and clicking can be done without really thinking about selecting an appr
 
 <P> Synchronizing from the preview window to the source window works the same way, but there is an additional complication. Projects may contain several source files, inserted using the \include or
 \input methods. TeXShop handles this complication by assuming that all \include and \input statements occur in the root file, using one of the commands \include{this file}, \input{this file}, or
-\import{this file}. In the initial implementation, it makes a list of the first twenty such files
+\import{this file}. In the initial implementation, it makes a list of the first sixty such files
 and searches all of them, declaring success if a string occurs exactly once in exactly one of the files. If the string is found in a file which is not yet open, TeXShop opens the file. Then it scrolls to the appropriate spot and highlights the resulting phrase in yellow. (In future implementations, the
-number twenty may be raised; write if you need more files searched.)</P>
+number sixty may be raised; write if you need more files searched.)</P>
 
+<P>ConTeXt uses a different method of inputting files, so a search for \include and \input statements will not find related ConTeXt files. There is a manual method to indicate
+files to be searched for synchronization; this method works with any typesetting method and
+is required in ConTeXt. At the top of the root file, list files to be searched via
+<dl>
+	<dd>%!TEX projectfile =
+</dl>
+Here are examples:
+<dl>
+	<dd>%!TEX projectfile = /Users/koch/MyDoc/chapter1.tex
+	<dd>%!TEX projectfile = chapter2.tex
+	<dd>%!TEX projectfile = ../chapter3.tex
+</dl>
+ 
 <P> Previous versions of TeXShop used an alternate synchronization method, invented in 2003 by
 Jérôme Laurens and Piero D'Ancona. They  wrote a style file for pdflatex; their package, pdfsync.sty, causes pdftex to write an extra file during typesetting with information needed to correlate the output pdf and input source files. Laurens' and D'Ancona's  work depends on internal pdftex commands which output the x and y coordinates of certain typesetting operations, so it only works with pdftex, pdflatex, and context. </P>
 
@@ -99,6 +112,7 @@ change this:</p>
 			<li><a href="advanced_unicode.htm">Unicode</a>
 			<li><a href="advanced_bibtex.htm">BibTeX</a>
 			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
 			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
 			<li><a href="advanced_mathematica.htm">Mathematica</a>
 			<li><a href="advanced_localization.htm">Localizations</a>

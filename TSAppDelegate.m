@@ -36,6 +36,50 @@
     return [super init];
 }
 
+- (void)testForIntel;
+{
+    
+// if the processor is intel and the path variable preference is /usr/local/tetex/bin/powerpc-apple-darwin-current, then
+// change that preference permanently to /usr/local/tetex/bin/i386-apple-darwin-current
+
+    NSString *binPath = [SUD stringForKey:TetexBinPathKey];
+    if (! [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"])
+	return;
+	
+// now test /usr/bin/uname -p; if this is Intel then make the change
+
+    unameTask = [[NSTask alloc] init];
+    NSString *enginePath = [[NSBundle mainBundle] pathForResource:@"unamewrap" ofType:nil];
+    unamePipe = [[NSPipe pipe] retain];
+    unameHandle = [unamePipe fileHandleForReading];
+    [unameTask setStandardOutput: unamePipe];
+    if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+        [unameTask setLaunchPath:enginePath];
+        [unameTask launch];
+	[unameTask waitUntilExit];
+	int status = [unameTask terminationStatus];
+	if (status == 0) {
+	    NSData *theData = [unameHandle readDataToEndOfFile];
+	    char * myData = [theData bytes];
+	    if (([theData length] >= 4) && (myData[0] == 'i') && (myData[1] == '3') && (myData[2] == '8') && (myData[3] == '6')) {
+		NSString *newBinPath = [NSString stringWithString: @"/usr/local/teTeX/bin/i386-apple-darwin-current"];
+		[SUD setObject: newBinPath forKey:TetexBinPathKey];
+		[SUD synchronize];
+		}
+	    }
+	}
+
+    if (unamePipe) {
+	[unamePipe release];
+	unamePipe = nil;
+	}
+    if (unameTask) {
+	[unameTask release];
+        unameTask = nil;
+	}
+}
+
+
 - (void)setForPreview: (BOOL)value;
 {
     forPreview = value;
@@ -54,18 +98,58 @@
 
     
     macroType = LatexEngine;
-    
-    kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+	
+	// WARNING: kTaggedTeXSections may be reset in EncodingSupport
+	
+	if ([SUD boolForKey: ConTeXtTagsKey]) {
+
+		kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+					@"\\section",
+					@"\\subsection",
+					@"\\subsubsection",
+					@"\\subsubsubsection",
+					@"\\subsubsubsubsection",
+					@"\\part",
+					@"\\title",
+					@"\\subject",
+					@"\\subsubject",
+					@"\\subsubsubject",
+					@"\\subsubsubsubject",
+					@"\\subsubsubsubsubject",
+					nil];
+					
+		kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+					@"section: ",
+					@"subsection: ",
+					@"subsubsection: ",
+					@"subsubsubsection: ",
+					@"subsubsubsubsection: ",
+					@"part: ",
+					@"title: ",
+					@"subject: ",
+					@"subsubject: ",
+					@"subsubsubject: ",
+					@"subsubsubsubject: ",
+					@"subsubsubsubsubject: ",
+					nil];
+		}
+		
+	else {
+	
+		
+		kTaggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
 					@"\\section",
 					@"\\subsection",
 					@"\\subsubsection",
 					nil];
 					
-    kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+		kTaggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
 					@"section: ",
 					@"subsection: ",
 					@"subsubsection: ",
 					nil];
+		}
+		
     // if this is the first time the app is used, register a set of defaults to make sure
     // that the app is useable.
     if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
@@ -172,6 +256,8 @@
         }
         else
             theFinder = [TextFinder sharedInstance];
+	    
+	[self testForIntel];
 
     // documentsHaveLoaded = NO;
 }

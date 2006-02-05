@@ -143,12 +143,36 @@ static id sharedEncodingSupport = nil;
 		texChar = 0x00a5; // yen
 		if (kTaggedTeXSections)
 			[kTaggedTeXSections release];
-		kTaggedTeXSections = [[NSArray alloc] initWithObjects:
+			
+		if ([SUD boolForKey: ConTeXtTagsKey]) {
+
+			kTaggedTeXSections = [[NSArray alloc] initWithObjects:
+					filterBackslashToYen(@"\\chapter"),
+					filterBackslashToYen(@"\\section"),
+					filterBackslashToYen(@"\\subsection"),
+					filterBackslashToYen(@"\\subsubsection"),
+					filterBackslashToYen(@"\\subsubsubsection"),
+					filterBackslashToYen(@"\\subsubsubsubsection"),
+					filterBackslashToYen(@"\\part"),
+					filterBackslashToYen(@"\\title"),
+					filterBackslashToYen(@"\\subject"),
+					filterBackslashToYen(@"\\subsubject"),
+					filterBackslashToYen(@"\\subsubsubject"),
+					filterBackslashToYen(@"\\subsubsubsubject"),
+					filterBackslashToYen(@"\\subsubsubsubsubject"),
+					nil];
+			}
+			
+		else {
+			
+			kTaggedTeXSections = [[NSArray alloc] initWithObjects:
 							filterBackslashToYen(@"\\chapter"),
 							filterBackslashToYen(@"\\section"),
 							filterBackslashToYen(@"\\subsection"),
 							filterBackslashToYen(@"\\subsubsection"),
 							nil];
+			}
+			
                 // mitsu 1.29 (P)
 		if (shouldFilter != filterMacJ && commandCompletionList)
 		{
@@ -178,6 +202,8 @@ static id sharedEncodingSupport = nil;
 	else 
 	{
 		texChar = 0x005c; // backslash
+		
+		/*
 		if (kTaggedTeXSections)
 			[kTaggedTeXSections release];
 		kTaggedTeXSections = [[NSArray alloc] initWithObjects:
@@ -186,6 +212,7 @@ static id sharedEncodingSupport = nil;
 							@"\\subsection",
 							@"\\subsubsection",
 							nil];
+		*/
                 // mitsu 1.29 (P)
 		if (shouldFilter == filterMacJ && commandCompletionList)
 		{
@@ -275,7 +302,7 @@ static id sharedEncodingSupport = nil;
 - (int)tagForEncoding: (NSString *)encoding
 {
 
-    if ([encoding isEqualToString:@"MacOSRoman"])
+      if ([encoding isEqualToString:@"MacOSRoman"])
         return 0;
     else if ([encoding isEqualToString:@"IsoLatin"])
         return 1;
@@ -283,49 +310,50 @@ static id sharedEncodingSupport = nil;
         return 2;
     else if ([encoding isEqualToString:@"IsoLatin5"])
         return 3;
-    else if ([encoding isEqualToString:@"MacJapanese"])
+    else if ([encoding isEqualToString:@"IsoLatin9"])
         return 4;
+    else if ([encoding isEqualToString:@"MacJapanese"])
+        return 5;
      // S. Zenitani Dec 13, 2002:
     else if ([encoding isEqualToString:@"DOSJapanese"])
-        return 5;
-    else if ([encoding isEqualToString:@"SJIS_X0213"])
         return 6;
-    else if ([encoding isEqualToString:@"EUC_JP"])
+    else if ([encoding isEqualToString:@"SJIS_X0213"])
         return 7;
-    else if ([encoding isEqualToString:@"JISJapanese"])
+    else if ([encoding isEqualToString:@"EUC_JP"])
         return 8;
-    else if ([encoding isEqualToString:@"MacKorean"])
+    else if ([encoding isEqualToString:@"JISJapanese"])
         return 9;
+    else if ([encoding isEqualToString:@"MacKorean"])
+        return 10;
     // --- end
     else if ([encoding isEqualToString:@"UTF-8 Unicode"])
-        return 10;
-    else if ([encoding isEqualToString:@"Standard Unicode"])
         return 11;
-     else if ([encoding isEqualToString:@"Mac Cyrillic"])
+    else if ([encoding isEqualToString:@"Standard Unicode"])
         return 12;
-     else if ([encoding isEqualToString:@"DOS Cyrillic"])
+     else if ([encoding isEqualToString:@"Mac Cyrillic"])
         return 13;
-     else if ([encoding isEqualToString:@"DOS Russian"])
+     else if ([encoding isEqualToString:@"DOS Cyrillic"])
         return 14;
-     else if ([encoding isEqualToString:@"Windows Cyrillic"])
+     else if ([encoding isEqualToString:@"DOS Russian"])
         return 15;
-     else if ([encoding isEqualToString:@"KOI8_R"])
+     else if ([encoding isEqualToString:@"Windows Cyrillic"])
         return 16;
-     else if ([encoding isEqualToString:@"Mac Chinese Traditional"])
+     else if ([encoding isEqualToString:@"KOI8_R"])
         return 17;
-     else if ([encoding isEqualToString:@"Mac Chinese Simplified"])
+     else if ([encoding isEqualToString:@"Mac Chinese Traditional"])
         return 18;
-    else if ([encoding isEqualToString:@"DOS Chinese Traditional"])
+     else if ([encoding isEqualToString:@"Mac Chinese Simplified"])
         return 19;
-    else if ([encoding isEqualToString:@"DOS Chinese Simplified"])
+    else if ([encoding isEqualToString:@"DOS Chinese Traditional"])
         return 20;
-    else if ([encoding isEqualToString:@"GBK"])
+    else if ([encoding isEqualToString:@"DOS Chinese Simplified"])
         return 21;
-    else if ([encoding isEqualToString:@"GB 2312"])
+    else if ([encoding isEqualToString:@"GBK"])
         return 22;
-    else if ([encoding isEqualToString:@"GB 18030"])
+    else if ([encoding isEqualToString:@"GB 2312"])
         return 23;
-    
+    else if ([encoding isEqualToString:@"GB 18030"])
+        return 24;
 
      else 
         return 0;
@@ -348,66 +376,69 @@ static id sharedEncodingSupport = nil;
         case 3: value = [NSString stringWithString:@"IsoLatin5"];
                 break;
                 
-        case 4: value = [NSString stringWithString:@"MacJapanese"];
+        case 4: value = [NSString stringWithString:@"IsoLatin9"];
+                break;
+                
+        case 5: value = [NSString stringWithString:@"MacJapanese"];
                 break;
                 
         // S. Zenitani Dec 13, 2002:
-        case 5: value = [NSString stringWithString:@"DOSJapanese"];
+        case 6: value = [NSString stringWithString:@"DOSJapanese"];
                 break;
                 
-        case 6: value = [NSString stringWithString:@"SJIS_X0213"];
+        case 7: value = [NSString stringWithString:@"SJIS_X0213"];
                 break;
                 
-        case 7: value = [NSString stringWithString:@"EUC_JP"];
+        case 8: value = [NSString stringWithString:@"EUC_JP"];
                 break;
                 
         // Mitsuhiro Shishikura Jan 4, 2003:
-        case 8: value = [NSString stringWithString:@"JISJapanese"];
+        case 9: value = [NSString stringWithString:@"JISJapanese"];
                 break;
                 
-        case 9: value = [NSString stringWithString:@"MacKorean"];
+        case 10: value = [NSString stringWithString:@"MacKorean"];
                 break;
         
-        case 10: value = [NSString stringWithString:@"UTF-8 Unicode"];
+        case 11: value = [NSString stringWithString:@"UTF-8 Unicode"];
                 break;
                 
-        case 11: value = [NSString stringWithString:@"Standard Unicode"];
+        case 12: value = [NSString stringWithString:@"Standard Unicode"];
                 break;
                 
-        case 12: value = [NSString stringWithString:@"Mac Cyrillic"];
+        case 13: value = [NSString stringWithString:@"Mac Cyrillic"];
                 break;
                 
-        case 13: value = [NSString stringWithString:@"DOS Cyrillic"];
+        case 14: value = [NSString stringWithString:@"DOS Cyrillic"];
                 break;
                 
-        case 14: value = [NSString stringWithString:@"DOS Russian"];
+        case 15: value = [NSString stringWithString:@"DOS Russian"];
                 break;
                 
-        case 15: value = [NSString stringWithString:@"Windows Cyrillic"];
+        case 16: value = [NSString stringWithString:@"Windows Cyrillic"];
                 break;
                 
-        case 16: value = [NSString stringWithString:@"KOI8_R"];
+        case 17: value = [NSString stringWithString:@"KOI8_R"];
                 break;
                 
-        case 17: value = [NSString stringWithString:@"Mac Chinese Traditional"];
+        case 18: value = [NSString stringWithString:@"Mac Chinese Traditional"];
                 break;
         
-        case 18: value = [NSString stringWithString:@"Mac Chinese Simplified"];
+        case 19: value = [NSString stringWithString:@"Mac Chinese Simplified"];
                 break;
         
-        case 19: value = [NSString stringWithString:@"DOS Chinese Traditional"];
+        case 20: value = [NSString stringWithString:@"DOS Chinese Traditional"];
                 break;
         
-        case 20: value = [NSString stringWithString:@"DOS Chinese Simplified"];
+        case 21: value = [NSString stringWithString:@"DOS Chinese Simplified"];
                 break;
         
-        case 21: value = [NSString stringWithString:@"GBK"];
+        case 22: value = [NSString stringWithString:@"GBK"];
                 break;
         
-        case 22: value = [NSString stringWithString:@"GB 2312"];
+        case 23: value = [NSString stringWithString:@"GB 2312"];
                 break;
         
-        case 23: value = [NSString stringWithString:@"GB 18030"];
+        case 24: value = [NSString stringWithString:@"GB 18030"];
                 break;
         
                 
@@ -423,7 +454,7 @@ static id sharedEncodingSupport = nil;
 {
     NSStringEncoding	theEncoding;
     
-    switch (encoding) {
+      switch (encoding) {
 
         case 0: theEncoding =  NSMacOSRomanStringEncoding;
                 break;
@@ -437,66 +468,69 @@ static id sharedEncodingSupport = nil;
         case 3: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin5);
                 break;
                 
-        case 4: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
+        case 4: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
+				break;
+                
+        case 5: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
                 break;
                 
         // S. Zenitani Dec 13, 2002:
-        case 5: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese);
+        case 6: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSJapanese);
                 break;
                 
-        case 6: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingShiftJIS_X0213_00);
+        case 7: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingShiftJIS_X0213_00);
                 break;
                 
-        case 7: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP);
+        case 8: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingEUC_JP);
                 break;
                 
         // Mitsuhiro Shishikura Jan 4, 2003:
-        case 8: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP);
+        case 9: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP);
                 break;
                 
-        case 9: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean);
+        case 10: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean);
                 break;
         
-        case 10: theEncoding =  NSUTF8StringEncoding;
+        case 11: theEncoding =  NSUTF8StringEncoding;
                 break;
                 
-        case 11: theEncoding =  NSUnicodeStringEncoding;
+        case 12: theEncoding =  NSUnicodeStringEncoding;
                 break;
                 
-        case 12: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic);
+        case 13: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCyrillic);
                  break;
                 
-        case 13: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic);
+        case 14: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSCyrillic);
                  break;
                 
-        case 14: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian);
+        case 15: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSRussian);
                  break;
                 
-        case 15: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic);
+        case 16: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingWindowsCyrillic);
                  break;
                 
-        case 16: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R);
+        case 17: theEncoding =  CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingKOI8_R);
                 break;
                 
-        case 17: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseTrad);
+        case 18: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseTrad);
                 break;
         
-        case 18: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseSimp);
+        case 19: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseSimp);
                 break;
         
-        case 19: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSChineseTrad);
+        case 20: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSChineseTrad);
                 break;
        
-        case 20: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSChineseSimplif);
+        case 21: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSChineseSimplif);
                 break;
        
-        case 21: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGBK_95);
+        case 22: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGBK_95);
                 break;
        
-        case 22: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_2312_80);
+        case 23: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_2312_80);
                 break;
        
-        case 23: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+        case 24: theEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
                 break;
                 
         default: theEncoding =  NSMacOSRomanStringEncoding;
@@ -616,6 +650,7 @@ static id sharedEncodingSupport = nil;
 // replace backslashes by yens
 NSMutableString *filterBackslashToYen(NSString *aString)
 {
+	NSLog(@"did filter");
 	NSMutableString *newString = [NSMutableString stringWithString: aString];
 	[newString replaceOccurrencesOfString: @"\\" withString: yenString
 						options: 0 range: NSMakeRange(0, [newString length])];

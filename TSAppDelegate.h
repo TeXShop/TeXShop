@@ -19,6 +19,11 @@
 @interface TSAppDelegate : NSObject 
 {
     BOOL	forPreview;
+    
+    NSTask        *unameTask;
+    NSPipe        *unamePipe;
+    NSFileHandle  *unameHandle;
+
 }
 
 - (IBAction)displayMatrixPanel:(id)sender; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03

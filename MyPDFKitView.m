@@ -337,6 +337,9 @@
 		else
 			needsInitialization = NO;
 		
+		NSRect visibleRect = [[self documentView] visibleRect];
+		NSRect fullRect = [[self documentView] bounds];
+		
 		drawMark = NO;
 		aPage = [self currentPage];
 		theindex = [[self document] indexForPage: aPage];
@@ -392,8 +395,23 @@
 			[self layoutDocumentView];
 			}
 		[self setupOutline];
+		
+		// WARNING: The next 9 lines of code are very fragile. Inigially I used
+		// NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+		// and works on Intel but not on PowerPC.
+		// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+		// but it doesn't seem to work there. If changes are made, be sure to test on
+		// Intel and on PowerPC.
 		aPage = [[self document] pageAtIndex: theindex];
 		[self goToPage: aPage];
+		
+		NSRect newFullRect = [[self documentView] bounds];
+		int difference = newFullRect.size.height - fullRect.size.height;
+		visibleRect.origin.y = visibleRect.origin.y + difference;
+		[[self window] disableFlushWindow];
+		[self display];
+		[[self documentView] scrollRectToVisible: visibleRect];
+		[[self window] enableFlushWindow];
 }
 
 

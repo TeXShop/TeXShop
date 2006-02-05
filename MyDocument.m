@@ -155,17 +155,19 @@
     return @"MyDocument";
 }
 
-- (void)printShowingPrintPanel:(BOOL)flag 
+// - (void) printDocumentWithSettings: (NSDictionary :)printSettings showPrintPanel:(BOOL)showPrintPanel delegate:(id)delegate 
+// 	didPrintSelector:(SEL)didPrintSelector contextInfo:(void *)contextInfo
+ - (void)printShowingPrintPanel:(BOOL)flag 
 {
-    id			printView;
+    id					printView;
     NSPrintOperation	*printOperation;
-    NSString		*imagePath;
+    NSString			*imagePath;
 #ifndef ROOTFILE
-    NSString		*projectPath, *nameString;
+    NSString			*projectPath, *nameString;
 #endif
-    NSString		*theSource;
-    id			aRep;
-    int			result;
+    NSString			*theSource;
+    id					aRep;
+    int					result;
 
     if (myImageType == isTeX) {
     
@@ -179,7 +181,7 @@
             return;
 #endif
         }
-
+		
 #ifndef ROOTFILE
         projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
         if ([[NSFileManager defaultManager] fileExistsAtPath: projectPath]) {
@@ -197,7 +199,8 @@
             }
         else
 #endif
-            imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+			imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+			
     }
     else if (myImageType == isPDF)
         imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
@@ -208,7 +211,7 @@
 
     aRep = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-        if ((myImageType == isTeX) || (myImageType == isPDF))
+        if ((myImageType == isTeX) || (myImageType == isPDF)) 
             aRep = [[NSPDFImageRep imageRepWithContentsOfFile: imagePath] retain];
         else if (myImageType == isJPG)
             aRep = [[NSImageRep imageRepWithContentsOfFile: imagePath] retain];
@@ -219,7 +222,7 @@
         if (aRep == nil) return;
         if ((myImageType == isJPG) || (myImageType == isTIFF)) 
             printView = [[PrintBitmapView alloc] initWithBitmapRep: aRep];
-        else
+        else 
             printView = [[PrintView alloc] initWithRep: aRep];
         printOperation = [NSPrintOperation printOperationWithView:printView
             printInfo: [self printInfo]];
@@ -391,6 +394,10 @@
     NSString            *defaultCommand;
     
     [super windowControllerDidLoadNib:aController];
+	
+	// can this fix the printer; Feb 1, 2006
+	
+	// [self setPrintInfo:[NSPrintInfo sharedPrintInfo]];
 	
     
 // the code below exists because the spell checker sometimes did not exist

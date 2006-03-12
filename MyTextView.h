@@ -5,7 +5,8 @@
 
 @interface MyTextView : NSTextView
 {
-    MyDocument		*document; 
+    MyDocument		*document;
+	BOOL			alternateDown;
 }
 
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity;

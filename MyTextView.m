@@ -69,6 +69,11 @@
 - (void)mouseDown:(NSEvent *)theEvent
 {
 		NSMutableDictionary	*mySelectedTextAttributes;
+		
+		if ([theEvent modifierFlags] & NSAlternateKeyMask)
+			alternateDown = YES;
+		else
+			alternateDown = NO;
 	
         // koch; Dec 13, 2003
 		
@@ -84,7 +89,14 @@
 			[mySelectedTextAttributes setObject:[NSColor colorWithCatalogName: @"System" colorName: @"selectedTextBackgroundColor"]  forKey:@"NSBackgroundColor"];
 			[[document textView] setSelectedTextAttributes: mySelectedTextAttributes];
 			}
-        [super mouseDown:theEvent];
+			
+		[super mouseDown:theEvent];
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+	alternateDown = NO;
+	[super mouseUp:theEvent];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
@@ -92,7 +104,7 @@
     // return YES;
     return [SUD boolForKey:AcceptFirstMouseKey];
 }
-                
+
 #pragma mark =====others=====
 
 // drag & drop support --- added by zenitani, Feb 13, 2003
@@ -390,6 +402,23 @@
 }
 // zenitani 1.33(2) end
 
+// The new two routines just insure that the cursor does not change when the option key is
+// pressed. This paves the way for a serious change in the third routine. If the option key
+// is down during a double click over a bracket, the bracket is chosen. If it is not down
+// during a double click, the text between the bracket and its matching pair is selected.
+// This is exactly the behavior of XCode.
+
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+	if (!([theEvent modifierFlags] & NSAlternateKeyMask))
+		[super flagsChanged:theEvent];
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+	if (!([theEvent modifierFlags] & NSAlternateKeyMask))
+		[super mouseMoved:theEvent];
+}
 
 // New version by David Reitter selects beginning backslash with words as in "\int"
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
@@ -415,8 +444,11 @@
 		}
 	}
 	
-	if ((proposedSelRange.length != 0) || (granularity != 2))
+	if ((proposedSelRange.length != 0) || (granularity != 1))
         return replacementRange;
+	
+	if (alternateDown)
+		return replacementRange;
 
     if (textString == nil) return replacementRange;
     length = [textString length];

@@ -1,0 +1,116 @@
+January 9, 2006
+
+Beginning of changes since 2.06
+
+1) Removed Indent, Unindent, Back, and Forward key shortcuts
+from non-English localizations of Menu.nib
+
+2) Changed the ReleaseDocumentClasses default preference to 1,
+since some users report a spinning beachball with the earlier 0
+
+3) Now includes TeX-mdimporter 1.2, which fixes a memory leak
+Users who installed TeXShop 2.05 and 2.06 should choose
+"Select Default Preferences" in Preferences, and then reset their
+preferences, or should open Terminal and type
+
+	defaults write TeXShop ReleaseDocumentClasses 1
+
+4) Reconnected the "Set Default Values" button in Preferences
+
+5) Peter Dyballa recommended calling ps2pdf rather than epstopdf
+when converting eps files to pdf files, and provided an example which
+converted correctly with ps2pdf, but not with epstopdf. The program
+currently does this if the distiller preference is "ghostscript",
+and calls /usr/bin/pstopdf if it is "apple distiller"
+
+Changes since 2.07
+
+6) This idea of Dyballa's is not a good idea because ps2pdf
+doesn't respect the bound box at all and gives pdf images
+which fill the page. So I reverted back to the original behavior.
+
+7) In the German localization, the "Default Command" preference
+under the typesetting tab was not connected. This is fixed.
+
+8) In the German localization while using a German keyboard,
+the (apple)-{ keyboard shortcut for comment does not work.
+On this keyboard, { is obtained as option-8. Strangely on the
+same keyboard, } is obtained as option-9 but (apple)-} for
+uncomment does work.
+
+To fix this and maintain consistency, comment is now apple-3
+and uncomment is now apple-4. This change was made only in the
+German localization.
+
+9) Suppose the "select tool" is selected in the Preview window
+to select pieces of pdf and drag them elsewhere. If apple-1 is
+then used to switch to the source window and the document is
+typeset, then when the preview window becomes active again the
+select tool will be inactive. This is fixed.
+
+10) The "Insert Reference" failed because the first line
+was "--Applescript direct" and ought to be "--Applescript".
+This is changed. However, upgrading TeXShop doesn't upgrade
+the macros, so users need to make this change by hand.
+
+Changes since 2.08
+
+1) Menu changes in Japanese and German
+
+2) Fixed ISO Latin 9 Encoding
+
+3) In help, SaveBackup should be KeepBackup, so
+
+	defaults write TeXShop KeepBackup YES
+
+4) This is a fix in 1.43. In CheckForUpdates, the code correctly
+checks to see if the user is running on Tiger. If not, it reports
+an update only if there is a version newer than 1.43, reporting
+the number of this newer update in the dialog. But previously, it
+then downloaded the latest version for Tiger. Now it downloads the
+latest pre-Tiger version.
+
+5) Added a new hidden preference to always open the Drawer when
+the preview window is first opened. By default, this preference is NO.
+To set it
+
+	defaults write TeXShop PreviewDrawerOpen YES
+
+6) At Bob Kerstetter's request, added a hidden preference with default
+value NO:
+
+	defaults write TeXShop ConTeXtTags YES
+
+When this value is YES, the tags contain
+\chapter, \section, \subsection, \subsubsection as before,
+but in addition \subsubsubsection, \subsubsubsubsection,
+\part, \title, \subject, \subsubject, \subsubsubject,
+\subsubsubsubject, and \subsubsubsubsubject.
+
+7) This is not a change, but a remark. In the latest TeX distributions,
+dvips. A user wrote:
+
+"The console indicated that/usr/local/teTeX/bin/powerpc-apple-darwin-
+current/dvips could not find the figures referenced in the parent 
+directory as  ../figures/xxx.eps. (Since I am writing a whole book, I 
+had separated out the figures and text into two subdirectory of the 
+same parent.) The pdf file produced had the typeset text, but only 
+empty figures as a result" and Gerben replied "This is not a bug 
+but a change in default behaviour. The old default behaviour is 
+insecure. It can read files via parent directories or with absolute 
+paths. You can get the old behaviour back by adding the -R0 flag to dvips."
+
+To make this happen, change the TeXShop TeX + dvips + distiller
+preference under the Engine tab for TeX and LaTeX as follows (I give
+the Latex version)
+
+	simpdftex latex --maxpfb --extradvipsopts "-R0"
+
+8) Added an extra help section explaining how to make and use
+format files with TeXShop
+
+Changes since 2.09a
+
+1) Replaced OgreKit by the "official universal binary" version
+2.1.2 from the OgreKit web site.  
+

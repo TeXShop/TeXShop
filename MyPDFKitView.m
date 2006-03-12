@@ -309,6 +309,8 @@
 		[self setupOutline];
 		
 		[myPDFWindow makeKeyAndOrderFront: self];
+		if ([SUD boolForKey:PreviewDrawerOpenKey]) 
+			[self toggleDrawer: self];
 	
 
 }
@@ -335,6 +337,9 @@
 		else
 			needsInitialization = NO;
 		
+		NSRect visibleRect = [[self documentView] visibleRect];
+		NSRect fullRect = [[self documentView] bounds];
+		
 		drawMark = NO;
 		aPage = [self currentPage];
 		theindex = [[self document] indexForPage: aPage];
@@ -351,7 +356,7 @@
 			
 		// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 		if ([self doReleaseDocument]) {
-			NSLog(@"texshop release");
+			// NSLog(@"texshop release");
 			pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
 			[self setDocument: pdfDoc];
 			// [pdfDoc release];
@@ -390,8 +395,23 @@
 			[self layoutDocumentView];
 			}
 		[self setupOutline];
+		
+		// WARNING: The next 9 lines of code are very fragile. Inigially I used
+		// NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+		// and works on Intel but not on PowerPC.
+		// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+		// but it doesn't seem to work there. If changes are made, be sure to test on
+		// Intel and on PowerPC.
 		aPage = [[self document] pageAtIndex: theindex];
 		[self goToPage: aPage];
+		
+		NSRect newFullRect = [[self documentView] bounds];
+		int difference = newFullRect.size.height - fullRect.size.height;
+		visibleRect.origin.y = visibleRect.origin.y + difference;
+		[[self window] disableFlushWindow];
+		[self display];
+		[[self documentView] scrollRectToVisible: visibleRect];
+		[[self window] enableFlushWindow];
 }
 
 
@@ -1192,6 +1212,16 @@ switch (rotation)
 
 		// koch; Dec 5, 2003
 		
+		// The next lines fix a strange bug. Suppose the user has chosen the select tool,
+		// but then changes to the source window with command-1 and typesets to get back
+		// to the preview. Then the select tool is not active. The reason is that
+		// pushing the command key calls "flags changed" but releasing it doesn't call
+		// "flags changed" because now another window is active. Koch Jan 11, 2006
+		if (!([theEvent modifierFlags] & NSAlternateKeyMask) &&
+			!([theEvent modifierFlags] & NSCommandKeyMask) &&
+			!([theEvent modifierFlags] & NSControlKeyMask))
+			currentMouseMode = mouseMode;
+		
         if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
                 currentMouseMode = mouseMode;
                 [[self window] invalidateCursorRectsForView: self];
@@ -1221,7 +1251,7 @@ switch (rotation)
 			((mouseMode==NEW_MOUSE_MODE_MAG_GLASS_L)?1:((mouseMode==NEW_MOUSE_MODE_MAG_GLASS)?0:(-1)))];
 	}
 	else
-	{
+	{	
 		switch (currentMouseMode)
 		{
 			case NEW_MOUSE_MODE_SCROLL:
@@ -1242,7 +1272,7 @@ switch (rotation)
                                 #endif
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
-			case NEW_MOUSE_MODE_SELECT_PDF: 
+			case NEW_MOUSE_MODE_SELECT_PDF:
 				if(selRectTimer && [self mouse: [self convertPoint: 
 					[theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
 				{
@@ -3303,8 +3333,8 @@ done:
 		NSData *data = nil;
 		NSNumber *aNumber;
 		
-		aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
-		NSLog([aNumber stringValue]);
+		// aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
+		// NSLog([aNumber stringValue]);
 		
 		data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
 		
@@ -4981,6 +5011,7 @@ done:
 // change mouse mode when a modifier key is pressed
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+	
 	if (([theEvent modifierFlags] & NSCommandKeyMask) && (!([theEvent modifierFlags] & NSAlternateKeyMask)))
                 currentMouseMode = NEW_MOUSE_MODE_SELECT_TEXT; 
 	else if ([theEvent modifierFlags] & NSControlKeyMask)
@@ -4989,8 +5020,9 @@ done:
 		currentMouseMode = NEW_MOUSE_MODE_SELECT_PDF;
 	else if ([theEvent modifierFlags] & NSAlternateKeyMask)
 		currentMouseMode = MOUSE_MODE_MAG_GLASS;
-	else
+	else {
 		currentMouseMode = mouseMode;
+		}
 		
 	[[self window] invalidateCursorRectsForView: self]; // this updates the cursor rects
 }

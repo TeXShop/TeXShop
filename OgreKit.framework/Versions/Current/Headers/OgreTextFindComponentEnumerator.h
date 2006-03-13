@@ -17,10 +17,11 @@
 
 @interface OgreTextFindComponentEnumerator : NSEnumerator
 {
-    OgreTextFindBranch  *_branch;
-    int                 *_indexes, _nextIndex, _count;
-    int                 _terminalIndex;
-    BOOL                _inSelection;
+    OgreTextFindBranch	*_branch;
+    unsigned			*_indexes, _count;
+	int					_nextIndex;
+    int					_terminalIndex;
+    BOOL				_inSelection;
 }
 
 - (id)initWithBranch:(OgreTextFindBranch*)aBranch inSelection:(BOOL)inSelection;

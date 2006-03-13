@@ -1,4 +1,4 @@
-Oniguruma API   2004/11/12
+Oniguruma API   2005/06/30
 
 #include <oniguruma.h>
 
@@ -50,7 +50,7 @@ Oniguruma API   2004/11/12
   1 func:     function pointer.    void (*func)(char* warning_message)
 
 
-# int onig_new(regex_t** reg, UChar* pattern, UChar* pattern_end,
+# int onig_new(regex_t** reg, const UChar* pattern, const UChar* pattern_end,
             OnigOptionType option, OnigEncoding enc, OnigSyntaxType* syntax,
             OnigErrorInfo* err_info)
 
@@ -67,13 +67,14 @@ Oniguruma API   2004/11/12
       ONIG_OPTION_NONE               no option
       ONIG_OPTION_SINGLELINE         '^' -> '\A', '$' -> '\z', '\Z' -> '\z'
       ONIG_OPTION_MULTILINE          '.' match with newline
-      ONIG_OPTION_IGNORECASE         ignore case (case-insensitive)
+      ONIG_OPTION_IGNORECASE         ambiguity match on
       ONIG_OPTION_EXTEND             extended pattern form
       ONIG_OPTION_FIND_LONGEST       find longest match
       ONIG_OPTION_FIND_NOT_EMPTY     ignore empty match
       ONIG_OPTION_NEGATE_SINGLELINE
-              clear ONIG_OPTION_SINGLELINE which is default on
-              in ONIG_SYNTAX_POSIX_XXX, ONIG_SYNTAX_PERL and ONIG_SYNTAX_JAVA.
+            clear ONIG_OPTION_SINGLELINE which is enabled on
+            ONIG_SYNTAX_POSIX_BASIC, ONIG_SYNTAX_POSIX_EXTENDED,
+            ONIG_SYNTAX_PERL, ONIG_SYNTAX_PERL_NG, ONIG_SYNTAX_JAVA
 
       ONIG_OPTION_DONT_CAPTURE_GROUP only named group captured.  (/.../g)
       ONIG_OPTION_CAPTURE_GROUP      named and no-named group captured. (/.../G)
@@ -109,11 +110,13 @@ Oniguruma API   2004/11/12
       ONIG_ENCODING_KOI8          KOI8
       ONIG_ENCODING_KOI8_R        KOI8-R
       ONIG_ENCODING_BIG5          Big5
+      ONIG_ENCODING_GB18030       GB 18030
 
       or any OnigEncodingType data address defined by user.
 
   6 syntax:     address of pattern syntax definition.
 
+      ONIG_SYNTAX_ASIS              plain text
       ONIG_SYNTAX_POSIX_BASIC       POSIX Basic RE
       ONIG_SYNTAX_POSIX_EXTENDED    POSIX Extended RE
       ONIG_SYNTAX_EMACS             Emacs
@@ -121,6 +124,7 @@ Oniguruma API   2004/11/12
       ONIG_SYNTAX_GNU_REGEX         GNU regex
       ONIG_SYNTAX_JAVA              Java (Sun java.util.regex)
       ONIG_SYNTAX_PERL              Perl
+      ONIG_SYNTAX_PERL_NG           Perl + named group
       ONIG_SYNTAX_RUBY              Ruby
       ONIG_SYNTAX_DEFAULT           default (== Ruby)
                                    onig_set_default_syntax()
@@ -132,7 +136,7 @@ Oniguruma API   2004/11/12
 
 
 
-# int onig_new_deluxe(regex_t** reg, UChar* pattern, UChar* pattern_end,
+# int onig_new_deluxe(regex_t** reg, const UChar* pattern, const UChar* pattern_end,
                       OnigCompileInfo* ci, OnigErrorInfo* einfo)
 
   Create a regex object.
@@ -159,7 +163,8 @@ Oniguruma API   2004/11/12
        ONIGENC_AMBIGUOUS_MATCH_NONASCII_CASE: ignore case for non-ASCII
        ONIGENC_AMBIGUOUS_MATCH_COMPOUND:      grapheme cluster as a char
        ONIGENC_AMBIGUOUS_MATCH_FULL:          all ambiguity on
-       ONIGENC_AMBIGUOUS_MATCH_DEFAULT:       (ASCII | NONASCII | COMPOUND)
+       ONIGENC_AMBIGUOUS_MATCH_DEFAULT:       (ASCII | NONASCII)
+                                              onig_set_default_ambig_flag()
 
   5 err_info:    address for return optional error info.
                  Use this value as 3rd argument of onig_error_code_to_str().
@@ -186,7 +191,7 @@ Oniguruma API   2004/11/12
   1 reg: regex object.
 
 
-# int onig_recompile(regex_t* reg, UChar* pattern, UChar* pattern_end,
+# int onig_recompile(regex_t* reg, const UChar* pattern, const UChar* pattern_end,
 	  OnigOptionType option, OnigEncoding enc, OnigSyntaxType* syntax,
           OnigErrorInfo* err_info)
 
@@ -200,7 +205,7 @@ Oniguruma API   2004/11/12
   Another arguments are same with onig_new().
 
 
-# int onig_recompile_deluxe(regex_t* reg, UChar* pattern, UChar* pattern_end,
+# int onig_recompile_deluxe(regex_t* reg, const UChar* pattern, const UChar* pattern_end,
                       OnigCompileInfo* ci, OnigErrorInfo* einfo)
 
   Recompile a regex object.
@@ -214,8 +219,8 @@ Oniguruma API   2004/11/12
   Another arguments are same with onig_new_deluxe().
 
 
-# int onig_search(regex_t* reg, UChar* str, UChar* end, UChar* start,
-                   UChar* range, OnigRegion* region, OnigOptionType option)
+# int onig_search(regex_t* reg, const UChar* str, const UChar* end, const UChar* start,
+                   const UChar* range, OnigRegion* region, OnigOptionType option)
 
   Search string and return search result and matching region.
 
@@ -238,7 +243,7 @@ Oniguruma API   2004/11/12
     ONIG_OPTION_POSIX_REGION  region argument is regmatch_t[] of POSIX API.
 
 
-# int onig_match(regex_t* reg, UChar* str, UChar* end, UChar* at,
+# int onig_match(regex_t* reg, const UChar* str, const UChar* end, const UChar* at,
 		 OnigRegion* region, OnigOptionType option)
 
   Match string and return result and matching region.
@@ -301,7 +306,7 @@ Oniguruma API   2004/11/12
   2 n:      new size
 
 
-# int onig_name_to_group_numbers(regex_t* reg, UChar* name, UChar* name_end,
+# int onig_name_to_group_numbers(regex_t* reg, const UChar* name, const UChar* name_end,
                                   int** num_list)
 
   Return the group number list of the name.
@@ -318,7 +323,7 @@ Oniguruma API   2004/11/12
   4 num_list:  return list of group number.
 
 
-# int onig_name_to_backref_number(regex_t* reg, UChar* name, UChar* name_end,
+# int onig_name_to_backref_number(regex_t* reg, const UChar* name, const UChar* name_end,
                                   OnigRegion *region)
 
   Return the group number corresponding to the named backref (\k<name>).
@@ -335,7 +340,7 @@ Oniguruma API   2004/11/12
 
 
 # int onig_foreach_name(regex_t* reg,
-                        int (*func)(UChar*,UChar*,int,int*,regex_t*,void*),
+                        int (*func)(const UChar*, const UChar*, int,int*,regex_t*,void*),
                         void* arg)
 
   Iterate function call for all names.
@@ -437,7 +442,7 @@ Oniguruma API   2004/11/12
   4 arg;     optional callback argument.
 
 
-# UChar* onigenc_get_prev_char_head(OnigEncoding enc, UChar* start, UChar* s)
+# UChar* onigenc_get_prev_char_head(OnigEncoding enc, const UChar* start, const UChar* s)
 
   Return previous character head address.
 
@@ -448,7 +453,7 @@ Oniguruma API   2004/11/12
 
 
 # UChar* onigenc_get_left_adjust_char_head(OnigEncoding enc,
-                                           UChar* start, UChar* s)
+                                           const UChar* start, const UChar* s)
 
   Return left-adjusted head address of a character.
 
@@ -459,7 +464,7 @@ Oniguruma API   2004/11/12
 
 
 # UChar* onigenc_get_right_adjust_char_head(OnigEncoding enc,
-                                            UChar* start, UChar* s)
+                                            const UChar* start, const UChar* s)
 
   Return right-adjusted head address of a character.
 
@@ -469,13 +474,13 @@ Oniguruma API   2004/11/12
   3 s:     target address of string
 
 
-# int onigenc_strlen(OnigEncoding enc, UChar* s, UChar* end)
-# int onigenc_strlen_null(OnigEncoding enc, UChar* s)
+# int onigenc_strlen(OnigEncoding enc, const UChar* s, const UChar* end)
+# int onigenc_strlen_null(OnigEncoding enc, const UChar* s)
 
   Return number of characters in the string.
 
 
-# int onigenc_str_bytelen_null(OnigEncoding enc, UChar* s)
+# int onigenc_str_bytelen_null(OnigEncoding enc, const UChar* s)
 
   Return number of bytes in the string.
 
@@ -545,6 +550,18 @@ Oniguruma API   2004/11/12
           ONIG_META_CHAR_ANYCHAR_ANYTIME
 
   3 code: meta character or ONIG_INEFFECTIVE_META_CHAR.
+
+
+# OnigAmbigType onig_get_default_ambig_flag()
+
+  Get default ambig flag.
+
+
+# int onig_set_default_ambig_flag(OnigAmbigType ambig_flag)
+
+  Set default ambig flag.
+
+  1 ambig_flag: ambiguity flag
 
 
 # unsigned int onig_get_match_stack_limit_size(void)

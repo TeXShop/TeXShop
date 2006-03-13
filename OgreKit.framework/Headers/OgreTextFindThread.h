@@ -102,7 +102,7 @@
 - (void)setAsynchronous:(BOOL)asynchronou;
 
 - (void)setDidEndSelector:(SEL)aSelector toTarget:(id)aTarget;
-- (void)setProgressDelegate:(id/*<OgreTextFindProgressDelegate>*/)aDelegate;
+- (void)setProgressDelegate:(NSObject <OgreTextFindProgressDelegate>*)aDelegate;
 
 /* Accessors */
 - (OGRegularExpression*)regularExpression;

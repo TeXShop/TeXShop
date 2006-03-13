@@ -19,7 +19,7 @@
 // OgreTextFinderLocalizable.stringsを使用したローカライズ
 #define OgreTextFinderLocalizedString(key)	[[OgreTextFinder ogreKitBundle] localizedStringForKey:(key) value:(key) table:@"OgreTextFinderLocalizable"]
 
-@class OgreTextFinder, OgreFindPanelController, OgreTextFindResult, OgreTextFindThread;
+@class OgreTextFinder, OgreFindPanelController, OgreTextFindResult, OgreTextFindThread, OgreTextFindProgressSheet;
 
 @protocol OgreTextFindDataSource
 /* OgreTextFinderが検索対象を知りたいときにresponder chain経由で呼ばれる 
@@ -154,7 +154,7 @@
 - (BOOL)jumpToSelection;
 
 /* creating an alert sheet */
-- (id)alertSheetOnTarget:(id)aTerget;
+- (OgreTextFindProgressSheet*)alertSheetOnTarget:(id)aTerget;
 
 /* Getting and registering adapters for targets */
 - (id)adapterForTarget:(id)aTargetToFindIn;

@@ -1,0 +1,122 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>Unicode（ユニコード）</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="ユニコード文字の使用について">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<body>	
+
+<div id="content_border">
+
+<p>
+Unicode は世界の主要な言語<small>（アラビア語、中国語、ギリシア語、ヘブライ語、日本語、ローマ字、ロシア語、その他の多くの言語）</small>の文字を、単一の文字コード体系で処理する仕組みです。 Cocoa のテキスト処理は Unicode がベースになっているので、 TeXShop でもそのまま Unicode を扱うことができます。 Unicode が実際にどんな感じなのか試してみるには、 「システム環境設定」から「言語環境」を開き、 「入力メニュー」タブで、すでに「入」になっているものに加えて別の言語を選んでみてください。たとえば、ギリシア語<small>（よく知られていますね）</small>、ヘブライ語<small>（右から左へ書きます）</small>、アラビア語<small>（右から左へ書くうえ、リガチャ〔合字〕を広範に使用するので語末と語中とでは字体が異なります）</small>、あるいは中国語などを選んでみるとわかりやすいでしょう。追加した入力メニューは、現在の入力言語を示す国旗で表示されます。
+</p>
+
+<p>
+数文字打ち込んでみてから、他の言語に変え、さらにまた打ち込んでみます。
+</p>
+
+<p>
+Unicode ファイルにはいくつかの形式があります。環境設定項目ではそのうちの２つを選べます。標準的な OSX Unicode は Mac OSX ではよく使われますが、これが TeX の世界で有用なのかどうかについてはわかりません。 UTF-8 Unicode は、普通の ASCII キャラクターが普通に表示されるので人気の高い方式です。 UTF-8 形式でファイルを保存すれば TeX で処理することができますが、 Unicode 文字は疑問符に置き換えられてしまいます。
+</p>
+
+<p>
+UTF-8 Unicode で入力されたファイルを扱える TeX パッケージもあります ； 下記を参照してください──
+</p>
+
+<dl>
+	<dd>http://www.ctan.org/tex-archive/macros/latex/contrib/supported/unicode/
+</dl>
+
+<BLOCKQUOTE>
+<p>
+<small>
+（訳注：リンク不全。以下を参照）
+</small>
+<dl>
+	<dd><A HREF="http://www.ctan.org/tex-archive/macros/latex/contrib/unicode/">http://www.ctan.org/tex-archive/macros/latex/contrib/unicode/</A>
+</dl>
+</p>
+
+</BLOCKQUOTE>
+
+<hr>
+
+<p>
+<b>「UTF パッケージ対応」について</b>
+
+<p>
+TeXShop 1.35 では、pTeX 用にUTF パッケージ（utf.sty）がサポートされるようになりました。
+</p>
+<p>
+環境設定パネルの「詳細」タブ内に「UTF パッケージ対応」という項目があります。ここにチェックを入れることで TeXShop は、pTeX が対応してない文字（JIS X0208 以外の文字）を utf.sty の形式に変換します。たとえば、Unicode 文字は \UTF{Hex code} となり、非-Unicode 文字は \CID{glyph ID} となります。
+</p>
+<p>
+この機能がサポートされたことによる利点は、TeXShop 内蔵のエディタで「&#x9DD7;」や「&#x9592;」といった文字を直に入力できる、ということです。言い換えれば、コード表を調べたうえで本文中に \UTF{9DD7} や \UTF{9592}（ないしは \CID{07646} や \CID{08685} ）などと書く手間が省けるということです。
+</p>
+<p>
+利用するにあたっては、utf.sty をインストールしたうえで、プリアンブル部に、
+
+	<dl>
+		<dd>\usepackage{utf}
+	</dl>
+
+と記述する必要があります。 （ otf.sty についても、利用可能のようです。）
+</p>
+<p>
+UTF パッケージ・OTF パッケージについてのさらに詳しい情報は、以下をご覧ください。
+</p>
+	<dl>
+		<dd><A HREF="http://psitau.at.infoseek.co.jp/">http://psitau.at.infoseek.co.jp/</A>
+	</dl>
+</p>
+
+<blockquote>
+<small>
+【補足】
+<ul>
+<li>小川版の pTeX パッケージを導入した場合は、インストール時に組み込まれるので、改めて utf.sty をインストールする必要はありません。
+<li>「UTF パッケージ対応」機能は、日本語系のすべてのエンコーディング方式で利用可能ですが、SJISX0213 については、これに対応した pTeX パッケージを利用する必要があります。
+<li>グリフ機能（CID）を使うときには、ヒラギノフォントを用いるのが無難でしょう。
+</ul>
+</small>
+
+
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">上級向けのヘルプ</div>
+<div id="header_title">Unicode（ユニコード）</div>
+
+		<div id="menu_border">
+		<ul>
+			<li><a href="advanced_personaltetex.htm">スタイルとマクロを teTeX に追加する</a>
+			<li><a href="advanced_addengine.htm">追加のタイプセット・エンジン</a>
+			<li><a href="advanced_removeaux.htm">作業ファイルを削除する</a>
+			<li><a href="advanced_externaleditor.htm">外部エディタを使用する</a>
+			<li><a href="advanced_pdfcopypaste.htm">プレビューウィンドウからのコピー＆ペーストおよびドラッグ＆ドロップ </a>
+			<li><a href="advanced_root.htm">プロジェクトのルートファイルを設定する</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode（ユニコード）</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_otherfiles.htm">その他のファイルを TeXShop で開く</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">各国語版へのローカライズ</a>
+			<li><a href="advanced_syntaxcolor.htm">ソースのカラー表示</a>
+			<li><a href="advanced_shellescape.htm">Shell-Escape の保護</a>			
+			<li><a href="advanced_coloredtext.htm">TeX における文字の色指定</a>			
+			<li><a href="advanced_moretetex.htm">teTeX についてさらに</a>
+			<li><a href="advanced_fink.htm">Fink との共存</a>
+			<li><a href="advanced_otherdistributions.htm">他の TeX ディストリビューションとの共存</a>
+			<li><a href="advanced_context.htm">ConTeXt と MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist ファイル</a>
+			<li><a href="advanced_menushortcuts.htm">メニュー項目のショートカット・キーを再定義する</a>
+		</UL>
+	</div>
+	</body>
+
+</HTML>

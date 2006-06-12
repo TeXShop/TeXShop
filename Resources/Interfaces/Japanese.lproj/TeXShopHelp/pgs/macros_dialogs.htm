@@ -1,0 +1,73 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>ダイアログを作る</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="AppleScriptで作るダイアログの作例">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+
+<BODY>
+<div id="content_border">
+
+<p>
+AppleScript でダイアログを作成し、ユーザの入力に応じて動作するようにできます。たとえば、以下のスクリプトを書き入れて、ふるまいを試してみてください。
+</p>
+
+<tt>
+	<dl>
+		<dd>-- AppleScript
+		<dd>-- Use a dialog to enter user defined information into an applescript.
+		<dd>-- ダイアログを使い、ユーザの定めるデータを AppleScript に取り込みます。
+		<dd>-- There are two feedbacks possible 'text' and "choice of buttons".
+		<dd>-- 「テキスト」と「ボタン選択」による２つのフィードバックが利用可能です。
+		<dd>-- The returned information can be used to define corresponding variables.
+		<dd>-- 返されたデータは該当する変数を定義するのに使えます。
+		<dd>-- The number of buttons may not exceed three.
+		<dd>-- ボタンの数は３つを超えないように。
+		<dd>-- In the three examples below it is shown how to use text return, button return, and both.
+		<dd>-- 以下の３つの例では、テキスト、ボタン、テキスト＆ボタンの使い方について示しています。
+		<p>
+		<dd>activate
+		<dd>display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+		<dd>set theText to (the text returned of the result)
+		<p>
+		<dd>display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+		<dd>set theButton to (the button returned of the result)
+		<p>
+		<dd>display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+		<dd>set {theText, theButton} to {the text returned of the result, the button returned of the result}
+	</dl>
+</tt>
+
+<p>
+この例にあるコマンド「activate」には解説が必要です。 AppleScript を実行するよう要請されるとTeXShop は、別のプログラムを呼び出してスクリプトを実行します。そのプログラム── Scriptrunner は、 TeXShop に組み込まれています。スクリプトで作成したダイアログはすべて、 TeXShop ではなく Scriptrunner で表示されます。 「activate」コマンドは Scriptrunner を前面に持ってくるので、ダイアログは他のウィンドウよりも手前に表示されます。
+</p>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">マクロ・ヘルプ</div>
+<div id="header_title">ダイアログを作る</div>
+
+<div id="menu_border">
+
+	<UL>
+		<li><a href="macros_preliminaries.htm">まえがき</a> 
+		<li><a href="macros_default.htm">デフォルトのマクロを理解する</a>
+		<li><a href="macros_rearrange.htm">マクロの項目名を並べ替える</a>
+		<li><a href="macros_define.htm">新しいマクロを定義する</a>
+		<li><a href="macros_applescript.htm">AppleScript マクロ</a>
+
+		<li><a href="macros_includedscripts.htm">デフォルトの AppleScript マクロ</a>
+		<li><a href="macros_defapplescript.htm">AppleScript マクロを定義する</a>
+		<li><a href="macros_dialogs.htm">ダイアログを作る</a>
+		<li><a href="macros_writingcompletescripts.htm">TeXShop のタイプセット・コマンドでスクリプトを書く</a>
+		<li><a href="macros_writingcommandscripts.htm">シェルコマンドでスクリプトを書く</a>
+	</UL>
+</div>
+</BODY>
+
+</HTML>

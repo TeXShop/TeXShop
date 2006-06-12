@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+
+<!--  
+	Advanced users can change the behavior of the Latex Panel with this file.
+
+	The first portion of this file configures the standard buttons on the
+	panel. The button names for this part of the panel should not be changed, but the
+	text that is inserted when they are pressed can be changed.
+
+	The file contains keys labeled
+
+		Environments
+		Functions1
+		Greek
+		International
+		Math
+		Symbols
+		Typeface
+
+	corresponding to various tabs in the Latex Panel. Each key is followed by an array 
+	of strings which contain the text to be inserted by the appropriate button. In this
+	text, the symbol #SEL# means that the text should replace the current selection
+	rather than being added to it, and the symbol #INS# means that the cursor should
+	be placed at that spot after the insertion.
+
+	The final key is labeled
+
+		Customized
+
+	This is for user additions in the Custom tab of the panel. Up to sixteen
+	additions are allowed. This file contains twelve additions. Each addition
+	is determined by two strings. The first is the name of the button, and the
+	second is the text to be inserted when the button is pressed. For example, the
+	entry
+
+		<string>Section</string>
+		<string>\section{#SEL##INS#}</string>
+
+	yields a button named "Section." When this button is pressed, the text
+
+		\section{ }
+
+	will be inserted in the source, and the cursor will be placed inside the
+	brackets. 
+	 
+--> 
+
+<dict>
+	<key>Environments</key>
+	<array>
+		<string>\begin{itemize}
+  \item #SEL##INS#
+  \item 
+  \item 
+\end{itemize}</string>
+		<string>\begin{enumerate}
+  \item #SEL##INS#
+  \item 
+  \item 
+\end{enumerate}</string>
+		<string>\begin{description}
+  \item[#SEL#] #INS#
+  \item[ ]
+  \item[ ]
+\end{description}</string>
+		<string>\begin{cases}
+      &amp; \text{ }, \\
+      &amp; \text{otherwise}.
+\end{cases}</string>
+		<string>\begin{figure}
+\centering
+\includegraphics[width=2in]{file_path}
+\caption{ }
+\label{ }
+\end{figure}</string>
+		<string>\begin{center}
+#SEL#
+\end{center}</string>
+		<string>\begin{align}
+\label{}
+   #SEL# &amp;   \\
+    &amp;  
+\end{align}</string>
+		<string>\begin{tabbing}
+    \=    \=    \kill
+    \&gt;    \&gt;    \\
+    \&gt;   \&gt;  
+\end{tabbing}</string>
+		<string>\begin{table}
+  \centering #SEL#
+  \caption{ }\label{ }
+\end{table}</string>
+		<string>\begin{tabular}{||}
+\hline
+% after \\ : \hline or \cline{col1-col2} \cline{col3-col4} ...
+  #SEL##INS# &amp;  &amp;  \\
+   &amp;  &amp;  \\
+   &amp;  &amp;  \\
+\hline
+\end{tabular}</string>
+		<string>\begin{array}{ }
+      &amp;    \\
+      &amp;   
+\end{array}</string>
+		<string>\begin{pmatrix}
+      &amp;    \\
+      &amp;  
+\end{pmatrix}</string>
+		<string>\begin{equation}
+\label{ }
+#SEL##INS#
+\end{equation}</string>
+		<string>\begin{displaymath}
+#SEL##INS#
+\end{displaymath}</string>
+		<string>\begin{eqnarray}
+A &amp; = &amp; B \\
+C &amp; = &amp; D 
+\end{eqnarray}</string>
+		<string>\begin{#SEL#}
+#INS#
+\end{#SEL#}</string>
+	</array>
+	<key>Functions1</key>
+	<array>
+		<string>\cos</string>
+		<string>\sin</string>
+		<string>\tan</string>
+		<string>\cosh</string>
+		<string>\sinh</string>
+		<string>\tanh</string>
+		<string>\inf</string>
+		<string>\sup</string>
+		<string>\cot</string>
+		<string>\min</string>
+		<string>\max</string>
+		<string>\coth</string>
+		<string>\exp</string>
+		<string>\ln</string>
+		<string>\log</string>
+		<string>\arg</string>
+		<string>\ker</string>
+		<string>\sec</string>
+		<string>\gcd</string>
+		<string>\dim</string>
+		<string>\det</string>
+		<string>\hom</string>
+		<string>\csc</string>
+		<string>\lg</string>
+		<string>\arccos</string>
+		<string>\arcsin</string>
+		<string>\arctan</string>
+		<string>\lim</string>
+		<string>\liminf</string>
+		<string>\limsup</string>
+	</array>
+	<key>Greek</key>
+	<array>
+		<string>\alpha</string>
+		<string>\beta</string>
+		<string>\gamma</string>
+		<string>\delta</string>
+		<string>\epsilon</string>
+		<string>\varepsilon</string>
+		<string>\zeta</string>
+		<string>\eta</string>
+		<string>\theta</string>
+		<string>\vartheta</string>
+		<string>\iota</string>
+		<string>\kappa</string>
+		<string>\lambda</string>
+		<string>\mu</string>
+		<string>\nu</string>
+		<string>\xi</string>
+		<string>o</string>
+		<string>\pi</string>
+		<string>\varpi</string>
+		<string>\rho</string>
+		<string>\varrho</string>
+		<string>\sigma</string>
+		<string>\varsigma</string>
+		<string>\tau</string>
+		<string>\upsilon</string>
+		<string>\phi</string>
+		<string>\varphi</string>
+		<string>\chi</string>
+		<string>\psi</string>
+		<string>\omega</string>
+		<string>\Gamma</string>
+		<string>\Delta</string>
+		<string>\Theta</string>
+		<string>\Lambda</string>
+		<string>\Xi</string>
+		<string>\Pi</string>
+		<string>\Sigma</string>
+		<string>\Upsilon</string>
+		<string>\Phi</string>
+		<string>\Psi</string>
+		<string>\Omega</string>
+	</array>
+	<key>International</key>
+	<array>
+		<string>\'a</string>
+		<string>\`a</string>
+		<string>\'e</string>
+		<string>\`e</string>
+		<string>\'{\i}</string>
+		<string>\`{\i}</string>
+		<string>\'o</string>
+		<string>\`o</string>
+		<string>\'u</string>
+		<string>\`u</string>
+		<string>\oe</string>
+		<string>\^a</string>
+		<string>\"a</string>
+		<string>\^e</string>
+		<string>\"e</string>
+		<string>\^{\i}</string>
+		<string>\"{\i}</string>
+		<string>\^o</string>
+		<string>\"o</string>
+		<string>\^u</string>
+		<string>\"u</string>
+		<string>\ae</string>
+		<string>\~a</string>
+		<string>\~o</string>
+		<string>\~{n}</string>
+		<string>\c{c}</string>
+		<string>{\ss}</string>
+		<string>\aa</string>
+		<string>\AA</string>
+		<string>\o</string>
+		<string>\O</string>
+		<string>\AE</string>
+		<string>\OE</string>
+		<string>!`</string>
+		<string>?`</string>
+		<string>\'{#SEL##INS#}</string>
+		<string>\`{#SEL##INS#}</string>
+		<string>\^{#SEL##INS#}</string>
+		<string>\"{#SEL##INS#}</string>
+		<string>\~{#SEL##INS#}</string>
+		<string>\={#SEL##INS#}</string>
+		<string>\.{#SEL##INS#}</string>
+		<string>\v{#SEL##INS#}</string>
+		<string>\u{#SEL##INS#}</string>
+		<string>\H{#SEL##INS#}</string>
+		<string>\c{#SEL##INS#}</string>
+	</array>
+	<key>Math</key>
+	<array>
+		<string>\hbar</string>
+		<string>\imath</string>
+		<string>\jmath</string>
+		<string>\ell</string>
+		<string>\Re</string>
+		<string>\Im</string>
+		<string>\emptyset</string>
+		<string>\infty</string>
+		<string>\partial</string>
+		<string>\nabla</string>
+		<string>\triangle</string>
+		<string>\forall</string>
+		<string>\exists</string>
+		<string>\nexists</string>
+		<string>\top</string>
+		<string>\bot</string>
+		<string>\dag</string>
+		<string>\ddag</string>
+		<string>\sum</string>
+		<string>\prod</string>
+		<string>\int</string>
+		<string>\oint</string>
+		<string>\bigcap</string>
+		<string>\bigcup</string>
+		<string>\biguplus</string>
+		<string>\bigoplus</string>
+		<string>\bigotimes</string>
+		<string>\bigodot</string>
+		<string>\mathbf{ #SEL##INS#}</string>
+		<string>\mathcal{#SEL##INS#}</string>
+		<string>\mathbb{#SEL##INS#}</string>
+		<string>\mathrm{#SEL##INS#}</string>
+		<string>^{#SEL##INS#}</string>
+		<string>\widetilde{#SEL##INS#}</string>
+		<string>\underbrace{#SEL##INS#}</string>
+		<string>\widehat{#SEL##INS#}</string>
+		<string>\underline{#SEL##INS#}</string>
+		<string>\overrightarrow{#SEL##INS#}</string>
+		<string>\sqrt{#SEL##INS#}</string>
+		<string>\sqrt[n]{#SEL##INS#}</string>
+		<string>\overline{#SEL##INS#}</string>
+		<string>\overbrace{#SEL##INS#}</string>
+		<string>\frac{#SEL##INS#}{}</string>
+		<string>_{#SEL##INS#}</string>
+		<string>\hat{#SEL##INS#}</string>
+		<string>\check{#SEL##INS#}</string>
+		<string>\breve{#SEL##INS#}</string>
+		<string>\acute{#SEL##INS#}</string>
+		<string>\grave{#SEL##INS#}</string>
+		<string>\tilde{#SEL##INS#}</string>
+		<string>\bar{#SEL##INS#}</string>
+		<string>\vec{#SEL##INS#}</string>
+		<string>\dot{#SEL##INS#}</string>
+		<string>\ddot{#SEL##INS#}</string>
+		<string>#SEL#^{\prime}</string>
+	</array>
+	<key>Symbols</key>
+	<array>
+		<string>\{</string>
+		<string>\big\{</string>
+		<string>\Big\{</string>
+		<string>\bigg\{</string>
+		<string>\Bigg\{</string>
+		<string>\}</string>
+		<string>\left[</string>
+		<string>\right]</string>
+		<string>|</string>
+		<string>\|</string>
+		<string>\cdots</string>
+		<string>\subset</string>
+		<string>\supset</string>
+		<string>\subseteq</string>
+		<string>\supseteq</string>
+		<string>\in</string>
+		<string>\ni</string>
+		<string>\sim</string>
+		<string>\simeq</string>
+		<string>\approx</string>
+		<string>\cong</string>
+		<string>\vdots</string>
+		<string>\propto</string>
+		<string>\pm</string>
+		<string>\mp</string>
+		<string>\times</string>
+		<string>\div</string>
+		<string>\ast</string>
+		<string>\star</string>
+		<string>\circ</string>
+		<string>\bullet</string>
+		<string>\cdot</string>
+		<string>\ddots</string>
+		<string>\cap</string>
+		<string>\cup</string>
+		<string>\uplus</string>
+		<string>\bigtriangleup</string>
+		<string>\bigtriangledown</string>
+		<string>\oplus</string>
+		<string>\otimes</string>
+		<string>\odot</string>
+		<string>\neq</string>
+		<string>\dagger</string>
+		<string>\ngeqslant</string>
+		<string>\leqslant</string>
+		<string>\geqslant</string>
+		<string>\ll</string>
+		<string>\gg</string>
+		<string>\lll</string>
+		<string>\ggg</string>
+		<string>\lesssim</string>
+		<string>\gtrsim</string>
+		<string>\nless</string>
+		<string>\ngtr</string>
+		<string>\nleqslant</string>
+	</array>
+	<key>Typeface</key>
+	<array>
+		<string>\emph{#SEL##INS#}</string>
+		<string>\textrm{#SEL##INS#}</string>
+		<string>\textbf{#SEL##INS#}</string>
+		<string>\textit{#SEL##INS#}</string>
+		<string>\textsc{#SEL##INS#}</string>
+		<string>\textsl{#SEL##INS#}</string>
+		<string>\textmd{#SEL##INS#}</string>
+		<string>\textsf{#SEL##INS#}</string>
+		<string>\mathbf{#SEL##INS#}</string>
+		<string>\mathcal{#SEL##INS#}</string>
+		<string>\mathbb{#SEL##INS#}</string>
+		<string>\mathrm{#SEL##INS#}</string>
+		<string>\texttt{#SEL##INS#}</string>
+		<string>\verb"#SEL##INS#"</string>
+	</array>
+        <key>Customized</key>
+	<array>
+			<string>Section</string>
+			<string>\section{#SEL##INS#}</string>
+			<string>Subsection</string>
+			<string>\subsection{#SEL##INS#}</string>
+			<string>Subsubscn.</string>
+			<string>\subsubsection{#SEL##INS#}</string>
+			<string>Section*</string>
+			<string>\section*{#SEL##INS#}</string>
+			<string>Subsection*</string>
+			<string>\subsection*{#SEL##INS#}</string>
+			<string>Subsubscn.*</string>
+			<string>\subsubsection*{#SEL##INS#}</string>
+			<string>Href</string>
+			<string>\href{#SEL#}{#INS#}</string>
+			<string>Footnote</string>
+			<string>\footnote{#SEL##INS#}</string>
+			<string>Author</string>
+			<string>\author{#SEL##INS#}</string>
+			<string>Title</string>
+			<string>\title{#SEL##INS#}</string>
+			<string>Date</string>
+			<string>\date{#SEL##INS#}</string>
+			<string>Maketitle</string>
+			<string>\maketitle</string>
+   </array>
+</dict>
+</plist>

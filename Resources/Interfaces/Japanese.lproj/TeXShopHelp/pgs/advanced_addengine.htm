@@ -1,0 +1,156 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>追加のタイプセット・エンジン</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="XeTeX と XeLaTeX について">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<!--コメントアウトしてある部分はバージョン1.35の旧文です。-->
+
+<body>	
+
+<div id="content_border">
+
+<p>
+最近になり、 Jonathan Kew が XeTeX と XeLaTeX を発表しました。これらのプログラムは、 TeX 文書内で Macintosh のフォントをじかに利用することができます。 XeTeX と XeLaTeX は unicode によるソースが必要になりますが、それゆえすべての unicode 文字を取り扱うことができます ； たとえば、アラビア語やヘブライ語をソースコードに打ち込んで、アラビア語やヘブライ語の出力として見ることができます。 TeXShop のエディタではこうした文字を右から左へきちんと入力できます。 XeTeX は Gerben Wierda の配布する標準的な TeX には含まれていませんが、 Wierda の i-Installer を使うことで、オプション・インストールとして Jonathan Kew のところから入手することができます。さらに詳しいことについては、以下でお調べください──
+</p>
+	<dl>
+		<dd><a href="http://scripts.sil.org/xetex">http://scripts.sil.org/xetex</a>
+	</dl>
+
+<p>
+これがどのように動作するのかを理解できるような、簡単な XeLaTeX のソース文書と出力結果があります。アラビア語とヘブライ語の文字は「システム環境設定」の「言語環境」で「入力メニュー」タブを選び、 Arabic と Hebrew にチェックを入れます ； 小さな国旗がメニューバーに表示されるので、それを選択することでキーボード入力を切り替えられます。
+</p>
+
+<IMG HEIGHT="356" WIDTH="328" border="1" SRC="../gfx/source.jpg" align="top">＿入力例
+<p>
+<IMG HEIGHT="155" WIDTH="349" border="1" SRC="../gfx/output.jpg" align="top">＿出力例
+
+
+<p>
+TeXShop では現在すでに XeTeX と XeLaTeX をサポートしています：
+</p>
+
+<ul>
+	<li>XeTeX と XeLaTeX は、ソースウィンドウにあるプルダウンメニュー「タイプセット」から利用可能です
+	<li>環境設定で XeTeX または XeLaTeX をデフォルトのタイプセット・コマンドにできます
+	
+<!--	<li>もしソースの冒頭10行以内に次の書式があれば──-->
+	<li>もしソースの冒頭20行以内に次の書式があれば──
+		<dl>
+<!--			<dd><tt>%&encoding=UTF-8 Unicode</tt>-->
+			<dd><tt>%!TEX encoding = UTF-8 Unicode</tt>
+		</dl>
+		そのソースは、環境設定でのデフォルトのエンコーディング方式に関わらず UTF-8 Unicode 形式で読み込まれ保存されます
+<!--	<li>もしソースの第１行目に次のいずれかの書式があれば──-->
+	<li>もしソースの冒頭20行以内に次のいずれかの書式があれば──
+		<dl>
+<!--			<dd><tt>%&program=xetex</tt>-->
+			<dd><tt>%!TEX TS-program = xetex</tt>
+			<p>
+<!--			<dd><tt>%&program=xelatex</tt>-->
+			<dd><tt>%!TEX TS-program = xelatex</tt>
+		</dl>
+		メニューで選択したタイプセット・オプションに関わらず、特定のプログラムが用いられます
+</ul>
+
+<p>
+こうした XeTeX の特徴は、 TeXShop にタイプセット・エンジンを追加する新しい一般的な方法の特例となっています。 ~/Library/TeXShop 内に「Engines」という名前のフォルダがあります ； このフォルダに入っているファイルは、タイプセット・プログラムを呼び出せるシェル・スクリプトです。 TeXShop を最初に起動すると、このフォルダを調べ、ファイルのスクリプト名を加え、プルダウンメニュー「タイプセット」に含めます。この中から１つを選んでタイプセット・ボタンを押せば、スクリプトが呼び出されます。ユーザは自分で独自のスクリプトを書き、それを「Engines」フォルダに追加することができます。各スクリプトは、スペースを含まない名前で、拡張子が「.engine」となっており、実行可能なビット・セットがなければなりません。
+</p>
+
+<p>
+~/Library/TeXShop/Engines 内にある項目は、デフォルトのタイプセット方式として、 TeXShop の環境設定で選択できます。環境設定に表示される際には、拡張子なしの名称となることに注意します。
+</p>
+
+<p>
+<!--ソースコードの第１行目に次のように書くことでデフォルトのプログラムを設定できます──-->
+ソースコードの冒頭20行以内の１行に次のように書くことでデフォルトのプログラムを設定できます──
+</p>
+	<dl>
+<!--		<dd><tt>%&program=xelatex</tt>-->
+		<dd><tt>%!TEX TS-program = xelatex</tt>
+	</dl>
+
+<p>
+任意のファイルを開いたり保存したりするのに用いるエンコーディング方式は、
+<!--以下のような書式をソース文書の冒頭10行以内に書き込むことで設定できます。-->
+以下のような書式をソース文書の冒頭20行以内に書き込むことで設定できます。
+サポートされているエンコーディング方式のいずれでも可能です。この動作を回避するには、オプションキーを押しながらファイルを開きます。
+</p>
+	<dl>
+<!--		<dd><tt>%&encoding=UTF-8 Unicode</tt>-->
+		<dd><tt>%!TEX encoding = UTF-8 Unicode</tt>
+	</dl>
+
+<p>
+<!--等号記号の前後にスペースを入れることはできません ； -->
+<tt>%!TEX</tt> の後に１つ、等号記号の前に１つ、半角スペースを入れなければなりません ； 
+エンコーディング名に含まれるスペースは、下記のリストにあるスペースと一致させてください。エンコーディング方式の名称は Mac OS X の内部で用いられているものです。以下が利用可能な名称のリストです：
+</p>
+
+	<ul>
+		<li> MacOSRoman
+		<li> IsoLatin
+		<li> IsoLatin2
+		<li> IsoLatin5
+		<li> MacJapanese
+		<li> DOSJapanese
+		<li> SJIS_X0213
+		<li> EUC_JP
+		<li> JISJapanese
+		<li> MacKorean
+		<li> UTF-8 Unicode
+		<li> Standard Unicode
+		<li> Mac Cyrillic
+		<li> DOS Cyrillic
+		<li> DOS Russian
+		<li> Windows Cyrillic
+		<li> KOI8_R
+		<li> Mac Chinese Traditional
+		<li> Mac Chinese Simplified
+		<li> DOS Chinese Traditional
+		<li> DOS Chinese Simplified
+		<li> GBK
+		<li> GB 2312
+		<li> GB 18030
+	</ul>
+
+
+
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">上級向けのヘルプ</div>
+<div id="header_title">追加のタイプセット・エンジン</div>
+
+		<div id="menu_border">
+		<ul>
+			<li><a href="advanced_personaltetex.htm">スタイルとマクロを teTeX に追加する</a>
+			<li><a href="advanced_addengine.htm">追加のタイプセット・エンジン</a>
+			<li><a href="advanced_removeaux.htm">作業ファイルを削除する</a>
+			<li><a href="advanced_externaleditor.htm">外部エディタを使用する</a>
+			<li><a href="advanced_pdfcopypaste.htm">プレビューウィンドウからのコピー＆ペーストおよびドラッグ＆ドロップ </a>
+			<li><a href="advanced_root.htm">プロジェクトのルートファイルを設定する</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode（ユニコード）</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_otherfiles.htm">その他のファイルを TeXShop で開く</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">各国語版へのローカライズ</a>
+			<li><a href="advanced_syntaxcolor.htm">ソースのカラー表示</a>
+			<li><a href="advanced_shellescape.htm">Shell-Escape の保護</a>			
+			<li><a href="advanced_coloredtext.htm">TeX における文字の色指定</a>			
+			<li><a href="advanced_moretetex.htm">teTeX についてさらに</a>
+			<li><a href="advanced_fink.htm">Fink との共存</a>
+			<li><a href="advanced_otherdistributions.htm">他の TeX ディストリビューションとの共存</a>
+			<li><a href="advanced_context.htm">ConTeXt と MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist ファイル</a>
+			<li><a href="advanced_menushortcuts.htm">メニュー項目のショートカット・キーを再定義する</a>
+		</UL>
+	</div>
+	</body>
+
+</HTML>

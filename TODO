@@ -1,0 +1,564 @@
+Some of the things Richard and Max have to do before the release:
+
+* Backport all changes made between 2.03 and 2.09b:
+  - TeX.mdimporter: TODO
+* Write a list of things that Max changed (at least the user visible stuff)
+* Remove the fake "Eugene Algorithms", use "The TeXShop team" or so instead (?)
+* Modify the web site:
+  - add a link the SF.net project page
+  - add links to the bug/feature request trackers
+  - 
+* File release system: Add 2.04 and 2.09 to the SF.net file release system (Max)
+* Hunt down memory leaks
+* ...
+* Do lots of testing, esp. for some of the more obscure features, to 
+
+
+When doing the release, we should
+* Give all files standarized names containing the version, e.g.
+   TeXShop-2.10.dmg  and TeXShop-2.10-source.zip
+  or so.
+* Release them via the SF.net FRS (File Release System); if desired, they can of course
+  in addition also be released in the traditional place (probably required for the
+  auto-update feature anyway).
+* ...
+
+
+
+AFTER the 2.10 release, we can move on to other things. Top on the list:
+* New localization system (Max)
+* Bette auto-update system; consider Sparkle <http://andymatuschak.org/pages/sparkle>
+* Use "Smart Crash Reports" <http://www.unsanity.com/smartcrashreports/>
+* ...
+
+
+
+The following is a preliminary, incomplete list of changes since 2.09b:
+-- BEGIN DRAFT ---
+- Major (and I mean it!) overhaul of the TeXShop source code, which resolved
+  many leaks, removed duplicate code, cleaned up cruft, simplified many things,
+  and, and and... Most importantly, this will make it a lot easier to implement
+  future modifications to TeXShop. However, due to the huge amount of change
+  involved, this is likely to have introduced a couple regressions. too. Please
+  bear with us while we work on fixing these, and report any problems you
+  encounter via the new TeXShop bug tracker:
+    <https://sourceforge.net/tracker/?group_id=155796&atid=797238>
+- Moved TeXShop source code into a Subversion repository hosted at SourceForge.net,
+  see also <https://sourceforge.net/projects/texshop/>
+
+- Added Cmd-, as hotkey for prefs dialog in all localizations
+- Changed 'Goto Error' hotkey from Cmd-E to Cmd-Ctrl-E (to enable 'Use selection for find')
+- Rewrote the syntax coloring code, which is now a lot faster (in particular for big files)
+- Rewrote file encoding support, which makes it much easier to add new encodings in the future
+- Replaced certain internal wrapper programs (unamewrap, TEXTEDIT.app) by code which performs the respective actions directly
+
+To stress it again, we made literally hundreds of internal changes, many of which
+you won't notice for now, but which will enable us to make further changes in the
+hopefully not so distant future. For some rough and incomplete notes on what we
+are considering to do, see <http://svn.sourceforge.net/viewcvs.cgi/texshop/trunk/TODO?view=markup>.
+
+Finally, if you encounter bugs, have feature requests, or want to help with the
+development of TeXShop, then <https://sourceforge.net/projects/texshop/> is the
+place to go.
+-- END DRAFT ---
+
+
+
+
+
+The following is an export from my OmniOutliner file, and only a temporary placeholder.
+
+Topic
+- [-] TeXShop
+    - [+] Subversion
+        - [+] Create a local repository of the sources
+        - [+] Find a public hoster for it. Maybe savannah?
+        - [+] With OgreKit in a vendor branch
+    - [+] Bug tracker would be nice
+        - [+] Maybe register a SF.net project? Or berlios, or savanah,
+              or ...
+    - [-] Cleanup
+        - [-] Legal stuff
+            - [-] Who or what is 'Eugene Algorithms' mentioned in the
+                  Info.plist?
+                - [+] Apparently a fake entity
+                - [-] Replace it with something real
+                    - [+] For now, I inserted 'Richard Koch' instead
+                    - [ ] Future: Use "The TeXShop Team" or "The
+                          TeXShop Project" or so
+            - [+] Copyright probably should be 2000-2005 instead of
+                  2001-2005
+            - [+] Add GPL headers to source files
+        - [-] Change stuff to point at texshop.org
+            - [+] In Info.plist
+            - [ ] In TeXShop help files
+            - [ ] On the TeXShop website itself
+            - [ ] Ultimately, texshop.org should be the main site,
+                  instead of redirecting to uoregon.edu
+        - [-] Source
+            - [+] Remove tons of commented out obsolete code
+            - [+] Unify source formatting
+            - [ ] unify/simplify yen/backslash conversion code
+            - [-] rename classes and files; in particular get rid of
+                  the "My" prefix (use e.g. "TS" instead)
+                - [+] MainWindow -> TSTextWindow
+                - [+] MyWindow -> TSPreviewWindow
+                - [+] MyTextView -> TSTextView
+                - [ ] MyPDFKitView -> TSPDFView or TSPDFKitView or
+                      TSPreviewView
+                - [ ] MyPDFView -> TSGraphicsView 
+                - [+] PrintView + PrintBitmapView -> TSPrintView
+                - [+] MyDocument -> TSDocument (right now, it combines
+                      TeX, PDF, arbitrary images -> maybe split the
+                      class?)
+                - [+] MyDocumentController -> TSDocumentController
+                - [+] MyDocumentScripting -> TSDocumentScripting
+                - [+] MyDocumentToolbar -> TSToolbarController
+                - [+] ConsoleWindow -> TSConsoleWindow
+                - [+] MacroEditor -> TSMacroEditor
+                - [+] MacroMenuController -> TSMacroMenuController
+                - [+] OutlineViewController -> TSMacroOutlineController
+                - [+] MyOutlineView -> TSMacroOutlineView
+                - [+] MyTreeNode -> TSMacroTreeNode
+                - [+] MatrixTableView -> TSMatrixTableView
+                - [+] Matrixcontroller -> TSMatrixPanelController
+                - [+] Autrecontroller -> TSLaTeXPanelController
+                - [+] EncodingSupport -> TSEncodingSupport
+                - [ ] ...
+            - [ ] Split code into more files, based on functionality
+                - [ ] TSDocument, MyPDFKitView, MyPDFView all are over
+                      100 KB and should be split
+            - [ ] Split methods which are "too big"
+                - [ ] [MyTextView keyDown]
+                - [ ] [MyDocument windowControllerDidLoadNib]
+                - [ ] [MyDocument completeSaveFinished]
+            - [ ] Mark all global and member variables with according
+                  prefixes
+                - [ ] This makes maintenance a lot easier, and helps
+                      people who are new to the code...
+                - [ ] Careful: .nib files need to be updated, too
+            - [-] Add files for NSFoo addons
+                - [ ] NSArray-Extras (see MyTreeNode)
+                - [+] NSString-Extras (add 'contains:' method)
+                - [ ] NSOutlineView (OutlineViewController)
+            - [-] TSAppDelegate.m
+                - [ ] configure* methods duplicate code
+                - [+] copyTo*Directory methods duplicate code
+                - [ ] displayLatexPanel / displayMatrixPanel hardcode
+                      menu names -> better approach possible?
+                    - [ ] maybe using setTag or setRepresentedObject
+                - [ ] simplify validateMenuItem
+                - [ ] checkForUpdate hardcodes a lot of text -> turn
+                      into a .nib ?
+            - [+] extras.* -> unused, remove completely
+            - [-] get rid of MITSU_PDF; always enable PDF viewer
+                - [ ] remove UseMitsu.h
+                - [+] remove MyView.*
+                - [ ] Rename MyPDFKitView and MyPDFView appropriately
+                - [ ] Unify their code as much as possible. Introduce a
+                      common base class etc.
+            - [ ] get rid of (In)activeTextFieldCell ? Seems like that
+                  would be trivial to do...
+            - [+] PrintView
+                - [+] Unify with PrintBitmapView
+                - [+] Fix memory leak (aRep is not freed)
+            - [+] NSCursor
+                - [+] Do not use undocumented NSCursor _crosshairCursor
+                      API
+                - [+] Removed openHandCursor() and grabHandCursor() and
+                      use NSCursor class methods instead
+            - [ ] Add a common base class for MyPDFView and
+                  MyPDFKitView, to simplify rest of code
+            - [+] Unify pdfWindowDidBecomeKey and pdfWindowDidResignKey
+                  in TSWindowManager
+        - [ ] TSDocument
+            - [ ] Move ToolbarCode into separate class
+            - [ ] Important: We are using multiple windows for our
+                  document, and we do it the wrong way
+                - [ ] Shoud overload makeWindowControllers !
+                - [ ] See "Sketch" demo by Apple, as well as the
+                      NSDocument docs
+                - [ ] Use multiple NSWindowControllers, one for the
+                      text editor window, one for the preview
+                - [ ] overload [NSWindowController
+                      windowTitleForDocumentDisplayName] to customize
+                      the window title of the preview (add page number
+                      to the end)
+                - [ ] mark text editor window as being "primary":
+                      [NSWindowController setShouldCloseDocument:YES]
+            - [ ] possibly split this into separate classes for TeX
+                  files and other files
+            - [ ] Blocks that could be split out:
+                - [ ] Syntax highlighting code
+                - [ ] PDF Sync code
+                - [ ] macros
+                - [ ] matrix
+                - [ ] auto completion
+                - [ ] multiple classes in OutlineViewController.m
+                - [ ] ... (need to do a full code review before
+                      compiling a proper list)
+            - [ ] Code that could be unified
+                - [ ] doJob: and doJobForScript:
+                - [ ] checkRootFile_forTask, checkMasterFile,
+                      checkFileLinks
+        - [ ] Toolbar
+            - [ ] Move toolbar code into separate class
+            - [ ] Fix the toolbar item validation code
+            - [ ] Maybe move the whole toolbar config stuff into a
+                  .toolbar file, like the OmniGroup folks do
+            - [ ] In fact, check how OminAppKit handles toolbars
+            - [ ] "Auto completion" item: The menu representation
+                  doesn't put a check mark into the menu when auto
+                  completion is active
+            - [ ] Get rid of the extra "prev page" and "next page"
+                  buttons - it's just confusing
+        - [-] TSEncodingSupport
+            - [+] Right now, one needs to modify three .nib files (and
+                  all localized variants, i.e. about 30 files) as well
+                  as EncodingSupport.m to change the list of supported
+                  encodings
+                - [+] Suggestion: Generate the menus in the .nibs "on
+                      the fly": add a method to EncodinSupport which
+                      populates a NSMenu with the correct menu items,
+                      and then let the prefs dialog etc. call that
+                      method
+            - [+] Use custom Encoding.strings file to localize encoding
+                  names
+            - [-] Add localized names for the encodings in all languages
+                - [ ] /System/Library/Frameworks/CoreServices.framework/
+                      Frameworks/CarbonCore.framework/Resources/*.lproj/
+                      TextEncodingNames.string
+                - [+] Add comments to encoding.strings which give the
+                      hex key used in TextEncodingNames.string, to help
+                      translators
+            - [+] Abolish the intermediate encoding "tags", directly
+                  use NSStringEncoding
+            - [ ] Currently "EncodingChangedNotification" is sent *to*
+                  TSEncodingSupport, and this then modifies the
+                  encoding settings. Proposal: The prefs manager
+                  directly invokes a method of TSEncodingSupport when
+                  the encoding changes; this then sends out the
+                  notification, and lets client code do its updates, as
+                  needed. This would get rid of various ugly tricks and
+                  hacks.
+        - [+] Use preprocessor on Info.plist / CustomInfo.plist for the
+              version strings -> reduce number of places where we have
+              to update the version
+        - [+] TEXTEDIT.app provides TEXEDIT support (see
+              <http://www.die.net/doc/linux/man/man1/tex.1.html>); the
+              same could be achieved with an extremely simple shell
+              script using "osascript". 
+        - [ ] Revise matrixpanel_1.plist
+            - [ ] Use a dict instead of an array -> more flexible,
+                  easier to maintain, forward compatible
+        - [ ] Remove the Bold/Italics/Alignment/Ruler options. We can
+              use the keyboard shortcuts for better things, too
+        - [ ] Add a "Custom Tab width" option, e.g. to the "Fonts"
+              dialog
+    - [-] Bugs
+        - [ ] Loading e.g. a TIFF (sometimes?) results in it being
+              drawn on a black background.
+            - [ ] Can be reproduced using e.g. LaTeXAction.tiff
+        - [ ] Fix toolbar validation code
+            - [ ] it used to call [super validateMenuItem] instead of
+                  [self validateMenuItem]
+        - [ ] Disable "Previous page" when on first page (same for
+              "Next Page" on last page)
+        - [ ] Statistics dialog is broken
+            - [ ] Tries to use "detex" w/o checking for its presence,
+                  and fails silently
+        - [ ] Phantom line bug
+            - [ ] http://www.apfelwiki.de/forum/viewtopic.php?t=239&sid=
+                  757aba62dac6b809f2f8373ac4b92480
+            - [ ] Apparently is a Cocoa bug
+            - [ ] To reproduce, try http://arXiv.org/abs/hep-th/9912205
+        - [ ] Editor slow down
+            - [ ] http://www.apfelwiki.de/forum/viewtopic.php?t=263&sid=
+                  757aba62dac6b809f2f8373ac4b92480
+        - [ ] PDF Kit bug
+                  The second bug affects loading a new pdf document
+                  after typesetting.
+                  Apple's PDFKit documentation states
+                  
+                      "setDocument:(PDFDocument *)document
+                  
+                      "Associates a document with a PDF View object. If
+                  a document is already associated
+                      with the view, it is released first and then
+                  document is associated with the view."
+                  
+                  However, when I first released version 2.0, users
+                  complained that after typesetting
+                  a large project a couple of times, the system slowed
+                  way down and it would be
+                  several seconds after typesetting before they could
+                  edit again. My experiments showed
+                  that the problem happened when disposing the old
+                  document structures (there are
+                  many because PDFKit associates page classes to each
+                  page of a document). So I
+                  changed the code so old pdf document classes appears
+                  to still be used, and thus are
+                  not released when a new document is created by
+                  typesetting. I still call setDocument
+                  above, but the old classes are then not disposed.
+                  
+                  This means, of course,
+                  that virtual memory is gradually expanded as the user
+                  typesets again and again.
+                  
+                  I have no idea why disposing the old data structures
+                  creates this awful slowdown.
+                  I suspect I'll need Apple's help, and have started
+                  constructing a simple example
+                  which illustrates the problem, but haven't written
+                  Apple about it yet.
+                  
+            - [ ] related to use of setDocument:(PDFDocument *)document
+        - [ ] If you use multi-page mode, and typeset a document, it
+              will always jump to the start of the page instead of
+              staying in the old position
+            - [ ] http://www.apfelwiki.de/forum/viewtopic.php?t=285&sid=
+                  757aba62dac6b809f2f8373ac4b92480
+        - [ ] Switching between single and multipage sometimes changes
+              the magnification ?!?
+        - [ ] "Display Format" menu sometimes has too many check marks
+        - [ ] "Go to error" should only be active when it makes sense
+              (i.e. when there are errors)
+        - [ ] German localization: "In Auswahl Ersetzen" -> "In Auswahl
+              ersetzen"
+        - [ ] German localization of the Help text is quite horrible in
+              some parts.
+        - [ ] Search & Replace with OgreKit can mess up the
+              (incremental) syntax highlighting (to trigger this,
+              replace "$a$" by "abc")
+        - [ ] Syntax highlighting
+            - [ ] Bug when replacing the \ in "\example" by a letter
+            - [ ] Undo doesn't work properly:  replace the x in
+                  "\example" by a space. Then undo. The coloring is now
+                  bad
+        - [ ] "Find all" is buggy: Run "Find All", then close the find
+              dialog (not the result window); switch to another app and
+              come back: The two windows are back, and the find dialog
+              can't be closed anymore (see
+              <http://www.apfelwiki.de/forum/viewtopic.php?p=1133#1133>)
+              .
+        - [ ] Auto completion seems to slow TeXShop down a lot
+        - [+] Memory leaks
+            - [+] openForPreview is leaking myArray
+            - [+] MyPDFKitView missing [super dealloc]
+        - [ ] When opening FOO.bib file, we also open FOO.pdf as a
+              preview for it.
+    - [-] Features
+        - [-] PDF preview
+            - [ ] Window zoom isn't working very nicely, could be
+                  improved
+            - [ ] When using the rectangle selection tool, the
+                  dimension of the rect is shown, but no unit
+                - [ ] I guess the unit is "pixels"; at the very least
+                      that should be displayed
+                - [ ] Maybe it would be possible/desirable to use cm or
+                      inch instead/alternatively
+            - [ ] pdfsync in the "search"-mode could be improved; it
+                  doesn't quite behave as expected: Instead of
+                  selecting the text *after* the click position, it
+                  should select the text (or maybe, 'words') around the
+                  click position
+            - [+] The arrow buttons in the toolbar are strange; maybe
+                  for pageup/down, copy the icons from Preview.app
+            - [+] The "<" and ">" buttons in the toolbar look ugly ->
+                  instead use the triangle buttons from Preview.app.
+                  See also Cocoa Browser
+            - [ ] Add Zoom in/out hotkeys (Cmd-Plus and Minus)
+            - [ ] Add page count to window title, like in Preview.app
+            - [ ] In the toolbar, change the NSMatrix for the
+                  selection/zoom/etc. tools to a NSSegmentedControl
+            - [ ] When using the magnifier tool, draw a border around
+                  the magnified area
+        - [ ] Editor
+            - [ ] Add a (optional) status line at the bottom of the
+                  window, showing the cursor position
+            - [ ] Optionally show line numbers
+            - [ ] Navigation
+                - [ ] "Jump to next section"
+                - [ ] "Section folding" wäre cool, aber schwer
+                - [ ] Improved tags system
+                    - [ ] Put the "tags" / TOC into a NSOutlineView in
+                          a drawer? 
+                    - [ ] Make the tags menu hierarchical (possible as
+                          an option only)
+                    - [ ] The menu looks odd when the .tex files
+                          contains lines like this:
+                        - [ ] \section{This is a section}
+                              \label{this-is-a-label}
+            - [ ] Check if a file was modified on the HD by another
+                  program
+                - [ ] Possible reaction: If the file was in
+                      non-dirty/saved state, silently reload it;
+                      otherwise, show a dialog to the user and ask
+                      whether to reload or whether to ignore the changes
+                - [ ] This is important to avoid data loss if the user
+                      has the file open in two editors at the same time
+            - [ ] Spell checking
+                - [ ] Remember the language of a given file during run
+                      time, so that if one has two files in two
+                      different languages open, one doesn't have to
+                      switch the spell check back and forth
+                - [ ] Maybe make it possible to mark a document as
+                      being in a certain language (using special
+                      comments at the start of the document).
+            - [ ] When a ".bib" file is open, no reason to offer e.g.
+                  "LaTeX" as a typesetting operation, is there?
+        - [ ] Global
+            - [ ] Maybe prevent PDFs from appearing in "Open Recent"
+                  list ? (-> NSDocumentController noteNewRecentDocument)
+                - [ ] Better would be if we could split the open recent
+                      list into three or more parts, "TeX Files",
+                      "PDFs", "Other", similar to the global recent
+                      objects menu (under the apple menu). This might
+                      be a lot of work, though.
+            - [ ] Handling of new untitled windows
+                - [ ] Upon launch, (optionally) a new untitled window
+                      is opened. When you then open an existing
+                      document, the empty untitled document stays. But
+                      if no change was made to it at all, then it
+                      should simply be removed, like e.g. TextEdit does
+                      (this is part of the HIG)
+                - [ ] TextEdit source is open and shows how to
+                      implement this
+            - [ ] Shortcuts/hotkeys: Some differ from virtually every
+                  other app out there. Consider changing them
+                - [ ] "Go to error" now is Cmd-E. In other programs it
+                      is "Enter Selection"; the latter is currently w/o
+                      a hotkey, which is very annoying (it's a rather
+                      central feature and I use it *way* more often
+                      than "Go to error". Suggestion: Change "Go to
+                      error" to Alt-Cmd-E or Ctrl-Cmd-E, and use Cmd-E
+                      the way many other apps use it
+                - [ ] Cmd-D was the standard for "Find previous" under
+                      10.0. These days (and since at least 10.2), the
+                      standard combo is Cmd-Shift-G, used in virtually
+                      every app out there.
+                - [ ] At least on a german OS X, Cmd-< and Cmd-> are
+                      normally used to cycle through the open windows.
+                      Not sure if this is the same as in the english
+                      system, though.
+                    - [ ] Suggestion: Use the same hotkeys as in
+                          Mail.app for (un)indent: Alt-Shift-Cmd-Ä and Ö
+                - [ ] Cmd-+ and Cmd-- for zoom in/out is intuitive and
+                      matches Preview.app. Letting them rotate
+                      something isn't...
+                - [ ] For rotating, either use the same combos as
+                      Preview.app (Cmd-L and Cmd-R) or similar derived
+                      combos (e.g. Cmd-Ctrl-L or Cmd-Alt-L, i.e. add in
+                      shift/alt/ctrl as desired).
+            - [ ] Move "Spelling" commands to a submenu, like in
+                  TextEdit and other apps
+        - [-] Localization
+            - [ ] German auto-update dialog is using the informal "Du"
+                  -> not professional, fix
+            - [ ] Fix spelling mistakes in german translation
+            - [+] .nib files should be properly set up as
+                  "localizations" in the XCode project
+            - [ ] Improved semi-automatic localization
+                - [ ] there are already several documents describing
+                      the localization process, e.g. "Localizing Nib
+                      Files.txt"
+                - [ ] But there are many of them, which is confusing.
+                      Unify them into one document
+                - [ ] Also, reduce the number of "critical"
+                      translations (by not hardcoding strings into the
+                      source etc.)
+                - [ ] Use Localization tools
+                    - [ ] nibTranslate 0.7.1
+                    - [ ] AppleGlot
+                    - [ ] http://www.blue-tec.com/locsuite/
+                    - [ ] ...
+            - [ ] Remove (or at least reduce) hardcoded strings
+                - [ ] [TSAppDelegate displayLatexPanel]
+                - [ ] [TSAppDelegate displayMatrixPanel]
+                - [ ] configureExternalEditor
+                - [ ] Autrecontroller panelWillClose
+                - [ ] Matrixcontroller panelWillClose
+                - [ ] EncodingSupport setupForEncoding
+                - [ ] MacroEditor.m
+                - [ ] ... many more
+            - [ ] Plan for transition
+                - [ ] Pick a tool / tool chain for the semi-automatic
+                      localization process
+                - [ ] Start with MainMenu.nib (it should be relatively
+                      easy to start with)
+                - [ ] get feedback from Dick & translators
+                - [ ] if successful, proceed with the other .nib files.
+                      We will ask translators to translate from
+                      scratch, though they can copy text from the old
+                      localizations
+                    - [ ] TSDocument
+                    - [ ] MacroEditor
+                    - [ ] matrixpanel
+                    - [ ] completionpanel
+                    - [ ] FindPanel (?)
+                    - [ ] Preferences -> but here it might be better to
+                          first redesign it from scratch!
+                - [ ] Future (incremental) updates of the localization
+                      then would be easy. So would adding of new dialog
+                      elements etc.
+        - [ ] Preference Dialog
+            - [ ] Overhaul the whole thing. It could look a lot better,
+                  and be cleaner
+            - [ ] Make use of 'Bindings', for many settings we might
+                  not even need any code
+            - [ ] Do not use the ugly NSBox borders (switch to type
+                  "None"?)
+            - [ ] Use bold headers on the NSBox
+            - [ ] Maybe a vertical line to seperate the left/right
+                  halves of the dialog
+            - [ ] Make the prefs dialog bigger (esp. wider), including
+                  the text items: This reduces the amount of work that
+                  has to be done to localize it (many lanuages need
+                  more space than the english version of a given text)
+            - [ ] Add more settings to the dialog
+                - [ ] ... for syntax coloring (and while doing that,
+                      change the NSUserDefault entries we use for
+                      colors to something better)
+            - [ ] On the "Misc" pane, change the various radio buttons
+                  to popup menus, which are each in its own row
+        - [ ] Help / Documentation
+            - [ ] Fancy help navigation menu (see helpmenu.psd)
+                  currently isn't usable because it hard codes text.
+                  However, using CSS, it should be possible to use it
+                  anyway
+                - [ ] We only have to show the TeXShop icon, with
+                      centered bold text "TeXShop Help" below it on the
+                      left side;
+                - [ ] on the right side, the curved menu appears, with
+                      text next to it, which we offset/position using
+                      CSS.
+            - [ ] Make sure to update the URL in here, too
+            - [ ] tidy the Help HTML
+    - [ ] Website
+        - [ ] Update the 'About TeXShop' page -- "TeX previewer for Mac
+              OS " is hardly an appropriate description these days :-)
+        - [ ] Broken link to iTeXMac. Correct one:
+              http://itexmac.sourceforge.net/
+    - [ ] Misc
+        - [ ] New syntax coloring code disables printing colored
+              sources. Is this a problem for anybody? If so, we can try
+              to re-add this capability
+        - [ ] Shouldn't we use ~/Library/Application Support/TeXShop
+              instead of ~/Library/TeXShop ?
+            - [ ] Probably not worth all the work required to change it
+        - [ ] Why is there a distinction between "--applescript direct"
+              and "--applescript" ?
+        - [ ] Write a syntax forma guideline, which specifies the
+              formatting rules we use...
+        - [ ] latexmk support? alternatively, implement that
+              functionality on our own
+            - [ ] http://semantics-online.org/geek/2004/07/latexmk_and_t
+                  exshop_automagic_pdfpreview_of_latex_documents
+            - [ ] http://www.phys.psu.edu/~collins/software/latexmk-jcc/
+        - [ ] Why is 'RefreshTimeKey' a config key / user
+              configurable???
+    - [ ] Regressions
+        - [ ] Splitview mode: Pasting something in one split view
+              doesn't cause the other to be updated/redrawn!

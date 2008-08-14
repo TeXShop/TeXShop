@@ -138,6 +138,7 @@
 - (void)flagsChanged:(NSEvent *)theEvent;
 - (void)doSync: (NSEvent *)theEvent;
 - (BOOL)doNewSync: (NSEvent *)theEvent;
+- (BOOL)doSyncTeX: (NSEvent *)theEvent;
 - (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
 - (void)drawPage:(PDFPage *)page;
 - (void)resetCursorRects;

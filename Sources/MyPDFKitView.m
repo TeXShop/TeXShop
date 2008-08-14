@@ -377,9 +377,10 @@
 	int difference = newFullRect.size.height - fullRect.size.height;
 	visibleRect.origin.y = visibleRect.origin.y + difference;
 	[[self window] disableFlushWindow];
-	[self display];
+	// [self display];
 	[[self documentView] scrollRectToVisible: visibleRect];
 	[[self window] enableFlushWindow];
+	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
 
 
@@ -2546,6 +2547,114 @@
 
 }
 
+- (BOOL)doSyncTeX: (NSEvent *)theEvent
+{
+	NSTask			*synctexTask;
+	NSPipe			*synctexPipe;
+	NSFileHandle	*synctexHandle;
+
+	NSDate			*myDate;
+	NSString		*enginePath, *myFileName, *mySyncTeXFileName, *mySyncTeX;
+	NSMutableArray	*args;
+	
+	myFileName = [myDocument fileName];
+	if (! myFileName)
+		return NO;
+	mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+		{
+		return NO;
+		}
+	mySyncTeX = [[SUD stringForKey:TetexBinPath] stringByAppendingPathComponent: @"synctex"];
+	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeX])
+		{
+		return NO;
+		}  
+	
+	return NO;
+
+/*		
+	synctexTask = [[NSTask alloc] init];
+	[synctexTask setCurrentDirectoryPath: [myFileName stringByDeletingLastPathComponent]];
+	synctexPipe = [[NSPipe pipe] retain];
+	synctexHandle = [synctexPipe fileHandleForReading];
+	[synctexHandle readInBackgroundAndNofity];
+	[synctexTask setStandardOutput: synctexPipe];
+	
+	// [synctexTask setEnvironment: [self environmentForSubTask]];
+	enginePath = [[NSBundle mainBundle] pathForResource:@"synctexwrap" ofType:nil];
+	tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+	args = [NSMutableArray array];
+	[args addObject:tetexBinPath];
+	[args addObject: [myFileName  stringByStandardizingPath]];
+	detexPipe = [[NSPipe pipe] retain];
+	detexHandle = [detexPipe fileHandleForReading];
+	[detexHandle readInBackgroundAndNotify];
+	[detexTask setStandardOutput: detexPipe];
+	if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+		[detexTask setLaunchPath:enginePath];
+		[detexTask setArguments:args];
+		[detexTask launch];
+	} else {
+		if (detexPipe)
+			[detexTask release];
+		detexTask = nil;
+	}
+
+
+	- (void)showStatistics: sender
+{
+	NSDate          *myDate;
+	NSString        *enginePath, *myFileName, *tetexBinPath;
+	NSMutableArray  *args;
+	
+	[statisticsPanel setTitle:[self displayName]];
+	[statisticsPanel makeKeyAndOrderFront:self];
+	
+	myFileName = [self fileName];
+	if (! myFileName)
+		return;
+	
+	if (detexTask != nil) {
+		[detexTask terminate];
+		myDate = [NSDate date];
+		while (([detexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+		[detexTask release];
+		[detexPipe release];
+		detexTask = nil;
+		detexPipe = nil;
+	}
+	
+	detexTask = [[NSTask alloc] init];
+	[detexTask setCurrentDirectoryPath: [myFileName stringByDeletingLastPathComponent]];
+	[detexTask setEnvironment: [self environmentForSubTask]];
+	enginePath = [[NSBundle mainBundle] pathForResource:@"detexwrap" ofType:nil];
+	tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+	args = [NSMutableArray array];
+	[args addObject:tetexBinPath];
+	[args addObject: [myFileName  stringByStandardizingPath]];
+	detexPipe = [[NSPipe pipe] retain];
+	detexHandle = [detexPipe fileHandleForReading];
+	[detexHandle readInBackgroundAndNotify];
+	[detexTask setStandardOutput: detexPipe];
+	if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+		[detexTask setLaunchPath:enginePath];
+		[detexTask setArguments:args];
+		[detexTask launch];
+	} else {
+		if (detexPipe)
+			[detexTask release];
+		detexTask = nil;
+	}
+	
+}
+
+
+
+	return NO;
+*/
+}
+
 
 - (BOOL)doNewSync: (NSEvent *)theEvent
 {
@@ -2822,6 +2931,8 @@
 
 }
 
+
+
 // TODO: This method is way too big and should be split up / simplified
 - (void)doSync: (NSEvent *)theEvent
 {
@@ -2852,6 +2963,15 @@
 	BOOL			result;
 	
 	int syncMethod = [SUD integerForKey:SyncMethodKey];
+	
+	if (syncMethod == SYNCTEXFIRST) {
+		result = [self doSyncTeX: theEvent];
+		if (result)
+			return;
+		else
+			syncMethod = SEARCHONLY;
+		}
+	
 	
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
 		result = [self doNewSync: theEvent];

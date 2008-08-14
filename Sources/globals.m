@@ -128,6 +128,7 @@ NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
 NSString *ConvertLFKey = @"ConvertLF";
 NSString *UseOgreKitKey = @"UseOgreKit";
 NSString *BringPdfFrontOnAutomaticUpdateKey = @"BringPdfFrontOnAutomaticUpdate";
+NSString *BringPdfFrontOnTypesetKey = @"BringPdfFrontOnTypeset";
 NSString *SourceWindowAlphaKey = @"SourceWindowAlpha";
 NSString *PreviewWindowAlphaKey = @"PreviewWindowAlpha";
 NSString *ConsoleWindowAlphaKey = @"ConsoleWindowAlpha";

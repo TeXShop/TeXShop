@@ -207,7 +207,8 @@ typedef enum _SyncMethodType
 {
 	PDFSYNC = 0, // original PDF sync
 	SEARCHONLY = 1, // new pdf search method
-	SEARCHFIRST = 2 // new pdf search first, but fall back on PDF sync if necessary
+	SEARCHFIRST = 2, // new pdf search first, but fall back on PDF sync if necessary
+	SYNCTEXFIRST = 3 // synctex, but fall back on pdf search if necessary
 } _SyncMethodType;
 
 /*" Comment and Indent Methods"*/
@@ -326,6 +327,7 @@ extern NSString *ExternalEditorTypesetAtStartKey;
 extern NSString *ConvertLFKey;
 extern NSString *UseOgreKitKey;
 extern NSString *BringPdfFrontOnAutomaticUpdateKey;
+extern NSString *BringPdfFrontOnTypesetKey;
 extern NSString *SourceWindowAlphaKey;
 extern NSString *PreviewWindowAlphaKey;
 extern NSString *ConsoleWindowAlphaKey;

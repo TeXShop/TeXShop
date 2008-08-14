@@ -794,9 +794,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 		if ([SUD boolForKey:ConsoleBehaviorKey]) {
 			if (![outputWindow isVisible])
 				[outputWindow orderBack: self];
-			[outputWindow makeKeyWindow];
-		} else
-			[outputWindow makeKeyAndOrderFront: self];
+				// BOOL front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+				//if (front)
+				//		[outputWindow makeKeyWindow];
+		} else {
+			if ([SUD boolForKey: BringPdfFrontOnTypesetKey])
+				[outputWindow makeKeyAndOrderFront: self];
+			else
+				[outputWindow orderFront: self]; 
+			}
 		
 		
 		
@@ -1279,6 +1285,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	NSDate			*endDate;
 	int				status;
 	BOOL			alreadyFound;
+	BOOL			front;
 
 	[outputText setSelectable: YES];
 
@@ -1325,10 +1332,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 					[myPDFKitView reShowWithPath: imagePath];
 					[pdfKitWindow setRepresentedFilename: imagePath];
 					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
-					[pdfKitWindow makeKeyAndOrderFront: self];
-
-
-
+					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+					if ((front) || (! [pdfKitWindow isVisible]))
+						[pdfKitWindow makeKeyAndOrderFront: self];
 				}
 			}
 

@@ -95,6 +95,7 @@
 	IBOutlet NSColorWell	*_copyForeColorWell;// mitsu 1.29 (O)
 	IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O)
 	IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)
+	IBOutlet NSMatrix		*_afterTypesettingMatrix;
 }
 
 + (id)sharedInstance;
@@ -147,6 +148,7 @@
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
+- (IBAction)afterTypesettingChanged:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

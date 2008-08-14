@@ -854,6 +854,26 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleBehaviorKey];
 }
 
+/*" This method is connected to the "After Typesetting" matrix on the Preference pane.
+A tag of 0 means "Activate Preview"; a tag of 1 means "Continue Editing".
+"*/
+- (IBAction)afterTypesettingChanged:sender;
+{
+	BOOL	oldValue, newValue;
+	int		tagValue;
+	
+	oldValue = [SUD boolForKey:BringPdfFrontOnTypesetKey];
+	tagValue = [[sender selectedCell] tag];
+	if (tagValue == 0)
+		newValue = YES;
+	else
+		newValue = NO;
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:oldValue forKey:BringPdfFrontOnTypesetKey];
+
+	[SUD setBool:newValue forKey:BringPdfFrontOnTypesetKey];
+}
+
 /*" This method is connected to the "Console" matrix on the TeX pane.
 
 A tag of 0 means "always", a tag of 1 means "when errors occur".
@@ -1033,6 +1053,7 @@ This method retrieves the application preferences from the defaults object and s
 	double	magnification;
 	int		mag, tabSize;
 	int		myTag;
+	BOOL	myBool;
 	NSNumber    *myNumber;
 
 	fontData = [defaults objectForKey:DocumentFontKey];
@@ -1154,6 +1175,14 @@ This method retrieves the application preferences from the defaults object and s
 
 	myTag = [defaults integerForKey:DistillerCommandKey];
 	[_distillerMatrix selectCellWithTag: myTag];
+	
+	myBool = [defaults boolForKey:BringPdfFrontOnTypesetKey];
+	if (myBool == YES)
+		myTag = 0;
+	else
+		myTag = 1;
+	[_afterTypesettingMatrix selectCellWithTag: myTag];
+	
 
 
 	// end mitsu 1.29

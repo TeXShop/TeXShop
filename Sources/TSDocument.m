@@ -2506,6 +2506,16 @@ preference change is cancelled. "*/
 	BOOL			result;
 
 	int syncMethod = [SUD integerForKey:SyncMethodKey];
+	
+	if (syncMethod == SYNCTEXFIRST) {
+		result = [self doPreviewSyncTeXWithFilename: fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
+		if (result)
+			return;
+		else
+			syncMethod = SEARCHONLY;
+		}
+	
+
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
 		result = [self doNewPreviewSyncWithFilename:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
 		if (result)
@@ -2792,6 +2802,10 @@ preference change is cancelled. "*/
 
 }
 
+- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
+{
+	return NO;
+}
 
 - (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView
 {
@@ -2954,7 +2968,7 @@ preference change is cancelled. "*/
 			[myPDFKitView reShowWithPath: pdfPath];
 			[pdfKitWindow setRepresentedFilename: pdfPath];
 			[pdfKitWindow setTitle: [pdfPath lastPathComponent]];
-			if (front) {
+			if ((front) || (![pdfKitWindow isVisible])) {
 				[[NSApplication sharedApplication] activateIgnoringOtherApps: YES];
 				[pdfKitWindow makeKeyAndOrderFront: self];
 			}

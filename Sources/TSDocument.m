@@ -97,6 +97,10 @@
 	showIndexColor = NO;
 	isLoading = NO;
 	firstTime = NO;
+	
+	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
+	lineNumberView1 = nil;
+	lineNumberView2 = nil;
 
 
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
@@ -127,6 +131,9 @@
 
 	[mSelection release];
 	[_textStorage release];
+	[lineNumberView1 release];
+	[lineNumberView2 release];
+	[scrollView2 release];
 
 /* toolbar stuff */
 	[typesetButton release];
@@ -149,6 +156,32 @@
 
 	[super dealloc];
 }
+
+- (void) showHideLineNumbers: sender
+{
+	if (!lineNumbersShowing) {
+		if (lineNumberView1 == nil) {
+			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
+			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			[scrollView setVerticalRulerView:lineNumberView1];
+			[scrollView2 setVerticalRulerView:lineNumberView2];
+			
+			[scrollView setHasVerticalRuler:YES];
+			[scrollView setHasHorizontalRuler:NO];
+			
+			[scrollView2 setHasVerticalRuler:YES];
+			[scrollView2 setHasHorizontalRuler:NO];
+		}
+		[scrollView setRulersVisible:YES];
+		[scrollView2 setRulersVisible:YES];
+		lineNumbersShowing = YES;
+	} else {
+		[scrollView setRulersVisible:NO];
+		[scrollView2 setRulersVisible:NO];
+		lineNumbersShowing = NO;
+	}
+}
+
 
 -(BOOL)doNotReadSource;
 {
@@ -384,6 +417,23 @@ if (! skipTextWindow) {
 	[scrollView2 removeFromSuperview];
 	windowIsSplit = NO;
 	//  endforsplit
+	
+	if (lineNumbersShowing) {
+		if (lineNumberView1 == nil) {
+			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
+			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			[scrollView setVerticalRulerView:lineNumberView1];
+			[scrollView2 setVerticalRulerView:lineNumberView2];
+			
+			[scrollView setHasVerticalRuler:YES];
+			[scrollView setHasHorizontalRuler:NO];
+			
+			[scrollView2 setHasVerticalRuler:YES];
+			[scrollView2 setHasHorizontalRuler:NO];
+			}
+		[scrollView setRulersVisible:YES];
+		[scrollView2 setRulersVisible:YES];
+		}
 
 	}
 
@@ -2459,6 +2509,15 @@ preference change is cancelled. "*/
 		return YES;
 	}
 	// end forsplit
+	
+	if ([anItem action] == @selector(showHideLineNumbers:)) {
+		if (lineNumbersShowing)
+			[anItem setState:NSOnState];
+		else
+			[anItem setState:NSOffState];
+		return YES;
+	}
+
 
 	//Michael Witten: mfwitten@mit.edu
 	if ([anItem action] == @selector(setLineBreakMode:)) {

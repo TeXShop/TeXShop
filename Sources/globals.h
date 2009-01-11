@@ -248,6 +248,7 @@ extern NSString *SavePSEnabledKey;
 extern NSString *LatexScriptCommandKey;
 extern NSString *ParensMatchingEnabledKey;
 extern NSString *SpellCheckEnabledKey;
+extern NSString *LineNumberEnabledKey;
 extern NSString *AutoCompleteEnabledKey;
 extern NSString *PdfMagnificationKey;
 extern NSString *NoScrollEnabledKey;

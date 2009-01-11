@@ -25,6 +25,8 @@
 #import <AppKit/AppKit.h>
 #import "TSFullscreenWindow.h"
 #import <Quartz/Quartz.h>
+#import "NoodleLineNumberView.h"
+#import "NoodleLineNumberMarker.h"
 
 
 #define NUMBEROFERRORS	20
@@ -79,6 +81,8 @@ enum RootCommand
 	IBOutlet NSTextView			*textView;		/*" textView displaying the current TeX source "*/
 	IBOutlet NSScrollView		*scrollView;		/*" scrollView for textView"*/
 	IBOutlet NSWindow			*textWindow;		/*" window displaying the current document "*/
+	NoodleLineNumberView		*lineNumberView1;
+	NoodleLineNumberView		*lineNumberView2;
 
 	IBOutlet MyPDFView			*pdfView;		/*" view displaying the current preview "*/
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
@@ -137,6 +141,7 @@ enum RootCommand
 
 	NSTextStorage				*_textStorage;
 	BOOL		windowIsSplit;
+	BOOL		lineNumbersShowing;
 	
 	BOOL				isFullScreen;
 	TSFullscreenWindow	*fullscreenWindow;
@@ -238,6 +243,7 @@ enum RootCommand
 - (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo;
 // forsplit
 - (void) splitWindow: sender;
+- (void) showHideLineNumbers: sender;
 - (void) setTextView: (id)aView;
 // endforsplit
 - (id) magnificationPanel;

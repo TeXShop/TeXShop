@@ -388,6 +388,17 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setBool:[[sender selectedCell] state] forKey:SpellCheckEnabledKey];
 }
 
+/*" This method is connected to the 'line number' checkbox.
+"*/
+- (IBAction)lineNumberButtonPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:LineNumberEnabledKey] forKey:LineNumberEnabledKey];
+
+	[SUD setBool:[[sender selectedCell] state] forKey:LineNumberEnabledKey];
+}
+
+
 /*" This method is connected to the 'shell escape warning' checkbox.
 "*/
 - (IBAction)escapeWarningChanged:sender
@@ -1074,6 +1085,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
+	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];

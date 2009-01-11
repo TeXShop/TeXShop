@@ -40,6 +40,7 @@
 	IBOutlet NSButtonCell	*_spellCheckButton;		/*" connected to "SpellChecking "*/
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
+	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
 	IBOutlet NSButton		*_externalEditorButton;		/*" use external editor "*/
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
@@ -114,6 +115,7 @@
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
+- (IBAction)lineNumberButtonPressed;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;

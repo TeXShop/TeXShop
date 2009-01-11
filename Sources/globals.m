@@ -50,6 +50,7 @@ NSString *SavePSEnabledKey = @"SavePSEnabled";
 NSString *LatexScriptCommandKey = @"LatexScriptCommand";
 NSString *ParensMatchingEnabledKey = @"ParensMatchingEnabled";
 NSString *SpellCheckEnabledKey = @"SpellCheckEnabled";
+NSString *LineNumberEnabledKey = @"LineNumberEnabled";
 NSString *AutoCompleteEnabledKey = @"AutoCompleteEnabled";
 NSString *PdfMagnificationKey = @"PdfMagnification";
 NSString *NoScrollEnabledKey = @"NoScrollEnabled";

@@ -29,10 +29,14 @@
 @interface TSConsoleWindow : NSWindow
 {
 	TSDocument	*myDocument;
+	BOOL		firstResize;
 }
 
 - (void) doChooseMethod: sender;
 - (void) doError: sender;
 - (void) doTypeset: sender;
 - (TSDocument *)document;
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
+
 @end

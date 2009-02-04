@@ -34,6 +34,8 @@
 	BOOL		firstClose;
 }
 
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
+
 - (void) doTextMagnify: sender;   // for toolbar in text mode
 - (void) doTextPage: sender;      // for toolbar in text mode
 - (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;

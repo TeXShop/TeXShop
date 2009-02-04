@@ -76,15 +76,23 @@ static id _sharedInstance = nil;
 {
 	NSArray *upArray;
 	NSArray *downArray;
-	[hstep setMaxValue:MATSIZE];
-	[vstep setMaxValue:MATSIZE];
+	
+	// MatrixSize = MATSIZE;
+	MatrixSize = [SUD integerForKey:MatrixSizeKey];
+	if (MatrixSize < 2)
+		MatrixSize = 2;
+	if (MatrixSize > 100)
+		MatrixSize = 100;
+	
+	[hstep setMaxValue:MatrixSize];
+	[vstep setMaxValue:MatrixSize];
 	myMatrix=[[MatrixData alloc]init];
 	int j;
-	for (j = 0; j < MATSIZE; j++) {
+	for (j = 0; j < MatrixSize; j++) {
 		[myMatrix addRow];
 	}
 	
-	while ([myMatrix colCount]<MATSIZE) {
+	while ([myMatrix colCount]<MatrixSize) {
 		[myMatrix addCol];
 		MatrixTableColumn *newcol;
 		newcol = [[MatrixTableColumn alloc] initWithIdentifier:[[NSNumber numberWithInt:[myMatrix colCount]-1] stringValue]];
@@ -253,13 +261,13 @@ static id _sharedInstance = nil;
 - (IBAction)resizeMatrix:(id)sender
 {
 	int ival = [sender intValue];
-	if (ival > MATSIZE)
-		ival = MATSIZE;
+	if (ival > MatrixSize)
+		ival = MatrixSize;
 	else if (ival < 1)
 		ival = 1;
 
 	if ((sender == hstep) || (sender == htf)) {
-		while ((ival != [myMatrix actCols]) && (ival <= MATSIZE) && (ival > 0)) {
+		while ((ival != [myMatrix actCols]) && (ival <= MatrixSize) && (ival > 0)) {
 			if (ival > [myMatrix actCols]) {
 				[myMatrix setActCols:[myMatrix actCols]+1];
 			} else {
@@ -277,7 +285,7 @@ static id _sharedInstance = nil;
 		
 	} else if ((sender == vstep) || (sender == vtf)) {
 		
-		while ((ival != [myMatrix actRows]) && (ival <= MATSIZE) && (ival > 0)) {
+		while ((ival != [myMatrix actRows]) && (ival <= MatrixSize) && (ival > 0)) {
 			if (ival > [myMatrix actRows]) {
 				[myMatrix setActRows:[myMatrix actRows]+1];
 			} else {

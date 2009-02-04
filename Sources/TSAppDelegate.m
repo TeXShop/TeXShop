@@ -657,6 +657,8 @@
 	[textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
 }
 
+// The routine below is no longer used; it has been replaced by Sparkle. Koch, 1/11/2009.
+
 // Update Checker Nov 05 04; Martin Kerz
 // This code simply fixes a text file from a fixed URL, and parses it
 // for the version of the latest TeXShop releae. It then compares it to

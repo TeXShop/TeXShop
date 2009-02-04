@@ -40,6 +40,7 @@
 - (void) becomeMainWindow;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow:(id)sender;
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 // forsplit
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 - (void)close;

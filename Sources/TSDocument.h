@@ -384,6 +384,7 @@ enum RootCommand
 //-----------------------------------------------------------------------------
 - (void)registerForNotifications;
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
+- (void)setConsoleFontFromPreferences:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
 - (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(unsigned)level; // added by S. Zenitani
 - (void)resetMacroButton:(NSNotification *)notification;
@@ -468,3 +469,13 @@ enum RootCommand
  - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 
 @end
+
+@interface TSDocument (Console)
+
+/*
+ - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
+ - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
+*/
+
+@end
+

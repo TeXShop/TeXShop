@@ -42,6 +42,8 @@
 	IBOutlet id mtscrv;
 	IBOutlet id vstep;
 	IBOutlet id vtf;
+	
+	int			MatrixSize;
 
 	BOOL shown; //YES if user has chosen to display panel
 

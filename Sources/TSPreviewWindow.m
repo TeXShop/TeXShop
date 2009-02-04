@@ -51,6 +51,16 @@ extern NSPanel *pageNumberWindow;
 	return result;
 }
 
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
+{
+	NSRect	newFrame;
+	
+	newFrame = defaultFrame;
+	newFrame.origin.x = 200;
+	newFrame.size.width = newFrame.size.width - 200;
+	return newFrame;
+}
+
 
 
 /*

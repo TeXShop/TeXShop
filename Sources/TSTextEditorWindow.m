@@ -133,5 +133,15 @@
 	[myDocument saveSourcePosition];
 }
 
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
+{
+	NSRect	newFrame;
+	
+	newFrame = defaultFrame;
+	if (defaultFrame.size.width > 1024)
+		newFrame.size.width = 1024;
+	return newFrame;
+}
+
 
 @end

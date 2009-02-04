@@ -1,0 +1,53 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 AndaleMono;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww30960\viewh15680\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 Preparing a new release:\
+\
+1) Create a new copy of texshopappcast.xml and put it in www.uoregon.edu/~koch/texshop, i.e., public_html/texshop. Below is an appropriate file:\
+\
+-----------\
+\
+<?xml version="1.0" encoding="utf-8"?>\
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">\
+   <channel>\
+      <title>TeXShop Versions</title>\
+      <link>http://www.uoregon.edu/~koch/texshop</link>\
+      <description>Most recent changes.</description>\
+      <language>en</language>\
+         <item>\
+            <title>Version 2.20</title>\
+						<sparkle:releaseNotesLink>\
+							http://www.uoregon.edu/~koch/texshop/releasenotes2.20\
+						</sparkle:releaseNotesLink>\
+            <pubDate>Sun, 29 Jan 2009 12:00:00 +0000</pubDate>\
+            <enclosure url="http://www.uoregon.edu/~koch/texshop/texshop2.20.zip" sparkle:version="2.20" length="35034890" type="application/octet-stream" sparkle:dsaSignature="MC0CFETC0a6nHZppB1hp8f9okjU7EE4NAhUAhbaB6Yk/9QAW6KW027McYwDwx08=" />\
+         </item>\
+\
+   </channel>\
+</rss>\
+\
+------------\
+\
+2) Notice that this xml file contains the TeXShop version in several places, the name of the release notes file, the name of the zip file, the length of the zip file in bytes, and a digital signature.\
+\
+3) Place the release notes file, the zip file, and this file in the public_html/texshop folder.\
+\
+4) Determine the length of the zip file with "ls -l" in Terminal. \
+\
+5) Determine the digital signature by running sign-update.rb in the Sparkle Signing Tools folder. The instructions are:\
+\
+	
+\f1\fs26 ruby "Sparkle Signing Tools/sign_update.rb" \\ \uc0\u8232 path_to_your_update.zip path_to_your_dsa_priv.pem\
+\
+
+\f0\fs24 Here "path_to_your_update.zip" is the obvious path to the new zip file and "path_to_your_dsa_priv.pem" is a path to a private key. This key is not in the source folder; it is held by Richard Koch, 2740 Washington St., Eugene, OR, 541-686-8466.
+\f1\fs26  
+\f0\fs24 \
+\
+\
+For details, see\
+\
+http://sparkle.andymatuschak.org/documentation/pmwiki.php/Documentation/BasicSetup?from=Main.HomePage}

@@ -33,6 +33,7 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
+	firstResize = NO;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
 	float alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
 	if (alpha < 0.999)
@@ -54,6 +55,48 @@
 {
 	[myDocument doTypeset: sender];
 }
+
+
+- (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
+{
+	NSRect	oldFrame;
+	NSRect	newFrame;
+	float	newWidth;
+	
+	oldFrame = [window frame];
+	newFrame = defaultFrame;
+	
+	newWidth = oldFrame.size.width;
+	newFrame.size.width = newWidth; 
+	newFrame.origin = oldFrame.origin;
+	
+	return newFrame;
+}
+
+
+
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize
+{
+
+	NSRect	oldFrame;
+	NSSize	newFrameSize;
+	
+	if ([SUD boolForKey:ConsoleWidthResizeKey])
+		return proposedFrameSize;
+	
+	if (firstResize) {
+		newFrameSize = proposedFrameSize;
+		oldFrame = [window frame];
+		newFrameSize.width = oldFrame.size.width;
+		return newFrameSize;
+		}
+	else {
+		firstResize = YES;
+		return proposedFrameSize;
+		}
+}
+
+
 
 // for scripting
 - (TSDocument *)document

@@ -349,6 +349,12 @@ extern NSString *OtherTeXExtensionsKey;
 extern NSString *ReleaseDocumentOnLeopardKey;
 extern NSString *BibDeskCompletionKey;
 extern NSString *SyncTeXOnlyKey;
+extern NSString *ConsoleBackgroundColor_RKey;
+extern NSString *ConsoleBackgroundColor_GKey;
+extern NSString *ConsoleBackgroundColor_BKey;
+extern NSString *ConsoleFontNameKey;
+extern NSString *ConsoleFontSizeKey;
+extern NSString *ConsoleWidthResizeKey;
 // end mitsu 1.29
 
 
@@ -379,6 +385,10 @@ extern NSString *SyntaxColoringChangedNotification;
 extern NSString *DocumentFontChangedNotification;
 extern NSString *DocumentFontRememberNotification;
 extern NSString *DocumentFontRevertNotification;
+extern NSString *ConsoleFontChangedNotification;
+extern NSString *ConsoleBackgroundColorChangedNotification;
+extern NSString *SourceBackgroundColorChangedNotification;
+extern NSString *PreviewBackgroundColorChangedNotification;
 extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
 extern NSString *MagnificationRevertNotification;

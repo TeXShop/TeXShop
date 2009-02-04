@@ -25,6 +25,7 @@
 #import "UseMitsu.h"
 #import <Carbon/Carbon.h>
 
+
 #import "TSDocument.h"
 #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
 
@@ -133,6 +134,12 @@
 	[_textStorage release];
 	[lineNumberView1 release];
 	[lineNumberView2 release];
+	 /* The next line line could be dangerous! It is needed if the source window 
+	is initialized, so without it there is a small memory leak. 
+	But if a pdf file is opened and doesn't open the source window, 
+	then the line causes a crash when TeXShop quits.
+	(Later this was fixed by retaining it even if the source window doesn't open) 
+	*/
 	[scrollView2 release];
 
 /* toolbar stuff */
@@ -213,6 +220,30 @@
 		else
 			return NO;
 }
+
+- (void)setupConsole;
+{
+	[self setConsoleBackgroundColorFromPreferences: nil];
+	[self setConsoleFontFromPreferences:nil];
+	
+/*
+	minWindowSize = [outputWindow minSize];
+	maxWindowSize = [outputWindow maxSize];
+	
+	if ([SUD boolForKey: ConsoleWidthResizeKey] == YES) {
+		minWindowSize.width = 200;
+		maxWindowSize.width = 2000; 
+		}
+	else {
+		minWindowSize.width = 504;
+		maxWindowSize.width = 504;
+		}
+		
+	[outputWindow setMinSize: minWindowSize];
+	[outputWindow setMaxSize: maxWindowSize];
+*/
+}
+
 
 - (void)setupTextView:(NSTextView *)aTextView
 {
@@ -303,7 +334,7 @@
 	BOOL			imageFound;
 	NSString		*theFileName;
 	int				defaultcommand;
-	NSSize			contentSize;
+	// NSSize			contentSize;
 	NSDictionary	*myAttributes;
 	int				i;
 	BOOL			done;
@@ -390,10 +421,15 @@
 	[(TSTextView *)textView2 setDocument: self];
 	*/
 	
+	// The next lines are needed because we may access scrollView2 even if the source window doesn't open
+	[scrollView2 retain];
+	[scrollView2 removeFromSuperview];
+	
 if (! skipTextWindow) {
 	textView = textView1;
 	[self setupTextView:textView1];
 	[self setupTextView:textView2];
+	[self setupConsole];
 	
 	if (spellExists)
 		[textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
@@ -413,8 +449,8 @@ if (! skipTextWindow) {
 	[[textView1 layoutManager] replaceTextStorage:_textStorage];
 	[[textView2 layoutManager] replaceTextStorage:_textStorage];
 
-	[scrollView2 retain];
-	[scrollView2 removeFromSuperview];
+	// [scrollView2 retain];
+	// [scrollView2 removeFromSuperview];
 	windowIsSplit = NO;
 	//  endforsplit
 	
@@ -763,7 +799,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"mf"])
 		|| ([extension isEqualToString: @"bib"])
 		|| ([extension isEqualToString: @"htx"]) || ([extension isEqualToString: @"HTX"]) 
-		|| ([extension isEqualToString: @"sk"]) 
+		|| ([extension isEqualToString: @"sk"]) || ([extension isEqualToString: @"skt"])
 		|| ([extension isEqualToString: @"htx"])
 		|| ([extension isEqualToString: @"ly"]))
 		return YES;
@@ -1393,7 +1429,15 @@ in other code when an external editor is being used. */
 
 	// register for notification when the document font changes in preferences
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setDocumentFontFromPreferences:) name:DocumentFontChangedNotification object:nil];
-
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleFontFromPreferences:) name:ConsoleFontChangedNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleBackgroundColorFromPreferences:) name:ConsoleBackgroundColorChangedNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setSourceBackgroundColorFromPreferences:) name:SourceBackgroundColorChangedNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
+	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(revertDocumentFont:) name:DocumentFontRevertNotification object:nil];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rememberFont:) name:DocumentFontRememberNotification object:nil];
@@ -1598,6 +1642,48 @@ in other code when an external editor is being used. */
 	}
 	[self fixUpTabs];
 }
+
+- (void)setConsoleFontFromPreferences:(NSNotification *)notification
+{
+	NSFont		*theFont;
+
+	theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+	[outputText setFont: theFont];
+}
+
+- (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor		*backgroundColor;
+		
+	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:ConsoleBackgroundColor_RKey]
+												green: [SUD floatForKey:ConsoleBackgroundColor_GKey]
+												blue: [SUD floatForKey:ConsoleBackgroundColor_BKey]
+												alpha:1.0];
+	[outputText setBackgroundColor:backgroundColor];
+}
+
+- (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor	*backgroundColor;
+	
+	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
+												green: [SUD floatForKey:background_GKey]
+												blue: [SUD floatForKey:background_BKey]
+												alpha:1.0];
+	[textView1 setBackgroundColor: backgroundColor];
+	[textView2 setBackgroundColor: backgroundColor];
+}
+
+- (void)setPreviewBackgroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor *backColor;
+	
+	backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
+		green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
+		alpha: 1];
+	[pdfKitWindow setBackgroundColor: backColor];
+}
+
 
 - (void)externalEditorChange:(NSNotification *)notification
 {

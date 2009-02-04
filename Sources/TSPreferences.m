@@ -75,6 +75,7 @@ static id _sharedInstance = nil;
 	_undoManager = [[NSUndoManager alloc] init];
 	// setup the default font here so it's defined when we run for the first time.
 	_documentFont = [NSFont userFontOfSize:12.0];
+	// _consoleFont = [NSFont userFixedPitchedFontOfSize:10.0];
 
 	// register for changes in the user defaults
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
@@ -116,6 +117,10 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRememberNotification object:self];
 	[[NSNotificationCenter defaultCenter] postNotificationName:MagnificationRememberNotification object:self];
 	fontTouched = NO;
+	consoleFontTouched = NO;
+	consoleBackgroundColorTouched = NO;
+	sourceBackgroundColorTouched = NO;
+	previewBackgroundColorTouched = NO;
 	externalEditorTouched = NO;
 	syntaxColorTouched = NO;
 	oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
@@ -182,6 +187,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	// also register the default font. _documentFont was set in -init, dump it here to
 	// the user defaults
 	[SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
+	// [SUD setObject:[NSArchiver archivedDataWithRootObject:_consoleFont] forKey:ConsoleFontKey];
 	[SUD synchronize];
 
 	[self updateControlsFromUserDefaults:SUD];
@@ -198,33 +204,75 @@ Clicking this button will bring up the font panel.
 - (IBAction)changeDocumentFont:sender
 {
 	// become first responder so we will see the envents that NSFontManager sends
-	// up the repsonder chain
+	// up the responder chain
 	[_prefsWindow makeFirstResponder:_prefsWindow];
 	[[NSFontManager sharedFontManager] setSelectedFont:_documentFont isMultiple:NO];
 	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
 }
+
+- (IBAction)changeConsoleResize:sender
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ConsoleWidthResizeKey] forKey:ConsoleWidthResizeKey];
+	if ([[_consoleResizeMatrix selectedCell] tag] == 0) 
+		[SUD setBool:YES forKey:ConsoleWidthResizeKey];	
+	else 
+		[SUD setBool:NO forKey:ConsoleWidthResizeKey];
+}
+
+
+
+- (IBAction)changeConsoleFont:sender
+{
+	_consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+	
+	// become first responder so we will see the envents that NSFontManager sends
+	// up the responder chain
+	[_prefsWindow makeFirstResponder:_prefsWindow];
+	[[NSFontManager sharedFontManager] setSelectedFont:_consoleFont isMultiple:NO];
+	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
+}
+
 
 /*" This method is sent down the responder chain by the font manager when changing fonts in the font panel. Since this class is delegate of the Window, we will receive this method and we can reflect the changes in the textField accordingly.
 "*/
 - (void)changeFont:(id)fontManager
 {
 	NSData	*fontData;
+	
+	
+	NSString *theTab = [[_tabView selectedTabViewItem] identifier];
+	
+	if ([theTab isEqualToString: @"Document"])
+		{
 
-	_documentFont = [fontManager convertFont:_documentFont];
-	fontTouched = YES;
+		_documentFont = [fontManager convertFont:_documentFont];
+		fontTouched = YES;
 
-	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontKey] forKey:DocumentFontKey];
+		// register the undo message first
+		[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontKey] forKey:DocumentFontKey];
 
-	[self updateDocumentFontTextField];
+		[self updateDocumentFontTextField];
 
-	// update the userDefaults
-	fontData = [NSArchiver archivedDataWithRootObject:_documentFont];
-	[SUD setObject:fontData forKey:DocumentFontKey];
-	[SUD setBool:YES forKey:SaveDocumentFontKey];
+		// update the userDefaults
+		fontData = [NSArchiver archivedDataWithRootObject:_documentFont];
+		[SUD setObject:fontData forKey:DocumentFontKey];
+		[SUD setBool:YES forKey:SaveDocumentFontKey];
 
-	// post a notification so all open documents can change their font
-	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+		// post a notification so all open documents can change their font
+		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+		}
+		
+	else if ([theTab isEqualToString: @"Console"])
+		{
+		_consoleFont = [fontManager convertFont:_consoleFont];
+		[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:ConsoleFontNameKey] forKey:ConsoleFontNameKey];
+		[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleFontSizeKey] forKey:ConsoleFontSizeKey];
+		[SUD setObject: [_consoleFont fontName] forKey:ConsoleFontNameKey];
+		[SUD setFloat: [_consoleFont pointSize] forKey: ConsoleFontSizeKey];
+		[self updateConsoleFontTextField];
+		consoleFontTouched = YES;
+		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
+		}
 }
 
 /*" This method is connected to the "Source Window Position" Matrix.
@@ -356,6 +404,62 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	syntaxColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 }
+
+/*" This method is connected to the source window background color well.
+"*/
+- (IBAction)setSourceBackgroundColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:background_RKey] forKey:background_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:background_GKey] forKey:background_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:background_BKey] forKey:background_BKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:background_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:background_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey:background_BKey];
+	
+	sourceBackgroundColorTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
+}
+
+/*" This method is connected to the preview window background color well.
+"*/
+- (IBAction)setPreviewBackgroundColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfPageBack_RKey] forKey:PdfPageBack_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfPageBack_GKey] forKey:PdfPageBack_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfPageBack_BKey] forKey:PdfPageBack_BKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:PdfPageBack_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:PdfPageBack_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey:PdfPageBack_BKey];
+	
+	previewBackgroundColorTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
+}
+
+/*" This method is connected to the console window background color well.
+"*/
+- (IBAction)setConsoleBackgroundColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleBackgroundColor_RKey] forKey:ConsoleBackgroundColor_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleBackgroundColor_GKey] forKey:ConsoleBackgroundColor_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleBackgroundColor_BKey] forKey:ConsoleBackgroundColor_BKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:ConsoleBackgroundColor_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:ConsoleBackgroundColor_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey:ConsoleBackgroundColor_BKey];
+	
+	consoleBackgroundColorTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleBackgroundColorChangedNotification object:self];
+}
+
+
 
 /*" This method is connected to the 'select on activate' checkbox.
 "*/
@@ -954,6 +1058,14 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[[NSNotificationCenter defaultCenter] postNotificationName:ExternalEditorNotification object:self];
 	if (fontTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRevertNotification object:self];
+	if (consoleFontTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
+	if (consoleBackgroundColorTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleBackgroundColorChangedNotification object:self];
+	if (sourceBackgroundColorTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
+	if (previewBackgroundColorTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 	if (magnificationTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:MagnificationRevertNotification object:self];
 	/* below we must reset a preference because it will not be undone in time */
@@ -1073,6 +1185,7 @@ This method retrieves the application preferences from the defaults object and s
 		_documentFont = [NSUnarchiver unarchiveObjectWithData:fontData];
 	}
 	[self updateDocumentFontTextField];
+	[self updateConsoleFontTextField];
 
 	[_sourceWindowPosMatrix selectCellWithTag:[defaults integerForKey:DocumentWindowPosModeKey]];
 	/* koch: */
@@ -1092,6 +1205,24 @@ This method retrieves the application preferences from the defaults object and s
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
 	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)
+	
+	NSColor *sourceBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:background_RKey]
+		green: [defaults floatForKey:background_GKey] blue: [defaults floatForKey:background_BKey] alpha:1.0];
+	[_sourceBackgroundColorWell setColor:sourceBackgroundColor];
+	
+	NSColor *previewBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:PdfPageBack_RKey]
+		green: [defaults floatForKey:PdfPageBack_GKey] blue: [defaults floatForKey:PdfPageBack_BKey] alpha:1.0];
+	[_previewBackgroundColorWell setColor:previewBackgroundColor];
+	
+	NSColor *consoleBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:ConsoleBackgroundColor_RKey]
+		green: [defaults floatForKey:ConsoleBackgroundColor_GKey] blue: [defaults floatForKey:ConsoleBackgroundColor_BKey] alpha:1.0];
+	[_consoleBackgroundColorWell setColor:consoleBackgroundColor];
+	
+	if ([defaults boolForKey:ConsoleWidthResizeKey] == YES) 
+		[_consoleResizeMatrix selectCellWithTag:0];
+	else 
+		[_consoleResizeMatrix selectCellWithTag:1];
+
 
 
 	// Create the contents of the encoding menu on the fly & select the active encoding
@@ -1245,6 +1376,17 @@ This method updates the textField that represents the name of the selected font 
 	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [_documentFont displayName], [_documentFont pointSize]];
 	[_documentFontTextField setStringValue:fontDescription];
 }
+
+- (void)updateConsoleFontTextField
+{
+	NSString *fontDescription;
+
+	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [SUD stringForKey:ConsoleFontNameKey], [SUD floatForKey:ConsoleFontSizeKey]];
+	[_consoleFontTextField setStringValue:fontDescription];
+}
+
+
+
 
 /*" %{This method is not to be called from outside of this class.} "*/
 

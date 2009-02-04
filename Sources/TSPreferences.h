@@ -30,6 +30,7 @@
 {
 	IBOutlet NSWindow	*_prefsWindow;			/*" connected to the window "*/
 	IBOutlet NSTextField	*_documentFontTextField;	/*" connected to "Document Font" "*/
+	IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
 	IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
@@ -71,11 +72,21 @@
 	IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
+	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
+	IBOutlet NSColorWell	*_previewBackgroundColorWell;
+	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
+	IBOutlet NSTabView		*_tabView;
+	IBOutlet NSMatrix		*_consoleResizeMatrix;
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
 	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
+	NSFont			*_consoleFont;			/*" used to track the font that the user has selected for the console window "*/
 	BOOL			fontTouched;			/*" if user fiddled with fonts and then cancelled,
 																we restore the old one "*/
+	BOOL			consoleFontTouched;
+	BOOL			consoleBackgroundColorTouched;
+	BOOL			sourceBackgroundColorTouched;
+	BOOL			previewBackgroundColorTouched;
 	BOOL			syntaxColorTouched;		/*" if user fiddled with syntax and then cancelled,
 																we restore the old one "*/
 	BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
@@ -107,6 +118,7 @@
 - (IBAction)showPreferences:sender;
 
 - (IBAction)changeDocumentFont:sender;
+- (IBAction)changeConsoleFont:sender;
 - (IBAction)sourceWindowPosChanged:sender;
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
@@ -115,7 +127,7 @@
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
-- (IBAction)lineNumberButtonPressed;
+- (IBAction)lineNumberButtonPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
@@ -151,6 +163,10 @@
 - (IBAction)autoPDFChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
 - (IBAction)afterTypesettingChanged:sender;
+- (IBAction)setSourceBackgroundColor:sender;
+- (IBAction)setPreviewBackgroundColor:sender;
+- (IBAction)setConsoleBackgroundColor:sender;
+- (IBAction)changeConsoleResize:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)
@@ -180,5 +196,6 @@
 //------------------------------------------------------------------------------
 - (void)updateControlsFromUserDefaults:(NSUserDefaults *)defaults;
 - (void)updateDocumentFontTextField;
+- (void)updateConsoleFontTextField;
 
 @end

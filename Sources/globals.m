@@ -150,6 +150,13 @@ NSString *OtherTeXExtensionsKey = @"OtherTeXExtensions";
 NSString *ReleaseDocumentOnLeopardKey = @"ReleaseDocumentOnLeopard";
 NSString *BibDeskCompletionKey = @"BibDeskCompletion";
 NSString *SyncTeXOnlyKey = @"SyncTeXOnly";
+NSString *ConsoleBackgroundColor_RKey = @"ConsoleBackgroundColor_R";
+NSString *ConsoleBackgroundColor_GKey = @"ConsoleBackgroundColor_G";
+NSString *ConsoleBackgroundColor_BKey = @"ConsoleBackgroundColor_B";
+NSString *ConsoleFontNameKey = @"ConsoleFontName";
+NSString *ConsoleFontSizeKey = @"ConsoleFontSize";
+NSString *ConsoleWidthResizeKey = @"ConsoleWidthResize";
+
 
 // Paths
 NSString *DesktopPath = @"~/Desktop/";
@@ -180,6 +187,10 @@ NSString *SyntaxColoringChangedNotification = @"SyntaxColoringChangedNotificatio
 NSString *DocumentFontChangedNotification = @"DocumentFontChangedNotification";
 NSString *DocumentFontRememberNotification = @"DocumentFontRememberNotification";
 NSString *DocumentFontRevertNotification = @"DocumentFontRevertNotification";
+NSString *ConsoleFontChangedNotification = @"ConsoleFontChangedNotification";
+NSString *ConsoleBackgroundColorChangedNotification = @"ConsoleBackgroundColorChangedNotification";
+NSString *SourceBackgroundColorChangedNotification = @"DocumentBackgroundColorChangedNotification";;
+NSString *PreviewBackgroundColorChangedNotification = @"PreviewBackgroundColorChangedNotification";;
 NSString *MagnificationChangedNotification = @"MagnificationChangedNotification";
 NSString *MagnificationRememberNotification = @"MagnificationRememberNotification";
 NSString *MagnificationRevertNotification = @"MagnificationRevertNotification";

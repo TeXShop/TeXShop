@@ -224,6 +224,7 @@
 - (void)setupConsole;
 {
 	[self setConsoleBackgroundColorFromPreferences: nil];
+	[self setConsoleForegroundColorFromPreferences: nil];
 	[self setConsoleFontFromPreferences:nil];
 	
 /*
@@ -424,12 +425,13 @@
 	// The next lines are needed because we may access scrollView2 even if the source window doesn't open
 	[scrollView2 retain];
 	[scrollView2 removeFromSuperview];
+	[self setupConsole];
+
 	
 if (! skipTextWindow) {
 	textView = textView1;
 	[self setupTextView:textView1];
 	[self setupTextView:textView2];
-	[self setupConsole];
 	
 	if (spellExists)
 		[textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
@@ -1434,6 +1436,8 @@ in other code when an external editor is being used. */
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleBackgroundColorFromPreferences:) name:ConsoleBackgroundColorChangedNotification object:nil];
 	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleForegroundColorFromPreferences:) name:ConsoleForegroundColorChangedNotification object:nil];
+	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setSourceBackgroundColorFromPreferences:) name:SourceBackgroundColorChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
@@ -1660,6 +1664,17 @@ in other code when an external editor is being used. */
 												blue: [SUD floatForKey:ConsoleBackgroundColor_BKey]
 												alpha:1.0];
 	[outputText setBackgroundColor:backgroundColor];
+}
+
+- (void)setConsoleForegroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor		*foregroundColor;
+	
+	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:ConsoleForegroundColor_RKey]
+												green: [SUD floatForKey:ConsoleForegroundColor_GKey]
+												 blue: [SUD floatForKey:ConsoleForegroundColor_BKey]
+												alpha:1.0];
+	[outputText setTextColor:foregroundColor];
 }
 
 - (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification
@@ -4564,6 +4579,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			
 		[fullscreenWindow orderOut:self];
 		}
+}
+
+- (void)displayConsole: (id)sender
+{
+	[outputWindow makeKeyAndOrderFront: self];
 }
 
 

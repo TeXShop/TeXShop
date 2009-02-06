@@ -75,6 +75,7 @@
 	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
+	IBOutlet NSColorWell	*_consoleForegroundColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
 
@@ -85,6 +86,7 @@
 																we restore the old one "*/
 	BOOL			consoleFontTouched;
 	BOOL			consoleBackgroundColorTouched;
+	BOOL			consoleForegroundColorTouched;
 	BOOL			sourceBackgroundColorTouched;
 	BOOL			previewBackgroundColorTouched;
 	BOOL			syntaxColorTouched;		/*" if user fiddled with syntax and then cancelled,
@@ -166,6 +168,7 @@
 - (IBAction)setSourceBackgroundColor:sender;
 - (IBAction)setPreviewBackgroundColor:sender;
 - (IBAction)setConsoleBackgroundColor:sender;
+- (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
 
 #ifdef MITSU_PDF

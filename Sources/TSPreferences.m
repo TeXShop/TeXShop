@@ -119,6 +119,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	fontTouched = NO;
 	consoleFontTouched = NO;
 	consoleBackgroundColorTouched = NO;
+	consoleForegroundColorTouched = NO;
 	sourceBackgroundColorTouched = NO;
 	previewBackgroundColorTouched = NO;
 	externalEditorTouched = NO;
@@ -458,6 +459,25 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	consoleBackgroundColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleBackgroundColorChangedNotification object:self];
 }
+
+/*" This method is connected to the console window background color well.
+ "*/
+- (IBAction)setConsoleForegroundColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleForegroundColor_RKey] forKey:ConsoleForegroundColor_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleForegroundColor_GKey] forKey:ConsoleForegroundColor_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleForegroundColor_BKey] forKey:ConsoleForegroundColor_BKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:ConsoleForegroundColor_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:ConsoleForegroundColor_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey:ConsoleForegroundColor_BKey];
+	
+	consoleForegroundColorTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleForegroundColorChangedNotification object:self];
+}
+
 
 
 
@@ -1062,6 +1082,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
 	if (consoleBackgroundColorTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleBackgroundColorChangedNotification object:self];
+	if (consoleForegroundColorTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleForegroundColorChangedNotification object:self];
 	if (sourceBackgroundColorTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
 	if (previewBackgroundColorTouched)
@@ -1217,6 +1239,10 @@ This method retrieves the application preferences from the defaults object and s
 	NSColor *consoleBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:ConsoleBackgroundColor_RKey]
 		green: [defaults floatForKey:ConsoleBackgroundColor_GKey] blue: [defaults floatForKey:ConsoleBackgroundColor_BKey] alpha:1.0];
 	[_consoleBackgroundColorWell setColor:consoleBackgroundColor];
+	
+	NSColor *consoleForegroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:ConsoleForegroundColor_RKey]
+		green: [defaults floatForKey:ConsoleForegroundColor_GKey] blue: [defaults floatForKey:ConsoleForegroundColor_BKey] alpha:1.0];
+	[_consoleForegroundColorWell setColor:consoleForegroundColor];
 	
 	if ([defaults boolForKey:ConsoleWidthResizeKey] == YES) 
 		[_consoleResizeMatrix selectCellWithTag:0];

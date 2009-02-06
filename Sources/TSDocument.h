@@ -330,6 +330,7 @@ enum RootCommand
 - (void) savePreviewPosition;
 - (void) fullscreen: (id)sender;
 - (void) endFullScreen;
+- (void)displayConsole: (id)sender;
 
 // BibDesk Completion
 //---------------------------

@@ -45,6 +45,8 @@
 - (void) zoomIn: sender;
 - (void) zoomOut: sender;
 
+- (void) displayLog: sender;
+- (void) displayConsole: sender;
 
 - (void) firstPage: sender;
 - (void) lastPage: sender;

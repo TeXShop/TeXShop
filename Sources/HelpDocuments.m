@@ -19,6 +19,15 @@
 
 @implementation HelpDocuments
 
+- (id)init
+{
+	if ((self = [super init])) {
+		displayPackageHelpTask = nil;
+	}
+	
+	return self;
+}
+
 - (void)displayFile:(NSString *)fileName
 {
 	TSDocumentController	*myController;
@@ -76,6 +85,53 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayHelpForPackage:sender
+{
+	NSDate				*myDate;
+	NSString			*packageString;
+	NSMutableArray		*args;
+	NSMutableDictionary	*env;
+	NSMutableString		*path, *enginePath;
+	int					result;
+	
+	result = [NSApp runModalForWindow: packageHelpPanel];
+	[packageHelpPanel close];
+	if (result == 0) 
+		packageString = [packageResult stringValue];
+	else
+		return;
+	
+	if ([packageString isEqualToString:@""])
+		return;
+	
+	if (displayPackageHelpTask != nil) {
+		[displayPackageHelpTask terminate];
+		myDate = [NSDate date];
+		while (([displayPackageHelpTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+		[displayPackageHelpTask release];
+		displayPackageHelpTask = nil;
+	}
+	
+	enginePath = [NSMutableString stringWithString:[SUD stringForKey:TetexBinPath]];
+	[enginePath appendString:@"/texdoc"];
+	
+	// get copy of environment and add the preferences paths
+	env = [[NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]] retain];
+	path = [NSMutableString stringWithString: [env objectForKey:@"PATH"]];
+	[path appendString:@":"];
+	// [path appendString:[SUD stringForKey:TetexBinPath]];
+	[path appendString:[SUD stringForKey:TetexBinPath]];
+	[env setObject: path forKey: @"PATH"];
+	
+	
+	displayPackageHelpTask = [[NSTask alloc] init];
+	[displayPackageHelpTask setLaunchPath:enginePath];
+	args = [NSMutableArray array];
+	[args addObject: packageString];
+	[displayPackageHelpTask setArguments:args];
+	[displayPackageHelpTask setEnvironment:env];
+	[displayPackageHelpTask launch];
+}
 
 
 - (IBAction)displayHG:sender
@@ -233,7 +289,20 @@
 
 }
 
+- (void) okForPanel: sender
+{
+	[NSApp stopModalWithCode: 0];
+}
+
+- (void) cancelForPanel: sender
+{
+	[NSApp stopModalWithCode:1];
+}
+
+
 @end
+
+
 
 @implementation HelpDocuments (Private)
 

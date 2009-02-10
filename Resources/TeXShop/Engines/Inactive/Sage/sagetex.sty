@@ -1,0 +1,139 @@
+%%
+%% This is file `sagetex.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% sagetexpackage.dtx  (with options: `latex')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2008 by Dan Drake <ddrake@member.ams.org>
+%% 
+%% This program is free software: you can redistribute it and/or modify it
+%% under the terms of the GNU General Public License as published by the
+%% Free Software Foundation, either version 2 of the License, or (at your
+%% option) any later version.
+%% 
+%% This program is distributed in the hope that it will be useful, but
+%% WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%% General Public License for more details.
+%% 
+%% You should have received a copy of the GNU General Public License along
+%% with this program.  If not, see <http://www.gnu.org/licenses/>
+%% 
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sagetex}
+  [2008/03/12 v1.4 embedding Sage into LaTeX documents]
+\RequirePackage{verbatim}
+\RequirePackage{graphicx}
+\RequirePackage{makecmds}
+\RequirePackage{ifpdf}
+\RequirePackage{ifthen}
+\newcounter{ST@inline}
+\newcounter{ST@plot}
+\setcounter{ST@inline}{0}
+\setcounter{ST@plot}{0}
+\newlength{\sagetexindent}
+\setlength{\sagetexindent}{5ex}
+\newcommand{\ST@epsim}{False}
+\DeclareOption{imagemagick}{\renewcommand{\ST@epsim}{True}}
+\ProcessOptions\relax
+\newwrite\ST@sf
+\immediate\openout\ST@sf=\jobname.sage
+\newcommand{\ST@wsf}[1]{\immediate\write\ST@sf{#1}}
+%% \iffalse
+%% To get .sage files to automatically change the Python path to find
+%% sagetex.py, delete the \iffalse and \fi lines surrounding this and
+%% change the directory below to where sagetex.py can be found.
+\ST@wsf{import sys}
+%% \ST@wsf{sys.path.insert(0, 'directory with sagetex.py')}
+\ST@wsf{sys.path.insert(0, '/Applications/sage')}
+%% \fi
+\ST@wsf{import sagetex}
+\ST@wsf{sagetex.openout('\jobname')}
+\InputIfFileExists{\jobname.sout}{}{}
+\newcommand{\sage}[1]{%
+\ST@wsf{try:}%
+\ST@wsf{ sagetex.inline(\theST@inline, #1)}%
+\ST@wsf{except:}%
+\ST@wsf{ sagetex.goboom(\the\inputlineno)}%
+\begin{NoHyper}\ref{@sagelabel\theST@inline}\end{NoHyper}%
+\@ifundefined{r@@sagelabel\theST@inline}{\gdef\ST@rerun{x}}{}%
+\stepcounter{ST@inline}}
+\AtBeginDocument{\provideenvironment{NoHyper}{}{}}
+\catcode`\%=12
+\newcommand{\percent}{%}
+\catcode`\%=14
+\newcommand{\ST@plotdir}{sage-plots-for-\jobname.tex}
+\newcommand{\sageplot}[1][width=.75\textwidth]{%
+  \@ifnextchar[{\ST@sageplot[#1]}{\ST@sageplot[#1][notprovided]}%]
+}
+\def\ST@sageplot[#1][#2]#3{%
+\ST@wsf{try:}%
+\ST@wsf{ sagetex.initplot('\jobname')}%
+\ST@wsf{ sagetex.plot(\theST@plot, #3, format='#2', epsmagick=\ST@epsim)}%
+\ST@wsf{except:}%
+\ST@wsf{ sagetex.goboom(\the\inputlineno)}%
+\ifpdf
+  \ifthenelse{\equal{#2}{notprovided}}%
+    {\ST@inclgrfx{#1}{pdf}}%
+    {\ST@inclgrfx{#1}{#2}}%
+\else
+  \ifthenelse{\equal{#2}{notprovided}}%
+    {\ST@inclgrfx{#1}{eps}}%
+    {\ifthenelse{\equal{\ST@epsim}{True}}
+      {\ST@inclgrfx{#1}{eps}}%
+      {\IfFileExists{\ST@plotdir/plot-\theST@plot.#2}%
+        {\framebox[2cm]{\rule[-1cm]{0cm}{2cm}\textbf{??}}%
+         \PackageWarning{sagetex}{Graphics file
+         \ST@plotdir/plot-\theST@plot.#2\space on page \thepage\space
+         cannot be used with DVI output. Use pdflatex or create an EPS
+         file. Plot command is}}%
+        {\framebox[2cm]{\rule[-1cm]{0cm}{2cm}\textbf{??}}%
+         \PackageWarning{sagetex}{Graphics file
+         \ST@plotdir/plot-\theST@plot.#2\space on page \thepage\space
+         does not exist}%
+         \gdef\ST@rerun{x}}}}%
+\fi
+\stepcounter{ST@plot}}
+\newcommand{\ST@inclgrfx}[2]{%
+  \IfFileExists{\ST@plotdir/plot-\theST@plot.#2}%
+    {\includegraphics[#1]{\ST@plotdir/plot-\theST@plot.#2}}%
+    {\framebox[2cm]{\rule[-1cm]{0cm}{2cm}\textbf{??}}%
+     \PackageWarning{sagetex}{Graphics file
+     \ST@plotdir/plot-\theST@plot.#2\space on page \thepage\space does not
+     exist}%
+     \gdef\ST@rerun{x}}}
+\newcommand{\ST@beginsfbl}{%
+  \@bsphack%
+  \ST@wsf{sagetex.blockbegin()}%
+  \ST@wsf{try:}%
+  \let\do\@makeother\dospecials\catcode`\^^M\active}
+\newcommand{\ST@endsfbl}{%
+\ST@wsf{except:}%
+\ST@wsf{ sagetex.goboom(\the\inputlineno)}%
+\ST@wsf{sagetex.blockend()}}
+\newenvironment{sageblock}{\ST@beginsfbl%
+\def\verbatim@processline{\ST@wsf{ \the\verbatim@line}%
+\hspace{\sagetexindent}\the\verbatim@line\par}%
+\verbatim}%
+{\ST@endsfbl\endverbatim}
+\newenvironment{sagesilent}{\ST@beginsfbl%
+\def\verbatim@processline{\ST@wsf{ \the\verbatim@line}}%
+\verbatim@start}%
+{\ST@endsfbl\@esphack}
+\newenvironment{sageverbatim}{%
+\def\verbatim@processline{\hspace{\sagetexindent}\the\verbatim@line\par}%
+\verbatim}%
+{\endverbatim}
+\AtEndDocument{\ST@wsf{sagetex.endofdoc()}%
+\@ifundefined{ST@rerun}{}%
+{\PackageWarningNoLine{sagetex}{There were undefined Sage formulas
+and/or plots}%
+\PackageWarningNoLine{sagetex}{Run Sage on \jobname.sage, and then run
+LaTeX on \jobname.tex again}}}
+\endinput
+%%
+%% End of file `sagetex.sty'.

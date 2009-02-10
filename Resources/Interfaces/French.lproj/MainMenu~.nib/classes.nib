@@ -7,6 +7,21 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>displayConsole</key>
+				<string>id</string>
+				<key>displayLog</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>TSLogWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
 				<key>bottom</key>
 				<string>id</string>
 				<key>changeMouseMode</key>
@@ -157,6 +172,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>cancelForPanel</key>
+				<string>id</string>
 				<key>displayArrows</key>
 				<string>id</string>
 				<key>displayBinary</key>
@@ -176,6 +193,8 @@
 				<key>displayGettingStartedXeTeX</key>
 				<string>id</string>
 				<key>displayHG</key>
+				<string>id</string>
+				<key>displayHelpForPackage</key>
 				<string>id</string>
 				<key>displayLargeOperators</key>
 				<string>id</string>
@@ -203,6 +222,8 @@
 				<string>id</string>
 				<key>displayTextSymbols</key>
 				<string>id</string>
+				<key>okForPanel</key>
+				<string>id</string>
 				<key>supplementsToDesktop</key>
 				<string>id</string>
 			</dict>
@@ -210,6 +231,13 @@
 			<string>HelpDocuments</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>packageHelpPanel</key>
+				<string>id</string>
+				<key>packageResult</key>
+				<string>id</string>
+			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
 		</dict>
@@ -275,6 +303,10 @@
 				<key>changePDFViewSize</key>
 				<string>id</string>
 				<key>changePageStyle</key>
+				<string>id</string>
+				<key>displayConsole</key>
+				<string>id</string>
+				<key>displayLog</key>
 				<string>id</string>
 				<key>doBibtex</key>
 				<string>id</string>
@@ -381,6 +413,10 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>displayConsole</key>
+				<string>id</string>
+				<key>displayLog</key>
+				<string>id</string>
 				<key>doChooseMethod</key>
 				<string>id</string>
 				<key>doError</key>
@@ -552,6 +588,8 @@
 				<string>id</string>
 				<key>setConsoleBackgroundColor</key>
 				<string>id</string>
+				<key>setConsoleForegroundColor</key>
+				<string>id</string>
 				<key>setDefaults</key>
 				<string>id</string>
 				<key>setEngine</key>
@@ -603,6 +641,8 @@
 				<string>NSColorWell</string>
 				<key>_consoleFontTextField</key>
 				<string>NSTextField</string>
+				<key>_consoleForegroundColorWell</key>
+				<string>NSColorWell</string>
 				<key>_consoleMatrix</key>
 				<string>NSMatrix</string>
 				<key>_consoleResizeMatrix</key>
@@ -712,6 +752,94 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>changeMouseMode</key>
+				<string>id</string>
+				<key>changePDFViewSize</key>
+				<string>id</string>
+				<key>changePageStyle</key>
+				<string>id</string>
+				<key>changeScale</key>
+				<string>id</string>
+				<key>chooseExportImageType</key>
+				<string>id</string>
+				<key>copy</key>
+				<string>id</string>
+				<key>doStepper</key>
+				<string>id</string>
+				<key>firstPage</key>
+				<string>id</string>
+				<key>goBack</key>
+				<string>id</string>
+				<key>goForward</key>
+				<string>id</string>
+				<key>goToKitPage</key>
+				<string>id</string>
+				<key>lastPage</key>
+				<string>id</string>
+				<key>nextPage</key>
+				<string>id</string>
+				<key>previousPage</key>
+				<string>id</string>
+				<key>rotateClockwise</key>
+				<string>id</string>
+				<key>rotateCounterclockwise</key>
+				<string>id</string>
+				<key>saveSelectionToFile</key>
+				<string>id</string>
+				<key>selectAll</key>
+				<string>id</string>
+				<key>takeDestinationFromOutline</key>
+				<string>id</string>
+				<key>toggleDrawer</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MyPDFKitView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_searchProgress</key>
+				<string>NSProgressIndicator</string>
+				<key>_searchTable</key>
+				<string>NSTableView</string>
+				<key>currentPage</key>
+				<string>id</string>
+				<key>currentPage1</key>
+				<string>id</string>
+				<key>imageTypePopup</key>
+				<string>id</string>
+				<key>imageTypeView</key>
+				<string>id</string>
+				<key>mouseModeMatrix</key>
+				<string>NSMatrix</string>
+				<key>mouseModeMenu</key>
+				<string>NSMenu</string>
+				<key>myDocument</key>
+				<string>id</string>
+				<key>myScale</key>
+				<string>id</string>
+				<key>myScale1</key>
+				<string>id</string>
+				<key>myStepper</key>
+				<string>id</string>
+				<key>myStepper1</key>
+				<string>id</string>
+				<key>totalPage</key>
+				<string>id</string>
+				<key>totalPage1</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>PDFView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
 				<key>abort</key>
 				<string>id</string>
 				<key>cancelForPanel</key>
@@ -723,6 +851,10 @@
 				<key>chooseProgram</key>
 				<string>id</string>
 				<key>chooseProgramEE</key>
+				<string>id</string>
+				<key>displayConsole</key>
+				<string>id</string>
+				<key>displayLog</key>
 				<string>id</string>
 				<key>doBack</key>
 				<string>id</string>
@@ -938,94 +1070,6 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
-				<key>changeMouseMode</key>
-				<string>id</string>
-				<key>changePDFViewSize</key>
-				<string>id</string>
-				<key>changePageStyle</key>
-				<string>id</string>
-				<key>changeScale</key>
-				<string>id</string>
-				<key>chooseExportImageType</key>
-				<string>id</string>
-				<key>copy</key>
-				<string>id</string>
-				<key>doStepper</key>
-				<string>id</string>
-				<key>firstPage</key>
-				<string>id</string>
-				<key>goBack</key>
-				<string>id</string>
-				<key>goForward</key>
-				<string>id</string>
-				<key>goToKitPage</key>
-				<string>id</string>
-				<key>lastPage</key>
-				<string>id</string>
-				<key>nextPage</key>
-				<string>id</string>
-				<key>previousPage</key>
-				<string>id</string>
-				<key>rotateClockwise</key>
-				<string>id</string>
-				<key>rotateCounterclockwise</key>
-				<string>id</string>
-				<key>saveSelectionToFile</key>
-				<string>id</string>
-				<key>selectAll</key>
-				<string>id</string>
-				<key>takeDestinationFromOutline</key>
-				<string>id</string>
-				<key>toggleDrawer</key>
-				<string>id</string>
-				<key>zoomIn</key>
-				<string>id</string>
-				<key>zoomOut</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>MyPDFKitView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_searchProgress</key>
-				<string>NSProgressIndicator</string>
-				<key>_searchTable</key>
-				<string>NSTableView</string>
-				<key>currentPage</key>
-				<string>id</string>
-				<key>currentPage1</key>
-				<string>id</string>
-				<key>imageTypePopup</key>
-				<string>id</string>
-				<key>imageTypeView</key>
-				<string>id</string>
-				<key>mouseModeMatrix</key>
-				<string>NSMatrix</string>
-				<key>mouseModeMenu</key>
-				<string>NSMenu</string>
-				<key>myDocument</key>
-				<string>id</string>
-				<key>myScale</key>
-				<string>id</string>
-				<key>myScale1</key>
-				<string>id</string>
-				<key>myStepper</key>
-				<string>id</string>
-				<key>myStepper1</key>
-				<string>id</string>
-				<key>totalPage</key>
-				<string>id</string>
-				<key>totalPage1</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>PDFView</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
 				<key>associatedWindow</key>
 				<string>id</string>
 				<key>doChooseMethod</key>
@@ -1043,63 +1087,12 @@
 			<string>NSWindow</string>
 		</dict>
 		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>associatedWindow</key>
-				<string>id</string>
-				<key>bottom</key>
-				<string>id</string>
-				<key>changePDFViewSize</key>
-				<string>id</string>
-				<key>changePageStyle</key>
-				<string>id</string>
-				<key>doChooseMethod</key>
-				<string>id</string>
-				<key>doError</key>
-				<string>id</string>
-				<key>doTextMagnify</key>
-				<string>id</string>
-				<key>doTextPage</key>
-				<string>id</string>
-				<key>down</key>
-				<string>id</string>
-				<key>firstPage</key>
-				<string>id</string>
-				<key>lastPage</key>
-				<string>id</string>
-				<key>left</key>
-				<string>id</string>
-				<key>nextPage</key>
-				<string>id</string>
-				<key>orderOut</key>
-				<string>id</string>
-				<key>previousPage</key>
-				<string>id</string>
-				<key>right</key>
-				<string>id</string>
-				<key>rotateClockwise</key>
-				<string>id</string>
-				<key>rotateCounterclockwise</key>
-				<string>id</string>
-				<key>savePreviewPosition</key>
-				<string>id</string>
-				<key>saveSelectionToFile</key>
-				<string>id</string>
-				<key>top</key>
-				<string>id</string>
-				<key>up</key>
-				<string>id</string>
-				<key>zoomIn</key>
-				<string>id</string>
-				<key>zoomOut</key>
-				<string>id</string>
-			</dict>
 			<key>CLASS</key>
-			<string>TSPreviewWindow</string>
+			<string>OgreTextFinder</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>NSWindow</string>
+			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -1172,12 +1165,67 @@
 			<string>NSObject</string>
 		</dict>
 		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>associatedWindow</key>
+				<string>id</string>
+				<key>bottom</key>
+				<string>id</string>
+				<key>changePDFViewSize</key>
+				<string>id</string>
+				<key>changePageStyle</key>
+				<string>id</string>
+				<key>displayConsole</key>
+				<string>id</string>
+				<key>displayLog</key>
+				<string>id</string>
+				<key>doChooseMethod</key>
+				<string>id</string>
+				<key>doError</key>
+				<string>id</string>
+				<key>doTextMagnify</key>
+				<string>id</string>
+				<key>doTextPage</key>
+				<string>id</string>
+				<key>down</key>
+				<string>id</string>
+				<key>firstPage</key>
+				<string>id</string>
+				<key>lastPage</key>
+				<string>id</string>
+				<key>left</key>
+				<string>id</string>
+				<key>nextPage</key>
+				<string>id</string>
+				<key>orderOut</key>
+				<string>id</string>
+				<key>previousPage</key>
+				<string>id</string>
+				<key>right</key>
+				<string>id</string>
+				<key>rotateClockwise</key>
+				<string>id</string>
+				<key>rotateCounterclockwise</key>
+				<string>id</string>
+				<key>savePreviewPosition</key>
+				<string>id</string>
+				<key>saveSelectionToFile</key>
+				<string>id</string>
+				<key>top</key>
+				<string>id</string>
+				<key>up</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
 			<key>CLASS</key>
-			<string>OgreTextFinder</string>
+			<string>TSPreviewWindow</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>NSObject</string>
+			<string>NSWindow</string>
 		</dict>
 	</array>
 	<key>IBVersion</key>

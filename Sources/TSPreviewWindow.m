@@ -117,6 +117,15 @@ extern NSPanel *pageNumberWindow;
 	[sheet orderOut: self];
 }
 
+- (void) displayLog: sender
+{
+	[myDocument displayLog: sender];
+}
+
+- (void) displayConsole: sender
+{
+	[myDocument displayConsole: sender];
+}
 
 
 

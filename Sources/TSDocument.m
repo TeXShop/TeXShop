@@ -102,6 +102,7 @@
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	lineNumberView1 = nil;
 	lineNumberView2 = nil;
+	logLineNumberView = nil;
 
 
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
@@ -134,6 +135,7 @@
 	[_textStorage release];
 	[lineNumberView1 release];
 	[lineNumberView2 release];
+	[logLineNumberView release];
 	 /* The next line line could be dangerous! It is needed if the source window 
 	is initialized, so without it there is a small memory leak. 
 	But if a pdf file is opened and doesn't open the source window, 
@@ -170,21 +172,29 @@
 		if (lineNumberView1 == nil) {
 			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
 			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
+			
 			[scrollView setVerticalRulerView:lineNumberView1];
 			[scrollView2 setVerticalRulerView:lineNumberView2];
+			[logScrollView setVerticalRulerView:logLineNumberView];
 			
 			[scrollView setHasVerticalRuler:YES];
 			[scrollView setHasHorizontalRuler:NO];
 			
 			[scrollView2 setHasVerticalRuler:YES];
 			[scrollView2 setHasHorizontalRuler:NO];
+			
+			[logScrollView setHasVerticalRuler:YES];
+			[logScrollView setHasHorizontalRuler:NO];
 		}
 		[scrollView setRulersVisible:YES];
 		[scrollView2 setRulersVisible:YES];
+		[logScrollView setRulersVisible:YES];
 		lineNumbersShowing = YES;
 	} else {
 		[scrollView setRulersVisible:NO];
 		[scrollView2 setRulersVisible:NO];
+		[logScrollView setRulersVisible:NO];
 		lineNumbersShowing = NO;
 	}
 }
@@ -244,6 +254,14 @@
 	[outputWindow setMaxSize: maxWindowSize];
 */
 }
+
+- (void)setupLogWindow
+{
+	[self setLogWindowBackgroundColorFromPreferences: nil];
+	[self setLogWindowForegroundColorFromPreferences: nil];
+	[self setLogWindowFontFromPreferences:nil];
+}
+
 
 
 - (void)setupTextView:(NSTextView *)aTextView
@@ -426,6 +444,7 @@
 	[scrollView2 retain];
 	[scrollView2 removeFromSuperview];
 	[self setupConsole];
+	[self setupLogWindow];
 
 	
 if (! skipTextWindow) {
@@ -460,17 +479,24 @@ if (! skipTextWindow) {
 		if (lineNumberView1 == nil) {
 			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
 			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
+			
 			[scrollView setVerticalRulerView:lineNumberView1];
 			[scrollView2 setVerticalRulerView:lineNumberView2];
+			[logScrollView setVerticalRulerView: logLineNumberView];
 			
 			[scrollView setHasVerticalRuler:YES];
 			[scrollView setHasHorizontalRuler:NO];
 			
 			[scrollView2 setHasVerticalRuler:YES];
 			[scrollView2 setHasHorizontalRuler:NO];
+			
+			[logScrollView setHasVerticalRuler:YES];
+			[logScrollView setHasHorizontalRuler:NO];
 			}
 		[scrollView setRulersVisible:YES];
 		[scrollView2 setRulersVisible:YES];
+		[logScrollView setRulersVisible:YES];
 		}
 
 	}
@@ -586,6 +612,7 @@ if (! skipTextWindow) {
 				[pdfKitWindow setRepresentedFilename: imagePath];
 				[pdfKitWindow setTitle: [imagePath lastPathComponent]];
 				[pdfKitWindow makeKeyAndOrderFront: self];
+				[self fillLogWindowIfVisible];
 				if ((_documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
 					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
 																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
@@ -689,6 +716,7 @@ if (! skipTextWindow) {
 		[myPDFKitView showWithPath: imagePath];
 		[pdfKitWindow setRepresentedFilename: imagePath];
 		[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+		[self fillLogWindowIfVisible];
 	} else if (_externalEditor) {
 
 		PDFfromKit = YES;
@@ -1430,7 +1458,7 @@ in other code when an external editor is being used. */
 
 
 	// register for notification when the document font changes in preferences
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setDocumentFontFromPreferences:) name:DocumentFontChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setDocumentFontBoth:) name:DocumentFontChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleFontFromPreferences:) name:ConsoleFontChangedNotification object:nil];
 	
@@ -1438,7 +1466,7 @@ in other code when an external editor is being used. */
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleForegroundColorFromPreferences:) name:ConsoleForegroundColorChangedNotification object:nil];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setSourceBackgroundColorFromPreferences:) name:SourceBackgroundColorChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackgroundColorBoth:) name:SourceBackgroundColorChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
 	
@@ -1630,6 +1658,12 @@ in other code when an external editor is being used. */
 	}
 }
 
+- (void)setDocumentFontBoth:(NSNotification *)notification
+{
+	[self setDocumentFontFromPreferences: notification];
+	[self setLogWindowFontFromPreferences: notification];
+}
+
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification
 /*" Changes the font of %textView to the one saved in the NSUserDefaults. This method is also registered with NSNotificationCenter and a notifictaion will be send whenever the font changes in the preferences panel.
 "*/
@@ -1646,6 +1680,20 @@ in other code when an external editor is being used. */
 	}
 	[self fixUpTabs];
 }
+
+- (void)setLogWindowFontFromPreferences:(NSNotification *)notification
+{
+	NSData	*fontData;
+	NSFont 	*font;
+	
+	fontData = [SUD objectForKey:DocumentFontKey];
+	if (fontData != nil)
+	{
+		font = [NSUnarchiver unarchiveObjectWithData:fontData];
+		[logTextView setFont:font];
+	}
+}
+
 
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification
 {
@@ -1677,6 +1725,12 @@ in other code when an external editor is being used. */
 	[outputText setTextColor:foregroundColor];
 }
 
+- (void)setBackgroundColorBoth:(NSNotification *)notification
+{
+	[self setSourceBackgroundColorFromPreferences: notification];
+	[self setLogWindowBackgroundColorFromPreferences: notification];
+}
+
 - (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification
 {
 	NSColor	*backgroundColor;
@@ -1688,6 +1742,31 @@ in other code when an external editor is being used. */
 	[textView1 setBackgroundColor: backgroundColor];
 	[textView2 setBackgroundColor: backgroundColor];
 }
+
+- (void)setLogWindowBackgroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor	*backgroundColor;
+	
+	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
+												green: [SUD floatForKey:background_GKey]
+												 blue: [SUD floatForKey:background_BKey]
+												alpha:1.0];
+	[logTextView setBackgroundColor: backgroundColor];
+}
+
+- (void)setLogWindowForegroundColorFromPreferences:(NSNotification *)notification
+{
+	NSColor		*foregroundColor;
+	
+	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
+												green: [SUD floatForKey:foreground_GKey]
+												 blue: [SUD floatForKey:foreground_BKey]
+												alpha:1.0];
+	
+	[logTextView setTextColor: foregroundColor];
+}
+
+
 
 - (void)setPreviewBackgroundColorFromPreferences:(NSNotification *)notification
 {
@@ -1735,6 +1814,7 @@ preference change is cancelled. "*/
 		font = [NSUnarchiver unarchiveObjectWithData:previousFontData];
 		[textView1 setFont:font];
 		[textView2 setFont:font];
+		[logTextView setFont:font];
 	}
 	[self fixUpTabs];
 }
@@ -3156,10 +3236,12 @@ preference change is cancelled. "*/
 			[myPDFKitView reShowWithPath: pdfPath];
 			[pdfKitWindow setRepresentedFilename: pdfPath];
 			[pdfKitWindow setTitle: [pdfPath lastPathComponent]];
+				[self fillLogWindowIfVisible];
 			if ((front) || (![pdfKitWindow isVisible])) {
 				[[NSApplication sharedApplication] activateIgnoringOtherApps: YES];
 				[pdfKitWindow makeKeyAndOrderFront: self];
 			}
+			
 		}
 	}
 }
@@ -4583,7 +4665,63 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 
 - (void)displayConsole: (id)sender
 {
+	NSString	*theSource;
+	
+	theSource = [_textStorage string];
+	if ([self checkMasterFile: theSource forTask:RootForConsole])
+		return;
+	if ([self checkRootFile_forTask: RootForConsole])
+		return;	
 	[outputWindow makeKeyAndOrderFront: self];
+}
+
+- (void)fillLogWindowIfVisible
+{
+	
+	if ([logWindow isVisible])
+		[self fillLogWindow];
+}
+
+- (BOOL)fillLogWindow
+{
+	NSString			*logPath;
+	NSString			*content;
+	NSData				*logData;
+	NSStringEncoding	theEncoding;
+
+	theEncoding = NSMacOSRomanStringEncoding;
+	logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
+
+	if ([[NSFileManager defaultManager] fileExistsAtPath: logPath] && [[NSFileManager defaultManager] isReadableFileAtPath: logPath]) 
+		{
+			logData = [[NSFileManager defaultManager] contentsAtPath:logPath];
+			if (!logData)
+				return NO;
+			content = [[[NSString alloc] initWithData:logData encoding:theEncoding] autorelease];
+				if (!content) 
+					return NO;
+			[logTextView setString: content];
+			[logWindow setRepresentedFilename: logPath];
+			[logWindow setTitle:[logPath lastPathComponent]];
+			return YES;
+		}
+	else
+		return NO;
+}
+
+
+
+- (void)displayLog: (id)sender
+{
+	NSString *theSource;
+	
+	theSource = [_textStorage string];
+	if ([self checkMasterFile: theSource forTask:RootForLogFile])
+		return;
+	if ([self checkRootFile_forTask: RootForLogFile])
+		return;	
+	if ([self fillLogWindow])
+		[logWindow makeKeyAndOrderFront: self];	
 }
 
 

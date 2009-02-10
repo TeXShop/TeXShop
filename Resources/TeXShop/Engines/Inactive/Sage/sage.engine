@@ -1,0 +1,10 @@
+#!/bin/tcsh
+
+set path= ($path /usr/texbin /usr/local/bin)
+set filename = "$1"
+set sagename = "${filename:r}.sage"
+
+pdflatex "$filename"
+/Applications/sage/sage "$sagename"
+pdflatex "$filename"
+

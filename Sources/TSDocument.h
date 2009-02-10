@@ -64,7 +64,9 @@ enum RootCommand
 	RootForPrinting = 3,
 	RootForSwitchWindow = 4,
 	RootForPdfSync = 5,
-	RootForTrashAUX = 6
+	RootForTrashAUX = 6,
+	RootForLogFile = 7,
+	RootForConsole = 8
 };
 
 @class MyPDFKitView;
@@ -83,6 +85,7 @@ enum RootCommand
 	IBOutlet NSWindow			*textWindow;		/*" window displaying the current document "*/
 	NoodleLineNumberView		*lineNumberView1;
 	NoodleLineNumberView		*lineNumberView2;
+	NoodleLineNumberView		*logLineNumberView;
 
 	IBOutlet MyPDFView			*pdfView;		/*" view displaying the current preview "*/
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
@@ -130,6 +133,9 @@ enum RootCommand
 	IBOutlet NSPopUpButton		*macroButton;		/*" pull-down list for macros "*/
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
+	NSWindow					*logWindow;
+	NSTextView					*logTextView;
+	NSScrollView				*logScrollView;
 
 	id			gotopageOutlet;
 	id			magnificationOutlet;
@@ -331,6 +337,7 @@ enum RootCommand
 - (void) fullscreen: (id)sender;
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
+- (void)displayLog: (id)sender;
 
 // BibDesk Completion
 //---------------------------

@@ -56,6 +56,16 @@
 	[myDocument doTypeset: sender];
 }
 
+- (void) displayLog: sender
+{
+	[myDocument displayLog: sender];
+}
+
+- (void) displayConsole: sender
+{
+	[myDocument displayConsole: sender];
+}
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {

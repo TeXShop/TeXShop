@@ -10,6 +10,10 @@
 
 
 @interface HelpDocuments : NSObject {
+	
+	NSTask		*displayPackageHelpTask;
+	NSPanel		*packageHelpPanel;
+	NSTextField	*packageResult;
 
 }
 
@@ -17,6 +21,7 @@
 - (IBAction)displayGettingStartedLatex:sender;
 - (IBAction)displayGettingStartedConTeXt:sender;
 - (IBAction)displayGettingStartedXeTeX:sender;
+- (IBAction)displayHelpForPackage:sender;
 
 - (IBAction)displayShortCourse:sender;
 - (IBAction)displayHG:sender;
@@ -38,5 +43,8 @@
 - (IBAction)displayTextSpacing:sender;
 - (IBAction)supplementsToDesktop:sender;
 - (IBAction)displayTables:sender;
+
+- (void)okForPanel:sender;
+- (void)cancelForPanel:sender;
 
 @end

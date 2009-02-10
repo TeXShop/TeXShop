@@ -52,7 +52,11 @@
 				if (obj == self)
 					return NO;
 				rootDocument = obj;
-				if (task == RootForPrinting) {
+				if (task == RootForConsole){
+					[obj displayConsole:nil];
+				} else if (task == RootForLogFile){
+					[obj displayLog:nil];
+				} else if (task == RootForPrinting) {
 					[obj printDocument:nil];
 				} else if (task == RootForPdfSync) {
 					[obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];

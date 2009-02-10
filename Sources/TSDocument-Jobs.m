@@ -1332,6 +1332,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 					[myPDFKitView reShowWithPath: imagePath];
 					[pdfKitWindow setRepresentedFilename: imagePath];
 					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+					[self fillLogWindowIfVisible];
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))
 						[pdfKitWindow makeKeyAndOrderFront: self];

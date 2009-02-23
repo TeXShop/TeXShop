@@ -76,7 +76,7 @@
 	NSColor	*backColor;
 
 	downOverLink = NO;
-
+	
 	drawMark = NO;
 	pageStyle = [SUD integerForKey: PdfPageStyleKey];
 	firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
@@ -90,11 +90,12 @@
 
 	// Size Option
 	[self setupMagnificationStyle];
-
+	
+	/*
 	backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
 		green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 		alpha: 1];
-	[[[self documentView] window] setBackgroundColor: backColor];
+	*/
 
 
 }
@@ -254,7 +255,6 @@
 
 - (void) showWithPath: (NSString *)imagePath
 {
-	
 	PDFDocument	*pdfDoc;
 	NSData	*theData;
 	
@@ -285,6 +285,13 @@
 		[self toggleDrawer: self];
 }
 
+- (void) showForSecond;
+{
+totalRotation = 0;
+[self initializeDisplay];
+}
+
+
 - (void) reShowWithPath: (NSString *)imagePath
 {
 	
@@ -296,6 +303,8 @@
 	PDFPage		*myPage;
 	NSData		*theData;
 	
+	[[self window] disableFlushWindow];
+
 	[self cleanupMarquee: YES];
 	
 	if (sourceFiles != nil) {
@@ -376,12 +385,153 @@
 	NSRect newFullRect = [[self documentView] bounds];
 	int difference = newFullRect.size.height - fullRect.size.height;
 	visibleRect.origin.y = visibleRect.origin.y + difference;
-	[[self window] disableFlushWindow];
-	// [self display];
+		// [self display];
 	[[self documentView] scrollRectToVisible: visibleRect];
 	[[self window] enableFlushWindow];
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
+
+- (void)prepareSecond
+{	PDFPage		*aPage;
+	int			oldindex;
+	
+	[self cleanupMarquee: YES];
+	
+	if ([self document] == nil)
+		secondNeedsInitialization = YES;
+	else
+		secondNeedsInitialization = NO;
+	
+	
+	secondVisibleRect = [[self documentView] visibleRect];
+	secondFullRect = [[self documentView] bounds];
+	
+	
+	drawMark = NO;
+	aPage = [self currentPage];
+	secondTheIndex = [[self document] indexForPage: aPage];
+	oldindex = secondTheIndex;
+	secondTheIndex++;
+	
+	/*
+	 if ([[self document] isFinding])
+	 [[self document] cancelFindString];
+	 if (_searchResults != NULL) {
+	 [_searchResults removeAllObjects];
+	 [_searchTable reloadData];
+	 [_searchResults release];
+	 _searchResults = NULL;
+	 }
+	*/ 
+}	 
+
+- (void) reShowForSecond
+{
+	
+	PDFPage		*aPage;
+	
+	[[self window] disableFlushWindow];
+	/*
+	[self cleanupMarquee: YES];
+
+	if ([self document] == nil)
+		secondNeedsInitialization = YES;
+	else
+		secondNeedsInitialization = NO;
+
+
+	NSRect visibleRect = [[self documentView] visibleRect];
+	NSRect fullRect = [[self documentView] bounds];
+
+
+	drawMark = NO;
+	aPage = [self currentPage];
+	theindex = [[self document] indexForPage: aPage];
+	oldindex = theindex;
+	theindex++;
+	*/
+	
+/*
+	if ([[self document] isFinding])
+		[[self document] cancelFindString];
+	if (_searchResults != NULL) {
+		[_searchResults removeAllObjects];
+		[_searchTable reloadData];
+		[_searchResults release];
+		_searchResults = NULL;
+	}
+
+	
+	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
+	if ([self doReleaseDocument]) {
+		// NSLog(@"texshop release");
+		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+		[self setDocument: pdfDoc];
+		// [pdfDoc release];
+	} else {
+		oldDoc = [self document];
+		theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+		pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+		// pdfDoc = [[PDFDocument alloc] initWithData: theData];
+		[self setDocument: pdfDoc];
+		if (oldDoc != NULL) {
+			[oldDoc setDelegate: NULL];
+			[oldDoc release];
+		}
+	}
+ */
+// ----------------------------------	
+	
+/*
+	[[self document] setDelegate: self];
+*/
+	totalPages = [[self document] pageCount];
+/*
+	[totalPage setIntValue:totalPages];
+	[totalPage1 setIntValue: totalPages];
+	[totalPage display];
+	[totalPage1 display];
+ */
+	if (secondTheIndex > totalPages)
+		secondTheIndex = totalPages;
+	secondTheIndex--;
+ 
+
+	if (secondNeedsInitialization)
+		[self initializeDisplay];
+	
+/*
+	if (totalRotation != 0) {
+		for (i = 0; i < totalPages; i++) {
+			myPage = [[self document] pageAtIndex:i];
+			amount = [myPage rotation];
+			newAmount = amount + totalRotation;
+			[myPage setRotation: newAmount];
+		}
+		[self layoutDocumentView];
+	}
+	[self setupOutline];
+*/
+	
+	// WARNING: The next 9 lines of code are very fragile. Initially I used
+	// NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+	// and works on Intel but not on PowerPC.
+	// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+	// but it doesn't seem to work there. If changes are made, be sure to test on
+	// Intel and on PowerPC.
+	aPage = [[self document] pageAtIndex: secondTheIndex];
+	[self goToPage: aPage];
+	
+	NSRect newFullRect = [[self documentView] bounds];
+	int difference = newFullRect.size.height - secondFullRect.size.height;
+	secondVisibleRect.origin.y = secondVisibleRect.origin.y + difference;
+	
+	// [self display];
+	[[self documentView] scrollRectToVisible: secondVisibleRect];
+	[[self window] enableFlushWindow];
+	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
+}
+
 
 
 
@@ -1147,7 +1297,6 @@
 		}
 
 		else {
-
 			backColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
 			[backColor set];
 			 NSRectFill(boxRect);
@@ -1155,10 +1304,12 @@
 		}
 	}
 
-	else
+	else {
+		[PreviewBackgroundColor set];
+		NSRectFill(boxRect);
+	}
 
-
-		 NSDrawWindowBackground(boxRect);
+		 // NSDrawWindowBackground(boxRect);
 
 	[NSGraphicsContext restoreGraphicsState];
 	[page drawWithBox:[self displayBox]];
@@ -1225,7 +1376,8 @@
 	if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		currentMouseMode = mouseMode;
 		[[self window] invalidateCursorRectsForView: self];
-		[self doSync: theEvent];
+		NSPoint thePoint = [theEvent locationInWindow];
+		[self doSync: thePoint];
 		return;
 	}
 
@@ -1467,9 +1619,12 @@
 
 
 
-- (BOOL) validateMenuItem: (id) menuItem
+- (BOOL) validateMenuItem:(NSMenuItem *)anItem
 {
-	BOOL		enable = YES;
+	
+		
+		return [super validateMenuItem: anItem];	
+		
 
 /*
 	if ([menuItem action] == @selector(getInfo:))
@@ -1482,7 +1637,6 @@
 	}
 */
 
-	return enable;
 }
 
 
@@ -2547,7 +2701,7 @@
 
 }
 
-- (BOOL)doSyncTeX: (NSEvent *)theEvent
+- (BOOL)doSyncTeX: (NSPoint) thePoint
 {
 	NSString	*myFileName, *mySyncTeXFileName, *mySyncTeX;
 
@@ -2569,7 +2723,7 @@
 */
 		
 		 
-	NSPoint windowPosition = [theEvent locationInWindow];
+	NSPoint windowPosition = thePoint;
 	NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
 	PDFPage *thePage = [self pageForPoint: kitPosition nearest:YES];
 	if (thePage == NULL)
@@ -2586,7 +2740,7 @@
 }
 
 
-- (BOOL)doNewSync: (NSEvent *)theEvent
+- (BOOL)doNewSync: (NSPoint) thePoint
 {
 	int						theIndex;
 	int						testIndex;
@@ -2624,7 +2778,7 @@
 	
 
 
-	NSPoint windowPosition = [theEvent locationInWindow];
+	NSPoint windowPosition = thePoint;
 	NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
 	PDFPage *thePage = [self pageForPoint: kitPosition nearest:YES];
 	if (thePage == NULL)
@@ -2866,7 +3020,7 @@
 
 
 // TODO: This method is way too big and should be split up / simplified
-- (void)doSync: (NSEvent *)theEvent
+- (void)doSync: (NSPoint)thePoint
 {
 	NSFileManager	*fileManager;
 	NSNumber        *thePageNumber;
@@ -2897,7 +3051,7 @@
 	int syncMethod = [SUD integerForKey:SyncMethodKey];
 	
 	if (syncMethod == SYNCTEXFIRST) {
-		result = [self doSyncTeX: theEvent];
+		result = [self doSyncTeX: thePoint];
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
 		else
@@ -2906,7 +3060,7 @@
 	
 	
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
-		result = [self doNewSync: theEvent];
+		result = [self doNewSync: thePoint];
 		if (result)
 			return;
 	}
@@ -2918,7 +3072,7 @@
 	// The code below finds the page number, and the position of the click
 	// in view coordinates.
 	
-	NSPoint windowPosition = [theEvent locationInWindow];
+	NSPoint windowPosition = thePoint;
 	NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
 	PDFPage *thePage = [self pageForPoint: kitPosition nearest:YES];
 	if (thePage == NULL)
@@ -3752,6 +3906,29 @@
 	} else {
 		[super keyDown:theEvent];
 	}
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+	NSMenu *theMenu = [super menuForEvent: theEvent];
+	if (theMenu != nil) {
+		menuSyncPoint = [theEvent locationInWindow];
+		[theMenu insertItemWithTitle: NSLocalizedString(@"Sync", @"Sync") action:@selector(doMenuSync:) keyEquivalent:@"" atIndex:0];
+		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
+	}
+    return theMenu;
+}
+
+- (void)doMenuSync: (id)theItem
+{
+	[[self window] invalidateCursorRectsForView: self];
+ 	[self doSync: menuSyncPoint];
+}
+
+- (BOOL)becomeFirstResponder
+{
+	[myPDFWindow setActiveView: self];
+	return [super becomeFirstResponder];
 }
 
 @end

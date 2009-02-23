@@ -439,6 +439,13 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setFloat: [newColor blueComponent] forKey:PdfPageBack_BKey];
 	
 	previewBackgroundColorTouched = YES;
+	
+	[PreviewBackgroundColor release];
+	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [newColor redComponent]
+													   green: [newColor greenComponent] blue: [newColor blueComponent]
+													   alpha: 1];
+	[PreviewBackgroundColor retain];
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 }
 
@@ -1073,6 +1080,13 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 	// close the window
 	[_prefsWindow performClose:self];
+	
+	[PreviewBackgroundColor release];
+	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
+													   green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
+													   alpha: 1];
+	[PreviewBackgroundColor retain];
+	
 	/* koch: undo font changes */
 	if (externalEditorTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:ExternalEditorNotification object:self];

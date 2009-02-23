@@ -128,6 +128,8 @@
         },
                 {
             ACTIONS =             {
+                displayConsole = id;
+                displayLog = id;
                 doChooseMethod = id;
                 doError = id;
                 doTypeset = id;
@@ -148,6 +150,7 @@
                 chooseProgram = id;
                 chooseProgramEE = id;
                 displayConsole = id;
+                displayLog = id;
                 doBack = id;
                 doBackForward = id;
                 doBibtex = id;
@@ -194,6 +197,7 @@
                 showInfo = id;
                 showStatistics = id;
                 showSyncMarks = id;
+                splitPreviewWindow = id;
                 splitWindow = id;
                 trashAUXFiles = id;
                 updateStatistics = id;
@@ -204,6 +208,8 @@
                 autoCompleteButton = NSButton;
                 backforthKK = NSSegmentedControl;
                 drawerKK = NSImageView;
+                extensionPanel = id;
+                extensionResult = id;
                 fullscreenPDFView = id;
                 fullscreenWindow = id;
                 gotopageOutlet = id;
@@ -225,6 +231,7 @@
                 mouseModeMenu = NSMenu;
                 mouseModeMenuKit = NSMenu;
                 myPDFKitView = MyPDFKitView;
+                myPDFKitView2 = MyPDFKitView;
                 nextButton = id;
                 openSaveBox = NSPopUpButton;
                 openSaveView = NSView;
@@ -232,7 +239,8 @@
                 outputWindow = NSWindow;
                 pagenumberKitPanel = NSPanel;
                 pagenumberPanel = NSPanel;
-                pdfKitWindow = NSWindow;
+                pdfKitSplitView = NSSplitView;
+                pdfKitWindow = TSPreviewWindow;
                 pdfView = MyPDFView;
                 pdfWindow = NSWindow;
                 popupButton = NSPopUpButton;
@@ -269,6 +277,10 @@
             SUPERCLASS = NSWindow;
         },
                 {
+            ACTIONS =             {
+                displayConsole = id;
+                displayLog = id;
+            };
             CLASS = TSLogWindow;
             LANGUAGE = ObjC;
             OUTLETS =             {
@@ -282,6 +294,8 @@
                 bottom = id;
                 changePDFViewSize = id;
                 changePageStyle = id;
+                displayConsole = id;
+                displayLog = id;
                 doChooseMethod = id;
                 doError = id;
                 doTextMagnify = id;
@@ -298,6 +312,9 @@
                 rotateCounterclockwise = id;
                 savePreviewPosition = id;
                 saveSelectionToFile = id;
+                splitPdfKitWindow = id;
+                splitPreviewWindow = id;
+                splitWindow = id;
                 top = id;
                 up = id;
                 zoomIn = id;
@@ -331,6 +348,20 @@
             CLASS = TSTextView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTextView;
+        },
+                {
+            ACTIONS =             {
+                changeMouseMode = id;
+            };
+            CLASS = TSViewController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                myDocument = id;
+                myPDFKitView = id;
+                myPDFKitView2 = id;
+                previewWindow = id;
+            };
+            SUPERCLASS = NSObject;
         }
     );
     IBVersion = 1;

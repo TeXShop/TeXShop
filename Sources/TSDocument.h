@@ -27,6 +27,7 @@
 #import <Quartz/Quartz.h>
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
+#import "TSPreviewWindow.h"
 
 
 #define NUMBEROFERRORS	20
@@ -91,7 +92,9 @@ enum RootCommand
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
-	IBOutlet NSWindow			*pdfKitWindow;
+	IBOutlet TSPreviewWindow	*pdfKitWindow;
+	IBOutlet NSSplitView		*pdfKitSplitView;
+	IBOutlet MyPDFKitView		*myPDFKitView2;
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
 	IBOutlet NSTextView			*outputText;		/*" text displaying the output of the running TeX process "*/
@@ -108,6 +111,8 @@ enum RootCommand
 	IBOutlet NSPanel			*magnificationKitPanel;
 	IBOutlet NSPanel			*statisticsPanel;
 	IBOutlet NSForm				*statisticsForm;
+	IBOutlet NSPanel			*extensionPanel;
+	IBOutlet NSTextField		*extensionResult;
 	IBOutlet NSPopUpButton		*openSaveBox;		// TODO: Rename this to 'encodingPopUp' (don't forget to update the NIBs)
 	IBOutlet NSView				*openSaveView;
 	IBOutlet NSPanel			*linePanel;
@@ -136,6 +141,7 @@ enum RootCommand
 	NSWindow					*logWindow;
 	NSTextView					*logTextView;
 	NSScrollView				*logScrollView;
+	NSString					*logExtension;
 
 	id			gotopageOutlet;
 	id			magnificationOutlet;
@@ -220,6 +226,7 @@ enum RootCommand
 	NSTimer             *_pdfRefreshTimer;
 	BOOL                _pdfRefreshTryAgain;
 
+	BOOL				fromMenu;			// if TeX, LaTeX, etc called from a menu command, ignore $%TEX TS-program command
 	BOOL                typesetContinuously;
 	int                 tempEngine;
 	BOOL                useTempEngine;
@@ -249,6 +256,7 @@ enum RootCommand
 - (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo;
 // forsplit
 - (void) splitWindow: sender;
+- (void) splitPreviewWindow: sender;
 - (void) showHideLineNumbers: sender;
 - (void) setTextView: (id)aView;
 // endforsplit
@@ -262,8 +270,8 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
-- (void) okForRequest: sender;
-- (void) okForPrintRequest: sender;
+// - (void) okForRequest: sender;
+// - (void) okForPrintRequest: sender;
 - (void) chooseEncoding: sender;
 - (NSStringEncoding) encoding;
 - (void) close;
@@ -338,6 +346,7 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
+- (void)splitPDFKitView: (BOOL) direction;
 
 // BibDesk Completion
 //---------------------------

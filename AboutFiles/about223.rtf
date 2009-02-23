@@ -1,0 +1,63 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17600\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 In TeXShop 2.22:\
+\
+1) Console Preferences stick even if TeXShop uses external editors.\
+\
+2) Localization improvements in French,  Spanish, and Japanese.\
+\
+3) You can now set the Foreground color in the console using Preferences\
+\
+4) A new menu item to open the Console if it is closed.\
+\
+5) Recognizes asy files\
+\
+6) Correct Error Shortcut on Console\
+\
+7) Added "Show Log". When file is typeset, this log updates. If "Show Log" is selected for a source with a root file, the root file's log is shown rather than the nonexistent log file for the input source file.\
+\
+If the command key is down when "Show Log" is selected, a dialog appears asking for an extension, which can be entered with or without the period. Suppose this extension is "aux". Then instead of the log file, the corresponding aux file will open, be updated after typesetting, etc.\
+\
+8) Added "Show Package Documentation", which calls texdoc; this was suggested by Juan Luis Varona\
+\
+9) Remove menu items to change color of text, add the ruler, and left, right, and center justify. None make sense in TeXShop.\
+\
+10) Added a new engine, ``sage.engine''. This engine makes it possible to use the open source mathematical software Sage, a replacement for Maple, Mathematica, and MatLab, directly from within a TeX source file. For instance, a single line can ask Sage to plot a function; in the typeset output, this plot will appear at that spot. Or a single line can ask Sage to integrate a complicated expression symbolically; in the typeset output, the answer will be shown, typeset consistently with other mathematical expressions in the document.\
+\
+To obtain this engine, quit TeXShop. Then move ~/Library/TeXShop/Engines to the desktop. Restart TeXShop. A new Engines folder will be created containing the Sage engine in an Inactive subfolder. Merge any extra files from your old Engines folder on the desktop into the new Engines folder.\
+\
+11) Added a contextual menu item to the Source and Preview windows: Sync. This is an alternate to pushing the command key while clicking.\
+\
+12) There was discussion on one of the mailing lists about the logic behind TeXShop's "Typeset" menu command, various other menu commands to typeset, the "%!TEX program = " mechanism, and the fact that "BibTeX" and "MakeIndex" are not really typesetting commands. Members of the list tried to understand the logic behind fine details of TeXShop's operation, but this was a hopeless task because there wasn't much logic present.\
+\
+An attempt has been made in version 2.23 to provide consistent behavior, but without a complete overhaul of the interface. The code now works in the following way:\
+\
+The "Typeset" command in the Typesetting menu always does exactly the same thing as the "Typeset" button in the source window toolbar. Both commands call the typesetting command listed in the drop down menu next to the toolbar button, unless the first few lines of the source file contain a line of the form\
+\
+     %!TEX TS-program = ...\
+\
+If such a line is present, then the Typeset command uses the indicated program instead (unless the drop down menu is set to bibtex or makeindex; see comments below).  If a "%!TEX TS-program = ..." line is present, that program is used instead to typeset. The selected item in the drop down menu does not change, so commenting out the source line will cause typesetting to revert back to the method indicated in the drop down menu. Incidentally, TeXShop ignores extra comment characters at the beginning of the above source line, so it cannot be commented out by adding an extra comment. I prefer to add a space between the "TS" letters.\
+\
+In previous versions of TeXShop, it was not possible to select bibtex, makeindex, metapost, context, or metafont in the "%!TEX TS-program = ..." line (for purely historical reasons). This anomaly has been fixed, and any engine can be selected:\
+\
+     tex, pdftex, latex, pdflatex, bibtex, makeindex, metapost, context, metafont, or a user defined engine\
+\
+There should be one space after the equal sign before the program name, and case is important.\
+\
+Selecting bibtex or makeindex in the drop down menu causes these programs to be called even if a "%!TEX TS-program = ..." line is present, since these two programs aren't really typesetting engines and a user may need to call them even when an unusual typesetting engine is being used.\
+\
+So much for the basic "Typeset" command.  The TeXShop "Typeset" menu also contains items to call TeX, LaTeX, BibTeX, MakeIndex, MetaPost, ConTeXt, and MetaFont. These items are present mainly for historical reasons and most users ignore them. Adding new engines to TeXShop doesn't add extra menu items because the menu would become awkwardly long if a user had a large number of extra engines.\
+\
+The BibTeX and MakeIndex items are special cases, however. Selecting one of these items causes TeXShop to run the resulting program regardless of the setting of the toolbar's drop down menu and the possible presence of a "%!TEX TS-program = ..." source line. This is probably the most convenient way to call these two commands.\
+\
+The remaining TeX, LaTeX, MetaPost, ConTeXt, and MetaFont menu commands behave in a slightly different way. Selecting one of these menu items causes TeXShop to run the resulting command, regardless of the toolbar's drop-down menu selection and regardless of any "%!TEX TS-program = ..." line. Moreover, selecting one of these menu commands changes the toolbar's drop-down menu selection to the engine chosen in the menu command. The idea behind this design is that beginning users may first find the menu commands and typeset using them. If such a user later uses the "Typeset" button in the toolbar, it should cause the same behavior as the earlier menu command.\
+\
+Sorry for this complexity; I'm trying to balance leaving the interface unchanged for users set in their ways with easier use of the BibTeX and MakeIndex commands.\
+\
+\
+\
+}

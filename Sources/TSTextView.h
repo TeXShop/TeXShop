@@ -37,6 +37,7 @@
 - (NSString *)readSourceFromEquationEditorPDF: (NSString *)filePath;
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 - (NSString *)resolveAlias: (NSString *)path;
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 @end
 
 

@@ -25,13 +25,19 @@
 #import "UseMitsu.h"
 
 #import <AppKit/NSWindow.h>
+#import <Quartz/Quartz.h>
+
 
 @class TSDocument;
 
 @interface TSPreviewWindow : NSWindow
 {
 	TSDocument	*myDocument;
+	BOOL		windowIsSplit;
 	BOOL		firstClose;
+	PDFView		*activeView;
+	
+	
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
@@ -76,4 +82,10 @@
 - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 //- (void)configurePaperSize: sender;
+- (void) splitPdfKitWindow: (id)sender;
+- (void) splitWindow: (id)sender;
+- (void) splitPreviewWindow: sender;
+- (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+- (void) setActiveView:(PDFView *)theView;
+- (PDFView *)activeView;
 @end

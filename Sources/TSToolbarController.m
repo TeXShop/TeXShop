@@ -88,6 +88,7 @@ static NSString*	kMagnificationKKTID 	= @"MagnificationKIT";
 static NSString*	kMouseModeKKTID 		= @"MouseModeKIT";
 static NSString*	kBackForthKKTID			= @"BackForthKIT";
 static NSString*	kDrawerKKTID			= @"DrawerKIT";
+static NSString*	kSplitKKTID				= @"SplitKIT";
 #endif
 
 
@@ -356,6 +357,11 @@ static NSString*	kDrawerKKTID			= @"DrawerKIT";
 	if ([itemIdent isEqual: kSplitID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 											 imageName:@"split1" target:self action:@selector(splitWindow:)];
+	}
+	
+	if ([itemIdent isEqual: kSplitKKTID]) {
+		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+											 imageName:@"split1" target:self action:@selector(splitPreviewWindow:)];
 	}
 
 	if ([itemIdent isEqual: kDrawerKKTID]) {
@@ -908,7 +914,8 @@ static NSString*	kDrawerKKTID			= @"DrawerKIT";
 					kGotoPageKKTID,
 					kMouseModeKKTID, // mitsu 1.29 (O)
 					NSToolbarFlexibleSpaceItemIdentifier,
-					NSToolbarSpaceItemIdentifier,
+					kSplitKKTID,
+					// NSToolbarSpaceItemIdentifier,
 				nil];
 	}
 
@@ -1009,6 +1016,7 @@ static NSString*	kDrawerKKTID			= @"DrawerKIT";
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
+					kSplitKKTID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,

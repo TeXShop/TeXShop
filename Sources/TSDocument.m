@@ -98,11 +98,13 @@
 	showIndexColor = NO;
 	isLoading = NO;
 	firstTime = NO;
+	fromMenu = NO;
 	
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	lineNumberView1 = nil;
 	lineNumberView2 = nil;
 	logLineNumberView = nil;
+	logExtension = nil;
 
 
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
@@ -160,6 +162,9 @@
 	[mouseModeMatrix release]; // mitsu 1.29 (O)
 
 	[_pdfLastModDate release];
+	
+	if (logExtension != nil)
+		[logExtension release];
 	
 	[self invalidateCompletionConnection];
 
@@ -443,6 +448,13 @@
 	// The next lines are needed because we may access scrollView2 even if the source window doesn't open
 	[scrollView2 retain];
 	[scrollView2 removeFromSuperview];
+	
+	[myPDFKitView2 retain];
+	[myPDFKitView2 removeFromSuperview];
+	
+	// The following line is needed because otherwise there is a crash if a document is closed but the log file was never opened. Mysterious!
+	[logScrollView retain];
+
 	[self setupConsole];
 	[self setupLogWindow];
 
@@ -609,6 +621,10 @@ if (! skipTextWindow) {
 
 				PDFfromKit = YES;
 				[myPDFKitView showWithPath: imagePath];
+				// [myPDFKitView2 prepareSecond];
+				[[myPDFKitView document] retain];
+				[myPDFKitView2 setDocument: [myPDFKitView document]];
+				[myPDFKitView2 showForSecond];
 				[pdfKitWindow setRepresentedFilename: imagePath];
 				[pdfKitWindow setTitle: [imagePath lastPathComponent]];
 				[pdfKitWindow makeKeyAndOrderFront: self];
@@ -714,6 +730,11 @@ if (! skipTextWindow) {
 		_pdfLastModDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 
 		[myPDFKitView showWithPath: imagePath];
+		// [myPDFKitView2 prepareSecond];
+		[[myPDFKitView document] retain];
+		[myPDFKitView2 setDocument: [myPDFKitView document]];
+		[myPDFKitView2 showForSecond];
+		
 		[pdfKitWindow setRepresentedFilename: imagePath];
 		[pdfKitWindow setTitle: [imagePath lastPathComponent]];
 		[self fillLogWindowIfVisible];
@@ -1388,6 +1409,59 @@ in other code when an external editor is being used. */
 	}
 }
 
+- (void) splitPreviewWindow: sender
+{
+	[pdfKitWindow splitPdfKitWindow: sender];
+}
+
+- (void)splitPDFKitView: (BOOL) direction
+{
+	NSSize		newSize;
+	NSRect		theFrame;
+
+	if (direction) {
+		theFrame = [myPDFKitView frame];
+		newSize.width = theFrame.size.width;
+		newSize.height = 100;
+		[myPDFKitView setFrameSize:newSize];
+		[myPDFKitView2 setFrameSize:newSize];
+		[pdfKitSplitView addSubview: myPDFKitView2];
+		[pdfKitSplitView adjustSubviews];
+		//
+		[[myPDFKitView document] retain];
+		[myPDFKitView2 setDocument:[myPDFKitView document]];
+	}
+	else
+		[myPDFKitView2 removeFromSuperview];
+	
+	
+/*	
+	selectedRange = [textView selectedRange];
+	newSize.width = 100;
+	newSize.height = 100;
+	if (windowIsSplit) {
+		//		[scrollView2 retain];	// FIXME: THis retain doesn't seem necessary and cause a leak, I believe...
+		[scrollView2 removeFromSuperview];
+		windowIsSplit = NO;
+		textView = textView1;
+		[textView scrollRangeToVisible: selectedRange];
+		[textView setSelectedRange: selectedRange];
+	} else {
+		theFrame = [scrollView frame];
+		newSize.width = theFrame.size.width;
+		newSize.height = 100;
+		[scrollView setFrameSize:newSize];
+		[scrollView2 setFrameSize:newSize];
+		[splitView addSubview: scrollView2];
+		[splitView adjustSubviews];
+		[textView1 scrollRangeToVisible: selectedRange];
+		[textView2 scrollRangeToVisible: selectedRange];
+		selectedRange.length = 0;
+		[textView2 setSelectedRange: selectedRange];
+ */
+		
+}
+
 - (void) splitWindow: sender
 {
 	NSSize		newSize;
@@ -1770,12 +1844,8 @@ in other code when an external editor is being used. */
 
 - (void)setPreviewBackgroundColorFromPreferences:(NSNotification *)notification
 {
-	NSColor *backColor;
-	
-	backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
-		green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
-		alpha: 1];
-	[pdfKitWindow setBackgroundColor: backColor];
+	[myPDFKitView setNeedsDisplay: YES];
+	[myPDFKitView2 setNeedsDisplay: YES];
 }
 
 
@@ -3234,6 +3304,10 @@ preference change is cancelled. "*/
 		} else {
 			PDFfromKit = YES;
 			[myPDFKitView reShowWithPath: pdfPath];
+			[myPDFKitView2 prepareSecond];
+			[[myPDFKitView document] retain];
+			[myPDFKitView2 setDocument: [myPDFKitView document]];
+			[myPDFKitView2 reShowForSecond];
 			[pdfKitWindow setRepresentedFilename: pdfPath];
 			[pdfKitWindow setTitle: [pdfPath lastPathComponent]];
 				[self fillLogWindowIfVisible];
@@ -4122,24 +4196,29 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 }
 
 - (void)doBackForward:(id)sender
-{
+{	NSLog(@"here");
 	switch ([sender selectedSegment]) {
-		case 0:	[[self pdfKitView] goBack:sender];
+		// case 0:	[[self pdfKitView] goBack:sender];
+		case 0: [[pdfKitWindow activeView] goBack:sender];
 			break;
 
-		case 1: [[self pdfKitView] goForward:sender];
+		// case 1: [[self pdfKitView] goForward:sender];
+			case 1: [[pdfKitWindow activeView] goForward:sender];
 			break;
 	}
 }
 
 - (void)doForward:(id)sender
 {
-	[[self pdfKitView] goForward:sender];
+
+	// [[self pdfKitView] goForward:sender];
+	 [[pdfKitWindow activeView] goForward:sender];
 }
 
 - (void)doBack:(id)sender
 {
-	[[self pdfKitView] goBack:sender];
+	// [[self pdfKitView] goBack:sender];
+	[[pdfKitWindow activeView] goBack:sender];
 }
 
 - (id) mousemodeMenu
@@ -4690,7 +4769,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	NSStringEncoding	theEncoding;
 
 	theEncoding = NSMacOSRomanStringEncoding;
-	logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
+	// logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
+	if (logExtension == nil)
+		return NO;
+	logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:logExtension];
 
 	if ([[NSFileManager defaultManager] fileExistsAtPath: logPath] && [[NSFileManager defaultManager] isReadableFileAtPath: logPath]) 
 		{
@@ -4713,7 +4795,36 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 
 - (void)displayLog: (id)sender
 {
-	NSString *theSource;
+	NSString	*newLogExtension, *theSource;
+	NSString	*tempResult;
+	int			result;
+	BOOL		askForExtension;
+		
+	if (GetCurrentKeyModifiers() & cmdKey)
+		askForExtension = YES;
+	else
+		askForExtension = NO;
+	
+	if (askForExtension) {
+		result = [NSApp runModalForWindow: extensionPanel];
+		[extensionPanel close];
+		if (result == 0) {
+			tempResult = [extensionResult stringValue];
+			if (tempResult == nil)
+				return;
+			tempResult = [tempResult stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+			newLogExtension = [tempResult stringByTrimmingCharactersInSet: [NSCharacterSet punctuationCharacterSet]];
+			}
+		else
+			return;
+		}
+	else
+		newLogExtension = [NSString stringWithString:@"log"];
+	
+	[newLogExtension retain];
+	if (logExtension != nil)
+		[logExtension release];
+	logExtension = newLogExtension;
 	
 	theSource = [_textStorage string];
 	if ([self checkMasterFile: theSource forTask:RootForLogFile])

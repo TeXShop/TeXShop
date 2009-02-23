@@ -30,6 +30,7 @@
 #import "MyPDFView.h"
 #import "MyPDFKitView.h"
 #import "globals.h"
+
 extern NSPanel *pageNumberWindow;
 
 
@@ -38,16 +39,19 @@ extern NSPanel *pageNumberWindow;
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
+	NSColor	*backColor;
 
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
 
-
-	[self setBackgroundColor: [NSColor whiteColor]];
+	// backColor = [NSColor lightGrayColor];
+	backColor = [NSColor colorWithCalibratedRed:0.9 green:0.9 blue:0.9 alpha: 1.0];
+	[self setBackgroundColor: backColor];
 
 	float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
 	if (alpha < 0.999)
 		[self setAlphaValue:alpha];
 
+	windowIsSplit = NO;
 	return result;
 }
 
@@ -443,6 +447,14 @@ extern NSPanel *pageNumberWindow;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
+	
+	if ([anItem action] == @selector(splitWindow:)) {
+		if (windowIsSplit)
+			[anItem setState:NSOnState];
+		else
+			[anItem setState:NSOffState];
+		return YES;
+	}
 
 	if ([anItem action] == @selector(displayLatexPanel:))
 		return NO;
@@ -571,5 +583,39 @@ extern NSPanel *pageNumberWindow;
 */
 
 #endif
+
+- (void) splitPdfKitWindow: (id)sender
+{
+	if (windowIsSplit) {
+		windowIsSplit = NO;
+		// activeView = myPDFKitView;
+	}
+	else {
+		windowIsSplit = YES;
+		// activeView = myPDFKitView;
+		}
+	[myDocument splitPDFKitView:windowIsSplit];
+}
+
+- (void) splitWindow: (id)sender
+{
+	[self splitPdfKitWindow: sender];
+}
+
+- (void) splitPreviewWindow: sender
+{
+	[self splitPdfKitWindow: sender];
+}
+
+- (void) setActiveView:(PDFView *)theView
+{
+	activeView = theView;
+}
+
+- (PDFView *)activeView;
+{
+	return activeView;
+}
+
 
 @end

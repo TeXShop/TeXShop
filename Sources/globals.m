@@ -215,6 +215,7 @@ NSArray				*g_taggedTagSections;
 NSString *g_commandCompletionChar = nil;
 NSMutableString *g_commandCompletionList = nil;
 BOOL g_canRegisterCommandCompletion = NO;
+NSColor *PreviewBackgroundColor = nil;
 
 // Koch 8/24/03
 int	g_macroType;	// FIXME: get rid of this

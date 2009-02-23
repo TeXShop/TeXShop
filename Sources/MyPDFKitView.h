@@ -80,6 +80,13 @@
 	NSRect							rect;  // to simulate cacheImageInRect
 	
 	NSPoint							offsetPoint;
+	NSPoint							menuSyncPoint;  // For calling sync using a contextual menu
+	
+	BOOL							secondNeedsInitialization;
+	int								secondTheIndex;
+	NSRect							secondFullRect, secondVisibleRect;
+	
+	
 }
 
 // - (void) scheduleAddintToolips;
@@ -87,6 +94,9 @@
 - (void) initializeDisplay;
 - (void) showWithPath: (NSString *)imagePath;
 - (void) reShowWithPath: (NSString *)imagePath;
+- (void) showForSecond;
+- (void) prepareSecond;
+- (void) reShowForSecond;
 - (void) setupPageStyle;
 - (void) setupMagnificationStyle;
 - (BOOL) doReleaseDocument;
@@ -122,6 +132,8 @@
 - (void) zoomIn: (id)sender;
 - (void) zoomOut: (id)sender;
 
+- (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+
 
 - (void)selectARect: (NSEvent *)theEvent;
 - (void)selectAll: (id)sender;
@@ -136,9 +148,9 @@
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (int)level;
 - (void)flagsChanged:(NSEvent *)theEvent;
-- (void)doSync: (NSEvent *)theEvent;
-- (BOOL)doNewSync: (NSEvent *)theEvent;
-- (BOOL)doSyncTeX: (NSEvent *)theEvent;
+- (void)doSync: (NSPoint)thePoint;
+- (BOOL)doNewSync: (NSPoint)thePoint;
+- (BOOL)doSyncTeX: (NSPoint)thePoint;
 - (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
 - (void)drawPage:(PDFPage *)page;
 - (void)resetCursorRects;
@@ -149,5 +161,6 @@
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)updateBackground: (NSRect)aRect;
 - (void)goToKitPageNumber: (int) thePage; 
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 @end
 

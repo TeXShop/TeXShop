@@ -23,6 +23,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 // This nifty macro computes the size of a static array.
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
@@ -415,3 +416,5 @@ extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/
 extern NSMutableString *g_commandCompletionList;/*" The list of completions, read from CommandCompletion.txt "*/
 extern BOOL g_canRegisterCommandCompletion;	/*" This is set to NO while e.g. CommandCompletion.txt is open "*/
+extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview window PDFKitView pages "*/
+

@@ -1312,6 +1312,17 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     [self setSelectedRange: selectedRange];
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+	NSMenu *theMenu = [super menuForEvent: theEvent];
+	if (theMenu != nil) {
+		[theMenu insertItemWithTitle:NSLocalizedString(@"Sync", @"Sync") action:@selector(doSync:) keyEquivalent:@"" atIndex:0];
+		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
+		}
+    return theMenu;
+}
+
+
 @end
 
 @implementation NSTextView (TeXShop)

@@ -173,9 +173,19 @@
 	//  whichEngine = type;
 
 	// added by mitsu --(J+) check mark in "Typeset" menu
-	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
-	whichEngine = type;
-	[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+	// [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+	// whichEngine = type;
+	// [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+	if ((type == BibtexEngine) || (type == IndexEngine)) {
+		useTempEngine = YES;
+		tempEngine = type;
+		}
+	else {
+		[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+		whichEngine = type;
+		[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+		}
+	
 	[self fixMacroMenu];
 	// end addition
 
@@ -501,7 +511,7 @@
 	myRange.length = 1;
 	
 	
-if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program for BibTeX and MakeIndex
+if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don't use TS-program for BibTeX and MakeIndex or Menu Command
 	
 	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
 		[theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
@@ -526,28 +536,74 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 						stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				programString = [programString lowercaseString];
 				if ([programString isEqualToString:@"pdftex"]) {
+					useTempEngine = YES;
+					tempEngine = TexEngine;
 					withLatex = NO;
 					theScript = kTypesetViaPDFTeX;
 					done = YES;
 				} else if ([programString isEqualToString:@"pdflatex"]) {
+					useTempEngine = YES;
+					tempEngine = LatexEngine;
 					withLatex = YES;
 					theScript = kTypesetViaPDFTeX;
 					done = YES;
 				} else if ([programString isEqualToString:@"tex"]) {
+					useTempEngine = YES;
+					tempEngine = TexEngine;
 					withLatex = NO;
 					theScript = kTypesetViaGhostScript;
 					done = YES;
 				} else if ([programString isEqualToString:@"latex"]) {
+					useTempEngine = YES;
+					tempEngine = LatexEngine;
 					withLatex = YES;
 					theScript = kTypesetViaGhostScript;
 					done = YES;
 				} else if ([programString isEqualToString:@"personaltex"]) {
+					useTempEngine = YES;
+					tempEngine = TexEngine;
 					withLatex = NO;
 					theScript = kTypesetViaPersonalScript;
 					done = YES;
 				} else if ([programString isEqualToString:@"personallatex"]) {
+					useTempEngine = YES;
+					tempEngine = LatexEngine;
 					withLatex = YES;
 					theScript = kTypesetViaPersonalScript;
+					done = YES;
+				} else if ([programString isEqualToString:@"bibtex"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					useTempEngine = YES;
+					tempEngine = BibtexEngine;
+					// whichEngine = BibtexEngine;
+					// [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					// [self fixMacroMenu];
+					done = YES;
+				} else if ([programString isEqualToString:@"makeindex"]) {
+					// [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					useTempEngine = YES;
+					tempEngine = IndexEngine;
+					// whichEngine = IndexEngine;
+					// [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					// [self fixMacroMenu];
+					done = YES;
+				} else if ([programString isEqualToString:@"metapost"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = MetapostEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+					done = YES;
+				} else if ([programString isEqualToString:@"context"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = ContextEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+					done = YES;
+				} else if ([programString isEqualToString:@"metafont"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = MetafontEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
 					done = YES;
 				} else {
 					i = UserEngine;
@@ -627,6 +683,31 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 				} else if ([lowerprogramName isEqualToString:@"personallatex"]) {
 					withLatex = YES;
 					theScript = kTypesetViaPersonalScript;
+				} else if ([lowerprogramName isEqualToString:@"metapost"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = MetapostEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+				} else if ([lowerprogramName isEqualToString:@"bibtex"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = BibtexEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+				} else if ([lowerprogramName isEqualToString:@"makeindex"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = IndexEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+				} else if ([lowerprogramName isEqualToString:@"context"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = ContextEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
+				} else if ([lowerprogramName isEqualToString:@"metafont"]) {
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+					whichEngine = MetafontEngine;
+					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+					[self fixMacroMenu];
 				} else {
 					i = UserEngine;
 					j = [programButton numberOfItems];
@@ -645,6 +726,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	}
 	
 	}
+	
+	fromMenu = NO;
 
 	// End Old Stuff
 
@@ -1066,6 +1149,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	[programButtonEE selectItemWithTitle: @"Plain TeX"];
 // end addition
 
+	fromMenu = YES;
 	[self doJob:TexEngine withError:YES runContinuously:NO];
 }
 
@@ -1075,7 +1159,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	[programButton selectItemWithTitle: @"LaTeX"];
 	[programButtonEE selectItemWithTitle: @"LaTeX"];
 // end addition
-
+	fromMenu = YES;
 	[self doJob:LatexEngine withError:YES runContinuously:NO];
 }
 
@@ -1094,7 +1178,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	[programButton selectItemWithTitle: @"ConTeXt"];
 	[programButtonEE selectItemWithTitle: @"ConTeXt"];
 // end addition
-
+	fromMenu = YES;
 	[self doJob:ContextEngine withError:YES runContinuously:NO];
 }
 
@@ -1105,14 +1189,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	[programButtonEE selectItemWithTitle: @"MetaPost"];
 // end addition
 
+	fromMenu = YES;
 	[self doJob:MetapostEngine withError:YES runContinuously:NO];
 }
 
 - (void) doBibtex: sender
 {
 // added by mitsu --(J++) Program popup button indicating Program name
-	[programButton selectItemWithTitle: @"BibTeX"];
-	[programButtonEE selectItemWithTitle: @"BibTeX"];
+	// [programButton selectItemWithTitle: @"BibTeX"];
+	// [programButtonEE selectItemWithTitle: @"BibTeX"];
 // end addition
 
 	[self doJob:BibtexEngine withError:NO runContinuously:NO];
@@ -1121,8 +1206,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 - (void) doIndex: sender
 {
 // added by mitsu --(J++) Program popup button indicating Program name
-	[programButton selectItemWithTitle: @"MakeIndex"];
-	[programButtonEE selectItemWithTitle: @"MakeIndex"];
+	// [programButton selectItemWithTitle: @"MakeIndex"];
+	// [programButtonEE selectItemWithTitle: @"MakeIndex"];
 // end addition
 
 	[self doJob:IndexEngine withError:NO runContinuously:NO];
@@ -1134,7 +1219,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 	[programButton selectItemWithTitle: @"MetaFont"];
 	[programButtonEE selectItemWithTitle: @"MetaFont"];
 // end addition
-
+	fromMenu = YES;
 	[self doJob:MetafontEngine withError:NO runContinuously:NO];
 }
 
@@ -1330,6 +1415,10 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 					alreadyFound = YES;
 					PDFfromKit = YES;
 					[myPDFKitView reShowWithPath: imagePath];
+					[myPDFKitView2 prepareSecond];
+					[[myPDFKitView document] retain];
+					[myPDFKitView2 setDocument: [myPDFKitView document]];
+					[myPDFKitView2 reShowForSecond];
 					[pdfKitWindow setRepresentedFilename: imagePath];
 					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
 					[self fillLogWindowIfVisible];

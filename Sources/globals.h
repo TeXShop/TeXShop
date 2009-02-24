@@ -347,6 +347,7 @@ extern NSString *RevisePathKey;
 extern NSString *OtherTeXExtensionsKey;
 extern NSString *ReleaseDocumentOnLeopardKey;
 extern NSString *BibDeskCompletionKey;
+extern NSString *SyncTeXOnlyKey;
 // end mitsu 1.29
 
 

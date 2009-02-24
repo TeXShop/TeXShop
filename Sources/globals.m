@@ -148,7 +148,7 @@ NSString *RevisePathKey = @"RevisePath"; // NO or YES
 NSString *OtherTeXExtensionsKey = @"OtherTeXExtensions";
 NSString *ReleaseDocumentOnLeopardKey = @"ReleaseDocumentOnLeopard";
 NSString *BibDeskCompletionKey = @"BibDeskCompletion";
-
+NSString *SyncTeXOnlyKey = @"SyncTeXOnly";
 
 // Paths
 NSString *DesktopPath = @"~/Desktop/";

@@ -316,11 +316,21 @@ static TSEncoding _availableEncodings[] = {
 
 - (NSStringEncoding)stringEncodingForKey: (NSString *)key
 {
+
 	int i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		if ([key isEqualToString:_availableEncodings[i].name])
 			return _availableEncodings[i].nsEnc;
 	}
+	
+	// In 2.18, the old name CentralEurRoman was changed to the new name Mac Central European Roman
+	// Unfortunately, members of Mathematical Institute of Silesian University in Opava, Czech Republic, Europe had
+	// hundreds of documents with encoding set by %!TEX encoding = CentralEurRoman
+	// We special case that name for those folks!
+	if ([key isEqualToString: @"CentralEurRoman"]) 
+			return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCentralEurRoman);
+
+
 	// If the encoding is unknown, use the first encoding in our list (MacOS Roman).
 	return _availableEncodings[0].nsEnc;
 }

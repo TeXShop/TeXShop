@@ -248,6 +248,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 				else if ( [fileExt  isEqualToString: @"bib"] ) insertString = @"\\bibliography{%n}\n";
 				else if ( [fileExt  isEqualToString: @"bst"] ) insertString = @"\\bibliographystyle{%n}\n";
 				else if (( [fileExt  isEqualToString: @"pdf"] ) ||
+						( [fileExt isEqualToString: @"png"] ) ||
 						( [fileExt isEqualToString: @"jpeg"] ) || ( [fileExt isEqualToString: @"jpg"] ) ||
 						( [fileExt isEqualToString: @"tiff"] ) || ( [fileExt isEqualToString: @"tif"] ) ||
 						( [fileExt isEqualToString: @"eps"] ) || ( [fileExt isEqualToString: @"ps"] ))

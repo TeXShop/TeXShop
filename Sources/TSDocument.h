@@ -151,18 +151,21 @@ enum RootCommand
 	BOOL		tagLine;
 
 
-	BOOL		typesetStart;		/*" YES if tex output "*/
+	BOOL			typesetStart;		/*" YES if tex output "*/
 	NSFileHandle	*writeHandle;
 	NSFileHandle	*readHandle;
-	NSPipe		*inputPipe;
-	NSPipe		*outputPipe;
-	NSTask		*texTask;
-	NSTask		*bibTask;
-	NSTask		*indexTask;
-	NSTask		*metaFontTask;
-	NSTask		*detexTask;
-	NSPipe		*detexPipe;
-	NSFileHandle        *detexHandle;
+	NSPipe			*inputPipe;
+	NSPipe			*outputPipe;
+	NSTask			*texTask;
+	NSTask			*bibTask;
+	NSTask			*indexTask;
+	NSTask			*metaFontTask;
+	NSTask			*detexTask;
+	NSPipe			*detexPipe;
+	NSFileHandle	*detexHandle;
+	NSTask			*synctexTask;
+	NSPipe			*synctexPipe;
+	NSFileHandle	*synctexHandle;
 
 
 	NSDate		*startDate;
@@ -265,6 +268,7 @@ enum RootCommand
 - (void) fixAutoMenu;
 - (void) fixMacroMenu;
 - (void) fixMacroMenuForWindowChange;
+- (NSRange) lineRange: (int)line;
 - (void) toLine: (int)line;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
@@ -302,7 +306,6 @@ enum RootCommand
 - (BOOL)indexColorState;
 - (void) flipIndexColorState: sender;
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
-- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 - (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 - (void)trashAUXFiles: sender;
 - (void)trashAUX;
@@ -449,5 +452,13 @@ enum RootCommand
 - (void)fixColor:(unsigned)from :(unsigned)to;
 - (void)colorizeAll;
 - (void)colorizeVisibleAreaInTextView:(NSTextView *)aTextView;
+
+@end
+
+
+@interface TSDocument (SyncTeX)
+
+ - (BOOL)doSyncTeXForPage: (int)pageNumber x: (float)xPosition y: (float)yPosition yOriginal: (float)yOriginalPosition;
+ - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 
 @end

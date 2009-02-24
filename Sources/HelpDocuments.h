@@ -37,5 +37,6 @@
 - (IBAction)displayTextSymbols:sender;
 - (IBAction)displayTextSpacing:sender;
 - (IBAction)supplementsToDesktop:sender;
+- (IBAction)displayTables:sender;
 
 @end

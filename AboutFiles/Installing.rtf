@@ -1,0 +1,41 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf330
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww18580\viewh27740\viewkind0
+\deftab720
+\pard\pardeftab720\sl380\sa260\ql\qnatural
+
+\f0\b\fs28 \cf0 \
+For New Users
+\fs26 \
+
+\b0 Create a TeX subfolder inside /Applications. Drag TeXShop to that folder. Your are done; stop reading this document.\
+\
+
+\b\fs28 Upgrading Older Versions
+\fs26 \
+
+\b0 TeXShop can run from any location, but I suggest that it be installed in /Applications/TeX because the full MacTeX-2008 package installs it there. You may have to create the TeX subfolder. Drag TeXShop to that location, replacing any previous version.\
+User configuration of TeXShop happens in two ways. Some configuration options are selected in TeXShop Preferences. TeXShop also installs the folder ~/Library/TeXShop, and users can edit the contents of this folder and its subfolders, or add additional files to these folders.\
+TeXShop has default values for Preferences, and default items to be placed in ~/Library/TeXShop. Sometimes these default values and items change with new releases, but installing a new version never updates the users values and items. After all, these configuration items are choices made by the user, which TeXShop doesn't change behind the users back.\
+Below are the new defaults for version 2.18 for new users. Old users may wish to make these changes as well.\
+\
+
+\b\fs28 Preference Items:
+\fs26 \
+
+\b0 There is a new preference item "BibDesk Completions" under the Document tab. Selecting this allows BibDesk to autocomplete reference item entry during typesetting.\
+There is a new preference item "SyncTeX" under the Misc tab. This is the new default value for the Sync Method; selecting it tells TeXShop to use Jerome Laurens' new SyncTeX code for synchronization, but fall back on the old Search method if SyncTeX fails. To enable SyncTeX, it is also necessary to change the pdftex entries under the Engine tab. Both entries need an additional flag, "--synctex=1". For instance, the Latex entry should read\
+     pdflatex --shell-escape --synctex=1\
+TeXShop has a new preference labeled "After Typesetting" under the Typesetting Tab. You can either ask the preview window to come forward, or let the Edit window remain active for additional input. By default, the preview window comes forward; that is the old behavior before this preference was added.\
+\
+
+\b\fs28 ~Library/TeXShop Changes:
+\fs26 \
+
+\b0 There are two ways to see the changed version. Both ways start by quitting TeXShop. Then either move the entire TeXShop folder in ~/Library to your desktop, or else move a particular subfolder like Macros or Engines to your desktop.Then restart TeXShop. Default values for the entire folder, or for the subfolder you moved, will be created. Finally merge in any old changes that you want to preserve.\
+In version 2.18, two changes were made to the default Macros. One change is cosmetic; references to teTeX were changed to references to TeX Live. The other is more significant: in the Applescript item "View pdf with Acrobat" the AppleTalk code now calls the latest version of Acrobat.\
+The other changes were made to the default Engines, and specifically to the Inactive folder inside. Herbert Schulz upgraded Latexmk to support SyncTeX. Optional engines were provided for luaTeX. And the optional engines for XeTeX now call xdvpdf since by default XeTeX now uses xdvipdfm. \
+\
+\
+}

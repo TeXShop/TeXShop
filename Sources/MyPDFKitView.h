@@ -37,6 +37,7 @@
 	id								myScale1;
 	id								myStepper1;
 	id								myDocument;
+	MyPDFKitView					*firstView;
 	NSDrawer						*_drawer;
 	PDFOutline						*_outline;
 	NSTextField						*_noOutlineText;
@@ -60,6 +61,7 @@
 	int								currentMouseMode;
 
 	int								totalRotation;
+	int								scaleMag;  // view's magnification
 
 	NSRect							selectedRect;
 	NSRect							oldVisibleRect;
@@ -90,6 +92,7 @@
 }
 
 // - (void) scheduleAddintToolips;
+- (id) init;
 - (void) setup;
 - (void) initializeDisplay;
 - (void) showWithPath: (NSString *)imagePath;
@@ -103,6 +106,8 @@
 
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;
+- (void) rotateClockwisePrimary;
+- (void) rotateCounterclockwisePrimary;
 
 - (void) goBack:sender;
 - (void) goForward: sender;
@@ -162,5 +167,9 @@
 - (void)updateBackground: (NSRect)aRect;
 - (void)goToKitPageNumber: (int) thePage; 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
+- (void)fixMagnificationControls;
+- (void)setFirstView:(MyPDFKitView *)theView;
+- (NSMutableArray *)getSearchResults;
+- (void)resetSearchDelegate;
 @end
 

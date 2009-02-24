@@ -36,8 +36,8 @@
 	BOOL		windowIsSplit;
 	BOOL		firstClose;
 	PDFView		*activeView;
-	
-	
+	PDFView		*myPDFKitView;
+	PDFView		*myPDFKitView2;
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
@@ -87,5 +87,12 @@
 - (void) splitPreviewWindow: sender;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) setActiveView:(PDFView *)theView;
+- (void) changeMouseMode: sender;
+- (void) doStepper: sender;
+- (void) changeScale: sender;
+- (void) goToKitPage: sender;
+// - (void) doFind: sender;
+- (IBAction) takeDestinationFromOutline: (id) sender;
+
 - (PDFView *)activeView;
 @end

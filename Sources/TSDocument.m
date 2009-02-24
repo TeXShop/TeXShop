@@ -529,6 +529,8 @@ if (! skipTextWindow) {
 	metaFontTask = nil;
 	detexTask = nil;
 	detexPipe = nil;
+	synctexTask = nil;
+	synctexPipe = nil;
 
 	if (!_externalEditor) {
 		[self setupTags];
@@ -2320,6 +2322,37 @@ preference change is cancelled. "*/
 	}
 }
 
+- (NSRange) lineRange: (int)line
+{
+	int			i;
+	NSString	*text;
+	unsigned	start, end, stringlength;
+	NSRange		myRange, returnRange;
+	
+	returnRange.location = 0;
+	returnRange.length = 0;
+
+	if (line < 1) 
+		return returnRange;
+	text = [textView string];
+	stringlength = [text length];
+	myRange.location = 0;
+	myRange.length = 1;
+	i = 1;
+	while ((i <= line) && (myRange.location < stringlength)) {
+		[text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+		myRange.location = end;
+		i++;
+	}
+	if (i == (line + 1)) {
+		returnRange.location = start;
+		returnRange.length = (end - start);
+	}
+	
+	return returnRange;
+}
+
+
 - (void) toLine: (int) line
 {
 	int		i;
@@ -2509,7 +2542,7 @@ preference change is cancelled. "*/
 	
 	if (syncMethod == SYNCTEXFIRST) {
 		result = [self doPreviewSyncTeXWithFilename: fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
-		if (result)
+		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
 		else
 			syncMethod = SEARCHONLY;
@@ -2800,11 +2833,6 @@ preference change is cancelled. "*/
    [myPDFKitView goToKitPageNumber: pdfPage];
    [pdfKitWindow makeKeyAndOrderFront: self];
 
-}
-
-- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
-{
-	return NO;
 }
 
 - (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView

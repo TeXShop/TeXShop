@@ -10,7 +10,7 @@
 
 <BODY>
 	<div id="content_border">
-		<P>TeXShop a&ntilde;ade tal men&uacute; Marcas las l&iacute;neas que comienzan con las palabras \section, \subsection, \subsubsection o \chapter. Para desactivar esto, abre el Terminal y teclea el siguiente comando. Cambia la palabra NO por YES para activarlo de nuevo.</P>
+		<P>TeXShop a&ntilde;ade al men&uacute; Marcas las l&iacute;neas que comienzan con las palabras \section, \subsection, \subsubsection o \chapter. Para desactivar esto, abre el Terminal y teclea el siguiente comando. Cambia la palabra NO por YES para activarlo de nuevo.</P>
 		<dl>
 			<dd>defaults write TeXShop TagSections NO
 		</dl>
@@ -147,9 +147,9 @@ Esta sintaxis no era adecuada, y se ha cambiado (la nueva se explica en otra par
 			<dd>defaults write TeXShop PreviewDrawerOpen YES
 		</dl>
 
-<p>Cuando se lanz&oacute; TeXShop para Tiger (Mac OS X 10.4), los usuarios notaron un molesto bug que hac&iacute;a que el funcionamiento del programa fuera cada vez m&aacute;s lento, hasta llegar a ser pr&aacute;cticamente inusable tras varios a procesos de componer p&aacute;ginas. Este bug fue solucionado un par de d&iacute;as despu&eacute;s del lanzamiento. El problema ocurr&iacute;a cuando un nuevo pdf era cargado en el PdfKitView de la ventana con el pdf.
+<p>Cuando se lanz&oacute; TeXShop para Tiger (Mac OS X 10.4), los usuarios notaron un molesto bug que hac&iacute;a que el funcionamiento del programa fuera cada vez m&aacute;s lento, hasta llegar a ser pr&aacute;cticamente inusable tras varios procesos de componer p&aacute;ginas. Este bug fue solucionado un par de d&iacute;as despu&eacute;s del lanzamiento. El problema ocurr&iacute;a cuando un nuevo pdf era cargado en el PdfKitView de la ventana con el pdf.
 Seg&uacute;n la documentaci&oacute;n de Apple, esto deber&iacute;a haber liberado de la memoria las estructuras de datos previas. La liberaci&oacute;n ocurr&iacute;a, pero ocasionaba que el programa se hiciera m&aacute;s lento. As&iacute; que el m&eacute;todo de fijar el bug consiti&oacute; en puentear al sistema haci&eacute;ndole creer que esas estructuras de datos todav&iacute;a esaban siendo usadas, as&iacute; que el sistema no las liberaba.</p>
-<p>Recientes investigaciones parecen mostrar que este bug no es tan severo en Tiger 10.4.4. Como consecuencia, se ha a&ntilde;adido una preferencia oculta para liberar los datos si as&iacute; lo desamos. Los valores de esta preferencia son</p>
+<p>Investigaciones posteriores parec&iacute;an mostrar que este bug no era tan severo en Tiger 10.4.4. Como consecuencia, se a&ntilde;adi&oacute; una preferencia oculta para liberar los datos si as&iacute; lo dese&aacute;bamos. Los valores de esta preferencia son</p>
 		<dl>
 			<dd> 0 para liberar los datos en el sistema 10.4.3 o superior
 			<dd> 1 para no liberar nunca los datos
@@ -159,6 +159,18 @@ Seg&uacute;n la documentaci&oacute;n de Apple, esto deber&iacute;a haber liberad
 		<dl>
 			<dd>defaults write TeXShop ReleaseDocumentClasses 1
 		</dl>
+<p> Afortunadamente, Apple solucion&oacute; este bug en Leopard (Mac OS X 10.5). Cuando TeXShop arranca, primero comprueba si se est&aacute; ejecutando Leopard.
+Si &eacute;se es el caso, TeXShop ignora la preferencia que acabamos de describir, y tampoco usa el truco que permit&iacute;a contrarrestrar el fallo.
+Como consecuencia, TeXShop libera correctamente la memoria en Leopard.</p>
+
+
+<p> TeXShop soporta SyncTeX. Los detalles est&aacute;n descritos en la secci&oacute;n sobre sincronizaci&oacute;n de la ayuda avanzada. Si synctex falla, TeXShop intenta en m&eacute;todo
+de sincronizaci&oacute;n basado en b&uacute;squedas. Para los usuarios que quieran experimentar con synctex en s&iacute; mismo, existe una preferencia oculta para lograr que TeXShop use exclusivamente synctex:</p>
+<dl>
+<dd>
+					defaults write TeXShop SyncTeXOnly YES
+			</dl>
+<p> Por defecto, esta preferencia tiene el valor NO.</p>
 
 </div>
 <div id="header_background"></div>

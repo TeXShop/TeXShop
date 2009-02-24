@@ -711,7 +711,7 @@
 														   @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestVersion],
 									 @"OK", @"Cancel", nil);
 		if (button == NSOKButton) {
-			[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.dmg"]];
+			[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.zip"]];
 		}
 	}
 

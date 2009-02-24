@@ -214,6 +214,14 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayTables:sender
+{
+	NSString				*fileName;
+ 	
+	fileName = [[NSBundle mainBundle] pathForResource:@"Tables" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
 - (IBAction)supplementsToDesktop:sender
 {
 		NSFileManager *fileManager = [NSFileManager defaultManager];

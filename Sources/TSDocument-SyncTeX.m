@@ -566,7 +566,7 @@
 		
 	i = 0;
 	while (i < boxNumber) {
-		thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 
 		Param = 65536;
@@ -618,11 +618,14 @@
 			myOval = [theSelection boundsForPage:thePage];
 			pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 			Param = 65536;
-			[myPDFKitView setIndexForMark: (pageNumber[i] - 1)];
-			[myPDFKitView setBoundsForMark: myOval];
-			[myPDFKitView setDrawMark: YES];
-			[myPDFKitView goToPage: thePage];
-			[myPDFKitView display];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
 
 			return YES;
 			}
@@ -656,11 +659,17 @@
 		i++;
 		}
 		
-	[myPDFKitView setIndexForMark: (initialFirstPage - 1)];
-	[myPDFKitView setBoundsForMark: myOval];
-	[myPDFKitView setDrawMark: YES];
-	[myPDFKitView goToPage: thePage];
-	[myPDFKitView display];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
+	
+	[[pdfKitWindow activeView] goToPage: thePage];
+	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+
+	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+	[[pdfKitWindow activeView] setCurrentSelection: nil];
+	[[pdfKitWindow activeView] display];
 
 	return YES;
 	

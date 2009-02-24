@@ -51,6 +51,7 @@ extern NSPanel *pageNumberWindow;
 	if (alpha < 0.999)
 		[self setAlphaValue:alpha];
 
+	activeView = nil;
 	windowIsSplit = NO;
 	return result;
 }
@@ -79,6 +80,7 @@ extern NSPanel *pageNumberWindow;
 - (void) becomeMainWindow
 {
 	[super becomeMainWindow];
+
 	[myDocument fixMacroMenuForWindowChange];
 }
 
@@ -202,7 +204,9 @@ extern NSPanel *pageNumberWindow;
 }
 
 - (void) nextPage: sender;
-{	if ([myDocument fromKit])
+{	
+	
+	if ([myDocument fromKit])
 		[[myDocument pdfKitView] nextPage: sender];
 	else
 		[[myDocument pdfView] nextPage: sender];
@@ -586,13 +590,20 @@ extern NSPanel *pageNumberWindow;
 
 - (void) splitPdfKitWindow: (id)sender
 {
+	
+	[(MyPDFKitView *)myPDFKitView2 setFirstView: myPDFKitView];
+	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
+	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
+	
+	
 	if (windowIsSplit) {
 		windowIsSplit = NO;
-		// activeView = myPDFKitView;
+		activeView = [myDocument mainPdfKitView];
+		[(MyPDFKitView *)activeView resetSearchDelegate];
 	}
 	else {
 		windowIsSplit = YES;
-		// activeView = myPDFKitView;
+		activeView = [myDocument mainPdfKitView];
 		}
 	[myDocument splitPDFKitView:windowIsSplit];
 }
@@ -609,13 +620,51 @@ extern NSPanel *pageNumberWindow;
 
 - (void) setActiveView:(PDFView *)theView
 {
+	
+	if (activeView) {
+		[(MyPDFKitView *)activeView setDrawMark: NO];
+		[activeView display];
+		}
 	activeView = theView;
 }
 
 - (PDFView *)activeView;
 {
+	if (activeView == nil)
+		activeView = [myDocument mainPdfKitView];
 	return activeView;
 }
 
+- (void) changeMouseMode: sender
+{
+	[(MyPDFKitView *)myPDFKitView changeMouseMode: sender];
+	[(MyPDFKitView *)myPDFKitView2 changeMouseMode: sender];
+}
 
+- (void) doStepper: sender;
+{
+		[(MyPDFKitView *)activeView doStepper: sender]; 
+}
+
+- (void) changeScale: sender;
+{
+	[(MyPDFKitView *)activeView changeScale: sender]; 
+}
+
+- (void) goToKitPage: sender
+{
+	[(MyPDFKitView *)activeView goToKitPage: sender]; 
+}
+
+/*
+- (void) doFind: sender
+{
+	[(MyPDFKitView *)activeView doFind: sender]; 
+}
+*/
+
+- (IBAction) takeDestinationFromOutline: (id) sender
+{
+	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
+}
 @end

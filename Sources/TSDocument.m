@@ -419,6 +419,8 @@
 	NS_HANDLER
 		spellExists = NO;
 	NS_ENDHANDLER
+	
+	[pdfKitWindow setActiveView: myPDFKitView];
 
 	switch ([SUD integerForKey: LineBreakModeKey]) {
 		case 0: lineBreakMode = NSLineBreakByClipping;          break;
@@ -1418,6 +1420,7 @@ in other code when an external editor is being used. */
 {
 	NSSize		newSize;
 	NSRect		theFrame;
+	
 
 	if (direction) {
 		theFrame = [myPDFKitView frame];
@@ -1427,9 +1430,10 @@ in other code when an external editor is being used. */
 		[myPDFKitView2 setFrameSize:newSize];
 		[pdfKitSplitView addSubview: myPDFKitView2];
 		[pdfKitSplitView adjustSubviews];
-		//
-		[[myPDFKitView document] retain];
-		[myPDFKitView2 setDocument:[myPDFKitView document]];
+		if ([myPDFKitView2 document] == nil) {
+			[[myPDFKitView document] retain];
+			[myPDFKitView2 setDocument:[myPDFKitView document]];
+			}
 	}
 	else
 		[myPDFKitView2 removeFromSuperview];
@@ -2690,6 +2694,12 @@ preference change is cancelled. "*/
 
 - (id) pdfKitView
 {
+	// return myPDFKitView;
+	return  [pdfKitWindow activeView];
+}
+
+- (id) mainPdfKitView
+{
 	return myPDFKitView;
 }
 
@@ -3140,7 +3150,7 @@ preference change is cancelled. "*/
    // [pdfView displayPage:pdfPage];
    // [pdfWindow makeKeyAndOrderFront: self];
    pdfPage++;
-   [myPDFKitView goToKitPageNumber: pdfPage];
+   [[pdfKitWindow activeView] goToKitPageNumber: pdfPage];
    [pdfKitWindow makeKeyAndOrderFront: self];
 
 }
@@ -3200,12 +3210,25 @@ preference change is cancelled. "*/
 				return NO;
 			thePage = [myPages objectAtIndex:0];
 			selectionBounds = [mySelection boundsForPage: thePage];
-			[myPDFKitView setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
-			[myPDFKitView setBoundsForMark: selectionBounds];
-			[myPDFKitView setDrawMark: YES];
-			[myPDFKitView goToPage: thePage];
-			[myPDFKitView display];
+			
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark:selectionBounds];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: mySelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
 			[pdfKitWindow makeKeyAndOrderFront:self];
+			
+			/*
+			[[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[[pdfKitWindow activeView] setBoundsForMark: selectionBounds];
+			[[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self];
+			*/
 			return YES;
 		}
 	}
@@ -3239,11 +3262,26 @@ preference change is cancelled. "*/
 				return NO;
 			thePage = [myPages objectAtIndex:0];
 			selectionBounds = [mySelection boundsForPage: thePage];
-			[myPDFKitView setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
-			[myPDFKitView setBoundsForMark: selectionBounds];
-			[myPDFKitView setDrawMark: YES];
-			[myPDFKitView goToPage: thePage];
-			[myPDFKitView display];
+			// replace "myPDFKitView" below by "[myPDFKitWindow activeView]"
+			
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark:selectionBounds];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: mySelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self];
+			
+			/*
+			[[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[[pdfKitWindow activeView] setBoundsForMark: selectionBounds];
+			[[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] display];
+			*/
+			
 			return YES;
 		}
 	}
@@ -3521,6 +3559,7 @@ preference change is cancelled. "*/
 	else
 		showSync = NO;
 	[myPDFKitView display];
+	[myPDFKitView2 display];
 }
 
 - (void) flipIndexColorState: sender
@@ -4167,7 +4206,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 		showSync = YES;
 	else
 		showSync = NO;
-   [myPDFKitView display];
+	[myPDFKitView display];
+	[myPDFKitView2 display];
 }
 
 - (BOOL)syncState // warning; can be called after syncBox is disposed
@@ -4196,7 +4236,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 }
 
 - (void)doBackForward:(id)sender
-{	NSLog(@"here");
+{	
 	switch ([sender selectedSegment]) {
 		// case 0:	[[self pdfKitView] goBack:sender];
 		case 0: [[pdfKitWindow activeView] goBack:sender];
@@ -4835,6 +4875,14 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 		[logWindow makeKeyAndOrderFront: self];	
 }
 
-
+- (void) fixAfterRotation: (BOOL) clockwise
+{
+	if (clockwise)
+		[myPDFKitView rotateClockwisePrimary];
+	else
+		[myPDFKitView rotateCounterclockwisePrimary];
+	[myPDFKitView layoutDocumentView];
+	[myPDFKitView2 layoutDocumentView];
+}
 
 @end

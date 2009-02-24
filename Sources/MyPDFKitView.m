@@ -62,6 +62,13 @@
 	[super dealloc];
 }
 
+- (id)init
+{
+	if ((self = [super init]))
+        firstView = nil;
+    return self;
+}
+
 /*
 - (void)scheduleAddingToolips
 {
@@ -72,8 +79,6 @@
 
 - (void) initializeDisplay
 {
-
-	NSColor	*backColor;
 
 	downOverLink = NO;
 	
@@ -193,7 +198,7 @@
 	}
 }
 
-- (void) setup
+- (void) notificationSetup;
 {
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(pageChanged:)
 												 name: PDFViewPageChangedNotification object: self];
@@ -216,6 +221,11 @@
 											 selector:@selector(revertMagnification:)
 												 name:MagnificationRevertNotification object:nil];
 	
+}
+
+- (void) setup
+{
+	[self notificationSetup];
 	
 	mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
@@ -287,8 +297,14 @@
 
 - (void) showForSecond;
 {
-totalRotation = 0;
-[self initializeDisplay];
+	// totalRotation = 0;
+	sourceFiles = nil;
+	
+	if (mouseMode == 0)
+		mouseMode = currentMouseMode = [SUD integerForKey: PdfKitMouseModeKey];
+	totalPages = [[self document] pageCount];
+	[self notificationSetup];
+	[self initializeDisplay];
 }
 
 
@@ -431,6 +447,7 @@ totalRotation = 0;
 	PDFPage		*aPage;
 	
 	[[self window] disableFlushWindow];
+	totalPages = [[self document] pageCount];
 	/*
 	[self cleanupMarquee: YES];
 
@@ -519,6 +536,11 @@ totalRotation = 0;
 	// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
 	// but it doesn't seem to work there. If changes are made, be sure to test on
 	// Intel and on PowerPC.
+	
+	if (sourceFiles != nil) {
+		[sourceFiles release];
+		sourceFiles = nil;
+	}
 	aPage = [[self document] pageAtIndex: secondTheIndex];
 	[self goToPage: aPage];
 	
@@ -532,16 +554,11 @@ totalRotation = 0;
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
 
-
-
-
-- (void) rotateClockwise:sender
-{
+- (void) rotateClockwisePrimary
+{	
 	int			i, amount, newAmount;
 	PDFPage		*myPage;
-
-	[self cleanupMarquee: YES];
-
+	
 	totalRotation = totalRotation + 90;
 	if (totalRotation >= 360)
 		totalRotation = totalRotation - 360;
@@ -550,28 +567,49 @@ totalRotation = 0;
 		amount = [myPage rotation];
 		newAmount = amount + 90;
 		[myPage setRotation: newAmount];
-		}
-	[self layoutDocumentView];
+	}
 }
 
-- (void) rotateCounterclockwise:sender
+
+- (void) rotateClockwise:sender
+{
+	
+	
+	[self cleanupMarquee: YES];
+
+	// [self rotateClockwisePrimary];
+	[myDocument fixAfterRotation: YES];
+	// [self layoutDocumentView];
+}
+
+- (void) rotateCounterclockwisePrimary
 {
 	int			i, amount, newAmount;
 	PDFPage		*myPage;
-
-	[self cleanupMarquee: YES];
-
+	
 	totalRotation = totalRotation - 90;
 	if (totalRotation < 0)
 		totalRotation = totalRotation + 360;
-
+	
 	for (i = 0; i < totalPages; i++) {
 		myPage = [[self document] pageAtIndex:i];
 		amount = [myPage rotation];
 		newAmount = amount - 90;
 		[myPage setRotation: newAmount];
-		}
-	[self layoutDocumentView];
+	}
+}
+
+- (void) rotateCounterclockwise:sender
+{
+	
+	
+
+	[self cleanupMarquee: YES];
+	
+	// [self rotateCounterclockwisePrimary];
+
+	[myDocument fixAfterRotation: NO];
+	// [self layoutDocumentView];
 }
 
 - (void) goBack:sender
@@ -592,9 +630,10 @@ totalRotation = 0;
 {
 	float	theScale;
 	int		magsize;
-
+	
 	theScale = [self scaleFactor];
 	magsize = theScale * 100;
+	scaleMag = magsize;
 	[myScale setIntValue: magsize];
 	[myScale1 setIntValue: magsize];
 	[myScale display];
@@ -608,7 +647,6 @@ totalRotation = 0;
 	int				pageNumber;
 	int				numRows, i, newlySelectedRow;
 	unsigned int	newPageIndex;
-
 
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
@@ -667,6 +705,7 @@ totalRotation = 0;
 	scale = scale + 10;
 	if (scale > 1000)
 		scale = 1000;
+	scaleMag = scale;
 	[myScale setIntValue: scale];
 	[self changeScale: self];
 }
@@ -679,6 +718,7 @@ totalRotation = 0;
 	scale = scale - 10;
 	if (scale< 20)
 		scale = 20;
+	scaleMag = scale;
 	[myScale setIntValue: scale];
 	[self changeScale: self];
 }
@@ -691,17 +731,21 @@ totalRotation = 0;
 	
 	[self cleanupMarquee: YES];
 
-	if (sender == myScale1)
+	if (sender == myScale1) {
 		[myScale setIntValue: [myScale1 intValue]];
+		scaleMag = [myScale1 intValue];
+		}
 	scale = [myScale intValue];
 	if (scale < 20) {
 		scale = 20;
+		scaleMag = scale;
 		[myScale setIntValue: scale];
 		[myScale1 setIntValue: scale];
 		[myScale display];
 		}
 	if (scale > 1000) {
 		scale = 1000;
+		scaleMag = scale;
 		[myScale setIntValue: scale];
 		[myScale1 setIntValue: scale];
 		[myScale display];
@@ -740,6 +784,7 @@ totalRotation = 0;
 		[myScale setIntValue: [myStepper intValue]];
 	else
 		[myScale setIntValue: [myStepper1 intValue]];
+	scaleMag = [myScale intValue];
 	[self changeScale: self];
 }
 
@@ -753,6 +798,7 @@ totalRotation = 0;
 
 - (void) nextPage: (id)sender
 {
+	
 	if  ((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE))
 		[self cleanupMarquee: YES];
 	[self goToNextPage:sender];
@@ -774,23 +820,29 @@ totalRotation = 0;
 
 - (void) goToKitPageNumber: (int) thePage
 {
+	int			myPage;
+	PDFPage		*aPage;
+	NSNumber	*myNumber;
+	
+	myPage = thePage;
+	
 	if  ((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE))
 		[self cleanupMarquee: YES];
+	
 
-	PDFPage	*aPage;
 
-	if (thePage < 1)
-		thePage = 1;
-	if (thePage > totalPages)
-		thePage = totalPages;
+	if (myPage < 1)
+		myPage = 1;
+	if (myPage > totalPages)
+		myPage = totalPages;
 
-	[currentPage setIntValue: thePage];
-	[currentPage1 setIntValue: thePage];
+	[currentPage setIntValue: myPage];
+	[currentPage1 setIntValue: myPage];
 	[currentPage display];
 	[[self window] makeFirstResponder: currentPage];
 
-	thePage = thePage - 1;
-	aPage = [[self document] pageAtIndex: thePage];
+	myPage = myPage - 1;
+	aPage = [[self document] pageAtIndex: myPage];
 	[self goToPage: aPage];
 
 }
@@ -803,10 +855,10 @@ totalRotation = 0;
 	if  ((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE))
 		[self cleanupMarquee: YES];
 	thePage = [sender intValue];
-	[self goToKitPageNumber: thePage];
-
 	if (sender == currentPage1)
 		[NSApp endSheet:[myDocument pagenumberPanel]];
+	[self goToKitPageNumber: thePage];
+
 
 }
 
@@ -897,6 +949,7 @@ totalRotation = 0;
 
 - (void) copy: (id)sender
 {
+	
 	if (mouseMode != NEW_MOUSE_MODE_SELECT_PDF)
 		[super copy:sender];
 	else {
@@ -999,6 +1052,7 @@ totalRotation = 0;
 
 - (void) doFind: (id) sender
 {
+	
 	if ([[self document] isFinding])
 		[[self document] cancelFindString];
 
@@ -1014,10 +1068,14 @@ totalRotation = 0;
 - (void) startFind: (NSNotification *) notification
 {
 	// Empty arrays.
+	if (firstView != nil)
+		[firstView startFind: notification];
+	else {
 	[_searchResults removeAllObjects];
 
 	[_searchTable reloadData];
 	[_searchProgress startAnimation: self];
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------- findProgress
@@ -1026,8 +1084,13 @@ totalRotation = 0;
 {
 	double		pageIndex;
 
+	if (firstView != nil)
+		[firstView findProgress: notification];
+	else {
+	
 	pageIndex = [[[notification userInfo] objectForKey: @"PDFDocumentPageIndex"] doubleValue];
 	[_searchProgress setDoubleValue: pageIndex / [[self document] pageCount]];
+	}
 }
 
 // ------------------------------------------------------------------------------------------------------- didMatchString
@@ -1035,19 +1098,27 @@ totalRotation = 0;
 
 - (void) didMatchString: (PDFSelection *) instance
 {
+	if (firstView != nil)
+		[firstView didMatchString: instance];
+		else {
 	// Add page label to our array.
 	[_searchResults addObject: [instance copy]];
 
 	// Force a reload.
 	[_searchTable reloadData];
+		}
 }
 
 // -------------------------------------------------------------------------------------------------------------- endFind
 
 - (void) endFind: (NSNotification *) notification
 {
+	if (firstView != nil)
+		[firstView endFind: notification];
+	else {
 	[_searchProgress stopAnimation: self];
 	[_searchProgress setDoubleValue: 0];
+	}
 }
 
 
@@ -1059,7 +1130,10 @@ totalRotation = 0;
 
 - (int) numberOfRowsInTableView: (NSTableView *) aTableView
 {
-	return ([_searchResults count]);
+	if (firstView != nil)
+		return ([firstView numberOfRowsInTableView: aTableView]);
+	else
+		return ([_searchResults count]);
 }
 
 // ------------------------------------------------------------------------------ tableView:objectValueForTableColumn:row
@@ -1067,25 +1141,35 @@ totalRotation = 0;
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) theColumn
 		row: (int) rowIndex
 {
-	if ([[theColumn identifier] isEqualToString: @"page"])
-		return ([[[[_searchResults objectAtIndex: rowIndex] pages] objectAtIndex: 0] label]);
-	else if ([[theColumn identifier] isEqualToString: @"section"])
-		return ([[[self document] outlineItemForSelection: [_searchResults objectAtIndex: rowIndex]] label]);
-	else
-		return NULL;
+	if (firstView != nil)
+		return ([firstView tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
+	else {
+		if ([[theColumn identifier] isEqualToString: @"page"])
+			return ([[[[_searchResults objectAtIndex: rowIndex] pages] objectAtIndex: 0] label]);
+		else if ([[theColumn identifier] isEqualToString: @"section"])
+			return ([[[self document] outlineItemForSelection: [_searchResults objectAtIndex: rowIndex]] label]);
+		else
+			return NULL;
+		}
 }
 
 // ------------------------------------------------------------------------------------------ tableViewSelectionDidChange
 
 - (void) tableViewSelectionDidChange: (NSNotification *) notification
 {
-	int			rowIndex;
-
+	int				rowIndex;
+	NSMutableArray	*_firstSearchResults;
+	
 	// What was selected.  Skip out if the row has not changed.
 	rowIndex = [(NSTableView *)[notification object] selectedRow];
 	if (rowIndex >= 0)
 	{
-		[self setCurrentSelection: [_searchResults objectAtIndex: rowIndex]];
+		if (firstView != nil) {
+			_firstSearchResults = [firstView getSearchResults];
+			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
+			}
+		else
+			[self setCurrentSelection: [_searchResults objectAtIndex: rowIndex]];
 		[self centerSelectionInVisibleArea: self];
 	}
 }
@@ -2267,7 +2351,7 @@ totalRotation = 0;
 			PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
 			NSData	*myData = [myPage dataRepresentation];
 			NSPDFImageRep *myRep = [NSPDFImageRep imageRepWithData: myData];
-			
+		
 			pageDataRect = [self convertRect:newRect toPage:myPage];
 			pageRect = [myPage boundsForBox: kPDFDisplayBoxMediaBox];
 			pageDataRect = NSIntersectionRect(pageDataRect, pageRect);
@@ -2295,7 +2379,7 @@ totalRotation = 0;
 			// pageDataRect.origin.x = pageDataRect.origin.x * amount;
 			// pageDataRect.origin.y = pageDataRect.origin.y * amount;
 			
-			if (type == IMAGE_TYPE_PDF) 
+		if (type == IMAGE_TYPE_PDF) 
 				data = [myDragView dataWithPDFInsideRect: pageDataRect];
 			else if (type == IMAGE_TYPE_EPS)
 				data = [myDragView dataWithEPSInsideRect: pageDataRect];
@@ -2404,6 +2488,7 @@ totalRotation = 0;
 	
 	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
 
+	
 	pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
 	imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
 	if (imageCopyType != IMAGE_TYPE_PDF && imageCopyType != IMAGE_TYPE_EPS &&
@@ -2418,6 +2503,7 @@ totalRotation = 0;
 	// FIXME: If imageCopyType is unknown, then dataType is 0 here!
 	[pboard declareTypes:[NSArray arrayWithObjects: dataType,
 							NSFilenamesPboardType, nil] owner:self];
+	
 
 	if (!((imageCopyType == IMAGE_TYPE_PDF || imageCopyType == IMAGE_TYPE_EPS)
 		&& [SUD boolForKey: PdfQuickDragKey])) {
@@ -2443,6 +2529,7 @@ totalRotation = 0;
 		// Hence I am disabling this code for now.
 #if 0
 		image = [self imageFromRect: mySelectedRect];
+		
 		if (image) {
 			//[self pasteboard:pboard provideDataForType:dataType];
 			//[self pasteboard:pboard provideDataForType:NSFilenamesPboardType];
@@ -3835,6 +3922,7 @@ totalRotation = 0;
 	if (scale > 1000)
 		scale = 1000;
 
+	scaleMag = scale;
 	[myScale setIntValue: scale];
 	[myScale1 setIntValue: scale];
 	[myScale display];
@@ -3927,8 +4015,76 @@ totalRotation = 0;
 
 - (BOOL)becomeFirstResponder
 {
-	[myPDFWindow setActiveView: self];
-	return [super becomeFirstResponder];
+	BOOL	result;
+	[(TSPreviewWindow *)myPDFWindow setActiveView: self];
+	result =  [super becomeFirstResponder];
+	[self fixStuff];
+	[self resetSearchDelegate];
+	return result;
+}
+
+- (void)resetSearchDelegate
+{
+	[_searchTable setDelegate:self];
+}
+
+- (void)fixStuff
+{
+	NSMenu			*previewMenu, *menu;
+	NSArray			*menuArray;
+	NSEnumerator	*enumerator;
+	id				anObject;
+	id <NSMenuItem>	item;
+	
+	//------Display Format Menu-----------------
+	previewMenu = [[[NSApp mainMenu] itemWithTitle:
+				NSLocalizedString(@"Preview", @"Preview")] submenu];
+	menu = [[previewMenu itemWithTitle:
+				NSLocalizedString(@"Display Format", @"Display Format")] submenu];
+	// for all items in submenu
+	menuArray = [menu itemArray];
+	enumerator = [menuArray objectEnumerator];
+	while (anObject = [enumerator nextObject])
+		[anObject setState: NSOffState];
+	item = [menu itemWithTag: pageStyle];
+	[item setState: NSOnState];
+		
+	//-------Magnification Menu------------------
+	menu = [[previewMenu itemWithTitle:
+					 NSLocalizedString(@"Magnification", @"Magnification")] submenu];
+	// for all items in submenu
+	menuArray = [menu itemArray];
+	enumerator = [menuArray objectEnumerator];
+	while (anObject = [enumerator nextObject])
+		[anObject setState: NSOffState];
+	item = [menu itemWithTag: resizeOption];
+	[item setState: NSOnState];
+	
+	//-------Magnification Controls----------
+	// [self fixMagnificationControls];
+	[self scaleChanged: nil];
+	[self pageChanged: nil];
+	
+}
+
+- (void)fixMagnificationControls
+{
+	if (scaleMag == 0)
+		scaleMag = 100;
+	[myScale setIntValue: scaleMag];
+	[myScale1 setIntValue: scaleMag];
+	[myStepper setIntValue: scaleMag];
+	[myStepper1 setIntValue: scaleMag];
+}
+
+- (void)setFirstView:(MyPDFKitView *)theView
+{
+	firstView = theView;
+}
+
+- (NSMutableArray *)getSearchResults
+{
+	return _searchResults;
 }
 
 @end

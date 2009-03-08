@@ -1416,56 +1416,6 @@ in other code when an external editor is being used. */
 	[pdfKitWindow splitPdfKitWindow: sender];
 }
 
-- (void)splitPDFKitView: (BOOL) direction
-{
-	NSSize		newSize;
-	NSRect		theFrame;
-	
-
-	if (direction) {
-		theFrame = [myPDFKitView frame];
-		newSize.width = theFrame.size.width;
-		newSize.height = 100;
-		[myPDFKitView setFrameSize:newSize];
-		[myPDFKitView2 setFrameSize:newSize];
-		[pdfKitSplitView addSubview: myPDFKitView2];
-		[pdfKitSplitView adjustSubviews];
-		if ([myPDFKitView2 document] == nil) {
-			[[myPDFKitView document] retain];
-			[myPDFKitView2 setDocument:[myPDFKitView document]];
-			}
-	}
-	else
-		[myPDFKitView2 removeFromSuperview];
-	
-	
-/*	
-	selectedRange = [textView selectedRange];
-	newSize.width = 100;
-	newSize.height = 100;
-	if (windowIsSplit) {
-		//		[scrollView2 retain];	// FIXME: THis retain doesn't seem necessary and cause a leak, I believe...
-		[scrollView2 removeFromSuperview];
-		windowIsSplit = NO;
-		textView = textView1;
-		[textView scrollRangeToVisible: selectedRange];
-		[textView setSelectedRange: selectedRange];
-	} else {
-		theFrame = [scrollView frame];
-		newSize.width = theFrame.size.width;
-		newSize.height = 100;
-		[scrollView setFrameSize:newSize];
-		[scrollView2 setFrameSize:newSize];
-		[splitView addSubview: scrollView2];
-		[splitView adjustSubviews];
-		[textView1 scrollRangeToVisible: selectedRange];
-		[textView2 scrollRangeToVisible: selectedRange];
-		selectedRange.length = 0;
-		[textView2 setSelectedRange: selectedRange];
- */
-		
-}
-
 - (void) splitWindow: sender
 {
 	NSSize		newSize;
@@ -2696,11 +2646,6 @@ preference change is cancelled. "*/
 {
 	// return myPDFKitView;
 	return  [pdfKitWindow activeView];
-}
-
-- (id) mainPdfKitView
-{
-	return myPDFKitView;
 }
 
 - (id) pdfWindow
@@ -4873,16 +4818,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 		return;	
 	if ([self fillLogWindow])
 		[logWindow makeKeyAndOrderFront: self];	
-}
-
-- (void) fixAfterRotation: (BOOL) clockwise
-{
-	if (clockwise)
-		[myPDFKitView rotateClockwisePrimary];
-	else
-		[myPDFKitView rotateCounterclockwisePrimary];
-	[myPDFKitView layoutDocumentView];
-	[myPDFKitView2 layoutDocumentView];
 }
 
 @end

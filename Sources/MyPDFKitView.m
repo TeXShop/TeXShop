@@ -42,7 +42,7 @@
 #import "TSDocument.h"
 #import "TSEncodingSupport.h"
 #import "MyDragView.h"
-
+#import "TSPreviewWindow.h"
 
 #define NUMBER_OF_SOURCE_FILES	60
 
@@ -52,6 +52,8 @@
 
 - (void) dealloc
 {
+	[self cleanupMarquee: YES];
+	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
@@ -578,7 +580,7 @@
 	[self cleanupMarquee: YES];
 
 	// [self rotateClockwisePrimary];
-	[myDocument fixAfterRotation: YES];
+	[(TSPreviewWindow *)myPDFWindow fixAfterRotation: YES];
 	// [self layoutDocumentView];
 }
 
@@ -608,7 +610,7 @@
 	
 	// [self rotateCounterclockwisePrimary];
 
-	[myDocument fixAfterRotation: NO];
+	[(TSPreviewWindow *)myPDFWindow fixAfterRotation: NO];
 	// [self layoutDocumentView];
 }
 
@@ -2509,10 +2511,13 @@
 		&& [SUD boolForKey: PdfQuickDragKey])) {
 		data = [self imageDataFromSelectionType: imageCopyType];
 		if (data) {
+			
 			[pboard setData:data forType:dataType];
 			filePath = [[DraggedImagePath stringByStandardizingPath]
 					stringByAppendingPathExtension: extensionForType(imageCopyType)];
 			if ([data writeToFile: filePath atomically: NO])
+				
+			// WARNING: the next line causes a crash at program end!
 				[pboard setPropertyList:[NSArray arrayWithObject: filePath]
 									forType:NSFilenamesPboardType];
 			image = [[[NSImage alloc] initWithData: data] autorelease];

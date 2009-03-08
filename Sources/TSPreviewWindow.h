@@ -38,6 +38,7 @@
 	PDFView		*activeView;
 	PDFView		*myPDFKitView;
 	PDFView		*myPDFKitView2;
+	NSSplitView	*pdfKitSplitView;
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
@@ -82,9 +83,9 @@
 - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 //- (void)configurePaperSize: sender;
-- (void) splitPdfKitWindow: (id)sender;
-- (void) splitWindow: (id)sender;
-- (void) splitPreviewWindow: sender;
+- (void) splitPdfKitWindow: (id)sender; 
+- (void) splitWindow: (id)sender; // so menu item can split both source and preview window
+- (void)fixAfterRotation: (BOOL) clockwise;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) setActiveView:(PDFView *)theView;
 - (void) changeMouseMode: sender;

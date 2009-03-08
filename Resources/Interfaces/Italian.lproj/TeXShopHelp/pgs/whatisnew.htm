@@ -14,6 +14,107 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.21 - 2.25</h5></P>
+
+<p>Version 2.21 - 2.24 were internal versions, never released. Here are the changes in version 2.25:</p>
+
+<ul>
+
+<li> Split window, previously available for the source window, now also works for the Preview window. Buttons and tools which interact with the Preview window are applied to the active portion of the Preview window when split. To activate the other portion, click on it. To avoid cluttering the interface, the active portion of the Preview window is not marked. Note that it is possible to use different Display formats in the two views. For instance, after splitting the window you can activate the lower portion and select Double Multiple Page in the Display Format menu to obtain a single page view in the top half and a double page view in the lower half.
+
+<p>
+<li> Syncing from source to Preview now scrolls the selection to the visible portion of the window. When the Preview is split, syncing from source to preview goes to the active portion of the Preview window.
+
+<p>
+<li> A new menu command, Show Log File, opens the log file. This file is updated after typesetting. If a source file has a root file, the menu command opens the log file of the root file, rather than the nonexistent root file of the input file.
+
+<p>
+<p>If the command key is held down while choosing this menu item, a dialog will appear asking for the extension of the file to be opened. For instance, typing "aux" into the dialog opens the aux file rather than the log file. The requested extension can be  typed with or without an opening period.
+
+<p>
+<li>A new Help menu command, "Show Package Documentation", opens a dialog which requests the name of a package in TeX Live. It then opens the TeX Live documentation for this package, using the command line program "texdoc." This improvement was suggested by Juan Luis Varona. 
+
+
+<p>TeX Live has a vast amount of documentation; go to /usr/local/texlive/2008/texmf-dist/doc/latex to see some (but not all) of this documentation. Note that almost all documentation folders have lower case names; therefore it is best to name packages in lower case when requesting documentation: pdftex, latex, graphicx, geometry, texdoc. But there are exceptions: IEEEtran.
+
+<p>Documentation is sometimes available in several different forms: pdf, html, etc. Add the extension to the request to see a particular form of the documentation. For instance, enter "pdftex.pdf" or "pdftex.html" to see these forms of the pdftex documentation. Texdoc will choose a convenient form on its own if the extension is omitted.
+
+<p>Texdoc does not open the documentation in TeXShop; instead it uses the Mac's default application for a given extension. By default, the Macintosh opens pdf files in Preview and html files in Safari, so texdoc will use those viewers. There is a standard way to redefine the default application for an extension. If you change the default, texdoc will use the new default application.
+
+<p>It is also possible to directly configure texdoc to use particular viewers; see the texdoc documentation for details.
+
+<p>Sometimes texdoc will not find documentation for a package, style file, or program. In that case, nothing will appear. In particular, TeXShop does not put up a warning dialog when documentation is not found. Although such a dialog would be useful at first, in the end it might become annoying.
+
+<p>
+<li>It is possible to set the foreground color of the Console window in Preferences. This was requested by users who prefer white characters on black backgrounds for the console.
+
+<p>
+<li>A new menu command opens the console if it has been closed.
+
+<p>
+<li>The menu items to change the text color in the source, to justify right, left, or center in the source, and to bring up the ruler in the source have been removed, since they make no sense in TeX.
+
+<p>
+<li>There are localization improvements in French, Spanish, and Japanese.
+
+<p>
+<li>This version fixes a bug which ignored Console Preferences when using external editors.
+
+<p>
+<li>TeXShop can now create and edit asy files.
+
+<p>
+<li>Added a contextual menu item to the Source and Preview windows: Sync. Some users may prefer this menu item for synchronization because using it avoids the command key.
+
+<p>
+<li>The TeXShop/Engines/Inactive folder now contains two scripts from Daniel Becker to call texcount to count active words in a TeX source file. The output may be more accurate than the output from detex, which is currently called by TeXShop's "statistics" command. 
+
+<p>Users who upgrade TeXShop can get the new Inactive folder by quitting TeXShop, moving ~/Library/TeXShop/Engines to the desktop, and then restarting TeXShop. The new default Engines folder will be created by TeXShop. After it is created, merge extra items in your old copy on the desktop back into the ~/Library/TeXShop/Engines folder.
+
+<p>
+<li>The Inactive folder also contains a "sage.engine" file. This engine makes it possible to use the open source mathematical software Sage, a replacement for Maple, Mathematica, and MatLab, directly from within a TeX source file. For instance, a single TeX line can ask Sage to plot a function; in the typeset output, this plot will appear at that spot. Or a single line can ask Sage to integrate a complicated expression symbolically; in the typeset output, the answer will be shown, typeset consistently with other mathematical expressions in the document. The inactive folder contains an example document typeset in this way. Sage is available free at http://www.sagemath.org/.
+
+<p>  
+<li>There was discussion on one of the mailing lists about the logic behind TeXShop's "Typeset" menu command, the "%!TEX program" mechanism, and the fact that "BibTeX" and "MakeIndex" are not really typesetting commands. Members of the list tried to understand the logic behind fine details of TeXShop's operation, but this was a hopeless task because there wasn't much logic present.
+
+<p>An attempt has been made in version 2.25 to provide consistent behavior, but without a complete overhaul of the interface. The code now works in the following way:
+
+<p>The "Typeset" command in the Typesetting menu always does exactly the same thing as the "Typeset" button in the source window toolbar. Both commands call the typesetting command listed in the drop down menu next to the toolbar button, unless the first few lines of the source file contain a line of the form
+
+<dl>
+ <dd>   %!TEX TS-program = ...
+ </dl>
+
+<p>If such a line is present, then the Typeset command uses the indicated program instead (unless the drop down menu is set to bibtex or makeindex; see comments below). The selected item in the drop down menu does not change, so commenting out the source line will cause typesetting to revert back to the method indicated in the drop down menu. Incidentally, TeXShop ignores extra comment characters at the beginning of the above source line, so it cannot be commented out by adding an extra comment. I prefer to add a space between the "TS" letters.
+
+<p>In previous versions of TeXShop, it was not possible to select bibtex, makeindex, metapost, context, or metafont in the "%!TEX TS-program"  line, for purely historical reasons. This anomaly has been fixed, and any engine can be selected:
+
+<dl>
+<dd>     tex, pdftex, latex, pdflatex, bibtex, makeindex, metapost, context, metafont, or a user defined engine
+</dl>
+
+<p>There should be one space after the equal sign before the program name, and case is important.
+
+<p>Selecting bibtex or makeindex in the drop down menu causes these programs to be called even if a "%!TEX TS-program" line is present, since these two programs aren't really typesetting engines and a user may need to call them even when an unusual typesetting engine is being used.
+
+<p>So much for the basic "Typeset" command.  The TeXShop "Typeset" menu also contains items to call TeX, LaTeX, BibTeX, MakeIndex, MetaPost, ConTeXt, and MetaFont. These items are present mainly for historical reasons and most users ignore them. Adding new engines to TeXShop doesn't add extra menu items because the menu would become awkwardly long if a user had a large number of extra engines.
+
+<p>The BibTeX and MakeIndex items are treated specially. Selecting one of these items causes TeXShop to run the resulting program regardless of the setting of the toolbar's drop down menu and the possible presence of a "%!TEX TS-program" source line. This is probably the most convenient way to call these two commands.
+
+<p>The remaining TeX, LaTeX, MetaPost, ConTeXt, and MetaFont menu commands behave in a slightly different way. Selecting one of these menu items causes TeXShop to run the resulting command, regardless of the toolbar's drop-down menu selection and regardless of any "%!TEX TS-program" line. Moreover, selecting one of these menu commands changes the toolbar's drop-down menu selection to the engine chosen in the menu command. The idea behind this design is that beginning users may first find the menu commands and typeset using them. If such a user later uses the "Typeset" button in the toolbar, it should cause the same behavior as the earlier menu command.
+
+<p>Sorry for this complexity; I'm trying to balance leaving the interface unchanged for users set in their ways with easier use of the BibTeX and MakeIndex commands.
+
+</ul.
+
+
+
+
+
+
+
+
+
 <P><h5>TeXShop Changes 2.19 - 2.20</h5></P>
 
 <p>Version 2.19 was an internal version, never released. Here are the changes in it and version 2.20:</p>

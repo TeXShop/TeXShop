@@ -37,7 +37,13 @@
 	id								myScale1;
 	id								myStepper1;
 	id								myDocument;
-	MyPDFKitView					*firstView;
+	// *firstView below points to the top view in the splitview configuration if this code is running for the second view;
+	// if this code is running for the top view, *firstView = nil
+	// MyPDFKitView is used both both views, so firstView is the only way this view knows which view it is
+	// This is crucial, because the top view controls the document data, including most particularly the outline view and
+	// searching command data
+	// 
+	MyPDFKitView					*firstView; // this points to the top view in the split view configuration; otherwise this class doesn't know the difference between the two views
 	NSDrawer						*_drawer;
 	PDFOutline						*_outline;
 	NSTextField						*_noOutlineText;

@@ -68,7 +68,7 @@ static id _sharedInstance = nil;
 - (id)init
 {
 	if (_sharedInstance != nil) {
-		[super dealloc];
+		[super dealloc]; // huh? Weird code; Feb 24, 2009, RMK
 		return _sharedInstance;
 	}
 	_sharedInstance = self;
@@ -78,7 +78,9 @@ static id _sharedInstance = nil;
 	// _consoleFont = [NSFont userFixedPitchedFontOfSize:10.0];
 
 	// register for changes in the user defaults
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+	
+	// I now believe this is not needed; Feb 24, 2009 RMK
+	// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
 
 	return self;
 }
@@ -1135,12 +1137,15 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 //==============================================================================
 /*" This method will be called whenever the user defaults change. We simply update the state of the prefences window and all of its controls. This may sound like the "brute force" method (in fact it is) but since the UserDefaults aren't likely to change from outside of this class we'll ignore that for now.
 "*/
+/*" Actually, Feb 26, 2009, I discovered that this routine is often called, including at terminate time when some objects it calls may already be disposed! 
+ I have no idea why we'd ever want to call this routine. Note that updateControlsFromUserDefaults is called by showPreferences, so since this only calls it when
+ the window is not visible, and it will be called again when it becomes visible, I don't see what point! RMK"*/
 - (void)userDefaultsChanged:(NSNotification *)notification
 {
 	// only update the window's controls when the window is not visible.
 	// If the window is visible the user edits it directly with the mouse.
 	if ([_prefsWindow isVisible] == NO) {
-		[self updateControlsFromUserDefaults:[notification object]];
+		// [self updateControlsFromUserDefaults:[notification object]];
 	}
 }
 
@@ -1214,7 +1219,7 @@ This method retrieves the application preferences from the defaults object and s
 	int		myTag;
 	BOOL	myBool;
 	NSNumber    *myNumber;
-
+	
 	fontData = [defaults objectForKey:DocumentFontKey];
 	if (fontData != nil)
 	{

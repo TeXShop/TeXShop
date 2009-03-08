@@ -93,7 +93,6 @@ enum RootCommand
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
-	IBOutlet NSSplitView		*pdfKitSplitView;
 	IBOutlet MyPDFKitView		*myPDFKitView2;
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
@@ -282,7 +281,6 @@ enum RootCommand
 - (void) chooseProgramEE: sender;
 - (id) pdfView;
 - (id) pdfKitView;
-- (id) mainPdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
@@ -347,8 +345,6 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
-- (void)splitPDFKitView: (BOOL) direction;
-- (void)fixAfterRotation: (BOOL) clockwise;
 
 // BibDesk Completion
 //---------------------------

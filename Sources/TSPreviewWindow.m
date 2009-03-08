@@ -22,6 +22,17 @@
  *
  */
 
+/*
+ * Among other things, this window controls splitting of the Preview Window views.
+ * Splitting is done here, and controls which affect both views simultaneously
+ * are connected here. Many controls automatically use the active view without help.
+ *
+ * The TSDocument class is involved only slightly in splitting. It receives a few toolbar
+ * commands to split the window, but immediately passes them to this class. It also
+ * initializes *activeView when the nib is first expanded; from them on, active view
+ * is set here from calls in split window or in the pdfkitview's activate routine.
+ */
+
 #import "UseMitsu.h"
 
 #import <AppKit/AppKit.h>
@@ -590,34 +601,58 @@ extern NSPanel *pageNumberWindow;
 
 - (void) splitPdfKitWindow: (id)sender
 {
+	NSSize		newSize;
+	NSRect		theFrame;
 	
-	[(MyPDFKitView *)myPDFKitView2 setFirstView: myPDFKitView];
+	[(MyPDFKitView *)myPDFKitView2 setFirstView: (MyPDFKitView *)myPDFKitView];
 	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
 	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
 	
 	
 	if (windowIsSplit) {
 		windowIsSplit = NO;
-		activeView = [myDocument mainPdfKitView];
+		activeView = myPDFKitView;
 		[(MyPDFKitView *)activeView resetSearchDelegate];
 	}
 	else {
 		windowIsSplit = YES;
-		activeView = [myDocument mainPdfKitView];
+		activeView = myPDFKitView;
 		}
-	[myDocument splitPDFKitView:windowIsSplit];
+	
+	if (windowIsSplit) {
+		theFrame = [myPDFKitView frame];
+		newSize.width = theFrame.size.width;
+		newSize.height = 100;
+		[myPDFKitView setFrameSize:newSize];
+		[myPDFKitView2 setFrameSize:newSize];
+		[pdfKitSplitView addSubview: myPDFKitView2];
+		[pdfKitSplitView adjustSubviews];
+		if ([myPDFKitView2 document] == nil) {
+			[[myPDFKitView document] retain];
+			[myPDFKitView2 setDocument:[myPDFKitView document]];
+		}
+	}
+	else
+		[myPDFKitView2 removeFromSuperview];
 }
 
+// Procedure called by menu item which splits both source and preview windows
 - (void) splitWindow: (id)sender
 {
 	[self splitPdfKitWindow: sender];
 }
 
-- (void) splitPreviewWindow: sender
+- (void) fixAfterRotation: (BOOL) clockwise
 {
-	[self splitPdfKitWindow: sender];
+	if (clockwise)
+		[(MyPDFKitView *)myPDFKitView rotateClockwisePrimary];
+	else
+		[(MyPDFKitView *)myPDFKitView rotateCounterclockwisePrimary];
+	[myPDFKitView layoutDocumentView];
+	[myPDFKitView2 layoutDocumentView];
 }
 
+// Among other times, this is called by TSDocument at nib initialization time
 - (void) setActiveView:(PDFView *)theView
 {
 	
@@ -631,7 +666,7 @@ extern NSPanel *pageNumberWindow;
 - (PDFView *)activeView;
 {
 	if (activeView == nil)
-		activeView = [myDocument mainPdfKitView];
+		activeView = myPDFKitView;
 	return activeView;
 }
 

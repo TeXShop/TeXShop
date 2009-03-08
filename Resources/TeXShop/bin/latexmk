@@ -34,6 +34,7 @@ if 0;
 # primary run.  Ensure fdb and c. is updated enough etc.
 # I may have it correct now: fdb_write in makeB
 # See also routine rdb_update_files_for_rule, and who calls it
+#          It appears to be unused.  What is rationale?
 
 # Apparently excess runs of latex after change in .tex file that entails 
 #   change in bibliography.  
@@ -148,8 +149,8 @@ if 0;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.03';
-$version_details = "$My_name, John Collins, 22 December 2008";
+$version_num = '4.04';
+$version_details = "$My_name, John Collins, 25 February 2009";
 
 
 use Config;
@@ -218,6 +219,28 @@ else {
 ##
 ##   Modification log for 24 Sep 2008 onwards in detail
 ##
+##     25 Feb 2009, John Collins  Ensure viewed file type is made
+##     24 Feb 2009, John Collins  V. 4.04 
+##                                Fix problems when using both latex and pdflatex
+##                                1. In fdb, keep primary rules that have been 
+##                                   run, even if they are not in use in 
+##                                   current invocation of latexmk.
+##                                2. But don't write primary rules if they have
+##                                   not been run (i.e., $run_time==0).
+##                                3. If $run_time==0 for an in-use primary
+##                                   rule, i.e., if the rule has not
+##                                   been run, then run it
+##                                   unconditionally.
+##                                4. But don't let this apply to other
+##                                   rules, since the time-stamp rule
+##                                   will normally have been adequate.
+##                                Improved diagnostics on reason for rerun.
+##                                Corrected classify_rules call in pvc.
+##                                In rdb_set_from_logB: when setting 
+##                                    subsidiary rules after parsing log
+##                                    file, this is now done only for the
+##                                    currently-being-applied primary rule,
+##                                    not for all primary rules.
 ##     22 Dec 2008, John Collins  V. 4.03
 ##     22 Dec 2008, John Collins  Fix possibility that unwrapping of lines 
 ##                                in log_file is done incorrectly
@@ -1052,8 +1075,7 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 # List of known rules.  Rule types: primary, 
 #     external (calls program), internal (calls routine), cusdep.
 
-%known_rules = ( 'latex'  => 'primary',  'pdflatex'  => 'primary', 
-              );
+%possible_primaries = ( 'latex'  => 'primary',  'pdflatex'  => 'primary' );
 %primaries = ();    # Hash of rules for primary part of make.  Keys are 
                     # currently 'latex', 'pdflatex' or both.  Value is
                     # currently irrelevant.  Use hash for ease of lookup
@@ -1072,7 +1094,7 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 %rule_db = ();      # Database of all rules:
                     # Hash: rulename -> [array of rule data]
                     # Rule data:
-                    #   0: [ cmd_type, ext_cmd, int_cmd, out_of_date-crit, 
+                    #   0: [ cmd_type, ext_cmd, int_cmd, test_kind, 
                     #       source, dest, base, out_of_date,
 		    #       out_of_date_user, time_of_last_run ]
                     # where 
@@ -1092,7 +1114,7 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 		    #       This variable intcmd is a reference to an array,  
                     #       $$intcmd[0] = internal routine
                     #       $$intcmd[1...] = its arguments (if any)
-                    #     out_of_date_crit specifies method of determining
+                    #     test_kind specifies method of determining
                     #       whether a file is out-of-date:
                     #         0 for never
                     #         1 for usual: whether there is a source
@@ -1495,6 +1517,14 @@ if ( $view eq "default" ) {
     if ( $pdf_mode ) { $view = "pdf"; }
 }
 
+# Make sure we make the kind of file we want to view:
+if ($view eq 'dvi') { $dvi_mode = 1; }
+if ($view eq 'ps') { $postscript_mode = 1; }
+if ( ($view eq 'pdf') && ($pdf_mode == 0) ) { 
+    $pdf_mode = 1; 
+}
+
+# Make sure that we make something if all requests are turned off
 if ( ! ( $dvi_mode || $pdf_mode || $postscript_mode || $printout_mode) ) {
     print "No specific requests made, so default to dvi by latex\n";
     $dvi_mode = 1;
@@ -1521,15 +1551,6 @@ if ( $preview_continuous_mode || $preview_mode ) { $one_time{'view'} = 1; }
 if ( length($dvi_filter) != 0 ) { $requested_filerules{'dvi_filter'} = 1; }
 if ( length($ps_filter) != 0 )  { $requested_filerules{'ps_filter'} = 1; }
 if ( $banner ) { $requested_filerules{'dvips'} = 1; }
-
-%possible_primaries = ();
-foreach (&rdb_possible_primaries) {
-    $possible_primaries{$_} = 1;
-}
-
-#print "POSSIBLE PRIMARIES: ";
-#foreach (keys %possible_primaries ) {print "$_, ";}
-#print "\n";
 
 
 if ( $pdf_mode == 2 ) {
@@ -1570,7 +1591,6 @@ foreach $filename ( @file_list )
     $failure = 0;        # Set nonzero to indicate failure at some point of 
                          # a make.  Use value as exit code if I exit.
     $failure_msg = '';   # Indicate reason for failure
-#?? Unneeded now:     $bibtex_mode = $save_bibtex_mode;
 
     if ( $do_cd ) {
        ($filename, $path) = fileparse( $filename );
@@ -2233,7 +2253,9 @@ sub make_preview_continuousB {
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
+    local @rules_never_run = ();
     local @rules_to_apply = ();
+
     local $failure = 0;
     local $runs = 0;
     local %rules_applied = ();
@@ -2361,11 +2383,11 @@ CHANGE:
            sleep($sleep_time);
            &rdb_clear_change_record;
            rdb_recurseA( [@targets], \&rdb_flag_changes_here );
-           if ( &rdb_count_changes > 0) { 
-               &rdb_diagnose_changes
-                   unless $silent;
-#??? 
-	       warn "$My_name: File(s) changed or not used in previous run(s).  Remake files.\n"; 
+           if ( &rdb_need_run ) { 
+  	       if (!$silent) {
+                   warn "$My_name: Need to remake files.\n";
+ 	           &rdb_diagnose_changes( '  ' );
+	       }
                last WAIT;
 	   }
         # Does this do this job????
@@ -3152,7 +3174,7 @@ CANDIDATE:
 
         if ( $misparse > 0 ) {
 	    print "$misparse\n";
-            print "Apparent input files appearently from misunderstood lines in .log file:\n";
+            print "Apparent input files apparently from misunderstood lines in .log file:\n";
             foreach ( @misparse ) { print "   $_\n"; }
         }
         print "Log file shows the following generated files: ";
@@ -3583,13 +3605,25 @@ sub rdb_write {
     &rdb_classify_rules( \%possible_primaries, keys %requested_filerules );
 
     print $out_handle "# Fdb version $fdb_ver\n";
-    my @rules = sort( 
-                  rdb_accessible( 
-                     uniq1( keys %known_rules, keys %current_primaries )));
+    my @rules = rdb_accessible( uniq1( keys %possible_primaries )  ) ;
+    # Separate call to sort.  Otherwise rdb_accessible seems to get wrong argument.
+    @rules = sort( @rules );
     rdb_for_some(
        \@rules,
-       sub { print $out_handle "[\"$rule\"] $$Prun_time \"$$Psource\" \"$$Pdest\" \"$$Pbase\" \n"; },
-       sub { print $out_handle "  \"$file\" $$Ptime $$Psize $$Pmd5 \"$$Pfrom_rule\"\n"; },
+       sub { 
+           # Omit data on a unused and never-run primary rule:
+	   if ( ($$Prun_time == 0) 
+                && exists( $possible_primaries{$rule} )
+                && ! exists( $current_primaries{$rule} )
+              )
+           { 
+               return; 
+           }
+           print $out_handle "[\"$rule\"] $$Prun_time \"$$Psource\" \"$$Pdest\" \"$$Pbase\" \n"; 
+           rdb_do_files(
+             sub { print $out_handle "  \"$file\" $$Ptime $$Psize $$Pmd5 \"$$Pfrom_rule\"\n"; }
+	   );
+       }
     );
     undef $out_handle;
     return 1;
@@ -3635,11 +3669,9 @@ sub rdb_set_from_logB {
                   if ($diagnostics);
             rdb_create_rule( $from_rule, 'external', $makeindex, '', 1, 
                              $idx_file, $ind_file, $ind_base, 1, 0);
-            foreach my $primary ( keys %primaries ) {
-                print "  ===Source file '$ind_file' for '$primary'\n"
+            print "  ===Source file '$ind_file' for '$rule'\n"
                   if ($diagnostics > -1);
-                rdb_ensure_file( $primary, $ind_file, $from_rule );
-	    }
+            rdb_ensure_file( $rule, $ind_file, $from_rule );
 	}
         if ( ! -e $ind_file ) { 
             # Failure was non-existence of makable file
@@ -3666,24 +3698,22 @@ sub rdb_set_from_logB {
                   if ($diagnostics);
                 rdb_ensure_file( $from_rule, $source );
 	    }
-            foreach my $primary ( keys %primaries ) {
-                print "  ===Source file '$bbl_file' for '$primary'\n"
+            print "  ===Source file '$bbl_file' for '$rule'\n"
                   if ($diagnostics);
-                rdb_ensure_file( $primary, $bbl_file, $from_rule );
-                if ( ! -e $bbl_file ) { 
-                    # Failure was non-existence of makable file
-                    # Leave failure issue to other rules.
-		    $failure = 0;
-		}
+            rdb_ensure_file( $rule, $bbl_file, $from_rule );
+            if ( ! -e $bbl_file ) { 
+                # Failure was non-existence of makable file
+                # Leave failure issue to other rules.
+               $failure = 0;
 	    }
 	}
     }
 
 NEW_SOURCE:
     foreach my $new_source (keys %dependents) {
-	foreach my $primary ( keys %primaries ) {
-            rdb_ensure_file( $primary, $new_source );
-	}
+        print "  ===Source file for rule '$rule': '$new_source'\n"
+	    if ($diagnostics);
+        rdb_ensure_file( $rule, $new_source );
     }
 
     my @more_sources = &rdb_set_dependentsA( $rule );
@@ -4015,29 +4045,7 @@ sub rdb_accessible {
 } #END rdb_accessible
 
 #************************************************************
-
-sub rdb_possible_primaries {
-    # Returns array of possible primaries
-    my @rules = ();
-    foreach my $rule ( keys %known_rules ) {
-        if ( $known_rules{$rule} eq 'primary') {
-	    push @rules, $rule;
-	}
-    }
-    return @rules;
-} #END rdb_possible_primaries
-
 #************************************************************
-#************************************************************
-#************************************************************
-
-# Routines for makes.  NEW VERSIONS ??
-
-#????????Debugging routines:
-sub R1 {print "===START $rule\n"}
-sub R2 {print "===END $rule\n"}
-sub F1 {print "   ---START $file\n"}
-sub F2 {print "   ---END $file\n"}
 #************************************************************
 
 sub rdb_makeB {
@@ -4192,6 +4200,7 @@ sub rdb_makeB {
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
+    local @rules_never_run = ();
     local @rules_to_apply = ();
 
     &rdb_classify_rules( \%possible_primaries, @requested_targets );
@@ -4254,7 +4263,10 @@ sub rdb_makeB {
 	continue {
             # Re-evaluate rule classification and accessibility,
             # but do not change primaries.
-            &rdb_classify_rules( \%current_primaries, @requested_targets );
+            # Problem is that %current_primaries gets altered
+            my %old_curr_prim = %current_primaries;
+            &rdb_classify_rules( \%possible_primaries, @requested_targets );
+            %current_primaries = %old_curr_prim;
             &rdb_make_links;
 	}
     }
@@ -4296,11 +4308,14 @@ sub rdb_makeB1 {
     if ($diagnostics) { print "  MakeB1 $rule\n"; }
     if ($failure & ! $force_mode) {return;}
     &rdb_clear_change_record;
-    &rdb_flag_changes_here;
-#    if ($diagnostics>-1) { print "     MakeB1.1 $rule $$Pout_of_date\n"; }
+    if ( ($$Prun_time == 0) && exists($possible_primaries{$rule}) ) {
+        push @rules_never_run, $rule;
+        $$Pout_of_date = 1;
+    }
+    else {
+        &rdb_flag_changes_here;
+    }
 
-    my $return = 0;   # Return code from called routine
-#??    print "makeB1: Trying '$rule' for '$$Pdest': ";
     if (!$$Pout_of_date) {
 #??	if ( ($$Pcmd_type eq 'primary') && (! $silent) ) {
 #            print "Rule '$rule' up to date\n";
@@ -4310,19 +4325,17 @@ sub rdb_makeB1 {
     if ($diagnostics) { print "     remake\n"; }
     if (!$silent) { 
         print "$My_name: applying rule '$rule'...\n"; 
-        &rdb_diagnose_changes( "Rule $rule: ");
+        &rdb_diagnose_changes( "Rule '$rule': ");
     }
-##????????????????????????????????????: variable rules_applied not used
     $rules_applied{$rule} = 1;
     $runs++;
-#??    print "$rule: $$Pcmd_type\n";
 
     # We are applying the rule, so its source file state for when it
     # was last made is as of now:
     # ??IS IT CORRECT TO DO NOTHING IN CURRENT VERSION?
 
     # The actual run
-    $return = 0;
+    my $return = 0;   # Return code from called routine
     # Rule may have been created since last run:
     if ( ! defined $pass{$rule} ) {$pass{$rule} = 0; }
     if ( $pass{$rule} ge $max_repeat ) {
@@ -4452,6 +4465,7 @@ sub rdb_classify_rules {
 	    foreach ( @one_time ) { print "    $_\n"; }
 	}
     } #end diagnostics
+
 } #END rdb_classify_rules
 
 #-------------------
@@ -4460,7 +4474,7 @@ sub rdb_classify1 {
     # Helper routine for rdb_classify_rules
     # Applied as rule_act1 in recursion over rules
     # Assumes rule context, and local variables from rdb_classify_rules
-#    print "=========== '$rule' $depth ========== \n";
+    #print "??======= '$rule' $depth $state ========== \n";
     push @classify_stack, [$state];
     if ( exists $possible_one_time{$rule} ) {
         # Normally, we will have already extracted the one_time rules,
@@ -4675,13 +4689,14 @@ sub rdb_primary_run {
 #************************************************************
 
 sub rdb_clear_change_record {
+    # Initialize diagnostics for reasons for running rule.
     @changed = ();
     @disappeared = ();
     @no_dest = ();
-    @rules_to_apply = ();
-#???????????????    $failure = 0;
-##????????????????????????????????????: variable rules_applied not used
-    $rules_applied = 0;
+    @rules_never_run = ();
+    @rules_to_apply = ();   # This is used in recursive application
+                            # of rdb_flag_changes_here, to list
+                            # rules that were out-of-date for some reason.
 } #END rdb_clear_change_record 
 
 #************************************************************
@@ -4767,9 +4782,9 @@ sub rdb_file_change1 {
 
 #************************************************************
 
-sub rdb_count_changes {
-    return $#changed + $#no_dest + $#rules_to_apply + 3;
-} #END rdb_count_changes
+sub rdb_need_run {
+    return ($#changed >= 0) || ($#no_dest >= 0) || ($#rules_to_apply >= 0);
+} #END rdb_need_run
 
 #************************************************************
 
@@ -4779,26 +4794,31 @@ sub rdb_diagnose_changes {
     # Precede the message by the optional heading, else by "$My_name: " 
     my $heading = defined($_[0]) ?   $_[0]  :  "$My_name: "; 
 
-    if ( &rdb_count_changes == 0 ) {
-	warn "${heading}No changes\n";
-	return; 
+    if ($#rules_never_run >= 0) {
+	warn "${heading}Rules & subrules not known to be previously run:\n";
+        foreach (@rules_never_run) { warn "   $_\n"; }
     }
-    warn "${heading}Changes:\n";
-    if ( $#changed >= 0 ) {
-	warn "   Changed files, or newly in use since previous run(s):\n";
-	foreach (uniqs(@changed)) { warn "      '$_'\n"; }
+    if ( ($#changed >= 0) || ($#disappeared >= 0) || ($#no_dest >= 0) ) {
+        warn "${heading}File changes, etc:\n";
+        if ( $#changed >= 0 ) {
+	    warn "   Changed files, or newly in use since previous run(s):\n";
+       	    foreach (uniqs(@changed)) { warn "      '$_'\n"; }
+        }
+        if ( $#disappeared >= 0 ) {
+	    warn "   No-longer-existing files:\n";
+	    foreach (uniqs(@disappeared)) { warn "      '$_'\n"; }
+        }
+        if ( $#no_dest >= 0 ) {
+	    warn "   Non-existent destination files:\n";
+	    foreach (uniqs(@no_dest)) { warn "      '$_'\n"; }
+        }
     }
-    if ( $#disappeared >= 0 ) {
-	warn "   No-longer-existing files:\n";
-	foreach (uniqs(@disappeared)) { warn "      '$_'\n"; }
+    elsif ($#rules_to_apply >=0) {
+         warn "${heading}The following rules & subrules became out-of-date:\n";
+         foreach (@rules_to_apply) { warn "      '$_'\n"; }
     }
-    if ( $#no_dest >= 0 ) {
-	warn "   Non-existent destination files:\n";
-	foreach (uniqs(@no_dest)) { warn "      '$_'\n"; }
-    }
-    if ( $#rules_to_apply >= 0 ) {
-	warn "   Rules to apply:\n";
-	foreach (uniqs(@rules_to_apply)) { warn "      '$_'\n"; }
+    else {
+	warn "${heading}No file changes\n";
     }
 }     #END rdb_diagnose_changes
 
@@ -4902,6 +4922,7 @@ sub rdb_recurseA {
 
     # This routine sets a context for anything recursive, with @heads,
     # %visited  and $depth being set as local variables.
+
     local @heads = ();
     my $rules = shift;
 

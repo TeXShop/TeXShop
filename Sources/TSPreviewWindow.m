@@ -72,7 +72,8 @@ extern NSPanel *pageNumberWindow;
 	NSRect	newFrame;
 	
 	newFrame = defaultFrame;
-	newFrame.origin.x = 200;
+	newFrame.origin.x = newFrame.origin.x + 200;
+	
 	newFrame.size.width = newFrame.size.width - 200;
 	return newFrame;
 }
@@ -343,21 +344,24 @@ extern NSPanel *pageNumberWindow;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+	
 	if ([myDocument fromKit] && ([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		if ([[theEvent characters] characterAtIndex:0] == '[') {
-			[[myDocument pdfKitView] goBack: self];
+			// [[myDocument pdfKitView] goBack: self];
+			[activeView zoomOut:nil];
 			return;
 		} 
 		
 		if ([[theEvent characters] characterAtIndex:0] == ']') {
-			[[myDocument pdfKitView] goForward: self];
+			// [[myDocument pdfKitView] goForward: self];
+			[activeView zoomIn:nil];
 			return;
 		} 
 	
 	}
 
 	if (![myDocument fromKit]) {
-
+		
 		unichar	theChar;
 
 		if ([theEvent type] == NSKeyDown) {
@@ -558,6 +562,7 @@ extern NSPanel *pageNumberWindow;
 
 - (void)zoomOut: (id)sender
 {
+	
 	if ([myDocument fromKit])
 		[[myDocument pdfKitView] zoomOut: sender];
 }
@@ -628,7 +633,7 @@ extern NSPanel *pageNumberWindow;
 		[pdfKitSplitView addSubview: myPDFKitView2];
 		[pdfKitSplitView adjustSubviews];
 		if ([myPDFKitView2 document] == nil) {
-			[[myPDFKitView document] retain];
+			// [[myPDFKitView document] retain];
 			[myPDFKitView2 setDocument:[myPDFKitView document]];
 		}
 	}

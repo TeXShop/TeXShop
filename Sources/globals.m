@@ -210,6 +210,7 @@ NSDictionary		*g_autocompletionDictionary;
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
+BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
 
 // command completion
 NSString *g_commandCompletionChar = nil;

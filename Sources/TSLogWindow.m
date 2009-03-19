@@ -47,21 +47,18 @@
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
-	NSRect	newFrame, oldFrame;
-	float	width, displacement;
+	NSRect	oldFrame;
+	NSRect	newFrame;
+
 	
-	width = defaultFrame.size.width;
 	oldFrame = [window frame];
 	newFrame = defaultFrame;
-	newFrame.origin.x = oldFrame.origin.x;
-	newFrame.size.width = width - oldFrame.origin.x;
-	if (newFrame.size.width < 800) {
-		displacement = 800 - newFrame.size.width;
-		newFrame.size.width = newFrame.size.width + displacement;
-		newFrame.origin.x = newFrame.origin.x - displacement; 
-		}
-	if (newFrame.size.width > 1300)
-		newFrame.size.width = 1300;
+	
+	if (defaultFrame.size.width > 1024)
+		newFrame.size.width = 1024;
+	
+	newFrame.origin = oldFrame.origin;
+	
 	return newFrame;
 }
 

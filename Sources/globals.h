@@ -411,6 +411,7 @@ extern int					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
+extern BOOL				fromMenu;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

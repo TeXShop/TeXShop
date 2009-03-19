@@ -70,13 +70,13 @@
 						[obj doUser:whichEngine];
 					} else {
 						switch (theEngine) {
-							case TexEngine: [obj doTex:nil]; break;
-							case LatexEngine: [obj doLatex:nil]; break;
-							case ContextEngine: [obj doContext:nil]; break;
-							case MetapostEngine: [obj doMetapost:nil]; break;
+							case TexEngine: [obj doTex1:nil]; break;
+							case LatexEngine: [obj doLatex1:nil]; break;
+							case ContextEngine: [obj doContext1:nil]; break;
+							case MetapostEngine: [obj doMetapost1:nil]; break;
 							case BibtexEngine: [obj doBibtex:nil]; break;
 							case IndexEngine: [obj doIndex:nil]; break;
-							case MetafontEngine: [obj doMetaFont:nil]; break;
+							case MetafontEngine: [obj doMetaFont1:nil]; break;
 							default: NSBeginAlertSheet(NSLocalizedString(@"Typesetting engine cannot be found.", @"Typesetting engine cannot be found."),
 													   nil,nil,nil,[textView window],nil,nil,nil,nil,
 													   @"Path Name: %@",nameString);
@@ -109,13 +109,13 @@
 				[obj doUser:whichEngine];
 			} else {
 				switch (theEngine) {
-					case TexEngine: [obj doTex:nil]; break;
-					case LatexEngine: [obj doLatex:nil]; break;
-					case ContextEngine: [obj doContext:nil]; break;
-					case MetapostEngine: [obj doMetapost:nil]; break;
+					case TexEngine: [obj doTex1:nil]; break;
+					case LatexEngine: [obj doLatex1:nil]; break;
+					case ContextEngine: [obj doContext1:nil]; break;
+					case MetapostEngine: [obj doMetapost1:nil]; break;
 					case BibtexEngine: [obj doBibtex:nil]; break;
 					case IndexEngine: [obj doIndex:nil]; break;
-					case MetafontEngine: [obj doMetaFont:nil]; break;
+					case MetafontEngine: [obj doMetaFont1:nil]; break;
 					default: NSBeginAlertSheet(NSLocalizedString(@"Typesetting engine cannot be found.", @"Typesetting engine cannot be found."),
 											   nil,nil,nil,[textView window],nil,nil,nil,nil,
 											   @"Path Name: %@",nameString);

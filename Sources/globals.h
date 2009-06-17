@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: globals.h 134 2006-05-21 11:53:32Z fingolfin $
+ * $Id: globals.h 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Created by dirk on Thu Dec 07 2000.
  *
@@ -290,6 +290,9 @@ extern NSString *commandblueKey;
 extern NSString *markerredKey;
 extern NSString *markergreenKey;
 extern NSString *markerblueKey;
+extern NSString *indexredKey;
+extern NSString *indexgreenKey;
+extern NSString *indexblueKey;
 
 extern NSString *background_RKey;
 extern NSString *background_GKey;
@@ -338,10 +341,13 @@ extern NSString *ReleaseDocumentClassesKey;
 extern NSString *RedConsoleAfterErrorKey;
 extern NSString *PreviewDrawerOpenKey;
 extern NSString *ConTeXtTagsKey;
+extern NSString *RevisePathKey;
 // end mitsu 1.29
 
 
 /*" Paths "*/
+extern NSString *DesktopPath;
+extern NSString *MoviesPath;
 extern NSString *TeXShopPath;
 extern NSString *TexTemplatePath;
 extern NSString *TexTemplateMorePath;
@@ -355,7 +361,9 @@ extern NSString *TempOutputKey;
 extern NSString *AutoCompletionPath;
 extern NSString *MenuShortcutsPath;
 extern NSString *MacrosPath;
+extern NSString *CommandCompletionFolderPath;
 extern NSString *CommandCompletionPath; // mitsu 1.29 (P)
+extern NSString *DraggedImageFolderPath;
 extern NSString *DraggedImagePath; // mitsu 1.29 drag & drop
 
 

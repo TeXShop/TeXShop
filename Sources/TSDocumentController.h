@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocumentController.h 108 2006-02-10 13:50:25Z fingolfin $
+ * $Id: TSDocumentController.h 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Created by Richard Koch on Sun Feb 16 2003.
  *
@@ -29,9 +29,12 @@
 	NSView				*encodingView;
 	NSPopUpButton		*encodingMenu;
 	NSStringEncoding	_encoding;
+	BOOL				doList;
 }
 - (IBAction)openDocument:(id)sender;
 - (void)initializeEncoding;
 - (int)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions;
 - (NSStringEncoding)encoding;
+- (void)noteNewRecentDocument:(NSDocument *)aDocument;
+- (void)listDocument:(BOOL)value;
 @end

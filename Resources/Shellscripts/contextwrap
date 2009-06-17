@@ -11,33 +11,8 @@ endif
 
 set filename = "$argv[3]"
 
-if (-x /usr/bin/ruby) then
-
-	if (-e /usr/local/teTeX/share/texmf.local/scripts/context/ruby/texmfstart.rb) then
-		if ("$argv[2]" == "YES") then
-			/usr/bin/ruby /usr/local/teTeX/share/texmf.local/scripts/context/ruby/texmfstart.rb texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
-			exit
-		else
-			/usr/bin/ruby /usr/local/teTeX/share/texmf.local/scripts/context/ruby/texmfstart.rb texexec --pdf "${filename}"
-			exit
-		endif
-	endif
-	
- 	if (-e /usr/local/teTeX/share/texmf.tetex/scripts/context/ruby/texmfstart.rb) then
-		if ("$argv[2]" == "YES") then
-			/usr/bin/ruby /usr/local/teTeX/share/texmf.tetex/scripts/context/ruby/texmfstart.rb texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
-			exit
-		else
-			/usr/bin/ruby /usr/local/teTeX/share/texmf.tetex/scripts/context/ruby/texmfstart.rb texexec --pdf "${filename}"
-			exit
-		endif
-	endif
-
+if ("$argv[2]" == "YES") then
+	texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
 else
-	
-	if ("$argv[2]" == "YES") then
-		texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
-	else
-		texexec --pdf "${filename}"
-	endif
+	texexec --pdf "${filename}"
 endif

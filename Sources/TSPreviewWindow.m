@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSPreviewWindow.m 139 2006-05-21 13:21:25Z fingolfin $
+ * $Id: TSPreviewWindow.m 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Originally part of TSDocument. Broken out by dirk on Tue Jan 09 2001.
  *
@@ -502,6 +502,29 @@ extern NSPanel *pageNumberWindow;
 		[[myDocument pdfKitView] changePDFViewSize: sender];
 	else
 		[[myDocument pdfView] changePDFViewSize: sender];
+}
+
+- (void)zoomIn: (id)sender
+{
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] zoomIn: sender];
+}
+
+- (void)zoomOut: (id)sender
+{
+	if ([myDocument fromKit])
+		[[myDocument pdfKitView] zoomOut: sender];
+}
+
+- (void)fullscreen: (id)sender
+{
+	if ([myDocument fromKit])
+		[myDocument fullscreen: sender];
+}
+
+- (void) savePreviewPosition: sender
+{
+	[myDocument savePreviewPosition];
 }
 
 - (void)copy: (id)sender

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocument-RootFile.m 197 2006-05-29 21:19:33Z fingolfin $
+ * $Id: TSDocument-RootFile.m 260 2007-08-08 22:51:09Z richard_koch $
  *
  */
 
@@ -264,14 +264,14 @@
 	NSEnumerator *en;
 	id obj;
 	unsigned numFiles,i;
-
+	
 	if (![SUD boolForKey:SaveRelatedKey])
 		return;
 
 	// load home path and jobname
 	home = [[self fileName] stringByDeletingLastPathComponent];
 	jobname = [[[self fileName] lastPathComponent] stringByDeletingPathExtension];
-
+	
 	// create list of linked files from \input commands
 	aRange = NSMakeRange(0, [theSource length]);
 	slist = [[NSMutableArray alloc] init];
@@ -292,6 +292,7 @@
 		aRange.location += 6;
 		aRange.length = [theSource length] - aRange.location;
 	}
+	
 	numFiles = [slist count];
 
 	if (numFiles==0) {
@@ -343,7 +344,7 @@
 		if (firstChar != BACKSLASH)
 			return nil;
 	}
-
+	
 	// check if next character is { or ' '
 	firstChar = [fileLine characterAtIndex:i];
 
@@ -359,6 +360,8 @@
 	} else if (firstChar==' ') {	// argument after space(s)
 									// skip any number of spaces
 		while (firstChar==' ') {
+			// Koch, Aug 7, 2007, the next line was missing and caused a hang
+			i++;
 			if ( i>= [fileLine length])
 				return nil;
 			firstChar = [fileLine characterAtIndex:i];

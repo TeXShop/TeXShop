@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSLaTeXPanelController.m 108 2006-02-10 13:50:25Z fingolfin $
+ * $Id: TSLaTeXPanelController.m 254 2007-06-03 21:09:25Z fingolfin $
  *
  * Created by lenglin on Sun Aug 26 2001.
  *
@@ -248,8 +248,9 @@ static id _sharedInstance = nil;
 - (void)panelWillClose:(NSNotification *)notification
 {
 	shown = NO;
-	[[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Close LaTeX Panel", @"Close LaTeX Panel")]
-		setTitle:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")];
+	NSMenuItem *myItem = [[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Close LaTeX Panel", @"Close LaTeX Panel")];
+	[myItem  setTitle:NSLocalizedString(@"LaTeX Panel...", @"LaTeX Panel...")];
+	[myItem setTag:0];
 }
 
 - (void)panelDidMove:(NSNotification *)notification

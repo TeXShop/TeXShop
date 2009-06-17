@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocument-Jobs.m 197 2006-05-29 21:19:33Z fingolfin $
+ * $Id: TSDocument-Jobs.m 254 2007-06-03 21:09:25Z fingolfin $
  *
  */
 
@@ -499,7 +499,10 @@
 	linesTested = 0;
 	myRange.location = 0;
 	myRange.length = 1;
-
+	
+	
+if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program for BibTeX and MakeIndex
+	
 	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
 		[theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
 		myRange.location = end;
@@ -635,6 +638,8 @@
 			}
 		}
 	}
+	
+	}
 
 	// End Old Stuff
 
@@ -697,8 +702,8 @@
 	if (filename == nil || [filename length] == 0 || isExecutable == FALSE) {
 		NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
-						  NSLocalizedString(@"%@ does not exist. Perhaps teTeX was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install teTeX. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution.",
-											@"%@ does not exist. Perhaps teTeX was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install teTeX. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution."),
+						  NSLocalizedString(@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution.",
+											@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution."),
 						  filename);
 		return FALSE;
 	}

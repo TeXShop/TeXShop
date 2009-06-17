@@ -1,6 +1,6 @@
 /*
  * TeXShop - TeX editor for Mac OS
- * Copyright (C) 2000-2005 Richard Koch
+ * Copyright (C) 2000-2007 Richard Koch
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSEncodingSupport.m 138 2006-05-21 12:17:27Z fingolfin $
+ * $Id: TSEncodingSupport.m 254 2007-06-03 21:09:25Z fingolfin $
  *
  * Created by Mitsuhiro Shishikura on Fri Dec 13 2002.
  *
@@ -246,7 +246,9 @@ static TSEncoding _availableEncodings[] = {
 
 		if ([currentEncoding isEqualToString:@"DOSJapanese"] ||
 				[currentEncoding isEqualToString:@"EUC_JP"] ||
-				[currentEncoding isEqualToString:@"JISJapanese"]) {
+				[currentEncoding isEqualToString:@"JISJapanese"] ||
+				([currentEncoding isEqualToString:@"UTF-8 Unicode"] && [SUD boolForKey:ptexUtfOutputEnabledKey]) )
+		{
 			g_shouldFilter = kOtherJapaneseFilterMode;
 			// set up menu item
 			if (editMenu) {
@@ -289,7 +291,8 @@ static TSEncoding _availableEncodings[] = {
 		theKey = @"ConvertToBackslash";
 	else if ([currentEncoding isEqualToString:@"DOSJapanese"] ||
 		[currentEncoding isEqualToString:@"EUC_JP"] ||
-		[currentEncoding isEqualToString:@"JISJapanese"])
+		[currentEncoding isEqualToString:@"JISJapanese"] ||
+		([currentEncoding isEqualToString:@"UTF-8 Unicode"] && [SUD boolForKey:ptexUtfOutputEnabledKey]) )
 		theKey = @"ConvertToYen";
 	else
 		return;
@@ -367,16 +370,8 @@ static TSEncoding _availableEncodings[] = {
 	NSString *currentEncoding;
 	currentEncoding = [self keyForStringEncoding:enc];
 
-	if (([currentEncoding isEqualToString:@"MacJapanese"] ||
-		 [currentEncoding isEqualToString:@"DOSJapanese"] ||
-		 [currentEncoding isEqualToString:@"JISJapanese"] ||
-		 [currentEncoding isEqualToString:@"EUC_JP"] ) &&
-		![dataString canBeConvertedToEncoding:
-			CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)]) {
-		return YES;
-	} else if ([currentEncoding isEqualToString:@"SJIS_X0213"] &&
-		![dataString canBeConvertedToEncoding:
-			CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingShiftJIS_X0213_00)]) {
+	if( ![dataString canBeConvertedToEncoding:
+			CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)] ) {
 		return YES;
 	} else {
 		return NO;
@@ -390,14 +385,7 @@ static TSEncoding _availableEncodings[] = {
 	NSRange charRange, aCIDRange;
 	NSString *subString;
 	NSGlyphInfo *aGlyph;
-	NSStringEncoding checkEncoding;
 	unsigned startl, endl, end;
-
-	if ([[self keyForStringEncoding:enc] isEqualToString:@"SJIS_X0213"]) {
-		checkEncoding = enc;
-	} else {
-		checkEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP);
-	}
 
 	charRange = NSMakeRange(0,1);
 	endl = 0;
@@ -411,41 +399,18 @@ static TSEncoding _availableEncodings[] = {
 		//        NSLog( @"%d %d", charRange.length, charRange.location);
 		subString = [dataString substringWithRange: charRange];
 
-		if (![subString canBeConvertedToEncoding: checkEncoding]) {
+		if (![subString canBeConvertedToEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)]) {
 			aGlyph = [[dataView textStorage] attribute:NSGlyphInfoAttributeName
 											   atIndex:charRange.location effectiveRange:&aCIDRange];
 			if (aGlyph) {
-				// from rtf2tex (1.35)
-				/*                switch([aGlyph characterCollection]){
-				case NSAdobeCNS1CharacterCollection:
-					utfString = [NSMutableString stringWithFormat:@"%cCIDC{%d}",
-						g_texChar, [aGlyph characterIdentifier]];
-					break;
-				case NSAdobeGB1CharacterCollection:
-					utfString = [NSMutableString stringWithFormat:@"%cCIDT{%d}",
-						g_texChar, [aGlyph characterIdentifier]];
-					break;
-				case NSAdobeKorea1CharacterCollection:
-					utfString = [NSMutableString stringWithFormat:@"%cCIDK{%d}",
-						g_texChar, [aGlyph characterIdentifier]];
-					break;
-				case NSAdobeJapan1CharacterCollection:
-				case NSAdobeJapan2CharacterCollection:*/
 				utfString = [NSMutableString stringWithFormat:@"%CCID{%d}",
 					g_texChar, [aGlyph characterIdentifier]];
-				/*                    break;
-				case NSIdentityMappingCharacterCollection:
-				default:
-					utfString = [NSMutableString stringWithFormat:@"?"];
-					break;
-				}*/
 			} else if (charRange.length > 1) {
 				NSLayoutManager *aLayout = [dataView layoutManager];
 				utfString = [NSMutableString stringWithFormat:@"%CCID{%d}", g_texChar,
 					[aLayout glyphAtIndex:charRange.location]];
 				// 0x2014,0x2015 fix (reported by Kino-san)
-			} else if (![[self keyForStringEncoding:enc] isEqualToString:@"SJIS_X0213"] &&
-					   [subString characterAtIndex: 0] == 0x2015) {
+			} else if ( [subString characterAtIndex: 0] == 0x2015) {
 				utfString = [NSMutableString stringWithFormat:@"%C", 0x2014];
 			} else {
 				utfString = [NSMutableString stringWithFormat:@"%CUTF{%04X}",

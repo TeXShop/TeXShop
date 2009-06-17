@@ -16,11 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: MyPDFKitView.m 204 2006-05-30 07:31:21Z fingolfin $
+ * $Id: MyPDFKitView.m 261 2007-08-09 20:10:11Z richard_koch $
  *
  * Parts of this code are taken from Apple's example PDFKitViewer.
  *
  */
+ 
+ // WARNING --------------------------------------------
+ // In Leopard, particularly when using the new Image Resolution ability, 
+ // NSWindow's cacheImageInRect, restoreCachedImage, and discardCachedImage
+ // do not work. Engineers at WWDC recommended better methods of rubber banding.
+ // 
+ // The code below is messy because the old cacheImage mechanism is present but
+ // commented out. It has been replaced by equivalent methods which work on Leopard
+ // and also on older operating systems.
+ // Eventually I'll clean up these routines, but for the moment I thought it
+ // best to leave the old code in place
+ // -----------------------------------------------------
+
+
 
 #import "MyPDFKitView.h"
 #import "MyPDFView.h"
@@ -46,6 +60,13 @@
 
 	[super dealloc];
 }
+
+/*
+- (void)scheduleAddingToolips
+{
+}
+*/
+
 
 
 - (void) initializeDisplay
@@ -480,12 +501,36 @@
 	return magsize;
 }
 
+- (void)zoomIn: sender
+{
+	int	scale;
+	
+	scale = [myScale intValue];
+	scale = scale + 10;
+	if (scale > 1000)
+		scale = 1000;
+	[myScale setIntValue: scale];
+	[self changeScale: self];
+}
+
+- (void)zoomOut: sender
+{
+	int	scale;
+	
+	scale = [myScale intValue];
+	scale = scale - 10;
+	if (scale< 20)
+		scale = 20;
+	[myScale setIntValue: scale];
+	[self changeScale: self];
+}
+
 
 - (void) changeScale: sender
 {
 	int		scale;
 	double	magSize;
-
+	
 	[self cleanupMarquee: YES];
 
 	if (sender == myScale1)
@@ -503,7 +548,8 @@
 		[myScale1 setIntValue: scale];
 		[myScale display];
 		}
-	[[self window] makeFirstResponder: myScale];
+	if ((sender == myScale) || (sender == myScale1))
+		[[self window] makeFirstResponder: myScale];
 	[myStepper setIntValue: scale];
 	[myStepper1 setIntValue: scale];
 	magSize = [self magnification];
@@ -640,7 +686,7 @@
 		{
 			[selRectTimer invalidate]; // this will release the timer
 			selRectTimer = nil;
-			[[self window] discardCachedImage];
+			rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
 		}
 */
 	}
@@ -1483,7 +1529,7 @@
 	startPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
 	[NSEvent startPeriodicEventsAfterDelay: 0 withPeriod: 0.2];
 	[self cleanupMarquee: YES];
-	[[self window] discardCachedImage];
+	rect = NSMakeRect(0, 0, 1, 1); //[[self window] discardCachedImage];
 
 #ifndef DO_NOT_SHOW_SELECTION_SIZE
 	// create a small window displaying the size of selection
@@ -1507,7 +1553,7 @@
 			[theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic)
 		{
 			// restore the cached image in order to clear the rect
-			[[self window] restoreCachedImage];
+			[self updateBackground: rect]; //[[self window] restoreCachedImage];
 			[[self window] flushWindow];
 			// get Mouse location and check if it is with the view's rect
 			if (!([theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic))
@@ -1556,7 +1602,8 @@
 			// do not use selectedRect = NSIntersectionRect(selectedRect, [self bounds]);
 			selRectWindow = [[self documentView] convertRect: selectedRect toView: nil];
 			// cache the window image
-			[[self window] cacheImageInRect:NSInsetRect(selRectWindow, -2, -2)];
+			// [[self window] cacheImageInRect:NSInsetRect(selRectWindow, -2, -2)];
+			rect = [self convertRect: NSInsetRect(selRectWindow, -2, -2) fromView: nil];
 			// draw rect frame
 			[path removeAllPoints]; // reuse path
 			// in order to draw a clear frame we draw an adjusted rect in clip view
@@ -1637,9 +1684,9 @@
 	else
 	{
 		selRectTimer = nil;
-		[[self window] restoreCachedImage];
+		[self updateBackground: rect]; //[[self window] restoreCachedImage];
 		[[self window] flushWindow];
-		[[self window] discardCachedImage];
+		rect = NSMakeRect(0, 0, 1, 1); //[[self window] discardCachedImage];
 	}
 	[self flagsChanged: theEvent]; // update cursor
 #ifndef DO_NOT_SHOW_SELECTION_SIZE
@@ -1668,10 +1715,11 @@
 
 	[path setLineWidth: 0.01];
 	[self cleanupMarquee: YES];
-	[[self window] discardCachedImage];
+	rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
 
 		// restore the cached image in order to clear the rect
-		[[self window] restoreCachedImage];
+		[self updateBackground: rect]; //[[self window] restoreCachedImage];
+
 
 		selectedRect = [self frame];
 		// FIX THIS: KOCH
@@ -1679,7 +1727,9 @@
 		//selectedRect.size.height = totalHeight;
 		selRectWindow = [self convertRect: selectedRect toView: nil];
 		// cache the window image
-		[[self window] cacheImageInRect:NSInsetRect(selRectWindow, -2, -2)];
+		// [[self window] cacheImageInRect:NSInsetRect(selRectWindow, -2, -2)];
+		rect = [self convertRect: NSInsetRect(selRectWindow, -2, -2) fromView: nil];
+
 		// draw rect frame
 		[path removeAllPoints]; // reuse path
 		// in order to draw a clear frame we draw an adjusted rect in clip view
@@ -1782,16 +1832,16 @@
 	{
 		NSRect visRect = [[self documentView] visibleRect];
 		// if (NSEqualRects(visRect, oldVisibleRect))
-		//	[[self window] restoreCachedImage];
+		//	[self updateBackground: rect]; // [[self window] restoreCachedImage];
 				// change by mitsu to cleanup marquee immediately
 				if (NSEqualRects(visRect, oldVisibleRect))
 		{
-			[[self window] restoreCachedImage];
+			[self updateBackground: rect]; //[[self window] restoreCachedImage];
 			[[self window] flushWindow];
 		}
 		else // the view was moved--do not use the cached image
 		{
-			[[self window] discardCachedImage];
+			rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
 			tempRect =  [self convertRect: NSInsetRect(
 				NSIntegralRect([[self documentView] convertRect: selectedRect toView: nil]), -2, -2)
 				fromView: nil];
@@ -1809,10 +1859,14 @@
 // recache the image around selected rectangle for quicker response
 - (void)recacheMarquee
 {
+
+	NSRect	theRect;
+	
 	if (selRectTimer)
 	{
-		[[self window] cacheImageInRect:
-					NSInsetRect([[self documentView] convertRect: selectedRect toView: nil], -2, -2)];
+		theRect = NSInsetRect([[self documentView] convertRect: selectedRect toView: nil], -2, -2);
+		// [[self window] cacheImageInRect: theRect];
+		rect = [self convertRect: theRect fromView: nil];
 		oldVisibleRect = [self visibleRect];
 	}
 }
@@ -1994,19 +2048,43 @@
 		//}
 		//else // probably one should use [NSPrintOperation PDFOperationWithView:insideRect:toData:]
 		//	[NSException raise: @"cannot handle rotated view" format: @""];
+		
+		// -----------------------------------------------------------------
+		// Richard Koch: August 9, 2007
+		// The code below works around a Leopard bug
+		// The following lines fail in Leopard at the final line
+		//      oldBackColor = [self backgroundColor]
+		//      [self setBackgroundColor: transparentColor];
+		//      data = [self dataWithPDFInsideRect: newRect];
+		//		[self setBackgroundColor: oldBackColor]
+		// However, this problem goes away if we do not call dataWithPDFInsideRect
+		// Apparently this line of code destroys oldBackColor
+		// To work around this, we must decompose oldBackColor and then reconstruct it
 
-		oldBackColor = [self backgroundColor];
-		backColor = [NSColor colorWithCalibratedRed: 1
-		green: 0 blue: 0
-		alpha: 0];
+		// oldBackColor = [self backgroundColor];
+		oldBackColor = [[self backgroundColor] colorUsingColorSpaceName:NSCalibratedRGBColorSpace]; 
+		float backRedColor, backGreenColor, backBlueColor, backAlphaColor;
+		backRedColor = [oldBackColor redComponent];
+		backGreenColor = [oldBackColor greenComponent];
+		backBlueColor = [oldBackColor blueComponent];
+		backAlphaColor = [oldBackColor alphaComponent];
+		
+		backColor = [NSColor colorWithCalibratedRed: 1.0
+		green: 0.0 blue: 0.0
+		alpha: 0.0];
 		[self setBackgroundColor: backColor];
 
 		if (type == IMAGE_TYPE_PDF)
 			data = [self dataWithPDFInsideRect: newRect];
 		else // IMAGE_TYPE_EPS
 			data = [self dataWithEPSInsideRect: newRect];
-
-		[self setBackgroundColor: oldBackColor];
+			
+		NSColor *olderBackColor = [NSColor colorWithCalibratedRed: backRedColor green: backGreenColor blue: backBlueColor alpha: backAlphaColor];
+		[self setBackgroundColor: olderBackColor];
+		// [self setBackgroundColor: oldBackColor];
+		
+		// end of workaround
+		// --------------------------------------------------------------
 
 	}
 	NS_HANDLER
@@ -3250,6 +3328,15 @@
 
 #pragma mark =====magnifying glass=====
 
+// WARNING: Modified Version
+
+- (void)updateBackground: (NSRect)aRect
+{
+	NSRect theRect = NSIntersectionRect(aRect, [self visibleRect]);
+	[self displayRect: theRect];
+}
+
+
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (int)level
 {
 	NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
@@ -3267,10 +3354,16 @@
 	originalLevel = level+[theEvent clickCount];
 	
 	//[self cleanupMarquee: NO];
-	[[self window] discardCachedImage]; // make sure not use the cached image
+	rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage]; // make sure not use the cached image
+	
+	[[self window] disableFlushWindow];
 	
 	do {
+	
 		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+		
+			// [[self window] disableFlushWindow];
+
 			// set up the size and magScale
 			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
 				currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
@@ -3281,8 +3374,9 @@
 					magWidth = 380; magHeight = 250;
 					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
 				} else { // currentLevel >= 3 // need to cache the image
-					[[self window] restoreCachedImage];
-					[[self window] cacheImageInRect:[self convertRect:[self visibleRect] toView: nil]];
+					[self updateBackground: rect]; // [[self window] restoreCachedImage];
+					// [[self window] cacheImageInRect:[self convertRect:[self visibleRect] toView: nil]];
+					rect = [self visibleRect];
 				}
 				if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
 					if ([theEvent modifierFlags] & NSCommandKeyMask)
@@ -3316,15 +3410,18 @@
 				// define rect for magnification in window coordinate
 				if (currentLevel >= 3) { // mitsu 1.29 (S5) set magRectWindow here
 					magRectWindow = [self convertRect:[self visibleRect] toView:nil];
+					rect = [self visibleRect];
 				} else { // currentLevel <= 2
 					magRectWindow = NSMakeRect(mouseLocWindow.x-magOffsetX, mouseLocWindow.y-magOffsetY,
 											   magWidth, magHeight);
 					// restore the cached image in order to clear the rect
-					[[self window] restoreCachedImage];
-					[[self window] cacheImageInRect:
-						NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2),
-										   [[self superview] convertRect:[[self superview] bounds]
-																  toView:nil])]; // mitsu 1.29b
+					[self updateBackground:rect]; // [[self window] restoreCachedImage];
+					// [[self window] cacheImageInRect:
+					//	NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2),
+					//					   [[self superview] convertRect:[[self superview] bounds]
+					//
+					rect = NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2), [[self superview] convertRect:[[self superview] bounds]  toView:nil]); // mitsu 1.29b
+					rect = [self convertRect: rect fromView: nil];
 				}
 				// draw marquee
 				if (selRectTimer)
@@ -3350,15 +3447,21 @@
 					cursorVisible = YES;
 				}
 				// restore the cached image in order to clear the rect
-				[[self window] restoreCachedImage];
+				// [self updateBackground: rect]; // [[self window] restoreCachedImage];
+				[self updateBackground:rect];
 				// autoscroll
 				if (!([theEvent type]==NSFlagsChanged))
 					[self autoscroll: theEvent];
 				if (currentLevel >= 3)
-					[[self window] cacheImageInRect:magRectWindow];
+					; // [[self window] cacheImageInRect:magRectWindow];
 				else
-					[[self window] discardCachedImage];
+					rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
 			}
+			
+		[[self window] enableFlushWindow];
+		[[self window] flushWindow];
+		[[self window] disableFlushWindow];
+		
 		} else if ([theEvent type] == NSLeftMouseUp) {
 			break;
 		}
@@ -3366,8 +3469,10 @@
 			NSLeftMouseDraggedMask | NSFlagsChangedMask];
 	} while (YES);
 	
-	[[self window] restoreCachedImage];
-	[[self window] flushWindow];
+	[[self window] enableFlushWindow];
+	
+	[self updateBackground:rect]; // [[self window] restoreCachedImage];
+	// [[self window] flushWindow];
 	[NSCursor unhide];
 	[[self documentView] setPostsBoundsChangedNotifications: postNote];
 	[self flagsChanged: theEvent]; // update cursor

@@ -11,12 +11,18 @@
 <BODY>
 <div id="content_border">
 
+<!-- 
 <p>
-Claus Gerhardt による AppleScript 「pdflatexc」を使って、 AppleScript から UNIX のシェルコマンドを呼び出す原理を例示してみましょう。このシェルスクリプト自体は大しておもしろくありません ； teTeX のバイナリの場所を $PATH 変数に加え、 pdflatex を呼び出してタイプセットを行なっています。
+Claus Gerhardt による AppleScript 「pdflatexc」を使って、AppleScript から UNIX のシェルコマンドを呼び出す原理を例示してみましょう。このシェルスクリプト自体は大しておもしろくありません ； teTeX のバイナリの場所を $PATH 変数に加え、pdflatex を呼び出してタイプセットを行なっています。
 </p>
+ -->
 
 <p>
-シェルスクリプトそのものは、 TeXShop には依存していませんし、 pdflatexc を含むディレクトリがバイナリの検索パスにあれば「pdflatexc myfile.tex」と打ち込むことで Terminal からも実行できます。これがそのシェルスクリプトです：
+
+</p>
+Claus Gerhardt さんによる AppleScript 「pdflatexc」を使って、AppleScript から UNIX のシェルコマンドを呼び出す原理を例示してみましょう。このシェルスクリプト自体は大しておもしろくありません ； teTeX のバイナリの場所を $PATH 変数に加え、pdflatex を呼び出してタイプセットを行なっています。
+<p>
+シェルスクリプトそのものは、TeXShop には依存していませんし、pdflatexc を含むディレクトリがバイナリの検索パスにあれば「pdflatexc myfile.tex」と打ち込むことで Terminal からも実行できます。これがそのシェルスクリプトです：
 </p>
 
 <tt>
@@ -74,8 +80,14 @@ Claus Gerhardt による AppleScript 「pdflatexc」を使って、 AppleScript から UNIX 
 	</dl>
 </tt>
 
+<!-- 
 <p>
-前置きのコメントはさておき、このスクリプトの冒頭７行は、 Claus Gerhardt の魔法のレシピです──ソースファイルを保存し、処理しようとしている文書の名前を見つけて「frontName」にセットしています。このレシピでは、 ~/Library/TeXShop/Scripts にある「setpath.scpt」というコンパイル済みのスクリプトを使ってハードな作業すべてをこなしています。注意深く読み解いてみれば、この数行は ~/Library/TeXShop/Scripts/setname.scpt というパスを見つけ、パラメータ #NAMEPATH# と #TEXPATH# でスクリプトを呼び出していることがわかります。
+前置きのコメントはさておき、このスクリプトの冒頭７行は、Claus Gerhardt の魔法のレシピです──ソースファイルを保存し、処理しようとしている文書の名前を見つけて「frontName」にセットしています。このレシピでは、~/Library/TeXShop/Scripts にある「setpath.scpt」というコンパイル済みのスクリプトを使ってハードな作業すべてをこなしています。注意深く読み解いてみれば、この数行は ~/Library/TeXShop/Scripts/setname.scpt というパスを見つけ、パラメータ #NAMEPATH# と #TEXPATH# でスクリプトを呼び出していることがわかります。
+</p>
+ -->
+
+<p>
+前置きのコメントはさておき、このスクリプトの冒頭７行は、Claus Gerhardt さんの魔法のレシピです──ソースファイルを保存し、処理しようとしている文書の名前を見つけて「frontName」にセットしています。このレシピでは、~/Library/TeXShop/Scripts にある「setpath.scpt」というコンパイル済みのスクリプトを使ってハードな作業すべてをこなしています。注意深く読み解いてみれば、この数行は ~/Library/TeXShop/Scripts/setname.scpt というパスを見つけ、パラメータ #NAMEPATH# と #TEXPATH# でスクリプトを呼び出していることがわかります。
 </p>
 
 <p>
@@ -91,16 +103,22 @@ Claus Gerhardt による AppleScript 「pdflatexc」を使って、 AppleScript から UNIX 
 	</dl>
 </tt>
 
+<!-- 
 <p>
-しかしながら Gerhardt のスクリプトには長所が２つあります。ひとつは、前面にある文書がログファイル（たとえば /Users/koch/Examples/myfile.log のようなもの）であっても──換言すれば、これ以降のコマンドを受け入れないような種類の文書だったとしても──スクリプトを呼び出せる、ということです。もうひとつは、ファイルが一度も保存されていなかった場合、 Gerhardt のスクリプトは保存を行なおうとしてエラーを返します──その一方で「保存」コマンドにより、保存ダイアログを出して TeXShop は保留状態になります（詳しくはヘルプの「<A HREF = "macros_writingcompletescripts.htm">TeXShop のタイプセット・コマンドでスクリプトを書く</A>」を参照してください）。
+しかしながら Gerhardt のスクリプトには長所が２つあります。ひとつは、前面にある文書がログファイル（たとえば /Users/koch/Examples/myfile.log のようなもの）であっても──換言すれば、これ以降のコマンドを受け入れないような種類の文書だったとしても──スクリプトを呼び出せる、ということです。もうひとつは、ファイルが一度も保存されていなかった場合、Gerhardt のスクリプトは保存を行なおうとしてエラーを返します──その一方で「保存」コマンドにより、保存ダイアログを出して TeXShop は保留状態になります（詳しくはヘルプの「<A HREF = "macros_writingcompletescripts.htm">TeXShop のタイプセット・コマンドでスクリプトを書く</A>」を参照してください）。
+</p>
+ -->
+
+<p>
+しかしながら Gerhardt さんのスクリプトには長所が２つあります。ひとつは、前面にある文書がログファイル（たとえば /Users/koch/Examples/myfile.log のようなもの）であっても──換言すれば、これ以降のコマンドを受け入れないような種類の文書だったとしても──スクリプトを呼び出せる、ということです。もうひとつは、ファイルが一度も保存されていなかった場合、Gerhardt のスクリプトは保存を行なおうとしてエラーを返します──その一方で「保存」コマンドにより、保存ダイアログを出して TeXShop は保留状態になります（詳しくはヘルプの「<A HREF = "macros_writingcompletescripts.htm">TeXShop のタイプセットコマンドでスクリプトを書く</A>」を参照してください）。
 </p>
 
 <p>
-つづく６行では、変数 dirName と baseName を定義しています。ソースファイルが「/Users/koch/This directory/Stuff/myfile.tex」の場合、 dirName は、シングルクオートとダブルクオートを含めて「" '/Users/koch/This directory/Stuff' "」となり、 baseName は「myfile.tex」となります。この作業部分が必要なのは、フォルダ名にスペースがあってもいいようにです。依然として TeX は、最終的なファイル名にあるスペースを容認しません。
+つづく６行では、変数 dirName と baseName を定義しています。ソースファイルが「/Users/koch/This directory/Stuff/myfile.tex」の場合、dirName は、シングルクオートとダブルクオートを含めて「" '/Users/koch/This directory/Stuff' "」となり、baseName は「myfile.tex」となります。この作業部分が必要なのは、フォルダ名にスペースがあってもいいようにです。依然として TeX は、最終的なファイル名にあるスペースを容認しません。
 </p>
 
 <p>
-そのまた次の３行がシェルスクリプトを呼び出しています。結果的には Terminal で「cd dirName; ~/Library/TeXShop/bin/pdflatexc baseName」と打ち込むのと同じとはいえ、はるかに正確です──というのも、 dirName は引用ではない形（つまり、上の例で言えば、途中のディレクトリにスペースがあるのでシングルクオートを含めて「'/Users/koch/This directory/Stuff'」）に置き換えねばならないのです。
+そのまた次の３行がシェルスクリプトを呼び出しています。結果的には Terminal で「cd dirName; ~/Library/TeXShop/bin/pdflatexc baseName」と打ち込むのと同じとはいえ、はるかに正確です──というのも、dirName は引用ではない形（つまり、上の例で言えば、途中のディレクトリにスペースがあるのでシングルクオートを含めて「'/Users/koch/This directory/Stuff'」）に置き換えねばならないのです。
 </p>
 
 <p>
@@ -148,7 +166,7 @@ cmd と引用符の間の半角スペースに注意してください。アンパサンド（＆記号）はバイナ
 </p>
 
 <p>
-作業ディレクトリを動かさずにさらにコマンドを入れたいのであれば、 「do shell script」の形では記述できません──それだと新規シェルが呼び出されてしまいます。 Terminal では連続するコマンドをセミコロンで区切りますが、 AppleScript では「";"」を使います。つまりこういうふうに──
+作業ディレクトリを動かさずにさらにコマンドを入れたいのであれば、「do shell script」の形では記述できません──それだと新規シェルが呼び出されてしまいます。Terminal では連続するコマンドをセミコロンで区切りますが、AppleScript では「";"」を使います。つまりこういうふうに──
 </p>
 
 <tt>
@@ -173,7 +191,7 @@ cmd と引用符の間の半角スペースに注意してください。アンパサンド（＆記号）はバイナ
 </p>
 
 <p>
-最後の３行でプレビューウィンドウを更新しています。
+最後の３行でプレビューウインドウを更新しています。
 </p>
 
 <p>
@@ -198,7 +216,7 @@ cmd と引用符の間の半角スペースに注意してください。アンパサンド（＆記号）はバイナ
 		<li><a href="macros_includedscripts.htm">デフォルトの AppleScript マクロ</a>
 		<li><a href="macros_defapplescript.htm">AppleScript マクロを定義する</a>
 		<li><a href="macros_dialogs.htm">ダイアログを作る</a>
-		<li><a href="macros_writingcompletescripts.htm">TeXShop のタイプセット・コマンドでスクリプトを書く</a>
+		<li><a href="macros_writingcompletescripts.htm">TeXShop のタイプセットコマンドでスクリプトを書く</a>
 		<li><a href="macros_writingcommandscripts.htm">シェルコマンドでスクリプトを書く</a>
 	</UL>
 </div>

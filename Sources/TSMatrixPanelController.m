@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSMatrixPanelController.m 108 2006-02-10 13:50:25Z fingolfin $
+ * $Id: TSMatrixPanelController.m 254 2007-06-03 21:09:25Z fingolfin $
  *
  * Created by Jonas Zimmermann on Fri Nov 28 2003.
  *
@@ -513,7 +513,9 @@ static id _sharedInstance = nil;
 - (void)panelWillClose:(NSNotification *)notification
 {
 	shown = NO;
-	[[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Close Matrix Panel", @"Close Matrix Panel")] setTitle:NSLocalizedString(@"Matrix Panel...", @"Matrix Panel...")];
+	NSMenuItem *myItem = [[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Close Matrix Panel", @"Close Matrix Panel")];
+	[myItem  setTitle:NSLocalizedString(@"Matrix Panel...", @"Matrix Panel...")];
+	[myItem setTag:0];
 }
 
 - (void)panelDidMove:(NSNotification *)notification

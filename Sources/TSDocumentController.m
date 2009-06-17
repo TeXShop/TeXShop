@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocumentController.m 135 2006-05-21 12:02:48Z fingolfin $
+ * $Id: TSDocumentController.m 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Created by Richard Koch on Sun Feb 16 2003.
  * Parts of this code are taken from Apple's example SimpleToolbar
@@ -28,6 +28,13 @@
 
 
 @implementation TSDocumentController : NSDocumentController
+
+- (void)init
+{
+	[super init];
+	doList = YES;
+}
+
 
 - (void)initializeEncoding  // the idea is that this is called after preferences is set up
 {
@@ -77,5 +84,17 @@
 	}
 	return result;
 }
+
+- (void)noteNewRecentDocument:(NSDocument *)aDocument
+{
+	if (doList)
+		[super noteNewRecentDocument:aDocument];
+}
+
+- (void)listDocument:(BOOL)value;
+{
+	doList = value;
+}
+
 
 @end

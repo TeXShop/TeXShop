@@ -1,0 +1,98 @@
+{\rtf1\ansi\ansicpg1252\cocoartf920
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww13800\viewh15780\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs36 \cf0 About TeXShop 2.12\
+\
+( In SVN Version:)\
+\
+
+\fs24 The key shortcuts to zoomIn and zoomOut in Source are apple+ and apple- WITHOUT shift key.\
+The same shortcuts to zoomIn and zoomOut in Preview are apple+ and apple- WITH shift key.\
+(Actually when the program is run on Leopard, zoomIn and zoomOut in Preview are ALSO\
+given with apple+ and apple- WITHOUT shift key; this is convenient because the same shortcut\
+works in both windows.)\
+\
+I modified the key shortcuts for rotate clockwise, rotate counterclockwise, and Latex Panel.\
+\
+I fixed two bugs: \
+\
+	1) the source window now picks up the User's font preference when it opens\
+\
+	2) there is no longer a hang if \\input myfile is used and the preference to "save related files" is checked\
+\
+-------------------------------------
+\fs36 \
+\
+( In Both Versions:)\
+\
+
+\fs24 This version of TeXShop, introduced in August, 2007, has the following new features:\
+\
+1) The program is no longer a beta release. As a result, the TeXShop menu item "Check for Updates" will again work.\
+\
+2) All Leopard bugs have been fixed. The program works completely in the latest Leopard beta. Of course the situation may change before Leopard is released, but I intend to install future betas immediately and fix any new problems which surface.\
+\
+Notice that the program runs on Tiger; this version does not contain features which require Leopard, but all of its features work on Leopard.\
+\
+3) A couple of very significant bugs are fixed. In previous versions, if a user opened a very large source document, for instance a single file containing the source for an entire book, there would be a long delay until the source loaded completely. After loading, the program was quite responsive. Interacting with the program during this loading period produced a spinning cursor and ultimately a crash. It was difficult to tell when loading was done, so a few users made coffee after loading before they dared work with the program.\
+\
+This bug is fixed. TeXShop will immediately become responsive when such a file is loaded, even before the file is completely loaded. For instance, the scroll bar may continue to get smaller as more and more text is loaded, but the initial sections can be edited immediately and the document can be scrolled to already loaded sections.\
+\
+A related bug: smaller documents still took a few seconds to load before they appeared on the screen; this is also fixed and documents should immediately appear when they are loaded.\
+\
+4) This summer I gave some talks about TeXShop and in the process discovered needed features. In this version, the source text can be made bigger or smaller using apple-shift-plus and apple-shift-minus, that is Command-+ and Command-_. There is a lack of symmetry here, but the result is a symmetric use of the keyboard. Hold down apple-shift and type the + key or the adjacent - key. So if you are giving a talk and want to enlarge the source text, a series of keystrokes immediately makes it larger.\
+\
+The same keystrokes work if the Preview window is active, magnifying or shrinking the pdf display. Notice that a side effect is that TeXShop shifts into a made where magnification makes sense, even though the default mode is "fit to window" in which the pdf expands to fit into the window. An additional keystroke, control-apple-F, has been added to make "fit to window" active again. Thus it is easy using keystrokes to temporarily magnify the Preview output, and then return to the original display.\
+\
+5) I also used Beamer to display slides in these talks. So I added a "Fullscreen" option which places the contents of the Preview window on the fullscreen, hiding the menubar and window frame, and switches the display to single page mode. TeXShop can be used in this mode if you are projecting slides on a screen. The keyboard and mouse are still active, so it is possible to click on hyperlinks or on the beamer controls at the bottom of the slide, or move between slides using spacebar and shift-spacebar, or using arrow keys. Push the ESCAPE key to return to normal display.\
+\
+6) I am trying to make TeXShop usable from the start so users do not need to reset Preferences. But I notice that many users don't understand one preference setting which I regard as essential. This is the setting (or series of settings) to automatically open the Source and Preview windows in standard positions. For instance, I like to arrange these windows so they are side by side and almost cover the screen.\
+\
+I have made this setting easier so users can do it without opening the Preference Panel. I renamed one menu so now the menus about the two windows are named Source and Preview. At the bottom of the Source window there is an item named Save Source Position; at the bottom of the Preview window there is an item named Save Preview Position. \
+\
+Thus I recommend that new users start a project, typeset it, and then arrange the two windows in their preferred positions. Then they should make the Source window active and choose Save Source Position, and make the Preview window active and choose Save Preview Position. \
+\
+7) Finally, I have substantially revised the Help menu. This is a work in progress; the infrastructure is now present, but the contents can be improved.\
+\
+The first idea is to clearly separate help for TeXShop from help with TeX. Currently users blur this distinction. Moreover, currently TeXShop doesn't provide any help with the crucial task of learning  TeX, but provides too much detail about the much easier task of using the program.\
+\
+In the new TeXShop section, a short document explains the major TeXShop features a new user is likely to use. This is followed by two movies which illustrate the use of the program. Finally, users are told that after they have mastered TeX and need to know more, they can open the TeXShop Help Panel and read further details.\
+\
+One problem with movies is that they are large and make TeXShop a large download. A possible solution is to place the movies on a server where they can be streamed to users, but I don't have a server. Presumably I could use the University of Oregon's web machine, but I don't know how many movies users could download before they would notice and complain or worse. The UO staff has been very cooperative so far, but their server machine does email for the entire campus and is used by faculty and graduate students for heavy computational work. So ...\
+\
+Incidentally, I wrote enough code to show that this streaming stuff actually works from the UO machine using essentially trivial TeXShop code.\
+\
+I therefore instituted a slightly different design. When TeXShop starts, it puts the two included movies in\
+\
+	~/Library/TeXShop/Movies/TeXShop\
+\
+When more movies become available, users can download one or more from some server and add the new movies to ~/Library/TeXShop/Movies/TeXShop. The next time TeXShop starts, it will see these extra movies and add them to the menu listing available demonstrations.\
+\
+The advantage is that servers don't have to stream, users need only download once, and the choice of servers can be made later.\
+\
+Currently the program does not offer movies for learning TeX, but the same mechanism could be used with minimal work. Movies about general typesetting would be put in ~/Library/TeXShop/Movies/GeneralTypesetting and a menu command (not yet available) would pick them up. Movies about mathematical typesetting would be put in ~/Library/TeXShop/Movies/MathematicalTypesetting.\
+\
+I'll add these menu items as soon as someone produces convincing movies about these two subjects.\
+\
+8) A new second section offers help with TeX, specifically help about General Typesetting, i.e., typesetting not involving heavy mathematics. The ultimate goal is to have a very short First Steps document explaining what the section is about,  and then a longer document which actually teaches a reasonable amount of LaTeX to get started. The goal, however, is to keep this quite simple, so documents which cover all subjects in detail are worse than documents which say enough to get started but not everything. I'm not a writer, so I don't know how to do this, but I know what I want. Namely 1) no generalities,\
+2) specific examples, 3) enough of these examples to be useful and cover basic typesetting problems users may run into,\
+but 4) no exhaustive treatment.\
+\
+I'm convinced that new users outside the sciences ought to use XeTeX, so the longer document should use XeLaTeX without making a big deal about it, and should use Will Robertson's style files, and should introduce the use of arbitrary Macintosh fonts and unicode input and typing non-Roman languages. The document shouldn't push XeTeX; the philsophy should be "this is what we do, doesn't everybody do it this way?" However, early on, perhaps in the First Steps document, we should explain the use of XeTeX, and that everything in the longer document EXCEPT the font examples and the Unicode input will work with ordinary LaTeX.\
+\
+It may be a long time until we have such a document. I'm not writing it, but maybe someone else will.\
+\
+9) A third section offers help with TeX for those using extensive mathematics. This time we use ordinary LaTeX and AMS-LaTeX, and luckily this time we have exactly the right longer document because George Gratzer generously offered to allow the use of his short course. This is, I think, perfect. It says enough without saying too much, and I'm entirely convinced by George's belief that right from the start mathematicians should use AMS-LaTeX. \
+\
+In the current setup, we also send the General Typesetting folks to this document after the First Steps document explains the small number of modifications needed to use XeTeX and other fonts.\
+\
+10) Perhaps in a perfect world we could combine General Typesetting and Mathematical Typesetting. But not yet. Mathematicians and other Scientists writing joint papers will probably not want to introduce the added compatibility problems caused by using Unicode and a fairly new typesetting engine. But for non scientists, the advantages seem already overwhelming, and I suspect that XeTeX will help us capture new users.\
+\
+11) George also generously allowed the use of his appendices listing various symbol tables. Notice that TeXShop can copy the TeX command from this table, and then paste it into the source window.\
+\
+\
+\
+}

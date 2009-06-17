@@ -1,0 +1,115 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Creaci&oacute;n y uso de formatos de TeX</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="formatos; format; fmt">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+<h4> Uso de formatos </h4>
+		<P>Cuando TeX compila un documento para generar el pdf, debe procesar la cabecera, que puede contener bastantes &oacute;rdenes \input, \include y \usepackage.
+TeX repite todo esto cada vez que tiene que compilar el documento, incluso aunque gran parte de la cabecera no habr&aacute; cambiado en absoluto.</P>
+
+<p>TeX dispone de un mecanismo para acelerar esto. Se le puede indicar que procese algunas l&iacute;neas de c&oacute;digo fuente y que, a partir de ellas, genere lo que se denomina un &laquo;formato&raquo;. Una vez hecho esto, cuando TeX compone p&aacute;ginas, lee el formato muy r&aacute;pidamente, y generar el pdf le cuesta muchos menos tiempo. LaTeX est&aacute; construido de esta manera; el formato LaTeX se crea al instalar TeX en tu m&aacute;quina, y el comando &laquo;latex archivo&raquo; le dice a TeX que lea el formato LaTeX y que entonces procese &laquo;archivo&raquo;.</p>
+
+<p>Cuando los ordenadores eran mucho m&aacute;s lentos que ahora, los usuarios creaban sus propios formatos a menudo, para acelerar as&iacute; la composici&oacute;n de p&aacute;ginas. En nuestros d&iacute;as, esto es mucho menos frecuente, pero manejar archivos de formato puede ser todav&iacute;a &uacute;til. Por ejemplo, una organizaci&oacute;n puede crear y distribuir un formato propio para que lo usen todos los que trabajan en un proyecto com&uacute;n. En esta secci&oacute;n explicaremos c&oacute;mo usar un formato porporcionado por otra persona, y c&oacute;mo crear un formato propio.</p>
+
+<p>Un formato t&iacute;pico tiene extensi&oacute;n &laquo;fmt&raquo;. Sup&oacute;n que un departamento de la University of Oregon ha creado un formato llamado &laquo;uo.fmt&raquo;. Para usarlo, sigue los pasos siguientes:</p>
+<ul>
+<li> Lleva uo.fmt a &laquo;~/Library/texmf/web2c/uo.fmt&raquo;. Puede que necesites crear alguno de esos directorios.
+<li> Crea un nuevo motor (&lsquo;engine&rsquo;) de compilaci&oacute;n yendo a ~/Library/TeXShop/Engines y duplicando el archivo
+XeLaTeX.engine. Los archivos .engine necesitan tener activado el bit que los convierte en ejecutables (en el sentido de unix), y esta duplicaci&oacute;n de uno ya existente lo logra de manera autom&aacute;tica.
+<li> Renombra este nuevo archivo. No es necesario que el nombre que le des coincida con el del formato. Puesto que el nombre aparecer&aacute; en la interfaz de TeXShop, deber&iacute;a ser un nombre que tenga sentido para los usuarios. Elijamos, por ejemplo, &laquo;Oregon.engine&raquo;.
+<li>Abre Oregon.engine con TeXShop y ed&iacute;talo, hasta que contenga lo siguiente:
+<dl>
+<dd>#!/bin/tcsh
+<dd>
+<dd>set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)
+<dd>pdflatex -fmt uo  "$1" 
+</dl>
+	Las primeras dos l&iacute;neas ya estar&aacute;n presentes, as&iacute; que posiblemente te baste con cambiar la tercera l&iacute;nea. Sin embargo, si tu m&aacute;quina tiene un microprocesador Intel, debes cambiar la palabra &laquo;powerpc&raquo; de la segunda l&iacute;nea por &laquo;i386&raquo;.
+</ul>
+<p>Esto completa la instalaci&oacute;n. La pr&oacute;xima vez que arranques TeXShop, en el men&uacute; desplegable situado, en la barra de herramientas, al lado del bot&oacute;n de componer, aparecer&aacute; &laquo;Oregon&raquo; como una opci&oacute;n adicional. El&iacute;gela si quieres componer p&aacute;ginas usando el formato uo.fmt. Si quieres que este m&eacute;todo de composici&oacute;n sea el predeterminado, ve a las preferencias de TeXShop, bajo la solapa &laquo;Composici&oacute;n&raquo;; luego, en la parte correspondiente a &laquo;Formato por defecto&raquo; selecciona &laquo;Este otro comando&raquo;, y rellena la caja de texto editable con la palabra &laquo;Oregon&raquo;.</p>
+<p>Tambi&eacute;n puedes indicar, en un documento en particular, que TeXShop utilice el formato Oregon para componerlo, sin tener que seleccionar la opci&oacute;n de composici&oacute;n adecuada en los men&uacute;s. Para ello, a&ntilde;ade la siguiente l&iacute;nea en la parte arriba del archivo con el c&oacute;digo:</p>
+<dl>
+<dd> %!TEX TS-program = Oregon
+</dl>
+<p>De este modo, ese documento usar&aacute; el formato uo.fmt independientemente de la m&eacute;todo de composici&oacute;n que est&eacute; elegido.</p>
+<p>Las instrucciones anteriores asumen que tienes un formato para pdflatex. Tambi&eacute;n se pueden hacer formatos para plain TeX; para ello, cambia &laquo;pdflatex&raquo; por &laquo;pdftex&raquo; en el archivo .engine.</p>
+<p>Tambi&eacute;n es posible usar formatos si est&aacute;s componiendo mendiante tex + ghostscript. Pero ten en cuenta que TeXShop asume que un archivo .engine contiene una o m&aacute;s l&iacute;neas con comandos que al final producen un archivo .pdf. As&iacute; que el archivo .engine debe contener comandos que conviertan el archivo .dvi en un .pdf. He aqu&iacute; un archivo uo.fmt t&iacute;pico que lograr&iacute;a esto:</p>
+<dl>
+<dd>#!/bin/tcsh
+<dd>set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)
+<dd>latex -fmt uolatex  "$1"
+<dd>set filename = "$1"
+<dd>dvips "${filename:r}.dvi"
+<dd>pstopdf "${filename:r}.ps" 
+</dl>  
+<h4> Creaci&oacute;n de formatos </h4>
+<p>Los archivos de formato contienen la representaci&oacute;n binaria interna que ha surgido al compilar l&iacute;neas de c&oacute;digo fuente. Esta representaci&oacute;n depende tanto del microprocesador como de la implementaci&oacute;n particular de TeX que se ha usado. 
+En consecuencia, habitualmente no podr&aacute;s usar un archivo de formato generado por otra persona, salvo que tal persona tenga la misma m&aacute;quina y la misma instalaci&oacute;n de TeX que t&uacute;.<p>
+
+<p>Para evitar este problema, es com&uacute;n que las organizaciones que quieren distribuir un formato nos proporcionen las l&iacute;neas de c&oacute;digo tex necesarias para construir tal formato. Si &eacute;ste es el caso, hay que construir el formato usando &laquo;initex&raquo;. Por ejemplo, sup&oacute;n que el archivo con c&oacute;digo es &laquo;uo.tex&raquo;. Para construir el formato, abre el Terminal de Apple, y c&aacute;mbiate al directorio en el que est&aacute; &laquo;uo.tex&raquo; (para hacer esto, unos peque&ntilde;os conocimientos de unix pueden ser muy convenientes). Entonces, teclea</p>
+<dl>
+<dd>pdflatex -ini
+</dl>
+<p>Obtendr&aacute;s un <i>promt</i> de la forma **. Ah&iacute;, teclea</p>
+<dl>
+<dd>&amp;pdflatex uo
+</dl>
+<p>y pulsa la tecla de fin de l&iacute;nea. Eso hace que se cree el formato. Al final, tienes que proporcionar un comando &laquo;\dump&raquo; si no estaba ya incuido en el archivo con c&oacute;digo tex. De este modo, aparecer&aacute; el deseado formato &laquo;uo.fmt&raquo;.</p>
+<p>Para practicar, puedes intentar hacer esto a partir del siguiente archivo &laquo;uo.tex&raquo;:</p>
+<dl>
+<dd>\documentclass[11pt]{article}
+<dd>\usepackage{geometry}   
+<dd>\geometry{letterpaper}                 
+<dd>\usepackage[parfill]{parskip} 
+<dd>\usepackage{graphicx}
+<dd>\usepackage{amssymb}
+<dd>\usepackage{epstopdf}
+<dd>\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+<dd>\dump
+</dl>
+
+
+
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda avanzada</div><div id="header_title">Creaci&oacute;n y uso de formatos de TeX</div>
+
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adici&oacute;n de estilos personales y men&uacute;s de macros a teTeX</a>
+			<LI><a href="advanced_addengine.htm">Motores de composici&oacute;n adicionales</a>
+			<LI><a href="advanced_removeaux.htm">Borrado de archivos AUX</a>
+			<li><a href="advanced_externaleditor.htm">Uso de un editor externo</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copiar-pegar y arrastrar-soltar desde la ventana del PDF</a>
+			<li><a href="advanced_root.htm">Establecer un documento ra&iacute;z</a>
+			<li><a href="advanced_pdfsync.htm">Sincronizaci&oacute;n c&oacute;digo-pdf (pdfsync)</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Creaci&oacute;n y uso de formatos de TeX</a>
+			<li><a href="advanced_otherfiles.htm">Abrir otros archivos con TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizaciones</a>
+			<li><a href="advanced_syntaxcolor.htm">Colores para sintaxis</a>
+			<li><a href="advanced_shellescape.htm">Protecci&oacute;n ante shell-escape</a>
+			<li><a href="advanced_coloredtext.htm">Texto coloreado en TeX</a>
+			<li><a href="advanced_moretetex.htm">M&aacute;s sobre teTeX</a>
+			<li><a href="advanced_fink.htm">Coexistencia con Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexistencia con otras distribuciones de TeX</a>
+			<li><a href="advanced_context.htm">ConTeXt y MetaPost</a>
+			<li><a href="advanced_plist.htm">Archivos .plist</a>
+			<li><a href="advanced_menushortcuts.htm">Redefinici&oacute;n de atajos de teclado de men&uacute;s</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

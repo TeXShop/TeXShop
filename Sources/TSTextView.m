@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSTextView.m 197 2006-05-29 21:19:33Z fingolfin $
+ * $Id: TSTextView.m 261 2007-08-09 20:10:11Z richard_koch $
  *
  */
 
@@ -590,6 +590,7 @@
 
 - (void)setDocument: (TSDocument *)doc
 {
+
 	_document = doc;
 }
 

@@ -1,0 +1,45 @@
+
+% These lines tell TeXShop to typeset with xelatex, and to open and 
+% save the source with Unicode encoding.
+
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[12pt]{article}
+\usepackage{geometry} 
+\geometry{letterpaper}
+\usepackage{graphicx}
+\usepackage{amssymb}
+
+% Will Robertson's fontspec.sty can be used to simplify font choices.
+% To experiment, open /Applications/Font Book to examine the fonts 
+% provided on Mac OS X, and change "Hoefler Text" to any of these choices.
+
+\usepackage{fontspec,xltxtra,xunicode}
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont[Mapping=tex-text]{Hoefler Text}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{Gill Sans}
+\setmonofont[Scale=MatchLowercase]{Andale Mono}
+
+\title{Brief Article}
+\author{The Author}
+
+\begin{document}
+\maketitle
+
+This is a standard TeX document using Hoefler Text. It uses \LaTeX\ and
+the standard \TeX\ graphic packages.
+
+% For many users, the previous commands will be enough.
+% If you want to directly input Unicode, add an Input Menu or Keyboard to the menu bar 
+% using the International Panel in System Preferences.
+% Unicode must be typeset using a font containing the appropriate characters.
+
+\newfontfamily{\A}{Geeza Pro}
+\newfontfamily{\H}[Scale=0.9]{Lucida Grande}
+\newfontfamily{\J}[Scale=0.85]{Osaka}
+
+Here are some multilingual Unicode fonts: this is Arabic text: {\A السلام عليكم}, 
+this is Hebrew: {\H שלום}, and here's some Japanese: {\J 今日は}.
+
+\end{document}  

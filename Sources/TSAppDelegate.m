@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSAppDelegate.m 232 2006-06-10 23:36:39Z richard_koch $
+ * $Id: TSAppDelegate.m 262 2007-08-17 01:33:24Z richard_koch $
  *
  * Created by dirk on Tue Jan 23 2001.
  *
@@ -64,20 +64,40 @@
 
 
 - (void)testForIntel;
-{
+{	
+	// The default value for the preference is now /usr/texbin as of Jan 11, 2007.
+	// I make this change unless a hidden preference says not to.
+	// 
 	// if the processor is intel and the path variable preference is /usr/local/tetex/bin/powerpc-apple-darwin-current,
 	// then change that preference permanently to /usr/local/tetex/bin/i386-apple-darwin-current
-
-    NSString *binPath = [SUD stringForKey:TetexBinPath];
-    if (! [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"])
-		return;
 	
-	// Determine CPU type
-	cpu_type_t cputype;
-	size_t s = sizeof cputype;
-	if (sysctlbyname("hw.cputype", &cputype, &s, NULL, 0) == 0 && cputype == CPU_TYPE_I386) {
-		[SUD setObject:@"/usr/local/teTeX/bin/i386-apple-darwin-current" forKey:TetexBinPath];
-		[SUD synchronize];
+	BOOL canRevisePath = [SUD boolForKey:RevisePathKey];
+    NSString *binPath = [SUD stringForKey:TetexBinPath];
+	
+	if (canRevisePath) {
+		if ( [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"] ||
+			[binPath isEqualToString:@"/usr/local/teTeX/bin/i386-apple-darwin-current"] ) {
+			
+			[SUD setObject:@"/usr/texbin" forKey:TetexBinPath];
+			[SUD setObject:@"NO" forKey:RevisePathKey];
+			[SUD synchronize];
+			
+			}
+		}
+		
+	else {
+
+			
+		if (! [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"])
+			return;
+	
+		// Determine CPU type
+		cpu_type_t cputype;
+		size_t s = sizeof cputype;
+		if (sysctlbyname("hw.cputype", &cputype, &s, NULL, 0) == 0 && cputype == CPU_TYPE_I386) {
+			[SUD setObject:@"/usr/local/teTeX/bin/i386-apple-darwin-current" forKey:TetexBinPath];
+			[SUD synchronize];
+		}
 	}
 }
 
@@ -110,7 +130,6 @@
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;
 	id theFinder;
-	BOOL isDirectory, pathExists, templateDirectoryExists;
 
 	g_macroType = LatexEngine;
 	
@@ -182,23 +201,79 @@
 	//
 	// This must come before dealing with TSEncodingSupport and MacoMenuController below
 	
-	pathExists = [[NSFileManager defaultManager] 
-		fileExistsAtPath:[[TeXShopPath stringByStandardizingPath] stringByAppendingPathComponent:@"Templates"] 
-		isDirectory: &isDirectory];
-	templateDirectoryExists = (pathExists && isDirectory); 
-	
-	[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
-				toPath:[TeXShopPath stringByStandardizingPath]];
-	
-	if (! templateDirectoryExists)
-		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Templates"] 
-				toPath:[[TeXShopPath stringByStandardizingPath] stringByAppendingPathComponent:@"Templates"]];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if (! [fileManager fileExistsAtPath: [TeXShopPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
+			  toPath:[TeXShopPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [CommandCompletionFolderPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/CommandCompletion"]
+			  toPath:[CommandCompletionFolderPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [DraggedImageFolderPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/DraggedImages"]
+			  toPath:[DraggedImageFolderPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [EnginePath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines"]
+			  toPath:[EnginePath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [AutoCompletionPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Keyboard"]
+			  toPath:[AutoCompletionPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [LatexPanelPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/LatexPanel"]
+			  toPath:[LatexPanelPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [MacrosPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Macros"]
+			  toPath:[MacrosPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [MatrixPanelPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/MatrixPanel"]
+			  toPath:[MatrixPanelPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [MenuShortcutsPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Menus"]
+			  toPath:[MenuShortcutsPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [ScriptsPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Scripts"]
+			  toPath:[ScriptsPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [TexTemplatePath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Templates"]
+			  toPath:[TexTemplatePath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [BinaryPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/bin"]
+			  toPath:[BinaryPath stringByStandardizingPath]];
+		}
+		
+	if (! [fileManager fileExistsAtPath: [MoviesPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Movies"]
+			  toPath:[MoviesPath stringByStandardizingPath]];
+		}
 
+		
 // Finish configuration of various pieces
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];
 	[self finishMenuKeyEquivalentsConfigure];
 	[self configureExternalEditor];
+	[self configureMovieMenu];
 
 	if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
 		g_texChar = YEN;
@@ -470,6 +545,60 @@
 	}
 }
 
+- (IBAction)doMovie:(id)sender
+{
+	NSString *title = [[sender title] stringByAppendingString:@".mov"];
+	[myMovie doMovie:title];
+}
+
+- (void)configureMovieMenu
+{
+	NSFileManager *fm;
+	NSString      *basePath, *path, *title;
+	NSArray       *fileList;
+	// NSMenu 	  *submenu;
+	BOOL	   isDirectory;
+	unsigned i;
+	// unsigned lv = 3;
+	
+	NSMenu *helpMenu = [[[NSApp mainMenu] itemWithTitle:
+					NSLocalizedString(@"Help", @"Help")] submenu];
+
+	
+	NSMenu *texshopDemosMenu = [[helpMenu itemWithTitle:
+					NSLocalizedString(@"TeXShop Demos", @"TeXShop Demos")] submenu];
+	
+	if (!texshopDemosMenu)
+		return;
+		
+	fm       = [ NSFileManager defaultManager ];
+	basePath = [[ MoviesPath stringByAppendingString:@"/TeXShop"] stringByStandardizingPath ];
+	fileList = [ fm directoryContentsAtPath: basePath ];
+
+	for (i = 0; i < [fileList count]; i++) {
+		title = [ fileList objectAtIndex: i ];
+		path  = [ basePath stringByAppendingPathComponent: title ];
+		if ([fm fileExistsAtPath:path isDirectory: &isDirectory]) {
+			if (isDirectory )
+				{;
+				// [popupButton addItemWithTitle: @""];
+				// newItem = [popupButton lastItem];
+				// [newItem setTitle: title];
+				// submenu = [[[NSMenu alloc] init] autorelease];
+				// [self makeMenuFromDirectory: submenu basePath: path
+				//					 action: @selector(doTemplate:) level: lv];
+				// [newItem setSubmenu: submenu];
+				} 
+			else if ([[[title pathExtension] lowercaseString] isEqualToString: @"mov"]) {
+				title = [title stringByDeletingPathExtension];
+				[texshopDemosMenu addItemWithTitle:title action: @selector(doMovie:) keyEquivalent:@"" ];
+			}
+		}
+	}
+}
+
+
+
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
@@ -549,12 +678,12 @@
 {
 	NSString *currentVersion = [[[NSBundle bundleForClass:[self class]]
 		infoDictionary] objectForKey:@"CFBundleVersion"];
-
+		
 	NSDictionary *texshopVersionDictionary = [NSDictionary dictionaryWithContentsOfURL:
 		[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop-current.txt"]];
 
 	NSString *latestVersion = [texshopVersionDictionary valueForKey:@"TeXShop"];
-
+	
 	int button;
 	if(latestVersion == nil){
 		NSRunAlertPanel(NSLocalizedString(@"Error",

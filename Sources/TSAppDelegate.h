@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSAppDelegate.h 108 2006-02-10 13:50:25Z fingolfin $
+ * $Id: TSAppDelegate.h 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Created by dirk on Tue Jan 23 2001.
  *
  */
 
 #import "UseMitsu.h"
+#import "TSMovie.h"
 
 #import <Cocoa/Cocoa.h>
 
@@ -31,6 +32,7 @@
 @interface TSAppDelegate : NSObject
 {
 	BOOL	_forPreview;
+	TSMovie	*myMovie;
 }
 
 - (IBAction)displayMatrixPanel:(id)sender; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
@@ -51,4 +53,6 @@
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
 - (IBAction)checkForUpdate:(id)sender; // Update checker
+- (void)configureMovieMenu;
+- (IBAction)doMovie:(id)sender;
 @end

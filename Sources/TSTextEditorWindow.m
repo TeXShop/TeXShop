@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSTextEditorWindow.m 114 2006-05-20 15:59:29Z fingolfin $
+ * $Id: TSTextEditorWindow.m 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Originally part of TSDocument. Broken out by dirk on Tue Jan 09 2001.
  *
@@ -127,5 +127,11 @@
 	
 	[super sendEvent: theEvent];
 }
+
+- (void)saveSourcePosition: sender
+{
+	[myDocument saveSourcePosition];
+}
+
 
 @end

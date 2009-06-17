@@ -71,7 +71,7 @@ set q1 to display dialog "Open TeX File" &amp; return &amp; return &amp; "Enter 
 set filename_to_open to the text returned of q1
 
 try
-	set file_path to do shell script "/usr/local/teTeX/bin/powerpc-apple-darwin-current/kpsewhich " &amp; filename_to_open
+	set file_path to do shell script "/usr/texbin/kpsewhich " &amp; filename_to_open
 	set theFile to alias (POSIX file file_path)
 	tell application "TeXShop"
 		activate
@@ -1839,10 +1839,11 @@ end tell
 					<key>content</key>
 					<string>\begin{table}[htdp]
 \caption{default}
-\centering
+\begin{center}
 \begin{tabular}{|c|c|}
 #SEL##INS#
 \end{tabular}
+\end{center}
 \label{default}
 \end{table}%
 </string>
@@ -1859,10 +1860,11 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\begin{figure}[htbp]
-\centering
+\begin{center}
 #SEL##INS#
 \caption{default}
 \label{default}
+\end{center}
 \end{figure}
 </string>
 					<key>name</key>
@@ -1871,10 +1873,11 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\begin{figure}[htbp]
-\centering
+\begin{center}
 \epsfile{file=#SEL##INS#,scale=0.8}
 \caption{{\bf default}}
 \label{default}
+\end{center}
 \end{figure}
 </string>
 					<key>name</key>

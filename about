@@ -1,0 +1,41 @@
+Changed the version number to 2.12. This is no longer a beta, so "Check for Updates" works again.
+
+Some features of the previous Tiger version did not work in Leopard. This Tiger version fixes all such bugs in Leopard. (This situation may change until Leopard is released, but I'll keep on top of the Leopard betas.)
+
+The following bugs are fixed:
+
+a) If a user checked the Preference item "Save Related Files" and then included an item \input myfile.tex, the program would enter an infinite loop. Fixed.
+
+b) The "Document Font" preference for the Source file was not respected when the file was opened later. Fixed.
+
+c) If a file with a medium sized source file was opened, there was a delay before the file appeared. Fixed.
+
+d) If a file had a very large source file (book length), then it took a long time to load. During that time, any interaction with the file would lead to a spinning cursor and ultimately to a crash. Some users got in the habit of opening the file and then getting coffee, since it was difficult to tell when loading ended. This significant bug is fixed.
+
+The keyboard shortcuts command-plus and command-minus (WITHOUT the shift key) zoomIn and zoomOut on the source. The keyboard shortcuts command-plus and command-minus (WITH the shift key) zoomIn and zoomOut on the preview. I've also changed the keyboard shortcuts for Rotate and for the Latex Panel.
+Incidentally, on Leopard this version also does zoomIn and zoomOut on Preview using the same keyboard shortcuts but WITHOUT using the shift key, so the same shortcuts work on both the Source and Preview windows.
+
+A "fullscreen" menu command has been added. Selecting it switches the Preview window to fullscreen mode.  It is possible to page through the document using the arrow keys, or using spacebar and shift-spacebar. The mouse is active, so hyperlinks and Beamer controls work. To exit this mode, hit the ESCAPE key. This command is useful for users who construct slides with Beamer; the slides can be displayed with a projector in fullscreen mode.
+
+A surprising number of users do not use the Source and Preview preferences "All Windows Start at Fixed Position." To encourage the use of these preferences, I have added an item "Save Source Position" to the Source menu (I renamed this menu; it used to be the Format menu) and added an item "Save Preview Position" to the Preview menu. The user should position Souce and Preview windows as desired and select these items to set the desired preferences. With this addition, I believe that most users will not need to open the Preference Pane when they start using TeXShop.
+
+I have substantially revised the Help menu. This is a work in progress; the infrastructure is now present, but the contents can be improved.
+
+The items in this menu have been divided into groups. The first is about TeXShop, the second about General Typesetting, and the third about Mathematical Typesetting. 
+
+In the TeXShop portion, a short document tells beginners everything they need to know to begin using the program. This is followed by two Movies which illustrate TeXShop use. Finally, the old Help panel is provided for advanced users.
+
+The General Typesetting section currently contains only a short document about XeTeX. It should later be expanded with a manual teaching key points of non-mathematical typesetting.
+
+The Mathematical Typesetting section has a short introductory document. But then, with George Gratzer's permission, it contains his complete Short Course, the first section of his new book about LaTeX and AMSTeX. George also allowed us to include the various symbol tables from the appendices to the book.
+
+The number of movies for TeXShop could later be expanded, and other movies could be added for General Typesetting and for Mathematical Typesetting. The basic mechanism is that Movies are treated like Templates, etc. They are stored in ~/Library/TeXShop/Movies/TeXShop. In the future, movies could also be placed in ~/Library/TeXShop/Movies/GeneralTypesetting, etc. This would require a SMALL change in TeXShop source code.
+
+I don't want to add more movies to TeXShop itself; the download size would become too large. The basic idea is that we might put additional movies on a website; users could then add them to ~/Library/TeXShop/Movies/TeXShop and  TeXShop will add their names to the appropriate menu on startup. I also experimented with streaming movies, but want to shy away from that because we have no natural server, at least at present.
+
+
+
+
+
+
+

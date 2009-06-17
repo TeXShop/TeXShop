@@ -14,6 +14,12 @@
 		<dl>
 			<dd>defaults write TeXShop TagSections NO
 		</dl>
+<p>Los usuarios de ConTeXt pueden querer que algunas palabras adicionales sean autom&aacute;ticamente reconocidas y a&ntilde;adidas al men&uacute; Marcas. Con la siguiente preferencia se logra a&ntilde;adir las palabras \subsubsubsection, \subsubsubsubsection, \part, \title,
+\subject, \subsubject, \subsubsubject, \subsubsubsubject y \subsubsubsubsubject:
+</p>
+		<dl>
+			<dd>defaults write TeXShop ConTeXtTags YES
+		</dl>
 		<p>Cuando los colores para sintaxis est&aacute;n activados, en la ventana de c&oacute;digo fuente, los comentarios se colorean en rojo, los comandos en azul, y los s&iacute;mbolos $, {, y } en verde oscuro. Se pueden cambiar estos colores. Cada color se determina por sus componentes rojo, verde y azul (esto es, en RGB); estas componentes son n&uacute;meros reales entre 0.00 y 1.00. Para cambiar el color de $, {, y } a un verde muy intenso, ejecuta los siguientes comandos en el Terminal:</p>
 		<dl>
 			<dd>defaults write TeXShop markerred 0.0
@@ -71,7 +77,7 @@ Se pueden a&ntilde;adir m&aacute;s extensiones a esta lista, una por una. Por ej
 	<dl>
 		<dd> defaults write TeXShop OtherTrashExtensions -array
 	</dl>
-<p>A veces es necesaria una limpieza m&aacute;s profunda. Si pulsamos la tecla opci&oacute;n al usar &laquo;Borrar archivos aux&raquo;, TeXShop usa los mecanismos de %&amp;SourceDoc y &laquo;Documento ra&iacute;z...&raquo; para encontrar el documento ra&iacute;z. Entonces lleva a la papelera todos los archivos en la carpeta de ese archivo ra&iacute;z y sus subcarpetas, siempre que tengan las extensiones adecuadas, y sin tener en cuenta su nombre.
+<p>A veces es necesaria una limpieza m&aacute;s profunda. Si pulsamos la tecla opci&oacute;n al usar &laquo;Borrar archivos aux&raquo;, TeXShop usa los mecanismos de &laquo;%!TEX root =&raquo; y &laquo;Documento ra&iacute;z...&raquo; para encontrar el documento ra&iacute;z. Entonces lleva a la papelera todos los archivos en la carpeta de ese archivo ra&iacute;z y sus subcarpetas, siempre que tengan las extensiones adecuadas, y sin tener en cuenta su nombre.
 Se puede hacer que &eacute;ste sea el comportamiento predeterminado de &laquo;Borrar archivos aux&raquo;, para que no haya que usar la tecla opci&oacute;n. Esto se logra con
 </p>
 <dl>
@@ -98,12 +104,12 @@ El valor por defecto de esta preferencia es YES.
 			<dd>defaults write TeXShop ExternalEditorTypesetAtStart NO
 		</dl>
 
-<p> Hay una preferencia oculta para asignar un tama&ntilde;o predeterminado a las matrices que crea el Panel matrices. Para cambiar el valor que viene por defecto, usa, por ejemplo,</p>
+<p>Hay una preferencia oculta para asignar un tama&ntilde;o predeterminado a las matrices que crea el Panel matrices. Para cambiar el valor que viene por defecto, usa, por ejemplo,</p>
 		<dl>
 			<dd> defaults write TeXShop matrixsize 12
 		</dl> 
 
-<p> Aunque no est&aacute; instalado por defecto, la barra de herramientas de la ventana del pdf contiene un &lsquo;checkbox&rsquo; llamado SyncMarks.
+<p>Aunque no est&aacute; instalado por defecto, la barra de herramientas de la ventana del pdf contiene un &lsquo;checkbox&rsquo; llamado SyncMarks.
 Cuando est&aacute; marcado, TeXShop muestra los puntos de sincronizaci&oacute;n
 en la ventana con el pdf previsto.
 Cuando la ventana con el pdf aparece por primera vez, este &lsquo;checkbox&rsquo; no est&aacute; marcado. Esto se puede cambiar v&iacute;a</p>
@@ -111,20 +117,48 @@ Cuando la ventana con el pdf aparece por primera vez, este &lsquo;checkbox&rsquo
 			<dd>defaults write TeXShop ShowSyncMarks YES
 		</dl>
 
-<p>Cuando la ventana con el pdf se actualiza tras componer, esta ventana se coloca en el frente. Este comportamiento causa problemas si se usa con un editor X11 que se est&eacute; ejecutando en el X11 Window Manager de Apple. Para evitarlo, este comportamiento se puede desactivar con
-</p>
+<p>Cuando la ventana con el pdf se actualiza tras componer, esta ventana se coloca en el frente. Este comportamiento causa problemas si se usa con un editor X11 que se est&eacute; ejecutando en el X11 Window Manager de Apple. Para evitarlo, este comportamiento se puede desactivar con</p>
 		<dl>
 			<dd>defaults write TeXShop BringPdfFrontOnAutomaticUpdate NO
 		</dl>
 
 <p>En versiones anteriores, TeXShop usaba una juego diferente de comandos para especificar el motor de composici&oacute;n, el c&oacute;digo de caracteres y el archivo ra&iacute;z;
 por ejemplo, %&amp;latex, %&amp;encoding= UTF-8 Unicode o %SourceDoc ../Main.tex.
-Esta sintaxis no era adecuada, y se ha cambiado (la nueva se explica en otra parte de la ayuda). Si tienes muchos documentos antiguos, puedes volver a activar temporalmente este tipo de comandos, y lograr que tanto la sintaxis antigua como la nueva funcionen. Este cambio, que deber&iacute;as efectuar s&oacute;lo en caso de emergencia, se logra con
-</p>
+Esta sintaxis no era adecuada, y se ha cambiado (la nueva se explica en otra parte de la ayuda). Si tienes muchos documentos antiguos, puedes volver a activar temporalmente este tipo de comandos, y lograr que tanto la sintaxis antigua como la nueva funcionen. Este cambio, que deber&iacute;as efectuar s&oacute;lo en caso de emergencia, se logra con</p>
 		<dl>
 			<dd>defaults write TeXShop UseOldHeadingCommands YES
 		</dl>
+<p>Las teclas de cursor izquierda y derecha hacen que el contenido de la ventana con el pdf previsto se desplace hacia los lados si la ventana es m&aacute;s estrecha que el tama&ntilde;o de la p&aacute;gina; en otro caso, el desplazamiento es vertical. Hay una preferencia oculta para cambiar esto, y conseguir que las teclas de cursor izquierda y derecha sirvan siempre para cambiar de p&aacute;gina:</p>
+		<dl>
+			<dd>defaults write TeXShop LeftRightArrowsAlwaysPage YES
+		</dl>
+<p>La consola de texto en la que aparecen tanto los mensajes que nos env&iacute;a TeX al componer p&aacute;ginas como los errores muestra el texto en negro. Se puede conseguir que el texto sea rojo a partir del primer error con una preferencia oculta:</p>
+		<dl>
+			<dd> defaults write TeXShop RedConsoleAfterError YES
+		</dl>
+<p>En la ventana de edici&oacute;n, los ajustes de l&iacute;nea din&aacute;micos (es decir, la introducci&oacute;n de cambios de l&iacute;nea que s&oacute;lo aparecen en la ventana, pero no son reales) se produce siempre al final de las palabras. Este comportamiento puede cambiarse a &laquo;ninguno&raquo; = 0, &laquo;por palabras&raquo; = 1 o &laquo;por caracteres&raquo; = 2:
+</p>
+		<dl>
+			<dd>defaults write TeXShop LineBreakMode 1
+		</dl>
+<p>Cuando la ventana con el pdf previsto aparece por primera vez, su caj&oacute;n est&aacute; oculto. Hay una preferencia oculta para lograr que el caj&oacute;n sea visible la primera vez que aparece la ventana con el pdf:
+</p>
+		<dl>
+			<dd>defaults write TeXShop PreviewDrawerOpen YES
+		</dl>
 
+<p>Cuando se lanz&oacute; TeXShop para Tiger (Mac OS X 10.4), los usuarios notaron un molesto bug que hac&iacute;a que el funcionamiento del programa fuera cada vez m&aacute;s lento, hasta llegar a ser pr&aacute;cticamente inusable tras varios a procesos de componer p&aacute;ginas. Este bug fue solucionado un par de d&iacute;as despu&eacute;s del lanzamiento. El problema ocurr&iacute;a cuando un nuevo pdf era cargado en el PdfKitView de la ventana con el pdf.
+Seg&uacute;n la documentaci&oacute;n de Apple, esto deber&iacute;a haber liberado de la memoria las estructuras de datos previas. La liberaci&oacute;n ocurr&iacute;a, pero ocasionaba que el programa se hiciera m&aacute;s lento. As&iacute; que el m&eacute;todo de fijar el bug consiti&oacute; en puentear al sistema haci&eacute;ndole creer que esas estructuras de datos todav&iacute;a esaban siendo usadas, as&iacute; que el sistema no las liberaba.</p>
+<p>Recientes investigaciones parecen mostrar que este bug no es tan severo en Tiger 10.4.4. Como consecuencia, se ha a&ntilde;adido una preferencia oculta para liberar los datos si as&iacute; lo desamos. Los valores de esta preferencia son</p>
+		<dl>
+			<dd> 0 para liberar los datos en el sistema 10.4.3 o superior
+			<dd> 1 para no liberar nunca los datos
+			<dd> 2 para liberar siempre los datos
+		</dl>
+<p>El valor por defecto es 1, lo que causa que el programa se comporte tal como lo hac&iacute;an las versiones anteriores:</p>
+		<dl>
+			<dd>defaults write TeXShop ReleaseDocumentClasses 1
+		</dl>
 
 </div>
 <div id="header_background"></div>

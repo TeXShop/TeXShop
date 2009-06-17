@@ -2,7 +2,7 @@
 
 <HEAD>
 		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
-		<TITLE>More About teTeX</TITLE>
+		<TITLE>More About TeXLive</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="about tetex; add sty file">
 	<link href="../sty/screen.css" rel="stylesheet" media="all">
@@ -10,20 +10,12 @@
 
 <BODY>
 	<div id="content_border">
-		<P>teTeX is installed in the directory /usr/local/teTeX, which is not visible from the Finder. But the installer creates a symbolic link to this directory in /Library/teTeX. Therefore, go to /Library/teTeX to inspect files in teTeX. </P>
-		<p>The documentation for teTeX is in /Library/teTeX/share/texmf/doc/tetex. In particular, examine the files</p>
+		<P>TeXLive from TUG and gwTeX from Gerben Wierda are installed in the directories /usr/local/texlive and /usr/local/gwTeX, which are not visible from the Finder. But the installer creates a symbolic link to the directory of the active TeX distribution in /Library/TeX/Root. Therefore, go to /Library/TeX/Root to inspect files in your distribution. </P>
+		<p>The documentation for the active distribution is in /Library/TeX/Documentation (this is actually a link to various documentation folders in the distribution). </p>
+		<p>It is possible to store additional style files, fonts, etc., in TeXLive itself. But TeXLive is owned by root and lives in a folder which isn't writeable by users.. Moreover, it is a good idea to keep this directory pure so it can be upgraded easily when later versions are released. It is better to construct a mirror image of the TeXLive directory structure inside your Library folder and store your personal files there. </p>
+		<p>The files must be in appropriate directories. TeXLive uses a directory structure invented by the TeX working group. Suppose you want to add a extra style file named new.sty to the style files used by LaTeX. Look inside TeXLive and notice that a natural spot for this file would be</p>
 		<dl>
-			<dd>TETEXDOC.pdf 
-			<dd>teTeX-FAQ
-		</dl>
-		<p>Additional documentation for Gerben Wierda's Mac OSX compilation is in</p>
-		<dl>
-			<dd>/Library/teTeX/README.macosx
-		</dl>
-		<p>It is possible to store additional style files, fonts, etc., in teTeX itself. But teTeX is owned by root and lives in /usr/local/teTeX, which isn't visible in the Finder. Moreover, it is a good idea to keep this directory pure so it can be upgraded easily when later versions are released. It is better to construct a mirror image of the teTeX directory structure inside your Library folder and store your personal files there. </p>
-		<p>The files must be in appropriate directories. teTeX uses a directory structure invented by the TeX working group. Suppose you want to add a extra style file named new.sty to the style files used by LaTeX. Look inside teTeX and notice that a natural spot for this file would be</p>
-		<dl>
-			<dd>/usr/local/teTeX/share/texmf/tex/latex/misc/
+			<dd>/usr/local/texlive/2007/texmf/tex/latex/misc/
 		</dl>
 		<p>So inside your home directory's Library folder, make a series of subdirectories as follows:</p>
 		<dl>
@@ -33,14 +25,16 @@
 		<ul>
 			
 		</ul>
+
+<p> The various MacTeX packages install a Preference Pane named "TeX Distribution". This pane allows you to have several TeX distributions installed on your machine and to switch from one to the other. The pane switches the PATH to TeX for command line invocation, the MAN page pointer in Terminal, and the preferences locating various TeX applications in all GUI applications.</p>
 	</div>		
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
-<div id="header_chapter">Advanced Help</div><div id="header_title">More About teTeX</div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">More About TeXLive</div>
 
 	<div id="menu_border">
 		<ul>
-			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to teTeX</a>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeXLive</a>
 			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
 			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
 			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
@@ -57,7 +51,7 @@
 			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
 			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
 			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
-			<li><a href="advanced_moretetex.htm">More About teTeX</a>
+			<li><a href="advanced_moretetex.htm">More About TeXLive</a>
 			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
 			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
 			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>

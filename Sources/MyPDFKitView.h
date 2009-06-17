@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: MyPDFKitView.h 159 2006-05-24 23:45:37Z fingolfin $
+ * $Id: MyPDFKitView.h 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Parts of this code are taken from Apple's example PDFKitViewer.
  *
@@ -77,8 +77,10 @@
 	double							oldMagnification;
 
 	BOOL							downOverLink;
+	NSRect							rect;  // to simulate cacheImageInRect
 }
 
+// - (void) scheduleAddintToolips;
 - (void) setup;
 - (void) initializeDisplay;
 - (void) showWithPath: (NSString *)imagePath;
@@ -115,6 +117,9 @@
 - (void) mouseDragged: (NSEvent *) theEvent;
 - (void) mouseMoved: (NSEvent *) theEvent;
 - (void) scrollByDragging: (NSEvent *)theEvent;
+- (void) zoomIn: (id)sender;
+- (void) zoomOut: (id)sender;
+
 
 - (void)selectARect: (NSEvent *)theEvent;
 - (void)selectAll: (id)sender;
@@ -139,5 +144,7 @@
 - (void)setDrawMark: (BOOL)value;
 - (void)setupSourceFiles;
 - (void)keyDown:(NSEvent *)theEvent;
+- (void)updateBackground: (NSRect)aRect;
+- (void)goToKitPageNumber: (int) thePage; 
 @end
 

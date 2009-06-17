@@ -16,13 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocument.h 228 2006-06-10 15:26:28Z richard_koch $
+ * $Id: TSDocument.h 262 2007-08-17 01:33:24Z richard_koch $
  *
  * Created by koch in July, 2000.
  *
  */
 
 #import <AppKit/AppKit.h>
+#import "TSFullscreenWindow.h"
+#import <Quartz/Quartz.h>
+
 
 #define NUMBEROFERRORS	20
 
@@ -132,6 +135,10 @@ enum RootCommand
 
 	NSTextStorage				*_textStorage;
 	BOOL		windowIsSplit;
+	
+	BOOL				isFullScreen;
+	TSFullscreenWindow	*fullscreenWindow;
+	PDFView				*fullscreenPDFView;
 
 	NSStringEncoding	_encoding;
 	NSStringEncoding	_tempencoding;
@@ -171,6 +178,7 @@ enum RootCommand
 	NSDictionary		*commandColorAttribute;
 	NSDictionary		*commentColorAttribute;
 	NSDictionary		*markerColorAttribute;
+	NSDictionary		*indexColorAttribute;
 
 	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
 	unsigned	tagLocation;
@@ -182,6 +190,7 @@ enum RootCommand
 	BOOL                taskDone;
 	int                 pdfSyncLine;
 	id                  syncBox;
+	id					indexColorBox;
 	BOOL                aggressiveTrash;
 
 	BOOL		_externalEditor;
@@ -205,6 +214,12 @@ enum RootCommand
 	BOOL				PDFfromKit;
 	unsigned int		pdfCharacterIndex;
 	BOOL				textSelectionYellow;
+	BOOL				showIndexColor; // this is related to a bug where the source draws after the toolbar is disposed
+	BOOL				showSync; // this fixes a bug in which the pdfkit draws a final time and accesses a toolbar button after it is disposed
+	BOOL				isLoading;
+	BOOL				firstTime;
+	NSTimeInterval		colorTime;
+
 
 	//Michael Witten: mfwitten@mit.edu
 	NSLineBreakMode		lineBreakMode;
@@ -224,12 +239,14 @@ enum RootCommand
 - (id) pagenumberPanel;
 - (void) quitMagnificationPanel: sender;
 - (void) quitPagenumberPanel: sender;
-- (void) okForPanel: sender;
-- (void) cancelForPanel: sender;
+- (void) okForPanel: sender;  //needed?
+- (void) cancelForPanel: sender;  //needed?
 - (void) showStatistics: sender;
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
+- (void) okForRequest: sender;
+- (void) okForPrintRequest: sender;
 - (void) chooseEncoding: sender;
 - (NSStringEncoding) encoding;
 - (void) close;
@@ -266,8 +283,8 @@ enum RootCommand
 - (void) refreshPDFAndBringFront: (BOOL)front;
 - (void) refreshTEXT;
 - (NSString *)displayName;
-- (BOOL) isTexExtension: (NSString *)extension;
-- (BOOL) isTextExtension: (NSString *)extension;
+- (BOOL) isTexExtension: (NSString *)extension;  //needed?
+- (BOOL) isTextExtension: (NSString *)extension; //needed?
 - (NSPDFImageRep *) myTeXRep;
 - (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (BOOL)isDocumentEdited;
@@ -279,6 +296,9 @@ enum RootCommand
 - (void)showSyncMarks:sender;
 - (BOOL)syncState;
 - (void) flipShowSync: sender;
+- (void)showIndexColor:sender;
+- (BOOL)indexColorState;
+- (void) flipIndexColorState: sender;
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 - (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 - (void)trashAUXFiles: sender;
@@ -294,6 +314,11 @@ enum RootCommand
 - (void) setCharacterIndex:(unsigned int)idx;
 - (BOOL) textSelectionYellow;
 - (void) setTextSelectionYellow:(BOOL)value;
+- (void) saveSourcePosition;
+- (void) savePreviewPosition;
+- (void) fullscreen: (id)sender;
+- (void) endFullScreen;
+
 // - (void) printDocumentWithSettings: (NSDictionary :)printSettings showPrintPanel:(BOOL)showPrintPanel delegate:(id)delegate 
 // 	didPrintSelector:(SEL)didPrintSelector contextInfo:(void *)contextInfo;
 //-----------------------------------------------------------------------------
@@ -343,6 +368,7 @@ enum RootCommand
 - (void)resetMacroButton:(NSNotification *)notification;
 
 - (NSString *)filterBackslashes:(NSString *)aString;
+- (NSStringEncoding)dataEncoding:(NSData *)theData;
 
 @end
 

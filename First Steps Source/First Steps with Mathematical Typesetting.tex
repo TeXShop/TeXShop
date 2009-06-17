@@ -1,0 +1,80 @@
+\documentclass[11pt, oneside]{amsart}
+\usepackage{multicol}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage{url}
+
+
+\title{First Steps with Mathematical Typesetting }
+\author{Richard Koch}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+\begin{multicols}{2}
+
+\section{Some \TeX\ History}
+\thispagestyle{empty}
+
+Source documents written with raw \TeX\ contain very primitive markup commands. But  \TeX\ allows a user to define new commands in terms of these primitive commands; using these new commands produces a source manuscript that is easier to write and more readable.
+Typically \TeX\ inputs the new definitions at the start of a run, and then reads the source document.
+
+A collection of such higher level commands is called a Macro package or Format. Knuth wrote such a package early in the development of \TeX, called Plain \TeX. Today if a user claims to be writing in ``ordinary \TeX,'' they are almost certainly using Plain \TeX.
+
+Almost immediately after \TeX\ was introduced, other Macro packages were written by experts. The first of these was \AmS-\TeX\ by Michael Spivak, produced in 1980 in cooperation with the American Mathematical Society. In 1982, Leslie Lamport introduced \LaTeX, a package which simplifies many operations and concentrates on the non-mathematical side of \TeX. Today the vast majority of \TeX\ is written with \LaTeX.
+
+Later \LaTeX\ was improved so Spivak's macros could be used on top of it. The process of creating this combination is described in the introduction to George Gr\"atzer's book. The result is a system allowing ordinary users to input \LaTeX\ commands as described in a large number of books about \TeX, while mathematicians can choose between the mathematical commands of \TeX\ and \LaTeX\ and the additional power of \AmS- \TeX.
+
+\section{\emph{More} Math Into \LaTeX}
+
+George Gr\"atzer wrote the standard book about this system, \emph{More} Math Into \LaTeX.  The 4th Edition of his book will be published in September, 2007. The book begins with a  short course introducing a beginner to the basic features of \LaTeX\ and \AmS-\TeX; a good way to learn \TeX\ is to work through this short course. The remaining book gives many more details about the topics introduced in the short course, and about additional features of \TeX. Gr\"atzer generously gave me permission to include the short course in TeXShop. Notice that the short course contains a table of contents for the complete book.
+
+The short course contains many examples which a reader can enter, typeset, and expand. The first examples require that an additional file, {\tt sample.cls}, be added to the folder containing the source document. The TeXShop Help menu command ``Place Course Supplements on Desktop'' will place a folder on your desktop containing this file.
+
+Later the short course introduces a large example, {\tt intrart.tex}, which the user can revise as they are learning \TeX. This file accesses an illustration, {\tt products.pdf}, during typesetting. The file and the illustration are also placed in the folder by the previous Help menu command.
+
+At the end of Gr\"atzer's book, there are appendices containing tables of \TeX\ commands for a large number of mathematical and other symbols. Gr\"atzer also generously gave permission to include these tables in the TeXShop Help menu.
+
+\section{Additional Steps}
+
+Mastering the short course should be enough to get you started with \TeX\ and \LaTeX. When you run into problems, a Google search is likely to be productive; Google knows a surprising amount of \TeX. Another extremely useful source  is the UK List of Frequently Asked Questions on the Web, which can be found by Googling ``TeX FAQ." A vast amount of additional material is available on the web. 
+
+Users serious about \TeX\ will want to own several reference books. Here is a very short list:
+\begin{itemize}
+\item
+\emph{More} Math Into \LaTeX, Fourth Edition, by George Gr\"atzer
+\item Guide to \LaTeX, Fourth Edition, by Helmut Kopka and Patrick W. Daly
+\item \LaTeX, a Document Preparation System, Second Edition, by Leslie Lamport
+\end{itemize}
+
+For extra reading, I recommend
+Digital Typography by Donald E. Knuth. 
+This book contains a collection of papers by Knuth about \TeX. Many are informal, entertaining, and far less stuffy than you'd expect. The first chapter is the text of a lecture Knuth gave when he received the 1996 Kyoto Prize. Chapter 24 of the book contains entries from Knuth's 1977 diary. On March 30, he wrote ``Galley proofs for vol 2 finally arive, they look typographically awful\ldots I decide I have to solve the problem myself.'' On May 5, he wrote ``Major design of \TeX\ started.'' On May 7 he wrote ``Went to movies Airport 77 and Earthquake (to escape).'' This is followed by the first preliminary description of \TeX\ written on May 13, a long and fascinating typewritten document.
+
+Those truly serious about \TeX\  can obtain Knuth's boxed set of five standard references, titled Computers and Typesetting.
+ This set contains
+\begin{itemize}
+\item The \TeX book, Knuth's \TeX\ manual for users
+\item \TeX: The Program, the full source code for \TeX
+\item The METAFONTbook, Knuth's manual for MetaFont, the program he used to construct fonts
+\item METAFONT: The Program, the full source code for MetaFont
+\item Computer Modern Typefaces, detailed definitions of the characters in the default Computer Modern fonts designed by Knuth for  \TeX, including full page blown up pictures of each individual character
+\end{itemize}
+
+\section{\LaTeX, \AmS-\TeX, and Xe\TeX}
+All of the commands in this Short Course will also work in XeTeX, and thus can be used if you are interested in the General Typesetting discussed in an earlier Help file. To make this work, you need to add the small number of additional code lines discussed in that document to the sample files in Gr\"atzer's book.
+
+As explained earlier, the advantage of typesetting this material in Xe\TeX\ is that you have easy access to all of the fonts available on your Macintosh, and can input pure Unicode in the source manuscript for non-Roman languages. The disadvantage is that your document will not be as portable, and the Unicode sections of the source manuscript may confuse collaborators. Mathematicians with extensive contacts around the world are likely to want to stick to the standard \LaTeX\ and \AmS-\TeX\ familiar to all of their colleagues, but users outside this world may well find the advantages of Xe\TeX\ overwhelming. It certainly represents the future of \TeX.
+
+
+\end{multicols}
+
+\end{document}  

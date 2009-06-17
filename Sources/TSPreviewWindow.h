@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSPreviewWindow.h 139 2006-05-21 13:21:25Z fingolfin $
+ * $Id: TSPreviewWindow.h 260 2007-08-08 22:51:09Z richard_koch $
  *
  * Originally part of TSDocument. Broken out by dirk on Tue Jan 09 2001.
  *
@@ -40,6 +40,9 @@
 - (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
+- (void) zoomIn: sender;
+- (void) zoomOut: sender;
+
 
 - (void) firstPage: sender;
 - (void) lastPage: sender;
@@ -55,6 +58,7 @@
 - (void) doChooseMethod: sender;
 - (void) rotateClockwise: sender;
 - (void) rotateCounterclockwise: sender;
+- (void) savePreviewPosition: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow: sender;

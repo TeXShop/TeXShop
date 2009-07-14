@@ -571,9 +571,7 @@
 
 		Param = 65536;
 		aPoint.x = xNumber[i]/Param;
-		// aPoint.x = xNumber[i]; in version 1.2
 		aPoint.y = pageSize.size.height - yNumber[i]/Param;
-		//aPoint.y = pageSize.size.height - yNumber[i]; in version 1.2
 		theNumber = [thePage characterIndexAtPoint:aPoint];
 		pageString = [thePage string];
 		theLocation = theNumber - 2;

@@ -35,7 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 
-#import "OgreKit/OgreTextFinder.h"
+// #import "OgreKit/OgreTextFinder.h"
 #import "TextFinder.h"
 
 #include <sys/sysctl.h>     // for testForIntel
@@ -307,9 +307,11 @@
 	// end mitsu 1.29b
 #endif
 
+	/*
 	if ([SUD boolForKey:UseOgreKitKey])
 		theFinder = [OgreTextFinder sharedTextFinder];
 	else
+	*/
 		theFinder = [TextFinder sharedInstance];
 	    
 	[self testForIntel];
@@ -657,10 +659,12 @@
 // end mitsu 1.29
 #endif
 
+/*
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder
 {
 	[textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
 }
+*/
 
 // The routine below is no longer used; it has been replaced by Sparkle. Koch, 1/11/2009.
 

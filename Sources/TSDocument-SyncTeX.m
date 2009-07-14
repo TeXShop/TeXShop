@@ -626,6 +626,7 @@
 			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self]; 
 
 			return YES;
 			}
@@ -670,6 +671,8 @@
 	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
+	
+	[pdfKitWindow makeKeyAndOrderFront:self];
 
 	return YES;
 	
@@ -693,7 +696,7 @@
 	[myPDFKitView setBoundsForMark: myOval];
 	[myPDFKitView setDrawMark: YES];
 	[myPDFKitView goToPage: thePage];
-	[myPDFKitView display];
+	[pdfWindow display];
 	
 	i++;
 	}

@@ -7,12 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <QTKit/QTKit.h>
 
 
 
-@interface TSMovieWindow : NSWindow {
+@interface  TSMovieWindow: NSWindow {
 
-NSMovieView	*myMovieView;
+QTMovieView	*myMovieView;
 
 }
 

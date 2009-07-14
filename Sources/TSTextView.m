@@ -30,7 +30,7 @@
 #import "TSEncodingSupport.h"
 #import "TSPreferences.h"
 #import "TSMacroMenuController.h" // zenitani 1.33
-#import <OgreKit/OgreKit.h>
+// #import <OgreKit/OgreKit.h>
 // Adam Maxwell addition
 #import <unistd.h>
 
@@ -530,10 +530,12 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	}
 
 	// zenitani 1.35 (A) -- normalizing newline character for regular expression
+	/*
 	if ([SUD boolForKey:ConvertLFKey]) {
 		newString = [OGRegularExpression replaceNewlineCharactersInString:newString
 				withCharacter:OgreLfNewlineCharacter];
 	}
+	*/
 
 	[super insertText: newString];
 }
@@ -568,10 +570,12 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 				string = filterYenToBackslash(string);
 
 			// zenitani 1.35 (A) -- normalizing newline character for regular expression
+			/*
 			if ([SUD boolForKey:ConvertLFKey]) {
 				string = [OGRegularExpression replaceNewlineCharactersInString:string
 						withCharacter:OgreLfNewlineCharacter];
 			}
+			*/
 
 			// Replace the text--imitate what happens in ordinary editing
 			NSRange	selectedRange = [self selectedRange];

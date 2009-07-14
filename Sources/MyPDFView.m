@@ -3585,6 +3585,7 @@ typedef struct qdPixel
 // data in a PICT file, we have to put 512 bytes of zeros before this data.
 NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 {
+	/*
 	GWorldPtr		gworld;
 	Rect			gwRect;
 	OpenCPicParams	picParam;
@@ -3603,7 +3604,7 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	gwRect.right = widthInPixels  = [bitmap size].width;
 	gwRect.bottom = heightInPixels = [bitmap size].height;
 	// NSQuickDrawView will be used as the target of CopyBits while recoding the picture
-	NSQuickDrawView *qdView = [[NSQuickDrawView alloc] initWithFrame:
+	QTMoveView *qdView = [[QTMovieView alloc] initWithFrame:
 						NSMakeRect(0, 0, widthInPixels, heightInPixels)];
 	if (!qdView )
 		return nil;
@@ -3660,6 +3661,7 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	}
 	[qdView release];
 	return data;
+	*/
 }
 
 

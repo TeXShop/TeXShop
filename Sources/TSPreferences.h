@@ -39,6 +39,7 @@
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
 	IBOutlet NSButtonCell	*_spellCheckButton;		/*" connected to "SpellChecking "*/
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
+	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
 	IBOutlet NSButton		*_externalEditorButton;		/*" use external editor "*/
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
@@ -78,7 +79,9 @@
 																we restore the old one "*/
 	BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
 	BOOL			autoCompleteTouched;
+	BOOL			bibDeskCompleteTouched;
 	BOOL			oldAutoComplete;
+	BOOL			oldBibDeskComplete;
 	BOOL			magnificationTouched;
 	BOOL			externalEditorTouched;
 	BOOL			encodingTouched;
@@ -109,6 +112,7 @@
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;
+- (IBAction)bibDeskCompletePressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;

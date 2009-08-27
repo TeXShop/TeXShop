@@ -41,6 +41,7 @@
 #import "globals.h"
 #import "TSDocument.h"
 #import "TSEncodingSupport.h"
+#import "MyDragView.h"
 
 
 #define NUMBER_OF_SOURCE_FILES	60
@@ -230,6 +231,12 @@
 {
 	long	MacVersion;
 	int		result;
+	
+	result = [SUD boolForKey:ReleaseDocumentOnLeopardKey];
+	if (result) {
+		if ((Gestalt(gestaltSystemVersion, &MacVersion) == noErr) && (MacVersion >= 0x1050)) 
+			return YES;
+		}
 
 	result = [SUD integerForKey:ReleaseDocumentClassesKey];
 	if (result == 1)
@@ -1073,15 +1080,24 @@
 	drawMark = value;
 }
 
+/*
+- (void)drawPage:(PDFPage *)page
+{
+	[page drawWithBox: kPDFDisplayBoxMediaBox];
+}
+*/
+
+
 
 - (void)drawPage:(PDFPage *)page
 {
+	
 	int					pagenumber;
 	NSPoint				p;
 	int					rotation;
 	NSRect				boxRect;
 	NSAffineTransform   *transform;
-
+	
 	// boxRect = [page boundsForBox: [self displayBox]];
 	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
 	rotation = [page rotation];
@@ -1133,15 +1149,15 @@
 
 			backColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
 			[backColor set];
-			NSRectFill(boxRect);
-			// NSDrawWindowBackground(boxRect);
+			 NSRectFill(boxRect);
+			// NSDrawWindowBackground(boxRect); NO
 		}
 	}
 
 	else
 
 
-		NSDrawWindowBackground(boxRect);
+		 NSDrawWindowBackground(boxRect);
 
 	[NSGraphicsContext restoreGraphicsState];
 	[page drawWithBox:[self displayBox]];
@@ -1186,6 +1202,7 @@
 	}
 
 }
+
 
 #pragma mark =====mouse routines=====
 
@@ -1880,13 +1897,16 @@
 // get image data from the selected rectangle with specified type
 - (NSData *)imageDataFromSelectionType: (int)type
 {
-	NSRect visRect, newRect, selRectWindow;
+	NSRect visRect, newRect, newRectRevised, pageRect, pageDataRect, selRectWindow, frameRect;
 	NSRect mySelectedRect;
 	NSData *data = nil;
 	NSBitmapImageRep *bitmap = nil;
 	NSBitmapImageFileType fileType;
 	NSDictionary *dict;
 	NSColor *foreColor, *backColor, *oldBackColor;
+	NSSize mySize;
+	
+	offsetPoint.x = 0; offsetPoint.y = 0;
 
 	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
 	visRect = [self visibleRect];
@@ -2062,6 +2082,15 @@
 		// To work around this, we must decompose oldBackColor and then reconstruct it
 
 		// oldBackColor = [self backgroundColor];
+		
+		// Richard Koch: December 10, 2007
+		// The above fix failed on the release version of Leopard. Instead
+		// an entirely new method is required, which was suggested to me at the
+		// developer conference by the author of PDFKit
+		
+		// The code commented out below is the original fix
+		
+		/*
 		oldBackColor = [[self backgroundColor] colorUsingColorSpaceName:NSCalibratedRGBColorSpace]; 
 		float backRedColor, backGreenColor, backBlueColor, backAlphaColor;
 		backRedColor = [oldBackColor redComponent];
@@ -2073,18 +2102,65 @@
 		green: 0.0 blue: 0.0
 		alpha: 0.0];
 		[self setBackgroundColor: backColor];
+		*/
 
-		if (type == IMAGE_TYPE_PDF)
-			data = [self dataWithPDFInsideRect: newRect];
-		else // IMAGE_TYPE_EPS
-			data = [self dataWithEPSInsideRect: newRect];
+		// if (type == IMAGE_TYPE_PDF) 
+		// data = [self dataWithPDFInsideRect: newRect];
+						
+			NSPoint myLocation = [[self window] mouseLocationOutsideOfEventStream];
+			myLocation = [self convertPoint: myLocation fromView:nil];
+			PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
+			NSData	*myData = [myPage dataRepresentation];
+			NSPDFImageRep *myRep = [NSPDFImageRep imageRepWithData: myData];
 			
+			pageDataRect = [self convertRect:newRect toPage:myPage];
+			pageRect = [myPage boundsForBox: kPDFDisplayBoxMediaBox];
+			pageDataRect = NSIntersectionRect(pageDataRect, pageRect);
+			newRectRevised = [self convertRect:pageDataRect fromPage:myPage];
+			offsetPoint.x = newRectRevised.origin.x - newRect.origin.x;
+			offsetPoint.y = newRectRevised.origin.y - newRect.origin.y;
+			 
+			MyDragView *myDragView = [[MyDragView alloc] initWithFrame: pageRect];
+			[myDragView setImageRep: myRep];
+			
+			double amount;
+			amount = [self magnification];
+			frameRect = [myDragView frame];
+			frameRect.size.width = frameRect.size.width * amount;
+			frameRect.size.height = frameRect.size.height * amount;
+			[myDragView setFrame: frameRect];
+			
+			mySize.width = amount;
+			mySize.height = amount;
+			[myDragView scaleUnitSquareToSize: mySize];
+			
+			
+			pageDataRect.size.height = pageDataRect.size.height * amount;
+			pageDataRect.size.width = pageDataRect.size.width * amount;
+			// pageDataRect.origin.x = pageDataRect.origin.x * amount;
+			// pageDataRect.origin.y = pageDataRect.origin.y * amount;
+			
+			if (type == IMAGE_TYPE_PDF) 
+				data = [myDragView dataWithPDFInsideRect: pageDataRect];
+			else if (type == IMAGE_TYPE_EPS)
+				data = [myDragView dataWithEPSInsideRect: pageDataRect];
+			else
+				data = nil;
+				
+			[myDragView release];
+			
+			
+		// else // IMAGE_TYPE_EPSfile://localhost/Users/koch/Library/TeXShop/DraggedImages/texshop_image.pdf
+		//	data = [self dataWithEPSInsideRect: newRect];
+		
+		/*
 		NSColor *olderBackColor = [NSColor colorWithCalibratedRed: backRedColor green: backGreenColor blue: backBlueColor alpha: backAlphaColor];
 		[self setBackgroundColor: olderBackColor];
 		// [self setBackgroundColor: oldBackColor];
 		
 		// end of workaround
 		// --------------------------------------------------------------
+		*/
 
 	}
 	NS_HANDLER
@@ -2169,7 +2245,8 @@
 	NSImage *image;
 	NSSize dragOffset = NSMakeSize(0, 0);
 	NSRect	mySelectedRect;
-
+	NSPoint	offset;
+	
 	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
 
 	pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
@@ -2199,7 +2276,10 @@
 									forType:NSFilenamesPboardType];
 			image = [[[NSImage alloc] initWithData: data] autorelease];
 			if (image) {
-				[self dragImage:image at:mySelectedRect.origin offset:dragOffset
+				// drag pdf image here
+				offset = mySelectedRect.origin;
+				offset.x = offset.x + offsetPoint.x; offset.y = offset.y + offsetPoint.y;
+				[self dragImage:image at:offset offset:dragOffset
 					event:theEvent pasteboard:pboard source:self slideBack:YES];
 			}
 		}
@@ -2279,6 +2359,38 @@
 	// differences, but those aren't a real problem.
 
 	searchText = @"%!TEX projectfile =";
+	done = NO;
+	maskRange.location = 0;
+	maskRange.length = sourceLength;
+	
+	// experiments show that the syntax is \include{file} where "file" cannot include ".tex" but the name must be "file.tex"
+	while ((!done) && (maskRange.length > 0) && (currentIndex < NUMBER_OF_SOURCE_FILES)) {
+		searchRange = [sourceText rangeOfString: searchText options:NSLiteralSearch range:maskRange];
+		if (searchRange.location == NSNotFound)
+			done = YES;
+		else {
+			maskRange.location = searchRange.location + 1;
+			maskRange.length = sourceLength - maskRange.location;
+			[sourceText getLineStart: &startIndex end: &lineEndIndex contentsEnd: &contentsEndIndex forRange: searchRange];
+			newSearchRange.location = searchRange.location + [searchText length];
+			newSearchRange.length = contentsEndIndex - newSearchRange.location;
+			filePath = [sourceText substringWithRange: newSearchRange];
+			if (filePath)
+			    filePath = [filePath stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]]; 
+			if (filePath && ([filePath length] > 0)) {
+			    if ([filePath characterAtIndex: 0] != '/')
+					filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
+			    filePath = [filePath stringByStandardizingPath];
+			    // add this to the array
+			    if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
+					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					currentIndex++;
+				}
+			}
+		}
+	}
+	
+	searchText = @"% !TEX projectfile =";
 	done = NO;
 	maskRange.location = 0;
 	maskRange.length = sourceLength;
@@ -2467,7 +2579,7 @@
 	NSRange					encodingRange, newEncodingRange, myRange, theRange1;
 	unsigned				length1, start, end, irrelevant;
 	BOOL					done;
-	int						linesTested;
+	int						linesTested, offset;
 	NSString				*aString;
 	int						correction;
 
@@ -2514,9 +2626,14 @@
 				theRange1.location = start; theRange1.length = (end - start);
 				testString = [firstBytes substringWithRange: theRange1];
 				encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
+				offset = 16;
+				if (encodingRange.location == NSNotFound) {
+					encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
+					offset = 17;
+					}
 				if (encodingRange.location != NSNotFound) {
 					done = YES;
-					newEncodingRange.location = encodingRange.location + 16;
+					newEncodingRange.location = encodingRange.location + offset;
 					newEncodingRange.length = [testString length] - newEncodingRange.location;
 					if (newEncodingRange.length > 0) {
 						encodingString = [[testString substringWithRange: newEncodingRange]

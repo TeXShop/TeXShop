@@ -31,7 +31,18 @@
 #import "TSPreferences.h"
 #import "TSMacroMenuController.h" // zenitani 1.33
 #import <OgreKit/OgreKit.h>
+// Adam Maxwell addition
+#import <unistd.h>
 
+@protocol BDSKCompletionProtocol <NSObject>
+- (NSArray *)completionsForString:(NSString *)searchString;
+- (NSArray *)orderedDocumentURLs;
+@end
+
+static NSString *SERVER_NAME = @"BDSKCompletionServer";
+#define BIBDESK_IDENTIFIER "edu.ucsd.cs.mmccrack.bibdesk"
+static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
+// end Adam Maxwell addition
 
 // end addition
 
@@ -487,6 +498,7 @@
 // added by mitsu --(A) g_texChar filtering
 - (void)insertText:(id)aString
 {
+
 	// AutoCompletion
 	// Code added by Greg Landweber for auto-completions of '^', '_', etc.
 	// First, avoid completing \^, \_, \"
@@ -587,6 +599,379 @@
 	_document = nil;
 	return self;
 }
+
+// Adam Maxwell addition
+
+
+#pragma mark -
+
+
+
+static inline 
+NSRange SafeBackwardSearchRange(NSRange startRange, unsigned seekLength){
+    unsigned minLoc = ( (startRange.location > seekLength) ? seekLength : startRange.location);
+    return NSMakeRange(startRange.location - minLoc, minLoc);
+}
+
+static inline
+NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned maxLoc ){
+    seekLength = ( (startLoc + seekLength > maxLoc) ? maxLoc - startLoc : seekLength );
+    return NSMakeRange(startLoc, seekLength);
+}
+
+#pragma mark Reference-searching heuristics
+
+// ** Check to see if it's TeX
+//  - look back to see if { ; if no brace, return not TeX
+//  - if { found, look back between insertion point and { to find comma; check to see if it's BibTeX, then return the match range
+// ** Check to see if it's BibTeX
+//  - look back to see if it's jurabib with }{
+//  - look back to see if ] ; if no options, then just find the citecommand (or not) by searching back from {
+//  - look back to see if ][ ; if so, set ] range again
+//  - look back to find [ starting from ]
+//  - now we have the last [, see if there is a cite immediately preceding it using rangeOfString:@"cite" || rangeOfString:@"bibentry"
+//  - if there were no brackets, but there was a double curly brace, then check for a jurabib citation
+// ** After all of this, we've searched back to a brace, and then checked for a cite command with two optional parameters
+
+- (BOOL)isBibTeXCitation:(NSRange)braceRange{
+    
+    NSString *str = [self string];
+    NSRange citeSearchRange = NSMakeRange(NSNotFound, 0);
+    NSRange doubleBracketRange = NSMakeRange(NSNotFound, 0);
+    
+    NSRange rightBracketRange = [str rangeOfString:@"]" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(braceRange, 1)]; // see if there are any optional parameters
+    
+    // check for jurabib \citefield, which has two mandatory parameters in curly braces, e.g. \citefield[pagerange]{title}{cite:key}
+    NSRange doubleBraceRange = [str rangeOfString:@"}{" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange( NSMakeRange(braceRange.location + 1, 1), 10)];
+    
+    if(rightBracketRange.location == NSNotFound && doubleBraceRange.location == NSNotFound){ // no options and not jurabib, so life is easy; look backwards 10 characters from the brace and see if there's a citecommand
+        citeSearchRange = SafeBackwardSearchRange(braceRange, 20);
+        if([str rangeOfString:@"cite" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound ||
+           [str rangeOfString:@"bibentry" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound){
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+    
+    if(doubleBraceRange.location != NSNotFound) // reset the brace range if we have jurabib
+        braceRange = [str rangeOfString:@"{" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(doubleBraceRange, 10)];
+    
+    NSRange leftBracketRange = [str rangeOfString:@"[" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(braceRange, 100)]; // first occurrence of it, looking backwards
+    // next, see if we have two optional parameters; this range is tricky, since we have to go forward one, then do a safe backward search over the previous characters
+    if(leftBracketRange.location != NSNotFound)
+        doubleBracketRange = [str rangeOfString:@"][" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange( NSMakeRange(leftBracketRange.location + 1, 3), 3)]; 
+    
+    if(doubleBracketRange.location != NSNotFound) // if we had two parameters, find the last opening bracket
+        leftBracketRange = [str rangeOfString:@"[" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(doubleBracketRange, 50)];
+    
+    if(leftBracketRange.location != NSNotFound){
+        citeSearchRange = SafeBackwardSearchRange(leftBracketRange, 20); // could be larger
+        if([str rangeOfString:@"cite" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound ||
+           [str rangeOfString:@"bibentry" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound){
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+    
+    if(doubleBraceRange.location != NSNotFound){ // jurabib with no options on it
+        citeSearchRange = SafeBackwardSearchRange(braceRange, 20); // could be larger
+        if([str rangeOfString:@"cite" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound ||
+           [str rangeOfString:@"bibentry" options:NSBackwardsSearch | NSLiteralSearch range:citeSearchRange].location != NSNotFound){
+            return YES;
+        } else {
+            return NO;
+        }
+    }        
+    
+    return NO;
+}
+
+- (NSRange)citeKeyRange{
+    
+    NSString *str = [self string];
+    NSRange r = [self selectedRange]; // here's the insertion point
+    NSRange commaRange;
+    NSRange finalRange;
+    unsigned maxLoc;
+    
+    NSRange braceRange = [str rangeOfString:@"{" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(r, 100)]; // look for an opening brace
+    NSRange closingBraceRange = [str rangeOfString:@"}" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(r, 100)];
+    
+    if(closingBraceRange.location != NSNotFound && closingBraceRange.location > braceRange.location) // if our { has a matching }, don't bother
+        return finalRange = NSMakeRange(NSNotFound, 0);
+    
+    if(braceRange.location != NSNotFound){ // may be TeX
+        commaRange = [str rangeOfString:@"," options:NSBackwardsSearch | NSLiteralSearch range:NSUnionRange(braceRange, r)]; // exclude commas in the optional parameters
+    } else { // definitely not TeX
+        return finalRange = NSMakeRange(NSNotFound, 0);
+    }
+    
+    if([self isBibTeXCitation:braceRange]){
+        if(commaRange.location != NSNotFound && r.location > commaRange.location){
+            maxLoc = ( (commaRange.location + 1 > r.location) ? commaRange.location : commaRange.location + 1 );
+            finalRange = SafeForwardSearchRange(maxLoc, r.location - commaRange.location - 1, r.location);
+        } else {
+            maxLoc = ( (braceRange.location + 1 > r.location) ? braceRange.location : braceRange.location + 1 );
+            finalRange = SafeForwardSearchRange(maxLoc, r.location - braceRange.location - 1, r.location);
+        }
+    } else {
+        finalRange = NSMakeRange(NSNotFound, 0);
+    }
+    
+    return finalRange;
+}
+
+- (NSRange)refLabelRange{
+    
+    NSString *s = [self string];
+    NSRange r = [self selectedRange];
+    NSRange searchRange = SafeBackwardSearchRange(r, 12);
+    
+    // look for standard \ref
+    NSRange foundRange = [s rangeOfString:@"\\ref{" options:NSBackwardsSearch range:searchRange];
+    
+    if(foundRange.location == NSNotFound){
+        
+        // maybe it's a pageref
+        foundRange = [s rangeOfString:@"\\pageref{" options:NSBackwardsSearch range:searchRange];
+        
+        // could also be an eqref (amsmath)
+        if(foundRange.location == NSNotFound)
+            foundRange = [s rangeOfString:@"\\eqref{" options:NSBackwardsSearch range:searchRange];
+    }
+    unsigned idx = NSMaxRange(foundRange);
+    idx = (idx < r.location ? r.location - idx : 0);
+    
+    return NSMakeRange(NSMaxRange(foundRange), idx);
+}
+
+#pragma mark -
+#pragma mark AppKit overrides
+
+// Override usual behaviour so we can have dots, colons and hyphens in our cite keys
+- (NSRange)rangeForBibTeXUserCompletion{
+    
+    NSRange range = [self citeKeyRange];
+    return range.location == NSNotFound ? [self refLabelRange] : range;
+}
+
+static BOOL isCompletingTeX = NO;
+
+// we replace this method since the completion controller uses it to update
+- (NSRange)rangeForUserCompletion{
+    
+    NSRange range = [self rangeForBibTeXUserCompletion];
+    isCompletingTeX = range.location != NSNotFound;
+    
+    return range.location != NSNotFound ? range : [super rangeForUserCompletion];
+}
+
+// this returns -1 instead of NSNotFound for compatibility with the completion controller indexOfSelectedItem parameter
+static inline int
+BDIndexOfItemInArrayWithPrefix(NSArray *array, NSString *prefix)
+{
+    unsigned idx, count = [array count];
+    for(idx = 0; idx < count; idx++){
+        if([[array objectAtIndex:idx] hasPrefix:prefix])
+            return idx;
+    }
+    
+    return -1;
+}
+/* Establishes the DO connection to BibDesk and asks it for completions.  Also tells BibDesk to open
+ files that we need for completion, launching it if necessary.  The return value is an array of
+ KVC-compliant completion objects from BibDesk, without any polishing.
+ */
+
+static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
+{
+    // !!! NSWorkspace will unhide the app regardless, which is annoying, so the caller should only pass fileURLs if necessary (using LS directly doesn't help, either)
+    OSStatus err;
+    CFURLRef appURL = NULL;
+    err = LSFindApplicationForInfo('BDSK', CFSTR(BIBDESK_IDENTIFIER), NULL, NULL, &appURL);
+    
+    if (noErr == err) {
+        LSLaunchURLSpec spec;
+        memset(&spec, 0, sizeof(LSLaunchURLSpec));
+        spec.appURL = appURL;
+        spec.itemURLs = (CFArrayRef)fileURLs;
+        spec.launchFlags = kLSLaunchAndHide | kLSLaunchDontSwitch;
+        err = LSOpenFromURLSpec(&spec, NULL);
+        
+        CFRelease(appURL);
+    }
+    return noErr == err;
+}
+
+- (void)connectToBibDesk
+{
+    if ((nil != [_document completionConnection]) && (nil != [_document completionServer]))
+        return;
+    
+    NSConnection *connection = [NSConnection connectionWithRegisteredName:SERVER_NAME host:nil];
+    
+    // !!! launchBibDeskAndOpenURLs returns before the application is fully launched, so the first connect can fail
+    
+    // launch the app if we don't get a connection
+    if (nil == connection) {
+        if (launchBibDeskAndOpenURLs(nil) == NO) {
+            fprintf(stderr, "Error: unable to find and launch BibDesk\n");
+        }
+        
+        // !!! hack in case the app isn't finished launching; it's only a heuristic, but better than connection failures
+        CFAbsoluteTime stopTime = CFAbsoluteTimeGetCurrent() + MAX_WAIT_TIME;
+        while (nil == connection && CFAbsoluteTimeGetCurrent() < stopTime) {
+            usleep(200);
+            connection = [NSConnection connectionWithRegisteredName:SERVER_NAME host:nil];
+        }
+    }
+    
+    // give up after 10 seconds of waiting; no idea what's wrong here, but BibDesk could be too old
+    if (nil == connection) {
+        fprintf(stderr, "Error: unable to connect to BibDesk\n");
+        fprintf(stderr, "*** You must be running BibDesk 1.3.0 or later to use this program! ***\n");
+    }
+    
+    // if we don't set these explicitly, timeout never seems to take place
+    [connection setRequestTimeout:MAX_WAIT_TIME];
+    [connection setReplyTimeout:MAX_WAIT_TIME];
+    
+	[_document setCompletionConnection:[connection retain]];
+    @try {
+        [_document setCompletionServer:[[[_document completionConnection] rootProxy] retain]];
+        [[_document completionServer] setProtocolForProxy:@protocol(BDSKCompletionProtocol)];
+		[_document registerForConnectionDidDieNotification];
+    }
+    @catch(id exception) {
+        fprintf(stderr, "Error: caught exception \"%s\" while contacting BibDesk\n", [[exception description] UTF8String]);
+        fprintf(stderr, "*** You must be running BibDesk 1.3.0 or later to use this program! ***\n");
+    }    
+}    
+
+- (NSArray *)completionsWithSearchString:(NSString *)searchTerm
+{    
+    [self connectToBibDesk];
+    NSArray *completions = nil;
+    
+    @try {
+        completions = [[_document completionServer] completionsForString:searchTerm];
+    }
+    @catch(id exception) {
+        fprintf(stderr, "Error: caught exception \"%s\" while contacting BibDesk\n", [[exception description] UTF8String]);
+        fprintf(stderr, "*** You must be running BibDesk 1.3.0 or later to use this program! ***\n");
+        completions = nil;
+    }    
+    return completions;
+}
+
+#define COMPLETIONSTRING @" (BibDesk)"
+
+
+// Provide own completions based on results by Bibdesk.  
+// Should check whether Bibdesk is available first.  
+// Setting initial selection in list to second item doesn't work.  
+// Requires X.3
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(int *)idx{
+
+	NSString *s = [self string];
+    NSRange refLabelRange = [self refLabelRange];
+	BOOL _bibDeskCompletion = [SUD boolForKey:BibDeskCompletionKey];
+    
+    // don't bother checking for a citekey if this is a \ref
+    NSRange keyRange = ( (refLabelRange.location == NSNotFound) ? [self citeKeyRange] : NSMakeRange(NSNotFound, 0) ); 
+    NSMutableArray *returnArray = [NSMutableArray array];
+    
+	if ((keyRange.location != NSNotFound) && (_bibDeskCompletion)) {
+        
+        NSString *end = [[s substringWithRange:keyRange] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		
+        // array of KVC objects
+        NSEnumerator *compEnum = [[self completionsWithSearchString:end] objectEnumerator];
+        id object;
+        while ((object = [compEnum nextObject])) {
+            int nameCount = [[object valueForKey:@"numberOfNames"] intValue];
+            NSString *title = [object valueForKey:@"title"];
+            NSString *citeKey = [object valueForKey:@"citeKey"];
+            NSString *name = [object valueForKey:@"lastName"];
+            if (nil == name)
+                name = @"";
+            else if (nameCount > 2)
+                name = [name stringByAppendingString:@" et al"];
+            NSString *compValue = [NSString stringWithFormat:@"%@%@%% %@, %@", citeKey, COMPLETIONSTRING, name, title];
+            [returnArray addObject:compValue];
+        }
+                
+        *idx = BDIndexOfItemInArrayWithPrefix(returnArray, end);
+        
+	} else if(refLabelRange.location != NSNotFound){
+        NSString *hint = [s substringWithRange:refLabelRange];
+        
+        NSScanner *labelScanner = [[NSScanner alloc] initWithString:s];
+        [labelScanner setCharactersToBeSkipped:nil];
+        NSString *scanned = nil;
+        NSMutableSet *setOfLabels = [NSMutableSet setWithCapacity:10];
+        NSString *scanFormat;
+        
+        scanFormat = [@"\\label{" stringByAppendingString:hint];
+        
+        while(![labelScanner isAtEnd]){
+            [labelScanner scanUpToString:scanFormat intoString:nil]; // scan for strings with \label{hint in them
+            [labelScanner scanString:@"\\label{" intoString:nil];    // scan away the \label{
+            [labelScanner scanUpToString:@"}" intoString:&scanned];  // scan up to the next brace
+            if(scanned != nil) [setOfLabels addObject:[scanned stringByAppendingString:COMPLETIONSTRING]]; // add it to the set
+        }
+        [labelScanner release];
+        // return the set as an array, sorted alphabetically
+        [returnArray setArray:[[setOfLabels allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]]; 
+        *idx = BDIndexOfItemInArrayWithPrefix(returnArray, hint);
+    } else {
+        // return the spellchecker's guesses
+        returnArray = (NSMutableArray *)[[NSSpellChecker sharedSpellChecker] completionsForPartialWordRange:charRange inString:s language:nil inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
+        *idx = BDIndexOfItemInArrayWithPrefix(returnArray, [s substringWithRange:charRange]);        
+    }
+	return returnArray;
+}
+
+// for legacy reasons, rangeForUserCompletion gives us an incorrect range for replacement; since it's compatible with searching and I don't feel like changing all the range code, we'll fix it up here
+- (void)fixRange:(NSRange *)range{    
+    NSString *string = [self string];
+    
+    NSRange selRange = [self selectedRange];
+    unsigned minLoc = ( (selRange.location > 100) ? 100 : selRange.location);
+    NSRange safeRange = NSMakeRange(selRange.location - minLoc, minLoc);
+    
+    NSRange braceRange = [string rangeOfString:@"{" options:NSBackwardsSearch | NSLiteralSearch range:safeRange]; // look for an opening brace
+    NSRange commaRange = [string rangeOfString:@"," options:NSBackwardsSearch | NSLiteralSearch range:safeRange]; // look for a comma
+    unsigned maxLoc = [[self string] length];
+    
+    if(braceRange.location != NSNotFound && braceRange.location < range->location){
+        // we found the brace, which must exist if we're here; if not, we won't adjust anything, though
+        if(commaRange.location != NSNotFound && commaRange.location > braceRange.location)
+            range->location = MIN(commaRange.location + 1, maxLoc);
+        else
+            range->location = MIN(braceRange.location + 1, maxLoc);
+    }
+}
+
+// finish off the completion, inserting just the cite key
+- (void)insertCompletion:(NSString *)word forPartialWordRange:(NSRange)charRange movement:(int)movement isFinal:(BOOL)flag {
+    
+    if(isCompletingTeX || [self refLabelRange].location != NSNotFound)
+        [self fixRange:&charRange];
+    
+	if (flag == YES && ([word rangeOfString:COMPLETIONSTRING].location != NSNotFound)) {
+        // this is one of our suggestions, so we need to trim it
+        // strip the comment for this, this assumes cite keys can't have spaces in them
+		NSRange firstSpace = [word rangeOfString:@" "];
+		word = [word substringToIndex:firstSpace.location];
+	}
+    [super insertCompletion:word forPartialWordRange:charRange movement:movement isFinal:flag];
+}
+
+#pragma mark -
+// end Adam Maxwell addition
 
 - (void)setDocument: (TSDocument *)doc
 {
@@ -915,6 +1300,7 @@
 //mfwitten@mit.edu: delegate methods for rulers"
 - (void)rulerView: (NSRulerView*)aRulerView didMoveMarker: (NSRulerMarker*)aMarker
 {
+
     NSRange selectedRange = [self selectedRange];
     id representedObject = [aMarker representedObject];
     

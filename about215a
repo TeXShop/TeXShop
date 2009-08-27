@@ -1,0 +1,35 @@
+Fixed foreground color in source as follows:
+
+In TSDocument-Syntax.m, colorizeText, commented out the line
+
+	[layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
+
+and in TSDocument-Syntax.m, reColor, commented out the lines
+
+	[[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+	[[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+
+
+In TSDocument.m, setupTextView, added the lines
+
+	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
+		green: [SUD floatForKey:foreground_GKey]
+		blue: [SUD floatForKey:foreground_BKey]
+		alpha:1.0];
+
+and later
+
+	[aTextView setTextColor: foregroundColor];
+
+
+
+
+Also activated PDF window when it was updated during "automatic updating":
+
+In TSDocument.m
+
+	refreshPDFAndBringFront
+
+in the section at the end starting if (front), added the line
+
+	[[NSApplication sharedApplication] activateIgnoringOtherApps: YES];

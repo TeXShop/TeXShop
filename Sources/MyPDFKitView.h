@@ -78,6 +78,8 @@
 
 	BOOL							downOverLink;
 	NSRect							rect;  // to simulate cacheImageInRect
+	
+	NSPoint							offsetPoint;
 }
 
 // - (void) scheduleAddintToolips;

@@ -132,6 +132,8 @@ enum RootCommand
 	id			previousButton;
 	id			nextButton;
 
+	NSConnection    *_completionConnection; //Adam Maxwell
+    id               _completionServer; //Adam Maxwell
 
 	NSTextStorage				*_textStorage;
 	BOOL		windowIsSplit;
@@ -318,6 +320,15 @@ enum RootCommand
 - (void) savePreviewPosition;
 - (void) fullscreen: (id)sender;
 - (void) endFullScreen;
+
+// BibDesk Completion
+//---------------------------
+ - (NSConnection *)completionConnection; //Adam Maxwell
+ - (void)setCompletionConnection:(NSConnection *)completionConnection;
+ - (id)completionServer; //Adam Maxwell
+ - (void)setCompletionServer:(id)completionServer;
+ - (void)registerForConnectionDidDieNotification;
+//----------------------------
 
 // - (void) printDocumentWithSettings: (NSDictionary :)printSettings showPrintPanel:(BOOL)showPrintPanel delegate:(id)delegate 
 // 	didPrintSelector:(SEL)didPrintSelector contextInfo:(void *)contextInfo;

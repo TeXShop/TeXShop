@@ -1,3 +1,5 @@
 #!/bin/bash
 export BIBINPUTS=${BIBINPUTS}:`kpsewhich --show-path=bib | sed -e "s/\!\!//g"`
-~/Library/TeXShop/bin/latexmk -pdf -r "$HOME/Library/TeXShop/bin/xelatexmkrc" "$1"
+export TSBIN=$HOME/Library/TeXShop/bin
+export LTMKBIN=$HOME/Library/TeXShop/bin
+${LTMKBIN}/latexmk -pdf -r "${TSBIN}/xelatexmkrc" "$1"

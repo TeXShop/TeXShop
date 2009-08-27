@@ -140,7 +140,7 @@
 	NSString                *nameString;
 	unsigned                length;
 	BOOL                    done;
-	int                     linesTested;
+	int                     linesTested, offset;
 	unsigned                start, end, irrelevant;
 
 	if (theSource == nil)
@@ -169,8 +169,13 @@
 		theRange.location = start; theRange.length = (end - start);
 		testString = [theSource substringWithRange: theRange];
 		sourcedocRange = [testString rangeOfString:@"%!TEX root ="];
+		offset = 12;
+		if (sourcedocRange.location == NSNotFound) {
+			sourcedocRange = [testString rangeOfString:@"% !TEX root ="];
+			offset = 13;
+			}
 		if (sourcedocRange.location != NSNotFound) {
-			newSourceDocRange.location = sourcedocRange.location + 12;
+			newSourceDocRange.location = sourcedocRange.location + offset;
 			newSourceDocRange.length = [testString length] - newSourceDocRange.location;
 			if (newSourceDocRange.length > 0) {
 				done = YES;

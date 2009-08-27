@@ -50,6 +50,11 @@
 	[myDocument doError: sender];
 }
 
+- (void) doTypeset: sender
+{
+	[myDocument doTypeset: sender];
+}
+
 // for scripting
 - (TSDocument *)document
 {

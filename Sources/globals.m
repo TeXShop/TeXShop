@@ -144,6 +144,9 @@ NSString *RedConsoleAfterErrorKey = @"RedConsoleAfterError"; // NO or YES
 NSString *PreviewDrawerOpenKey = @"PreviewDrawerOpen"; // NO or YES
 NSString *ConTeXtTagsKey = @"ConTeXtTags"; // NO or YES
 NSString *RevisePathKey = @"RevisePath"; // NO or YES
+NSString *OtherTeXExtensionsKey = @"OtherTeXExtensions";
+NSString *ReleaseDocumentOnLeopardKey = @"ReleaseDocumentOnLeopard";
+NSString *BibDeskCompletionKey = @"BibDeskCompletion";
 
 
 // Paths
@@ -180,6 +183,7 @@ NSString *MagnificationRememberNotification = @"MagnificationRememberNotificatio
 NSString *MagnificationRevertNotification = @"MagnificationRevertNotification";
 NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
 NSString *DocumentAutoCompleteNotification = @"DocumentAutoCompleteNotification";
+NSString *DocumentBibDeskCompleteNotification = @"DocumentBibDeskCompleteNotification";
 NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 
 /*" Other variables "*/

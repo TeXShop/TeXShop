@@ -462,7 +462,7 @@
 	int             i, j;
 	BOOL            done;
 	unsigned        length;
-	int             linesTested;
+	int             linesTested, offset;
 	NSData          *myData;
 
 
@@ -513,8 +513,13 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4)) { //don't use TS-program
 		testString = [theSource substringWithRange: theRange];
 
 		programRange = [testString rangeOfString:@"%!TEX TS-program ="];
+		offset = 18;
+		if (programRange.location == NSNotFound) {
+			programRange = [testString rangeOfString:@"% !TEX TS-program ="];
+			offset = 19;
+			}
 		if (programRange.location != NSNotFound) {
-			newProgramRange.location = programRange.location + 18;
+			newProgramRange.location = programRange.location + offset;
 			newProgramRange.length = [testString length] - newProgramRange.location;
 			if (newProgramRange.length > 0) {
 				programString = [[testString substringWithRange: newProgramRange]

@@ -47,6 +47,8 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingISOLatin2,			@"IsoLatin2" },
 	{ 0, kCFStringEncodingISOLatin5,			@"IsoLatin5" },
 	{ 0, kCFStringEncodingISOLatin9,			@"IsoLatin9" },
+	{ 0, kCFStringEncodingISOLatinGreek,		@"IsoLatinGreek" }, //Greek ISO 8859-7
+	{ 0, kCFStringEncodingMacCentralEurRoman,	@"Mac Central European Roman" }, // added at request of Czech Republic respondent 
 	{ 0, kCFStringEncodingMacJapanese,			@"MacJapanese" },
 	{ 0, kCFStringEncodingDOSJapanese,			@"DOSJapanese" },
 	{ 0, kCFStringEncodingShiftJIS_X0213_00,	@"SJIS_X0213" },
@@ -58,6 +60,7 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingMacCyrillic,			@"Mac Cyrillic" },
 	{ 0, kCFStringEncodingDOSCyrillic,			@"DOS Cyrillic" },
 	{ 0, kCFStringEncodingDOSRussian,			@"DOS Russian" },
+	{ 0, kCFStringEncodingWindowsLatin2,		@"WindowsCentralEurRoman" }, // code page 1250
 	{ 0, kCFStringEncodingWindowsCyrillic,		@"Windows Cyrillic" },
 	{ 0, kCFStringEncodingKOI8_R,				@"KOI8_R" },
 	{ 0, kCFStringEncodingMacChineseTrad,		@"Mac Chinese Traditional" },

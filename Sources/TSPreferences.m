@@ -120,7 +120,9 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	syntaxColorTouched = NO;
 	oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
 	autoCompleteTouched = NO;
+	bibDeskCompleteTouched = NO;
 	oldAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
+	oldBibDeskComplete = [SUD boolForKey:BibDeskCompletionKey];
 	magnificationTouched = NO;
 	// added by mitsu --(G) TSEncodingSupport
 	encodingTouched = NO;
@@ -409,6 +411,22 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
 
 }
+
+/*" This method is connected to the 'BibDesk Complete' checkbox.
+"*/
+- (IBAction)bibDeskCompletePressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:BibDeskCompletionKey] forKey:BibDeskCompletionKey];
+	
+	[SUD setBool:[[sender selectedCell] state] forKey:BibDeskCompletionKey];
+	bibDeskCompleteTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
+
+}
+
+
+
 
 
 //==============================================================================
@@ -916,6 +934,10 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[SUD setBool:oldAutoComplete forKey:AutoCompleteEnabledKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
 	}
+	if (bibDeskCompleteTouched) {
+		[SUD setBool:oldBibDeskComplete forKey:BibDeskCompletionKey];
+		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
+	}
 	// added by mitsu --(G) TSEncodingSupport
 	if (encodingTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object: self ];
@@ -1032,6 +1054,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
+	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];

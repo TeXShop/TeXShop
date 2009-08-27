@@ -144,6 +144,8 @@
 	[mouseModeMatrix release]; // mitsu 1.29 (O)
 
 	[_pdfLastModDate release];
+	
+	[self invalidateCompletionConnection];
 
 	[super dealloc];
 }
@@ -181,9 +183,14 @@
 
 - (void)setupTextView:(NSTextView *)aTextView
 {
-	NSColor		*backgroundColor, *insertionpointColor;
 
+	NSColor		*foregroundColor, *backgroundColor, *insertionpointColor;
 
+	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
+												green: [SUD floatForKey:foreground_GKey]
+												 blue: [SUD floatForKey:foreground_BKey]
+												alpha:1.0];
+												
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
 												green: [SUD floatForKey:background_GKey]
 												 blue: [SUD floatForKey:background_BKey]
@@ -193,6 +200,8 @@
 													green: [SUD floatForKey:insertionpoint_GKey]
 													 blue: [SUD floatForKey:insertionpoint_BKey]
 													alpha:1.0];
+													
+										
 
 	[aTextView setAutoresizingMask: NSViewWidthSizable];
 	[[aTextView textContainer] setWidthTracksTextView:YES];
@@ -201,6 +210,7 @@
 	[aTextView setRichText:NO];
 	[aTextView setUsesFontPanel:YES];
 	[aTextView setFont:[NSFont userFontOfSize:12.0]];
+	[aTextView setTextColor: foregroundColor];
 	[aTextView setBackgroundColor: backgroundColor];
 	[aTextView setInsertionPointColor: insertionpointColor];
 	[aTextView setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A)
@@ -685,6 +695,9 @@ in other code when an external editor is being used. */
 // Check if should syntax color and allow typesetting by some engine or other
 - (BOOL) isTexExtension: (NSString *)extension
 {
+	NSArray         *otherExtensions;
+	NSEnumerator    *arrayEnumerator;
+	NSString		*stringObject;
 	
 	if (([extension isEqualToString: @"tex"]) || ([extension isEqualToString: @"TEX"])
 		|| ([extension isEqualToString: @"dtx"]) || ([extension isEqualToString: @"ins"])
@@ -697,10 +710,19 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @""]) || ([extension isEqualToString: @"mp"])
 		|| ([extension isEqualToString: @"mf"])
 		|| ([extension isEqualToString: @"bib"])
+		|| ([extension isEqualToString: @"htx"]) || ([extension isEqualToString: @"HTX"]) 
+		|| ([extension isEqualToString: @"sk"]) 
+		|| ([extension isEqualToString: @"htx"])
 		|| ([extension isEqualToString: @"ly"]))
 		return YES;
-	else
-		return NO;
+		
+	otherExtensions = [SUD stringArrayForKey: OtherTeXExtensionsKey];
+	arrayEnumerator = [otherExtensions objectEnumerator];
+	while ((stringObject = [arrayEnumerator nextObject])) 
+		if ([extension isEqualToString:stringObject])
+				return YES;
+			
+	return NO;
 }
 
 // Check if should read at all for source window; graphic files shoulnd't go to text window
@@ -726,7 +748,7 @@ in other code when an external editor is being used. */
 	unsigned            length;
 	NSString            *encodingString, *text, *testString;
 	BOOL                done;
-	int                 linesTested;
+	int                 linesTested, offset;
 	unsigned            start, end;
 
 	// FIXME: Unify this with the code in readFromFile:
@@ -748,9 +770,14 @@ in other code when an external editor is being used. */
 			theRange.location = start; theRange.length = (end - start);
 			testString = [text substringWithRange: theRange];
 			encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
+			offset = 16;
+			if (encodingRange.location == NSNotFound) {
+				encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
+				offset = 17;
+				}
 			if (encodingRange.location != NSNotFound) {
 				done = YES;
-				newEncodingRange.location = encodingRange.location + 16;
+				newEncodingRange.location = encodingRange.location + offset;
 				newEncodingRange.length = [testString length] - newEncodingRange.location;
 				if (newEncodingRange.length > 0) {
 					encodingString = [[testString substringWithRange: newEncodingRange]
@@ -791,7 +818,7 @@ in other code when an external editor is being used. */
 	NSRange             encodingRange, newEncodingRange, myRange, theRange;
 	unsigned            length, start, end;
 	BOOL                done;
-	int                 linesTested;
+	int                 linesTested, offset;
 	NSStringEncoding	theEncoding;
 	
 	// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
@@ -816,9 +843,14 @@ in other code when an external editor is being used. */
 			theRange.location = start; theRange.length = (end - start);
 			testString = [firstBytes substringWithRange: theRange];
 			encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
+			offset = 16;
+			if (encodingRange.location == NSNotFound) {
+				encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
+				offset = 17;
+				}
 			if (encodingRange.location != NSNotFound) {
 				done = YES;
-				newEncodingRange.location = encodingRange.location + 16;
+				newEncodingRange.location = encodingRange.location + offset;
 				newEncodingRange.length = [testString length] - newEncodingRange.location;
 				if (newEncodingRange.length > 0) {
 					encodingString = [[testString substringWithRange: newEncodingRange]
@@ -1319,6 +1351,9 @@ in other code when an external editor is being used. */
 
 	// register for notification when auto completion changes in preferences
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changePrefAutoComplete:) name:DocumentAutoCompleteNotification object:nil];
+	
+	// register for notification when bibdesk completion changes in preferences
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changePrefBibDeskComplete:) name:DocumentBibDeskCompleteNotification object:nil];
 
 	// externalEditChange
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(externalEditorChange:) name:ExternalEditorNotification object:nil];
@@ -1506,7 +1541,8 @@ in other code when an external editor is being used. */
 	if (fontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
-		[textView setFont:font];
+		[textView1 setFont:font];
+		[textView2 setFont:font];
 	}
 	[self fixUpTabs];
 }
@@ -1544,7 +1580,8 @@ preference change is cancelled. "*/
 	if (previousFontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:previousFontData];
-		[textView setFont:font];
+		[textView1 setFont:font];
+		[textView2 setFont:font];
 	}
 	[self fixUpTabs];
 }
@@ -1865,6 +1902,7 @@ preference change is cancelled. "*/
 
 - (void)newTag: (id)sender
 {
+
 	NSString		*text;
 	NSRange		myRange, tempRange;
 	unsigned		start, end, end1, changeStart, changeEnd;
@@ -2902,7 +2940,7 @@ preference change is cancelled. "*/
 {
 	NSPDFImageRep	*tempRep;
 	NSString		*pdfPath;
-
+	
 	pdfPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
 	if ([[NSFileManager defaultManager] fileExistsAtPath: pdfPath]) {
@@ -2917,6 +2955,7 @@ preference change is cancelled. "*/
 			[pdfKitWindow setRepresentedFilename: pdfPath];
 			[pdfKitWindow setTitle: [pdfPath lastPathComponent]];
 			if (front) {
+				[[NSApplication sharedApplication] activateIgnoringOtherApps: YES];
 				[pdfKitWindow makeKeyAndOrderFront: self];
 			}
 		}
@@ -3179,6 +3218,60 @@ preference change is cancelled. "*/
 	[autoCompleteButton setState: doAutoComplete];
 }
 
+// BibDesk Completion; Adam Maxwell
+
+ - (NSConnection *)completionConnection{
+ 
+	return _completionConnection;
+ }
+ 
+ - (void)setCompletionConnection:(NSConnection *)completionConnection{
+	
+	_completionConnection = completionConnection;
+	}
+ 
+ - (id)completionServer{
+ 
+	return _completionServer;
+}
+
+ - (void)setCompletionServer:(id)completionServer{
+	
+	_completionServer = completionServer;
+}
+
+- (void)invalidateCompletionConnection
+{
+    [[_completionConnection sendPort] invalidate];
+    [[_completionConnection receivePort] invalidate];
+    [_completionConnection invalidate];
+    [_completionConnection release];
+    _completionConnection = nil;
+    [_completionServer release];
+    _completionServer = nil;
+}
+
+- (void)registerForConnectionDidDieNotification
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleConnectionDied:) name:NSConnectionDidDieNotification object:_completionConnection];
+}
+
+- (void)handleConnectionDied:(NSNotification *)aNote
+{
+   if ([aNote object] == _completionConnection) {
+       [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:_completionConnection];
+       [self invalidateCompletionConnection];
+   }
+}
+
+
+- (void)changePrefBibDeskComplete:(NSNotification *)notification
+{
+	if (! [SUD boolForKey:BibDeskCompletionKey])
+		[self invalidateCompletionConnection];
+}
+
+// End BibDesk Completion
 
 
 // The code below is copied directly from Apple's TextEdit Example
@@ -3217,6 +3310,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 // The code below is a modification of code from Apple's TextEdit example
 //mfwitten@mit.edu: 22 June 2005 Cleaned up
 - (void)fixUpTabs {
+
     NSFont		*	font		= nil;
 	NSData		*	fontData;
     
@@ -3226,7 +3320,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
         fontData = [SUD objectForKey:DocumentFontKey];
         if (fontData != nil) {
             font = [NSUnarchiver unarchiveObjectWithData:fontData];
-            [textView setFont:font];
+            // [textView setFont:font];
 		} else
             font = [NSFont userFontOfSize:12.0];
 	}
@@ -3241,9 +3335,23 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	
 	if (textStorageLength)
 		[_textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:NSMakeRange(0, textStorageLength)];
+		
+	// Warning: the next six lines are needed to insure that new text added at the start of a line
+	// does not revert back to the old tab style
+		
+	NSMutableDictionary *theTypingAttributes = [[[NSMutableDictionary alloc] initWithCapacity:1] autorelease];
+	[theTypingAttributes setObject:newStyle forKey:NSParagraphStyleAttributeName];
+	[textView1 setTypingAttributes:theTypingAttributes];
+	
+	NSMutableDictionary *theTypingAttributes2 = [[[NSMutableDictionary alloc] initWithCapacity:1] autorelease];
+	[theTypingAttributes2 setObject:newStyle forKey:NSParagraphStyleAttributeName];
+	[textView2 setTypingAttributes:theTypingAttributes2];
         
-	[textView setFont:font];
-	[textView setDefaultParagraphStyle: newStyle];
+	[textView1 setFont:font];
+	[textView1 setDefaultParagraphStyle: newStyle];
+	[textView2 setFont:font];
+	[textView2 setDefaultParagraphStyle: newStyle];
+
 }
 
 

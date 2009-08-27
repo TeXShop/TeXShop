@@ -33,5 +33,6 @@
 
 - (void) doChooseMethod: sender;
 - (void) doError: sender;
+- (void) doTypeset: sender;
 - (TSDocument *)document;
 @end

@@ -84,7 +84,7 @@ static BOOL isValidTeXCommandChar(int c)
 	unsigned		end;
 	BOOL			colorIndexDifferently;
 	NSTimeInterval	theTime;
-
+	
 	if (isLoading) {
 		if (firstTime == YES) {
 			colorTime = [[NSDate date] timeIntervalSince1970];
@@ -144,6 +144,8 @@ static BOOL isValidTeXCommandChar(int c)
 	// then only recolor anything which is supposed to have another color.
 	colorRange.location = aLineStart;
 	colorRange.length = aLineEnd - aLineStart;
+	// WARNING!! The following line has been commented out to restore changing the text color
+	// June 27, 2008; Koch; I don't understand the previous warning; the line below fixes cases when removing a comment leaves text red
 	[layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
 
 	// Now we iterate over the whole text and perform the actual recoloring.
@@ -270,8 +272,8 @@ static BOOL isValidTeXCommandChar(int c)
 
 		theRange.location = 0;
 		theRange.length = [_textStorage length];
-		[[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
-		[[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+		// [[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+		// [[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
 	}
 }
 

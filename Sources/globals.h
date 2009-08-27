@@ -342,6 +342,9 @@ extern NSString *RedConsoleAfterErrorKey;
 extern NSString *PreviewDrawerOpenKey;
 extern NSString *ConTeXtTagsKey;
 extern NSString *RevisePathKey;
+extern NSString *OtherTeXExtensionsKey;
+extern NSString *ReleaseDocumentOnLeopardKey;
+extern NSString *BibDeskCompletionKey;
 // end mitsu 1.29
 
 
@@ -377,6 +380,7 @@ extern NSString *MagnificationRememberNotification;
 extern NSString *MagnificationRevertNotification;
 extern NSString *DocumentSyntaxColorNotification;
 extern NSString *DocumentAutoCompleteNotification;
+extern NSString *DocumentBibDeskCompleteNotification;
 extern NSString *ExternalEditorNotification;
 
 

@@ -159,6 +159,7 @@ NSString *ConsoleForegroundColor_BKey = @"ConsoleForegroundColor_B";
 NSString *ConsoleFontNameKey = @"ConsoleFontName";
 NSString *ConsoleFontSizeKey = @"ConsoleFontSize";
 NSString *ConsoleWidthResizeKey = @"ConsoleWidthResize";
+NSString *RightJustifyKey = @"RightJustify";
 
 
 // Paths

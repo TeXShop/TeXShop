@@ -38,6 +38,7 @@
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 - (NSString *)resolveAlias: (NSString *)path;
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
+- (void)autoComplete:(NSMenuItem *)theMenu; //Added by soheil
 @end
 
 

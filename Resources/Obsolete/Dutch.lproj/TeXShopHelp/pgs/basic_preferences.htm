@@ -1,0 +1,85 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Setting Preferences</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="preference; magnify; window position; encoding">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Several items can be changed using the Preference menu: the default font for the input window, the default magnification for the output window, and the default position of these windows when they first appear. You can configure the console so it always appears when typesetting, or only appears when there is an error. You can configure the source window so an initial click in the window only activates the
+window, or this initial click also sets the text insertion point.</P>
+		<p>The preference dialog can also be used to change the commands executed when the &quot;TeX&quot; and &quot;LaTeX&quot; buttons are pushed. This is useful because some users prefer a version of TeX called etex, and there are pdf versions of etex called pdfetex and pdfelatex. Obviously the substituted command must produce a pdf output file. If the new programs are in the teTeX binary directory, it is enough to name them in the preference dialog; the dialog will also accept fully qualified path names for files which live elsewhere.</p>
+		<p>TeXShop editing is done with Apple's Cocoa editing class, which uses Unicode for internal work. When TeXShop files are written to disk, they are usually converted to 8-bit ascii because TeX expects to receive such a file. There are several ways to do the conversion: Mac OS Roman, Iso Latin 1, Iso Latin 2, and others. A preference item selects the method used. For many users, the choice will make no difference. Some TeX packages allow users to type accented European characters directly on the keyboard; these packages require the Iso Latin conversion. Thanks to Martin Heusse for providing the original code for this preference. The conversion method can also be selected directly from the Open and Save panels.</p>
+		<p>Users in Japan and Korea will use other conversion preferences, also provided.</p>
+	<p>It is possible to reset the background color of the source window. The preference dialog does not have an interface to make this change. To set the background to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</p>
+		<dl>
+			<dd>defaults write TeXShop background_R 0.42
+			<dd>defaults write TeXShop background_G 0.39
+			<dd>defaults write TeXShop background_B 0.77
+		</dl> 
+
+<p>It is also possible to set the text color in the source window. This preference will only be recognized if syntax coloring is on. To set the forground color to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</p>
+		<dl>
+			<dd>defaults write TeXShop foreground_R 0.42
+			<dd>defaults write TeXShop foreground_G 0.39
+			<dd>defaults write TeXShop foreground_B 0.77
+		</dl>
+<p>The color of the insertion point in the source window can be changed. For example, to set this insertion point color to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:</p>
+		<dl>
+			<dd>defaults write TeXShop insertionpoint_R 0.42
+			<dd>defaults write TeXShop insertionpoint_G 0.39
+			<dd>defaults write TeXShop insertionpoint_B 0.77
+		</dl>
+<p>By using the previous three sets of commands in combination, the source window can be made to display white text on a black
+background or other coloring schemes as desired.</p>
+
+<p> There are hidden preferences to set the transparency of the source, preview, and console windows:</p>
+		<dl>
+			<dd>defaults write TeXShop ConsoleWindowAlpha 0.75
+			<dd>defaults write TeXShop SourceWindowAlpha 0.75
+			<dd>defaults write TeXShop PreviewWindowAlpha 0.75
+		</dl>
+<p> Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is completely
+opaque. Use these commands cautiously!</p>
+
+<p> When TeXShop typesets a source file, it displays the result in the preview window, activating this window and bringing it to the front. A preference setting changes this behavior, showing the result in the preview window but keeping the source window active for further editing. This is particularly useful if you have a large monitor and the source and preview windows do not overlap. To set this preference, choose the Typesetting tab in preferences and change the "After Typesetting" item to "Continue Editing."</p>
+
+<p>A pulldown menu
+at the bottom of the Preferences Panel can be used to reset preferences to their default values. This is mainly useful in Japan, since different defaults are available for users of various pTeX distributions.
+</p>			
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Basic Help</div><div id="header_title">Setting Preferences</div>
+
+		<div id="menu_border">
+		<ul>
+				<LI><a href="basic_preliminaries.htm">Preliminaries</a>
+			<LI><a href="basic_installtetex.htm">Installing TeX Live</a>
+			<LI><a href="basic_installtexshop.htm">Installing TeXShop</a>
+			<LI><a href="basic_typesetting.htm">Typesetting Documents</a>
+			<li><a href="basic_alternatetypeset.htm">Alternate Typesetting Mode</a>	
+			<li><a href="basic_spelling.htm">Checking Spelling</a>
+			<li><a href="basic_latexpanel.htm">Latex Panel</a>
+			<li><a href="basic_matrixpanel.htm">Matrix Panel</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Toolbar and Applescript</a>
+			<li><a href="basic_graphics.htm">Including Graphics</a>
+			<li><a href="basic_printing.htm">Printing</a>
+			<li><a href="basic_preferences.htm">Setting Preferences</a>
+			<li><a href="basic_templates.htm">Modifying the Templates Menu</a>
+			<li><a href="basic_edittricks.htm">Editing Tricks</a>
+			<li><a href="basic_autocompletion.htm">Auto Completion</a>
+			<li><a href="basic_commandcompletion.htm">Command Completion </a>
+			<li><a href="basic_bugs.htm">Sending Bug Reports</a>
+			<li><a href="basic_websites.htm">Useful Web Sites</a>
+			<li><a href="basic_license.htm">License</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

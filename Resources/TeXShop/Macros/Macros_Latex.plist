@@ -20,8 +20,15 @@
 -- Ramon Figueroa-Centeno (March 10, 2009)
 -- http://www2.hawaii.edu/~ramonf
 
+-- History:
+-- 1.1: March 19, 2008
+-- Added missing default engines: metapost, metafont, and context.
+-- 1.2: March 28, 2009
+-- Added code to respect first lines that start with "%&amp;"
+
+
 -- If you wish you can change this so that your favorite engine is the default choice
-property default_engine : "pdflatex"
+property default_engine : "pdflatexmk"
 
 tell application "TeXShop"
 	
@@ -30,7 +37,7 @@ tell application "TeXShop"
 		-- Shell script to get the names of the engines installed in ~/Library/TeXShop/Engines/
 		set command to "ls ~/Library/TeXShop/Engines/ | egrep -e '^.*\\.engine$' | sed 's/\\.engine//'"
 		set engines to paragraphs of (do shell script command)
-		set engines to sort({"tex", "latex", "pdflatex", "pdftex", "personaltex", "personallatex", "metapost", "context", "metafont"} &amp; engines)
+		set engines to sort({"tex", "latex", "pdflatex", "pdftex", "personaltex", "personallatex", "metapost", "metafont", "context"} &amp; engines)
 	end tell
 	
 	-- Figure out which is the index of the "default_engine" in the "engines" list
@@ -122,8 +129,27 @@ tell application "TeXShop"
 	set program to "% !TEX TS-program = " &amp; engine &amp; linefeed
 	set selection_offset to selection_offset + (count of program)
 	
+	-- If the first line starts with "%&amp;" set the insertion offset
+	-- to the beginning of the second line.
+	try
+		set first_line to paragraph 1 of the text of the front document as string
+		if the first_line starts with "%&amp;" then
+			set insertion_offset to count the characters of the first_line
+			try
+				get paragraph 2 of the text of the front document
+			on error -- There is only one line?
+				set selection_offset to selection_offset + 1
+				set program to linefeed &amp; program
+			end try
+		else
+			set insertion_offset to 0
+		end if
+	on error -- The document was empty?
+		set insertion_offset to 0
+	end try
+	
 	-- Insert Engine
-	set offset of the selection of the front document to 0
+	set offset of the selection of the front document to insertion_offset
 	set length of the selection of the front document to 0
 	set content of the selection of the front document to program
 	
@@ -164,6 +190,12 @@ end sort</string>
 -- Ramon Figueroa-Centeno (March 10, 2009)
 -- http://www2.hawaii.edu/~ramonf
 
+-- History: 
+-- 1.1: March 18, 2009
+-- Added missing encodings.
+-- 1.2: March 28, 2009
+-- Added code to respect first lines that start with "%&amp;"
+
 -- If you wish you can change this so that your favorite encoding is the default choice
 property default_encoding : "MacOSRoman"
 
@@ -171,7 +203,7 @@ tell application "TeXShop"
 	
 	-- Get a sorted list of the TeXShop encodings
 	tell me
-		set encodings to {"MacOSRoman", "IsoLatin", "IsoLatin2", "IsoLatin5", "IsoLatin9", "IsoLatinGreek", "ITF-8 Unicode", "Standard Unicode", "MacJapanese", "DOSJapanese", "SJIS_X0213", "EUC_JP", "JISJapanese", "MacKorean", "Mac Central European Roman", "WindowsCentralEurRoman", "Mac Cyrillic", "DOS Cyrillic", "DOS Russian", "Windows Cyrillic", "KOI8_R", "Mac Chinese Traditional", "Mac Chinese Simplified", "DOS Chinese Traditional", "DOS Chinese Simplified", "GBK", "GB 2312", "GB 18030"}
+		set encodings to {"MacOSRoman", "IsoLatin", "IsoLatin2", "IsoLatin5", "IsoLatin9", "IsoLatinGreek", "Mac Central European Roman", "MacJapanese", "DOSJapanese", "SJIS_X0213", "EUC_JP", "JISJapanese", "MacKorean", "UTF-8 Unicode", "Standard Unicode", "Mac Cyrillic", "DOS Cyrillic", "DOS Russian", "WindowsCentralEurRoman", "Windows Cyrillic", "KOI8_R", "Mac Chinese Traditional", "Mac Chinese Simplified", "DOS Chinese Traditional", "DOS Chinese Simplified", "GBK", "GB 2312", "GB 18030"}
 		set encodings to sort(encodings)
 	end tell
 	
@@ -264,8 +296,27 @@ tell application "TeXShop"
 	set program to "% !TEX encoding = " &amp; encoding &amp; linefeed
 	set selection_offset to selection_offset + (count of program)
 	
-	-- Insert encoding
-	set offset of the selection of the front document to 0
+	-- If the first line starts with "%&amp;" set the insertion offset
+	-- to the beginning of the second line.
+	try
+		set first_line to paragraph 1 of the text of the front document as string
+		if the first_line starts with "%&amp;" then
+			set insertion_offset to count the characters of the first_line
+			try
+				get paragraph 2 of the text of the front document
+			on error -- There is only one line?
+				set selection_offset to selection_offset + 1
+				set program to linefeed &amp; program
+			end try
+		else
+			set insertion_offset to 0
+		end if
+	on error -- The document was empty?
+		set insertion_offset to 0
+	end try
+	
+	-- Insert Encoding
+	set offset of the selection of the front document to insertion_offset
 	set length of the selection of the front document to 0
 	set content of the selection of the front document to program
 	
@@ -306,6 +357,11 @@ end sort</string>
 -- restoring the original selection.
 -- Ramon Figueroa-Centeno (March 10, 2009)
 -- http://www2.hawaii.edu/~ramonf
+
+-- History: 
+-- 1.1: March 18, 2009
+-- Added code to respect first lines that start with "%&amp;"
+
 
 -- What is the default choice: relative or not relative (i.e. absolute)
 property relative : true
@@ -424,8 +480,27 @@ tell application "TeXShop"
 	set program to "% !TEX root = " &amp; root &amp; linefeed
 	set selection_offset to selection_offset + (count of program)
 	
-	-- Insert encoding
-	set offset of the selection of the front document to 0
+	-- If the first line starts with "%&amp;" set the insertion offset
+	-- to the beginning of the second line.
+	try
+		set first_line to paragraph 1 of the text of the front document as string
+		if the first_line starts with "%&amp;" then
+			set insertion_offset to count the characters of the first_line
+			try
+				get paragraph 2 of the text of the front document
+			on error -- There is only one line?
+				set selection_offset to selection_offset + 1
+				set program to linefeed &amp; program
+			end try
+		else
+			set insertion_offset to 0
+		end if
+	on error -- The document was empty?
+		set insertion_offset to 0
+	end try
+	
+	-- Insert Root
+	set offset of the selection of the front document to insertion_offset
 	set length of the selection of the front document to 0
 	set content of the selection of the front document to program
 	

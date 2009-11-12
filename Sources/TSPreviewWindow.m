@@ -145,7 +145,10 @@ extern NSPanel *pageNumberWindow;
 	[myDocument displayConsole: sender];
 }
 
-
+- (void) trashAUXFiles: sender
+{
+	[myDocument trashAUXFiles: sender];
+}
 
 - (void) runPageLayout: sender
 {

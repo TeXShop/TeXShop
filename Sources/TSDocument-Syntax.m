@@ -139,6 +139,38 @@ static BOOL isValidTeXCommandChar(int c)
 	// Note that aLineStart is the start of *a* line, but not necessarily the same line
 	// for which aLineEnd marks the end! We may span many lines.
 	[textString getLineStart:&aLineStart end:&aLineEnd contentsEnd:nil forRange:range];
+	
+	
+	// Handle Persian, Arabic, and Hebrew Justification
+	
+	NSRange			lineRange, selectedLineRange, middleEastRange, testRange;
+	NSCharacterSet	*middleEastSet;
+	unsigned		start, theend;
+	NSString		*theLine;
+	
+	if ([SUD boolForKey: RightJustifyKey]) {
+		// Arabic and Persian range is 0600 - 06FF; Hebrew range is 0590 - 05FF
+		middleEastRange.location = 0x0590;
+		middleEastRange.length = 0x016F;
+		middleEastSet = [NSCharacterSet characterSetWithRange: middleEastRange];
+		
+		lineRange.location = aLineStart;
+		lineRange.length = 1;
+		while (lineRange.location < aLineEnd) {
+			[textString getLineStart: &start end: &theend contentsEnd: nil forRange: lineRange];
+			lineRange.location = theend;
+			selectedLineRange.location = start;
+			selectedLineRange.length = theend - start;
+			theLine = [textString substringWithRange:selectedLineRange];
+			testRange = [theLine rangeOfCharacterFromSet: middleEastSet];
+			if (testRange.location == NSNotFound)
+				[aTextView setAlignment: NSLeftTextAlignment range: selectedLineRange];
+			else 
+				[aTextView setAlignment: NSRightTextAlignment range: selectedLineRange];
+		}
+	}
+	
+	
 
 	// We reset the color of all chars in the given range to the regular color; later, we'll
 	// then only recolor anything which is supposed to have another color.
@@ -183,6 +215,7 @@ static BOOL isValidTeXCommandChar(int c)
 					colorRange.length = location - colorRange.location;
 				}
 			}
+			/*
 			if (colorIndexDifferently) {
 				NSString *commandString = [textString substringWithRange: colorRange];
 				// esindex below is a Spanish indexing command
@@ -202,6 +235,44 @@ static BOOL isValidTeXCommandChar(int c)
 						}
 					[layoutManager addTemporaryAttributes:indexColorAttribute forCharacterRange:colorRange];
 					}
+				*/
+				/* the above code was patched by Tammo Jan Dijkema to handle optional arguments for ColorIndex
+				 (this is useful when using the package index, which creates optional indices). With this patch, 
+				 the command \index[notation]{foo} gets colored as expected.*/
+			if (colorIndexDifferently) {
+				NSString *commandString = [textString substringWithRange: colorRange];
+				// esindex below is a Spanish indexing command
+				if (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"])) {
+					int parens = 0;
+					BOOL optparens = NO;
+					BOOL notDone = YES;
+					
+					// Do first step of loop manually to check for optional argument for \index
+					theChar = [textString characterAtIndex: location];
+					location++;
+					colorRange.length = location - colorRange.location;
+					if (theChar == '{')
+						parens++;
+					else if (theChar == '[')
+						optparens = YES;
+					else
+						notDone = NO;
+					
+					while ((location < aLineEnd) && (notDone)) {
+						theChar = [textString characterAtIndex: location];
+						location++;
+						colorRange.length = location - colorRange.location;
+						if (theChar == '{')
+							parens++;
+						if (theChar == '}')
+							parens--;
+						if (parens == 0 && !optparens)
+							notDone = NO;
+						if (theChar == ']')
+							optparens = NO;
+					}
+					[layoutManager addTemporaryAttributes:indexColorAttribute forCharacterRange:colorRange];
+				}
 				else
 					[layoutManager addTemporaryAttributes:commandColorAttribute forCharacterRange:colorRange];
 				}

@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
 {\fonttbl\f0\froman\fcharset0 Times-Roman;}
 {\colortbl;\red255\green255\blue255;}
 \margl1440\margr1440\vieww15500\viewh19200\viewkind0
@@ -29,6 +29,12 @@ XeTeX and XeLaTeX produce extended dvi files which must be converted to pdf form
 \
 --------------------\
 \
+MetaPost is a system by John Nobby for drawing elaborate postscript illustrations. It can output ps and pdf files. Nicola Vitacolonna wrote two beautiful engines, metapost and metafun, to call this program. \
+\
+TeXShop also contains a built-in MetaPost command. Indeed it has two built-in commands, which call mptopdf and mpost respectively; the choice of command to call is determined by a TeXShop Preference. Originally, these built-in commands were quite primitive. The built-in command to call mptopdf now uses a copy of Vitacolonna's metapost engine. But the engine itself is included here for users who want to modify it.\
+\
+--------------------\
+\
 luaTeX is an experimental release of an extended version of pdfTeX using Lua as an embedded scripting language. This program will eventually replaced pdfTeX. See {\field{\*\fldinst{HYPERLINK "http://www.luatex.org/"}}{\fldrslt http://www.luatex.org/}} for details. Four engine files are provided to test luaTeX. Ordinary TeX and LaTeX source files should typeset with these engines, modulo a few problems due to the beta nature of the program.\
 \
 -------------------\
@@ -47,19 +53,13 @@ for details. The engine is by Matthew Leingang. Place the engine file in the act
 \
 Hiero is an engine which can typeset hieroglyphics. For details, see\
 \
-	 http://www.filipvervloesem.be/hierotexmac/hierotex.html.\
+	 http://www.filipvervloesem.be/hierotexmac/hierotex.html\
 \
-Place the engine file in the active area of the Engines directory. The Hiero directory also contains a short sample program, HieroTest.htx. To use this engine, however, it is also necessary to obtain the program "sesh" and various latex font and style files. To do so, go to the above web site. Do not follow the instructions on this site. Instead download "InstallHieroTeX.tar.bz2" and place this file inside a new folder. Double click it. The file will uncompress and you'll find InstallHieroTex. Hold down the Control key while clicking on this package to open it. Inside you will find HieroTexMac.tar.bz2, HieroTypeMac.tar.bz2, and htx2tex.bx2. Put these three files in the folder you created earlier and double click each. This will produce folders named HieroTexMac and HieroTexMac 2 and a program named htx2tex. Inside the first of these folders you will find a program named sesh. Create a directory ~/Library/bin if it does not already exist, and place htx2tex and sesh in this directory.\
+and\
 \
-Inside both HieroTexMac and HieroTexMac 2 you will find folders named texmf. Merge these folders into a single folder named texmf. The file "texmf_list" in the Hiero folder shows what the resulting contents of texmf should be.Then merge this folder into your existing folder ~/Library/texmf (or create a new folder is this does not exist). \
+	http://www.filipvervloesem.be/hierotexosx/Site/How_to_install_HieroTeX_on_Mac_OS_X.html\
 \
-Finally, issue the following commands in Terminal:\
-\
-	sudo updmap-sys --enable Map=diacrFonts\
-\
-	sudo updmap-sys --enable Map=hierofonts\
-\
-The capitolization in these commands is deliberate.\
+Place the engine file, Hiero.engine, in the active area of the Engines directory. Rather than using the instructions on the above web site to install Hiero-TeX, it is easiest to follow the instructions in the file Installing-Hiero-TeX included here. The directory also contains a test source file, HieroTest.htx; typeset this file to test the installation.\
 \
 --------------------\
 }

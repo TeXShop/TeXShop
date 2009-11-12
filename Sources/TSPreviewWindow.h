@@ -54,6 +54,7 @@
 
 - (void) displayLog: sender;
 - (void) displayConsole: sender;
+- (void) trashAUXFiles: sender;
 
 - (void) firstPage: sender;
 - (void) lastPage: sender;

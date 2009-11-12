@@ -145,7 +145,18 @@
 	[synctexTask launch];
 	
 	NSData *myData = [synctexHandle readDataToEndOfFile];
-	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
+	
+	NSString *content;
+	content = [[[NSString alloc] initWithData:myData encoding:_encoding] autorelease];
+	if (!content) {
+		_badEncoding = _encoding;
+		showBadEncodingDialog = YES;
+		content = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+	}
+	
+	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSUTF8StringEncoding];
+	if (!outputString)
+		outputString = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
 	
 	if (synctexTask != nil) {
 		[synctexTask terminate];
@@ -371,6 +382,8 @@
 	PDFSelection	*theSelection, *anotherSelection;
 	NSRect			anotherRect, pageSize;
 	NSString		*myFileName, *mySyncTeXFileName, *mySyncTeX;
+	float			magnification;
+	int				xoffset, yoffset;
 		
 	// return NO;  // temporarily use Search synchronization
 		
@@ -406,6 +419,7 @@
 		synctexPipe = nil;
 		}
 
+/*
 	synctexTask = [[NSTask alloc] init];
 	mainSourceString = [self fileName]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
 	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
@@ -439,9 +453,56 @@
 	inputString = [[[[lineString stringByAppendingString:@":"] stringByAppendingString: indexString] stringByAppendingString:@":"] stringByAppendingString: fileString]; 
 	
 	NSString *binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+	// NSString *binPath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
 	[args addObject: binPath];
 	[args addObject: inputString];
 	[args addObject: pdfPreviewString];
+ */
+	
+	synctexTask = [[NSTask alloc] init];
+	mainSourceString = [self fileName]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
+	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
+	synctexPipe = [[NSPipe pipe] retain];
+	synctexHandle = [synctexPipe fileHandleForReading];
+	[synctexTask setStandardOutput: synctexPipe];
+	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
+	[synctexTask setLaunchPath:enginePath];
+	args = [NSMutableArray array];
+	
+	[args addObject: @"view"];
+	[args addObject: @"-i"];
+	
+	
+	
+	lineNumber = [NSNumber numberWithInt: line];
+	indexNumber = [NSNumber numberWithInt: idx];
+	
+	lineString = [lineNumber stringValue];
+	indexString = [indexNumber stringValue];
+	if (fileName == nil)
+		fileString = [[self fileName] lastPathComponent];
+	else {
+		NSString *initialPart = [[[self fileName] stringByStandardizingPath] stringByDeletingLastPathComponent]; //get root complete path, minus root name
+		initialPart = [initialPart stringByAppendingString:@"/"];
+		myRange = [fileName rangeOfString: initialPart options:NSCaseInsensitiveSearch]; //see if this forms the first part of the source file's path
+		if ((myRange.location == 0) && (myRange.length <= [fileName length])) {
+			fileString = [fileName substringFromIndex: myRange.length]; //and remove it, so we have a relative path from root
+		}
+		else
+			return NO;
+	}
+	
+	pdfPreviewString = [[mainSourceString stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdf"]; 
+	
+	inputString = [[[[lineString stringByAppendingString:@":"] stringByAppendingString: indexString] stringByAppendingString:@":"] stringByAppendingString: fileString]; 
+	
+	[args addObject: inputString];
+	[args addObject: @"-o"];
+	[args addObject: pdfPreviewString];
+	
+	/*
+	 
+	*/
 	
 	[synctexTask setArguments:args];
 	[synctexTask launch];
@@ -471,6 +532,43 @@
 	if (range1.location == NSNotFound)
 		return NO;
 	outputString = [outputString substringFromIndex: (range1.location + 20)];
+	range1 = [outputString rangeOfString: @"Magnification:"];
+	if (range1.location == NSNotFound)
+		return NO;
+	[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+	range2.location = startIndex + 14;
+	range2.length = lineEndIndex - startIndex - 14;
+	paramString = [outputString substringWithRange: range2];
+	magnification = [paramString floatValue];
+	magnification = magnification / .000015;
+	// NSLog(paramString);
+	outputString = [outputString substringFromIndex: lineEndIndex];
+	
+	range1 = [outputString rangeOfString:@"XOffset:"];
+	if (range1.location == NSNotFound)
+		return NO;
+	[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+	range2.location = startIndex + 8;
+	range2.length = lineEndIndex - startIndex - 8;
+	paramString = [outputString substringWithRange: range2];
+	// NSLog(paramString);
+	xoffset = [paramString intValue];
+	outputString = [outputString substringFromIndex: lineEndIndex];
+	
+	range1 = [outputString rangeOfString:@"YOffset:"];
+	if (range1.location == NSNotFound)
+		return NO;
+	[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+	range2.location = startIndex + 8;
+	range2.length = lineEndIndex - startIndex - 8;
+	paramString = [outputString substringWithRange: range2];
+	// NSLog(paramString);
+	yoffset = [paramString intValue];
+	outputString = [outputString substringFromIndex: lineEndIndex];
+	xoffset = xoffset * 65536;
+	yoffset = yoffset * 65536;
+	// NSLog([NSString stringWithFormat:@"xoffset %d", xoffset]);
+	
 	
 	boxNumber = 0;
 	
@@ -499,7 +597,8 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		xNumber[boxNumber] = [paramString intValue];	
+		////
+		xNumber[boxNumber] = [paramString intValue] * magnification + xoffset;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"y:"];
@@ -509,7 +608,8 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		yNumber[boxNumber] = [paramString intValue];	
+		////
+		yNumber[boxNumber] = [paramString intValue] * magnification  + yoffset;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"h:"];
@@ -519,7 +619,8 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		hNumber[boxNumber] = [paramString intValue];	
+		////
+		hNumber[boxNumber] = [paramString intValue] * magnification  + xoffset;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"v:"];
@@ -529,7 +630,8 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		vNumber[boxNumber] = [paramString intValue];	
+		////
+		vNumber[boxNumber] = [paramString intValue] * magnification  + yoffset;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"W:"];
@@ -539,7 +641,7 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		WNumber[boxNumber] = [paramString intValue];	
+		WNumber[boxNumber] = [paramString intValue] * magnification;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"H:"];
@@ -549,7 +651,7 @@
 		range2.location = startIndex + 2;
 		range2.length = lineEndIndex - startIndex - 2;
 		paramString = [outputString substringWithRange: range2];
-		HNumber[boxNumber] = [paramString intValue];	
+		HNumber[boxNumber] = [paramString intValue] * magnification;	
 		outputString = [outputString substringFromIndex: lineEndIndex];
 
 		boxNumber++;

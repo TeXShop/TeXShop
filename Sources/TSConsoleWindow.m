@@ -66,6 +66,10 @@
 	[myDocument displayConsole: sender];
 }
 
+- (void) trashAUXFiles: sender
+{
+	[myDocument trashAUXFiles: sender];
+}
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {

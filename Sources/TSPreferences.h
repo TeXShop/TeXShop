@@ -42,6 +42,7 @@
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
+	IBOutlet NSButtonCell	*_midEastButton; /*" connected to Arabic, Persian, Hebrew "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
 	IBOutlet NSButton		*_externalEditorButton;		/*" use external editor "*/
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
@@ -130,6 +131,7 @@
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
 - (IBAction)lineNumberButtonPressed:sender;
+- (IBAction)midEastButtonPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;

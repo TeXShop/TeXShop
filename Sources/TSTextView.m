@@ -30,7 +30,7 @@
 #import "TSEncodingSupport.h"
 #import "TSPreferences.h"
 #import "TSMacroMenuController.h" // zenitani 1.33
-// #import <OgreKit/OgreKit.h>
+#import <OgreKit/OgreKit.h>
 // Adam Maxwell addition
 #import <unistd.h>
 
@@ -530,12 +530,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	}
 
 	// zenitani 1.35 (A) -- normalizing newline character for regular expression
-	/*
 	if ([SUD boolForKey:ConvertLFKey]) {
 		newString = [OGRegularExpression replaceNewlineCharactersInString:newString
 				withCharacter:OgreLfNewlineCharacter];
 	}
-	*/
 
 	[super insertText: newString];
 }
@@ -570,12 +568,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 				string = filterYenToBackslash(string);
 
 			// zenitani 1.35 (A) -- normalizing newline character for regular expression
-			/*
 			if ([SUD boolForKey:ConvertLFKey]) {
 				string = [OGRegularExpression replaceNewlineCharactersInString:string
 						withCharacter:OgreLfNewlineCharacter];
 			}
-			*/
 
 			// Replace the text--imitate what happens in ordinary editing
 			NSRange	selectedRange = [self selectedRange];
@@ -728,6 +724,7 @@ NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned
     return finalRange;
 }
 
+/*
 - (NSRange)refLabelRange{
     
     NSString *s = [self string];
@@ -751,6 +748,37 @@ NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned
     
     return NSMakeRange(NSMaxRange(foundRange), idx);
 }
+ */
+/* The previous procedure was modified by Tammo Jan Dijkema to handle BibDesk autocompletion for \autoref 
+ (which is included in the package hyperref).*/
+
+- (NSRange)refLabelRange{
+	
+	NSString *s = [self string];
+	NSRange r = [self selectedRange];
+	NSRange searchRange = SafeBackwardSearchRange(r, 12);
+	
+	// look for standard \ref
+	NSRange foundRange = [s rangeOfString:@"\\ref{" options:NSBackwardsSearch range:searchRange];
+	
+	if(foundRange.location == NSNotFound)
+		// maybe it's a pageref
+		foundRange = [s rangeOfString:@"\\pageref{" options:NSBackwardsSearch range:searchRange];
+	
+	if(foundRange.location == NSNotFound)
+		// could also be an eqref (amsmath)
+		foundRange = [s rangeOfString:@"\\eqref{" options:NSBackwardsSearch range:searchRange];
+	
+	if(foundRange.location == NSNotFound)
+		// could also be an autoref (hyperref)
+		foundRange = [s rangeOfString:@"\\autoref{" options:NSBackwardsSearch range:searchRange];
+	
+	unsigned idx = NSMaxRange(foundRange);
+	idx = (idx < r.location ? r.location - idx : 0);
+	
+	return NSMakeRange(NSMaxRange(foundRange), idx);
+}
+
 
 #pragma mark -
 #pragma mark AppKit overrides
@@ -984,6 +1012,62 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	_document = doc;
 }
 
+// Beginning of the code added by Soheil Hassas Yeganeh
+- (void) autoComplete:(NSMenuItem *)theMenu
+{
+	NSDictionary *dictionary = [theMenu representedObject];
+	NSNumber *selectedLocationObj = [dictionary valueForKey:@"sloc"];
+	NSNumber *replaceLocationObj = [dictionary valueForKey:@"rloc"];
+	int selectedLocation = [selectedLocationObj intValue];
+	int replaceLocation = [replaceLocationObj intValue];
+	NSString *originalString = [dictionary valueForKey:@"originalString"];
+	NSString *newString = [theMenu title];
+	NSRange replaceRange;
+	replaceRange.location = replaceLocation;
+	replaceRange.length = selectedLocation-replaceLocation;
+	
+	
+	[self replaceCharactersInRange:replaceRange withString:	newString];
+	// register undo
+	if (_document)
+		[_document registerUndoWithString:originalString location:replaceLocation
+								   length:[newString length]
+									  key:NSLocalizedString(@"Completion", @"Completion")];
+	//[self registerUndoWithString:originalString location:replaceLocation
+	//		length:[newString length]
+	//		key:NSLocalizedString(@"Completion", @"Completion")];
+	// clean up
+	int from, to;
+	NSString* currentString;
+	NSRange insRange;
+	bool wasCompleted;
+	static unsigned textLocation = NSNotFound; // location of insertion point
+	if (_document) {
+		from =replaceLocation;
+		to = from + [newString length];
+		[_document fixColor:from :to];
+		[_document setupTags];
+	}
+	currentString = [newString retain];
+	wasCompleted = YES;
+	// flash the new string
+	[self setSelectedRange: NSMakeRange(replaceLocation, [newString length])];
+	[self display];
+	NSDate *myDate = [NSDate date];
+	while ([myDate timeIntervalSinceNow] > - 0.050) ;
+	insRange = [newString rangeOfString:@"#INS#" options:0];
+	// set the insertion point
+	if (insRange.location != NSNotFound) // position of #INS#
+		textLocation = replaceLocation+insRange.location;
+	else{
+		textLocation = replaceLocation+[newString length];
+		[self setSelectedRange: NSMakeRange(textLocation,5)];
+	}
+}
+// End of the code added by Soheil Hassas Yeganeh
+
+
+
 // Command Completion!!
 
 // mitsu 1.29 (P)
@@ -1009,6 +1093,9 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 // you only need to supply g_commandCompletionChar(unichar) and g_commandCompletionList
 // (a string which starts and ends with line feeds).
 // so the code can be reused in other applications???
+
+/* OLD VERSION */ 
+
 - (void)keyDown:(NSEvent *)theEvent
 {
 	// FIXME: Using static variables like this is *EVIL*
@@ -1248,6 +1335,247 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 	[super keyDown: theEvent];
 }
+
+
+/* NEW VERSION 
+- (void)keyDown:(NSEvent *)theEvent
+{
+	// FIXME: Using static variables like this is *EVIL*
+	// It will simply not work correctly when using more than one window/view (which we frequently do)!
+	// TODO: Convert all of these static stack variables to member variables.
+	
+	
+	
+	static BOOL wasCompleted = NO; // was completed on last keyDown
+	static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	static NSString *originalString = nil; // string before completion, starts at replaceLocation
+	static NSString *currentString = nil; // completed string
+	static unsigned replaceLocation = NSNotFound; // completion started here
+	static unsigned int completionListLocation = 0; // location to start search in the list
+	static unsigned textLocation = NSNotFound; // location of insertion point
+	BOOL foundCandidate;
+	NSString *textString, *foundString, *latexString = 0;
+	NSMutableString *newString;
+	unsigned selectedLocation, currentLength, from, to;
+	NSRange foundRange, searchRange, spaceRange, insRange, replaceRange;
+	NSCharacterSet *charSet;
+	unichar c;
+	
+	if ([[theEvent characters] isEqualToString: g_commandCompletionChar] &&
+		(([theEvent modifierFlags] & NSAlternateKeyMask) == 0) &&
+		![self hasMarkedText] && g_commandCompletionList)
+		
+		//  if ([[theEvent characters] isEqualToString: g_commandCompletionChar] && (![self hasMarkedText]) && g_commandCompletionList)
+	{
+		textString = [self string]; // this will change during operations (such as undo)
+		selectedLocation = [self selectedRange].location;
+		// check for LaTeX \begin{...}
+		if (selectedLocation > 0 && [textString characterAtIndex: selectedLocation-1] == '}'
+			&& !latexSpecial)
+		{
+			charSet = [NSCharacterSet characterSetWithCharactersInString:
+					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+			foundRange = [textString rangeOfCharacterFromSet:charSet
+													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
+			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
+				[textString characterAtIndex: foundRange.location-6] == g_texChar  &&
+				[[textString substringWithRange: NSMakeRange(foundRange.location-5, 6)]
+				 isEqualToString: @"begin{"])
+			{
+				latexSpecial = YES;
+				latexString = [textString substringWithRange:
+							   NSMakeRange(foundRange.location, selectedLocation-foundRange.location)];
+				if (wasCompleted)
+					[currentString retain]; // extend life time
+			}
+		}
+		else
+			latexSpecial = NO;
+		
+		// if it was completed last time, revert to the uncompleted stage
+		if (wasCompleted)
+		{
+			currentLength = (currentString)?[currentString length]:0;
+			// make sure that it was really completed last time
+			// check: insertion point, string before insertion point, undo title
+			if ( selectedLocation == textLocation &&
+				[textString length]>= replaceLocation+currentLength && // this shouldn't be necessary
+				[[textString substringWithRange:
+				  NSMakeRange(replaceLocation, currentLength)]
+				 isEqualToString: currentString] &&
+				[[[self undoManager] undoActionName] isEqualToString:
+				 NSLocalizedString(@"Completion", @"Completion")])
+			{
+				// revert the completion:
+				// by doing this, even after showing several completion candidates
+				// you can get back to the uncompleted string by one undo.
+				[[self undoManager] undo];
+				selectedLocation = [self selectedRange].location;
+				if (selectedLocation >= replaceLocation &&
+					[[textString substringWithRange:
+					  NSMakeRange(replaceLocation, selectedLocation-replaceLocation)]
+					 isEqualToString: originalString]) // still checking
+				{
+					// this is supposed to happen
+					if (completionListLocation == NSNotFound)
+					{	// this happens if last one was LaTeX Special without previous completion
+						[originalString release];
+						[currentString release];
+						wasCompleted = NO;
+						return; // no other completion is possible
+					}
+				} else { // this shouldn't happen
+					[[self undoManager] redo];
+					selectedLocation = [self selectedRange].location;
+					[originalString release];
+					wasCompleted = NO;
+				}
+			} else { // probably there were other operations such as cut/paste/Macros which changed text
+				[originalString release];
+				wasCompleted = NO;
+			}
+			[currentString release];
+		}
+		
+		if (!wasCompleted && !latexSpecial) {
+			// determine the word to complete--search for word boundary
+			charSet = [NSCharacterSet characterSetWithCharactersInString:
+					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+			foundRange = [textString rangeOfCharacterFromSet:charSet
+													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
+			if (foundRange.location != NSNotFound) {
+				if (foundRange.location + 1 == selectedLocation)
+					return; // no string to match
+				c = [textString characterAtIndex: foundRange.location];
+				if (c == g_texChar || c == '{') // special characters
+					replaceLocation = foundRange.location; // include these characters for search
+				else
+					replaceLocation = foundRange.location + 1;
+			} else {
+				if (selectedLocation == 0)
+					return; // no string to match
+				replaceLocation = 0; // start from the beginning
+			}
+			originalString = [textString substringWithRange:
+							  NSMakeRange(replaceLocation, selectedLocation-replaceLocation)];
+			[originalString retain];
+			completionListLocation = 0;
+		}
+		
+		// try to find a completion candidate
+		if (!latexSpecial) { // ordinary case -- find from the list
+			searchRange.location = 0;
+			searchRange.length = [g_commandCompletionList length];		
+			NSMutableArray *completionList = [NSMutableArray array];
+			
+			while (YES) { // look for a candidate which is not equal to originalString
+				//				if ([theEvent modifierFlags] && wasCompleted) {
+				//					// backward
+				//					searchRange.location = 0;
+				//					searchRange.length = completionListLocation-1;
+				//				} else {
+				//					// forward
+				//					searchRange.location = completionListLocation;
+				//					searchRange.length = [g_commandCompletionList length] - completionListLocation;
+				//				}
+				
+				// search the string in the completion list
+				foundRange = [g_commandCompletionList rangeOfString: [@"\n" stringByAppendingString: originalString]
+															options: 0  range: searchRange];
+				
+				if (foundRange.location == NSNotFound) { // a completion candidate was not found
+					break;
+				} else { // found a completion candidate-- create replacement string
+					// get the whole line
+					foundRange.location++; // eliminate first LF
+					foundRange.length--;
+					foundRange = [g_commandCompletionList lineRangeForRange: foundRange];
+					foundRange.length--; // eliminate last LF
+					foundString = [g_commandCompletionList substringWithRange: foundRange];
+					completionListLocation = foundRange.location; // remember this location
+					// check if there is ":="
+					spaceRange = [foundString rangeOfString: @":="
+													options: 0 range: NSMakeRange(0, [foundString length])];
+					if (spaceRange.location != NSNotFound) {
+						spaceRange.location += 2;
+						spaceRange.length = [foundString length]-spaceRange.location;
+						foundString = [foundString substringWithRange: spaceRange]; //string after first space
+					}
+					newString = [NSMutableString stringWithString: foundString];
+					// replace #RET# by linefeed -- this could be tab -> \n
+					[newString replaceOccurrencesOfString: @"#RET#" withString: @"\n"
+												  options: 0 range: NSMakeRange(0, [newString length])];
+					// search for #INS#
+					insRange = [newString rangeOfString:@"#INS#" options:0];
+					if (insRange.location != NSNotFound)
+						[newString replaceCharactersInRange:insRange withString:@""];
+					[completionList addObject:newString];
+				}
+				searchRange.location = foundRange.location + foundRange.length;
+				searchRange.length = [g_commandCompletionList length] - searchRange.location;		
+			}
+			unsigned rectCount = 0;
+			NSRange myRange= NSMakeRange(replaceLocation, selectedLocation-replaceLocation);
+			NSRectArray selectedPositionRect = [[self layoutManager] rectArrayForCharacterRange:myRange withinSelectedCharacterRange:myRange inTextContainer:[self textContainer] rectCount:&rectCount];
+			if(rectCount != 0){
+				NSRect rectangle = selectedPositionRect[0];
+				NSPoint pointLoc = {rectangle.origin.x + [[NSFont systemFontOfSize:[NSFont smallSystemFontSize]] boundingRectForFont].size.width * (selectedLocation - replaceLocation - 1), rectangle.origin.y + [[self font] boundingRectForFont].size.height};
+				
+				pointLoc = [self convertPoint:pointLoc fromView:nil];
+				
+				NSEvent* myEvent = [NSEvent keyEventWithType:[theEvent type] 
+													location:pointLoc modifierFlags:[theEvent modifierFlags] timestamp:[theEvent timestamp] windowNumber:[theEvent windowNumber]
+													 context:[theEvent context] characters:[theEvent characters] charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers] 
+												   isARepeat:[theEvent isARepeat] keyCode:[theEvent keyCode]];
+				
+				NSMenu *theMenu = [[[NSMenu alloc] initWithTitle:@"Contextual Menu"] autorelease];
+				
+				NSArray *keys = [NSArray arrayWithObjects:@"sloc", @"rloc", @"originalString", nil];
+				NSArray *objects = [NSArray arrayWithObjects:[NSNumber numberWithInt:selectedLocation], [NSNumber numberWithInt:replaceLocation], originalString, nil];
+				NSDictionary *dictionary = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+				int count = [completionList count];
+				int i = 0;
+				for (i = 0; i < count; i++) {
+					NSMenuItem *item = [theMenu insertItemWithTitle:[completionList objectAtIndex:i] action:@selector(autoComplete:) keyEquivalent:@"" atIndex:0];
+					[item setRepresentedObject:dictionary];
+				}
+				
+				[NSMenu popUpContextMenu:theMenu withEvent:myEvent forView:self withFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+				
+				//			[[NSHelpManager sharedHelpManager] setContextHelp:@"sss" forObject:self]; // r20s2
+				
+				
+				
+				//			NSHelpManager* help = [[[NSHelpManager alloc] view:self stringForToolTip:@"SSSS" point:pointLoc userData:nil] autorelease];
+				//			[help showContextHelpForObject:[self textContainer] locationHint:pointLoc];
+			}
+			
+		} else { // LaTeX Special -- just add \end and copy of {...}
+			foundCandidate = YES;
+			if (!wasCompleted) {
+				originalString = [[NSString stringWithString: @""] retain];
+				replaceLocation = selectedLocation;
+				newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
+							 g_texChar, latexString];
+				insRange.location = 0;
+				completionListLocation = NSNotFound; // just to remember that it wasn't completed
+			} else {
+				// reuse the current string
+				newString = [NSMutableString stringWithFormat: @"%@\n%Cend%@\n",
+							 currentString, g_texChar, latexString];
+				insRange.location = [currentString length];
+				[currentString release];
+			}
+		}
+		[originalString release];
+		originalString = currentString = nil;
+		wasCompleted = NO;
+		return;
+	} 
+	[super keyDown: theEvent];
+}
+
+*/
 
 - (void)registerForCommandCompletion: (id)sender
 {

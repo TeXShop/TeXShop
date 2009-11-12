@@ -43,38 +43,8 @@
 			<dd><p>
 			<dd><tt>end</tt>
 		</dl>
-		<p>Suppose this file is named &quot;metademo.mp.&quot; When the file is processed by MetaPost, it will generate four different postscript files, named metademo.1, metademo.2, metademo.3, metademo.4. These names are determined by the number parameter of &quot;beginfig().&quot; If this number is nonnegative, like beginfig(0) or beginfig(10), the resulting file will be named metademo.0 or metademo.10. If this number is negative, like beginfig(-10), the resulting file will be named metademo.ps, overwriting any earlier metademo.ps file created by the source.</p>
-		<p>In its default configuration, TeXShop assumes that one of the numbers is zero. TeXShop calls the script pstopdf, which runs MetaPost and thus creates all of these postscript files. The script then converts each postscript file to a pdf file. Finally, the script renames the zeroth pdf file to the name of the source with extension "pdf", for instance metademo.pdf and displays this figure in the preview screen. 
-
-</p>
-		<p>When you are editing a MetaPost file, change the number of the figure being edited from positive to zero. TeXShop will then display this figure as it is being debugged. When you are satisfied with this figure, change its number back to positive and change the number of another figure from positive to zero.</p>
-		<p>Once MetaPost files have been created, then can be displayed like any other illustration. Pdflatex can be used if the illustrations are converted to pdf form, or TeX and Ghostscript can be used to include the postscript illustrations without conversion. For example, the four illustrations created by the above MetaPost file can be displayed by typesetting the following file with TeX and Ghostscript:</p>
-		<dl>
-			<dd><tt>\documentclass[11pt] {article}</tt>
-			<dd><tt>\usepackage{graphicx}</tt>
-			<dd>
-			<dd><tt>\begin{document}</tt>
-			<dd>
-			<dd><tt>Here are some illustrations.</tt>
-			<dd><tt>\vspace{.2in}</tt>
-			<dd>
-			<dd><tt>\includegraphics[width=1cm]{metademo.1}</tt>
-			<dd><tt>\hfill</tt>
-			<dd><tt>\includegraphics[width=1cm]{metademo.2}</tt>
-			<dd><tt>\hfill</tt>
-			<dd><tt>\includegraphics[width=1cm]{metademo.3}</tt>
-			<dd><tt>\hfill</tt>
-			<dd><tt>\includegraphics[width=1cm]{metademo.4}</tt>
-			<dd><tt>\hfill</tt>
-			<dd>
-			<dd><tt>\end{document}</tt>
-		</dl>
-		<p></p>
-		<ul>
-			
-		</ul>
-
-		<p>It is also possible to embed MetaPost source code directly in a Latex document using the package mfpic.
+		<p>Once MetaPost files have been created, then can be displayed like any other illustration. 
+				<p>It is also possible to embed MetaPost source code directly in a Latex document using the package mfpic.
 When this method is used, the MetaPost preference should be set to "mpost" rather than "mptopdf" in the Preferences dialog so MetaPost will run directly when the MetaPost engine is selected.
 A document containing MetaPost source code is first typeset with pdflatex or latex, creating a mp source file with all of the document's illustrations. This file is then compiled with MetaPost. Finally, the document is typeset again with pdflatex or latex to show the resulting illustrations.  </p>
 

@@ -27,7 +27,7 @@
 
 
 #import "TSDocument.h"
-// #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
+#import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
 
 #if 0
 #import <Security/Authorization.h>
@@ -116,6 +116,7 @@
 
 - (void)dealloc
 {
+	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:pdfView];// mitsu 1.29 (O) need to remove here, otherwise updateCurrentPage fails
 	if (tagTimer != nil) {
@@ -546,6 +547,9 @@ if (! skipTextWindow) {
 
 
 	whichScript = [SUD integerForKey:DefaultScriptKey];
+	// This line fixes an obscure error
+	if ((whichScript < 100) || (whichScript > 102))
+		whichScript = 100;
 	[self fixTypesetMenu];
 
 	/* handle images */
@@ -1095,21 +1099,17 @@ in other code when an external editor is being used. */
 
 	if (content) {
 		// zenitani 1.35 (A) -- normalizing newline character for regular expression
-		/*
 		if ([SUD boolForKey:ConvertLFKey]) {
 			content = [OGRegularExpression replaceNewlineCharactersInString:content
 															  withCharacter:OgreLfNewlineCharacter];
 		}
-		*/
 		// zenitani 2.10 (A) -- decode utf.sty format
-		/*
 		if( [SUD boolForKey:ptexUtfOutputEnabledKey] ) {
 			OGRegularExpression     *utfRegex;
 			utfRegex = [OGRegularExpression regularExpressionWithString:@"\\\\(UTF|UTFK|UTFT|UTFC){([0-9a-fA-F]{4})}"];
 			content = [utfRegex replaceAllMatchesInString: content delegate:self
 						replaceSelector:@selector(decodeUtfStyFormat:contextInfo:) contextInfo:nil];
 		}
-		*/
 		
 		theLength = [content length];
 		// NSLog([NSString stringWithFormat:@"%d", theLength]);
@@ -1143,7 +1143,6 @@ in other code when an external editor is being used. */
 }
 
 // zenitani 2.10 (A) -- decode utf.sty format
-/*
 - (NSString *)decodeUtfStyFormat:(OGRegularExpressionMatch *)aMatch contextInfo:(id)contextInfo
 {
 	unsigned int u, d;
@@ -1151,7 +1150,6 @@ in other code when an external editor is being used. */
 	NSLog([NSString stringWithFormat: @"%d %d %C", u, d, 256*u + d]);
 	return [NSString stringWithFormat: @"%C", 256*u + d];
 }
-*/
 
 
 - (BOOL)revertToContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
@@ -4048,12 +4046,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	}
 }
 
-
+/*
 - (void)trashAUX
 {
 	NSString		*path, *path1, *path2;
 	NSString		*extension;
-	NSString        *fileName, *objectFileName;
+	NSString        *fileName, *objectFileName, *objectName;
 	NSMutableArray  *pathsToBeMoved, *fileToBeMoved = 0;
 	id              anObject, stringObject;
 	int             myTag;
@@ -4085,6 +4083,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	
 	while ((anObject = [enumerator nextObject])) {
 		doMove = YES;
+		extension = [anObject pathExtension];
 		if (! aggressiveTrash) {
 			objectFileName = [anObject stringByDeletingPathExtension];
 			if (! [objectFileName isEqualToString:fileName])
@@ -4092,14 +4091,142 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 		}
 		
 		isOneOfOther = NO;
-		
-		extension = [anObject pathExtension];
-		
 		otherExtensions = [SUD stringArrayForKey: OtherTrashExtensionsKey];
 		arrayEnumerator = [otherExtensions objectEnumerator];
 		while ((stringObject = [arrayEnumerator nextObject])) {
 			if ([extension isEqualToString:stringObject])
 				isOneOfOther = YES;
+		}
+		
+		if ([extension isEqualToString:@"gz"]) {
+			objectName = [anObject stringByDeletingPathExtension];
+			if ([[objectName pathExtension] isEqualToString:@"synctex"]) {
+				doMove = YES;
+				isOneOfOther = YES;
+				if (! aggressiveTrash) {
+					objectName = [objectName stringByDeletingPathExtension];
+					if (! [objectName isEqualToString:fileName])
+						doMove = NO;
+				}
+			}
+		}
+			
+		if (doMove && (isOneOfOther ||
+					   ([extension isEqualToString:@"aux"] ||
+						[extension isEqualToString:@"blg"] ||
+						[extension isEqualToString:@"brf"] ||
+						[extension isEqualToString:@"glo"] ||
+						[extension isEqualToString:@"idx"] ||
+						[extension isEqualToString:@"ilg"] ||
+						[extension isEqualToString:@"ind"] ||
+						[extension isEqualToString:@"loa"] ||
+						[extension isEqualToString:@"lof"] ||
+						[extension isEqualToString:@"log"] ||
+						[extension isEqualToString:@"lot"] ||
+						[extension isEqualToString:@"mtc"] ||
+						[extension isEqualToString:@"mlf"] ||
+						[extension isEqualToString:@"out"] ||
+						[extension isEqualToString:@"ttt"] ||
+						[extension isEqualToString:@"fff"] ||
+						[extension isEqualToString:@"ent"] ||
+						[extension isEqualToString:@"css"] ||
+						[extension isEqualToString:@"idv"] ||
+						[extension isEqualToString:@"wrm"] ||
+						[extension isEqualToString:@"4ct"] ||
+						[extension isEqualToString:@"4tc"] ||
+						[extension isEqualToString:@"lg"] ||
+						[extension isEqualToString:@"xref"] ||
+						[extension isEqualToString:@"pdfsync"] ||
+						[extension isEqualToString:@"synctex"] ||
+						[extension isEqualToString:@"toc"])))
+			[pathsToBeMoved addObject: anObject];
+		
+	}
+	
+	if (aggressiveTrash) {
+		
+		enumerator = [pathsToBeMoved objectEnumerator];
+		while ((anObject = [enumerator nextObject])) {
+			path1 = [path stringByAppendingPathComponent: anObject];
+			path2 = [path1 stringByDeletingLastPathComponent];
+			[fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
+			[[NSWorkspace sharedWorkspace]
+					performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
+		}
+		
+	} else {
+		[[NSWorkspace sharedWorkspace]
+			performFileOperation:NSWorkspaceRecycleOperation source:path destination:nil files:pathsToBeMoved tag:&myTag];
+	}
+	
+}
+*/
+
+- (void)trashAUX
+{
+	NSString		*path, *path1, *path2;
+	NSString		*extension;
+	NSString        *fileName, *objectFileName, *objectName;
+	NSMutableArray  *pathsToBeMoved, *fileToBeMoved = 0;
+	id              anObject, stringObject;
+	int             myTag;
+	BOOL            doMove, isOneOfOther, trashPDF;
+	NSEnumerator    *enumerator;
+	NSArray         *otherExtensions;
+	NSEnumerator    *arrayEnumerator;
+	
+	if (! fileIsTex)
+		return;
+	
+	if ([self fileName] == nil)
+		return;
+	
+	path = [[self fileName] stringByDeletingLastPathComponent];
+	fileName = [[[self fileName] lastPathComponent] stringByDeletingPathExtension];
+	NSFileManager *myFileManager = [NSFileManager defaultManager];
+	
+	if (aggressiveTrash) {
+		enumerator = [myFileManager enumeratorAtPath: path];
+		fileToBeMoved = [NSMutableArray arrayWithCapacity: 1];
+		[fileToBeMoved addObject:@""];
+	} else
+		enumerator = [[myFileManager directoryContentsAtPath: path] objectEnumerator];
+	
+	pathsToBeMoved = [NSMutableArray arrayWithCapacity: 20];
+	
+	if ((GetCurrentKeyModifiers() & shiftKey) != 0)
+		trashPDF = YES;
+	else
+		trashPDF = NO;
+	
+	while ((anObject = [enumerator nextObject])) {
+		doMove = YES;
+		extension = [anObject pathExtension];
+		if ((! aggressiveTrash) || [extension isEqualToString:@"pdf"]) {
+			objectFileName = [anObject stringByDeletingPathExtension];
+			if (! [objectFileName isEqualToString:fileName])
+				doMove = NO;
+		}
+		
+		isOneOfOther = NO;
+		otherExtensions = [SUD stringArrayForKey: OtherTrashExtensionsKey];
+		arrayEnumerator = [otherExtensions objectEnumerator];
+		while ((stringObject = [arrayEnumerator nextObject])) {
+			if ([extension isEqualToString:stringObject])
+				isOneOfOther = YES;
+		}
+		
+		if ([extension isEqualToString:@"gz"]) {
+			objectName = [anObject stringByDeletingPathExtension];
+			if ([[objectName pathExtension] isEqualToString:@"synctex"]) {
+				doMove = YES;
+				isOneOfOther = YES;
+				if (! aggressiveTrash) {
+					objectName = [objectName stringByDeletingPathExtension];
+					if (! [objectName isEqualToString:fileName])
+						doMove = NO;
+				}
+			}
 		}
 		
 		if (doMove && (isOneOfOther ||
@@ -4128,6 +4255,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 						[extension isEqualToString:@"lg"] ||
 						[extension isEqualToString:@"xref"] ||
 						[extension isEqualToString:@"pdfsync"] ||
+						[extension isEqualToString:@"synctex"] ||
+						([extension isEqualToString:@"pdf"] && trashPDF) ||
 						[extension isEqualToString:@"toc"])))
 			[pathsToBeMoved addObject: anObject];
 		
@@ -4141,12 +4270,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			path2 = [path1 stringByDeletingLastPathComponent];
 			[fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
 			[[NSWorkspace sharedWorkspace]
-					performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
+			 performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
 		}
 		
 	} else {
 		[[NSWorkspace sharedWorkspace]
-			performFileOperation:NSWorkspaceRecycleOperation source:path destination:nil files:pathsToBeMoved tag:&myTag];
+		 performFileOperation:NSWorkspaceRecycleOperation source:path destination:nil files:pathsToBeMoved tag:&myTag];
 	}
 	
 }

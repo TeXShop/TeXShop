@@ -1,0 +1,9 @@
+#!/bin/tcsh
+
+set path= ($path /usr/texbin /usr/local/bin)
+set filename = "$1"
+set asyname = "${filename:r}.asy"
+
+pdflatex -synctex=1 "$filename"
+asy -v "$asyname"
+pdflatex -synctex=1 "$filename"

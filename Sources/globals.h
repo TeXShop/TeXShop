@@ -359,6 +359,7 @@ extern NSString *ConsoleForegroundColor_BKey;
 extern NSString *ConsoleFontNameKey;
 extern NSString *ConsoleFontSizeKey;
 extern NSString *ConsoleWidthResizeKey;
+extern NSString *RightJustifyKey;
 // end mitsu 1.29
 
 

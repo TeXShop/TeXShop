@@ -531,6 +531,17 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setBool:[[sender selectedCell] state] forKey:LineNumberEnabledKey];
 }
 
+/*" This method is connected to the 'Arabic, Persian, Hebrew' checkbox.
+ "*/
+- (IBAction)midEastButtonPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:RightJustifyKey] forKey:RightJustifyKey];
+	
+	[SUD setBool:[[sender selectedCell] state] forKey:RightJustifyKey];
+}
+
+
 
 /*" This method is connected to the 'shell escape warning' checkbox.
 "*/
@@ -1240,6 +1251,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
+	[_midEastButton setState:[defaults boolForKey:RightJustifyKey]];
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];

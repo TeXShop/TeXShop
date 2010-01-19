@@ -344,14 +344,25 @@
 
 }
 
-- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
+/* The code below is an experimental version of new code to handle pdfsync. It is messy, with various experiments half done.
+ The code calls the system synctex to analyze the sync file, and first checks to see if it is the old 2008 synctex or the new
+ 2009 synctex. This is important because the two versions give different results. 
+ 
+ The code is complicated because it must handle both versions. In addition, this code experiments with embedding the synctex
+ file in TeXShop rather than calling the experimental version. I only have modified code for Intel, so another problem is that
+ the code has to see if the Intel version which returns "Magnification" is called, or the PowerPC code which doesn't.
+ 
+ For now, doPreviewSyncTeXWithFilename is called rather than this code.
+*/
+
+- (BOOL)doPreviewSyncTeXWithFilenameNew:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
 {
 	NSDate          *myDate;
 	NSString		*enginePath;
 	NSString		*mainSourceString;
 	NSString		*inputString;
 	NSString		*pdfPreviewString;
-	NSString		*lineString;
+	NSString		*lineString, *pieceText;
 	NSString		*indexString;
 	NSString		*fileString;
 	NSNumber		*lineNumber, *indexNumber;
@@ -362,9 +373,13 @@
 	int				pageNumber[200];
 	float			hNumber[200], vNumber[200], WNumber[200], HNumber[200], xNumber[200], yNumber[200];
 	NSString		*theText[200];
+	NSString		*boxText[200];
 	NSRange			theRanges[200];
 	BOOL			firstPage[200];
+	BOOL			secondPage[200];
+	NSRect			boxRect[200];
 	int				initialFirstPage;
+	int				initialSecondPage;
 	int				boxNumber;
 	float			Param;
 	unsigned		startIndex, lineEndIndex, contentsEndIndex;
@@ -375,7 +390,7 @@
 	NSPoint			aPoint;
 	int				theNumber, theLocation;
 	NSRange			theRange;
-	NSRange			myLineRange;
+	NSRange			myLineRange, myPieceRange, myTranslatedPieceRange;
 	NSString		*sourceLineString, *searchString;
 	TSDocument		*newDocument;
 	int				searchIndex;
@@ -384,9 +399,16 @@
 	NSString		*myFileName, *mySyncTeXFileName, *mySyncTeX;
 	float			magnification;
 	int				xoffset, yoffset;
+	BOOL			oldVersion;
+	NSString		*tempString;
+	PDFSelection	*tempSelection;
+	int				mainPageNumber;
+	float			left, middle;
+	int				k;
 		
 	// return NO;  // temporarily use Search synchronization
 		
+// FIRST GET SYNCTEX DATA
 	
 	myFileName = [self fileName];
 	if (! myFileName)
@@ -419,15 +441,18 @@
 		synctexPipe = nil;
 		}
 
-/*
+
 	synctexTask = [[NSTask alloc] init];
 	mainSourceString = [self fileName]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
 	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
 	synctexPipe = [[NSPipe pipe] retain];
 	synctexHandle = [synctexPipe fileHandleForReading];
 	[synctexTask setStandardOutput: synctexPipe];
-	enginePath = [[NSBundle mainBundle] pathForResource:@"synctexviewwrap" ofType:nil];
+	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
+	// enginePath = [[NSBundle mainBundle] pathForResource:@"synctexviewwrap" ofType:nil];
 	[synctexTask setLaunchPath:enginePath];
+	
+/*
 	args = [NSMutableArray array];
 	
 	lineNumber = [NSNumber numberWithInt: line];
@@ -458,7 +483,9 @@
 	[args addObject: inputString];
 	[args addObject: pdfPreviewString];
  */
-	
+ 
+
+/*
 	synctexTask = [[NSTask alloc] init];
 	mainSourceString = [self fileName]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
 	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
@@ -467,6 +494,7 @@
 	[synctexTask setStandardOutput: synctexPipe];
 	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
 	[synctexTask setLaunchPath:enginePath];
+*/
 	args = [NSMutableArray array];
 	
 	[args addObject: @"view"];
@@ -500,9 +528,8 @@
 	[args addObject: @"-o"];
 	[args addObject: pdfPreviewString];
 	
-	/*
 	 
-	*/
+	
 	
 	[synctexTask setArguments:args];
 	[synctexTask launch];
@@ -526,15 +553,33 @@
 	
 	/* Next, digest this information */
 	
+	range1 = [outputString rangeOfString:@"This is SyncTeX command line utility, version 1.0"];
+	if (range1.location != NSNotFound)
+		oldVersion = YES;
+	else
+		oldVersion = NO;
 	
-
 	range1 =  [outputString rangeOfString:@"SyncTeX result begin"];
 	if (range1.location == NSNotFound)
 		return NO;
 	outputString = [outputString substringFromIndex: (range1.location + 20)];
+	
 	range1 = [outputString rangeOfString: @"Magnification:"];
-	if (range1.location == NSNotFound)
-		return NO;
+	if (range1.location == NSNotFound) {
+		
+		magnification = 1;
+		xoffset = 0;
+		yoffset = 0;
+	}
+	
+	else {
+			
+
+	// range1 = [outputString rangeOfString: @"Magnification:"];
+	// if (range1.location == NSNotFound)
+	// 	return NO;
+		
+		NSLog(@"yes, here");
 	[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
 	range2.location = startIndex + 14;
 	range2.length = lineEndIndex - startIndex - 14;
@@ -568,7 +613,24 @@
 	xoffset = xoffset * 65536;
 	yoffset = yoffset * 65536;
 	// NSLog([NSString stringWithFormat:@"xoffset %d", xoffset]);
+
+	}
 	
+
+
+	
+//	magnification = 1;
+//	xoffset = 0;
+//	yoffset = 0;
+		
+	
+	
+/*
+ 
+	
+*/
+
+// NOW DIGEST THE BOX DATA FROM SYNCTEX
 	
 	boxNumber = 0;
 	
@@ -582,12 +644,22 @@
 		range2.length = lineEndIndex - startIndex - 5;
 		paramString = [outputString substringWithRange: range2];
 		pageNumber[boxNumber] = [paramString intValue];
-		if (boxNumber == 0)
+		if (boxNumber == 0) {
 				initialFirstPage = pageNumber[boxNumber];
+				initialSecondPage = initialFirstPage;
+				}
 		if (pageNumber[boxNumber] == initialFirstPage)
 			firstPage[boxNumber] = YES;
-		else
+		else { 
 			firstPage[boxNumber] = NO;
+			if (initialSecondPage == initialFirstPage) 
+				initialSecondPage = pageNumber[boxNumber];
+			if (pageNumber[boxNumber] == initialSecondPage)
+				secondPage[boxNumber] = YES;
+			else
+				secondPage[boxNumber] = NO;
+			}
+		
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		
 		range1 = [outputString rangeOfString:@"x:"];
@@ -659,21 +731,735 @@
 	
 	if (boxNumber == 0)
 		return NO;
+	
+	
+	
+	
+	/*
+	
+	i = 0;
+	
+		thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+		myOval.size.height = HNumber[i] + 10; myOval.size.width = WNumber[i] + 10;
+		myOval.origin.x = hNumber[i] - 5; myOval.origin.y = pageSize.size.height - vNumber[i] - 5;
+	
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+		[[pdfKitWindow activeView] goToPage: thePage];
+		[[pdfKitWindow activeView] display];
+	
+			
+		return YES;
+
+	*/	
 		
 		
 		
+	
+	/* Next, get the text inside these various boxes and under the "index point" */
+	
+// NOW GET THE TEXT IN EACH BOX	
+		
+	i = 0;
+	
+	// for each box, get the text inside the box
+	
+	while (i < boxNumber) {
+		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
+		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+		
+		
+		if (oldVersion) {
+			Param = 65536;
+			aPoint.x = xNumber[i]/Param;
+			aPoint.y = pageSize.size.height - yNumber[i]/Param;
+			}
+		else {
+			aPoint.x = xNumber[i]; // in version 1.2
+			aPoint.y = pageSize.size.height - yNumber[i]; // in version 1.2
+		}
+		
+		// if (oldVersion) 
+		{
+		
+			theNumber = [thePage characterIndexAtPoint:aPoint];
+			pageString = [thePage string];
+			theLocation = theNumber - 2;
+			if (theLocation < 0)
+				theLocation = 0;
+			theRange.location = theLocation;
+			if ((theLocation + 5) < [pageString length])
+					theRange.length = 5;
+				else
+					theRange.length = [pageString length] - theLocation;
+
+			theRanges[i] = theRange;
+			theText[i] = [pageString substringWithRange:theRange];
+			// NSLog(theText[i]);
+			
+		}
+		
+		if ( ! oldVersion) {
+			myOval.size.height = HNumber[i] + 10; myOval.size.width = WNumber[i] + 10;
+			myOval.origin.x = hNumber[i] - 5; myOval.origin.y = pageSize.size.height - vNumber[i] - 5;
+			tempSelection = [thePage selectionForRect: myOval];
+			boxRect[i] = [tempSelection boundsForPage: thePage];
+			tempString = [tempSelection string];
+			boxText[i] = tempString;
+		}
+		i++;
+		}
+		
+		
+	/* Next get the text where the mouse was clicked and see if that text is inside one of these boxes.
+	   If so, declare victory. */
+
+// GET TEXT WHERE MOUSE WAS CLICKED
+	   
+		
+	if (fileName == nil)
+		newDocument = self;
+	else {
+		id newURL = [NSURL fileURLWithPath: fileName];
+		newDocument = [[TSDocumentController sharedDocumentController] documentForURL:newURL];
+		}
+	if (newDocument == nil)
+		return NO;
+	myLineRange = [newDocument lineRange: line];
+	sourceLineString = [[aTextView string] substringWithRange: myLineRange];
+	// NSLog(sourceLineString);
+	
+// IN OLD METHOD, FIND BOX TEXT IN SOURCE LINE TEXT
+	
+	searchIndex = idx - myLineRange.location;
+	
+	i = 0;
+	if (oldVersion) {
+		while (i < boxNumber) {
+			theRange = [sourceLineString rangeOfString: theText[i]];
+			if ((theRange.location != NSNotFound) && (theRange.location <= (searchIndex + 5)) && (searchIndex < (theRange.location + theRange.length + 5))) {
+		
+				// theRange = [sourceLineString rangeOfString: pieceText];
+				// if (theRange.location != NSNotFound) {
+			
+			thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+			theSelection = [thePage selectionForRange: theRanges[i]];
+			myOval = [theSelection boundsForPage:thePage];
+			pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+			Param = 65536;
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self]; 
+
+			return YES;
+			}
+			i++;
+			}
+		}
+	
+// NOW THE NEW METHOD
+	
+	i = 0;
+	
+/* Explanation: Take the source code for the line, and the character in this line. Go back 5 characters and forward 5 characters. 
+ Then search through the text for all boxes until this is found. If found, declare success, and choose an appropriate portion of the box.
+ If no success, back up 5 characters and try again. Repeat as often as characters remain. If no success, repeat, going forward 5 characters.
+*/
+	
+	if (! oldVersion ) {
+		
+		myPieceRange.location = idx - myLineRange.location - 5;
+		if (myPieceRange.location < 0)
+			myPieceRange.location = 0;
+		myPieceRange.length = 10;
+		if ((myPieceRange.length + myPieceRange.location) >= [sourceLineString length])
+			myPieceRange.length = [sourceLineString length] - myPieceRange.location;
+		myTranslatedPieceRange = myPieceRange;
+		k = 0;
+		
+		do {
+		
+		pieceText = [sourceLineString substringWithRange: myTranslatedPieceRange];
+		// NSLog(pieceText);
+		
+		i = 0;
+		while ((i < boxNumber) && (boxText[i] != nil))  {
+			theRange = [boxText[i] rangeOfString: pieceText];
+			if (theRange.location != NSNotFound) {
+				left = theRange.location + (myPieceRange.location - myTranslatedPieceRange.location); 
+				left = left / [boxText[i] length]; 
+				}
+			if ((theRange.location != NSNotFound) && (left < 0.9)) {
+				
+				/* now get proportion of totale box length to left, and in middle */
+				middle = theRange.length;
+				middle = middle / [boxText[i] length];
+				
+				thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+				theSelection = [thePage selectionForRange: theRanges[i]];
+				
+				/*
+				myOval.size.height = HNumber[i] + 10; myOval.size.width = WNumber[i] + 10;
+				
+				myOval.origin.x = hNumber[i] - 5 + (myOval.size.width) * left; myOval.origin.y = pageSize.size.height - vNumber[i] - 5;
+				myOval.size.width = myOval.size.width * middle;
+				*/
+				myOval.size.height = boxRect[i].size.height;
+				myOval.size.width = boxRect[i].size.width;
+				myOval.origin.x = boxRect[i].origin.x + myOval.size.width * left;
+				myOval.origin.y = boxRect[i].origin.y;
+				myOval.size.width = myOval.size.width * middle;
+
+				pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+				[[pdfKitWindow activeView] goToPage: thePage];
+				[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+				[[pdfKitWindow activeView] setCurrentSelection: nil];
+				[[pdfKitWindow activeView] display];
+				[pdfKitWindow makeKeyAndOrderFront:self]; 
+				
+				return YES;
+				}
+			i++;
+			}
+			
+			if (myTranslatedPieceRange.location > 5)
+				myTranslatedPieceRange.location = myTranslatedPieceRange.location - 5;
+			else
+				myTranslatedPieceRange.location = 0;
+			k++;
+		}
+		while ((myTranslatedPieceRange.location > 0) && (k < 3));
+		
+			
+	myTranslatedPieceRange = myPieceRange;
+	myTranslatedPieceRange.location = myTranslatedPieceRange.location + 5;
+		while ( (myTranslatedPieceRange.location + myTranslatedPieceRange.length) < [sourceLineString length])
+		
+		{
+		pieceText = [sourceLineString substringWithRange: myTranslatedPieceRange];
+		// NSLog(pieceText);
+		
+		k = 0;
+		i = 0;
+			while ((i < boxNumber) && (boxText[i] != nil) && (k < 2)) {
+			theRange = [boxText[i] rangeOfString: pieceText];
+			if (theRange.location != NSNotFound) {
+				left = theRange.location + (myPieceRange.location - myTranslatedPieceRange.location); 
+				left = left / [boxText[i] length];
+				}
+			if ((theRange.location != NSNotFound) && (left < 0.9)) {
+				
+				// now get proportion of totale box length to left, and in middle 
+				middle = theRange.length;
+				middle = middle / [boxText[i] length];
+				
+				
+				thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+				theSelection = [thePage selectionForRange: theRanges[i]];
+				
+				/*
+				myOval.size.height = HNumber[i] + 10; myOval.size.width = WNumber[i] + 10;
+				
+				myOval.origin.x = hNumber[i] - 5 + (myOval.size.width) * left; myOval.origin.y = pageSize.size.height - vNumber[i] - 5;
+				myOval.size.width = myOval.size.width * middle;
+				*/
+				myOval.size.height = boxRect[i].size.height;
+				myOval.size.width = boxRect[i].size.width;
+				myOval.origin.x = boxRect[i].origin.x + myOval.size.width * left;
+				myOval.origin.y = boxRect[i].origin.y;
+				myOval.size.width = myOval.size.width * middle;
+				
+				pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+				[[pdfKitWindow activeView] goToPage: thePage];
+				[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+				[[pdfKitWindow activeView] setCurrentSelection: nil];
+				[[pdfKitWindow activeView] display];
+				[pdfKitWindow makeKeyAndOrderFront:self]; 
+				
+				return YES;
+				
+			}
+			i++;
+		}
+		
+		myTranslatedPieceRange.location = myTranslatedPieceRange.location + 5;
+		k++;
+	}
+		
+
+ }
+				
+	
+
+
+
+/*
+	if (! oldVersion) {
+	
+			if (! oldVersion) {
+				myPieceRange.location = idx - myLineRange.location - 5;
+				if (myPieceRange.location < 0)
+					myPieceRange.location = 0;
+				myPieceRange.length = 10;
+				if ((myPieceRange.length + myPieceRange.location) > [sourceLineString length])
+					myPieceRange.length = [sourceLineString length] - myPieceRange.location;
+				pieceText = [sourceLineString substringWithRange: myPieceRange];
+				NSLog(pieceText);
+			}
+			
+			
+			while (i < boxNumber) {
+				// theRange = [sourceLineString rangeOfString: theText[i]];
+				// if ((theRange.location != NSNotFound) && (theRange.location <= (searchIndex + 5)) && (searchIndex < (theRange.location + theRange.length + 5))) {
+					
+				theRange = [sourceLineString rangeOfString: pieceText];
+				if (theRange.location != NSNotFound) {
+					
+					thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+					theSelection = [thePage selectionForRange: theRanges[i]];
+					myOval = [theSelection boundsForPage:thePage];
+					pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+					Param = 65536;
+					[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+					[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+					[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+					[[pdfKitWindow activeView] goToPage: thePage];
+					[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+					[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+					[[pdfKitWindow activeView] setCurrentSelection: nil];
+					[[pdfKitWindow activeView] display];
+					[pdfKitWindow makeKeyAndOrderFront:self]; 
+					
+					return YES;
+				}
+				i++;
+			}
+		}
+ 
+ */
+			
+		
+		
+		
+	/* In case of failure, guess the full box where the text occurs. */
+	
+	if (oldVersion) 
+		Param = 65536;
+	else
+		Param = 1;
+	
+	mainPageNumber = 0;
+	if ((boxNumber > 1) && ( ! firstPage[1]))
+		mainPageNumber = 1;
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[mainPageNumber] - 1)];
+		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+
+	myOval.size.height = HNumber[mainPageNumber] / Param + 10; myOval.size.width = WNumber[mainPageNumber]/ Param + 10;
+	myOval.origin.x = hNumber[mainPageNumber] / Param - 5; myOval.origin.y = pageSize.size.height - vNumber[mainPageNumber]/ Param - 5;
+
+	theSelection = [thePage selectionForRange: theRanges[mainPageNumber]];
+	i = mainPageNumber + 1;
+	while (i < boxNumber) {
+		if ( ((mainPageNumber == 0) && firstPage[i]) || ((mainPageNumber == 1) && secondPage[i]) ) {
+			anotherRect.size.height = HNumber[i] / Param + 10; anotherRect.size.width = WNumber[i]/ Param + 10;
+			anotherRect.origin.x = hNumber[i] / Param - 5; anotherRect.origin.y = pageSize.size.height - vNumber[i]/ Param - 5;
+			if (NSIntersectsRect(myOval, anotherRect))
+				myOval = NSUnionRect(myOval, anotherRect);
+			}
+		i++;
+		}
+	
+	if (mainPageNumber == 0)
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
+	else
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialSecondPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
+	
+	[[pdfKitWindow activeView] goToPage: thePage];
+	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+
+	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+	[[pdfKitWindow activeView] setCurrentSelection: nil];
+	[[pdfKitWindow activeView] display];
+	
+	[pdfKitWindow makeKeyAndOrderFront:self];
+
+	return YES;
+	
+/* 
+	// This section, commented out, provides a fascinating illustration of the output of synctex. When syncing from source to preview, 
+	// synctex outputs a series of rectangles, from four or five to thirty or more. The code below draws each of these rectangles,
+	// one after the other. The rectangles flash by fairly rapidly, but it is  possible to get a feeling for their information and
+	// how typesetting produces them one by one.
+
+
+	i = 0;
+	while (i < boxNumber) {
+		
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+	
+		Param = 65536; 
+	myOval.size.height = HNumber[i] / Param + 10; myOval.size.width = WNumber[i]/ Param + 10;
+	myOval.origin.x = hNumber[i] / Param - 5; myOval.origin.y = pageSize.size.height - vNumber[i]/ Param - 5;
+	
+	[myPDFKitView setIndexForMark: (pageNumber[i] - 1)];
+	[myPDFKitView setBoundsForMark: myOval];
+	[myPDFKitView setDrawMark: YES];
+	[myPDFKitView goToPage: thePage];
+	[pdfWindow display];
+	
+	i++;
+	}
+
+*/
+
+	return YES;
+			
+}
+
+/* The code below is the original 2008 version. But it is modified to call "synctex" embedded in the program, rather than the a version in TeX Live.
+ This is important because the 2008 and 2009 versions of synctex are different. This program uses the 2008 version. The Intel portion has been modified
+ to return additional information, "Magnification", so this code tests if that additional information is present.
+*/
+
+- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
+{
+	NSDate          *myDate;
+	NSString		*enginePath;
+	NSString		*mainSourceString;
+	NSString		*inputString;
+	NSString		*pdfPreviewString;
+	NSString		*lineString;
+	NSString		*indexString;
+	NSString		*fileString;
+	NSNumber		*lineNumber, *indexNumber;
+	NSMutableArray	*args;
+	NSRange			myRange;
+	NSRange			range1, range2;
+	NSString		*paramString;
+	int				pageNumber[200];
+	float			hNumber[200], vNumber[200], WNumber[200], HNumber[200], xNumber[200], yNumber[200];
+	NSString		*theText[200];
+	NSRange			theRanges[200];
+	BOOL			firstPage[200];
+	int				initialFirstPage;
+	int				boxNumber;
+	float			Param;
+	unsigned		startIndex, lineEndIndex, contentsEndIndex;
+	NSRect			myOval;
+	PDFPage			*thePage;
+	int				i;
+	NSString		*pageString;
+	NSPoint			aPoint;
+	int				theNumber, theLocation;
+	NSRange			theRange;
+	NSRange			myLineRange;
+	NSString		*sourceLineString;
+	TSDocument		*newDocument;
+	int				searchIndex;
+	PDFSelection	*theSelection;
+	NSRect			anotherRect, pageSize;
+	NSString		*myFileName, *mySyncTeXFileName, *mySyncTeX;
+	float			magnification;
+	float			xoffset, yoffset;
+
+	
+	// return NO;  // temporarily use Search synchronization
+	
+	
+	myFileName = [self fileName];
+	if (! myFileName)
+		return NO;
+	mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+	{ 
+		mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
+		if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+			return NO;
+	}
+	mySyncTeX = [[SUD stringForKey:TetexBinPath] stringByAppendingPathComponent: @"synctex"];
+	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeX])
+	{
+		return NO;
+	} 
+	
+	
+	/* First, get the synctex information */
+// GET SYNCTEX INFO	
+	
+	
+	if (synctexTask != nil) {
+		[synctexTask terminate];
+		myDate = [NSDate date];
+		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+		[synctexTask release];
+		[synctexPipe release];
+		synctexTask = nil;
+		synctexPipe = nil;
+	}
+	
+	synctexTask = [[NSTask alloc] init];
+	mainSourceString = [self fileName]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
+	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
+	synctexPipe = [[NSPipe pipe] retain];
+	synctexHandle = [synctexPipe fileHandleForReading];
+	[synctexTask setStandardOutput: synctexPipe];
+	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
+	// enginePath = [[NSBundle mainBundle] pathForResource:@"synctexviewwrap" ofType:nil];
+	[synctexTask setLaunchPath:enginePath];
+	
+	args = [NSMutableArray array];
+	
+	[args addObject: @"view"];
+	[args addObject: @"-i"];
+	
+	
+	
+	lineNumber = [NSNumber numberWithInt: line];
+	indexNumber = [NSNumber numberWithInt: idx];
+	
+	lineString = [lineNumber stringValue];
+	indexString = [indexNumber stringValue];
+	if (fileName == nil)
+		fileString = [[self fileName] lastPathComponent];
+	else {
+		NSString *initialPart = [[[self fileName] stringByStandardizingPath] stringByDeletingLastPathComponent]; //get root complete path, minus root name
+		initialPart = [initialPart stringByAppendingString:@"/"];
+		myRange = [fileName rangeOfString: initialPart options:NSCaseInsensitiveSearch]; //see if this forms the first part of the source file's path
+		if ((myRange.location == 0) && (myRange.length <= [fileName length])) {
+			fileString = [fileName substringFromIndex: myRange.length]; //and remove it, so we have a relative path from root
+		}
+		else
+			return NO;
+	}
+	
+	pdfPreviewString = [[mainSourceString stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdf"]; 
+	
+	inputString = [[[[lineString stringByAppendingString:@":"] stringByAppendingString: indexString] stringByAppendingString:@":"] stringByAppendingString: fileString]; 
+	
+	[args addObject: inputString];
+	[args addObject: @"-o"];
+	[args addObject: pdfPreviewString];
+	
+	
+	
+	
+	[synctexTask setArguments:args];
+	[synctexTask launch];
+	
+	
+	
+	
+	NSData *myData = [synctexHandle readDataToEndOfFile];
+	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
+	
+	if (synctexTask != nil) {
+		[synctexTask terminate];
+		myDate = [NSDate date];
+		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+		[synctexTask release];
+		[synctexPipe release];
+		synctexTask = nil;
+		synctexPipe = nil;
+	}
+	
+	// NSLog(outputString);
+	
+	
+	
+	/* Next, digest this information */
+// DIGEST SYNCTEX INFO	
+	
+	
+	range1 =  [outputString rangeOfString:@"SyncTeX result begin"];
+	if (range1.location == NSNotFound)
+		return NO;
+	outputString = [outputString substringFromIndex: (range1.location + 20)];
+	
+
+// BEGIN ADDITIONS
+	range1 = [outputString rangeOfString: @"Magnification:"];
+	if (range1.location == NSNotFound) {
+		
+		magnification = 1;
+		xoffset = 0;
+		yoffset = 0;
+	}
+	
+	else {
+		// range1 = [outputString rangeOfString: @"Magnification:"];
+		// if (range1.location == NSNotFound)
+		// 	return NO;
+		
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 14;
+		range2.length = lineEndIndex - startIndex - 14;
+		paramString = [outputString substringWithRange: range2];
+		magnification = [paramString floatValue];
+		// NSLog(@"%f", magnification);
+		magnification = magnification / .0000152018;
+		// NSLog(paramString);
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"XOffset:"];
+		if (range1.location == NSNotFound)
+			return NO;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 8;
+		range2.length = lineEndIndex - startIndex - 8;
+		paramString = [outputString substringWithRange: range2];
+		// NSLog(paramString);
+		xoffset = [paramString intValue];
+		// NSLog(@"%f", xoffset);
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"YOffset:"];
+		if (range1.location == NSNotFound)
+			return NO;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 8;
+		range2.length = lineEndIndex - startIndex - 8;
+		paramString = [outputString substringWithRange: range2];
+		// NSLog(paramString);
+		yoffset = [paramString intValue];
+		// NSLog(@"%f", yoffset);
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		xoffset = xoffset * 65536;
+		yoffset = yoffset * 65536;
+		// NSLog([NSString stringWithFormat:@"xoffset %d", xoffset]);
+		
+		// NSLog(@"yes, here");
+		// NSLog(@"%f", magnification);
+		// NSLog(@"%f", xoffset);
+		// NSLog(@"%f", yoffset);
+		// magnification = 1;
+		// xoffset = 0;
+		// yoffset = 0;
+		
+	}
+	
+	
+	boxNumber = 0;
+	
+	while (boxNumber < 200) {
+		
+		range1 = [outputString rangeOfString:@"Page:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 5;
+		range2.length = lineEndIndex - startIndex - 5;
+		paramString = [outputString substringWithRange: range2];
+		pageNumber[boxNumber] = [paramString intValue];
+		if (boxNumber == 0)
+			initialFirstPage = pageNumber[boxNumber];
+		if (pageNumber[boxNumber] == initialFirstPage)
+			firstPage[boxNumber] = YES;
+		else
+			firstPage[boxNumber] = NO;
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"x:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		xNumber[boxNumber] = [paramString intValue] * magnification + xoffset;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"y:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		yNumber[boxNumber] = [paramString intValue] * magnification + yoffset;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"h:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		hNumber[boxNumber] = [paramString intValue] * magnification + xoffset;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"v:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		vNumber[boxNumber] = [paramString intValue] * magnification + yoffset;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"W:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		WNumber[boxNumber] = [paramString intValue] * magnification;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		range1 = [outputString rangeOfString:@"H:"];
+		if (range1.location == NSNotFound)
+			break;
+		[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
+		range2.location = startIndex + 2;
+		range2.length = lineEndIndex - startIndex - 2;
+		paramString = [outputString substringWithRange: range2];
+		HNumber[boxNumber] = [paramString intValue] * magnification;	
+		outputString = [outputString substringFromIndex: lineEndIndex];
+		
+		boxNumber++;
+	}
+	
+	if (boxNumber == 0)
+		return NO;
+	
+	
+	
 	/* Next, get the text inside these various boxes and under the "index point" */
 	
 	
-		
+	
 	i = 0;
 	while (i < boxNumber) {
 		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
-
+		
 		Param = 65536;
 		aPoint.x = xNumber[i]/Param;
+		// aPoint.x = xNumber[i]; in version 1.2
 		aPoint.y = pageSize.size.height - yNumber[i]/Param;
+		//aPoint.y = pageSize.size.height - yNumber[i]; in version 1.2
 		theNumber = [thePage characterIndexAtPoint:aPoint];
 		pageString = [thePage string];
 		theLocation = theNumber - 2;
@@ -687,22 +1473,22 @@
 		theRanges[i] = theRange;
 		theText[i] = [pageString substringWithRange:theRange];
 		// NSLog(theText[i]);
-
+		
 		i++;
-		}
-		
-		
+	}
+	
+	
 	/* Next get the text where the mouse was clicked and see if that text is inside one of these boxes.
-	   If so, declare victory. */
-	   
-	   
-		
+	 If so, declare victory. */
+	
+	
+	
 	if (fileName == nil)
 		newDocument = self;
 	else {
 		id newURL = [NSURL fileURLWithPath: fileName];
 		newDocument = [[TSDocumentController sharedDocumentController] documentForURL:newURL];
-		}
+	}
 	if (newDocument == nil)
 		return NO;
 	myLineRange = [newDocument lineRange: line];
@@ -729,27 +1515,27 @@
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
 			[pdfKitWindow makeKeyAndOrderFront:self]; 
-
+			
 			return YES;
-			}
-		i++;
 		}
-		
-		
-		
+		i++;
+	}
+	
+	
+	
 	/* In case of failure, guess the full box where the text occurs. */
 	
 	
 	
-		
+	
 	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
 	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
-
+	
 	
 	Param = 65536;
 	myOval.size.height = HNumber[0] / Param + 10; myOval.size.width = WNumber[0]/ Param + 10;
 	myOval.origin.x = hNumber[0] / Param - 5; myOval.origin.y = pageSize.size.height - vNumber[0]/ Param - 5;
-
+	
 	theSelection = [thePage selectionForRange: theRanges[0]];
 	i = 1;
 	while (i < boxNumber) {
@@ -758,10 +1544,10 @@
 			anotherRect.origin.x = hNumber[i] / Param - 5; anotherRect.origin.y = pageSize.size.height - vNumber[i]/ Param - 5;
 			if (NSIntersectsRect(myOval, anotherRect))
 				myOval = NSUnionRect(myOval, anotherRect);
-			}
-		i++;
 		}
-		
+		i++;
+	}
+	
 	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
 	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
 	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
@@ -769,45 +1555,22 @@
 	
 	[[pdfKitWindow activeView] goToPage: thePage];
 	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
-
+	
 	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
 	
 	[pdfKitWindow makeKeyAndOrderFront:self];
-
+	
 	return YES;
 	
-/*  
-	// This section, commented out, provides a fascinating illustration of the output of synctex. When syncing from source to preview, 
-	// synctex outputs a series of rectangles, from four or five to thirty or more. The code below draws each of these rectangles,
-	// one after the other. The rectangles flash by fairly rapidly, but it is  possible to get a feeling for their information and
-	// how typesetting produces them one by one.
-	 	
-	i = 0;
-	while (i < boxNumber) {
-		
-	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
-	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 	
-	Param = 65536;
-	myOval.size.height = HNumber[i] / Param + 10; myOval.size.width = WNumber[i]/ Param + 10;
-	myOval.origin.x = hNumber[i] / Param - 5; myOval.origin.y = pageSize.size.height - vNumber[i]/ Param - 5;
-	
-	[myPDFKitView setIndexForMark: (pageNumber[i] - 1)];
-	[myPDFKitView setBoundsForMark: myOval];
-	[myPDFKitView setDrawMark: YES];
-	[myPDFKitView goToPage: thePage];
-	[pdfWindow display];
-	
-	i++;
-	}
-*/
-
-
 	return YES;
-			
+	
 }
+
+
+
 
 
 

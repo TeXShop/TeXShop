@@ -107,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.10d';
-$version_details = "$My_name, John Collins, 10 September 2009";
+$version_num = '4.11';
+$version_details = "$My_name, John Collins, 27 November 2009";
 
 
 use Config;
@@ -177,6 +177,36 @@ else {
 ##
 ##   Modification log from 21 Aug 2009 onwards in detail
 ##
+##     27 Nov 2009, John Collins  Solve problem that changes in \include 
+##                                   files weren't reflected in changes
+##                                   in bibtex source files.
+##                                Remove excess recalculations of md5 in 
+##                                   startup and when initializing rule 
+##                                   from fdb_latexmk file.
+##                                Fdb_latexmk now has data for all rules
+##                                   need for making target files,
+##                                   not just rules accessible from primary
+##                                   rules.
+##     26 Nov 2009, John Collins  In testing for changes, when filetime
+##                                   has changed, but file is unchanged,
+##                                   update filetime in rule.
+##                                   This saves excessive md5 calculations.
+##     25 Nov 2009, John Collins  Fixed issue with fdb_get and 1-second
+##                                   granularity of file timestamps.
+##                                   The issue was that if runs of
+##                                   latex (etc) occur within the
+##                                   1-second time granularity, file
+##                                   contents can change even though
+##                                   the file's time and size are
+##                                   unchanged, falsifying an
+##                                   assumption made by fdb_get, but
+##                                   only when the old time is the
+##                                   same as the run time of a command
+##                                   that uses the file.
+##                                Avoided excess md5 calculations at
+##                                   startup.
+##     24 Nov 2009, John Collins  Start 4.11
+##     22 Sep 2009, John Collins  Bibtex error => message see blg file.
 ##     10 Sep 2009, John Collins  When tmp view file is moved to view file,
 ##                                  delete original file first.  Avoids
 ##                                  bug in kpdf
@@ -1104,6 +1134,23 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
                     #      the run, so that even though the file changes during
                     #      a primary run, there is no need to trigger another 
                     #      run because of this.
+                    #  Size and md5 correspond to the values at the last run.
+                    #  But time may be updated to correspond to the time
+                    #  for the file, if the file is otherwise unchanged.
+                    #  This saves excessive md5 calculations, which would
+                    #  otherwise be done everytime the file is checked, 
+                    #  in the following situation:
+                    #     When the file has been rewritten after a run
+                    #     has started (commonly aux, bbl files etc),
+                    #     but the actual file contents haven't
+                    #     changed.  Then because the filetime has
+                    #     changed, on every file-change check latexmk
+                    #     would normally redo the md5 calculation to
+                    #     test for actual changes.  Once one such
+                    #     check is done, and the contents are
+                    #     unchanged, later checks are superfluous, and
+                    #     can be avoided by changing the file's time
+                    #     in the source-file list.
 
 %fdb_current = ();  # Fdb-hash for all files used.
 
@@ -1676,6 +1723,15 @@ foreach $filename ( @file_list )
 	    rdb_for_some( [keys %possible_primaries], \&rdb_set_from_logB );
 	}
     }
+    foreach $rule ( rdb_accessible( uniq1( keys %requested_filerules  )  ) ){
+        # For all source files of all accessible rules, 
+        #    if the file data are not already set (e.g., from fdb_latexmk
+        #    file, set them from disk.
+        rdb_one_rule ($rule, undef, 
+                      sub{ if ( $$Ptime == 0) { &rdb_update1; } }
+	);
+    }
+
     if ($go_mode) {
         # Force everything to be remade.
 	rdb_recurseA( [keys %requested_filerules], sub{$$Pout_of_date=1;}  );
@@ -1909,7 +1965,9 @@ sub rdb_set_rules {
     #              "    S='$source', D='$dest', B='$base' $needs_making\n";
 	    rdb_create_rule( $rule, $cmd_type, $ext_cmd, $int_cmd, $test_kind, 
 			     $source, $dest, $base,
-			     $needs_making );
+			     $needs_making, undef, 1 );
+# !! ?? Last line was
+#			     $needs_making, undef, ($test_kind==1) );
 	}
     } # End arguments of subroutine
     &rdb_make_links;
@@ -2335,7 +2393,7 @@ CHANGE:
   WAIT: while (1) {
            sleep($sleep_time);
 	   if ($have_break) { last WAIT; }
-           if ( rdb_have_changes(@targets) ) { 
+           if ( rdb_new_changes(@targets) ) { 
   	       if (!$silent) {
                    warn "$My_name: Need to remake files.\n";
  	           &rdb_diagnose_changes( '  ' );
@@ -3363,11 +3421,33 @@ AUX_LINE:
 #************************************************************
 
 sub fdb_get {
-    # Call: fdb_get(filename)
+    # Call: fdb_get(filename [, runtime])
     # Returns an array (time, size, md5) for the current state of the
     #    named file.
-    # For non-existent file, deletes entry in fdb_current, and returns (0,-1,0) 
-    my $file = shift;
+    # The optional argument runtime is the runtime of some command
+    #    associated with the use of the file --- see below.
+    # For non-existent file, deletes its entry in fdb_current, 
+    #    and returns (0,-1,0)  
+    # As an optimization, the md5 value is taken from the cache in 
+    #    fdb_current, if the time and size stamp indicate that the 
+    #    file has not changed.
+    # The md5 value is recalculated if
+    #    the current filetime differs from the cached value: 
+    #               file has been written
+    #    the current filesize differs from the cached value: 
+    #               file has definitely changed
+    # But the file can also be rewritten without change in filetime when 
+    #    file processing happens within the 1-second granularity of the 
+    #    timestamp (notably for aux files from latex on a short source file).
+    # The only case that concerns us is when the file is an input to a program
+    #    at some runtime t, the file is rewritten later by the same or another
+    #    program, with timestamp t, and when the initial file also has 
+    #    timestamp t.
+    # A test is applied for this situation if the runtime argument is 
+    #    supplied and is nonzero.
+
+    my ($file, $run_time) = @_;
+    if ( ! defined $run_time ) { $run_time = 0;}
     my ($new_time, $new_size) = get_time_size($file);
     my @nofile =  (0,-1,0);     # What we use for initializing
 				# a new entry in fdb or flagging
@@ -3384,16 +3464,38 @@ sub fdb_get {
     }
     my $file_data = $fdb_current{$file};
     my ( $time, $size, $md5 ) = @$file_data;
-    if ( ($new_time != $time) || ($new_size != $size) ) {
+#warn "--------- Getting MD5: $file: (N,O,R) = $new_time, $time, $run_time\n";
+#warn "--------- $file: (OT,OS,OM) = @$file_data\n";
+    if ( ($new_time != $time) || ($new_size != $size) 
+         || ( $run_time && ($run_time == $time ) )
+       ) {
         # Only force recalculation of md5 if time or size changed
+        # Or if the time equals runtime, so that the file may
+        #   have changed within the 1-second granularity of the time
         # Else we assume file is really unchanged.
         $recalculate_md5 = 1;
     }
     if ($recalculate_md5) {
+#warn "--------- RECALC MD5: $rule $file: (N,O,R) = $new_time, $time, $run_time\n";
+#warn "  ------- $file: (OT,OS,OM) = @$file_data\n";
+#&traceback;
         @$file_data = ( $new_time, $new_size, get_checksum_md5( $file ) );
+#warn "  ------- $file: (NT,NS,NM) = @$file_data\n";
     }
     return @$file_data;;
 } #END fdb_get
+
+#************************************************************
+
+sub fdb_set {
+    # Call: fdb_set(filename, $time, $size, $md5 )
+    # Set data in file data cache, i.e., %fdb_current
+    my ($file, $time, $size, $md5 ) = @_;
+    if ( ! exists $fdb_current{$file} ) {
+        $fdb_current{$file} = [0, -1, 0];
+    }
+    @{$fdb_current{$file}} = ( $time, $size, $md5 );
+} #END fdb_set
 
 #************************************************************
 
@@ -3418,7 +3520,6 @@ sub rdb_read {
     # Returns -1 if file could not be read else number of errors.
     # Thus return value on success is 0
     my $in_name = $_[0];
-
     my $in_handle = new FileHandle;
     $in_handle->open( $in_name, '<' )
        or return ();
@@ -3479,8 +3580,11 @@ LINE:
                        $$PAnew_cmd[1] = $func_name;
                     }
                 }
+                # Set source file as non-existent.  
+                # If it existed on last run, it will be in later 
+                #    lines of the fdb file
                 rdb_create_rule( $rule, 'cusdep', '', $PAnew_cmd, 1, 
-                                 $source, $dest, $base, 0, $run_time );
+                                 $source, $dest, $base, 0, $run_time, 1 );
 	    }
             elsif ( $rule =~ /^(makeindex|bibtex)\s*(.*)$/ ) {
                 my $rule_generic = $1;
@@ -3506,8 +3610,11 @@ LINE:
 		warn "  Rule kind = '$rule_generic'; ext_cmd = '$ext_cmd';\n",
 		     "  source = '$source'; dest = '$dest'; base = '$base';\n"
                    if $diagnostics;
+                # Set source file as non-existent.  
+                # If it existed on last run, it will be in later 
+                #    lines of the fdb file
                 rdb_create_rule( $rule, $cmd_type, $ext_cmd, '', 1, 
-                                 $source, $dest, $base, 0, $run_time);
+                                 $source, $dest, $base, 0, $run_time, 1);
 	    }
             else {
   	        warn "$My_name: In file-database '$in_name' rule '$rule'\n",
@@ -3538,8 +3645,13 @@ LINE:
 		$errors++;
 		next LINE;
 	    }
-	    rdb_ensure_file( $rule, $file );
+            # Set file in database.  But ensure we don't do an unnecessary 
+            #    fdb_get, which can trigger a new MD5 calculation, which is
+            #    lengthy for a big file.  Ininitially flagging the file
+            #    as non-existent solves the problem:
+	    rdb_ensure_file( $rule, $file, undef, 1 ); 
             rdb_set_file1( $rule, $file, $time, $size, $md5 );
+            fdb_set( $file, $time, $size, $md5 );
             # Save the rest of the data, especially the from_fule until we know all 
             #   the rules, otherwise the from_rule may not exist.
             # Also we'll have a better chance of looping through files.
@@ -3657,7 +3769,10 @@ LINE:
 sub rdb_write {
     # Call: rdb_write( $out_name )
     # Writes to the given file name the database of file and rule data
-    #   accessible from the primary rules.
+    #   for all rules needed to make final output
+    # !!?? Previously was:
+    # OLD Writes to the given file name the database of file and rule data
+    # OLD   accessible from the primary rules.
     # Returns 1 on success, 0 if file couldn't be opened.
     local $out_name = $_[0];
     local $out_handle = new FileHandle;
@@ -3679,7 +3794,9 @@ sub rdb_write {
     &rdb_classify_rules( \%possible_primaries, keys %requested_filerules );
 
     print $out_handle "# Fdb version $fdb_ver\n";
-    my @rules = rdb_accessible( uniq1( keys %possible_primaries )  ) ;
+# !!??   Rules or rules accessible from primary
+#    my @rules = rdb_accessible( uniq1( keys %possible_primaries )  ) ;
+    my @rules = rdb_accessible( uniq1( keys %possible_primaries, keys %requested_filerules  )  ) ;
     # Separate call to sort.  Otherwise rdb_accessible seems to get wrong argument.
     @rules = sort( @rules );
     rdb_for_some(
@@ -3788,24 +3905,35 @@ sub rdb_set_from_logB {
         my @new_aux_files;
         &parse_aux( "$bbl_base.aux", \@new_bib_files, \@new_aux_files );
         my $from_rule = "bibtex $bbl_base";
+        print "!!!===Dealing with rule '$from_rule'\n"
+            if ($diagnostics);
         if ( ! rdb_rule_exists( $from_rule ) ){
-            print "!!!===Creating rule '$from_rule'\n"
+            print "   ===Creating rule '$from_rule'\n"
               if ($diagnostics);
             rdb_create_rule( $from_rule, 'external', $bibtex, '', 1, 
                              "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0);
-            foreach my $source ( @new_bib_files, @new_aux_files ) {
-                print "  ===Source file '$source'\n"
-                  if ($diagnostics);
-                rdb_ensure_file( $from_rule, $source );
-	    }
-            print "  ===Source file '$bbl_file' for '$rule'\n"
-                  if ($diagnostics);
-            rdb_ensure_file( $rule, $bbl_file, $from_rule );
-            if ( ! -e $bbl_file ) { 
-                # Failure was non-existence of makable file
-                # Leave failure issue to other rules.
-               $failure = 0;
-	    }
+	}
+        local %old_sources = ();
+        rdb_one_rule( $from_rule, sub { %old_sources = %$PHsource; } );
+        foreach my $source ( @new_bib_files, @new_aux_files ) {
+            print "  === Source file '$source' for '$from_rule'\n"
+               if ($diagnostics);
+            rdb_ensure_file( $from_rule, $source );
+            delete $old_sources{$source};
+        }
+        if ($diagnostics>-1 ) {
+            foreach ( keys %old_sources ) {
+                print "Removing no-longer-needed dependent '$_' from rule '$from_rule'\n";
+            }
+        }        
+        rdb_remove_files( $from_rule, keys %old_sources );
+        print "  ===Source file '$bbl_file' for '$rule'\n"
+            if ($diagnostics);
+        rdb_ensure_file( $rule, $bbl_file, $from_rule );
+        if ( ! -e $bbl_file ) { 
+            # Failure was non-existence of makable file
+            # Leave failure issue to other rules.
+            $failure = 0;
 	}
     }
 
@@ -4610,7 +4738,11 @@ sub rdb_makeB1 {
     if ($return != 0) {
         $failure = 1; 
 	$$Plast_result = 2;
-        $$Plast_message = $failure_msg = "Run of rule '$rule' gave a non-zero error code";
+        if ( !$$Plast_message ) {
+            $$Plast_message = "Run of rule '$rule' gave a non-zero error code";
+	}
+# !!??        $failure_msg = $$Plast_message;
+        
     }
 }  #END rdb_makeB1
 
@@ -4780,13 +4912,15 @@ sub rdb_run1 {
         $$Plast_message = "Bug or configuration error; incorrect command type";
     }
     if ( $rule =~ /^bibtex/ ) {
-        my $retcode = &check_bibtex_log($$Pbase);
+        my $retcode = check_bibtex_log($$Pbase);
         if ($retcode == 3) {
             $$Plast_result = 2;
             $$Plast_message = "Could not open bibtex log file for '$$Pbase'";
             push @warnings, $$Plast_message;
         }
         elsif ($retcode == 2) {
+            $$Plast_message = "Bibtex errors: See file '$$Pbase.blg'";
+            push @warnings, $$Plast_message;
         }
         elsif ($retcode == 1) {
             push @warnings, "Bibtex warnings for '$$Pbase'";
@@ -4804,7 +4938,7 @@ sub rdb_run1 {
     if ( ($$Plast_result == 0) && ($return != 0) ) {
         $$Plast_result = 2;
         if ($$Plast_message eq '') {
-	    $$Plast_message = "Command gave return code $return";
+	    $$Plast_message = "Command for '$rule' gave return code $return";
 	}
     }
     elsif ( $$Pdest && (! -e $$Pdest) ) {
@@ -4961,6 +5095,10 @@ sub rdb_clear_change_record {
 sub rdb_flag_changes_here {
     # Flag changes in current rule.  
     # Assumes rule context.
+    # Optional argument: if true then fdb_get shouldn't do runtime test
+    #                    for recalculation of md5
+    local $ignore_run_time = $_[0];
+    if ( ! defined $ignore_run_time ) { $ignore_run_time = 0; }
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
     rdb_do_files( \&rdb_file_change1);
@@ -4977,7 +5115,8 @@ sub rdb_file_change1 {
     # Assumes rule and file context.  Assumes $dest_mtime set.
     # Flag whether $file in $rule has changed or disappeared.
     # Set rule's make flag if there's a change.
-    my ($new_time, $new_size, $new_md5) = fdb_get($file);
+    my $run_time_argument = $ignore_run_time ? 0 : $$Prun_time;
+    my ($new_time, $new_size, $new_md5) = fdb_get($file, $run_time_argument);
 #??    print "FC1 '$rule':$file $$Pout_of_date TK=$$Ptest_kind\n"; 
 #??    print "    OLD $$Ptime, $$Psize, $$Pmd5\n",
 #??          "    New $new_time, $new_size, $new_md5\n";
@@ -5009,6 +5148,10 @@ sub rdb_file_change1 {
             $$Pout_of_date_user = 1;
 	}
     }
+    elsif ( $new_time != $$Ptime ) {
+#warn "--==-- Unchanged $file, changed time, update filetime in $rule\n";
+	$$Ptime = $new_time;
+    }
     if ( ( ($$Ptest_kind == 2) || ($$Ptest_kind == 3) )
          && (! exists $generated_exts_all{$ext} )
          && ( $new_time > $dest_mtime )
@@ -5021,11 +5164,11 @@ sub rdb_file_change1 {
 
 #************************************************************
 
-sub rdb_have_changes {
+sub rdb_new_changes {
     &rdb_clear_change_record;
-    rdb_recurseA( [@_], \&rdb_flag_changes_here );
+    rdb_recurseA( [@_], sub{ &rdb_flag_changes_here(1); } );
     return ($#changed >= 0) || ($#no_dest >= 0) || ($#rules_to_apply >= 0);
-} #END rdb_have_changes
+} #END rdb_new_changes
 
 #************************************************************
 
@@ -5355,7 +5498,7 @@ sub rdb_one_file {
 sub rdb_create_rule {
     # rdb_create_rule( rule, command_type, ext_cmd, int_cmd, test_kind,
     #                  source, dest, base, 
-    #                  needs_making, run_time )
+    #                  needs_making, run_time, set_file_not_exists )
     # int_cmd is either a string naming a perl subroutine or it is a
     # reference to an array containing the subroutine name and its
     # arguments. 
@@ -5364,10 +5507,11 @@ sub rdb_create_rule {
 # ==== Sets rule data ====
     my ( $rule, $cmd_type, $int_cmd, $PAext_cmd, $test_kind, 
          $source, $dest, $base, 
-         $needs_making, $run_time ) = @_;
+         $needs_making, $run_time, $set_file_not_exists ) = @_;
     my $changed = 0;
     # Set defaults, and normalize parameters:
-    foreach ( $cmd_type, $int_cmd, $PAext_cmd, $source, $dest, $base ) {
+    foreach ( $cmd_type, $int_cmd, $PAext_cmd, $source, $dest, $base, 
+              $set_file_not_exists ) {
         if (! defined $_) { $_ = ''; }
     }
     foreach ( $needs_making, $run_time, $test_kind ) {
@@ -5392,7 +5536,9 @@ sub rdb_create_rule {
             $changed, -1, '' ],
            {}
 	];
-    if ($source) { rdb_ensure_file( $rule, $source );  }
+    if ($source) { 
+       rdb_ensure_file( $rule, $source, undef, $set_file_not_exists );  
+    }
 } #END rdb_create_rule
 
 #************************************************************
@@ -5425,7 +5571,8 @@ sub rdb_ensure_file {
                               ${$PHsource}{$new_file} = [0, -1, 0, '', 0];
 		          }
 		          else {
-                              ${$PHsource}{$new_file} = [fdb_get($new_file), '', 0];
+                              ${$PHsource}{$new_file} 
+                              = [fdb_get($new_file, $$Prun_time), '', 0];
                	          }
 		      }
 		  }
@@ -5493,7 +5640,7 @@ sub rdb_update_filesA {
 #************************************************************
 
 sub rdb_update1 {
-    # Call: fdb_update1.  
+    # Call: rdb_update1.  
     # Assumes file context.  Updates file data to correspond to
     # current file state on disk
     ($$Ptime, $$Psize, $$Pmd5) = fdb_get($file);
@@ -5763,6 +5910,7 @@ sub get_checksum_md5 {
     my $md5 = Digest->MD5;
     my $ignore_pattern = '';
 
+#warn "======= GETTING MD5: $source\n";
     if ( $source eq "" ) { 
        # STDIN:
        open( $input, '-' );

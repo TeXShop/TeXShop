@@ -161,6 +161,9 @@ static BOOL isValidTeXCommandChar(int c)
 			lineRange.location = theend;
 			selectedLineRange.location = start;
 			selectedLineRange.length = theend - start;
+			// a line must START with Persian, etc., to be right justified
+			if (selectedLineRange.length != 0)
+				selectedLineRange.length = 1;
 			theLine = [textString substringWithRange:selectedLineRange];
 			testRange = [theLine rangeOfCharacterFromSet: middleEastSet];
 			if (testRange.location == NSNotFound)

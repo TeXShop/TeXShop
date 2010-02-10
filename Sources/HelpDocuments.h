@@ -43,6 +43,7 @@
 - (IBAction)displayTextSpacing:sender;
 - (IBAction)supplementsToDesktop:sender;
 - (IBAction)displayTables:sender;
+- (IBAction)displayThisRelease:sender;
 
 - (void)okForPanel:sender;
 - (void)cancelForPanel:sender;

@@ -266,8 +266,7 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Movies"]
 			  toPath:[MoviesPath stringByStandardizingPath]];
 		}
-
-		
+	
 // Finish configuration of various pieces
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];
@@ -604,7 +603,6 @@
 
 
 
-
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
 	if ([anItem action] == @selector(displayLatexPanel:)) {
@@ -803,6 +801,7 @@
 		}
 	}
 }
+
 
 @end
 

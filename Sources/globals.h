@@ -123,8 +123,7 @@ enum EngineCommand
 	IndexEngine = 4,
 	MetapostEngine = 5,
 	ContextEngine = 6,
-	MetafontEngine = 7,
-	UserEngine = 8
+	UserEngine = 7
 };
 
 // mitsu 1.29 (O)
@@ -366,6 +365,7 @@ extern NSString *RightJustifyKey;
 /*" Paths "*/
 extern NSString *DesktopPath;
 extern NSString *MoviesPath;
+extern NSString *DocumentsPath;
 extern NSString *TeXShopPath;
 extern NSString *TexTemplatePath;
 extern NSString *TexTemplateMorePath;

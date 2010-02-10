@@ -165,6 +165,7 @@ NSString *RightJustifyKey = @"RightJustify";
 // Paths
 NSString *DesktopPath = @"~/Desktop/";
 NSString *MoviesPath = @"~/Library/TeXShop/Movies";
+NSString *DocumentsPath = @"~/Library/TeXShop/Documents";
 NSString *TeXShopPath = @"~/Library/TeXShop";
 NSString *TexTemplatePath = @"~/Library/TeXShop/Templates";
 NSString *TexTemplateMorePath = @"~/Library/TeXShop/Templates/More";

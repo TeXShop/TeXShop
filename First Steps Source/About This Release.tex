@@ -1,0 +1,100 @@
+ \documentclass[11pt, oneside]{amsart}
+\usepackage{multicol}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage{url}
+
+
+\title{About TeXShop 2.30 }
+\author{Richard Koch}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+%  \begin{multicols}{2}
+
+\thispagestyle{empty}
+\section{This Document}
+
+If you are a new TeXShop user, you can skip this document and begin using the program.
+
+The default behavior of TeXShop can be modified in two ways: by making Preference changes, and by editing files in $\sim$/Library/TeXShop. Here $\sim$/Library is the Library folder in your home directory. When new versions of TeXShop are installed, these locations are not touched because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do. 
+
+In the future, please read this document when you upgrade; each release of TeXShop will contain a new version.
+\section{Preference Changes}
+
+TeXShop 2.30 can find errors in projects governed by a root document. When the user selects ``Goto Error,'' the source file containing the error is opened and the line with the error is highlighted. TeXShop finds errors by parsing the console output. In the default operation of TeX, the console error message does not identify the source file, but this can be changed if TeX is run with the ``file-line-error'' flag. Therefore, the following Preference changes are needed under the Engine tab (modify appropriately if you added other flags or omitted shell-escape):
+
+Under the engine tab, the pdfTeX item should be
+\begin{verbatim}
+     pdftex --file-line-error --shell-escape --synctex=1
+\end{verbatim}
+the pdfLaTeX item should be
+\begin{verbatim}
+     pdflatex --file-line-error --shell-escape --synctex=1 
+\end{verbatim}
+the TeX item for TeX + dvips + distiller should be
+\begin{verbatim}
+     simpdftex etex --maxpfb --extratexopts "-file-line-error -synctex=1"
+\end{verbatim}
+and the corresponding Latex item should be
+\begin{verbatim}
+     simpdftex latex --maxpfb --extratexopts "-file-line-error -synctex=1"
+\end{verbatim}
+
+\section{A Refresher Course}
+
+TeXShop creates a folder $\sim$/Library/TeXShop containing several subfolders. One of these folders is named ``Templates''; it  contains templates for various kinds of TeX documents. I'll use that folder as an example, although it has not changed in version 2.30. Users can edit these templates, add templates of their own, and throw away inappropriate templates. TeXShop displays these templates in a pulldown menu on the source toolbar; users select a template to insert its source code in their document.
+
+When TeXShop is upgraded, there are sometimes new versions of the default templates, but it would certainly be inappropriate to reach into the user's carefully edited Templates folder and change its contents. Therefore, upgrades do not modify the contents of folders in $\sim$/Library/TeXShop. But there is a way to get the new default templates. Quit TeXShop, move the entire Templates folder to the desktop, and restart TeXShop. When it discovers that the Templates folder is completely missing, TeXShop replaces it with a new default copy. Then merge any edited files from the desktop copy of Templates back into the new $\sim$/Library/TeXShop/Templates. 
+
+\section{Command Completion}
+TeXShop has Command Completion. Type the beginning of a command and hit the Escape key. TeXShop will complete the command. If several completions are possible, hit Escape several times to cycle between them.
+The list of known completions is stored in $\sim$/Library/TeXShop/CommandCompletion and  can be edited within TeXShop.
+
+This facility has been expanded by Herbert Schulz in version 2.30. To use his additions, it is necessary to obtain the new CommandCompletion file. Quit TeXShop,  move the old CommandCompletion folder to the desktop,   and restart the program. A new folder will be created containing the new CommandCompletion.txt file and also a pdf document from Schulz explaining the changes in detail. If you modified the list of Command Completions, you must then edit CommandCompletions.txt, perhaps with TeXShop or TextEdit, and merge in your changes from the desktop copy.
+
+\section{bin}
+
+Schulz also modified scripts run by Latexmk; the new scripts contain the file-line-error flag. In addition, there is a new script by Alan Munn used by his new  ``Paste Spreadsheet Cells'' macro. To obtain the new scripts, quit TeXShop, move $\sim$/Library/TeXShop/bin to the desktop, and restart the program. Then merge in from the desktop copy any additional scripts you may have added. Most users haven't changed ``bin'' and won't need to merge.
+
+\section{Engines}
+
+Nicola Vitacolonna has beautiful new engines for metapost and metafun. The XeTeX and XeLaTeX engines have been modified to contain the file-line-error flag. Herbert Schulz modified latexmk. To obtain these, quit TeXShop, move $\sim$/Library/TeXShop/Engines to the desktop, restart the program, and merge in any changes you have made from the desktop copy.
+
+\section{Macros}
+
+Alan Munn provided a wonderful new macro named ``Paste Spreadsheet Cells.'' Using his macro, you can copy cells from a spreadsheet and paste these cells, embedded in appropriate TeX code, into your source. To obtain the new Macro, you must recreate the Macros subfolder of $\sim$/Library/TeXShop.
+
+It is likely that you have added your own macros to the default Macros provided by TeXShop. This is a good time to rearrange your Macros so merging your changes with the new defaults will be easy, both now and in the future. We recommend placing a divider after the default macros, and moving your own macros to the section below this divider. Note that TeXShop's Macro Editor makes this process easy because it allows you to grab macros in the left column and rearrange them as you wish.
+
+After this rearrangement, select your personal macros below the divider in the Macro Editor, and choose the  ``Save Selection To File ...'' entry in the Macro menu. The new file only contains your personal macros, not the default TeXShop macros.
+
+Next, quit TeXShop, and move the Macros folder in $\sim$/Library/TeXShop to the desktop. Then restart TeXShop. The new default Macros folder will be created. Finally, open the Macro Editor and in the Macro menu choose ``Add Macros From File ...'', selecting the file you created earlier. In the end, you'll have TeXShop's default macros, a divider, and then your personal macros.
+
+The default Macros in TeXShop were created in a somewhat random manner. Some are immediately useful and others are samples showing users how to construct a macro. In a future TeXShop release, it would be nice to clean up these defaults. The new default menu would contain macros most users need, arranged in an optimal manner. Remaining macros could be provided in an optional file that could be merged in as desired.
+
+I invite readers to write me listing macros which should be part of that new default menu. 
+
+\section{Documentation}
+
+The ``Paste Spreadsheet Cells'' macro by Alan Munn is documented in TeXShop Help under Macros Help, Default Applescript Macros.
+
+Herbert Schulz's extensions to Command Completion are explained in a short paper he wrote, which can be found in $\sim$/Library/TeXShop/CommandCompletion.
+
+Nicola Vitacolonna's new engines for MetaPost, nv-metafun and nv-metapost, are explained in his ReadMe in
+$\sim$/Library/TeXShop/Engines/Inactive/MetaPost. This folder also contains a folder of examples.
+
+
+
+% \end{multicols}
+
+\end{document}  

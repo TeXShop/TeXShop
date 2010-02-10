@@ -190,6 +190,7 @@ enum RootCommand
 	BOOL		fileIsTex;
 	TSDocumentType			_documentType;
 	int			errorLine[NUMBEROFERRORS];
+	NSString	*errorLinePath[NUMBEROFERRORS];
 	int			errorNumber;
 	int			whichError;
 	DefaultTypesetMode			theScript;		/*" script currently executing; 100, 101, 102 "*/
@@ -292,6 +293,7 @@ enum RootCommand
 - (void) fixTypesetMenu;
 - (void) doError: sender;
 - (int) errorLineFor: (int)theError;
+- (NSString *) errorLinePathFor: (int)theError;
 - (int) totalErrors;
 - (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces;
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType;
@@ -392,6 +394,14 @@ enum RootCommand
 - (void)removeNewLinesFromSelection: (id)sender;															//mfwitten@mit.edu 22 June 2005
 // end witten
 
+//BULLET (H. Neary) (modified by (HS))
+- (void) placeComment: (id)sender;
+- (void) placeBullet: (id)sender;
+- (void)doNextBullet: (id)sender;
+- (void)doPreviousBullet: (id)sender;
+- (void)doNextBulletAndDelete: (id)sender;
+- (void)doPreviousBulletAndDelete: (id)sender;
+//end BULLET (H. Neary) (modified by (HS))
 
 //-----------------------------------------------------------------------------
 // private API

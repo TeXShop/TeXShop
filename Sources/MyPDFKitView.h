@@ -24,6 +24,7 @@
 
 #import <AppKit/AppKit.h>
 #import <Quartz/Quartz.h>
+#import <AppKit/NSEvent.h>
 
 
 @interface MyPDFKitView : PDFView
@@ -93,6 +94,7 @@
 	BOOL							secondNeedsInitialization;
 	int								secondTheIndex;
 	NSRect							secondFullRect, secondVisibleRect;
+	BOOL							protectFind;
 	
 	
 }
@@ -177,5 +179,7 @@
 - (void)setFirstView:(MyPDFKitView *)theView;
 - (NSMutableArray *)getSearchResults;
 - (void)resetSearchDelegate;
+- (void)cancelSearch;
+- (void)setProtectFind: (BOOL)value;
 @end
 

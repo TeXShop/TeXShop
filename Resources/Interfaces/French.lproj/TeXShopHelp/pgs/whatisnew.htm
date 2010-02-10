@@ -14,6 +14,136 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.30</h5></P>
+
+<ul>
+
+<li> TeXShop has a new item in the Help Menu named "About This Release." This item will be revised for each release, and explains any steps needed to activate new features. Users should form a habit of reading this short file after upgrading.
+
+<p> New users get the latest defaults and can ignore the step. But older users may need to make small changes in Preferences, and regenerate certain subfolders in ~/Library/TeXShop. These locations allow users to modify the default behavior of TeXShop, so
+the program does not automatically update them because it does not want to deactivate user choices behind the user's back.
+
+<p> 
+
+<li> This version fixes a crucial crash bug involving synctex, searching pdf documents, and related notifications. Some users ran into the bug when attempting to search pdf documents. Others had crashes immediately after syncing. Many users avoided the crash entirely. Now it should be fixed for everyone.
+
+<p>
+<li> TeXShop has a "Goto Error" menu command, mirrored on the console window. Until this version, the command only worked on individual files. But the command now works with projects controlled by a root file. If an error occurs in an included source file not open on the desktop, that source will open and the line with the error will be highlighted. This change
+requires a new flag in all engines: " --file-line-error". In TeXShop default preferences, this is set for pdftex, pdflatex, simpdftex, and xetex. If users wrote other engines, they will need to add the flag for these.
+
+<p>
+<li> New MetaPost and MetaFun engines by Nicola Vitacolonna are included. The engines are called "nv-metapost" and "nv-metafun." To prepare for these engines, the operation of TeXShop when using MetaPost and MetaFont has been revised. The built-in MetaFont command has been removed entirely; Vitacolonna's nv-metapost works much better for that purpose. The buildin MetaPost command has been retained for compatibility with projects by current users. This command just calls mpost directly. The preference item which switched this command between MetaPost and mptopdf has been removed.</p>
+
+<p>
+Users working with MetaPost for illustrations, or MetaFont, users will want to use nv-metapost and nv-metafun instead. Minimal documentation for these commands is available in TeXShop Help's advanced section on ConTeXt and MetaPost. But a more extensive README by Vitacolonna is available in ~/Library/TeXShop/Engines/Inactive/MetaPost.
+
+<p>
+<li> Very important improvements to command completion by Herbert Schulz are now included. These improvements allow "tags" in completed commands with parameters. When a command is completed, the entire command, including tags where the required parameters go, appears in the source file, and the first tag is selected. The user can type the parameter, replacing the tag. A keyboard shortcut then activates a new menu item which jumps to the next tag. The user can thus fill in all parameters without removing their hands from the keyboard.
+
+<p> A greatly expanded command completion file by Herbert Schulz is included in this release. For detailed instructions, read the document about command completion written by Schulz and available in ~/Library/TeXShop/CommandCompletion.
+
+<p>
+<li> A new "Paste Spreadsheet Cells" macro by Alan Munn has been added to the Macro menu. This wonderful macro allows users to copy an array of cells from a spreadsheet and paste the array, properly formatted with TeX commands, in the TeX source code. Munn wrote instructions for this command, which are in TeXShop Help's Macro section, in Default AppleScript Macros.
+ 
+<p>
+<li> A new latexmk engine, version 4.13a, is included.
+
+<p>
+<li>  The right justification feature introduced in TeXShop 2.28 for  Arabic, Hebrew, and Persian has been improved. Now a line must start with a character from one of these languages before it is right justified. Thus
+lines containing TeX commands with embedded Arabic, Hebrew, or Persian will still be left justified.
+
+<p>
+<li>  Added Windows Latin 1 to the list of supported encodings.
+
+<p>
+<li>  Added "ctx" to list of extensions which are regarded as TeX files and can be syntax colored and typeset.
+
+<p>
+<li>  In 2.29, closing a document left the associated pdf file open until TeXShop quit. This bug is fixed; the pdf file is closed when the source document closes.
+
+
+
+
+</ul> 
+
+<P><h5>TeXShop Changes 2.28-2.29</h5></P>
+
+<ul> 
+<p>Here are the changes in version 2.29:</p>
+
+<ul> 
+
+<li>  Revised SyncTeX. The code now has an embedded copy of "synctex" from TeX Live 2008, so it is independent of synctex changes in TeX Live 2009. Note that "synctex" is the script by Jerome Laurens to interprete synctex output, NOT the actual technology to produce this data). The Intel version of the embedded file also has information to interprete files produced by dvips, but the powerpc version does not. So on intel, synctex works better with dvips tasks. In early versions of TeXShop for TeX Live 2009, the embedded code didn't have powerpc code, causing crashes on powerpc. This is fixed. 
+
+</ul>
+</ul>
+<ul>
+
+<p>Here are the changes in version 2.28:</p>
+
+<ul> 
+
+<li> The =synctex=1 flag was added to the XeTeX and XeLaTeX engines.
+
+<p>
+
+<li> Revised the Hiero engine to deal with new installation instructions on the web page.
+
+<p>
+
+<li> Fixed a bug which broke SyncTeX when filenames contained unicode characters.
+
+<p>
+
+<li> Trash AUX files now trashes .synctex and .synctex.gz files.
+
+<p>
+
+<li>  The script for for mptopdf was changed to much more extensive script by Nicola Vitacolonna. This script, and one for metafun, are in the inactive folder of the Engines folder. But the metapost script is also used internally, replacing the original naive script. 
+
+<p>
+
+<li> An extra source preference named "Arabic, Persian, Hebrew" has been added. This item only works if Syntax Coloring is active. When the new item is activated, lines in the source which contain characters from these languages --- i.e., characters in the range 0x0590 - 0x06FF -- are right justified on the screen. This does not change the source processed by the TeX engine.
+
+<p>
+
+<li>  Removed command line equivalents for "Bold" and "Italic"
+
+<p>
+
+<li>  Removed "package" check for file types tex, ctx, bst, drv, abc, ly, texi, Rnw. Now no file types have "package" checked.
+
+<p>
+
+<li>  There are a small number of German localization fixes.
+
+<p>
+
+<li> The keyboard command to trash AUX files also works if the console or preview window are active.
+
+<p>
+
+<li>  If the shift key is held down while selecting "Trash AUX Files", then the pdf preview file is also trashed. This key can be held in combination with option or not, depending on the choice of aggressive trash. However, aggressive trashing with the shift key down will NOT remove other pdf files (!).
+
+</ul>
+</ul>
+
+<P><h5>TeXShop Changes 2.27</h5></P>
+
+<ul>
+
+<li> When using SyncTeX from source to Preview, the preview window now comes forward.
+
+<p>
+
+<li> There are many changes in TeXShop Help, including a new section on encoding, and separate sections on General Engines, and on the XeTeX engine. References to XeTeX were removed.
+
+<p>
+<li> There are slight improvements in the Program, Encoding, and Root macro files by Ram—n M. Figueroa-Centeno.
+
+</ul>
+
+
 <P><h5>TeXShop Changes 2.21 - 2.26</h5></P>
 
 <ul>

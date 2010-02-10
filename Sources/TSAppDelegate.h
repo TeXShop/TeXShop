@@ -31,8 +31,8 @@
 
 @interface TSAppDelegate : NSObject
 {
-	BOOL	_forPreview;
-	TSMovie	*myMovie;
+	BOOL			_forPreview;
+	TSMovie			*myMovie;
 }
 
 - (IBAction)displayMatrixPanel:(id)sender; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03

@@ -957,14 +957,6 @@ person script. See also: DefaultTypesetMode.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:SyncMethodKey];
 }
 
-- (IBAction)defaultMetaPostChanged:sender
-{
-	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:MetaPostCommandKey] forKey:MetaPostCommandKey];
-
-	[SUD setInteger:[[sender selectedCell] tag] forKey:MetaPostCommandKey];
-}
-
 - (IBAction)defaultBibtexChanged:sender
 {
 	// register the undo message first
@@ -1366,9 +1358,6 @@ This method retrieves the application preferences from the defaults object and s
 	itemIndex = [_colorParam1Popup indexOfItemWithTag: myTag];
 	if (itemIndex == -1) itemIndex = 2; // default idx = 2
 	[_colorParam1Popup selectItemAtIndex: itemIndex];
-
-	myTag = [defaults integerForKey:MetaPostCommandKey];
-	[_defaultMetaPostMatrix selectCellWithTag: myTag];
 
 	myTag = [defaults integerForKey:BibtexCommandKey];
 	[_defaultBibtexMatrix selectCellWithTag: myTag];

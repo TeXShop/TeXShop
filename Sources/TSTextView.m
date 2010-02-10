@@ -1084,6 +1084,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 // special treatments: in the candiate,
 //     #RET# will be replaced by linefeed (new line)
 //     #INS# will be removed and the insertion point will be placed there
+//     A second #INS# will be removed and text between the two will be selected (Change made by (HS))
 //     if there is ":=", the string after it (the first one) will be inserted
 // (2) LaTeX special: if the insertion point is right after "\begin{...}"
 // where ... contains no word boundary characters, then "\end{...}" together with
@@ -1114,6 +1115,10 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	NSMutableString *newString;
 	unsigned selectedLocation, currentLength, from, to;
 	NSRange foundRange, searchRange, spaceRange, insRange, replaceRange;
+	// Start Changed by (HS) - define ins2Range, selectlength
+	NSRange ins2Range;
+	unsigned selectlength = 0;
+	// End Changed by (HS) - define ins2Range, selectlength
 	NSCharacterSet *charSet;
 	unichar c;
 
@@ -1262,8 +1267,22 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 								options: 0 range: NSMakeRange(0, [newString length])];
 					// search for #INS#
 					insRange = [newString rangeOfString:@"#INS#" options:0];
-					if (insRange.location != NSNotFound)
+					// Start Changed by (HS) - find second #INS#, remove if it's there and 
+					// set selection length. NOTE: selectlength inited to 0 so ok if not found.
+					//if (insRange.location != NSNotFound)
+					//	[newString replaceCharactersInRange:insRange withString:@""];
+					if (insRange.location != NSNotFound) {
 						[newString replaceCharactersInRange:insRange withString:@""];
+						ins2Range = [newString rangeOfString:@"#INS#" options:0];
+						if (ins2Range.location != NSNotFound) {
+						    [newString replaceCharactersInRange:ins2Range withString:@""];
+						    selectlength = ins2Range.location - insRange.location;
+						}
+					}
+					// End Changed by (HS) - find second #INS# if it's there and set selection length
+					// Filtering for Japanese
+					//if (shouldFilter == filterMacJ)//we use current encoding, so this isn't necessary
+					//	newString = filterBackslashToYen(newString);
 					if (![newString isEqualToString: originalString])
 						break;		// continue search if newString is equal to originalString
 				}
@@ -1319,8 +1338,15 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				textLocation = replaceLocation+insRange.location;
 			else
 				textLocation = replaceLocation+[newString length];
-			[self setSelectedRange: NSMakeRange(textLocation,0)];
-		} else { // candidate was not found
+			// Start changed by (HS) - set selection length as well as insertion point
+			// NOTE: selectlength inited to 0 so it's already correct if we get here
+			//[self setSelectedRange: NSMakeRange(textLocation,0)];
+			[self setSelectedRange: NSMakeRange(textLocation,selectlength)];
+			[self scrollRangeToVisible: NSMakeRange(textLocation,selectlength)]; // Force into view (7/25/06) (HS)
+			// End changed by (HS) - set selection length as well as insertion point
+		}
+		else // candidate was not found
+		{
 			[originalString release];
 			originalString = currentString = nil;
 			wasCompleted = NO;

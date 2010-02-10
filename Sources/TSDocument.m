@@ -116,6 +116,13 @@
 
 - (void)dealloc
 {
+	int	i;
+	
+	for (i = 0; i < NUMBEROFERRORS; i++) {
+		if (errorLinePath[i] != nil)
+			[errorLinePath[i] release];
+		errorLinePath[i] = nil;
+	}
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:pdfView];// mitsu 1.29 (O) need to remove here, otherwise updateCurrentPage fails
@@ -168,6 +175,8 @@
 		[logExtension release];
 	
 	[self invalidateCompletionConnection];
+	
+	[myPDFKitView2 release];
 
 	[super dealloc];
 }
@@ -373,7 +382,8 @@
 	// causes all of the data to be reformatted.
 	[self setupFromPreferencesUsingWindowController:aController];
 
-
+	for (i = 0; i < NUMBEROFERRORS; i++)
+		 errorLinePath[i] = nil;
 		
 	/* when opening an empty document, must open the source editor */
 	theFileName = [self fileName];
@@ -858,7 +868,8 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"htx"]) || ([extension isEqualToString: @"HTX"]) 
 		|| ([extension isEqualToString: @"sk"]) || ([extension isEqualToString: @"skt"])
 		|| ([extension isEqualToString: @"htx"])
-		|| ([extension isEqualToString: @"ly"]))
+		|| ([extension isEqualToString: @"ly"])
+		|| ([extension isEqualToString: @"ctx"]))
 		return YES;
 		
 	otherExtensions = [SUD stringArrayForKey: OtherTeXExtensionsKey];
@@ -2524,6 +2535,14 @@ preference change is cancelled. "*/
 		return -1;
 }
 
+- (NSString *) errorLinePathFor: (int)theError{
+		if (theError < errorNumber)
+			return errorLinePath[theError];
+		else 
+			return nil;
+}
+
+
 - (int) totalErrors{
 	return errorNumber;
 }
@@ -2538,6 +2557,8 @@ preference change is cancelled. "*/
 	BOOL		doError;
 	int			myErrorNumber;
 	int			myErrorLine = -1;
+	NSString	*myErrorPath;
+	TSDocument	*theDocument;
 
 	myRoot = nil;
 	doError = NO;
@@ -2557,6 +2578,7 @@ preference change is cancelled. "*/
 			if (whichError >= errorNumber)
 				whichError = 0;			// warning; main.tex could be closed in the middle of error processing
 			myErrorLine = errorLine[whichError];
+			myErrorPath = errorLinePath[whichError];
 			whichError++;
 			if (whichError >= errorNumber)
 				whichError = 0;
@@ -2568,6 +2590,7 @@ preference change is cancelled. "*/
 			if (whichError >= myErrorNumber)
 				whichError = 0;
 			myErrorLine = [rootDocument errorLineFor: whichError];
+			myErrorPath = [rootDocument errorLinePathFor: whichError];
 			whichError++;
 			if (whichError >= myErrorNumber)
 				whichError = 0;
@@ -2576,8 +2599,24 @@ preference change is cancelled. "*/
 
 
 	if (!_externalEditor && fileIsTex && doError) {
-		[textWindow makeKeyAndOrderFront: self];
-		[self toLine: myErrorLine];
+		if (myErrorPath == nil) {
+			[textWindow makeKeyAndOrderFront: self];
+			[self toLine: myErrorLine];
+		}
+		else {
+			NSString *thePath = [[[self fileName] stringByDeletingLastPathComponent] stringByAppendingPathComponent: [myErrorPath stringByStandardizingPath]];
+			NSString *theCorrectedPath = [thePath stringByStandardizingPath];
+			NSDocumentController *myController = [NSDocumentController sharedDocumentController];
+			theDocument = [myController openDocumentWithContentsOfFile: thePath display: YES];
+			if (theDocument)
+				[theDocument toLine: myErrorLine];
+			else {
+				[textWindow makeKeyAndOrderFront: self];
+				[self toLine: myErrorLine];
+			}
+
+		}
+			
 	}
 }
 
@@ -3117,6 +3156,8 @@ preference change is cancelled. "*/
 	NSArray				*myPages;
 	PDFPage				*thePage;
 	NSRect				selectionBounds;
+	
+	 [myPDFKitView cancelSearch];
 
 // I now try a new method. We will pick a string of length 10, first surrounding the text where
 // the click occurred. If it isn't found, we'll back up 5 characters at a time for 20 times, repeating
@@ -3151,7 +3192,9 @@ preference change is cancelled. "*/
 		numberOfTests++;
 
 	// search for this in the pdf
+		[myPDFKitView setProtectFind: YES];
 		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		[myPDFKitView setProtectFind: NO];
 		if ([searchResults count] == 1) {
 			mySelection = [searchResults objectAtIndex:0];
 			myPages = [mySelection pages];
@@ -3203,7 +3246,9 @@ preference change is cancelled. "*/
 		numberOfTests++;
 
 	// search for this in the pdf
+		[myPDFKitView setProtectFind: YES];
 		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		[myPDFKitView setProtectFind: NO];
 		if ([searchResults count] == 1) {
 			mySelection = [searchResults objectAtIndex:0];
 			myPages = [mySelection pages];
@@ -3346,13 +3391,16 @@ preference change is cancelled. "*/
 {
 	NSString		*newOutput, *numberOutput, *searchString, *tempString, *detexString;
 	NSData		*myData, *detexData;
-	NSRange		myRange, lineRange, searchRange, testRange;
+	NSRange		myRange, lineRange, searchRange, testRange, errorRange, pathRange;
 	int			error;
 	int                 lineCount, wordCount, charCount;
 	unsigned int	myLength;
-	unsigned		start, end;
+	unsigned		start, end, start1, end1;
 	NSStringEncoding	theEncoding;
 	BOOL                result;
+	NSString	*thePath;
+	NSNumber	*theNumber;
+	NSString	*theNumberString, *theLine;
 
 	NSFileHandle *myFileHandle = [aNotification object];
 	if (myFileHandle == readHandle) {
@@ -3365,7 +3413,10 @@ preference change is cancelled. "*/
 			if (newOutput == nil) {
 				newOutput = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
 			}
+			
+			// NSLog(newOutput);
 			// 1.35 (F) end
+			
 			
 			myLength = [newOutput length];
 			testRange.location = [newOutput length] - 2;
@@ -3387,6 +3438,27 @@ preference change is cancelled. "*/
 						error = [numberOutput intValue];
 						if ((error > 0) && (errorNumber < NUMBEROFERRORS)) {
 							errorLine[errorNumber] = error;
+							
+							// new code to find file containing error
+							// ----------
+							if (errorLinePath[errorNumber] != nil)
+								[errorLinePath[errorNumber] release];
+							errorLinePath[errorNumber] = nil;
+							
+							theNumber = [NSNumber numberWithInt: error];
+							theNumberString = [theNumber stringValue];
+							theLine = [[[NSString stringWithString:@":"] stringByAppendingString: theNumberString] stringByAppendingString: @":"];
+							errorRange = [newOutput rangeOfString: theLine];
+							if (errorRange.location != NSNotFound) {
+								[newOutput getLineStart: &start1 end: &end1 contentsEnd: nil forRange: errorRange];
+								pathRange.location = start1;
+								pathRange.length = errorRange.location - pathRange.location;
+								thePath = [newOutput substringWithRange: pathRange];
+								errorLinePath[errorNumber] = [thePath retain];
+							}
+							// end of new code
+							// -----------
+							
 							errorNumber++;
 							[outputWindow makeKeyAndOrderFront: self];
 						}
@@ -4954,5 +5026,193 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	if ([self fillLogWindow])
 		[logWindow makeKeyAndOrderFront: self];	
 }
+
+// // // // // // // //begin BULLET (H. Neary) (modified by (HS))
+// These search forward/backward for a Mark (by default the ¥ character) which acts as a placeholder.
+// The latest versions then look for a ``comment start'' ( "¥Ü" be default) starting at the Mark (i.e., the ¥ must also be part
+// of the ``comment start'' sequence and then look for the ``comment end'' ("Ý"). All the text between the Mark and the ``comment
+// end'' is selected 9only the Mark is selected if no comment is found. There are versions that delete the Mark (but not the
+// comment if it's there). Finally there are two commands for inserting Marks (since this differs on different keyboards) and
+// ``comment strings'' to make it fairly easy to build CommandCompletion files with comments.
+//
+// There is a new Format->Completion->Marks submenu (see the MainMenu.nib file --- English.lproj only for now) and these
+// selectors are used there.
+//
+
+NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentString = @"Ý";
+
+- (void) doNextBullet: (id)sender // modified by (HS)
+{
+    NSRange tempRange, forwardRange, markerRange, commentRange;
+    NSString *text;
+	
+    text = [textView string];
+    tempRange = [textView selectedRange];
+    tempRange.location += tempRange.length; // move the range to after the selection (a la Find) to avoid re-finding (HS)
+    //set up a search range from here to eof
+    forwardRange.length = [text length] - tempRange.location;
+    forwardRange.location = tempRange.location;
+    markerRange = [text rangeOfString:placeholderString options:NSLiteralSearch range:forwardRange];
+    //if marker found - set commentRange there and look for end of comment
+    if (markerRange.location != NSNotFound){ // marker found
+	commentRange.location = markerRange.location;
+	commentRange.length = [text length] - commentRange.location;
+	commentRange = [text rangeOfString:startcommentString options:NSLiteralSearch range:commentRange];
+	if ((commentRange.location != NSNotFound) && (commentRange.location == markerRange.location)){
+	    // found comment start right after marker --- there is a comment
+	    commentRange.location = markerRange.location;
+	    commentRange.length = [text length] - markerRange.location;
+	    commentRange = [text rangeOfString:endcommentString options:NSLiteralSearch range:commentRange];
+	    if (commentRange.location != NSNotFound){
+		markerRange.length = commentRange.location - markerRange.location + commentRange.length;
+	    }
+	}
+	[textView setSelectedRange:markerRange];
+	[textView scrollRangeToVisible:markerRange];
+    }
+    else NSBeep();
+    //NSLog(@"Next ¥ hit");
+}
+
+- (void) doPreviousBullet: (id)sender // modified by (HS)
+{
+    NSRange tempRange, backwardRange, markerRange, commentRange;
+    NSString *text;
+	
+    text = [textView string];
+    tempRange = [textView selectedRange];
+    //set up a search range from string start to beginning of selection
+    backwardRange.length = tempRange.location;
+    backwardRange.location = 0;
+    markerRange = [text rangeOfString:placeholderString options:NSBackwardsSearch range:backwardRange];
+    //if marker found - set commentRange there and look for end of comment
+    if (markerRange.location != NSNotFound){ // marker found
+	commentRange.location = markerRange.location;
+	commentRange.length = [text length] - commentRange.location;
+	commentRange = [text rangeOfString:startcommentString options:NSLiteralSearch range:commentRange];
+	if ((commentRange.location != NSNotFound) && (commentRange.location == markerRange.location)){
+	    // found comment start right after marker --- there is a comment
+	    commentRange.location = markerRange.location;
+	    commentRange.length = [text length] - markerRange.location;
+	    commentRange = [text rangeOfString:endcommentString options:NSLiteralSearch range:commentRange];
+	    if (commentRange.location != NSNotFound){
+		markerRange.length = commentRange.location - markerRange.location + commentRange.length;
+	    }
+	}
+	[textView setSelectedRange:markerRange];
+	[textView scrollRangeToVisible:markerRange];
+    }
+    else NSBeep();
+    //NSLog(@"Next ¥ hit");
+}
+
+- (void) doNextBulletAndDelete: (id)sender // modified by (HS)
+{
+    NSRange tempRange, forwardRange, markerRange, commentRange;
+    NSString *text;
+	
+    text = [textView string];
+    tempRange = [textView selectedRange];
+    tempRange.location += tempRange.length; // move the range to after the selection (a la Find) to avoid re-finding (HS)
+    //set up a search range from here to eof
+    forwardRange.length = [text length] - tempRange.location;
+    forwardRange.location = tempRange.location;
+    markerRange = [text rangeOfString:placeholderString options:NSLiteralSearch range:forwardRange];
+    //if marker found - set commentRange there and look for end of comment
+    if (markerRange.location != NSNotFound){ // marker found
+	commentRange.location = markerRange.location;
+	commentRange.length = [text length] - commentRange.location;
+	commentRange = [text rangeOfString:startcommentString options:NSLiteralSearch range:commentRange];
+	if ((commentRange.location != NSNotFound) && (commentRange.location == markerRange.location)){
+	    // found comment start right after marker --- there is a comment
+	    commentRange.location = markerRange.location;
+	    commentRange.length = [text length] - markerRange.location;
+	    commentRange = [text rangeOfString:endcommentString options:NSLiteralSearch range:commentRange];
+	    if (commentRange.location != NSNotFound){
+		markerRange.length = commentRange.location - markerRange.location + commentRange.length;
+	    }
+	}
+	// delete bullet (marker)
+	tempRange.location = markerRange.location;
+	tempRange.length = [placeholderString length];
+	markerRange.length -= tempRange.length; // deleting the bullet so selection is shorter
+	[textView replaceCharactersInRange:tempRange withString:@""];
+	// end delete bullet (marker)
+	[textView setSelectedRange:markerRange];
+	[textView scrollRangeToVisible:markerRange];
+    }
+    else NSBeep();
+    //NSLog(@"Next ¥ hit");
+}
+
+- (void) doPreviousBulletAndDelete: (id)sender // modified by (HS)
+{
+    NSRange tempRange, backwardRange, markerRange, commentRange;
+    NSString *text;
+	
+    text = [textView string];
+    tempRange = [textView selectedRange];
+    //set up a search range from string start to beginning of selection
+    backwardRange.length = tempRange.location;
+    backwardRange.location = 0;
+    markerRange = [text rangeOfString:placeholderString options:NSBackwardsSearch range:backwardRange];
+    //if marker found - set commentRange there and look for end of comment
+    if (markerRange.location != NSNotFound){ // marker found
+	commentRange.location = markerRange.location;
+	commentRange.length = [text length] - commentRange.location;
+	commentRange = [text rangeOfString:startcommentString options:NSLiteralSearch range:commentRange];
+	if ((commentRange.location != NSNotFound) && (commentRange.location == markerRange.location)){
+	    // found comment start right after marker --- there is a comment
+	    commentRange.location = markerRange.location;
+	    commentRange.length = [text length] - markerRange.location;
+	    commentRange = [text rangeOfString:endcommentString options:NSLiteralSearch range:commentRange];
+	    if (commentRange.location != NSNotFound){
+		markerRange.length = commentRange.location - markerRange.location + commentRange.length;
+	    }
+	}
+	// delete bullet (marker)
+	tempRange.location = markerRange.location;
+	tempRange.length = [placeholderString length];
+	markerRange.length -= tempRange.length; // deleting the bullet so selection is shorter
+	[textView replaceCharactersInRange:tempRange withString:@""];
+	// end delete bullet (marker)
+	[textView setSelectedRange:markerRange];
+	[textView scrollRangeToVisible:markerRange];
+    }
+    else NSBeep();
+    //NSLog(@"Next ¥ hit");
+}
+
+- (void) placeBullet: (id)sender // modified by (HS) to be a simple insertion (replacing the selection)
+{
+    NSString		*text;
+    NSRange		myRange;
+
+    text = [textView string];
+    myRange = [textView selectedRange];
+    [textView replaceCharactersInRange:myRange withString:placeholderString];//" ¥\n" puts ¥ on previous line
+    myRange.location += [placeholderString length];//= end+2;//start puts ¥ on previous line
+    myRange.length = 0;
+    [textView setSelectedRange: myRange];
+    //NSLog(@"Place ¥ hit");
+}
+
+- (void) placeComment: (id)sender // by (HS) to be a simple insertion (replacing the selection)
+{
+    NSString		*text;
+    NSRange		myRange;
+
+    text = [textView string];
+    myRange = [textView selectedRange];
+    [textView replaceCharactersInRange:myRange withString:startcommentString];//" ¥\n" puts ¥ on previous line
+    myRange.location += [startcommentString length];//= end+2;//start puts ¥ on previous line
+    myRange.length = 0;
+    [textView replaceCharactersInRange:myRange withString:endcommentString];
+    [textView setSelectedRange: myRange];
+    //NSLog(@"Place ¥ hit");
+}
+
+// end BULLET (H. Neary) (modified by (HS))
+
 
 @end

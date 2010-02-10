@@ -88,8 +88,9 @@
 	if (texTask != nil) {
 		if (theScript == kTypesetViaGhostScript) {
 			kill( -[texTask processIdentifier], SIGTERM);
-		} else
+		} else {
 			[texTask terminate];
+			}
 		myDate = [NSDate date];
 		while (([texTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
 			;
@@ -599,12 +600,6 @@
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
 					done = YES;
-				} else if ([programString isEqualToString:@"metafont"]) {
-					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
-					whichEngine = MetafontEngine;
-					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
-					[self fixMacroMenu];
-					done = YES;
 				} else {
 					i = UserEngine;
 					j = [programButton numberOfItems];
@@ -701,11 +696,6 @@
 				} else if ([lowerprogramName isEqualToString:@"context"]) {
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
 					whichEngine = ContextEngine;
-					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
-					[self fixMacroMenu];
-				} else if ([lowerprogramName isEqualToString:@"metafont"]) {
-					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
-					whichEngine = MetafontEngine;
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
 				} else {
@@ -937,9 +927,9 @@
 			} else if (whichEngineLocal == MetapostEngine) {
 				NSString* mpEngineString;
 				switch ([SUD integerForKey:MetaPostCommandKey]) {
-					case 0: mpEngineString = @"mptopdfwrap"; break;
+					case 0: mpEngineString = @"metapostwrap"; break;
 					case 1: mpEngineString = @"metapostwrap"; break;
-					default: mpEngineString = @"mptopdfwrap"; break;
+					default: mpEngineString = @"metapostwrap"; break;
 				}
 				enginePath = [[NSBundle mainBundle] pathForResource:mpEngineString ofType:nil];
 				if (continuous)
@@ -1084,19 +1074,7 @@
 				 }
 				 indexTask = [[NSTask alloc] init];
 				 [self startTask: indexTask running: @"makeindex" withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-			 } else if (whichEngineLocal == MetafontEngine) {
-				 NSString* metaFontPath = [sourcePath stringByDeletingPathExtension];
-				 // Koch: ditto, spaces in path
-				 [args addObject: [metaFontPath lastPathComponent]];
-				 
-				 if (metaFontTask != nil) {
-					 [metaFontTask terminate];
-					 [metaFontTask release];
-					 metaFontTask = nil;
-				 }
-				 metaFontTask = [[NSTask alloc] init];
-				 [self startTask: metaFontTask running: @"mf" withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-			 } else if (whichEngineLocal >= UserEngine) {
+			  } else if (whichEngineLocal >= UserEngine) {
 				 NSString* userEngineName = [[[programButton itemAtIndex:(whichEngineLocal - 1)] title] stringByAppendingString:@".engine"];
 				 NSString* userEnginePath = [[EnginePath stringByAppendingString:@"/"] stringByAppendingString: userEngineName];
 				 // NSString* userPath = [sourcePath stringByDeletingPathExtension];
@@ -1236,17 +1214,17 @@
 
 - (void) doMetaFont: sender
 {
-	fromMenu = YES;
-	[self doMetaFont1: sender];
+	// fromMenu = YES;
+	// [self doMetaFont1: sender];
 }
 
 - (void) doMetaFont1: sender
 {
 // added by mitsu --(J++) Program popup button indicating Program name
-	[programButton selectItemWithTitle: @"MetaFont"];
-	[programButtonEE selectItemWithTitle: @"MetaFont"];
+	// [programButton selectItemWithTitle: @"MetaFont"];
+	// [programButtonEE selectItemWithTitle: @"MetaFont"];
 // end addition
-	[self doJob:MetafontEngine withError:NO runContinuously:NO];
+	// [self doJob:MetafontEngine withError:NO runContinuously:NO];
 }
 
 // The temp forms which follow do not reset the default typeset buttons
@@ -1281,7 +1259,7 @@
 
 - (void) doMetaFontTemp: sender
 {
-	[self doJobForScript:MetafontEngine withError:YES runContinuously:NO];
+	// [self doJobForScript:MetafontEngine withError:YES runContinuously:NO];
 }
 
 - (void) doTypesetEE: sender
@@ -1369,6 +1347,7 @@
 {
 	if (! fileIsTex)
 		return;
+	
 
 	/* The lines of code below kill previously running tasks. This is
 	necessary because otherwise the source file will be open when the
@@ -1380,6 +1359,11 @@
    // [outputText selectAll:self];
 	[outputText replaceCharactersInRange: [outputText selectedRange] withString:@"\nProcess aborted\n"];
 	[outputText scrollRangeToVisible:[outputText selectedRange]];
+	
+	// NSString *theString = @"very strange\n"; 
+	// NSData *theData = [theString dataUsingEncoding: NSASCIIStringEncoding];
+	// [[inputPipe fileHandleForWriting] writeData: theData ];
+	
    // [outputText setSelectable: NO];
 
 	taskDone = YES;

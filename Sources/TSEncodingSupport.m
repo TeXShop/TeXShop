@@ -60,6 +60,7 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingMacCyrillic,			@"Mac Cyrillic" },
 	{ 0, kCFStringEncodingDOSCyrillic,			@"DOS Cyrillic" },
 	{ 0, kCFStringEncodingDOSRussian,			@"DOS Russian" },
+	{ 0, kCFStringEncodingWindowsLatin1,		@"Windows Latin 1" }, // code page 1252
 	{ 0, kCFStringEncodingWindowsLatin2,		@"WindowsCentralEurRoman" }, // code page 1250
 	{ 0, kCFStringEncodingWindowsCyrillic,		@"Windows Cyrillic" },
 	{ 0, kCFStringEncodingKOI8_R,				@"KOI8_R" },

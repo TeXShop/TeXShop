@@ -52,14 +52,20 @@
 
 - (void) dealloc
 {
+	
 	[self cleanupMarquee: YES];
 	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
 	// Clean up.
-	[_searchResults release];
+	if (_searchResults != NULL) {
+		[_searchResults removeAllObjects];
+		[_searchResults release];
+		_searchResults = NULL;
+	}
 	[sourceFiles release];
+
 
 	[super dealloc];
 }
@@ -68,6 +74,7 @@
 {
 	if ((self = [super init]))
         firstView = nil;
+	protectFind = NO;
     return self;
 }
 
@@ -980,6 +987,7 @@
 		}
 }
 
+
 // --------------------------------------------------------------------------------------------------------- toggleDrawer
 
 - (IBAction) toggleDrawer: (id) sender
@@ -1055,6 +1063,10 @@
 
 - (void) doFind: (id) sender
 {
+	if (protectFind) {
+		// NSLog(@"protectFind");
+		return;
+		}
 	
 	if ([[self document] isFinding])
 		[[self document] cancelFindString];
@@ -1070,9 +1082,16 @@
 
 - (void) startFind: (NSNotification *) notification
 {
+	if (protectFind) {
+		// NSLog(@"protectFind: start");
+		return;
+	}
+	
+	if ([notification object] != [self document])
+		return;
 	// Empty arrays.
 	if (firstView != nil)
-		[firstView startFind: notification];
+		; // [firstView startFind: notification];
 	else {
 	[_searchResults removeAllObjects];
 
@@ -1086,9 +1105,17 @@
 - (void) findProgress: (NSNotification *) notification
 {
 	double		pageIndex;
+	
+	if (protectFind) {
+		// NSLog(@"protectFind: progress");
+		return;
+	}
+	
+	if ([notification object] != [self document])
+		return;
 
 	if (firstView != nil)
-		[firstView findProgress: notification];
+		; // [firstView findProgress: notification];
 	else {
 	
 	pageIndex = [[[notification userInfo] objectForKey: @"PDFDocumentPageIndex"] doubleValue];
@@ -1101,23 +1128,38 @@
 
 - (void) didMatchString: (PDFSelection *) instance
 {
+	if (protectFind) {
+		// NSLog(@"protectFind: match");
+		return;
+	}
+	
 	if (firstView != nil)
-		[firstView didMatchString: instance];
+		; // [firstView didMatchString: instance];
 		else {
 	// Add page label to our array.
-	[_searchResults addObject: [instance copy]];
-
-	// Force a reload.
-	[_searchTable reloadData];
+	if (_searchResults != NULL){
+		[_searchResults addObject: [instance copy]];
+		// Force a reload.
+		[_searchTable reloadData];
 		}
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------- endFind
 
 - (void) endFind: (NSNotification *) notification
 {
+	
+	if (protectFind) {
+		// NSLog(@"protectFind: end");
+		return;
+	}
+	
+	if ([notification object] != [self document])
+		return;
+	
 	if (firstView != nil)
-		[firstView endFind: notification];
+		; //[firstView endFind: notification];
 	else {
 	[_searchProgress stopAnimation: self];
 	[_searchProgress setDoubleValue: 0];
@@ -1162,6 +1204,9 @@
 {
 	int				rowIndex;
 	NSMutableArray	*_firstSearchResults;
+	
+	if ([notification object] != _searchTable)
+		return;
 	
 	// What was selected.  Skip out if the row has not changed.
 	rowIndex = [(NSTableView *)[notification object] selectedRow];
@@ -3741,6 +3786,12 @@
 	while (remainingRange.length > 0);
 }
 
+- (void) cancelSearch
+{
+	if ([[self document] isFinding])
+		[[self document] cancelFindString];
+}
+
 
 #pragma mark =====magnifying glass=====
 
@@ -4091,6 +4142,11 @@
 - (NSMutableArray *)getSearchResults
 {
 	return _searchResults;
+}
+
+- (void)setProtectFind: (BOOL)value
+{
+	protectFind = value;
 }
 
 @end

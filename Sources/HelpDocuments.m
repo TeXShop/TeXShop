@@ -47,6 +47,15 @@
 		}
 }
 
+- (IBAction)displayThisRelease:sender
+{
+	NSString				*fileName;
+	
+	fileName = [[NSBundle mainBundle] pathForResource:@"About This Release" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
+
 - (IBAction)displayGettingStartedTeXShop:sender
 {
 	NSString				*fileName;

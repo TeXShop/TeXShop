@@ -1,5 +1,8 @@
 # special latexmk settings for Herb Schulz
-$pdflatex = 'pdflatex --shell-escape --synctex=1 %O %S';
+$pdflatex = 'pdflatex --shell-escape --synctex=1 --file-line-error %O %S';
+
+# if a bbl file is present but the generating bib file isn't available don't run bibtex. --- default in latexmk 4.13
+#$bibtex_use = 1;
 
 # Custom dependency for glossary/glossaries package
 # if you make custom glossaries you may have to add items to the @cus_dep_list and corresponding sub-routines

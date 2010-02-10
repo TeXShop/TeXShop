@@ -47,6 +47,7 @@ extern NSPanel *pageNumberWindow;
 
 @implementation TSPreviewWindow
 
+
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
@@ -65,6 +66,14 @@ extern NSPanel *pageNumberWindow;
 	activeView = nil;
 	windowIsSplit = NO;
 	return result;
+}
+
+- (void)close
+{
+	[myPDFKitView setDocument: nil];
+	[myPDFKitView2 setDocument: nil];
+	
+	[super close];
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame

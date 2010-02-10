@@ -10,10 +10,12 @@
 
 <BODY>
 		<div id="content_border">
-		<P>ConTeXt is a general purpose TeX macro package by Hans Hagen; for some, it will be a serious alternative to LaTeX. See <a href="http://www.pragma-ade.com/">http://www.pragma-ade.com/</a> for details. </P>
-		<p>MetaPost is a MetaFont like system by John Hobby which can output postscript and pdf files. The package can be used to draw elaborate postscript illustrations.  See <a href="http://cm.bell-labs.com/who/hobby/MetaPost.html">http://cm.bell-labs.com/who/hobby/MetaPost.html</a> for more details.  Interesting metapost examples can be found at many web sites; for instance see  <a href="http://www.cs.ucc.ie/%7edongen/mpost/mpost.html">http://www.cs.ucc.ie/~dongen/mpost/mpost.html</a>. TeXShop now supports MetaPost.</p>
+		<P>ConTeXt is a general purpose TeX macro package by Hans Hagen. For some, it will be a serious alternative to LaTeX. See <a href="http://www.pragma-ade.com/">http://www.pragma-ade.com/</a> for details. Note that TeXShop has a ConTeXt engine.</P>
+		<p>MetaPost is a MetaFont like system by John Hobby, which can be used to draw elaborate illustrations.  See <a href="http://tug.org/metapost.html">http://tug.org/metapost.html</a> for more details.  The MetaPost manual is part of TeX Live; to get it, select "Show Help forPackage:" at the bottom of the TeXShop Help Menu and ask for "MetaPost". Interesting metapost examples can be found at many web sites; for instance see  <a href="http://www.cs.ucc.ie/%7edongen/mpost/mpost.html">http://www.cs.ucc.ie/~dongen/mpost/mpost.html</a>. TeXShop has three separate MetaPost engines, MetaPost, nv-metafun, and nv-metapost. The first of these is a minimal script which directly calls MetaPost. The second two are elaborate scripts by Nicola Vitacolonna which greatly ease the process of working with MetaPost in TeXShop. A detailed README by Vitacolonna  in ~/Library/TeXShop/Engines/Inactive/MetaPost describes the two "nv-" scripts.</p>
 		<p>Here is a sample MetaPost file:</p>
 		<dl>
+			<dd><tt>% !TEX TS-program = nv-metafun</tt>
+			<dd><p>
 			<dd><tt>prologues:=2;</tt>
 			<dd><tt>color yellow; yellow = green + red;</tt>
 			<dd><p>
@@ -44,9 +46,11 @@
 			<dd><tt>end</tt>
 		</dl>
 		<p>Once MetaPost files have been created, then can be displayed like any other illustration. 
+		<p> To try the previous example, create a new TeXShop window. Cut the above example from help and paste it into the window. Save the source file, but when the Save Dialog appears, use the bottom popup menu to select the File Format "mp File". Then typeset as usual.
+
+<p> MetaPost is an extension of Donald Knuth's MetaFont program, used to create TeX fonts. The nv-metapost engine can be used to work directly with metafont sources, although the engine calls MetaPost rather than MetaFont. There are some incompatibilities between these programs, but often MetaFont source files compile without problems. If you'd like to try an example, find the metafont source section of the TeX Live TeX Distribution. For example, if you use TeX Live 2009 or MacTeX-2009, use Terminal and "cd /usr/local/texlive/2009/texmf-dist/fonts/source/public".  Then type "open ." to open this directory in the Finder. Select one of the many folders, for instance "concrete" and drag it to the desktop to create a copy there. Open one of the mf files in this copy in TeXShop, say ccr10.mf. Select the nv-metapost engine and typeset. After a fair amount of work, you will see exactly how each character of the concrete font is constructed. 
 				<p>It is also possible to embed MetaPost source code directly in a Latex document using the package mfpic.
-When this method is used, the MetaPost preference should be set to "mpost" rather than "mptopdf" in the Preferences dialog so MetaPost will run directly when the MetaPost engine is selected.
-A document containing MetaPost source code is first typeset with pdflatex or latex, creating a mp source file with all of the document's illustrations. This file is then compiled with MetaPost. Finally, the document is typeset again with pdflatex or latex to show the resulting illustrations.  </p>
+A document containing MetaPost source code is first typeset with pdflatex or latex, creating a mp source file with all of the document's illustrations. This file is then compiled with MetaPost (with the "MetaPost" engine rather than "nv-metapost"). Finally, the document is typeset again with pdflatex or latex to show the resulting illustrations.  </p>
 
 <p>Below is an example created by  Claus Gerhardt. Save this example as "MetaPostTest". Notice the line
 "\opengraphsfile{MetaPostTest}" in the source. Although the mfpic package permits any name for this graph file, its name must be the same as the document name to use the following procedure in TeXShop. 

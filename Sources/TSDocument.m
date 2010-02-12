@@ -624,7 +624,7 @@ if (! skipTextWindow) {
 				PDFfromKit = YES;
 				[myPDFKitView showWithPath: imagePath];
 				// [myPDFKitView2 prepareSecond];
-				[[myPDFKitView document] retain];
+				// [[myPDFKitView document] retain];
 				[myPDFKitView2 setDocument: [myPDFKitView document]];
 				[myPDFKitView2 showForSecond];
 				[pdfKitWindow setRepresentedFilename: imagePath];
@@ -733,7 +733,7 @@ if (! skipTextWindow) {
 
 		[myPDFKitView showWithPath: imagePath];
 		// [myPDFKitView2 prepareSecond];
-		[[myPDFKitView document] retain];
+		// [[myPDFKitView document] retain];
 		[myPDFKitView2 setDocument: [myPDFKitView document]];
 		[myPDFKitView2 showForSecond];
 		
@@ -3288,7 +3288,7 @@ preference change is cancelled. "*/
 			PDFfromKit = YES;
 			[myPDFKitView reShowWithPath: pdfPath];
 			[myPDFKitView2 prepareSecond];
-			[[myPDFKitView document] retain];
+			// [[myPDFKitView document] retain];
 			[myPDFKitView2 setDocument: [myPDFKitView document]];
 			[myPDFKitView2 reShowForSecond];
 			[pdfKitWindow setRepresentedFilename: pdfPath];

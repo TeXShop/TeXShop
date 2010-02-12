@@ -511,7 +511,7 @@
 	myRange.length = 1;
 	
 	
-if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don't use TS-program for BibTeX and MakeIndex or Menu Command
+ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don't use TS-program for BibTeX and MakeIndex or Menu Command
 	
 	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
 		[theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
@@ -1144,27 +1144,38 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doTex: sender
 {
+	fromMenu = YES;
+	[self doTex1: sender];
+}
+
+- (void) doTex1: sender
+{
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"Plain TeX"];
 	[programButtonEE selectItemWithTitle: @"Plain TeX"];
 // end addition
 
-	fromMenu = YES;
 	[self doJob:TexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doLatex: sender
 {
+	fromMenu = YES;
+	[self doLatex1: sender];
+}
+
+- (void) doLatex1: sender
+{
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"LaTeX"];
 	[programButtonEE selectItemWithTitle: @"LaTeX"];
 // end addition
-	fromMenu = YES;
 	[self doJob:LatexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doUser: (int)theEngine
 {
+	fromMenu = NO;
 	[programButton selectItemAtIndex:(theEngine - 1)];
 	[programButtonEE selectItemAtIndex:(theEngine - 1)];
 	whichEngine = theEngine;
@@ -1174,22 +1185,32 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doContext: sender
 {
+	fromMenu = YES;
+	[self doContext1: sender];
+}
+
+- (void) doContext1: sender
+{
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"ConTeXt"];
 	[programButtonEE selectItemWithTitle: @"ConTeXt"];
 // end addition
-	fromMenu = YES;
 	[self doJob:ContextEngine withError:YES runContinuously:NO];
 }
 
 - (void) doMetapost: sender
+{
+	fromMenu = YES;
+	[self doMetapost1: sender];
+}
+
+- (void) doMetapost1: sender
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"MetaPost"];
 	[programButtonEE selectItemWithTitle: @"MetaPost"];
 // end addition
 
-	fromMenu = YES;
 	[self doJob:MetapostEngine withError:YES runContinuously:NO];
 }
 
@@ -1199,7 +1220,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	// [programButton selectItemWithTitle: @"BibTeX"];
 	// [programButtonEE selectItemWithTitle: @"BibTeX"];
 // end addition
-
+	fromMenu = NO;
 	[self doJob:BibtexEngine withError:NO runContinuously:NO];
 }
 
@@ -1209,17 +1230,22 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	// [programButton selectItemWithTitle: @"MakeIndex"];
 	// [programButtonEE selectItemWithTitle: @"MakeIndex"];
 // end addition
-
+	fromMenu = NO;
 	[self doJob:IndexEngine withError:NO runContinuously:NO];
 }
 
 - (void) doMetaFont: sender
 {
+	fromMenu = YES;
+	[self doMetaFont1: sender];
+}
+
+- (void) doMetaFont1: sender
+{
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"MetaFont"];
 	[programButtonEE selectItemWithTitle: @"MetaFont"];
 // end addition
-	fromMenu = YES;
 	[self doJob:MetafontEngine withError:NO runContinuously:NO];
 }
 
@@ -1267,11 +1293,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 	BOOL	useError;
 
-   useError = NO;
-   if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
-	useError = YES;
-   if (whichEngine >= UserEngine)
-	useError = YES;
+    fromMenu = NO;
+	useError = NO;
+	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
+		useError = YES;
+	if (whichEngine >= UserEngine)
+		useError = YES;
 // changed by mitsu --(J) Typeset commmand
 	[self doJob: whichEngine withError:useError runContinuously:method];
 // end change
@@ -1282,6 +1309,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 //    NSString	*titleString;
 	BOOL	useError;
 
+   fromMenu = NO;
    useError = NO;
 	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
 		useError = YES;
@@ -1416,7 +1444,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 					PDFfromKit = YES;
 					[myPDFKitView reShowWithPath: imagePath];
 					[myPDFKitView2 prepareSecond];
-					[[myPDFKitView document] retain];
+					// [[myPDFKitView document] retain];
 					[myPDFKitView2 setDocument: [myPDFKitView document]];
 					[myPDFKitView2 reShowForSecond];
 					[pdfKitWindow setRepresentedFilename: imagePath];

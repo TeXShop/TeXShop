@@ -571,7 +571,9 @@
 
 		Param = 65536;
 		aPoint.x = xNumber[i]/Param;
+		// aPoint.x = xNumber[i]; in version 1.2
 		aPoint.y = pageSize.size.height - yNumber[i]/Param;
+		//aPoint.y = pageSize.size.height - yNumber[i]; in version 1.2
 		theNumber = [thePage characterIndexAtPoint:aPoint];
 		pageString = [thePage string];
 		theLocation = theNumber - 2;
@@ -626,6 +628,7 @@
 			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self]; 
 
 			return YES;
 			}
@@ -670,6 +673,8 @@
 	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
+	
+	[pdfKitWindow makeKeyAndOrderFront:self];
 
 	return YES;
 	
@@ -693,7 +698,7 @@
 	[myPDFKitView setBoundsForMark: myOval];
 	[myPDFKitView setDrawMark: YES];
 	[myPDFKitView goToPage: thePage];
-	[myPDFKitView display];
+	[pdfWindow display];
 	
 	i++;
 	}

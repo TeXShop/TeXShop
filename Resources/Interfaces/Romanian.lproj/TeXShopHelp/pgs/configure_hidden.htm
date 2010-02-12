@@ -51,6 +51,7 @@ following preferences adds the words \subsubsubsection, \subsubsubsubsection, \p
 					<dd>
 					defaults write TeXShop background_B 0.77
 			</dl>
+			<p> Warning: the next two items have not worked since version 2.10. They will be fixed eventually, but probably not in the immediate future.</p>
 			<p>
 				The text color of the source window can be changed. This change requires that syntax coloring be on. For example, to set this foreground color for text to (r, g, b) = (.42, .39, .77), issue the following commands in Terminal:
 			</p>
@@ -205,27 +206,26 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 <dd>
 					defaults write TeXShop PreviewDrawerOpen YES
 			</dl>
+			
+<p> TeXShop now supports SyncTeX. See the synchronization section in Advanced Help for details. If synctex fails, TeXShop falls back on the Search synchronization method. For users who would like to experiment with synctex by itself, there is a hidden preference to turn off this fallback behavior:</p>
+
+<p> There is a significant bug in Tiger, explained in the remaining paragraphs of this page. TeXShop has a workaround for the bug. The bug is fixed in Leopard and the workaround is ignored on that system. The bug is important, so users should upgrade to Leopard if possible.</p>
 
 <p> When TeXShop was first released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. So the bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.</p>
-<p>  Recent investigation seems to show that this bug is not as severe in Tiger 10.4.4. Consequently a hidden preference has been added to release the data if desired. The values of this preference are</p>
+<p>  Later a hidden preference was added to release the data if desired. The values of this preference are</p>
 <dl>
-<dd> 0 to release the data on system 10.4.3 or higher
+<dd> 0 to release the data on system 10.4.3 or higher (experiments suggested that the bug was not as severe on 10.4.3)
 <dd> 1 to never release the data
 <dd> 2 to always release the data
 </dl>
-<p> The default value is 1, causing the program to behave as previous versions behave.</p>
+<p> The default value is 1, causing the program to use the original workaround.</p>
 <dl>
 <dd>
 					defaults write TeXShop ReleaseDocumentClasses 1
 			</dl>
-<p> Incidentally, this bug was fixed by Apple in Leopard. When TeXShop runs, it first checks to see if the computer is running Leopard. If so, the previously described preference is ignored, and the bug fix by tricking the system is also disabled. Thus memory is correctly released on Leopard.</p>
+<p> When TeXShop runs on Leopard, it ignores this preference setting and bypasses the bug fix. Thus memory is correctly released on Leopard.</p>
 
-<p> TeXShop now supports SyncTeX. See the synchronization section in Advanced Help for details. If synctex fails, TeXShop falls back on the Search synchronization method. For users who would like to experiment with synctex by itself, there is a hidden preference to turn off this fallback behavior:</p>
-<dl>
-<dd>
-					defaults write TeXShop SyncTeXOnly YES
-			</dl>
-<p> By default, this preference has the value NO.</p>
+
 
 
 		</div>

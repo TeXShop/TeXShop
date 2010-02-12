@@ -701,6 +701,7 @@
 
 - (void)zoomIn: sender
 {
+	
 	int	scale;
 	
 	scale = [myScale intValue];

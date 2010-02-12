@@ -7,6 +7,931 @@
 	<key>submenu</key>
 	<array>
 		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Script that improves on the TeXShop default macro called "Program",
+-- i.e., %!TEX TS-program =  #INS#
+-- by letting the user choose which engine she/he wants to use,
+-- deleting the first old (if any) engine command,
+-- inserting the command at the beginning of the document, and
+-- restoring the original selection.
+-- It assumes that engines are installed in ~/Library/TeXShop/Engines/
+-- Ramon Figueroa-Centeno (March 10, 2009)
+-- http://www2.hawaii.edu/~ramonf
+
+-- If you wish you can change this so that your favorite engine is the default choice
+property default_engine : "pdflatex"
+
+tell application "TeXShop"
+	
+	-- Get a sorted list of the default and installed TeXShop engines
+	tell me
+		-- Shell script to get the names of the engines installed in ~/Library/TeXShop/Engines/
+		set command to "ls ~/Library/TeXShop/Engines/ | egrep -e '^.*\\.engine$' | sed 's/\\.engine//'"
+		set engines to paragraphs of (do shell script command)
+		set engines to sort({"tex", "latex", "pdflatex", "pdftex", "personaltex", "personallatex", "metapost", "context", "metafont"} &amp; engines)
+	end tell
+	
+	-- Figure out which is the index of the "default_engine" in the "engines" list
+	if default_engine is in engines then
+		repeat with i from 1 to count of engines
+			if item i of engines is default_engine then
+				exit repeat
+			end if
+		end repeat
+	else
+		-- if the "default_engine" is not among the engines then choose the alphabetically first available engine name
+		set i to 1
+	end if
+	
+	set the engine to choose from list engines with prompt "Pick an engine:" default items item i of engines OK button name "OK" cancel button name "Cancel" without multiple selections allowed and empty selection allowed
+	if the result is false then
+		return
+	end if
+	
+	-- The linefeed character
+	set linefeed to ASCII character 10
+	
+	-- The whole text of the document
+	set whole_document to (the text of the front document) as string
+	
+	-- The offset of the selection
+	set selection_offset to offset of the selection of the front document
+	
+	-- The length of the selection
+	set selection_length to length of the selection of the front document
+	
+	-- Find and delete a previous engine specification
+	-- (it will not handle more than one specification)
+	set searchString1 to "%!TEX TS-program ="
+	set search1 to (search for searchString1 starting from 0) of front document
+	set searchString2 to "% !TEX TS-program ="
+	set search2 to (search for searchString2 starting from 0) of front document
+	
+	if search1 * search2 &gt; 0 then
+		if search1 &lt; search2 then
+			set first_occurrence to search1
+		else
+			set first_occurrence to search2
+		end if
+	else if search1 &gt; 0 then
+		set first_occurrence to search1
+	else
+		set first_occurrence to search2
+	end if
+	if first_occurrence &gt; 0 then
+		set offset of selection of front document to (first_occurrence - 1)
+		
+		-- Get the offset of the line feed (or eof) ending the line containing "%!TEX TS-program ="
+		-- (here we use a "try" statement to avoid  needing to have a saved file
+		-- from which we could get the "eof") 
+		set i to first_occurrence
+		set end_of_file to false
+		set char to character i of whole_document
+		repeat while char is not in {linefeed, return}
+			set i to i + 1
+			try
+				set char to character i of whole_document
+			on error
+				set end_of_file to true
+				exit repeat
+			end try
+		end repeat
+		
+		-- Detect if the line starts with "% !TEX TS-program =" and it is not the last line,
+		-- if so we will delete not only "% !TEX TS-program =..." but the whole line
+		if ((first_occurrence = 1) or (character (first_occurrence - 1) of whole_document is in {linefeed, return})) and not end_of_file then
+			set i to i + 1
+		end if
+		
+		set length of selection of front document to (i - first_occurrence)
+		-- Delete the line
+		set the content of the selection of the front document to ""
+		
+		-- We will try to restore the selection the user had before invoking this script
+		-- so we compute what the new selection_offset should be.
+		if (selection_offset ≥ first_occurrence - 1) and (selection_offset &lt; i - 1) then
+			set selection_offset to first_occurrence - 1
+			set selection_length to 0
+		else if selection_offset ≥ i - 1 then
+			set selection_offset to selection_offset - (i - first_occurrence)
+		end if
+	end if
+	
+	set program to "% !TEX TS-program = " &amp; engine &amp; linefeed
+	set selection_offset to selection_offset + (count of program)
+	
+	-- Insert Engine
+	set offset of the selection of the front document to 0
+	set length of the selection of the front document to 0
+	set content of the selection of the front document to program
+	
+	-- Restore the offset of the selection
+	set offset of the selection of the front document to selection_offset
+	
+	-- Restore the length of the selection
+	set length of the selection of the front document to selection_length
+	
+end tell
+
+(* 
+http://www.macosxhints.com/article.php?story=20040513173003941
+Sort lists in AppleScript using the Unix sort command
+Mon, May 17 '04 at 09:13AM • from: erickaterman *)
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10} -- always a linefeed
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort</string>
+			<key>name</key>
+			<string>Program</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Script that improves on the TeXShop default macro called "Encoding",
+-- i.e., %!TEX encoding =  #INS#
+-- by letting the user choose which encoding she/he wants to use,
+-- deleting the first old (if any) encoding command,
+-- inserting the command at the beginning of the document, and
+-- restoring the original selection.
+-- Ramon Figueroa-Centeno (March 10, 2009)
+-- http://www2.hawaii.edu/~ramonf
+
+-- If you wish you can change this so that your favorite encoding is the default choice
+property default_encoding : "MacOSRoman"
+
+tell application "TeXShop"
+	
+	-- Get a sorted list of the TeXShop encodings
+	tell me
+		set encodings to {"MacOSRoman", "IsoLatin", "IsoLatin2", "IsoLatin5", "IsoLatin9", "IsoLatinGreek", "ITF-8 Unicode", "Standard Unicode", "MacJapanese", "DOSJapanese", "SJIS_X0213", "EUC_JP", "JISJapanese", "MacKorean", "Mac Central European Roman", "WindowsCentralEurRoman", "Mac Cyrillic", "DOS Cyrillic", "DOS Russian", "Windows Cyrillic", "KOI8_R", "Mac Chinese Traditional", "Mac Chinese Simplified", "DOS Chinese Traditional", "DOS Chinese Simplified", "GBK", "GB 2312", "GB 18030"}
+		set encodings to sort(encodings)
+	end tell
+	
+	-- Figure out which is the index of the "default_encoding" in the "encodings" list
+	if default_encoding is in encodings then
+		repeat with i from 1 to count of encodings
+			if item i of encodings is default_encoding then
+				exit repeat
+			end if
+		end repeat
+	else
+		-- if the "default_encoding" is not among the encodings then choose the alphabetically first available encoding name
+		set i to 1
+	end if
+	
+	set the encoding to choose from list encodings with prompt "Pick an encoding:" default items item i of encodings OK button name "OK" cancel button name "Cancel" without multiple selections allowed and empty selection allowed
+	if the result is false then
+		return
+	end if
+	
+	-- The linefeed character
+	set linefeed to ASCII character 10
+	
+	-- The whole text of the document
+	set whole_document to (the text of the front document) as string
+	
+	-- The offset of the selection
+	set selection_offset to offset of the selection of the front document
+	
+	-- The length of the selection
+	set selection_length to length of the selection of the front document
+	
+	-- Find and delete a previous encoding specification
+	-- (it will not handle more than one specification)
+	set searchString1 to "%!TEX encoding ="
+	set search1 to (search for searchString1 starting from 0) of front document
+	set searchString2 to "% !TEX encoding ="
+	set search2 to (search for searchString2 starting from 0) of front document
+	
+	if search1 * search2 &gt; 0 then
+		if search1 &lt; search2 then
+			set first_occurrence to search1
+		else
+			set first_occurrence to search2
+		end if
+	else if search1 &gt; 0 then
+		set first_occurrence to search1
+	else
+		set first_occurrence to search2
+	end if
+	if first_occurrence &gt; 0 then
+		set offset of selection of front document to (first_occurrence - 1)
+		
+		-- Get the offset of the line feed (or eof) ending the line containing "% !TEX encoding ="
+		-- (here we use a "try" statement to avoid  needing to have a saved file
+		-- from which we could get the "eof") 
+		set i to first_occurrence
+		set end_of_file to false
+		set char to character i of whole_document
+		repeat while char is not in {linefeed, return}
+			set i to i + 1
+			try
+				set char to character i of whole_document
+			on error
+				set end_of_file to true
+				exit repeat
+			end try
+		end repeat
+		
+		-- Detect if the line starts with "% !TEX encoding =" and it is not the last line,
+		-- if so we will delete not only "% !TEX encoding =..." but the whole line
+		if ((first_occurrence = 1) or (character (first_occurrence - 1) of whole_document is in {linefeed, return})) and not end_of_file then
+			set i to i + 1
+		end if
+		
+		set length of selection of front document to (i - first_occurrence)
+		-- Delete the line
+		set the content of the selection of the front document to ""
+		
+		-- We will try to restore the selection the user had before invoking this script
+		-- so we compute what the new selection_offset should be.
+		if (selection_offset ≥ first_occurrence - 1) and (selection_offset &lt; i - 1) then
+			set selection_offset to first_occurrence - 1
+			set selection_length to 0
+		else if selection_offset ≥ i - 1 then
+			set selection_offset to selection_offset - (i - first_occurrence)
+		end if
+	end if
+	
+	set program to "% !TEX encoding = " &amp; encoding &amp; linefeed
+	set selection_offset to selection_offset + (count of program)
+	
+	-- Insert encoding
+	set offset of the selection of the front document to 0
+	set length of the selection of the front document to 0
+	set content of the selection of the front document to program
+	
+	-- Restore the offset of the selection
+	set offset of the selection of the front document to selection_offset
+	
+	-- Restore the length of the selection
+	set length of the selection of the front document to selection_length
+	
+end tell
+
+(* 
+http://www.macosxhints.com/article.php?story=20040513173003941
+Sort lists in AppleScript using the Unix sort command
+Mon, May 17 '04 at 09:13AM • from: erickaterman *)
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10} -- always a linefeed
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort</string>
+			<key>name</key>
+			<string>Encoding</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Script that improves on the TeXShop default macro called "Root",
+-- i.e., %!TEX root =  #INS#
+-- by letting the user choose which root document she/he wants to use
+-- (as a relative or absolute path),
+-- deleting the first old (if any) root command,
+-- inserting the command at the beginning of the document, and
+-- restoring the original selection.
+-- Ramon Figueroa-Centeno (March 10, 2009)
+-- http://www2.hawaii.edu/~ramonf
+
+-- What is the default choice: relative or not relative (i.e. absolute)
+property relative : true
+
+tell application "TeXShop"
+	
+	try
+		path of the front document
+		set TeX_path to the result
+	on error -- there is no front document  or it has not ever been saved
+		beep
+		display dialog "there is no front document" &amp; return &amp; "or it has not been saved ever!" buttons {"Ok"} default button "Ok" with icon caution giving up after 5
+		return
+	end try
+	
+	set TeX_path to do shell script "dirname " &amp; quoted form of TeX_path
+	
+	-- Get the absolute path to the Root document
+	try
+		set Root_abs_path to POSIX path of (choose file with prompt "Pick the Root document:")
+	on error
+		return
+	end try
+	
+	-- Use perl to convert the absolute path to the Root document 
+	-- to a relative path to it.
+	set command to "perl -e 'use File::Spec; "
+	set command to command &amp; "$rel_path = File::Spec-&gt;abs2rel"
+	set command to command &amp; "( \"" &amp; Root_abs_path &amp; "\","
+	set command to command &amp; "\"" &amp; TeX_path &amp; "\" ) ; "
+	set command to command &amp; "print $rel_path'"
+	tell me to set Root_rel_path to do shell script command
+	
+	if relative then
+		set i to 1
+	else
+		set i to 2
+	end if
+	
+	set roots to {Root_rel_path, Root_abs_path}
+	set the root to choose from list roots with prompt "Choose between a relative and absolute path:" default items item i of roots OK button name "OK" cancel button name "Cancel" without multiple selections allowed and empty selection allowed
+	if the result is false then
+		return
+	end if
+	
+	-- The linefeed character
+	set linefeed to ASCII character 10
+	
+	-- The whole text of the document
+	set whole_document to (the text of the front document) as string
+	
+	-- The offset of the selection
+	set selection_offset to offset of the selection of the front document
+	
+	-- The length of the selection
+	set selection_length to length of the selection of the front document
+	
+	-- Find and delete a previous encoding specification
+	-- (it will not handle more than one specification)
+	set searchString1 to "%!TEX root ="
+	set search1 to (search for searchString1 starting from 0) of front document
+	set searchString2 to "% !TEX root ="
+	set search2 to (search for searchString2 starting from 0) of front document
+	
+	if search1 * search2 &gt; 0 then
+		if search1 &lt; search2 then
+			set first_occurrence to search1
+		else
+			set first_occurrence to search2
+		end if
+	else if search1 &gt; 0 then
+		set first_occurrence to search1
+	else
+		set first_occurrence to search2
+	end if
+	
+	if first_occurrence &gt; 0 then
+		set offset of selection of front document to (first_occurrence - 1)
+		
+		-- Get the offset of the line feed (or eof) ending the line containing "%!TEX root ="
+		-- (here we use a "try" statement to avoid  needing to have a saved file
+		-- from which we could get the "eof") 
+		set i to first_occurrence
+		set end_of_file to false
+		set char to character i of whole_document
+		repeat while char is not in {linefeed, return}
+			set i to i + 1
+			try
+				set char to character i of whole_document
+			on error
+				set end_of_file to true
+				exit repeat
+			end try
+		end repeat
+		
+		-- Detect if the line starts with "% !TEX root =" and it is not the last line,
+		-- if so we will delete not only "% !TEX root =..." but the whole line
+		if ((first_occurrence = 1) or (character (first_occurrence - 1) of whole_document is in {linefeed, return})) and not end_of_file then
+			set i to i + 1
+		end if
+		
+		set length of selection of front document to (i - first_occurrence)
+		-- Delete the line
+		set the content of the selection of the front document to ""
+		
+		-- We restore the selection the user had before invoking this script
+		-- so we compute what the new selection_offset should be.
+		if (selection_offset ≥ first_occurrence - 1) and (selection_offset &lt; i - 1) then
+			set selection_offset to first_occurrence - 1
+			set selection_length to 0
+		else if selection_offset ≥ i - 1 then
+			set selection_offset to selection_offset - (i - first_occurrence)
+		end if
+	end if
+	
+	set program to "% !TEX root = " &amp; root &amp; linefeed
+	set selection_offset to selection_offset + (count of program)
+	
+	-- Insert encoding
+	set offset of the selection of the front document to 0
+	set length of the selection of the front document to 0
+	set content of the selection of the front document to program
+	
+	-- Restore the offset of the selection
+	set offset of the selection of the front document to selection_offset
+	
+	-- Restore the length of the selection
+	set length of the selection of the front document to selection_length
+end tell</string>
+			<key>name</key>
+			<string>Root</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>% !TEX root =  #INS#</string>
+			<key>name</key>
+			<string>Root (Short Version)</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Separator</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+-- Script to insert a begin/end block
+-- Ramon Figueroa-Centeno March 10, 2009
+
+tell application "TeXShop"
+	
+	-- The linefeed character.
+	set linefeed to ASCII character 10
+	
+	set TeX_delimiters to {linefeed, return, tab} &amp; characters of ¬
+		" {}[](),:;.\\|/?!&lt;&gt;`'\"@#$%^~&amp;-+=" as list
+	
+	set the front_document to the front document
+	-- set the front_document to document #DOCUMENTNAME#
+	
+	-- The whole text of the document
+	set whole_document to (the text of the front_document) as string
+	
+	-- The offset of the selection
+	set selection_offset to offset of the selection of the front_document
+	
+	repeat until (selection_offset = 0) or (character selection_offset of ¬
+		the whole_document is in TeX_delimiters)
+		set selection_offset to selection_offset - 1
+	end repeat
+	set the offset of the selection of the front_document to selection_offset
+	
+	set selection_length to 0
+	
+	try
+		set next_character to character (selection_offset + selection_length + 1) of ¬
+			the whole_document
+		repeat until (next_character is in TeX_delimiters)
+			set selection_length to selection_length + 1
+			try
+				set next_character to character (selection_offset + selection_length + 1) of ¬
+					the whole_document
+			on error
+				-- reached the end of the document
+				exit repeat
+			end try
+		end repeat
+	end try
+	set the length of the selection of the front_document to selection_length
+	
+	-- The selection is empty, so stop
+	if selection_length = 0 then
+		beep
+		return
+	end if
+	
+	set environment_name to the content of the selection of the front_document
+	set begin_environment to "\\begin{" &amp; environment_name &amp; "}"
+	set end_environment to "\\end{" &amp; environment_name &amp; "}"
+	set environment to begin_environment &amp; linefeed &amp; " " &amp; linefeed &amp; end_environment
+	set insertion_point to (count of begin_environment) + selection_offset + 3
+	
+	-- determine if we are the beginning of a line
+	set at_the_beginning to ((selection_offset = 0) or (character selection_offset of ¬
+		the whole_document is in {linefeed, return}))
+	
+	-- determine if we are at the end of a line
+	-- (since we do not know if we are at the end of the document
+	-- we use a "try" to avoid having to count the characters of the document)
+	set at_the_end to false
+	try
+		if character (selection_offset + selection_length + 1) of ¬
+			the whole_document is in {linefeed, return} then
+			set at_the_end to true
+		end if
+	on error
+		set at_the_end to true
+	end try
+	
+	if at_the_beginning and at_the_end then
+		-- say "at the beginning and the end"
+		set the content of the selection of the front_document to ¬
+			environment
+		set the offset of the selection of the front_document to ¬
+			insertion_point - 1
+	else if at_the_beginning then
+		-- say "at the beginning"
+		set the content of the selection of the front_document to ¬
+			environment &amp; linefeed
+		set the offset of the selection of the front_document to ¬
+			insertion_point
+	else if at_the_end then
+		-- say "at the end"
+		set the content of the selection of the front_document to ¬
+			linefeed &amp; environment
+		set the offset of the selection of the front_document to ¬
+			insertion_point
+	else
+		-- say "at the middle"
+		set the content of the selection of the front_document to ¬
+			linefeed &amp; environment &amp; linefeed
+		set the offset of the selection of the front_document to ¬
+			insertion_point
+	end if
+end tell</string>
+			<key>name</key>
+			<string>Insert Begin/End</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+-- Script to close a begin/end block
+-- Ramon Figueroa-Centeno March 10, 2009
+
+tell application "TeXShop"
+	
+	-- The linefeed character.
+	set linefeed to ASCII character 10
+	
+	set the front_document to the front document
+	-- set the front_document to document #DOCUMENTNAME#
+	
+	-- The whole text of the document
+	set whole_document to (the text of the front_document) as string
+	
+	-- If the front document is not saved dump its 
+	-- content to a temporary file and use that
+	if the front_document is modified then
+		tell me
+			set texpath to do shell script "mktemp /tmp/XXXXXXXX"
+			set TMP to POSIX file texpath
+			open for access TMP with write permission
+			write whole_document to TMP
+			close access TMP
+		end tell
+	else
+		set texpath to the path of the front_document
+		-- set texpath to the #FILEPATH#
+	end if
+	
+	-- The offset of the selection
+	set selection_offset to offset of the selection of the front_document
+	
+	-- Move the insertion point to the beginning of the selected word.
+	-- Unless we are at the end of a line.
+	-- If one removes " " (space) from the list  the insertion point moves to the
+	-- beginning of the line. 
+	
+	try
+		if the character (selection_offset + 1) of the whole_document is not in {linefeed, return} then
+			repeat until (selection_offset = 0) or ¬
+				(character selection_offset of the whole_document is in {linefeed, return, " "})
+				set selection_offset to selection_offset - 1
+			end repeat
+			set the offset of the selection of the front_document to selection_offset
+		end if
+	on error
+		-- It appears that we are at the end of the file!
+	end try
+	
+	-- Stop if the insertion point is at the beginning of the document
+	if selection_offset = 0 then
+		return
+	end if
+	
+	-- The document up to the selection
+	set partial_document to ¬
+		(characters 1 thru (selection_offset) of the whole_document) as string
+	
+	-- Let selection_line_number be the number of the line of the start of the current selection
+	set selection_line_number to count paragraphs of the partial_document
+	
+	set report to "selection line: " &amp; selection_line_number &amp; return
+	
+	-- The total number of lines
+	set total_lines to count paragraphs of the whole_document
+	
+	set report to report &amp; "total # of lines: " &amp; total_lines &amp; return
+	
+	-- The "command" is a shell script that does this: 
+	-- delete all comments:
+	-- sed 's/%.*$//'  (or sed '/%.*$/ s/%.*$//' for speed)
+	set command to " | sed '/%.*$/ s/%.*$//'"
+	-- replace all "\" with a linefeed character:
+	-- tr -s "\\" "\n" 
+	set command to command &amp; " | tr -s \"\\\\\" \"\\n\""
+	-- delete everything after and including the first "}":
+	-- sed 's/}.*//'  (or sed '/}.*/ s/}.*//'  for speed)
+	set command to command &amp; " | sed '/}.*/ s/}.*//'"
+	-- keep only the lines that start with "begin{" or "end{":
+	-- egrep -e '^begin{|^end{' 
+	set command to command &amp; " | egrep -e '^begin{|^end{'"
+	-- replace all "{" by spaces:
+	-- tr -s "{" " " 
+	set command to command &amp; " | tr -s \"{\" \" \""
+	
+	-- shell command to convert returns (\r) to line feeds (\n)
+	set mac2unix to "tr \\\\r \\\\n"
+	
+	--select insertion point before the selection
+	set length of the selection of the front_document to 0
+	
+	-- Divide the line of the selection into two chunks
+	-- one before and another after the beginning of the selection
+	try
+		set firstLineChunk to the last paragraph of the partial_document
+	on error
+		set firstLineChunk to ""
+	end try
+	set the_line to paragraph selection_line_number of the whole_document
+	try
+		set secondLineChunk to characters ((count of the firstLineChunk) + 1) ¬
+			thru (count of the_line) of the_line as string
+	on error
+		set secondLineChunk to ""
+	end try
+	
+	-- Set list_1 to a list that contains strings, each with two words
+	-- the first word is "begin" or "end" and the second is the 
+	-- name of the corresponding environment
+	
+	set list_1 to {}
+	
+	set command_2 to ¬
+		mac2unix &amp; " &lt; " &amp; (quoted form of texpath) ¬
+		&amp; " | head -n " &amp; (selection_line_number - 1) &amp; command
+	tell me to set parsed to do shell script command_2
+	if parsed is not "" then
+		set list_1 to list_1 &amp; (paragraphs of parsed)
+	end if
+	
+	set command_2 to ¬
+		"echo " &amp; (quoted form of firstLineChunk) &amp; " | " &amp; mac2unix &amp; command
+	tell me to set parsed to do shell script command_2
+	if parsed is not "" then
+		set list_1 to list_1 &amp; (paragraphs of parsed)
+	end if
+	
+	-- If list_1 is empty then there is no environment to close
+	if (count of list_1) = 0 then
+		beep
+		say "There are no environments before this point."
+		--display dialog "There are no environments before this point." buttons {"OK"} default button 1 with icon caution
+		return
+	end if
+	
+	set flips to 0
+	repeat with i from (count list_1) to 1 by -1
+		if word 1 of item i of list_1 is "end" then
+			set flips to flips + 1
+		else
+			set flips to flips - 1
+		end if
+		
+		if flips = -1 -- The next line does this:			-- The next line does this:
+			-- but handles starred commands correctly
+			tell me to  to set environment_name to do shell script ¬
+				"echo \"" &amp; (item i of list_1) &amp; "\" |  sed '/.* / s/.* //'"
+			exit repeat
+		end if
+		
+	end repeat
+	if not (flips = -1) then
+		beep
+		say "I did not find an open environment!"
+		--display dialog "I did not find an open environment!" buttons {"OK"} default button 1 with icon caution
+		return
+	end if
+	
+	-- Now we check to see if the environment we are in is already closed
+	
+	set list_2 to {}
+	
+	set command_2 to ¬
+		"echo " &amp; (quoted form of secondLineChunk) &amp; " | " &amp; mac2unix &amp; command
+	tell me to set parsed to do shell script command_2
+	if parsed is not "" then
+		set list_2 to paragraphs of parsed
+	end if
+	
+	set command_2 to ¬
+		mac2unix &amp; " &lt; " &amp; (quoted form of texpath) ¬
+		&amp; " | tail -n +" &amp; (selection_line_number + 1) &amp; command
+	tell me to set parsed to do shell script command_2
+	if parsed is not "" then
+		set list_2 to list_2 &amp; (paragraphs of parsed)
+	end if
+	
+	set close_environment to true
+	
+	if (count of list_2) &gt; 0 then
+		set flips to 0
+		repeat with i from 1 to (count list_2)
+			if word 1 of item i of list_2 is "begin" then
+				set flips to flips + 1
+			else
+				set flips to flips - 1
+			end if
+			if flips = -1 then
+				-- The next line does this:
+				-- set environment_name_2 to word 2 of item i of list_2
+				-- but handles starred commands correctly
+				set environment_name_2 to do shell script ¬
+					"echo \"" &amp; (item i of list_2) &amp; "\" |  sed '/.* / s/.* //'"
+				if environment_name_2 = environment_name then
+					beep
+					activate
+					display dialog "The environment \"" &amp; environment_name ¬
+						&amp; "\"" &amp; return &amp; "you are working on is already closed." &amp; return ¬
+						&amp; "Do you still want to close it?" buttons {"No", "Yes"} ¬
+						default button "No" with icon note
+					set close_environment to (button returned of the result is not "No")
+				end if
+				exit repeat
+			end if
+		end repeat
+	end if
+	
+	-- Close the environment
+	if close_environment then
+		if the_line = "" then
+			set the content of the selection of the front_document to ¬
+				"\\end{" &amp; environment_name &amp; "}"
+		else
+			-- If we are at the beginning of a line then close the environment
+			-- and then enter a return. Otherwise, enter a return before doing so.
+			if (character selection_offset of the whole_document is in {linefeed, return}) then
+				set the content of the selection of the front_document to ¬
+					"\\end{" &amp; environment_name &amp; "}" &amp; linefeed
+			else
+				set the content of the selection of the front_document to ¬
+					linefeed &amp; "\\end{" &amp; environment_name &amp; "}" &amp; linefeed
+			end if
+		end if
+	end if
+	
+	-- If a temporary file was created delete it.
+	try
+		do shell script "rm " &amp; POSIX path of TMP
+	end try
+	
+end tell</string>
+			<key>name</key>
+			<string>Close Begin/End</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript
+
+-- "INSERT REFERENCE"
+-- This script searches through the current file (or within every file in the current folder) for \label{...} commands, then pops up a list for you to choose from which you may insert one.
+--The inserted reference label is wrapped in a (optional) customisable LaTeX command.
+-- It will cut down the list to include only those entries that contain the current selection. So if you type "sec" and select it, then run this script, you will get a choice of only, e.g., "sec:intro","sec:conc","fig:secunia", but not other labels in your document e.g., "cha:monkey","equ:maxwell",etc. 
+
+-- v2004-08-24
+
+
+-- CUSTOMISE TO YOUR LIKING:
+
+property ref_command : "ref" -- or "vref" or "fref" etc... N.B. no backslash!
+-- Inserts e.g. "\ref{fig:ladle}" or "\vref{fig:ladle}" or ... based on this property
+-- Put "" to insert the plain label: e.g. "fig:ladle" 
+
+property only_scan_current_file : true
+-- If false, the script will search through every .tex file in the folder containing the current file.
+-- This is useful for projects with other \include{} -ed files in the same folder.
+-- Otherwise, it will only look in the current file.
+
+property sort_output : false
+-- If false, displays labels in the order they're found in the document.
+-- Otherwise, displays them in alphabetical order.
+
+property save_before_run : true
+-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
+
+--THE SCRIPT:
+
+
+if save_before_run then
+	tell application "TeXShop" to save the front document
+end if
+
+tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
+
+if only_scan_current_file then
+	set texfiles_tosearch to the quoted form of the texpath -- search the current file
+else
+	set texloc to POSIX file texpath -- Convert to applescript format: "path:to:docu.tex"
+	tell application "Finder" to set texfolder to the container of (texloc as alias) -- Get the folder: "path:to:"
+	set texdir to the POSIX path of (texfolder as alias) -- Convert to UNIX path: "/path/to"
+	set texfiles_tosearch to the quoted form of texdir &amp; "*.tex" -- search all .tex files: "/path/to/*.tex"
+end if
+
+tell application "TeXShop"
+	
+	set current_selection to the content of the selection of the front document
+	
+	-- DO SHELL SCRIPT COMPONENTS:
+	--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
+	set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
+	-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
+	set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
+	set filter_selection to " | grep " &amp; quoted form of the current_selection
+	if sort_output then
+		set sort to " | sort -u"
+	else
+		set sort to ""
+	end if
+	
+	-- glue the shell scripts together:
+	set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+	
+	try
+		-- filter choices with the current selection:
+		set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
+	on error
+		-- If it fails (e.g., nothing found) ask to diplay all labels:
+		display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+		if the button returned of the result is "View all" then
+			set choose_labels to every paragraph of (do shell script get_labels_shell_script)
+		else
+			return -- exit script
+		end if
+	end try
+	
+	-- In case the document doesn't contain any labels:
+	if choose_labels = {""} then
+		display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
+		return
+	end if
+	
+	set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
+	if label_insert ≠ false then
+		if ref_command = "" then
+			set ref_insert to label_insert
+		else
+			set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
+		end if
+		set the selection of the front document to ref_insert as string
+	end if
+	
+end tell</string>
+			<key>key</key>
+			<string>R+ShiftKey</string>
+			<key>name</key>
+			<string>Insert reference</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>-- Applescript direct
+
+-- OPEN QUICKLY...
+-- The idea for this script was stolen from iTeXMac.
+-- This script pops up a dialog box with a list of  files in the current directory.
+-- The selection (multiple allowed) is opened.
+
+-- CUSTOMISE TO YOUR LIKING:
+property extensions_to_open : {"tex", "sty", "pdf"}
+
+
+-- THE SCRIPT:
+
+--get the path to the current tex file - "/path/to/docu.tex":
+tell application "TeXShop" to set texpath to the path of the front document
+
+-- Convert to applescript format - "path:to:docu.tex"
+set texloc to POSIX file texpath
+-- Get the folder it's in - "path:to:"
+tell application "Finder" to set texfolder to the container of (texloc as alias)
+-- Get the path to the folder - "/path/to/"
+set texdir to the POSIX path of (texfolder as alias)
+-- Get a list of all the filenames to open:
+set texfiles to the name of every file of texfolder whose name extension is in extensions_to_open
+
+tell application "TeXShop" to set openfiles to choose from list texfiles with prompt "Which file(s) do you wish to open?" with multiple selections allowed
+if openfiles is not false then
+	repeat with this_filename in openfiles
+		set file_to_open to POSIX file (texdir &amp; this_filename)
+		tell application "TeXShop" to open file_to_open
+	end repeat
+end if</string>
+			<key>key</key>
+			<string>O+ShiftKey</string>
+			<key>name</key>
+			<string>Open quickly…</string>
+		</dict>
+		<dict>
 			<key>name</key>
 			<string>Applescript</string>
 			<key>submenu</key>
@@ -617,147 +1542,6 @@ end tell
 			</array>
 		</dict>
 		<dict>
-			<key>content</key>
-			<string>--Applescript
-
--- "INSERT REFERENCE"
--- This script searches through the current file (or within every file in the current folder) for \label{...} commands, then pops up a list for you to choose from which you may insert one.
---The inserted reference label is wrapped in a (optional) customisable LaTeX command.
--- It will cut down the list to include only those entries that contain the current selection. So if you type "sec" and select it, then run this script, you will get a choice of only, e.g., "sec:intro","sec:conc","fig:secunia", but not other labels in your document e.g., "cha:monkey","equ:maxwell",etc. 
-
--- v2004-08-24
-
-
--- CUSTOMISE TO YOUR LIKING:
-
-property ref_command : "ref" -- or "vref" or "fref" etc... N.B. no backslash!
--- Inserts e.g. "\ref{fig:ladle}" or "\vref{fig:ladle}" or ... based on this property
--- Put "" to insert the plain label: e.g. "fig:ladle" 
-
-property only_scan_current_file : true
--- If false, the script will search through every .tex file in the folder containing the current file.
--- This is useful for projects with other \include{} -ed files in the same folder.
--- Otherwise, it will only look in the current file.
-
-property sort_output : false
--- If false, displays labels in the order they're found in the document.
--- Otherwise, displays them in alphabetical order.
-
-property save_before_run : true
--- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
-
---THE SCRIPT:
-
-
-if save_before_run then
-	tell application "TeXShop" to save the front document
-end if
-
-tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
-
-if only_scan_current_file then
-	set texfiles_tosearch to the quoted form of the texpath -- search the current file
-else
-	set texloc to POSIX file texpath -- Convert to applescript format: "path:to:docu.tex"
-	tell application "Finder" to set texfolder to the container of (texloc as alias) -- Get the folder: "path:to:"
-	set texdir to the POSIX path of (texfolder as alias) -- Convert to UNIX path: "/path/to"
-	set texfiles_tosearch to the quoted form of texdir &amp; "*.tex" -- search all .tex files: "/path/to/*.tex"
-end if
-
-tell application "TeXShop"
-	
-	set current_selection to the content of the selection of the front document
-	
-	-- DO SHELL SCRIPT COMPONENTS:
-	--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
-	set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
-	-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
-	set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
-	set filter_selection to " | grep " &amp; quoted form of the current_selection
-	if sort_output then
-		set sort to " | sort -u"
-	else
-		set sort to ""
-	end if
-	
-	-- glue the shell scripts together:
-	set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
-	
-	try
-		-- filter choices with the current selection:
-		set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
-	on error
-		-- If it fails (e.g., nothing found) ask to diplay all labels:
-		display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
-		if the button returned of the result is "View all" then
-			set choose_labels to every paragraph of (do shell script get_labels_shell_script)
-		else
-			return -- exit script
-		end if
-	end try
-	
-	-- In case the document doesn't contain any labels:
-	if choose_labels = {""} then
-		display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
-		return
-	end if
-	
-	set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
-	if label_insert ≠ false then
-		if ref_command = "" then
-			set ref_insert to label_insert
-		else
-			set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
-		end if
-		set the selection of the front document to ref_insert as string
-	end if
-	
-end tell</string>
-			<key>key</key>
-			<string>R+ShiftKey</string>
-			<key>name</key>
-			<string>Insert reference</string>
-		</dict>
-		<dict>
-			<key>content</key>
-			<string>-- Applescript direct
-
--- OPEN QUICKLY...
--- The idea for this script was stolen from iTeXMac.
--- This script pops up a dialog box with a list of  files in the current directory.
--- The selection (multiple allowed) is opened.
-
--- CUSTOMISE TO YOUR LIKING:
-property extensions_to_open : {"tex", "sty", "pdf"}
-
-
--- THE SCRIPT:
-
---get the path to the current tex file - "/path/to/docu.tex":
-tell application "TeXShop" to set texpath to the path of the front document
-
--- Convert to applescript format - "path:to:docu.tex"
-set texloc to POSIX file texpath
--- Get the folder it's in - "path:to:"
-tell application "Finder" to set texfolder to the container of (texloc as alias)
--- Get the path to the folder - "/path/to/"
-set texdir to the POSIX path of (texfolder as alias)
--- Get a list of all the filenames to open:
-set texfiles to the name of every file of texfolder whose name extension is in extensions_to_open
-
-tell application "TeXShop" to set openfiles to choose from list texfiles with prompt "Which file(s) do you wish to open?" with multiple selections allowed
-if openfiles is not false then
-	repeat with this_filename in openfiles
-		set file_to_open to POSIX file (texdir &amp; this_filename)
-		tell application "TeXShop" to open file_to_open
-	end repeat
-end if</string>
-			<key>key</key>
-			<string>O+ShiftKey</string>
-			<key>name</key>
-			<string>Open quickly…</string>
-		</dict>
-		<dict>
 			<key>name</key>
 			<string>Claus Gerhardt Macros</string>
 			<key>submenu</key>
@@ -1280,303 +2064,6 @@ end tell
 					<string>latex-makeindex-mpost</string>
 				</dict>
 			</array>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Separator</string>
-		</dict>
-		<dict>
-			<key>content</key>
-			<string>\begin{#SEL#}
-#INS#
-\end{#SEL#}</string>
-			<key>name</key>
-			<string>Begin/End</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Encoding</string>
-			<key>submenu</key>
-			<array>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = MacOSRoman
-#INS#</string>
-					<key>name</key>
-					<string>MacOSRoman</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = IsoLatin
-#INS#</string>
-					<key>name</key>
-					<string>IsoLatin</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = IsoLatin2
-#INS#</string>
-					<key>name</key>
-					<string>IsoLatin2</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = IsoLatin5
-#INS#</string>
-					<key>name</key>
-					<string>IsoLatin5</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = IsoLatin9
-#INS#</string>
-					<key>name</key>
-					<string>IsoLatin9</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = IsoLatinGreek
-#INS#</string>
-					<key>name</key>
-					<string>IsoLatinGreek</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Mac Central European Roman
-#INS#</string>
-					<key>name</key>
-					<string>Mac Central European Roman</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = MacJapanese
-#INS#</string>
-					<key>name</key>
-					<string>MacJapanese</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = DOSJapanese
-#INS#</string>
-					<key>name</key>
-					<string>DOSJapanese</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = SJIS_X0213
-#INS#</string>
-					<key>name</key>
-					<string>SJIS_X0213</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = EUC_JP
-#INS#</string>
-					<key>name</key>
-					<string>EUC_JP</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = JISJapanese
-#INS#</string>
-					<key>name</key>
-					<string>JISJapanese</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = MacKorean
-#INS#</string>
-					<key>name</key>
-					<string>MacKorean</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = UTF-8 Unicode
-#INS#</string>
-					<key>name</key>
-					<string>UTF-8 Unicode</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Standard Unicode
-#INS#</string>
-					<key>name</key>
-					<string>Standard Unicode</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Mac Cyrillic
-#INS#</string>
-					<key>name</key>
-					<string>Mac Cyrillic</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = DOS Cyrillic
-#INS#</string>
-					<key>name</key>
-					<string>DOS Cyrillic</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = DOS Russian
-#INS#</string>
-					<key>name</key>
-					<string>DOS Russian</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = WindowsCentralEurRoman
-#INS#</string>
-					<key>name</key>
-					<string>WindowsCentralEurRoman</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Windows Cyrillic
-#INS#</string>
-					<key>name</key>
-					<string>Windows Cyrillic</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = KOI8_R
-#INS#</string>
-					<key>name</key>
-					<string>KOI8_R</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Mac Chinese Traditional
-#INS#</string>
-					<key>name</key>
-					<string>Mac Chinese Traditional</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = Mac Chinese Simplified
-#INS#</string>
-					<key>name</key>
-					<string>Mac Chinese Simplified</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = DOS Chinese Traditional
-#INS#</string>
-					<key>name</key>
-					<string>DOS Chinese Traditional</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = DOS Chinese Simplified
-#INS#</string>
-					<key>name</key>
-					<string>DOS Chinese Simplified</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = GBK
-#INS#</string>
-					<key>name</key>
-					<string>GBK</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = GB 2312
-#INS#</string>
-					<key>name</key>
-					<string>GB 2312</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX encoding = GB 18030
-#INS#</string>
-					<key>name</key>
-					<string>GB 18030</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Program</string>
-			<key>submenu</key>
-			<array>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = tex
-#INS#</string>
-					<key>name</key>
-					<string>tex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = pdftex
-#INS#</string>
-					<key>name</key>
-					<string>pdftex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = latex
-#INS#</string>
-					<key>name</key>
-					<string>latex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = pdflatex
-#INS#</string>
-					<key>name</key>
-					<string>pdflatex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = bibtex
-#INS#</string>
-					<key>name</key>
-					<string>bibtex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = makeindex
-#INS#</string>
-					<key>name</key>
-					<string>makeindex</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = metapost
-#INS#</string>
-					<key>name</key>
-					<string>metapost</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = context
-#INS#</string>
-					<key>name</key>
-					<string>context</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = metafont
-#INS#</string>
-					<key>name</key>
-					<string>metafont</string>
-				</dict>
-				<dict>
-					<key>content</key>
-					<string>%!TEX TS-program = #INS#</string>
-					<key>name</key>
-					<string>user defined engine</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>content</key>
-			<string>%!TEX root =  #INS#</string>
-			<key>name</key>
-			<string>Root</string>
 		</dict>
 		<dict>
 			<key>name</key>

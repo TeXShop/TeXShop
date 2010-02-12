@@ -225,7 +225,6 @@ enum RootCommand
 	NSTimer             *_pdfRefreshTimer;
 	BOOL                _pdfRefreshTryAgain;
 
-	BOOL				fromMenu;			// if TeX, LaTeX, etc called from a menu command, ignore $%TEX TS-program command
 	BOOL                typesetContinuously;
 	int                 tempEngine;
 	BOOL                useTempEngine;
@@ -419,12 +418,17 @@ enum RootCommand
 - (void) doUser: (int)theEngine;
 
 - (void) doTex: sender;
+- (void) doTex1: sender;
 - (void) doLatex: sender;
+- (void) doLatex1: sender;
 - (void) doBibtex: sender;
 - (void) doMetapost: sender;
+- (void) doMetapost1: sender;
 - (void) doContext: sender;
+- (void) doContext1: sender;
 - (void) doIndex: sender;
 - (void) doMetaFont: sender;
+- (void) doMetaFont1: sender;
 - (void) doTexTemp: sender;
 - (void) doLatexTemp: sender;
 - (void) doBibtexTemp: sender;

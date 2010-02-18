@@ -39,6 +39,7 @@
 	PDFView		*myPDFKitView;
 	PDFView		*myPDFKitView2;
 	NSSplitView	*pdfKitSplitView;
+	BOOL		willClose;
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
@@ -56,6 +57,7 @@
 - (void) displayLog: sender;
 - (void) displayConsole: sender;
 - (void) trashAUXFiles: sender;
+- (void) abort: sender;
 
 - (void) firstPage: sender;
 - (void) lastPage: sender;

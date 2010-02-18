@@ -191,6 +191,7 @@ enum RootCommand
 	TSDocumentType			_documentType;
 	int			errorLine[NUMBEROFERRORS];
 	NSString	*errorLinePath[NUMBEROFERRORS];
+	NSString	*errorText[NUMBEROFERRORS];
 	int			errorNumber;
 	int			whichError;
 	DefaultTypesetMode			theScript;		/*" script currently executing; 100, 101, 102 "*/
@@ -289,11 +290,13 @@ enum RootCommand
 - (void) fixMacroMenuForWindowChange;
 - (NSRange) lineRange: (int)line;
 - (void) toLine: (int)line;
+- (void) toLine: (int) line andSubstring: theString;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
 - (void) doError: sender;
 - (int) errorLineFor: (int)theError;
 - (NSString *) errorLinePathFor: (int)theError;
+- (NSString *) errorTextFor: (int)theError;
 - (int) totalErrors;
 - (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces;
 - (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType;
@@ -304,6 +307,7 @@ enum RootCommand
 - (id) pdfKitWindow;
 - (id) textWindow;
 - (id) textView;
+- (id) topView;
 - (void)fixUpTabs;
 - (BOOL) externalEditor;
 - (void) refreshPDFAndBringFront: (BOOL)front;

@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# csv2latex Version 1.1 2010/01/31
+# csv2latex Version 1.2 2010/02/18
 #
 # (c) 2005 Tom Counsell <tom@counsell.org>
 # (c) 2009, 2010 Alan Munn <amunn@msu.edu>
@@ -13,6 +13,7 @@
 # v 1.0 2009/09/13 	Initial release
 # v 1.1 2010/01/31 	Fixed bug in  Applescript and updated documentation
 #					Removed unneeded dependency in script
+# v 1.2 2010/02/18	Added error trap for empty clipboard.
 #
 # Usage: csv2latex <tablestyle>
 # 	where <tablestyle> = cells, simple, booktabs, longtable
@@ -35,7 +36,7 @@
 #--Applescript direct
 #	set mainList to {"cells","booktabs", "simple","longtable" }
 #	choose from list mainList with prompt "Choose a table format"
-#	if result is not false then
+#	if the result is not false then
 #		set tablestyle to result as text
 #		do shell script  "/usr/local/bin/csv2latex" & " " &  tablestyle
 #		tell application "System Events" to keystroke "v" using {command down}
@@ -52,6 +53,7 @@ text = `pbpaste`.gsub( /(\r?\n)|\r/, "\r" )
 lines = text.split("\r")
 lines = lines.map { |line| line.split("\t") }
 columns = lines.map { |line| line.size }.max
+if columns.nil? then exit end
 header = lines.shift
 if ARGV.empty?
 	hstyle = "simple"

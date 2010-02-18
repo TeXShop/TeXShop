@@ -24,6 +24,7 @@
  */
 
 #import "UseMitsu.h"
+#import "Globals.h"
 
 #import "TSToolbarController.h"
 
@@ -210,6 +211,12 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	[mouseModeMatrix removeFromSuperview];
 	[mouseModeMatrixKK retain];
 	[mouseModeMatrixKK removeFromSuperview];
+	// WARNING: this must be called now, because calling it when the matrix is active but offscreen causes defective toolbar display
+	int mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
+	[mouseModeMatrixKK selectCellWithTag: mouseMode];
+	
+	
+
 #endif
 	[syncBox retain];
 	[syncBox removeFromSuperview];
@@ -774,8 +781,10 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		
 
 		return toolbarItem;
+		// return nil;
 	}
 
 	// end mitsu 1.29

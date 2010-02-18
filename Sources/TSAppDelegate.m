@@ -193,7 +193,7 @@
 		factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
-
+	
 	// Make sure the ~/Library/TeXShop/ directory exists and is populated.
 	// To do this, we walk recursively through our private 'TeXShop' folder contained
 	// in the .app bundle, and mirrors all files and folders found there which aren't
@@ -270,7 +270,6 @@
 // Finish configuration of various pieces
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];
-	[self finishMenuKeyEquivalentsConfigure];
 	[self configureExternalEditor];
 	[self configureMovieMenu];
 
@@ -317,6 +316,8 @@
 										  green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 										  alpha: 1];
 	[PreviewBackgroundColor retain];
+	[self finishMenuKeyEquivalentsConfigure];
+
 }
 
 
@@ -373,12 +374,12 @@
 	mainMenu = [NSApp mainMenu];
 	mainMenuEnumerator = [shortcutsDictionary keyEnumerator];
 	while ((key = [mainMenuEnumerator nextObject])) {
-		menuDictionary = [shortcutsDictionary objectForKey: key];
 		value = [key intValue];
 		if (value == 0)
 			theMenu = [[mainMenu itemWithTitle: key] submenu];
 		else
 			theMenu = [[mainMenu itemAtIndex: (value - 1)] submenu];
+		menuDictionary = [shortcutsDictionary objectForKey: key];
 		
 		if (theMenu && menuDictionary) {
 			menuItemsEnumerator = [menuDictionary keyEnumerator];
@@ -389,6 +390,7 @@
 				else
 					theMenuItem = [theMenu itemAtIndex: (value - 1)];
 				object = [menuDictionary objectForKey: key1];
+				
 				if (([object isKindOfClass: [NSDictionary class]]) && ([theMenuItem hasSubmenu])) {
 					subMenu = [theMenuItem submenu];
 					subMenuItemsEnumerator = [object keyEnumerator];
@@ -401,24 +403,29 @@
 						object = [object objectForKey: key2];
 						if ([object isKindOfClass: [NSArray class]]) {
 							theChar = [object objectAtIndex: 0];
-							mask = NSCommandKeyMask;
-							if ([[object objectAtIndex: 1] boolValue])
-								mask = (mask | NSAlternateKeyMask);
-							if ([[object objectAtIndex: 2] boolValue])
-								mask = (mask | NSControlKeyMask);
-							[theMenuItem setKeyEquivalent: theChar];
-							[theMenuItem setKeyEquivalentModifierMask: mask];
+							if ([theChar isKindOfClass: [NSString class]]) {
+								mask = (NSCommandKeyMask | NSFunctionKeyMask);
+								if ([[object objectAtIndex: 1] boolValue])
+									mask = (mask | NSAlternateKeyMask);
+								if ([[object objectAtIndex: 2] boolValue])
+									mask = (mask | NSControlKeyMask);
+								[theMenuItem setKeyEquivalent: theChar];
+								[theMenuItem setKeyEquivalentModifierMask: mask];
+								}							}
 						}
-					}
-				} else if ([object isKindOfClass: [NSArray class]]) {
+					} 
+				
+				else if ([object isKindOfClass: [NSArray class]]) {
 					theChar = [object objectAtIndex: 0];
-					mask = (NSCommandKeyMask | NSFunctionKeyMask);
-					if ([[object objectAtIndex: 1] boolValue])
-						mask = (mask | NSAlternateKeyMask);
-					if ([[object objectAtIndex: 2] boolValue])
-						mask = (mask | NSControlKeyMask);
-					[theMenuItem setKeyEquivalent: theChar];
-					[theMenuItem setKeyEquivalentModifierMask: mask];
+					if ([theChar isKindOfClass: [NSString class]]) {
+						mask = (NSCommandKeyMask | NSFunctionKeyMask);
+						if ([[object objectAtIndex: 1] boolValue])
+							mask = (mask | NSAlternateKeyMask);
+						if ([[object objectAtIndex: 2] boolValue])
+							mask = (mask | NSControlKeyMask);
+						[theMenuItem setKeyEquivalent: theChar];
+						[theMenuItem setKeyEquivalentModifierMask: mask];
+						}
 				}
 			}
 		}

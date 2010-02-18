@@ -37,6 +37,7 @@
 - (void) doTypeset: sender;
 - (void) displayLog: sender;
 - (void) displayConsole: sender;
+- (void) abort: sender;
 - (void) trashAUXFiles: sender;
 - (TSDocument *)document;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;

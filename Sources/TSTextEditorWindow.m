@@ -78,6 +78,17 @@
 	[myDocument doChooseMethod: sender];
 }
 
+- (void) abort: sender
+{
+	[myDocument abort: sender];
+}
+
+- (void) trashAUXFiles: sender
+{
+	[myDocument trashAUXFiles: sender];
+}
+
+
 // forsplit
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {

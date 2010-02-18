@@ -1,48 +1,44 @@
-#!/bin/tcsh
+#!/bin/bash
 
 # This short script calls texexec to run a conTeXt job
 # Richard Koch; September 14, 2001 and May 29, 2006
 
-set mygspath = "$argv[2]"
-if (-x ${mygspath}/ps2pdf) then
-        setenv PATH "${mygspath}:${PATH}"
-        rehash
-endif
+mygspath="$2"
+if [ -x ${mygspath}/ps2pdf ]; then
+	export PATH="${mygspath}":$PATH
+fi
  
-set mytexexecpath = "$argv[4]"
-if (-x ${mytexexecpath}texexec) then
-	setenv PATH "${mytexexecpath}:${PATH}"
-	rehash
-endif
+mytexexecpath="$4"
+if [ -x ${mytexexecpath}texexec ]; then
+	PATH="${mytexexecpath}":$PATH
+fi
 
-set pstest = $argv[5]
-set filename = "$argv[6]"
+pstest="$5"
+filename="$6"
+basename="${filename%%.*}"
+dviname="$basename".dvi
 
-if ("$argv[1]" == "YES") then
+if [ "$1" = "YES" ]; then
+	texexec --passon=" --interaction=nonstopmode " "${filename}"
+else
+	texexec "${filename}"
+fi
 
-texexec --passon=" --interaction=nonstopmode " "${filename}"
-
-else    
-
-texexec "${filename}"
-
-endif
-
-if ("$argv[3]" == "Panther") then
+if [ "$3" = "Panther" ]; then
     
-    if ("$pstest" == "no") then
-	simpdftex latex --distiller /usr/bin/pstopdf "${filename:r}.dvi"
+    if [ "$pstest" = "no" ]; then
+	simpdftex latex --distiller /usr/bin/pstopdf "$dviname"
     else
-	simpdftex latex --distiller /usr/bin/pstopdf --keep-psfile "${filename:r}.dvi"
-    endif
+	simpdftex latex --distiller /usr/bin/pstopdf --keep-psfile "$dviname"
+    fi
     
 else
 
-    if ("$pstest" == "no") then
-	simpdftex latex "${filename:r}.dvi"
+    if [ "$pstest" = "no" ]; then
+	simpdftex latex "$dviname"
     else
-	simpdftex latex --keep-psfile "${filename:r}.dvi"
-    endif
+	simpdftex latex --keep-psfile "$dviname"
+    fi
 
-endif
+fi
 

@@ -10,9 +10,42 @@
 \
 2) Slight improvement in Context and MetaPost help section.\
 \
+3) New latexmk material\
+\
+4) Goto Error is improved and now highlights the text in the console before the error, rather than an entire line containing the error.\
+\
+5) Added a new menu item, "Abort Typesetting", with a keyboard shortcut that works when any window is active\
+\
+6) The Abort button has recently stopped working for ConTeXt. This is probably due to revised calling conventions for ConTeXt\
+within TeX Live. Steffen Wolfrum complained about this problem, and later made the astonishing discovery that if the tcsh shell\
+script in TeXShop which calls ConTeXt is replaced with a bash shell script, the problem goes away. This change is made in\
+TeXShop 2.31.\
+\
+7) French localization of "Completion" and "Mark" by Rene Fritz\
+\
+8) The default KeyEquivalents.plist in ~/Library/TeXShop/Menus was defective; among other things, it had embedded comments\
+within comments, which is illegal. The file has been fixed. The method of changing default shortcuts is limited, however: the OgreKit\
+Find Panel menu items are handled in a special way and cannot be changed by this method; the Macro menu items are controlled\
+by the Macro code and cannot be changed by this method, although they can be changed with TeXShop's built-in Macro Editor;\
+the File items are sometimes overridden by Cocoa so shortcut changes in that menu can have unintended consequences. \
+\
+9) Fixed the notorious "toolbar incorrectly drawn bug". This bug occurred when the Preview toolbar contained a "mouse mode matrix", but this\
+matrix was offscreen because the window was too narrow to contain it. Sometimes the toolbar was only half visible, and sometimes it\
+was completely empty. The bug is fixed.\
+\
+10) Fixed a bug reported by Cesar Rivas: when the Default Page Style was "Single Page", the toolbar scale reported the wrong value,\
+and thus zoom in and zoom out started from the wrong values. In the process of fixing this bug, I removed "firstView" in favor of\
+stronger code.\
+\
+11) A new sagetex engine by Dan Drake, easier to install, because SageTeX is now part of sage. Moreover, sage commands are not\
+rerun by the engine if the only source changes in the source were outside the ``sage command sections.''\
+\
+12) Fixed an obscure bug reported by Jean-Michel Bismut: he got intermittent crashes when closing the Preview window with command-W or\
+clicking the red close circle. Jean-Michel uses an external editor, which may or may not be related to the problem. I could never reproduce\
+this bug, but found a possible cause and Jean-Michel reports that the bug has vanished.\
+\
+13) New vesion of csv2latex in ~/Library/TeXShop/bin, used by the "Paste Spreadsheet Cells" macro, with improved error handling.\
 \
 TO DO\
-\
-1) Abort ConTeXt (probably postpone this to another release)\
 \
 }

@@ -14,6 +14,59 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.31</h5></P>
+
+<ul>
+
+<li> Goto Error is improved. It now highlights the text just before the error (as reported by TeX in the console) rather than an entire line containing the error. When searching for errors, users should first look at the spot where the highlighting ends. This change was requested by users who let TeXShop automatically soft wrap lines; to TeX, these source files appear to contain whole paragraphs rather than individual lines. In earlier versions of TeXShop, Goto Error highlighted these entire paragraphs, making the error hard to spot.
+
+<p>
+<li> Fixed the notorious "toolbar incorrectly drawn bug". This bug occurred when the Preview toolbar contained the "mouse mode matrix" but this
+matrix was forced offscreen when the Preview window appeared because the window was too narrow to contain it. In that situation, the tools in the toolbar were drawn too high and partially cutoff, or so high that they were invisible. The bug is fixed.
+
+<p>
+<li> Fixed an obscure bug reported by Jean-Michel Bismut: he got intermittent crashes when closing the Preview window with command-W or
+the red close circle. The bug mainly appeared when TeXShop was used with an external editor. Fixed.
+
+<p>
+<li> Fixed a bug reported by Cesar Rivas: when the Default Page Style was "Single Page", the toolbar scale reported the wrong value,
+and thus zoom in and zoom out started from the wrong values. The bug fix solved another problem: previously if the user picked a mouse tool 
+like "magnify" that was not the default and then typeset, the toolbar would still show the magnify tool active, but the actual tool would change to its default value. Fixed.
+
+<p>
+<li> TeXShop has a new SageTeX engine by Dan Drake. This engine is easier to install because SageTeX is now part of Sage rather than an extra download. The engine no longer reruns Sage when typesetting a source in which the sage commands have not changed.
+
+<p> For a brief time, SageTeX was part of TeX Live 2009. This is no longer true because SageTeX is closely tied to Sage and needs to be updated when Sage is updated. SageTeX users should carefully read the short document in ~/Library/TeXShop/Engines/Inactive/Sage before installing the new engine; the document explains the simple step required when upgrading Sage.
+
+<p>
+<li> The internal TeXShop script which calls ConTeXt was modified to make the Abort command work. Although it worked for other engines, it recently stopped working for ConTeXT. Steffen Wolfrum reported the bug and was instrumental in finding a fix. The broken script was a tcsh script, and Wolfrum discovered that Abort worked when the internal script was rewritten as a bash script.
+
+<p>
+<li> Added a new menu item, "Abort Typesetting", with a keyboard shortcut. This makes it possible to call abort from the keyboard without using the mouse. The shortcut works regardless of which window is active.
+
+<p>
+<li> The pdf file is now closed when the Preview window is closed. In version 2.30, the entire document had to be closed to close the pdf file. In 2.29, TeXShop itself had to quit to close the file. So we are making incremental progress.
+
+<p>
+<li> Improvements in French localization by Rene Fritz.
+
+<p>
+<li> Slight improvements in ConTeXt and MetaPost help sections.
+
+<p>
+<li> Slight improvements in latexmk.
+
+<p>
+<li> Better error detection in the "Paste Spreadsheet Cells" macro.
+
+<p>
+<li> The default KeyEquivalents.plist in ~/Library/TeXShop/Menus was defective; among other things, it had comments
+within comments, which is illegal. The file has been fixed. 
+
+<p> KeyEquivalents.plist doesn't actually change any keyboard shortcuts because the changes it illustrates are commented out. But users can change TeXShop's default keyboard shortcuts by editing the file. However, there are some limitations. The OgreKit Find Panel menu items are handled in a special manner and cannot be changed with KeyEquivalents. The Macro menu items are also handling in a special way and cannot be changed with KeyEquivalents, although they can be changed with TeXShop's built-in Macro Editor. Finally, File menu items are sometimes overridden by Cocoa, so shortcut changes in that menu can have unintended consequences.
+
+</ul>
+
 <P><h5>TeXShop Changes 2.30</h5></P>
 
 <ul>

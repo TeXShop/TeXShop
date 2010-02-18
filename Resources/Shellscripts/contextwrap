@@ -1,18 +1,17 @@
-#!/bin/tcsh
+#!/bin/bash
 
 # This short script calls texexec to run a conTeXt job
 # Richard Koch; September 14, 2001 and May 29, 2006
 
-set mytexexecpath = "$argv[1]"
-if (-x ${mytexexecpath}texexec) then
-	setenv PATH "${mytexexecpath}:${PATH}"
-	rehash
-endif
+mytexexecpath="$1"
+if [ -x ${mytexexecpath}texexec ]; then
+	export PATH="${mytexexecpath}":$PATH
+fi
 
-set filename = "$argv[3]"
+filename="$3"
 
-if ("$argv[2]" == "YES") then
+if [ "$2" = "YES" ]; then
 	texexec --pdf --passon=" --interaction=nonstopmode " "${filename}"
 else
 	texexec --pdf "${filename}"
-endif
+fi

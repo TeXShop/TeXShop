@@ -124,6 +124,12 @@
 		errorLinePath[i] = nil;
 	}
 	
+	for (i = 0; i < NUMBEROFERRORS; i++) {
+		if (errorText[i] != nil)
+			[errorText[i] release];
+		errorText[i] = nil;
+	}
+	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:pdfView];// mitsu 1.29 (O) need to remove here, otherwise updateCurrentPage fails
 	if (tagTimer != nil) {
@@ -179,6 +185,11 @@
 	[myPDFKitView2 release];
 
 	[super dealloc];
+}
+
+- (id)topView
+{
+	return myPDFKitView;
 }
 
 - (void) showHideLineNumbers: sender
@@ -382,9 +393,11 @@
 	// causes all of the data to be reformatted.
 	[self setupFromPreferencesUsingWindowController:aController];
 
-	for (i = 0; i < NUMBEROFERRORS; i++)
+	for (i = 0; i < NUMBEROFERRORS; i++) {
 		 errorLinePath[i] = nil;
-		
+		errorText[i] = nil;
+	}
+	
 	/* when opening an empty document, must open the source editor */
 	theFileName = [self fileName];
 	fileExtension = [[self fileName] pathExtension];
@@ -2542,6 +2555,14 @@ preference change is cancelled. "*/
 			return nil;
 }
 
+- (NSString *) errorTextFor: (int)theError{
+	if (theError < errorNumber)
+		return errorText[theError];
+	else 
+		return nil;
+}
+
+
 
 - (int) totalErrors{
 	return errorNumber;
@@ -2558,6 +2579,7 @@ preference change is cancelled. "*/
 	int			myErrorNumber;
 	int			myErrorLine = -1;
 	NSString	*myErrorPath;
+	NSString	*myErrorText;
 	TSDocument	*theDocument;
 
 	myRoot = nil;
@@ -2579,6 +2601,7 @@ preference change is cancelled. "*/
 				whichError = 0;			// warning; main.tex could be closed in the middle of error processing
 			myErrorLine = errorLine[whichError];
 			myErrorPath = errorLinePath[whichError];
+			myErrorText = errorText[whichError];
 			whichError++;
 			if (whichError >= errorNumber)
 				whichError = 0;
@@ -2591,6 +2614,7 @@ preference change is cancelled. "*/
 				whichError = 0;
 			myErrorLine = [rootDocument errorLineFor: whichError];
 			myErrorPath = [rootDocument errorLinePathFor: whichError];
+			myErrorText = [rootDocument errorTextFor: whichError];
 			whichError++;
 			if (whichError >= myErrorNumber)
 				whichError = 0;
@@ -2601,18 +2625,32 @@ preference change is cancelled. "*/
 	if (!_externalEditor && fileIsTex && doError) {
 		if (myErrorPath == nil) {
 			[textWindow makeKeyAndOrderFront: self];
-			[self toLine: myErrorLine];
+			if (myErrorText = nil)
+				[self toLine: myErrorLine];
+			else 
+				[self toLine: myErrorLine andSubstring: myErrorText];
+
 		}
 		else {
 			NSString *thePath = [[[self fileName] stringByDeletingLastPathComponent] stringByAppendingPathComponent: [myErrorPath stringByStandardizingPath]];
 			NSString *theCorrectedPath = [thePath stringByStandardizingPath];
 			NSDocumentController *myController = [NSDocumentController sharedDocumentController];
-			theDocument = [myController openDocumentWithContentsOfFile: thePath display: YES];
-			if (theDocument)
-				[theDocument toLine: myErrorLine];
+			theDocument = [myController openDocumentWithContentsOfFile: theCorrectedPath display: YES];
+			if (myErrorText == nil) {
+				if (theDocument) 
+					[theDocument toLine: myErrorLine];
+				else {
+					[textWindow makeKeyAndOrderFront: self];
+					[self toLine: myErrorLine];
+				}
+			}
 			else {
-				[textWindow makeKeyAndOrderFront: self];
-				[self toLine: myErrorLine];
+				if (theDocument) 
+					[theDocument toLine: myErrorLine andSubstring: myErrorText];
+				else {
+					[textWindow makeKeyAndOrderFront: self];
+					[self toLine: myErrorLine andSubstring: myErrorText];
+				}
 			}
 
 		}
@@ -2677,6 +2715,53 @@ preference change is cancelled. "*/
 	}
 
 }
+
+- (void) toLine: (int) line andSubstring: theString
+{
+	int		i;
+	NSString	*text, *lineText, *searchString;
+	unsigned	start, end, stringlength;
+	NSRange	myRange, subTextRange;
+	
+	if (theString == nil)
+		searchString = nil;
+	else
+		searchString = [theString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		
+	if (line < 1) return;
+	text = [textView string];
+	stringlength = [text length];
+	myRange.location = 0;
+	myRange.length = 1;
+	i = 1;
+	while ((i <= line) && (myRange.location < stringlength)) {
+		[text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+		myRange.location = end;
+		i++;
+	}
+	if (i == (line + 1)) {
+		myRange.location = start;
+		myRange.length = (end - start);
+		if (searchString != nil) {
+			lineText = [text substringWithRange: myRange];
+			subTextRange =[lineText rangeOfString: searchString];
+			if (subTextRange.location != NSNotFound) {
+				if ([searchString length] >= 5) {
+					myRange.location = myRange.location + subTextRange.location;
+					myRange.length = [searchString length];
+					}
+				else if ((myRange.length - subTextRange.location) >= 5) {
+					myRange.location = myRange.location + subTextRange.location;
+					myRange.length = 5;
+					}
+				}
+			}
+		[textView setSelectedRange: myRange];
+		[textView scrollRangeToVisible: myRange];
+	}
+	
+}
+
 
 #pragma mark -
 
@@ -3391,7 +3476,7 @@ preference change is cancelled. "*/
 {
 	NSString		*newOutput, *numberOutput, *searchString, *tempString, *detexString;
 	NSData		*myData, *detexData;
-	NSRange		myRange, lineRange, searchRange, testRange, errorRange, pathRange;
+	NSRange		myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange;
 	int			error;
 	int                 lineCount, wordCount, charCount;
 	unsigned int	myLength;
@@ -3401,6 +3486,7 @@ preference change is cancelled. "*/
 	NSString	*thePath;
 	NSNumber	*theNumber;
 	NSString	*theNumberString, *theLine;
+	NSString	*searchText;
 
 	NSFileHandle *myFileHandle = [aNotification object];
 	if (myFileHandle == readHandle) {
@@ -3438,6 +3524,27 @@ preference change is cancelled. "*/
 						error = [numberOutput intValue];
 						if ((error > 0) && (errorNumber < NUMBEROFERRORS)) {
 							errorLine[errorNumber] = error;
+							
+							// new code to find text just before error
+							if (errorText[errorNumber] != nil)
+								[errorText[errorNumber] release];
+							errorText[errorNumber] = nil;
+							
+							searchDotsRange = [numberOutput rangeOfString: @"..."];
+							if (searchDotsRange.location == NSNotFound) {
+								searchDotsRange = [numberOutput rangeOfString: @" "];
+								if (searchDotsRange.location != NSNotFound) {
+									searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 1)];
+									if (searchText != nil)
+										errorText[errorNumber] = [searchText retain];
+								}
+							}
+							else {
+								searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 3)];
+								if (searchText != nil)
+									errorText[errorNumber]  = [searchText retain];
+							}
+								
 							
 							// new code to find file containing error
 							// ----------

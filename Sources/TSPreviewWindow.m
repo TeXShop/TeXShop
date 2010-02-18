@@ -65,6 +65,7 @@ extern NSPanel *pageNumberWindow;
 
 	activeView = nil;
 	windowIsSplit = NO;
+	willClose = NO;
 	return result;
 }
 
@@ -72,6 +73,7 @@ extern NSPanel *pageNumberWindow;
 {
 	[myPDFKitView setDocument: nil];
 	[myPDFKitView2 setDocument: nil];
+	willClose = YES;
 	
 	[super close];
 }
@@ -100,6 +102,7 @@ extern NSPanel *pageNumberWindow;
 
 - (void) becomeMainWindow
 {
+	willClose = NO;
 	[super becomeMainWindow];
 
 	[myDocument fixMacroMenuForWindowChange];
@@ -152,6 +155,11 @@ extern NSPanel *pageNumberWindow;
 - (void) displayConsole: sender
 {
 	[myDocument displayConsole: sender];
+}
+
+- (void) abort: sender
+{
+	[myDocument abort: sender];
 }
 
 - (void) trashAUXFiles: sender
@@ -334,6 +342,7 @@ extern NSPanel *pageNumberWindow;
 
 - (void) orderOut:sender
 {
+	willClose = YES;
 	if ([myDocument externalEditor])
 		[myDocument close];
 	else if (([myDocument documentType] != isTeX) && ([myDocument documentType] != isOther)) {
@@ -356,6 +365,10 @@ extern NSPanel *pageNumberWindow;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+	 if (willClose) {
+		[super sendEvent: theEvent];
+		return;
+	}
 	
 	if ([myDocument fromKit] && ([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		if ([[theEvent characters] characterAtIndex:0] == '[') {
@@ -621,7 +634,6 @@ extern NSPanel *pageNumberWindow;
 	NSSize		newSize;
 	NSRect		theFrame;
 	
-	[(MyPDFKitView *)myPDFKitView2 setFirstView: (MyPDFKitView *)myPDFKitView];
 	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
 	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
 	

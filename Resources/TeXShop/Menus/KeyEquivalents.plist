@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-
 <!--  
-	Advanced users can replace TeXShop's default keyboard menu shortcuts with their
-	own customized versions using this file. This file must be named "KeyEquivalents.plsit"
-        and live in the folder ~/Library/TeXShop/Menus.
-
+	 Advanced users can replace TeXShop's default keyboard menu shortcuts with their
+	 own customized versions using this file. This file must be named "KeyEquivalents.plsit"
+          and live in the folder ~/Library/TeXShop/Menus.
+          
+          However, there are some substantial gotchas. The OgreKit Find menu items are controlled
+          by Ogrekit and cannot be modified with this file. The Macro menu items are
+          controlled by the Macro code and similarly cannot be modified here, although they
+          can be modified using TeXShop's Macro Editor. Finally, several items in
+          the File menu are controlled by Cocoa, and attempts to modify them yield unexpected
+          results. 
+          
 	The structure of this file is as follows. At the top level, we list the items
-	in the main TeXShop menu: TeXShop, File, Edit, Format, etc. We need only list
+	in the main TeXShop menu: TeXShop, File, Edit, Source, etc. We need only list
 	menus containing items whose key equivalents we want to change. Below each
 	top level menu is a dictionary containing items in this menu whose key equivalents
 	are to be changed. Again, we need only list items to be changed. 
-
-	If such an item is a submenu, then the item is followed by a dictionary listing
-	the items in the submenu. Otherwise, the item is followed by an array to be described
-	in the next paragraph. TeXShop has no submenus of depth larger than one.
-
-	The first element of the array is the character giving the key equivalent
-	of the menu item. This character can be a lower case or upper case character. For instance, it
-	could be "c" or "C". (On the menu display, it will be capitalized, and an extra shift character
-	will appear for capitol letters.) The next array element is "true" if the option key
-	should be down and "false" otherwise. The final array element is "true" if the control
-	key should be down and "false" otherwise.
+	
+	Each dictionary entry has a key describing the menu item, and an array describing the
+	new key equivalent. The first item in this array is a string giving the new key equivalent.
+	This string should be an upper case or lower case character. For instance, it could 
+	be "C" or "c". On the menu display, it will be capitalized,  and an extra shift character 
+	will appear for capitol letters. The string could also be an empty string  <string></string>.
+	In that case, any existing key equivalent will be removed.
+	
+	The next array element is "true" if the option key should be down and "false" otherwise. 
+	The final array element is "true" if the control key should be down and "false" otherwise. 
+		
+	If an item is a submenu, then the item is followed by a dictionary listing
+	the items in the submenu rather than an array. The elements in this dictionary 
+	describe the submenu items. TeXShop submenus of depth greater than one are rare and
+	it isn't possible to change keyboard shortcuts for these items.
 
 	In this file, menu items can be identified by a string containing the menu contents,
 	or by a string with an integer listing the menu location. For example, the "Open" item
@@ -43,9 +53,6 @@
 
 	If a key command is added to a menu item but it is already being used elsewhere, the
 	command will not "take." In that case, the other command must be removed or changed.
-	To remove a command, write the first array element as <string></string>. The order
-	of these operations does not matter, so a key command can be assigned to a new
-	menu item at one spot in this file, and later removed from its original item.
         
 	Below is an example to show how this works. The example implements a crazy redefinition:
 	the key equivalent W is removed from the Close menu, and Comment, Uncomment, Indent,
@@ -53,22 +60,24 @@
 	control keys. Since nobody would actually want to do this, the example is commented out;
 	use it as a guide and add similar definitions which are not bracketed inside the
 	comment symbols.
---> 
+-->
+<dict>
+<!-- 
+	Leave this comment and its immediate close; only make changes below these lines.
+-->
 
 <!--
-
-<dict>
 	
 	<key>File</key>
 	<dict>
-		<key>6</key>  <!-- Close  -->
+		<key>Show Console</key> 
 		<array>
-			<string></string>
-			<true/>
-			<true/>
+			<string>u</string>
+			<false/>
+			<false/>
 		</array>
 
-		<key>10</key>  <!-- Revert To Saved -->
+		<key>Revert To Saved</key> 
 		<array>
 			<string></string>
 			<false/>
@@ -77,20 +86,20 @@
 	</dict>
 	
 
-	<key>Edit</key>
+	<key>Source</key>
 	<dict>
-		<key>Find</key> 
+		<key>Completion</key> 
 		<dict>
-			<key>1</key>  <!-- Find... -->
+			<key>Add Word</key>  
 			<array>
-				<string>u</string>
-				<false/>
-				<false/>
+				<string>W</string>
+				<true/>
+				<true/>
 			</array>
 		</dict>
 	</dict>
 
-	<key>4</key>    <!-- Format -->
+	<key>4</key>  
 	<dict>
 		<key>Comment</key>
 		<array>
@@ -118,7 +127,10 @@
 		</array>
 	</dict>
 
-</dict>
 -->
 
+<!-- 
+	Leave this comment and its immediate close; only make changes above these lines.
+-->
+</dict>
 </plist>

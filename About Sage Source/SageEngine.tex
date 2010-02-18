@@ -12,14 +12,16 @@
 
 \begin{document}
 \maketitle
+\vspace{-.3in}
 \section{Sage}
-
 Sage is a mathematical software system providing an open source alternative to Magma, Maple, Mathematica, and Matlab. It is available from 
 \url{http://www.sagemath.org/} as a free download. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
-SageTeX is an extra utility available from the Sage site. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five. In the source file, the initial line
+Download sage from this web site. Move the resulting ``sage'' directory to /Applications. Open the sage directory and double click the ``sage'' icon to initialize sage.
+
+SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five. In the source file, the initial line
 \begin{verbatim}
-     %!TEX TS-program = sage
+     % !TEX TS-program = sage
 \end{verbatim}
 tells TeXShop to process the file using the sage engine; this engine first calls pdflatex, then calls sage, and finally calls pdflatex again.
 The remaining lines in the preamble are standard LaTeX commands, except the required line
@@ -32,27 +34,36 @@ In the remaining source, sage commands are entered within lines of the form
 \end{verbatim}
 These line cause sage to process commands and output LaTeX source fragments, which become part of the LaTeX document.
 
-Notice in particular that sage can plot standard functions. Sage can also compute integrals symbolically; for example, look carefully at the command which processes $\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}$. This commands contains standard LaTeX code to display the integral, but then Sage integrates and returns a typeset copy of the result.
+Notice in particular that sage can plot standard functions. Sage can also compute integrals symbolically; for example, look carefully at the command which processes $\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}$. This command contains standard LaTeX code to display the integral, but then Sage integrates and returns a typeset copy of the result.
 
+\newpage
 \section{Setting Up the Engine}
 
-This folder contains an engine file named ``sage.engine''. Move this file to the active portion of ~/Library/TeXShop/Engines. This engine file assumes that Sage was installed in /Applications, producing a folder named sage which contains a script named sage. If Sage was installed in a different location, edit sage.engine appropriately.
+This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. This engine file assumes that Sage was installed in /Applications. If Sage was installed in a different location, edit sage.engine appropriately. Dan Drake, who is responsible for SageTeX, wrote this engine.
 
-This folder also contains a Python file named ``sagetex.py''. Move this to /Applications/sage/. If you do not have write permission for this location, move the file to a different location of your choosing, for instance a location in your home folder. You can also place sagetex.py directly in the folder containing your source, but this is awkward if you have several folders containing different source files.
+One final step is required to use SageTeX. The ``sage'' directory contains a style file named ``sagetex.sty'' and a number of support files. These files must be copied to your TeX distribution. The files depend on other features of sage, so whenever you upgrade sage, you also need to upgrade the copies in your TeX distribution.
 
-Finally, this folder contains a style file named ``sagetex.sty''.This file should be installed in a texmf tree in your system; it is easiest to put it in  $\sim$/Library/texmf/tex/latex. Here $\sim$/Library is the Library folder in your home directory. You may have to create the subfolders texmf, tex, and latex.
-
-The sagetex.sty file contains a line giving a path to sagetex.py. If you didn't put sagetex.py in /Applications/sage/, you will need to edit sagetex.sty as follows. Examine the section between lines 46 and 53 of the file. Uncomment the ``iffalse'' and ''fi'' lines at the beginning and end if you want sagetex.sty to look for sagetex.py in the folder containing your TeX source. Otherwise, edit the line
+Read the sage web page \url{http://sagemath.org/doc/installation/sagetex.html} for instructions on copying the files. It is easiest to install them in $\sim$/Library/texmf. If you installed sage in /Applications, the web page instructions are easily summarized: open Terminal and issue the command
 \begin{verbatim}
-     \ST@wsf{sys.path.insert(0, '/Applications/sage')}
+     cp -R /Applications/sage/local/share/texmf ~/Library/texmf
 \end{verbatim}
-replacing ``/Applications/sage'' with a complete path to the folder containing your sagetex.py file.
 
-The files ``sagetex.py'' and ``sagetex.sty'' are available in the Utilities section of the Sage download page,
-\url{http://www.sagemath.org/download-mac.html}. It is likely that these files will change as Sage and SageTeX are updated. Consequently, it would be safest to download the latest versions rather than using the files provided in this folder. If you do that, you will definitely need to edit sagetex.sty to point to the correct install location for sagetex.py. 
+
+There is one final problem. The release version of TeX Live 2009 contained sagetex.sty. This file is updated whenever sage is updated, so the copy in TeX Live easily gets out of sync with sage. Therefore the authors of sage requested that TeX Live remove their copy of sagetex.sty. If you updated TeX Live 2009 with TeX Live Utility or tlmgr, it should be gone. But just to make sure, type the following commands in Terminal:
+\begin{verbatim}
+     cd /usr/local/texlive/2009/texmf-dist/tex/latex/sagetex
+     ls
+\end{verbatim}
+If this location contains sagetex.sty, type
+\begin{verbatim}
+     sudo mv sagetex.sty sagetex-old.sty
+\end{verbatim}
+Experts will remark that it shouldn't make any difference because $\sim$/Library/texmf takes precedence. True enough for TeX, but experiments show that the old copy texmf-dist breaks sage. We don't quite know why that is. 
+
+
 
 \section{Final Remarks}
-Although spaces are permitted in LaTeX source file names, Sage does not like spaces in file names. So LaTeX source file names which call SageTeX should not contain spaces.
+Although spaces are permitted in LaTeX source file names, Sage does not like spaces in file names. So LaTeX source file names which call SageTeX should not contain spaces. This problem is fixed in beta releases of SageTeX not yet in the sage distribution.
 
 A Sage tutorial is available at the Sage page \url{http://www.sagemath.org/help.html}. It is definitely recommended. Extensive additional documentation is available at the same web page.
 \end{document}

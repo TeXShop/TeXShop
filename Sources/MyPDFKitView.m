@@ -72,9 +72,10 @@
 
 - (id)init
 {
-	if ((self = [super init]))
-        firstView = nil;
-	protectFind = NO;
+	// WARNING: This may never be called. (??)	
+	if ((self = [super init])) {
+		protectFind = NO;
+		}
     return self;
 }
 
@@ -154,7 +155,7 @@
 {
 	double	theMagnification;
 	int		mag;
-
+	
 		switch (resizeOption) {
 
 		case NEW_PDF_ACTUAL_SIZE:	theMagnification = 1.0;
@@ -236,8 +237,10 @@
 {
 	[self notificationSetup];
 	
-	mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
-	[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+	// lines below were moved to toolbar setup to avoid "toolbar bug"
+	// mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
+	// [[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+	
 	[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	currentMouseMode = mouseMode;
 	selRectTimer = nil;
@@ -278,6 +281,11 @@
 	NSData	*theData;
 	
 	sourceFiles = nil;
+	
+	// For the next line, we initialize once, but then when reshowing, 
+	// or even closing and opening the window, we keep the previous value
+	
+	mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	
 	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 	if ([self doReleaseDocument]) {
@@ -643,11 +651,13 @@
 	theScale = [self scaleFactor];
 	magsize = theScale * 100;
 	scaleMag = magsize;
-	[myScale setIntValue: magsize];
-	[myScale1 setIntValue: magsize];
-	[myScale display];
-	[myStepper setIntValue: magsize];
-	[myStepper1 setIntValue: magsize];
+	if (self == [myDocument topView]) {
+		[myScale setIntValue: magsize];
+		[myScale1 setIntValue: magsize];
+		[myScale display];
+		[myStepper setIntValue: magsize];
+		[myStepper1 setIntValue: magsize];
+		}
 }
 
 - (void) pageChanged: (NSNotification *) notification
@@ -1090,8 +1100,8 @@
 	if ([notification object] != [self document])
 		return;
 	// Empty arrays.
-	if (firstView != nil)
-		; // [firstView startFind: notification];
+	if (self != [myDocument topView])
+		; 
 	else {
 	[_searchResults removeAllObjects];
 
@@ -1114,8 +1124,8 @@
 	if ([notification object] != [self document])
 		return;
 
-	if (firstView != nil)
-		; // [firstView findProgress: notification];
+	if (self != [myDocument topView])
+		; 
 	else {
 	
 	pageIndex = [[[notification userInfo] objectForKey: @"PDFDocumentPageIndex"] doubleValue];
@@ -1133,8 +1143,8 @@
 		return;
 	}
 	
-	if (firstView != nil)
-		; // [firstView didMatchString: instance];
+	if (self != [myDocument topView])
+		;
 		else {
 	// Add page label to our array.
 	if (_searchResults != NULL){
@@ -1158,8 +1168,8 @@
 	if ([notification object] != [self document])
 		return;
 	
-	if (firstView != nil)
-		; //[firstView endFind: notification];
+	if (self != [myDocument topView])
+		;
 	else {
 	[_searchProgress stopAnimation: self];
 	[_searchProgress setDoubleValue: 0];
@@ -1175,8 +1185,8 @@
 
 - (int) numberOfRowsInTableView: (NSTableView *) aTableView
 {
-	if (firstView != nil)
-		return ([firstView numberOfRowsInTableView: aTableView]);
+	if (self != [myDocument topView])
+		return ([[myDocument topView] numberOfRowsInTableView: aTableView]);
 	else
 		return ([_searchResults count]);
 }
@@ -1186,8 +1196,9 @@
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) theColumn
 		row: (int) rowIndex
 {
-	if (firstView != nil)
-		return ([firstView tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
+	if (self != [myDocument topView])
+		return ([[myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
+
 	else {
 		if ([[theColumn identifier] isEqualToString: @"page"])
 			return ([[[[_searchResults objectAtIndex: rowIndex] pages] objectAtIndex: 0] label]);
@@ -1212,8 +1223,8 @@
 	rowIndex = [(NSTableView *)[notification object] selectedRow];
 	if (rowIndex >= 0)
 	{
-		if (firstView != nil) {
-			_firstSearchResults = [firstView getSearchResults];
+		if (self != [myDocument topView]) {
+			_firstSearchResults = [[myDocument topView] getSearchResults];
 			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
 			}
 		else
@@ -4132,11 +4143,6 @@
 	[myScale1 setIntValue: scaleMag];
 	[myStepper setIntValue: scaleMag];
 	[myStepper1 setIntValue: scaleMag];
-}
-
-- (void)setFirstView:(MyPDFKitView *)theView
-{
-	firstView = theView;
 }
 
 - (NSMutableArray *)getSearchResults

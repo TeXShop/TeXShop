@@ -66,6 +66,11 @@
 	[myDocument displayConsole: sender];
 }
 
+- (void) abort: sender
+{
+	[myDocument abort: sender];
+}
+
 - (void) trashAUXFiles: sender
 {
 	[myDocument trashAUXFiles: sender];

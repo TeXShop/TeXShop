@@ -343,11 +343,18 @@ extern NSPanel *pageNumberWindow;
 - (void) orderOut:sender
 {
 	willClose = YES;
-	if ([myDocument externalEditor])
-		[myDocument close];
-	else if (([myDocument documentType] != isTeX) && ([myDocument documentType] != isOther)) {
-		[myDocument close];
+	if ([myDocument externalEditor]) {
+		if (! [myDocument getWillClose]) {
+			[myDocument setWillClose: YES];
+			[myDocument close];
 		}
+	}
+	else if (([myDocument documentType] != isTeX) && ([myDocument documentType] != isOther)) {
+		if (! [myDocument getWillClose]) {
+			[myDocument setWillClose: YES];
+			[myDocument close];
+		}		
+	}
 	else
 		[super orderOut: sender];
 }

@@ -35,7 +35,11 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 
+#ifdef To64
+#else
 #import "OgreKit/OgreTextFinder.h"
+#endif
+
 #import "TextFinder.h"
 
 #include <sys/sysctl.h>     // for testForIntel
@@ -126,10 +130,13 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-	NSString *fileName;
+	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;
 	id theFinder;
+	float oldVersion, newVersion;
+	BOOL needsUpdating;
+
 
 	g_macroType = LatexEngine;
 	
@@ -201,7 +208,28 @@
 	//
 	// This must come before dealing with TSEncodingSupport and MacoMenuController below
 	
+	// First see if we already updated. 
+	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
+	
+	oldVersion = 0.0;
+	currentVersion = [[[NSBundle bundleForClass:[self class]]
+					   infoDictionary] objectForKey:@"CFBundleVersion"];
+	newVersion = [currentVersion floatValue];
+
+	if ([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]] ) {
+		versionString = [[NewPath stringByAppendingPathComponent:@".Version"] stringByStandardizingPath];
+		if ([fileManager fileExistsAtPath: versionString]) {
+			myVersion = [NSString stringWithContentsOfFile:versionString encoding:NSASCIIStringEncoding error:nil];
+			oldVersion = [myVersion floatValue];
+			}
+		}
+	if (newVersion > (oldVersion + 0.005))
+		needsUpdating = TRUE;
+	else 
+		needsUpdating = FALSE;
+
+		
 	if (! [fileManager fileExistsAtPath: [TeXShopPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
 			  toPath:[TeXShopPath stringByStandardizingPath]];
@@ -217,10 +245,14 @@
 			  toPath:[DraggedImageFolderPath stringByStandardizingPath]];
 		}
 		
-	if (! [fileManager fileExistsAtPath: [EnginePath stringByStandardizingPath]] ) {
+	if (! [fileManager fileExistsAtPath: [EnginePath stringByStandardizingPath]] ){
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines"]
 			  toPath:[EnginePath stringByStandardizingPath]];
 		}
+	else if (needsUpdating) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines/Inactive"]
+				  toPath:[EngineInactivePath stringByStandardizingPath]];
+	}
 		
 	if (! [fileManager fileExistsAtPath: [AutoCompletionPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Keyboard"]
@@ -247,7 +279,7 @@
 			  toPath:[MenuShortcutsPath stringByStandardizingPath]];
 		}
 		
-	if (! [fileManager fileExistsAtPath: [ScriptsPath stringByStandardizingPath]] ) {
+	if ((! [fileManager fileExistsAtPath: [ScriptsPath stringByStandardizingPath]] ) || needsUpdating) { 
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Scripts"]
 			  toPath:[ScriptsPath stringByStandardizingPath]];
 		}
@@ -257,7 +289,7 @@
 			  toPath:[TexTemplatePath stringByStandardizingPath]];
 		}
 		
-	if (! [fileManager fileExistsAtPath: [BinaryPath stringByStandardizingPath]] ) {
+	if ((! [fileManager fileExistsAtPath: [BinaryPath stringByStandardizingPath]] ) || needsUpdating) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/bin"]
 			  toPath:[BinaryPath stringByStandardizingPath]];
 		}
@@ -266,6 +298,16 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Movies"]
 			  toPath:[MoviesPath stringByStandardizingPath]];
 		}
+	
+
+		
+	if (([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]]) && needsUpdating)
+			[fileManager removeFileAtPath: [NewPath stringByStandardizingPath] handler: nil];
+	
+	if (needsUpdating)
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/New"]
+				  toPath:[NewPath stringByStandardizingPath]];
+
 	
 // Finish configuration of various pieces
 	[[TSMacroMenuController sharedInstance] loadMacros];
@@ -305,9 +347,12 @@
 	// end mitsu 1.29b
 #endif
 
+#ifdef To64
+#else
 	if ([SUD boolForKey:UseOgreKitKey])
 		theFinder = [OgreTextFinder sharedTextFinder];
 	else
+#endif
 		theFinder = [TextFinder sharedInstance];
 	    
 	[self testForIntel];
@@ -662,10 +707,13 @@
 // end mitsu 1.29
 #endif
 
+#ifdef To64
+#else
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder
 {
 	[textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
 }
+#endif
 
 // The routine below is no longer used; it has been replaced by Sparkle. Koch, 1/11/2009.
 
@@ -785,7 +833,19 @@
 		}
 	} else {
 		// Copy source to destination
-		if (!dstExists) {
+		if (dstExists) {
+			NS_DURING
+			result = [fileManager removeFileAtPath: dstPath handler:nil];
+			NS_HANDLER
+				result = NO;
+				reason = [localException reason];
+			NS_ENDHANDLER
+			if (!result) {
+			}
+		}
+			
+			
+		
 			NS_DURING
 				// file doesn't exist -> copy it
 				result = [fileManager copyPath:srcPath toPath:dstPath handler:nil];
@@ -804,7 +864,7 @@
 				// end of the mirroring process, pop up a single error dialog 
 				// stating something like "TeXShop failed to copy one or multiple files
 				// from FOO to BAR, etc.".
-			}
+			
 		}
 	}
 }

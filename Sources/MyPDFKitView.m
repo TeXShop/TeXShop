@@ -93,6 +93,9 @@
 	downOverLink = NO;
 	
 	drawMark = NO;
+	showSync = NO;
+	if ([SUD boolForKey:ShowSyncMarksKey])
+		showSync = YES;
 	pageStyle = [SUD integerForKey: PdfPageStyleKey];
 	firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
 	resizeOption = [SUD integerForKey: PdfKitFitSizeKey];
@@ -3625,7 +3628,11 @@
 		NSColor         *backColor;
 		unsigned        start, end, irrelevant;
 
-	if (! [myDocument syncState])
+// BUG: This causes a crash if NSDocument is being closed and the pdf window needs to be redrawn
+//	if (! [myDocument syncState])
+//	 	return;
+	
+	if (! showSync)
 		return;
 
 	pageNumber = page + 1;
@@ -4153,6 +4160,11 @@
 - (void)setProtectFind: (BOOL)value
 {
 	protectFind = value;
+}
+
+- (void) setShowSync: (BOOL)value
+{	
+	showSync = value;
 }
 
 @end

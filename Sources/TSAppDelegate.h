@@ -27,7 +27,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+#ifdef To64
+#else
 @class OgreTextFinder;
+#endif
 
 @interface TSAppDelegate : NSObject
 {
@@ -51,7 +54,12 @@
 - (void)configureExternalEditor;
 - (void)setForPreview: (BOOL)value;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
+
+#ifdef To64
+#else
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
+#endif
+
 - (IBAction)checkForUpdate:(id)sender; // Update checker
 - (void)configureMovieMenu;
 - (IBAction)doMovie:(id)sender;

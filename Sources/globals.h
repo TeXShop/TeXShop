@@ -25,6 +25,8 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#define	To64
+
 // This nifty macro computes the size of a static array.
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -373,7 +375,9 @@ extern NSString *LatexPanelPath;
 extern NSString *MatrixPanelPath; // Jonas' Matrix addition
 extern NSString *BinaryPath;
 extern NSString *EnginePath;
+extern NSString *EngineInactivePath;
 extern NSString *ScriptsPath;
+extern NSString *NewPath;
 extern NSString *TempPath;
 extern NSString *TempOutputKey;
 extern NSString *AutoCompletionPath;

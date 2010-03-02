@@ -40,6 +40,7 @@
 	double		oldMagnification;
 	//double		oldWidth, oldHeight; // mitsu 1.29 (O) not used
 	BOOL		fixScroll;
+	BOOL		showSync;
 	NSPDFImageRep	*myRep;
 	TSDocument		*myDocument;
 	int			rotationAmount;  // will be 0, 90, -90, 180
@@ -132,6 +133,7 @@
 - (void)changePDFViewSize: (id)sender;
 - (void)doSync: (NSEvent *)theEvent;
 - (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
+- (void)setShowSync: (BOOL)value;
 @end
 
 @interface FlippedClipView : NSClipView {

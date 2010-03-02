@@ -59,6 +59,10 @@ NSData *draggedData;
 			selector:@selector(revertMagnification:)
 			name:MagnificationRevertNotification object:nil];
 	fixScroll = NO;
+	showSync = NO;
+	if ([SUD boolForKey:ShowSyncMarksKey])
+		showSync = YES;
+	
 	myRep = nil;
 	rotationAmount = 0;
 	//largeMagnify = NO; // mitsu 1.29 (O) not used
@@ -112,7 +116,11 @@ NSData *draggedData;
 	NSColor         *backColor;
 	unsigned        start, end, irrelevant;
 
-	if (! [myDocument syncState])
+//  can cause crash if NSDocument dealloced
+// 	if (! [myDocument syncState])
+// 		return;
+	
+	if (! showSync)
 		return;
 
 	pageNumber = page + 1;
@@ -3436,6 +3444,12 @@ failed. If you change the code below, be sure to test carefully!
 	// end mitsu 1.29b
 }
 
+- (void) setShowSync: (BOOL)value
+{	
+	showSync = value;
+}
+
+
 @end
 
 
@@ -3595,6 +3609,9 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	void 	*srcPixels, *destBaseAddr;
 	NSData *data = nil;
 
+#ifdef To64
+	return nil;
+#else
 	if (!bitmap || !([bitmap bitsPerSample]==8 &&
 			[bitmap isPlanar]==NO && [bitmap samplesPerPixel]>=3))
 		return nil;
@@ -3660,6 +3677,7 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	}
 	[qdView release];
 	return data;
+#endif
 }
 
 
@@ -3693,4 +3711,6 @@ NSString *extensionForType(int type)
 			return @"tiff";
 	}
 }
+
+
 // end mitsu 1.29

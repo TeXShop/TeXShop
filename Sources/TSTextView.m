@@ -30,12 +30,7 @@
 #import "TSEncodingSupport.h"
 #import "TSPreferences.h"
 #import "TSMacroMenuController.h" // zenitani 1.33
-
-#ifdef To64
-#else
 #import <OgreKit/OgreKit.h>
-#endif
-
 // Adam Maxwell addition
 #import <unistd.h>
 
@@ -533,16 +528,12 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	} else if (g_shouldFilter == kOtherJapaneseFilterMode) {
 		newString = filterYenToBackslash(newString);
 	}
-	
-#ifdef To64
-#else
 
 	// zenitani 1.35 (A) -- normalizing newline character for regular expression
 	if ([SUD boolForKey:ConvertLFKey]) {
 		newString = [OGRegularExpression replaceNewlineCharactersInString:newString
 				withCharacter:OgreLfNewlineCharacter];
 	}
-#endif
 
 	[super insertText: newString];
 }
@@ -576,15 +567,11 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			else if (g_shouldFilter == kOtherJapaneseFilterMode)
 				string = filterYenToBackslash(string);
 
-#ifdef To64
-#else
-			
 			// zenitani 1.35 (A) -- normalizing newline character for regular expression
 			if ([SUD boolForKey:ConvertLFKey]) {
 				string = [OGRegularExpression replaceNewlineCharactersInString:string
 						withCharacter:OgreLfNewlineCharacter];
 			}
-#endif
 
 			// Replace the text--imitate what happens in ordinary editing
 			NSRange	selectedRange = [self selectedRange];
@@ -1112,6 +1099,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+	
 	// FIXME: Using static variables like this is *EVIL*
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
 	// TODO: Convert all of these static stack variables to member variables.

@@ -46,5 +46,5 @@ if test -z "$FIGURES"; then
 else
   echo $Myname: Using latexmk to process: $FIGURES 
 #  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -E -o %B.eps %S && epstopdf %B.eps --outfile=%D/'  $FIGURES
-  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf14 -dAutoRotatePages=\/None %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
+  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
 fi

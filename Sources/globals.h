@@ -25,8 +25,6 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#define	To64
-
 // This nifty macro computes the size of a static array.
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 

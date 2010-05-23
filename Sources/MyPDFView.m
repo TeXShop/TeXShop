@@ -3609,9 +3609,6 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	void 	*srcPixels, *destBaseAddr;
 	NSData *data = nil;
 
-#ifdef To64
-	return nil;
-#else
 	if (!bitmap || !([bitmap bitsPerSample]==8 &&
 			[bitmap isPlanar]==NO && [bitmap samplesPerPixel]>=3))
 		return nil;
@@ -3677,7 +3674,6 @@ NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap)
 	}
 	[qdView release];
 	return data;
-#endif
 }
 
 

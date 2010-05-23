@@ -27,11 +27,7 @@
 
 
 #import "TSDocument.h"
-
-#ifdef To64
-#else
 #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
-#endif
 
 #if 0
 #import <Security/Authorization.h>
@@ -1127,9 +1123,6 @@ in other code when an external editor is being used. */
 	}
 
 	if (content) {
-
-#ifdef To64
-#else
 		// zenitani 1.35 (A) -- normalizing newline character for regular expression
 		if ([SUD boolForKey:ConvertLFKey]) {
 			content = [OGRegularExpression replaceNewlineCharactersInString:content
@@ -1142,7 +1135,6 @@ in other code when an external editor is being used. */
 			content = [utfRegex replaceAllMatchesInString: content delegate:self
 						replaceSelector:@selector(decodeUtfStyFormat:contextInfo:) contextInfo:nil];
 		}
-#endif
 		
 		theLength = [content length];
 		// NSLog([NSString stringWithFormat:@"%d", theLength]);
@@ -1175,8 +1167,6 @@ in other code when an external editor is being used. */
 	return result;
 }
 
-#ifdef To64
-#else
 // zenitani 2.10 (A) -- decode utf.sty format
 - (NSString *)decodeUtfStyFormat:(OGRegularExpressionMatch *)aMatch contextInfo:(id)contextInfo
 {
@@ -1185,7 +1175,7 @@ in other code when an external editor is being used. */
 	NSLog([NSString stringWithFormat: @"%d %d %C", u, d, 256*u + d]);
 	return [NSString stringWithFormat: @"%C", 256*u + d];
 }
-#endif
+
 
 - (BOOL)revertToContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {

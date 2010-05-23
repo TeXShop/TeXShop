@@ -1099,6 +1099,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+	
 	// FIXME: Using static variables like this is *EVIL*
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
 	// TODO: Convert all of these static stack variables to member variables.

@@ -123,6 +123,10 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+	
+//	if (([theEvent type] == NSFlagsChanged) && ([theEvent modifierFlags] & NSCommandKeyMask))
+//		NSLog(@"yes");
+	
 	if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		
 		if  ([[theEvent characters] characterAtIndex:0] == '[') {

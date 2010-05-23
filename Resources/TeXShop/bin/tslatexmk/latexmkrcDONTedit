@@ -1,11 +1,13 @@
-# special latexmk settings for Herb Schulz
-$latex = 'latex --shell-escape --synctex=1 --file-line-error %O %S';
-$dvips = 'dvips -R0 %O -o %D %S';
-$dvips_pdf_switch = '-Poutline';
-$ps2pdf = 'ps2pdf14 %O %S %D';
+# Don't edit this file IF it is named latexmkrcDONTedit directly since
+#   TeXShop may replace it on update.
+# If you wish to edit or add to this file, copy it to ~/Library/TeXShop/bin
+#   and rename it latexmkrcedit if that file doesn't already exist.
 
-# if a bbl file is present but the generating bib file isn't available don't run bibtex. --- default in latexmk 4.13
-#$bibtex_use = 1;
+# Edit this File to add/change dependencies and rules
+# The following is used by ALL the latexmk engine files
+
+# change '--shell-escape' to an empty string, '', to remove the shell-escape default
+$TSUserCompileOptions = '--shell-escape';
 
 # Custom dependency for glossary/glossaries package
 # if you make custom glossaries you may have to add items to the @cus_dep_list and corresponding sub-routines
@@ -42,18 +44,18 @@ add_cus_dep('not', 'ntn', 0, 'makenot2ntn');
 
 # dependencies for custom indexes using the index package
 # examples for sample.tex for index package:
-# add_cus_dep('adx', 'and', 0, 'makeadx2and');
-# 		sub makeadx2and {
-# 				system("makeindex -o '$_[0]'.and '$_[0]'.adx");
-# 		}
-# add_cus_dep('ndx', 'nnd', 0, 'makendx2nnd');
-# 		sub makendx2nnd {
-# 				system("makeindex -o '$_[0]'.nnd '$_[0]'.ndx");
-# 		}
-# add_cus_dep('ldx', 'lnd', 0, 'makeldx2lnd');
-# 		sub makeldx2lnd {
-# 				system("makeindex -o '$_[0]'.lnd '$_[0]'.ldx");
-# 		}
+ add_cus_dep('adx', 'and', 0, 'makeadx2and');
+ 		sub makeadx2and {
+ 				system("makeindex -o '$_[0]'.and '$_[0]'.adx");
+ 		}
+ add_cus_dep('ndx', 'nnd', 0, 'makendx2nnd');
+ 		sub makendx2nnd {
+ 				system("makeindex -o '$_[0]'.nnd '$_[0]'.ndx");
+ 		}
+ add_cus_dep('ldx', 'lnd', 0, 'makeldx2lnd');
+	 sub makeldx2lnd {
+	 		 system("makeindex -o '$_[0]'.lnd '$_[0]'.ldx");
+	 }
 
 # Custom dependency and function for nomencl package
 add_cus_dep('nlo', 'nls', 0, 'makenlo2nls');

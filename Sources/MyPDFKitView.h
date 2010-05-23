@@ -74,6 +74,7 @@
 	int								pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
+	BOOL							showSync;
 	NSMutableArray					*sourceFiles;
 
 	double							oldMagnification;
@@ -173,5 +174,6 @@
 - (void)resetSearchDelegate;
 - (void)cancelSearch;
 - (void)setProtectFind: (BOOL)value;
+- (void) setShowSync: (BOOL)value;
 @end
 

@@ -373,7 +373,9 @@ extern NSString *LatexPanelPath;
 extern NSString *MatrixPanelPath; // Jonas' Matrix addition
 extern NSString *BinaryPath;
 extern NSString *EnginePath;
+extern NSString *EngineInactivePath;
 extern NSString *ScriptsPath;
+extern NSString *NewPath;
 extern NSString *TempPath;
 extern NSString *TempOutputKey;
 extern NSString *AutoCompletionPath;

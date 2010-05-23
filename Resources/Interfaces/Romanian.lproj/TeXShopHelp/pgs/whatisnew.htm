@@ -1,7 +1,7 @@
 <HTML>
 
 <HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=ISO-8859-1">
 		<TITLE>What's new?</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="new features; bug fixes">
@@ -13,6 +13,49 @@
 
 
 <div id="content_normal">
+
+<P><h5>TeXShop Changes 2.32 and 2.33</h5></P>
+
+<ul>
+
+<li> TeXShop 2.32 is an internal version never publicly released.
+<p>
+
+<li> The major change in 2.33 improves the upgrade process. In previous TeXShop versions, it was necessary to regenerate
+various folders in ~/Library/TeXShop to get new defaults. While this method still works, the changes make regeneration unnecessary.
+There are three aspects to the change:
+
+<ul>
+<p>
+<li> TeXShop now automatically updates three subfolders of ~/Library/TeXShop: bin, Engines/Inactive, and Scripts. This upgrade does not
+remove files added by the user; it only writes new files and folders or updates existing files and folders known to TeXShop. Note that active engines in ~/Library/TeXShop/Engines are not updated; only the inactive folder is updated.
+<p>
+<li> TeXShop adds a new folder, ~/Library/TeXShop/New. This folder can be totally rewritten during an update. 
+<p>
+<li> Finally, TeXShop Help contains a file named "About This Update," which is rewritten for each update, explaining the exact steps needed to obtain new defaults.
+</ul>
+<p>
+As an example of how these changes are used, consider the case when there is a new default Macro. It is no longer necessary to regenerate the Macros folder to obtain this Macro. Instead, the New folder will contain the new macro. Use the Macro Editor's "Add Macros from File..." item to add the macro, and drag it in the Macro Editor's list to an appropriate spot.
+<p> Another example: the latexmk engine is often upgraded, but the upgrade usually changes support files in bin rather than the engine itself. From now on, such upgrades will be made automatically without user intervention. Fairly often, additional engines are added to the Inactive folder during upgrades. These will automatically appear without user intervention. For version 2.33, it is important that latexmk users read "About This Release" so they will make a few changes needed to automate future upgrades.
+<p> One technical detail: the New folder contains a hidden file listing the version of TeXShop which created the most recent update. TeXShop will only update files in ~/Library/TeXShop if it is a later version than the version listed in this hidden file. So TeXShop doesn't update at each new start, and old version can be run without changing  ~/Library/TeXShop.
+<p>
+<li> Improved Spanish localization by Juan Luis Varona.
+<p>
+<li> Fixed a bug reported by Tomas Zahradnicky: when a user attempted to print a file which had not been typeset, a dialog appeared asking the user to typeset first. The dialog has an "OK" button, but clicking the Close icon instead caused a hang. Fixed.
+
+<p>
+<li> Fixed a bug reported by Micael Sharpe: searching in the Preview window and afterward closing the source window sometimes caused a crash. Fixed.
+
+<p>
+<li> New code by Scott Lambert to improve the Comment/Uncomment and Indent/Unindent code.
+
+<p>
+<li> Added fdb_latexmk to the extensions automatically removed by "Trash AUX Files", to improve the operation of latexmk.
+
+<p>
+<li> The flip code used by some default macros is now a universal binary.
+</ul>
+
 
 <P><h5>TeXShop Changes 2.31</h5></P>
 
@@ -192,7 +235,7 @@ lines containing TeX commands with embedded Arabic, Hebrew, or Persian will stil
 <li> There are many changes in TeXShop Help, including a new section on encoding, and separate sections on General Engines, and on the XeTeX engine. References to XeTeX were removed.
 
 <p>
-<li> There are slight improvements in the Program, Encoding, and Root macro files by Ram—n M. Figueroa-Centeno.
+<li> There are slight improvements in the Program, Encoding, and Root macro files by Ramon M. Figueroa-Centeno.
 
 </ul>
 
@@ -1309,7 +1352,7 @@ fixed thanks to Juan Luis Varona.</li>
 					If the source file has include files,  this operation will open
 					the appropriate include file and take the user to a point in that file. Read the
 					help file "General Help: Pdfsync" for important details. This change depends
-					on pdfsync.sty, a file create by Piero D'Ancona with improvements by Jérôme 
+					on pdfsync.sty, a file create by Piero D'Ancona with improvements by JÃˆrÃ™me 
 					Laurens.
 
 <li> 					Also added pdfsync the other way. Clicking on a spot in the source file (including

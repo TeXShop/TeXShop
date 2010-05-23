@@ -215,6 +215,7 @@ enum RootCommand
 	id                  syncBox;
 	id					indexColorBox;
 	BOOL                aggressiveTrash;
+	BOOL				willClose;
 
 	BOOL		_externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
@@ -324,7 +325,6 @@ enum RootCommand
 - (void)setCallingWindow: (NSWindow *)thisWindow;
 - (void)setPdfSyncLine:(int)line;
 - (void)showSyncMarks:sender;
-- (BOOL)syncState;
 - (void) flipShowSync: sender;
 - (void)showIndexColor:sender;
 - (BOOL)indexColorState;
@@ -464,6 +464,8 @@ enum RootCommand
 - (void) convertDocument;
 - (void) abort:sender;
 - (void) sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (BOOL) getWillClose;
+- (void) setWillClose: (BOOL)value;
 
 @end
 

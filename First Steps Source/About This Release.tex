@@ -11,7 +11,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 2.31 }
+\title{About TeXShop 2.33 }
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -22,16 +22,20 @@
 %  \begin{multicols}{2}
 
 \thispagestyle{empty}
+\vspace{-.3in}
 \section{This Document}
 
 If you are a new TeXShop user, you can skip this document and begin using the program.
 
-The default behavior of TeXShop can be modified in two ways: by making Preference changes, and by editing files in $\sim$/Library/TeXShop. Here $\sim$/Library is the Library folder in your home directory. When new versions of TeXShop are installed, these locations are not touched because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do. 
+The default behavior of TeXShop can be modified in two ways: by making Preference changes, and by editing files in $\sim$/Library/TeXShop. Here $\sim$/Library is the Library folder in your home directory. 
 
-In the future, please read this document when you upgrade; each release of TeXShop will contain a new version. This version explains changes for TeXShop 2.30 and 2.31. A section labeled ``2.30 only'' can be ignored if you are upgrading from 2.30 to 2.31 and made the required 2.30 changes already.
-\section{Preference Changes (2.30 Only)}
+New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 
-TeXShop 2.30 can find errors in projects governed by a root document. When the user selects ``Goto Error,'' the source file containing the error is opened and the line with the error is highlighted. TeXShop finds errors by parsing the console output. In the default operation of TeX, the console error message does not identify the source file, but this can be changed if TeX is run with the ``file-line-error'' flag. Therefore, the following Preference changes are needed under the Engine tab (modify appropriately if you added other flags or omitted shell-escape):
+In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version. This version explains changes for TeXShop 2.30 -- 2.33.
+
+\section{Preference Changes;  No New Changes After 2.30}
+
+TeXShop 2.30 can find errors in projects governed by a root document. When the user selects ``Goto Error,'' the source file containing the error is opened and the line with the error is highlighted. TeXShop finds errors by parsing the console output. In the default operation of TeX, the console error message does not identify the source file, but this can be changed if TeX is run with the ``file-line-error'' flag. Therefore, the following Preference changes are needed under the Engine tab. If you modified TeXShop's defaults earlier, for instance by omitting the shell-escape flag, modify the suggestions below appropriately.
 
 Under the engine tab, the pdfTeX item should be
 \begin{verbatim}
@@ -50,54 +54,110 @@ and the corresponding Latex item should be
      simpdftex latex --maxpfb --extratexopts "-file-line-error -synctex=1"
 \end{verbatim}
 
-\section{A Refresher Course}
+\section{A Refresher Course; No Action Required}
 
-TeXShop creates a folder $\sim$/Library/TeXShop containing several subfolders. One of these folders is named ``Templates''; it  contains templates for various kinds of TeX documents. I'll use that folder as an example, although it has not changed in version 2.30. Users can edit these templates, add templates of their own, and throw away inappropriate templates. TeXShop displays these templates in a pulldown menu on the source toolbar; users select a template to insert its source code in their document.
+TeXShop creates a folder $\sim$/Library/TeXShop containing several subfolders. One of these folders is named ``Templates''; it  contains templates for various kinds of TeX documents. I'll use that folder as an example, although it has not changed recently. Users can edit these templates, add templates of their own, and throw away inappropriate templates. TeXShop displays these templates in a pulldown menu on the source toolbar; users select a template to insert its source code in their document.
 
-When TeXShop is upgraded, there are sometimes new versions of the default templates, but it would certainly be inappropriate to reach into the user's carefully edited Templates folder and change its contents. Therefore, upgrades do not modify the contents of folders in $\sim$/Library/TeXShop. But there is a way to get the new default templates. Quit TeXShop, move the entire Templates folder to the desktop, and restart TeXShop. When it discovers that the Templates folder is completely missing, TeXShop replaces it with a new default copy. Then merge any edited files from the desktop copy of Templates back into the new $\sim$/Library/TeXShop/Templates. 
+When TeXShop is upgraded, there might be new versions of the default templates, but it would certainly be inappropriate to reach into the user's carefully edited Templates folder and change its contents. Therefore, TeXShop upgrades install the new templates in $\sim$/TeXShop/New.  Users can examine them at their leisure and activate ones they like by moving those to $\sim$/TeXShop/Templates.
 
-\section{Command Completion}
+For the record, there is a way to obtain the exact contents of $\sim$/Library/Templates as seen by a brand new user.  To get it, quit TeXShop and move the entire Templates folder to the desktop. Then restart TeXShop. When it discovers that the Templates folder is completely missing, TeXShop replaces it with a new default copy. The same mechanism works with any subfolder of $\sim$/Library/TeXShop. However, this drastic action should almost never be necessary because of changes introduced in TeXShop 2.33.
 
-The only change in 2.31 is a French translation of Herbert Schulz's documentation. If you read English and made the 2.30 changes, you can ignore this section. 
+\section{A Slight Upgrade Change From 2.33 Onward}
+
+In the past, upgrades did not modify any folder in $\sim$/Library/TeXShop. Starting with TeXShop 2.33, three folders are touched:  bin, Engines/Inactive, and Scripts. Extra files added to those folders by users are left unchanged, but default TeXShop files are replaced by new versions and new default TeXShop files are added. Note that active Engine files are not changed because they don't live in the Inactives folder.
+
+These changes make upgrading engines much easier. Support files are automatically upgraded, so users only need to upgrade by hand  the actual engine files, which seldom change.
+
+\section{Easy Steps for Some Users}
+
+Some TeXShop users have never edited files in $\sim$/Library/TeXShop, except perhaps to modify the default Templates, have never added new Macros to the Macro menu, have never added  new Engines, and  have never used Command Completion or at least never added words to the Completion Dictionary.
+These users can complete the upgrade easily. Quit TeXShop, open $\sim$/Library/TeXShop, and move the following three folders to the desktop:
+CommandCompletion, Macros, Keyboard. Then restart TeXShop. Done. But it might be nice to keep the old desktop copies of these folders for a few days in case you made a modification you had forgotten, and find that TeXShop's behavior has changed.
+
+\section{New And Improved Engines}
+
+In version 2.30, Nicola Vitacolonna made beautiful new engines for metapost and metafun,  To obtain these engines, move nv-metafun.engine and nv-metapost.engine from 
+\begin{verbatim}
+     ~/Library/TeXShop/Engines/Inactive/Metapost
+\end{verbatim}
+to $\sim$/Library/TeXShop/Engines.
+
+The XeTeX and XeLaTeX engines have been modified to contain the file-line-error flag. To obtain these new versions, move XeTeX.engine and XeLaTeX.engine from
+\begin{verbatim}
+     ~/Library/TeXShop/Engines/Inactive/XeTeX
+\end{verbatim}
+to $\sim$/Library/TeXShop/Engines, replacing the older versions there now.
+
+In 2.31 there is a new Sage engine by Dan Drake. If you used the old Sage engine, you will need to switch to the new one because SageTeX is now included in Sage. Because there are several changes in SageTeX, you need to read ``About Sage'' in 
+\begin{verbatim}
+     ~/Library/TeXShop/Engines/Inactive/Safe
+\end{verbatim}
+for important details.
+
+The latexmk engines maintained by Herbert Schulz are upgraded regularly. Schulz has modified these engines and their support files so that in the future upgrades will occur automatically without user action. But users must make one change in 2.32 to switch to the new files; if this change is not made, the old latexmk from TeXShop 2.30 will stay in place and continue working. 
+
+Changing is easy for most users. Latexmk comes with six engine files, located in 
+\begin{verbatim}
+     ~/Library/TeXShop/Engines/Inactive/Latexmk
+\end{verbatim}
+Drag new versions of those which you use from this location to $\sim$/Library/TeXShop/Engines, replacing the older versions there now. Done.
+
+A small number of users may have edited support files  for latexmk that used to be in $\sim$/Library/TeXShop/bin. These edited versions will remain unchanged in this location, but new support files are now provided in $\sim$/Library/TeXShop/bin/tslatexmk. In the new latexmk, these support files should not be edited because they will be upgraded by TeXShop upgrades. Instead, Schulz has provided a mechanism to add personal changes to a new editable file. Read the documentation in 
+\begin{verbatim}
+     ~/Library/TeXShop/Engines/Inactive/Latexmk
+\end{verbatim}
+to see how this is done. It is only necessary to take action if you edited the previous support files.
+
+\section{Macros; No New Changes After 2.30}
+
+Alan Munn provided a wonderful new macro named ``Paste Spreadsheet Cells.'' Using his macro, you can copy cells from a spreadsheet and paste these cells, embedded in appropriate TeX code, into your source. To obtain the macro, go to
+\begin{verbatim}
+     ~/Library/TeXShop/New/Macros
+\end{verbatim}
+and copy the file PasteSpreadsheetCells.plist to the desktop. Then open TeXShop and in the Macro menu select ``Open Macro Editor.'' Select the ``Add macros from file...'' item in this menu, navigate to the desktop copy of PasteSpreadsheetCells.plist, and choose it. A new ``Paste Spreadsheet Cells'' macro will be added to your Macro list. If you desire, drag it to a different spot in the list, and then hit the Save button.
+
+\section{Keyboard Shortcuts; No New Changes After 2.31}
+
+TeXShop has the ability to remap Keyboard Shortcuts. This feature was activated by only a few users, and stopped working some time ago because the file controlling it contained comments within comments, which is illegal in xml. If you modified Keyboard Shortcuts in the past, copy the file
+\begin{verbatim}
+     ~/Library/TeXShop/Menus/KeyEquivalents.plist
+\end{verbatim}
+ to  the desktop. Then in all cases find the file
+\begin{verbatim}
+     ~/Library/TeXShop/New/Menus/KeyEquivalents.plist
+\end{verbatim}
+and move it to the folder
+\begin{verbatim}
+     ~/Library/TeXShop/Menus
+\end{verbatim}
+overwriting the old file. The new file is only an template explaining how to make changes, but the changes it makes are commented out. In the unlikely event that you edited the old KeyEquivalents.plist, merge in your changes from the desktop copy.
+
+
+\section{Command Completion; No New Changes After 2.31}
 
 TeXShop has Command Completion. Type the beginning of a command and hit the Escape key. TeXShop will complete the command. If several completions are possible, hit Escape several times to cycle between them.
 The list of known completions is stored in $\sim$/Library/TeXShop/CommandCompletion and  can be edited within TeXShop.
 
-This facility has been expanded by Herbert Schulz in version 2.30. To use his additions, it is necessary to obtain the new CommandCompletion file. Quit TeXShop,  move the old CommandCompletion folder to the desktop,   and restart the program. A new folder will be created containing the new CommandCompletion.txt file and also a pdf document from Schulz explaining the changes in detail. If you modified the list of Command Completions, you must then edit CommandCompletions.txt, perhaps with TeXShop or TextEdit, and merge in your changes from the desktop copy.
+This facility has been expanded by Herbert Schulz in version 2.30. To use his additions, you need a new CommandCompletion file. 
+If you modified the default Command Completions sometime in the past, copy the file 
+\begin{verbatim}
+     ~/Library/TeXShop/CommandCompletion/CommandCompletion.txt 
+\end{verbatim}
+ to  the desktop. Then in all cases find the file
+ \begin{verbatim}
+     ~/Library/TeXShop/New/CommandCompletion/CommandCompletion.txt 
+\end{verbatim}
+and move it to the folder  
+\begin{verbatim}
+     ~/Library/TeXShop/CommandCompletion 
+\end{verbatim}
+overwriting the old file.  If you modified the old file, you must edit CommandCompletions.txt with TeXShop or TextEdit and merge in your changes from the desktop copy.
 
-\section{bin}
-
-In version 2.30 several engine and macro changes require new files in the ``bin'' directory. In version 2.31, there is one new latexmk file in that directory and a slightly revised version of a file used by the Paste Spreadsheet Cells macro. So for either version, quit TeXShop, move $\sim$/Library/TeXShop/bin to the desktop, and restart the program. Then merge in from the desktop copy any additional scripts you may have added. Most users haven't changed ``bin'' and won't need to merge. 
-
-\section{Engines}
-
-In version 2.31, there is a new Sage engine. In version 2.30, Nicola Vitacolonna has beautiful new engines for metapost and metafun. Also the XeTeX and XeLaTeX engines have been modified to contain the file-line-error flag, and Herbert Schulz modified latexmk. To obtain these, quit TeXShop, move $\sim$/Library/TeXShop/Engines to the desktop, restart the program, and merge in any changes you have made from the desktop copy.
-
-\section{Macros (2.30 Only)}
-
-Alan Munn provided a wonderful new macro named ``Paste Spreadsheet Cells.'' Using his macro, you can copy cells from a spreadsheet and paste these cells, embedded in appropriate TeX code, into your source. To obtain the new Macro, you must recreate the Macros subfolder of $\sim$/Library/TeXShop.
-
-It is likely that you have added your own macros to the default Macros provided by TeXShop. This is a good time to rearrange your Macros so merging your changes with the new defaults will be easy, both now and in the future. We recommend placing a divider after the default macros, and moving your own macros to the section below this divider. Note that TeXShop's Macro Editor makes this process easy because it allows you to grab macros in the left column and rearrange them as you wish.
-
-After this rearrangement, select your personal macros below the divider in the Macro Editor, and choose the  ``Save Selection To File ...'' entry in the Macro menu. The new file only contains your personal macros, not the default TeXShop macros.
-
-Next, quit TeXShop, and move the Macros folder in $\sim$/Library/TeXShop to the desktop. Then restart TeXShop. The new default Macros folder will be created. Finally, open the Macro Editor and in the Macro menu choose ``Add Macros From File ...'', selecting the file you created earlier. In the end, you'll have TeXShop's default macros, a divider, and then your personal macros.
-
-The default Macros in TeXShop were created in a somewhat random manner. Some are immediately useful and others are samples showing users how to construct a macro. In a future TeXShop release, it would be nice to clean up these defaults. The new default menu would contain macros most users need, arranged in an optimal manner. Remaining macros could be provided in an optional file that could be merged in as desired.
-
-I invite readers to write me listing macros which should be part of that new default menu. 
-
-\section{Menus}
-
-The KeyEquivalents.plist file has been rewritten; the previous version contained comments within comments, which are illegal in xml. To obtain the file, quit TeXShop and move $\sim$/Library/TeXShop/Menus to the deskop. Then restart the program. You'll need to merge in the old file only if you tried to change TeXShop's default keyboard shortcuts. 
-
-The new file is only a skeleton explaining how users can make changes; it doesn't actually change TeXShop's default values.
-
-\section{Documentation (2.30 Only)}
+\section{Documentation; No New Changes After 2.30}
 
 The ``Paste Spreadsheet Cells'' macro by Alan Munn is documented in TeXShop Help under Macros Help, Default Applescript Macros.
 
-Herbert Schulz's extensions to Command Completion are explained in a short paper he wrote, which can be found in $\sim$/Library/TeXShop/CommandCompletion.
+Herbert Schulz's extensions to Command Completion are explained in a short paper he wrote, which can be found in $\sim$/Library/TeXShop/New/CommandCompletion.
 
 Nicola Vitacolonna's new engines for MetaPost, nv-metafun and nv-metapost, are explained in his ReadMe in
 $\sim$/Library/TeXShop/Engines/Inactive/MetaPost. This folder also contains a folder of examples.

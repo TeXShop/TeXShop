@@ -99,6 +99,7 @@
 	isLoading = NO;
 	firstTime = NO;
 	fromMenu = NO;
+	willClose = NO;
 	
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	lineNumberView1 = nil;
@@ -2876,16 +2877,21 @@ preference change is cancelled. "*/
 
 - (void)bringPdfWindowFront{
 	NSString		*theSource;
-
+	
 	if (!_externalEditor) {
+		
 		theSource = [[self textView] string];
 		if ([self checkMasterFile:theSource forTask:RootForSwitchWindow])
 			return;
 		if ([self checkRootFile_forTask:RootForSwitchWindow])
 			return;
 		//if ([self myTeXRep] != nil)
-		if ([self fromKit])
-			[[self pdfKitWindow] makeKeyAndOrderFront: self];
+		if ([self fromKit]){
+			if ([[self pdfKitWindow] isVisible])
+				[[self pdfKitWindow] makeKeyAndOrderFront: self];
+			else
+				[self refreshPDFAndBringFront: YES];
+			}
 		}
 }
 
@@ -3686,6 +3692,8 @@ preference change is cancelled. "*/
 		showSync = YES;
 	else
 		showSync = NO;
+	[myPDFKitView setShowSync: showSync];
+	[myPDFKitView2 setShowSync: showSync];
 	[myPDFKitView display];
 	[myPDFKitView2 display];
 }
@@ -4100,6 +4108,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	[self doCommentOrIndentForTag: [sender tag]];
 }
 
+/*
+
 - (void) doCommentOrIndentForTag: (int)tag
 {
 	NSString		*text, *oldString;
@@ -4197,6 +4207,92 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 }
 
 // end mitsu 1.29
+ 
+*/
+
+// mitsu 1.29 (T3)//rewritten Scott Lambert 3/1/2010
+- (void) doCommentOrIndentForTag: (int)tag
+{
+	NSString	*text, *oldString;
+	NSRange		modifyRange;
+	unsigned	blockStart, blockEnd, lineStart, lineContentsEnd, lineEnd;
+	int			theChar = 0;
+	NSString	*theCommand = 0;
+	
+	
+	text = [textView string];
+	//Expand the selectedRange to include whole lines
+	[text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
+	
+	//Save the oldString for undo
+	modifyRange.location = blockStart;
+	modifyRange.length = (blockEnd - blockStart);
+	oldString = [[textView string] substringWithRange: modifyRange];
+	
+	lineStart=blockStart;
+	//We want to make at least one attempt at modifying. 
+	//This matters only the selection is empty and the cursor is on the last line of the file which happens to be blank.
+	do {
+		modifyRange.location=lineStart;
+		modifyRange.length=0;
+		//Find the end of the line (for the next iteration). Detect if line is blank: avoid characterAtIndex exception.
+		[text getLineStart:NULL end:&lineEnd contentsEnd:&lineContentsEnd forRange:modifyRange];
+		switch (tag) {
+			case Mcomment:
+				[textView replaceCharactersInRange:modifyRange withString:@"%"];
+				blockEnd++;
+				lineEnd++;
+				theCommand = NSLocalizedString(@"Comment", @"Comment");
+				break;
+				
+			case Muncomment:
+				if (lineStart<lineContentsEnd)
+					theChar=[text characterAtIndex:lineStart];
+				if (theChar == '%') {
+					modifyRange.length = 1;
+					[textView replaceCharactersInRange:modifyRange withString:@""];
+					blockEnd--;
+					lineEnd--;
+					theCommand = NSLocalizedString(@"Uncomment", @"Uncomment");
+				}
+				break;
+				
+			case Mindent:
+				[textView replaceCharactersInRange:modifyRange withString:@"\t"];
+				blockEnd++;
+				lineEnd++;
+				theCommand = NSLocalizedString(@"Indent", @"Indent");
+				break;
+				
+			case Munindent:
+				if (lineStart<lineContentsEnd)
+					theChar=[text characterAtIndex:lineStart];
+				if (theChar == '\t') {
+					modifyRange.length = 1;
+					[textView replaceCharactersInRange:modifyRange withString:@""];
+					blockEnd--;
+					lineEnd--;
+					theCommand = NSLocalizedString(@"Unindent", @"Unindent");
+				}
+				break;
+		};
+		lineStart=lineEnd;
+	} while (lineStart<blockEnd);
+	
+	if (!theCommand)
+		return;	// If no change was made, do nothing (see bug #1488597).
+	
+	[self fixColor:blockStart :blockEnd];
+	modifyRange.location = blockStart;
+	modifyRange.length = (blockEnd - blockStart);
+	[textView setSelectedRange: modifyRange];
+	
+	[self registerUndoWithString:oldString location:modifyRange.location
+						  length:modifyRange.length key: theCommand];
+}
+
+// end mitsu 1.29 //end rewritten Scott Lambert 3/1/2010
+
 
 - (void)trashAUXFiles: sender
 {
@@ -4435,6 +4531,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 						[extension isEqualToString:@"xref"] ||
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
+						[extension isEqualToString:@"fdb_latexmk"] ||
 						([extension isEqualToString:@"pdf"] && trashPDF) ||
 						[extension isEqualToString:@"toc"])))
 			[pathsToBeMoved addObject: anObject];
@@ -4465,13 +4562,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 		showSync = YES;
 	else
 		showSync = NO;
+	[myPDFKitView setShowSync: showSync];
+	[myPDFKitView2 setShowSync: showSync];
 	[myPDFKitView display];
 	[myPDFKitView2 display];
-}
-
-- (BOOL)syncState // warning; can be called after syncBox is disposed
-{
-	return showSync;
 }
 
 - (void) showIndexColor: sender
@@ -5320,6 +5414,17 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 }
 
 // end BULLET (H. Neary) (modified by (HS))
+
+- (BOOL) getWillClose
+{
+	return willClose;
+}
+
+- (void) setWillClose: (BOOL)value
+{
+	willClose = value;
+}
+
 
 
 @end

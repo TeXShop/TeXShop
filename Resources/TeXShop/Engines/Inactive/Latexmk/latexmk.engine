@@ -1,4 +1,9 @@
 #!/bin/bash
-export TSBIN="$HOME/Library/TeXShop/bin"
-export LTMKBIN="$HOME/Library/TeXShop/bin"
-"${LTMKBIN}"/latexmk -pdfps -r "${TSBIN}/latexmkrc" "$1"
+export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+export LTMKEDIT="$HOME/Library/TeXShop/bin"
+# make sure latexmkrcedit exists in bin
+if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then
+	cp "${LTMKBIN}/latexmkrcDONTedit" "${LTMKEDIT}/latexmkrcedit"
+fi
+"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/latexmkrc" "$1"

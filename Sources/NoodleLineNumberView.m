@@ -70,6 +70,9 @@
     [lineIndices release];
 	[linesToMarkers release];
     [font release];
+
+// The next line was added by Koch to avoid a crash when closing; the crash seemed to occur only on PPC machines
+//	[self setClientView: nil];
     
     [super dealloc];
 }

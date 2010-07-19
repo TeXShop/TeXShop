@@ -108,8 +108,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.13a';
-$version_details = "$My_name, John Collins, 16 January 2010";
+$version_num = '4.17';
+$version_details = "$My_name, John Collins, 9 June 2010";
 
 
 use Config;
@@ -119,7 +119,7 @@ use FileHandle;
 use File::Find;
 use Cwd;            # To be able to change cwd
 use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd
-use Digest;
+use Digest::MD5;
 
 #use strict;
 
@@ -176,51 +176,49 @@ else {
 ##     5.  Parsing of log file instead of source file is used to
 ##         obtain dependencies, by default.
 ##
-##   Modification log from 25 Nov 2009 onwards in detail
+##   Modification log from 22 Jan 2010 onwards in detail
 ##
-##     16 Jan 2010, John Collins  V. 4.13a. 
-##                                Correct bug in deleting extra files (I wasn't 
-##                                  consistent about periods in file extensions)
-##                                Delete unused subroutines
-##     13 Jan 2010, John Collins  V. 4.13 
-##     27 Dec 2009, John Collins  Correct position of inserting bbl into list 
-##                                   of generated extensions.
-##                                Correct clean_up.  It stopped deleting aux 
-##                                   file.
-##                                $bibtex_use defaults to 1.
-##     15 Dec 2009, John Collins  Option not to do bibtex
-##                                   (to allow for case that bbl files
-##                                   are available, but no bibtex).
-##     27 Nov 2009, John Collins  Solve problem that changes in \include 
-##                                   files weren't reflected in changes
-##                                   in bibtex source files.
-##                                Remove excess recalculations of md5 in 
-##                                   startup and when initializing rule 
-##                                   from fdb_latexmk file.
-##                                Fdb_latexmk now has data for all rules
-##                                   need for making target files,
-##                                   not just rules accessible from primary
-##                                   rules.
-##     26 Nov 2009, John Collins  In testing for changes, when filetime
-##                                   has changed, but file is unchanged,
-##                                   update filetime in rule.
-##                                   This saves excessive md5 calculations.
-##     25 Nov 2009, John Collins  Fixed issue with fdb_get and 1-second
-##                                   granularity of file timestamps.
-##                                   The issue was that if runs of
-##                                   latex (etc) occur within the
-##                                   1-second time granularity, file
-##                                   contents can change even though
-##                                   the file's time and size are
-##                                   unchanged, falsifying an
-##                                   assumption made by fdb_get, but
-##                                   only when the old time is the
-##                                   same as the run time of a command
-##                                   that uses the file.
-##                                Avoided excess md5 calculations at
-##                                   startup.
+##      9 Jun 2010, John Collins  With $force_mode on, do a better job 
+##                                  of completing processing.
+##                                Remove long-unused $force_include_mode
+##                                  and its -F and -F- options
+##      8 Jun 2010, John Collins  Deal with bug about misparsing log file
+##                         with non-space-containing filename that is
+##                         followed by a space and a message on same line.
+##     18 May 2010, John Collins  Remove unlink $$Pdest in do_viewfile
+##     17 May 2010, John Collins  Correct sleep time to 1 sec 
+##                                   if s<0 (otherwise infinite delay)
+##                                   or if 0<s<1 (otherwise zero delay)
+##     10 May 2010, John Collins  Deal with filenames in log file that are 
+##                                messed up by pdfTeX warnings not preceeded 
+##                                by a new line
+##     18 Apr 2010, John Collins  Clean up comment from previous mod.
+##     16 Apr 2010, John Collins  V. 4.15c.  Correct line wrapping issue.
+##     12 Apr 2010, John Collins  V. 4.15b.  Change 
+##                            use Digest;
+##                        to 
+##                            use Digest::MD5;
+##                        for TeX Live compatibility. Needed also to change 
+##                            my $md5 = Digest->MD5;
+##                        to
+##                            my $md5 = Digest::MD5->new;
 ##
-##   1998-2009, John Collins.  Many improvements and fixes.
+##      8 Apr 2010, John Collins  V. 4.15a.  Better defaults for system
+##                                  configuration file under cygwin
+##      7 Apr 2010, John Collins  V. 4.15: Change defaults on 
+##                           $latex_silent_switch and $pdflatex_silent_switch
+##                                to make them TeXLive compatible always
+##     26 Mar 2010, John Collins  V. 4.14b.  Make sure md5 calc
+##                                doesn't bomb out on directory
+##                                Parse log file: if apparent dependent
+##                                is directory, remove it from list.
+##     27 Feb 2010, John Collins  V. 4.14a.  List failed primaries
+##     22 Jan 2010, John Collins  V. 4.14.  Try to fix problem that with -pvc
+##                                failure on latex should force a wait until
+##                                a user file is changed.  But latexmk keeps 
+##                                doing dvips, dvipdf, etc.
+##
+##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
 ##
 ##   Modified by Evan McLean (no longer available for support)
@@ -446,6 +444,8 @@ $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
 
 $quote_filenames = 1;       # Quote filenames in external commands
 
+
+
 #########################################################################
 
 ################################################################
@@ -505,10 +505,6 @@ if ( $^O eq "MSWin32" ) {
     @rc_system_files = ( 'C:/latexmk/LatexMk' );
 
     $search_path_separator = ';';  # Separator of elements in search_path
-
-    # For both fptex and miktex, the following makes error messages explicit:
-    $latex_silent_switch  = '-interaction=batchmode -c-style-errors';
-    $pdflatex_silent_switch  = '-interaction=batchmode -c-style-errors';
 
     # For a pdf-file, "start x.pdf" starts the pdf viewer associated with
     #   pdf files, so no program name is needed:
@@ -605,17 +601,20 @@ elsif ( $^O eq "cygwin" ) {
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
-    ## We can stay with MSWin files here, since perl understands them,
-    @rc_system_files = ( 'C:/latexmk/LatexMk' );
+    ## We could stay with MSWin files here, since cygwin perl understands them
+    ## @rc_system_files = ( 'C:/latexmk/LatexMk' );
+    ## But they are deprecated in v. 1.7.  So use the UNIX version, prefixed
+    ##   with a cygwin equivalent of the MSWin location
+    @rc_system_files = 
+     ( '/cygdrive/c/latexmk/LatexMk', 
+       '/opt/local/share/latexmk/LatexMk', 
+       '/usr/local/share/latexmk/LatexMk',
+       '/usr/local/lib/latexmk/LatexMk' );
 
     $search_path_separator = ';';  # Separator of elements in search_path
     # This is tricky.  The search_path_separator depends on the kind
     # of executable: native NT v. cygwin.  
     # So the user will have to override this.
-
-    # For both fptex and miktex, the following makes error messages explicit:
-    $latex_silent_switch  = '-interaction=batchmode -c-style-errors';
-    $pdflatex_silent_switch  = '-interaction=batchmode -c-style-errors';
 
     # We will assume that files can be viewed by native NT programs.
     #  Then we must fix the start command/directive, so that the
@@ -887,8 +886,6 @@ $dvi_filter = '';	# DVI filter command
 $ps_filter = '';	# Postscript filter command
 
 $force_mode = 0;        # =1 to force processing past errors
-$force_include_mode = 0;# =1 to ignore non-existent files when testing
-                        # for dependency.  (I.e., don't treat them as error)
 $go_mode = 0;           # =1 to force processing regardless of time-stamps
                         # =2 full clean-up first
 $preview_mode = 0;
@@ -1230,8 +1227,6 @@ while ($_ = $ARGV[0])
   elsif (/^-nodependents$/ || /^-dependents-$/) { $dependents_list = 0; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
-  elsif (/^-F$/)     { $force_include_mode = 1; }
-  elsif (/^-F-$/)    { $force_include_mode = 0; }
   elsif (/^-f$/)     { $force_mode = 1; }
   elsif (/^-f-$/)    { $force_mode = 0; }
   elsif (/^-g$/)     { $go_mode = 1; }
@@ -1562,6 +1557,22 @@ if ( $pdf_mode == 2 ) {
     add_option( \$dvips, " $dvips_pdf_switch" );
 }
 
+# Note sleep has granularity of 1 second.
+# Sleep periods 0 < $sleep_time < 1 give zero delay,
+#    which is probably not what the user intended.
+# Sleep periods less than zero give infinite delay
+if ( $sleep_time < 0 ) {
+     warn "$My_name: Correcting negative sleep_time to 1 sec.\n";
+     $sleep_time = 1;
+}
+elsif ( ($sleep_time < 1) && ( $sleep_time != 0 ) ) {
+     warn "$My_name: Correcting nonzero sleep_time of less than 1 sec to 1 sec.\n";
+     $sleep_time = 1;
+}
+elsif ( $sleep_time == 0 ) {
+     warn "$My_name: sleep_time was configured to zero.\n",
+    "    Do you really want to do this?  It will give 100% CPU usage.";
+}
 
 # Make convenient forms for lookup.
 # Extensions always have period.
@@ -1583,8 +1594,8 @@ $quell_uptodate_msgs = $silent;
 #?? Unneeded now: $save_bibtex_mode = $bibtex_mode;
 
 $failure_count = 0;
-$last_failed = 0;    # Flag whether failed on making last file
-                     # This is used for showing suitable error diagnostics
+@failed_primaries = ();
+
 FILE:
 foreach $filename ( @file_list )
 {
@@ -1812,10 +1823,7 @@ continue {
     }
     if ( ($failure > 0) || ($error_message_count > 0) ) {
         $failure_count ++;
-        $last_failed = 1;
-    }
-    else {
-        $last_failed = 0;
+        push @failed_primaries, $filename;
     }
     &ifcd_popd;
 }
@@ -1827,11 +1835,13 @@ if ( $do_cd && ($#dir_stack > -1) ) {
 }
 
 if ($failure_count > 0) {
-    if ( $last_failed <= 0 ) {
-        # Error occured, but not on last file, so
-        #     user may not have seen error messages
+    if ( $#file_list > 0 ) {
+        # Error occured, but multiple files were processed, so
+        #     user may not have seen all the error messages
         warn "\n------------\n";
-        warn "$My_name: Some operations failed.\n";
+        show_array( 
+           "$My_name: Some operations failed, for the following tex file(s)", 
+           @failed_primaries);
     }
     if ( !$force_mode ) {
       warn "$My_name: Use the -f option to force complete processing.\n";
@@ -2123,7 +2133,6 @@ sub do_viewfile {
     if ( &view_file_via_temporary ) {
         my $tmpfile = tempfile1( "${root_filename}_tmp", $ext );
         $return = &rdb_ext_cmd1( '', '', $tmpfile );
-        unlink $$Pdest;
         move( $tmpfile, $$Pdest );
     }
     else {
@@ -2282,7 +2291,6 @@ sub find_basename
 #************************************************************
 
 sub make_preview_continuousB {
-  # Version for use with makeB
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
@@ -2346,6 +2354,7 @@ sub make_preview_continuousB {
     # Set $first_time to flag first run (to save unnecessary diagnostics)
 CHANGE:
     for (my $first_time = 1; 1; $first_time = 0 ) {
+        my %rules_to_watch = %requested_filerules;
         $updated = 0;
         $failure = 0;
         $failure_msg = '';
@@ -2363,18 +2372,9 @@ CHANGE:
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
             $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
         }
-        if ( $failure > 0 ) {
-            if ( !$failure_msg ) {
-	        $failure_msg = 'Failure to make the files correctly';
-            }
-            # There will be files changed during the run that are irrelevant.
-            # We need to wait for the user to change the files.
-            # So set the GENERATED files as up-to-date
-            rdb_for_some( [keys %current_primaries], \&rdb_update_gen_files );
-
-            $failure_msg =~ s/\s*$//;  #Remove trailing space
-            warn "$My_name: $failure_msg\n",
-    "    ==> You will need to change a source file before I do another run <==\n";
+        # Start viewer if needed.
+        if ( ($failure > 0) && (! $force_mode) ) {
+            # No viewer yet
 	}
         elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
             # A viewer is running.  Explicitly get it to update screen if we have to do it:
@@ -2396,7 +2396,6 @@ CHANGE:
 	    }
             local $retcode = 0;
             rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
-# PREVIOUS            local $retcode = rdb_makeB ( 'view' );
             if ( $retcode != 0 ) {
                 if ($force_mode) {
                     warn "$My_name: I could not run previewer\n";
@@ -2409,18 +2408,42 @@ CHANGE:
                 $viewer_running = 1;
                 $$Pneed_to_get_viewer_process = 1;
 	    } # end analyze result of trying to run viewer
-       } # end start viewer
-       rdb_show_rule_errors();
-       if ( $first_time || $updated || $failure ) {
-          print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
-       }
-       $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
-       &catch_break;
-       $have_break = 0;
+        } # end start viewer
+        if ( $failure > 0 ) {
+            if ( !$failure_msg ) {
+	        $failure_msg = 'Failure to make the files correctly';
+            }
+            @pre_primary = ();   # Array of rules
+            @post_primary = ();  # Array of rules
+            @one_time = ();      # Array of rules
+            &rdb_classify_rules( \%possible_primaries, keys %requested_filerules );
+            # There will be files changed during the run that are irrelevant.
+            # We need to wait for the user to change the files.
+
+            # So set the GENERATED files from (pdf)latex as up-to-date:
+            rdb_for_some( [keys %current_primaries], \&rdb_update_gen_files );
+
+            # And don't watch for changes for post_primary rules (ps and pdf 
+            # from dvi, etc haven't been run after an error in (pdf)latex, so
+            # are out-of-date by filetime criterion, but they should not be run
+            # until after another (pdf)latex run:
+            foreach (@post_primary) { delete $rules_to_watch{$_}; }
+
+            $failure_msg =~ s/\s*$//;  #Remove trailing space
+            warn "$My_name: $failure_msg\n",
+    "    ==> You will need to change a source file before I do another run <==\n";
+	}
+        rdb_show_rule_errors();
+        if ( $first_time || $updated || $failure ) {
+            print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
+        }
+        $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
+        &catch_break;
+        $have_break = 0;
   WAIT: while (1) {
-           sleep($sleep_time);
+           sleep( $sleep_time );
 	   if ($have_break) { last WAIT; }
-           if ( rdb_new_changes(@targets) ) { 
+           if ( rdb_new_changes(keys %rules_to_watch) ) { 
   	       if (!$silent) {
                    warn "$My_name: Need to remake files.\n";
  	           &rdb_diagnose_changes( '  ' );
@@ -2641,8 +2664,6 @@ sub print_help
   "   -e <code> - Execute specified PERL code\n",
   "   -f     - force continued processing past errors\n",
   "   -f-    - turn off forced continuing processing past errors\n",
-  "   -F     - Ignore non-existent files when testing for dependencies\n",
-  "   -F-    - Turn off -F\n",
   "   -gg    - Super go mode: clean out generated files (-CA), and then\n",
   "            process files regardless of file timestamps\n",
   "   -g     - process regardless of file timestamps\n",
@@ -2863,13 +2884,14 @@ sub parse_logB {
         s/[\n\r]*$//;
         # Handle wrapped lines:
         # They are lines brutally broken at exactly $log_wrap chars 
-        #    excluding line-end.  The TeX program adds an EXTRA 
-        #    end-of-line character whenever a line gets to $log_wrap
-        #    characters.  So we recover the unwrapped line(s) simply 
-        #    by deleting the end-of-line following a line of exactly 
-        #    $log_wrap characters.  
+        #    excluding line-end.  Sometimes a line $log_wrap chars 
+        #    long is an ordinary line, sometimes it is part of a line
+        #    that was wrapped.  To handle all cases, I keep both
+        #    options open by putting the line into @lines before
+        #    and after appending the next line:  
         my $len = length($_);
         while ( ($len == $log_wrap) && !eof($log_file) ) {
+            push @lines, $_;
             my $extra = <$log_file>;
             $extra =~ s/[\n\r]*$//;
             $len = length($extra);
@@ -2894,10 +2916,32 @@ sub parse_logB {
     my $delegated_output = "";   #    and output file.  (Don't put in
                                  #    data structure until block is ended.)
     my %new_conversions = ();
+    my @retries = ();
 LINE:
-    while( $line <= $#lines ) { 
-        $_ = $lines[$line];
-	$line ++;
+    while( ($line <= $#lines) || ($#retries > -1) ) { 
+        if ($#retries > -1) {
+	    $_ = pop @retries;
+	}
+	else {
+            $_ = $lines[$line];
+            $line ++;
+	}
+        if ( /^! pdfTeX warning/ || /^pdfTeX warning/ ) {
+            # This kind of warning is produced by some versions of pdftex
+            # or produced by my reparse of warnings from other
+            # versions.
+            next;
+	}
+        elsif ( /^(.+)(pdfTeX warning.*)$/ ) {
+            # Line contains a pdfTeX warnings that may have been
+            # inserted directly after other material without an
+            # intervening new line.  I think pdfTeX always inserts a
+            # newline after the warning.  (From examination of source
+            # code.) 
+     	    push @retries, $1;
+            # But continue parsing the original line, in case it was a
+            # misparse, e.g., of a filename ending in 'pdfTeX';
+	}
         if ( $line == 1 ){
 	    if ( /^This is / ) {
 	        # First line OK
@@ -3108,29 +3152,36 @@ LINE:
 	#    filename (on VAX/VMS) may include '[' and ']' (directory
 	#             separators) 
 	#    filenames (on MS-Win) commonly include space.
+        #    filenames on UNIX can included space.
+        #    Miktex quotes filenames
+        #    But web2c doesn't.  Then 
+        #       (string  message
+        #    is ambiguous: is the filename "string" or "string message".
+        #    Allow both as candidates, since user filenames with spaces 
+        #    are rare.  System filenames with spaces are common, but
+        #    they are normally followed by a newline rather than messages. 
 
 	# First step: replace $_ by whole of line after the '('
 	#             Thus $_ is putative filename followed by other stuff.
             $_ = $1; 
+            # Array of new candidate include files; sometimes more than one.
+            my @new_includes = ();
+            my $quoted = 0;
             if ( /^\"([^\(^\)^\"]+)\"/ ) {
                # Quoted file name, as from MikTeX
+		$quoted = 1;
             }
-            elsif ( /^([^\(^\)]*?)\s\[/ ) {
-                # Terminator: space then '['
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
+            elsif ( /^([^\(^\)]*?)\s+[\[\{\<]/ ) {
+                # Terminator: space then '[' or '{' or '<'
+                # Use *? in condition: to pick up first ' [' (etc) 
+                # as terminator
             }
-            elsif ( /^([^\(^\)]*)\s(?=\()/ ) {
+            elsif ( /^([^\(^\)]*)\s+(?=\()/ ) {
                 # Terminator is ' (', but '(' isn't in matched string,
                 # so we keep the '(' ready for the next match
             }
             elsif  ( /^([^\(^\)]*)(\))/ ) {
                 # Terminator is ')'
-            }
-            elsif ( /^([^\(^\)]*?)\s*\{/ ) {
-                # Terminator: arbitrary space then '{'
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
             }
 	    else {
                 #Terminator is end-of-string
@@ -3138,6 +3189,12 @@ LINE:
             $_ = $';       # Put $_ equal to the unmatched tail of string '
             my $include_candidate = $1;
             $include_candidate =~ s/\s*$//;   # Remove trailing space.
+            if ( !$quoted && ($include_candidate =~ /(\S+)\s/ ) ){
+                # Non-space-containing filename-candidate
+                # followed by space followed by message
+                # (Common)
+                push @new_includes, $1;
+	    }
             if ( $include_candidate eq "[]" ) {
                 # Part of overfull hbox message
                 next INCLUDE_CANDIDATE;
@@ -3150,14 +3207,13 @@ LINE:
             # treated this as a special case.  For safety check here:
             $include_candidate =~ s/^\"(.*)\"$/$1/;
 
-            # Make list of new include files; sometimes more than one.
-            my @new_includes = ($include_candidate);
+            push @new_includes, $include_candidate;
             if ( $include_candidate =~ /^(.+)\[([^\]]+)\]$/ ) {
                 # Construct of form 'file1[file2]', as produced by pdflatex
                 if ( -e $1 ) {
                     # If the first component exists, we probably have the
                     #   pdflatex form
-                    @new_includes = ($1, $2);
+                    push @new_includes, $1, $2;
 	        }
                 else {
                     # We have something else.
@@ -3198,7 +3254,14 @@ LINE:
 CANDIDATE:
     foreach my $candidate (keys %dependents) {
         my $code = $dependents{$candidate};
-        if ( -e $candidate ) {
+        if ( -d $candidate ) {
+            #  If $candidate is directory, it was presumably found from a 
+            #     mis-parse, so remove it from the list.  (Misparse can 
+            #     arise, for example from a mismatch of latexmk's $log_wrap
+            #     value and texmf.cnf value of max_print_line.)
+            delete $dependents{$candidate};
+        }
+        elsif ( -e $candidate ) {
             if ( exists $generated_log{$candidate} ){
 	        $dependents{$candidate} = 6;
 	    }
@@ -4498,7 +4561,7 @@ sub rdb_makeB {
                           "make new source files\n";
                     next PASS;
 		}
-                elsif ( ! $failure ) {
+                elsif ( $force_mode || (! $failure) ) {
                     next PASS;
 		}
             }
@@ -5667,7 +5730,6 @@ sub rdb_file_exists {
 #************************************************************
 
 sub rdb_update_gen_files {
-    # Call: fdb_updateA
     # Assumes rule context.  Update source files of rule to current state.
     rdb_do_files( 
         sub{
@@ -5954,13 +6016,17 @@ sub get_time_size_raw
 sub get_checksum_md5 {
     my $source = shift;
     my $input = new FileHandle;
-    my $md5 = Digest->MD5;
+    my $md5 = Digest::MD5->new;
     my $ignore_pattern = '';
 
 #warn "======= GETTING MD5: $source\n";
     if ( $source eq "" ) { 
        # STDIN:
        open( $input, '-' );
+    }
+    elsif ( -d $source ) {
+        # We won't use checksum for directory
+        return 0;
     }
     else {
         open( $input, '<', $source )

@@ -883,6 +883,8 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"sk"]) || ([extension isEqualToString: @"skt"])
 		|| ([extension isEqualToString: @"htx"])
 		|| ([extension isEqualToString: @"ly"])
+		|| ([extension isEqualToString: @"Stex"])
+		|| ([extension isEqualToString: @"lytex"])
 		|| ([extension isEqualToString: @"ctx"]))
 		return YES;
 		

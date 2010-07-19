@@ -1,0 +1,59 @@
+January 2, 2003
+
+Changes since 1.26; Changes due to Mitsuhiro Shishikura with
+small Koch changes
+
+a) Magnification: mousing in the pdf Display magnifies a small
+surrounding section; hold down "option" to enlarge the area
+displayed.
+
+b) New documents are now correctly named "Untitled, Untitled-1, etc."
+without spaces!
+
+c) User input text typed in the Console window is added to the
+output in the upper part of this window so a complete record of
+typesetting transactions is available.
+
+d) Added support for file types .def, .fd, .ltx, .clo
+
+e) Better way of accepting changes in input items in preferences
+
+f) Now magnification can be changed in preferences even if no
+	pdf view window is open
+
+g) Changed the typeset and program choosing buttons and menus
+
+h) Added typeset menu; changed keyboard equivalent of font panel
+
+i) jpg and tiff images failed if magnification was not 100; this is fixed
+
+j) Added all Japanese modifications by Mitsuhiro Shishikura
+
+k) Added Macro item and stuff by Mitsuhiro Shishikura
+
+l) Added John Nairn change: 
+
+	If any line of the source document begins with
+
+		%SourceDoc ../Main.tex
+
+then the system will typeset ../Main.tex if it is open,
+and otherwise open it and typeset it. Here ../Main.tex can
+be replaced by any absolute path, or path with ~, or path with ../
+characters. Also \jobname can replace the name of the file. 
+
+Notice that this is a replacement for the SetProjectRoot command
+of TeXShop, and really more useful.
+
+m) Nairn also added another change. That change searched the
+file to be typeset for input myfile commands, and saved these
+files if open in TeXShop. This is now added, with a preference
+item to turn it on or off.
+
+o) I modified the TeXShop Root File support so it repeats Nairn's
+behavior in l). So now exactly the same behavior can be achieved
+either by created a root file using the TeXShop menu, or by adding
+a $SourceDoc line to the source file.
+
+
+

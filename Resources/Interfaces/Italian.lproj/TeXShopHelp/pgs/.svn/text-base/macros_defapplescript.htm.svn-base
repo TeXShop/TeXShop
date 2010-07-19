@@ -1,0 +1,93 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Defining AppleScript Macros</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="applescript">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+		<div id="content_border">
+		<P>AppleScript syntax is a subject all its own. To learn more about it, read one of several books on the subject. If you installed the developer tools which come with Mac OS X, there is an online book about AppleScript in the Developer folder.</P>
+
+ <P>When TeXShop interpretes an applescript macro, it first replaces any string #FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#, #LOGPATH#, #AUXPATH# with the complete path name of the source tex file, pdf file, dvi file, ps file, log file, or aux file respectively. Similarly, the strings #INDPATH#, #BBLPATH#, and #HTMLPATH# are replaced with the complete path name of the ind file, bbl file, or html file. </P>
+
+<P>In addition, any string #NAMEPATH# 
+is replaced with the complete path name of the source tex file minus its extension,
+and any string #DOCUMENTNAME# is replaced with  the display name of the current document.
+This last replacement is somewhat subtle; it gives the title of the document as shown at the top of the source window.  If a document was saved with the "hide extension" box checked, #DOCUMENTNAME# will contain only the document name. But if the document was saved without checking "hide extension", #DOCUMENTNAME# will contain the document name and extension. This information can be used to locate the calling document for Applescript code as follows:
+
+<div id="source">
+tell document #DOCUMENTNAME# of application "TeXShop"<br>
+latex<br>
+end tell<br>
+</div>
+</P>
+
+		<P>There are at least two ways to write Applescript commands. Applescript can run shell commands, so after preliminary processing with an applescript, a shell command can be called to do the actual work. TeXShop comes with several examples of this technique; some of these examples will be explained in a later help section. Applescript commands can also call built-in TeXShop commands and thus work directly. A later section will give examples of
+this technique.</P>
+
+<P>
+TeXShop understands the following commands:</p>
+
+<p><div id="source">
+ typeset<br>
+ latex<br>
+ tex<br>
+ context<br>
+ bibtex<br>
+ makeindex<br>
+ metapost<br>
+ typesetinteractive<br>
+ latexinteractive<br>
+ texinteractive<br>
+ contextinteractive<br>
+ bibtexinteractive<br>
+ makeindexinteractive<br>
+ metapostinteractive<br>
+ taskdone<br>
+ refreshpdf<br>
+ refreshtext<br>
+ goto line<br>
+</div></p>
+<p>
+The first seven commands call TeXShop typesetting routines. These commands typeset continuously without
+stopping at errors. The next seven commands also call TeXShop typesetting commands, but this time if there is an error, the user is allowed to interact with the console. When a typesetting command is called, control returns to the applescript immediately without waiting until the operation is complete. The "taskdone" call returns NO if typesetting is still running, and YES when it is done. The calls "refreshpdf" and "refreshtext" cause pdf and text documents to display the latest version of their files on the screen. The "goto line" command tells the editor
+to select a given line; for example:
+</p>
+<p><div id="source">
+tell document #DOCUMENTNAME# of application "TeXShop"
+ goto line 37
+ end tell
+</div
+ </P>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Macros Help</div>
+<div id="header_title">Defining AppleScript Macros</div>
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminaries</a></li>
+			<LI><a href="macros_default.htm">Understanding Default Macros</a></li>
+			<LI><a href="macros_rearrange.htm">Rearranging the Macro Menu</a></li>
+			<LI><a href="macros_define.htm">Defining New Macros</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Macros</a></li>
+			<LI><a href="macros_includedscripts.htm">Default AppleScript Macros</a></li>
+			<li><a href="macros_defapplescript.htm">Defining AppleScript Macros</a></li>
+			<li><a href="macros_dialogs.htm">Creating Dialogs</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Writing Scripts with TeXShop Typesetting Commands</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Writing Scripts with Shell Commands</a></li>
+		</UL>
+	</div>
+
+
+
+
+
+	</BODY>
+
+</HTML>

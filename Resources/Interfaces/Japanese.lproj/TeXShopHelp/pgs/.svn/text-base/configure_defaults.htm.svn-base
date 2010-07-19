@@ -1,0 +1,92 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>初期設定について</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="「内部設定」についてと、1.26以前からの日本のユーザへの注意点。">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<BODY>
+<div id="content_border">
+
+<p>
+TeXShop 1.35 には新しい検索パネルがあります──これにはシステム10.3以降が必要となります。それ以外では依然として従来のパネルが表示されます。TeXShop の環境設定で、従来の Apple 標準のパネルに切り替えることができますが、新しい検索パネルのほうがよりパワフルなはずです ； 正規表現をサポートしているのです。最初のうちは予期したように動作しないかもしれませんが、パネルはそこに表示されている各種の選択を記憶していますし、思いどおりに動作するよう調整できることでしょう。
+</p>
+
+<p>
+残りの解説は、1.33以前のバージョンのユーザ用のものです──以下の変更を前もって行なっていないかもしれないので。TeXShop の環境設定パネルには「内部設定」タブがありますが、次のように変更してください：
+</p>
+
+	<ol>
+		<li type="1">pdftex の設定は──
+				<dl>
+					<dd><tt>pdftex  --shell-escape</tt>
+				</dl>
+		<p>
+		<li>pdflatex の設定は──
+				<dl>
+					<dd><tt>pdflatex  --shell-escape</tt>
+				</dl>
+		<p>
+		<li>altpdftex の設定は──
+				<dl>
+					<dd><tt>altpdftex  --maxpfb</tt>
+				</dl>
+		<p>
+		<li>altpdflatex の設定は──
+				<dl>
+					<dd><tt>altpdflatex --maxpfb</tt>
+				</dl>
+	</ol>
+</font>
+
+<p>
+TeXShop 1.26 以前からの日本のユーザは、~/Library/TeXShop/LatexPanel/completion.plist というファイルを英語版のものと差し替えてください──Japanese(ShiftJIS &#x00A5;) 用の修正はすでに不要となりました。あるいはこの completion.plist ファイルをフォルダから取り除いても同じことです ； 新しいファイルは、次に TeXShop を起動したときに作られます。
+</p>
+
+<hr>
+
+<p>
+<b>日本語環境で TeXShop 1.35 にアップグレードする際の注意点</b>
+</p>
+
+<p>
+TeXShop 1.35 では、日本語 pTeX 用の設定プロファイルが変更されました。以前のバージョンを使っていた方は、
+</p>
+	<dl>
+		<dd>~/Library/TeXShop/bin
+		<p>
+		<dd>（つまりホーム・ディレクトリの「ライブラリ」フォルダの中の「TeXShop 」フォルダ内にある「bin」というフォルダ）
+	</dl>
+<p>
+を一度削除してから TeXShop を起動し直して下さい。このフォルダが古いままでは、新しい設定プロファイルを利用できませんし、タイプセットが行なえないこともあります。
+</p>
+
+</div>		
+		<div id="header_background"></div>
+		<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+		<div id="header_chapter">TeXShop の設定はどうすればよいか？</div>
+		<div id="header_title">初期設定について</div>
+		<div id="menu_border">
+			<UL>
+				<li><a href="configure_preliminaries.htm">まえがき</a>
+				<li><a href="configure_correctinstall.htm">きちんとインストールしましたか？</a>
+				<li><a href="configure_prefchanges.htm">おすすめの設定変更</a>
+				<li><a href="configure_convertgraphics.htm">画像形式を自動的に変換する</a>
+				<li><a href="configure_defaults.htm">初期設定について</a>
+		
+				<li><a href="configure_latextemplate.htm">デフォルトの LaTeX テンプレート</a>
+				<li><a href="configure_hidden.htm">隠れた環境設定項目</a>
+				<li><a href="configure_plist.htm">.plist ファイル</a>
+				<li><a href="configure_panel.htm">LaTeX パネルを一部変更する</a>
+				<li><a href="configure_autocompletion.htm">オートコンプリートを変更する</a>
+		
+				<li><a href="configure_menushortcuts.htm">メニュー項目のショートカットキーを再定義する</a>
+				<li><a href="configure_macros.htm">マクロメニューを変更する</a>
+			</UL>
+		</div>
+</BODY>
+
+</HTML>

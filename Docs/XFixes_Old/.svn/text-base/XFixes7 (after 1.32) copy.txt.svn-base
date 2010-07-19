@@ -1,0 +1,299 @@
+November 3, 2003
+
+Changes since 1.32
+
+1) Now "Select All" can be used to select the full page of
+pdf output in selection mode. There is one restriction;
+in Multi-Page mode and Double-Multi-Page mode, select all is
+only active if the document has at most 20 pages, since
+otherwise the selected pdf would be enormous and bring the
+machine to a crawl.
+
+2) Fixed a strange bug in 10.2.8 (and possibly earlier systems)
+reported by Jerry Keough. If you have set preferences
+so no empty window opens at startup, and if you open a
+document, make the pdf window active, and then close the source
+window, the next time you use the menu, the program will crash.
+This bug does not occur on Panther.
+
+Investigation shows that the problem lies in the sequence of
+notifications sent when windows close or become active. In
+Panther, the notifications are sent in the following order for
+the above sequence:
+
+	pdf close
+	document active
+	document close
+
+as expected. In 10.2.8 (and probably in 10.2 in general)
+
+	document close
+	pdf close
+	document active
+
+so the system believes that a document is active when, in fact, it
+no longer exists. The menu crash occurs when the menu code asks a
+document which no longer exists to describe its state.
+
+The fix is a litte scary. When a document closes, I make an explicit
+call to TSWindowManager to report that the document is closed. 
+In Panther, investigation shows that this call occurs as follows:
+
+	pdf close
+	document active
+	new call
+	document close
+
+and in 10.2.8 it occurs as follows
+
+	document close
+	pdf close
+	document active
+	new call
+
+Notice that this new call is only sent when the entire document
+is closing. So both orders are correct.
+
+Experiments also show that if a second window is waiting to become
+active, it's "document active" message is sent after all of these
+calls in both cases.
+
+3) Added additional code for drag and drop by Zenitani. See the previous
+XFixes6 for the basic idea of this code. The new version reports an
+error if the filename of the dropped file contains a space. The new
+code also permits customization. The method of customization is
+easy to work with, but perhaps the design is a little strange:
+customization is done with the Macro menu. Insert a new submenu
+titled "Drag & Drop". Inside items under this menu like
+".pdf"; each item is a file extension. Insert the code that should
+be included in the body of this item; for instance, the code for
+.pdf might be "\includegraphics[#INS#]{%r}" In these inclusions,
+
+	%F full path of an dropped file
+	%f dropped filename
+	%r relative path of the dropped file
+	%n filename without extension
+	%e extension.
+
+If an extension is not mentioned in the Macro Editor, then it is
+handled in the default manner Zenitani previously defined. Thus for
+most people, no macro "Drag & Drop" submenu is needed.
+
+If the dropped pdf file is originally exported from LaTeX Equation Editor, and if its file size is not too large (less than 1MB), TeXShop reads back equations from the file. If you don't like this, option-drag the file.
+
+4) Some users report that tex pages appear with slightly colored
+background --- yellow, bluish, or whatever. Frank Stengel discovered that
+removing a NSEraseRect call from the print drawing routine fixed this
+problem. This call has been removed.
+
+Incidentally, this makes TeXShop printing of typeset files completely
+vanilla. The drawRect routine which does the actual drawing of the
+printed image has only one line: [myRep draw]. So print drawing
+is now done entirely by internal Cocoa classes.
+
+5) German help has been updated by Martin Kerz
+
+6) The Italian localization has been updated by Nicola Vitacolonna
+
+7) Spanish help has been updated by Juan Luis Varona Malumbres
+
+8) Added #NAMEPATH# for Claus Gerhardt
+
+9) Added a Romanian localization by Andrei Teleman. Thanks!
+
+10) The French localization has been updated by Hendrik Chaltin
+
+11) A version was briefly on the web with slightly broken drag-and-drop
+code, now fixed. The broken version always inserted \include, and
+never \includegraphics, etc.
+
+12) A preference item now allows users to distill with Apple's pstopdf
+rather than ghostscript. Warning: a few tex scripts (but none in
+TeXShop) may still call ghostscript; the most important is
+epstopdf.sty. If the Panther distiller is chosen but the user's
+system is below 10.3, distill operations continue to call
+ghostscript.
+
+13) Refixed command completion (!!). Now pushing ESC should complete
+commands in the command completion list. Moreover, the Panther
+(ESC + option) method of completing commands should work again.
+
+14) Added the Macros menu to the preview window toolbar. Also
+modified this menu so appletalk scripts are always active and
+"insert text" scripts are only active when the source window is
+the front window.
+
+15) TeXShop has an applescript command to add text. This command did
+not update the undo stack, so applying the command and then choosing
+undo would confuse the program. This was fixed by Stefan Walsen
+and his patch is applied in this version of TeXShop.
+
+16) Added the following Applescript commands to TeXShop:
+
+	latex
+	tex
+	bibtex
+	makeindex
+	context
+	metapost
+	refreshpdf
+	taskdone
+
+The first five call the usual typesetting commands, using the
+document choice of "pdftex" or "tex and ghostscript" to typeset,
+and update the preview display at the end. These commands return
+immediately before typesetting is done, so listing several typesetting
+commands in one Applescript is dangerous. While typesetting, the
+taskdone command will return "NO", and it will return "YES" once
+the command is finished. This makes it possible to call several
+typesetting commands from one script. Here, for instance, is a script
+to do a complete bibtex job:
+
+ --Applescript
+
+ tell front document of application "TeXShop"
+	latex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	bibtex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	latex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+	latex
+
+	repeat
+		delay 2
+		if taskdone
+			exit repeat
+		end if
+	end repeat
+
+end tell
+
+The command "refreshpdf" opens the preview window if necessary,
+and then in all cases updates the pdf display to the current version,
+leaving user page choices and other choices unchanged. Here is
+a typeical call:
+
+	tell front document of application "TeXShop"
+		refreshpdf
+	end tell
+
+17) A new preference item turns on "continuous pdf updating" for the
+pdf preview window when the window is opened for an external
+editor. Such windows are opened by the "Open for Preview..." menu
+command, or by the "Open..." command if the program is configured
+for an external editor. In this mode, the program updates the window
+automatically when the pdf file changes.
+
+18) Added an "Abort" button to the console for people who want to
+stop the typesetting program in midstream. This is a minor change.
+
+19) Added a patch by Elliott Hughes; this patch cleans up some of
+the code calling a tex, latex, bibtex, etc., task. The crucial 
+feature of the patch is that if the bin file is not found, an
+error message appears explaining this and asking if the
+preferences bin path is correct. Thus people who use fink will
+be warned if they forget to change the preference.
+
+20) Added an additional applescript command:
+
+	open_for_externaleditor
+
+This command is understood by the entire application, and the
+syntax of calling it is
+
+	tell application "TeXShop"
+		open_for_externaleditor at "/Users/koch/TestFile.tex"
+	end tell
+
+Obviously, this opens a tex file for external editing; recall that
+the preview window will appear rather than the source window.
+
+21) Added the command "refreshtext" to similarly refresh a window
+holding text. 
+
+22) Added #DOCUMENTNAME# This is the name of the document, and can
+be used in the command
+
+	tell document #DOCUMENTNAME# of application "TeXShop"
+		latex
+	end tell
+
+Warning: this variable is subtle. It contains an extension if the
+user asks to "show extensions" but no extension otherwise. The
+"tell document #DOCUMENTNAME# requires that these settings match.
+
+23) Added a hidden preference
+
+	defaults write TeXShop RefreshTime  4.00
+
+sets the number of seconds between attempts to see if the pdf
+file has changed. The default right now is 4, but this is to allow
+us to experiment with the correct value.
+
+24) Added another hidden preference
+
+	defaults write TeXShop PdfFileRefresh YES
+
+If continuous refreshing is set to on in preference and this is set
+to YES, then when pdf files are opened, they also automatically
+refresh. Previously, only files "opened for Preview" refreshed.
+The default value for this is YES.
+
+25) Added a new document script command
+
+	typeset
+
+26) Added new document script commands
+
+	latexinteractive
+	texinteractive
+	bibtexinteractive
+	contextinteractive
+	metapostinteractive
+	makeindexinteractive
+	typesetinteractive
+
+These are exactly like their noninteractive counterparts except
+that they should only be called from an applescript running from a
+program other than TeXShop, and when they are called the typesetting commands do NOT run continuously, so the user has a change to inspect errors, push return, etc. The point is that when applescript is called 
+from another application, then the event loop is still running
+in TeXShop and user interaction is possible.
+
+27) At the request of Joachim Kock, changed the behavior of TeXShop when it opens a file for Preview, or is in external editor mode and opens a file. The program now compares the dates of the source and preview files for the project. If the preview does not exist, or if it is out of date, the tex program is automatically typeset (using the user's current typesetting settings). There is a hidden
+preference to turn this behavior off:
+
+	defaults write TeXShop ExternalEditorTypesetAtStart NO
+
+but the preference is set to YES by default.
+
+28) Later discovered how to run Applescripts interactively from TeXShop. The trick is
+to write an entirely new application, ScriptRunner, and add it to the TeXShop
+bundle. When TeXShop runs an applescript, it sends the script on to ScriptRunner.
+Thus during user interaction, ScriptRunner hangs waiting for user actions, but
+TeXShop continues running.
+
+28) At the last possible moment, fixed a printing bug. If the user printed
+the source and then printed the typeset document, the document would appear lower on the page. This no longer happens.
+

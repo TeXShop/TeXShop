@@ -1,0 +1,36 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = LilyPond-Book
+\documentclass[a4paper]{article}
+\input{preamble.lytex}
+\begin{document}
+\maketitle
+Documents for \index{lilypond-book} may freely mix \index{music}
+and~\index{text}. For example,
+
+\begin{lilypond}
+\relative c' {
+  c2 g'2 \times 2/3 { f8 e d } c'2 g4
+}
+\end{lilypond}
+
+Options are put in brackets:
+
+\begin[fragment,quote,staffsize=26,verbatim]{lilypond}
+  c'4 f16
+\end{lilypond}
+
+Larger examples can be put into a separate \index{file}, and introduced with
+\verb+\lilypondfile+.
+
+\lilypondfile[quote,noindent]{screech-boink.ly}
+
+\centering{\includegraphics[width=5cm]{monet-fragment.png}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{lilybook}
+
+\printindex
+
+\end{document}
+\end

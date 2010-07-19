@@ -1,0 +1,73 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Removing AUX Files</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="aux; remove; log">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<p>When documents are typeset, auxiliary files are created with extensions .aux, .log, .bbl, etc.
+Occasionally these files can become corrupt and lead to unexplained typesetting errors. TeXShop has a menu
+command "Trash AUX Files" which will remove all such files so typesetting can proceed. There is a similarly named button on the Console window. If either of these
+items is activated, TeXShop will move to the trash all files in the current source directory with
+the same name as the source file and extension aux, blg, brf, ccs, ent, fff, glo, idx, idv, ilg, ind, ioa, lg, log,  lot, mte, mlf, out, pdfsync, toc,  ttt, wrm, xref, 4ct, or 4tc.</p>
+<p> Additional extensions can be added to this list. To add "dvi" to the list, activate the Terminal and
+type </p>
+<dl>
+<dd> defaults write TeXShop OtherTrashExtensions -array-add "dvi"
+</dl>
+<p> To remove all additions and return to the original default list, tppe </p>
+<dl>
+<dd> defaults write TeXShop OtherTrashExtensions -array
+</dl>
+<p> Sometimes more extensive cleanup is needed. For example, if a book is controlled by main.tex, and chapters are in subfolders accessed with commands like \include{chapter1/chapter1}, then typesetting the book
+will create main.aux, main.pdfsync, and main.log in the main folder, and chapter1.aux in the chapter1 folder.</p>
+<p> The required extensive cleanup can be done by holding down the option key while choosing "Trash AUX Files." In this case:</p>
+<dl>
+<li>"%!TEX root" and Root File information will be used to find the root document and its folder
+<li> All files with appropriate extensions in this folder or any subfolder will be moved to the trash, regardless of the name of the file
+</dl>
+<p> There is a way to make this behavior the default behavior for "Trash AUX Files" even if the option
+key is not down:
+<dl>
+<dd> defaults write TeXShop AggressiveTrashAUX YES
+</dl>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">Removing AUX Files</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeXLive</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About TeXLive</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

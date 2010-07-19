@@ -1,0 +1,59 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Creating Dialogs</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="applescript; dialogs">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+		<div id="content_border">
+		<P>AppleScript can create dialogs and act on user input. For example, insert the following script and test its behavior.</p>
+<div id="source">
+<p>
+-- AppleScript <br>
+-- Use a dialog to enter user defined information into an applescript.<br>
+-- There are two feedbacks possible 'text' and "choice of buttons".<br>
+-- The returned information can be used to define corresponding variables.<br>
+-- The number of buttons may not exceed three.<br>
+-- In the three examples below it is shown how to use text return, button return, and both.
+</p>
+<p>
+activate<br>
+display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+set theText to (the text returned of the result)</p>
+<p>
+display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+set theButton to (the button returned of the result)</p>
+<p>
+display dialog "Test dialog: type something below" default answer "Hello World!" buttons {"A", "B", "C"} default button "B"
+set {theText, theButton} to {the text returned of the result, the button returned of the result}</p>
+</div>
+<p>
+One command in this example, "activate",  requires comment. When TeXShop is asked to run an AppleScript, it calls a separate program to run the script. That program, Scriptrunner, is in the TeXShop bundle. Any dialogs created by the script will be displayed by Scriptrunner rather than by TeXShop. The "activate" command brings Scriptrunner to the front so dialogs will appear on top of other windows.</p>
+</div>
+
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Macros Help</div>
+<div id="header_title">Creating Dialogs</div>
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminaries</a></li>
+			<LI><a href="macros_default.htm">Understanding Default Macros</a></li>
+			<LI><a href="macros_rearrange.htm">Rearranging the Macro Menu</a></li>
+			<LI><a href="macros_define.htm">Defining New Macros</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Macros</a></li>
+			<LI><a href="macros_includedscripts.htm">Default AppleScript Macros</a></li>
+			<li><a href="macros_defapplescript.htm">Defining AppleScript Macros</a></li>
+			<li><a href="macros_dialogs.htm">Creating Dialogs</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Writing Scripts with TeXShop Typesetting Commands</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Writing Scripts with Shell Commands</a></li>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

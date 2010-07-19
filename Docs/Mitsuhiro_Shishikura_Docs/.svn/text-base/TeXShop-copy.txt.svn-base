@@ -1,0 +1,43 @@
+Summery of Copy/Export function of TeXShop
+
+There are two types--bitmap and vector graphics.  
+(need more explanation)
+Bitmap:
+A bitmap may look poorly when you enlarge it after pasting or when you print.  
+For example, if you are pasting into an Application which you only view on the screen and you are not going to change the size of pasted image, you can use bitmap formats.  
+Supported formats: TIFF, JPEG, PNG, PICT*
+*--PICT can contain both bitmap and vector graphics.  The ones you get from TeXShop are in bitmap format.  
+For JPEG and TIFF, there are several levels or types of compression.
+You can change the colors of foreground (black part) and background (white part) by checking "Use Color Mapping" in Preview pane of Preferences.  The colors can be set there.  For TIFF and PNG formats you can make foreground/background transparent by setting the Opacity of the colors to be zero.  (JPEG and PICT does not support transparency.)  
+For color mapping, the preview is supposed to be in black and white, if it is already colored you may get unexpected colors.  
+In Preferences, "param" setting will change the way the original colors are mapped to a gradation of specified colors.  Larger values will emphasize forecolor and make the characters look thicker.  
+
+Vector Graphics:
+Supported formats: PDF, EPS(export only)
+When "Use Color Mapping" is unchecked in Preview pane of Preferences, the background will be transparent. By checking it, you can change the background color but NOT the foreground color.  "param" does not affect in this format.  
+
+If you want to change the foreground color, you have to do it in TeX source.  For LaTeX, you can use package "color".  For example, put 
+\usepackage{color}
+after \documentclass{} and put
+\color{blue}
+after \begin{document}, then the entire text will be in blue.  To color a part of text, bracket it like 
+{\color{green} the text you want to color}.  
+You can also define custom colors by 
+\definecolor{mycolor}{rgb}{0.2, 0.7, 0.8}
+where last three numbers are values for red, green and blue.  See document for "color" package, for example http://www.ctan.org/tex-archive/macros/latex/required/graphics/grfguide.tex.  
+
+In case you want to set the text color to white or a light color, you may want to see the preview with darker background.  In order to do this, type in Terminal
+do shell script "defaults write TeXShop Pdfbackground_R 0.5"
+do shell script "defaults write TeXShop Pdfbackground_G 0.5"
+do shell script "defaults write TeXShop Pdfbackground_B 0.5"
+and you get a gray background after typesetting.  To revert to white background, do the same with 0.5 replaced by 1.  Alternatively, you can define a macro "PDF Gray background" in MacroEditor with content
+--AppleScript
+do shell script "defaults write TeXShop Pdfbackground_R 0.5"
+do shell script "defaults write TeXShop Pdfbackground_G 0.5"
+do shell script "defaults write TeXShop Pdfbackground_B 0.5"
+and another macro "PDF White background" with
+--AppleScript
+do shell script "defaults write TeXShop Pdfbackground_R 1"
+do shell script "defaults write TeXShop Pdfbackground_G 1"
+do shell script "defaults write TeXShop Pdfbackground_B 1"
+

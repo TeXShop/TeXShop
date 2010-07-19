@@ -1,0 +1,137 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Adding Additional Typesetting Engines</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="bibtex; bibliography; citation">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+<p> Recently, Jonathan Kew introduced XeTeX and XeLaTeX. These programs can use
+Macintosh fonts directly within a TeX document. XeTeX and XeLaTeX require unicode source and
+thus can deal with any unicode character; for example, with them you can type Arabic or Hebrew in the source document
+and later see
+Arabic or Hebrew in the output. TeXShop's editor will correctly input these characters from
+right to left. XeTeX is not part of the standard TeX distribution from
+Gerben Wierda, but it can be obtained using Wierda's i-Installer as an optional install directly from
+Jonathan Kew. For additional details, consult </p>
+<dl>
+			<dd><a href="http://scripts.sil.org/xetex">http://scripts.sil.org/xetex</a>
+		</dl>
+
+<p> To understand how this works, here is a brief XeLaTeX source document, and the resulting
+output. The Arabic and Hebrew
+characters were obtained by accessing the International Panel in System Preferences, selecting the
+Input Menu tab, and checking Arabic and Hebrew; a small flag appeared on the menu bar and a user could
+switch keyboards by selecting an appropriate flag.</p>
+<IMG HEIGHT="356" WIDTH="328" border="0" SRC="../gfx/source.jpg">
+
+<IMG HEIGHT="155" WIDTH="349" border="0" SRC="../gfx/output.jpg">
+
+<p> TeXShop now supports XeTeX and XeLaTeX:</p>
+<dl>
+<li> XeTeX and XeLaTeX are available in the pull-down typesetting menu on the source window
+<li> A user can make XeTeX or XeLaTeX the default typesetting option in preferences
+<li> If one of the first twenty lines of the source has the form
+<dl>
+<dd> %!TEX encoding = UTF-8 Unicode
+</dl>
+then that source will be loaded and saved with UTF-8 Unicode encoding regardless of the default encoding
+setting in preferences
+<li> If one of the first twenty lines of the source has the form
+<dl>
+<dd> %!TEX TS-program = xetex or %!TEX TS-program = xelatex
+</dl>
+then the appropriate program will be used regardless of the typesetting option chosen in the menu
+</dl>
+
+<p>These XeTeX features form a special case of a new general method for adding typesetting engines to
+TeXShop. There is now a folder in ~/Library/TeXShop named Engines; the files in this folder are shell
+scripts which call typesetting programs. When TeXShop first starts, it examines this folder and adds
+the script names of files it contains to the pull-down typesetting menu. Choosing one of these
+items and pushing the Typeset button calls the script. Users can write their own scripts and add them
+to the Engines folder. Each such script must have a name without spaces, and extension ".engine",
+and have the executable bit set.</p>
+
+<p> Items in ~/Library/TeXShop/Engines can be chosen as the default typesetting method in TeXShop Preferences.
+Notice that when a method is listed in Preferences, its name is given without the extension.</p>
+
+<p> The default program can be set on one of the first twenty lines of the source code by writing
+a line like </p>
+<dl>
+<dd> %!TEX TS-program = xelatex
+</dl>
+
+<p>The encoding used to open or save any file can be set by writing a line of the following form
+as one of the first twenty lines of a source document. Any supported encoding is allowed. To bypass this
+behavior, hold down the option key while opening a file. </p>
+<dl>
+<dd> %!TEX encoding = UTF-8 Unicode
+</dl>
+ <p> There must be one space after %!TEX and one space before the equals sign; the spaces in the name of the
+encoding must match the spaces in the name listed below. The name of the encoding is the internal name
+used by Mac OS X. Below is a list of allowed names:</p>
+<dl>
+<li> MacOSRoman
+<li> IsoLatin
+<li> IsoLatin2
+<li> IsoLatin5
+<li> MacJapanese
+<li> DOSJapanese
+<li> SJIS_X0213
+<li> EUC_JP
+<li> JISJapanese
+<li> MacKorean
+<li> UTF-8 Unicode
+<li> Standard Unicode
+<li> Mac Cyrillic
+<li> DOS Cyrillic
+<li> DOS Russian
+<li> Windows Cyrillic
+<li> KOI8_R
+<li> Mac Chinese Traditional
+<li> Mac Chinese Simplified
+<li> DOS Chinese Traditional
+<li> DOS Chinese Simplified
+<li> GBK
+<li> GB 2312
+<li> GB 18030
+</dl>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">Additional Typesetting Engines</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeXLive</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About TeXLive</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

@@ -1,0 +1,582 @@
+<HTML>
+
+<HEAD>
+				<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+				<TITLE>更新履歴</TITLE>
+				<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+				<META NAME="description" CONTENT="新機能　バグ修正　（バージョン1.38～1.42＆2.05）">
+				<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<BODY>
+<div id="content_normal">
+
+<h3>Version 2.09</h3>
+
+<h5>バージョン 2.09 での変更点</h5>
+<p>
+<h6>2.09d</h6>
+
+<ul>
+	<li>
+	<!-- Fixed a bug when opening jpg and other image files while the default encoding is UTF-8. -->
+	デフォルトのエンコーディングが UTF-8 になっている状態で jpg その他のイメージファイルを開く際のバグを修正しました。
+	</li>
+</ul>
+
+<h6>2.09c</h6>
+
+<ul>
+	<li>
+	<!-- ScriptRunner, an internal TeXShop application which runs applescripts, is now a univeral binary. -->
+	「ScriptRunner」がユニバーサルバイナリとなりました──これは Applescript を実行するための、TeXShop 内部のアプリケーションです。
+	</li>
+</ul>
+
+<h6>2.09b</h6>
+
+<ul>
+	<li>
+	<!-- The OgreKit Find Panel Framework has been replaced with the latest universal binary version, 2.1.2, from the OgreKit site. This fixes several problems in the previous version when run on Intel processors. -->
+	「OgreKit Find Panel Framework」を、OgreKit のサイトから取り寄せて、ユニバーサルバイナリ化された最新のバージョン 2.1.2 に置き換えました。インテルプロセッサ上で使用する際に前バージョンで生じていたいくつかの問題が修正されています。
+	</li>
+</ul>
+
+<h6>2.09a</h6>
+
+<ul>
+	<li>
+	<!-- After typesetting, TeXShop leaves the scroll position fixed rather than scrolling to the top of the page. -->
+	タイプセット後、スクロール位置がページの先頭に移動せずにそのままになるようにしました。
+	</li>
+<p>
+	<li>
+	<!-- Double clicking on a bracket like (, {, [, ], }, or ) selects all text between the bracket and its matching pair. Double clicking on a bracket with the option key down selects just the bracket. -->
+	(, {, [, ], }, ) といった括弧類をダブルクリックすると、対応する括弧とその間の全てのテキストが選択されます。option キーを押しながら括弧をダブルクリックすると、その括弧だけを選択することができます。
+	</li>
+</ul>
+
+<h6>2.09</h6>
+<ul>
+	<li>
+	<!-- The ISO Latin 9 encoding was broken; now it is fixed. -->
+	ISO Latin 9 エンコーディングが壊れていました──修正済みです。
+	</li>
+<p>
+	<li>
+	<!-- New menu items were localized in German and Japanese -->
+	新しいメニュー項目がドイツ語版と日本語版でローカライズされました。
+	</li>
+<p>
+	<li>
+	<!-- The hidden preference to keep backup files of source documents was incorrectly described in help as requiring "SaveBackup" rather than the correct "KeepBackup". This section of help is fixed. To keep backup files, type the following in Terminal: -->
+	ソースファイルのバックアップを取っておくための隠れた環境設定が、「KeepBackup」ではなく「SaveBackup」と誤ってヘルプに記載されていました。なので、ファイルのバックアップを取っておくには、ターミナルで次のように打ち込みます──
+	</li>
+
+		<dl>
+			<dd>defaults write TeXShop KeepBackup YES
+		</dl>
+
+	<li>
+	<!-- A new hidden preference causes the drawer to be open when Preview windows are first opened: -->
+	プレビューウインドウを開いた際に、最初からドロワーが表示されるようにするための新しい隠れた環境設定──
+	</li>
+		<dl>
+			<dd>defaults write TeXShop PreviewDrawerOpen YES
+		</dl>
+<p>
+	<li>
+	<!-- A new hidden preference adds additional automatic tags for ConTeXt users. Currently lines beginning with \chapter, \section, \subsection, and \subsubsection are automatically added to the Tags pulldown menu. If this preference is chosen, lines beginning with \subsubsubsection, \subsubsubsubsection, \part, \title, \subject, \subsubject, \subsubsubject,\subsubsubsubject, and \subsubsubsubsubject are also added. -->
+	自動的にタグを追加する新しい隠れた環境設定を、ConTeXt ユーザ用に追加しました。現在は「\chapter」「\section」「\subsection」それに「\subsubsection」で始まる行が自動で「タグ」プルダウンメニューに追加されます。新しい環境設定を選択すると、「\subsubsubsection」「\subsubsubsubsection」「\part」「\title」「\subject」「\subsubject」「\subsubsubject」「\subsubsubsubject」それから「\subsubsubsubsubject」もまた追加されるようになります。
+	</li>
+		<dl>
+			<dd>defaults write TeXShop ConTeXtTags YES
+		</dl>
+
+	<li>
+	<!-- TeXShop Help has a new section explaining how to make and use TeX formats. -->
+	TeX フォーマットの作成と利用について説明する新しい章を TeXShop ヘルプに追加しました。
+	</li>
+<p>
+	<li>
+	<!-- A user wrote complaining that dvips could not find figures references in the parent directory as ../figures/xxx.eps during typesetting in tex + ghostscript mode. Gerben Wierda told him that this is a change in the default behavior of dvips because the old behavior was insecure. To return to the old behavior, modify the TeX + dvips + distiller preference in TeXShop Help under the Engine tab to -->
+	あるユーザが不満を書き送ってきました──「tex + ghostscript」モードでタイプセットしていると、例えば ../figures/xxx.eps というような上位のディレクトリ内を参照先にする図表を、dvips が見つけられないのだ、と。Gerben Wierda さんはこのユーザに対して、以前のままでは安全ではなかったので、dvips のデフォルトの動作が変更になったのだ、と言いました。旧来の動作に戻すには、環境設定の「内部設定」タブのところで「TeX + dvips + distiller」を以下のようにします──
+	</li>
+
+	<dl>
+	<dd>simpdftex latex --maxpfb --extradvipsopts "-R0"
+	</dl>
+</ul>
+
+<h3>Version 2.08</h3>
+
+<h5>バージョン 2.08 での変更点</h5>
+
+<ul>
+	<li>
+	<!-- In a copy of 2.07 temporarily on the network, conversion of eps files to pdf files was done with ps2pdf rather than the usual epstopdf. This was a mistake and was rapidly fixed. It is fixed in this version. -->
+	一時的にネットワーク上にあったバージョン 2.07 では、EPS ファイルから PDF ファイルへの変換が、通常の epstopdf ではなく ps2pdf で行なわれていました。これは誤りですから今バージョンで早急に修正しました。
+	</li>
+<p>
+	<li>
+	<!-- In the German localization, the "Default Command" preference under the Typesetting tab was not connected. Fixed. -->
+	ドイツ語版のローカライズにおいて、環境設定の「Typesetting」タブ内にある「Standaard TeX opdracht」が接続されていませんでした。これを修正。
+	</li>
+<p>
+	<li>
+	<!-- In the German localization while using the German keyboard, the apple-{ shortcut for commenting failed. To fix this, the shortcuts for comment and uncomment in this version are apple-3 and apple-4. This change is only made in the German localization. -->
+	ドイツ語版でドイツ語キーボードを使っていると、コメント用のショートカット──コマンド＋「{」が機能しませんでした。これを修正するために、「コメント」および「コメントを外す」ショートカットを、今バージョンにおいてコマンド＋３およびコマンド＋４にしました。この変更はドイツ語版だけです。
+	</li>
+<p>
+	<li>
+	<!-- If the "select tool" was chosen in the Preview window and the user switched to the source window with apple-1 and then typeset, the select tool would no longer be selected when the Preview window became active again. This is fixed. -->
+	プレビューウインドウで「範囲指定」を選択しており、コマンド＋１を使ってソースウインドウに切り替え、それからタイプセットを行なうと、プレビューウインドウが再びアクティブになったときにはもう「範囲指定」を選べなくなっていました。これを修正。
+	</li>
+<p>
+	<li>
+	<!-- The "Insert Reference" macro failed because the first line was "--Applescript direct" rather than "--Applescript" This is fixed for new users, but TeXShop macros are not changed when users upgrade because they made have modified the macros. So users need to make this change on their own. -->
+	「Insert Reference」というマクロが機能していませんでした──というのも、最初の行が「--Applescript」ではなく「--Applescript direct」となっていたからです。これは新規のユーザにとっては解決済みのことですが、TeXShop のマクロは、ユーザそれぞれが使いやすいようにしているので、バージョンアップの際にも変更されません。なので変更はユーザが自分で行なう必要があります。
+	</li>
+</ul>
+
+<h3>Version 2.07</h3>
+<h5>バージョン 2.07 での変更点</h5>
+
+<ul>
+	<li>
+	<!-- Some users still report a spinning beachball, so we revert back to the default value of "1" for the hidden ReleaseDocumentClasses preference. Users who installed 2.05 or 2.06 during the 12 hours it was on the network need to type the following command in Terminal: -->
+	いまだにビーチボールが回るという報告がありますので、隠れた環境設定「ReleaseDocumentClasses」のデフォルトの値を「１」に戻しました。今から前12時間以内にバージョン 2.05 ないしは 2.06 をダウンロードしてインストールしたユーザは、Terminal で以下のようにコマンドをタイプする必要があります──
+	</li>
+		<dl>
+			<dd>defaults write TeXShop ReleaseDocumentClasses 1
+		</dl>
+</ul>
+
+<h3>Version 1.43 & 2.06</h3>
+
+<h5>バージョン 2.06 での変更点</h5>
+
+<ul>
+	<li>
+	<!-- Removed Indent, Unindent, Back, and Forward key shortcuts from non-English localizations of Menu.nib. -->
+	「右シフト」「左シフト」「戻る」「進む」用のキーボードショートカットについては、英語以外のローカライズ版の「Menu.nib」ファイルからは取り除きました。
+	</li>
+<p>
+	<li>
+	<!-- Now includes TeX-mdimporter 1.2, which fixes a memory leak in the original. -->
+	バージョン1.2の「TeX-mdimporter」が収録されました──これはオリジナル版にあったメモリリークが修繕されたものです。
+	</li>
+<p>
+	<li>
+	<!-- Recommended the "Set Default Values" button in Preferences -->
+	環境設定内の「設定プロファイル」ボタンがお勧めです。
+	</li>
+</ul>
+
+
+<h5>バージョン 1.43 での変更点</h5>
+
+<ul>
+	<li>
+	<!-- The ISO Latin 9 encoding was broken; now it is fixed. -->
+	ISO Latin 9 エンコーディングが壊れていました──修正済みです。
+	</li>
+<p>
+	<li>
+	<!-- The "Check for Updates" menu item code had an error. If the user was running on a pre-Tiger system, it correctly looked only for updated versions of TeXShop 1. If such a version was found, it correctly reported the new version it would download. But then it actually downloaded the Tiger version. This is now fixed, but it doesn't fix versions of TeXShop earlier than 1.43, of course. (Note that this command on TeXShop Version 2 has always worked.) -->
+	メニュー項目にある「アップデートを確認...」にエラーがありました。ユーザが Tiger 以前のシステムを利用しているのであれば、１系の最新の TeXShop だけを探してくるのが本当です。それでもし最新のバージョンがあれば、そのことを報告し、ダウンロードするわけです。けれども実際には、Tiger 版がダウンロードされていました。これを修正はしましたが、1.43 以前のバージョンについては、むろん直っていません。（注記：２系の TeXShop では、このメニューコマンドはちゃんと機能しています。）
+	</li>
+<p>
+	<li>
+	<!-- The hidden preference to keep backup files of source documents was incorrectly described in help as requiring "SaveBackup" rather than the correct "KeepBackup". Thus to keep backup files, type the following in Terminal: -->
+	ソースファイルのバックアップを取っておくための隠れた環境設定が、「KeepBackup」ではなく「SaveBackup」と誤ってヘルプに記載されていました。なので、ファイルのバックアップを取っておくには、ターミナルで次のように打ち込みます──
+	</li>
+
+		<dl>
+			<dd>defaults write TeXShop KeepBackup YES
+		</dl>
+
+</ul>
+
+
+<h3>Version 1.42 ＆ 2.05</h3>
+<h5>バージョン 2.05 での新機能</h5>
+
+<ul>
+
+<li>
+TeXShop 2.05 でユニバーサル・バイナリ（Universal Binary）になりました──PowerPC 用とインテル・プロセッサ用コードの両方が含まれています。システムにより自動的に適切な方のコードが実行されます。
+</li>
+<p>
+<li>
+TeXShop のデフォルトの環境設定では、teTeX バイナリのディレクトリは、/usr/local/teTeX/bin/powerpc-apple-darwin-current です。しかし Gerben Wierda さんの最新の TeX ディストリビューションをインストールしている場合は、インテル用のバイナリが入っていることもあります。なのでインテル機では、teTeX バイナリのディレクトリは、/usr/local/teTeX/bin/i386-apple-darwin-current になるはずです。TeXShop ではこの変更を自動で行なうコードを組み込みました。最初にプログラムを起動した際に「uname -p」をコールして作動中のプロセッサを判定します。その結果が「i386」ならTeXShop は、上述の設定を /usr/local/teTeX/bin/i386-apple-darwin-current へと恒久的に 変更します。とはいえこの変更は、デフォルトの /usr/local/teTeX/bin/powerpc-apple-darwin-current をユーザが手ずから他のロケーションへと書き変えていた場合には行なわれません。なのでもし Fink の teTeX ディストリビューションないしはその他のディストリビューションを入れており、それを teTeX バイナリのディレクトリ設定で指定していれば、環境設定は変更されません。
+</li>
+<p>
+<li>
+TeXShop を最初に Tiger 上でリリースした際にユーザが遭遇した厄介なバグは、タイプセットを数度実行した後、プログラムが次第にノロノロしてくるというものでした。このバグは公開して数日で修正しました。新しい PDF ファイルがプレビューウインドウ内の PdfKitView にロードされる際に問題が生じていました。Apple のドキュメントによれば、古いデータ・ストラクチャがメモリから解放されるはずだとのことでした。解放は起こっていました、が、それがプログラムのスローダウンを引き起こしていたのです。なのでバグフィックスはシステムをごまかしてデータ・ストラクチャがまだ使用中であると思い込ませ、システムが解放しようとしないようにさせました。
+</li>
+<p>
+副作用としてメモリが次第にいっぱいになってしまうので、毎日の作業が済んだ後 TeXShop を終了する必要があると覚ったユーザもいました。
+<p>
+最近の検証ではこのバグは Tiger 10.4.3 で直っているようです。したがって最新の TeXShop ではどのシステムが稼働しているか調べ、10.4.3 以降であれば古いデータ・ストラクチャを解放するようにしますが、そうでなければせずにおきます。
+<p>
+この挙動は隠れた環境設定の新項目で制御できます：
+<p>
+<tt>
+	<dl>
+		<dd>defaults write TeXShop ReleaseDocumentClasses 0
+	</dl>
+</tt>
+<p>
+デフォルトの値は 0 です──プログラムは上述のように機能します。値が 1 なら、古いデータストラクチャは解放されず、プログラムは以前のバージョンの TeXShop 2 とまったく同じにふるまいます。もし値が 2 であれば、古いデータストラクチャは常に解放されます。
+<p>
+ですから、何回かタイプセット作業をした後でプログラムが遅くなってしまうようであれば、ReleaseDocumentClasses を 1 に変更して、できるだけ詳しい状況を私（作者）に報告してください。
+<li>
+Michael Witten さんは MIT の学生ですが、複数の折り返しモードを TeXShop に追加してくれました。「折り返しなし」を選ぶとユーザが ENTER キーを押すまで行は右に伸びてゆきますし、「ワード毎」を選べばテキストは単語の区切りで折り返し（これが以前までの動作でした）、「文字毎」を選択するとテキストはギリギリ最後の文字できっちりと折り返します。以上の折り返しは「ソフト」というわけではありません──ウインドウのサイズを変更すれば折り返し位置も変更されます。デフォルトの折り返し表示は「ワード毎」になっていますが、メニューコマンドで折り返しを変更できます。さらに、隠れた環境設定でデフォルトの折り返し表示を変えておくことができます──
+</li>
+
+<tt>
+	<dl>
+		<dd>defaults write TeXShop LineBreakMode 1
+		</dl>
+</tt>
+
+<p>
+「折り返しなし」は「 0 」で、「ワード毎」は「 1 」、そして「文字毎」が「 2 」です。折り返しは通常ウインドウの右端で行なわれます──が、もしルーラーがアクティブになっている場合には「右マーカー」の位置で折り返します。
+<p>
+Witten さんはまた「改行を挿入」コマンドも追加してくれました。段落を選択している場合、このコマンドにより段落の右端に改行が挿入されます。この後でウインドウをリサイズしても折り返し位置はそのまま残ります。これが便利なのは、たとえば仲間にソースを送るとして、先方のエディタの幅が固定されていて折り返しがないようなときでしょう。「改行を挿入」コマンドを実行する際に選択部分がなければ、文書全体にわたってハードラップがかけられます。注意したいのは、「改行を挿入」はアンドゥがきかないということです。
+<li>
+TeXShop のアプリケーションバンドルに Norman Gall さんの TeX-mdimporter が入りました。ファイルの拡張子が .tex・.latex・.ltx・.ctx・texi であれば、保存時に Spotlight によって索引が作成されます。システム 10.4 から 10.4.2 までは、ファイルタイプが TEXT なので TeXShop ファイルは自動的に索引が作成されていましたが、10.4.3 で Apple がやり方を変えてしまいました。なので索引作成にインポーターが必要となったのです。TeXShop をインストールする際に、システムが自動でインポーターを認識します。そしてそれ以降、TeXShop が起動しておらずとも .tex や .ltx などのファイルの索引作成に利用されます。
+</li>
+<p>
+もし後々 Gall さんがインポーターをアップデートし、ユーザが新しいバージョンを ~/Library/Spotlight やその他の標準的な場所にインストールした場合には、TeXShop のバンドルに含まれているバージョンではなく、アップデートされたバージョンの方が使用されます──というのも Apple のインポーター検出ルーチンは、バンドルに含まれるインポーターについては最後の手段として用いるからです。
+<p>
+Gall さんのインポーターは TeXShop を念頭に置いて書かれているわけではありませんが、その代わりにすべての TeX エディタやフロントエンドで利用できるように設計されています；普遍的なインポーターの方が、それぞれのフロントエンド用に特化したものよりも望ましいでしょう。最新版については <a href="http://www.spookyhill.net/~gall/latex" target="new">http://www.spookyhill.net/~gall/latex</a> をご覧ください。
+<li>
+Gerben Wierda さんの TeX ディストリビューションに含まれていた altpdftex, altpdflatex の２つのコマンドが、simldftex tex と smpdftex latex に変更されています。TeXShop でも、これらのコマンドをデフォルトの設定値に変更しました。
+</li>
+<p>
+さらに、ユーザが「TeX＋Ghostscript」モードで最初にタイプセットを試みる際に、TeXShop が上記の設定項目をチェックし、必要であれば変更しておきます。この動作の実行は TeX バイナリのディレクトリにおける「simpdftex」の有無によって判定します。もし「simpdftex」があり、「TeXShop 環境設定」の「内部設定」で、「TeX + dvips + distiller」の欄が「altpdftex」になっていれば、「simpdftex tex」へと書き換えられます。環境設定内であらかじめ変更を加えてあった箇所についてはそのままにしておきます。同時に「LaTeX プログラム」欄も書き換えられます。もしも「altpdflatex」になっていれば「simpdftex latex」へと書き換えられますが、あらかじめ変更してあった箇所についてはそのままにしておきます。
+<li>
+ISO Latin 9 エンコーディングを追加しました。
+</li>
+<p>
+<li>
+コマンド＋「 [ 」およびコマンド＋「 ] 」について、ソースウインドウとプレビューウインドウとでは別々の動作をするようにしました。ソースウインドウ内では「左シフト」と「右シフト」となります。プレビューウインドウ内では「戻る」と「進む」です。デメリットとしては、これらのコマンドをメニューに付け加えられないので、ユーザがショートカットを覚えておかなければなりません。この変更はドイツ語版およびその他のキーボードで、コマンド＋「 < 」およびコマンド＋「 > 」がウインドウの巡回に割り当てられいるユーザの要望によるものでした。英語版キーボードのユーザは、ウインドウの巡回にはコマンド＋「 ` 」が割り当てられています。
+</li>
+<p>
+<li>
+新しい隠れた環境設定を追加しました
+</li>
+
+<tt>
+	<dl>
+		<dd>defaults write TeXShop LeftRightArrowsAlwaysPage YES
+		</dl>
+</tt>
+
+<p>
+デフォルトの値は NO です。YES にすると、水平スクロールバーが表示されていても、左矢印・右矢印でページごとにスクロールします。
+<li>
+「環境設定」の「プレビュー」タブ内の英語表記を「After Window Review」から「Magnification Style」にし、「Preview Window Magnification」を「Preview Window Fixed Magnification」に変更することで、これらの環境設定項目の機能をより詳しく言い表わすようにしました。注意してほしいのは、TeXShop が「プレビューウインドウの倍率」の数値を利用するのは「ウインドウのリサイズ後」の項目が「固定倍率」に設定されている時だけだということです。
+</li>
+<p>
+<li>
+新しい項目を追加──
+</li>
+
+<tt>
+	<dl>
+		<dd>%!TEX projectfile =
+		</dl>
+</tt>
+
+<p>
+これは TeX のソースファイルの冒頭に付記できます。この変更は主に ConTeXt ユーザが新しい方式のシンクロナイゼーションを利用できるようにするためのものです。プレビューウインドウからソースウインドウへのシンクロの際、TeXShop は、まだ開かれていないソースファイルを必要に応じて開けるようにするために、プレビュー中の文書に関連するソースファイルをすべて把握しておく必要があります。これはルートファイルを解析し、\include と \input のある行を見つけることで行なっています。けれども ConTeXt では、ファイルを挿入するのに異なるコマンドを用いています。新しい構文では、検索に必要な追加のソースファイルを、ConTeXt ユーザがルートファイル内で直接指示できるようになります。以下に例を挙げておきます──
+<p>
+
+<tt>
+	<dl>
+		<dd>%!TEX projectfile = /Users/koch/MyDoc/chapter1.tex
+		<dd>%!TEX projectfile = chapter2.tex
+		<dd>%!TEX projectfile = ../chapter3.tex
+		</dl>
+</tt>
+
+<li>
+「.Rnw」を TeXShop で編集できる拡張子として追加しました。これは Paolo Bosetti さんの要望でしたが、彼は TeX と R と Sweave をいっしょに使っています。
+</li>
+<p>
+<li>
+ユーザが拡張子「.dvi」のファイルを開こうとすると、TeXShop は DVI ファイルを PDF ファイルに変換するスクリプトを走らせます。以前のバージョンでは、「.dvi」ファイルが書き込み可能なディレクトリにある場合と書き込み不可のディレクトリにある場合とでは異なるスクリプトを実行していました。けれども Gerben Wierda さんが simpdftex のスクリプトを改善して両方のケースを扱えるようにしたので、TeXShop では変換するにあたって常に simpdftex をコールするようになりました。実を言えば「環境設定」で設定した「TeX + dvips + distiller」のスクリプトをコールしているわけです──ユーザがごく最近の TeX ディストリビューションを持っていれば、この環境設定は simpdftex になっていることでしょう。
+</li>
+<p>
+<li>
+新しい隠れた環境設定を追加しました──
+</li>
+
+<tt>
+	<dl>
+		<dd>defaults write TeXShop RedConsoleAfterError NO
+		</dl>
+</tt>
+
+<p>
+この初期値が YES ならば、コンソールの最初のエラー部分より後ろのテキストは赤色で表示されます。デフォルト値は NO です。
+<li>
+コンソールウインドウのアピアランスを微妙に修正しました──とりわけ英語表記ですが。これについてはさらなる作業が必要とされています。コンソールウインドウはサイズが変更でき、場所も移動できますが、TeXShop を再起動してもシステムは変更後のサイズと場所を覚えていることに注意してください。
+</li>
+<p>
+<li>
+バージョン 2.05 では、「最後に保存した状態に戻す」について、Mac OS X Tiger の新しいコマンド「textView breakUndoCoalescing」を利用して修正しました。以前のバージョンのTeXShop でも、最後に保存した状態に戻せるようにするコマンドは使えました。けれどもこれには「トリッキーなコード」が必要で、このトリックの影響のひとつとして TeXShop はたまに、文書の現在の状態が既に保存したものだったかどうかわからなくなり、タイプセットする前に保存をしないことがあり、プレビューウインドウに表示される結果が変になっていました。
+</li>
+<p>
+<li>
+バージョン 2.00 から 2.04 までの TeXShop では時おり、新しい環境設定を覚えておくという厄介事がありました──「定着」するまで何度か設定してやる必要があったのです。これを修正しました。
+</li>
+</ul>
+
+
+<h5>バージョン 1.42 と 2.05 共通の新機能</h5>
+<ul>
+<li>
+Gerben Wierda さんの TeX ディストリビューションに含まれている "altpdftex" と "altpdflatex" のコマンドが、それぞれ "simpdftex tex" と "simpdftex latex" に変更されています。TeXShop を新しくインストールした場合は、これらのコマンドがデフォルトで設定されるようになりました。
+</li>
+<p>
+さらに、ユーザが「TeX＋Ghostscript」モードで最初にタイプセットを試みる際に、TeXShop が上記の設定項目をチェックし、必要であれば変更しておきます。この動作の実行は TeX バイナリのディレクトリにおける「simpdftex」の有無によって判定します。もし「simpdftex」があり、「TeXShop 環境設定」の「内部設定」で、「TeX + dvips + distiller」の欄が「altpdftex」になっていれば、「simpdftex tex」へと書き換えられます。環境設定内であらかじめ変更を加えてあった箇所についてはそのままにしておきます。同時に「LaTeX プログラム」欄も書き換えられます。もしも「altpdflatex」になっていれば「simpdftex latex」へと書き換えられますが、あらかじめ変更してあった箇所についてはそのままにしておきます。
+<li>
+ISO Latin 9 エンコーディングを追加しました。
+</li>
+<p>
+<li>
+新しいドイツ語ローカライズとヘルプファイル。
+</li>
+<p>
+<li>
+銭谷誠司さんから助力を得た岡崎祥久さんによる新しい日本語ヘルプ。
+</li>
+<p>
+<li>
+新しいスペイン語ヘルプファイルとローカライズ。
+</li>
+<p>
+<li>
+バージョン 1.2.4 の OgreKit を使用。
+</li>
+<p>
+<li>
+ファイルパスのフォルダ名にスペース文字が含まれている場合も、eps, ps, dvi ファイルを pdf に変換できるようになりました。この変換機能は、これらのファイルをダブルクリックで開いたときに動作します。書き込み権限のないディレクトリにファイルがある場合も、pdf への変換が動作するようになりました。
+</li>
+<p>
+<li>
+「作業ファイルを除去」によって取り除かれるファイルの拡張子を追加：cos・idv・4ct・4tc・lg・xref・ttt・fff・ent・wrm 。
+</li>
+<p>
+<li>
+ユーザが UTF-8 Unicode エンコーディングのファイルを開こうとしても、そのファイルがきちんとした UTF-8 ファイルではなかった場合には、問題を告げるダイアログが表示され、ファイルは MacOSXRoman エンコーディングで開かれるようにしました。
+</li>
+<p>
+<li>
+Bib ファイルの処遇を向上させました──テキストをドラッグできるようにする、シンタックス・カラーリングを機能させる、等々。
+</li>
+<p>
+<li>
+ひとこと：コンソールウインドウ内で語句を「検索」することができなくなったとの報告がユーザから寄せられました。でも実際のところは、検索できます。このウインドウは２つの部分から成り立っています。タイプセットが終了した時点では、下側の部分がアクティブになっていますから、検索パネルはこの部分を検索対象にします。上の部分をアクティブにするには、一度クリックしておきます。そうすれば「検索」が機能します。
+</li>
+<p>
+<li>
+マウスの初動をコントロールする環境設定項目を追加しました。「選択時にカーソルを移動」がそうです。もしこれにチェックが入っていれば、ソースウインドウをクリックした際に、クリックをした位置に挿入ポイントが置かれます。もしチェックが入っていなければ、もう一度クリックして挿入ポイントを移動させることになります。
+</li>
+<p>
+<li>
+TeXShop で編集可能なファイルタイプに pdf を追加し、pdf アイコンも追加しました。これにより TeXShop をデフォルトの PDF ビューワに指定することができるようになりました。
+</li>
+<p>
+<li>
+Lilypond・abc・bst を編集可能な拡張子として追加しました。
+</li>
+<p>
+<li>
+David Reitter さんのコードを追加することで、\int 等の語の選択において、最初の「\」も選択に含まれるようになりました。
+</li>
+</ul>
+
+<h5>バージョン 1.42 と 2.05 でのバグ修正</h5>
+<ul>
+<li>
+日本語環境では、環境設定項目の「コピー」項目がローカライズ時の手違いで動作しませんでした。この件を修正しました。
+</li>
+<p>
+<li>
+コマンド補完用の設定ファイルが UTF-8 Unicode で読み出され保存されるようになりました。
+</li>
+<p>
+<li>
+pdfsync におけるエラーを修正しました。
+</li>
+<p>
+<li>
+タイプセットエンジンをコールする際に、たんにファイル名だけでなく、拡張子付きのファイル名を渡すようにしました。
+</li>
+<p>
+<li>
+バージョン 1.35 では、OgreKit の検索パネルと Apple の検索パネルとの切り替えが、英語版ローカライズでのみ可能でした。これを修正しました。
+</li>
+<p>
+<li>
+<!-- 
+統計パネルを取り出すためのメニュー項目が英語版にしかありませんでした。これがすべてのバージョンで利用可能となりました。
+ -->
+統計パネルを呼び出すためのメニュー項目が英語版にしかありませんでした。これが各国語版で利用可能となりました。
+</li>
+<p>
+<li>
+「ページレイアウト」が「単一ページ」以外のモードになっていると、各 PDF ページの周囲に黒い境界線が引かれます。以前はこの境界線がわずかにページ内に食い込んでおり、ページの周囲を微妙にへずっていました。今ではページのちょうど外側になっています。このエラーを指摘してくれた Scott Ranby さんに感謝。
+</li>
+<p>
+<li>
+コマンド「%!TEX TS-program」と「%!TEX root =」を外部エディタで利用できるようにしました。
+</li>
+</ul>
+
+<h3>Version 1.41 ＆ 2.04</h3>
+<ul>
+<li>
+バージョン1.41 と 2.04 の TeXShop は、TeX インストールパッケージ「MacTeX.pkg」の最初のリリースに同梱されていますが、それ以外では公開されませんでした。
+</li>
+</ul>
+
+<h3>Version 1.40 ＆ 2.03</h3>
+
+<h5>バージョン 2.03 での変更点</h5>
+<ul>
+<li>
+PDF 検索（つまりシンクロ）のコードを改善し、\include{file}・\input{file}・\import{file} に対応しました。規模の大きなプロジェクトでシンクロナイゼーションを利用してトラブルに見舞われていたユーザは、これが機能するようになったことに気付くかもしれません。
+</li>
+<p>
+<li>
+コマンド＋Ｆで検索パネルを開いた際、前回の検索語句がハイライト表示されるようになったので、新しい検索語句をタイプするだけで書き換えることができます。
+</li>
+<p>
+<li>
+コマンド＋左矢印（&#x2318;＋←）とコマンド＋右矢印（&#x2318;＋→）は、プレビューウインドウが開いている際にはページアップとページダウンとして動作しますが、エディタでは行頭・行末への移動となります──バージョン 2.01 でうっかり除いてしまったキーボードショートカットを復元しました。
+</li>
+<p>
+<li>
+Juan Luis Verona さんによる新しいスペイン語ローカライズとヘルプ。
+</li>
+<p>
+<li>
+Martin Kerz さんによるドイツ語ローカライズへの追加修正。
+</li>
+</ul>
+
+<h5>バージョン 1.40 での変更点</h5>
+<ul>
+<li>
+コマンド＋Ｆで検索パネルを開いた際、前回の検索語句がハイライト表示されるようになったので、新しい検索語句をタイプするだけで書き換えることができます。
+</li>
+</ul>
+
+<h3>Version 1.39 ＆ 2.02</h3>
+
+<h5>バージョン 2.02 での変更点</h5>
+<ul>
+<li>
+ショートカットキーを追加しました──コマンド＋左カーソルキーで前ページへ移動、コマンド＋右カーソルキーで次ページへ移動、コマンド＋「 [ 」キーで「戻る」、コマンド＋「 ] 」キーで「進む」となります。上記のショートカットキーはアップルのプレビュー（Preview.app）でも用いられています。この追加に伴い、「行を右シフト」と「行を左シフト」のショートカットキーはそれぞれコマンド＋「 < 」とコマンド＋「 > 」へと変更され、「コメント」と「コメントを外す」はそれぞれコマンド＋「 { 」とコマンド＋「 } 」とに変更されました。
+</li>
+<p>
+<li>
+水平方向のスクロールバーがアクティブになっているときには、左右のカーソルキーはそれぞれ左右へのスクロールとなりますが、そうでないときには上下のページ移動となります。この動作はアップルのプレビュー（Preview.app）に倣ったものです。
+</li>
+<p>
+<li>
+プレビューウインドウでリンク箇所をクリックしたときは、使用中のツールの種類（スクロールやテキスト、拡大鏡ツールなど）に関わらず、リンク先にジャンプするようになりました。
+</li>
+<p>
+<li>
+ツールバー項目の「倍率」と「ページ」の背景の囲みをなくしましたので、サイズも小さくなり、以前よりハッキリと見えるようになりました。
+</li>
+<p>
+<li>
+新しいシンクロナイゼーション方法で検索するファイルの数を 20 から 60 に増やしました。
+</li>
+<p>
+<li>
+OgreKit のパーミッションを修復。
+</li>
+<p>
+<li>
+岡崎祥久さんによる日本語版ローカライズ。
+</li>
+</ul>
+<h5>バージョン 1.39 での変更点</h5>
+<ul>
+<li>
+岡崎祥久さんによる日本語版ローカライズ。
+</li>
+<p>
+<li>
+Juan Luis Varona Malumbres さんによるスペイン語版ローカライズ。
+</li>
+<p>
+<li>
+OgreKit のパーミッションを修復。
+</li>
+</ul>
+
+<h3>Version 1.38 ＆ 2.01</h3>
+
+<h5>バージョン 2.01 での変更点</h5>
+<ul>
+<li>
+デフォルトの設定の欠落により PDF ウインドウの背景色が黒くなっていました。これを修正。
+</li>
+<p>
+<li>
+書類のタイプセット後にビーチボールが現われ、エディタが使えるようになるまでに相当の遅れの出ることがありました。修正しました。
+</li>
+<p>
+<li>
+プレビューウインドウの位置とサイズを定める環境設定が壊れていました。修正済みです。
+</li>
+<p>
+<li>
+デフォルトの倍率を変更しても、開いているウインドウでは即座に変更されませんでした。修正しました。
+</li>
+<p>
+<li>
+ソースコードのテキストの一部を、ある箇所から別の箇所にドラッグする操作が Tiger ではうまく動作しませんでした。これを修正。
+</li>
+<p>
+<li>
+TeXShop および TeXShopヘルプがドイツ語にローカライズされました。
+</li>
+<p>
+<li>
+マクロ > Headings > 12pt > book ──つまり、文字サイズ 12 ポイントの「book」クラスのヘッダを挿入するマクロに、誤った文字が入っていました。新規ユーザであればこれは修正されていることになりますが、それ以外のユーザはマクロエディタを使ってこの文字を取り除いておく必要があります。
+</li>
+</ul>
+
+<h5>バージョン 1.38 での変更点</h5>
+<ul>
+<li>
+ソースコードのテキストの一部を、ある箇所から別の箇所にドラッグする操作が Tiger ではうまく動作しませんでした。これを修正。
+</li>
+<p>
+<li>
+ドイツ語版ローカライズにいくらか追加が行なわれました。
+</li>
+<p>
+<li>
+マクロ > Headings > 12pt > book ──つまり、文字サイズ 12 ポイントの「book」クラスのヘッダを挿入するマクロに、誤った文字が入っていました。新規ユーザであればこれは修正されていることになりますが、それ以外のユーザはマクロエディタを使ってこの文字を取り除いておく必要があります。
+</li>
+</ul>
+
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_title">更新履歴</div>
+</BODY>
+</HTML>

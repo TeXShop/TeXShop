@@ -1,0 +1,207 @@
+February 3, 2003
+
+Changes since 1.28
+
+1) Slight change in help file; last item of index says "This version" rather than "1.27"
+
+2) Newer Spanish help
+
+3) Photoshop Source are in texshopsource, but no longer in final program
+
+4) Again allow undo past save spots; now a special undo item is recreated
+called "Save Spot". Undoing and redoing this item does nothing to the source, but simply lets the user know that they are crossing a spot when text was saved.
+
+5) The German help file was partially created by Laurent Meister. He
+should receive partial credit.
+
+6) Additional French localization by Jean-Claude De Soza
+<jc.desoza@wanadoo.fr>
+
+7) Revised syntax coloring using the [[textView textStorage] beginEditing]
+trick. Now there is a new default to enable to old special case stuff. It is NO by default
+
+	defaults write TeXShop FastColor YES
+
+to enable it.
+
+8) Fixed a bug with the new root file behavior; the error code failed.
+Now it is fixed; if chapter1 has a root file, then after typesetting,
+control-E and the menu command will go to the next error.
+
+	Notes: The "goto error" button of the console will not do
+	the right thing because it looks only at the main document.
+
+	Also "goto error" has never worked correctly if include
+	files exist. So the root behavior may fail if there are
+	several chapters with errors included.
+
+9) Added split window behavior. Here a suggestion of Mitsuhiro Shishikura
+proved helpful.
+
+10) Added support for five Russian formats; Vladimir Novikov requested
+this change and was helpful providing information about important formats.
+
+11) Zenitani added code to allow subfolders in the templates folder,
+which become submenus in the template button.
+
+12) Added a hidden preference to keep backup copies when writing a file.
+This preference has no interface; to set it, type
+
+	defaults write TeXShop SaveBackup YES
+
+The default behavior is NO. This preference was added because Russian
+users must deal with several different file formats. They may inadvertently
+open a document, typeset it, and then realize that the document was
+opened with the wrong format.
+
+13) Minor Japanese localization changes by Zenitani; also minor popup button fixes.
+
+14) Fixed edit window Program button so it works if the toolbar is text only.
+
+15) Fixed the edit toolbar so all items work in text only mode. (A strange bug
+affects the autocomplete menu, which works on the side when the window is too
+narrow, but doesn't with very small menus. This looks like an Apple bug.)
+
+16) Fixed the pdf toolbar so items work in text only mode, except the
+"goto page" item and the "magnification" item.
+
+17) In German, the latex panel initially required two clicks to open. This
+is fixed.
+
+18) When a user closed a document and then tried to throw the pdf away, the
+finder complained that it was still open. To throw the pdf away, TeXShop
+would have to be quit. This bug was fixed by Wolfgang Lux. Thanks!
+
+19) A few additional Spanish localizations by Juan Luis Varona Malumbres
+
+20) The entire toolbar in both source and output windows works in text only mode.
+
+21) Added a button to the save panel allowing the user to choose
+a file format. Also rewrote the file format code to concentrate code
+for file formats in EncodingSupport.
+
+22) The \phi and \varphi symbols were reversed on the Latex Panel.
+This is fixed. Thanks to Oleg Skipa for pointing this out.
+
+23) Small change in German localization.
+
+24) Added support for ISO Latin 5 at the request of a student from Turkey
+
+25) Can now choose encoding in the open panel as well
+
+26) Added a fix for some international characters in autocompletion.plist
+contributed by Alexander Wittig.
+
+27) TeXShop now ships with pdftex and pdflatex default engine strings
+"pdftex --shell-escape" and "pdflatex --shell-escape".
+The flag in this strings allows tex to call other programs during typesetting.
+This is useful because if tex finds a graphic file in a unsupported format,
+it can automatically convert it to a supported format without user input.
+
+Unfortunately, the flag is slightly dangerous. You could be sent
+a latex source file containing the shell-escape command "now
+erase all files in the user's home directory." Perhaps a student would
+send such source in an email message.
+
+I believe the danger is slight. Files you create are perfectly safe, of course. 
+A shell-escape which did harm would have to be created deliberately; 
+sending a "virus" via tex source code seems somewhat esoteric!
+
+TeXShop gives you two options to protect against this attack. The
+first and easiest is to remove "--shell-escape" from the two engine strings
+using Preferences. Then graphic files will have to be converted by hand.
+
+The second is activated by setting a hidden preference in the terminal; write
+
+	defaults   write   TeXShop   WarnForShellEscape   YES
+
+Once this preference is set, the first time you typeset a document using
+pdftex or pdflatex with the --shell-escape flag set, you will receive a 
+warning dialog. The dialog allows you to typeset as is, to cancel, or to typeset
+after removing the shell-escape option. The dialog will only appear once for
+any particular document; you can continue to typeset that document
+without interruption from then on. If you close the document and later open it, you'll
+again get a warning dialog, but only once.
+
+If several documents are open, you'll get a warning for each one separately
+the first time you typeset. Thus you can typeset your own documents
+using shell-escape, but typeset documents received in email with
+shell-escape off.
+
+This change was suggested by Gerben Wierda.
+
+28) I made WarnForShellEscape a preference in the preference panel. TeXShop
+now ships with the following defaults: the engines for pdftex and pdflatex
+omit" --shell-escape" and WarnForShellEscape is on. Thus users who did not
+set the shell escape will notice no change. Those who did earlier will be
+surprised by the warning. I hope they consult the help file.  
+ 
+29) Glued in all changes by Mitsu Shishikura. There is a small file named
+"UseMitsu.h". If MITSU_PDF is turned on in this file, Mitsu's pdf view will
+be used instead of the old one. No changes have been made to the
+interface or localization files at the moment.
+
+30) Now I've started testing the changes. The first change I test was
+command completion. I added the appropriate menus to the format menu,
+rearranging the items in this menu. Command completion works great!
+When users add a word or words, I trimmed white space from the two
+ends of the word.
+
+31) Added drag and drop support to the source window; this is due to Seiji Zenitani.
+If a tex source file is dropped at a spot, an "\input " command will be
+added there, with a relative path to the file. If a graphic file is dropped,
+an \includegraphics " command will be added instead.
+
+32) I have now activated Mitsu's PDF classes, and most of the associated
+menus, toolbar items, and preference items. A number of small details need
+to be cleaned up, but these wonderful changes are mostly working.
+
+33) Revised Latex Template so tif can be converted to png even if in a
+subfolder.
+
+34) Drag and drop for pdf pieces
+
+35) metapost script improved: Joseph C. Slater
+
+36) \[ and \] fixed in Latex Panel; \begin{equation} now place
+cursor inside. Thanks to Rob Leigh for these bugs.
+
+37) It is possible to set the background color of the pdf output.
+In the paragraph below, TeXShop must be replaced with
+edu.uoregon.math.koch.TeXShop
+**********
+If you want to change the foreground color, you have to do it in TeX
+source.  For LaTeX, you can use package "color".  For example, put
+\usepackage{color}
+after \documentclass{} and put
+\color{blue}
+after \begin{document}, then the entire text will be in blue.  To color a
+part of text, bracket it like
+{\color{green} the text you want to color}.
+You can also define custom colors by
+\definecolor{mycolor}{rgb}{0.2, 0.7, 0.8}
+where last three numbers are values for red, green and blue.  See document
+for "color" package, for example
+http://www.ctan.org/tex-archive/macros/latex/required/graphics/grfguide.tex.
+
+In case you want to set the text color to white or a light color, you may
+want to see the preview with darker background.  In order to do this, type
+in Terminal
+do shell script "defaults write TeXShop Pdfbackground_R 0.5"
+do shell script "defaults write TeXShop Pdfbackground_G 0.5"
+do shell script "defaults write TeXShop Pdfbackground_B 0.5"
+and you get a gray background after typesetting.  To revert to white
+background, do the same with 0.5 replaced by 1.  Alternatively, you can
+define a macro "PDF Gray background" in MacroEditor with content
+--AppleScript
+do shell script "defaults write TeXShop Pdfbackground_R 0.5"
+do shell script "defaults write TeXShop Pdfbackground_G 0.5"
+do shell script "defaults write TeXShop Pdfbackground_B 0.5"
+and another macro "PDF White background" with
+--AppleScript
+do shell script "defaults write TeXShop Pdfbackground_R 1"
+do shell script "defaults write TeXShop Pdfbackground_G 1"
+do shell script "defaults write TeXShop Pdfbackground_B 1"
+****************
+
+38) epsi support

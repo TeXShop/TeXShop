@@ -1,0 +1,122 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue221;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf2 From: 
+\f1\b0 Mitsuhiro Shishikura <mitsu@kusm.kyoto-u.ac.jp>\
+
+\f0\b Date: 
+\f1\b0 Fri Jan 3, 2003  8:36:49 AM US/Pacific\
+
+\f0\b To: 
+\f1\b0 Richard Koch <koch@math.uoregon.edu>\
+
+\f0\b Subject: 
+\f1\b0 Re: TeXShop\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 Dear Dick,\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf3 I don't think it is necessary to active this with a command key, but\
+I did make one change. Sometimes users will want to magnify\
+a larger area. In the code below, the option key can be pressed any time\
+the magnifying glass is being used, and then a larger area will be\
+magnified.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+This is a good idea and I like it.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf3 Also I notice one very minor bug, but it is Apple's bug, they know\
+about it,\
+and they will surely fix it soon. If the magnifying glass is positioned\
+"just\
+right," then large symbols like integrals, summation signs, and\
+parentheses,\
+will be slightly cut off when the mouse is released. See my web page\
+for an explanation of other symptoms of this bug. In the case of the\
+magnifying class, the symbol can be fixed by using the mouse again\
+and moving it slightly, and the bug is almost invisible. So I don't\
+intend\
+to try a fix.\
+\
+OK?\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+I  read that part of your web page before, and I tried it out this time.\
+In fact, the magnifying glass can be a quick (although incomplete) remedy\
+for that bug.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf3 Seiji Zenitani made some changes to Japanese encodings. I think\
+his changes are compatible with your changes, but I need to check\
+that with you. Zenitani added\
+\
+	Japanese (ShiftJIS yen)  of course yen is replaced by the yen symbol\
+	Japanese (ShiftJIS \\)\
+	Janapese (EUC)\
+\
+It looks like you want these three encodings plus one more, namely\
+Japanese(JIS).\
+\
+I convinced Zenitani to use Japanese (ShiftJIS 1) and Japanese\
+(ShiftJIS 2)\
+in all localizations except Japanese, fearing that the yen symbol might\
+be unavailable to\
+other users. But now that I understand the issues, I think that was a\
+mistake\
+and unless you object I'll name these Japanese (ShiftJIS yen) and\
+Japanese (ShiftJIS \\) in all localizations\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+Seiji Zenitani and me (among others) are in contact through a BBS\
+in Japan.  He and others gave suggestions to my versions of TeXShop-jx.\
+ShiftJIS, EUC and JIS are three major encodings for Japanese.  On Macintosh and\
+windows, ShiftJIS is the default encoding and EUC and JIS are for UNIX systems.\
+(I think EUC is more dominant now. ) At the beginning, I thought of\
+implementing\
+only ShiftJIS and EUC, but when I asked on the BBS if JIS is necessary, and one\
+of experienced users says that some style files may be distributed in JIS\
+encoding.\
+So if you don't mind, please add one more.\
+\
+As for yen sign, it users use a proper unicode font, it should come out\
+correctly.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf3 I agree with ALL your changes for command T; a faculty member\
+here requested a similar change. So I'll do that next.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+When you assign the default program ID, or whichEngine, you may want to add\
+a code so that if the first line of a document mentions the name of the program\
+then it override the default program.  (Like "%&pdflatex" etc in current\
+version.)\
+---------------------------------------------------\
+I have some comments on your 1-26 version:\
+\
+In Japanese resource, the menus are in a wrong order; preview menu came after\
+help menu.  You can tell it by looking at key equivalents.\
+\
+In Configuration.rtf, you explained how to open the TeXShop.app as a package.\
+One should hold the control key, not the command key.\
+\
+Also for these .plist files, you could add a code so that these files are\
+copied\
+from TeXShop.app to proper directories in ~/Library/TeXShop.\
+Templates and LaTeX panel has this feature, and I also added a similar one for\
+MacroMenu.\
+\
+I observed that each document has a copy of autocompletionDictionary.\
+You can make it a global variable and initialize it in\
+applicationWillFinishLaunching\
+in TSAppDelegate.m.\
+\
+Best regards,\
+\
+Mitsu\
+\
+}

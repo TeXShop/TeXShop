@@ -1,0 +1,60 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>AppleScript Makros</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="So benutzen Sie ApplScripts zusammen mit TeXShop Makros.">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	
+	</HEAD>
+
+<BODY>
+		<div id="content_border">
+			<P>Beginnen Makros mit einem der folgenden Strings:</P>
+			<dl>
+				<dd><tt>--AppleScript</tt>
+			</dl>
+			<p>oder</p>
+			<dl>
+				<dd><tt>--AppleScript</tt>
+			</dl>
+			<p>wird der resultierende AppleScript Code ausgef&uuml;hrt, wenn das Makro gestartet wird. Nehmen wir zum Beispiel ein Makro mit dem Titel &bdquo;pdf-Datei mit Acrobat Reader &ouml;ffnen&ldquo; Wird dieses Makro ausgef&uuml;hrt, wenn die Quelltext-Datei aktiviert ist (und die pdf-Datei erstellt wurde), so startet der Adobe Acrobat Reader und die pdf-Ausgabe-Datei wird in diesem Programm angezeigt. Der dazu geh&ouml;rige AppleScript Code lautet:</p>
+			<dl>
+				<dd><tt>--AppleScript</tt>
+				<dd>
+				<dd><tt>tell application &quot;Acrobat Reader 5.0&quot;</tt>
+					<dl>
+						<dd><tt>activate</tt>
+						<dd><tt>open POSIX file #PDFPATH#</tt>
+					</dl>
+				<dd><tt>end tell</tt>
+				
+			</dl>
+			<p>Befehle, die mit &bdquo;--AppleScript direct&ldquo; beginnen, werden direkt von TeXShop ausgef&uuml;hrt. W&auml;hrend das Applescript ausgef&uuml;hrt wird, ist TeXShop unt&auml;tig, d.h. seine Event-Loop wird nicht ausgef&uuml;hrt. Daher kann auch w&auml;hrend der Ausf&uuml;hrung TeXShop nicht aufgerufen werden um z.B. Benutzereingaben zu erm&ouml;glichen. So kann auch TeXShop vom Skript nicht aufgefordert werden LaTeX auszuf&uuml;hren, da dieses bei einem eventuellen Fehler den Benutzer zu einer Benutzereingabe in der Fehlerkonsole aufforern w&uuml;rde. Eine solche Eingabe w&uuml;rde aber auf Grund der fehlenden Event-Loop nicht erkannt.</p>
+			<p>Befehle, die mit &bdquo;--AppleScript&ldquo; beginnen, werden durch kleine Hilfsprogramme in TeXShop ausgef&uuml;hrt. HIerbei k&ouml;nnen die Applescripts auch TeXShop auffordern gewisse Funktionen auszuf&uuml;hren, da bei etwaigen Benutzereingaben das Hilfsprogramm zwar gestoppt wird, TeXShop selbst aber weiter l&auml;uft. </p>
+			<p>Daher ist es empfehlenswert die Syntax &bdquo;--AppleScript direct&ldquo; f&uuml;r Routineskripte zu verwenden und &bdquo;--AppleScript&ldquo; f&uuml;r Skripte umfangreicherer Art.</p>
+		</div>
+		<div id="header_background"></div>
+		<div id="header_logo">
+			<a href="../TeXShop%20Help.html"><img height="40" width="40" border="0" src="../gfx/xicnsc.gif"></a></div>
+		<div id="header_chapter">
+			Hilfe zu Makros</div>
+		<div id="header_title">
+			AppleScript Makros</div>
+		<div id="menu_border">
+			<ul>
+				<li><a href="macros_preliminaries.htm">Einleitung</a>
+				<li><a href="macros_default.htm">Die Standardmakros verstehen</a>
+				<li><a href="macros_rearrange.htm">Das Makromen&uuml; neu anordnen</a>
+				<li><a href="macros_define.htm">Neue Makros erstellen</a>
+				<li><a href="macros_applescript.htm">AppleScript Makros</a>
+				<li><a href="macros_includedscripts.htm">Standard AppleScript Makros</a>
+				<li><a href="macros_defapplescript.htm">AppleScript Makros erstellen</a>
+				<li><a href="macros_dialogs.htm">Dialoge erstellen</a>
+				<li><a href="macros_writingcompletescripts.htm">Skripte mit TeXShop-Satzkommandos erstellen</a>
+				<li><a href="macros_writingcommandscripts.htm">Skripte mit Shell-Befehlen erstellen</a>
+			</ul>
+		</div>
+	</BODY>
+</HTML>

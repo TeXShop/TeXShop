@@ -1,0 +1,69 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Borrado de archivos AUX</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="aux; borrar; log">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<p>Al componer p&aacute;ginas, TeX crea archivos auxiliares con extensiones .log, .bbl, etc. Ocasionalmente, estos ficheros se corrompen y se producen errores inexplicables al componer. TeXShop tiene un men&uacute; &laquo;Borrar archivos aux&raquo; que permite borrar todos estos archivos. Hay un bot&oacute;n similar en la ventana de la Consola. Al usar cualquiera de los dos, TeXShop pone en la papelera todos los ficheros con el mismo nombre (descartada la extensi&oacute;n), y situados en la misma carpeta, que el archivo con el c&oacute;digo fuente, siempre que su extensi&oacute;n sea .aux, .blg, .brf, .ccs, .ent, .fff, .glo, .idx, .idv, .ilg, .ind, .ioa, .lg, .log, .lot, .mte, .mlf, .out, .pdfsync, .toc, .ttt, .wrm, .xref, .4ct o .4tc.</p>
+
+<p>Se pueden a&ntilde;adir m&aacute;s extensiones a esta lista. Por ejemplo, para a&ntilde;adir los archivos .dvi a la lista, activa el Terminal y teclea
+</p>
+		<dl>
+			<dd>defaults write TeXShop OtherTrashExtensions -array-add "dvi"
+		</dl>
+<p>Para suprimir de la lista todas las extensiones a&ntilde;adidas, y volver a la original:
+	<dl>
+		<dd> defaults write TeXShop OtherTrashExtensions -array
+	</dl>
+<p>A veces es necesaria una limpieza m&aacute;s profunda.
+Por ejemplo, si el documento ra&iacute;z de un libro es main.tex y los cap&iacute;tulos est&aacute;n en subcarpetas a las que se accede con comandos del tipo \include{chapter1/chapter1}, al componer el libro aparecen los archivos main.aux, main.pdfsync y main.log en la carpeta principal, y chapter1.aux en la carpeta chapter1.</p>
+<p>La limpieza extensiva requerida se logra pulsando la tecla opci&oacute;n al usar &laquo;Borrar archivos aux&raquo;. En este caso:
+<dl>
+<li> TeXShop usa los mecanismos de &laquo;%!TEX root&raquo; y &laquo;Documento ra&iacute;z...&raquo; para encontrar el documento ra&iacute;z y su carpeta.
+<li> Lleva a la papelera todos los archivos de esa carpeta y sus subcarpetas, siempre que tengan las extensiones adecuadas, y sin tener en cuenta su nombre.
+</dl>
+Hay una manera de hacer que &eacute;ste sea el comportamiento predeterminado de &laquo;Borrar archivos aux&raquo;, incluso sin pulsar la tecla opci&oacute;n:
+<dl>
+<dd> defaults write TeXShop AggressiveTrashAUX YES
+</dl>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda avanzada</div><div id="header_title">Borrado de archivos AUX</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adici&oacute;n de estilos personales y men&uacute;s de macros a teTeX</a>
+			<LI><a href="advanced_addengine.htm">Motores de composici&oacute;n adicionales</a>
+			<LI><a href="advanced_removeaux.htm">Borrado de archivos AUX</a>
+			<li><a href="advanced_externaleditor.htm">Uso de un editor externo</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copiar-pegar y arrastrar-soltar desde la ventana del PDF</a>
+			<li><a href="advanced_root.htm">Establecer un documento ra&iacute;z</a>
+			<li><a href="advanced_pdfsync.htm">Sincronizaci&oacute;n c&oacute;digo-pdf (pdfsync)</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Creaci&oacute;n y uso de formatos de TeX</a>
+			<li><a href="advanced_otherfiles.htm">Abrir otros archivos con TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizaciones</a>
+			<li><a href="advanced_syntaxcolor.htm">Colores para sintaxis</a>
+			<li><a href="advanced_shellescape.htm">Protecci&oacute;n ante shell-escape</a>
+			<li><a href="advanced_coloredtext.htm">Texto coloreado en TeX</a>
+			<li><a href="advanced_moretetex.htm">M&aacute;s sobre teTeX</a>
+			<li><a href="advanced_fink.htm">Coexistencia con Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexistencia con otras distribuciones de TeX</a>
+			<li><a href="advanced_context.htm">ConTeXt y MetaPost</a>
+			<li><a href="advanced_plist.htm">Archivos .plist</a>
+			<li><a href="advanced_menushortcuts.htm">Redefinici&oacute;n de atajos de teclado de men&uacute;s</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

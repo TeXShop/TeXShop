@@ -1,0 +1,103 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Trucos de edici&oacute;n</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="trucos de edici&oacute;n; comentarios; sangr&iacute;a; dividir ventana; arrastrar y soltar; archivo de respaldo; backup file; OgreKit">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+<p>Al hacer doble click en un delimitador (par&eacute;ntesis, corchete o llave, ya sea de abrir o cerrar) es decir, en (, {, [, ], } o ), se seleccionar&aacute; todo lo que haya entre los correspondientes delimitadores de abrir y cerrar. Si hacemos doble click con la tecla opci&oacute;n pulsada, se seleccionar&aacute; s&oacute;lo el delimitador.</p>
+
+<p> TeXShop incorpora un nuevo panel de B&uacute;squedas desarrollado por Isao Sonobe. Este panel soporta expresiones regulares. En las preferecias, los usuarios pueden elegir si prefieren este panel o el original de Apple. El nuevo panel de B&uacute;squedas esta basado en OgreKit un &lsquo;framework&rsquo; de Cocoa que permite manejar expresiones regulares. V&eacute;ase</p>
+<dl>
+<dd> <dd><a href="http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit">http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit</a>
+</dl>
+
+<p> OgreKit se distribuye mediante una ligera modificaci&oacute;n de la licencia BSD; esta licencia se puede encontrar en la distribuci&oacute;n del c&oacute;digo fuente de TeXShop. OgreKit requiere Panther, as&iacute; que el nuevo panel s&oacute;lo est&aacute; disponible en m&aacute;quinas que tengan el sistema 10.3 o posterior.</p>
+<p> Este nuevo panel de B&uacute;squedas incorpora muchas posibilidades interesantes. OgreKit modifica el submen&uacute; &laquo;Buscar&raquo; del men&uacute; &laquo;Edici&oacute;n&raquo; de TeXShop, reemplaz&aacute;ndolo por un submen&uacute; m&aacute;s extenso. El panel de B&uacute;squedas tiene muchos botones para controlar c&oacute;mo debe encontrar palabras; los ajustes que hagamos se conservan de sesi&oacute;n en sesi&oacute;n. Col&oacute;calos a tu gusto haste que las b&uacute;squedas funcionenen como esperas, y rel&aacute;jate.</p>
+
+		<P>Podemos comentar grupos de l&iacute;neas usando un comando en el correspondiente men&uacute; y, si lo deseamos, activarlas de nuevo m&aacute;s tarde. Tambi&eacute;n podemos sangrar varias l&iacute;neas a la vez, o quitarles la sangr&iacute;a. Si el comienzo de una l&iacute;nea est&aacute; tabulado, las nuevas l&iacute;neas que vayamos creando comienzan con la misma tabulaci&oacute;n, hasta que cancelemos este comportamiento con la tecla de retroceso. Este comportamiento con tabuladores ha sido a&ntilde;adido a TeXShop por Nicol&aacute;s Ojeda B&auml;r, de Argentina, cuyo correo electr&oacute;nico es <a href="mailto:lojedaortiz@interlink.com.ar">lojedaortiz@interlink.com.ar</a>. &iexcl;Gracias!</P>
+		<P>La ventana con el c&oacute;digo fuente se puede dividir en dos usando la correspondiente herramienta que aparece en la parte de arriba de la ventana. Cuando la ventana est&aacute; dividida, se muestran dos vistas del mismo c&oacute;digo. Puedes teclear en cualqueira de las dos partes, y los cambios que efect&uacute;es en una aparecer&aacute;n tambi&eacute;n &mdash;autom&aacute;ticamente&mdash; en la otra. De este modo, puedes efectuar modificaciones en una secci&oacute;n del c&oacute;digo teniendo a la vista otra secci&oacute;n del c&oacute;digo.</P>
+
+		<P>Podemos hacer que TeXShop cree un archivo de respaldo (&lsquo;buckup&rsquo;) cada vez que guardamos o componemos. Para ello, hay que emplear las preferencias ocultas. Para que TeXShop cree archivos de respaldo, abre la Terminal y teclea el siguiente comando:</P>
+		<dl>
+			<dd><tt>defaults write TeXShop SaveBackup YES</tt>
+		</dl>
+<P>Cambia YES por NO para dejar de hacer copias de respaldo.
+</P>
+
+<p> Un panel llamado Estad&iacute;sticas lista el n&uacute;mero de palabras, l&iacute;neas y caracteres de un documento. Internamente, este panel llama a</p>
+<dl>
+<dd> detex myfile | wc
+</dl>
+<p> El comando detex borra las &oacute;rdenes tex, y el recuento de palabras que se obtiene es s&oacute;lo aproximado. Este m&eacute;todo s&iacute; que tiene en cuenta los caracteres procedentes de ficheros a&ntilde;adidos con \input e \include.</p>
+
+<P>
+Podemos arrastrar y soltar iconos de archivos en la ventana de c&oacute;digo.
+Si el archivo que se arrastra es un archivo TeX, TeXShop a&ntilde;ade un comando \input con la ruta (relativa) que lleva al archivo. Si es un archivo gr&aacute;fico, en lugar de un \input lo que se a&ntilde;ade es un \includegraphics. TeXShop reconoce los siguientes tipos de gr&aacute;ficos: pdf, jpg, jpeg, tif, tiff, eps, ps.
+</P>
+
+<P>
+Arrastrar un archivo cls produce un \documentclass y una referencia al
+archivo; arrastrar un sty produce un \usepackage; arrastar un bib produce un \bibliographystyle; cualqueir otro archivo de texto produce un \input.
+</P>
+
+<P>
+Arrastrar y soltar tiene en cuenta los alias. Por ejemplo, si un archivo gr&aacute;fico es realmente un alias, se puede arrastrar y soltar el archivo dentro de la ventana de c&oacute;digo, y todo funcionar&aacute; bien. TeX en s&iacute; mismo no es capaz de manejar alias, aunque s&iacute; &lsquo;symbolic links&rsquo;. As&iacute;, si tecleamos el nombre de un alias de un gr&aacute;fico en la ventana de c&oacute;digo, se producir&aacute; un error al componer p&aacute;ginas.
+</P>
+
+<P>
+El usuario puede configurar el comportamiento del arrastar y soltar.
+Se hace mediante el men&uacute; Macro. Inserta un nuevo submen&uacute; titulado &laquo;Drag &amp; Drop&raquo;.
+Dentro de este submen&uacute; coloca &iacute;tems cuyo nombre sea el de la extensi&oacute;n cuyo comportamiento quieras describir, y pon el c&oacute;digo que TeXShop debe insertar con archivos de este tipo.
+Por ejemplo, si el &iacute;tem es .pdf, el c&oacute;digo podr&iacute;a ser
+\includegraphics[#INS#]{%r}. En estas inclusiones, puedes usar las siguientes abreviaturas:
+
+<dl>
+<dd>	%F ruta completa (&lsquo;full path&rsquo;) del archivo soltado
+<dd>	%f nombre (&lsquo;filename&rsquo;) del archivo
+<dd>	%r ruta relativa (&lsquo;relative path&rsquo;) del archivo
+<dd>	%n nombre del archivo sin extensi&oacute;n
+<dd>	%e extensi&oacute;n.
+</dl>
+</P>
+
+<P>
+Cualquier extensi&oacute;n que no aparezca expresamente en el Editor de Macros ser&aacute; tratada de la manera predeterminda descrita anteriormente. As&iacute;, la mayor&iacute;a de los usuarios no necesitar&aacute;n el submen&uacute; &laquo;Drag &amp; Drop&raquo;.
+</P>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda b&aacute;sica</div><div id="header_title">Trucos de edici&oacute;n</div>
+		<div id="menu_border">
+		<ul>
+			<LI><a href="basic_preliminaries.htm">Preliminares</a>
+			<LI><a href="basic_installtetex.htm">C&oacute;mo obtener e instalar teTeX</a>
+			<LI><a href="basic_installtexshop.htm">C&oacute;mo obtener e instalar TeXShop</a>
+			<li><a href="basic_typesetting.htm">Componer (&lsquo;typeset&rsquo;) documentos</a>
+			<li><a href="basic_alternatetypeset.htm">M&eacute;todos alternativos de composici&oacute;n</a>
+			<li><a href="basic_spelling.htm">Correcci&oacute;n ortogr&aacute;fica</a>
+			<li><a href="basic_latexpanel.htm">Panel LaTeX</a>
+			<li><a href="basic_matrixpanel.htm">Panel matrices</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Barra de herramientas y AppleScript</a>
+			<li><a href="basic_graphics.htm">Inclusi&oacute;n de gr&aacute;ficos</a>
+			<li><a href="basic_printing.htm">Imprimir</a>
+			<li><a href="basic_preferences.htm">Establecer preferencias</a>
+			<li><a href="basic_templates.htm">Personalizaci&oacute;n del men&uacute; Plantillas</a>
+			<li><a href="basic_edittricks.htm">Trucos de edici&oacute;n</a>
+			<li><a href="basic_autocompletion.htm">Autocompleci&oacute;n</a>
+			<li><a href="basic_commandcompletion.htm">Compleci&oacute;n de comandos</a>
+			<li><a href="basic_bugs.htm">Notificaci&oacute;n de errores (&lsquo;bugs&rsquo;)</a>
+			<li><a href="basic_websites.htm">Sitios web &uacute;tiles</a>
+			<li><a href="basic_license.htm">Licencia</a>
+			<li><a href="basic_thistranslation.htm">Sobre la traducci&oacute;n a espa&ntilde;ol</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

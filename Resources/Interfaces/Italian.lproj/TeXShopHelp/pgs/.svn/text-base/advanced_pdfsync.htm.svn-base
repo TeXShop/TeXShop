@@ -1,0 +1,132 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Pdfsync</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="pdfsync, synchronize, synchronization">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Synchronization is an important feature of Textures, a commercial implementation of TeX for
+Mac Classic by Blue Sky TeX Systems. Using this feature,  an author can click in the preview window and immediately be taken to the corresponding spot in the source window, or click in the source window and be taken to the preview window. A native version of Textures for MacOS X is promised but has not yet been released. The implementation of synchronization in Textures is widely admired for its ability to precisely locate the corresponding spot in the source code.</P> 
+
+<P>Since this implementation, a number of TeX systems have provided a roughly similar feature using an additional style file which causes TeX to write extra information to the dvi file. None of these approximations (including the TeXShop methods to be described next) is as accurate as the Textures method.</P>
+
+<P> TeXShop can provide synchronization in two ways. The default method uses a new ability in Mac OSX 10.4 to search for strings in pdf files. No special style files need be included to use this method. Click on a word or phrase in the source window while holding down the Apple control key; the preview window will scroll to the appropriate spot and the corresponding typeset phrase will be circled in red. Similarly, click on a word or phrase in the preview window. The appropriate source file will open (if necessary) and scroll to the corresponding source phrase, which will be highlighted in yellow.</P>
+
+<P> This method is independent of the engine used to typeset the file, so it will work with pdftex and pdflatex, with TeX + Ghostscript and LaTeX + Ghostscript, with XeTeX, and with other engines.</P>
+
+<P> When using this facility, it helps to know the underlying mechanism. Suppose you click on a spot in the source file. TeXShop obtains the string 20 characters wide centered about the click, and searches for the corresponding string in the pdf file. If it finds this string exactly once, it circles the pdf string in red and declares success. But often, source strings contain formatting commands and do not match output strings; this is certainly true when typesetting mathematics. So if the search fails, TeXShop backs up 5 characters, obtains a new string 20 characters wide, and tries again. It repeats this operation 20 times if necessary, and if none of the tries succeeds it repeats the operation 20 more times looking forward past the original string rather than backward. If none of these search operations succeeds, TeXShop gives up.
+
+<P>Obviously, then, it is best to click on sentences rather than formulas. Paragraphs
+with heavy markup may not synchronize well. Experiments show, however, that searches usually
+succeed and clicking can be done without really thinking about selecting an appropriate spot.     
+
+<P> Synchronizing from the preview window to the source window works the same way, but there is an additional complication. Projects may contain several source files, inserted using the \include or
+\input methods. TeXShop handles this complication by assuming that all \include and \input statements occur in the root file, using one of the commands \include{this file}, \input{this file}, or
+\import{this file}. In the initial implementation, it makes a list of the first sixty such files
+and searches all of them, declaring success if a string occurs exactly once in exactly one of the files. If the string is found in a file which is not yet open, TeXShop opens the file. Then it scrolls to the appropriate spot and highlights the resulting phrase in yellow. (In future implementations, the
+number sixty may be raised; write if you need more files searched.)</P>
+
+<P>ConTeXt uses a different method of inputting files, so a search for \include and \input statements will not find related ConTeXt files. There is a manual method to indicate
+files to be searched for synchronization; this method works with any typesetting method and
+is required in ConTeXt. At the top of the root file, list files to be searched via
+<dl>
+	<dd>%!TEX projectfile =
+</dl>
+Here are examples:
+<dl>
+	<dd>%!TEX projectfile = /Users/koch/MyDoc/chapter1.tex
+	<dd>%!TEX projectfile = chapter2.tex
+	<dd>%!TEX projectfile = ../chapter3.tex
+</dl>
+ 
+<P> Previous versions of TeXShop used an alternate synchronization method, invented in 2003 by
+Jérôme Laurens and Piero D'Ancona. They  wrote a style file for pdflatex; their package, pdfsync.sty, causes pdftex to write an extra file during typesetting with information needed to correlate the output pdf and input source files. Laurens' and D'Ancona's  work depends on internal pdftex commands which output the x and y coordinates of certain typesetting operations, so it only works with pdftex, pdflatex, and context. </P>
+
+<P> TeXShop can still use this method. A preference is available in the Misc tab to select the
+synchronization method; "pdfsync" is the original method and "pdfsearch" is the new method. It is also
+possible to choose to use "pdfsearch" but fall back on "pdfsync" when "pdfsearch" fails to find a match. </P>
+
+<P>The "pdfsync" method requires that you install the latest version of pdfsync.sty and related files. Read "How do I configure TeXShop?: Did You Install TeXShop Correctly" to make certain that you installed these files.</P>
+
+<P>To use pdfsync with LaTeX, add the following line to the
+preamble of your tex source code before the \begin{document} line:</P>
+<dl>
+<dd>\usepackage{pdfsync}
+</dl>
+<P>The package will be ignored if you typeset with tex + ghostscript, but if you typeset with pdflatex, an extra file will be created with extension .pdfsync. For example, if the
+source file is named main.tex, the extra file will be named main.pdfsync. This extra file contains the information needed to correlate spots in the pdf file with spots in the source file. Most files should typeset without errors using pdfsync, but in a small number of cases, this package might introduce extra errors. Such dangerous code
+can be enclosed between a pair of commands \pdfsyncstop and \pdfsyncstart. For added accuracy, extra synchronization points can be added using the command \pdfsync. The pdfsync style files sometimes changes line breaks in a document, so the standard recommendation is to typeset using it and then typeset a final time without it.  
+</P>
+
+<P> Once a file has been typeset with pdfsync, synchronization works exactly as with "pdfsearch" described above. Note that if you include pdfsync.sty but choose "pdfsearch" as the TeXShop synchronization preference, then the .pdfsync file will just be ignored.</P>
+
+<P> Warning: if a root document uses \include to add other source files but these files are not linked back to the root document with a "%!TEX root" line or a root file, then command-click will move from the preview window to an included source, but not from the included source back to the preview. It is easy to remedy this by adding a "%!TEX root" comment to the top of each source file.
+</P>
+
+<P> As explained above, pdfsync works with files read by \include{myfile}. It also works with the input
+command provided the syntax used is \input{myfile}; the alternate syntax \input myfile will not work.
+</P>
+
+<p> The file pdfsync.sty is used for LaTeX; similar files pdfsync.tex and pdfsync4context.tex exist for tex and context synchronization.</p>
+
+<p> Synchronization works by writing data to mysource.pdfsync corresponding to certain synchronization spots in the preview window. Roughly speaking, each data entry contains </p>
+<dl>
+<dd> the page number of the preview document where the point occurs
+<dd> the location of the point on this page
+<dd> the name of the source file producing this particular output
+<dd> the line number in this source file for this particular output
+</dl>
+<p> There is a way to get TeXShop to display these synchronization points. The preview window toolbar has
+a checkbox item called SyncMarks. By default, this item is not shown; use Customize Toolbar in the
+Window menu to select it. When the checkbox is checked, synchronization points are shown.</p>
+<p> When the Preview window first appears, this item is not checked. A hidden preference item can
+change this:</p>
+<dl>
+<dd> defaults write TeXShop ShowSyncMarks YES
+</dl> 
+ 
+
+
+		<ul>
+			
+		</ul>
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">Pdfsync</div>
+
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeXLive</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About TeXLive</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

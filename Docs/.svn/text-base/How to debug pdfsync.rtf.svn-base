@@ -1,0 +1,45 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww12220\viewh14220\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+
+\f0\fs24 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc
+
+\fs28 \cf0 How To Debug PdfSync\
+\
+December 15, 2003
+\fs24 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+\cf0 \
+Pdfsync is a new feature of TeXShop. Using this feature, you can click at a spot in the preview window while holding down the command key and be taken to the corresponding spot in the source file; conversely you can click on a spot in the source file while holding down the command key and be taken to the corresponding page of the preview window. Since this feature is new, it may have some bugs. Here is how to help debug.\
+\
+1) To use the new feature, you must place the line\
+\
+	\\usepackage\{pdfsync\}\
+\
+near the top of your source file. This package causes pdflatex to output a file during typesetting containing information needed to link the source and output files. The pdfsync package was written by Piero D'Ancona with help from J\'8er\'99me Laurens.\
+\
+In special cases, the pdfsync package can cause typesetting errors. We know of  the following problems:\
+\
+	a) \\input does not work (but \\include should work)\
+\
+	b) metapost commands embedded in a latex document do not work (see the TeXShop\
+	TeXShop help files for an example of such a document)\
+\
+	c) the hyperref package needs to be loaded without any options; only colours \
+	may be set via hypersetup.\
+\
+If you run into this sort of problem, try commenting out the usepackage command and typesetting again. If the experiment incriminates pdfsync, please report the bug to Piero D'Ancona, J\'8er\'99me Laurens, and Richard Koch, indicating clearly the problem and probable cause.\
+\
+2) The remaining bugs will occur when trying to sync from source to preview or from preview to source. The worse sort of bug would be a TeXShop crash. I have tried to protect the code against such problems; TeXShop should never crash. But if you run into such a problem, try to make a sample with a file as small as possible, and send me a) the file, and b) the crash log, which you will find in\
+\
+	~/Library/Logs/CrashReporter/TeXShop.crash.log\
+\
+3) I'm also interested in cases when there is no crash, but command clicking has no effect. In this case, please send a) a small file with the problem, b) the corresponding .pdfsync file, and c) any non-default preference setting which you think might be involved.\
+\
+4) Finally, you will find many cases when command clicking does work, but the result is not as accurate as you expect. A lot of polishing remains to be done;  I'm already working on these inaccuracies. But if you have a particularly striking example, feel free to send it. \
+\
+Richard Koch\
+koch@math.uoregon.edu}

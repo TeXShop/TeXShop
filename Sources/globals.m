@@ -160,6 +160,9 @@ NSString *ConsoleFontNameKey = @"ConsoleFontName";
 NSString *ConsoleFontSizeKey = @"ConsoleFontSize";
 NSString *ConsoleWidthResizeKey = @"ConsoleWidthResize";
 NSString *RightJustifyKey = @"RightJustify";
+NSString *CommandCompletionCharKey = @"CommandCompletionChar";
+NSString *CommandCompletionAlternateMarkShortcutKey = @"CommandCompletionAlternateMarkShortcut";
+
 
 
 // Paths
@@ -169,6 +172,7 @@ NSString *DocumentsPath = @"~/Library/TeXShop/Documents";
 NSString *TeXShopPath = @"~/Library/TeXShop";
 NSString *TexTemplatePath = @"~/Library/TeXShop/Templates";
 NSString *TexTemplateMorePath = @"~/Library/TeXShop/Templates/More";
+NSString *StationeryPath = @"~/Library/TeXShop/Stationery";
 NSString *LatexPanelPath = @"~/Library/TeXShop/LatexPanel";
 NSString *MatrixPanelPath = @"~/Library/TeXShop/MatrixPanel";
 NSString *BinaryPath = @"~/Library/TeXShop/bin";
@@ -206,6 +210,7 @@ NSString *DocumentSyntaxColorNotification = @"DocumentSyntaxColorNotification";
 NSString *DocumentAutoCompleteNotification = @"DocumentAutoCompleteNotification";
 NSString *DocumentBibDeskCompleteNotification = @"DocumentBibDeskCompleteNotification";
 NSString *ExternalEditorNotification = @"ExternalEditorNotification";
+NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotification";
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;

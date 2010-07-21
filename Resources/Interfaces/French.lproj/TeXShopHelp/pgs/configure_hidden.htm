@@ -209,6 +209,26 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 			
 <p> TeXShop now supports SyncTeX. See the synchronization section in Advanced Help for details. If synctex fails, TeXShop falls back on the Search synchronization method. For users who would like to experiment with synctex by itself, there is a hidden preference to turn off this fallback behavior:</p>
 
+<dl>
+<dd>
+					defaults write TeXShop SyncTeXOnly YES
+			</dl>
+			
+<p> TeXShop supports command completion. Type the first portion of a complicated TeX command and push the escape key. The rest of the command will be entered into the source. This command can be quite complicated, with additional parameters; in that case, TeXShop types "marks" where each parameter is be filled in. Menu commands in Completion/Marks jump from mark to mark; these commands have shortcuts listed in the menu. </p>
+
+<p> Since jumping to the next or previous mark is a common operation, TeXShop also allows users to type option-escape to get to the next mark and control-escape to get to the previous mark.</p>
+
+<p> A Preference Panel item allows users to use "tab" instead of "escape" as the key which triggers command completion. In that case, the shortcuts which jump from mark to mark become option-tab and control-tab.</p>
+
+<p> Occasionally, third party utilities make use of option-escape, control-escape, option-tab, and control-tab for other purposes. If TeXShop's use of these shortcuts interferes with these utilities, you can turn off these particular TeXShop shortcuts with a hidden preference:
+
+
+<dl>
+<dd>
+					defaults write TeXShop CommandCompletionAlternateMarkShortcut NO
+			</dl>
+
+
 <p> There is a significant bug in Tiger, explained in the remaining paragraphs of this page. TeXShop has a workaround for the bug. The bug is fixed in Leopard and the workaround is ignored on that system. The bug is important, so users should upgrade to Leopard if possible.</p>
 
 <p> When TeXShop was first released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. So the bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.</p>

@@ -58,6 +58,11 @@
 	[super newDocument: sender];
 }
 
+- (IBAction)newDocumentFromStationery: (id)sender
+{
+	
+}
+
 - (IBAction)openDocument:(id)sender
 {
 	[super openDocument: sender];
@@ -95,6 +100,29 @@
 {
 	doList = value;
 }
+
+/* The code below was an attempt to support the "Stationery Bit", but I don't know how to find its
+ value in Cocoa. NSFileImmutable isn't it.
+ 
+
+- (id)openDocumentWithContentsOfURL:(NSURL *)absoluteURL display:(BOOL)displayDocument error:(NSError **)outError
+{
+	NSLog(@"got here");
+	
+	NSString *path = [absoluteURL path];
+	if (path) {
+		NSLog(@"and here");
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		NSDictionary *values = [fileManager attributesOfItemAtPath: path error: NULL];
+		NSNumber *theResult = [values valueForKey: @"NSFileImmutable"];
+		if ([theResult boolValue])
+			NSLog(@"it is stationery");
+		NSLog([theResult stringValue]);
+	}
+	
+	return [super openDocumentWithContentsOfURL:absoluteURL display:displayDocument error:outError];
+}
+*/
 
 
 @end

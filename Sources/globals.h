@@ -359,6 +359,8 @@ extern NSString *ConsoleFontNameKey;
 extern NSString *ConsoleFontSizeKey;
 extern NSString *ConsoleWidthResizeKey;
 extern NSString *RightJustifyKey;
+extern NSString *CommandCompletionCharKey;
+extern NSString *CommandCompletionAlternateMarkShortcutKey;
 // end mitsu 1.29
 
 
@@ -369,6 +371,7 @@ extern NSString *DocumentsPath;
 extern NSString *TeXShopPath;
 extern NSString *TexTemplatePath;
 extern NSString *TexTemplateMorePath;
+extern NSString *StationeryPath;
 extern NSString *LatexPanelPath;
 extern NSString *MatrixPanelPath; // Jonas' Matrix addition
 extern NSString *BinaryPath;
@@ -404,6 +407,7 @@ extern NSString *DocumentSyntaxColorNotification;
 extern NSString *DocumentAutoCompleteNotification;
 extern NSString *DocumentBibDeskCompleteNotification;
 extern NSString *ExternalEditorNotification;
+extern NSString *CommandCompletionCharNotification;
 
 
 /*" Other variables "*/

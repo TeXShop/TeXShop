@@ -33,6 +33,7 @@
 	IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
 	IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
+	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
 
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
@@ -100,6 +101,7 @@
 	BOOL			magnificationTouched;
 	BOOL			externalEditorTouched;
 	BOOL			encodingTouched;
+	BOOL			commandCompletionCharTouched;
 
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
 	IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
@@ -136,6 +138,7 @@
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
 - (IBAction)tabsChanged:sender;
+- (IBAction)commandCompletionChanged:sender;
 - (IBAction)findPanelChanged:sender;
 
 

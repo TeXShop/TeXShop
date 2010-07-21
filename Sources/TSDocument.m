@@ -884,6 +884,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"htx"])
 		|| ([extension isEqualToString: @"ly"])
 		|| ([extension isEqualToString: @"Stex"])
+		|| ([extension isEqualToString: @"lytex"])
 		|| ([extension isEqualToString: @"ctx"]))
 		return YES;
 		
@@ -1531,6 +1532,8 @@ in other code when an external editor is being used. */
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(revertDocumentFont:) name:DocumentFontRevertNotification object:nil];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rememberFont:) name:DocumentFontRememberNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setCommandCompletionChar:) name:CommandCompletionCharNotification object:nil]; 
 
 	// register for notification when the syntax coloring changes in preferences
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reColor:) name:DocumentSyntaxColorNotification object:nil];
@@ -1856,6 +1859,21 @@ in other code when an external editor is being used. */
 		previousFontData = [[NSArchiver archivedDataWithRootObject: font] retain];
 	}
 }
+	 
+- (void)setCommandCompletionChar: (NSNotification *)notification
+/*" Called when preferences changes the Command Completion Character "*/
+	{
+		unichar esc = 0x001B; // configure the key in Preferences?
+		unichar tab = 0x0009; // ditto
+		if (g_commandCompletionChar)
+			[g_commandCompletionChar release];
+		
+		if ([[SUD stringForKey: CommandCompletionCharKey] isEqualToString:@"ESCAPE"]) 
+			g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+		else
+			g_commandCompletionChar = [[NSString stringWithCharacters: &tab length: 1] retain];
+		
+	}
 
 - (void)revertDocumentFont:(NSNotification *)notification
 /*" Changes the font of %textView to the one used before preferences called, in case the

@@ -135,6 +135,7 @@
 
 
 	g_macroType = LatexEngine;
+
 	
 	// WARNING: g_taggedTeXSections may be reset in EncodingSupport
 	
@@ -284,6 +285,11 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Templates"]
 			  toPath:[TexTemplatePath stringByStandardizingPath]];
 		}
+	
+	if (! [fileManager fileExistsAtPath: [StationeryPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Stationery"]
+				  toPath:[StationeryPath stringByStandardizingPath]];
+	}
 		
 	if ((! [fileManager fileExistsAtPath: [BinaryPath stringByStandardizingPath]] ) || needsUpdating) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/bin"]
@@ -478,9 +484,15 @@
 	NSData              *myData;
 
 	unichar esc = 0x001B; // configure the key in Preferences?
-	if (!g_commandCompletionChar)
-		g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
-
+	unichar tab = 0x0009; // ditto
+	if (!g_commandCompletionChar) {
+		if ([[SUD stringForKey: CommandCompletionCharKey] isEqualToString:@"ESCAPE"]) 
+			g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+		else
+			g_commandCompletionChar = [[NSString stringWithCharacters: &tab length: 1] retain];
+		
+	}
+			
 	[g_commandCompletionList release];
 	g_commandCompletionList = nil;
 	g_canRegisterCommandCompletion = NO;
@@ -522,6 +534,7 @@
 	[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"File", @"File")] submenu]
 		itemWithTag:110] setTitle:menuTitle];
 }
+
 
 - (IBAction)openForPreview:(id)sender
 {

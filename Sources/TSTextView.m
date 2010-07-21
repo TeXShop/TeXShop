@@ -1122,8 +1122,24 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// End Changed by (HS) - define ins2Range, selectlength
 	NSCharacterSet *charSet;
 	unichar c;
-
+	
 	if ([[theEvent characters] isEqualToString: g_commandCompletionChar] &&
+		( ! [[SUD stringForKey: CommandCompletionAlternateMarkShortcutKey] isEqualToString:@"NO"] ) &&
+		(([theEvent modifierFlags] & NSAlternateKeyMask) != 0))
+			{
+				[_document doNextBullet:self];
+				return;
+			}
+		
+	else if ([[theEvent characters] isEqualToString: g_commandCompletionChar] &&
+		( ! [[SUD stringForKey: CommandCompletionAlternateMarkShortcutKey] isEqualToString:@"NO"] ) &&
+		(([theEvent modifierFlags] & NSControlKeyMask) != 0))
+			{
+				[_document doPreviousBullet:self];
+				return;
+			}
+
+	else if ([[theEvent characters] isEqualToString: g_commandCompletionChar] &&
 		(([theEvent modifierFlags] & NSAlternateKeyMask) == 0) &&
 		![self hasMarkedText] && g_commandCompletionList)
 
@@ -1184,6 +1200,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 						[originalString release];
 						[currentString release];
 						wasCompleted = NO;
+						[super keyDown: theEvent];
 						return; // no other completion is possible
 					}
 				} else { // this shouldn't happen
@@ -1207,7 +1224,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
 				if (foundRange.location + 1 == selectedLocation)
-					return; // no string to match
+				{ [super keyDown: theEvent];
+					return;} // no string to match
 				c = [textString characterAtIndex: foundRange.location];
 				if (c == g_texChar || c == '{') // special characters
 					replaceLocation = foundRange.location; // include these characters for search
@@ -1215,7 +1233,10 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					replaceLocation = foundRange.location + 1;
 			} else {
 				if (selectedLocation == 0)
+				{
+					[super keyDown: theEvent];
 					return; // no string to match
+				}
 				replaceLocation = 0; // start from the beginning
 			}
 			originalString = [textString substringWithRange:
@@ -1350,7 +1371,10 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		{
 			[originalString release];
 			originalString = currentString = nil;
+			if (! wasCompleted)
+				[super keyDown: theEvent];
 			wasCompleted = NO;
+			//NSLog(@"called super");
 		}
 		return;
 	} else if (wasCompleted) { // we are not doing the completion
@@ -1358,6 +1382,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		[currentString release];
 		originalString = currentString = nil;
 		wasCompleted = NO;
+		// return; //Herb Suggested Error Here		
 	}
 
 	[super keyDown: theEvent];

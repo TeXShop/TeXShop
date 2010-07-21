@@ -194,7 +194,7 @@
 		[self checkFileLinksA];
 
 
-	if (_externalEditor || (! [self isDocumentEdited])) {
+	if (_externalEditor || ([self fileURL] && (! [self isDocumentEdited])) ) {
 		[self saveFinished: self didSave:YES contextInfo:nil];
 	} else {
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);

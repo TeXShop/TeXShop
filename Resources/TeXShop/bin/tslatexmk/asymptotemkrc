@@ -7,8 +7,10 @@ $pdflatex = "pdflatex $TSUserCompileOptions --synctex=1 --file-line-error %O %S"
 #$bibtex_use = 1;
 
 # special custom dependency for asymptote
-add_cus_dep( "asy", "tex", 0, "asy2tex" );
-   sub asy2tex { return system("asy $_[0].asy"); }
+add_cus_dep("asy","eps",0,"asy2x");
+add_cus_dep("asy","pdf",0,"asy2x");
+add_cus_dep("asy","tex",0,"asy2x");
+   sub asy2x { return system("asy '$_[0]'"); }
 
 # Custom dependency and function(s) for epstopdf package
 

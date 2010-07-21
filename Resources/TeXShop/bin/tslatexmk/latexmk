@@ -108,8 +108,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.16a';
-$version_details = "$My_name, John Collins, 18 May 2010";
+$version_num = '4.17';
+$version_details = "$My_name, John Collins, 9 June 2010";
 
 
 use Config;
@@ -178,6 +178,13 @@ else {
 ##
 ##   Modification log from 22 Jan 2010 onwards in detail
 ##
+##      9 Jun 2010, John Collins  With $force_mode on, do a better job 
+##                                  of completing processing.
+##                                Remove long-unused $force_include_mode
+##                                  and its -F and -F- options
+##      8 Jun 2010, John Collins  Deal with bug about misparsing log file
+##                         with non-space-containing filename that is
+##                         followed by a space and a message on same line.
 ##     18 May 2010, John Collins  Remove unlink $$Pdest in do_viewfile
 ##     17 May 2010, John Collins  Correct sleep time to 1 sec 
 ##                                   if s<0 (otherwise infinite delay)
@@ -879,8 +886,6 @@ $dvi_filter = '';	# DVI filter command
 $ps_filter = '';	# Postscript filter command
 
 $force_mode = 0;        # =1 to force processing past errors
-$force_include_mode = 0;# =1 to ignore non-existent files when testing
-                        # for dependency.  (I.e., don't treat them as error)
 $go_mode = 0;           # =1 to force processing regardless of time-stamps
                         # =2 full clean-up first
 $preview_mode = 0;
@@ -1222,8 +1227,6 @@ while ($_ = $ARGV[0])
   elsif (/^-nodependents$/ || /^-dependents-$/) { $dependents_list = 0; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
-  elsif (/^-F$/)     { $force_include_mode = 1; }
-  elsif (/^-F-$/)    { $force_include_mode = 0; }
   elsif (/^-f$/)     { $force_mode = 1; }
   elsif (/^-f-$/)    { $force_mode = 0; }
   elsif (/^-g$/)     { $go_mode = 1; }
@@ -2288,7 +2291,6 @@ sub find_basename
 #************************************************************
 
 sub make_preview_continuousB {
-  # Version for use with makeB
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
@@ -2370,6 +2372,43 @@ CHANGE:
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
             $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
         }
+        # Start viewer if needed.
+        if ( ($failure > 0) && (! $force_mode) ) {
+            # No viewer yet
+	}
+        elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
+            # A viewer is running.  Explicitly get it to update screen if we have to do it:
+            rdb_one_rule( 'update_view', \&rdb_run1 );
+        }
+        elsif ( ($view_file ne '') && (-e $view_file) && !$viewer_running ) {
+            # Start the viewer
+	    if ( !$silent ) {
+                if ($new_viewer_always) {
+                    warn "$My_name: starting previewer for '$view_file'\n",
+                         "------------\n";
+  	        }
+                else {
+                    warn "$My_name: I have not found a previewer that ",
+                         "is already running. \n",
+                         "   So I will start it for '$view_file'\n",
+                         "------------\n";
+ 	       }
+	    }
+            local $retcode = 0;
+            rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
+            if ( $retcode != 0 ) {
+                if ($force_mode) {
+                    warn "$My_name: I could not run previewer\n";
+                }
+                else {
+                    &exit_msg1( "I could not run previewer", $retcode);
+                }
+            }
+            else {
+                $viewer_running = 1;
+                $$Pneed_to_get_viewer_process = 1;
+	    } # end analyze result of trying to run viewer
+        } # end start viewer
         if ( $failure > 0 ) {
             if ( !$failure_msg ) {
 	        $failure_msg = 'Failure to make the files correctly';
@@ -2394,47 +2433,13 @@ CHANGE:
             warn "$My_name: $failure_msg\n",
     "    ==> You will need to change a source file before I do another run <==\n";
 	}
-        elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
-            # A viewer is running.  Explicitly get it to update screen if we have to do it:
-            rdb_one_rule( 'update_view', \&rdb_run1 );
+        rdb_show_rule_errors();
+        if ( $first_time || $updated || $failure ) {
+            print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
         }
-        elsif ( ($view_file ne '') && (-e $view_file) && !$viewer_running ) {
-            # Start the viewer
-	    if ( !$silent ) {
-                if ($new_viewer_always) {
-                    warn "$My_name: starting previewer for '$view_file'\n",
-                         "------------\n";
-  	        }
-                else {
-                    warn "$My_name: I have not found a previewer that ",
-                         "is already running. \n",
-                         "   So I will start it for '$view_file'\n",
-                         "------------\n";
- 	       }
-	    }
-            local $retcode = 0;
-            rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
-# PREVIOUS            local $retcode = rdb_makeB ( 'view' );
-            if ( $retcode != 0 ) {
-                if ($force_mode) {
-                    warn "$My_name: I could not run previewer\n";
-                }
-                else {
-                    &exit_msg1( "I could not run previewer", $retcode);
-                }
-            }
-            else {
-                $viewer_running = 1;
-                $$Pneed_to_get_viewer_process = 1;
-	    } # end analyze result of trying to run viewer
-       } # end start viewer
-       rdb_show_rule_errors();
-       if ( $first_time || $updated || $failure ) {
-          print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
-       }
-       $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
-       &catch_break;
-       $have_break = 0;
+        $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
+        &catch_break;
+        $have_break = 0;
   WAIT: while (1) {
            sleep( $sleep_time );
 	   if ($have_break) { last WAIT; }
@@ -2659,8 +2664,6 @@ sub print_help
   "   -e <code> - Execute specified PERL code\n",
   "   -f     - force continued processing past errors\n",
   "   -f-    - turn off forced continuing processing past errors\n",
-  "   -F     - Ignore non-existent files when testing for dependencies\n",
-  "   -F-    - Turn off -F\n",
   "   -gg    - Super go mode: clean out generated files (-CA), and then\n",
   "            process files regardless of file timestamps\n",
   "   -g     - process regardless of file timestamps\n",
@@ -3149,29 +3152,36 @@ LINE:
 	#    filename (on VAX/VMS) may include '[' and ']' (directory
 	#             separators) 
 	#    filenames (on MS-Win) commonly include space.
+        #    filenames on UNIX can included space.
+        #    Miktex quotes filenames
+        #    But web2c doesn't.  Then 
+        #       (string  message
+        #    is ambiguous: is the filename "string" or "string message".
+        #    Allow both as candidates, since user filenames with spaces 
+        #    are rare.  System filenames with spaces are common, but
+        #    they are normally followed by a newline rather than messages. 
 
 	# First step: replace $_ by whole of line after the '('
 	#             Thus $_ is putative filename followed by other stuff.
             $_ = $1; 
+            # Array of new candidate include files; sometimes more than one.
+            my @new_includes = ();
+            my $quoted = 0;
             if ( /^\"([^\(^\)^\"]+)\"/ ) {
                # Quoted file name, as from MikTeX
+		$quoted = 1;
             }
-            elsif ( /^([^\(^\)]*?)\s\[/ ) {
-                # Terminator: space then '['
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
+            elsif ( /^([^\(^\)]*?)\s+[\[\{\<]/ ) {
+                # Terminator: space then '[' or '{' or '<'
+                # Use *? in condition: to pick up first ' [' (etc) 
+                # as terminator
             }
-            elsif ( /^([^\(^\)]*)\s(?=\()/ ) {
+            elsif ( /^([^\(^\)]*)\s+(?=\()/ ) {
                 # Terminator is ' (', but '(' isn't in matched string,
                 # so we keep the '(' ready for the next match
             }
             elsif  ( /^([^\(^\)]*)(\))/ ) {
                 # Terminator is ')'
-            }
-            elsif ( /^([^\(^\)]*?)\s*\{/ ) {
-                # Terminator: arbitrary space then '{'
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
             }
 	    else {
                 #Terminator is end-of-string
@@ -3179,6 +3189,12 @@ LINE:
             $_ = $';       # Put $_ equal to the unmatched tail of string '
             my $include_candidate = $1;
             $include_candidate =~ s/\s*$//;   # Remove trailing space.
+            if ( !$quoted && ($include_candidate =~ /(\S+)\s/ ) ){
+                # Non-space-containing filename-candidate
+                # followed by space followed by message
+                # (Common)
+                push @new_includes, $1;
+	    }
             if ( $include_candidate eq "[]" ) {
                 # Part of overfull hbox message
                 next INCLUDE_CANDIDATE;
@@ -3191,14 +3207,13 @@ LINE:
             # treated this as a special case.  For safety check here:
             $include_candidate =~ s/^\"(.*)\"$/$1/;
 
-            # Make list of new include files; sometimes more than one.
-            my @new_includes = ($include_candidate);
+            push @new_includes, $include_candidate;
             if ( $include_candidate =~ /^(.+)\[([^\]]+)\]$/ ) {
                 # Construct of form 'file1[file2]', as produced by pdflatex
                 if ( -e $1 ) {
                     # If the first component exists, we probably have the
                     #   pdflatex form
-                    @new_includes = ($1, $2);
+                    push @new_includes, $1, $2;
 	        }
                 else {
                     # We have something else.
@@ -4546,7 +4561,7 @@ sub rdb_makeB {
                           "make new source files\n";
                     next PASS;
 		}
-                elsif ( ! $failure ) {
+                elsif ( $force_mode || (! $failure) ) {
                     next PASS;
 		}
             }

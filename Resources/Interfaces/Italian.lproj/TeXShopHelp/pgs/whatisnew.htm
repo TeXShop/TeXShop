@@ -14,6 +14,61 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.35 amd 2.36</h5></P>
+
+<ul>
+
+<li> TeXShop 2.35 is an internal version never publicly released.
+<p>
+
+<li> Added a new preference item which switches between the tab and escape keys as the trigger for command completion. 
+<p>
+<li>
+Recall
+that complicated commands entered with command completion include "marks" where the various command arguments occur. The Completion/Marks menu contains menu commands to go to the next mark, or to the previous mark. These menu commands have keyboard shortcuts which have not been changed. But TeXShop 2.36 adds extra keyboard shortcuts for these two commands:
+<dl>
+<dd> option-escape to go to the next mark
+<dd> control-escape to go to the previous mark
+</dl>
+<p>
+When the tab key triggers command completion, these shortcuts become
+<dl>
+<dd> option-tab to go to the next mark
+<dd> control-tab to go to the previous mark
+</dl>
+<p>
+
+<li> Keyboard shortcuts always cause trouble for some users, who may have third party utilities which already use those shortcuts. So there is a hidden preference to turn off the new shortcuts for next mark and previous mark:
+<dl>
+<dd> defaults write TeXShop CommandCompletionAlternateMarkShortcut NO
+</dl>
+<p>
+<li> Added a menu item following the File/New command:
+<dl>
+<dd> New from Stationery...
+</dl>
+<p> Selecting this item brings up a list of  stationery: Beamer, AMS-Article, Letter, Project, ProjectChapter, etc. Each item is listed in the left column and briefly described in the right column. Selecting an item opens a new document with the contents of the chosen stationery. This document is not associated with the stationery file on disk, so pushing the typeset button asks the user to save the document and suggests as a default name "Untitled", exactly as if the document had been created by the New command.
+
+<p> Version 2.36 contains rather rudimentary stationery files. I'm hoping users will contribute better and more robust alternatives for future versions.
+
+<li> Stationery files are stored in a new folder: ~/Library/TeXShop/Stationery. This folder works like all other folders in ~/Library/TeXShop. Users can remove files from the folder, edit files currently there, and add additional files. To recreate the default folder, entirely remove the Stationery folder and restart TeXShop.
+
+<p> Each stationery document ends with extension ".tex". If the folder contains a file with the same name, but extension ".comment", then this file is assumed to contain a one line comment about the file, which will appear in the right column of the stationery dialog. Thus the folder contains both Beamer.tex and Beamer.comment. This "comment" file is optional. An easy way to create a comment file is to duplicate an existing file, rename it, and edit its contents with TeXShop. 
+
+<p> The stationery mechanism is a variant of the Templates menu in TeXShop, which is unchanged. My hope is that the default stationery menu will lead new users more quickly to the standard documents almost everyone eventually creates. Hence I intend to keep the default collection fairly small. Users are free to add additional stationery to the mix.
+
+
+<li>  Version 2.36 contains a slightly revised LilyPond engine.
+
+<p>
+<li> Version 2.36 contains a new default ConTeXt-MKIV engine, created after consulting Hans Hagen at TUG-2010.
+
+
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 2.34</h5></P>
 
 <ul>

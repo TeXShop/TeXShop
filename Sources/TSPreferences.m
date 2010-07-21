@@ -134,6 +134,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	magnificationTouched = NO;
 	// added by mitsu --(G) TSEncodingSupport
 	encodingTouched = NO;
+	commandCompletionCharTouched = NO;
 	// end addition
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
@@ -314,6 +315,23 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 		[_sourceWindowPosMatrix selectCellWithTag:DocumentWindowPosFixed];
 	}
 }
+
+/*" Set Command Completion Key"*/
+- (IBAction)commandCompletionChanged:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:CommandCompletionCharKey] forKey:CommandCompletionCharKey];
+	
+	if ([[sender selectedCell] tag] == 0)
+		[SUD setObject:@"ESCAPE" forKey:CommandCompletionCharKey];
+	else
+		[SUD setObject:@"TAB" forKey:CommandCompletionCharKey];
+	commandCompletionCharTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"CommandCompletionCharNotification" object: self];
+	
+}
+
+
 
 /*" Set Find Panel"*/
 - (IBAction)findPanelChanged:sender
@@ -1109,6 +1127,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 	if (magnificationTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:MagnificationRevertNotification object:self];
+	
 	/* below we must reset a preference because it will not be undone in time */
 	if (syntaxColorTouched) {
 		[SUD setBool:oldSyntaxColor forKey:SyntaxColoringEnabledKey];
@@ -1125,6 +1144,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	// added by mitsu --(G) TSEncodingSupport
 	if (encodingTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object: self ];
+	}
+	if (commandCompletionCharTouched) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"CommandCompletionCharNotification" object: self];
 	}
 	// end addition
 
@@ -1279,6 +1301,11 @@ This method retrieves the application preferences from the defaults object and s
 	[[TSEncodingSupport sharedInstance] addEncodingsToMenu:[_defaultEncodeMatrix menu] withTarget:0 action:0];
 	[_defaultEncodeMatrix selectItemWithTag: [[TSEncodingSupport sharedInstance] defaultEncoding]];
 
+	if ([[defaults stringForKey:CommandCompletionCharKey] isEqualToString: @"ESCAPE"])
+		[_commandCompletionMatrix selectCellWithTag:0];
+	else 
+		[_commandCompletionMatrix selectCellWithTag:1];
+	
 	if ([defaults boolForKey:UseOgreKitKey] == NO)
 		[_findMatrix selectCellWithTag:0];
 	else

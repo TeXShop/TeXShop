@@ -108,8 +108,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.17';
-$version_details = "$My_name, John Collins, 9 June 2010";
+$version_num = '4.18';
+$version_details = "$My_name, John Collins, 23 July 2010";
 
 
 use Config;
@@ -178,6 +178,13 @@ else {
 ##
 ##   Modification log from 22 Jan 2010 onwards in detail
 ##
+##     23 Jul 2010, John Collins  Only produce "Removing no-longer-needed
+##                                  dependent" messages when diagnostics are
+##                                  on.
+##     23 Jun 2010, John Collins  Add test in log file for natbib's
+##                                citation-undefined warning
+##     23 Jun 2010, John Collins  V. 4.18
+##     13 Jun 2010, John Collins  Correct warning message
 ##      9 Jun 2010, John Collins  With $force_mode on, do a better job 
 ##                                  of completing processing.
 ##                                Remove long-unused $force_include_mode
@@ -1571,7 +1578,7 @@ elsif ( ($sleep_time < 1) && ( $sleep_time != 0 ) ) {
 }
 elsif ( $sleep_time == 0 ) {
      warn "$My_name: sleep_time was configured to zero.\n",
-    "    Do you really want to do this?  It will give 100% CPU usage.";
+    "    Do you really want to do this?  It will give 100% CPU usage.\n";
 }
 
 # Make convenient forms for lookup.
@@ -2986,6 +2993,10 @@ LINE:
 	    warn "$My_name: $1 \n";
 	    $bad_citation = 1;
 	}
+        if (/Package natbib Warning: (Citation[^\001]*undefined)./) {
+            warn "$My_name: $1 \n";
+            $bad_citation = 1;
+	}
 	if ( /^Document Class: / ) {
 	    # Class sign-on line
 	    next LINE;
@@ -4015,7 +4026,7 @@ sub rdb_set_from_logB {
             rdb_ensure_file( $from_rule, $source );
             delete $old_sources{$source};
         }
-        if ($diagnostics>-1 ) {
+        if ($diagnostics) {
             foreach ( keys %old_sources ) {
                 print "Removing no-longer-needed dependent '$_' from rule '$from_rule'\n";
             }
@@ -4095,7 +4106,7 @@ NEW_SOURCE:
     foreach (keys %$PHsource) { 
         if ( ! exists $dependents{$_} ) {
             print "Removing no-longer-needed dependent '$_' from rule '$rule'\n"
-              if $diagnostics>-1;
+              if $diagnostics;
             push @files_not_needed, $_;
 	}
     }

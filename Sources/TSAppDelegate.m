@@ -743,7 +743,7 @@
 		infoDictionary] objectForKey:@"CFBundleVersion"];
 		
 	NSDictionary *texshopVersionDictionary = [NSDictionary dictionaryWithContentsOfURL:
-		[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop-current.txt"]];
+		[NSURL URLWithString:@"http://pages.uoregon.edu/koch/texshop/texshop-current.txt"]];
 
 	NSString *latestVersion = [texshopVersionDictionary valueForKey:@"TeXShop"];
 	
@@ -774,7 +774,7 @@
 														   @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestVersion],
 									 @"OK", @"Cancel", nil);
 		if (button == NSOKButton) {
-			[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.uoregon.edu/~koch/texshop/texshop.zip"]];
+			[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://pages.uoregon.edu/koch/texshop/texshop.zip"]];
 		}
 	}
 

@@ -2,8 +2,8 @@
 
 set path= ($path /usr/texbin /usr/local/bin)
 set filename = "$1"
-set asyname = "${filename:r}.asy"
+set asyname = "${filename:r}"
 
 pdflatex -synctex=1 "$filename"
-asy -v "$asyname"
+asy -v "$asyname"-*.asy
 pdflatex -synctex=1 "$filename"

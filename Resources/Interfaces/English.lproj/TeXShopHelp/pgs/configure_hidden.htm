@@ -228,6 +228,17 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 					defaults write TeXShop CommandCompletionAlternateMarkShortcut NO
 			</dl>
 
+<p> Until version 2.38 of TeXShop, syntax coloring considered '\@' to be a single command which ended with the @ sign, so lines like
+<dl>
+<dd> \ifx\@@input\@undefined\let\@@input\input\fi 
+</dl>
+in style files would only be partly colored. This is fixed in version 2.38. In the unlikely event that you prefer the old method:
+<dl>
+<dd> defaults write TeXShop MakeatletterEnabled NO
+</dl>
+
+
+
 
 <p> There is a significant bug in Tiger, explained in the remaining paragraphs of this page. TeXShop has a workaround for the bug. The bug is fixed in Leopard and the workaround is ignored on that system. The bug is important, so users should upgrade to Leopard if possible.</p>
 

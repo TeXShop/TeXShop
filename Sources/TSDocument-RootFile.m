@@ -82,7 +82,21 @@
 						}
 					}
 				} else if (task == RootForOpening) {
-					;
+					// added by Terada (from this line)
+					NSRect activeWindowFrame = [[obj textWindow] frame];
+					NSRect newFrame;
+					NSScreen *screen = [NSScreen mainScreen];
+					if(NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0)
+					{
+						newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSHeight([screen frame]), NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+					}
+					else
+					{
+						newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSMinY(activeWindowFrame) + 20, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+					}
+					
+					[[obj textWindow] setFrame:newFrame display:YES];
+					// added by Terada (until this line)
 				} else if (task == RootForTrashAUX) {
 					[obj trashAUX];
 				}

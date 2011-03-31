@@ -10,6 +10,8 @@
 #import "TSDocumentController.h"
 #import "Globals.h"
 #import "TSDocument.h"
+#import "TSTextEditorWindow.h"
+#import "TSPreviewWindow.h"
 
 @interface HelpDocuments (Private)
 
@@ -61,6 +63,14 @@
 	NSString				*fileName;
  	
 	fileName = [[NSBundle mainBundle] pathForResource:@"First Steps with TeXShop" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
+- (IBAction)displayTipsandTricks:sender
+{
+	NSString				*fileName;
+ 	
+	fileName = [[NSBundle mainBundle] pathForResource:@"TeXShop Tips & Tricks" ofType:@"pdf"];
 	[self displayFile: fileName];
 }
 
@@ -141,6 +151,112 @@
 	[displayPackageHelpTask setEnvironment:env];
 	[displayPackageHelpTask launch];
 }
+
+- (IBAction)displayStyleFile:sender
+{
+	// added by Terada (- (void) displayStyleFile:)
+		
+		NSString			*target;
+
+/*
+		NSSize dialogSize = NSMakeSize(340, 120);
+		NSRect dialogRect = NSMakeRect(0, 0, dialogSize.width, dialogSize.height);
+		
+		NSWindow *dialog = [[[NSWindow alloc] initWithContentRect:dialogRect
+														styleMask:(NSTitledWindowMask|NSResizableWindowMask)
+														  backing:NSBackingStoreBuffered 
+															defer:NO] autorelease];
+		[dialog setFrame:dialogRect display:NO];
+		[dialog setMinSize:NSMakeSize(250, dialogSize.height)];
+		[dialog setMaxSize:NSMakeSize(10000, dialogSize.height)];
+		[dialog setTitle:NSLocalizedString(@"Input Stylefile Name to Open", @"Input Stylefile Name to Open")];
+		
+		NSTextField *input = [[[NSTextField alloc] init] autorelease];
+		[input setFrame:NSMakeRect(17, 54, dialogSize.width - 40, 25)];
+		NSString *lastStyName = [SUD stringForKey:LastStyNameKey];
+		lastStyName = (!lastStyName || [lastStyName isEqualToString:@""]) ? @"latex.ltx" : lastStyName;
+		[input setStringValue:lastStyName];
+		[input setAutoresizingMask:NSViewWidthSizable];
+		[[dialog contentView] addSubview:input];
+		
+		NSButton* cancelButton = [[[NSButton alloc] init] autorelease];
+		[cancelButton setTitle:NSLocalizedString(@"Cancel", @"Cancel")];
+		[cancelButton setFrame:NSMakeRect(dialogSize.width - 206, 12, 96, 32)];
+		[cancelButton setBezelStyle:NSRoundedBezelStyle];
+		[cancelButton setAutoresizingMask:NSViewMinXMargin];
+		[cancelButton setKeyEquivalent:@"\033"];
+		[cancelButton setTarget:self];
+		[cancelButton setAction:@selector(dialogCancel:)];
+		[[dialog contentView] addSubview:cancelButton];
+		
+		NSButton* okButton = [[[NSButton alloc] init] autorelease];
+		[okButton setTitle:@"OK"];
+		[okButton setFrame:NSMakeRect(dialogSize.width - 110, 12, 96, 32)];
+		[okButton setBezelStyle:NSRoundedBezelStyle];
+		[okButton setAutoresizingMask:NSViewMinXMargin];
+		[okButton setKeyEquivalent:@"\r"];
+		[okButton setTarget:self];
+		[okButton setAction:@selector(dialogOk:)];
+		[[dialog contentView] addSubview:okButton];
+		
+		BOOL returnCode = [NSApp runModalForWindow:dialog];
+		[dialog orderOut:self];
+*/
+	
+		NSString *lastStyName = [SUD stringForKey:LastStyNameKey];
+		lastStyName = (!lastStyName || [lastStyName isEqualToString:@""]) ? @"latex.ltx" : lastStyName;
+		[styleFileResult setStringValue:lastStyName];
+	
+		BOOL returnCode = [NSApp runModalForWindow: openStyleFilePanel];
+		[openStyleFilePanel close];
+		if (returnCode == 0) 
+			target = [styleFileResult stringValue];
+		else
+			return;
+		
+		if ([target isEqualToString:@""])
+			return;
+		
+		{
+			NSWindow *theWindow = [NSApp mainWindow];
+			NSString *cd;
+			if ([theWindow isKindOfClass:[TSTextEditorWindow class]])
+				cd = [[[theWindow document] fileName] stringByDeletingLastPathComponent];
+			else if ([theWindow isKindOfClass:[TSPreviewWindow class]]) 
+				cd = [[[theWindow document] fileName] stringByDeletingLastPathComponent];
+			else 
+				cd = @"";
+			
+
+//			NSString* cd = [[self fileName] stringByDeletingLastPathComponent];
+			cd = cd ? [NSString stringWithFormat:@"cd \"%@\";", cd] : @"";
+			
+			NSString* kpsetool = [SUD objectForKey:KpsetoolKey];
+			if(!kpsetool || [kpsetool isEqualToString:@""]){
+				kpsetool = @"kpsetool -w -n latex tex";
+			}
+			[SUD setObject:target forKey:LastStyNameKey];
+			NSString* cmdLine = [NSString stringWithFormat:@"%@ PATH=%@:$PATH; open `%@ \"%@\"`", cd, [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath], kpsetool, target];
+			
+			char str[1024];
+			FILE *fp;
+			
+			if((fp=popen([[cmdLine stringByAppendingString:@" >/dev/null 2>&1"] UTF8String], "r")) == NULL){
+				NSBeep();
+				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), @"An error has occurred.", @"OK", nil, nil);
+				return;
+			}
+			while(YES){
+				if(fgets(str, 1024, fp) == NULL) break;
+			}
+			if(pclose(fp) != 0) {
+				NSBeep();
+				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), [NSString stringWithFormat:NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), target], @"OK", nil, nil);
+			}
+		}
+}
+	
+
 
 
 - (IBAction)displayHG:sender

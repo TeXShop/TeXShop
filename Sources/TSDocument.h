@@ -132,11 +132,13 @@ enum RootCommand
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
-	IBOutlet NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
+	
+	NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
 
 	IBOutlet NSPopUpButton		*macroButton;		/*" pull-down list for macros "*/
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
+	IBOutlet NSButton           *showFullPathButton; // added by Terada
 	NSWindow					*logWindow;
 	NSTextView					*logTextView;
 	NSScrollView				*logScrollView;
@@ -153,6 +155,7 @@ enum RootCommand
 	NSTextStorage				*_textStorage;
 	BOOL		windowIsSplit;
 	BOOL		lineNumbersShowing;
+	BOOL		invisibleCharactersShowing; // added by Terada
 	
 	BOOL				isFullScreen;
 	TSFullscreenWindow	*fullscreenWindow;
@@ -220,6 +223,10 @@ enum RootCommand
 	BOOL		_externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
 	BOOL		doAutoComplete;
+	BOOL        showFullPath; // added by Terada
+	BOOL		autoCompleting; // added by Terada
+	BOOL	    contentHighlighting; // added by Terada
+	BOOL	    braceHighlighting; // added by Terada
 	BOOL		warningGiven;
 	BOOL		omitShellEscape;
 	BOOL		withLatex;
@@ -243,8 +250,12 @@ enum RootCommand
 	BOOL				isLoading;
 	BOOL				firstTime;
 	NSTimeInterval		colorTime;
+	NSString			*spellLanguage;
 
-
+	int lastCursorLocation; // added by Terada
+	int lastStringLength; // added by Terada
+	BOOL lastInputIsDelete; // added by Terada
+	
 	//Michael Witten: mfwitten@mit.edu
 	NSLineBreakMode		lineBreakMode;
 	// end witten
@@ -259,6 +270,7 @@ enum RootCommand
 - (void) splitWindow: sender;
 - (void) splitPreviewWindow: sender;
 - (void) showHideLineNumbers: sender;
+- (void) showHideInvisibleCharacters: sender;// added by Terada
 - (void) setTextView: (id)aView;
 // endforsplit
 - (id) magnificationPanel;
@@ -286,7 +298,12 @@ enum RootCommand
 - (void) doCompletion:(NSNotification *)notification;
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
+- (void) changeShowFullPath: sender; // added by Terada
 - (void) fixAutoMenu;
+- (void) fixShowFullPathButton; // added by Terada
+- (NSString*) fileTitleName; // added by Terada
+// - (void) openStyleFile: (id)sender; // added by Terada
+- (void) setAutoCompleting:(BOOL)flag; // added by Terada
 - (void) fixMacroMenu;
 - (void) fixMacroMenuForWindowChange;
 - (NSRange) lineRange: (int)line;
@@ -350,6 +367,8 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
+- (void)resetSpelling;
+
 
 // BibDesk Completion
 //---------------------------

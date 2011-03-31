@@ -135,6 +135,11 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	// added by mitsu --(G) TSEncodingSupport
 	encodingTouched = NO;
 	commandCompletionCharTouched = NO;
+	highlightTouched = NO; // added by Terada
+	invisibleCharacterTouched = NO; // added by Terada
+	kpsetoolTouched = NO; // added by Terada
+	bibTeXengineTouched = NO; // added by Terada
+//	makeatletterTouched = NO; // added by Terada
 	// end addition
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
@@ -315,6 +320,108 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 		[_sourceWindowPosMatrix selectCellWithTag:DocumentWindowPosFixed];
 	}
 }
+
+// added by Terada( - (IBAction)highlightChanged: )
+- (IBAction)highlightChanged:(id)sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:AlwaysHighlightEnabledKey] forKey:AlwaysHighlightEnabledKey];
+	[SUD setBool:![_alwaysHighlightButton state] forKey:AlwaysHighlightEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:ShowIndicatorForMoveEnabledKey] forKey:ShowIndicatorForMoveEnabledKey];
+	[SUD setBool:[_showIndicatorForMoveButton state] forKey:ShowIndicatorForMoveEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:HighlightContentEnabledKey] forKey:HighlightContentEnabledKey];
+	[SUD setBool:[_highlightContentButton state] forKey:HighlightContentEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:BeepEnabledKey] forKey:BeepEnabledKey];
+	[SUD setBool:[_beepButton state] forKey:BeepEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:FlashBackgroundEnabledKey] forKey:FlashBackgroundEnabledKey];
+	[SUD setBool:[_flashBackgroundButton state] forKey:FlashBackgroundEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:CheckBraceEnabledKey] forKey:CheckBraceEnabledKey];
+	[SUD setBool:[_checkBraceButton state] forKey:CheckBraceEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:CheckBracketEnabledKey] forKey:CheckBracketEnabledKey];
+	[SUD setBool:[_checkBracketButton state] forKey:CheckBracketEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:CheckSquareBracketEnabledKey] forKey:CheckSquareBracketEnabledKey];
+	[SUD setBool:[_checkSquareBracketButton state] forKey:CheckSquareBracketEnabledKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:CheckParenEnabledKey] forKey:CheckParenEnabledKey];
+	[SUD setBool:[_checkParenButton state] forKey:CheckParenEnabledKey];
+	
+	highlightTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedsForRecolorNotification" object: self];
+}
+
+// added by Terada( - (IBAction)invisibleCharacterChanged: )
+- (IBAction)invisibleCharacterChanged:(id)sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:showTabCharacterKey] forKey:showTabCharacterKey];
+	[SUD setBool:[_showTabCharacterButton state] forKey:showTabCharacterKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:showSpaceCharacterKey] forKey:showSpaceCharacterKey];
+	[SUD setBool:[_showSpaceCharacterButton state] forKey:showSpaceCharacterKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:showFullwidthSpaceCharacterKey] forKey:showFullwidthSpaceCharacterKey];
+	[SUD setBool:[_showFullwidthSpaceCharacterButton state] forKey:showFullwidthSpaceCharacterKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:showNewLineCharacterKey] forKey:showNewLineCharacterKey];
+	[SUD setBool:[_showNewLineCharacterButton state] forKey:showNewLineCharacterKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SpaceCharacterKindKey] forKey:SpaceCharacterKindKey];
+	[SUD setInteger:[_SpaceCharacterKindMatrix selectedTag] forKey:SpaceCharacterKindKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:FullwidthSpaceCharacterKindKey] forKey:FullwidthSpaceCharacterKindKey];
+	[SUD setInteger:[_FullwidthSpaceCharacterKindMatrix selectedTag] forKey:FullwidthSpaceCharacterKindKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:NewLineCharacterKindKey] forKey:NewLineCharacterKindKey];
+	[SUD setInteger:[_NewLineCharacterKindMatrix selectedTag] forKey:NewLineCharacterKindKey];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:TabCharacterKindKey] forKey:TabCharacterKindKey];
+	[SUD setInteger:[_TabCharacterKindMatrix selectedTag] forKey:TabCharacterKindKey];
+	
+	invisibleCharacterTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedsForRecolorNotification" object: self];
+	
+}
+
+// added by Terada( - (IBAction)makeatletterChanged: )
+/* Commented out by Koch
+- (IBAction)makeatletterChanged:(id)sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:MakeatletterEnabledKey] forKey:MakeatletterEnabledKey];
+	[SUD setBool:[_makeatletterButton state] forKey:MakeatletterEnabledKey];
+	
+	makeatletterTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedsForRecolorNotification" object: self];
+}
+*/
+
+// added by Terada( - (IBAction)kpsetoolChanged: )
+- (IBAction)kpsetoolChanged:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:KpsetoolKey] forKey:KpsetoolKey];
+	
+	kpsetoolTouched = YES;
+	[SUD setObject:[_kpsetoolField stringValue] forKey:KpsetoolKey];
+}
+
+// added by Terada( - (IBAction)bibTeXengineChanged: )
+- (IBAction)bibTeXengineChanged:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:BibTeXengineKey] forKey:BibTeXengineKey];
+	
+	bibTeXengineTouched = YES;
+	[SUD setObject:[_bibTeXengineField stringValue] forKey:BibTeXengineKey];
+}
+
 
 /*" Set Command Completion Key"*/
 - (IBAction)commandCompletionChanged:sender
@@ -547,6 +654,15 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:LineNumberEnabledKey] forKey:LineNumberEnabledKey];
 
 	[SUD setBool:[[sender selectedCell] state] forKey:LineNumberEnabledKey];
+}
+
+// added by Terada (-(IBAction)showInvisibleCharacterButtonPressed:)
+- (IBAction)showInvisibleCharacterButtonPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ShowInvisibleCharactersEnabledKey] forKey:ShowInvisibleCharactersEnabledKey];
+	
+	[SUD setBool:[sender state] forKey:ShowInvisibleCharactersEnabledKey];
 }
 
 /*" This method is connected to the 'Arabic, Persian, Hebrew' checkbox.
@@ -975,6 +1091,7 @@ person script. See also: DefaultTypesetMode.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:SyncMethodKey];
 }
 
+/* // comment out by Terada
 - (IBAction)defaultBibtexChanged:sender
 {
 	// register the undo message first
@@ -982,6 +1099,7 @@ person script. See also: DefaultTypesetMode.
 
 	[SUD setInteger:[[sender selectedCell] tag] forKey:BibtexCommandKey];
 }
+*/
 
 - (IBAction)distillerChanged:sender
 {
@@ -1148,6 +1266,12 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	if (commandCompletionCharTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"CommandCompletionCharNotification" object: self];
 	}
+	// added by Terada
+	// third test removed by Koch
+	// if (highlightTouched || invisibleCharacterTouched || makeatletterTouched) {
+	if (highlightTouched || invisibleCharacterTouched) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedsForRecolorNotification" object: self];
+	}
 	// end addition
 
 	// The user defaults have changed. Force update of the user interface.
@@ -1265,6 +1389,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
+	[_showInvisibleCharactersButton setState:[defaults boolForKey:ShowInvisibleCharactersEnabledKey]];
 	[_midEastButton setState:[defaults boolForKey:RightJustifyKey]];
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
@@ -1272,6 +1397,37 @@ This method retrieves the application preferences from the defaults object and s
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
 	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)
+	
+	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
+	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada
+	[_highlightContentButton setState:[defaults boolForKey:HighlightContentEnabledKey]]; // added by Terada
+	[_beepButton setState:[defaults boolForKey:BeepEnabledKey]]; // added by Terada
+	[_flashBackgroundButton setState:[defaults boolForKey:FlashBackgroundEnabledKey]]; // added by Terada
+	[_checkBraceButton setState:[defaults boolForKey:CheckBraceEnabledKey]]; // added by Terada
+	[_checkBracketButton setState:[defaults boolForKey:CheckBracketEnabledKey]]; // added by Terada
+	[_checkSquareBracketButton setState:[defaults boolForKey:CheckSquareBracketEnabledKey]]; // added by Terada
+	[_checkParenButton setState:[defaults boolForKey:CheckParenEnabledKey]]; // added by Terada
+	[_showTabCharacterButton setState:[defaults boolForKey:showTabCharacterKey]]; // added by Terada
+	[_showSpaceCharacterButton setState:[defaults boolForKey:showSpaceCharacterKey]]; // added by Terada
+	[_showFullwidthSpaceCharacterButton setState:[defaults boolForKey:showFullwidthSpaceCharacterKey]]; // added by Terada
+	[_showNewLineCharacterButton setState:[defaults boolForKey:showNewLineCharacterKey]]; // added by Terada
+	[_SpaceCharacterKindMatrix selectCellWithTag:[defaults integerForKey:SpaceCharacterKindKey]]; // added by Terada
+	[_FullwidthSpaceCharacterKindMatrix selectCellWithTag:[defaults integerForKey:FullwidthSpaceCharacterKindKey]]; // added by Terada
+	[_NewLineCharacterKindMatrix selectCellWithTag:[defaults integerForKey:NewLineCharacterKindKey]]; // added by Terada
+	[_TabCharacterKindMatrix selectCellWithTag:[defaults integerForKey:TabCharacterKindKey]]; // added by Terada
+//	[_makeatletterButton setState:[defaults boolForKey:MakeatletterEnabledKey]]; // added by Terada
+
+	NSString *kpsetool = [defaults objectForKey:KpsetoolKey];
+	if (!kpsetool || [kpsetool isEqualToString:@""]) {
+		kpsetool = @"kpsetool -w -n latex tex";
+	}
+	[_kpsetoolField setStringValue:kpsetool]; // added by Terada
+	
+	NSString *bibTeXengine = [defaults objectForKey:BibTeXengineKey];
+	if (!bibTeXengine || [bibTeXengine isEqualToString:@""]) {
+		bibTeXengine = @"bibtex";
+	}
+	[_bibTeXengineField setStringValue:bibTeXengine]; // added by Terada
 	
 	NSColor *sourceBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:background_RKey]
 		green: [defaults floatForKey:background_GKey] blue: [defaults floatForKey:background_BKey] alpha:1.0];
@@ -1386,8 +1542,8 @@ This method retrieves the application preferences from the defaults object and s
 	if (itemIndex == -1) itemIndex = 2; // default idx = 2
 	[_colorParam1Popup selectItemAtIndex: itemIndex];
 
-	myTag = [defaults integerForKey:BibtexCommandKey];
-	[_defaultBibtexMatrix selectCellWithTag: myTag];
+//	myTag = [defaults integerForKey:BibtexCommandKey]; // comment out by Terada
+//	[_defaultBibtexMatrix selectCellWithTag: myTag]; // comment out by Terada
 
 	myTag = [defaults integerForKey:DistillerCommandKey];
 	[_distillerMatrix selectCellWithTag: myTag];

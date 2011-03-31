@@ -1056,11 +1056,13 @@
 				 bibTask = [[NSTask alloc] init];
 				 
 				 NSString* bibtexEngineString;
-				 switch ([SUD integerForKey:BibtexCommandKey]) {
-					 case 0: bibtexEngineString = @"bibtex"; break;
-					 case 1: bibtexEngineString = @"jbibtex"; break;
-					 default: bibtexEngineString = @"bibtex"; break;
-				 }
+				 /*
+				  switch ([SUD integerForKey:BibtexCommandKey]) {
+				  case 0: bibtexEngineString = @"bibtex"; break;
+				  case 1: bibtexEngineString = @"jbibtex"; break;
+				  default: bibtexEngineString = @"bibtex"; break;
+				  }*/ // comment out by Terada
+				 bibtexEngineString = [SUD objectForKey:BibTeXengineKey]; // modified by Terada
 				 [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
 			 } else if (whichEngineLocal == IndexEngine) {
 				 NSString* indexPath = [sourcePath stringByDeletingPathExtension];
@@ -1432,7 +1434,8 @@
 					[myPDFKitView2 setDocument: [myPDFKitView document]];
 					[myPDFKitView2 reShowForSecond];
 					[pdfKitWindow setRepresentedFilename: imagePath];
-					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+					//[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+					[pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
 					[self fillLogWindowIfVisible];
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))

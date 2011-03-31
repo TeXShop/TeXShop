@@ -44,7 +44,9 @@
 
 - (void) becomeMainWindow
 {
+	if([myDocument fileName] != nil ) [self setTitle:[myDocument fileTitleName]]; // added by Terada
 	[super becomeMainWindow];
+	[myDocument resetSpelling];
 	[myDocument fixMacroMenuForWindowChange];
 }
 

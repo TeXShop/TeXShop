@@ -30,6 +30,7 @@
 
 #import "MyPDFView.h"
 #import "MyPDFKitView.h"
+#import "TSToolbar.h"
 
 // added by mitsu --(H) Macro menu; macroButton
 #import "TSMacroMenuController.h"
@@ -54,6 +55,7 @@ static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 		= @"Templates";
 static NSString*	kAutoCompleteID		= @"AutoComplete";  //warning: used in TSDocument's fixAutoMenu
+static NSString*	kShowFullPathID		= @"ShowFullPath";  // added by Terada
 static NSString*    kColorIndexTID		= @"ColorIndex";
 // forsplit
 static NSString*	kSplitID			= @"Split";
@@ -102,7 +104,8 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 - (NSToolbar*)makeToolbar:(NSString*)inID
 {
 	// Create a new toolbar instance, and attach it to our document window
-	NSToolbar *toolbar = [[[NSToolbar alloc] initWithIdentifier: inID] autorelease];
+	TSToolbar *toolbar = [[[TSToolbar alloc] initWithIdentifier: inID] autorelease];
+	[toolbar turnVisibleOff:NO];
 
 	// Set up toolbar properties: Allow customization, give a default display mode, and remember state 		in user defaults
 	[toolbar setAllowsUserCustomization: YES];
@@ -183,6 +186,8 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	[popupButton removeFromSuperview];
 	[autoCompleteButton retain];
 	[autoCompleteButton removeFromSuperview];
+	[showFullPathButton retain]; // added by Terada
+	[showFullPathButton removeFromSuperview]; // added by Terada
 	// added by mitsu --(H) Macro menu; macroButton
 	[macroButton retain];
 	[macroButton removeFromSuperview];
@@ -417,6 +422,22 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 		return toolbarItem;
 	}
 
+	// added by Terada (from this line) ////////////////
+	if ([itemIdent isEqual: kShowFullPathID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+												   customView:showFullPathButton];
+		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		submenu = [[[NSMenu alloc] init] autorelease];
+		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"ShowFullPath", @"ShowFullPath")
+												  action: @selector(changeShowFullPath:) keyEquivalent:@""] autorelease];
+		[submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+	///////////// added by Terada (until this line) ////////////////
+	
 	// added by mitsu --(H) Macro menu; macroButton
 	if ([itemIdent isEqual: kMacrosTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButton];
@@ -959,6 +980,7 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 					kTagsTID,
 					kTemplatesID,
 					kAutoCompleteID,
+					kShowFullPathID, // added by Terada
 					kSplitID,
 					kMacrosTID,
 					kColorIndexTID,
@@ -1107,9 +1129,14 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 - (BOOL) validateToolbarItem: (NSToolbarItem *) toolbarItem {
 	// Optional method   self message is sent to us since we are the target of some toolbar item actions
 	// (for example:  of the save items action)
+	
 	BOOL 		enable 		= NO;
 	NSString	*toolbarID	= [[toolbarItem toolbar] identifier];
 	NSString	*itemID		= [toolbarItem itemIdentifier];
+	
+	// NSLog(@"validate");
+	// NSLog(toolbarID);
+	// NSLog(itemID);
 
 	// FIXME: The following line of code is broken in two ways. First off, it shouldn't
 	// invoke validateMenuItem on 'super' but rather it should use 'self'.

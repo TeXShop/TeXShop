@@ -10,16 +10,65 @@
 
 <BODY>
 	<div id="content_border">
-		<P>Cocoa programs automatically inherit spell checking technology by Apple. The spell checker in Mac OS X 10.4 and higher does a better job dealing with LaTeX commands, but the Apple spell checker does not understand LaTeX commands and marks many of them as misspelled. However, other spelling services can be added to the Apple technology; they then become available in all Cocoa programs. </P>
-		<p>TeXShop supports continuous spell checking, which can be toggled on or off with a menu command. A preference item selects the initial position of this toggle.</p>
-		<p>Aspell is &quot;a more intelligent Ispell&quot; for Unix machines written by Kevin Adkinson. His program has been ported to Mac OS X and made into a spelling service by Anton Leuski. The new speller supports LaTeX. To obtain it, go to</p>
+		<P>Cocoa programs automatically inherit spell checking technology by Apple. TeXShop supports continuous spell checking, which can be toggled on or off with a menu command. A preference item selects the initial position of this toggle.</p>
+		<p> The Apple spell checker does not understand LaTeX commands and marks many such commands as misspelled. However, Apple's technology allows third parties to add extra spell servers to the operating system, which then become available as transparent extensions of Apple's system. One of these third party servers, cocoAspell, supports LaTeX and is often installed by TeX users. This speller was written by Anton Leuski, using Kevin Adkinson's ispell for Unix machines as a foundation. To obtain it, go to</P>
+		<p>
 		<dl>
 			<dd><a href="http://cocoaspell.leuski.net/">http://cocoaspell.leuski.net/</a>
 		</dl>
-		<p>An alternate LaTeX spell checker named Excalibur is often used. This spell checker was written by Rick Zaccone; it can open TeXShop files. To obtain it, go to</p>
+	and download the free installer which makes installing a breeze. The installer  provides an English dictionary, but Leuski's site contains a link to a site with free dictionaries for over 90 extra languages. 
+	<p> After installing cocoAspell, it is important to configure it for TeX. That is done with the  Spelling Preference Pane which the cocoAspell installer adds to Apple's System Preferences panel. Use this pane to select active cocoAspell dictionaries. For each selected dictionary, click the TeX/LaTeX filter switch
+	in the Spelling Pane panel to turn on LaTeX filtering.
+	
+	<p> Once cocoAspell is installed, open Apple's Language & Text Preference Pane, select the Text tab, and choose the appropriate spelling dictionary in the pulldown "Spelling" menu. Notice that dictionaries from the cocoAspell system are indicated by an extra (Aspell) after their names in this list.
+		<p>An alternate LaTeX spell checker named Excalibur is sometimes used. This spell checker was written by Rick Zaccone; it can open TeXShop files. To obtain it, go to</p>
 		<dl>
 			<dd><a href="http://www.eg.bucknell.edu/%7eexcalibr/excalibur.html">http://www.eg.bucknell.edu/~excalibr/excalibur.html</a>
 		</dl>
+Zaccone's program is not a spell service; instead source files are spell checked by opening them in this program as a separate step in the authoring process.
+
+<p> If you use more than one language in TeXShop, you can  select the active dictionary for a document on one of the first twenty lines of
+the source code by writing a line like
+<dl>
+<dd> % !TEX spellcheck = de-DE
+</dl>
+In that case, documents without this line will use the system default spelling dictionary, but documents with this line will use the indicated dictionary. The line is
+recognized when the document is opened, so the first time it is added to a source file, the file must be saved and reopened before the line is recognized. In a project with a root document, each included source file must contain the line.
+
+<p> When using this command, Apple dictionaries are specified using either the ISO 639-1 or ISO 639-2 standards for determining language designations, and the ISO 3166-1 standard for regional designations. The regional designation is used to distinguish between a language as used in one part of the world and that same language in another part of the world. For instance, French is "fr" in ISO 639-1 and "fre" in ISO 639-2; French (France) has regional designation "FR" and
+French (Canadian) has regional designation "CA". So to select a French dictionary in Canada, "spellcheck = fr" will work, and "spellcheck = fr-CA" would be even better.
+Since these are ISO standards, similar commands will work on other platforms, although TeXShop only runs on the Mac. The language standards are described in 
+<dl>
+			<dd><a href="http://www.loc.gov/standards/iso639-2/php/English_list.php">http://www.loc.gov/standards/iso639-2/php/English_list.php</a>
+		</dl>
+and the regional standards are at
+<dl>
+			<dd><a href="http:www.iso.ch">http:www.iso.ch</a>
+		</dl>
+although this second site is difficult to use.
+
+<p> Specifying a cocoAspell dictionary is slightly tricky. The Spelling Preference Pane installed by cocoAspell lists all cocoAspell dictionaries, including active dictionaries. Names in this list are the names to be used following "spellcheck". When these dictionaries appear in Apple's list in the Language & Text panel, they often have different names. Those names don't work.
+
+<p> For example, there  is a ocoAspell dictionary named German. If the German dictionary is selected in the Spelling Preference Panel, then the resulting dictionary will be listed in Apple's panel as Deutch (Aspell). In this case 
+<dl>
+			<dd>% !TEX spellcheck = de
+		</dl>
+will select Apple's German dictionary and 
+<dl>
+			<dd>% !TEX spellcheck = German
+		</dl>
+will select the cocoAspell German dictionary, while
+<dl>
+			<dd>% !TEX spellcheck = Deutsch (Aspell)
+		</dl>
+will select nothing. 
+
+<p> Similarly there is a cocoAspell dictionary named German (Germany) in the Spelling Preference Pane. To select it, the appropriate command is
+<dl>
+			<dd>% !TEX spellcheck = German (Germany)
+		</dl>
+
+
 	</div>		
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>

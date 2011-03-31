@@ -10,17 +10,31 @@
 
 <BODY>
 	<div id="content_border">
-		<P>TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions &quot;.log&quot;, &quot;.aux&quot;, etc. Files with extensions &quot;.jpg&quot;, &quot;.tif&quot;, &quot;.eps&quot;, or &quot;.pdf&quot; are opened as graphic files.</P>
+<h1>What kind of files can TeXShop open?</h1>
+<P>TeXShop can open most files for editing. This facility has been provided so users can read TeX-related files with extensions &quot;.log&quot;, &quot;.aux&quot;, etc.</p>
+<h2>Recognized text file types</h2>
+	<p>TeXShop can open &quot;.ins&quot;, &quot;.dts&quot;, &quot;.sty&quot;, &quot;.cls&quot;, &quot;mf&quot;, &quot;.def&quot;, &quot;.fd&quot;, &quot;.ltx&quot;, &quot;.clo&quot;, &quot;.ctx&quot;, &quot;.bst&quot;, &quot;.bib&quot;, &quot;.engine&quot;, &quot;.htx&quot;, &quot;.sk&quot;, &quot;dtx&quot;, &quot;.drv&quot;, &quot;.dn&quot;, &quot;.abc&quot;, &quot;.ly&quot;, &quot;.texi&quot;, &quot;.Rnw&quot;, &quot;.asy&quot;, &quot;.akt&quot;, 
+	&quot;.bbx&quot;, &quot;.cbx&quot;, &quot;.lbx&quot;, 
+	and &quot;mp&quot; files for processing.</p> 
+	<p>It can also open any text file.</p>	 
+<h2>Non-text files</h2>		
+		Files with extensions &quot;.jpg&quot;, &quot;.tif&quot;, &quot;.eps&quot;, or &quot;.pdf&quot; are opened as graphic files.</P>
 		<p>TeXShop can also open &quot;.dvi&quot; and &quot;.ps&quot; files. In these cases, it converts the file to pdf and displays this pdf file.</p>
-		<p>TeXShop can open &quot;.ins&quot;, &quot;.dts&quot;, &quot;.sty&quot;, &quot;.cls&quot;, &quot;mf&quot;, &quot;.def&quot;, &quot;.fd&quot;, &quot;.ltx&quot;, &quot;.clo&quot;, &quot;.ctx&quot;, &quot;.bst&quot;, &quot;.bib&quot;, &quot;.engine&quot;, &quot;.htx&quot;, &quot;.sk&quot;, &quot;dtx&quot;, &quot;.drv&quot;, &quot;.dn&quot;, &quot;.abc&quot;, &quot;.ly&quot;, &quot;.texi&quot;, &quot;.Rnw&quot;, &quot;.asy&quot;, &quot;.akt&quot;,and &quot;mp&quot; files for processing. It can open any text file.</p>
-		
-		<p>It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it saves files in the format chosen in Preferences. Consequently, information may be lost if TeXShop is used to edit files which really aren't related to TeX.  </p>
+<h2>Other file types</h2>
+<p>It is not a good idea to use TeXShop as a general editor. TeXShop can read files written in UniCode and other formats, but it saves files in the format chosen in Preferences. Consequently, information may be lost if TeXShop is used to edit files which really aren't related to TeX.  </p>
 
 <p> If TeXShop opens a file with an unusual extension, and later saves the file, the saved file will have the same  extension. Thus if TeXShop opens, edits, and saves an "akt" file, the saved file will still have extension "akt."</p>
 
 <p> When TeXShop creates a new file, the saved file will have extension ".tex" unless special action is taken. Your computer's preference settings may have been set to hide extensions in the Finder; in that case you may not see the extension, but it is there. It is not possible to change the extension by adding it explicitly to the file name. For instance, in some circumstances saving a file "MyFile.htx" will actually create "MyFile.htx.tex." This can be particularly tricky if your computer hides extensions.</p>
 
 <p>But the TeXShop "Save Panel" includes a drop down menu named "File Format". Choose a format in this menu to initially save a new file with a nonstandard extension.</p>
+<h2>Adding to the list of file types</h2>
+<p>There is a hidden preference to add file extensions to the list of files that TeXShop recognizes as source files which can be typeset and syntax colored.  This is useful when you want to use syntax coloring when editing TeX files with non-standard extensions. For example,</p>
+		<dl>
+			<dd>defaults write TeXShop OtherTeXExtensions -array-add "lbx"
+		</dl>
+<p>tells TeXShop to syntax color biblatex 'lbx' files.<p>
+
 
 	</div>		
 <div id="header_background"></div>

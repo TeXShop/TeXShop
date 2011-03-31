@@ -35,6 +35,8 @@ static BOOL isValidTeXCommandChar(int c)
 		return YES;
 	else if ((c >= 'a') && (c <= 'z'))
 		return YES;
+	else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
+		return YES; // added by Terada
 	else
 		return NO;
 }
@@ -132,9 +134,10 @@ static BOOL isValidTeXCommandChar(int c)
 	// Clip the given range (call it paranoia, if you like :-).
 	if (range.location >= length)
 		return;
-	if (range.location + range.length > length)
+	if (range.location + range.length > length && ![SUD boolForKey:AlwaysHighlightEnabledKey]) // modified by Terada
+//	if (range.location + range.length > length)
 		range.length = length - range.location;
-
+	
 	// We only perform coloring for full lines here, so extend the given range to full lines.
 	// Note that aLineStart is the start of *a* line, but not necessarily the same line
 	// for which aLineEnd marks the end! We may span many lines.

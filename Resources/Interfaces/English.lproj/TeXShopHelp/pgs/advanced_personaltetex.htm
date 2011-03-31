@@ -11,20 +11,37 @@
 <BODY>
 	<div id="content_border">
 		<P>
-Users sometimes create additional sty, cls, bib, and tex files for common use in several different projects. These files will certainly be seen by tex and latex if they are placed in the same folder as the tex source file being typeset, but then multiple copies of the files must be kept on the
-computer. 
- </P>
+Every TeX distribution expects to find personal additions (such as private style files or packages not part of the main distribution) in a local folder or directory.  The name of this folder is 'texmf' and it has a specific structure of sub-folders so that the TeX programs can find files correctly.</p>
 
-<P>
-It is possible to make these files visible to all TeXLive projects, whether typeset from TeXShop or from the Terminal. To do so, create a subfolder of the Library folder in your home directory named texmf. Create subfolders named tex and bibtex. Within the tex folder, create a subfolder named latex. Store your personal files in these folders.
- </P>
+<p>On a Mac, the local texmf folder  is located in the Library folder  of your Home directory.  This is usually notated as "~/Library/texmf", where the "~" means "your home directory" (i.e. what you get when you click on the Home icon in a finder window.).</p>
 
-<P>
-Tex will find any file in ~/Library/texmf/tex or a subfolder of this
-directory. Latex will find any file in ~/Library/texmf/tex/latex or a subfolder of this directory. Bibtex will find bib files in ~/Library/texmf/bibtex/bib or a subfolder; it will find bst files in ~/Library/texmf/bibtex/bst or a subfolder. Makeindex will find any file in ~/Library/texmf/makeindex  or a subfolder. It is not necessary to run texhash after adding files to these folders.
- </P>
+<h2>When should I put things in the local texmf ?</h2>
 
+Before putting anything into the local texmf folder, you should check that the relevant package isn't already part of TeXLive, and therefore included in the MacTeX distribution.  The easiest way to do this is to use the TeXLive utility.  This is especially true of packages on CTAN, most of which are included in TeXLive, and should already be available to you.
+
+If you know that a package is not available as part of TeXLive, then you should put it into your local texmf folder.
+
+<h2>What goes where?</h2>
+<p>
+The texmf folder contains a number of folders, and these folders themselves contain other folders.  For most users, the three top-level folders that are most important are the following:</p>
+<table>
+<tr><th>Folder</th><th>What goes in it</th></tr> <tr><th>bibtex </th><td>This is where bib files and bst files go. It should contain at least the following folders: </td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>bst </td><td>Put bst files here.</td></tr> <tr><td>bib </td><td>Put bib files here.</td></tr> <tr><td>&nbsp;</td>
+</tr> <tr><th>tex </th><td>This is where new packages go. It should contain the following folders:</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>latex </td><td>Put latex packages here.</td></tr> 
+<tr><td>plain </td><td>Put plain tex files here.</td></tr> 
+<tr><td>xelatex </td><td>Put xelatex specific packages here.</td></tr>
+<tr><td>xetex</td><td>Put plain xetex files here.</td></tr>
+<tr><td>context </td><td>Put context files here.</td></tr>
+<tr><td>generic </td><td>Put files that are usable with any TeX flavor here.</td></tr> 
+<tr><td>&nbsp;</td></tr> 
+<tr><th>doc </th><td>Put documentation files from packages installed in the tex folder  here.  Putting the documentation files here allows them to be found by the texdoc system (or the "Show Help for Package" function in the Help menu of TeXShop).</td></tr>
+</table>
+<p>Other top-level folders in include fonts, scripts, and source.  
 <P>
+<h2>Environment Variables</h2>
 On other Unix machines, tex is sometimes notified of the location
 of personal input files by setting the environment variables
 TEXINPUTS, BSTINPUTS, and BIBINPUTS. This is almost never necessary with TeX Live; instead put personal input files in appropriate subdirectories of ~/Library/texmf.</p>

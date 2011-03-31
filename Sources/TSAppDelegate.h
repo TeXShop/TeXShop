@@ -41,6 +41,8 @@
 - (IBAction)displayMatrixPanel:(id)sender;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+- (IBAction)nextTeXWindow:(id)sender; // added by Taylor
+- (IBAction)previousTeXWindow:(id)sender; // added by Taylor
 - (BOOL)forPreview;
 - (void)finishCommandCompletionConfigure; // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender; // mitsu 1.29 (P)

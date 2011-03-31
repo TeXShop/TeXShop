@@ -103,6 +103,7 @@ extern NSPanel *pageNumberWindow;
 - (void) becomeMainWindow
 {
 	willClose = NO;
+	if([myDocument fileName] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 
 	[myDocument fixMacroMenuForWindowChange];

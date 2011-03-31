@@ -394,7 +394,7 @@ static TSEncoding _availableEncodings[] = {
 
 - (NSData *)ptexUtfOutput: (NSTextView *)dataView withEncoding: (NSStringEncoding)enc
 {
-	NSString *dataString = [dataView string];
+	NSString *dataString = [[dataView string] precomposedStringWithCanonicalMapping]; // modified by Terada;
 	NSMutableString *utfString, *newString = [NSMutableString string];
 	NSRange charRange, aCIDRange;
 	NSString *subString;

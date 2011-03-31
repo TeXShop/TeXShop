@@ -1,0 +1,217 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf350
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17600\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 2.38 Changes\
+\
+1) Version 422e of Latexmk\
+\
+2) The Help menu now contains a link to a wonderful document by Herbert Shultz called\
+"TeXShop Tips & Tricks." This document describes a number of useful TeXShop\
+features like working with large documents, bibdesk, pdflatexmk, editing shortcuts,\
+auto completion, and command completion.  \
+\
+3) New Chinese localization by Linus Yang, laokongzi@gmail.com. Thanks!\
+\
+4) A small bug fix: when a TeX source window is closed, the pdf Preview\
+window is also closed. In previous versions, the pdf preview window\
+closed automatically when the nib file was released, but this could cause\
+crashes in a small number of cases. In Lion, the corresponding crash\
+happened always, leading to a rapid discovery of the problem. This\
+fix may help stability on earlier systems, and is required for Lion.\
+\
+5) Version 2.38 contains a number of wonderful additions by Yusuke Terada,\
+taylorkgb@gmail.com. Terada works for a company in Tokyo, and implemented\
+changes requested by workers in the company. His code is impressive and\
+elegant. Many, many thanks!\
+\
+Most of Terada's changes are activated by new items in the TeXShop Preference\
+Panel, which are turned off by default. So users need to turn these items on to\
+experiment with them, and can easily return to the old behavior if desired.\
+\
+A) Show Invisible Characters: TeXShop can now show ordinary space characters,\
+Japanese full width space characters, tab characters, and newline characters, all\
+in the source window. Preference items turn each choice on or off, so users can\
+display newlines and tabs, but not spaces.\
+\
+B) Much better handling of parentheses: \{ and \}, ( and ), [ and ], and < and >. \
+When such a pair is closed, the matching opening parenthesis is marked with\
+clearly visible color, and the entire section between these parentheses is colored\
+yellow. This yellow color remains until another character is typed, and then it\
+vanishes. Thus it is much easier to close a parenthesis and then stop and make sure\
+the scope of that parenthesis pair is correct. By default, this feature is on when, but\
+it can be turned off in Preferences.\
+\
+C) If a parenthesis is typed with not matching pair, the computer beeps, or\
+if desired the screen flashes. This feature is off by default and must be turned on\
+in preferences. \
+\
+D) I have been recommending that users turn on the preference "All windows start\
+at fixed position" for both source and preview windows. But by default, the\
+preference setting is "Remember last position on close." Because I do not use the\
+default setting, it was not implemented very well.\
+\
+Terada has improved the default greatly. New windows now appear just down and to the right\
+of the previous window, as Apple's Interface Guidelines recommend. It is best to try the\
+new code to get a feel for the improvement.\
+\
+Note that if you use the "All windows start at fixed position" setting, Terada's changes\
+do not apply and TeXShop works as it always has.\
+\
+E) TeXShop uses the default Cocoa behavior for window titles. Let me explain this default\
+before explaining Terada's changes. Suppose a source file is titled "Dual.tex". Then the title\
+at the top of the source window will read "Dual.tex" and the title at the top of the preview\
+window will read "Dual.pdf". If you click on either title while holding the Command Key down,\
+a pull down menu will appear listing the various components of the full path to the file. Choosing\
+one of these items will open the corresponding folder in the Finder. In this way, it is very easy\
+to go to the actual source or output file in the File system.\
+\
+The window titles are also listed in TeXShop's "Window" menu. Selecting a window title there\
+will bring the corresponding Window to the front.\
+\
+All this is fine except for one kind of work flow. Suppose you have folders named Sample1,\
+Sample2, Sample3, and Sample4, and suppose each folder contains two files: a file\
+named Data and a file named Graph. Suppose your master document includes\
+Sample1/Data and Sample3/Data. If your master and both data files are open on your desktop, \
+you may want to switch from one file to another using the Window menu. But this menu will list\
+two files with the same name: Data. It would be much better if it listed Sample1/Data and\
+Sample3/Data so you could keep them straight.\
+\
+Terada's change makes this possible. The source window toolbar contains an optional checkbox \
+item named "Show Full Path"; this item must be added using "Customize Toolbar\'85" and isn't in\
+the default toolbar.  Checking this item will cause the source and preview windows to list \
+the full path to files rather than just the title of the files. Moreover, this full path will be listed in\
+the Window menu.\
+\
+Full path can be turned on or off on a file by file basis, so some files can show the full path\
+while others show only the window title. The default checkbox state in a new window will\
+be the state last set by the user. Thus a user who always wants full path can check one file\
+and then forget it, even if quitting and restarting TeXShop. \
+\
+F) A new menu item in the TeXShop Help menu is proved, named "Open Style File\'85" This\
+item will open any style file in the texmf trees visible to TeX and LaTeX. This command uses\
+"kpsetool" to find such style files, but the tool can be changed in a new Engine file preference.\
+\
+G) A new preference "BibTeX Engine" is provided listing the default BibTeX engine. This\
+default is mainly present for users in Japan, because these users have access to\
+\
+	bibtex, jbibtex, pbibtex, and ubibtex\
+\
+H) New hidden preference items named "backgroundAlpha" and "ConsoleBackgroundAlpha" are\
+provided. For example, the following commands will provide source windows with translucent\
+backgrounds:\
+\
+\pard\pardeftab720\ql\qnatural
+\cf0 $ defaults write TeXShop SourceWindowAlpha 0.9\
+$ defaults write TeXShop backgroundAlpha 0.6\
+\
+(Actually my experiments show that both of these preference items are irrelevant, and the\
+old SourceWindowAlpha and ConsoleWindowAlpha, documented in TeXShop Help, are\
+enough to make transparent windows. I'll keep this H) in the change document 'just in case.')\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+I) Syntax coloring has been changed slightly. Previously, the @ symbol ended a TeX command,\
+so \\@this will only color \\@. But now it doesn't, so for example, every character of the following line\
+will be colored:\
+\
+\\ifx\\@@input\\@undefined\\let\\@@input\\input\\fi\
+\
+This will mainly affect users editing style files. \
+\
+We suspect that most users won't notice the change, and those who notice will like it. But\
+the old behavior can be restored with a hidden preference:\
+\
+	defaults write TeXShop MakeatletterEnabled NO\
+\
+J) Two new items were added to the Window menu: "Next Source Window" and "Previous\
+Source Window". These cycle through source windows without changing the Preview Window.\
+\
+K) That's all folks! Many thanks to Yusuke Terada.\
+\
+6) Revised the ConTeXt-MKIV.engine and the document "About the Inactive Folder" in\
+TeXShop/Engines/Inactive to indicate that users must run the following command ONCE\
+in Terminal before using this engine:\
+\
+	luatools --generate\
+\
+7) A minor bug fix to the "Uncomment" command by Yusuke Terada: previously, TeXShop removed\
+empty uncommented lines, but now it doesn't.\
+\
+8) The next addition is by Alvise Trevisan,  A.Trevisan@few.vu.nl\
+In previous versions of TeXShop, if you type begin\{itemize\} (or \\begin\{\}\} or a number of other\
+typical fragments) and then push the Escape key, the corresponding \\end\{itemize\} will appear\
+on the following line and it is only necessary to fill in the intermediate lines. Unfortunately, if the\
+opening \\begin\{itemize\} is indented, the indentation is not preserved for the corresponding\
+\\end\{itemize\}. But with Trevisan's modification, it is preserved.\
+\
+9) Added extensions .bcf and .run.xml to Files->Trash Aux Files. This is needed to switch\
+from biber to bibtex, for latexmk.\
+\
+10) Alan Munn, amunn@gmx.com, updated the Help Files\
+\
+	advanced_otherfiles, advanced_syntaxcolor, basic_preferences\
+\
+and I also revised\
+\
+	advanced_removeaux\
+\
+Alan's formatting is easier to read than the formatting of other help files, but this introduces some\
+inconsistency in the appearance of help pages. We hope other pages will be reformatted over time.\
+\
+11) Added the ability to edit box, cox, and lbx files, used by biblatex.\
+\
+12) Added syntax coloring for bbx, cbx, and lbx files.\
+\
+\
+----------------------------------------\
+\
+(These changes were added after the initial release to localizers)\
+\
+13) In Source menu, new "Show Invisible Characters" item\
+\
+14) In the Preference "Invisible Characters" section, a new "On by Default" box to control state when windows are first opened\
+\
+15) The Open Style File panel has been revised, and now individual items are localized:\
+\
+	a) title: Kpsetool\
+\
+	b) text: "Style File Name (lower case is usually best)\
+\
+	c) buttons: Cancel OK\
+\
+16) Modification by Terada for Japan; UTF-8-Mac automatically converted to UTF-8\
+when ptexUtfOutputEnabled.\
+\
+17) Herb Schulz adapted Alvise Trevisan's code to the rest of Command Completion.\
+\
+18) The items under the Edit menu's Substitutions submenu can be turned on or off.\
+TeXShop now remembers the last setting. Newly opened files will have these settings,\
+and the settings will be remembered even if TeXShop quits.\
+\
+(Warning: Only Copy/Paste is supported in 10.4. In addition, Link Detection and Quote \
+Substitution are supported by 10.5. Support for other items, and in particular Text\
+Substitution, requires 10.6.)\
+\
+19) latexmk 4.23\
+\
+20) Added\
+\
+	% !!TeX spellcheck = de-DE\
+\
+This selects the language which the spell checker should use on that particular document.\
+After typing this command, the file must be saved and reloaded, since the command is\
+recognized when the file is read. Each include file in a project must have the line. \
+Files without the line use the default spellchecker methods, and the command works\
+on a file-by-file basis. So users can work on English and Spanish documents simultaneously.\
+\
+The description of languages is apparently a universal convention; TeXShop uses whatever\
+the Apple spellchecker (and presumably other checkers like CocoAspell) use.\
+\
+\
+\
+\
+\
+\
+}

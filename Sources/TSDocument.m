@@ -25,7 +25,6 @@
 #import "UseMitsu.h"
 #import <Carbon/Carbon.h>
 
-
 #import "TSDocument.h"
 #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
 
@@ -50,6 +49,7 @@
 #import "TSEncodingSupport.h"
 #import "TSMacroMenuController.h"
 #import "TSDocumentController.h"
+#import "TSLayoutManager.h" // added by Terada 
 
 
 #define COLORTIME  0.02
@@ -100,14 +100,24 @@
 	firstTime = NO;
 	fromMenu = NO;
 	willClose = NO;
+	spellLanguage = nil;
 	
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
+	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
 	lineNumberView1 = nil;
 	lineNumberView2 = nil;
 	logLineNumberView = nil;
 	logExtension = nil;
 
-
+	lastCursorLocation = 0; // added by Terada
+	lastStringLength = 0; // added by Terada
+	lastInputIsDelete = NO;  // added by Terada
+	
+	highlightBracesColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
+								 [NSColor magentaColor], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada
+	highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
+								  [NSColor colorWithDeviceRed:1 green:1 blue:0.5 alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada
+	
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
 
 	_textStorage = [[NSTextStorage alloc] init];
@@ -178,6 +188,8 @@
 
 	[_pdfLastModDate release];
 	
+	[spellLanguage release];
+	
 	if (logExtension != nil)
 		[logExtension release];
 	
@@ -226,6 +238,20 @@
 	}
 }
 
+- (void) applyInvisibleCharactersShowing
+{
+	[(TSLayoutManager*)[textView layoutManager] setInvisibleCharactersEnabled:invisibleCharactersShowing];
+	[(TSLayoutManager*)[textView1 layoutManager] setInvisibleCharactersEnabled:invisibleCharactersShowing];
+	[(TSLayoutManager*)[textView2 layoutManager] setInvisibleCharactersEnabled:invisibleCharactersShowing];
+}
+
+// added by Terada (- (void) showHideInvisibleCharacters:)
+- (void) showHideInvisibleCharacters: sender
+{
+	invisibleCharactersShowing = !invisibleCharactersShowing;
+	[self applyInvisibleCharactersShowing];
+	[self colorizeAll];
+}
 
 -(BOOL)doNotReadSource;
 {
@@ -304,7 +330,7 @@
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
 												green: [SUD floatForKey:background_GKey]
 												 blue: [SUD floatForKey:background_BKey]
-												alpha:1.0];
+												alpha: ([SUD floatForKey:backgroundAlphaKey] == 0 ) ? 1.0 : [SUD floatForKey:backgroundAlphaKey]]; // modified by Terada
 
 	insertionpointColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:insertionpoint_RKey]
 													green: [SUD floatForKey:insertionpoint_GKey]
@@ -387,6 +413,7 @@
 	NSString		*defaultCommand;
 
 	[super windowControllerDidLoadNib:aController];
+	[self applyInvisibleCharactersShowing]; // added by Terada
 	
 	// WARNING: I moved this to the start from much further on; the original location is still present
 	// but commented out. This speeds up loading dramatically, and I think it causes no problems. The basic idea is
@@ -429,6 +456,7 @@
 		}
 	else
 		skipTextWindow = NO;
+	
 		
 
 	// can this fix the printer; Feb 1, 2006
@@ -553,6 +581,8 @@ if (! skipTextWindow) {
 	doAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
 	[self fixAutoMenu];
 
+	showFullPath = [SUD boolForKey:ShowFullPathEnabledKey]; // added by Terada
+	[self fixShowFullPathButton]; // added by Terada
 
 	[self registerForNotifications];
 	
@@ -596,6 +626,9 @@ if (! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:pdfView selector:@selector(wasScrolled:)
 												 name:NSViewBoundsDidChangeNotification object:[pdfView superview]];
 	// end mitsu 1.29
+
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(colorizeAll)
+												 name:@"NeedsForRecolorNotification" object:nil]; // added by Terada
 
 	[pdfView setImageType: _documentType];
 
@@ -766,7 +799,8 @@ if (! skipTextWindow) {
 		[myPDFKitView2 showForSecond];
 		
 		[pdfKitWindow setRepresentedFilename: imagePath];
-		[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+		//[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+		[pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // added by Terada
 		[self fillLogWindowIfVisible];
 	} else if (_externalEditor) {
 
@@ -798,7 +832,6 @@ if (! skipTextWindow) {
 				[self doTypeset:self];
 		}
 	}
-
 }
 
 - (void)runModalSavePanelForSaveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
@@ -885,7 +918,10 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"ly"])
 		|| ([extension isEqualToString: @"Stex"])
 		|| ([extension isEqualToString: @"lytex"])
-		|| ([extension isEqualToString: @"ctx"]))
+		|| ([extension isEqualToString: @"ctx"])
+		|| ([extension isEqualToString: @"bbx"])
+		|| ([extension isEqualToString: @"cbx"])
+		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
 	otherExtensions = [SUD stringArrayForKey: OtherTeXExtensionsKey];
@@ -976,18 +1012,17 @@ in other code when an external editor is being used. */
 
 	// zenitani 1.35 (C) --- utf.sty output
 	if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
-		[[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [_textStorage string] withEncoding: _encoding] ) {
-
+	   [[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [[_textStorage string] precomposedStringWithCanonicalMapping] withEncoding: _encoding] ) { // modified by Terada
+		
 		return [[TSEncodingSupport sharedInstance] ptexUtfOutput: textView withEncoding: _encoding];
 	} else {
-		return [[_textStorage string] dataUsingEncoding: _encoding allowLossyConversion:YES];
+		return [[[_textStorage string] precomposedStringWithCanonicalMapping] dataUsingEncoding: _encoding allowLossyConversion:YES]; // modified by Terada
 	}
 }
 
-
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
-	NSString            *firstBytes, *encodingString, *testString;
-	NSRange             encodingRange, newEncodingRange, myRange, theRange;
+	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
+	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange;
 	unsigned            length, start, end;
 	BOOL                done;
 	int                 linesTested, offset;
@@ -995,10 +1030,56 @@ in other code when an external editor is being used. */
 	
 	// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
 	theEncoding = _encoding;
-
+	firstBytes = [[NSString alloc] initWithData:theData encoding:NSMacOSRomanStringEncoding];
+	
+	// First check for new spelling language
+	
+	length = [firstBytes length];
+	done = NO;
+	linesTested = 0;
+	myRange.location = 0;
+	myRange.length = 1;
+	
+	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+		[firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+		myRange.location = end;
+		myRange.length = 1;
+		linesTested++;
+		
+		// FIXME: Simplify the following code
+		theRange.location = start; theRange.length = (end - start);
+		testString = [firstBytes substringWithRange: theRange];
+		spellcheckRange = [testString rangeOfString:@"%!TEX spellcheck ="];
+		offset = 18;
+		if (spellcheckRange.location == NSNotFound) {
+			spellcheckRange = [testString rangeOfString:@"% !TEX spellcheck ="];
+			
+			offset = 19;
+		}
+		if (spellcheckRange.location != NSNotFound) {
+			done = YES;
+			spellcheckRange.location = spellcheckRange.location + offset;
+			spellcheckRange.length = [testString length] - spellcheckRange.location;
+			if (spellcheckRange.length > 0) {
+				spellcheckString = [[testString substringWithRange: spellcheckRange]
+									stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				// NSLog(spellcheckString);
+				NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+				if ([theChecker setLanguage:spellcheckString]) {
+					spellLanguageChanged = YES;
+					if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
+						automaticLanguage = [theChecker setAutomaticallyIdentifiesLanguages:NO];
+					if (spellLanguage != nil)
+						[spellLanguage release];
+					spellLanguage = [spellcheckString retain];
+					}
+			}
+		}
+	}
+	
+	
 	// FIXME: Unify this with the code in dataRepresentationOfType:
 	if ((GetCurrentKeyModifiers() & optionKey) == 0) {
-		firstBytes = [[NSString alloc] initWithData:theData encoding:NSMacOSRomanStringEncoding];
 		length = [firstBytes length];
 		done = NO;
 		linesTested = 0;
@@ -1018,6 +1099,7 @@ in other code when an external editor is being used. */
 			offset = 16;
 			if (encodingRange.location == NSNotFound) {
 				encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
+				
 				offset = 17;
 				}
 			if (encodingRange.location != NSNotFound) {
@@ -1043,10 +1125,10 @@ in other code when an external editor is being used. */
 				}
 			}
 		}
-
-		[firstBytes release];
 	}
-
+	
+	[firstBytes release];
+	
 	return theEncoding;
 }
 
@@ -1196,6 +1278,24 @@ in other code when an external editor is being used. */
 	return value;
 }
 
+- (void)resetSpelling {
+	if (! spellLanguageChanged)
+		return;
+	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+	if (spellLanguage != nil) {
+		[theChecker setLanguage:spellLanguage]; 
+		if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
+			automaticLanguage = [theChecker setAutomaticallyIdentifiesLanguages:NO];
+	}
+	else {
+		[theChecker setLanguage:defaultLanguage]; 
+		if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
+			automaticLanguage = [theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
+	}
+}
+
+
+
 // - (void) printDocumentWithSettings: (NSDictionary :)printSettings showPrintPanel:(BOOL)showPrintPanel delegate:(id)delegate 
 // 	didPrintSelector:(SEL)didPrintSelector contextInfo:(void *)contextInfo
 - (void)printShowingPrintPanel:(BOOL)flag
@@ -1251,6 +1351,7 @@ in other code when an external editor is being used. */
 
 - (void)close
 {
+	
 	[tagTimer invalidate];
 	[tagTimer release];
 	tagTimer = nil;
@@ -1259,7 +1360,13 @@ in other code when an external editor is being used. */
 	[_pdfRefreshTimer release];
 	_pdfRefreshTimer = nil;
 
+	// [[pdfWindow toolbar] setVisible: NO];
+	// [[pdfKitWindow toolbar] setVisible: NO];
+	[[pdfWindow toolbar] turnVisibleOff:YES];
+	[[pdfKitWindow toolbar] turnVisibleOff:YES];
 	[pdfWindow close];
+	[pdfKitWindow close];
+	
 	/* The next line fixes a crash bug in Jaguar; see notifyActiveTextWindowClosed for
 	a description. */
 	[[TSWindowManager sharedInstance] notifyActiveTextWindowClosed];
@@ -1599,6 +1706,22 @@ in other code when an external editor is being used. */
 											   object:textView2];
 }
 
+// added by Terada (- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow )
+- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow
+{
+	if(!activeWindow || ![activeWindow respondsToSelector:@selector(frame)]) return;
+	NSRect activeWindowFrame = [activeWindow frame];
+	NSRect newFrame;
+	NSScreen *screen = [NSScreen mainScreen];
+	if(NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0){
+		newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSHeight([screen frame]), NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+	}else{
+		newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSMinY(activeWindowFrame) + 20, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame) - 40);
+	}
+		
+	[targetWindow setFrame:newFrame display:YES];
+}
+
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController
 /*" This method reads the NSUserDefaults and restores the settings before the document will actually be displayed.
 "*/
@@ -1614,6 +1737,12 @@ in other code when an external editor is being used. */
 		{
 			case DocumentWindowPosSave:
 				[textWindow setFrameAutosaveName:DocumentWindowNameKey];
+				// added by Terada (from this line)
+				NSWindow *activeTextWindow = [[TSWindowManager sharedInstance] activeTextWindow];
+				if(activeTextWindow){
+					[self repositionWindow:textWindow activeWindow:activeTextWindow];
+				}
+				// added by Terada (until this line)
 				break;
 
 			case DocumentWindowPosFixed:
@@ -1627,6 +1756,27 @@ in other code when an external editor is being used. */
 		case PdfWindowPosSave:
 			[pdfWindow setFrameAutosaveName:PdfWindowNameKey];
 			[pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
+			// added by Terada (from this line)
+			int numberOfWindows = 0;
+			int i;
+			int *listOfWindows;
+			
+			NSCountWindowsForContext([NSApp contextID], &numberOfWindows);
+			
+			if (numberOfWindows>0){
+				listOfWindows = malloc(numberOfWindows * sizeof(int));
+				NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
+				
+				for(i=0; i<numberOfWindows; i++){
+					NSWindow *aWindow = [NSApp windowWithWindowNumber:listOfWindows[i]];
+					if ([aWindow isKindOfClass:[TSPreviewWindow class]]) {
+						[self repositionWindow:pdfKitWindow activeWindow:aWindow];
+						break;
+					}
+				}
+				free(listOfWindows);        
+			}			
+			// added by Terada (until this line)
 			break;
 
 		case PdfWindowPosFixed:
@@ -1771,7 +1921,7 @@ in other code when an external editor is being used. */
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:ConsoleBackgroundColor_RKey]
 												green: [SUD floatForKey:ConsoleBackgroundColor_GKey]
 												blue: [SUD floatForKey:ConsoleBackgroundColor_BKey]
-												alpha:1.0];
+												alpha:([SUD floatForKey:ConsoleBackgroundAlphaKey] == 0 ) ? 1.0 : [SUD floatForKey:ConsoleBackgroundAlphaKey]]; // modified by Terada
 	[outputText setBackgroundColor:backgroundColor];
 }
 
@@ -2405,6 +2555,247 @@ preference change is cancelled. "*/
 
 }
 
+// added by Terada (- (void)resetHighlight:)
+- (void)resetHighlight:(id)sender
+{
+	if(windowIsSplit){
+		[self colorizeVisibleAreaInTextView:textView1];
+		[self colorizeVisibleAreaInTextView:textView2];
+	}
+	else {
+		[self colorizeVisibleAreaInTextView:textView];
+	}
+	braceHighlighting = NO;
+}
+
+// added by Terada ( - (void)showIndicator: )
+- (void)showIndicator:(NSString*)range
+{
+	if (NSFoundationVersionNumber > LEOPARD) {
+		if(windowIsSplit){
+			[textView1 showFindIndicatorForRange:NSRangeFromString(range)];
+			[textView2 showFindIndicatorForRange:NSRangeFromString(range)];
+		}else{
+			[textView showFindIndicatorForRange:NSRangeFromString(range)];
+		}
+	}
+}
+
+// added by Terada (- (void)resetBackgroundColor:)
+- (void)resetBackgroundColor:(id)sender
+{
+	if(windowIsSplit){
+		[[textView1 layoutManager] removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:NSMakeRange(0, [[textView1 textStorage] length])];
+		[[textView2 layoutManager] removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:NSMakeRange(0, [[textView2 textStorage] length])];
+	}else{
+		[[textView layoutManager] removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:NSMakeRange(0, [[textView textStorage] length])];
+	}
+	contentHighlighting = NO;
+}
+
+// added by Terada (- (void)resetBackgroundColorOfTextView:)
+- (void)resetBackgroundColorOfTextView:(id)sender
+{
+	NSColor* backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
+														 green: [SUD floatForKey:background_GKey]
+														  blue: [SUD floatForKey:background_BKey]
+														 alpha: ([SUD floatForKey:backgroundAlphaKey] == 0 ) ? 1.0 : [SUD floatForKey:backgroundAlphaKey]]; // modified by Terada
+	if(windowIsSplit){
+		[textView1 setBackgroundColor:backgroundColor];
+		[textView2 setBackgroundColor:backgroundColor];
+	}else{
+		[textView setBackgroundColor:backgroundColor];
+	}
+}
+
+// added by Terada (- (void)highlightContent:)
+- (void)highlightContent:(NSString*)range
+{
+	contentHighlighting = YES;
+	if(windowIsSplit){
+		[[textView1 layoutManager] addTemporaryAttributes:highlightContentColorDict 
+										forCharacterRange:NSRangeFromString(range)];
+		[[textView2 layoutManager] addTemporaryAttributes:highlightContentColorDict 
+										forCharacterRange:NSRangeFromString(range)];
+	}else {
+		[[textView layoutManager] addTemporaryAttributes:highlightContentColorDict 
+									   forCharacterRange:NSRangeFromString(range)];
+	}
+	
+}
+
+// added by Terada (- (void)hilightBraceAt:)
+- (void)highlightBracesAt:(NSArray*)locations
+{
+	int location1 = [[locations objectAtIndex:0] intValue];
+	int location2 = [[locations objectAtIndex:1] intValue];
+
+	if (windowIsSplit) {
+		[[textView1 layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+										forCharacterRange:NSMakeRange(location1, 1)];
+		[[textView1 layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+										forCharacterRange:NSMakeRange(location2, 1)];
+		[[textView2 layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+										forCharacterRange:NSMakeRange(location1, 1)];
+		[[textView2 layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+										forCharacterRange:NSMakeRange(location2, 1)];
+	}else {
+		[[textView layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+							forCharacterRange:NSMakeRange(location1, 1)];
+		[[textView layoutManager] addTemporaryAttributes:highlightBracesColorDict 
+							forCharacterRange:NSMakeRange(location2, 1)];
+	}
+	braceHighlighting = YES;
+}
+
+// added by Terada (- (void)textViewDidChangeSelection:(NSNotification *)inNotification)
+- (void)textViewDidChangeSelection:(NSNotification *)inNotification
+{
+	BOOL alwaysHighlight  = [SUD boolForKey:AlwaysHighlightEnabledKey]; 
+	BOOL highlightContent = [SUD boolForKey:HighlightContentEnabledKey];
+	BOOL showIndicatorForMove = [SUD boolForKey:ShowIndicatorForMoveEnabledKey];
+	BOOL beep = [SUD boolForKey:BeepEnabledKey];
+	BOOL flashBackground = [SUD boolForKey:FlashBackgroundEnabledKey];
+	
+	BOOL checkBrace =  [SUD boolForKey:CheckBraceEnabledKey];
+	BOOL checkBracket =  [SUD boolForKey:CheckBracketEnabledKey];
+	BOOL checkSquareBracket = [SUD boolForKey:CheckSquareBracketEnabledKey];
+	BOOL checkParen = [SUD boolForKey:CheckParenEnabledKey];
+	
+	if (![SUD boolForKey:SyntaxColoringEnabledKey] 
+		|| (!checkBrace && !checkBracket && !checkSquareBracket && !checkParen)) {
+		return;
+	}
+	
+	if(contentHighlighting){
+		[self performSelector:@selector(resetBackgroundColor:) 
+				   withObject:nil afterDelay:0];
+	}
+	
+	@try {
+		if(alwaysHighlight || braceHighlighting){
+			[self performSelector:@selector(resetHighlight:) 
+					   withObject:nil afterDelay:0];
+		}
+	}
+	@catch (NSException *e) {
+	}
+	@finally {
+	}
+	
+	unichar k_braceCharList[] = {0x0028, 0x0029, 0x005B, 0x005D, 0x007B, 0x007D, 0x003C, 0x003E}; // ()[]{}<>
+    
+	NSString *theString = [_textStorage string];
+    int theStringLength = [theString length];
+    if (theStringLength == 0) { return; }
+    NSRange theSelectedRange = [[self textView] selectedRange];
+    int theLocation = theSelectedRange.location;
+    int theDifference = theLocation - lastCursorLocation;
+    lastCursorLocation = theLocation;
+	
+	if (theStringLength - lastStringLength == -1) {
+		lastStringLength = theStringLength;
+		lastInputIsDelete = YES;
+		return;
+	}
+	lastStringLength = theStringLength;
+	if (lastInputIsDelete){
+		lastInputIsDelete = NO;
+		return;
+	}
+    
+	if (theDifference != 1 && theDifference != -1) {
+        return; // If the difference is more than one, they've moved the cursor with the mouse or it has been moved by resetSelectedRange below and we shouldn't check for matching braces then
+    }
+    
+    if (theDifference == 1) { // Check if the cursor has moved forward
+        theLocation--;
+    }
+	
+    if (theLocation == theStringLength) {
+        return;
+    }
+	
+	int originalLocation = theLocation;
+    unichar theUnichar = [theString characterAtIndex:theLocation];
+	BOOL notCS = (((theLocation > 0) ? [theString characterAtIndex:theLocation-1] : nil) != g_texChar);
+    unichar theCurChar, theBraceChar;
+	int inc;
+    if (theUnichar == ')' && checkParen && notCS) {
+        theBraceChar = k_braceCharList[0];
+		inc = -1;
+    } else if (theUnichar == '(' && checkParen && notCS) {
+        theBraceChar = k_braceCharList[1];
+		inc = 1;
+    } else if (theUnichar == ']' && checkSquareBracket && notCS) {
+        theBraceChar = k_braceCharList[2];
+		inc = -1;
+    } else if (theUnichar == '[' && checkSquareBracket && notCS) {
+        theBraceChar = k_braceCharList[3];
+		inc = 1;
+    } else if (theUnichar == '}' && checkBrace && notCS) {
+        theBraceChar = k_braceCharList[4];
+		inc = -1;
+    } else if (theUnichar == '{' && checkBrace && notCS) {
+        theBraceChar = k_braceCharList[5];
+		inc = 1;
+    } else if (theUnichar == '>' && checkBracket && notCS) {
+        theBraceChar = k_braceCharList[6];
+		inc = -1;
+    } else if (theUnichar == '<' && checkBracket && notCS) {
+        theBraceChar = k_braceCharList[7];
+		inc = 1;
+    } else {
+        return;
+    }
+    unsigned int theSkipMatchingBrace = 0;
+    theCurChar = theUnichar;
+	
+	
+    while ((theLocation += inc) >= 0 && (theLocation < theStringLength)) {
+        theUnichar = [theString characterAtIndex:theLocation];
+		notCS = (((theLocation > 0) ? [theString characterAtIndex:theLocation-1] : nil) != g_texChar);
+        if (theUnichar == theBraceChar && notCS) {
+            if (!theSkipMatchingBrace) {
+				[self performSelector:@selector(highlightBracesAt:)
+						   withObject:[NSArray arrayWithObjects:
+									   [NSNumber numberWithInt:theLocation],
+									   [NSNumber numberWithInt:originalLocation],
+									   nil]
+						   afterDelay:0];
+				
+                if(highlightContent){
+					[self performSelector:@selector(highlightContent:) 
+							   withObject:NSStringFromRange(NSMakeRange(MIN(originalLocation, theLocation), ABS(originalLocation - theLocation)+1)) afterDelay:0];
+				}
+				
+				if (NSFoundationVersionNumber > LEOPARD && !autoCompleting && showIndicatorForMove) {
+					[self performSelector:@selector(showIndicator:) 
+							   withObject:NSStringFromRange(NSMakeRange(theLocation, 1)) 
+							   afterDelay:0];
+				}
+				
+                if(!alwaysHighlight){
+					[self performSelector:@selector(resetHighlight:) 
+							   withObject:nil afterDelay:0.30];
+				}
+                return;
+            } else {
+                theSkipMatchingBrace += inc;
+            }
+        } else if (theUnichar == theCurChar && notCS) {
+            theSkipMatchingBrace -= inc;
+        }
+    }
+    if(beep) NSBeep();
+	if(flashBackground) {
+		[textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
+		[self performSelector:@selector(resetBackgroundColorOfTextView:) 
+				   withObject:nil afterDelay:0.20];
+	}
+}
+
+
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
 	// FIXME/TODO: Implementing this delegate method but not its close relative
@@ -2414,37 +2805,37 @@ preference change is cancelled. "*/
 	// course we already map Cmd-Clicking to something else anyway.
 	// Still, at least block selections would be useful for our users. But until the rest
 	// of the code is not aware of this possibility, we better keep this disabled.
-
+	
 	NSRange			matchRange;
 	NSString		*textString;
 	int				i, j, count, uchar, leftpar, rightpar;
 	NSDate			*myDate;
-
+	
 	// Record the modified range (for the syntax coloring code).
 	colorStart = affectedCharRange.location;
 	colorEnd = colorStart + [replacementString length];
-
+	
 #if 1
-// FIXME HACK: Always rebuild the tags menu when things change...
+	// FIXME HACK: Always rebuild the tags menu when things change...
 	tagLine = YES;
 #else
 	NSRange			tagRange;
 	unsigned 		start, end, end1;
-
+	
 	//
 	// Trigger an update of the tags menu, if necessary
 	//
 	tagRange = [replacementString rangeOfString:@"%:"];
 	if (tagRange.length != 0)
 		tagLine = YES;
-
+	
 	// added by S. Zenitani -- "\n" increments tagLocationLine
 	tagRange = [replacementString rangeOfString:@"\n"];
 	if (tagRange.length != 0)
 		tagLine = YES;
 	// end
-
-
+	
+	
 	textString = [textView string];
 	[textString getLineStart:&start end:&end contentsEnd:&end1 forRange:affectedCharRange];
 	tagRange.location = start;
@@ -2452,7 +2843,7 @@ preference change is cancelled. "*/
 	matchRange = [textString rangeOfString:@"%:" options:0 range:tagRange];
 	if (matchRange.length != 0)
 		tagLine = YES;
-
+	
 	// FIXME: The following check is silly. *Every* line contains a newline, so the check will
 	// *always* succeed! And thus we regenerate the tags menu after each key press...
 	// OTOH, just removing this will cause lots of bugs related to tagging: For example,
@@ -2460,17 +2851,17 @@ preference change is cancelled. "*/
 	// now a "%:" on the line. To catch all cases, it is necessary to check for a "%:" in the
 	// textStorage both before the replacement and also after it. Checking replacementString
 	// is rather pointless in most cases.
-
+	
 	// for tagLocationLine (2) Zenitani
 	matchRange = [textString rangeOfString:@"\n" options:0 range:tagRange];
 	if (matchRange.length != 0)
 		tagLine = YES;
-
+	
 	//
 	// Update the list of sections in the tag menu, if enabled
 	//
 	if ([SUD boolForKey: TagSectionsKey]) {
-
+		
 		for (i = 0; i < [g_taggedTeXSections count]; ++i) {
 			tagRange = [replacementString rangeOfString:[g_taggedTeXSections objectAtIndex:i]];
 			if (tagRange.length != 0) {
@@ -2478,15 +2869,15 @@ preference change is cancelled. "*/
 				break;
 			}
 		}
-
+		
 		if (!tagLine) {
-
+			
 			textString = [textView string];
 			[textString getLineStart:&start end:&end
 						 contentsEnd:&end1 forRange:affectedCharRange];
 			tagRange.location	= start;
 			tagRange.length		= end - start;
-
+			
 			for (i = 0; i < [g_taggedTeXSections count]; ++i) {
 				matchRange = [textString rangeOfString: [g_taggedTeXSections objectAtIndex:i] options:0 range:tagRange];
 				if (matchRange.length != 0) {
@@ -2494,67 +2885,84 @@ preference change is cancelled. "*/
 					break;
 				}
 			}
-
+			
 		}
 	}
 #endif
-
+	
 	if (replacementString == nil)
 		return YES;
-
-
+	
+	
 	if ([replacementString length] != 1)
 		return YES;
 	rightpar = [replacementString characterAtIndex:0];
-
+	
 	if ([SUD boolForKey:ParensMatchingEnabledKey]) {
-		if ((rightpar != '}') &&  (rightpar != ')') &&  (rightpar != ']'))
+		if (!(   ((rightpar == '}') && [SUD boolForKey:CheckBraceEnabledKey]) 
+			  || ((rightpar == ')') && [SUD boolForKey:CheckParenEnabledKey])
+			  || ((rightpar == '>') && [SUD boolForKey:CheckBracketEnabledKey])
+			  || ((rightpar == ']') && [SUD boolForKey:CheckSquareBracketEnabledKey]))) // modified by Terada
 			return YES;
-
+		
 		if (rightpar == '}')
 			leftpar = '{';
 		else if (rightpar == ')')
 			leftpar = '(';
+		else if (rightpar == '>') // added by Terada
+			leftpar = '<'; // added by Terada
 		else
 			leftpar = '[';
-
+		
 		textString = [textView string];
 		i = affectedCharRange.location;
 		j = 1;
 		count = 1;
-
-
+		
+		if (((i > 0) ? [textString characterAtIndex:i-1] : nil) == g_texChar) return YES; // added by Terada
+		
 		/* modified Jan 26, 2001, so we don't search entire text */
 		while ((i > 0) && (j < 5000)) {
 			i--; j++;
 			uchar = [textString characterAtIndex:i];
-			if (uchar == rightpar)
+			BOOL notCS = (((i > 0) ? [textString characterAtIndex:i-1] : nil) != g_texChar); // added by Terada
+			if (uchar == rightpar && notCS) // modified by Terada
 				count++;
-			else if (uchar == leftpar)
+			else if (uchar == leftpar && notCS) // modified by Terada
 				count--;
 			if (count == 0) {
 				matchRange.location = i;
 				matchRange.length = 1;
-				/* koch: here 'affinity' and 'stillSelecting' are necessary,
-					else the wrong range is selected. */
-				[textView setSelectedRange: matchRange
-								  affinity: NSSelectByCharacter stillSelecting: YES];
+				// modified by Terada (from this line)
+				if (NSFoundationVersionNumber > LEOPARD) {
+					[self performSelector:@selector(showIndicator:) 
+							   withObject:NSStringFromRange(matchRange)
+							   afterDelay:0.0];
+				}
+				else {
+					/* koch: here 'affinity' and 'stillSelecting' are necessary,
+					 else the wrong range is selected. */
+					[textView setSelectedRange: matchRange
+									  affinity: NSSelectByCharacter stillSelecting: YES];
+					
+					// TODO / FIXME: Replace the brace highlighting below with something better. See Smultron:
+					//   [layoutManager addTemporaryAttributes:[self highlightColour] forCharacterRange:NSMakeRange(cursorLocation, 1)];
+					//   [self performSelector:@selector(resetBackgroundColour:) withObject:NSStringFromRange(NSMakeRange(cursorLocation, 1)) afterDelay:0.12];
+					
+					[textView display];
+					myDate = [NSDate date];
+					/* Koch: Jan 26, 2001: changed -0.15 to -0.075 to speed things up */
+					while ([myDate timeIntervalSinceNow] > - 0.075);
+					[textView setSelectedRange: affectedCharRange];
+					
+				}
+				// modified by Terada (until this line)
 
-	// TODO / FIXME: Replace the brace highlighting below with something better. See Smultron:
-	//   [layoutManager addTemporaryAttributes:[self highlightColour] forCharacterRange:NSMakeRange(cursorLocation, 1)];
-	//   [self performSelector:@selector(resetBackgroundColour:) withObject:NSStringFromRange(NSMakeRange(cursorLocation, 1)) afterDelay:0.12];
-
-				[textView display];
-				myDate = [NSDate date];
-				/* Koch: Jan 26, 2001: changed -0.15 to -0.075 to speed things up */
-				while ([myDate timeIntervalSinceNow] > - 0.075);
-				[textView setSelectedRange: affectedCharRange];
-				
 				break;
 			}
 		}
 	}
-
+	
 	return YES;
 }
 
@@ -2569,10 +2977,10 @@ preference change is cancelled. "*/
 }
 
 - (NSString *) errorLinePathFor: (int)theError{
-		if (theError < errorNumber)
-			return errorLinePath[theError];
-		else 
-			return nil;
+	if (theError < errorNumber)
+		return errorLinePath[theError];
+	else 
+		return nil;
 }
 
 - (NSString *) errorTextFor: (int)theError{
@@ -2601,10 +3009,10 @@ preference change is cancelled. "*/
 	NSString	*myErrorPath;
 	NSString	*myErrorText;
 	TSDocument	*theDocument;
-
+	
 	myRoot = nil;
 	doError = NO;
-
+	
 	if (rootDocument != nil) {
 		wlist = [NSApp orderedDocuments];
 		en = [wlist objectEnumerator];
@@ -2613,7 +3021,7 @@ preference change is cancelled. "*/
 				myRoot = rootDocument;
 		}
 	}
-
+	
 	if (rootDocument == nil) {
 		if (errorNumber > 0) {
 			doError = YES;
@@ -2640,8 +3048,8 @@ preference change is cancelled. "*/
 				whichError = 0;
 		}
 	}
-
-
+	
+	
 	if (!_externalEditor && fileIsTex && doError) {
 		if (myErrorPath == nil) {
 			[textWindow makeKeyAndOrderFront: self];
@@ -2649,7 +3057,7 @@ preference change is cancelled. "*/
 				[self toLine: myErrorLine];
 			else 
 				[self toLine: myErrorLine andSubstring: myErrorText];
-
+			
 		}
 		else {
 			NSString *thePath = [[[self fileName] stringByDeletingLastPathComponent] stringByAppendingPathComponent: [myErrorPath stringByStandardizingPath]];
@@ -2672,9 +3080,9 @@ preference change is cancelled. "*/
 					[self toLine: myErrorLine andSubstring: myErrorText];
 				}
 			}
-
-		}
 			
+		}
+		
 	}
 }
 
@@ -2687,7 +3095,7 @@ preference change is cancelled. "*/
 	
 	returnRange.location = 0;
 	returnRange.length = 0;
-
+	
 	if (line < 1) 
 		return returnRange;
 	text = [textView string];
@@ -2715,7 +3123,7 @@ preference change is cancelled. "*/
 	NSString	*text;
 	unsigned	start, end, stringlength;
 	NSRange	myRange;
-
+	
 	if (line < 1) return;
 	text = [textView string];
 	stringlength = [text length];
@@ -2733,7 +3141,7 @@ preference change is cancelled. "*/
 		[textView setSelectedRange: myRange];
 		[textView scrollRangeToVisible: myRange];
 	}
-
+	
 }
 
 - (void) toLine: (int) line andSubstring: theString
@@ -2872,6 +3280,15 @@ preference change is cancelled. "*/
 		return YES;
 	}
 
+	// added by Terada
+	if ([anItem action] == @selector(showHideInvisibleCharacters:)) {
+		if (invisibleCharactersShowing)
+			[anItem setState:NSOnState];
+		else
+			[anItem setState:NSOffState];
+		return YES;
+	}
+	
 
 	//Michael Witten: mfwitten@mit.edu
 	if ([anItem action] == @selector(setLineBreakMode:)) {
@@ -3702,6 +4119,123 @@ preference change is cancelled. "*/
 	[self fixAutoMenu];
 }
 
+// added by Terada (- (void) changeShowFullPath:)
+- (void) changeShowFullPath: sender
+{
+	showFullPath = ! showFullPath;
+	[self fixShowFullPathButton];
+	[SUD setBool:showFullPath forKey:ShowFullPathEnabledKey];
+	[pdfKitWindow becomeMainWindow];
+	[pdfKitWindow makeKeyWindow];
+	[textWindow becomeMainWindow];
+	[textWindow makeKeyWindow];
+}
+
+
+// added by Terada (- (NSString*) fileTitleName)
+- (NSString*) fileTitleName
+{
+	return showFullPath ? [self fileName] : [[self fileName] lastPathComponent];
+}
+
+/*
+// added by Terada (- (void) openStyleFile:)
+- (void) openStyleFile: (id)sender
+{
+	
+	NSSize dialogSize = NSMakeSize(340, 120);
+	NSRect dialogRect = NSMakeRect(0, 0, dialogSize.width, dialogSize.height);
+	
+	NSWindow *dialog = [[[NSWindow alloc] initWithContentRect:dialogRect
+													styleMask:(NSTitledWindowMask|NSResizableWindowMask)
+													  backing:NSBackingStoreBuffered 
+														defer:NO] autorelease];
+	[dialog setFrame:dialogRect display:NO];
+	[dialog setMinSize:NSMakeSize(250, dialogSize.height)];
+	[dialog setMaxSize:NSMakeSize(10000, dialogSize.height)];
+	[dialog setTitle:NSLocalizedString(@"Input Stylefile Name to Open", @"Input Stylefile Name to Open")];
+	
+	NSTextField *input = [[[NSTextField alloc] init] autorelease];
+	[input setFrame:NSMakeRect(17, 54, dialogSize.width - 40, 25)];
+	NSString *lastStyName = [SUD stringForKey:LastStyNameKey];
+	lastStyName = (!lastStyName || [lastStyName isEqualToString:@""]) ? @"latex.ltx" : lastStyName;
+	[input setStringValue:lastStyName];
+	[input setAutoresizingMask:NSViewWidthSizable];
+	[[dialog contentView] addSubview:input];
+	
+	NSButton* cancelButton = [[[NSButton alloc] init] autorelease];
+	[cancelButton setTitle:NSLocalizedString(@"Cancel", @"Cancel")];
+	[cancelButton setFrame:NSMakeRect(dialogSize.width - 206, 12, 96, 32)];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setAutoresizingMask:NSViewMinXMargin];
+	[cancelButton setKeyEquivalent:@"\033"];
+	[cancelButton setTarget:self];
+	[cancelButton setAction:@selector(dialogCancel:)];
+	[[dialog contentView] addSubview:cancelButton];
+	
+	NSButton* okButton = [[[NSButton alloc] init] autorelease];
+	[okButton setTitle:@"OK"];
+	[okButton setFrame:NSMakeRect(dialogSize.width - 110, 12, 96, 32)];
+	[okButton setBezelStyle:NSRoundedBezelStyle];
+	[okButton setAutoresizingMask:NSViewMinXMargin];
+	[okButton setKeyEquivalent:@"\r"];
+	[okButton setTarget:self];
+	[okButton setAction:@selector(dialogOk:)];
+	[[dialog contentView] addSubview:okButton];
+	
+	BOOL returnCode = [NSApp runModalForWindow:dialog];
+    [dialog orderOut:self];
+	
+	if(returnCode){
+		NSString* cd = [[self fileName] stringByDeletingLastPathComponent];
+		cd = cd ? [NSString stringWithFormat:@"cd \"%@\";", cd] : @"";
+		
+		NSString* kpsetool = [SUD objectForKey:KpsetoolKey];
+		if(!kpsetool || [kpsetool isEqualToString:@""]){
+			kpsetool = @"kpsetool -w -n latex tex";
+		}
+		NSString* target = [input stringValue];
+		[SUD setObject:target forKey:LastStyNameKey];
+		NSString* cmdLine = [NSString stringWithFormat:@"%@ PATH=%@:$PATH; open `%@ \"%@\"`", cd, [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath], kpsetool, target];
+		
+		char str[1024];
+		FILE *fp;
+		
+		if((fp=popen([[cmdLine stringByAppendingString:@" >/dev/null 2>&1"] UTF8String], "r")) == NULL){
+			NSBeep();
+			NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), @"An error has occurred.", @"OK", nil, nil);
+			return;
+		}
+		while(YES){
+			if(fgets(str, 1024, fp) == NULL) break;
+		}
+		if(pclose(fp) != 0) {
+			NSBeep();
+			NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), [NSString stringWithFormat:NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), target], @"OK", nil, nil);
+		}
+	}
+}
+
+// added by Terada (- (void) dialogOk:)
+- (void)dialogOk:(id)sender
+{
+    [NSApp stopModalWithCode:YES];
+}
+
+// added by Terada (- (void) dialogCancel:)
+- (void)dialogCancel:(id)sender
+{
+    [NSApp stopModalWithCode:NO];
+}
+*/
+
+// added by Terada (- (void) setAutoCompleting:)
+- (void) setAutoCompleting:(BOOL)flag 
+{
+	autoCompleting = flag;
+}
+
+
 - (void) flipShowSync: sender
 {
 	int theState = [syncBox state];
@@ -3763,6 +4297,23 @@ preference change is cancelled. "*/
 			}
 		}
 }
+
+// added by Terada (- (void) fixShowFullPathButton)
+- (void) fixShowFullPathButton
+{
+	[showFullPathButton setState: showFullPath];
+	NSEnumerator* enumerator = [[[textWindow toolbar] items] objectEnumerator];
+	id anObject;
+	while ((anObject = [enumerator nextObject])) {
+		if ([[anObject itemIdentifier] isEqual: @"ShowFullPath"]) {
+			if (showFullPath)
+				[[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setState: NSOnState];
+			else
+				[[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setState: NSOffState];
+		}
+	}
+}
+
 
 - (void)changePrefAutoComplete:(NSNotification *)notification
 {
@@ -3977,6 +4528,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	NSRange		oldRange, searchRange;
 	NSMutableString	*stringBuf;
 	NSString *oldString, *newString;
+
+	autoCompleting = YES; // added by Terada
 	
 	// mutably copy the replacement text
 	stringBuf = [NSMutableString stringWithString: theString];
@@ -4017,6 +4570,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			[textView setSelectedRange:searchRange];
 		}
 	}
+	autoCompleting = NO; // added by Terada
+	contentHighlighting = NO; // added by Terada
+	braceHighlighting = NO; // added by Terada
 }
 
 
@@ -4267,6 +4823,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			case Muncomment:
 				if (lineStart<lineContentsEnd)
 					theChar=[text characterAtIndex:lineStart];
+				else break; // added by Terada
 				if (theChar == '%') {
 					modifyRange.length = 1;
 					[textView replaceCharactersInRange:modifyRange withString:@""];
@@ -4523,6 +5080,19 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			}
 		}
 		
+		if ([extension isEqualToString:@"xml"]) {
+			objectName = [anObject stringByDeletingPathExtension];
+			if ([[objectName pathExtension] isEqualToString:@"run"]) {
+				doMove = YES;
+				isOneOfOther = YES;
+				if (! aggressiveTrash) {
+					objectName = [objectName stringByDeletingPathExtension];
+					if (! [objectName isEqualToString:fileName])
+						doMove = NO;
+				}
+			}
+		}
+		
 		if (doMove && (isOneOfOther ||
 					   ([extension isEqualToString:@"aux"] ||
 						[extension isEqualToString:@"blg"] ||
@@ -4548,6 +5118,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 						[extension isEqualToString:@"4tc"] ||
 						[extension isEqualToString:@"lg"] ||
 						[extension isEqualToString:@"xref"] ||
+						[extension isEqualToString:@"bcf"] ||
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
 						[extension isEqualToString:@"fdb_latexmk"] ||
@@ -4834,6 +5405,35 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	{
 		case NSLineBreakByClipping:
         {
+			
+			// modified by Terada
+			NSTextContainer *container;
+			NSSize maximumSize = NSMakeSize(FLT_MAX, FLT_MAX);
+			
+			[scrollView setAutoresizingMask:NSViewWidthSizable];
+			[[scrollView contentView] setAutoresizesSubviews:YES];
+			[scrollView setHasHorizontalScroller:YES];
+			
+			container = [textView textContainer];
+			[container setContainerSize:maximumSize];
+			[container setWidthTracksTextView:NO];
+			
+			[textView setMaxSize:maximumSize];
+			[textView setHorizontallyResizable:YES];
+			
+			//Do the same for the second textView:
+			[scrollView2 setAutoresizingMask:NSViewWidthSizable];
+			[[scrollView2 contentView] setAutoresizesSubviews:YES];
+			[scrollView2 setHasHorizontalScroller:YES];
+			
+			container = [textView2 textContainer];
+			[container setContainerSize:maximumSize];
+			[container setWidthTracksTextView:NO];
+			
+			[textView2 setMaxSize:maximumSize];
+			[textView2 setHorizontallyResizable:YES];
+			
+			/*
             NSTextContainer *   container       = [textView textContainer];
             NSSize              containerSize   = [container containerSize];
                                 containerSize.width = FLT_MAX;
@@ -4860,6 +5460,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			[container setContainerSize: containerSize];
 			[textView2 setFrameSize: containerSize];
             [textView2 setFrameSize: [scrollView contentSize]];
+			*/
             
 			break;
 		}
@@ -5248,9 +5849,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 }
 
 // // // // // // // //begin BULLET (H. Neary) (modified by (HS))
-// These search forward/backward for a Mark (by default the ¥ character) which acts as a placeholder.
-// The latest versions then look for a ``comment start'' ( "¥Ü" be default) starting at the Mark (i.e., the ¥ must also be part
-// of the ``comment start'' sequence and then look for the ``comment end'' ("Ý"). All the text between the Mark and the ``comment
+// These search forward/backward for a Mark (by default the â€¢ character) which acts as a placeholder.
+// The latest versions then look for a ``comment start'' ( "â€¢â€¹" be default) starting at the Mark (i.e., the â€¢ must also be part
+// of the ``comment start'' sequence and then look for the ``comment end'' ("â€º"). All the text between the Mark and the ``comment
 // end'' is selected 9only the Mark is selected if no comment is found. There are versions that delete the Mark (but not the
 // comment if it's there). Finally there are two commands for inserting Marks (since this differs on different keyboards) and
 // ``comment strings'' to make it fairly easy to build CommandCompletion files with comments.
@@ -5259,7 +5860,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 // selectors are used there.
 //
 
-NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentString = @"Ý";
+NSString *placeholderString = @"â€¢", *startcommentString = @"â€¢â€¹", *endcommentString = @"â€º";
 
 - (void) doNextBullet: (id)sender // modified by (HS)
 {
@@ -5291,7 +5892,7 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 	[textView scrollRangeToVisible:markerRange];
     }
     else NSBeep();
-    //NSLog(@"Next ¥ hit");
+    //NSLog(@"Next â€¢ hit");
 }
 
 - (void) doPreviousBullet: (id)sender // modified by (HS)
@@ -5323,7 +5924,7 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 	[textView scrollRangeToVisible:markerRange];
     }
     else NSBeep();
-    //NSLog(@"Next ¥ hit");
+    //NSLog(@"Next â€¢ hit");
 }
 
 - (void) doNextBulletAndDelete: (id)sender // modified by (HS)
@@ -5362,7 +5963,7 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 	[textView scrollRangeToVisible:markerRange];
     }
     else NSBeep();
-    //NSLog(@"Next ¥ hit");
+    //NSLog(@"Next â€¢ hit");
 }
 
 - (void) doPreviousBulletAndDelete: (id)sender // modified by (HS)
@@ -5400,7 +6001,7 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 	[textView scrollRangeToVisible:markerRange];
     }
     else NSBeep();
-    //NSLog(@"Next ¥ hit");
+    //NSLog(@"Next â€¢ hit");
 }
 
 - (void) placeBullet: (id)sender // modified by (HS) to be a simple insertion (replacing the selection)
@@ -5410,11 +6011,11 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 
     text = [textView string];
     myRange = [textView selectedRange];
-    [textView replaceCharactersInRange:myRange withString:placeholderString];//" ¥\n" puts ¥ on previous line
-    myRange.location += [placeholderString length];//= end+2;//start puts ¥ on previous line
+    [textView replaceCharactersInRange:myRange withString:placeholderString];//" â€¢\n" puts â€¢ on previous line
+    myRange.location += [placeholderString length];//= end+2;//start puts â€¢ on previous line
     myRange.length = 0;
     [textView setSelectedRange: myRange];
-    //NSLog(@"Place ¥ hit");
+    //NSLog(@"Place â€¢ hit");
 }
 
 - (void) placeComment: (id)sender // by (HS) to be a simple insertion (replacing the selection)
@@ -5424,12 +6025,12 @@ NSString *placeholderString = @"¥", *startcommentString = @"¥Ü", *endcommentStri
 
     text = [textView string];
     myRange = [textView selectedRange];
-    [textView replaceCharactersInRange:myRange withString:startcommentString];//" ¥\n" puts ¥ on previous line
-    myRange.location += [startcommentString length];//= end+2;//start puts ¥ on previous line
+    [textView replaceCharactersInRange:myRange withString:startcommentString];//" â€¢\n" puts â€¢ on previous line
+    myRange.location += [startcommentString length];//= end+2;//start puts â€¢ on previous line
     myRange.length = 0;
     [textView replaceCharactersInRange:myRange withString:endcommentString];
     [textView setSelectedRange: myRange];
-    //NSLog(@"Place ¥ hit");
+    //NSLog(@"Place â€¢ hit");
 }
 
 // end BULLET (H. Neary) (modified by (HS))

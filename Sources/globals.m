@@ -51,7 +51,19 @@ NSString *LatexScriptCommandKey = @"LatexScriptCommand";
 NSString *ParensMatchingEnabledKey = @"ParensMatchingEnabled";
 NSString *SpellCheckEnabledKey = @"SpellCheckEnabled";
 NSString *LineNumberEnabledKey = @"LineNumberEnabled";
+NSString *ShowInvisibleCharactersEnabledKey = @"ShowInvisibleChractersEnabled"; // added by Terada
 NSString *AutoCompleteEnabledKey = @"AutoCompleteEnabled";
+NSString *AlwaysHighlightEnabledKey = @"AlwaysHighlightEnabled"; // added by Terada
+NSString *HighlightContentEnabledKey = @"HighlightContentEnabled"; // added by Terada
+NSString *ShowFullPathEnabledKey = @"ShowFullPathEnabled"; // added by Terada
+NSString *ShowIndicatorForMoveEnabledKey = @"ShowIndicatorForMoveEnabled"; // added by Terada
+NSString *BeepEnabledKey = @"BeepEnabled"; // added by Terada
+NSString *FlashBackgroundEnabledKey = @"FlashBackgroundEnabled"; // added by Terada
+NSString *CheckBraceEnabledKey = @"CheckBraceEnabled"; // added by Terada
+NSString *CheckBracketEnabledKey = @"CheckBracketEnabled"; // added by Terada
+NSString *CheckSquareBracketEnabledKey = @"CheckSquareBracketEnabled"; // added by Terada
+NSString *CheckParenEnabledKey = @"CheckParenEnabled"; // added by Terada
+NSString *MakeatletterEnabledKey = @"MakeatletterEnabled"; // added by Terada
 NSString *PdfMagnificationKey = @"PdfMagnification";
 NSString *NoScrollEnabledKey = @"NoScrollEnabled";
 NSString *PdfWindowFixedPosKey = @"PdfWindowFixedPosition";
@@ -79,7 +91,7 @@ NSString *TexCommandKey = @"TexCommand";
 NSString *TexGSCommandKey = @"TexGSCommand";
 NSString *TexScriptCommandKey = @"TexScriptCommand";
 NSString *MetaPostCommandKey = @"MetaPostCommand";
-NSString *BibtexCommandKey = @"BibtexCommand";
+NSString *BibtexCommandKey = @"BibtexCommand"; // comment out by Terada (added back in, but unused: Koch)
 NSString *DistillerCommandKey = @"DistillerCommand";
 NSString *MatrixSizeKey = @"matrixsize"; // Jonas' Matrix addition
 NSString *TSHasBeenUsedKey = @"TSHasBeenUsed";
@@ -100,6 +112,7 @@ NSString *indexblueKey = @"indexblue";
 NSString *background_RKey = @"background_R";
 NSString *background_GKey = @"background_G";
 NSString *background_BKey = @"background_B";
+NSString *backgroundAlphaKey = @"backgroundAlpha"; // added by Terada
 NSString *foreground_RKey = @"foreground_R";
 NSString *foreground_GKey = @"foreground_G";
 NSString *foreground_BKey = @"foreground_B";
@@ -153,6 +166,7 @@ NSString *SyncTeXOnlyKey = @"SyncTeXOnly";
 NSString *ConsoleBackgroundColor_RKey = @"ConsoleBackgroundColor_R";
 NSString *ConsoleBackgroundColor_GKey = @"ConsoleBackgroundColor_G";
 NSString *ConsoleBackgroundColor_BKey = @"ConsoleBackgroundColor_B";
+NSString *ConsoleBackgroundAlphaKey = @"ConsoleBackgroundAlpha"; // added by Terada
 NSString *ConsoleForegroundColor_RKey = @"ConsoleForegroundColor_R";
 NSString *ConsoleForegroundColor_GKey = @"ConsoleForegroundColor_G";
 NSString *ConsoleForegroundColor_BKey = @"ConsoleForegroundColor_B";
@@ -162,6 +176,24 @@ NSString *ConsoleWidthResizeKey = @"ConsoleWidthResize";
 NSString *RightJustifyKey = @"RightJustify";
 NSString *CommandCompletionCharKey = @"CommandCompletionChar";
 NSString *CommandCompletionAlternateMarkShortcutKey = @"CommandCompletionAlternateMarkShortcut";
+NSString *showSpaceCharacterKey = @"ShowSpaceCharacter"; // added by Terada
+NSString *showFullwidthSpaceCharacterKey = @"ShowFullwidthSpaceCharacter"; // added by Terada
+NSString *showTabCharacterKey = @"ShowTabCharacter"; // added by Terada
+NSString *showNewLineCharacterKey = @"ShowNewLineCharacter"; // added by Terada
+NSString *SpaceCharacterKindKey = @"SpaceCharacterKind"; // added by Terada
+NSString *FullwidthSpaceCharacterKindKey = @"FullwidthSpaceCharacterKind"; // added by Terada
+NSString *TabCharacterKindKey = @"TabCharacterKind"; // added by Terada
+NSString *NewLineCharacterKindKey = @"NewLineCharacterKind"; // added by Terada
+NSString *LastStyNameKey = @"LastStyName"; // added by Terada
+NSString *KpsetoolKey = @"Kpsetool"; // added by Terada
+NSString *BibTeXengineKey = @"BibTeXengine"; // added by Terada
+
+NSString *SmartInsertDeleteKey = @"SmartInsertDelete"; // Koch
+NSString *AutomaticDataDetectionKey = @"AutomaticDataDetection"; // Koch
+NSString *AutomaticLinkDetectionKey = @"AutomaticLinkDetection"; // Koch
+NSString *AutomaticTextReplacementKey = @"AutomaticTextReplacement"; // Koch
+NSString *AutomaticDashSubstitutionKey = @"AutomaticDashSubstitution"; // Koch
+NSString *AutomaticQuoteSubstitutionKey = @"AutomaticQuoteSubstitution"; // Koch
 
 
 
@@ -226,6 +258,11 @@ NSString *g_commandCompletionChar = nil;
 NSMutableString *g_commandCompletionList = nil;
 BOOL g_canRegisterCommandCompletion = NO;
 NSColor *PreviewBackgroundColor = nil;
+
+// Spelling (defaults if not changed by document tag)
+BOOL		spellLanguageChanged;
+BOOL		automaticLanguage;
+NSString	*defaultLanguage;
 
 // Koch 8/24/03
 int	g_macroType;	// FIXME: get rid of this

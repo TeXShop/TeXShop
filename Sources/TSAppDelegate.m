@@ -35,6 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 
+
 #import "OgreKit/OgreTextFinder.h"
 #import "TextFinder.h"
 
@@ -59,6 +60,7 @@
 - (void)dealloc
 {
 	[g_autocompletionDictionary release];
+	[defaultLanguage release];
 	[super dealloc];
 }
 
@@ -321,6 +323,17 @@
 		g_texChar = YEN;
 	else
 		g_texChar = BACKSLASH;
+	
+// Configure Spelling
+	spellLanguageChanged = NO;
+	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+	defaultLanguage = [[theChecker language] retain];
+	// NSLog(defaultLanguage);
+	if ([theChecker respondsToSelector:@selector(automaticallyIdentifiesLanguages)])
+		automaticLanguage = [theChecker automaticallyIdentifiesLanguages];
+	else
+		automaticLanguage = NO;
+	
 
 // added by mitsu --(H) Macro menu and (G) TSEncodingSupport
 	[[TSEncodingSupport sharedInstance] setupForEncoding];        // this must come after
@@ -670,6 +683,52 @@
 	} else
 		return YES;
 }
+
+// added by Terada (- (NSArray*)searchTeXWindows:)
+- (NSArray*)searchTeXWindows:(int*)ptrToCurrentIndexInReturnedArray
+{
+	NSArray* windows = [NSApp windows];
+	uint currentIndex = [windows indexOfObject:[NSApp keyWindow]];
+	NSMutableArray *matchIndexes = [[NSMutableArray arrayWithCapacity:0] retain];
+	*ptrToCurrentIndexInReturnedArray = -1;
+	int count = 0;
+	uint i;
+	
+	for(i=0; i<[windows count]; i++){
+		if ([[windows objectAtIndex:i] isKindOfClass:[TSTextEditorWindow class]]) {
+			[matchIndexes addObject:[NSNumber numberWithInt:i]];
+			if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
+			count++;
+		}
+	}
+	
+	return (count == 0) ? nil : matchIndexes;
+}
+
+// added by Terada (- (IBAction)nextTeXWindow:)
+- (IBAction)nextTeXWindow:(id)sender 
+{
+	int currentIndexInReturnedArray;
+	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
+	if (matchIndexes) {
+		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] intValue];
+		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
+	}
+	[matchIndexes release];
+}
+
+// added by Terada (- (IBAction)previousTeXWindow:)
+- (IBAction)previousTeXWindow:(id)sender 
+{
+	int currentIndexInReturnedArray;
+	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
+	if (matchIndexes) {
+		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] intValue];
+		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
+	}
+	[matchIndexes release];
+}
+
 
 // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender

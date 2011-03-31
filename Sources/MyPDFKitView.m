@@ -669,7 +669,8 @@
 	int				pageNumber;
 	int				numRows, i, newlySelectedRow;
 	unsigned int	newPageIndex;
-
+	NSIndexSet		*myIndexSet;
+	
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
 	[currentPage setIntValue: pageNumber];
@@ -695,13 +696,17 @@
 		if ([[self document] indexForPage: [[outlineItem destination] page]] == newPageIndex)
 		{
 			newlySelectedRow = i;
-			[_outlineView selectRow: newlySelectedRow byExtendingSelection: NO];
+			myIndexSet = [NSIndexSet indexSetWithIndex: i];
+			// [_outlineView selectRow: newlySelectedRow byExtendingSelection: NO]; //this was deprecated, so
+			[_outlineView selectRowIndexes: myIndexSet byExtendingSelection: NO];
 			break;
 		}
 		else if ([[self document] indexForPage: [[outlineItem destination] page]] > newPageIndex)
 		{
 			newlySelectedRow = i - 1;
-			[_outlineView selectRow: newlySelectedRow byExtendingSelection: NO];
+			myIndexSet = [NSIndexSet indexSetWithIndex: i];
+			// [_outlineView selectRow: newlySelectedRow byExtendingSelection: NO]; //this was deprecated, so
+			[_outlineView selectRowIndexes: myIndexSet byExtendingSelection: NO];
 			break;
 		}
 	}

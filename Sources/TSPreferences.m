@@ -1121,6 +1121,17 @@ person script. See also: DefaultTypesetMode.
 	[[TSEncodingSupport sharedInstance] setupForEncoding];
 }
 
+// koch, 4/10/2011
+- (IBAction)convertUTFPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
+	
+	[SUD setBool:[sender state] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
+	
+}
+
+
 
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
@@ -1397,6 +1408,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
 	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)
+	[_convertUTFButton setState:[defaults boolForKey:AutomaticUTF8MACtoUTF8ConversionKey]];
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada

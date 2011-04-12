@@ -14,6 +14,41 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.39</h5></P>
+
+TeXShop 2.39 fixes a significant bug for users who write in Hebrew and Arabic. In
+version 2.38, typesetting sometimes displaced diacritical marks left one character,
+even though the source looked correct. The problem was not in the typesetting, but
+instead in the source code, which was converted to an incorrect form when saved. This is fixed.
+See the explanation which follows.
+
+<ul>
+<li> Some languages use extensive diacritical marks, including more than one mark for each letter.
+For these languages, there are 
+two conventions about the order that the main character and diacritical
+marks are written. The two conventions are
+
+<dl>
+<dd>	UTF-8-Mac = NFD = Normalization Form Decomposition
+<dd>	UTF-8 = NFC = Normalization Form Composition
+</dl>
+<p>  A major problem is that the two forms look the same on the screen, but
+typeset differently (or in some cases not at all). Users in Japan
+sometimes copy and drag UTF-8-MAC text to TeXShop, but then find
+that they cannot typeset. So Yusuke Terada provided automatic conversion. This breaks Hebrew
+and Arabic typesetting.
+
+<p> In TeXShop 2.39, a new Preference item under the Miscellaneous tab turns this automatic conversion on. The
+preference item should be turned on by users in Japan, but most other users should leave it off.
+
+<li> The program  comes with French translations by Rene Fritz of Herbert Schulz' two documents on
+Command Conversion and TeXShop Tips and Tricks.
+
+<p>
+<li> Minor improvements have been made in the French, Spanish, German, and Chinese translations.
+
+</ul>
+
 <P><h5>TeXShop Changes 2.38</h5></P>
 
 <p> Version 2.38 contains some wonderful changes by Yusuke Terada,

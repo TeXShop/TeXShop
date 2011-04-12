@@ -194,6 +194,7 @@ NSString *AutomaticLinkDetectionKey = @"AutomaticLinkDetection"; // Koch
 NSString *AutomaticTextReplacementKey = @"AutomaticTextReplacement"; // Koch
 NSString *AutomaticDashSubstitutionKey = @"AutomaticDashSubstitution"; // Koch
 NSString *AutomaticQuoteSubstitutionKey = @"AutomaticQuoteSubstitution"; // Koch
+NSString *AutomaticUTF8MACtoUTF8ConversionKey = @"AutomaticUTF8MACtoUTF8Conversion"; //Koch
 
 
 

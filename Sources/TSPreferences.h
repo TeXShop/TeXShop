@@ -74,6 +74,7 @@
 	IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
+	IBOutlet NSButton		*_convertUTFButton;
 	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
@@ -197,6 +198,7 @@
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
+- (IBAction)convertUTFPressed:sender;
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
 - (IBAction)setPreviewBackgroundColor:sender;

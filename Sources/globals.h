@@ -393,6 +393,7 @@ extern NSString *AutomaticLinkDetectionKey; // Koch
 extern NSString *AutomaticTextReplacementKey; // Koch
 extern NSString *AutomaticDashSubstitutionKey; // Koch
 extern NSString *AutomaticQuoteSubstitutionKey; // Koch
+extern NSString *AutomaticUTF8MACtoUTF8ConversionKey; //Koch
 // end mitsu 1.29
 
 

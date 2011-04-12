@@ -1011,12 +1011,19 @@ in other code when an external editor is being used. */
 
 
 	// zenitani 1.35 (C) --- utf.sty output
-	if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
-	   [[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [[_textStorage string] precomposedStringWithCanonicalMapping] withEncoding: _encoding] ) { // modified by Terada
-		
-		return [[TSEncodingSupport sharedInstance] ptexUtfOutput: textView withEncoding: _encoding];
-	} else {
-		return [[[_textStorage string] precomposedStringWithCanonicalMapping] dataUsingEncoding: _encoding allowLossyConversion:YES]; // modified by Terada
+	if ( [SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] ) {
+		if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
+				[[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [[_textStorage string] precomposedStringWithCanonicalMapping] withEncoding: _encoding] ) { // modified by Terada
+			return [[TSEncodingSupport sharedInstance] ptexUtfOutput: textView withEncoding: _encoding];
+		} else 
+			return [[[_textStorage string] precomposedStringWithCanonicalMapping] dataUsingEncoding: _encoding allowLossyConversion:YES]; // modified by Terada
+		}
+	else {
+		if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
+		   [[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [_textStorage string]  withEncoding: _encoding] ) { // original code
+				return [[TSEncodingSupport sharedInstance] ptexUtfOutput: textView withEncoding: _encoding];
+		} else 
+			return [[_textStorage string]  dataUsingEncoding: _encoding allowLossyConversion:YES]; // original code
 	}
 }
 

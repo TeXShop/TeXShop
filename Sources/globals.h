@@ -394,6 +394,17 @@ extern NSString *AutomaticTextReplacementKey; // Koch
 extern NSString *AutomaticDashSubstitutionKey; // Koch
 extern NSString *AutomaticQuoteSubstitutionKey; // Koch
 extern NSString *AutomaticUTF8MACtoUTF8ConversionKey; //Koch
+extern NSString *highlightBracesRedKey; //Koch
+extern NSString *highlightBracesBlueKey; //Koch
+extern NSString *highlightBracesGreenKey; //Koch
+extern NSString *highlightContentRedKey; //Koch
+extern NSString *highlightContentGreenKey; //Koch
+extern NSString *highlightContentBlueKey; //Koch
+extern NSString *invisibleCharRedKey; //Koch
+extern NSString *invisibleCharGreenKey; //Koch
+extern NSString *invisibleCharBlueKey; //Koch
+extern NSString *brieflyFlashYellowForMatchKey; //Koch
+
 // end mitsu 1.29
 
 

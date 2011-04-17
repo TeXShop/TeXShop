@@ -79,6 +79,7 @@
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleForegroundColorWell;
+	IBOutlet NSColorWell	*_highlightBracesColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
 
@@ -202,6 +203,7 @@
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
 - (IBAction)setPreviewBackgroundColor:sender;
+- (IBAction)setHighlightBracesColor:sender;
 - (IBAction)setConsoleBackgroundColor:sender;
 - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;

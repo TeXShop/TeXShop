@@ -251,6 +251,7 @@ enum RootCommand
 	BOOL				firstTime;
 	NSTimeInterval		colorTime;
 	NSString			*spellLanguage;
+	BOOL				consoleCleanStart;
 
 	int lastCursorLocation; // added by Terada
 	int lastStringLength; // added by Terada

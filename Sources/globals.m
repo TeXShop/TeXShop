@@ -195,6 +195,17 @@ NSString *AutomaticTextReplacementKey = @"AutomaticTextReplacement"; // Koch
 NSString *AutomaticDashSubstitutionKey = @"AutomaticDashSubstitution"; // Koch
 NSString *AutomaticQuoteSubstitutionKey = @"AutomaticQuoteSubstitution"; // Koch
 NSString *AutomaticUTF8MACtoUTF8ConversionKey = @"AutomaticUTF8MACtoUTF8Conversion"; //Koch
+NSString *highlightBracesRedKey = @"highlightBracesRed"; //Koch (flashing color when braces first typed)
+NSString *highlightBracesGreenKey = @"highlightBracesGreen"; //Koch
+NSString *highlightBracesBlueKey = @"highlightBracesBlue"; //Koch
+NSString *highlightContentRedKey = @"highlightContentRed"; //Koch (content between braces when braces first typed)
+NSString *highlightContentGreenKey = @"highlightContentGreen"; //Koch
+NSString *highlightContentBlueKey = @"highlightContentBlue"; //Koch
+NSString *invisibleCharRedKey = @"invisibleCharRed"; //Koch
+NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
+NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
+NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
+
 
 
 

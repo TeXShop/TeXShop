@@ -847,6 +847,7 @@
 		inputPipe = [[NSPipe pipe] retain];
 		writeHandle = [inputPipe fileHandleForWriting];
 		
+		consoleCleanStart = YES;
 		[outputText setSelectable: YES];
 		[outputText selectAll:self];
 		[outputText replaceCharactersInRange: [outputText selectedRange] withString:@""];
@@ -1331,13 +1332,18 @@
 		[writeHandle writeData: myData];
 		// added by mitsu --(L) reflect tex input and clear tex input field in console window
 		NSRange selectedRange = [outputText selectedRange];
+		
 		selectedRange.location += selectedRange.length;
 		selectedRange.length = 0;
 		// in the next two lines, replace "command" by "old command" after Japanese modification made -- koch
 		[outputText replaceCharactersInRange: selectedRange withString: command];
 		selectedRange.length = [command length];
-		if ([SUD boolForKey: RedConsoleAfterErrorKey])
+		
+		if ([SUD boolForKey: RedConsoleAfterErrorKey]) {
 			[outputText setTextColor: [NSColor redColor] range: selectedRange];
+			consoleCleanStart = NO;
+		}
+		
 		[outputText scrollRangeToVisible: selectedRange];
 		[texCommand setStringValue: @""];
 		// end addition

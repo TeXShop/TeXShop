@@ -576,6 +576,22 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 }
 
+/*" This method is connected to the highlight Braces color well.
+ "*/
+- (IBAction)setHighlightBracesColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+	
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:highlightBracesRedKey] forKey:highlightBracesRedKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:highlightBracesGreenKey] forKey:highlightBracesGreenKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:highlightBracesBlueKey] forKey:highlightBracesBlueKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:highlightBracesRedKey];
+	[SUD setFloat: [newColor greenComponent] forKey:highlightBracesGreenKey];
+	[SUD setFloat: [newColor blueComponent] forKey:highlightBracesBlueKey];
+}
+
+
 /*" This method is connected to the console window background color well.
 "*/
 - (IBAction)setConsoleBackgroundColor:sender
@@ -1456,6 +1472,10 @@ This method retrieves the application preferences from the defaults object and s
 	NSColor *consoleForegroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:ConsoleForegroundColor_RKey]
 		green: [defaults floatForKey:ConsoleForegroundColor_GKey] blue: [defaults floatForKey:ConsoleForegroundColor_BKey] alpha:1.0];
 	[_consoleForegroundColorWell setColor:consoleForegroundColor];
+	
+	NSColor *highlightBracesColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:highlightBracesRedKey]
+		green: [defaults floatForKey:highlightBracesGreenKey] blue: [defaults floatForKey:highlightBracesBlueKey] alpha:1.0];
+	[_highlightBracesColorWell setColor:highlightBracesColor];
 	
 	if ([defaults boolForKey:ConsoleWidthResizeKey] == YES) 
 		[_consoleResizeMatrix selectCellWithTag:0];

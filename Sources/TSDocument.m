@@ -113,10 +113,22 @@
 	lastStringLength = 0; // added by Terada
 	lastInputIsDelete = NO;  // added by Terada
 	
+	float r, g, b;
+	r = [SUD floatForKey: highlightBracesRedKey];
+	g = [SUD floatForKey: highlightBracesGreenKey];
+	b = [SUD floatForKey: highlightBracesBlueKey];
 	highlightBracesColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
-								 [NSColor magentaColor], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada
+								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada
+	
+	r = [SUD floatForKey: highlightContentRedKey];
+	g = [SUD floatForKey: highlightContentGreenKey];
+	b = [SUD floatForKey: highlightContentBlueKey];
 	highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
-								  [NSColor colorWithDeviceRed:1 green:1 blue:0.5 alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada
+								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada 
+	// highlightBracesColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
+	// 							 [NSColor magentaColor], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada magentaColor
+	// highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
+	// 							  [NSColor colorWithDeviceRed:1 green:1 blue:0.5 alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada
 	
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
 
@@ -1714,6 +1726,8 @@ in other code when an external editor is being used. */
 }
 
 // added by Terada (- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow )
+// this was the original version, modified for 2.40 slightly
+/*
 - (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow
 {
 	if(!activeWindow || ![activeWindow respondsToSelector:@selector(frame)]) return;
@@ -1728,6 +1742,27 @@ in other code when an external editor is being used. */
 		
 	[targetWindow setFrame:newFrame display:YES];
 }
+*/
+
+// added by Terada (- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow )
+- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow
+{
+	if(!activeWindow || ![activeWindow respondsToSelector:@selector(frame)]) return;
+	NSRect activeWindowFrame = [activeWindow frame];
+	NSScreen *screen = [NSScreen mainScreen];
+	float minX = 20 + ((NSMinX(activeWindowFrame) + NSWidth(activeWindowFrame) + 20 > NSWidth([screen frame])) ? 0 : NSMinX(activeWindowFrame));
+	float minY, height;
+	if(NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0) {
+		minY = NSHeight([screen frame]);
+		height = NSHeight(activeWindowFrame);
+	}else {
+		minY = NSMinY(activeWindowFrame) + 20;
+		height = NSHeight(activeWindowFrame) - 40;
+	}
+	NSRect newFrame = NSMakeRect(minX, minY, NSWidth(activeWindowFrame), height);
+	[targetWindow setFrame:newFrame display:YES];
+}
+
 
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController
 /*" This method reads the NSUserDefaults and restores the settings before the document will actually be displayed.
@@ -2565,6 +2600,9 @@ preference change is cancelled. "*/
 // added by Terada (- (void)resetHighlight:)
 - (void)resetHighlight:(id)sender
 {
+	if([textView1 hasMarkedText] || [textView2 hasMarkedText]) 
+		return;
+	
 	if(windowIsSplit){
 		[self colorizeVisibleAreaInTextView:textView1];
 		[self colorizeVisibleAreaInTextView:textView2];
@@ -2770,6 +2808,7 @@ preference change is cancelled. "*/
 									   [NSNumber numberWithInt:originalLocation],
 									   nil]
 						   afterDelay:0];
+				 
 				
                 if(highlightContent){
 					[self performSelector:@selector(highlightContent:) 
@@ -2782,10 +2821,12 @@ preference change is cancelled. "*/
 							   afterDelay:0];
 				}
 				
-                if(!alwaysHighlight){
+				
+				if(!alwaysHighlight){
 					[self performSelector:@selector(resetHighlight:) 
 							   withObject:nil afterDelay:0.30];
 				}
+				
                 return;
             } else {
                 theSkipMatchingBrace += inc;
@@ -2794,6 +2835,7 @@ preference change is cancelled. "*/
             theSkipMatchingBrace -= inc;
         }
     }
+	
     if(beep) NSBeep();
 	if(flashBackground) {
 		[textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
@@ -2941,7 +2983,7 @@ preference change is cancelled. "*/
 				matchRange.location = i;
 				matchRange.length = 1;
 				// modified by Terada (from this line)
-				if (NSFoundationVersionNumber > LEOPARD) {
+				if ((NSFoundationVersionNumber > LEOPARD) && ([SUD boolForKey: brieflyFlashYellowForMatchKey])) {
 					[self performSelector:@selector(showIndicator:) 
 							   withObject:NSStringFromRange(matchRange)
 							   afterDelay:0.0];
@@ -4024,8 +4066,12 @@ preference change is cancelled. "*/
 
 			
 			typesetStart = YES;
-			
+			NSRange theRange = [outputText selectedRange];
+			theRange.length = [newOutput length];
 			[outputText replaceCharactersInRange: [outputText selectedRange] withString: newOutput];
+			if (! consoleCleanStart) {
+				[outputText setTextColor:[NSColor redColor] range: theRange];
+			}
 			[outputText scrollRangeToVisible: [outputText selectedRange]];
 			[newOutput release];
 			[readHandle readInBackgroundAndNotify];

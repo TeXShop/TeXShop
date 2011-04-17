@@ -116,7 +116,14 @@
 	NSSize theSize = NSMakeSize(theInsetWidth, theInsetHeight);
 	
     NSFont *theFont = [[self textStorage] font];
-    NSColor *theColor = [NSColor orangeColor];
+	
+	float r, g, b;
+	r = [SUD floatForKey: invisibleCharRedKey];
+	g = [SUD floatForKey: invisibleCharGreenKey];
+	b = [SUD floatForKey: invisibleCharBlueKey];
+	NSColor *theColor = [NSColor colorWithDeviceRed:r green:g blue:b alpha:1];
+    // NSColor *theColor = [NSColor orangeColor];
+	
     NSDictionary* _attributes = [NSDictionary dictionaryWithObjectsAndKeys:
 								 theFont, NSFontAttributeName, 
 								 theColor, NSForegroundColorAttributeName,  nil];

@@ -14,6 +14,53 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.40</h5></P>
+
+TeXShop 2.40 fixes a small number of minor bugs.
+
+<ul>
+<li> When working with a project containing a root file, windows would sometimes move as new chapter source
+files were opened. This is fixed.
+
+<p>
+<li> TeXShop has a hidden preference, "RedConsoleAfterError", which colors console output red after an
+error occurs in the source. This preference stopped working several versions ago. It again works.
+
+<p>
+<li> A few users disliked the temporary red color of parentheses in the new parenthesis matching code,
+but didn't want to turn parenthesis matching completely off because they wanted the matching parenthesis
+to blink. These users can now change the temporary parenthesis color in the Preference Panel.
+
+<p>
+<li> Hidden preference items were added to change all of the colors used in the new 2.38 additions by
+Yusude Terada: the temporary parenthesis color (default is magenta), the highlight color for text between matching parentheses (default is yellow),
+and the color of invisible characters when shown (default is orange). 
+
+<dl>
+<dd> defaults write TeXShop highlightBracesRed 1.00
+<dd> defaults write TeXShop highlightBracesGreen 0.00
+<dd> defaults write TeXShop highlightBracesBlue 1.00
+</dl>
+<dl> 
+<dd> defaults write TeXShop highlightContentRed 1.00
+<dd> defaults write TeXShop highlightContentGreen 1.00
+<dd> defaults write TeXShop highlightContentBlue 0.00
+</dl>
+<dl> 
+<dd> defaults write TeXShop invisibleCharRed 1.00
+<dd> defaults write TeXShop invisibleCharGreen 0.50
+<dd> defaults write TeXShop invisibleCharBlue 0.00
+</dl>
+
+<p> 
+<li> On Snow Leopard and above, matching braces are briefly marked with a yellow badge over the brace; this
+fulfills a request for great visibility of the matching characters. The badge can now be turned off with a hidden preference:
+<dl>
+<dd> defaults write TeXShop brieflyFlashYellowForMatch NO
+</dl>
+
+</ul>
+
 <P><h5>TeXShop Changes 2.39</h5></P>
 
 TeXShop 2.39 fixes a significant bug for users who write in Hebrew and Arabic. In

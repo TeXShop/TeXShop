@@ -260,6 +260,7 @@ NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotificatio
 TSFilterMode		g_shouldFilter;
 int					g_texChar;
 NSDictionary		*g_autocompletionDictionary;
+NSArray				*g_autocompletionKeys;  // added by Terada
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;

@@ -170,6 +170,7 @@
 - (IBAction)tabsChanged:sender;
 - (IBAction)commandCompletionChanged:sender;
 - (IBAction)findPanelChanged:sender;
+- (IBAction)defaultEngineCall:sender;
 
 
 - (IBAction)pdfWindowPosChanged:sender;

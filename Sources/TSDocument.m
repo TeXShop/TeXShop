@@ -1438,13 +1438,31 @@ in other code when an external editor is being used. */
 	NSDate          *myDate;
 	NSString        *enginePath, *myFileName, *tetexBinPath;
 	NSMutableArray  *args;
+	NSRange			theRange;
+	NSError			*theError;
+	BOOL			doSelection;
 	
 	[statisticsPanel setTitle:[self displayName]];
 	[statisticsPanel makeKeyAndOrderFront:self];
+
+	doSelection = NO;
+	NSArray *theRanges = [textView selectedRanges];
+	NSValue *theValue = [theRanges objectAtIndex:0];
+	theRange = [theValue rangeValue];
+	if (theRange.length > 0) {
+		NSString *statString = [[textView string] substringWithRange:theRange];
+		NSString *tempDir = NSTemporaryDirectory();
+		myFileName = [tempDir stringByAppendingPathComponent: [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"txt"]];
+		statTempFile = [myFileName retain]; // when we are done, the file will be erased and the variable released and set to zero
+		[statString writeToFile:myFileName atomically:YES encoding:_encoding error: NULL];
+		doSelection = YES;
+	}
 	
-	myFileName = [self fileName];
-	if (! myFileName)
-		return;
+	if (! doSelection) {
+		myFileName = [self fileName];
+		if (! myFileName)
+			return;
+		}
 	
 	if (detexTask != nil) {
 		[detexTask terminate];
@@ -1488,9 +1506,16 @@ in other code when an external editor is being used. */
 - (void)updateStatistics: sender
 {
 	SEL		saveForStatistics;
-
-	saveForStatistics = @selector(saveForStatistics:didSave:contextInfo:);
-	[self saveDocumentWithDelegate: self didSaveSelector: saveForStatistics contextInfo: nil];
+	
+	NSArray *theRanges = [textView selectedRanges];
+	NSValue *theValue = [theRanges objectAtIndex:0];
+	NSRange theRange = [theValue rangeValue];
+	if (theRange.length > 0)
+		[self showStatistics:nil];
+	else {
+		saveForStatistics = @selector(saveForStatistics:didSave:contextInfo:);
+		[self saveDocumentWithDelegate: self didSaveSelector: saveForStatistics contextInfo: nil];
+		}
 }
 
 
@@ -3338,6 +3363,16 @@ preference change is cancelled. "*/
 		return YES;
 	}
 	
+	// added by Koch
+	if ([anItem action] == @selector(changeAutoComplete:)) {
+		if (doAutoComplete)
+			[anItem setState:NSOnState];
+		else 
+			[anItem setState:NSOffState];
+		return YES;
+	}
+
+	
 
 	//Michael Witten: mfwitten@mit.edu
 	if ([anItem action] == @selector(setLineBreakMode:)) {
@@ -4095,6 +4130,11 @@ preference change is cancelled. "*/
 				[[statisticsForm cellAtIndex:2] setObjectValue:[charNumber stringValue]];
 			}
 		}
+		if (statTempFile) { // we got statistics for a selection and need to erase the temp file
+			[[NSFileManager defaultManager] removeItemAtPath:statTempFile error: NULL];
+			[statTempFile release];
+			statTempFile = nil;
+			}
 	}
 }
 
@@ -6098,6 +6138,70 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 	willClose = value;
 }
 
+- (void)closeCurrentEnvironment:(id)sender
+{
+	NSRange  oldRange;
+	NSString *newString = nil;
+	
+	autoCompleting = YES;
+	
+	oldRange = [textView selectedRange];
+	
+	NSString *regex = @"(begin|end)\\{(.*?)\\}";
+	if(g_texChar == YEN){
+		regex = [NSString stringWithFormat:@"%c%@", YEN, regex];
+	}else{
+		regex = [@"\\\\" stringByAppendingString:regex];
+	}
+	
+	NSEnumerator* enumerator = [[[OGRegularExpression regularExpressionWithString:regex]
+								 allMatchesInString:[[[textView textStorage] string] substringToIndex:oldRange.location]]
+								reverseObjectEnumerator];
+	
+	OGRegularExpressionMatch *match;
+	NSString *environment;
+	int increment, count_value;
+	NSNumber *count;
+	NSMutableDictionary *environmentStack = [NSMutableDictionary dictionaryWithCapacity:0];
+	
+	while((match = [enumerator nextObject])) {
+		increment = [[match substringAtIndex:1] isEqualToString:@"end"] ? 1 : -1;
+		environment = [match substringAtIndex:2];
+		count = [environmentStack objectForKey:environment];
+		if (count) {
+			count_value = [count intValue];
+			if(increment == 1){
+				[environmentStack setObject:[NSNumber numberWithInt:count_value+1] forKey:environment];
+			}else if(count_value > 0){
+				[environmentStack setObject:[NSNumber numberWithInt:count_value-1] forKey:environment];
+			}else {
+				newString = environment;
+				break;
+			}
+		}else {
+			if(increment == 1){
+				[environmentStack setObject:[NSNumber numberWithInt:1] forKey:environment];
+			}else {
+				newString = environment;
+				break;
+			}
+		}
+	}
+	
+	if(newString){
+		newString = [NSString stringWithFormat:@"%cend{%@}", g_texChar, newString];
+		if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) {
+			[textView replaceCharactersInRange:oldRange withString:newString];
+			[textView didChangeText];
+			
+			[[textView undoManager] setActionName:NSLocalizedString(@"Close Current Environment", @"Close Current Environment")];
+		}
+	}else {
+		NSBeep();
+	}
+	
+	autoCompleting = NO;
+}
 
 
 @end

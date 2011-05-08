@@ -404,6 +404,14 @@
 			[[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
 	[g_autocompletionDictionary retain];
 	// end of code added by Greg Landweber
+	
+	// added by Terada
+	autocompletionPath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletionDisplayOrder"] stringByAppendingPathExtension:@"plist"];
+	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]){
+		g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
+		[g_autocompletionKeys retain];
+	}
+	
 }
 
 

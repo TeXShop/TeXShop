@@ -252,6 +252,7 @@ enum RootCommand
 	NSTimeInterval		colorTime;
 	NSString			*spellLanguage;
 	BOOL				consoleCleanStart;
+	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 
 	int lastCursorLocation; // added by Terada
 	int lastStringLength; // added by Terada
@@ -369,7 +370,7 @@ enum RootCommand
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
 - (void)resetSpelling;
-
+- (void)closeCurrentEnvironment:(id)sender;
 
 // BibDesk Completion
 //---------------------------

@@ -850,7 +850,34 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 }
 
 
+- (IBAction)defaultEngineCall:sender //Koch; change one of four engine Unix calls
+{
+	NSString *defaultValue;
+	
+	int			which = [sender tag];
+	
+	switch (which) {
+		case 0: defaultValue = @"pdftex --file-line-error --shell-escape --synctex=1";
+				[_texCommandTextField setStringValue: defaultValue];
+				[self texProgramChanged: nil];
+				break;
+			
+		case 1: defaultValue = @"pdflatex --file-line-error --shell-escape --synctex=1";
+				[_latexCommandTextField setStringValue: defaultValue];
+				[self latexProgramChanged: nil];
+				break;
 
+		case 2: defaultValue = @"simpdftex etex --maxpfb --extratexopts \"-file-line-error -synctex=1\"";
+				[_texGSCommandTextField setStringValue: defaultValue];
+				[self texGSProgramChanged: nil];
+				break;
+
+		case 3: defaultValue = @"simpdftex latex --maxpfb --extratexopts \"-file-line-error -synctex=1\"";
+				[_latexGSCommandTextField setStringValue: defaultValue];
+				[self latexGSProgramChanged: nil];
+				break;
+	}
+}
 
 
 /*" This method is connected to resize option popup button. "*/

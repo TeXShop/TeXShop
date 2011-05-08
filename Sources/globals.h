@@ -458,6 +458,7 @@ extern NSString *CommandCompletionCharNotification;
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern int					g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
 extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
+extern NSArray				*g_autocompletionKeys; // added by Terada
 
 extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag) 
 extern BOOL					automaticLanguage; 

@@ -1250,7 +1250,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1329,7 +1329,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -1551,7 +1551,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixxed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1617,7 +1617,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // -- fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {

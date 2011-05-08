@@ -47,7 +47,7 @@
 \setlength{\fboxsep}{0pt}
 \newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
 
-\title{\TS\ Tips \& Tricks\\\small v0.4.2--2011/04/03}
+\title{\TS\ Tips \& Tricks\\\small v0.5.0--2011/04/20}
 \author{H. Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
 \date{}
 
@@ -204,18 +204,32 @@ You can get more information about this, as well as a (useful) sample, by downlo
 
 % Key Bindings (auto-completion)
 %	via ~/Library/TeXShop/Keyboard/autocompletion.plist
-\subsection{Auto Completion}
+\subsection{Key Bindings}
 
-Besides adding shortcuts to Menu Items you can actually bind keystrokes, within \TS, to expand into groups of characters. This is called Auto Completion and is enabled by setting the \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Editor}\To\mnu{Auto Complete} option. Don't confuse this with Command Completion which is discussed in Section (\ref{sec:CC}) below.
+Besides adding shortcuts to Menu Items you can actually bind keystrokes, within \TS, to expand into groups of characters. Checking the \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Editor}\To\mnu{Key Bindings} option will enable this feature. You can also toggle it on/off for any particular document using \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Toggle On/Off}. This feature was previously called Auto Completion; not to be confused with Command Completion---see section (\ref{sec:CC}) below.
 
-E.g., pressing \cmd{Opt-,} with a US keyboard layout, usually enters \texttt{\(\leq\)} into your document but with Auto Completion enabled \verb|\leq| will be entered. Similarly, with some text selected pressing \verb|"| will surround the selected text with \verb|``| and \verb|''|.
+E.g., pressing \cmd{Opt-,} with a US keyboard layout, usually enters \texttt{\(\leq\)} into your document but with Key Binding enabled \verb|\leq| will be entered. Similarly, with some text selected pressing \verb|"| will surround the selected text with \verb|``| and \verb|''|.
 
-You can add your own keybindings and/or remove those you don't need by editing \path{~/Library/TeXShop/Keyboard/autocompletion.plist}. To add a keybinding to the \verb|_| key so that pressing it with a selection will produce the selection surrounded by \verb|_{| and \verb|}| enter the lines
-\begin{verbatim}
-	<key>_</key>
-	<string>_{#SEL##INS#}</string>
-\end{verbatim}
-to the list in \path{autocompetion.plist}.
+You can add, remove or change the key bindings using the Key Bindings Editor (\mnu{Source}\To\mnu{Key Bindings}\To\mnu{Edit Key Bindings File…}). Figures (\ref{fig:keybindingmenu}) and (\ref{fig:keybindeditor}) show the \mnu{Key Bindings} Menu and Editor.
+\begin{figure}
+\centering
+\fbox{\includegraphics[width=3in]{figs/KeyBindingMenu}}
+\caption{The Key Bindings Menu in \TS.}
+\label{fig:keybindingmenu}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[height=2.00in]{figs/KeyBindingEditor}
+\caption{The Key Bindings Editor in \TS.}
+\label{fig:keybindeditor}
+\end{figure}
+
+%You can add your own keybindings and/or remove those you don't need by editing \path{~/Library/TeXShop/Keyboard/autocompletion.plist}. To add a keybinding to the \verb|_| key so that pressing it with a selection will produce the selection surrounded by \verb|_{| and \verb|}| enter the lines
+%\begin{verbatim}
+%	<key>_</key>
+%	<string>_{#SEL##INS#}</string>
+%\end{verbatim}
+%to the list in \path{autocompetion.plist}.
 
 % Macros
 %	Applescript and Text macros and the Macros Menu
@@ -268,7 +282,7 @@ line at the top of a file with your choice of engine substituted for \texttt{xxx
 
 \LaTeX\ markup is rather wordy which is nice because it describes what it's supposed to do but a bit painful to write. Command Completion allows you to insert complete environments and commands with a few keystrokes and the press of a ``trigger'' key (this is \cmd{Esc} by default but can be changed to \cmd{Tab} in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Command Completion Triggered By:}).
 
-Commands that have arguments usually have a Mark (\texttt{•}) inserted for each argument. You move to the next argument by using the \mnu{Source}\To\mnu{Completion}\To\mnu{Marks}\To\mnu{Next Mark} command (\cmd{Ctl-Cmd-F} [or \cmd{Opt-Trigger}]). This also selects the Mark so typing automatically removes the Mark and substitutes the typed information. See the complete documentation, with lists of commands/abbreviations supplied with \TS\ out of the box, in the \path{~/Library/TeXShop/CommandCompletion/} folder for much more information.
+Commands that have arguments usually have a Mark (\texttt{•}) inserted for each argument. You move to the next argument by using the \mnu{Source}\To\mnu{Command Completion}\To\mnu{Marks}\To\mnu{Next Mark} command (\cmd{Ctl-Cmd-F} [or \cmd{Opt-Trigger}]). This also selects the Mark so typing automatically removes the Mark and substitutes the typed information. See the complete documentation, with lists of commands/abbreviations supplied with \TS\ out of the box, in the \path{~/Library/TeXShop/CommandCompletion/} folder for much more information.
 
 \subsection{Completions}
 

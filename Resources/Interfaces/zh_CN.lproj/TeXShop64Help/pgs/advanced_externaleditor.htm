@@ -1,0 +1,84 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Using an External Editor</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="external editor">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+		<div id="content_border">
+		<P>TeXShop can be configured for an external editor in several ways. Some features below will be useful and others not depending on how your editor works. In the future, your editor may come with configuration instructions.  
+</p>
+
+<P>
+ There is a menu item named &quot;Open for Preview...&quot; When this item is chosen, you will be asked to select a .tex source file. But only the associated pdf preview window opens. If the source has not yet been typeset or if the pdf is out of date, TeXShop will typeset the file as it is opened. You can open your source file in any editor. When it is time to typeset, save the changes in your editor, switch to the preview window, and typeset. In this mode, TeXShop never opens or modifies the source file. It simply passes this file to the Unix TeX or LaTeX process.
+</P>
+
+<P>The preview window can be configured to contain a typesetting button. If such a button is not there, use "Customize Toolbar..." in the Windows menu to add one.</P>
+		<p>For users who prefer external editors most of the time, there is a preference item called &quot;Configure for External Editor.&quot; When this preference is chosen, the &quot;Open&quot; and &quot;Open Recent...&quot; menus open tex source files in the above manner for editing with an external editor. Moreover, the  &quot;Open for Preview...&quot; menu becomes &quot;Open for Editing...&quot; and opens the source file in TeXShop's internal editor for those rare occasions when the internal editor is desired. The &quot;Open&quot; and &quot;Open Recent...&quot; menus can also open jpg, tiff, ps, pdf, dvi, log, and other files; selecting the new preference does not change this behavior.</p>
+		<p>Some editors are able to call Unix typesetting commands directly. A new preference item, "Automatic Preview Update", has been added to improve your experience with these editors. When this item is active and a .tex file is opened using "Open for Preview", the pdf preview display automatically updates whenever the pdf file is rewritten. Thus you can typeset with an external editor and the preview window will automatically show changes. The preference also applies to .pdf files opened in TeXShop, and if TeXShop is configured to use an external editor, the preference applies to .tex files opened with "Open".
+ </p>
+<p> The following applescript commands have been added to
+TeXShop so editors can call TeXShop directly:
+<dl>
+<dd> typesetinteractive
+<dd> texinteractive
+<dd> latexinteractive
+<dd> contextinteractive
+<dd> bibtexinteractive
+<dd> makeindexinteractive
+<dd> metapostinteractive
+<dd> taskdone
+<dd> refreshpdf
+<dd> open_for_externaleditor
+</dl>
+The first seven commands activate TeXShop typesetting commands. Applescript will return immediately
+after these calls without waiting for typesetting to complete. The "taskdone" call can be used to
+test completion; it returns NO while typesetting is being done, and YES when it is finished. Each of
+these calls refreshes the preview window at the end of typesetting. If your editor calls TeXShop to typeset, the "Automatic Preview Update" preference can be turned off.
+</p>
+<p>If the external editor modifies the pdf output directly, it can call "refreshpdf" to refresh the pdf display. This is only needed if "Automatic Preview Update" is off. Finally "open_for_externaleditor" opens a tex file by calling "Open for Preview".
+ </p>
+
+<p>The Tcl code to make these calls from AlphaX
+in included in the AlphaTcl folder inside the TeXShop_Folder of the TeXShop distribution. Read the
+first lines of this file to see how to configure AlphaX for this purpose.
+ </p></div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop64%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Advanced Help</div><div id="header_title">Using an External Editor</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeX Live</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<li><a href="advanced_encoding.htm">Encodings</a>
+			<li><a href="advanced_xetex.htm">XeTeX and XeLaTeX</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Synchronizing Source and Preview</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About TeX Live</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

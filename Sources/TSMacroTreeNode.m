@@ -110,7 +110,7 @@
 	[children makeObjectsPerformSelector:@selector(setNodeParent:) withObject:self];
 }
 
-- (void)insertChild:(TSMacroTreeNode*)child atIndex:(int)idx
+- (void)insertChild:(TSMacroTreeNode*)child atIndex:(NSInteger)idx
 {
 	if (!_nodeChildren)
 		_nodeChildren = [[NSMutableArray alloc] init];
@@ -118,7 +118,7 @@
 	[child setNodeParent: self];
 }
 
-- (void)insertChildren:(NSArray*)children atIndex:(int)idx
+- (void)insertChildren:(NSArray*)children atIndex:(NSInteger)idx
 {
 	if (!_nodeChildren)
 		_nodeChildren = [[NSMutableArray alloc] init];
@@ -140,7 +140,7 @@
 
 - (void)removeChild:(TSMacroTreeNode*)child
 {
-	int idx = [self indexOfChild: child];
+	NSInteger idx = [self indexOfChild: child];
 	if (idx!=NSNotFound) {
 		[self removeChildrenIdenticalTo: [NSArray arrayWithObject: [self childAtIndex:idx]]];
 	}
@@ -152,7 +152,7 @@
 		[[self nodeParent] removeChild: self];
 }
 
-- (int)indexOfChild:(TSMacroTreeNode*)child
+- (NSInteger)indexOfChild:(TSMacroTreeNode*)child
 {
 	if (_nodeChildren)
 		return [_nodeChildren indexOfObject: child];
@@ -160,7 +160,7 @@
 		return NSNotFound;
 }
 
-- (int)indexOfChildIdenticalTo:(TSMacroTreeNode*)child
+- (NSInteger)indexOfChildIdenticalTo:(TSMacroTreeNode*)child
 {
 	if (_nodeChildren)
 		return [_nodeChildren indexOfObjectIdenticalTo: child];
@@ -168,7 +168,7 @@
 		return NSNotFound;
 }
 
-- (int)numberOfChildren
+- (NSInteger)numberOfChildren
 {
 	return [_nodeChildren count];
 }
@@ -191,7 +191,7 @@
 	return [_nodeChildren lastObject];
 }
 
-- (TSMacroTreeNode*)childAtIndex:(int)idx
+- (TSMacroTreeNode*)childAtIndex:(NSInteger)idx
 {
 	return [_nodeChildren objectAtIndex:idx];
 }
@@ -376,7 +376,7 @@
 // for debug
 - (void) examine
 {
-	NODE_INFO(@"examine", self);
+	// NODE_INFO(@"examine", self); warning says "always evaluates to true"
 
 	NSArray *children = [self children];
 	if (children) {
@@ -616,7 +616,7 @@
 
 @implementation NSMutableArray (MyExtensions)
 
-- (void) insertObjectsFromArray:(NSArray *)array atIndex:(int)idx {
+- (void) insertObjectsFromArray:(NSArray *)array atIndex:(NSInteger)idx {
 	NSObject *entry = nil;
 	NSEnumerator *enumerator = [array objectEnumerator];
 	while ((entry = [enumerator nextObject])) {

@@ -4,7 +4,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface NSIndexSet (Extension)
--(uint)countOfIndexesInRange:(NSRange)range;
+-(NSUInteger)countOfIndexesInRange:(NSRange)range;
 @end
 
 @interface TSListEditorTableView : NSTableView {

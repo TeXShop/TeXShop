@@ -26,12 +26,13 @@
 #import <AppKit/AppKit.h>
 
 // This nifty macro computes the size of a static array.
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#define ARRAYSIZE(x) ((NSInteger)(sizeof(x) / sizeof(x[0])))
 
 // The yen and backslash characters are both used to start LaTeX commands. Used
 // frequently throughout the code to detect commands.
 #define	YEN			0x00a5
 #define	BACKSLASH	'\\'
+#define COMMENT     '%'
 
 
 // Shortcut to access the standard user defaults more easily.
@@ -340,6 +341,7 @@ extern NSString *PdfPageBack_BKey;
 extern NSString *ExternalEditorTypesetAtStartKey;
 extern NSString *ConvertLFKey;
 extern NSString *UseOgreKitKey;
+extern NSString *FindMethodKey;
 extern NSString *BringPdfFrontOnAutomaticUpdateKey;
 extern NSString *BringPdfFrontOnTypesetKey;
 extern NSString *SourceWindowAlphaKey;
@@ -407,8 +409,10 @@ extern NSString *invisibleCharGreenKey; //Koch
 extern NSString *invisibleCharBlueKey; //Koch
 extern NSString *brieflyFlashYellowForMatchKey; //Koch
 extern NSString *syncWithRedOvalsKey;
+extern NSString *AutoSaveKey;
 
-// end of defaults
+
+// end defaults
 
 
 /*" Paths "*/
@@ -459,7 +463,8 @@ extern NSString *CommandCompletionCharNotification;
 
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
-extern int					g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern NSInteger            g_commentChar;
 extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
 extern NSArray				*g_autocompletionKeys; // added by Terada
 
@@ -468,11 +473,12 @@ extern BOOL					automaticLanguage;
 extern NSString				*defaultLanguage;
 
 
-extern int					g_macroType; // = EngineCommand for current window
+extern NSInteger					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern BOOL				fromMenu;
+extern BOOL             doAutoSave;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

@@ -279,9 +279,9 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
     ci.target_enc  = ONIG_ENCODING_UTF16_LE;
 #endif
 
-    ci.syntax      = [[self class] onigSyntaxTypeForSyntax:_syntax];
-    ci.option      = compileTimeOptions;
-    ci.ambig_flag  = ONIGENC_AMBIGUOUS_MATCH_DEFAULT;
+    ci.syntax         = [[self class] onigSyntaxTypeForSyntax:_syntax];
+    ci.option         = compileTimeOptions;
+    ci.case_fold_flag = ONIGENC_CASE_FOLD_DEFAULT;
     
 	r = onig_new_deluxe(
         &_regexBuffer, 
@@ -291,7 +291,7 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
         &einfo);
 	if (r != ONIG_NORMAL) {
 		// エラー。例外を発生させる。
-		char s[ONIG_MAX_ERROR_MESSAGE_LEN];
+		unsigned char s[ONIG_MAX_ERROR_MESSAGE_LEN];
 		onig_error_code_to_str(s, r, &einfo);
 		[self release];
 		[NSException raise:OgreException format:@"%s", s];
@@ -303,10 +303,11 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
 		// 辞書の作成
 		// 例: /(?<a>a+)(?<b>b+)(?<a>c+)/
 		// 構造: {"a" = (1,3), "b" = (2)}
+		NSMutableDictionary *groupIndexForNameDictionary = [[NSMutableDictionary alloc] initWithCapacity:[self numberOfNames]];
 		_groupIndexForNameDictionary = [[NSMutableDictionary alloc] initWithCapacity:[self numberOfNames]];
-		r = onig_foreach_name(_regexBuffer, namedGroupCallback, _groupIndexForNameDictionary);	// nameの一覧を得る
+		r = onig_foreach_name(_regexBuffer, namedGroupCallback, groupIndexForNameDictionary);	// nameの一覧を得る
 		
-		NSEnumerator	*keyEnumerator = [_groupIndexForNameDictionary keyEnumerator];
+		NSEnumerator	*keyEnumerator = [groupIndexForNameDictionary keyEnumerator];
 		NSString		*name;
 		NSMutableArray	*array;
 		int 			i, maxGroupIndex = 0;
@@ -333,6 +334,7 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
 			[_groupIndexForNameDictionary setObject:array forKey:name];
 			[array release];
 		}
+        [groupIndexForNameDictionary release];
 		
 		// 逆引き辞書の作成
 		// 例: /(?<a>a+)(?<b>b+)(?<a>c+)/
@@ -1381,7 +1383,7 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
 	}
 	if (lastMatch == nil) {
 		// マッチ箇所がなかった場合は、そのまま返す。
-		replacedString = targetString;
+		replacedString = (NSObject<OGStringProtocol,OGMutableStringProtocol>*)targetString;
 	} else {
 		// 最後のマッチ以降をコピ
 		[replacedString appendOGString:[lastMatch postmatchOGString]];
@@ -1460,7 +1462,7 @@ static int namedGroupCallback(const unsigned char *name, const unsigned char *na
 // onigurumaのバージョン文字列を返す
 + (NSString*)onigurumaVersion
 {
-	return [NSString stringWithCString:onig_version()];
+	return [NSString stringWithCString:onig_version() encoding:NSASCIIStringEncoding];
 }
 
 

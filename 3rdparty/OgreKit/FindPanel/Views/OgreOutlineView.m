@@ -124,12 +124,21 @@
     _ogreSelectedRange = aRange;
 }
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self 
+                                                    name:NSOutlineViewSelectionDidChangeNotification 
+                                                  object:self];
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self 
-        name:NSOutlineViewSelectionDidChangeNotification 
-        object:self];
-    
+                                                    name:NSOutlineViewSelectionDidChangeNotification 
+                                                  object:self];
     [_ogrePathComponents release];
     [super dealloc];
 }

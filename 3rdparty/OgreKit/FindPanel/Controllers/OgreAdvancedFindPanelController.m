@@ -159,6 +159,14 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 	NSLog(@"%@", [aNotification name]);
 }*/
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -203,7 +211,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 			}
 			
 			item = [[NSMenuItem alloc] init];
-			unsigned	start, end, contentsEnd;
+#ifdef MAC_OS_X_VERSION_10_6
+			NSUInteger  start, end, contentsEnd;
+#else
+			unsigned    start, end, contentsEnd;
+#endif
 			[[attrString string] getLineStart:&start 
 				end:&end 
 				contentsEnd:&contentsEnd 
@@ -251,7 +263,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 			[attrString release];
 			
 			item = [[NSMenuItem alloc] init];
-			unsigned	start, end, contentsEnd;
+#ifdef MAC_OS_X_VERSION_10_6
+			NSUInteger  start, end, contentsEnd;
+#else
+			unsigned    start, end, contentsEnd;
+#endif
 			[[attrString string] getLineStart:&start 
 				end:&end 
 				contentsEnd:&contentsEnd 
@@ -303,7 +319,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 			}
 			
 			item = [[NSMenuItem alloc] init];
-			unsigned	start, end, contentsEnd;
+#ifdef MAC_OS_X_VERSION_10_6
+			NSUInteger  start, end, contentsEnd;
+#else
+			unsigned    start, end, contentsEnd;
+#endif
 			[[attrString string] getLineStart:&start 
 				end:&end 
 				contentsEnd:&contentsEnd 
@@ -351,7 +371,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 			[attrString release];
 			
 			item = [[NSMenuItem alloc] init];
-			unsigned	start, end, contentsEnd;
+#ifdef MAC_OS_X_VERSION_10_6
+			NSUInteger  start, end, contentsEnd;
+#else
+			unsigned    start, end, contentsEnd;
+#endif
 			[[attrString string] getLineStart:&start 
 				end:&end 
 				contentsEnd:&contentsEnd 
@@ -549,7 +573,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 	[_findHistory insertObject:[[attrString copy] autorelease] atIndex:0];
 	
 	NSMenuItem	*item = [[NSMenuItem alloc] init];
+#ifdef MAC_OS_X_VERSION_10_6
+	NSUInteger	start, end, contentsEnd;
+#else
 	unsigned	start, end, contentsEnd;
+#endif
 	[string getLineStart:&start 
 		end:&end 
 		contentsEnd:&contentsEnd 
@@ -588,7 +616,11 @@ static NSString	*OgreAFPCAttributedReplaceHistoryKey = @"AFPC Attributed Replace
 	[_replaceHistory insertObject:[[string copy] autorelease] atIndex:0];
 	
 	NSMenuItem	*item = [[NSMenuItem alloc] init];
+#ifdef MAC_OS_X_VERSION_10_6
+	NSUInteger	start, end, contentsEnd;
+#else
 	unsigned	start, end, contentsEnd;
+#endif
 	[[string string] getLineStart:&start 
 		end:&end 
 		contentsEnd:&contentsEnd 

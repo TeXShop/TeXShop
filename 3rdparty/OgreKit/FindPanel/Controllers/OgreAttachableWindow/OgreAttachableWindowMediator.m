@@ -105,7 +105,7 @@ static inline float	f_abs(float x)
 	NSWindow<OgreAttachableWindowAcceptorProtocol>	*candidate;
 	NSRectEdge		accepteeEdge;
 	while ((candidate = [acceptorEnumerator nextObject]) != nil) {
-		if (candidate == acceptee || [childWindows containsObject:candidate] || ![candidate isVisible]) {
+		if ([candidate isEqual:acceptee] || [childWindows containsObject:candidate] || ![candidate isVisible]) {
 			continue;
 		}
 		

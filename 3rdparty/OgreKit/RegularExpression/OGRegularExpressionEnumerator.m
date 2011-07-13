@@ -174,14 +174,14 @@ NSString	* const OgreEnumeratorException = @"OGRegularExpressionEnumeratorExcept
 		return match;
 	}
 	
-	onig_region_free(region, 1 /* free self */);	// マッチしなかった文字列のregionを開放。
+	onig_region_free(region, 1 /* free all */);	// マッチしなかった文字列のregionを開放。
 	
 	if (r == ONIG_MISMATCH) {
 		// マッチしなかった場合
 		_terminalOfLastMatch = -1;
 	} else {
 		// エラー。例外を発生させる。
-		char s[ONIG_MAX_ERROR_MESSAGE_LEN];
+		unsigned char s[ONIG_MAX_ERROR_MESSAGE_LEN];
 		onig_error_code_to_str(s, r);
 		[NSException raise:OgreEnumeratorException format:@"%s", s];
 	}

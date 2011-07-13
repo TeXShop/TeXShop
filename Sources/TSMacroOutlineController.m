@@ -153,7 +153,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 - (void)addNewDataToSelection:(TSMacroTreeNode *)newChild
 {
 	NSIndexSet		*myIndexSet;
-	int childIndex = 0, newRow = 0;
+	NSInteger childIndex = 0, newRow = 0;
 	NSArray *selectedNodes = [self selectedNodes];
 	TSMacroTreeNode *selectedNode = ([selectedNodes count] ? [selectedNodes lastObject] : rootOfTree);
 	TSMacroTreeNode *parentNode = nil;
@@ -186,7 +186,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)addNewDataArrayToSelection:(NSArray *)newChildren
 {
-	int childIndex = 0; //, newRow = 0;
+	NSInteger childIndex = 0; //, newRow = 0;
 	NSArray *selectedNodes = [self selectedNodes];
 	TSMacroTreeNode *selectedNode;
 	TSMacroTreeNode *parentNode = nil;
@@ -259,7 +259,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 //		NSOutlineView.dataSource -> Instance of this class (or file's owner)
 
 // Required methods.
-- (id)outlineView:(NSOutlineView *)olv child:(int)idx ofItem:(id)item
+- (id)outlineView:(NSOutlineView *)olv child:(NSInteger)idx ofItem:(id)item
 {
 	return [(item)?((TSMacroTreeNode*)item):rootOfTree childAtIndex:idx];
 }
@@ -269,7 +269,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	return [(TSMacroTreeNode*)item isExpandable];
 }
 
-- (int)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item
+- (NSInteger)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item
 {
 	return [(item)?((TSMacroTreeNode*)item):rootOfTree numberOfChildren];
 }
@@ -373,7 +373,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	return YES;
 }
 
-- (unsigned int)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(int)childIndex
+- (NSUInteger)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)childIndex
 {
 	// This method validates whether or not the proposal is a valid one. Returns NO if the drop should not be allowed.
 	TSMacroTreeNode *targetNode = item;
@@ -401,7 +401,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 		// Check to make sure we don't allow a node to be inserted into one of its descendants!
 		if (targetNodeIsValid && ([info draggingSource]==outlineView) && [[info draggingPasteboard] availableTypeFromArray:[NSArray arrayWithObject: DragDropSimplePboardType]] != nil) {
-			NSArray *_draggedNodes = [[[info draggingSource] dataSource] draggedNodes];
+			NSArray *_draggedNodes = [(TSMacroOutlineController *)[[info draggingSource] dataSource] draggedNodes];
 			targetNodeIsValid = ![targetNode isDescendantOfNodeInArray: _draggedNodes];
 		}
 	}
@@ -412,7 +412,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	return targetNodeIsValid ? NSDragOperationGeneric : NSDragOperationNone;
 }
 
-- (void)performDropOperation:(id <NSDraggingInfo>)info onNode:(TSMacroTreeNode*)parentNode atIndex:(int)childIndex
+- (void)performDropOperation:(id <NSDraggingInfo>)info onNode:(TSMacroTreeNode*)parentNode atIndex:(NSInteger)childIndex
 {
 	// Helper method to insert dropped data into the model.
 	NSPasteboard * pboard = [info draggingPasteboard];
@@ -457,7 +457,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	[outlineView selectItems: itemsToSelect byExtendingSelection: NO];
 }
 
-- (BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(int)childIndex
+- (BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(NSInteger)childIndex
 {
 	TSMacroTreeNode * 		parentNode = nil;
 
@@ -490,7 +490,6 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 }
 
 - (NSArray*)allSelectedItems {
-	NSLog(@"here");
 	NSIndexSet *theIndexes = [self selectedRowIndexes];
 	NSMutableArray *items = [NSMutableArray array];
 	/* selectedRowEnumerator is deprecated
@@ -501,8 +500,8 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 			[items addObject: [self itemAtRow:[selRow intValue]]];
 	}
 	*/
-	int rows = [self numberOfRows];
-	int i;
+	NSInteger rows = [self numberOfRows];
+	NSInteger i;
 	for (i = 0; i < rows; i++)
 		if ([theIndexes containsIndex:i]) {
 			if ([self itemAtRow: i])
@@ -514,11 +513,11 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)selectItems:(NSArray*)items byExtendingSelection:(BOOL)shouldExtend {
 	NSIndexSet		*myIndexSet;
-	int i;
+	NSInteger i;
 	if (shouldExtend == NO)
 		[self deselectAll:nil];
 	for (i = 0; i < [items count]; i++) {
-		int row = [self rowForItem:[items objectAtIndex:i]];
+		NSInteger row = [self rowForItem:[items objectAtIndex:i]];
 		if(row >= 0) {
 			myIndexSet = [NSIndexSet indexSetWithIndex: row];
 			// [self selectRow: row byExtendingSelection:YES]; // deprecated, so
@@ -529,7 +528,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)delete: (id)sender
 {
-	[[self delegate] deleteSelection: sender];
+	[(TSMacroOutlineController *)[self delegate] deleteSelection: sender];
 }
 
 
@@ -600,7 +599,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	[super editWithFrame: textFrame inView: controlView editor:textObj delegate:anObject event: theEvent];
 }
 
-- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(int)selStart length:(int)selLength {
+- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(NSInteger)selStart length:(NSInteger)selLength {
 	NSRect textFrame, imageFrame;
 	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [image size].width, NSMinXEdge);
 	[super selectWithFrame: textFrame inView: controlView editor:textObj delegate:anObject start:selStart length:selLength];

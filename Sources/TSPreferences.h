@@ -44,6 +44,7 @@
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
 	IBOutlet NSButtonCell	*_midEastButton; /*" connected to Arabic, Persian, Hebrew "*/
+    IBOutlet NSButtonCell   *_autoSaveButton; /*" connected to AutoSave "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
 	IBOutlet NSButton		*_externalEditorButton;		/*" use external editor "*/
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
@@ -63,7 +64,7 @@
 	IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
 	IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/
 	IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
-	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
+//	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
 //	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/ // comment out by Terada
 	IBOutlet NSMatrix	*_syncMatrix;			/*" connected to "Sync Method" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
@@ -164,6 +165,7 @@
 - (IBAction)lineNumberButtonPressed:sender;
 - (IBAction)showInvisibleCharacterButtonPressed:sender; // added by Terada
 - (IBAction)midEastButtonPressed:sender;
+- (IBAction)autoSaveButtonPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
@@ -191,7 +193,7 @@
 - (IBAction)latexScriptProgramChanged:sender;
 - (IBAction)defaultScriptChanged:sender;
 - (IBAction)syncChanged:sender;
-- (IBAction)defaultMetaPostChanged:sender;
+// - (IBAction)defaultMetaPostChanged:sender;
 //- (IBAction)defaultBibtexChanged:sender; // comment out by Terada
 - (IBAction)distillerChanged:sender;
 - (IBAction)defaultProgramChanged:sender;

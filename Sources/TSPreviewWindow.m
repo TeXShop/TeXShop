@@ -48,7 +48,7 @@ extern NSPanel *pageNumberWindow;
 @implementation TSPreviewWindow
 
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
 	NSColor	*backColor;
@@ -59,7 +59,7 @@ extern NSPanel *pageNumberWindow;
 	backColor = [NSColor colorWithCalibratedRed:0.9 green:0.9 blue:0.9 alpha: 1.0];
 	[self setBackgroundColor: backColor];
 
-	float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
+	CGFloat alpha = [SUD floatForKey: PreviewWindowAlphaKey];
 	if (alpha < 0.999)
 		[self setAlphaValue:alpha];
 
@@ -69,6 +69,7 @@ extern NSPanel *pageNumberWindow;
 	return result;
 }
 
+
 - (void)close
 {
 	[myPDFKitView setDocument: nil];
@@ -77,6 +78,7 @@ extern NSPanel *pageNumberWindow;
 	
 	[super close];
 }
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
@@ -103,7 +105,7 @@ extern NSPanel *pageNumberWindow;
 - (void) becomeMainWindow
 {
 	willClose = NO;
-	if([myDocument fileName] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
+	if([myDocument fileURL] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 
 	[myDocument fixMacroMenuForWindowChange];
@@ -123,7 +125,7 @@ extern NSPanel *pageNumberWindow;
 			contextInfo: nil];
 }
 
-- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
 {
 	// [sheet close];
 	[sheet orderOut: self];
@@ -142,7 +144,7 @@ extern NSPanel *pageNumberWindow;
 			contextInfo: nil];
 }
 
-- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
 {
 	// [sheet close];
 	[sheet orderOut: self];
@@ -739,4 +741,10 @@ extern NSPanel *pageNumberWindow;
 {
 	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
 }
+
+- (BOOL)windowIsSplit
+{
+    return windowIsSplit;
+}
+
 @end

@@ -18,6 +18,16 @@
 
 @implementation OgreTextFindLeaf
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+#ifdef DEBUG_OGRE_FIND_PANEL
+	NSLog(@"  -finalize of %@", [self className]);
+#endif
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 #ifdef DEBUG_OGRE_FIND_PANEL

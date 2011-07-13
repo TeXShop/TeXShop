@@ -145,10 +145,10 @@ static id sharedFindObject = nil;
 	lastFindWasSuccessful = NO;
 	if (text) {
 		NSString *textContents = [text string];
-		unsigned textLength;
+		NSUInteger textLength;
 		if (textContents && (textLength = [textContents length])) {
 			NSRange range;
-			unsigned options = 0;
+			NSUInteger options = 0;
 		if (direction == Backward) options |= NSBackwardsSearch;
 			if ([ignoreCaseButton state]) options |= NSCaseInsensitiveSearch;
 			range = [textContents findString:[self findString] selectedRange:[text selectedRange] options:options wrap:YES];
@@ -227,8 +227,8 @@ Turns out this approach of building the new string and inserting it at the appro
 		NSString *textContents = [text string];
 		BOOL entireFile = replaceAllScopeMatrix ? ([replaceAllScopeMatrix selectedTag] == ReplaceAllScopeEntireFile) : YES;
 		NSRange replaceRange = entireFile ? NSMakeRange(0, [textStorage length]) : [text selectedRange];
-		unsigned searchOption = ([ignoreCaseButton state] ? NSCaseInsensitiveSearch : 0);
-		unsigned replaced = 0;
+		NSUInteger searchOption = ([ignoreCaseButton state] ? NSCaseInsensitiveSearch : 0);
+		NSUInteger replaced = 0;
 		NSRange firstOccurence;
 
 		if (findTextField) [self setFindString:[findTextField stringValue]];
@@ -289,6 +289,7 @@ Turns out this approach of building the new string and inserting it at the appro
 			NSBeep();
 			[statusField setStringValue:NSLocalizedStringFromTable(@"Not found", @"FindPanel", @"Status displayed in find panel when the find string is not found.")];
 		} else {
+#warning 64BIT: Check formatting arguments
 			[statusField setStringValue:[NSString localizedStringWithFormat:NSLocalizedStringFromTable(@"%d replaced", @"FindPanel", @"Status displayed in find panel when indicated number of matches are replaced."), replaced]];
 		}
 	}
@@ -314,9 +315,9 @@ Turns out this approach of building the new string and inserting it at the appro
 
 @implementation NSString (NSStringTextFinding)
 
-- (NSRange)findString:(NSString *)string selectedRange:(NSRange)selectedRange options:(unsigned)options wrap:(BOOL)wrap {
+- (NSRange)findString:(NSString *)string selectedRange:(NSRange)selectedRange options:(NSUInteger)options wrap:(BOOL)wrap {
 	BOOL forwards = (options & NSBackwardsSearch) == 0;
-	unsigned length = [self length];
+	NSUInteger length = [self length];
 	NSRange searchRange, range;
 
 	if (forwards) {

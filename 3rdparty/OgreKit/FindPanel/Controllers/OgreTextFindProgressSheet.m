@@ -61,6 +61,17 @@
 	[self release];
 }
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+#ifdef DEBUG_OGRE_FIND_PANEL
+	NSLog(@"-finalize of %@", [self className]);
+#endif
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 #ifdef DEBUG_OGRE_FIND_PANEL
@@ -98,7 +109,7 @@
 		// closeは一回だけ実行できるrelease
 		if (progressWindow) {
 			[progressWindow close];
-			[NSApp endSheet:progressWindow returnCode:nil];
+			[NSApp endSheet:progressWindow returnCode:0];
 			progressWindow = nil;
 		}
 		if (_shouldRelease) {
@@ -140,7 +151,7 @@
 	// closeは一回だけ実行できるrelease
 	if (progressWindow) {
 		[progressWindow close];
-		[NSApp endSheet:progressWindow returnCode:nil];
+		[NSApp endSheet:progressWindow returnCode:0];
 		[_parentWindow flushWindow];
 		[progressWindow release];
 		progressWindow = nil;

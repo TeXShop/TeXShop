@@ -7,15 +7,15 @@ else
 	cd RegularExpression
 	tar zxvf onigd20050823.tar.gz
 	
-	if false; then
-        echo "Applying patch..."
-        cp 20040720.patch oniguruma/.
-        cd oniguruma
-        cp regparse.c regparse.c.original
-        cp regcomp.c regcomp.c.original
-        patch -p0 < 20040720.patch
-        cd ..
-	fi
+#	if false; then
+#        echo "Applying patch..."
+#        cp 20040720.patch oniguruma/.
+#        cd oniguruma
+#        cp regparse.c regparse.c.original
+#        cp regcomp.c regcomp.c.original
+#        patch -p0 < 20040720.patch
+#        cd ..
+#	fi
 	
 	cd ..
 fi

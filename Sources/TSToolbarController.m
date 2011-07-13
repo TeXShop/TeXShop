@@ -217,7 +217,7 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	[mouseModeMatrixKK retain];
 	[mouseModeMatrixKK removeFromSuperview];
 	// WARNING: this must be called now, because calling it when the matrix is active but offscreen causes defective toolbar display
-	int mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
+	NSInteger mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	[mouseModeMatrixKK selectCellWithTag: mouseMode];
 	
 	
@@ -288,7 +288,7 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	NSToolbarItem *toolbarItem = 0;
 	NSMenuItem *menuFormRep;
 	NSMenu *submenu;
-	id <NSMenuItem> submenuItem;
+	id submenuItem;
 
 	//    if ([itemIdent isEqual: kSaveDocToolbarItemIdentifier]) {
 	//		return [self makeToolbarItemWithItemIdentifier:itemIdent key:@"Save"
@@ -504,12 +504,12 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 		[menuFormRep setTitle: [toolbarItem label]];
 
 		submenu = [[[NSMenu alloc] init] autorelease];
-		id <NSMenuItem> tempsubmenuItem;
+		id tempsubmenuItem;
 		NSString *tempString;
 		id tempTarget;
 		SEL tempAction;
-		int i;
-		int j = [[programButtonEE menu] numberOfItems];
+		NSInteger i;
+		NSInteger j = [[programButtonEE menu] numberOfItems];
 		for (i = 0; i < j; i++) {
 			tempsubmenuItem = [[programButtonEE menu] itemAtIndex: i];
 			tempString = [tempsubmenuItem title];

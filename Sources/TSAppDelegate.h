@@ -58,11 +58,5 @@
 - (IBAction)checkForUpdate:(id)sender; // Update checker
 - (void)configureMovieMenu;
 - (IBAction)doMovie:(id)sender;
-- (IBAction)newFromStationery: (id)sender;
-
-- (int)numberOfRowsInTableView:(NSTableView *)tableView;
-- (id)tableView:(NSTableView *)tableView
-objectValueForTableColumn:(NSTableColumn *)tableColumn
-			row:(int)row;
-
+// - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 @end

@@ -141,6 +141,7 @@ NSString *PdfPageBack_BKey = @"Pdfbackground_B";
 NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
 NSString *ConvertLFKey = @"ConvertLF";
 NSString *UseOgreKitKey = @"UseOgreKit";
+NSString *FindMethodKey = @"FindMethod";
 NSString *BringPdfFrontOnAutomaticUpdateKey = @"BringPdfFrontOnAutomaticUpdate";
 NSString *BringPdfFrontOnTypesetKey = @"BringPdfFrontOnTypeset";
 NSString *SourceWindowAlphaKey = @"SourceWindowAlpha";
@@ -205,7 +206,8 @@ NSString *invisibleCharRedKey = @"invisibleCharRed"; //Koch
 NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
 NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
-NSString *syncWithRedOvalsKey = @"syncWithRedOvals"; //Koch
+NSString *syncWithRedOvalsKey = @"syncWithRedOvals";
+NSString *AutoSaveKey = @"AutoSave";
 
 
 
@@ -260,13 +262,15 @@ NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotificatio
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;
-int					g_texChar;
+NSInteger			g_texChar;
+NSInteger           g_commentChar;
 NSDictionary		*g_autocompletionDictionary;
 NSArray				*g_autocompletionKeys;  // added by Terada
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
 BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
+BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
 
 // command completion
 NSString *g_commandCompletionChar = nil;
@@ -280,4 +284,4 @@ BOOL		automaticLanguage;
 NSString	*defaultLanguage;
 
 // Koch 8/24/03
-int	g_macroType;	// FIXME: get rid of this
+NSInteger	g_macroType;	// FIXME: get rid of this

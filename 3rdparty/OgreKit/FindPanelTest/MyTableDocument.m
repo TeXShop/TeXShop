@@ -268,7 +268,7 @@ static NSString *gMyTableRowPropertyType = @"rows";
         
         [tableView deselectAll:nil];
         for (anIndex = row - overwrapCount; anIndex < (row - overwrapCount + [middleArray count]); anIndex++) {
-            [tableView selectRow:anIndex byExtendingSelection:[tableView allowsMultipleSelection]];
+            [tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: anIndex] byExtendingSelection:[tableView allowsMultipleSelection]];
         }
 
         [tableView reloadData];
@@ -323,9 +323,15 @@ static NSString *gMyTableRowPropertyType = @"rows";
 - (IBAction)removeRow:(id)sender
 {
     NSIndexSet  *selectedIndexes = [tableView selectedRowIndexes];
+#ifdef MAC_OS_X_VERSION_10_6
+    NSUInteger  numberOfIndexes = [selectedIndexes count];
+    if (numberOfIndexes == 0) return;
+    NSMutableArray  *columnArray;
+    NSEnumerator    *columnEnumerator = [_dict objectEnumerator];
+    while ((columnArray = [columnEnumerator nextObject]) != nil) [columnArray removeObjectsAtIndexes:selectedIndexes];
+#else
     unsigned    numberOfIndexes = [selectedIndexes count];
     if (numberOfIndexes == 0) return;
-    
     unsigned    *indexes = (unsigned*)NSZoneMalloc([self zone], numberOfIndexes * sizeof(unsigned));
     if (indexes == NULL) {
         return;
@@ -335,11 +341,10 @@ static NSString *gMyTableRowPropertyType = @"rows";
     NSMutableArray  *columnArray;
     NSEnumerator    *columnEnumerator = [_dict objectEnumerator];
     while ((columnArray = [columnEnumerator nextObject]) != nil) [columnArray removeObjectsFromIndices:indexes numIndices:numberOfIndexes];
-    
+    NSZoneFree([self zone], indexes);
+#endif
     [tableView deselectAll:nil];
     [tableView reloadData];
-    
-    NSZoneFree([self zone], indexes);
     [self updateChangeCount:NSChangeDone];
 }
 

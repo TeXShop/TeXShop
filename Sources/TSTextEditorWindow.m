@@ -31,11 +31,11 @@
 
 @implementation TSTextEditorWindow : NSWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
-	float alpha = [SUD floatForKey: SourceWindowAlphaKey];
+	CGFloat alpha = [SUD floatForKey: SourceWindowAlphaKey];
 	if (alpha < 0.999)
 		 [self setAlphaValue:alpha];
 	return result;
@@ -44,7 +44,7 @@
 
 - (void) becomeMainWindow
 {
-	if([myDocument fileName] != nil ) [self setTitle:[myDocument fileTitleName]]; // added by Terada
+	if([myDocument fileURL] != nil ) [self setTitle:[myDocument fileTitleName]]; // added by Terada
 	[super becomeMainWindow];
 	[myDocument resetSpelling];
 	[myDocument fixMacroMenuForWindowChange];
@@ -57,9 +57,9 @@
 }
 // end addition
 
-
 - (void)makeKeyAndOrderFront:(id)sender
 {
+    
 	if (
 		(! [myDocument externalEditor]) &&
 		(([myDocument documentType] == isTeX) || ([myDocument documentType] == isOther))
@@ -107,6 +107,7 @@
 
 - (void)close
 {
+    
 	[[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]]; // this fixes a bug; the application crashed when closing
 	// the last window in multi-page mode; investigation shows that the
 	// myPDFView "wasScrolled" method was called from the notification center before dealloc, but after other items in the window
@@ -120,6 +121,7 @@
 				[anObject setCallingWindow: nil];
 		}
 	}
+
 	[super close];
 }
 
@@ -159,6 +161,7 @@
 		newFrame.size.width = 1024;
 	return newFrame;
 }
+
 
 
 @end

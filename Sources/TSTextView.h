@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 #import "TSDocument.h"
 
-@interface TSTextView : NSTextView
+@interface TSTextView : NSTextView <NSTextFinderClient>
 {
 	TSDocument		*_document;
 	BOOL			_alternateDown;

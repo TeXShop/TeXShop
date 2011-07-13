@@ -171,6 +171,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 
 	NSString *fileName;
 	NSDictionary *factoryDefaults, *oldDefaults;
+    NSStringEncoding theEncoding;
 
 	oldDefaults = [SUD dictionaryRepresentation];
 	[_undoManager registerUndoWithTarget:self selector:@selector(undoDefaultPrefs:) object:oldDefaults];
@@ -188,7 +189,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 		default: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
 	}
 	NSParameterAssert(fileName != nil);
-	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
+	factoryDefaults = [[NSString stringWithContentsOfFile:fileName usedEncoding: &theEncoding error:NULL] propertyList];
 
 	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
@@ -444,12 +445,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 - (IBAction)findPanelChanged:sender
 {
 	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:UseOgreKitKey] forKey:UseOgreKitKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:FindMethodKey] forKey:FindMethodKey];
 
 	if ([[sender selectedCell] tag] == 0)
-		[SUD setBool:NO forKey:UseOgreKitKey];
-	else
-		[SUD setBool:YES forKey:UseOgreKitKey];
+		[SUD setInteger:0 forKey:FindMethodKey];
+	else if ([[sender selectedCell] tag] == 1)
+		[SUD setInteger:1 forKey:FindMethodKey];
+    else
+        [SUD setInteger:2 forKey:FindMethodKey];
 }
 
 
@@ -458,7 +461,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 {
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:MakeEmptyDocumentKey] forKey:MakeEmptyDocumentKey];
 
-	[SUD setBool:[sender state] forKey:MakeEmptyDocumentKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:MakeEmptyDocumentKey];
 }
 
 /*" Configure for External Editor "*/
@@ -466,7 +469,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 {
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:UseExternalEditorKey] forKey:UseExternalEditorKey];
 
-	[SUD setBool:[sender state] forKey:UseExternalEditorKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:UseExternalEditorKey];
 	 // post a notification so the system will learn about this change
 	[[NSNotificationCenter defaultCenter] postNotificationName:ExternalEditorNotification object:self];
 	externalEditorTouched = YES;
@@ -492,7 +495,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	NSWindow	*activeWindow = [[TSWindowManager sharedInstance] activeTextWindow];
 
 	if ((activeWindow != nil) && (! [value isEqualToString:oldValue]))
-		NSBeginCriticalAlertSheet(nil, nil, nil, nil,
+		NSBeginCriticalAlertSheet (nil, nil, nil, nil,
 					_prefsWindow, self, nil, NULL, nil,
 					NSLocalizedString(@"Currently open files retain their old encoding.", @"Currently open files retain their old encoding."));
 // end addition
@@ -502,17 +505,17 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 /*" Change tab size "*/
 - (IBAction)tabsChanged:sender
 {
-	int		value;
+	NSInteger		value;
 
 	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:tabsKey] forKey:tabsKey];
 
-	value = [_tabsTextField intValue];
+	value = [_tabsTextField integerValue];
 	if (value < 2) {
 		value = 2;
-		[_tabsTextField setIntValue:2];
+		[_tabsTextField setIntegerValue:2];
 	} else if (value > 50) {
 		value = 50;
-		[_tabsTextField setIntValue:50];
+		[_tabsTextField setIntegerValue:50];
 	}
 
 	[SUD setInteger:value forKey:tabsKey];
@@ -528,7 +531,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SyntaxColoringEnabledKey] forKey:SyntaxColoringEnabledKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:SyntaxColoringEnabledKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SyntaxColoringEnabledKey];
 	syntaxColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 }
@@ -638,7 +641,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AcceptFirstMouseKey] forKey:AcceptFirstMouseKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:AcceptFirstMouseKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:AcceptFirstMouseKey];
 }
 
 
@@ -649,7 +652,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ParensMatchingEnabledKey] forKey:ParensMatchingEnabledKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:ParensMatchingEnabledKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:ParensMatchingEnabledKey];
 }
 
 /*" This method is connected to the 'spell checking' checkbox.
@@ -659,7 +662,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SpellCheckEnabledKey] forKey:SpellCheckEnabledKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:SpellCheckEnabledKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SpellCheckEnabledKey];
 }
 
 /*" This method is connected to the 'line number' checkbox.
@@ -669,7 +672,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:LineNumberEnabledKey] forKey:LineNumberEnabledKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:LineNumberEnabledKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:LineNumberEnabledKey];
 }
 
 // added by Terada (-(IBAction)showInvisibleCharacterButtonPressed:)
@@ -678,7 +681,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ShowInvisibleCharactersEnabledKey] forKey:ShowInvisibleCharactersEnabledKey];
 	
-	[SUD setBool:[sender state] forKey:ShowInvisibleCharactersEnabledKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:ShowInvisibleCharactersEnabledKey];
 }
 
 /*" This method is connected to the 'Arabic, Persian, Hebrew' checkbox.
@@ -688,8 +691,19 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:RightJustifyKey] forKey:RightJustifyKey];
 	
-	[SUD setBool:[[sender selectedCell] state] forKey:RightJustifyKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:RightJustifyKey];
 }
+
+/*" This method is connected to the 'AutoSave' checkbox.
+ "*/
+- (IBAction)autoSaveButtonPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoSaveKey] forKey:AutoSaveKey];
+	
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:AutoSaveKey];
+}
+
 
 
 
@@ -700,7 +714,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:WarnForShellEscapeKey] forKey:WarnForShellEscapeKey];
 
-	[SUD setBool:[sender state] forKey:WarnForShellEscapeKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:WarnForShellEscapeKey];
 }
 
 
@@ -711,7 +725,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoCompleteEnabledKey] forKey:AutoCompleteEnabledKey];
 
-	[SUD setBool:[[sender selectedCell] state] forKey:AutoCompleteEnabledKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:AutoCompleteEnabledKey];
 	autoCompleteTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
 
@@ -724,7 +738,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:BibDeskCompletionKey] forKey:BibDeskCompletionKey];
 	
-	[SUD setBool:[[sender selectedCell] state] forKey:BibDeskCompletionKey];
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:BibDeskCompletionKey];
 	bibDeskCompleteTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 
@@ -820,13 +834,13 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:NoScrollEnabledKey] forKey:NoScrollEnabledKey];
 
-	[SUD setBool:[sender state] forKey:NoScrollEnabledKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:NoScrollEnabledKey];
 }
 
 - (IBAction)autoPDFChanged:sender
 {
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:PdfRefreshKey] forKey:PdfRefreshKey];
-	[SUD setBool:[sender state] forKey:PdfRefreshKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:PdfRefreshKey];
 }
 
 #ifdef MITSU_PDF
@@ -854,7 +868,7 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 {
 	NSString *defaultValue;
 	
-	int			which = [sender tag];
+	NSInteger			which = [sender tag];
 	
 	switch (which) {
 		case 0: defaultValue = @"pdftex --file-line-error --shell-escape --synctex=1";
@@ -901,7 +915,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 
 	NSMenu *formatMenu = [[previewMenu itemWithTitle:
 						NSLocalizedString(@"Copy Format", @"Copy Format")] submenu];
-	id <NSMenuItem> item = [formatMenu itemWithTag: [SUD integerForKey:PdfCopyTypeKey]];
+	id item = [formatMenu itemWithTag: [SUD integerForKey:PdfCopyTypeKey]];
 	if (item)
 		[[_undoManager prepareWithInvocationTarget:[NSApp delegate]] changeImageCopyType: item];
 
@@ -932,7 +946,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 {
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD integerForKey:PdfColorMapKey] forKey:PdfColorMapKey];
 
-	[SUD setBool:([sender state]==NSOnState) forKey:PdfColorMapKey];
+	[SUD setBool:([(NSCell *)sender state]==NSOnState) forKey:PdfColorMapKey];
 }
 
 /*" This method is connected to default mouse mode popup button. "*/
@@ -1048,7 +1062,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SavePSEnabledKey] forKey:SavePSEnabledKey];
 
-	[SUD setBool:[sender state] forKey:SavePSEnabledKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:SavePSEnabledKey];
 }
 
 
@@ -1158,7 +1172,7 @@ person script. See also: DefaultTypesetMode.
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:ptexUtfOutputEnabledKey] forKey:ptexUtfOutputEnabledKey];
 
-	[SUD setBool:[sender state] forKey:ptexUtfOutputEnabledKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:ptexUtfOutputEnabledKey];
 
 	// zenitani 2.10 (A) UTF-8 + utf.sty situation
 	[[TSEncodingSupport sharedInstance] setupForEncoding];
@@ -1170,7 +1184,7 @@ person script. See also: DefaultTypesetMode.
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
 	
-	[SUD setBool:[sender state] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
 	
 }
 
@@ -1197,7 +1211,7 @@ A tag of 0 means "Activate Preview"; a tag of 1 means "Continue Editing".
 - (IBAction)afterTypesettingChanged:sender;
 {
 	BOOL	oldValue, newValue;
-	int		tagValue;
+	NSInteger		tagValue;
 	
 	oldValue = [SUD boolForKey:BringPdfFrontOnTypesetKey];
 	tagValue = [[sender selectedCell] tag];
@@ -1222,7 +1236,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 	// since the default program values map identically to the tags of the NSButtonCells,
 	// we can use the tag directly here.
-	[SUD setBool:[sender state] forKey:SaveRelatedKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:SaveRelatedKey];
 }
 
 
@@ -1364,7 +1378,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 	a = [[ file stringByDeletingLastPathComponent ] pathComponents ];
 	b = [ path pathComponents ];
-	unsigned ai = [a count], bi = [b count], i, j;
+	NSUInteger ai = [a count], bi = [b count], i, j;
 	if( ai == 0 ) return path;
 	for( i=0; ((i<ai)&&(i<bi)); i++ ){
 		astr = [a objectAtIndex: i];
@@ -1391,11 +1405,12 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 {
 	NSString *fileName;
 	NSDictionary *factoryDefaults;
+    NSStringEncoding theEncoding;
 
 	// register defaults
 	fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 	NSParameterAssert(fileName != nil);
-	factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
+	factoryDefaults = [[NSString stringWithContentsOfFile:fileName usedEncoding: &theEncoding error: NULL] propertyList];
 
 	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
@@ -1418,8 +1433,8 @@ This method retrieves the application preferences from the defaults object and s
 {
 	NSData	*fontData;
 	double	magnification;
-	int		mag, tabSize;
-	int		myTag;
+	NSInteger		mag, tabSize;
+	NSInteger		myTag;
 	BOOL	myBool;
 	NSNumber    *myNumber;
 	
@@ -1445,6 +1460,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
 	[_showInvisibleCharactersButton setState:[defaults boolForKey:ShowInvisibleCharactersEnabledKey]];
 	[_midEastButton setState:[defaults boolForKey:RightJustifyKey]];
+    [_autoSaveButton setState:[defaults boolForKey:AutoSaveKey]];
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
@@ -1520,11 +1536,13 @@ This method retrieves the application preferences from the defaults object and s
 		[_commandCompletionMatrix selectCellWithTag:0];
 	else 
 		[_commandCompletionMatrix selectCellWithTag:1];
-	
-	if ([defaults boolForKey:UseOgreKitKey] == NO)
-		[_findMatrix selectCellWithTag:0];
-	else
-		[_findMatrix selectCellWithTag:1];
+    
+    if ([defaults integerForKey:FindMethodKey] == 0)
+        [_findMatrix selectCellWithTag:0];
+    else if ([defaults integerForKey:FindMethodKey] == 1)
+        [_findMatrix selectCellWithTag:1];
+    else 
+        [_findMatrix selectCellWithTag:2];
 	[_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
 	[_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
 
@@ -1537,7 +1555,7 @@ This method retrieves the application preferences from the defaults object and s
 
 	magnification = [defaults floatForKey:PdfMagnificationKey];
 	mag = round(magnification * 100.0);
-	myNumber = [NSNumber numberWithInt: mag];
+	myNumber = [NSNumber numberWithInteger:mag];
 	[_magTextField setStringValue:[myNumber stringValue]];
 	//      [_magTextField setIntValue: mag];
 
@@ -1549,7 +1567,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_firstPageMatrix selectCellWithTag:myTag];
 
 	// mitsu 1.29 (O)
-	int itemIndex;
+	NSInteger itemIndex;
 	myTag = [defaults integerForKey:PdfPageStyleKey];
 	if (!myTag) myTag = PDF_SINGLE_PAGE_STYLE; // default PdfPageStyleKey
 	itemIndex = [_pageStylePopup indexOfItemWithTag: myTag];
@@ -1620,7 +1638,7 @@ This method retrieves the application preferences from the defaults object and s
 #endif
 
 	tabSize = [defaults integerForKey: tabsKey];
-	myNumber = [NSNumber numberWithInt: tabSize];
+	myNumber = [NSNumber numberWithInteger:tabSize];
 	[_tabsTextField setStringValue:[myNumber stringValue]];
 	// [_tabsTextField setIntValue: tabSize];
 
@@ -1661,6 +1679,7 @@ This method updates the textField that represents the name of the selected font 
 {
 	NSString *fontDescription;
 
+#warning 64BIT: Check formatting arguments
 	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [_documentFont displayName], [_documentFont pointSize]];
 	[_documentFontTextField setStringValue:fontDescription];
 }
@@ -1669,6 +1688,7 @@ This method updates the textField that represents the name of the selected font 
 {
 	NSString *fontDescription;
 
+#warning 64BIT: Check formatting arguments
 	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [SUD stringForKey:ConsoleFontNameKey], [SUD floatForKey:ConsoleFontSizeKey]];
 	[_consoleFontTextField setStringValue:fontDescription];
 }

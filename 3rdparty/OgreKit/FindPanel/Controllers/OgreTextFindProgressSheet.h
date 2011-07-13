@@ -13,8 +13,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <OgreKit/OgreTextFinder.h>
-
-@protocol OgreTextFindProgressDelegate;
+#import <OgreKit/OgreTextFindProgressDelegate.h>
 
 @interface OgreTextFindProgressSheet : NSObject <OgreTextFindProgressDelegate>
 {

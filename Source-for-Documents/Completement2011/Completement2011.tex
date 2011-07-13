@@ -1,0 +1,481 @@
+% !TEX encoding = UTF-8 Unicode
+%!TEX TS-program =  xelatex
+
+\documentclass[12pt,french]{article}
+\usepackage[a4paper,twoside,textheight=23.5cm,heightrounded]{geometry}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{calc}
+\usepackage{booktabs}
+\usepackage{varioref}
+\usepackage{xltxtra}
+
+%Sections en sffamily
+\usepackage{sectsty}
+\allsectionsfont{\sffamily}
+
+%Fontes
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont[Mapping=tex-text]{Linux Libertine O}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{Helvetica Neue}
+\setmonofont[Scale=MatchLowercase]{Andale Mono}
+
+% En français
+\usepackage[frenchb]{babel}
+\addto\captionsfrench{\def\tablename{\textsc{Tableau}}}
+\frenchbsetup{ShowOptions,og=«,fg=»}
+
+% Les fontes casseaux 
+\newfontface\WDN{Wingdings 3}
+\newfontface\WD[Scale=.9]{Wingdings 3}
+\newfontface\WDL[Scale=1.2]{Wingdings 3}
+\newfontface\WA[Scale=.9]{Wingdings}
+
+% Des commandes symbols
+\newcommand{\tab}{{\raisebox{-2pt}{\WDL\symbol{42}}}}
+\newcommand{\esc}{{\WD \symbol{82}}}
+\newcommand{\alt}{{\WD \symbol{85}}}
+\newcommand{\ctr}{{\WD \symbol{84}}}
+\newcommand{\cmd}{{\WA \symbol{122}}}
+\newcommand{\maj}{{\WA \symbol{241}}}
+\newcommand{\texs}{\textsf{\TeX{}Shop}}
+\newcommand{\tex}{\textsf{\TeX}}
+
+%Pointbleu
+\newcommand{\pointbleu}{\colorbox{cyan!40}{\kern-3pt•\kern-3pt}}
+\newcommand{\pointbleua}{\,\colorbox{cyan!40}{\kern-4pt•\kern-4pt}\,}
+
+%Zonebleu
+\newcommand{\zonebleu}[1]{\colorbox{cyan!40}{\kern-4pt#1\kern-4pt}}
+
+
+%Police du code LaTeX
+\newcommand{\fontelatex}{\ttfamily}
+
+%Composition des noms d'argument
+\newcommand{\argument}[1]{{\fontelatex#1}}
+
+%Composition des options de commandes (entourées de crochets)
+\newcommand{\opt}[1]{{\fontelatex[#1]}}
+
+%Composition des arguments de commandes (entourées d'accolades de couleur verte)
+\newcommand{\argt}[1]{{\fontelatex\textcolor{green}{\{}#1\textcolor{green}{\}}}}
+
+%Composition des commandes LaTeX (avec la contre-oblique), en bleu
+\newcommand{\com}[1]{{\fontelatex\textcolor{blue}{\textbackslash#1}}}
+
+%Composition des commandes avec un argument
+\newcommand{\coma}[2]{\com{#1}\argt{#2}}
+
+%Composition des commandes avec option et argument
+\newcommand{\comoa}[3]{\com{#1}\opt{#2}\argt{#3}}
+
+%Microtypographie
+%\usepackage[final,babel]{microtype}
+
+% Hyperref
+\usepackage[colorlinks,linkcolor=black,urlcolor=blue]{hyperref}
+
+%Titre
+\title{\sffamily\bfseries Complètement de commande avec\\ \texs\space\thanks{Traduit par René Fritz le 30 mars 2011.}}
+\author{Herbert Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
+\date{6 mars 2011}
+
+%Début du document
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+
+Depuis la version V1.34, \texs{} offrait un service de complètement de commande \emph{(Command Completion 
+facility)} qui était assez puissante, bien que sous-utilisé. Le complètement de commande de \texs{} permet les achèvements (complètements) ou les substitutions (abréviations) pour un ensemble de caractères, délimités à gauche par un caractère de début de mot \emph{(Word Boundary Character)}\footnote{Ces caractères sont des espaces, onglets, retour à la ligne (interligne), points, virgule, point-virgule, deux points, \{, \}, (, ) ou \textbackslash{} (en réalité le caractère de commande de \tex{} qui peut varier dans différentes réalisations). Le \{{} et \textbackslash{} font aussi partie de l'expansion.} et déclenchés par la touche d'échappement (\esc).
+
+Avec l'aide des contributeurs de la liste mél de \textsf{Mac OS X} \tex{}\footnote{Souscrite en envoyant un mél à <
+\href{mailto:MacOSX-TeX-on@email.esm.psu.edu}{MacOSX-TeX-on@email.esm.psu.edu}>.}, une mise à jour du 
+fichier \textsf{CommandCompletion.txt} a été créée en même temps que des macros Applescript associées pour tirer 
+profit de ce service. Les complètements et abréviations fournis contiennent souvent des gros points, « • », appelés 
+repères \emph{(Marks)}\footnote{Précédemment appelés \emph{Tabs}.}, utilisés comme espaces réservés aux 
+arguments de commande ou pour accéder facilement à la fin d'un environnement. Le saut à ces repères, vers l'avant 
+ou vers l'arrière, a été obtenu en utilisant des macros\footnote{Les fichiers originaux 
+\textsf{CommandCompletion.txt}, les macros et la documentation sont encore disponibles sous le titre 
+\textsf{CommandCompletion.zip} sur le site <\url{http://homepage.mac.com/herbs2/}>.} ; les macros sautent aux 
+repères, les sélectionnent ou les suppriment. La plupart des abréviations sont inspirées de celles employées dans le 
+système \textsf{Fas\tex}\footnote{\textsf{Fas\tex} a été développé par Filip G. Machi, Jerrold E. Marsden et Wendy G. 
+McKay. Pour de plus amples renseignements, consultez la page Web \textsf{Fas\tex}, <\url{http://
+www.cds.caltech.edu/~fastex/}>.} utilisé avec \textsf{TypeIt4Me}\footnote{\textsf{TypeIt4Me}, par Riccardo Ettore, qui 
+est actuellement un panneau de préférences, permet de remplacer une abréviation dans la plupart des programmes 
+OS X avec « des dictionnaires » qui peuvent dépendre d'une application. Voir la page web \textsf{TypeIt4Me}, <
+\url{http://www.typeit4me.com/}, pour plus d'informations.}.
+\enlargethispage*{\baselineskip}
+
+À partir de la version 2.30 \texs{} intègre une version améliorée du complètement de commande inspirée 
+de Hugh Neary et Will Robertson. Les macros Applescript ne sont plus nécessaires et les arguments des 
+complètements peuvent comporter un bref aide-mémoire.
+
+\textbf{\texs{} 2.36 permet de déclencher le Complètement de Commande par la touche Tab (\tab{}) et de revenir à la touche \esc{} en allant dans : \texs{} → \textsf{Préférences…} → \textsf{Document} → \textsf{Commande de complétion déclenchée par}. Partout où vous verrez dans ce document \esc{} utilisez \tab{} si vous avez opté pour ce nouveau réglage.}
+
+\textbf{À partir de \texs{} 2.38, le Complètement de Commande maintient le retrait de ligne. Dans \texttt{$\sim$\!/Library/TeXShop/CommandCompletion/IndentedCC/}, on trouve également une version du fichier \textsf{CommandCompletion.txt} avec retrait de ligne. Elle peut être activée en la copiant dans \texttt{$\sim$\!/Library/TeXShop/CommandCompletion/} afin de remplacer la version qui s'y trouve.}
+
+\section*{Installation}
+
+Placer simplement cette version de \texs{} dans \texttt{/Apllications/TeX/}. Si vous avez déjà utilisé une précédente 
+version de \texs{} (antérieure à 2.31) suivez également les instructions de la sous-section suivante.
+
+\subsection*{\textsf{CommandCompletion.txt}}
+
+Par défaut, une nouvelle version de \textsf{CommandCompletion.txt} est ancré dans cette nouvelle version de \texs. 
+Elle sera installée, avec d'autres fichiers, à la première exécution de \texs{}, sauf si vous aviez utilisé \texs{} 
+auparavant. Dans ce cas, vous devez déplacer le répertoire \texttt{$\sim$/Library/TeXShop/CommandCompletion/} 
+(\texttt{$\sim$} est votre répertoire personnel) sur votre bureau et démarrer la nouvelle version de \texs{}; un dossier 
+de remplacement avec la nouvelle version de \textsf{CommandCompletion.txt} sera créé.
+
+Si vous avez déjà ajouté des éléments au dossier original, vous serez en mesure de les fusionner dans le nouveau 
+fichier après sa création. Vous pouvez ouvrir la nouvelle version de \textsf{CommandCompletion.txt} en cliquant sur 
+l'élément final du menu \textsf{Source} → \textsf{Complètement} → \textsf{Ouvrir le Fichier "Complètement"…} 
+L'ancien fichier doit être ouvert avec le codage Unicode (UTF-8) : utilisez la commande du menu \textsf{Fichier} → 
+\textsf{Ouvrir…} (\cmd{}-O) et assurez-vous d'avoir sélectionné le format de codage \texttt{Unicode(UTF-8)} avant 
+d'ouvrir votre ancienne version dans \texs.
+
+\section*{Nouveautés dans \texs}
+
+\mbox{Q}uatre changements interconnectés à \texs{} sont des plus importants : un ajout à la façon dont \texs{} traite 
+les complètements à partir du fichier \textsf{CommandCompletion.txt} ; un nouveau menu qui a des commandes pour 
+rechercher et sélectionner les Repères (\emph{Marks}) dans les complètements ; la possibilité de joindre des aide-mémoire, aux Repères ; un nouveau fichier \textsf{CommandCompletion.txt} qui acquiert un certain avantage 
+des trois précédents changements. Les quatre sous-sections suivantes traitent de chacun de ces changements plus 
+en détail. \mbox{Q}uelques changements mineures, au niveau du menu, sont examinés séparément.
+
+\subsection*{Traitement du complètement}
+
+Les complètements (dans le fichier \textsf{CommandCompletion.txt}) dans les versions précédentes de \texs{} ne 
+pouvaient contenir qu'une seule commande \texttt{\#INS\#} pour positionner le point d'insertion en leur sein. Cette 
+version \texs{} permet aux complètements d'avoir \emph{deux} copies de \texttt{\#INS\#} entre lesquelles le texte 
+sera sélectionné. Un seul \texttt{\#INS\#} se comporte de la même façon qu'auparavant ; il y a une totale compatibilité 
+ascendante avec les versions précédentes de \texs.
+
+\subsection*{Nouveau menu Source $\rightarrow$ Complètement $\rightarrow$ Repères}
+
+Le nouveau menu \textsf{Source} → \textsf{Complètement} → \textsf{Repères} contient des commandes pour 
+rechercher, aller au niveau des repères et des aide-mémoire, et les sélectionner. Les commandes sont indiquées 
+dans le \textsc{Tableau}~\Vref{commandes}. Les versions \textsf{(Ôter)} \emph{(Del)} des 
+commandes de recherche ne sont visibles dans le menu que si la touche option (\alt) est appuyée et la commande 
+\textsf{Insérer un aide-mémoire} ne s'affiche que lorsque vous maintenez appuyée la touche Contrôle (\ctr). La 
+commande \textsf{Insérer un repère} est ajoutée puisque l'utilisation de la fonction d'auto-complètement de \texs{} 
+(raccourci clavier) va inserrer un \com{bullet} dans le document lorsque la combinaison de touches qui, 
+normalement, insère un « • » (\alt-8 dans la correspondance du clavier américain) est employée. La version par 
+défaut du menu \textsf{Repères} est montrée dans la \textsc{Figure}~\Vref{menu}.
+
+\setlength{\belowcaptionskip}{\baselineskip}
+\renewcommand{\arraystretch}{1}
+\begin{table}[htbp]
+ \caption{\emph{Commandes du menu \textsf{Source} → \textsf{Complètement} → \textsf{Repères}.}
+\label{commandes}}
+ \centering
+  \begin{tabular}{@{} p{3.8cm} p{1.75cm} p{8.3cm} @{}}
+    \toprule
+   \textbf{Élément du menu} & \textbf{Raccourci} & \textbf{Connexion interne} \\ 
+    \midrule
+    \textsf{Repère suivant} & \ctr-\cmd-F & Va au prochain repère \emph{(Mark)} ou aide-mémoire et le sélectionne.\\ 
+    \textsf{Repère suivant (Ôter)} & \ctr-\alt-\cmd-F & Va au prochain repère ou aide-mémoire, le sélectionne et 
+supprime le repère: c'est surtout utile lorsque vous avez des environnements imbriqués pour supprimer 
+automatiquement un repère situé à la fin d'un environnement interne. \\ 
+    \textsf{Repère précédent} & \ctr-\cmd-G & Comme pour \textsf{Repère suivant} mais en sens inverse. \\ 
+    \textsf{Repère précédent (Ôter)} & \ctr-\alt-\cmd-G & Comme pour \textsf{Repère suivant (Ôter)} mais en sens 
+inverse. \\ 
+    \textsf{Insérer un repère} & \cmd-8 & Place un repère au point d'insertion : utilisé pour repérer des arguments, 
+etc., lors de la création de nouveaux complètements dans le fichier \textsf{CommandCompletion.txt}. \\ 
+    \textsf{Insérer un aide-mémoire} & \ctr-\cmd-8 & Place l'ossature d'un aide-mémoire « •‹› » avec le point d'insertion 
+situé avant le « › »: pratique pour créer des commentaires dans le fichier \textsf{CommandCompletion.txt}. \\ 
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection*{Aide-mémoire}
+
+Les modifications mentionnées dans les sous-sections précédentes permettent aux complètements de contenir des 
+aide-mémoire -- petits « pense-bêtes » -- qui donnent des indications sur ce que doit contenir un argument donné. 
+Les aide-mémoire, entourés de « •‹ » et « › »\footnote{Notez que « ‹ » et « › » sont des guillemets simples et non les 
+glyphes « < » et « > ».}, sont placés à l'intérieur les arguments ; si le premier argument contient un aide-mémoire, 
+celui-ci doit être entouré de deux \texttt{\#INS\#} afin qu'il soit sélectionné d'abord.
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{mark1}
+\caption{\emph{Menu, par défaut, de \textsf{Source} → \textsf{complètement} → \textsf{Repères}.}\label{menu}}
+\end{figure}
+
+\subsection*{Nouveau fichier \textsf{CommandCompletion.txt}}
+
+Par rapport à la version originale, il y a quelques changements dans le nouveau fichier 
+\textsf{CommandCompletion.txt} qui vient avec cette version de \texs{} :
+
+\begin{itemize}
+\item Il y a quelques corrections, mineures, de bogues, et quelques environnements et commandes supplémentaires ;
+\item toutes les commandes \texttt{\#INS\#} isolées sont remplacées par des \texttt{\#INS\#}•\texttt{\#INS\#} afin que 
+le repère initial soit sélectionné, \pointbleu. Il s'agit d'un souci de cohérence entre l'apparence et le comportement 
+lorsque vous utilisez les commandes \textsf{Repère suivant/précédent} ;
+\item il y a un peu (trop peu?) d'exemples d'aide-mémoire dans les commandes et les environnements.
+\end{itemize}
+
+\subsection*{Nouveaux raccourcis clavier dans \texs{} à partir de 2.36}
+
+En plus de \ctr{}-\cmd{}-F/G pour, \textsf{Repère suivant} et \textsf{Repère précédent}, \texs{} 2.36 introduit le 
+raccourci \alt{}/\ctr{}-\esc{} comme alternative pour atteindre ces éléments de menu. Si vous voulez supprimer cette 
+disposition, éxécutez la command suivante :
+
+\texttt{defaults write TeXShop CommandCompletionAlternateMarkShortcut NO}
+
+\noindent dans le \texttt{Terminal}. Pour revenir au réglage précédent remplacer \texttt{NO} par \texttt{YES}.  
+
+\section*{Utilisation}
+
+\subsection*{Complètement de commande}
+
+Une utilisation typique du complètement de commande est d'installer des environnements. Pour ce faire, tapez 
+\com{b} puis \esc{} ; ce qui devrait vous donner \com{begin}\texttt{\textcolor{green}{\{}}. Ensuite, commencez à taper 
+le nom de l'environnement, par exemple, \argument{eq} puis \esc{} ce qui donnera : 
+
+
+{\parindent=0pt%
+\coma{begin}{equation}%
+
+\pointbleu
+
+\coma{end}{equation}•
+}
+
+\noindent tandis que l'\esc{} suivant donnera \argument{eqnarray} suivi de sa variante étoilée (*). Après avoir entré le 
+texte de votre équation au niveau du curseur exécutez la commande \textsf{Source} → \textsf{Complètement} → 
+\textsf{Repères} → \textsf{Repère suivant} et le curseur sélectionnera (ou supprimera, si \textsf{Repère suivant 
+(Ôter)} est utilisé) le « • » suivant et vous pourrez commencer à taper le texte qui suit.
+
+Les macros sont également très pratiques pour les commandes qui prennent plusieurs arguments. Par exemple, 
+pour créer une nouvelle commande avec un argument optionnel tapez \com{new} or \com{newc} puis trois fois \esc{} 
+pour obtenir : 
+
+{\parindent=0pt%
+\coma{newcommand}{\pointbleua}\opt{•}\opt{•}\argt{•}
+}
+
+\noindent avec le premier repère sélectionné. Après avoir entré le nom de la nouvelle commande utilisez la 
+commande \textsf{Repère suivant} pour passer à l'argument suivant, etc.
+
+\subsection*{Abréviations}
+
+En plus du complètement de commande, il existe aussi de nombreuses abréviations pour les commandes. La 
+principale différence est que les abréviations ne sont pas seulement le début d'un nom de commande. Par exemple, 
+taper \argument{benu}, puis \esc{} au début d'une ligne\footnote{Ou après tout autre caractère de début de mot.} 
+produira l'environnement complet d'une énumération :
+
+{\parindent=0pt%
+\coma{begin}{enumerate}
+
+\com{item}
+
+\pointbleu
+
+\coma{end}{enumerate}•
+}
+
+\noindent comme vous pouvez vous en douter. De telles abréviations existent pour de nombreux environnements, 
+ainsi que pour des commandes de sectionnement. D'autres versions de commande avec une ou plusieurs options ou 
+des variantes étoilées (*) ont des noms qui se terminent respectivement par « \argument{o} » (un ou plusieurs) ou « 
+\argument{s} » : par exemple, \argument{sec} et deux pressions sur \esc{} ou \argument{secs} et une seule pression 
+sur \esc{} au début d'une nouvelle ligne donnent \coma{section*}{\pointbleua}. Par ailleurs, après avoir tapé le texte 
+pour le premier item, taper \argument{it} puis \esc{} sur une nouvelle ligne va générer un autre \com{item} avec un 
+repère sélectionné sur la ligne du dessous ; des pressions successives sur la touche \esc{} donneront \com{item}
+\opt{\pointbleua} avec un repére sur la ligne suivante, \coma{textit}{\pointbleua} et enfin \com{itshape} avant de 
+retourner au \argument{it} d'origine.
+
+Vous devez vous souvenir qu'il faut un des caractères de début de mot, avant d'utiliser les abréviations ; sinon, la 
+substitution ne fonctionnera pas correctement. Ce n'est pas un problème avec les environnements et les commandes 
+de sectionnement, puisque vous commencez, généralement, sur une nouvelle ligne ; mais, cela peut l'être pour 
+d'autres abréviations. C'est pourquoi de nombreuses abréviations ont également une version avec « \com{} » ; par 
+exemple, `\argument{tt} puis \esc{} ne se développera pas correctement, puisque « ` » n'est pas un caractère de 
+début de mot tandis que `\com{tt} puis \esc{} donnera `\coma{texttt}{\pointbleua} et qu'une deuxième pression de la 
+touche \esc{} donnera la déclaration `\com{ttfamily}\footnote{Des abréviations similaires existent pour les 
+\argument{bf}, \argument{sf}, \argument{sc}, etc. Les versions pour les maths sont précédées par un \argument{m}, 
+par exemple, \argument{mbf} puis \esc{}, donnera \coma{mathbf}{\pointbleua}.}
+
+Bon nombre des caractères grecs et leurs versions mathématiques, en ligne, ont des abréviations dont les règles 
+sont les suivantes :
+
+\begin{enumerate}
+\item Les abréviations des caractères grecs commencent toutes par un « \argument{x} » suivi d'une notation pour les 
+caractères : par exemple, \argument{xa} ou \com{xa}\footnote{Toutes les abréviations des caractères grecs ont une 
+version \com{}.} puis \esc{} et donnera \com{alpha}.
+\item La version \argument{var} de plusieurs caractères grecs commencent par « \argument{xv} » suivi de la notation 
+pour le caractère : par exemple, \argument{xth} donne \com{theta} tandis que \argument{xvth} puis \esc{} donne 
+\com{vartheta}.
+\item Pour obtenir des lettres capitales utilisez un « \argument{xc} » : par exemple, \argument{xg} donne\! 
+\com{gamma} tandis que \argument{xcg} donne \com{Gamma}.
+\item Enfin, l'abréviation précédée d'un \argument{d} présente le caractère grec comme dans une équation 
+mathématique en ligne : par exemple, \argument{dxcd} donne \com{(}\com{Delta}\com{)}.
+\end{enumerate}
+
+Les abréviations seront complétées et bouclées par le biais des correspondances tout comme les complètements de 
+commande : par exemple, l'abréviation \argument{newcoo} (notez le « \argument{oo} » à la fin de l'abréviation) suivi 
+d'une pression sur \esc{}  ou \argument{newc} suivi de trois pressions sur la touche \esc{}, les deux placées sur une 
+nouvelle ligne, donneront \coma{newcommand}{\pointbleua}\opt{•}\opt{•}\argt{•} : le \com{newcommand} avec deux 
+arguments optionnels. Il existe des abréviations de remplacement pour certaines commandes : par exemple,  
+\argument{ncm} donne le même résultat que  \argument{newc}. 
+
+Je vous suggère de lire le fichier \textsf{CommandCompletion.txt} pour voir les abréviations disponibles ; toutes les 
+lignes avec « : = » sont des abréviations. Naturellement, vous pouvez les modifier selon vos besoins, en ajouter ou 
+en supprimer.
+
+\subsection*{Aide-mémoire}
+
+Il est facile de se souvenir des arguments des commandes utilisées assez souvent, mais ce n'est pas le cas pour 
+celles qui le sont rarement. Ces dernières sont toutes indiquées pour les aide-mémoire. L'ordre des arguments de la 
+commande \com{rule} en est un exemple : 
+
+Tapez \com{rul} et deux fois \esc{} pour obtenir \com{rule}\opt{\zonebleu{•‹lift›}}\argt{•‹width›}\argt{•‹height›}\!, la 
+version avec l'argument optionnel\footnote{C'est-à-dire, \com{rule}\opt{\#INS\#•‹lift›\#INS\#}\argt{•‹width›}
+\argt{•‹height›} dans le fichier \textsf{CommandCompletion.txt}.}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{sec}
+\caption{\emph{De gauche à droite et de haut en bas cycle des résultats obtenus en entrant \texttt{sec} par pressions successives de \esc{} : soit la séquence \texttt{initial} → \texttt{sec} → \texttt{secs} → \texttt{seco}.}
+\label{sec}}
+\end{figure} 
+
+Un autre exemple est l'environnement \argument{wrapfigure} de l'extension \argument{wrapfig}, qui dispose de 
+plusieurs versions avec différents numéros et différents positionnements des arguments facultatifs. Pour voir les 
+variations avec les aide-mémoire, tapez \argument{bwr} sur une ligne vide et appuyez sur \esc{} pour obtenir :
+\smallskip
+
+{\parindent=0pt
+\coma{wrapfigure}{\zonebleu{•‹placement: r,R,l,L,i,I,o,O›}}\argt{•‹width›}
+
+•
+
+\coma{end}{wrapfigure}•
+}
+%\enlargethispage{25pt}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent pour obtenir les versions comportant des arguments optionnels appuyez successivement sur \esc{}.
+
+\subsection*{Autres environnements}
+
+Les environnements non prédéfinis dans le fichier \textsf{CommandCompletion.txt} peuvent, toujours, être ajoutés si 
+vous les utilisez beaucoup, mais il y a une alternative pour une utilisation occasionnelle. Les environnements peuvent 
+être construits à l'intérieur même de l'algorithme de complètement. Tapez d'abord \com{b} et appuyez sur \esc{} pour 
+obtenir \com{begin}\texttt{\textcolor{green}{\{}}, entrez ensuite le nom d'environnement et l'accolade de fermeture 
+\texttt{\textcolor{green}{\}}}, appuyez de nouveau sur \esc{} et la commande de clôture \coma{end}{} avec le nom 
+correspondant de l'environnement sera générée sur une ligne distincte.
+
+\section*{Abréviations du fichier \textsf{CommandCompletion.txt}}
+
+Cette section contient, nous l'espérons, la liste complète des abréviations fournies dans 
+\textsf{CommandCompletion.txt}. La liste a été partagée entre, les environnements, les commandes et les 
+déclarations, et les lettres grecques. Si vous donnez le début d'une abréviation la recherche va débuter à la première 
+abréviation similaire à votre proposition et à chaque pression de \esc{} elle va descendre dans la liste jusqu'à ce qu'il 
+n'y ait plus aucune identité : par exemple, si vous tapez \argument{be} des pressions successives de \esc{} 
+correspondront à \argument{benu}, \argument{benuo}, \argument{bequ}, \argument{bequs}, \argument{beqn} et 
+\argument{beqns} avant de retourner à l'original \argument{be}. Ajouter plus de lettres à l'abréviation peut vous 
+permettre d'arriver au résultat escompté en utilisant moins souvent la touche \esc{}. En réalité, certaines des 
+commandes et déclarations sont éparpillées entre les environnements dans le fichier 
+\textsf{CommandCompletion.txt} si bien qu'il pourrait y avoir, parfois, des éléments en plus. Les tableaux ne 
+présentent pas les complètements standards ni les versions  « \com{} » des abréviations.
+
+\noindent\textbf{\textsc{Remarque}. -- La liste peut sembler un peu intimidante. Il n'est pas nécessaire de « mémoriser » toutes ces abréviations ; apprenez-en un nombre minimum, celles dont vous avez besoin, et utilisez la touche \esc{} pour obtenir les variations d'une abréviation donnée (voir \textsc{Figure}~\Vref{sec}).}
+
+\subsection*{Abréviations des environnements}
+
+Le \textsc{Tableau}~\Vref{tbl1} contient une liste des abréviations, pour différents environnements, 
+fournies dans le fichier \textsf{CommandCompletion.txt}. Plusieurs environnements voisins verticalement portent le 
+même nom. Ils correspondent à des variations dans le nombre et la répartition des arguments optionnels possibles 
+ou à des variantes étoilées (*). Il se peut qu'il y ait, aussi, plus d'une abréviation pour le même environnement.
+
+\subsection*{Commandes \& déclarations}
+
+Comme pour les environnements il y a beaucoup de variations, en options et variantes étoilées (*), ainsi que de 
+nombreuses abréviations correspondant à la même commande : voir le \textsc{Tableau}~\Vref{tbl2}. 
+
+\subsection*{Lettres grecques}
+
+Les abréviations des lettres grecques apparaissent dans le \textsc{Tableau}~\Vref{tbl3}. Les versions destinées aux équations en ligne, c'est-à-dire, celles précédées d'un « \argument{d} », ne sont pas présentées.
+
+\section*{Ajouts au fichier \textsf{CommandCompletion.txt}}
+
+Si vous ajoutez des éléments au fichier \textsf{CommandCompletion.txt}, il y a certaines choses à connaître 
+concernant sa structure :
+
+
+\begin{itemize}
+\item Chaque environnement possède trois entrées : un complétement qui supprime le \com{begin} de tête, c'est-à-dire, qu'il commence avec une accolade « \texttt{\textcolor{green}{\{}} » et le nom de l'environnement ; deux 
+abréviations qui ont un nom d'abréviation sans barre oblique inverse (\com{}) et l'abréviation même avec la barre 
+oblique inverse. Les commandes peuvent avoir plusieurs formes ; la commande intégrale ainsi qu'une ou plusieurs 
+abréviations, toutes avec ou sans la barre oblique inverse \com{}.
+\item Pour les abréviations, vous devez ajouter toutes les variantes de terminaisons légèrement différentes. J'utilise 
+un « \argument{o} », à la fin d'une abréviation, pour un argument optionnel ; un « \argument{oo} » pour deux 
+arguments facultatifs ; un « \argument{s} » pour des commandes de formes étoilées, etc.
+\item L'ordre d'éléments similaires, dans le fichier, ne donne pas une différence spectaculaire dans l'ordre dans lequel ils sont trouvés : ceux placés après, seront trouvés plus tôt (l'exploitation du fichier est ascendante). Ainsi,  l'ordre des éléments obtenus lorsque vous tapez \com{b} puis \esc{} dépend purement de l'ordre des 
+correspondances dans le fichier \textsf{CommandCompletion.txt}.
+\item Pour un maximum de confort, placez un repère\footnote{En utilisant \textsf{Insérer un repère} (\cmd{}-8) du 
+menu \textsf{Source} → \textsf{Complètement} → \textsf{Repères}.} dans chacun des arguments des commandes. 
+Entourez le tout premier argument avec deux commandes \argument{\#INS\#} afin qu'il en ressorte sélectionné. Si 
+vous voulez avoir un aide-mémoire dans tous les arguments, insérez la structure\footnote{En utilisant \textsf{Insérer un aide-mémoire} (\ctr{}\cmd{}8) du menu \textsf{Source} → \textsf{Complètement} → \textsf{Repères}.} nécessaire et remplissez-la.
+\end{itemize}\smallskip
+
+Je suggère que vous jetiez un \oe{}il dans le fichier \textsf{CommandCompletion.txt} pour des exemples.
+
+\section*{Bogues}
+
+Le fichier \textsf{CommandCompletion.txt} est habituellement exploité de façon ascendante, à partir du dernier 
+élément ; mais, dans de rares cas, le sens de la recherche semble s'inverser, si bien que vous n'obtenez pas les 
+correspondances dans l'ordre que vous attendiez. Vous pouvez, généralement, forcer l'exploitation à revenir dans la 
+« bonne » direction, en tapant \argument{-{}-{}-} et en appuyant trois fois sur \esc{}, et ensuite en enlevant le  
+\argument{-\null-\null-}. Si cela ne corrige pas le sens de la recherche, vous pouvez utiliser le raccourci \maj-\esc{} 
+pour chercher dans l'« autre » direction.
+
+\section*{Ce qui manque}
+
+Toutes les suggestions sont bienvenues et seront prises en considération afin d'être incluses dans les itérations 
+ultérieures du code de la Commande de Complètement. 
+
+Essayez la… J'espère que vous l'aimerez.
+
+%\bigskip
+%
+%\hrule
+%\vspace{-6pt}
+%\begin{flushright}
+%\footnotesize Traduit par René Fritz, 30 mars 2011.
+%\end{flushright}
+
+
+\begin{table}[htbp]
+\centering
+\caption{\emph{Abréviations des environnements dans \textsf{CommandCompletion.txt}}.}
+\includegraphics[scale=.74]{tbl1}
+\label{tbl1}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\hspace{-1cm}
+\begin{minipage}{\textwidth}%Minipage pour déplacer le tableau vers la couture
+\caption{\emph{Commandes et déclarations dans \textsf{CommandCompletion.txt}}.}
+\includegraphics[scale=.74]{tbl2}
+\label{tbl2}
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{\emph{Lettres grecques dans \textsf{CommandCompletion.txt} (version \argument{d} non présentée)}.}
+\includegraphics[scale=.74]{tbl3}
+\label{tbl3}
+\end{table}
+
+
+\end{document}
+
+ 
+  	

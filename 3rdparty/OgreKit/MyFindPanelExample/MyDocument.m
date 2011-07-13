@@ -61,6 +61,7 @@
 		_tmpString = [aString retain];
 	}
 	[aString release];
+    aString = nil;
 	//NSLog(@"newline character: %d (-1:Nonbreaking 0:LF(Unix) 1:CR(Mac) 2:CR+LF(Windows) 3:UnicodeLineSeparator 4:UnicodeParagraphSeparator)", _newlineCharacter, [OgreTextFinder newlineCharacterInString:_tmpString]);
 	//NSLog(@"%@", [OGRegularExpression chomp:_tmpString]);
 	
@@ -72,6 +73,7 @@
 	if (_tmpString) {
 		[textView setString:_tmpString];
 		[_tmpString release];
+        _tmpString = nil;
 	} else {
 		_newlineCharacter = OgreUnixNewlineCharacter;	// デフォルトの改行コード
 	}

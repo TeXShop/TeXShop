@@ -34,7 +34,7 @@
 - (IBAction)openDocument:(id)sender;
 - (IBAction)newDocumentFromStationery: (id)sender;
 - (void)initializeEncoding;
-- (int)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions;
+- (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions;
 - (NSStringEncoding)encoding;
 - (void)noteNewRecentDocument:(NSDocument *)aDocument;
 - (void)listDocument:(BOOL)value;

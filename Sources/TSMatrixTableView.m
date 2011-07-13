@@ -53,9 +53,9 @@ static NSColor *sStripeColor = nil;
 -(void) reloadData
 {
 	[super reloadData];
-	int i;
+	NSInteger i;
 	for (i = 0; i < [self numberOfColumns]; i++) {
-		if (i >= [[[self dataSource] theMatrix] actCols])
+		if (i >= [[(TSMatrixPanelController *)[self dataSource] theMatrix] actCols])
 			[[[self tableColumns] objectAtIndex:i] setDataCell:[[InactiveTextFieldCell alloc] init]];
 		else
 			[[[self tableColumns] objectAtIndex:i] setDataCell:[[ActiveTextFieldCell alloc] init]];
@@ -75,15 +75,15 @@ static NSColor *sStripeColor = nil;
 - (void) drawStripesInRect:(NSRect)clipRect
 {
 	NSRect stripeRect;
-	int actCols = [[[self dataSource] theMatrix] actCols];
-	int actRows = [[[self dataSource] theMatrix] actRows];
-	float fullRowHeight = [self rowHeight] + [self intercellSpacing].height;
-	float clipBottom = MIN(NSMaxY(clipRect), actRows*fullRowHeight);
-	float clipRight=0;
-	int i;
+	NSInteger actCols = [[(TSMatrixPanelController *)[self dataSource] theMatrix] actCols];
+	NSInteger actRows = [[(TSMatrixPanelController *)[self dataSource] theMatrix] actRows];
+	CGFloat fullRowHeight = [self rowHeight] + [self intercellSpacing].height;
+	CGFloat clipBottom = MIN(NSMaxY(clipRect), actRows*fullRowHeight);
+	CGFloat clipRight=0;
+	NSInteger i;
 	NSArray* tableCols;
 	
-	int firstStripe = clipRect.origin.y / fullRowHeight;
+	NSInteger firstStripe = clipRect.origin.y / fullRowHeight;
 	if (firstStripe < actRows) {
 		
 		tableCols = [self tableColumns];
@@ -166,13 +166,13 @@ static NSColor *sStripeColor = nil;
 	return self;
 }
 
--(id)dataCellForRow:(int)row
+-(id)dataCellForRow:(NSInteger)row
 {
 	// NSTextFieldCell *acell=[self dataCell];
 	if ([self tableView] == nil || row == -1) {
 		return [self dataCell];
 	} else {
-		if (([[[[self tableView] dataSource] theMatrix] actRows] <= row) ) {
+		if (([[(TSMatrixPanelController *)[[self tableView] dataSource] theMatrix] actRows] <= row) ) {
 			return _inactiveDataCell;
 		}
 	}

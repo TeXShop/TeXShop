@@ -237,17 +237,17 @@ static NSString	*OgreTextFinderEscapeCharacterKey = @"Escape Character";
 		NSLog(@"Find Menu not found in %@.nib", [self findPanelNibName]);
 	} else {
 		// Findメニューのタイトル
-		NSString	*titleOfFindMenu = OgreTextFinderLocalizedString(@"Find");
+		NSString    *titleOfFindMenu = OgreTextFinderLocalizedString(@"Find");
 		
 		// Findメニューの初期化
 		[findMenu setTitle:titleOfFindMenu];
-		id <NSMenuItem> newFindMenuItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] init] autorelease];
+        NSMenuItem  *newFindMenuItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] init] autorelease];
 		[newFindMenuItem setTitle:titleOfFindMenu];
 		[newFindMenuItem setSubmenu:findMenu];
 		
 		NSMenu		*mainMenu = [NSApp mainMenu];
 		
-		id <NSMenuItem> oldFindMenuItem = [self findMenuItemNamed:titleOfFindMenu startAt:mainMenu];
+		NSMenuItem  *oldFindMenuItem = [self findMenuItemNamed:titleOfFindMenu startAt:mainMenu];
 		// Findメニューが既にある場合はそこをfindMenuに入れ替える
 		// なければ左から4番目にFindメニューを作り、そこにfindMenuをセットする。
 		if (oldFindMenuItem != nil) {
@@ -266,7 +266,7 @@ static NSString	*OgreTextFinderEscapeCharacterKey = @"Escape Character";
 // currentを起点に名前がnameのmenu itemを探す。
 - (NSMenuItem*)findMenuItemNamed:(NSString*)name startAt:(NSMenu*)current
 {
-	id <NSMenuItem>	foundMenuItem = nil;
+	NSMenuItem  *foundMenuItem = nil;
 	if (current == nil) return nil;
 	
 	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
@@ -274,8 +274,8 @@ static NSString	*OgreTextFinderEscapeCharacterKey = @"Escape Character";
 	int i, n;
 	NSMutableArray	*menuArray = [NSMutableArray arrayWithObject:current];
 	while ([menuArray count] > 0) {
-		NSMenu			*aMenu = [menuArray objectAtIndex:0];
-		id <NSMenuItem> aMenuItem = [aMenu itemWithTitle:name];
+		NSMenu      *aMenu = [menuArray objectAtIndex:0];
+		NSMenuItem  *aMenuItem = [aMenu itemWithTitle:name];
 		if (aMenuItem != nil) {
 			// 見つかった場合
 			foundMenuItem = [aMenuItem retain];
@@ -335,6 +335,19 @@ static NSString	*OgreTextFinderEscapeCharacterKey = @"Escape Character";
 	
 	return [history autorelease];
 }
+
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+#ifdef DEBUG_OGRE_FIND_PANEL
+	NSLog(@"CAUTION! -finalize of %@", [self className]);
+#endif
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	if (_saved == NO) [self appWillTerminate:nil];	// 履歴の保存がまだならば保存する。
+	_sharedTextFinder = nil;
+    [super finalize];
+}
+#endif
 
 - (void)dealloc
 {
@@ -977,8 +990,8 @@ static NSString	*OgreTextFinderEscapeCharacterKey = @"Escape Character";
 	BOOL	shouldCloseProgressSheet = NO;
 	SEL		didEndSelector = [aTextFindThread didEndSelectorForFindPanelController];
 	id		result = [aTextFindThread result];
-	shouldCloseProgressSheet = (BOOL)[findPanelController performSelector:didEndSelector withObject:result];
-	
+	shouldCloseProgressSheet = ([findPanelController performSelector:didEndSelector withObject:result] != nil);
+
 	id		sheet = [aTextFindThread progressDelegate];
 	
 	if (shouldCloseProgressSheet) {

@@ -58,14 +58,14 @@
 - (IBAction)cancel:(id)sender
 {
 	[_target performSelector:_cancelSelector withObject:self];
-    [NSApp endSheet:columnSheet returnCode:nil];
+    [NSApp endSheet:columnSheet returnCode:0];
     [columnSheet orderOut:nil];
 }
 
 - (IBAction)ok:(id)sender
 {
 	[_target performSelector:_okSelector withObject:self];
-    [NSApp endSheet:columnSheet returnCode:nil];
+    [NSApp endSheet:columnSheet returnCode:0];
     [columnSheet orderOut:nil];
 }
 

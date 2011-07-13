@@ -25,14 +25,16 @@
 
 #import "TSDocumentController.h"
 #import "TSEncodingSupport.h"
+#import "TSDocument.h"
 
 
 @implementation TSDocumentController : NSDocumentController
 
-- (void)init
+- (id)init
 {
-	[super init];
+    id result = [super init];
 	doList = YES;
+    return result;
 }
 
 
@@ -70,9 +72,9 @@
 }
 
 
-- (int)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
+- (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
 {
-	int					result;
+	NSInteger					result;
 
 	// Set an accessory view, with the encoding popup button in it.
 	[openPanel setAccessoryView: encodingView];
@@ -124,5 +126,25 @@
 }
 */
 
+/*
+
+- (void)closeAllDocumentsWithDelegate:(id)delegate didCloseAllSelector:(SEL)didCloseAllSelector contextInfo:(void *)contextInfo
+{
+    NSLog(@"documents should terminate");
+    
+    NSArray *myDocuments = [self documents];
+    NSInteger i;
+    id obj;
+    i = 1;
+    while (i < [myDocuments count]) {
+        obj = [myDocuments objectAtIndex: (i - 1)];
+        i++;
+        if ([(TSDocument *)obj skipTextWindow])
+            [(TSDocument *)obj close];
+    }
+    [super closeAllDocumentsWithDelegate:delegate didCloseAllSelector:didCloseAllSelector contextInfo: contextInfo];
+
+}
+*/
 
 @end

@@ -36,30 +36,30 @@
 	id			totalPage1;
 	id			myScale1;
 	id			myStepper1;
-	int			documentType;
+	NSInteger			documentType;
 	double		oldMagnification;
 	//double		oldWidth, oldHeight; // mitsu 1.29 (O) not used
 	BOOL		fixScroll;
 	BOOL		showSync;
 	NSPDFImageRep	*myRep;
 	TSDocument		*myDocument;
-	int			rotationAmount;  // will be 0, 90, -90, 180
+	NSInteger			rotationAmount;  // will be 0, 90, -90, 180
 	double		theMagSize;
 	//BOOL		largeMagnify; // for magnifying glass // mitsu 1.29 (O) not used
 
 	// mitsu 1.29 (O)
-	int 	pageStyle;
-		int     firstPageStyle;
-	float 	pageWidth;
-	float 	pageHeight;
-	float 	totalWidth;
-	float 	totalHeight;
-	int 	resizeOption;
+	NSInteger 	pageStyle;
+		NSInteger     firstPageStyle;
+	CGFloat 	pageWidth;
+	CGFloat 	pageHeight;
+	CGFloat 	totalWidth;
+	CGFloat 	totalHeight;
+	NSInteger 	resizeOption;
 	NSRect selectedRect;
 	NSRect oldVisibleRect;
 	NSTimer *selRectTimer;
-	int mouseMode;
-	int currentMouseMode;
+	NSInteger mouseMode;
+	NSInteger currentMouseMode;
 	IBOutlet NSMatrix *mouseModeMatrix;
 	IBOutlet NSMenu *mouseModeMenu;
 	IBOutlet NSView *imageTypeView;
@@ -69,10 +69,10 @@
 }
 
 // set up the view
-- (void) setImageType: (int)theType;
+- (void) setImageType: (NSInteger)theType;
 - (void) setDocument: (id) theDocument;
 - (void) setImageRep: (NSPDFImageRep *)theRep;
-- (void)setupForPDFRep: (NSPDFImageRep *)newRep style: (int)newPageStyle;
+- (void)setupForPDFRep: (NSPDFImageRep *)newRep style: (NSInteger)newPageStyle;
 - (void)setFrameAndBounds; // mitsu 1.29 (O)
 - (void)fitToSize;
 - (BOOL)acceptsFirstResponder;
@@ -83,8 +83,8 @@
 - (void) doStepper: sender;
 - (void) resetMagnification;
 // drawRect
-- (int)pageNumberForPoint: (NSPoint)aPoint;
-- (NSPoint)pointForPage: (int)aPage;
+- (NSInteger)pageNumberForPoint: (NSPoint)aPoint;
+- (NSPoint)pointForPage: (NSInteger)aPage;
 - (NSImage *)imageFromRect: (NSRect)aRect;
 // moving
 - (void) previousPage: sender;
@@ -98,20 +98,20 @@
 - (void) left: sender;
 - (void) right: sender;
 - (void) goToPage: sender;
-- (void)displayPage: (int)pagenumber;
+- (void)displayPage: (NSInteger)pagenumber;
 - (void)updateCurrentPage;
 - (void)wasScrolled: (NSNotification *)aNotification;
 // rotation
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;
 - (void) fixRotation;
-- (float)rotationAmount;
+- (CGFloat)rotationAmount;
 // printing
 - (void) printDocument: sender;
 // mouseDown
 - (void)changeMouseMode: (id)sender;
 - (void)flagsChanged:(NSEvent *)theEvent;
-- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (int)level;
+- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)scrollByDragging: (NSEvent *)theEvent;
 // select and copy
 - (void)selectARect: (NSEvent *)theEvent;
@@ -121,18 +121,18 @@
 - (void)recacheMarquee;
 - (void)moveSelection: (NSEvent *)theEvent;
 - (BOOL)hasSelection;
-- (NSData *)imageDataFromSelectionType: (int)type;
+- (NSData *)imageDataFromSelectionType: (NSInteger)type;
 - (void)saveSelectionToFile: (id)sender;
 - (void) chooseExportImageType: sender;
 // drag & drop
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
 // others
-- (int)pageStyle;
+- (NSInteger)pageStyle;
 - (void)changePageStyle: (id)sender;
-- (int)resizeOption;
+- (NSInteger)resizeOption;
 - (void)changePDFViewSize: (id)sender;
 - (void)doSync: (NSEvent *)theEvent;
-- (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
+- (void)drawDotsForPage:(NSInteger)page atPoint: (NSPoint)p;
 - (void)setShowSync: (BOOL)value;
 @end
 
@@ -140,7 +140,7 @@
 }
 @end
 
-NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor, NSColor *backColor, int param1);
+NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor, NSColor *backColor, NSInteger param1);
 NSData *getPICTDataFromBitmap(NSBitmapImageRep *bitmap);
 
-extern NSString *extensionForType(int type); // mitsu 1.29 drag & drop
+extern NSString *extensionForType(NSInteger type); // mitsu 1.29 drag & drop

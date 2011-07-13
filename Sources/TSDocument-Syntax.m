@@ -27,9 +27,9 @@
 #import "globals.h"
 
 
-static BOOL isValidTeXCommandChar(int c);
+static BOOL isValidTeXCommandChar(NSInteger c);
 
-static BOOL isValidTeXCommandChar(int c)
+static BOOL isValidTeXCommandChar(NSInteger c)
 {
 	if ((c >= 'A') && (c <= 'Z'))
 		return YES;
@@ -77,13 +77,13 @@ static BOOL isValidTeXCommandChar(int c)
 {
 	NSLayoutManager *layoutManager;
 	NSString		*textString;
-	unsigned		length;
+	NSUInteger		length;
 	NSRange			colorRange;
-	unsigned		location;
-	int				theChar;
-	unsigned		aLineStart;
-	unsigned		aLineEnd;
-	unsigned		end;
+	NSUInteger		location;
+	NSInteger				theChar;
+	NSUInteger		aLineStart;
+	NSUInteger		aLineEnd;
+	NSUInteger		end;
 	BOOL			colorIndexDifferently;
 	NSTimeInterval	theTime;
 	
@@ -148,7 +148,7 @@ static BOOL isValidTeXCommandChar(int c)
 	
 	NSRange			lineRange, selectedLineRange, middleEastRange, testRange;
 	NSCharacterSet	*middleEastSet;
-	unsigned		start, theend;
+	NSUInteger		start, theend;
 	NSString		*theLine;
 	
 	if ([SUD boolForKey: RightJustifyKey]) {
@@ -249,7 +249,7 @@ static BOOL isValidTeXCommandChar(int c)
 				NSString *commandString = [textString substringWithRange: colorRange];
 				// esindex below is a Spanish indexing command
 				if (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"])) {
-					int parens = 0;
+					NSInteger parens = 0;
 					BOOL optparens = NO;
 					BOOL notDone = YES;
 					
@@ -292,7 +292,7 @@ static BOOL isValidTeXCommandChar(int c)
 // Load the color definitions from the config system
 - (void)setupColors
 {
-	float		r, g, b;
+	CGFloat		r, g, b;
 	NSColor		*color;
 
 	//
@@ -409,10 +409,10 @@ static BOOL isValidTeXCommandChar(int c)
 
 
 // This is the main syntax coloring routine, used for everything except opening documents
-- (void)fixColor: (unsigned)from : (unsigned)to
+- (void)fixColor: (NSUInteger)from : (NSUInteger)to
 {
 	NSRange			colorRange;
-	unsigned		length;
+	NSUInteger		length;
 
 	// No syntax coloring if the file is not TeX, or if it is disabled
 	if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])

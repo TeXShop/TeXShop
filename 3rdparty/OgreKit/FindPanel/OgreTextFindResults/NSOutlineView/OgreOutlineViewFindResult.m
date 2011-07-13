@@ -28,6 +28,14 @@
     return self;
 }
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];

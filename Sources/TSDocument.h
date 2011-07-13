@@ -30,7 +30,6 @@
 #import "TSPreviewWindow.h"
 #import "synctex_parser.h"
 
-
 #define NUMBEROFERRORS	20
 
 /*" Symbolic constants for the default Typeset program to use. "*/
@@ -75,7 +74,7 @@ enum RootCommand
 @class MyPDFView;
 @class MySelection;
 
-@interface TSDocument : NSDocument
+@interface TSDocument : NSDocument <NSTextViewDelegate, NSToolbarDelegate>
 {
 	IBOutlet NSTextView			*textView1;
 	IBOutlet NSTextView			*textView2;
@@ -94,6 +93,7 @@ enum RootCommand
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
+    IBOutlet TSPreviewWindow    *pdfKitWindow1;
 	IBOutlet MyPDFKitView		*myPDFKitView2;
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
@@ -165,28 +165,29 @@ enum RootCommand
 	NSStringEncoding	_encoding;
 	NSStringEncoding	_tempencoding;
 	DefaultTypesetMode			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
-	int			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
+	NSInteger			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
 													7 = metafont "*/
 	TSDocument	*rootDocument;
 	BOOL		tagLine;
+    BOOL        skipTextWindow;
 
 
-	BOOL				typesetStart;		/*" YES if tex output "*/
-	NSFileHandle		*writeHandle;
-	NSFileHandle		*readHandle;
-	NSPipe				*inputPipe;
-	NSPipe				*outputPipe;
-	NSTask				*texTask;
-	NSTask				*bibTask;
-	NSTask				*indexTask;
-	NSTask				*metaFontTask;
-	NSTask				*detexTask;
-	NSPipe				*detexPipe;
-	NSFileHandle		*detexHandle;
-	NSTask				*synctexTask;
-	NSPipe				*synctexPipe;
-	NSFileHandle		*synctexHandle;
-	synctex_scanner_t	scanner;
+	BOOL                typesetStart;		/*" YES if tex output "*/
+	NSFileHandle        *writeHandle;
+	NSFileHandle        *readHandle;
+	NSPipe              *inputPipe;
+	NSPipe              *outputPipe;
+	NSTask              *texTask;
+	NSTask              *bibTask;
+	NSTask              *indexTask;
+	NSTask              *metaFontTask;
+	NSTask              *detexTask;
+	NSPipe              *detexPipe;
+	NSFileHandle        *detexHandle;
+	NSTask              *synctexTask;
+	NSPipe              *synctexPipe;
+	NSFileHandle        *synctexHandle;
+    synctex_scanner_t	scanner;
 
 
 	NSDate		*startDate;
@@ -194,29 +195,36 @@ enum RootCommand
 	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
 	TSDocumentType			_documentType;
-	int			errorLine[NUMBEROFERRORS];
+	NSInteger			errorLine[NUMBEROFERRORS];
 	NSString	*errorLinePath[NUMBEROFERRORS];
 	NSString	*errorText[NUMBEROFERRORS];
-	int			errorNumber;
-	int			whichError;
+	NSInteger			errorNumber;
+	NSInteger			whichError;
 	DefaultTypesetMode			theScript;		/*" script currently executing; 100, 101, 102 "*/
 	
-	unsigned	colorStart, colorEnd;
+	NSUInteger	colorStart, colorEnd;
 	NSDictionary		*regularColorAttribute;
 	NSDictionary		*commandColorAttribute;
 	NSDictionary		*commentColorAttribute;
 	NSDictionary		*markerColorAttribute;
 	NSDictionary		*indexColorAttribute;
+    
+    // for full screen operation
+    NSInteger           oldPageStyle;
+    NSInteger           oldResizeOption;
+    NSInteger           fullscreenPageStyle;
+    NSInteger           fullscreenResizeOption;
+
 
 	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
-	unsigned	tagLocation;
-	unsigned	tagLocationLine;
+	NSUInteger	tagLocation;
+	NSUInteger	tagLocationLine;
 
 	BOOL				makeError;
 	SEL					tempSEL;
 	MySelection			*mSelection;
 	BOOL                taskDone;
-	int                 pdfSyncLine;
+	NSInteger                 pdfSyncLine;
 	id                  syncBox;
 	id					indexColorBox;
 	BOOL                aggressiveTrash;
@@ -238,14 +246,14 @@ enum RootCommand
 	BOOL                _pdfRefreshTryAgain;
 
 	BOOL                typesetContinuously;
-	int                 tempEngine;
+	NSInteger                 tempEngine;
 	BOOL                useTempEngine;
 	BOOL                realEngine;
 	NSWindow            *callingWindow;
 	NSStringEncoding	_badEncoding;
 	BOOL                showBadEncodingDialog;
 	BOOL				PDFfromKit;
-	unsigned int		pdfCharacterIndex;
+	NSUInteger		pdfCharacterIndex;
 	BOOL				textSelectionYellow;
 	BOOL				showIndexColor; // this is related to a bug where the source draws after the toolbar is disposed
 	BOOL				showSync; // this fixes a bug in which the pdfkit draws a final time and accesses a toolbar button after it is disposed
@@ -256,8 +264,8 @@ enum RootCommand
 	BOOL				consoleCleanStart;
 	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 
-	int lastCursorLocation; // added by Terada
-	int lastStringLength; // added by Terada
+	NSInteger lastCursorLocation; // added by Terada
+	NSInteger lastStringLength; // added by Terada
 	BOOL lastInputIsDelete; // added by Terada
 	
 	//Michael Witten: mfwitten@mit.edu
@@ -267,9 +275,9 @@ enum RootCommand
 // end addition
 
 }
++ (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
-- (void)saveToFile:(NSString *)fileName saveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo;
 // forsplit
 - (void) splitWindow: sender;
 - (void) splitPreviewWindow: sender;
@@ -310,18 +318,17 @@ enum RootCommand
 - (void) setAutoCompleting:(BOOL)flag; // added by Terada
 - (void) fixMacroMenu;
 - (void) fixMacroMenuForWindowChange;
-- (NSRange) lineRange: (int)line;
-- (void) toLine: (int)line;
-- (void) toLine: (int) line andSubstring: theString;
+- (NSRange) lineRange: (NSInteger)line;
+- (void) toLine: (NSInteger)line;
+- (void) toLine: (NSInteger) line andSubstring: theString;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
 - (void) doError: sender;
-- (int) errorLineFor: (int)theError;
-- (NSString *) errorLinePathFor: (int)theError;
-- (NSString *) errorTextFor: (int)theError;
-- (int) totalErrors;
-- (int) textViewCountTabs: (NSTextView *) aTextView andSpaces: (int *) spaces;
-- (BOOL)writeToFile:(NSString *)fileName ofType:(NSString *)docType;
+- (NSInteger) errorLineFor: (NSInteger)theError;
+- (NSString *) errorLinePathFor: (NSInteger)theError;
+- (NSString *) errorTextFor: (NSInteger)theError;
+- (NSInteger) totalErrors;
+- (NSInteger) textViewCountTabs: (NSTextView *) aTextView andSpaces: (NSInteger *) spaces;
 - (BOOL)keepBackupFile;
 - (void) setupTags;
 - (TSDocumentType) documentType;
@@ -338,20 +345,19 @@ enum RootCommand
 - (BOOL) isTexExtension: (NSString *)extension;  //needed?
 - (BOOL) isTextExtension: (NSString *)extension; //needed?
 - (NSPDFImageRep *) myTeXRep;
-- (NSDictionary *)fileAttributesToWriteToFile:(NSString *)fullDocumentPath ofType:(NSString *)documentTypeName saveOperation:(NSSaveOperationType)saveOperationType;
 - (BOOL)isDocumentEdited;
 - (BOOL)fileIsTex; // added by zenitani, Feb 13, 2003
 - (void)bringPdfWindowFront;
 - (NSWindow *)getCallingWindow;
 - (void)setCallingWindow: (NSWindow *)thisWindow;
-- (void)setPdfSyncLine:(int)line;
+- (void)setPdfSyncLine:(NSInteger)line;
 - (void)showSyncMarks:sender;
 - (void) flipShowSync: sender;
 - (void)showIndexColor:sender;
 - (BOOL)indexColorState;
 - (void) flipIndexColorState: sender;
-- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
-- (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
+- (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
+- (BOOL)doNewPreviewSyncWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
 - (void)trashAUXFiles: sender;
 - (void)trashAUX;
 - (void)tryBadEncodingDialog: (NSWindow *)theWindow;
@@ -362,7 +368,7 @@ enum RootCommand
 - (void)doForward: (id)sender;
 - (id) mousemodeMenu;
 - (id) mousemodeMatrix;
-- (void) setCharacterIndex:(unsigned int)idx;
+- (void) setCharacterIndex:(NSUInteger)idx;
 - (BOOL) textSelectionYellow;
 - (void) setTextSelectionYellow:(BOOL)value;
 - (void) saveSourcePosition;
@@ -373,7 +379,15 @@ enum RootCommand
 - (void)displayLog: (id)sender;
 - (void)resetSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
-- (void)allocateSyncScanner;
+- (void)invalidateCompletionConnection;
+// Forward Routines Not Found by Source
+- (BOOL)fillLogWindow;
+- (void)fillLogWindowIfVisible;
+- (MyPDFKitView *)myPdfKitView;
+- (MyPDFKitView *)myPdfKitView2;
+- (void)enterFullScreen: (NSNotification *)notification;
+- (void)exitFullScreen: (NSNotification *)notification;
+- (BOOL)skipTextWindow;
 
 // BibDesk Completion
 //---------------------------
@@ -397,7 +411,7 @@ enum RootCommand
 //-----------------------------------------------------------------------------
 
 // added by mitsu --(J) Typeset command
-- (int)whichEngine;
+- (NSInteger)whichEngine;
 // end addition
 
 // mitsu 1.29
@@ -405,11 +419,11 @@ enum RootCommand
 - (BOOL)isDoAutoCompleteEnabled; // mitsu 1.29 (T4)
 - (void)insertSpecial:(NSString *)theString undoKey:(NSString *)key;
 - (void)insertSpecialNonStandard:(NSString *)theString undoKey:(NSString *)key;
-- (void)registerUndoWithString:(NSString *)oldString location:(unsigned)oldLocation
-	length: (unsigned)newLength key:(NSString *)key;
+- (void)registerUndoWithString:(NSString *)oldString location:(NSUInteger)oldLocation
+	length: (NSUInteger)newLength key:(NSString *)key;
 - (void)undoSpecial:(id)theDictionary;
 - (void)doCommentOrIndent: (id)sender;
-- (void)doCommentOrIndentForTag: (int)tag;
+- (void)doCommentOrIndentForTag: (NSInteger)tag;
 - (void)newTag: (id)sender;
 - (void)saveDocument: (id)sender;
 // end mitsu 1.29
@@ -438,7 +452,7 @@ enum RootCommand
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
-- (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(unsigned)level; // added by S. Zenitani
+- (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(NSUInteger)level; // added by S. Zenitani
 - (void)resetMacroButton:(NSNotification *)notification;
 
 - (NSString *)filterBackslashes:(NSString *)aString;
@@ -453,7 +467,7 @@ enum RootCommand
 
 - (NSDictionary *)environmentForSubTask;
 
-- (void) doUser: (int)theEngine;
+- (void) doUser: (NSInteger)theEngine;
 
 - (void) doTex: sender;
 - (void) doTex1: sender;
@@ -476,18 +490,18 @@ enum RootCommand
 - (void) doMetaFontTemp: sender;
 - (void) doTypeset: sender;
 - (void) doTypesetForScriptContinuously:(BOOL)method;
-- (void) doJob:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous;
-- (void) doJobForScript:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous;
+- (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;
+- (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;
 - (void) doTypesetEE: sender;
 
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
-- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (int)theEngine;
+- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine;
 - (void) completeSaveFinished;
 
 - (void) doTexCommand: sender;
 - (void) convertDocument;
 - (void) abort:sender;
-- (void) sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (void) sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
 - (BOOL) getWillClose;
 - (void) setWillClose: (BOOL)value;
 
@@ -499,11 +513,11 @@ enum RootCommand
 
 - (id) rootDocument;
 
-- (BOOL) checkMasterFile:(NSString *)theSource forTask:(int)task;
-- (BOOL) checkRootFile_forTask:(int)task;
+- (BOOL) checkMasterFile:(NSString *)theSource forTask:(NSInteger)task;
+- (BOOL) checkRootFile_forTask:(NSInteger)task;
 - (void) checkFileLinks:(NSString *)theSource;
 - (void) checkFileLinksA;
-- (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
+- (NSString *) readInputArg:(NSString *)fileLine atIndex:(NSUInteger)i
 		homePath:(NSString *)home job:(NSString *)jobname;
 - (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;
 
@@ -515,7 +529,7 @@ enum RootCommand
 
 - (void)setupColors;
 
-- (void)fixColor:(unsigned)from :(unsigned)to;
+- (void)fixColor:(NSUInteger)from :(NSUInteger)to;
 - (void)colorizeAll;
 - (void)colorizeVisibleAreaInTextView:(NSTextView *)aTextView;
 
@@ -524,8 +538,10 @@ enum RootCommand
 
 @interface TSDocument (SyncTeX)
 
- - (BOOL)doSyncTeXForPage: (int)pageNumber x: (float)xPosition y: (float)yPosition yOriginal: (float)yOriginalPosition;
- - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(int)line andCharacterIndex:(unsigned int)idx andTextView:(id)aTextView;
+ - (BOOL)doSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+ - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
+- (void)allocateSyncScanner;
+
 
 @end
 

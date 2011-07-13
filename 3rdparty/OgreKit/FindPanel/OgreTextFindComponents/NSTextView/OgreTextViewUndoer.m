@@ -30,6 +30,14 @@
     return self;
 }
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+    NSZoneFree([self zone], _rangeArray);
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
     //NSLog(@"dealloc %@", self);

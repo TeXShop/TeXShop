@@ -56,19 +56,19 @@
 
 - (void)addChild:(TSMacroTreeNode*)child;
 - (void)addChildren:(NSArray*)children;
-- (void)insertChild:(TSMacroTreeNode*)child atIndex:(int)idx;
-- (void)insertChildren:(NSArray*)children atIndex:(int)idx;
+- (void)insertChild:(TSMacroTreeNode*)child atIndex:(NSInteger)idx;
+- (void)insertChildren:(NSArray*)children atIndex:(NSInteger)idx;
 - (void)removeChild:(TSMacroTreeNode*)child;
 - (void)removeFromParent;
 
-- (int)indexOfChild:(TSMacroTreeNode*)child;
-- (int)indexOfChildIdenticalTo:(TSMacroTreeNode*)child;
+- (NSInteger)indexOfChild:(TSMacroTreeNode*)child;
+- (NSInteger)indexOfChildIdenticalTo:(TSMacroTreeNode*)child;
 
-- (int)numberOfChildren;
+- (NSInteger)numberOfChildren;
 - (NSArray*)children;
 - (TSMacroTreeNode*)firstChild;
 - (TSMacroTreeNode*)lastChild;
-- (TSMacroTreeNode*)childAtIndex:(int)idx;
+- (TSMacroTreeNode*)childAtIndex:(NSInteger)idx;
 
 - (BOOL)isDescendantOfNode:(TSMacroTreeNode*)node;
 	// returns YES if 'node' is an ancestor.
@@ -131,16 +131,17 @@
 @end
 
 @interface NSMutableArray (MyExtensions)
-- (void) insertObjectsFromArray:(NSArray *)array atIndex:(int)idx;
+- (void) insertObjectsFromArray:(NSArray *)array atIndex:(NSInteger)idx;
 @end
 
 
 // For debugging --to watch init, retain, release and dealloc of nodes, activate the following line
 //#define DEBUG_TREE
 
-#define PRINT(str1, str2) (printf("%s: %s\n", (str1)?[str1 cString]:nil, (str2)?[str2 cString]:nil))
+#define PRINT(str1, str2) (printf("%s: %s\n", (str1)?[str1 cStringUsingEncoding: NSASCIIstringEncoding]:nil, (str2)?[str2 cStringUsingEncoding: NSASCIIStringEncoding]:nil))
 
-#define _PRINT_NODE_INFO(str, node, ptr) (printf("[%p] %s(%d): %s\n", (ptr), (str)?[str cString]:nil, [node retainCount], ([node name])?[[node name] cString]:"(no name)"))
+// #warning 64BIT: Check formatting arguments
+#define _PRINT_NODE_INFO(str, node, ptr) (printf("[%p] %s(%d): %s\n", (ptr), (str)?[str cStringUsingEncoding: NSASCIIStringEncoding]:nil, [node retainCount], ([node name])?[[node name] cStringUsingEncoding: NSASCIIStringEncoding]:"(no name)"))
 #define NODE_INFO(str, node) (_PRINT_NODE_INFO(str, node, node))
 #define NODE_INFO_PLUS(str, node) (_PRINT_NODE_INFO(str, node, node+1))
 #define NODE_INFO_MINUS(str, node) (_PRINT_NODE_INFO(str, node, node-1))

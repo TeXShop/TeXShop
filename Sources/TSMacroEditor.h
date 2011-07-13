@@ -26,7 +26,7 @@
 
 #import "TSMacroTreeNode.h"
 
-@interface TSMacroEditor : NSObject
+@interface TSMacroEditor : NSObject <NSTextViewDelegate>
 {
 	IBOutlet id outlineController;
 	IBOutlet id outlineView;
@@ -74,12 +74,12 @@
 - (void)outlineViewItemsChanged: (NSNotification *)note;
 - (void)reflectChangesInEditor: (BOOL)forceUpdate;
 
-- (void)saveMacrosSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (void)saveMacrosSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
 
 - (void)saveNodes: (id)nodes toFile: (NSString *)filePath;
 - (void)saveSelection: (id)sender;
-- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo;
+- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo;
 - (void)readDictionaryToMacroEditor: (id)sender;
-- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo;
+- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo;
 
 @end

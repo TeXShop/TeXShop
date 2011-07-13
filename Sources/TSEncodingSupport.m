@@ -76,7 +76,7 @@ static TSEncoding _availableEncodings[] = {
 + (void)initialize
 {
 	// Conver the CF encodings to NS encodings.
-	int i;
+	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i)
 		_availableEncodings[i].nsEnc = CFStringConvertEncodingToNSStringEncoding(_availableEncodings[i].cfEnc);
 
@@ -152,7 +152,7 @@ static TSEncoding _availableEncodings[] = {
 {
 	NSString *currentEncoding;
 	NSMenu *editMenu;
-	id <NSMenuItem> item;
+	id item;
 	NSMutableString *menuTitle;
 	TSDocument *theDoc;
 
@@ -160,7 +160,7 @@ static TSEncoding _availableEncodings[] = {
 
 	editMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Edit", @"Edit")] submenu];
 	if (editMenu) {
-		int i = [editMenu indexOfItemWithTarget:self andAction:@selector(toggleTeXCharConversion:)];
+		NSInteger i = [editMenu indexOfItemWithTarget:self andAction:@selector(toggleTeXCharConversion:)];
 		if (i >= 0)	{ // remove menu item
 			[editMenu removeItemAtIndex: i];
 			if ([[editMenu itemAtIndex: i-1] isSeparatorItem])
@@ -318,7 +318,7 @@ static TSEncoding _availableEncodings[] = {
 - (NSStringEncoding)stringEncodingForKey: (NSString *)key
 {
 
-	int i;
+	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		if ([key isEqualToString:_availableEncodings[i].name])
 			return _availableEncodings[i].nsEnc;
@@ -338,7 +338,7 @@ static TSEncoding _availableEncodings[] = {
 
 - (NSString *)keyForStringEncoding: (NSStringEncoding)encoding
 {
-	int i;
+	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		if (_availableEncodings[i].nsEnc == encoding)
 			return _availableEncodings[i].name;
@@ -359,10 +359,10 @@ static TSEncoding _availableEncodings[] = {
 
 - (void)addEncodingsToMenu:(NSMenu *)menu withTarget:(id)aTarget action:(SEL)anAction
 {
-	id <NSMenuItem> item;
+	id item;
 	NSString *name;
 	NSStringEncoding enc;
-	int i;
+	NSInteger i;
 
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		enc = _availableEncodings[i].nsEnc;
@@ -404,7 +404,7 @@ static TSEncoding _availableEncodings[] = {
 	NSRange charRange, aCIDRange;
 	NSString *subString;
 	NSGlyphInfo *aGlyph;
-	unsigned startl, endl, end;
+	NSUInteger startl, endl, end;
 
 	charRange = NSMakeRange(0,1);
 	endl = 0;
@@ -422,16 +422,19 @@ static TSEncoding _availableEncodings[] = {
 			aGlyph = [[dataView textStorage] attribute:NSGlyphInfoAttributeName
 											   atIndex:charRange.location effectiveRange:&aCIDRange];
 			if (aGlyph) {
+#warning 64BIT: Check formatting arguments
 				utfString = [NSMutableString stringWithFormat:@"%CCID{%d}",
 					g_texChar, [aGlyph characterIdentifier]];
 			} else if (charRange.length > 1) {
 				NSLayoutManager *aLayout = [dataView layoutManager];
+#warning 64BIT: Check formatting arguments
 				utfString = [NSMutableString stringWithFormat:@"%CCID{%d}", g_texChar,
 					[aLayout glyphAtIndex:charRange.location]];
 				// 0x2014,0x2015 fix (reported by Kino-san)
 			} else if ( [subString characterAtIndex: 0] == 0x2015) {
 				utfString = [NSMutableString stringWithFormat:@"%C", 0x2014];
 			} else {
+#warning 64BIT: Check formatting arguments
 				utfString = [NSMutableString stringWithFormat:@"%CUTF{%04X}",
 					g_texChar, [subString characterAtIndex: 0]];
 			}

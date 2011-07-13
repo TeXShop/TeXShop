@@ -29,6 +29,21 @@
 
 /* 非公開メソッド */
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+#ifdef DEBUG_OGRE
+	NSLog(@"-finalize of %@", [self className]);
+#endif
+	// 鬼車正規表現オブジェクト
+	if (_regexBuffer != NULL) onig_free(_regexBuffer);
+	
+	// 正規表現を表す文字列
+    NSZoneFree([self zone], _UTF16ExpressionString);
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 #ifdef DEBUG_OGRE

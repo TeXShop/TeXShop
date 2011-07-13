@@ -87,7 +87,7 @@ static id _sharedInstance = nil;
 	[hstep setMaxValue:MatrixSize];
 	[vstep setMaxValue:MatrixSize];
 	myMatrix=[[MatrixData alloc]init];
-	int j;
+	NSInteger j;
 	for (j = 0; j < MatrixSize; j++) {
 		[myMatrix addRow];
 	}
@@ -95,8 +95,8 @@ static id _sharedInstance = nil;
 	while ([myMatrix colCount]<MatrixSize) {
 		[myMatrix addCol];
 		MatrixTableColumn *newcol;
-		newcol = [[MatrixTableColumn alloc] initWithIdentifier:[[NSNumber numberWithInt:[myMatrix colCount]-1] stringValue]];
-		[[newcol headerCell] setStringValue:[[NSNumber numberWithInt:[myMatrix colCount]] stringValue]];
+		newcol = [[MatrixTableColumn alloc] initWithIdentifier:[[NSNumber numberWithInteger:[myMatrix colCount]-1] stringValue]];
+		[[newcol headerCell] setStringValue:[[NSNumber numberWithInteger:[myMatrix colCount]] stringValue]];
 		[newcol setMinWidth:40];
 		[newcol setWidth:60];
 		[matrixtable addTableColumn:newcol];
@@ -105,8 +105,8 @@ static id _sharedInstance = nil;
 	[myMatrix setActRows:3];
 	[myMatrix setActCols:3];
 	
-	upArray = [NSArray arrayWithObjects:[NSNumber numberWithFloat:2.0], nil];
-	downArray = [NSArray arrayWithObjects:[NSNumber numberWithFloat:.5], nil];
+	upArray = [NSArray arrayWithObjects:[NSNumber numberWithDouble:2.0], nil];
+	downArray = [NSArray arrayWithObjects:[NSNumber numberWithDouble:.5], nil];
 		
 	[NSRulerView registerUnitWithName:@"Rows" abbreviation:@"rw"
 		 unitToPointsConversionFactor:19 stepUpCycle:upArray stepDownCycle:downArray];
@@ -161,21 +161,21 @@ static id _sharedInstance = nil;
 	notifcenter = [NSNotificationCenter defaultCenter];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
 	return [myMatrix rowCount];
 }
 
 // Mandatory tableview data source method
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
 	NSString  *theValue, *colid;
 	colid = [tableColumn identifier];
 	NSParameterAssert(row >= 0 && row < [myMatrix rowCount]);
 	if ([colid isEqualToString:@"col"]) {
-		return [NSNumber numberWithInt:row+1];
+		return [NSNumber numberWithInteger:row+1];
 	} else {
-		theValue = [myMatrix objectInRow:row inCol:[colid intValue]];
+		theValue = [myMatrix objectInRow:row inCol:[colid integerValue]];
 		return theValue;
 	}
 
@@ -186,15 +186,15 @@ static id _sharedInstance = nil;
 	[matrixtable setNeedsDisplay];
 }
 
-- (void)tableView:(NSTableView *)tv setObjectValue:(id)objectValue forTableColumn:(NSTableColumn *)tc row:(int)row
+- (void)tableView:(NSTableView *)tv setObjectValue:(id)objectValue forTableColumn:(NSTableColumn *)tc row:(NSInteger)row
 {
-	[myMatrix replaceObjectInRow:row inCol:[[tc identifier] intValue] withObject:objectValue];
+	[myMatrix replaceObjectInRow:row inCol:[[tc identifier] integerValue] withObject:objectValue];
 }
 
 	// when a drag-and-drop operation comes through, and a filename is being dropped on the table,
 	// we need to tell the table where to put the new filename (right at the end of the table).
 	// This controls the visual feedback to the user on where their drop will go.
-- (NSDragOperation)tableView:(NSTableView*)tv validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)op
+- (NSDragOperation)tableView:(NSTableView*)tv validateDrop:(id <NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)op
 {
 	[tv setDropRow:row dropOperation:NSTableViewDropAbove];
 	return [info draggingSourceOperationMask];
@@ -202,12 +202,12 @@ static id _sharedInstance = nil;
 
 - (BOOL) tableView:(NSTableView*)tv writeRows:(NSArray*)rows toPasteboard:(NSPasteboard *)pboard
 {
-	int i;
+	NSInteger i;
 	NSMutableArray *j = [NSMutableArray array];
 	[pboard declareTypes:[NSArray arrayWithObject:MatPboardType] owner:self];
 	
 	for (i = 0; i < [rows count]; i++) {
-		[j addObject:[myMatrix myRowAtIndex:[[rows objectAtIndex:i] intValue]]];
+		[j addObject:[myMatrix myRowAtIndex:[[rows objectAtIndex:i] integerValue]]];
 	}
 	[pboard setPropertyList:j forType:MatPboardType];
 	draggedRows = j;
@@ -219,7 +219,7 @@ static id _sharedInstance = nil;
 
 // This routine does the actual processing for a drag-and-drop operation on a tableview.
 // As the tableview's data source, we get this call when it's time to update our backend data.
-- (BOOL)tableView:(NSTableView*)tv acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)op
+- (BOOL)tableView:(NSTableView*)tv acceptDrop:(id <NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)op
 {
 	// Get the drag-n-drop pasteboard
 	NSPasteboard *myPasteboard=[info draggingPasteboard];
@@ -230,7 +230,7 @@ static id _sharedInstance = nil;
 	NSArray *_draggedrows;
 	NSMutableArray *matRow;
 	NSMutableIndexSet* indset = [NSMutableIndexSet indexSet];
-	int i;
+	NSInteger i;
 	
 	// find the best match of the types we'll accept and what's actually on the pasteboard
 	availableType=[myPasteboard availableTypeFromArray:typeArray];
@@ -239,9 +239,9 @@ static id _sharedInstance = nil;
 	
 	for (i = 0; i < [_draggedrows count]; i++) {
 		matRow = [_draggedrows objectAtIndex:i];
-		if (row > [[myMatrix rows] indexOfObjectIdenticalTo:[[[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]])
+		if (row > [[myMatrix rows] indexOfObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]])
 			row--;
-		[[myMatrix rows] removeObjectIdenticalTo:[[[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]];
+		[[myMatrix rows] removeObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]];
 		
 		[[myMatrix rows] insertObject:matRow atIndex:row+i];
 	}
@@ -260,7 +260,7 @@ static id _sharedInstance = nil;
 
 - (IBAction)resizeMatrix:(id)sender
 {
-	int ival = [sender intValue];
+	NSInteger ival = [sender integerValue];
 	if (ival > MatrixSize)
 		ival = MatrixSize;
 	else if (ival < 1)
@@ -277,10 +277,10 @@ static id _sharedInstance = nil;
 		}
 		
 		if (sender == hstep)
-			[htf setIntValue:[myMatrix actCols]];
+			[htf setIntegerValue:[myMatrix actCols]];
 		else {
-			[hstep setIntValue:[myMatrix actCols]];
-			[htf setIntValue:[myMatrix actCols]];
+			[hstep setIntegerValue:[myMatrix actCols]];
+			[htf setIntegerValue:[myMatrix actCols]];
 		}
 		
 	} else if ((sender == vstep) || (sender == vtf)) {
@@ -294,10 +294,10 @@ static id _sharedInstance = nil;
 		}
 		
 		if (sender == vstep)
-			[vtf setIntValue:[myMatrix actRows]];
+			[vtf setIntegerValue:[myMatrix actRows]];
 		else {
-			[vstep setIntValue:[myMatrix actRows]];
-			[vtf setIntValue:[myMatrix actRows]];
+			[vstep setIntegerValue:[myMatrix actRows]];
+			[vtf setIntegerValue:[myMatrix actRows]];
 		}
 		
 	}
@@ -307,15 +307,15 @@ static id _sharedInstance = nil;
 - (IBAction)insertMatrix:(id)sender
 {
 	NSMutableString *insertion = [NSMutableString stringWithCapacity:200];
-	int i, j;
-	int brstyleop = [[brselop selectedCell] tag];
-	int brstylecl = [[brselcl selectedCell] tag];
-	int environment = [[envsel selectedCell] tag];
-	int tablenv = ([chbfig state] == NSOnState);
-	int drawborder = ([borderbutton state] == NSOnState);
-	int drawgrid = ([gridbutton state] == NSOnState);
-	int hsize = [myMatrix actCols];
-	int vsize = [myMatrix actRows];
+	NSInteger i, j;
+	NSInteger brstyleop = [[brselop selectedCell] tag];
+	NSInteger brstylecl = [[brselcl selectedCell] tag];
+	NSInteger environment = [[envsel selectedCell] tag];
+	NSInteger tablenv = ([chbfig state] == NSOnState);
+	NSInteger drawborder = ([borderbutton state] == NSOnState);
+	NSInteger drawgrid = ([gridbutton state] == NSOnState);
+	NSInteger hsize = [myMatrix actCols];
+	NSInteger vsize = [myMatrix actRows];
 
 	if (environment == 0) {
 		if ((brstyleop == 4) && (brstylecl == 4)) {
@@ -367,7 +367,7 @@ static id _sharedInstance = nil;
 
 	for (j = 0; j < vsize; j++) {
 		for (i = 0; i < hsize; i++) {
-			[insertion appendString:[myMatrix objectInRow:j inCol:[[[[matrixtable tableColumns] objectAtIndex:i] identifier] intValue] ]];
+			[insertion appendString:[myMatrix objectInRow:j inCol:[[[[matrixtable tableColumns] objectAtIndex:i] identifier] integerValue] ]];
 			if (i < hsize-1)
 				[insertion appendString:[arrayMatrix objectAtIndex:3]];
 		}
@@ -456,8 +456,8 @@ static id _sharedInstance = nil;
 
 - (IBAction)resetMatrix:(id)sender
 {
-	int i, j, action;
-	int mwdth, mhght;
+	NSInteger i, j, action;
+	NSInteger mwdth, mhght;
 	mwdth = [myMatrix colCount];
 	mhght = [myMatrix rowCount];
 	
@@ -482,7 +482,7 @@ static id _sharedInstance = nil;
 				}
 			}
 			for(i = 0; (i < mwdth) && (i < mhght); i++)
-				[myMatrix replaceObjectInRow:i inCol:[[[[matrixtable tableColumns]objectAtIndex:i] identifier] intValue] withObject:@"1"];
+				[myMatrix replaceObjectInRow:i inCol:[[[[matrixtable tableColumns]objectAtIndex:i] identifier] integerValue] withObject:@"1"];
 			
 		}
 	}
@@ -529,7 +529,7 @@ static id _sharedInstance = nil;
 - (void)panelDidMove:(NSNotification *)notification
 {
 	NSRect	myFrame;
-	float	x, y;
+	CGFloat	x, y;
 
 	myFrame = [[self window] frame];
 	x = myFrame.origin.x;
@@ -566,55 +566,55 @@ static id _sharedInstance = nil;
 	return rows;
 }
 
-- (int)actRows
+- (NSInteger)actRows
 {
 	return activeRows;
 }
 
--(void)setActRows:(int)num
+-(void)setActRows:(NSInteger)num
 {
 	activeRows=num;
 }
 
-- (int)actCols
+- (NSInteger)actCols
 {
 	return activeCols;
 }
 
--(void)setActCols:(int)num
+-(void)setActCols:(NSInteger)num
 {
 	activeCols = num;
 }
 
--(id)myRowAtIndex:(unsigned)row
+-(id)myRowAtIndex:(NSUInteger)row
 {
 	return [[rows objectAtIndex:row]retain];
 }
 
--(int)rowCount
+-(NSInteger)rowCount
 {
 	return [rows count];
 }
 
--(int)colCount
+-(NSInteger)colCount
 {
 	if ([self rowCount]==0)
 		return 0;
 	return [[self myRowAtIndex:0] count];
 }
 
--(id)objectInRow:(unsigned)row inCol:(unsigned)col
+-(id)objectInRow:(NSUInteger)row inCol:(NSUInteger)col
 {
 	return [[self myRowAtIndex:row] objectAtIndex:col];
 }
 
--(void)replaceObjectInRow:(unsigned)row inCol:(unsigned)col withObject:(id) anObj{
+-(void)replaceObjectInRow:(NSUInteger)row inCol:(NSUInteger)col withObject:(id) anObj{
 	[[self myRowAtIndex:row] replaceObjectAtIndex:col withObject:anObj];
 }
 
 -(void)addRow
 {
-	int i;
+	NSInteger i;
 	[rows addObject:[[NSMutableArray arrayWithCapacity:[self colCount]]retain]];
 	for (i = [[rows objectAtIndex:[rows count]-1] count]; i < [self colCount]; i++) {
 		[[rows objectAtIndex:[rows count]-1] addObject:@"0"];
@@ -623,7 +623,7 @@ static id _sharedInstance = nil;
 
 }
 
-- (void)insertRow:(NSMutableArray*)row atIndex:(int)ind
+- (void)insertRow:(NSMutableArray*)row atIndex:(NSInteger)ind
 {
 	[rows insertObject:row atIndex:ind];
 }
@@ -638,14 +638,14 @@ static id _sharedInstance = nil;
 	[rows removeObjectIdenticalTo:row];
 }
 
-- (void)removeRowAtIndex:(unsigned int )ind
+- (void)removeRowAtIndex:(NSUInteger )ind
 {
 	[rows removeObjectAtIndex:ind];
 }
 
 -(void)addCol
 {
-	int i;
+	NSInteger i;
 	for (i = 0; i < [self rowCount]; i++) {
  		[[self myRowAtIndex:i] addObject:@"0"];
 	}
@@ -654,7 +654,7 @@ static id _sharedInstance = nil;
 
 -(void)removeLastCol
 {
-	int i;
+	NSInteger i;
 	for (i = 0; i < [self rowCount]; i++) {
 		[[self myRowAtIndex:i] removeLastObject];
 	}

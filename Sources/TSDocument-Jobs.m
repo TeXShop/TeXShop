@@ -63,6 +63,7 @@
 	//   end tell
 	NSMutableString *script = [NSMutableString string];
 
+#warning 64BIT: Check formatting arguments
 	[script appendFormat:@"open -a '%@' '%%s' &&", [[NSBundle mainBundle] bundlePath]];
 	[script appendString:@" osascript"];
 	[script appendString:@" -e 'tell application \"TeXShop\"'"];
@@ -127,7 +128,7 @@
 }
 
 
-- (void) doJobForScript:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous
+- (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
 	if (! fileIsTex)
 		return;
@@ -154,7 +155,7 @@
 }
 
 
-- (void) doJob:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous
+- (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
 	SEL		saveFinished;
 
@@ -207,7 +208,7 @@
 {
 	NSArray		*myList;
 	NSString		*myString, *middleString = 0;
-	int			size, i, pos;
+	NSInteger			size, i, pos;
 	BOOL		programFound, inMiddle;
 	NSString		*theEngine = 0;
 	NSRange		aRange;
@@ -270,7 +271,7 @@
     NSFileManager   *fileManager;
     NSString	    *newGSTeXCommand;
     BOOL			changed;
-	int				locationOfRest;
+	NSInteger				locationOfRest;
     
     changed = NO;
     gsTeXCommand = [SUD stringForKey:TexGSCommandKey];
@@ -327,7 +328,7 @@
 	NSString		*argumentString;
 	NSString           *tempDestinationString;
 
-	myFileName = [self fileName];
+	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 
 		fileManager = [NSFileManager defaultManager];
@@ -341,7 +342,7 @@
 
 				// create the necessary directories
 				NS_DURING
-					result = [fileManager createDirectoryAtPath:TempOutputKey attributes:nil];
+                result = [fileManager createDirectoryAtPath:TempOutputKey withIntermediateDirectories:NO attributes:nil error:NULL];
 				NS_HANDLER
 					result = NO;
 					reason = [localException reason];
@@ -355,15 +356,15 @@
 				tempDestinationString = [[TempOutputKey stringByAppendingString:@"/"]
 								stringByAppendingString: [myFileName lastPathComponent]];
 				if ([fileManager fileExistsAtPath: tempDestinationString])
-					[fileManager removeFileAtPath:tempDestinationString handler: nil];
-				[fileManager copyPath:myFileName toPath:tempDestinationString handler:nil];
+					[fileManager removeItemAtPath:tempDestinationString error:NULL];
+				[fileManager copyItemAtPath:myFileName toPath:tempDestinationString error:NULL];
 			}
 		}
 
-		imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+		imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-			myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 		}
 		else
@@ -467,13 +468,13 @@
 	NSArray			*myList;
 	NSString		*theSource, *theKey, *myEngine, *testString, *programString;
 	NSRange			aRange, myRange, theRange, programRange, newProgramRange;
-	unsigned int	mystart, myend;
-	unsigned int    start, end, irrelevant;
-	int             whichEngineLocal;
-	int             i, j;
+	NSUInteger      mystart, myend;
+	NSUInteger      start, end, irrelevant;
+	NSInteger             whichEngineLocal;
+	NSInteger             i, j;
 	BOOL            done;
-	unsigned        length;
-	int             linesTested, offset;
+	NSUInteger        length;
+	NSInteger             linesTested, offset;
 	NSData          *myData;
 
 
@@ -488,7 +489,7 @@
 	if (!_externalEditor)
 		theSource = [[self textView] string];
 	else {
-		myData = [NSData dataWithContentsOfFile:[self fileName]];
+		myData = [NSData dataWithContentsOfFile:[[self fileURL] path]];
 		theSource = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
 	}
 
@@ -732,7 +733,8 @@
 		if (aRange.location == NSNotFound)
 			warningGiven = YES;
 		else {
-			NSBeginCriticalAlertSheet(nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"),
+#warning 64BIT: Check formatting arguments
+			NSBeginCriticalAlertSheet (nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"),
 									  textWindow, self, @selector(sheetDidEnd:returnCode:contextInfo:), NULL, nil,
 									  NSLocalizedString(@"Warning: Using Shell Escape", @"Warning: Using Shell Escape"));
 			useTempEngine = NO;
@@ -744,7 +746,7 @@
 }
 
 
-- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (int)theEngine
+- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine
 {
 	BOOL    isFile;
 	BOOL    isExecutable;
@@ -762,6 +764,7 @@
 	if (theEngine >= UserEngine) {
 		isFile = [[NSFileManager defaultManager] fileExistsAtPath: filename];
 		if (! isFile) {
+#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil, nil, nil,[textView window], nil, nil, nil, nil,
 							  NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), filename);
@@ -769,6 +772,7 @@
 		} else
 			isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 		if (! isExecutable) {
+#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil,nil,nil,[textView window],nil,nil,nil,nil,
 							  NSLocalizedString(@"%@ does not have the executable bit set.", @"%@ does not have the executable bit set."), filename);
@@ -778,6 +782,7 @@
 	else
 		isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 	if (filename == nil || [filename length] == 0 || isExecutable == FALSE) {
+#warning 64BIT: Check formatting arguments
 		NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
 						  NSLocalizedString(@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution.",
@@ -808,10 +813,10 @@
 	NSString		*sourcePath;
 	NSString            *gsPath;
 	NSRange		aRange;
-	unsigned		here;
+	NSUInteger		here;
 	BOOL                continuous;
 	BOOL                fixPath;
-	int                 whichEngineLocal;
+	NSInteger                 whichEngineLocal;
 
 	whichEngineLocal = useTempEngine ? tempEngine : whichEngine;
 
@@ -819,7 +824,7 @@
 	continuous = typesetContinuously;
 	typesetContinuously = NO;
 
-	myFileName = [self fileName];
+	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 		
 		if (startDate != nil) {
@@ -827,10 +832,10 @@
 			startDate = nil;
 		}
 		
-		imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+		imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 		
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-			myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 		} else
 			startDate = nil;
@@ -1104,7 +1109,7 @@
 }
 
 
--(void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+-(void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
 	switch (returnCode) {
 		case NSAlertDefaultReturn:
@@ -1154,7 +1159,7 @@
 	[self doJob:LatexEngine withError:YES runContinuously:NO];
 }
 
-- (void) doUser: (int)theEngine
+- (void) doUser: (NSInteger)theEngine
 {
 	fromMenu = NO;
 	[programButton selectItemAtIndex:(theEngine - 1)];
@@ -1388,7 +1393,7 @@
 	NSString		*alternatePath;
 	NSDictionary	*myAttributes;
 	NSDate			*endDate;
-	int				status;
+	NSInteger				status;
 	BOOL			alreadyFound;
 	BOOL			front;
 
@@ -1425,11 +1430,11 @@
 		status = [[aNotification object] terminationStatus];
 
 		if ((status == 0) || (status == 1))  {
-			imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+			imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
 			alreadyFound = NO;
 			if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-				myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+				myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 				endDate = [myAttributes objectForKey:NSFileModificationDate];
 				if ((startDate == nil) || ! [startDate isEqualToDate: endDate]) {
 					alreadyFound = YES;
@@ -1446,7 +1451,7 @@
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))
 						[pdfKitWindow makeKeyAndOrderFront: self];
-					[self allocateSyncScanner];
+                    [self allocateSyncScanner];
 				}
 			}
 
@@ -1454,7 +1459,7 @@
 				alternatePath = [[TempOutputKey stringByAppendingString:@"/"] stringByAppendingString:[imagePath lastPathComponent]];
 				if ([[NSFileManager defaultManager] fileExistsAtPath: alternatePath]) {
 					texRep = [[NSPDFImageRep imageRepWithContentsOfFile: alternatePath] retain];
-					[[NSFileManager defaultManager] removeFileAtPath: alternatePath handler:nil];
+					[[NSFileManager defaultManager] removeItemAtPath: alternatePath error:NULL];
 					if (texRep) {
 						[pdfWindow setTitle: [imagePath lastPathComponent]];
 						[pdfView setImageRep: texRep];
@@ -1475,6 +1480,17 @@
 		texTask = nil;
 	}
 }
+
+- (BOOL) getWillClose
+{
+	return willClose;
+}
+
+- (void) setWillClose: (BOOL)value
+{
+	willClose = value;
+}
+
 
 
 @end

@@ -17,4 +17,6 @@
 - (IBAction)cancelPressed:(id)sender;
 - (IBAction)removePressed:(id)sender;
 - (IBAction)addPressed:(id)sender;
+- (void)removeDraggedOutRows;
+- (void)removeObjectsAtIndexes:(NSIndexSet*)indexes;
 @end

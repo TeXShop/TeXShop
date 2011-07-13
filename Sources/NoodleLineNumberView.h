@@ -57,7 +57,7 @@
 - (void)setBackgroundColor:(NSColor *)color;
 - (NSColor *)backgroundColor;
 
-- (unsigned)lineNumberForLocation:(float)location;
-- (NoodleLineNumberMarker *)markerAtLine:(unsigned)line;
+- (NSUInteger)lineNumberForLocation:(CGFloat)location;
+- (NoodleLineNumberMarker *)markerAtLine:(NSUInteger)line;
 
 @end

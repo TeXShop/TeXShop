@@ -25,10 +25,9 @@
 #import <AppKit/AppKit.h>
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
-#import "MyPDFKitView.h"
 
 
-@interface MyPDFKitView : PDFView
+@interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
 	id								currentPage;
 	id								totalPage;
@@ -52,17 +51,21 @@
 
 
 	NSWindow						*myPDFWindow;
-	int								pageStyle;
-	int								firstPageStyle;
-	int								resizeOption;
+	NSInteger								pageStyle;
+    // NSInteger                               oldPageStyle;
+    // NSInteger                               fullscreenPageStyle;
+	NSInteger								firstPageStyle;
+	NSInteger								resizeOption;
+    // NSInteger                               oldResizeOption;
+    // NSInteger                               fullscreenResizeOption;
 
-	int								totalPages;
+	NSInteger								totalPages;
 
-	int								mouseMode;
-	int								currentMouseMode;
+	NSInteger								mouseMode;
+	NSInteger								currentMouseMode;
 
-	int								totalRotation;
-	int								scaleMag;  // view's magnification
+	NSInteger								totalRotation;
+	NSInteger								scaleMag;  // view's magnification
 
 	NSRect							selectedRect;
 	NSRect							oldVisibleRect;
@@ -72,7 +75,7 @@
 	id								imageTypeView;
 	id								imageTypePopup;
 
-	int								pageIndexForMark;
+	NSInteger								pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
 	BOOL							showSync;
@@ -87,12 +90,12 @@
 	NSPoint							menuSyncPoint;  // For calling sync using a contextual menu
 	
 	BOOL							secondNeedsInitialization;
-	int								secondTheIndex;
+	NSInteger								secondTheIndex;
 	NSRect							secondFullRect, secondVisibleRect;
 	BOOL							protectFind;
-	
-	BOOL							oldSync;
-	NSRect							syncRect[200];
+    
+    BOOL							oldSync;
+    NSRect							syncRect[200];
 	int								numberSyncRect;
 
 	
@@ -120,7 +123,7 @@
 - (void) goBack:sender;
 - (void) goForward: sender;
 
-- (void) goToKitPageNumber: (int)thePage;
+- (void) goToKitPageNumber: (NSInteger)thePage;
 - (void) goToKitPage: (id)sender;
 - (void) previousPage: (id)sender;
 - (void) nextPage: (id)sender;
@@ -154,26 +157,26 @@
 - (void)cleanupMarquee: (BOOL)terminate;
 - (void)recacheMarquee;
 - (BOOL)hasSelection;
-- (NSData *)imageDataFromSelectionType: (int)type;
+- (NSData *)imageDataFromSelectionType: (NSInteger)type;
 // - (void)saveSelectionToFile: (id)sender;
 - (void) chooseExportImageType: sender;
 // drag & drop
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
-- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (int)level;
+- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)flagsChanged:(NSEvent *)theEvent;
 - (void)doSync: (NSPoint)thePoint;
 - (BOOL)doNewSync: (NSPoint)thePoint;
 - (BOOL)doSyncTeX: (NSPoint)thePoint;
-- (void)drawDotsForPage:(int)page atPoint: (NSPoint)p;
+- (void)drawDotsForPage:(NSInteger)page atPoint: (NSPoint)p;
 - (void)drawPage:(PDFPage *)page;
 - (void)resetCursorRects;
-- (void)setIndexForMark: (int)idx;
+- (void)setIndexForMark: (NSInteger)idx;
 - (void)setBoundsForMark: (NSRect)bounds;
 - (void)setDrawMark: (BOOL)value;
 - (void)setupSourceFiles;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)updateBackground: (NSRect)aRect;
-- (void)goToKitPageNumber: (int) thePage; 
+- (void)goToKitPageNumber: (NSInteger) thePage; 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 - (void)fixMagnificationControls;
 - (NSMutableArray *)getSearchResults;
@@ -184,5 +187,9 @@
 - (void)setNumberSyncRect: (int)value;
 - (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height;
 - (void)setOldSync: (BOOL)value;
+- (NSInteger)pageStyle;
+- (NSInteger)resizeOption;
+- (void)changePageStyleTo:(NSInteger)newStyle;
+- (void)changePDFViewSizeTo: (NSInteger)newResizeOption;
 @end
 

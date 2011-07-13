@@ -34,13 +34,13 @@
 	return rootDocument;
 }
 
-- (BOOL) checkRootFile: (NSString *)nameString forTask:(int)task
+- (BOOL) checkRootFile: (NSString *)nameString forTask:(NSInteger)task
 {
 	NSArray 			*wlist;
 	NSEnumerator 		*en;
 	id                      obj;
 	NSDocumentController    *dc;
-	int                         theEngine;
+	NSInteger                         theEngine;
 
 	// is the document open?
 	wlist = [NSApp orderedDocuments];
@@ -59,7 +59,7 @@
 				} else if (task == RootForPrinting) {
 					[obj printDocument:nil];
 				} else if (task == RootForPdfSync) {
-					[obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
+					[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
 				} else if (task == RootForSwitchWindow) {
 					[obj setCallingWindow: textWindow];
 					[obj bringPdfWindowFront];
@@ -110,14 +110,14 @@
 
 	// document not found, open document and typeset
 	dc = [NSDocumentController sharedDocumentController];
-	obj = [dc openDocumentWithContentsOfFile:nameString display:YES];
+	obj = [dc openDocumentWithContentsOfURL:[NSURL fileURLWithPath: nameString] display:YES error:NULL];
 	if (obj) {
 		if (obj == self)
 			return NO;
 		if (task == RootForPrinting) {
 			[obj printDocument:nil];
 		} else if (task == RootForPdfSync) {
-			[obj doPreviewSyncWithFilename:[self fileName] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
+			[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
 		} else if (task == RootForTexing) {
 			// FIXME: The following code block exists twice in this function
 			theEngine = useTempEngine ? tempEngine : whichEngine;
@@ -141,8 +141,8 @@
 			if([SUD integerForKey:DocumentWindowPosModeKey] == DocumentWindowPosSave){
 				NSRect activeWindowFrame = [[obj textWindow] frame];
 				NSScreen *screen = [NSScreen mainScreen];
-				float minX = 20 + ((NSMinX(activeWindowFrame) + NSWidth(activeWindowFrame) + 20 > NSWidth([screen frame])) ? 0 : NSMinX(activeWindowFrame));
-				float minY = (NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0) ? NSHeight([screen frame]) : NSMinY(activeWindowFrame) - 20;
+				CGFloat minX = 20 + ((NSMinX(activeWindowFrame) + NSWidth(activeWindowFrame) + 20 > NSWidth([screen frame])) ? 0 : NSMinX(activeWindowFrame));
+				CGFloat minY = (NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0) ? NSHeight([screen frame]) : NSMinY(activeWindowFrame) - 20;
 				NSRect newFrame = NSMakeRect(minX, minY, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
 				[[obj textWindow] setFrame:newFrame display:YES];
 			}
@@ -160,26 +160,26 @@
 	return YES;
 }
 
-- (BOOL)checkMasterFile:(NSString *)theSource forTask:(int)task
+- (BOOL)checkMasterFile:(NSString *)theSource forTask:(NSInteger)task
 {
 	NSString                *home, *jobname;
 	NSRange                 aRange, bRange;
 	NSRange                 myRange, theRange, sourcedocRange, newSourceDocRange;
 	NSString                *testString, *sourcedocString;
 	NSString                *nameString;
-	unsigned                length;
+	NSUInteger                length;
 	BOOL                    done;
-	int                     linesTested, offset;
-	unsigned                start, end, irrelevant;
+	NSInteger                     linesTested, offset;
+	NSUInteger                start, end, irrelevant;
 
 	if (theSource == nil)
 		return NO;
 
-	jobname=[[self fileName] stringByDeletingLastPathComponent];
+	jobname=[[[self fileURL] path] stringByDeletingLastPathComponent];
 
 	// load home path and jobname
-	home = [[self fileName] stringByDeletingLastPathComponent];
-	jobname = [[[self fileName] lastPathComponent] stringByDeletingPathExtension];
+	home = [[[self fileURL] path] stringByDeletingLastPathComponent];
+	jobname = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
 
 	// see if there is a parent document
 	length = [theSource length];
@@ -240,15 +240,16 @@
 }
 
 
-- (BOOL) checkRootFile_forTask:(int)task
+- (BOOL) checkRootFile_forTask:(NSInteger)task
 {
 	NSString			*projectPath, *nameString;
+    NSStringEncoding    theEncoding;
 
-	projectPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
+	projectPath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
 	if (![[NSFileManager defaultManager] fileExistsAtPath: projectPath])
 		return NO;
 
-	NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath];
+	NSString *projectRoot = [NSString stringWithContentsOfFile: projectPath usedEncoding: &theEncoding error:NULL];
 	projectRoot = [projectRoot stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ([projectRoot length] == 0)
 		return NO;
@@ -256,9 +257,9 @@
 	if ([projectRoot isAbsolutePath]) {
 		nameString = [NSString stringWithString:projectRoot];
 	} else {
-		nameString = [[self fileName] stringByDeletingLastPathComponent];
+		nameString = [[[self fileURL] path] stringByDeletingLastPathComponent];
 		nameString = [[nameString stringByAppendingString:@"/"]
-		stringByAppendingString: [NSString stringWithContentsOfFile: projectPath]];
+                      stringByAppendingString: [NSString stringWithContentsOfFile: projectPath usedEncoding: &theEncoding error: NULL]];
 		nameString = [nameString stringByStandardizingPath];
 	}
 
@@ -290,21 +291,21 @@
 
 - (void) checkFileLinks:(NSString *)theSource
 {
-	NSString *home,*jobname=[[self fileName] stringByDeletingLastPathComponent];
+	NSString *home,*jobname=[[[self fileURL]path] stringByDeletingLastPathComponent];
 	NSRange aRange,bRange;
 	NSString *saveName, *searchString;
 	NSMutableArray *slist;
 	NSArray *wlist;
 	NSEnumerator *en;
 	id obj;
-	unsigned numFiles,i;
+	NSUInteger numFiles,i;
 	
 	if (![SUD boolForKey:SaveRelatedKey])
 		return;
 
 	// load home path and jobname
-	home = [[self fileName] stringByDeletingLastPathComponent];
-	jobname = [[[self fileName] lastPathComponent] stringByDeletingPathExtension];
+	home = [[[self fileURL] path] stringByDeletingLastPathComponent];
+	jobname = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
 	
 	// create list of linked files from \input commands
 	aRange = NSMakeRange(0, [theSource length]);
@@ -358,7 +359,7 @@
 // added by John A. Nairn
 // read argument to \input command and resolve to full path name
 // ignore \input commands that have been commented out
-- (NSString *) readInputArg:(NSString *)fileLine atIndex:(unsigned)i
+- (NSString *) readInputArg:(NSString *)fileLine atIndex:(NSUInteger)i
 		homePath:(NSString *)home job:(NSString *)jobname
 {
 	unichar firstChar;

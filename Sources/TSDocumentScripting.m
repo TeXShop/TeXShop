@@ -72,7 +72,7 @@
 - (MySelection*)selection
 {
 	if (!mSelection)
-		mSelection = [[MySelection alloc] initWithDocument:self];
+		mSelection = [[MySelection alloc] initWithMyDocument:self];
 	return mSelection;
 }
 
@@ -86,7 +86,7 @@
 
 	NSRange		range = [[self firstTextView] selectedRange];
 	NSString *oldString, *key= @"AppleEvent";
-	unsigned newStringLen, from, to;
+	NSUInteger newStringLen, from, to;
 
 	// Determine the current selection
 	oldString = [[textView string] substringWithRange: range];
@@ -118,7 +118,7 @@
 
 - (NSScriptObjectSpecifier *)objectSpecifier {
 	NSArray *orderedDocs = [NSApp valueForKey:@"orderedDocuments"];
-	unsigned theIndex = [orderedDocs indexOfObjectIdenticalTo:self];
+	NSUInteger theIndex = [orderedDocs indexOfObjectIdenticalTo:self];
 
 	if (theIndex != NSNotFound) {
 		NSScriptClassDescription *desc = (NSScriptClassDescription *)[NSScriptClassDescription classDescriptionForClass:[NSApplication class]];
@@ -171,13 +171,13 @@
 //											[[args objectForKey:@"WholeWord"] boolValue] : NO;
 	BOOL			directionUp		= [args objectForKey:@"Direction"] ?
 											[[args objectForKey:@"Direction"] boolValue] : NO;
-	unsigned		startFrom		= [args objectForKey:@"StartOffset"] ?
-											[[args objectForKey:@"StartOffset"] unsignedIntValue] :
+	NSUInteger		startFrom		= [args objectForKey:@"StartOffset"] ?
+											[[args objectForKey:@"StartOffset"] unsignedIntegerValue] :
 											[[self firstTextView] selectedRange].location;
 	NSString*		myText			= [[self firstTextView] string];
 
 	NSRange			result, searchRange;
-	unsigned		mask = NSLiteralSearch;
+	NSUInteger		mask = NSLiteralSearch;
 
 	if (!caseSensitive)
 		mask |= NSCaseInsensitiveSearch;
@@ -190,13 +190,14 @@
 		searchRange.location	= startFrom;
 		searchRange.length 		= [myText length] - startFrom;
 	}
+    
 
 	result	= [myText rangeOfString:text options:mask range:searchRange];
 	if (result.location == NSNotFound) {
-		return [NSNumber numberWithUnsignedInt:0];
-	} else {
-		return [NSNumber numberWithUnsignedInt:(result.location+1)];
-	}
+		return [NSNumber numberWithUnsignedInteger:0];
+ 	} else {
+		return [NSNumber numberWithUnsignedInteger:(result.location + 1)];
+ 	}
 }
 
 - (id)handleLatexCommand:(NSScriptCommand*)command
@@ -341,10 +342,10 @@
 
 - (id)handleGotoLineCommand:(NSScriptCommand*)command
 {
-	int line;
+	NSInteger line;
 
 	NSDictionary* args = [command evaluatedArguments];
-	line = [[args objectForKey:@"LineNumber"] unsignedIntValue];
+	line = [[args objectForKey:@"LineNumber"] unsignedIntegerValue];
 	[self toLine:line];
 
 	return nil;
@@ -359,7 +360,7 @@
 //
 // -----------------------------------------------------------------------------
 
-- (id)initWithDocument:(TSDocument*)doc
+- (id)initWithMyDocument:(TSDocument*)doc
 {
 	mDocument = doc;
 	return self;
@@ -369,9 +370,10 @@
 //
 // -----------------------------------------------------------------------------
 
-- (unsigned)offset
+- (NSUInteger)offset
 {
-	unsigned	x = [[mDocument firstTextView] selectedRange].location;
+	NSUInteger	x = [[mDocument firstTextView] selectedRange].location;
+    
 	return x;
 }
 
@@ -379,9 +381,10 @@
 //
 // -----------------------------------------------------------------------------
 
-- (unsigned)length
+- (NSUInteger)length
 {
-	unsigned x = [[mDocument firstTextView] selectedRange].length;
+	NSUInteger x = [[mDocument firstTextView] selectedRange].length;
+   
 	return x;
 }
 
@@ -389,10 +392,10 @@
 //
 // -----------------------------------------------------------------------------
 
-- (void)setOffset:(unsigned)off
+- (void)setOffset:(NSUInteger)off
 {
 	NSRange		range 		= [[mDocument firstTextView] selectedRange];
-	unsigned	textLength	= [[[mDocument firstTextView] string] length];
+	NSUInteger	textLength	= [[[mDocument firstTextView] string] length];
 
 	if (off > textLength)
 		off = textLength;
@@ -407,10 +410,10 @@
 //
 // -----------------------------------------------------------------------------
 
-- (void)setLength:(unsigned)len
+- (void)setLength:(NSUInteger)len
 {
 	NSRange		range 		= [[mDocument firstTextView] selectedRange];
-	unsigned	textLength	= [[[mDocument firstTextView] string] length];
+	NSUInteger	textLength	= [[[mDocument firstTextView] string] length];
 
 	range.length = len;
 	if ((range.location + range.length) > textLength)
@@ -469,7 +472,7 @@
 
 - (NSArray *)orderedDocuments {
 	NSArray *orderedWindows = [NSApp valueForKey:@"orderedWindows"];
-	unsigned i, c = [orderedWindows count];
+	NSUInteger i, c = [orderedWindows count];
 	NSMutableArray *orderedDocs = [NSMutableArray array];
 	id curDelegate;
 
@@ -495,7 +498,7 @@
 //
 // -----------------------------------------------------------------------------
 
-- (void)insertInOrderedDocuments:(TSDocument *)doc atIndex:(int)idx {
+- (void)insertInOrderedDocuments:(TSDocument *)doc atIndex:(NSInteger)idx {
 	[doc retain];	// Keep it around...
 	[[doc firstTextView] setSelectedRange:NSMakeRange(0, 0)];
 //	[doc setDocumentName:nil];
@@ -522,11 +525,11 @@
 	useExternalEditor = [SUD boolForKey:UseExternalEditorKey];
 	myController = [NSDocumentController sharedDocumentController];
   //  forPreview = YES;
-	[[self delegate] setForPreview:YES];
+	[(TSAppDelegate *)[self delegate] setForPreview:YES];
 
-	result = [myController openDocumentWithContentsOfFile: myName display: YES];
+	result = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: myName] display: YES error:NULL];
 
-	[[self delegate] setForPreview:useExternalEditor];
+	[(TSAppDelegate *)[self delegate] setForPreview:useExternalEditor];
 
 	if (result == nil)
 		return [NSNumber numberWithBool:NO];

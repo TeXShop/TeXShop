@@ -55,15 +55,26 @@
 	return self;
 }
 
+#ifdef MAC_OS_X_VERSION_10_6
+- (void)finalize
+{
+#ifdef DEBUG_OGRE
+	NSLog(@"-finalize of %@", [self className]);
+#endif
+	if (_region != NULL) {
+		onig_region_free(_region, 1 /* free all */);
+	}
+    [super finalize];
+}
+#endif
+
 - (void)dealloc
 {
 #ifdef DEBUG_OGRE
 	NSLog(@"-dealloc of %@", [self className]);
 #endif
-	// ‰ğ•ú
 	[_enumerator release];
 
-	// ƒŠ[ƒWƒ‡ƒ“‚ÌŠJ•ú
 	if (_region != NULL) {
 		onig_region_free(_region, 1 /* free self */);
 	}

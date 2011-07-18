@@ -80,6 +80,20 @@
 }
 
 /*
+- (BOOL)wantsScrollEventsForSwipeTrackingOnAxis:(NSEventGestureAxis)axis
+{ 
+    return YES;
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    NSLog(@"scrollWheel Called");
+    [super scrollWheel:theEvent];
+}
+*/
+
+
+/*
 - (void)scheduleAddingToolips
 {
 }

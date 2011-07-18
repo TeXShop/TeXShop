@@ -146,7 +146,6 @@
 	id theFinder;
 	CGFloat oldVersion, newVersion;
 	BOOL needsUpdating;
-    NSStringEncoding theEncoding;
     id item;
 
 
@@ -163,7 +162,7 @@
 		// register defaults
 		fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 		NSParameterAssert(fileName != nil);
-		factoryDefaults = [[NSString stringWithContentsOfFile:fileName usedEncoding: &theEncoding error:NULL] propertyList];
+		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
 	

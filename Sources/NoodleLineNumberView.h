@@ -1,6 +1,6 @@
 //
 //  NoodleLineNumberView.h
-//  Line View Test
+//  NoodleKit
 //
 //  Created by Paul Kim on 9/28/08.
 //  Copyright (c) 2008 Noodlesoft, LLC. All rights reserved.
@@ -29,18 +29,24 @@
 
 #import <Cocoa/Cocoa.h>
 
+/*
+ Displays line numbers for an NSTextView.
+ 
+ For more details, see the related blog post at:  http://www.noodlesoft.com/blog/2008/10/05/displaying-line-numbers-with-nstextview/
+ */
+
 @class NoodleLineNumberMarker;
 
 @interface NoodleLineNumberView : NSRulerView
 {
     // Array of character indices for the beginning of each line
-    NSMutableArray      *lineIndices;
+    NSMutableArray      *_lineIndices;
 	// Maps line numbers to markers
-	NSMutableDictionary	*linesToMarkers;
-	NSFont              *font;
-	NSColor				*textColor;
-	NSColor				*alternateTextColor;
-	NSColor				*backgroundColor;
+	NSMutableDictionary	*_linesToMarkers;
+	NSFont              *_font;
+	NSColor				*_textColor;
+	NSColor				*_alternateTextColor;
+	NSColor				*_backgroundColor;
 }
 
 - (id)initWithScrollView:(NSScrollView *)aScrollView;

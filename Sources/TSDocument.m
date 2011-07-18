@@ -508,12 +508,13 @@
 	else
 		skipTextWindow = NO;
 
-
+/*
     if (skipTextWindow) {
         [[[self windowControllers] objectAtIndex:0] setWindow: nil];
         // [[[self windowControllers] objectAtIndex:0] setShouldCloseDocument: NO];
         // [[[self windowControllers] objectAtIndex:0] close];
     }
+*/
 
 
 
@@ -909,6 +910,14 @@ if (! skipTextWindow) {
 				[self doTypeset:self];
 		}
 	}
+}
+
+- (void)showWindows
+{
+    if (skipTextWindow)
+        return;
+    else
+        [super showWindows];
 }
 
 - (void)runModalSavePanelForSaveOperation:(NSSaveOperationType)saveOperation delegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo

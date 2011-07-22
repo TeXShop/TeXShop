@@ -1389,7 +1389,10 @@
 }
 */
 
-
+- (void)setOldSync: (BOOL)value
+{
+	oldSync = value;
+}
 
 - (void)drawPage:(PDFPage *)page
 {
@@ -1399,6 +1402,8 @@
 	int					rotation;
 	NSRect				boxRect;
 	NSAffineTransform   *transform;
+	BOOL				redOvals;
+	NSColor				*aColor, *myColor;
 	
 	// boxRect = [page boundsForBox: [self displayBox]];
 	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
@@ -1463,10 +1468,75 @@
 		 // NSDrawWindowBackground(boxRect);
 
 	[NSGraphicsContext restoreGraphicsState];
+	
+[NSGraphicsContext saveGraphicsState];
+	switch (rotation)
+	{
+		case 90:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: 0 yBy: boxRect.size.width];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+			
+		case 180:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			
+			break;
+			
+		case 270:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.height yBy: 0];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+	}
+	
+	p.x = 0; p.y = 0;
+	pagenumber = [[self document] indexForPage:page];
+	[self drawDotsForPage:pagenumber atPoint: p];
+	
+	int theIndex = [[self document] indexForPage: page];
+	redOvals = [SUD boolForKey: syncWithRedOvalsKey];
+	if (drawMark && (theIndex == pageIndexForMark)) {
+		int i = 0;
+		NSBezierPath *myPath;
+		if (oldSync)
+			myColor = [NSColor redColor];
+		else if (redOvals) 
+			myColor = [NSColor redColor];
+		else {
+			aColor = [NSColor yellowColor];
+			myColor = [aColor colorWithAlphaComponent: 0.5];
+			}
+		[myColor set];
+		if (oldSync) {
+			myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
+			[myPath stroke];
+			}
+		else while (i < numberSyncRect) {
+			if (redOvals) {
+				myPath = [NSBezierPath bezierPathWithOvalInRect: syncRect[i]];
+			   [myPath stroke];
+			}
+			else {
+				myPath = [NSBezierPath bezierPathWithRect: syncRect[i]];
+				[myPath fill];
+				}
+			i++;
+		}
+	}
+ 
+		
+
+	[NSGraphicsContext restoreGraphicsState];
 	[page drawWithBox:[self displayBox]];
 
 	// Set up transform to handle rotated page.
-
+/*
 	switch (rotation)
 	{
 		case 90:
@@ -1492,17 +1562,35 @@
 			break;
 	}
 
+		
 	p.x = 0; p.y = 0;
 	pagenumber = [[self document] indexForPage:page];
 	[self drawDotsForPage:pagenumber atPoint: p];
 
+
 	int theIndex = [[self document] indexForPage: page];
 	if (drawMark && (theIndex == pageIndexForMark)) {
-		NSBezierPath *myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
-		NSColor *myColor = [NSColor redColor];
+		int i = 0;
+		NSBezierPath *myPath;
+		NSColor *aColor = [NSColor yellowColor];
+		NSColor *myColor = [aColor colorWithAlphaComponent: 0.5];
 		[myColor set];
-		[myPath stroke];
+		while (i < numberSyncRect) {
+			NSBezierPath *myPath = [NSBezierPath bezierPathWithRect: syncRect[i]];
+			[myPath fill];
+			i++;
+		}
+ 
+		
+		
+		
+		
+//		NSBezierPath *myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
+//		NSColor *myColor = [NSColor redColor];
+//		[myColor set];
+//		[myPath stroke];
 	}
+*/
 
 }
 
@@ -1512,6 +1600,11 @@
 - (void) mouseDown: (NSEvent *) theEvent
 {
 
+	if (drawMark) {
+		[self setDrawMark: NO];
+		[self display];
+	}
+	
 	// koch; Dec 5, 2003
 
 	// The next lines fix a strange bug. Suppose the user has chosen the select tool,
@@ -3205,15 +3298,19 @@
 	unsigned        start, end, irrelevant;
 	BOOL			result;
 	
+	
 	int syncMethod = [SUD integerForKey:SyncMethodKey];
 	
 	if (syncMethod == SYNCTEXFIRST) {
+		[self setOldSync: NO];
 		result = [self doSyncTeX: thePoint];
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
 		else
 			syncMethod = SEARCHONLY;
 		}
+	
+	[self setOldSync: YES];
 	
 	
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
@@ -4171,5 +4268,19 @@
 {	
 	showSync = value;
 }
+
+- (void)setNumberSyncRect: (int)value
+{
+	numberSyncRect = value;
+}
+
+- (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height
+{
+	syncRect[which].origin.x = x;
+	syncRect[which].origin.y = y;
+	syncRect[which].size.width = width;
+	syncRect[which].size.height = height;
+}
+
 
 @end

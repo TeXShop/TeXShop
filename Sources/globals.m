@@ -205,6 +205,8 @@ NSString *invisibleCharRedKey = @"invisibleCharRed"; //Koch
 NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
 NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
+NSString *syncWithRedOvalsKey = @"syncWithRedOvals"; //Koch
+
 
 
 

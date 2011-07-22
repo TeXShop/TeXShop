@@ -174,6 +174,8 @@
 					nil];
 	} else {
 		
+/*
+		
 		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
 					@"\\section",
 					@"\\subsection",
@@ -185,6 +187,30 @@
 					@"subsection: ",
 					@"subsubsection: ",
 					nil];
+ */
+		
+		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+                               @"\\section",
+                               @"\\subsection",
+                               @"\\subsubsection",
+                               @"% \\section",
+                               @"% \\subsection",
+                               @"% \\subsubsection",
+                               @"% \\begin{macro}",
+                               @"% \\begin{environment}",
+                               nil];
+        
+		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"macro: ",
+                               @"environment: ",
+                               nil];
+		
 	}
 		
 	// if this is the first time the app is used, register a set of defaults to make sure

@@ -141,6 +141,10 @@
 {
 	int	i;
 	
+	if (scanner != NULL)
+		synctex_scanner_free(scanner);
+	scanner = NULL;
+	
 	for (i = 0; i < NUMBEROFERRORS; i++) {
 		if (errorLinePath[i] != nil)
 			[errorLinePath[i] release];
@@ -827,6 +831,9 @@ if (! skipTextWindow) {
 	// added by mitsu --(A) g_texChar filtering
 	[texCommand setDelegate: [TSEncodingSupport sharedInstance]];
 	// end addition
+	
+	if (!_externalEditor) 
+		[self allocateSyncScanner];
 
 	if (_externalEditor && ([SUD boolForKey: PdfRefreshKey] == YES)) {
 
@@ -3456,10 +3463,11 @@ preference change is cancelled. "*/
 	int             skipdepth;
 	NSString        *expectedFileName, *expectedString;
 	BOOL			result;
-
+	
 	int syncMethod = [SUD integerForKey:SyncMethodKey];
 	
 	if (syncMethod == SYNCTEXFIRST) {
+		[(MyPDFKitView *)[pdfKitWindow activeView] setOldSync: NO];
 		result = [self doPreviewSyncTeXWithFilename: fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
@@ -3467,7 +3475,8 @@ preference change is cancelled. "*/
 			syncMethod = SEARCHONLY;
 		}
 	
-
+	[(MyPDFKitView *)[pdfKitWindow activeView] setOldSync: YES];
+	
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
 		result = [self doNewPreviewSyncWithFilename:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
 		if (result)
@@ -4018,7 +4027,8 @@ preference change is cancelled. "*/
 	if (myFileHandle == readHandle) {
 		myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
 		if ([myData length]) {
-			theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
+			// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
+			theEncoding = _encoding;
 			newOutput = [[NSString alloc] initWithData: myData encoding: theEncoding];
 			
 			// 1.35 (F) fix --- suggested by Kino-san
@@ -5873,8 +5883,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	NSString			*content;
 	NSData				*logData;
 	NSStringEncoding	theEncoding;
+	NSStringEncoding	defaultEncoding;
 
-	theEncoding = NSMacOSRomanStringEncoding;
+	// theEncoding = NSMacOSRomanStringEncoding;
+	defaultEncoding = NSMacOSRomanStringEncoding;
+	theEncoding = _encoding;
 	// logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
 	if (logExtension == nil)
 		return NO;
@@ -5886,8 +5899,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 			if (!logData)
 				return NO;
 			content = [[[NSString alloc] initWithData:logData encoding:theEncoding] autorelease];
-				if (!content) 
-					return NO;
+			if (!content)
+                content = [[[NSString alloc] initWithData:logData encoding:defaultEncoding] autorelease];
+
+			if (!content) 
+				return NO;
 			[logTextView setString: content];
 			[logWindow setRepresentedFilename: logPath];
 			[logWindow setTitle:[logPath lastPathComponent]];

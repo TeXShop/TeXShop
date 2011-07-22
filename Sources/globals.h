@@ -387,6 +387,8 @@ extern NSString *LastStyNameKey; // added by Terada
 extern NSString *KpsetoolKey; // added by Terada
 extern NSString *BibTeXengineKey; // added by Terada
 
+// end mitsu 1.29
+
 extern NSString *SmartInsertDeleteKey; // Koch
 extern NSString *AutomaticDataDetectionKey; // Koch
 extern NSString *AutomaticLinkDetectionKey; // Koch
@@ -404,8 +406,9 @@ extern NSString *invisibleCharRedKey; //Koch
 extern NSString *invisibleCharGreenKey; //Koch
 extern NSString *invisibleCharBlueKey; //Koch
 extern NSString *brieflyFlashYellowForMatchKey; //Koch
+extern NSString *syncWithRedOvalsKey;
 
-// end mitsu 1.29
+// end of defaults
 
 
 /*" Paths "*/

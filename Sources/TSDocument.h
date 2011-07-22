@@ -28,6 +28,7 @@
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
 #import "TSPreviewWindow.h"
+#import "synctex_parser.h"
 
 
 #define NUMBEROFERRORS	20
@@ -170,21 +171,22 @@ enum RootCommand
 	BOOL		tagLine;
 
 
-	BOOL			typesetStart;		/*" YES if tex output "*/
-	NSFileHandle	*writeHandle;
-	NSFileHandle	*readHandle;
-	NSPipe			*inputPipe;
-	NSPipe			*outputPipe;
-	NSTask			*texTask;
-	NSTask			*bibTask;
-	NSTask			*indexTask;
-	NSTask			*metaFontTask;
-	NSTask			*detexTask;
-	NSPipe			*detexPipe;
-	NSFileHandle	*detexHandle;
-	NSTask			*synctexTask;
-	NSPipe			*synctexPipe;
-	NSFileHandle	*synctexHandle;
+	BOOL				typesetStart;		/*" YES if tex output "*/
+	NSFileHandle		*writeHandle;
+	NSFileHandle		*readHandle;
+	NSPipe				*inputPipe;
+	NSPipe				*outputPipe;
+	NSTask				*texTask;
+	NSTask				*bibTask;
+	NSTask				*indexTask;
+	NSTask				*metaFontTask;
+	NSTask				*detexTask;
+	NSPipe				*detexPipe;
+	NSFileHandle		*detexHandle;
+	NSTask				*synctexTask;
+	NSPipe				*synctexPipe;
+	NSFileHandle		*synctexHandle;
+	synctex_scanner_t	scanner;
 
 
 	NSDate		*startDate;
@@ -371,6 +373,7 @@ enum RootCommand
 - (void)displayLog: (id)sender;
 - (void)resetSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
+- (void)allocateSyncScanner;
 
 // BibDesk Completion
 //---------------------------

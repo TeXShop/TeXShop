@@ -25,6 +25,7 @@
 #import <AppKit/AppKit.h>
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
+#import "MyPDFKitView.h"
 
 
 @interface MyPDFKitView : PDFView
@@ -89,6 +90,11 @@
 	int								secondTheIndex;
 	NSRect							secondFullRect, secondVisibleRect;
 	BOOL							protectFind;
+	
+	BOOL							oldSync;
+	NSRect							syncRect[200];
+	int								numberSyncRect;
+
 	
 	
 }
@@ -175,5 +181,8 @@
 - (void)cancelSearch;
 - (void)setProtectFind: (BOOL)value;
 - (void) setShowSync: (BOOL)value;
+- (void)setNumberSyncRect: (int)value;
+- (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height;
+- (void)setOldSync: (BOOL)value;
 @end
 

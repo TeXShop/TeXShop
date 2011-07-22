@@ -1698,7 +1698,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSString        *newFileName, *theExtension;
 	TSDocument      *newDocument;
 	unsigned        start, end, irrelevant;
-
+	
 	includeFileName = nil;
 
 	// The code below finds the page number, and the position of the click

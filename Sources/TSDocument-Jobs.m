@@ -1446,6 +1446,7 @@
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))
 						[pdfKitWindow makeKeyAndOrderFront: self];
+					[self allocateSyncScanner];
 				}
 			}
 

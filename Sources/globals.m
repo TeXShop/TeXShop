@@ -208,6 +208,7 @@ NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
 NSString *syncWithRedOvalsKey = @"syncWithRedOvals";
 NSString *AutoSaveKey = @"AutoSave";
+NSString *FixLineNumberScrollKey = @"FixLineNumberScroll";
 
 
 

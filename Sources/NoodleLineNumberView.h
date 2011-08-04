@@ -28,6 +28,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+// FIX RULER SCROLL
+#import "TSDocument.h"
+@class TSDocument;
+// END FIX RULER SCROLL
 
 /*
  Displays line numbers for an NSTextView.
@@ -47,6 +51,9 @@
 	NSColor				*_textColor;
 	NSColor				*_alternateTextColor;
 	NSColor				*_backgroundColor;
+// FIX RULER SCROLL
+    TSDocument          *_document;
+// END FIX RULER SCROLL
 }
 
 - (id)initWithScrollView:(NSScrollView *)aScrollView;
@@ -65,5 +72,9 @@
 
 - (NSUInteger)lineNumberForLocation:(CGFloat)location;
 - (NoodleLineNumberMarker *)markerAtLine:(NSUInteger)line;
+
+// FIX RULER SCROLL
+- (void)setDocument:(TSDocument *)document;
+// END FIX RULER SCROLL
 
 @end

@@ -74,6 +74,10 @@ enum RootCommand
 @class MyPDFView;
 @class MySelection;
 
+// FIX RULER SCROLL
+@class NoodleLineNumberView;
+// END FIX RULER SCROLL
+
 @interface TSDocument : NSDocument <NSTextViewDelegate, NSToolbarDelegate>
 {
 	IBOutlet NSTextView			*textView1;
@@ -271,6 +275,12 @@ enum RootCommand
 	//Michael Witten: mfwitten@mit.edu
 	NSLineBreakMode		lineBreakMode;
 	// end witten
+    
+// FIX RULER SCROLL
+    NSRect lastDocumentVisibleRect;  // added by Terada (for Lion bug)
+    NSRect lastDocumentVisibleRect2;  // added by Terada (for Lion bug)
+    NSRect lastDocumentVisibleRectConsole; // added by Koch (for Lion bug)
+// END FIX RULER SCROLL
 
 // end addition
 
@@ -278,6 +288,11 @@ enum RootCommand
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
+
+// FIX RULER SCROLL
+- (void) redrawLineNumbers: sender;
+// END FIX RULER SCROLL
+
 // forsplit
 - (void) splitWindow: sender;
 - (void) splitPreviewWindow: sender;

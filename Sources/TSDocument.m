@@ -71,7 +71,6 @@
 {
 	id result = [super init];
 	
-    
 	isFullScreen = NO;
 
 	errorNumber = 0;
@@ -253,8 +252,14 @@
 			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
 			
 			[scrollView setVerticalRulerView:lineNumberView1];
-			[scrollView2 setVerticalRulerView:lineNumberView2];
-			[logScrollView setVerticalRulerView:logLineNumberView];
+            [scrollView2 setVerticalRulerView:lineNumberView2];
+            [logScrollView setVerticalRulerView:logLineNumberView];
+            
+// FIX RULER SCROÒL
+            [lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
+            [lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
+            [logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
+// END FIX RULER SCROLL
 			
 			[scrollView setHasVerticalRuler:YES];
 			[scrollView setHasHorizontalRuler:NO];
@@ -330,6 +335,12 @@
 	[self setConsoleBackgroundColorFromPreferences: nil];
 	[self setConsoleForegroundColorFromPreferences: nil];
 	[self setConsoleFontFromPreferences:nil];
+    if ([SUD integerForKey: FindMethodKey] == 0)
+        [outputText setUsesFindPanel: YES];
+    else if ([SUD integerForKey: FindMethodKey] == 1)
+        [outputText setUsesFindBar:YES];
+    else
+        [outputText setUsesFindPanel: YES];
 	
 /*
 	minWindowSize = [outputWindow minSize];
@@ -354,6 +365,12 @@
 	[self setLogWindowBackgroundColorFromPreferences: nil];
 	[self setLogWindowForegroundColorFromPreferences: nil];
 	[self setLogWindowFontFromPreferences:nil];
+    if ([SUD integerForKey: FindMethodKey] == 0)
+        [logTextView setUsesFindPanel: YES];
+    else if ([SUD integerForKey: FindMethodKey] == 1)
+        [logTextView setUsesFindBar:YES];
+    else
+        [logTextView setUsesFindPanel: YES];
 }
 
 
@@ -609,25 +626,32 @@ if (! skipTextWindow) {
 	
 	if (lineNumbersShowing) {
 		if (lineNumberView1 == nil) {
-			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
-			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+            
+           	 lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
+			 lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
 			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
 			
-			[scrollView setVerticalRulerView:lineNumberView1];
-			[scrollView2 setVerticalRulerView:lineNumberView2];
-			[logScrollView setVerticalRulerView: logLineNumberView];
+			 [scrollView setVerticalRulerView:lineNumberView1];
+			 [scrollView2 setVerticalRulerView:lineNumberView2];
+			 [logScrollView setVerticalRulerView: logLineNumberView];
+            
+// FIX RULER SCROLL
+            [lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
+            [lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
+            [logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
+// END FIX RULER SCROLL
 			
-			[scrollView setHasVerticalRuler:YES];
-			[scrollView setHasHorizontalRuler:NO];
+			 [scrollView setHasVerticalRuler:YES];
+			 [scrollView setHasHorizontalRuler:NO];
 			
-			[scrollView2 setHasVerticalRuler:YES];
-			[scrollView2 setHasHorizontalRuler:NO];
+			 [scrollView2 setHasVerticalRuler:YES];
+			 [scrollView2 setHasHorizontalRuler:NO];
 			
 			[logScrollView setHasVerticalRuler:YES];
 			[logScrollView setHasHorizontalRuler:NO];
 			}
-		[scrollView setRulersVisible:YES];
-		[scrollView2 setRulersVisible:YES];
+		  [scrollView setRulersVisible:YES];
+		 [scrollView2 setRulersVisible:YES];
 		[logScrollView setRulersVisible:YES];
 		}
 
@@ -911,6 +935,69 @@ if (! skipTextWindow) {
 		}
 	}
 }
+
+
+
+// FIX RULER SCROLL
+- (void) redrawLineNumbers: sender // added by Terada (for Lion bug)
+{
+    if(!lineNumbersShowing) return;
+    
+	NSSize		newSize;
+	NSRect		theFrame;
+    
+    if ((sender == textView1) && ([scrollView scrollerStyle] == NSScrollerStyleOverlay)) {
+    
+    NSRect currentRect = [scrollView documentVisibleRect];
+    
+    if(!NSEqualRects(currentRect, lastDocumentVisibleRect)){
+        theFrame = [scrollView frame];
+        newSize.width = theFrame.size.width;
+        newSize.height = theFrame.size.height+1;
+        [scrollView setFrameSize:newSize];
+        newSize.height = theFrame.size.height;
+        [scrollView setFrameSize:newSize];
+        lastDocumentVisibleRect = currentRect;
+    }
+        
+    }
+    
+    if ((sender == textView2) && ([scrollView2 scrollerStyle] == NSScrollerStyleOverlay)) {
+    
+    if (windowIsSplit) {
+        NSRect currentRect2 = [scrollView2 documentVisibleRect];
+        
+        if(!NSEqualRects(currentRect2, lastDocumentVisibleRect2)){
+            theFrame = [scrollView2 frame];
+            newSize.width = theFrame.size.width;
+            newSize.height = theFrame.size.height+1;
+            [scrollView2 setFrameSize:newSize];
+            newSize.height = theFrame.size.height;
+            [scrollView2 setFrameSize:newSize];
+            lastDocumentVisibleRect2 = currentRect2;
+        }
+    }
+        
+    }
+    
+    if ((sender == logTextView) && ([logScrollView scrollerStyle] == NSScrollerStyleOverlay)) {
+    
+    NSRect currentRectConsole = [logScrollView documentVisibleRect];
+    if(!NSEqualRects(currentRectConsole, lastDocumentVisibleRectConsole)){
+        theFrame = [logScrollView frame];
+        newSize.width = theFrame.size.width;
+        newSize.height = theFrame.size.height+1;
+        [logScrollView setFrameSize:newSize];
+        newSize.height = theFrame.size.height;
+        [logScrollView setFrameSize:newSize];
+        lastDocumentVisibleRectConsole = currentRectConsole;
+    }
+        
+    }
+    
+    
+}
+// END FIX RULER SCROLL
 
 - (void)showWindows
 {
@@ -1698,6 +1785,11 @@ in other code when an external editor is being used. */
 		theFrame = [scrollView frame];
 		newSize.width = theFrame.size.width;
 		newSize.height = 100;
+        /*
+        newSize.width = 100;
+        newSize.height = theFrame.size.height;
+        [splitView setVertical:YES];
+        */
 		[scrollView setFrameSize:newSize];
 		[scrollView2 setFrameSize:newSize];
 		[splitView addSubview: scrollView2];
@@ -2606,7 +2698,8 @@ preference change is cancelled. "*/
 
 - (void) setupTags
 {
-	if ([SUD boolForKey: TagSectionsKey]) {
+// The test below is an error, since it completely turns off tagging.
+//	if ([SUD boolForKey: TagSectionsKey]) { 
 		[tagTimer invalidate];
 		[tagTimer release];
 		tagTimer = nil;
@@ -2616,7 +2709,7 @@ preference change is cancelled. "*/
 		[tags removeAllItems];
 		[tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
 		tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
-	}
+//	}
 }
 
 - (void) fixTags:(NSTimer *)timer

@@ -30,6 +30,9 @@
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
 #import <tgmath.h>
+// FIX RULER SCROLL
+#import "globals.h"
+// END FIX RULER SCROLL
 
 #define DEFAULT_THICKNESS	22.0
 #define RULER_MARGIN		5.0
@@ -47,7 +50,7 @@
 
 @implementation NoodleLineNumberView
 
-- (id)initWithScrollView:(NSScrollView *)aScrollView
+- (id)initWithScrollView: (NSScrollView *)aScrollView
 {
     if ((self = [super initWithScrollView:aScrollView orientation:NSVerticalRuler]) != nil)
     {
@@ -363,23 +366,37 @@
     return ceil(MAX(DEFAULT_THICKNESS, stringSize.width + RULER_MARGIN * 2));
 }
 
+// FIX RULER SCROLL
+- (void)setDocument:(TSDocument*)document  // added by Terada (for Lion bug)
+{
+    _document = document;    
+}
+// END FIX RULER SCROLL
+
 - (void)drawHashMarksAndLabelsInRect:(NSRect)aRect
 {
     id			view;
 	NSRect		bounds;
+    
+    
+ 	bounds = [self bounds];
+    view = [self clientView];
 
-	bounds = [self bounds];
+// FIX RULER SCROLL
+    if ([SUD boolForKey:FixLineNumberScrollKey])
+        [_document redrawLineNumbers:view];
+// END FIX RULER SCROLL
 
 	if (_backgroundColor != nil)
 	{
 		[_backgroundColor set];
 		NSRectFill(bounds);
-		
+        
 		[[NSColor colorWithCalibratedWhite:0.58 alpha:1.0] set];
 		[NSBezierPath strokeLineFromPoint:NSMakePoint(NSMaxX(bounds) - 0/5, NSMinY(bounds)) toPoint:NSMakePoint(NSMaxX(bounds) - 0.5, NSMaxY(bounds))];
 	}
 	
-    view = [self clientView];
+    // view = [self clientView];
 	
     if ([view isKindOfClass:[NSTextView class]])
     {
@@ -419,6 +436,7 @@
         
         count = [lines count];
         
+        
         for (line = [self lineNumberForCharacterIndex:range.location inText:text]; line < count; line++)
         {
             index = [[lines objectAtIndex:line] unsignedIntegerValue];
@@ -440,7 +458,8 @@
 					
 					if (marker != nil)
 					{
-						markerImage = [marker image];
+						
+                        markerImage = [marker image];
 						markerSize = [markerImage size];
 						markerRect = NSMakeRect(0.0, 0.0, markerSize.width, markerSize.height);
 
@@ -448,7 +467,7 @@
 						markerRect.origin.x = NSWidth(bounds) - [markerImage size].width - 1.0;
 						markerRect.origin.y = ypos + NSHeight(rects[0]) / 2.0 - [marker imageOrigin].y;
 
-						[markerImage drawInRect:markerRect fromRect:NSMakeRect(0, 0, markerSize.width, markerSize.height) operation:NSCompositeSourceOver fraction:1.0];
+                        [markerImage drawInRect:markerRect fromRect:NSMakeRect(0, 0, markerSize.width, markerSize.height) operation:NSCompositeSourceOver fraction:1.0];
 					}
                     
                     // Line numbers are internally stored starting at 0

@@ -1398,6 +1398,10 @@
 	BOOL			front;
 
 	[outputText setSelectable: YES];
+    // [texCommand setSelectable: NO];
+    // [outputText setEditable: YES];
+    
+    // [outputText setEditable: YES];
 
 	if (([aNotification object] == bibTask) || ([aNotification object] == indexTask) || ([aNotification object] == metaFontTask)) {
 		if (inputPipe == [[aNotification object] standardInput]) {

@@ -2348,6 +2348,7 @@
 #endif
 }
 
+
 - (void)selectAll: (id)sender
 {
 /*
@@ -2421,6 +2422,12 @@
 	}
 
 }
+
+- (void) printDocument: sender
+{
+	[myDocument printDocument: sender];
+}
+
 
 
 

@@ -150,6 +150,8 @@
 
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 
+// printing
+- (void) printDocument: sender;
 
 - (void)selectARect: (NSEvent *)theEvent;
 - (void)selectAll: (id)sender;

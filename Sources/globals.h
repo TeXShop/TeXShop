@@ -410,6 +410,7 @@ extern NSString *invisibleCharBlueKey; //Koch
 extern NSString *brieflyFlashYellowForMatchKey; //Koch
 extern NSString *syncWithRedOvalsKey;
 extern NSString *AutoSaveKey;
+extern NSString *FixLineNumberScrollKey;
 
 
 // end defaults

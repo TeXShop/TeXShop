@@ -4532,6 +4532,16 @@
 }
 
 
+- (void)setDisplayMode:(PDFDisplayMode)mode
+{
+    [super setDisplayMode: mode];
+    switch (mode) {
+        case kPDFDisplaySinglePage: pageStyle = PDF_SINGLE_PAGE_STYLE; break;
+        case kPDFDisplayTwoUp: pageStyle = PDF_TWO_PAGE_STYLE; break;
+        case kPDFDisplaySinglePageContinuous: pageStyle = PDF_MULTI_PAGE_STYLE; break;
+        case kPDFDisplayTwoUpContinuous: pageStyle = PDF_DOUBLE_MULTI_PAGE_STYLE; break;
+    }
+}
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification
 {

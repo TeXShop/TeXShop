@@ -14,6 +14,52 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.04</h5></P>
+
+<ul>
+
+<li> Auto Save is automatically activated in TeXShop 3.04. The Preference item to turn it on or off has been removed. Users who intensely dislike
+Auto Save can switch to an older version of TeXShop. 
+
+<p> The main reason for the change is that there is a serious bug in TeXShop when Auto Save is off. Without Auto Save, opening a graphic file
+e.g., a jpg, pdf, png, tiff, or eps file, 
+also opens a blank source file with the same title. This also occurs when opening a document for an external editor, or opening a dvi file.  This
+problem does not occur when Auto Save is on. Thanks to Di Xiao for tracing this bug to Auto Save.
+
+<p> Notice that Apple programs like TextEdit also automatically activate Auto Save on Lion.
+
+<p>A hidden preference is provided to turn Auto Save off, but using this preference is strongly discouraged. As explained above, it creates
+significant bugs when opening files with no source window, like jpg, tiff, pdf, png, eps, and dvi files, or when using TeXShop with an external editor. The hidden
+preference is
+<dd>
+<dl> defaults write TeXShop AutoSaveEnabled NO
+</dd>
+
+
+<li> Version 3.04 contains a fix for "Show Full Path" in Lion, by Yusuke Terada.
+<p>
+<li> Added "md" to the file types TeXShop can edit, and typesetting engines can process. Such "markdown" files can be processed by pandoc
+and converted to latex, epub, and pdf. See <a href="http://johnmacfarlane.net/pandoc/">http://johnmacfarlane.net/pandoc/</a>
+<p>
+<li> The German localization has a different key equivalent for the menu command which enlarges the font in the source document.
+<p>
+<li> When the Preference Item for Arabic, Hebrew, and Persian is activated,  lines containing one of these languages are right justified.
+The new rule is that a line is right justified if its first, second, or third letter is in one of these languages. For instance, this rule right justifies
+a line beginning with "\" containing Persian letters, but does not right justify the command "\section{ ... }" even if the section title is in Persian.
+
+<p>
+<li> There is a hidden preference to change this behavior. If the following command is entered in Terminal, a line containing any characters
+in Arabic, Hebrew, or Persian will be right justified:
+<dd>
+<dl> defaults write TeXShop RightJustifyIfAny YES
+</dd>
+<p>
+<li> When the Preview window is taken full screen, it switches into double page mode. The user, however, can switch it into single page mode
+using a menu command. This is useful when displaying Beamer documents. If the window is taken out of full screen mode, and later  back into it,
+the display mode change made by the user will be remembered. TeXShop now remembers the mode change if it is made using a contextual
+menu rather than a menu in the menu bar. Thanks to  David Poole for pointing out this bug.
+</ul>
+
 <P><h5>TeXShop Changes 3.03</h5></P>
 
 <ul>

@@ -38,13 +38,21 @@
 	CGFloat alpha = [SUD floatForKey: SourceWindowAlphaKey];
 	if (alpha < 0.999)
 		 [self setAlphaValue:alpha];
+    [self performSelector:@selector(refreshTitle) withObject:nil afterDelay:1]; // added by Terada
 	return result;
 }
+
+- (void)refreshTitle // added by Terada
+{
+	if([myDocument fileURL] != nil) [self setTitle:[myDocument fileTitleName]];
+}
+
+
 
 
 - (void) becomeMainWindow
 {
-	if([myDocument fileURL] != nil ) [self setTitle:[myDocument fileTitleName]]; // added by Terada
+	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[myDocument resetSpelling];
 	[myDocument fixMacroMenuForWindowChange];

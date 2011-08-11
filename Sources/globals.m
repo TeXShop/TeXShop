@@ -207,10 +207,10 @@ NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
 NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
 NSString *syncWithRedOvalsKey = @"syncWithRedOvals";
-NSString *AutoSaveKey = @"AutoSave";
+NSString *AutoSaveKey = @"AutoSave"; // inactive
 NSString *FixLineNumberScrollKey = @"FixLineNumberScroll";
-
-
+NSString *RightJustifyIfAnyKey = @"RightJustifyIfAny";
+NSString *AutoSaveEnabledKey = @"AutoSaveEnabled";
 
 
 

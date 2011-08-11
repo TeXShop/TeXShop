@@ -1094,6 +1094,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"ctx"])
 		|| ([extension isEqualToString: @"bbx"])
 		|| ([extension isEqualToString: @"cbx"])
+        || ([extension isEqualToString: @"md"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -1588,6 +1589,7 @@ in other code when an external editor is being used. */
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
 				[CommandCompletionPath stringByStandardizingPath]])
 		[[NSApp delegate] finishCommandCompletionConfigure];
+     if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
 }
 
 

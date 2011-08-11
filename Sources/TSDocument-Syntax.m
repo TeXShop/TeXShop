@@ -164,10 +164,12 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			lineRange.location = theend;
 			selectedLineRange.location = start;
 			selectedLineRange.length = theend - start;
-			// a line must START with Persian, etc., to be right justified
-			if (selectedLineRange.length != 0)
-				selectedLineRange.length = 1;
-			theLine = [textString substringWithRange:selectedLineRange];
+            if ( ! [SUD boolForKey: RightJustifyIfAnyKey] ) {
+                // a line must START with Persian, etc., to be right justified; later must have Persian in first three letters
+                if (selectedLineRange.length >= 3)
+                    selectedLineRange.length = 3;
+                }
+  			theLine = [textString substringWithRange:selectedLineRange];
 			testRange = [theLine rangeOfCharacterFromSet: middleEastSet];
 			if (testRange.location == NSNotFound)
 				[aTextView setAlignment: NSLeftTextAlignment range: selectedLineRange];

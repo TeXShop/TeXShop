@@ -358,7 +358,7 @@
                                nil];
 	}
 
-    doAutoSave = [SUD boolForKey:AutoSaveKey];
+    doAutoSave = [SUD boolForKey:AutoSaveEnabledKey]; // this is a new hidden Preference, which can be used to turn it off
     
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];

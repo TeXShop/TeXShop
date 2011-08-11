@@ -411,6 +411,8 @@ extern NSString *brieflyFlashYellowForMatchKey; //Koch
 extern NSString *syncWithRedOvalsKey;
 extern NSString *AutoSaveKey;
 extern NSString *FixLineNumberScrollKey;
+extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Persian anywhere in the line
+extern NSString *AutoSaveEnabledKey;
 
 
 // end defaults

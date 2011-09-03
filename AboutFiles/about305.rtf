@@ -1,0 +1,64 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 The changes in version 3.05 are:\
+\
+a) There is a new folder in ~/Library/TeXShop/CommandCompletion named\
+"GratzerMathCC". This folder contains a file named "CommandCompletion.txt",\
+which users can activate by dragging it to the top level of CommandCompletion,\
+replacing the file there now. This file contains extra command completions\
+by George Gratzer for mathematical typesetting. The GratzerMathCC folder\
+also contains a pdf file documenting the new completions.\
+\
+b) Added a patch for syntax coloring submitted by Daniel Toundykov. This\
+patch fixes a bug introduced around version 2.10 which made it impossible to\
+change the foreground and background colors of the source window without\
+breaking syntax coloring. Thus users can now change these colors using\
+existing TeXShop commands.\
+\
+To change the source background\
+\
+	defaults write TeXShop background_R 0.25\
+\
+(with similar changes for background_G and background_B).\
+\
+To change the source foreground\
+\
+	defaults write TeXShop foreground_R 1.00\
+\
+(with similar changes for green and blue)\
+\
+To change the color of the insertion point\
+\
+	defaults write TeXShop insertionpoint_R 0.00\
+\
+(with similar changes for green and blue)\
+\
+Note that Macros/Applescript/ has two commands to illustrate this:\
+\
+	Colored source\
+	Default Colored source\
+\
+c) When TeXShop typesets, it first saves the source document if there\
+have been editing changes. With AutoSave enabled, TeXShop 3.**\
+called "Save a Version" to save the file, creating a new version.\
+Users who typeset after every few lines are left with an enormous\
+number of versions, and it is difficult to sort thrugh these versions \
+with the Time Machine like "Browser All Versions \'85"\
+\
+Ulrich Bauer submitted patches to TeXShop to fix these problems.\
+The basic idea of these patches is to call "autosaveDocumentWithDelegate"\
+rather than "saveDocumentWithDelegate". \
+\
+Since the changes involve a very significant part of the program, where\
+errors could have unfortunate consequences, 3.05 is a beta version\
+not yet available via Sparkle upgrade. Please report any problems with\
+saving, or with documents which don't have anticipated changes.\
+\
+ \
+\
+\
+}

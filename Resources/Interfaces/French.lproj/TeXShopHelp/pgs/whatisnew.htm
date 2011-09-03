@@ -14,6 +14,59 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.05</h5></P>
+
+<ul>
+
+<li> Before TeXShop typesets, it  saves the source document. To do that,
+TeXShop calls  the routine used by the "Save" menu. When AutoSave is activated, this menu item is renamed "Save A Version"
+and creates a new version of the document visible with the "Browse All Versions..." command.
+Users of TeXShop 3.01 who routinely typeset often obtained a enormous number of versions, making the
+"Browse All Versions..." command clumsy to use.
+
+<p> TeXShop 3.05 contains significant patches by Ulrich Bauer which fix this problem. TeXShop now saves changes
+before typesetting, but without creating new versions. This is in line with the design of AutoSave in Lion, which
+saves changes every few minutes but creates new Versions much less frequently. Roughly speaking, Bauer's patches
+call autosaveDocumentWithDelegate rather than saveDocumentWithDelegate when the autosave call is appropriate.
+
+<p>
+<li> The program has a patch to TeXShop's syntax coloring routine by Daniel Toundykov. When this
+routine was made faster and more reliable in TeXShop 2.10, the modification broke the ability to 
+change the background and foreground colors in TeXShop's source window. Toundykov's patch fixes
+this problem.
+
+<p> To change the source background color's Red component
+<dl>
+<dd> defaults write TeXShop background_R 0.25
+</dl>
+Set background_G and background_B to change the corresponding Green and Blue components.
+
+<p> To change the source foregrounds color's Red component
+<dl>
+<dd> defaults write TeXShop foreground_R 0.25
+</dl>
+Set foreground_G and foreground_B to change the corresponding Green and Blue components.
+
+<p> To change the insertion point color's Red component
+<dl>
+<dd> defaults write TeXShop insertionpoint_R 0.25
+</dl>
+Set insertionpoint_G and insertionpoint_B to change the corresponding Green and Blue components.
+
+
+
+
+<p>
+<li> The folder ~/Library/TeXShop/CommandCompletion now contains a subfolder named
+GratzerMathCC with an expanded list of command completions. These new completions are
+by George Gratzer, and are useful when typesetting
+mathematics. The folder also has a pdf file documenting the additions.  
+To activate the new completions, drag CommandCompletion.txt from the GratzerMathCC folder to the main
+CommandCompletion folder, replacing the existing CommandCompletion.txt there.
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.04</h5></P>
 
 <ul>

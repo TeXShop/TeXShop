@@ -510,8 +510,12 @@ enum RootCommand
 - (void) doTypesetEE: sender;
 
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
+
+
 - (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine;
+
 - (void) completeSaveFinished;
+- (void) autosaveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 
 - (void) doTexCommand: sender;
 - (void) convertDocument;
@@ -530,8 +534,10 @@ enum RootCommand
 
 - (BOOL) checkMasterFile:(NSString *)theSource forTask:(NSInteger)task;
 - (BOOL) checkRootFile_forTask:(NSInteger)task;
+/* Ulrich Bauer patch
 - (void) checkFileLinks:(NSString *)theSource;
 - (void) checkFileLinksA;
+*/
 - (NSString *) readInputArg:(NSString *)fileLine atIndex:(NSUInteger)i
 		homePath:(NSString *)home job:(NSString *)jobname;
 - (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;

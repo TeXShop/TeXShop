@@ -266,6 +266,8 @@
 	return [self checkRootFile:nameString forTask:task];
 }
 
+/* Removed by Ulrich Bauer patch
+
 - (void) checkFileLinksA
 {
 	NSArray *wlist;
@@ -355,6 +357,8 @@
 	// release file list
 	[slist release];
 }
+ 
+*/
 
 // added by John A. Nairn
 // read argument to \input command and resolve to full path name

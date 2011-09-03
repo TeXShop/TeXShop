@@ -128,9 +128,13 @@
 }
 
 
+
 - (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
-	if (! fileIsTex)
+	
+    SEL saveFinished;
+    
+    if (! fileIsTex)
 		return;
 
 	useTempEngine = YES;
@@ -143,6 +147,8 @@
 	errorNumber = 0;
 	whichError = 0;
 	makeError = error;
+    
+/*
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -152,6 +158,34 @@
 	} else {
 		[self saveDocumentWithDelegate: self didSaveSelector: @selector(saveFinished:didSave:contextInfo:) contextInfo: nil];
 	}
+*/
+    
+// patch by Ulrich Bauer; remove commented lines above and replace with
+    
+    if (!_externalEditor) {
+            id wlist = [NSApp orderedDocuments];
+            id en = [wlist objectEnumerator];
+            id obj;
+            while (obj = [en nextObject]) {
+                if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+                    {
+                        [obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+                    }
+                }
+                
+            saveFinished = @selector(saveFinished:didSave:contextInfo:);
+            if ([self fileURL])
+                    [self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+            else
+                    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+                
+            } 
+        else {
+            [self saveFinished: self didSave:YES contextInfo:nil];
+        }
+
+    
+    
 }
 
 
@@ -191,6 +225,7 @@
 	[self fixMacroMenu];
 	// end addition
 
+/*
 	if (!_externalEditor)
 		[self checkFileLinksA];
 
@@ -201,7 +236,40 @@
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
 		[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 	}
+*/
+    
+// bug fix by Ulrich Bauer; remove above lines and add
+    
+    	if (!_externalEditor) {
+            id wlist = [NSApp orderedDocuments];
+            id en = [wlist objectEnumerator];
+            id obj;
+            while (obj = [en nextObject]) {
+                if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+                    {
+                    [obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+                    }
+                }
+         
+        
+        
+ 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
+        if ([self fileURL])
+                [self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+        else
+                [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+        
+        } else {
+            [self saveFinished: self didSave:YES contextInfo:nil];
+        }
 }
+
+    
+- (void) autosaveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo
+{
+}
+
+    
 
 
 - (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args
@@ -502,8 +570,10 @@
 		return;
 	}
 
+/* // Ulrich Bauer patch
 	if (!_externalEditor)
 		[self checkFileLinks:theSource];
+*/
 
 	// New Stuff
 	length = [theSource length];

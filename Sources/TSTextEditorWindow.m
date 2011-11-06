@@ -37,9 +37,15 @@
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
 	CGFloat alpha = [SUD floatForKey: SourceWindowAlphaKey];
 	if (alpha < 0.999)
-		 [self setAlphaValue:alpha];
+        //[self setAlphaValue:alpha]; // removed by Terada
+        [self performSelector:@selector(setAlpha:) withObject:[NSNumber numberWithFloat:alpha] afterDelay:0.5]; // added by Terada   
     [self performSelector:@selector(refreshTitle) withObject:nil afterDelay:1]; // added by Terada
 	return result;
+}
+
+-(void)setAlpha:(NSNumber*)alpha // added by Terada
+{
+    [self setAlphaValue:[alpha floatValue]];
 }
 
 - (void)refreshTitle // added by Terada

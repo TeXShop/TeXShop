@@ -6547,6 +6547,12 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     [myPDFKitView2 changePageStyleTo:oldPageStyle];
 }
 
+// added by Terada
+- (NSString *)fileNameExtensionForType:(NSString *)typeName saveOperation:(NSSaveOperationType)saveOperation
+{
+    return [[[self fileURL] path] pathExtension];
+}
+
 
 
 @end

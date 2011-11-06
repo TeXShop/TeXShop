@@ -14,6 +14,51 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.06</h5></P>
+
+The  changes in 3.06 are  by Yusuke Terada.
+
+<ul>
+
+<li> On Lion, the hidden setting SourceWindowAlpha sometimes does not work.
+Especially, on opening source files which contain "TEX root =", SourceWindowAlpha is always ignored.
+To fix this issue, I added a method "setAlpha:" into TSTextEditorWindow.m and modified "initWIthContentRect:".
+
+<p>
+<li> On Lion, if you open a source file which contains "TEX root = foobar.tex" but foobar.tex does not exist, the window of foobar.tex is newly created.
+(On SnowLeopard, an error dialog was displayed in such a situation.)
+I modified a single line of TSDocument-RootFile.m to fix this issue.
+
+
+<p>
+<li> I modified TSDocument-Jobs.m in order to allow the BibTeX engine setting to have options.
+
+
+</ul>
+
+<p> In addition,  Terada improved OgreKit 2.1.4 to make it more useful.
+
+<ul>
+<li> 
+New OgreKit Find Panel uses the same font as TeXShop source windows.
+Syntax coloring, paren match highlighting, showing invisible characters and so on work also in OgreKit Find Panel.
+Auto Completion(Key Binding) and Command Completion also work.
+The settings of each function (on/off, its color) follow those of TeXShop.
+
+<p>
+<li> When regular expressions are enabled, the background color in the panel changes.
+
+<p>
+<li> Previously, when you open TeXShop source windows in different spaces, pressing Command+F caused switching spaces.
+By using the new OgreKit.framework, OgreKit Find Panel always appears in the current space.
+
+
+<p>
+<li>  Previously, after using "Replace All" of OgreKit Find Panel, the colors of all characters in TeXShop source window were changed to black.
+In the new OgreKit.framework, this issue is fixed by sending "NeedsForRecolorNotification" to NotificationCenter after using "Replace All".
+
+</ul> 
+
 <P><h5>TeXShop Changes 3.05</h5></P>
 
 <ul>

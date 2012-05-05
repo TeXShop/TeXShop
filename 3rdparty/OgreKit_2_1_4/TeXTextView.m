@@ -173,6 +173,7 @@
 
 - (void)insertText:(id)aString
 {
+    /* // comment out for disabling Key Binding (Auto Completion)
 	NSDictionary* texshopSettings = [NSDictionary dictionaryWithContentsOfFile:texshopPlistPath];
 	
 	if ([aString length] == 1 && texshopSettings && [[texshopSettings objectForKey:@"AutoCompleteEnabled"] boolValue] && autocompletionDictionary) {
@@ -190,7 +191,7 @@
 				return;
 			}
 		}
-	}	
+	}*/	
 	
 	// Filtering for Japanese
 	if([aString isEqualToString:@"¥"])
@@ -230,4 +231,18 @@
 	}
 	return [super readSelectionFromPasteboard:pboard type:type];
 }
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL didBecomeFirstResponder = [super becomeFirstResponder];
+    [self selectAll:nil];
+    return didBecomeFirstResponder;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [self setSelectedRange:NSMakeRange(0, 0)];
+    return [super resignFirstResponder];
+}
+
 @end

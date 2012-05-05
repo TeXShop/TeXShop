@@ -5117,6 +5117,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	
 	
 	text = [textView string];
+    NSRange oldRange = [textView selectedRange]; // added by Terada
+    NSInteger increment = 0; // added by Terada
+    
 	//Expand the selectedRange to include whole lines
 	[text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
 	
@@ -5138,6 +5141,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 				[textView replaceCharactersInRange:modifyRange withString:@"%"];
 				blockEnd++;
 				lineEnd++;
+                increment++; // added by Terada
 				theCommand = NSLocalizedString(@"Comment", @"Comment");
 				break;
 				
@@ -5150,6 +5154,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 					[textView replaceCharactersInRange:modifyRange withString:@""];
 					blockEnd--;
 					lineEnd--;
+                    increment--; // added by Terada
 					theCommand = NSLocalizedString(@"Uncomment", @"Uncomment");
 				}
 				break;
@@ -5158,6 +5163,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 				[textView replaceCharactersInRange:modifyRange withString:@"\t"];
 				blockEnd++;
 				lineEnd++;
+                increment++; // added by Terada
 				theCommand = NSLocalizedString(@"Indent", @"Indent");
 				break;
 				
@@ -5169,6 +5175,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 					[textView replaceCharactersInRange:modifyRange withString:@""];
 					blockEnd--;
 					lineEnd--;
+                    increment--; // added by Terada
 					theCommand = NSLocalizedString(@"Unindent", @"Unindent");
 				}
 				break;
@@ -5186,6 +5193,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	
 	[self registerUndoWithString:oldString location:modifyRange.location
 						  length:modifyRange.length key: theCommand];
+
+    // added by Terada (for selecting original range)
+    oldRange.location += (increment > 0) ? 1 : -1;
+    oldRange.length += increment + ((increment > 0) ? (-1) : 1);
+	[textView setSelectedRange: oldRange];
 }
 
 // end mitsu 1.29 //end rewritten Scott Lambert 3/1/2010
@@ -5443,6 +5455,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
 						[extension isEqualToString:@"fdb_latexmk"] ||
+                        [extension isEqualToString:@"fls"] ||
 						([extension isEqualToString:@"pdf"] && trashPDF) ||
 						[extension isEqualToString:@"toc"])))
 			[pathsToBeMoved addObject: anObject];

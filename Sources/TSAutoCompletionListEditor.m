@@ -26,9 +26,22 @@
 		}
 
 		autocompletionValues = [NSMutableArray arrayWithCapacity:0];
-		NSEnumerator *enumerator = [autocompletionKeys objectEnumerator];
+        NSArray *autocompletionKeysCopy = [NSArray arrayWithArray:autocompletionKeys];
+		NSEnumerator *enumerator = [autocompletionKeysCopy objectEnumerator];
 		while ((key = [enumerator nextObject])) {
-			[autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+			if ([[g_autocompletionDictionary allKeys] containsObject:key]){
+                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+            }else{
+                [autocompletionKeys removeObjectIdenticalTo:key];
+            }
+		}
+
+		enumerator = [[g_autocompletionDictionary allKeys] objectEnumerator];
+		while ((key = [enumerator nextObject])) {
+            if (![autocompletionKeys containsObject:key]) {
+                [autocompletionKeys addObject:key];
+                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+            }
 		}
 		
 		[autocompletionKeys retain];

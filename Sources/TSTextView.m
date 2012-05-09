@@ -516,34 +516,40 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
         BOOL flag;
         unichar c;
         
-        do {
-            if (replacementRange.location >= 1){
-                c = [textString characterAtIndex: replacementRange.location-1];
-                if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
-                    replacementRange.location--;
-                    replacementRange.length++;
-                    flag = YES;
-                }else{
-                    flag = NO;
-                }
-            }else{
-                flag = NO;
-            }
-        } while (flag);
         
-        do {
-            if (replacementRange.location + replacementRange.length  < [textString length]){
-                c = [textString characterAtIndex: replacementRange.location + replacementRange.length];
-                if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
-                    replacementRange.length++;
-                    flag = YES;
-                }else{
-                    flag = NO;
-                }
-            }else{
-                flag = NO;
+        if(replacementRange.location < [textString length]){
+            c = [textString characterAtIndex:replacementRange.location];
+            if((c != '{') && (c != '(') && (c != '[') && (c != '<') ){
+                do {
+                    if (replacementRange.location >= 1){
+                        c = [textString characterAtIndex: replacementRange.location-1];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.location--;
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
+                
+                do {
+                    if (replacementRange.location + replacementRange.length  < [textString length]){
+                        c = [textString characterAtIndex: replacementRange.location + replacementRange.length];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
             }
-        } while (flag);
+        }
 		
         // added by Terada (until this line)
 		

@@ -6163,7 +6163,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 	
 	oldRange = [textView selectedRange];
 	
-	NSString *regex = @"(begin|end)\\{(.*?)\\}";
+	NSString *regex = @"(begin|end)\\{(.*?)\\}|(start|stop)([a-zA-Z]+)";
 	if(g_texChar == YEN){
 		regex = [NSString stringWithFormat:@"%c%@", YEN, regex];
 	}else{
@@ -6175,28 +6175,31 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 								reverseObjectEnumerator];
 	
 	OGRegularExpressionMatch *match;
-	NSString *environment;
+	NSString *environment, *prefix, *stackKey;
 	int increment, count_value;
 	NSNumber *count;
 	NSMutableDictionary *environmentStack = [NSMutableDictionary dictionaryWithCapacity:0];
 	
 	while((match = [enumerator nextObject])) {
-		increment = [[match substringAtIndex:1] isEqualToString:@"end"] ? 1 : -1;
-		environment = [match substringAtIndex:2];
-		count = [environmentStack objectForKey:environment];
+		if(!(prefix = [match substringAtIndex:1])) prefix =  [match substringAtIndex:3];
+		if(!(environment = [match substringAtIndex:2])) environment = [match substringAtIndex:4];
+		increment = ([[match substringAtIndex:1] isEqualToString:@"end"] || [[match substringAtIndex:3] isEqualToString:@"stop"]) ? 1 : -1;
+		stackKey = [(([prefix isEqualToString:@"begin"] || [prefix isEqualToString:@"end"] ) ? @"A" : @"B") stringByAppendingString:environment];
+		
+		count = [environmentStack objectForKey:stackKey];
 		if (count) {
 			count_value = [count intValue];
 			if(increment == 1){
-				[environmentStack setObject:[NSNumber numberWithInt:count_value+1] forKey:environment];
+				[environmentStack setObject:[NSNumber numberWithInt:count_value+1] forKey:stackKey];
 			}else if(count_value > 0){
-				[environmentStack setObject:[NSNumber numberWithInt:count_value-1] forKey:environment];
+				[environmentStack setObject:[NSNumber numberWithInt:count_value-1] forKey:stackKey];
 			}else {
 				newString = environment;
 				break;
 			}
 		}else {
 			if(increment == 1){
-				[environmentStack setObject:[NSNumber numberWithInt:1] forKey:environment];
+				[environmentStack setObject:[NSNumber numberWithInt:1] forKey:stackKey];
 			}else {
 				newString = environment;
 				break;
@@ -6205,7 +6208,12 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 	}
 	
 	if(newString){
-		newString = [NSString stringWithFormat:@"%cend{%@}", g_texChar, newString];
+		if ([prefix isEqualToString:@"begin"]) {
+			newString = [NSString stringWithFormat:@"%cend{%@}", g_texChar, newString];
+		}else{
+			newString = [NSString stringWithFormat:@"%cstop%@", g_texChar, newString];
+		}
+		
 		if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) {
 			[textView replaceCharactersInRange:oldRange withString:newString];
 			[textView didChangeText];

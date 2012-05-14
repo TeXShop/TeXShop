@@ -135,7 +135,6 @@
 	float oldVersion, newVersion;
 	BOOL needsUpdating;
 
-
 	g_macroType = LatexEngine;
 
 	
@@ -173,6 +172,8 @@
 					@"subsubsubsubsubject: ",
 					nil];
 	} else {
+	 
+
 		
 /*
 		
@@ -188,6 +189,8 @@
 					@"subsubsection: ",
 					nil];
  */
+
+
 		
 		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
                                @"\\section",
@@ -212,19 +215,28 @@
                                nil];
 		
 	}
+ 
+ 
+	
+
 		
 	// if this is the first time the app is used, register a set of defaults to make sure
 	// that the app is useable.
 	if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
 		([[NSUserDefaults standardUserDefaults] objectForKey:TetexBinPath] == nil)) {
 		[[TSPreferences sharedInstance] registerFactoryDefaults];
-	} else {
+	} 
+	
+	
+      {
 		// register defaults
 		fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 		NSParameterAssert(fileName != nil);
-		factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
+		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error: NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
+	
+
 	
 	// Make sure the ~/Library/TeXShop/ directory exists and is populated.
 	// To do this, we walk recursively through our private 'TeXShop' folder contained
@@ -241,6 +253,8 @@
 	currentVersion = [[[NSBundle bundleForClass:[self class]]
 					   infoDictionary] objectForKey:@"CFBundleVersion"];
 	newVersion = [currentVersion floatValue];
+	
+	
 
 	if ([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]] ) {
 		versionString = [[NewPath stringByAppendingPathComponent:@".Version"] stringByStandardizingPath];
@@ -253,12 +267,13 @@
 		needsUpdating = TRUE;
 	else 
 		needsUpdating = FALSE;
-
+	
 		
 	if (! [fileManager fileExistsAtPath: [TeXShopPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
 			  toPath:[TeXShopPath stringByStandardizingPath]];
 		}
+	
 		
 	if (! [fileManager fileExistsAtPath: [CommandCompletionFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/CommandCompletion"]

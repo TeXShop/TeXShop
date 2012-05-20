@@ -1488,6 +1488,7 @@ in other code when an external editor is being used. */
 	id				aRep;
 	NSInteger				result;
     NSString        *fileName;
+    NSPrintPanel    *printPanel;
 	
     fileName = [[self fileURL] path];
     
@@ -1517,9 +1518,22 @@ in other code when an external editor is being used. */
 		if (aRep == nil)
 			return;
 		printView = [[TSPrintView alloc] initWithImageRep: aRep];
-		printOperation = [NSPrintOperation printOperationWithView:printView printInfo: [self printInfo]];
+        
+        if ([aRep isKindOfClass: [NSPDFImageRep class]])
+            {
+            NSRect bounds = [aRep bounds];
+            if ((bounds.size.width) > (bounds.size.height))
+                [[self printInfo] setOrientation: NSLandscapeOrientation];
+            else
+                [[self printInfo] setOrientation: NSPortraitOrientation];
+             }
+        
+ 		printOperation = [NSPrintOperation printOperationWithView:printView printInfo: [self printInfo]];
         [printOperation setShowsPrintPanel:flag];
         [printOperation setShowsProgressPanel:flag];
+        printPanel = [printOperation printPanel];
+        [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
+       //  [printPanel setOptions: (NSPrintPanelShowsPreview | NSPrintPanelShowsOrientation | NSPrintPanelShowsPageRange) ]; //( NSPrintPanelShowsPageSetupAccessory & [printPanel options])]; // NSPrintPanelShowsOrientation)];
 		[printOperation runOperation];
 		[printView release];
 	} else if (_documentType == isTeX)
@@ -2325,6 +2339,7 @@ preference change is cancelled. "*/
 	NSPrintInfo                 *myPrintInfo;
 	NSPrintingPaginationMode    originalPaginationMode;
 	BOOL                        originalVerticallyCentered;
+    NSPrintPanel                *printPanel;
 
 	myPrintInfo = [self printInfo];
 	originalPaginationMode = [myPrintInfo horizontalPagination];
@@ -2332,9 +2347,12 @@ preference change is cancelled. "*/
 
 	[myPrintInfo setHorizontalPagination: NSFitPagination];
 	[myPrintInfo setVerticallyCentered:NO];
+    [myPrintInfo setOrientation: NSPortraitOrientation];
 	printOperation = [NSPrintOperation printOperationWithView:textView printInfo: myPrintInfo];
     [printOperation setShowsPrintPanel:YES];
     [printOperation setShowsProgressPanel:YES];
+    printPanel = [printOperation printPanel];
+    [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
 	[printOperation runOperation];
 
 	[myPrintInfo setHorizontalPagination: originalPaginationMode];

@@ -741,6 +741,15 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	[ self registerForDraggedTypes:
 			[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil] ];
 	_document = nil;
+    wasCompleted = NO; // was completed on last keyDown
+	latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	originalString = nil; // string before completion, starts at replaceLocation
+	currentString = nil; // completed string
+	replaceLocation = NSNotFound; // completion started here
+	completionListLocation = 0; // location to start search in the list
+	textLocation = NSNotFound; // location of insertion point
+
+    
 	return self;
 }
 
@@ -1249,13 +1258,13 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
 	// TODO: Convert all of these static stack variables to member variables.
 	
-	static BOOL wasCompleted = NO; // was completed on last keyDown
-	static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
-	static NSString *originalString = nil; // string before completion, starts at replaceLocation
-	static NSString *currentString = nil; // completed string
-	static NSUInteger replaceLocation = NSNotFound; // completion started here
-	static NSUInteger completionListLocation = 0; // location to start search in the list
-	static NSUInteger textLocation = NSNotFound; // location of insertion point
+	// static BOOL wasCompleted = NO; // was completed on last keyDown
+	// static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	// static NSString *originalString = nil; // string before completion, starts at replaceLocation
+	// static NSString *currentString = nil; // completed string
+	// static NSUInteger replaceLocation = NSNotFound; // completion started here
+	// static NSUInteger completionListLocation = 0; // location to start search in the list
+	// static NSUInteger textLocation = NSNotFound; // location of insertion point
 	BOOL foundCandidate;
 	NSString *textString, *foundString, *latexString = 0;
 	NSMutableString *indentString = [NSMutableString stringWithString:@""]; // Alvise Trevisan; preserve tabs code

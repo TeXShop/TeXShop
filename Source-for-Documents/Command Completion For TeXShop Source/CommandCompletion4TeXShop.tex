@@ -30,7 +30,6 @@
 
 \pagestyle{plain}
 
-\usepackage{microtype}
 \usepackage{booktabs}
 
 %\pagestyle{empty}
@@ -57,7 +56,7 @@
 
 \title{Using Command Completion with \\ \TS}
 \author{Herbert Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
-\date{2011/07/27}
+\date{2012/05/14}
 
 
 \begin{document}
@@ -68,7 +67,7 @@
 
 As of v1.34 \TS\ offered a Command Completion facility that was reasonably powerful, if under-utilized. Command Completion in \TS\ allows continuations (completions) or substitutions (abbreviations) for a set of characters bounded on the left by a \textsf{Word Boundary Character}\footnote{The \textsf{Word Boundary Characters} are space, tab, linefeed(newline), period, comma, semicolon, colon, \{, \}, (, ) or \textbackslash\ (actually the \textsf{TeX Command Character} which can vary in different implementations). The \{ and \textbackslash\ also become part of the expansion.} and triggered by the Escape (\esckey) key.
 
-With the help of the good folks on the \textsf{Mac OS X TeX} e-mail list\footnote{Subscribe by sending an e-mail to <\url{mailto:MacOSX-TeX-on@email.esm.psu.edu}>.}, a \CCT\ file was created along with associated Applescript macros to take advantage of that facility. The completions and abbreviations supplied often contain bullet characters, `\texttt{•}', called Marks\footnote{Previously called Tabs.}, as placeholders for command arguments or to easily get to the end of an environment. Skipping forward and backward to these Marks was accomplished using macros\footnote{The original \CCT\ file, macros and documentation are still available as \textsf{CommandCompletion.zip} from  <\url{http://public.me.com/herbs2/}>.}; the macros jumped to the Marks and selected, or deleted, them. Most of the abbreviations were inspired by those used in the \textsf{\fastex}\footnote{\textsf{\fastex} was developed by Filip G. Machi, Jerrold E. Marsden and Wendy G. McKay. For more information see the \textsf{\fastex} web page, <\url{http://www.cds.caltech.edu/~fastex/}>.} set used with \textsf{TypeIt4Me}\footnote{\textsf{TypeIt4Me}, by Riccardo Ettore, presently a preference pane, allows abbreviation replacement in most OS~X programs with ``dictionaries'' that can be application dependent. See the \textsf{TypeIt4Me} web page, <\url{http://www.typeit4me.com/}>, for more information.}.
+With the help of the good folks on the \textsf{Mac OS X TeX} e-mail list\footnote{Subscribe by sending an e-mail to <\url{mailto:MacOSX-TeX-on@email.esm.psu.edu}>.}, a \CCT\ file was created along with associated Applescript macros to take advantage of that facility. The completions and abbreviations supplied often contain bullet characters, `\texttt{•}', called Marks\footnote{Previously called Tabs.}, as placeholders for command arguments or to easily get to the end of an environment. Skipping forward and backward to these Marks was accomplished using macros\footnote{The original \CCT\ file, macros and documentation are still available as \textsf{CommandCompletion.zip} at <\url{https://dl.dropbox.com/u/10932738/index.html}>.}; the macros jumped to the Marks and selected, or deleted, them. Most of the abbreviations were inspired by those used in the \textsf{\fastex}\footnote{\textsf{\fastex} was developed by Filip G. Machi, Jerrold E. Marsden and Wendy G. McKay. For more information see the \textsf{\fastex} web page, <\url{http://www.cds.caltech.edu/~fastex/}>.} set used with \textsf{TypeIt4Me}\footnote{\textsf{TypeIt4Me}, by Riccardo Ettore, presently a preference pane, allows abbreviation replacement in most OS~X programs with ``dictionaries'' that can be application dependent. See the \textsf{TypeIt4Me} web page, <\url{http://www.typeit4me.com/}>, for more information.}.
 
 Version 2.30 and later of \TS\ offers a built-in and enhanced version of Command Completion inspired by Hugh Neary and Will Robertson. There is no longer a need for the Applescript macros and the arguments of completions can have short comments.
 
@@ -84,7 +83,7 @@ Simply place this version of \TS\ into \path{/Applications/TeX/}. If you ever st
 
 \subsection*{\CCT}
 
-A new default version of \CCT\ is embedded within this new version of \TS. It will get installed, along with other files, the first time \TS\ runs \emph{unless} you've used \TS\ before. In that case you need to move the \path{~/Library/TeXShop/CommandCompletion/} (\path{~} is your HOME directory) directory to your Desktop and start the new version of \TS; a replacement folder with the new version of \CCT\ will be created.
+A new default version of \CCT\ is embedded within this new version of \TS. It will get installed, along with other files, the first time \TS\ runs \emph{unless} you've used \TS\ before. In that case you need to move the \path{~/Library/TeXShop/CommandCompletion/} directory (\path{~} is your HOME directory) to your Desktop and start the new version of \TS; a replacement folder with the new version of \CCT\ will be created.
 
 If you've already added items to the original file you will be able to merge them into the new file after it's created. You can open the new version of \CCT\ by clicking on the \mnu{Source}\To\mnu{Command Completion}\To\mnu{Edit Command Completion File\dots} menu item. The older file \emph{must} be opened with Unicode (UTF-8) encoding: use the \mnu{File}\To\mnu{Open\dots} (\cmd{\cmdkey-O}) menu command and make sure to select the \textsf{Unicode (UTF-8)} encoding before opening your old version in \TS.
 
@@ -238,6 +237,31 @@ The Greek Letter abbreviations appear in Table (\ref{tbl:greek}) on page \pagere
 
 \section*{Making Additions to \CCT}
 
+\subsection*{Quick Additions}
+
+For quick additions you can create the abbreviation and command as a single line in your document and then add it to the bottom (i.e., it will be found \emph{before} other ``matching'' abbreviations) of the \CCT\ file using the \mnu{Source}\To\mnu{Command Completion}\To\mnu{Add Word} (\cmd{Shift-Cmd-W}) command.
+
+Suppose you've defined an environment you call \cmd{myenv} and it comes in two versions, without and with an optional argument. Then create the lines
+\begin{verbatim}
+bmyenvo:=\begin{myenv}[#INS#•#INS#]#RET#•#RET#\end{myenv}•
+bmyenv:=\begin{myenv}#RET##INS#•#INS##RET#\end{myenv}•
+\end{verbatim}
+(all \cmd{Returns} have been replaced by \verb|#RET#|, the first argument in each line is written as \verb|#INS#•#INS#| and other arguments are simply \verb|•| (\cmd{Cmd-8})), select both lines and execute the \mnu{Add Word} command. Note: the version with the optional argument is placed first and will be found second!  Note: once these lines have have been added to \CCT\ you should delete them from your document. Now writing \cmd{bmy} on a new line and pressing \esckey\ will produce
+\begin{verbatim}
+\begin{myenv}
+|selmark
+\end{myenv}•
+\end{verbatim}
+and a second press of the \esckey\ gives the version with the optional argument,
+\begin{verbatim}
+\begin{myenv}[|selmark]
+•
+\end{myenv}•
+\end{verbatim}
+as expected.
+
+\subsection*{In Depth Additions}
+
 If you are adding items to the \CCT\ there are a few things you should know about its structure:
 \begin{itemize}
 \item
@@ -251,9 +275,9 @@ For maximum convenience place a Mark\footnote{Using \mnu{Insert Mark} (\cmdkey-\
 \end{itemize}
 I'd suggest that you take a look in the \CCT\ file for examples.
 
-\section*{Bugs}
-
-The \CCT\ file is usually searched backward from the last item but, on rare occasions, the search direction seems to switch so you don't get matches in the order you expect. You can usually force the search to go back to the ``correct'' direction by pressing \verb+---+ and then \esckey\ three times and then remove the \verb+---+. If that doesn't correct the direction you can use \shiftkey\,-\,\esckey\ to search in the ``other'' direction.
+%\section*{Bugs}
+%
+%The \CCT\ file is usually searched backward from the last item but, on rare occasions, the search seems to start in the wrong location so you don't get matches in the order you expect. You can usually force the search to go back to the ``correct'' location by pressing \verb+---+ and then \esckey\ three times and then remove the \verb+---+. If that doesn't correct the location you can use \shiftkey\,-\,\esckey\ to search in the ``other'' direction. It is not clear what is causing this rare bug at this time.
 
 \section*{What's Missing}
 
@@ -384,17 +408,18 @@ mit              & mathit            & renewcom   & renewcommand   & verb2      
 \begin{tabular}{llll}
 \textbf{Abbreviation} & \textbf{Command} & \textbf{Abbreviation} & \textbf{Command} \\
 \cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3} \cmidrule[0.5pt](lr){4-4}
-xa  & alpha      & xph  & phi \\
-xb  & beta       & xcph & Phi \\
-xch & chi        & xvph & varphi \\
-xd  & delta      & xps  & psi \\
-xcd & Delta      & xcps & Psi \\
-xe  & epsilon    & xs   & sigma \\
-xve & varepsilon & xcs  & Sigma \\
-xet & eta        & xvs  & varsigma \\
-xg  & gamma      & xz   & zeta \\
-xcg & Gamma      & xr   & rho \\
-xio & iota       & xvr  & varrho \\
+xa  & alpha      & xvp  & varpi \\
+xb  & beta       & xph  & phi \\
+xch & chi        & xcph & Phi \\
+xd  & delta      & xvph & varphi \\
+xcd & Delta      & xps  & psi \\
+xe  & epsilon    & xcps & Psi \\
+xve & varepsilon & xs   & sigma \\
+xet & eta        & xcs  & Sigma \\
+xg  & gamma      & xvs  & varsigma \\
+xcg & Gamma      & xz   & zeta \\
+xio & iota       & xr   & rho \\
+xk  & kappa      & xvr  & varrho \\
 xl  & lambda     & xt   & tau \\
 xcl & Lambda     & xth  & theta \\
 xm  & mu         & xcth & Theta \\
@@ -403,7 +428,6 @@ xo  & omega      & xu   & upsilon \\
 xco & Omega      & xcu  & Upsilon \\
 xp  & pi         & xx   & xi \\
 xcp & Pi         & xcx  & Xi \\
-xvp & varpi      &      & \\
 \end{tabular}
 \caption{Greek Letters in \CCT. The `\texttt{d}' versions are not shown.}
 \label{tbl:greek}

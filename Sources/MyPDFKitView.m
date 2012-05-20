@@ -99,6 +99,44 @@
 }
 */
 
+- (void)setScaleFactor:(CGFloat)scale
+{
+    [super setScaleFactor: scale];
+    resizeOption =  NEW_PDF_FIT_TO_NONE;
+}
+
+
+- (NSInteger)pageStyle
+{
+    return pageStyle;
+}
+
+- (NSInteger)firstPageStyle
+{
+    return firstPageStyle;
+}
+
+- (NSInteger)resizeOption
+{
+    return resizeOption;
+}
+
+- (void)setPageStyle: (NSInteger)thePageStyle
+{
+    pageStyle = thePageStyle;
+}
+
+- (void)setFirstPageStyle: (NSInteger)theFirstPageStyle;
+{
+    firstPageStyle = theFirstPageStyle;
+}
+
+- (void)setResizeOption: (NSInteger)theResizeOption
+{
+    resizeOption = theResizeOption;
+}
+
+
 
 
 - (void) initializeDisplay
@@ -429,6 +467,26 @@
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
 
+- (NSInteger)index
+{
+    PDFPage		*aPage;
+	NSInteger	theindex;
+    
+    aPage = [self currentPage];
+	theindex = [[self document] indexForPage: aPage];
+    return theindex;
+}
+
+- (void)moveSplitToCorrectSpot:(NSInteger)index;
+{
+    PDFPage		*aPage;
+    NSInteger	theindex, oldindex, pages;
+    
+    aPage = [[self document] pageAtIndex: index];
+    [self goToPage: aPage];
+    
+}
+
 - (void)prepareSecond
 {	PDFPage		*aPage;
 	NSInteger			oldindex;
@@ -575,16 +633,6 @@
 	[[self documentView] scrollRectToVisible: secondVisibleRect];
 	[[self window] enableFlushWindow];
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
-}
-
-- (NSInteger)pageStyle
-{ 
-    return pageStyle;
-}
-
-- (NSInteger)resizeOption
-{
-    return resizeOption;
 }
 
 - (void) rotateClockwisePrimary
@@ -4467,7 +4515,7 @@
 	[item setState: NSOnState];
 	
 	//-------Magnification Controls----------
-	// [self fixMagnificationControls];
+	[self fixMagnificationControls]; //needed when magnify in split mode
 	[self scaleChanged: nil];
 	[self pageChanged: nil];
 	
@@ -4476,6 +4524,7 @@
 - (BOOL)becomeFirstResponder
 {
 	BOOL	result;
+    
 	[(TSPreviewWindow *)myPDFWindow setActiveView: self];
 	result =  [super becomeFirstResponder];
 	[self fixStuff];

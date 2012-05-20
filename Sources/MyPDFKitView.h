@@ -115,6 +115,13 @@
 - (void) setupMagnificationStyle;
 - (BOOL) doReleaseDocument;
 
+- (NSInteger)pageStyle;
+- (NSInteger)firstPageStyle;
+- (NSInteger)resizeOption;
+- (void)setPageStyle: (NSInteger)thePageStyle;
+- (void)setFirstPageStyle: (NSInteger)theFirstPageStyle;
+- (void)setResizeOption: (NSInteger)theResizeOption;
+
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;
 - (void) rotateClockwisePrimary;
@@ -189,9 +196,9 @@
 - (void)setNumberSyncRect: (int)value;
 - (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height;
 - (void)setOldSync: (BOOL)value;
-- (NSInteger)pageStyle;
-- (NSInteger)resizeOption;
 - (void)changePageStyleTo:(NSInteger)newStyle;
 - (void)changePDFViewSizeTo: (NSInteger)newResizeOption;
+- (void)moveSplitToCorrectSpot:(NSInteger)index;
+- (NSInteger)index;
 @end
 

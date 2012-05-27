@@ -757,6 +757,11 @@ extern NSPanel *pageNumberWindow;
 	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
 }
 
+- (IBAction)convertTiff:(id)sender
+{
+    [(TSDocument *)myDocument convertTiff:sender];
+}
+
 - (BOOL)windowIsSplit
 {
     return windowIsSplit;

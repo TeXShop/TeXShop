@@ -98,6 +98,7 @@
 - (void) goToKitPage: sender;
 // - (void) doFind: sender;
 - (IBAction) takeDestinationFromOutline: (id) sender;
+- (IBAction) convertTiff:(id)sender;
 
 - (PDFView *)activeView;
 - (BOOL)windowIsSplit;

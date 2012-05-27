@@ -871,12 +871,12 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	NSInteger			which = [sender tag];
 	
 	switch (which) {
-		case 0: defaultValue = @"pdftex --file-line-error --shell-escape --synctex=1";
+		case 0: defaultValue = @"pdftex --file-line-error --synctex=1";
 				[_texCommandTextField setStringValue: defaultValue];
 				[self texProgramChanged: nil];
 				break;
 			
-		case 1: defaultValue = @"pdflatex --file-line-error --shell-escape --synctex=1";
+		case 1: defaultValue = @"pdflatex --file-line-error --synctex=1";
 				[_latexCommandTextField setStringValue: defaultValue];
 				[self latexProgramChanged: nil];
 				break;

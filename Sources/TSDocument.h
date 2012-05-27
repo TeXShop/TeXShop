@@ -310,6 +310,8 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
+
+- (IBAction) convertTiff:(id)sender;
 // - (void) okForRequest: sender;
 // - (void) okForPrintRequest: sender;
 - (void) chooseEncoding: sender;

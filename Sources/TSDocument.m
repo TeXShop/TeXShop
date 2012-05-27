@@ -238,6 +238,66 @@
 
 }
 
+- (IBAction)convertTiff:(id)sender
+{ 
+    NSArray         *fileTypes;
+    NSString        *filePath, *directoryPath;
+    // NSArray         *urls;
+    // NSFileManager   *fileManager;
+    // NSString        *sipsPath;
+    
+    fileTypes = [NSArray arrayWithObjects: @"tif", @"tiff", nil];
+    NSOpenPanel * openPanel = [NSOpenPanel openPanel];
+    [openPanel setTitle: @"Convert tiff to png"];
+    [openPanel setPrompt: NSLocalizedString(@"Convert", @"Convert")];
+    filePath = [[self fileURL] path];
+    directoryPath = [filePath stringByDeletingLastPathComponent];
+    
+    if (! directoryPath) {
+        directoryPath = NSHomeDirectory();
+        }
+    [openPanel setDirectoryURL: [NSURL fileURLWithPath: directoryPath isDirectory:YES]];
+    [openPanel setAllowsMultipleSelection: YES];
+    [openPanel setAllowedFileTypes: fileTypes];
+    // result = [openPanel runModal];
+    [openPanel beginSheetModalForWindow:textWindow completionHandler:^(NSInteger result1)
+     {
+    
+    if (result1 == NSFileHandlingPanelOKButton) {
+        NSArray *urls = [openPanel URLs];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        
+        if ([fileManager fileExistsAtPath:@"/usr/local/bin/convert"])
+        {
+            [urls enumerateObjectsUsingBlock:^(NSURL *obj, NSUInteger idx, BOOL *stop) {
+                // NSLog([obj path]);
+                NSTask   *convertTask;
+                NSArray  *arguments;
+                NSString *firstArgument, *secondArgument;
+                firstArgument = [NSString stringWithString:[obj path]];
+                secondArgument = [[firstArgument stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+                arguments = [NSArray arrayWithObjects: firstArgument, secondArgument, nil];
+                convertTask = [NSTask launchedTaskWithLaunchPath:@"/usr/local/bin/convert" arguments: arguments];
+            }];
+        }
+        else if ([fileManager fileExistsAtPath:@"/usr/bin/sips"])
+        {
+            NSString *sipsPath = [[NSBundle mainBundle] pathForResource:@"sipswrap" ofType:nil];
+            [urls enumerateObjectsUsingBlock:^(NSURL *obj, NSUInteger idx, BOOL *stop) {
+                // NSLog([obj path]);
+                NSTask   *convertTask;
+                NSArray  *arguments;
+                NSString *firstArgument, *secondArgument;
+                firstArgument = [NSString stringWithString:[obj path]];
+                secondArgument = [[firstArgument stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+                arguments = [NSArray arrayWithObjects: firstArgument, secondArgument, nil];
+                convertTask = [NSTask launchedTaskWithLaunchPath:sipsPath arguments: arguments];
+            }];
+        }
+    }
+     }];
+}
+
 - (id)topView
 {
 	return myPDFKitView;

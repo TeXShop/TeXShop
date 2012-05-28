@@ -1,164 +1,84 @@
 <HTML>
 
 <HEAD>
-			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
-			<TITLE>追加のタイプセットエンジン</TITLE>
-			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-			<META NAME="description" CONTENT="XeTeX と XeLaTeX について">
-			<link href="../sty/screen.css" rel="stylesheet" media="all">
-</HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Adding Additional Typesetting Engines</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="bibtex; bibliography; citation">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
 
-<!--コメントアウトしてある部分はバージョン1.35の旧文です。-->
-
-<body>	
-
-<div id="content_border">
-
-<!-- 
-<p>
-最近になり、Jonathan Kew が XeTeX と XeLaTeX を発表しました。これらのプログラムは、TeX 文書内で Macintosh のフォントをじかに利用することができます。XeTeX と XeLaTeX は unicode によるソースが必要になりますが、それゆえすべての unicode 文字を取り扱うことができます ； たとえば、アラビア語やヘブライ語をソースコードに打ち込んで、アラビア語やヘブライ語の出力として見ることができます。TeXShop のエディタではこうした文字を右から左へきちんと入力できます。XeTeX は Gerben Wierda の配布する標準的な TeX には含まれていませんが、Wierda の i-Installer を使うことで、オプション・インストールとして Jonathan Kew のところから入手することができます。さらに詳しいことについては、以下でお調べください──
-</p>
- -->
-
-<p>
-最近、Jonathan Kew さんが XeTeX と XeLaTeX を発表しました。これらのプログラムは、TeX 文書内で Macintosh のフォントをじかに利用することができます。XeTeX と XeLaTeX は unicode によるソースが必要になりますが、それゆえすべての unicode 文字を取り扱うことができます ； たとえば、アラビア語やヘブライ語をソースコードに打ち込んで、アラビア語やヘブライ語の出力として見ることができます。TeXShop のエディタではこうした文字を右から左へきちんと入力できます。XeTeX は Gerben Wierda さんの配布する標準的な TeX には含まれていませんが、Wierda さんの i-Installer を使うことで、オプション・インストールとして Jonathan Kew さんのところから入手することができます。さらに詳しいことについては、以下でお調べください──
-</p>
-
-	<dl>
-		<dd><a href="http://scripts.sil.org/xetex">http://scripts.sil.org/xetex</a>
-	</dl>
-
-<p>
-これがどのように動作するのかを理解できるような、簡単な XeLaTeX のソース文書と出力結果があります。アラビア語とヘブライ語の文字は「システム環境設定」の「言語環境」で「入力メニュー」タブを選び、Arabic と Hebrew にチェックを入れます ； 小さな国旗がメニューバーに表示されるので、それを選択することでキーボード入力を切り替えられます。
-</p>
-
-<IMG HEIGHT="356" WIDTH="328" border="1" SRC="../gfx/source.jpg" align="top">＿入力例
-<p>
-<IMG HEIGHT="155" WIDTH="349" border="1" SRC="../gfx/output.jpg" align="top">＿出力例
-
-
-<p>
-TeXShop では現在すでに XeTeX と XeLaTeX をサポートしています：
-</p>
-
-<ul>
-	<li>XeTeX と XeLaTeX は、ソースウインドウにあるプルダウンメニュー「タイプセット」から利用可能です
-	<li>環境設定で XeTeX または XeLaTeX をデフォルトのタイプセットコマンドにできます
+<BODY>
+	<div id="content_border">
 	
-<!--	<li>もしソースの冒頭10行以内に次の書式があれば──-->
-	<li>もしソースの冒頭20行以内に次の書式があれば──
-		<dl>
-<!--			<dd><tt>%&encoding=UTF-8 Unicode</tt>-->
-			<dd><tt>%!TEX encoding = UTF-8 Unicode</tt>
-		</dl>
-		そのソースは、環境設定でのデフォルトのエンコーディング方式に関わらず UTF-8 Unicode 形式で読み込まれ保存されます
-<!--	<li>もしソースの第１行目に次のいずれかの書式があれば──-->
-	<li>もしソースの冒頭20行以内に次のいずれかの書式があれば──
-		<dl>
-<!--			<dd><tt>%&program=xetex</tt>-->
-			<dd><tt>%!TEX TS-program = xetex</tt>
-			<p>
-<!--			<dd><tt>%&program=xelatex</tt>-->
-			<dd><tt>%!TEX TS-program = xelatex</tt>
-		</dl>
-		メニューで選択したタイプセット・オプションに関わらず、特定のプログラムが用いられます
-</ul>
+<p> TeXShop has several build-in methods to typeset documents. But it is possible to add additional typesetting methods; these new methods are called "engines."</p>
 
-<p>
-こうした XeTeX の特徴は、TeXShop にタイプセットエンジンを追加する新しい一般的な方法の特例となっています。~/Library/TeXShop 内に「Engines」という名前のフォルダがあります ； このフォルダに入っているファイルは、タイプセット・プログラムを呼び出せるシェル・スクリプトです。TeXShop を最初に起動すると、このフォルダを調べ、ファイルのスクリプト名を加え、プルダウンメニュー「タイプセット」に含めます。この中から１つを選んでタイプセット・ボタンを押せば、スクリプトが呼び出されます。ユーザは自分で独自のスクリプトを書き、それを「Engines」フォルダに追加することができます。各スクリプトは、スペースを含まない名前で、拡張子が「.engine」となっており、実行可能なビット・セットがなければなりません。
-</p>
+<p> An engine can call any sequence of programs in a processing chain which starts from a tex source file and ends with a pdf output file. Strictly speaking, even this pdf output file is optional; one engine supplied with TeXShop uses the TeX Live program tex4ht to convert LaTeX source to an html file; the engine then opens this html file in Safari. Instructions for the sequence of programs called by an engine are given in a shell script.</p> 
 
-<p>
-~/Library/TeXShop/Engines 内にある項目は、デフォルトのタイプセット方式として、TeXShop の環境設定で選択できます。環境設定に表示される際には、拡張子なしの名称となることに注意します。
-</p>
+<p>There is a folder in ~/Library/TeXShop named Engines; the files in this folder are shell
+scripts which call typesetting programs. When TeXShop first starts, it examines this folder and adds
+the script names of files it contains to the pull-down typesetting menu. Choosing one of these
+items and pushing the Typeset button calls the script. Users can write their own scripts and add them
+to the Engines folder. Each such script must have a name without spaces, and extension ".engine",
+and have the executable bit set.</p>
 
-<p>
-<!--ソースコードの第１行目に次のように書くことでデフォルトのプログラムを設定できます──-->
-ソースコードの冒頭20行以内の１行に次のように書くことでデフォルトのプログラムを設定できます──
-</p>
-	<dl>
-<!--		<dd><tt>%&program=xelatex</tt>-->
-		<dd><tt>%!TEX TS-program = xelatex</tt>
-	</dl>
+<p> Items in ~/Library/TeXShop/Engines can be chosen as the default typesetting method in TeXShop Preferences.
+Notice that when a method is listed in Preferences, its name is given without the extension.</p>
 
-<p>
-任意のファイルを開いたり保存したりするのに用いるエンコーディング方式は、
-<!--以下のような書式をソース文書の冒頭10行以内に書き込むことで設定できます。-->
-以下のような書式をソース文書の冒頭20行以内に書き込むことで設定できます。
-サポートされているエンコーディング方式のいずれでも可能です。この動作を回避するには、オプションキーを押しながらファイルを開きます。
-</p>
-	<dl>
-<!--		<dd><tt>%&encoding=UTF-8 Unicode</tt>-->
-		<dd><tt>%!TEX encoding = UTF-8 Unicode</tt>
-	</dl>
+<p> The default program can be set on one of the first twenty lines of the source code by writing
+a line like </p>
+<dl>
+<dd> % !TEX TS-program = xelatex
+</dl>
+<p> There must be one space before and one space after the equal sign. A Macro supplied with TeXShop makes adding this line easy; the Macro lists all active engines, making it possible to select the desired engine from a dialog list.</p>
 
-<p>
-<!--等号記号の前後にスペースを入れることはできません ； -->
-<tt>%!TEX</tt> の後に１つ、等号記号の前に１つ、半角スペースを入れなければなりません ； 
-エンコーディング名に含まれるスペースは、下記のリストにあるスペースと一致させてください。エンコーディング方式の名称は Mac OS X の内部で用いられているものです。以下が利用可能な名称のリストです：
-</p>
+<p> The "% !TEX TS-program = ..." line takes precedence over the typesetting method selected in the toolbar. For example, if the above line selecting "xelatex" is in the source document, then hitting the typeset button or selecting "Typeset" in the typesetting menu, or selecting the keyboard equivalent of this command, will typeset the document using xelatex, even if pdflatex is the default typesetting method selected in the toolbar's pulldown menu. If a project contains a root file and several associated chapter files, only the root file needs a "% !TEX TS-program " line.</p>
 
-	<ul>
-		<li> MacOSRoman
-		<li> IsoLatin
-		<li> IsoLatin2
-		<li> IsoLatin5
-		<li> MacJapanese
-		<li> DOSJapanese
-		<li> SJIS_X0213
-		<li> EUC_JP
-		<li> JISJapanese
-		<li> MacKorean
-		<li> UTF-8 Unicode
-		<li> Standard Unicode
-		<li> Mac Cyrillic
-		<li> DOS Cyrillic
-		<li> DOS Russian
-		<li> Windows Cyrillic
-		<li> KOI8_R
-		<li> Mac Chinese Traditional
-		<li> Mac Chinese Simplified
-		<li> DOS Chinese Traditional
-		<li> DOS Chinese Simplified
-		<li> GBK
-		<li> GB 2312
-		<li> GB 18030
-	</ul>
+<p>When writing a new engine file, it is convenient to start by duplicating an existing engine in ~/Library/Engines. The resulting file will automatically have its execute bit set. The file can then be edited with TeXShop to create the new engine.</p>
 
+<p> The ~/Library/TeXShop/Engines folder contains a subfolder named "Inactive" with many additional engine scripts. Examining these scripts will show by example how engine files are written. When an engine is called, the variable "$1" will contain a full path to the source file active when the engine was called. The extension of this file may or may not be ".tex". The engine script may contain many intermediate steps, creating various auxiliary files and processing them with alternate command line programs. TeXShop assumes that in the end a pdf file will be created with the same name as the source file but extension ".pdf". In that case TeXShop will automatically open the pdf file when the engine run ends and scroll to the same spot in this pdf file as in the previous pdf before typesetting. But if no pdf file is produced, TeXShop will ignore this step. In that case, it is up to the engine script to open the result in an appropriate program if desired.</p>
 
+<p> Engine scripts can be written in any convenient language. Most engines use csh or tcsh, but scripts written in perl and other languages will also work.</p>
 
+<p>Engines sometimes use the follow strategy: they typeset  an input file, creating an auxiliary file with the same name but some other extension, and then process this  auxiliary file using some other program. The sage engine in the "Inactive" folder shows an example;  the auxiliary file has extension ".sage" and must be processed by the Sage symbolic mathematics engine. The following code snippet from the sage engine is useful in this kind of situation: </p>
+<dl>
+<dd> set sagename = "${filename:r}.sage"
+</dl>
+<p> Here {filename:r} removes the extension from the name of a file, and ".sage" adds the sage extension.</p>
+
+</div>
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
-<div id="header_chapter">上級向けのヘルプ</div>
-<div id="header_title">追加のタイプセットエンジン</div>
-
-		<div id="menu_border">
+<div id="header_chapter">Advanced Help</div><div id="header_title">Additional Typesetting Engines</div>
+	<div id="menu_border">
 		<ul>
-			<li><a href="advanced_personaltetex.htm">スタイルとマクロを teTeX に追加する</a>
-			<li><a href="advanced_addengine.htm">追加のタイプセットエンジン</a>
-			<li><a href="advanced_removeaux.htm">作業ファイルを削除する</a>
-			<li><a href="advanced_externaleditor.htm">外部エディタを使用する</a>
-			<li><a href="advanced_pdfcopypaste.htm">プレビューウインドウからのコピー＆ペーストおよびドラッグ＆ドロップ </a>
-			<li><a href="advanced_root.htm">プロジェクトのルートファイルを設定する</a>
-			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
-			<li><a href="advanced_unicode.htm">Unicode（ユニコード）</a>
+			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeX Live</a>
+			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
+			<li><a href="advanced_encoding.htm">Encodings</a>
+			<li><a href="advanced_xetex.htm">XeTeX and XeLaTeX</a>
+			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
+			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
+			<li><a href="advanced_root.htm">Setting a Project Root File</a>
+			<li><a href="advanced_pdfsync.htm">Synchronizing Source and Preview</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
 			<li><a href="advanced_bibtex.htm">BibTeX</a>
 			<li><a href="advanced_makeindex.htm">MakeIndex</a>
-			<li><a href="advanced_formats.htm">新規フォーマットの作成と利用</a>
-			<li><a href="advanced_otherfiles.htm">その他のファイルを TeXShop で開く</a>
+			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
+			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
 			<li><a href="advanced_mathematica.htm">Mathematica</a>
-			<li><a href="advanced_localization.htm">各国語版へのローカライズ</a>
-			<li><a href="advanced_syntaxcolor.htm">ソースのカラー表示</a>
-			<li><a href="advanced_shellescape.htm">Shell-Escape の保護</a>			
-			<li><a href="advanced_coloredtext.htm">TeX における文字の色指定</a>			
-			<li><a href="advanced_moretetex.htm">teTeX についてさらに</a>
-			<li><a href="advanced_fink.htm">Fink との共存</a>
-			<li><a href="advanced_otherdistributions.htm">他の TeX ディストリビューションとの共存</a>
-			<li><a href="advanced_context.htm">ConTeXt と MetaPost</a>
-			<li><a href="advanced_plist.htm">Plist ファイル</a>
-			<li><a href="advanced_menushortcuts.htm">メニュー項目のショートカットキーを再定義する</a>
-		</ul>
+			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
+			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
+			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
+			<li><a href="advanced_moretetex.htm">More About TeX Live</a>
+			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
+			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist Files</a>
+			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
+		</UL>
 	</div>
-	</body>
+	</BODY>
 
 </HTML>

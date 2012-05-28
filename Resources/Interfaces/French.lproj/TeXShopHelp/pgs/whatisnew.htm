@@ -14,6 +14,211 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.44 and 2.45</h5></P>
+
+<ul>
+
+<li> TeXShop's Sparkle upgrade mechanism upgrades within the 2.** series
+and within the 3.** series, but not from one series to the other.
+
+<p>
+<li> The "--shell-escape'' flag has been removed from preference settings for pdftex and pdflatex. This flag
+presented security risks. Old users need to activate the
+change by selecting TeXShop Preferences, clicking the Engine tab, and pushing the "Default" buttons in
+the configuration section for pdfTeX and pdfLaTeX.
+
+<p>
+Recall that pdflatex can accept illustrations in several different formats, including pdf, jpg, and png. But
+it cannot accept eps illustrations used by many old TeX documents.  The epstopdf package 
+solved this problem by calling Ghostscript to convert eps files to pdf format automatically during typesetting.
+This package required --shell-escape and that is why previous versions of TeXShop set the flag.
+
+<p> Two years ago, TeXLive made conversion of eps files to pdf format easier and safer by introducing a restricted
+shell escape mode for pdflatex in which only a limited number of safe programs can be called during typesetting.
+This conversion was made automatic without including epstopdf, provided the graphicx package was included
+by the source document. 
+
+<p> We could have dropped the --shell-escape flag at that time, but there was another reason to continue
+using it. Originally, pdflatex accepted tif and tiff files. Eventually this feature was removed, but it was possible to
+convert these files to png format during typesetting using /usr/local/convert from ImageMagick. Unfortunately,
+TeX Live does not label convert as safe because in the Windows world there is an unrelated program which
+presents security risks. TeXShop 2.45 solves this problem by introducing a new method to convert tif and tiff
+files to png format.
+
+<p>
+<li> TeXShop 2.45 has a  menu command "Convert Tiff" which is active when a source window
+is active. This command opens a dialog which shows all tiff files in the folder containing the
+source file. Users can choose one tiff file or several. Push the "Convert" button to 
+create png forms of all such illustrations. This calls convert from ImageMagick if present, and otherwise
+calls the native sips program.
+
+<p> 
+<li> A new Latex Template is provided to reflect these changes. Old users can obtain this template
+by moving it from ~/Library/TeXShop/New/Templates to ~/Library/TeXShop/Templates.
+
+
+<p>
+<li> TeXShop 2.45 omits the Create Project Root menu item. Use the alternate "% !TEX root = "
+syntax instead. Old projects using Create Project Root will continue to typeset.
+
+<p>
+<li> 	The split window command for the Preview window has been improved. The second
+	portion now opens on the  section of the document shown in the top portion rather than the top of the
+	document. It has the same magnification as the top section of the window. Finally
+	the magnification toolbar button is now in sync with magnification in appropriate
+	sections of the split window.
+
+<p>
+<li> When a pdf document is printed, TeXShop now selects Portrait or Landscape mode
+	automatically. 
+
+<p>
+<li> Several problems cropped up in the German localization. 
+There was a bug in the Preview  Preferences
+for "Default page style." The buttons for 
+"Double Sided" and "Single Sided, Continuous" were reversed,
+ so they didn't do what they claimed to do. There was a similar problem in the
+ menu items to set the PDF display mode. Moreover, check marks in this menu
+ didn't work. These problems are fixed.
+
+	
+<p> The German localization now has a different key equivalent for the menu command which enlarges the font in the source document.
+
+
+<p>
+<li>  Herb Schulz fixed a bug in Command Completion. When multiple
+	windows were open, command completion in one window could interfere with command completion
+	in another window. This problem is fixed.
+
+<p>
+<li>  "TeXShop Tips & Tricks" is updated slightly.
+
+<p>
+<li> LatexMk was updated. This version of Latexmk  
+creates a file list named "file.fls", which helps latexmk keep
+track of all file dependencies. The TrashAUX command has been
+extended to remove files with this extension.
+
+<p>
+<li> pdflatexmk is now one of the default engines. Only new users will
+notice this change.
+
+<p>
+<li> TeXShop now creates a ~/Library/TeXShop/Documents folder containing 
+important documents. Currently many are duplicated from elsewhere in 
+~/Library/TeXShop, but this will be the spot to look in the future. 
+
+<p>
+<li>  New TeXShop releases will automatically update the Documents folder, just
+as they now automatically update 
+bin, Engines/inactive, and scripts.
+
+<p>
+<li> Yusuke Terada made the following changes:
+
+<ul>
+	<li> Double clicking on one of the end characters of a
+	"<" ...  ">"   pair selects both ends and all characters in between.
+
+	<p> <li> If the hidden preference MakeatletterEnabled is YES, 
+	selection of sequences containing  '@' by double-clicking is supported.
+	An example is "  \@latex@error" 
+	
+	<p> <li> As before, if text is selected and the "comment" item
+	is chosen, the entire paragraph containing the selection is
+	commented out. But now the text selection is preserved. This also
+	works with the "indent" command.
+
+	<p> <li> When the source window was active and split and a file was drag-and-dropped
+	to the bottom view, the action did not work. Now it does. 
+
+	<p> <li> AppleScript macros are now saved with UTF8 encoding, so scripts
+	can be written containing Japanese and other languages. This required
+	a small modification in the "ScriptRunner" program which runs scripts
+	which start with --applescript rather than --applescript direct.
+</ul>
+
+<p>
+<li> TSDocument-Jobs.m was modified to allow the BibTeX engine setting to have options.
+
+<p>
+<li> The program has a patch to TeXShop's syntax coloring routine by Daniel Toundykov. When this
+routine was made faster and more reliable in TeXShop 2.10, the modification broke the ability to 
+change the background and foreground colors in TeXShop's source window. Toundykov's patch fixes
+this problem.
+
+<p> To change the source background color's Red component
+<dl>
+<dd> defaults write TeXShop background_R 0.25
+</dl>
+Set background_G and background_B to change the corresponding Green and Blue components.
+
+<p> To change the source foregrounds color's Red component
+<dl>
+<dd> defaults write TeXShop foreground_R 0.25
+</dl>
+Set foreground_G and foreground_B to change the corresponding Green and Blue components.
+
+<p> To change the insertion point color's Red component
+<dl>
+<dd> defaults write TeXShop insertionpoint_R 0.25
+</dl>
+Set insertionpoint_G and insertionpoint_B to change the corresponding Green and Blue components.
+
+<p>
+<li> The folder ~/Library/TeXShop/CommandCompletion now contains a subfolder named
+GratzerMathCC with an expanded list of command completions. These new completions are
+by George Gratzer, and are useful when typesetting
+mathematics. The folder also has a pdf file documenting the additions.  
+To activate the new completions, drag CommandCompletion.txt from the GratzerMathCC folder to the main
+CommandCompletion folder, replacing the existing CommandCompletion.txt there.
+
+<p>
+<li> Added "md" to the file types TeXShop can edit, and typesetting engines can process. Such "markdown" files can be processed by pandoc
+and converted to latex, epub, and pdf. See <a href="http://johnmacfarlane.net/pandoc/">http://johnmacfarlane.net/pandoc/</a>
+
+<p>
+<li> When the Preference Item for Arabic, Hebrew, and Persian is activated,  lines containing one of these languages are right justified.
+The new rule is that a line is right justified if its first, second, or third letter is in one of these languages. For instance, this rule right justifies
+a line beginning with "\" containing Persian letters, but does not right justify the command "\section{ ... }" even if the section title is in Persian.
+
+<p>
+<li> There is a hidden preference to change this behavior. If the following command is entered in Terminal, a line containing any characters
+in Arabic, Hebrew, or Persian will be right justified:
+<dd>
+<dl> defaults write TeXShop RightJustifyIfAny YES
+</dd>
+
+
+<p>
+<li> The hidden preference
+<dd>
+<dl>defaults write TeXShop TagSections NO 
+</dd>
+turned off all tags, rather than just tags for sections and subsections. This is fixed.
+
+
+
+
+
+<p>
+<li> Automatic tagging of "% \chapter" in docstrip didn't work. Now it does.
+
+<p>
+<li> Choosing the "Print ..." menu  with the source window open started a print job
+which understood "Page Setup" changes. Choosing the same menu  with the preview
+window open started a print job that ignored "Page Setup." The print dialogs for these
+two operations were different: one was a standalone dialog and one was a drop-down
+dialog in a window. Both dialogs might be open at once on the screen.  This problem is fixed.
+
+
+
+</ul>
+
+
+
+
+
 <P><h5>TeXShop Changes 2.42 and 2.43</h5></P>
 
 <ul>

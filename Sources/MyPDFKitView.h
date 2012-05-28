@@ -112,6 +112,15 @@
 - (void) setupMagnificationStyle;
 - (BOOL) doReleaseDocument;
 
+- (int)pageStyle;
+- (int)firstPageStyle;
+- (int)resizeOption;
+- (void)setPageStyle: (int)thePageStyle;
+- (void)setFirstPageStyle: (int)theFirstPageStyle;
+- (void)setResizeOption: (int)theResizeOption;
+
+
+
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;
 - (void) rotateClockwisePrimary;
@@ -146,6 +155,9 @@
 - (void) zoomOut: (id)sender;
 
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+
+// printing
+- (void) printDocument: sender;
 
 
 - (void)selectARect: (NSEvent *)theEvent;
@@ -184,5 +196,8 @@
 - (void)setNumberSyncRect: (int)value;
 - (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height;
 - (void)setOldSync: (BOOL)value;
+
+
+
 @end
 

@@ -279,6 +279,17 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/CommandCompletion"]
 			  toPath:[CommandCompletionFolderPath stringByStandardizingPath]];
 		}
+	
+	
+    if (! [fileManager fileExistsAtPath: [DocumentsPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
+                  toPath:[DocumentsPath stringByStandardizingPath]];
+    }
+    else if (needsUpdating) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
+				  toPath:[DocumentsPath stringByStandardizingPath]];
+	}
+	
 		
 	if (! [fileManager fileExistsAtPath: [DraggedImageFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/DraggedImages"]
@@ -626,6 +637,7 @@
 		@"ins",
 		@"dtx",
 		@"mf",
+		@"md",
 		nil];
 	i = [myController runModalOpenPanel: myPanel forTypes: myArray];
 	fileArray = [myPanel filenames];

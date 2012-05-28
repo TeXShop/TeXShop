@@ -23,23 +23,12 @@
 		</dl>
 		<p>By changing the indicated width in this command, the graphic can be resized during typesetting. Experiment to find the desired size.</p>
 		
-		<p>If you used TeX in the past, your illustrations may be in eps format. These files must be converted to pdf format before being typeset with pdftex and pdflatex. This can be done automatically during typesetting by following the instructions below, but if you have only a few such files, you can convert them by opening them in TeXShop. The illustration will appear in a graphic window and TeXShop will simultaneously write the corresponding pdf file to disk in the  folder containing the eps file, leaving the eps form unchanged. </p>
+		<p>If you used TeX in the past, your illustrations may be in eps format. These files must be converted to pdf format before being typeset with pdftex and pdflatex. In TeX Live starting with 2011, this is done automatically, provided the source file includes the graphicx package.
 		
-		<p> If your document contains a large number of eps files, it is easiest to automatically convert them to pdf form during typesetting. This conversion will leave the eps files in place and write corresponding pdf files in the same locations. Once the files have been converted, future typesetting commands will use the pdf versions rather than the eps versions. To make conversion occur, three steps are necessary:</p>
-		<ul>
-		<li> At the top of the LaTeX source file, include the lines
-		<dl>
-			<dd><tt>\usepackage{graphicx}</tt>
-			<dd><tt>\usepackage{epstopdf}</tt>
-		</dl>
-		<li> <p>When you wish to include a graphic file, say &quot;f1.eps &quot;, use the command</p>
-		<dl>
-			<dd><tt>\includegraphics[width=2in]{f1}</tt>
-		</dl>
-		<p>Notice that the extension ".eps" is omitted. This command will cause TeX to input the graphic file &quot;f1.pdf&quot; if this file exists, but otherwise convert  the file &quot;f1.eps&quot; to &quot;f1.eps&quot; before inputting. </p>
-		<li> Make sure that Ghostscript is installed on your machine, and that PdfLaTeX is called with the flag "--shell-escape". For most users, both steps are automatic. If you use TeX Live installed with MacTeX, Ghostscript will have be installed. In the default TeXShop Preference settings, the shell-escape flag is set. If it is not, add it in TeXShop Preferences under the Engine tab, left column.
+		<p> It is possible to convert isolated eps files to pdf format by opening the file in TeXShop. This step automatically converts the eps
+		to pdf, writing the pdf file to disk and leaving the eps file in place. Then it opens the pdf file.
 		
-		</ul>
+		
 				<p>The authors of pdflatex and the authors of the graphics package graphicx have made it easy to include graphic files in a LaTeX document typeset with pdflatex, even if the document will later be typeset by standard latex and converted to a dvi file for distribution to other people. This might happen if you share source files with a colleague who uses ordinary LaTeX and requires eps illustrations rather than pdf illustrations. When you want to include an illustration, say &quot;f1.pdf &quot;, use the command below, omitting the ".pdf" or ".eps" extension:</p>
 		<dl>
 			<dd><tt>\includegraphics[width=2in]{f1}</tt>
@@ -47,13 +36,10 @@
 		<p>This command will cause tex to input the graphic file &quot;f1.pdf&quot; when the text is typeset with pdflatex, but input the file &quot;f1.eps&quot; when the text is typeset with latex. </p>
 		
 		
-		<p>You can also use tiff illustrations if you installed the "convert" utility from ImageMagick; this utility is automatically installed by MacTeX. In that case, make sure your header contains the lines:</p>
-		<dl>
-			<dd><tt>\usepackage{graphicx}</tt>
-			<dd><tt>\usepackage{epstopdf}</tt>
-			<dd><tt>\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}</tt>
-		</dl>
-<p> These lines will automatically convert tiff files to png format during typesetting. One peculiarity is that the extension of the file must be ".tif" rather than ".tiff".</p>
+		<p>You can also use tif and tiff illustrations. For these cases, TeXShop has a menu command "Convert tiff" which converts the files to png files which pdftex and pdflatex understand. The menu command will be active when the source window is active. When the menu is selected, an open dialog will appear listing all files
+		in the folder containing the source. Only tif and tiff files will be active; all others will be grayed out. Select one file or multiple files and push "Convert." All
+		selected files will be converted to png files, leaving the tiff files undisturbed. 
+		
 
 <p> If you have a few old files with eps illustrations, or if you use the pstricks postscript package in TeX, you can typeset with "TeX and DVI" instead of pdflatex. See the TeXShop Help section "Alternate Typesetting Mode" for details. In this mode, conversion of eps files to pdf format is not necessary. However, it is not a good idea to use this mode for new projects involving a large number of eps files, because the eps illustrations must be implicitly converted to pdf form every time the file is typeset, slowing typesetting down enormously when the eps illustrations are complicated. That is because convertion from postscript to pdf takes place at the very end of typesetting in "TeX and DVI" mode, after the illustrations have been embedded in the complete final document.</p>	
 	

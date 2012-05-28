@@ -1,169 +1,75 @@
 <HTML>
 
 <HEAD>
-			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
-			<TITLE>ドキュメントをタイプセットする</TITLE>
-			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-			<META NAME="description" CONTENT="タイプセット（組版）に必要な操作などについての解説">
-			<link href="../sty/screen.css" rel="stylesheet" media="all">
-</HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Typesetting Documents</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="typesetting; tag; open; multiple files; modify behavior">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
 
-<body>
-
-<div id="content_border">
-
-<!-- 
-<p>
-TeXShop を使うには、備え付けの編集ウィンドウに LaTeX のソースコードを打ち込みます。そしてウィンドウ上部にある「タイプセット」ボタンを押します。入力したものが保存され、pdflatex が実行されます。もうひとつウィンドウが開き、TeX からのメッセージを表示します。もしエラーがあれば pdflatex は止まります ； エラーをひとつずつスキップするには「リターン」をタイプしますが、終了させたり、実行を継続させたり、などといったことをするには、標準的な TeX インプットを打ち込みます。文書がタイプセットされると、出力結果の pdf ファイルを表示する新しいウィンドウが開きます。２つのウィンドウは command＋1 で切り替えることができます。
-</p>
- -->
-
-<p>
-TeXShop を使うには、備え付けの編集ウインドウに LaTeX のソースコードを打ち込みます。そしてウインドウ上部にある「タイプセット」ボタンを押します。入力したものが保存され、pdflatex が実行されます。もうひとつウインドウが開き、TeX からのメッセージを表示します。もしエラーがあれば pdflatex は止まります ； エラーをひとつずつスキップするには「リターン」をタイプしますが、終了させたり、実行を継続させたり、などといったことをするために、TeX の命令を打ち込むこともできます。文書がタイプセットされると、出力結果の pdf ファイルを表示する新しいウインドウが開きます。２つのウインドウは command + 1 で切り替えることができます。
-</p>
-
-<p>
-pdf の出力結果の画面でマウスをプレスするとカーソルの付近一帯が拡大されます。ダブルクリックするとより広い範囲が拡大されます ； トリプルクリックではさらに広い範囲が拡大されます。ページ上部のツールバーのボタンでデフォルトの<small>（プレスしたときの）</small>拡大範囲サイズを選択することができます。
-</p>
-
-<p>
-TeX 文書のタイプセットを行なうには、LaTeX と表示されているボタンを押して LaTeX の代わりに TeX を選択します。もし普段から TeX を用いるのであれば、環境設定ダイアログでデフォルトのプログラムを TeX にしてください。
-</p>
-
-<p>
-エラーに気付いた場合、すぐに編集ウインドウでエラーを修正し、再度「タイプセット」ボタンを押すことができます──動いている pdflatex を止める必要はありません。プログラムは初めのものを中断して次を実行し始めます。
-</p>
-
-<p>
-TeXShop は初めの20個のエラーのソース行をおぼえています。ソースファイルでこれらの行を繰り返し表示させるには、編集メニューから「エラー箇所へ移動」を選択するか、このメニューアイテムのショートカットキーをタイプします。
-</p>
-
-<p>
-エラーを直して再度タイプセットを行なった場合も、ビューワはそれまで見ていたページをおぼえています。
-</p>
-
-<p>
-もしソース行が「 %: 」という文字列で始まっていると、TeXShop はその行にある単語あるいは文を「タグ」として解釈し、プルダウンメニュー「タグ」に追加します。プルダウンメニューでタグ項目を選択すれば、ソースファイル内の該当する行へとスクロールします。また \section ・ \subsection ・ \subsubsection あるいは \chapter で始まる行も自動でタグメニューに追加されます。が、この動作は、Apple の Terminal プログラムで次のコマンドをタイプして変更することができます：
-</p>
-
+<BODY>
+	<div id="content_border">
+		<P>To use TeXShop, type your LaTeX input in the editing window it provides. Then push the &quot;Typeset&quot; button at the top of the window. The input will be saved and pdflatex will run. A second window will open displaying messages from tex. If there are errors, pdflatex will halt; type &quot;return&quot; to skip the errors one by one, or one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing command-1.</P>
+		<p>Press the mouse on a section of the pdf output display to magnify the region near the cursor. Double click to magnify a larger region; triple click to magnify a still larger region. Notice that the default region size can be selected using
+an element of the toolbar at the top of the page. </p>
+		<p>To typeset a TeX document, push the button labeled LaTeX and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.</p>
+		<p>If you notice an error, you can immediately fix it in the editing window and push the &quot;Typeset&quot; button again without halting the first invocation of pdflatex. The program will kill that invocation and run another. </p>
+		<p>TeXShop remembers the source lines of the first twenty errors. To cycle through these lines in the source file, choose &quot;Go To Error&quot; in the Edit menu or type the keyboard shortcut for this menu item.</p>
+		<p>When you fix errors and typeset again, the viewer will remember the page you were previously viewing.</p>
+		<p>If a line in the source begins with the characters &quot;%:&quot;, TeXShop interprets the remaining word or words on the line as a &quot;tag&quot; and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \section, \subsection, \subsubsection, or \chapter are automatically added to the Tag menu. However, this behavior can be changed by typing the following command in Apple's Terminal program:</p>
 		<dl>
 			<dd><tt>defaults write TeXShop TagSections NO</tt>
 		</dl>
-
-<p>
-TeXShop は複数の文書を表示させることができます。「新規」ないしは「開く...」を選択すると、もともとの文書はそのままにして、新しい文書用に追加のウインドウが開きます。フォルダ内に同じ名前の pdf ファイルがある TeX ファイルを開けば、pdf も表示されます。
+		<p>TeXShop can show multiple documents. If you choose &quot;New&quot; or &quot;Open,&quot;  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.</p>
+		<p>Some users like to divide their source into multiple files controlled by a master file using an \input command. TeXShop always saves the source file before typesetting. If the preference item &quot;During File Save, Save Related Files&quot; is checked, the master file will be searched before typesetting and any input file open in TeXShop will also be saved. This feature is due to John Nairn.</p>
+		<p>You can start TeXShop by double clicking on a document with extension &quot;.tex&quot;. The program will open that input document and (if it exists) the associated pdf document.</p>
+		<p>You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other TeX documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.</p>
+		<p>pdftex and pdflatex are unix programs derived from Knuth's TeX program. The syntax of TeX does not allow spaces in filenames, so source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.</p>
+	<p>
+	The preview window's behavior can be changed using the "Magnification" and "Display Format" items in the Preview menu. For example, you can configure the scroller to scroll through all of the document pages; the preview window can show two pages at a time; resizing the window can be made to change the preview magnification. Experiment until you find the mode you prefer, and then select this mode in preferences to make it permanent.
+</p>
+	<p>
+	Use the magnification tools in the Preview window's toolbar to magnify portions of text. By double or triple clicking before holding down the mouse, a larger portion of the text will be magnified. The
+magnified region can be changed during magnification by pushing the apple, option, control, and shift keys.
+</p>
+	<p>
+	Use the pdf selection tool to select a portion of the preview window and drag it to the desktop or another program's window. The selection can also be copied and then pasted into another document. By default, this selected region contains only foreground text in pdf format. This is useful, for example, when dragging text to Keynote; the slide's background will show behind the text and the text can be
+resized without losing clarity. 
+</p>
+	<p>
+	Use the text selection tool to select text in the preview window. This text can be copied and then pasted to a word processor. If the preview contains links, these links can be activated by clicking with the text selection tool. Use the Back/Forward commands to return to the original page. Use the Find command in the window's drawer to search for text in the pdf document. 
 </p>
 
-<p>
-ソースを複数のファイルに分割し、\input コマンドを使ってマスターファイルで管理するのを好むユーザもいます。TeXShop は常にタイプセット前にはソースファイルを保存します。環境設定で「ファイル保存時に関連ファイルも保存する」の項目がチェックされていれば、タイプセット前にマスターファイルを探し、TeXShop で開くどの入力ファイルについても同じように保存されます。この機能は John Nairn のおかげです。
-</p>
-
-<p>
-拡張子が「.tex」の文書をダブルクリックすることで TeXShop を立ち上げることができます。プログラムはその入力文書と（もしそれが存在すれば）関連する pdf 文書とを開きます。
-</p>
-
-<p>
-pdf ウインドウはいつでも閉じることができます。文書を再度タイプセットすれば改めて表示されます。入力ウインドウを閉じた場合には、入力・出力の両方のウインドウが閉じられます（他の TeX 文書のウインドウは開いたままです）。なので、もしソース入力のウインドウが画面上に散乱しているのであれば、閉じずに隠しておきます。
-</p>
-
-<p>
-pdftex と pdflatex は Knuth の TeX プログラムから派生した UNIX プログラムです。TeX の構文はファイル名でのスペースを容認しません──なのでTeXShop で作成するソースファイルもスペースなしで命名します。TeXShop 自体はファイル名にスペースがあっても問題はありません。
-</p>
-
-<p>
-プレビューウインドウの挙動は「プレビュー」メニューの「ズーム倍率」と「ページレイアウト」項目で変更できます。たとえば、スクロール方法を調整して、文章のすべてのページをスクロールさせるようにできます ； プレビューウインドウは見開き２ページを同時に表示できます ； ウインドウをリサイズすることで拡大表示の倍率を変更させられます。気に入る表示方式が見つかるまで試してみてから、その方式を環境設定で選択し固定させてください。
-</p>
-
-<p>
-テキスト部分を拡大するには、
-プレビューウインドウのツールバーにある拡大ツールを使います。
-マウスをプレスする前にダブルクリックもしくはトリプルクリックすることで、
-より広い範囲を拡大することができます。
-拡大中にコマンドキー、オプションキー、コントロールキーないしはシフトキーを押すことで、
-拡大された部分をいろいろと変化させることができます。
-</p>
-
-<!-- 
-<p>
-プレビューウィンドウの一部分を選択して、
-デスクトップや他のプログラムのウィンドウにドラッグするには、
-pdf 選択ツールを使います。
-選択部分はコピーして他の文書にペーストすることもできます。
-デフォルトでは、
-この選択部分には前面のテキストのみが pdf 形式で含まれています。
-これはたとえば、テキストを Keynote にドラッグするときに便利です；
-スライドの背景がテキストの背面に表示されますし、
-透過性を保ったままでテキストをリサイズすることができます。
-</p>
- -->
-
-<p>
-プレビューウインドウの一部分を選択して、デスクトップや他のプログラムのウインドウにドラッグするには、pdf 選択ツールを使います。選択部分はコピーして他の文書にペーストすることもできます。デフォルトでは、この選択部分には前面のテキストのみが pdf 形式で含まれています。これはたとえば、テキストを Keynote にドラッグするときに便利です； スライドの背景がテキストの背面に表示されますし、ベクトルデータなのでテキストをリサイズしても綺麗に見えます。
-</p>
-
-<!-- 
-<p>
-もしバージョン 2.00 以降の TeXShop を
-Mac OS X 10.4 以上で使っているのであれば、
-テキスト選択ツールを用いて、
-プレビューウィンドウ内のテキストを選択できます。
-このテキストはコピーしてワープロにペーストすることができます。
-プレビューにリンクが含まれている場合、
-テキスト選択ツールでクリックすればリンクが作動します。
-元のページに戻るには、“戻る／進む”コマンドを使います。
-プレビューウィンドウのドロワー内で検索コマンドを使えば、
-pdf 文書内のテキストを検索できます。
-</p>
- -->
-
-<!-- 
-<p>
-テキスト選択ツールを用いて、プレビューウインドウ内のテキストを選択できます。このテキストはコピーしてワープロにペーストすることができます。プレビューにリンクが含まれている場合、テキスト選択ツールでクリックすればリンクが作動します。元のページに戻るには、“戻る／進む”コマンドを使います。プレビューウインドウのドロワー内で検索コマンドを使えば、pdf 文書内のテキストを検索できます。
-</p>
- -->
-
-<p>
-テキスト選択ツールを用いると、プレビューウインドウ内のテキストを選択することができます。このテキストはコピーしてワープロにペーストすることができます。プレビューにリンクが含まれている場合、テキスト選択ツールでクリックすればリンクが作動します。元のページに戻るには、“戻る／進む”コマンドを使います。プレビューウインドウのドロワー内で検索コマンドを使えば、pdf 文書内のテキストを検索できます。
-</p>
-
-<p>
-ソースウインドウとプレビューウインドウ間を行き来するには、&#x2318;キーを押しながら語句をクリックします。ソースウインドウ内の語句をクリックした場合は、プレビューウインドウの方がしかるべき位置までスクロールし、組版済みの語句に赤で丸印を付けます。プレビューウインドウ内の語句をクリックしたのであれば、ソースウインドウを開き（まだ開かれていなければですが）、適切な位置までスクロールした上で、ソース中の語句を黄色でハイライト表示します。
-</p>
-
-
-</div>
-
+<p> You can jump between the source and preview windows by holding down the Apple command key while clicking on a word or phrase. If the phrase is in the source window, the preview window will scroll to the appropriate spot and the typeset phrase will be circled in red. If the phrase is in the preview window, the source window will open (if necessary) and scroll to the appropriate spot, and the source phrase will
+be highlighted in yellow.</p>  
+	</div>		
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
-<div id="header_chapter">基本的なヘルプ</div>
-<div id="header_title">ドキュメントをタイプセットする</div>
+<div id="header_chapter">Basic Help</div><div id="header_title">Typesetting Documents</div>
 
-	<div id="menu_border">
+		<div id="menu_border">
 		<ul>
-			<li><a href="basic_preliminaries.htm">まえがき</a>
-			<li><a href="basic_j_ptex.htm">pTeX とTeXShop で日本語環境を構築する</a>
-			<li><a href="basic_installtetex.htm">teTeX の入手とインストール</a>
-			<li><a href="basic_installtexshop.htm">TeXShop の入手とインストール</a>
-			<li><a href="basic_typesetting.htm">ドキュメントをタイプセットする</a>
-			<li><a href="basic_alternatetypeset.htm">もうひとつのタイプセット方式</a>	
-			<li><a href="basic_spelling.htm">スペルをチェックする</a>
-			<li><a href="basic_latexpanel.htm">Latex パネル</a>
-			<li><a href="basic_matrixpanel.htm">行列パネル</a>
-			<li><a href="basic_macros.htm">マクロ</a>
-			<li><a href="basic_toolbar.htm">ツールバーと Applescript</a>
-			<li><a href="basic_graphics.htm">画像を入れる</a>
-			<li><a href="basic_printing.htm">印刷</a>
-			<li><a href="basic_preferences.htm">環境設定</a>
-			<li><a href="basic_j_encoding.htm">日本語エンコーディングと &#x005C; &#x00A5; 文字の扱い</a>
-			<li><a href="basic_templates.htm">テンプレートメニューを変更する</a>
-			<li><a href="basic_edittricks.htm">編集上のコツ</a>
-			<li><a href="basic_autocompletion.htm">キーバインド</a>
-			<li><a href="basic_commandcompletion.htm">コマンドの補完</a>
-			<li><a href="basic_bugs.htm">バグレポートを送る</a>
-			<li><a href="basic_websites.htm">役に立つウェブサイト</a>
-			<li><a href="basic_license.htm">使用許諾</a>
-		</ul>
+				<LI><a href="basic_preliminaries.htm">Preliminaries</a>
+			<LI><a href="basic_installtetex.htm">Installing TeX Live</a>
+			<LI><a href="basic_installtexshop.htm">Installing TeXShop</a>
+			<LI><a href="basic_typesetting.htm">Typesetting Documents</a>
+			<li><a href="basic_alternatetypeset.htm">Alternate Typesetting Mode</a>	
+			<li><a href="basic_spelling.htm">Checking Spelling</a>
+			<li><a href="basic_latexpanel.htm">Latex Panel</a>
+			<li><a href="basic_matrixpanel.htm">Matrix Panel</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Toolbar and Applescript</a>
+			<li><a href="basic_graphics.htm">Including Graphics</a>
+			<li><a href="basic_printing.htm">Printing</a>
+			<li><a href="basic_preferences.htm">Setting Preferences</a>
+			<li><a href="basic_templates.htm">Modifying the Templates Menu</a>
+			<li><a href="basic_edittricks.htm">Editing Tricks</a>
+			<li><a href="basic_autocompletion.htm">Key Bindings</a>
+			<li><a href="basic_commandcompletion.htm">Command Completion </a>
+			<li><a href="basic_bugs.htm">Sending Bug Reports</a>
+			<li><a href="basic_websites.htm">Useful Web Sites</a>
+			<li><a href="basic_license.htm">License</a>
+		</UL>
 	</div>
-</body>
-
-</html>
+	</BODY>

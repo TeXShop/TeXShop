@@ -255,6 +255,7 @@ enum RootCommand
 	NSString			*spellLanguage;
 	BOOL				consoleCleanStart;
 	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
+	NSOpenPanel			*convertPanel; // using for convertTiff
 
 	int lastCursorLocation; // added by Terada
 	int lastStringLength; // added by Terada
@@ -374,6 +375,8 @@ enum RootCommand
 - (void)resetSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
 - (void)allocateSyncScanner;
+- (IBAction) convertTiff:(id)sender;
+- (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 
 // BibDesk Completion
 //---------------------------

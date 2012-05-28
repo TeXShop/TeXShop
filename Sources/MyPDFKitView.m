@@ -85,6 +85,41 @@
 }
 */
 
+- (void)setScaleFactor:(float)scale
+{
+    [super setScaleFactor: scale];
+    resizeOption =  NEW_PDF_FIT_TO_NONE;
+}
+
+- (int)pageStyle
+{
+    return pageStyle;
+}
+
+- (int)firstPageStyle
+{
+    return firstPageStyle;
+}
+
+- (int)resizeOption
+{
+    return resizeOption;
+}
+
+- (void)setPageStyle: (int)thePageStyle
+{
+    pageStyle = thePageStyle;
+}
+
+- (void)setFirstPageStyle: (int)theFirstPageStyle;
+{
+    firstPageStyle = theFirstPageStyle;
+}
+
+- (void)setResizeOption: (int)theResizeOption
+{
+    resizeOption = theResizeOption;
+}
 
 
 - (void) initializeDisplay
@@ -426,6 +461,28 @@
 	[[self window] enableFlushWindow];
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
+
+- (int)index
+{
+    PDFPage		*aPage;
+	int	theindex;
+    
+    aPage = [self currentPage];
+	theindex = [[self document] indexForPage: aPage];
+    return theindex;
+}
+
+- (void)moveSplitToCorrectSpot:(int)index;
+{
+    PDFPage		*aPage;
+    int	theindex, oldindex, pages;
+    
+    aPage = [[self document] pageAtIndex: index];
+    [self goToPage: aPage];
+    
+}
+
+
 
 - (void)prepareSecond
 {	PDFPage		*aPage;
@@ -1694,6 +1751,12 @@
 	}
 
 }
+
+- (void) printDocument: sender
+{
+	[myDocument printDocument: sender];
+}
+
 
 // ----------------------------------------------------------------------------------------------------------- mouseMoved
 
@@ -4238,7 +4301,7 @@
 	[item setState: NSOnState];
 	
 	//-------Magnification Controls----------
-	// [self fixMagnificationControls];
+	[self fixMagnificationControls]; // needed in split view
 	[self scaleChanged: nil];
 	[self pageChanged: nil];
 	

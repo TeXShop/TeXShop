@@ -54,7 +54,8 @@
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
-
+#define NSPrintPanelShowsOrientation 0x08
+#define NSPrintPanelShowsScaling 0x10
 
 @implementation TSDocument
 
@@ -215,6 +216,119 @@
 
 	[super dealloc];
 }
+
+- (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	BOOL			callConvert;
+	NSEnumerator	*fileEnumerator;
+	id				anObject;
+	NSTask			*convertTask;
+	NSArray			*arguments;
+	NSString		*firstArgument, *secondArgument;
+	NSString		*sipsPath;
+	
+	if (returnCode != NSOKButton) {
+		[convertPanel close];
+		return;
+		}
+	
+	NSArray *urls = [convertPanel URLs];
+	[convertPanel close];
+	
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager fileExistsAtPath:@"/usr/local/bin/convert"])
+		callConvert = YES;
+	else if ([fileManager fileExistsAtPath:@"/usr/bin/sips"]) {
+		callConvert = NO;
+		sipsPath = [[NSBundle mainBundle] pathForResource:@"sipswrap" ofType:nil];
+		}
+	else
+		return;
+	
+	fileEnumerator = [urls objectEnumerator];
+	while (anObject = [fileEnumerator nextObject]) {
+		
+		firstArgument = [NSString stringWithString:[anObject path]];
+		secondArgument = [[firstArgument stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+		arguments = [NSArray arrayWithObjects: firstArgument, secondArgument, nil];
+		if (callConvert)
+			convertTask = [NSTask launchedTaskWithLaunchPath:@"/usr/local/bin/convert" arguments: arguments];
+		else
+			convertTask = [NSTask launchedTaskWithLaunchPath:sipsPath arguments: arguments];
+	}
+	
+	
+	
+
+		
+}
+
+- (IBAction)convertTiff:(id)sender
+{ 
+    NSArray         *fileTypes;
+    NSString        *filePath, *directoryPath;
+     
+    fileTypes = [NSArray arrayWithObjects: @"tif", @"tiff", nil];
+    convertPanel = [NSOpenPanel openPanel];
+    // [convertPanel setTitle: @"Convert tiff to png"];
+    [convertPanel setPrompt: NSLocalizedString(@"Convert", @"Convert")];
+    filePath = [[self fileURL] path];
+    directoryPath = [filePath stringByDeletingLastPathComponent];
+    
+    if (! directoryPath) {
+        directoryPath = NSHomeDirectory();
+	}
+    // [convertPanel setDirectoryURL: [NSURL fileURLWithPath: directoryPath isDirectory:YES]];
+    [convertPanel setAllowsMultipleSelection: YES];
+    // [convertPanel setAllowedFileTypes: fileTypes];
+    // result = [convertPanel runModal];
+	
+	//[openPanel beginSheetModalForWindow:textWindow completionHandler:^(NSInteger result1)
+	[convertPanel beginSheetForDirectory: directoryPath file:nil types: fileTypes modalForWindow:textWindow modalDelegate: self didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+}
+	 
+
+	 
+/*	 
+     {
+		 
+		 if (result1 == NSFileHandlingPanelOKButton) {
+			 NSArray *urls = [openPanel URLs];
+			 NSFileManager *fileManager = [NSFileManager defaultManager];
+			 
+			 if ([fileManager fileExistsAtPath:@"/usr/local/bin/convert"])
+			 {
+				 [urls enumerateObjectsUsingBlock:^(NSURL *obj, NSUInteger idx, BOOL *stop) {
+					 // NSLog([obj path]);
+					 NSTask   *convertTask;
+					 NSArray  *arguments;
+					 NSString *firstArgument, *secondArgument;
+					 firstArgument = [NSString stringWithString:[obj path]];
+					 secondArgument = [[firstArgument stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+					 arguments = [NSArray arrayWithObjects: firstArgument, secondArgument, nil];
+					 convertTask = [NSTask launchedTaskWithLaunchPath:@"/usr/local/bin/convert" arguments: arguments];
+				 }];
+			 }
+			 else if ([fileManager fileExistsAtPath:@"/usr/bin/sips"])
+			 {
+				 NSString *sipsPath = [[NSBundle mainBundle] pathForResource:@"sipswrap" ofType:nil];
+				 [urls enumerateObjectsUsingBlock:^(NSURL *obj, NSUInteger idx, BOOL *stop) {
+					 // NSLog([obj path]);
+					 NSTask   *convertTask;
+					 NSArray  *arguments;
+					 NSString *firstArgument, *secondArgument;
+					 firstArgument = [NSString stringWithString:[obj path]];
+					 secondArgument = [[firstArgument stringByDeletingPathExtension] stringByAppendingPathExtension:@"png"];
+					 arguments = [NSArray arrayWithObjects: firstArgument, secondArgument, nil];
+					 convertTask = [NSTask launchedTaskWithLaunchPath:sipsPath arguments: arguments];
+				 }];
+			 }
+		 }
+     }];
+
+}
+*/
+
 
 - (id)topView
 {
@@ -940,6 +1054,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"ctx"])
 		|| ([extension isEqualToString: @"bbx"])
 		|| ([extension isEqualToString: @"cbx"])
+		|| ([extension isEqualToString: @"md"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -1324,6 +1439,7 @@ in other code when an external editor is being used. */
 
 // - (void) printDocumentWithSettings: (NSDictionary :)printSettings showPrintPanel:(BOOL)showPrintPanel delegate:(id)delegate 
 // 	didPrintSelector:(SEL)didPrintSelector contextInfo:(void *)contextInfo
+/*
 - (void)printShowingPrintPanel:(BOOL)flag
 {
 	id				printView;
@@ -1369,6 +1485,83 @@ in other code when an external editor is being used. */
 		[printRequestPanel close];
 		}
 }
+*/
+
+
+
+ - (void)printShowingPrintPanel:(BOOL)flag
+{
+	id					printView;
+	NSPrintOperation	*printOperation;
+	NSString			*imagePath;
+	NSString			*theSource;
+	id					aRep;
+	NSInteger			result;
+    NSString			*fileName;
+	id					printPanel; 
+					  
+	// NSPrintPanelShowsOrientation = 0x08;
+	// NSPrintPanelShowsScaling = 0x10;
+	
+    fileName = [[self fileURL] path];
+    
+	if (_documentType == isTeX) {
+		
+		if (!_externalEditor) {
+			theSource = [_textStorage string];
+			if ([self checkMasterFile:theSource forTask:RootForPrinting])
+				return;
+			if ([self checkRootFile_forTask:RootForPrinting])
+				return;
+		}
+		
+		imagePath = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+	}
+	else if (_documentType == isPDF)
+		imagePath = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+	else
+		imagePath = fileName;
+	
+	aRep = nil;
+	if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
+		if ((_documentType == isTeX) || (_documentType == isPDF))
+			aRep = [NSPDFImageRep imageRepWithContentsOfFile: imagePath];
+		else if (_documentType == isJPG || _documentType == isTIFF)
+			aRep = [NSImageRep imageRepWithContentsOfFile: imagePath];
+		if (aRep == nil)
+			return;
+		printView = [[TSPrintView alloc] initWithImageRep: aRep];
+        
+        if ([aRep isKindOfClass: [NSPDFImageRep class]])
+		{
+            NSRect bounds = [aRep bounds];
+            if ((bounds.size.width) > (bounds.size.height))
+                [[self printInfo] setOrientation: NSLandscapeOrientation];
+            else
+                [[self printInfo] setOrientation: NSPortraitOrientation];
+		}
+        
+ 		printOperation = [NSPrintOperation printOperationWithView:printView printInfo: [self printInfo]];
+        [printOperation setShowsPrintPanel:flag];
+        [printOperation setShowsProgressPanel:flag];
+        printPanel = [printOperation printPanel];
+		if ([printPanel respondsToSelector:@selector(setOptions:)])
+			[printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
+		[printOperation runOperation];
+		[printView release];
+	} else if (_documentType == isTeX)
+	{
+		result = [NSApp runModalForWindow: printRequestPanel];
+		[printRequestPanel close];
+	}
+}
+
+
+
+
+
+
+
 
 - (BOOL)keepBackupFile
 {
@@ -2147,6 +2340,7 @@ preference change is cancelled. "*/
 	[NSApp endSheet: pagenumberPanel returnCode: 0];
 }
 
+/*
 - (void) printSource: sender
 {
 
@@ -2169,6 +2363,35 @@ preference change is cancelled. "*/
 	[myPrintInfo setVerticallyCentered:originalVerticallyCentered];
 
 }
+*/
+
+- (void) printSource: sender
+{
+	
+	NSPrintOperation            *printOperation;
+	NSPrintInfo                 *myPrintInfo;
+	NSPrintingPaginationMode    originalPaginationMode;
+	BOOL                        originalVerticallyCentered;
+    id							printPanel;
+	
+	myPrintInfo = [self printInfo];
+	originalPaginationMode = [myPrintInfo horizontalPagination];
+	originalVerticallyCentered = [myPrintInfo isVerticallyCentered];
+	
+	[myPrintInfo setHorizontalPagination: NSFitPagination];
+	[myPrintInfo setVerticallyCentered:NO];
+    [myPrintInfo setOrientation: NSPortraitOrientation];
+	printOperation = [NSPrintOperation printOperationWithView:textView printInfo: myPrintInfo];
+    [printOperation setShowsPrintPanel:YES];
+    [printOperation setShowsProgressPanel:YES];
+	printPanel = [printOperation printPanel];
+	if ([printPanel respondsToSelector:@selector(setOptions:)])
+		[printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];	[printOperation runOperation];
+	[myPrintInfo setHorizontalPagination: originalPaginationMode];
+	[myPrintInfo setVerticallyCentered:originalVerticallyCentered];
+	
+}
+
 
 - (void) doChooseMethod: sender
 {
@@ -2496,7 +2719,7 @@ preference change is cancelled. "*/
 
 - (void) setupTags
 {
-	if ([SUD boolForKey: TagSectionsKey]) {
+// 	if ([SUD boolForKey: TagSectionsKey]) {
 		[tagTimer invalidate];
 		[tagTimer release];
 		tagTimer = nil;
@@ -2506,7 +2729,7 @@ preference change is cancelled. "*/
 		[tags removeAllItems];
 		[tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
 		tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
-	}
+//	}
 }
 
 - (void) fixTags:(NSTimer *)timer
@@ -2552,7 +2775,7 @@ preference change is cancelled. "*/
 			// To short-circuit the search, we only consider lines that start with a backslash (or yen) symbol.
 			// TODO: Actually, that's kind of overly restrictive. After all, having spaces in front
 			// of a \section command is valid. Might want to remove this limitation...
-			else if (enableAutoTagSections && ([text characterAtIndex: start] == g_texChar)) {
+			else if (enableAutoTagSections && ([text characterAtIndex: start] == g_texChar) || ([text characterAtIndex: start] == g_commentChar))  {
 				unsigned	i;
 				for (i = 0; i < [g_taggedTeXSections count]; ++i) {
 					NSString* tag = [g_taggedTeXSections objectAtIndex:i];
@@ -4899,6 +5122,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	
 	
 	text = [textView string];
+	NSRange oldRange = [textView selectedRange]; // added by Terada
+    int increment = 0; // added by Terada
+
 	//Expand the selectedRange to include whole lines
 	[text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
 	
@@ -4920,6 +5146,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 				[textView replaceCharactersInRange:modifyRange withString:@"%"];
 				blockEnd++;
 				lineEnd++;
+				increment++; //added by Terada
 				theCommand = NSLocalizedString(@"Comment", @"Comment");
 				break;
 				
@@ -4932,6 +5159,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 					[textView replaceCharactersInRange:modifyRange withString:@""];
 					blockEnd--;
 					lineEnd--;
+					increment--; //added by Terada
 					theCommand = NSLocalizedString(@"Uncomment", @"Uncomment");
 				}
 				break;
@@ -4940,6 +5168,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 				[textView replaceCharactersInRange:modifyRange withString:@"\t"];
 				blockEnd++;
 				lineEnd++;
+				increment++; //added by Terada
 				theCommand = NSLocalizedString(@"Indent", @"Indent");
 				break;
 				
@@ -4951,6 +5180,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 					[textView replaceCharactersInRange:modifyRange withString:@""];
 					blockEnd--;
 					lineEnd--;
+					increment--; // added by Terada
 					theCommand = NSLocalizedString(@"Unindent", @"Unindent");
 				}
 				break;
@@ -4968,6 +5198,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 	
 	[self registerUndoWithString:oldString location:modifyRange.location
 						  length:modifyRange.length key: theCommand];
+	
+	
+    // added by Terada (for selecting original range)
+    oldRange.location += (increment > 0) ? 1 : -1;
+    oldRange.length += increment + ((increment > 0) ? (-1) : 1);
+	[textView setSelectedRange: oldRange];
+	
 }
 
 // end mitsu 1.29 //end rewritten Scott Lambert 3/1/2010
@@ -5222,6 +5459,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, unsigned tabWidth) 
 						[extension isEqualToString:@"lg"] ||
 						[extension isEqualToString:@"xref"] ||
 						[extension isEqualToString:@"bcf"] ||
+						[extension isEqualToString:@"fls"] ||
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
 						[extension isEqualToString:@"fdb_latexmk"] ||

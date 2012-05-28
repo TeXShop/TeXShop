@@ -164,9 +164,17 @@ static BOOL isValidTeXCommandChar(int c)
 			lineRange.location = theend;
 			selectedLineRange.location = start;
 			selectedLineRange.length = theend - start;
+			
+			if ( ! [SUD boolForKey: RightJustifyIfAnyKey] ) {
+                // a line must START with Persian, etc., to be right justified; later must have Persian in first three letters
+                if (selectedLineRange.length >= 3)
+                    selectedLineRange.length = 3;
+			}
+			
+	
 			// a line must START with Persian, etc., to be right justified
-			if (selectedLineRange.length != 0)
-				selectedLineRange.length = 1;
+			// if (selectedLineRange.length != 0)
+			// 	selectedLineRange.length = 1;
 			theLine = [textString substringWithRange:selectedLineRange];
 			testRange = [theLine rangeOfCharacterFromSet: middleEastSet];
 			if (testRange.location == NSNotFound)
@@ -184,8 +192,13 @@ static BOOL isValidTeXCommandChar(int c)
 	colorRange.length = aLineEnd - aLineStart;
 	// WARNING!! The following line has been commented out to restore changing the text color
 	// June 27, 2008; Koch; I don't understand the previous warning; the line below fixes cases when removing a comment leaves text red
-	[layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
-
+	// Sept 3, 2011; the Toudykov patch below makes this unnecessary
+	// [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
+    
+    // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
+    [layoutManager addTemporaryAttributes:regularColorAttribute forCharacterRange:colorRange];
+    
+	
 	// Now we iterate over the whole text and perform the actual recoloring.
 	location = aLineStart;
 	while (location < aLineEnd) {

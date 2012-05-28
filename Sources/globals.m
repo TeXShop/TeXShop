@@ -141,6 +141,7 @@ NSString *PdfPageBack_BKey = @"Pdfbackground_B";
 NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
 NSString *ConvertLFKey = @"ConvertLF";
 NSString *UseOgreKitKey = @"UseOgreKit";
+NSString *FindMethodKey = @"FindMethod";
 NSString *BringPdfFrontOnAutomaticUpdateKey = @"BringPdfFrontOnAutomaticUpdate";
 NSString *BringPdfFrontOnTypesetKey = @"BringPdfFrontOnTypeset";
 NSString *SourceWindowAlphaKey = @"SourceWindowAlpha";
@@ -206,6 +207,7 @@ NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
 NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
 NSString *syncWithRedOvalsKey = @"syncWithRedOvals"; //Koch
+NSString *RightJustifyIfAnyKey = @"RightJustifyIfAny";
 
 
 
@@ -261,6 +263,7 @@ NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotificatio
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;
 int					g_texChar;
+int					g_commentChar;
 NSDictionary		*g_autocompletionDictionary;
 NSArray				*g_autocompletionKeys;  // added by Terada
 

@@ -32,6 +32,7 @@
 // frequently throughout the code to detect commands.
 #define	YEN			0x00a5
 #define	BACKSLASH	'\\'
+#define	COMMENT		'%'
 
 
 // Shortcut to access the standard user defaults more easily.
@@ -340,6 +341,7 @@ extern NSString *PdfPageBack_BKey;
 extern NSString *ExternalEditorTypesetAtStartKey;
 extern NSString *ConvertLFKey;
 extern NSString *UseOgreKitKey;
+extern NSString *FindMethodKey;
 extern NSString *BringPdfFrontOnAutomaticUpdateKey;
 extern NSString *BringPdfFrontOnTypesetKey;
 extern NSString *SourceWindowAlphaKey;
@@ -407,6 +409,7 @@ extern NSString *invisibleCharGreenKey; //Koch
 extern NSString *invisibleCharBlueKey; //Koch
 extern NSString *brieflyFlashYellowForMatchKey; //Koch
 extern NSString *syncWithRedOvalsKey;
+extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Persian anywhere in the line
 
 // end of defaults
 
@@ -460,6 +463,7 @@ extern NSString *CommandCompletionCharNotification;
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern int					g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern int					g_commentChar;
 extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
 extern NSArray				*g_autocompletionKeys; // added by Terada
 

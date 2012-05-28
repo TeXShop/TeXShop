@@ -20,9 +20,10 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     if (myPath == nil) [NSApp terminate:self];
-    scriptPath = [NSString stringWithCString: myPath]; 
+    scriptPath = [NSString stringWithUTF8String: myPath];  
     if ([[NSFileManager defaultManager] fileExistsAtPath: scriptPath]) {
-        NSString *scriptString = [NSString stringWithContentsOfFile: scriptPath];
+        // NSString *scriptString = [NSString stringWithContentsOfFile: scriptPath];
+		NSString *scriptString = [NSString stringWithContentsOfFile: scriptPath encoding:NSUTF8StringEncoding error:NULL];
         
         NSAppleScript *aScript = [[NSAppleScript alloc] initWithSource: scriptString];
         NSDictionary *errorInfo;

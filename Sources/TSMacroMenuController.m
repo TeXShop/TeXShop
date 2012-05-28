@@ -382,8 +382,10 @@ static id sharedMacroMenuController = nil;
 			NSString *scriptFileName = [scriptFilePath stringByAppendingString: @"/tempscript"];
 			
 			NS_DURING
-				// [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
-				[newString writeToFile: scriptFileName atomically: NO];
+			// [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
+            //[newString writeToFile: scriptFileName atomically: NO encoding:NSISOLatin1StringEncoding error:NULL];
+            [newString writeToFile: scriptFileName atomically: NO encoding:NSUTF8StringEncoding error:NULL]; // modified by Terada
+			
 			NS_HANDLER
 				return;
 			NS_ENDHANDLER

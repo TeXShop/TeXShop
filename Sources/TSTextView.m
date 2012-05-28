@@ -287,7 +287,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 // zenitani 1.33 begin
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
-
+	[_window makeFirstResponder:self]; // added by Terada (required in the case of split window)
 	NSPasteboard *pb = [ sender draggingPasteboard ];
 	NSString *type = [ pb availableTypeFromArray:
 		[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
@@ -512,6 +512,49 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// Extend word selection to cover an initial backslash (TeX command)
 	if (granularity == NSSelectByWord)
 	{
+		
+		// added by Terada (from this line)
+        BOOL flag;
+        unichar c;
+        
+        
+        if(replacementRange.location < [textString length]){
+            c = [textString characterAtIndex:replacementRange.location];
+            if((c != '{') && (c != '(') && (c != '[') && (c != '<') ){
+                do {
+                    if (replacementRange.location >= 1){
+                        c = [textString characterAtIndex: replacementRange.location-1];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.location--;
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
+                
+                do {
+                    if (replacementRange.location + replacementRange.length  < [textString length]){
+                        c = [textString characterAtIndex: replacementRange.location + replacementRange.length];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
+            }
+        }
+		
+        // added by Terada (until this line)
+		
+		
 		if (replacementRange.location >= 1 && [textString characterAtIndex: replacementRange.location-1] == BACKSLASH)
 		{
 			replacementRange.location--;
@@ -535,13 +578,16 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// If the users double clicks an opening or closing parenthesis / bracket / brace,
 	// then the following code will extend the selection to the matching opposite
 	// parenthesis / bracket / brace.
-	if ((uchar == '}') || (uchar == ')') || (uchar == ']')) {
+	if ((uchar == '}') || (uchar == ')') || (uchar == ']') || (uchar == '>')) { // modified by Terada
+
 		j = i;
 		rightpar = uchar;
 		if (rightpar == '}')
 			leftpar = '{';
 		else if (rightpar == ')')
 			leftpar = '(';
+		else if (rightpar == '>') // added by Terada
+			leftpar = '<'; // added by Terada
 		else
 			leftpar = '[';
 		nestingLevel = 1;
@@ -561,13 +607,16 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			}
 		}
 	}
-	else if ((uchar == '{') || (uchar == '(') || (uchar == '[')) {
+	else if ((uchar == '{') || (uchar == '(') || (uchar == '[') ||  (uchar == '<') ) { // modified by Terada
+
 		j = i;
 		leftpar = uchar;
 		if (leftpar == '{')
 			rightpar = '}';
 		else if (leftpar == '(')
 			rightpar = ')';
+		else if (leftpar == '<') // added by Terada
+			rightpar = '>'; // added by Terada
 		else
 			rightpar = ']';
 		nestingLevel = 1;
@@ -694,6 +743,14 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	[ self registerForDraggedTypes:
 			[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil] ];
 	_document = nil;
+	wasCompleted = NO; // was completed on last keyDown
+	latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	originalString = nil; // string before completion, starts at replaceLocation
+	currentString = nil; // completed string
+	replaceLocation = NSNotFound; // completion started here
+	completionListLocation = 0; // location to start search in the list
+	textLocation = NSNotFound; // location of insertion point
+	
 	return self;
 }
 
@@ -1200,13 +1257,13 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
 	// TODO: Convert all of these static stack variables to member variables.
 	
-	static BOOL wasCompleted = NO; // was completed on last keyDown
-	static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
-	static NSString *originalString = nil; // string before completion, starts at replaceLocation
-	static NSString *currentString = nil; // completed string
-	static unsigned replaceLocation = NSNotFound; // completion started here
-	static unsigned int completionListLocation = 0; // location to start search in the list
-	static unsigned textLocation = NSNotFound; // location of insertion point
+	// static BOOL wasCompleted = NO; // was completed on last keyDown
+	// static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	// static NSString *originalString = nil; // string before completion, starts at replaceLocation
+	// static NSString *currentString = nil; // completed string
+	// static unsigned replaceLocation = NSNotFound; // completion started here
+	// static unsigned int completionListLocation = 0; // location to start search in the list
+	// static unsigned textLocation = NSNotFound; // location of insertion point
 	BOOL foundCandidate;
 	NSString *textString, *foundString, *latexString = 0;
 	NSMutableString *indentString = [NSMutableString stringWithString:@""]; // Alvise Trevisan; preserve tabs code

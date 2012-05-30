@@ -1,76 +1,71 @@
 <HTML>
 
 <HEAD>
-<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
-<TITLE>Shell Escape Protection</TITLE>
-<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-<META NAME="description" CONTENT="shell escape; graphic conversion; security">
-<link href="../sty/screen.css" rel="stylesheet" media="all">
-	</HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>Shell-Escape ‚Ì•ÛŒì</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="TeX •¶‘ƒ^ƒCƒvƒZƒbƒgŽž‚ÌƒZƒLƒ…ƒŠƒeƒB‚É‚Â‚¢‚Ä">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
 
-<BODY>
-	<div id="content_border">
-In TeX Live since 2011, pdftex, pdflatex, and other TeX programs can call a small list of
-trusted programs during typesetting. For example, these programs are allowed to call Ghostscript
-to convert eps files to pdf files
+<body>	
 
-<p> It is possible to configure pdftex, pdflatex, and other programs so they can call arbitrary shell commands during
-typesetting. In that case, the flag "--shell-escape" must be added to the calling sequence, either
-in the Engine configuration section of TeXShop Preferences or in particular engine scripts. However,
-this flag is a serious security risk because it allows arbitrary shell programs to run, including for
-example a short program to erase all files in the home directory. If the flag is set, a malicious
-web site could offer a TeX source file which erases these files when it is typeset.
+<div id="content_border">
 
-<p> Although we recommend against setting the flag, it may be required by a few unusual
-typesetting packages.  
-TeXShop provides a protection mechanism for this situation. A preference item under the Engine
-		tab is labeled "Shell Escape Warning." This item is off when TeXShop is delivered.
-		If the item is on and "shell-escape" is active, then the first time a file is typeset during
-		a TexShop session, a warning dialog will appear allowing you to turn shell-escape
-		off for that particular file. This dialog will not appear again during the session for that
-		particular file. Thus you can typeset your own files using "shell-escape" and typeset
-		files received in the mail without "shell-escape."
-</P>
+<p>
+pdftex ‚Æ pdflatex ‚ÌƒfƒtƒHƒ‹ƒgƒRƒ}ƒ“ƒh‚Íupdftex --shell-escapev‚Æupdflatex --shell-escapev‚Å‚·B‚±‚ÌƒeƒLƒXƒg‚Ìushell-escapev‚Ì•”•ª‚Íƒ^ƒCƒvƒZƒbƒg’†‚É pdftex ‚ª‘¼‚ÌƒvƒƒOƒ‰ƒ€‚ðŽÀs‚·‚é‚Ì‚ð‹–‰Â‚µ‚Ä‚¢‚Ü‚·B‚±‚ê‚ª—L—p‚È‚Ì‚ÍA‚à‚µ TeX ‚ªƒTƒ|[ƒg‚µ‚Ä‚¢‚È‚¢Œ`Ž®‚ÌƒOƒ‰ƒtƒBƒbƒNEƒtƒ@ƒCƒ‹‚ª‚ ‚Á‚½ê‡‚ÉA‘¼‚ÌƒvƒƒOƒ‰ƒ€‚ðŒÄ‚Ño‚µ‚ÄŽ©“®“I‚ÉƒTƒ|[ƒg‚µ‚Ä‚¢‚éŒ`Ž®‚É•ÏŠ·‚·‚é‚±‚Æ‚ª‚Å‚«‚é‚©‚ç‚Å‚·B‚½‚Æ‚¦‚ÎAƒfƒtƒHƒ‹ƒg‚Ì LaTeX ƒeƒ“ƒvƒŒ[ƒg‚Å‚Í tif ƒtƒ@ƒCƒ‹‚ðŽ©“®“I‚É png ‚É•ÏŠ·‚µAeps ƒtƒ@ƒCƒ‹‚ð pdf ‚É•ÏŠ·‚µ‚Ü‚·B
+</p>
 
+<p>
+‚±‚ê‚É‚æ‚Á‚Ä¶‚¶‚é–â‘è‚ðS”z‚·‚éƒ†[ƒU‚à‚¢‚é‚©‚à‚µ‚ê‚Ü‚¹‚ñBushell-escapevƒtƒ‰ƒO‚Í pdftex ‚ª<b>‚Ç‚Ì‚æ‚¤‚È</b>ƒvƒƒOƒ‰ƒ€‚ðŽÀs‚·‚é‚±‚Æ‚Å‚à‹–‰Â‚µ‚Ä‚µ‚Ü‚¢‚Ü‚·B‚»‚ê‚ä‚¦A•s–ž‚ð•ø‚­Šw¶‚ª‚dƒ[ƒ‹‚Å‘—‚è•t‚¯‚Ä‚«‚½ TeX ƒ\[ƒX‚ðƒ^ƒCƒvƒZƒbƒg‚µ‚½‚çA‚ ‚È‚½‚ÌƒfƒBƒŒƒNƒgƒŠ‚É‚ ‚Á‚½ƒtƒ@ƒCƒ‹‚ªÁ‚³‚ê‚Ä‚µ‚Ü‚Á‚Ä‚¢‚é„Ÿ„Ÿ‚Æ‚¢‚Á‚½‚±‚Æ‚àA‚È‚¢‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
+</p>
 
+<!-- 
+<p>
+‚»‚ÌŠëŒ¯«‚ÍŒy”÷‚È‚à‚Ì‚¾„Ÿ„Ÿ‚ÆŽ„‚ÍŽv‚¢‚Ü‚·BŠQ‚ðˆ×‚·ƒ\[ƒXƒtƒ@ƒCƒ‹‚ÍˆÓ}“I‚Éì¬‚µ‚È‚¯‚ê‚Î‚È‚ç‚È‚¢‚Å‚µ‚å‚¤‚ªATeX ƒ\[ƒX‚ð’Ê‚¶‚ÄuƒEƒBƒ‹ƒXv‚ð‘—‚è•t‚¯‚é‚Æ‚¢‚¤‚Ì‚ÍA‚¢‚³‚³‚©“ï‹V‚È‚±‚Æ‚ÉŽv‚í‚ê‚Ü‚·B‚»‚ê‚Í‚Æ‚à‚©‚­‚Æ‚µ‚ÄAƒ†[ƒU‚ªŽ©g‚ðŽç‚é‚½‚ß‚Ì•û–@‚ª‚Q‚Â‚ ‚è‚Ü‚·BÅ‰‚É‚µ‚ÄÅ‚àŠÈ’P‚È•û–@‚ÍAŠÂ‹«Ý’è“à‚Ì‚Q‰ÓŠ‚É‚ ‚éu--shell-escapev‚Æ‚¢‚¤•¶Žš—ñ‚ðíœ‚µ‚Ä‚µ‚Ü‚¢AƒOƒ‰ƒtƒBƒbƒNEƒtƒ@ƒCƒ‹‚Ì•ÏŠ·‚ð‚·‚×‚ÄŽè“®‚Ås‚È‚¤‚±‚Æ‚Å‚·B
+</p>
+ -->
 
-		<ul>
-			
-		</ul>
-	</div>		
+<p>
+‚»‚ÌŠëŒ¯«‚ÍŒy”÷‚È‚à‚Ì‚¾„Ÿ„Ÿ‚ÆŽ„‚ÍŽv‚¢‚Ü‚·BŠQ‚ðˆ×‚·ƒ\[ƒXƒtƒ@ƒCƒ‹‚ÍˆÓ}“I‚Éì¬‚µ‚È‚¯‚ê‚Î‚È‚ç‚È‚¢‚Å‚µ‚å‚¤‚ªATeX ƒ\[ƒX‚ð’Ê‚¶‚ÄuƒEƒBƒ‹ƒXv‚ð‘—‚è•t‚¯‚é‚Æ‚¢‚¤‚Ì‚ÍA‚¢‚³‚³‚©“ï‹V‚È‚±‚Æ‚ÉŽv‚í‚ê‚Ü‚·B‚»‚ê‚Í‚Æ‚à‚©‚­Aƒ†[ƒU‚ªŽ©g‚ðŽç‚é‚½‚ß‚Ì•û–@‚ª‚Q‚Â‚ ‚è‚Ü‚·BÅ‰‚É‚µ‚ÄÅ‚àŠÈ’P‚È•û–@‚ÍAŠÂ‹«Ý’è“à‚Ì‚Q‰ÓŠ‚É‚ ‚éu--shell-escapev‚Æ‚¢‚¤•¶Žš—ñ‚ðíœ‚µ‚Ä‚µ‚Ü‚¢AƒOƒ‰ƒtƒBƒbƒNEƒtƒ@ƒCƒ‹‚Ì•ÏŠ·‚ð‚·‚×‚ÄŽè“®‚Ås‚È‚¤‚±‚Æ‚Å‚·B
+</p>
+
+<p>
+TeXShop ‚Å‚ÍA‚»‚ê‚Æ‚ÍˆÙ‚È‚é•ÛŒì‚à’ñ‹Ÿ‚µ‚Ä‚¢‚Ü‚·BŠÂ‹«Ý’èƒpƒlƒ‹‚Ìu“à•”Ý’èvƒ^ƒu‚É‚ ‚éuShell Escape ‚ðŒxv‚ª‚»‚ê‚Å‚·B‚±‚Ì€–Ú‚Í“–‰‚ÍƒIƒt‚É‚È‚Á‚Ä‚¢‚Ü‚·B‚±‚ê‚ðƒIƒ“‚É‚µushell-escapev‚ª—LŒø‚É‚È‚Á‚Ä‚¢‚ê‚ÎA‚ ‚éƒtƒ@ƒCƒ‹‚ð TeXShop ‚Å‰‚ß‚Äƒ^ƒCƒvƒZƒbƒg‚·‚é‚Æ‚«‚ÉA‚»‚Ì“Á’è‚Ìƒtƒ@ƒCƒ‹‚É‘Î‚µ‚Ä shell-escape ‚ðƒIƒt‚É‚·‚é‚±‚Æ‚ª‚Å‚«‚éŒxƒ_ƒCƒAƒƒO‚ªŒ»‚í‚ê‚Ü‚·B‚±‚Ìƒ_ƒCƒAƒƒO‚ÍATeXShop ‚Ì‹N“®’†‚É‚ÍA‚»‚Ì“Á’è‚Ìƒtƒ@ƒCƒ‹‚É‘Î‚µ‚Ä‚­‚è‚©‚¦‚µ•\Ž¦‚³‚ê‚é‚±‚Æ‚Í‚ ‚è‚Ü‚¹‚ñB‚È‚Ì‚ÅAƒ†[ƒUŽ©g‚Ìƒtƒ@ƒCƒ‹‚Íushell-escapev‚ðŽg‚Á‚Äƒ^ƒCƒvƒZƒbƒg‚Å‚«Aƒ[ƒ‹‚ÅŽó‚¯Žæ‚Á‚½ƒtƒ@ƒCƒ‹‚Íushell-escapev‚ð—p‚¢‚¸‚Éƒ^ƒCƒvƒZƒbƒg‚Å‚«‚Ü‚·B
+</p>
+
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
-<div id="header_chapter">Advanced Help</div><div id="header_title">Shell Escape Protection</div>
+<div id="header_chapter">ã‹‰Œü‚¯‚Ìƒwƒ‹ƒv</div>
+<div id="header_title">Shell-Escape ‚Ì•ÛŒì</div>
 
-	<div id="menu_border">
+		<div id="menu_border">
 		<ul>
-			<LI><a href="advanced_personaltetex.htm">Adding Personal Sty and Macro Files to TeX Live</a>
-			<LI><a href="advanced_addengine.htm">Additional Typesetting Engines</a>
-			<li><a href="advanced_encoding.htm">Encodings</a>
-			<li><a href="advanced_xetex.htm">XeTeX and XeLaTeX</a>
-			<LI><a href="advanced_removeaux.htm">Removing AUX Files</a>
-			<li><a href="advanced_externaleditor.htm">Using an External Editor</a>
-			<li><a href="advanced_pdfcopypaste.htm">Copy-Paste and Drag-Drop from the Preview Window </a>
-			<li><a href="advanced_root.htm">Setting a Project Root File</a>
-			<li><a href="advanced_pdfsync.htm">Synchronizing Source and Preview</a>
-			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_personaltetex.htm">ƒXƒ^ƒCƒ‹‚Æƒ}ƒNƒ‚ð teTeX ‚É’Ç‰Á‚·‚é</a>
+			<li><a href="advanced_addengine.htm">’Ç‰Á‚Ìƒ^ƒCƒvƒZƒbƒgƒGƒ“ƒWƒ“</a>
+			<li><a href="advanced_removeaux.htm">ì‹Æƒtƒ@ƒCƒ‹‚ðíœ‚·‚é</a>
+			<li><a href="advanced_externaleditor.htm">ŠO•”ƒGƒfƒBƒ^‚ðŽg—p‚·‚é</a>
+			<li><a href="advanced_pdfcopypaste.htm">ƒvƒŒƒrƒ…[ƒEƒCƒ“ƒhƒE‚©‚ç‚ÌƒRƒs[•ƒy[ƒXƒg‚¨‚æ‚Ñƒhƒ‰ƒbƒO•ƒhƒƒbƒv </a>
+			<li><a href="advanced_root.htm">ƒvƒƒWƒFƒNƒg‚Ìƒ‹[ƒgƒtƒ@ƒCƒ‹‚ðÝ’è‚·‚é</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicodeiƒ†ƒjƒR[ƒhj</a>
 			<li><a href="advanced_bibtex.htm">BibTeX</a>
 			<li><a href="advanced_makeindex.htm">MakeIndex</a>
-			<li><a href="advanced_formats.htm">Making and Using New TeX Formats</a>
-			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
+			<li><a href="advanced_formats.htm">V‹KƒtƒH[ƒ}ƒbƒg‚Ìì¬‚Æ—˜—p</a>
+			<li><a href="advanced_otherfiles.htm">‚»‚Ì‘¼‚Ìƒtƒ@ƒCƒ‹‚ð TeXShop ‚ÅŠJ‚­</a>
 			<li><a href="advanced_mathematica.htm">Mathematica</a>
-			<li><a href="advanced_localization.htm">Localizations</a>
-			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
-			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
-			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			
-			<li><a href="advanced_moretetex.htm">More About TeX Live</a>
-			<li><a href="advanced_fink.htm">Coexisting with Fink</a>
-			<li><a href="advanced_otherdistributions.htm">Coexisting with Other TeX Distributions</a>
-			<li><a href="advanced_context.htm">ConTeXt and MetaPost</a>
-			<li><a href="advanced_plist.htm">Plist Files</a>
-			<li><a href="advanced_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
-		</UL>
+			<li><a href="advanced_localization.htm">Še‘Œê”Å‚Ö‚Ìƒ[ƒJƒ‰ƒCƒY</a>
+			<li><a href="advanced_syntaxcolor.htm">ƒ\[ƒX‚ÌƒJƒ‰[•\Ž¦</a>
+			<li><a href="advanced_shellescape.htm">Shell-Escape ‚Ì•ÛŒì</a>			
+			<li><a href="advanced_coloredtext.htm">TeX ‚É‚¨‚¯‚é•¶Žš‚ÌFŽw’è</a>			
+			<li><a href="advanced_moretetex.htm">teTeX ‚É‚Â‚¢‚Ä‚³‚ç‚É</a>
+			<li><a href="advanced_fink.htm">Fink ‚Æ‚Ì‹¤‘¶</a>
+			<li><a href="advanced_otherdistributions.htm">‘¼‚Ì TeX ƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚Æ‚Ì‹¤‘¶</a>
+			<li><a href="advanced_context.htm">ConTeXt ‚Æ MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist ƒtƒ@ƒCƒ‹</a>
+			<li><a href="advanced_menushortcuts.htm">ƒƒjƒ…[€–Ú‚ÌƒVƒ‡[ƒgƒJƒbƒgƒL[‚ðÄ’è‹`‚·‚é</a>
+		</ul>
 	</div>
-	</BODY>
+	</body>
 
 </HTML>

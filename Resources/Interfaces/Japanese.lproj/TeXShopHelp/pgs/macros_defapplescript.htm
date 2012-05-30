@@ -1,93 +1,101 @@
 <HTML>
 
 <HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
-		<TITLE>Defining AppleScript Macros</TITLE>
-		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
-		<META NAME="description" CONTENT="applescript">
-		<link href="../sty/screen.css" rel="stylesheet" media="all">
-	</HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>AppleScript ƒ}ƒNƒ‚ð’è‹`‚·‚é</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="AppleScriptƒRƒ}ƒ“ƒh‚ð‘‚­•û–@‚É‚Â‚¢‚Ä">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
 
 <BODY>
-		<div id="content_border">
-		<P>AppleScript syntax is a subject all its own. To learn more about it, read one of several books on the subject. If you installed the developer tools which come with Mac OS X, there is an online book about AppleScript in the Developer folder.</P>
+<div id="content_border">
 
- <P>When TeXShop interpretes an applescript macro, it first replaces any string #FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#, #LOGPATH#, #AUXPATH# with the complete path name of the source tex file, pdf file, dvi file, ps file, log file, or aux file respectively. Similarly, the strings #INDPATH#, #BBLPATH#, and #HTMLPATH# are replaced with the complete path name of the ind file, bbl file, or html file. </P>
-
-<P>In addition, any string #NAMEPATH# 
-is replaced with the complete path name of the source tex file minus its extension,
-and any string #DOCUMENTNAME# is replaced with  the display name of the current document.
-This last replacement is somewhat subtle; it gives the title of the document as shown at the top of the source window.  If a document was saved with the "hide extension" box checked, #DOCUMENTNAME# will contain only the document name. But if the document was saved without checking "hide extension", #DOCUMENTNAME# will contain the document name and extension. This information can be used to locate the calling document for Applescript code as follows:
-
-<div id="source">
-tell document #DOCUMENTNAME# of application "TeXShop"<br>
-latex<br>
-end tell<br>
-</div>
-</P>
-
-		<P>There are at least two ways to write Applescript commands. Applescript can run shell commands, so after preliminary processing with an applescript, a shell command can be called to do the actual work. TeXShop comes with several examples of this technique; some of these examples will be explained in a later help section. Applescript commands can also call built-in TeXShop commands and thus work directly. A later section will give examples of
-this technique.</P>
-
-<P>
-TeXShop understands the following commands:</p>
-
-<p><div id="source">
- typeset<br>
- latex<br>
- tex<br>
- context<br>
- bibtex<br>
- makeindex<br>
- metapost<br>
- typesetinteractive<br>
- latexinteractive<br>
- texinteractive<br>
- contextinteractive<br>
- bibtexinteractive<br>
- makeindexinteractive<br>
- metapostinteractive<br>
- taskdone<br>
- refreshpdf<br>
- refreshtext<br>
- goto line<br>
-</div></p>
 <p>
-The first seven commands call TeXShop typesetting routines. These commands typeset continuously without
-stopping at errors. The next seven commands also call TeXShop typesetting commands, but this time if there is an error, the user is allowed to interact with the console. When a typesetting command is called, control returns to the applescript immediately without waiting until the operation is complete. The "taskdone" call returns NO if typesetting is still running, and YES when it is done. The calls "refreshpdf" and "refreshtext" cause pdf and text documents to display the latest version of their files on the screen. The "goto line" command tells the editor
-to select a given line; for example:
+AppleScript ‚Ì•¶–@‚Í‚»‚êŽ©‘Ì‚Å‚Ð‚Æ‚Â‚Ìƒe[ƒ}‚Å‚·BAppleScript ‚É‚Â‚¢‚Ä‚³‚ç‚ÉŠw‚Ô‚É‚ÍAŠÖ˜A–{‚ð‚Ç‚ê‚©‚Pû“Ç‚ñ‚Å‚Ý‚Ä‚­‚¾‚³‚¢BMac OS X ‚É•t‘®‚·‚éƒfƒxƒƒbƒp[Eƒc[ƒ‹ƒY‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚¢‚é‚Ì‚Å‚ ‚ê‚ÎAAppleScript ‚É‚Â‚¢‚Ä‚ÌƒIƒ“ƒ‰ƒCƒ“–{‚ª Developer ƒtƒHƒ‹ƒ_‚Ì’†‚É“ü‚Á‚Ä‚¢‚Ü‚·B
 </p>
-<p><div id="source">
-tell document #DOCUMENTNAME# of application "TeXShop"
- goto line 37
- end tell
-</div
- </P>
+
+<p>
+TeXShop ‚ª AppleScript ƒ}ƒNƒ‚ðŽÀs‚·‚é‚Æ‚«‚É‚ÍAÅ‰‚É #FILEPATH# E #PDFPATH# E #DVIPATH# E #PSPATH# E #LOGPATH# E #AUXPATH# ‚Æ‚¢‚Á‚½•¶Žš—ñ‚ð‚·‚×‚ÄATeX ƒ\[ƒXƒtƒ@ƒCƒ‹Apdf ƒtƒ@ƒCƒ‹Advi ƒtƒ@ƒCƒ‹Aps ƒtƒ@ƒCƒ‹Alog ƒtƒ@ƒCƒ‹A‚ ‚é‚¢‚Í aux ƒtƒ@ƒCƒ‹‚»‚ê‚¼‚ê‚ÌŠ®‘SƒpƒX–¼‚Å’u‚«Š·‚¦‚Ü‚·B“¯—l‚É•¶Žš—ñ #INDPATH# E #BBLPATH# E #HTMLPATH# ‚ÍAind ƒtƒ@ƒCƒ‹Abbl ƒtƒ@ƒCƒ‹Ahtml ƒtƒ@ƒCƒ‹‚ÌŠ®‘SƒpƒX–¼‚É’u‚«Š·‚¦‚ç‚ê‚Ü‚·B
+</p>
+
+<p>
+‰Á‚¦‚ÄA•¶Žš—ñ #NAMEPATH# ‚Í‚·‚×‚ÄATeX ƒ\[ƒXƒtƒ@ƒCƒ‹‚ÌŠg’£Žq‚ðÈ‚¢‚½Š®‘SƒpƒX–¼‚Å’u‚«Š·‚¦‚ç‚ê‚Ü‚·‚µA•¶Žš—ñ #DOCUMENTNAME# ‚Í‚·‚×‚ÄAŒ»Ý‚Ì•¶‘‚Ì•\Ž¦–¼‚Å’u‚«Š·‚¦‚ç‚ê‚Ü‚·B‚±‚ÌÅŒã‚Ì’u‚«Š·‚¦‚ÍA‚¢‚­‚Ô‚ñ”÷–­‚È‚à‚Ì‚Å‚· G ƒ\[ƒXƒEƒCƒ“ƒhƒE‚Ìã•”‚ÉŽ¦‚³‚ê‚Ä‚¢‚é•¶‘‚Ìƒ^ƒCƒgƒ‹‚ªŽg‚í‚ê‚é‚Ì‚Å‚·B‚à‚µuŠg’£Žq‚ð‰B‚·v‚Éƒ`ƒFƒbƒN‚ð“ü‚ê‚Ä•¶‘‚ð•Û‘¶‚µ‚Ä‚¢‚½ê‡‚É‚ÍA#DOCUMENTNAME# ‚Í•¶‘–¼‚Ì‚Ý‚É‚È‚è‚Ü‚·B‚¯‚ê‚Ç‚àuŠg’£Žq‚ð‰B‚·v‚Éƒ`ƒFƒbƒN‚ð“ü‚ê‚¸‚É•¶‘‚ð•Û‘¶‚µ‚Ä‚¢‚ê‚ÎA#DOCUMENTNAME# ‚É‚Í•¶‘–¼{Šg’£Žq‚ª“ü‚è‚Ü‚·B‚±‚Ì‚±‚Æ‚ÍAŽŸ‚Ì‚æ‚¤‚É AppleScript ƒR[ƒh‚ÅŒÄ‚Ño‚·•¶‘‚ðŒ©‚Â‚¯‚é‚Ì‚ÉŽg‚¦‚Ü‚·F
+</p>
+
+<tt>
+	<dl>
+		<dd>tell document #DOCUMENTNAME# of application "TeXShop"
+		<dd>latex
+		<dd>end tell
+	</dl>
+</tt>
+
+<p>
+AppleScript ƒRƒ}ƒ“ƒh‚ð‘‚­•û–@‚ÍA­‚È‚­‚Æ‚à‚Q‚Â‚ ‚è‚Ü‚·BAppleScript ‚ÍƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ðŽÀs‚Å‚«‚é‚Ì‚ÅAAppleScript ‚Å‘Oˆ—‚ð‚µ‚½ŒãAƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ðŒÄ‚Ño‚µ‚ÄŽÀì‹Æ‚ð‚³‚¹‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·BTeXShop ‚É‚Í‚±‚ÌŽè–@‚É‚Â‚¢‚Ä‚Ì—á‚ª‚¢‚­‚Â‚©•t‘®‚µ‚Ä‚¢‚Ü‚· G ‚±‚¤‚µ‚½—á‚Ì’†‚É‚ÍAƒwƒ‹ƒv‚ÌŒãß‚Åà–¾‚·‚é‚à‚Ì‚à‚ ‚è‚Ü‚·BAppleScript ƒRƒ}ƒ“ƒh‚ÍATeXShop ‚É‘g‚Ýž‚Ü‚ê‚Ä‚¢‚éƒRƒ}ƒ“ƒh‚ðŒÄ‚Ño‚µ‚Ä’¼Úì“®‚³‚¹‚é‚±‚Æ‚à‚Å‚«‚Ü‚·BŒãß‚Å‚Í‚±‚¿‚ç‚ÌŽè–@‚Ì—á‚É‚Â‚¢‚ÄG‚ê‚Ü‚·B
+</p>
+
+<p>
+TeXShop ‚ÍˆÈ‰º‚ÌƒRƒ}ƒ“ƒh‚ð—‰ð‚µ‚Ü‚·F
+</p>
+
+<tt>
+	<ol>
+		<li>typeset
+		<li>latex
+		<li>tex
+		<li>context
+		<li>bibtex
+		<li>makeindex
+		<li>metapost
+		<li>typesetinteractive
+		<li>latexinteractive
+		<li>texinteractive
+		<li>contextinteractive
+		<li>bibtexinteractive
+		<li>makeindexinteractive
+		<li>metapostinteractive
+		<li>taskdone
+		<li>refreshpdf
+		<li>refreshtext
+		<li>goto line
+	</ol>
+</tt>
+
+<p>
+Å‰‚Ì‚V‚Â‚ÌƒRƒ}ƒ“ƒh‚Í TeXShop ‚Ìƒ^ƒCƒvƒZƒbƒgEƒ‹[ƒ`ƒ“‚ðŒÄ‚Ño‚µ‚Ü‚·B‚±‚ê‚ç‚ÌƒRƒ}ƒ“ƒh‚ÍƒGƒ‰[‰ÓŠ‚ÅŽ~‚Ü‚é‚±‚Æ‚È‚µ‚Éƒ^ƒCƒvƒZƒbƒg‚ðŒp‘±‚µ‚Ü‚·BŽŸ‚Ì‚V‚Â‚ÌƒRƒ}ƒ“ƒh‚à‚Ü‚½ TeXShop ‚Ìƒ^ƒCƒvƒZƒbƒgƒRƒ}ƒ“ƒh‚Å‚·‚ªA‚±‚¿‚ç‚Í‚à‚µƒGƒ‰[‚ª‚ ‚ê‚ÎAƒRƒ“ƒ\[ƒ‹‚Å‘Î˜b“I‚Éì‹Æ‚ðs‚È‚¦‚Ü‚·Bƒ^ƒCƒvƒZƒbƒgƒRƒ}ƒ“ƒh‚ªŒÄ‚Ño‚³‚ê‚é‚ÆAì‹Æ‚ªŠ®—¹‚·‚é‚Ì‚ð‘Ò‚½‚¸‚ÉAƒRƒ“ƒgƒ[ƒ‹‚Í‚·‚®‚É AppleScript ‚É–ß‚è‚Ü‚·Butaskdonev‚ÍAƒ^ƒCƒvƒZƒbƒg’†‚Í NO ‚ð•Ô‚µAŠ®—¹‚·‚é‚Æ YES ‚ð•Ô‚µ‚Ü‚·Burefreshpdfv‚Æurefreshtextv‚ÍApdf ‚¨‚æ‚ÑƒeƒLƒXƒg•¶‘‚ðÅV‚Ìó‘Ô‚Å‰æ–Ê‚É•\Ž¦‚µ‚Ü‚·Bugoto linevƒRƒ}ƒ“ƒh‚ÍAŽw’è‚Ìs‚ð‘I‘ð‚·‚é‚æ‚¤ƒGƒfƒBƒ^‚É–½‚¶‚Ü‚· G ‚½‚Æ‚¦‚ÎF
+</p>
+
+<tt>
+	<dl>
+		<dd>tell document #DOCUMENTNAME# of application "TeXShop"
+		<dd>goto line 37
+		<dd>end tell
+	</dl>
+</tt>
+
 </div>
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
-<div id="header_chapter">Macros Help</div>
-<div id="header_title">Defining AppleScript Macros</div>
+<div id="header_chapter">ƒ}ƒNƒEƒwƒ‹ƒv</div>
+<div id="header_title">AppleScript ƒ}ƒNƒ‚ð’è‹`‚·‚é</div>
 
-	<div id="menu_border">
-		<UL>
-			<LI><a href="macros_preliminaries.htm">Preliminaries</a></li>
-			<LI><a href="macros_default.htm">Understanding Default Macros</a></li>
-			<LI><a href="macros_rearrange.htm">Rearranging the Macro Menu</a></li>
-			<LI><a href="macros_define.htm">Defining New Macros</a></li>
-			<li><a href="macros_applescript.htm">AppleScript Macros</a></li>
-			<LI><a href="macros_includedscripts.htm">Default AppleScript Macros</a></li>
-			<li><a href="macros_defapplescript.htm">Defining AppleScript Macros</a></li>
-			<li><a href="macros_dialogs.htm">Creating Dialogs</a></li>
-			<li><a href="macros_writingcompletescripts.htm">Writing Scripts with TeXShop Typesetting Commands</a></li>
-			<li><a href="macros_writingcommandscripts.htm">Writing Scripts with Shell Commands</a></li>
-		</UL>
-	</div>
+<div id="menu_border">
 
+	<UL>
+		<li><a href="macros_preliminaries.htm">‚Ü‚¦‚ª‚«</a> 
+		<li><a href="macros_default.htm">ƒfƒtƒHƒ‹ƒg‚Ìƒ}ƒNƒ‚ð—‰ð‚·‚é</a>
+		<li><a href="macros_rearrange.htm">ƒ}ƒNƒ‚Ì€–Ú–¼‚ð•À‚×‘Ö‚¦‚é</a>
+		<li><a href="macros_define.htm">V‚µ‚¢ƒ}ƒNƒ‚ð’è‹`‚·‚é</a>
+		<li><a href="macros_applescript.htm">AppleScript ƒ}ƒNƒ</a>
 
-
-
-
-	</BODY>
+		<li><a href="macros_includedscripts.htm">ƒfƒtƒHƒ‹ƒg‚Ì AppleScript ƒ}ƒNƒ</a>
+		<li><a href="macros_defapplescript.htm">AppleScript ƒ}ƒNƒ‚ð’è‹`‚·‚é</a>
+		<li><a href="macros_dialogs.htm">ƒ_ƒCƒAƒƒO‚ðì‚é</a>
+		<li><a href="macros_writingcompletescripts.htm">TeXShop ‚Ìƒ^ƒCƒvƒZƒbƒgƒRƒ}ƒ“ƒh‚ÅƒXƒNƒŠƒvƒg‚ð‘‚­</a>
+		<li><a href="macros_writingcommandscripts.htm">ƒVƒFƒ‹ƒRƒ}ƒ“ƒh‚ÅƒXƒNƒŠƒvƒg‚ð‘‚­</a>
+	</UL>
+</div>
+</BODY>
 
 </HTML>

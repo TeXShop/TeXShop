@@ -146,7 +146,6 @@
 	makeError = error;
 	
 	
-/*	
 	
 
 	if (!_externalEditor)
@@ -157,8 +156,8 @@
 	} else {
 		[self saveDocumentWithDelegate: self didSaveSelector: @selector(saveFinished:didSave:contextInfo:) contextInfo: nil];
 	}
-*/
-	
+
+/*
 	// patch by Ulrich Bauer; remove commented lines above and replace with
     
     if (!_externalEditor) {
@@ -182,6 +181,7 @@
 	else {
 		[self saveFinished: self didSave:YES contextInfo:nil];
 	}
+ */
 	
 	
 	
@@ -224,7 +224,6 @@
 	[self fixMacroMenu];
 	// end addition
 	
-/*
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -236,8 +235,8 @@
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
 		[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 	}
- */
-	
+ 
+/*
 	// bug fix by Ulrich Bauer; remove above lines and add
     
 	if (!_externalEditor) {
@@ -262,6 +261,7 @@
 	} else {
 		[self saveFinished: self didSave:YES contextInfo:nil];
 	}
+*/
 
 }
 

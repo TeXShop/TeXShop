@@ -33,6 +33,7 @@
 #import <OgreKit/OgreKit.h>
 // Adam Maxwell addition
 #import <unistd.h>
+#import "TSLayoutManager.h" // added by Terada
 
 @protocol BDSKCompletionProtocol <NSObject>
 - (NSArray *)completionsForString:(NSString *)searchString;
@@ -47,7 +48,100 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // end addition
 
 @implementation TSTextView
+// added by Terada (- (void)awakeFromNib)
+- (void)awakeFromNib
+{
+	TSLayoutManager *layoutManager = [[TSLayoutManager alloc] init];
+	[[self textContainer] replaceLayoutManager:layoutManager];
+	
+	[self setSmartInsertDeleteEnabled:[SUD boolForKey:SmartInsertDeleteKey]];
+	
+	//10.5
+	if ([super respondsToSelector:@selector(setAutomaticQuoteSubstitutionEnabled:)])
+		[self setAutomaticQuoteSubstitutionEnabled: [SUD boolForKey:AutomaticQuoteSubstitutionKey]];
+	
+	//10.5
+	if ([super respondsToSelector:@selector(setAutomaticLinkDetectionEnabled:)])
+		[self setAutomaticLinkDetectionEnabled: [SUD boolForKey:AutomaticLinkDetectionKey]];
+	
+	//10.6
+	if ([super respondsToSelector:@selector(setAutomaticDataDetectionEnabled:)])
+		[self setAutomaticDataDetectionEnabled: [SUD boolForKey:AutomaticDataDetectionKey]];
 
+	//10.6
+	if ([super respondsToSelector:@selector(setAutomaticTextReplacementEnabled:)])
+		[self setAutomaticTextReplacementEnabled: [SUD boolForKey:AutomaticTextReplacementKey]];
+	
+	//10.6
+	if ([super respondsToSelector:@selector(setAutomaticDashSubstitutionEnabled:)])
+		[self setAutomaticDashSubstitutionEnabled: [SUD boolForKey:AutomaticDashSubstitutionKey]];
+	
+}
+
+- (void)toggleSmartInsertDelete:(id)sender
+{
+	BOOL value;
+	
+	value = [SUD boolForKey:SmartInsertDeleteKey];
+	[SUD setBool: (!value) forKey:SmartInsertDeleteKey];
+	[super toggleSmartInsertDelete:sender];
+}
+
+- (void)toggleAutomaticQuoteSubstitution:(id)sender // at least 10.5
+{
+	BOOL value;
+	
+	if ([super respondsToSelector:@selector(isAutomaticQuoteSubstitutionEnabled)]) {
+		value = [SUD boolForKey:AutomaticQuoteSubstitutionKey];
+		[SUD setBool: (!value) forKey:AutomaticQuoteSubstitutionKey];
+		[super toggleAutomaticQuoteSubstitution:sender];
+		}
+}
+
+- (void)toggleAutomaticLinkDetection:(id)sender // at least 10.5
+{
+	BOOL value;
+	
+	if ([super respondsToSelector:@selector(isAutomaticLinkDetectionEnabled)]) {
+		value = [SUD boolForKey:AutomaticLinkDetectionKey];
+		[SUD setBool: (!value) forKey:AutomaticLinkDetectionKey];
+		[super toggleAutomaticLinkDetection:sender];
+		}
+}
+
+- (void)toggleAutomaticDataDetection:(id)sender // at least 10.6
+{
+	BOOL value;
+	
+	if ([super respondsToSelector:@selector(isAutomaticDataDetectionEnabled)]) {
+		value = [SUD boolForKey:AutomaticDataDetectionKey];
+		[SUD setBool: (!value) forKey:AutomaticDataDetectionKey];
+		[super toggleAutomaticDataDetection:sender];
+		}
+}
+
+- (void)toggleAutomaticDashSubstitution:(id)sender // at least 10.6
+{
+	BOOL value;
+	
+	if ([super respondsToSelector:@selector(isAutomaticDashSubstitutionEnabled)]) {
+		value = [SUD boolForKey:AutomaticDashSubstitutionKey];
+		[SUD setBool: (!value) forKey:AutomaticDashSubstitutionKey];
+		[super toggleAutomaticDashSubstitution:sender];
+		}
+}
+
+- (void)toggleAutomaticTextReplacement:(id)sender // at least 10.6
+{
+	BOOL value;
+	
+	if ([super respondsToSelector:@selector(isAutomaticTextReplacementEnabled)]) {
+		value = [SUD boolForKey:AutomaticTextReplacementKey];
+		[SUD setBool: (!value) forKey:AutomaticTextReplacementKey];
+		[super toggleAutomaticTextReplacement:sender];
+		}
+}
+ 
 #pragma mark =====pdfSync=====
 - (void)doSync:(NSEvent *)theEvent
 {
@@ -193,7 +287,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 // zenitani 1.33 begin
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
-
+	[_window makeFirstResponder:self]; // added by Terada (required in the case of split window)
 	NSPasteboard *pb = [ sender draggingPasteboard ];
 	NSString *type = [ pb availableTypeFromArray:
 		[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
@@ -418,6 +512,49 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// Extend word selection to cover an initial backslash (TeX command)
 	if (granularity == NSSelectByWord)
 	{
+		
+		// added by Terada (from this line)
+        BOOL flag;
+        unichar c;
+        
+        
+        if(replacementRange.location < [textString length]){
+            c = [textString characterAtIndex:replacementRange.location];
+            if((c != '{') && (c != '(') && (c != '[') && (c != '<') ){
+                do {
+                    if (replacementRange.location >= 1){
+                        c = [textString characterAtIndex: replacementRange.location-1];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.location--;
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
+                
+                do {
+                    if (replacementRange.location + replacementRange.length  < [textString length]){
+                        c = [textString characterAtIndex: replacementRange.location + replacementRange.length];
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                            replacementRange.length++;
+                            flag = YES;
+                        }else{
+                            flag = NO;
+                        }
+                    }else{
+                        flag = NO;
+                    }
+                } while (flag);
+            }
+        }
+		
+        // added by Terada (until this line)
+		
+		
 		if (replacementRange.location >= 1 && [textString characterAtIndex: replacementRange.location-1] == BACKSLASH)
 		{
 			replacementRange.location--;
@@ -441,13 +578,16 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// If the users double clicks an opening or closing parenthesis / bracket / brace,
 	// then the following code will extend the selection to the matching opposite
 	// parenthesis / bracket / brace.
-	if ((uchar == '}') || (uchar == ')') || (uchar == ']')) {
+	if ((uchar == '}') || (uchar == ')') || (uchar == ']') || (uchar == '>')) { // modified by Terada
+
 		j = i;
 		rightpar = uchar;
 		if (rightpar == '}')
 			leftpar = '{';
 		else if (rightpar == ')')
 			leftpar = '(';
+		else if (rightpar == '>') // added by Terada
+			leftpar = '<'; // added by Terada
 		else
 			leftpar = '[';
 		nestingLevel = 1;
@@ -467,13 +607,16 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			}
 		}
 	}
-	else if ((uchar == '{') || (uchar == '(') || (uchar == '[')) {
+	else if ((uchar == '{') || (uchar == '(') || (uchar == '[') ||  (uchar == '<') ) { // modified by Terada
+
 		j = i;
 		leftpar = uchar;
 		if (leftpar == '{')
 			rightpar = '}';
 		else if (leftpar == '(')
 			rightpar = ')';
+		else if (leftpar == '<') // added by Terada
+			rightpar = '>'; // added by Terada
 		else
 			rightpar = ']';
 		nestingLevel = 1;
@@ -512,8 +655,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			if ( completionString &&
 				(!g_shouldFilter || [aString characterAtIndex:0] != YEN)) // avoid completing yen
 			{
+				[_document setAutoCompleting:YES]; // added by Terada
 				[_document insertSpecialNonStandard:completionString
 						undoKey: NSLocalizedString(@"Autocompletion", @"Autocompletion")];
+				[_document setAutoCompleting:NO]; // added by Terada
 				return;
 			}
 		}
@@ -598,6 +743,14 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	[ self registerForDraggedTypes:
 			[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil] ];
 	_document = nil;
+	wasCompleted = NO; // was completed on last keyDown
+	latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	originalString = nil; // string before completion, starts at replaceLocation
+	currentString = nil; // completed string
+	replaceLocation = NSNotFound; // completion started here
+	completionListLocation = 0; // location to start search in the list
+	textLocation = NSNotFound; // location of insertion point
+	
 	return self;
 }
 
@@ -1082,7 +1235,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 // matches with the string will be inserted.  further escape(g_commandCompletionChar)
 // will cycle through the candidates.  it cycles backward with shift key.
 // special treatments: in the candiate,
-//     #RET# will be replaced by linefeed (new line)
+//     #RET# will be replaced by linefeed (new line) **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
 //     #INS# will be removed and the insertion point will be placed there
 //     A second #INS# will be removed and text between the two will be selected (Change made by (HS))
 //     if there is ":=", the string after it (the first one) will be inserted
@@ -1104,22 +1257,24 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
 	// TODO: Convert all of these static stack variables to member variables.
 	
-	static BOOL wasCompleted = NO; // was completed on last keyDown
-	static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
-	static NSString *originalString = nil; // string before completion, starts at replaceLocation
-	static NSString *currentString = nil; // completed string
-	static unsigned replaceLocation = NSNotFound; // completion started here
-	static unsigned int completionListLocation = 0; // location to start search in the list
-	static unsigned textLocation = NSNotFound; // location of insertion point
+	// static BOOL wasCompleted = NO; // was completed on last keyDown
+	// static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
+	// static NSString *originalString = nil; // string before completion, starts at replaceLocation
+	// static NSString *currentString = nil; // completed string
+	// static unsigned replaceLocation = NSNotFound; // completion started here
+	// static unsigned int completionListLocation = 0; // location to start search in the list
+	// static unsigned textLocation = NSNotFound; // location of insertion point
 	BOOL foundCandidate;
 	NSString *textString, *foundString, *latexString = 0;
+	NSMutableString *indentString = [NSMutableString stringWithString:@""]; // Alvise Trevisan; preserve tabs code
 	NSMutableString *newString;
 	unsigned selectedLocation, currentLength, from, to;
 	NSRange foundRange, searchRange, spaceRange, insRange, replaceRange;
 	// Start Changed by (HS) - define ins2Range, selectlength
 	NSRange ins2Range;
 	unsigned selectlength = 0;
-	// End Changed by (HS) - define ins2Range, selectlength
+	NSMutableString *indentRETString = [NSMutableString stringWithString:@"\n"]; // **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
+	// End Changed by (HS) - define ins2Range, selectlength, 
 	NSCharacterSet *charSet;
 	unichar c;
 	
@@ -1152,7 +1307,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1163,6 +1318,18 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				latexSpecial = YES;
 				latexString = [textString substringWithRange:
 							NSMakeRange(foundRange.location, selectedLocation-foundRange.location)];
+				
+				// Alvise Trevisan; preserve tabs code (begin addition)
+				int indentSpace;
+				int indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
+				int n;
+				
+				for (n = 0; n < indentTab; ++ n)
+					[indentString appendString:@"\t"];
+				for (n = 0; n < indentSpace; ++ n)
+					[indentString appendString:@" "];
+				// Alvise Trevisan; preserve tabs code (end addition)
+				
 				if (wasCompleted)
 					[currentString retain]; // extend life time
 			}
@@ -1219,7 +1386,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -1285,8 +1452,19 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					}
 					newString = [NSMutableString stringWithString: foundString];
 					// replace #RET# by linefeed -- this could be tab -> \n
-					[newString replaceOccurrencesOfString: @"#RET#" withString: @"\n"
-								options: 0 range: NSMakeRange(0, [newString length])];
+					// **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
+					int indentSpace;
+					int indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
+					int n;
+					for (n = 0; n < indentTab; ++ n)
+					    [indentRETString appendString:@"\t"];
+					for (n = 0; n < indentSpace; ++ n)
+					    [indentRETString appendString:@" "];
+					[newString replaceOccurrencesOfString: @"#RET#" withString: indentRETString
+								      options: 0 range: NSMakeRange(0, [newString length])];
+					//[newString replaceOccurrencesOfString: @"#RET#" withString: @"\n"
+					//			  options: 0 range: NSMakeRange(0, [newString length])];
+					// **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
 					// search for #INS#
 					insRange = [newString rangeOfString:@"#INS#" options:0];
 					// Start Changed by (HS) - find second #INS#, remove if it's there and 
@@ -1314,14 +1492,18 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			if (!wasCompleted) {
 				originalString = [[NSString stringWithString: @""] retain];
 				replaceLocation = selectedLocation;
-				newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
-									g_texChar, latexString];
+				// newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
+				//					g_texChar, latexString];
+				newString = [NSMutableString stringWithFormat: @"\n%@%Cend%@\n",
+							 indentString, g_texChar, latexString]; // Alvise Trevisan; preserve tabs code (revision of previous lines)
 				insRange.location = 0;
 				completionListLocation = NSNotFound; // just to remember that it wasn't completed
 			} else {
 				// reuse the current string
-				newString = [NSMutableString stringWithFormat: @"%@\n%Cend%@\n",
-									currentString, g_texChar, latexString];
+				// newString = [NSMutableString stringWithFormat: @"%@\n%Cend%@\n",
+				//					currentString, g_texChar, latexString];
+				newString = [NSMutableString stringWithFormat: @"%@\n%@%Cend%@\n",
+							 currentString, indentString, g_texChar, latexString];  // Alvise Trevisan; preserve tabs code (revision of previous lines)
 				insRange.location = [currentString length];
 				[currentString release];
 			}
@@ -1426,7 +1608,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixxed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1492,7 +1674,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // -- fixed by (HS)
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {

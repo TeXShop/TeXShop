@@ -228,6 +228,34 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 					defaults write TeXShop CommandCompletionAlternateMarkShortcut NO
 			</dl>
 
+<p> Until version 2.38 of TeXShop, syntax coloring considered '\@' to be a single command which ended with the @ sign, so lines like
+<dl>
+<dd> \ifx\@@input\@undefined\let\@@input\input\fi 
+</dl>
+in style files would only be partly colored. This is fixed in version 2.38. In the unlikely event that you prefer the old method:
+<dl>
+<dd> defaults write TeXShop MakeatletterEnabled NO
+</dl>
+
+<p> Version 2.38 of TeXShop introduced new parenthesis matching code and the ability to display invisible characters. The new code employs three colors:
+a temporary color assigned to parenthesis pairs (magenta), a temporary color assigned to the background of the text between these parenthesis pairs (yellow), and the color of invisible characters (orange). The first of these colors can be changed in the Preference Panel. The other two colors are controlled
+by hidden preference items:
+<dl>
+<dd> defaults write TeXShop highlightContentRed 1.00
+<dd> defaults write TeXShop highlightContentGreen 1.00
+<dd> defaults write TeXShop highlightContentBlue 0.00
+</dl>
+<dl>
+<dd> defaults write TeXShop invisibleCharRed 1.00
+<dd> defaults write TeXShop invisibleCharGreen 0.50
+<dd> defaults write TeXShop invislbleCharBlue 0.00
+</dl>
+
+<p> Version 2.38 also marks matching parentheses with a yellow badge over the parenthesis which flashes briefly and then disappears. This change to increase visibility fulfills a long time request; it requires Snow Leopard or higher. To turn the badge off:
+<dl>
+<dd> defaults write TeXShop brieflyFlashYellowForMatch NO
+</dl>
+
 
 <p> There is a significant bug in Tiger, explained in the remaining paragraphs of this page. TeXShop has a workaround for the bug. The bug is fixed in Leopard and the workaround is ignored on that system. The bug is important, so users should upgrade to Leopard if possible.</p>
 
@@ -271,7 +299,7 @@ changed to "no line break" = 0, "line break after words" = 1, or "line break aft
 			<li><a href="configure_hidden.htm">Hidden Preference Items</a>
 			<li><a href="configure_plist.htm">.plist Files</a>
 			<li><a href="configure_panel.htm">Modifying the Latex Panel</a>
-			<li><a href="configure_autocompletion.htm">Modifying Auto Completion</a>
+			<li><a href="configure_autocompletion.htm">Modifying Key Bindings</a>
 			<li><a href="configure_menushortcuts.htm">Redefining Keyboard Menu Shortcuts</a>
 			
 			<li><a href="configure_macros.htm">Modifying the Macros Menu</a>

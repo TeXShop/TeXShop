@@ -11,7 +11,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 2.37}
+\title{About TeXShop 2.47}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -31,9 +31,154 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 
-In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version. This version explains changes for TeXShop 2.30 -- 2.37.
+In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version. 
+
+\section{Changes in 2.47}
+
+The ConTeXt engines have been renamed. This is the only change. I promised to make this change a year ago, but checking MacTeX-2012 shortly
+before release, I found that the promise was ignored. The old and new names are
+\begin{itemize}
+\item ConTeXt-MKIV.engine $\rightarrow$ ConTeXt (LuaTeX).engine
+\item ConTeXt-xetex.engine $\rightarrow$ ConTeXt (XeTeX).engine
+\item ConTeXt .engine $\rightarrow$ ConTeXt (pdfTeX).engine
+\end{itemize}
+The new names make explicit the TeX program which will run the ConTeXt macros for that engine.
+
+The new files were placed in  ~/Library/TeXShop/Engines/Inactive folder. To complete the change,
+remove the old files from ~/Library/TeXShop/Engines/Inactive/ConTeXt, and rename
+ ConTeXt-MKiv.engine to ConTeXt (LuaTeX).engine  in ~/Library/TeXShop/Engines.
+
+
+\section {Changes in 2.46}
+
+Version 2.45 introduced a bug;  users had to save the source file before typesetting. This version fixes that inadvertent bug and returns to the standard
+TeXShop behavior. 
+
+\section{Changes in 2.45 Related to Shell Escape}
+It is very important that users make the two changes listed first. You may want to read this entire section before making the changes, but here are instructions when you are ready:
+\begin{itemize}
+\item Go to TeXShop Preferences and select the Engine tab. Press both ``Default'' buttons in the pdfTeX section of the pane in the middle of the left side.
+\item Go to the Library folder in your home directory.   In this Library folder, there is a TeXShop folder containing several subfolders. Inside TeXShop/New/Templates is a template named
+``LatexTemplate.tex''. Move this to TeXShop/Templates, overwriting the old template with the same name. If you edited this old template, you'll need to merge
+your changes with the changes from the new version.
+\end{itemize}
+
+The key feature of TeXShop 2.45 (and TeXShop 3.10)  is removal of the ``--shell-escape'' flag for the pdftex and pdflatex engines. This flag gives \TeX\  permission to
+call other programs during typesetting. Unfortunately, the flag allows {\em any} shell program to be run, including for instance a short command which erases everything in your home folder. So when the flag is set, you could download a \TeX\ file from a malicious web site, typeset it, and lose all of your files.
+
+Pushing the two ``Default'' buttons in Preferences removes the flags.
+
+Why was this flag activated in previous versions of TeXShop? A primary reason is that many users have old documents containing eps illustrations. While pdfTeX
+and pdfLaTeX can accept illustrations in many formats, including pdf, jpg, and png, they cannot accept eps illustrations. But the {\em epstopdf} package can call  Ghostscript during typesetting and automatically convert eps illustrations to pdf illustrations. The flag gave pdfTeX permission to call Ghostscript.
+
+Two years ago, the TeX Live distribution made this easier and safer. A new ``restricted shell escape'' command was added to \TeX\ giving \TeX\ permission to call a carefully limited list of programs during typesetting, including Ghostscript. Then the {\em graphicx} package was modified to automatically convert eps illustrations to pdf format during typesetting, without explicitly including epstopdf. This means that old projects with eps illustrations will automatically typeset with pdflatex, provided the source includes the {\em graphix} package. 
+
+At the time of these changes, we did not remove ``--shell-escape'' because it was still needed to convert tiff files to png format automatically during typesetting. This conversion is done by {\em /usr/bin/convert} , a program from ImageMagick which is installed as part of MacTeX. Unfortunately, TeX Live could not add convert to the restricted
+shell escape list because in the Windows world there is a program with this name which can do dangerous things. Also we knew that tex4ht, which can be used to typeset \TeX\ source and output html pages, calls convert.
+
+Recently, we discovered that while the tex4ht {\em script} calls convert, the convert program is not called by the pdflatex portion of the script. So the flag is not needed for
+tex4ht. 
+
+TeXShop 2.45 contains a new command in the File menu called ``Convert tiff.'' This item is active when a TeX source window is active. Selecting the item brings up a  dialog listing all files and folders in the
+directory containing the source file. Only tiff files are active in this dialog; others are grayed out. Multiple items can be chosen in the dialog. Pushing the  ``Convert''
+button at the bottom of the dialog will create png versions of all selected tif or tiff illustrations. 
+
+The {\em Convert tiff} dialog could be strengthened in the future to provide other graphic conversions, if there is sufficient demand.
+
+The new Latex Template removes the inclusion of epstopdf because it is no longer necessary, and removes  code to automatically convert tiff files to png using {\em convert} because it will not run without ``--shell-escape'' and has been replaced with the new TeXShop menu command.
+
+
+
+
+
+
+\section{Other Changes in 2.44 and 2.45}
+
+The purpose of TeXShop 2.45 is to bring to the Series 2 versions of TeXShop most features of the
+Series 3 versions of TeXShop that do not require Lion. Version 2.44 was not widely distributed.
+
+Currently, there are two primary forms of TeXShop, the series 2.** releases  for Tiger, Leopard, and Snow Leopard and the series 3.** releases for Lion
+and Mountain Lion. The Sparkle update
+system will only upgrade TeXShop 2.** to later 2.** releases and will only upgrade TeXShop 3.** to later 3.** releases. It will never upgrade, say, TeXShop 2.45 to
+TeXShop 3.10.
+
+We list here changes which may require user intervention.
+
+The pdflatexmk engine is now active by default for new users. Older users can activate it by finding ``pdflatexmk.engine'' in $\sim$/Library/TeXShop/Engines/Inactive/Latexmk
+and dragging it to $\sim$/Library/TeXShop/Engines.
+
+
+Previously TeXShop provided two ways to create projects governed by a master root file with several include files. The earlier method used a menu command {\em Create Project Root}. The later more powerful method involves adding ''\% !TEX root = ...'' to the
+first few lines of included files. This is the preferred method.
+
+We have  removed the menu item {\em Create Project Root}. Old projects using this mechanism will still typeset correctly, but new projects should use the  
+''\% !TEX root = ...'' syntax instead.
+
+
+The folder $\sim$/Library/TeXShop/CommandCompletion  has a new subfolder named GratzerMathCC. This folder contains
+an optional CommandCompletion.txt file with additional completions by George Gratzer, useful when typesetting mathematics.
+It also contains documentation by Gratzer and Herbert Shultz about these extensions.
+
+To obtain the folder, move it from $\sim$/Library/TeXShop/New/CommandCompletion to $\sim$/Library/TeXShop/CommandCompletion.
+To activate the new completions, move CommandCompletion.txt from the new folder up a level to the main CommandCompletion
+folder, replacing the similarly named file there now.
+
+
+
+
+\section{Changes in 2.42 and 2.43}
+There are revised engines in $\sim$/Library/TeXShop/Engines/Inactive for ConTeXt running on top of LuaTeX, XeTeX, and pdfTeX.
+In particular, the ConTeXt (LuaTeX) engine is now a default engine, replacing ConTeXt-MKIV in previous versions of TeXShop. Drag this file
+from $\sim$/Library/TeXShop/Engines/Inactive/ConTeXt to $\sim$/Library/TeXShop/Engines.
+
+\section{Changes in 2.41}
+
+The only change is an updated Command Completion.pdf document and various French translations of the documents. Find these documents in 
+\begin{quotation}
+ $\sim$/Library/TeXShop/New/CommandCompletion
+ \end{quotation}  and move them to  \begin{quotation}$\sim$/Library/TeXShop/CommandCompletion\end{quotation}
+
+\section{Changes in 2.40}
+
+If you already have 2.39, no changes are needed for 2.40.
+
+\section{Changes in 2.39}
+
+One new item is provided for 
+	$\sim$/Library/TeXShop/CommandCompletion: a French translation of Herbert Schulz's documentation  named
+	Completement2011.pdf.
+Find this item in
+\begin{quotation} 
+$\sim$/Library/TeXShop/New/CommandCompletion
+\end{quotation}
+ and move it to 
+ \begin{quotation}
+ $\sim$/Library/TeXShop/CommandCompletion
+ \end{quotation}
+
+
+\section{Changes in 2.38}
+
+Three new items are provided for $\sim$/Library/TeXShop/CommandCompletion: a revised document {\em Command Completion for TeXShop.pdf}
+and two folders named IndentedCC and Quick Start Guide for Command Completion. Find these three items in
+\begin{quotation} 
+$\sim$/Library/TeXShop/New/CommandCompletion
+\end{quotation}
+ and move them to 
+ \begin{quotation}
+ $\sim$/Library/TeXShop/CommandCompletion
+ \end{quotation}
+
+The documentation in $\sim$/Library/TeXShop/Engines/Inactive has been revised, but the revised version is installed automatically, so no action
+is needed when upgrading. According to the revised documentation, users of the ConTeXT-MKIV.engine must run the following
+command ONCE in Terminal before the engine will work:
+\begin{verbatim}
+     luatools --generate
+\end{verbatim}
+
 
 \section{Changes in 2.35, 2.36, and 2.37}
+
 
 If you already have 2.36, no changes are needed for 2.37.
 
@@ -148,7 +293,7 @@ and move it to the folder
 overwriting the old file. The new file is only an template explaining how to make changes, but the changes it makes are commented out. In the unlikely event that you edited the old KeyEquivalents.plist, merge in your changes from the desktop copy.
 
 
-\section{Command Completion; No New Changes After 2.31}
+\section{Command Completion Changes In 2.31}
 
 TeXShop has Command Completion. Type the beginning of a command and hit the Escape key. TeXShop will complete the command. If several completions are possible, hit Escape several times to cycle between them.
 The list of known completions is stored in $\sim$/Library/TeXShop/CommandCompletion and  can be edited within TeXShop.
@@ -168,7 +313,7 @@ and move it to the folder
 \end{verbatim}
 overwriting the old file.  If you modified the old file, you must edit CommandCompletions.txt with TeXShop or TextEdit and merge in your changes from the desktop copy.
 
-\section{Documentation; No New Changes After 2.30}
+\section{Documentation Changes In 2.30}
 
 The ``Paste Spreadsheet Cells'' macro by Alan Munn is documented in TeXShop Help under Macros Help, Default Applescript Macros.
 

@@ -11,9 +11,11 @@
 
 @interface HelpDocuments : NSObject {
 	
-	NSTask		*displayPackageHelpTask;
-	NSPanel		*packageHelpPanel;
-	NSTextField	*packageResult;
+	NSTask					*displayPackageHelpTask;
+	IBOutlet NSPanel		*packageHelpPanel;
+	IBOutlet NSPanel		*openStyleFilePanel;
+	IBOutlet NSTextField	*packageResult;
+	IBOutlet NSTextField	*styleFileResult;
 
 }
 
@@ -22,6 +24,8 @@
 - (IBAction)displayGettingStartedConTeXt:sender;
 - (IBAction)displayGettingStartedXeTeX:sender;
 - (IBAction)displayHelpForPackage:sender;
+- (IBAction)displayStyleFile:sender;
+- (IBAction)displayTipsandTricks:sender;
 
 - (IBAction)displayShortCourse:sender;
 - (IBAction)displayHG:sender;

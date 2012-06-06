@@ -129,6 +129,8 @@
 
 - (void) doJobForScript:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
+	SEL saveFinished;
+	
 	if (! fileIsTex)
 		return;
 
@@ -142,6 +144,9 @@
 	errorNumber = 0;
 	whichError = 0;
 	makeError = error;
+	
+	
+	
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -151,6 +156,35 @@
 	} else {
 		[self saveDocumentWithDelegate: self didSaveSelector: @selector(saveFinished:didSave:contextInfo:) contextInfo: nil];
 	}
+
+/*
+	// patch by Ulrich Bauer; remove commented lines above and replace with
+    
+    if (!_externalEditor) {
+		id wlist = [NSApp orderedDocuments];
+		id en = [wlist objectEnumerator];
+		id obj;
+		while (obj = [en nextObject]) {
+			if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+			{
+				[obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+			}
+		}
+		
+		saveFinished = @selector(saveFinished:didSave:contextInfo:);
+		if ([self fileURL])
+			[self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+		else
+			[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+		
+	} 
+	else {
+		[self saveFinished: self didSave:YES contextInfo:nil];
+	}
+ */
+	
+	
+	
 }
 
 
@@ -189,6 +223,7 @@
 	
 	[self fixMacroMenu];
 	// end addition
+	
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -200,7 +235,42 @@
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
 		[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 	}
+ 
+/*
+	// bug fix by Ulrich Bauer; remove above lines and add
+    
+	if (!_externalEditor) {
+		id wlist = [NSApp orderedDocuments];
+		id en = [wlist objectEnumerator];
+		id obj;
+		while (obj = [en nextObject]) {
+			if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+			{
+				[obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+			}
+		}
+		
+        
+        
+ 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
+        if ([self fileURL])
+			[self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+        else
+			[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+        
+	} else {
+		[self saveFinished: self didSave:YES contextInfo:nil];
+	}
+*/
+
 }
+
+- (void) autosaveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo
+{
+    if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
+}
+
+
 
 
 - (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args
@@ -501,9 +571,11 @@
 		return;
 	}
 
-	if (!_externalEditor)
-		[self checkFileLinks:theSource];
-
+/* // Ulrich Bauer patch
+	 if (!_externalEditor)
+	 [self checkFileLinks:theSource];
+*/
+	
 	// New Stuff
 	length = [theSource length];
 	done = NO;
@@ -847,6 +919,7 @@
 		inputPipe = [[NSPipe pipe] retain];
 		writeHandle = [inputPipe fileHandleForWriting];
 		
+		consoleCleanStart = YES;
 		[outputText setSelectable: YES];
 		[outputText selectAll:self];
 		[outputText replaceCharactersInRange: [outputText selectedRange] withString:@""];
@@ -1055,13 +1128,45 @@
 				 }
 				 bibTask = [[NSTask alloc] init];
 				 
+				 
+				 
+                 // modified by Terada
+                 NSMutableArray *bibtexArgs = [NSMutableArray arrayWithCapacity:0];
+                 NSString* bibtexEngineString = [self separate:[SUD objectForKey:BibTeXengineKey] into:bibtexArgs];
+                 [bibtexArgs addObjectsFromArray:args];
+                 
+				 [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+				 
+				 /*
+				  NSString* bibtexEngineString;
+				  
+				  switch ([SUD integerForKey:BibtexCommandKey]) {
+				  case 0: bibtexEngineString = @"bibtex"; break;
+				  case 1: bibtexEngineString = @"jbibtex"; break;
+				  default: bibtexEngineString = @"bibtex"; break;
+				  } // comment out by Terada
+				  bibtexEngineString = [SUD objectForKey:BibTeXengineKey]; // modified by Terada
+				  [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+				  */			 
+				 
+					 
+				 
+				 
+	/*			 
+				 
 				 NSString* bibtexEngineString;
-				 switch ([SUD integerForKey:BibtexCommandKey]) {
-					 case 0: bibtexEngineString = @"bibtex"; break;
-					 case 1: bibtexEngineString = @"jbibtex"; break;
-					 default: bibtexEngineString = @"bibtex"; break;
-				 }
+				 /*
+				  switch ([SUD integerForKey:BibtexCommandKey]) {
+				  case 0: bibtexEngineString = @"bibtex"; break;
+				  case 1: bibtexEngineString = @"jbibtex"; break;
+				  default: bibtexEngineString = @"bibtex"; break;
+				  } // comment out by Terada
+				 bibtexEngineString = [SUD objectForKey:BibTeXengineKey]; // modified by Terada
 				 [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+	*/
+				 
+				 
+				 
 			 } else if (whichEngineLocal == IndexEngine) {
 				 NSString* indexPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto, spaces in path
@@ -1329,13 +1434,18 @@
 		[writeHandle writeData: myData];
 		// added by mitsu --(L) reflect tex input and clear tex input field in console window
 		NSRange selectedRange = [outputText selectedRange];
+		
 		selectedRange.location += selectedRange.length;
 		selectedRange.length = 0;
 		// in the next two lines, replace "command" by "old command" after Japanese modification made -- koch
 		[outputText replaceCharactersInRange: selectedRange withString: command];
 		selectedRange.length = [command length];
-		if ([SUD boolForKey: RedConsoleAfterErrorKey])
+		
+		if ([SUD boolForKey: RedConsoleAfterErrorKey]) {
 			[outputText setTextColor: [NSColor redColor] range: selectedRange];
+			consoleCleanStart = NO;
+		}
+		
 		[outputText scrollRangeToVisible: selectedRange];
 		[texCommand setStringValue: @""];
 		// end addition
@@ -1432,11 +1542,13 @@
 					[myPDFKitView2 setDocument: [myPDFKitView document]];
 					[myPDFKitView2 reShowForSecond];
 					[pdfKitWindow setRepresentedFilename: imagePath];
-					[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+					//[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+					[pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
 					[self fillLogWindowIfVisible];
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))
 						[pdfKitWindow makeKeyAndOrderFront: self];
+					[self allocateSyncScanner];
 				}
 			}
 
@@ -1465,6 +1577,18 @@
 		texTask = nil;
 	}
 }
+
+- (BOOL) getWillClose
+{
+	return willClose;
+}
+
+- (void) setWillClose: (BOOL)value
+{
+	willClose = value;
+}
+
+
 
 
 @end

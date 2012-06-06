@@ -10,6 +10,7 @@
 
 <BODY>
 	<div id="content_border">
+<h2>Changing the syntax coloring</h2>
 		<P>When syntax coloring turned on in the source window, comments will be colored red, commands will be colored blue, and the symbols $, {, and } will be colored dark green. A few users may wish to change these colors. Each color is determined by setting its red, green, and blue components; these components are real numbers between 0.0 and 1.0. Suppose we wish to change the color of $, {, and } to bright green, a color with components (r, g, b) = (0.0, 1.0, 0.0). To do so, open the Terminal window and type the following commands</P>
 		<dl>
 			<dd>defaults write TeXShop markerred 0.0
@@ -17,9 +18,13 @@
 			<dd>defaults write TeXShop markerblue 0.0
 		</dl>
 		<p>The corresponding preference items for comments are commentred, commentgreen, commentblue; the items for commands are commandred, commandgreen, commandblue.</p>
-		<ul>
-			
-		</ul>
+<h2>Adding to the list of file types</h2>
+<p>There is a hidden preference to add file extensions to the list of files that TeXShop recognizes as source files which can be typeset and syntax colored.  This is useful when you want to use syntax coloring when editing TeX files with non-standard extensions. For example,</p>
+		<dl>
+			<dd>defaults write TeXShop OtherTeXExtensions -array-add "lbx"
+		</dl>
+<p>tells TeXShop to syntax color biblatex 'lbx' files.<p>
+
 	</div>		
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>

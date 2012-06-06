@@ -115,6 +115,11 @@
 		}
 }
 
+- (IBAction) convertTiff:(id)sender
+{
+    [(TSDocument *)myDocument convertTiff:sender];
+}
+
 
 
 // for scripting

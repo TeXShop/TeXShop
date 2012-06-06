@@ -35,6 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 
+
 #import "OgreKit/OgreTextFinder.h"
 #import "TextFinder.h"
 
@@ -59,6 +60,7 @@
 - (void)dealloc
 {
 	[g_autocompletionDictionary release];
+	[defaultLanguage release];
 	[super dealloc];
 }
 
@@ -133,7 +135,6 @@
 	float oldVersion, newVersion;
 	BOOL needsUpdating;
 
-
 	g_macroType = LatexEngine;
 
 	
@@ -171,6 +172,10 @@
 					@"subsubsubsubsubject: ",
 					nil];
 	} else {
+	 
+
+		
+/*
 		
 		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
 					@"\\section",
@@ -183,20 +188,55 @@
 					@"subsection: ",
 					@"subsubsection: ",
 					nil];
+ */
+
+
+		
+		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+                               @"\\section",
+                               @"\\subsection",
+                               @"\\subsubsection",
+                               @"% \\section",
+                               @"% \\subsection",
+                               @"% \\subsubsection",
+                               @"% \\begin{macro}",
+                               @"% \\begin{environment}",
+                               nil];
+        
+		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"macro: ",
+                               @"environment: ",
+                               nil];
+		
 	}
+ 
+ 
+	
+
 		
 	// if this is the first time the app is used, register a set of defaults to make sure
 	// that the app is useable.
 	if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
 		([[NSUserDefaults standardUserDefaults] objectForKey:TetexBinPath] == nil)) {
 		[[TSPreferences sharedInstance] registerFactoryDefaults];
-	} else {
+	} 
+	
+	
+      {
 		// register defaults
 		fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 		NSParameterAssert(fileName != nil);
-		factoryDefaults = [[NSString stringWithContentsOfFile:fileName] propertyList];
+		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error: NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
+	
+
 	
 	// Make sure the ~/Library/TeXShop/ directory exists and is populated.
 	// To do this, we walk recursively through our private 'TeXShop' folder contained
@@ -213,6 +253,8 @@
 	currentVersion = [[[NSBundle bundleForClass:[self class]]
 					   infoDictionary] objectForKey:@"CFBundleVersion"];
 	newVersion = [currentVersion floatValue];
+	
+	
 
 	if ([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]] ) {
 		versionString = [[NewPath stringByAppendingPathComponent:@".Version"] stringByStandardizingPath];
@@ -225,17 +267,29 @@
 		needsUpdating = TRUE;
 	else 
 		needsUpdating = FALSE;
-
+	
 		
 	if (! [fileManager fileExistsAtPath: [TeXShopPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
 			  toPath:[TeXShopPath stringByStandardizingPath]];
 		}
+	
 		
 	if (! [fileManager fileExistsAtPath: [CommandCompletionFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/CommandCompletion"]
 			  toPath:[CommandCompletionFolderPath stringByStandardizingPath]];
 		}
+	
+	
+    if (! [fileManager fileExistsAtPath: [DocumentsPath stringByStandardizingPath]] ) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
+                  toPath:[DocumentsPath stringByStandardizingPath]];
+    }
+    else if (needsUpdating) {
+		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
+				  toPath:[DocumentsPath stringByStandardizingPath]];
+	}
+	
 		
 	if (! [fileManager fileExistsAtPath: [DraggedImageFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/DraggedImages"]
@@ -321,6 +375,17 @@
 		g_texChar = YEN;
 	else
 		g_texChar = BACKSLASH;
+	
+// Configure Spelling
+	spellLanguageChanged = NO;
+	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+	defaultLanguage = [[theChecker language] retain];
+	// NSLog(defaultLanguage);
+	if ([theChecker respondsToSelector:@selector(automaticallyIdentifiesLanguages)])
+		automaticLanguage = [theChecker automaticallyIdentifiesLanguages];
+	else
+		automaticLanguage = NO;
+	
 
 // added by mitsu --(H) Macro menu and (G) TSEncodingSupport
 	[[TSEncodingSupport sharedInstance] setupForEncoding];        // this must come after
@@ -391,6 +456,14 @@
 			[[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
 	[g_autocompletionDictionary retain];
 	// end of code added by Greg Landweber
+	
+	// added by Terada
+	autocompletionPath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletionDisplayOrder"] stringByAppendingPathExtension:@"plist"];
+	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]){
+		g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
+		[g_autocompletionKeys retain];
+	}
+	
 }
 
 
@@ -564,6 +637,7 @@
 		@"ins",
 		@"dtx",
 		@"mf",
+		@"md",
 		nil];
 	i = [myController runModalOpenPanel: myPanel forTypes: myArray];
 	fileArray = [myPanel filenames];
@@ -670,6 +744,52 @@
 	} else
 		return YES;
 }
+
+// added by Terada (- (NSArray*)searchTeXWindows:)
+- (NSArray*)searchTeXWindows:(int*)ptrToCurrentIndexInReturnedArray
+{
+	NSArray* windows = [NSApp windows];
+	uint currentIndex = [windows indexOfObject:[NSApp keyWindow]];
+	NSMutableArray *matchIndexes = [[NSMutableArray arrayWithCapacity:0] retain];
+	*ptrToCurrentIndexInReturnedArray = -1;
+	int count = 0;
+	uint i;
+	
+	for(i=0; i<[windows count]; i++){
+		if ([[windows objectAtIndex:i] isKindOfClass:[TSTextEditorWindow class]]) {
+			[matchIndexes addObject:[NSNumber numberWithInt:i]];
+			if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
+			count++;
+		}
+	}
+	
+	return (count == 0) ? nil : matchIndexes;
+}
+
+// added by Terada (- (IBAction)nextTeXWindow:)
+- (IBAction)nextTeXWindow:(id)sender 
+{
+	int currentIndexInReturnedArray;
+	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
+	if (matchIndexes) {
+		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] intValue];
+		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
+	}
+	[matchIndexes release];
+}
+
+// added by Terada (- (IBAction)previousTeXWindow:)
+- (IBAction)previousTeXWindow:(id)sender 
+{
+	int currentIndexInReturnedArray;
+	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
+	if (matchIndexes) {
+		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] intValue];
+		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
+	}
+	[matchIndexes release];
+}
+
 
 // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender

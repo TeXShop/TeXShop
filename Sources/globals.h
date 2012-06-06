@@ -32,6 +32,7 @@
 // frequently throughout the code to detect commands.
 #define	YEN			0x00a5
 #define	BACKSLASH	'\\'
+#define	COMMENT		'%'
 
 
 // Shortcut to access the standard user defaults more easily.
@@ -249,7 +250,19 @@ extern NSString *LatexScriptCommandKey;
 extern NSString *ParensMatchingEnabledKey;
 extern NSString *SpellCheckEnabledKey;
 extern NSString *LineNumberEnabledKey;
+extern NSString *ShowInvisibleCharactersEnabledKey; // added by Terada
 extern NSString *AutoCompleteEnabledKey;
+extern NSString *AlwaysHighlightEnabledKey; // added by Terada
+extern NSString *HighlightContentEnabledKey; // added by Terada
+extern NSString *ShowFullPathEnabledKey; // added by Terada
+extern NSString *ShowIndicatorForMoveEnabledKey; // added by Terada
+extern NSString *BeepEnabledKey; // added by Terada
+extern NSString *FlashBackgroundEnabledKey; // added by Terada
+extern NSString *CheckBraceEnabledKey; // added by Terada
+extern NSString *CheckBracketEnabledKey; // added by Terada
+extern NSString *CheckSquareBracketEnabledKey; // added by Terada
+extern NSString *CheckParenEnabledKey; // added by Terada
+extern NSString *MakeatletterEnabledKey; // added by Terada
 extern NSString *PdfMagnificationKey;
 extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
@@ -277,7 +290,7 @@ extern NSString *TexCommandKey;
 extern NSString *TexGSCommandKey;
 extern NSString *TexScriptCommandKey;
 extern NSString *MetaPostCommandKey;
-extern NSString *BibtexCommandKey;
+extern NSString *BibtexCommandKey; // comment out by Terada (added back in, but unused; Koch)
 extern NSString *DistillerCommandKey;
 extern NSString *MatrixSizeKey; // Jonas' Matrix addition
 extern NSString *TSHasBeenUsedKey;
@@ -299,6 +312,7 @@ extern NSString *indexblueKey;
 extern NSString *background_RKey;
 extern NSString *background_GKey;
 extern NSString *background_BKey;
+extern NSString *backgroundAlphaKey; // added by Terada
 extern NSString *foreground_RKey;
 extern NSString *foreground_BKey;
 extern NSString *foreground_GKey;
@@ -327,6 +341,7 @@ extern NSString *PdfPageBack_BKey;
 extern NSString *ExternalEditorTypesetAtStartKey;
 extern NSString *ConvertLFKey;
 extern NSString *UseOgreKitKey;
+extern NSString *FindMethodKey;
 extern NSString *BringPdfFrontOnAutomaticUpdateKey;
 extern NSString *BringPdfFrontOnTypesetKey;
 extern NSString *SourceWindowAlphaKey;
@@ -352,6 +367,7 @@ extern NSString *SyncTeXOnlyKey;
 extern NSString *ConsoleBackgroundColor_RKey;
 extern NSString *ConsoleBackgroundColor_GKey;
 extern NSString *ConsoleBackgroundColor_BKey;
+extern NSString *ConsoleBackgroundAlphaKey; // added by Terada
 extern NSString *ConsoleForegroundColor_RKey;
 extern NSString *ConsoleForegroundColor_GKey;
 extern NSString *ConsoleForegroundColor_BKey;
@@ -361,7 +377,41 @@ extern NSString *ConsoleWidthResizeKey;
 extern NSString *RightJustifyKey;
 extern NSString *CommandCompletionCharKey;
 extern NSString *CommandCompletionAlternateMarkShortcutKey;
+extern NSString *showSpaceCharacterKey; // added by Terada
+extern NSString *showFullwidthSpaceCharacterKey; // added by Terada
+extern NSString *showTabCharacterKey; // added by Terada
+extern NSString *showNewLineCharacterKey; // added by Terada
+extern NSString *SpaceCharacterKindKey; // added by Terada
+extern NSString *FullwidthSpaceCharacterKindKey; // added by Terada
+extern NSString *TabCharacterKindKey; // added by Terada
+extern NSString *NewLineCharacterKindKey; // added by Terada
+extern NSString *LastStyNameKey; // added by Terada
+extern NSString *KpsetoolKey; // added by Terada
+extern NSString *BibTeXengineKey; // added by Terada
+
 // end mitsu 1.29
+
+extern NSString *SmartInsertDeleteKey; // Koch
+extern NSString *AutomaticDataDetectionKey; // Koch
+extern NSString *AutomaticLinkDetectionKey; // Koch
+extern NSString *AutomaticTextReplacementKey; // Koch
+extern NSString *AutomaticDashSubstitutionKey; // Koch
+extern NSString *AutomaticQuoteSubstitutionKey; // Koch
+extern NSString *AutomaticUTF8MACtoUTF8ConversionKey; //Koch
+extern NSString *highlightBracesRedKey; //Koch
+extern NSString *highlightBracesBlueKey; //Koch
+extern NSString *highlightBracesGreenKey; //Koch
+extern NSString *highlightContentRedKey; //Koch
+extern NSString *highlightContentGreenKey; //Koch
+extern NSString *highlightContentBlueKey; //Koch
+extern NSString *invisibleCharRedKey; //Koch
+extern NSString *invisibleCharGreenKey; //Koch
+extern NSString *invisibleCharBlueKey; //Koch
+extern NSString *brieflyFlashYellowForMatchKey; //Koch
+extern NSString *syncWithRedOvalsKey;
+extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Persian anywhere in the line
+
+// end of defaults
 
 
 /*" Paths "*/
@@ -413,7 +463,15 @@ extern NSString *CommandCompletionCharNotification;
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern int					g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern int					g_commentChar;
 extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
+extern NSArray				*g_autocompletionKeys; // added by Terada
+
+extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag) 
+extern BOOL					automaticLanguage; 
+extern NSString				*defaultLanguage;
+
+
 extern int					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
@@ -426,3 +484,6 @@ extern NSMutableString *g_commandCompletionList;/*" The list of completions, rea
 extern BOOL g_canRegisterCommandCompletion;	/*" This is set to NO while e.g. CommandCompletion.txt is open "*/
 extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview window PDFKitView pages "*/
 
+NSDictionary *highlightBracesColorDict; // added by Terada
+NSDictionary *highlightContentColorDict; // added by Terada
+#define LEOPARD 568 // added by Terada

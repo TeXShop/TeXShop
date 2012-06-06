@@ -39,6 +39,7 @@
 - (void) displayConsole: sender;
 - (void) abort: sender;
 - (void) trashAUXFiles: sender;
+- (IBAction) convertTiff:(id)sender;
 - (TSDocument *)document;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;

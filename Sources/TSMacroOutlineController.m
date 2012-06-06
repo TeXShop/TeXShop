@@ -152,6 +152,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)addNewDataToSelection:(TSMacroTreeNode *)newChild
 {
+	NSIndexSet		*myIndexSet;
 	int childIndex = 0, newRow = 0;
 	NSArray *selectedNodes = [self selectedNodes];
 	TSMacroTreeNode *selectedNode = ([selectedNodes count] ? [selectedNodes lastObject] : rootOfTree);
@@ -170,8 +171,11 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	[outlineView reloadData];
 	
 	newRow = [outlineView rowForItem: newChild];
-	if (newRow >= 0)
-		[outlineView selectRow: newRow byExtendingSelection: NO];
+	if (newRow >= 0) {
+		myIndexSet = [NSIndexSet indexSetWithIndex: newRow];
+		// [outlineView selectRow: newRow byExtendingSelection: NO]; // deprecated, so
+		[outlineView selectRowIndexes: myIndexSet byExtendingSelection: NO];
+		}
 	
 #ifdef TSMacroOutlineViewAddedItemNotification
 	// notify that item was added -- custom notification
@@ -486,24 +490,40 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 }
 
 - (NSArray*)allSelectedItems {
+	NSLog(@"here");
+	NSIndexSet *theIndexes = [self selectedRowIndexes];
 	NSMutableArray *items = [NSMutableArray array];
+	/* selectedRowEnumerator is deprecated
 	NSEnumerator *selectedRows = [self selectedRowEnumerator];
 	NSNumber *selRow = nil;
 	while ((selRow = [selectedRows nextObject])) {
 		if ([self itemAtRow:[selRow intValue]])
 			[items addObject: [self itemAtRow:[selRow intValue]]];
 	}
+	*/
+	int rows = [self numberOfRows];
+	int i;
+	for (i = 0; i < rows; i++)
+		if ([theIndexes containsIndex:i]) {
+			if ([self itemAtRow: i])
+				[items addObject: [self itemAtRow:i]];
+			}
+	
 	return items;
 }
 
 - (void)selectItems:(NSArray*)items byExtendingSelection:(BOOL)shouldExtend {
+	NSIndexSet		*myIndexSet;
 	int i;
 	if (shouldExtend == NO)
 		[self deselectAll:nil];
 	for (i = 0; i < [items count]; i++) {
 		int row = [self rowForItem:[items objectAtIndex:i]];
-		if(row >= 0)
-			[self selectRow: row byExtendingSelection:YES];
+		if(row >= 0) {
+			myIndexSet = [NSIndexSet indexSetWithIndex: row];
+			// [self selectRow: row byExtendingSelection:YES]; // deprecated, so
+			[self selectRowIndexes: myIndexSet byExtendingSelection:YES];
+			}
 	}
 }
 

@@ -82,7 +82,24 @@
 						}
 					}
 				} else if (task == RootForOpening) {
-					;
+					/* This section was moved lower down for version 2.40
+					 
+					// added by Terada (from this line)
+					NSRect activeWindowFrame = [[obj textWindow] frame];
+					NSRect newFrame;
+					NSScreen *screen = [NSScreen mainScreen];
+					if(NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0)
+					{
+						newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSHeight([screen frame]), NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+					}
+					else
+					{
+						newFrame = NSMakeRect(NSMinX(activeWindowFrame) + 20, NSMinY(activeWindowFrame) + 20, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+					}
+					
+					[[obj textWindow] setFrame:newFrame display:YES];
+					// added by Terada (until this line)
+					*/
 				} else if (task == RootForTrashAUX) {
 					[obj trashAUX];
 				}
@@ -120,6 +137,16 @@
 				}
 			}
 		} else if (task == RootForOpening) {
+			// added by Terada (from this line) // This was moved here for version 2.40
+			if([SUD integerForKey:DocumentWindowPosModeKey] == DocumentWindowPosSave){
+				NSRect activeWindowFrame = [[obj textWindow] frame];
+				NSScreen *screen = [NSScreen mainScreen];
+				float minX = 20 + ((NSMinX(activeWindowFrame) + NSWidth(activeWindowFrame) + 20 > NSWidth([screen frame])) ? 0 : NSMinX(activeWindowFrame));
+				float minY = (NSMinY(activeWindowFrame) + NSHeight([screen visibleFrame]) - NSHeight([screen frame]) + 20 < 0) ? NSHeight([screen frame]) : NSMinY(activeWindowFrame) - 20;
+				NSRect newFrame = NSMakeRect(minX, minY, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
+				[[obj textWindow] setFrame:newFrame display:YES];
+			}
+			// added by Terada (until this line)
 			[[obj textWindow] miniaturize:self];
 		} else if (task == RootForTrashAUX) {
 			[obj trashAUX];

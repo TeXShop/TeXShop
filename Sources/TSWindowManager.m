@@ -115,7 +115,7 @@ static id _sharedInstance = nil;
 */
 - (void)notifyActiveTextWindowClosed
 {
-	_activeTextWindow = nil;
+	// _activeTextWindow = nil; // removed by Terada
 }
 
 /*" This method is registered with the NotificationCenter and will be called when a document window will be closed.

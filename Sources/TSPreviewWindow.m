@@ -103,6 +103,7 @@ extern NSPanel *pageNumberWindow;
 - (void) becomeMainWindow
 {
 	willClose = NO;
+	if([myDocument fileName] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 
 	[myDocument fixMacroMenuForWindowChange];
@@ -640,6 +641,7 @@ extern NSPanel *pageNumberWindow;
 {
 	NSSize		newSize;
 	NSRect		theFrame;
+	BOOL		result;
 	
 	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
 	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
@@ -648,6 +650,7 @@ extern NSPanel *pageNumberWindow;
 	if (windowIsSplit) {
 		windowIsSplit = NO;
 		activeView = myPDFKitView;
+		result = [activeView becomeFirstResponder];
 		[(MyPDFKitView *)activeView resetSearchDelegate];
 	}
 	else {
@@ -663,10 +666,23 @@ extern NSPanel *pageNumberWindow;
 		[myPDFKitView2 setFrameSize:newSize];
 		[pdfKitSplitView addSubview: myPDFKitView2];
 		[pdfKitSplitView adjustSubviews];
+        
+        [(MyPDFKitView *)myPDFKitView2 setPageStyle:[(MyPDFKitView *)myPDFKitView pageStyle]];
+        [(MyPDFKitView *)myPDFKitView2 setFirstPageStyle:[(MyPDFKitView *)myPDFKitView firstPageStyle]];
+        if ( [(MyPDFKitView *)myPDFKitView resizeOption] == NEW_PDF_FIT_TO_NONE)
+			[(MyPDFKitView *)myPDFKitView2 setMagnification: [(MyPDFKitView *)myPDFKitView magnification]];
+        else {
+            [(MyPDFKitView *)myPDFKitView2 setResizeOption:[(MyPDFKitView *)myPDFKitView resizeOption]];
+            [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
+		}
+        [(MyPDFKitView *)myPDFKitView2 setupPageStyle];
+		//  [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
+		
 		if ([myPDFKitView2 document] == nil) {
 			// [[myPDFKitView document] retain];
 			[myPDFKitView2 setDocument:[myPDFKitView document]];
 		}
+        [(MyPDFKitView *)myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)myPDFKitView index]];
 	}
 	else
 		[myPDFKitView2 removeFromSuperview];
@@ -727,6 +743,12 @@ extern NSPanel *pageNumberWindow;
 	[(MyPDFKitView *)activeView goToKitPage: sender]; 
 }
 
+- (IBAction)convertTiff:(id)sender
+{
+    [(TSDocument *)myDocument convertTiff:sender];
+}
+
+
 /*
 - (void) doFind: sender
 {
@@ -738,4 +760,13 @@ extern NSPanel *pageNumberWindow;
 {
 	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
 }
+
+
+
+- (BOOL)windowIsSplit
+{
+    return windowIsSplit;
+}
+
+
 @end

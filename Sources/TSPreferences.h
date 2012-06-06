@@ -64,7 +64,7 @@
 	IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/
 	IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
 	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
-	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/
+//	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/ // comment out by Terada
 	IBOutlet NSMatrix	*_syncMatrix;			/*" connected to "Sync Method" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
 	IBOutlet NSTextField    *_engineTextField;
@@ -74,12 +74,36 @@
 	IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
+	IBOutlet NSButton		*_convertUTFButton;
 	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleForegroundColorWell;
+	IBOutlet NSColorWell	*_highlightBracesColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
+
+	IBOutlet NSButton *_showInvisibleCharactersButton; // added by Terada
+	IBOutlet NSButton *_showTabCharacterButton; // added by Terada
+	IBOutlet NSButton *_showSpaceCharacterButton; // added by Terada
+	IBOutlet NSButton *_showNewLineCharacterButton; // added by Terada
+	IBOutlet NSButton *_showFullwidthSpaceCharacterButton; // added by Terada
+	IBOutlet NSMatrix *_TabCharacterKindMatrix; // added by Terada
+	IBOutlet NSMatrix *_SpaceCharacterKindMatrix; // added by Terada
+	IBOutlet NSMatrix *_NewLineCharacterKindMatrix; // added by Terada
+	IBOutlet NSMatrix *_FullwidthSpaceCharacterKindMatrix; // added by Terada
+	IBOutlet NSButton *_alwaysHighlightButton; // added by Terada
+	IBOutlet NSButton *_highlightContentButton; // added by Terada
+	IBOutlet NSButton *_showIndicatorForMoveButton; // added by Terada
+	IBOutlet NSButton *_beepButton; // added by Terada
+	IBOutlet NSButton *_flashBackgroundButton; // added by Terada
+	IBOutlet NSButton *_checkBraceButton; // added by Terada
+	IBOutlet NSButton *_checkBracketButton; // added by Terada
+	IBOutlet NSButton *_checkSquareBracketButton; // added by Terada
+	IBOutlet NSButton *_checkParenButton; // added by Terada
+	IBOutlet NSTextField *_kpsetoolField; // added by Terada
+	IBOutlet NSTextField *_bibTeXengineField; // added by Terada
+//	IBOutlet NSButton *_makeatletterButton; // added by Terada
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
 	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -102,7 +126,12 @@
 	BOOL			externalEditorTouched;
 	BOOL			encodingTouched;
 	BOOL			commandCompletionCharTouched;
-
+	BOOL            invisibleCharacterTouched; // added by Terada
+	BOOL            highlightTouched; // added by Terada
+	BOOL            kpsetoolTouched; // added by Terada
+	BOOL            bibTeXengineTouched; // added by Terada
+//	BOOL            makeatletterTouched; // added by Terada
+	
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
 	IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
 	IBOutlet NSPopUpButton	*_resizeOptionPopup;// mitsu 1.29 (O) /*" connected to resize option popup button "*/
@@ -133,6 +162,7 @@
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
 - (IBAction)lineNumberButtonPressed:sender;
+- (IBAction)showInvisibleCharacterButtonPressed:sender; // added by Terada
 - (IBAction)midEastButtonPressed:sender;
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
@@ -140,6 +170,7 @@
 - (IBAction)tabsChanged:sender;
 - (IBAction)commandCompletionChanged:sender;
 - (IBAction)findPanelChanged:sender;
+- (IBAction)defaultEngineCall:sender;
 
 
 - (IBAction)pdfWindowPosChanged:sender;
@@ -161,7 +192,7 @@
 - (IBAction)defaultScriptChanged:sender;
 - (IBAction)syncChanged:sender;
 - (IBAction)defaultMetaPostChanged:sender;
-- (IBAction)defaultBibtexChanged:sender;
+//- (IBAction)defaultBibtexChanged:sender; // comment out by Terada
 - (IBAction)distillerChanged:sender;
 - (IBAction)defaultProgramChanged:sender;
 - (IBAction)setEngine:sender;
@@ -169,9 +200,11 @@
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
+- (IBAction)convertUTFPressed:sender;
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
 - (IBAction)setPreviewBackgroundColor:sender;
+- (IBAction)setHighlightBracesColor:sender;
 - (IBAction)setConsoleBackgroundColor:sender;
 - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
@@ -191,6 +224,13 @@
 - (IBAction)okButtonPressed:sender;
 - (IBAction)cancelButtonPressed:sender;
 - (IBAction)setDefaults:sender;
+
+- (IBAction)highlightChanged:sender; // added by Terada
+- (IBAction)invisibleCharacterChanged:sender; // added by Terada
+- (IBAction)kpsetoolChanged:sender; // added by Terada
+- (IBAction)bibTeXengineChanged:sender; // added by Terada
+// - (IBAction)makeatletterChanged:sender; // added by Terada
+
 
 //------------------------------------------------------------------------------
 // API used by other TeXShop classes

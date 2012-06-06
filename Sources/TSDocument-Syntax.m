@@ -35,6 +35,8 @@ static BOOL isValidTeXCommandChar(int c)
 		return YES;
 	else if ((c >= 'a') && (c <= 'z'))
 		return YES;
+	else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
+		return YES; // added by Terada
 	else
 		return NO;
 }
@@ -132,9 +134,10 @@ static BOOL isValidTeXCommandChar(int c)
 	// Clip the given range (call it paranoia, if you like :-).
 	if (range.location >= length)
 		return;
-	if (range.location + range.length > length)
+	if (range.location + range.length > length && ![SUD boolForKey:AlwaysHighlightEnabledKey]) // modified by Terada
+//	if (range.location + range.length > length)
 		range.length = length - range.location;
-
+	
 	// We only perform coloring for full lines here, so extend the given range to full lines.
 	// Note that aLineStart is the start of *a* line, but not necessarily the same line
 	// for which aLineEnd marks the end! We may span many lines.
@@ -161,9 +164,17 @@ static BOOL isValidTeXCommandChar(int c)
 			lineRange.location = theend;
 			selectedLineRange.location = start;
 			selectedLineRange.length = theend - start;
+			
+			if ( ! [SUD boolForKey: RightJustifyIfAnyKey] ) {
+                // a line must START with Persian, etc., to be right justified; later must have Persian in first three letters
+                if (selectedLineRange.length >= 3)
+                    selectedLineRange.length = 3;
+			}
+			
+	
 			// a line must START with Persian, etc., to be right justified
-			if (selectedLineRange.length != 0)
-				selectedLineRange.length = 1;
+			// if (selectedLineRange.length != 0)
+			// 	selectedLineRange.length = 1;
 			theLine = [textString substringWithRange:selectedLineRange];
 			testRange = [theLine rangeOfCharacterFromSet: middleEastSet];
 			if (testRange.location == NSNotFound)
@@ -181,8 +192,13 @@ static BOOL isValidTeXCommandChar(int c)
 	colorRange.length = aLineEnd - aLineStart;
 	// WARNING!! The following line has been commented out to restore changing the text color
 	// June 27, 2008; Koch; I don't understand the previous warning; the line below fixes cases when removing a comment leaves text red
-	[layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
-
+	// Sept 3, 2011; the Toudykov patch below makes this unnecessary
+	// [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
+    
+    // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
+    [layoutManager addTemporaryAttributes:regularColorAttribute forCharacterRange:colorRange];
+    
+	
 	// Now we iterate over the whole text and perform the actual recoloring.
 	location = aLineStart;
 	while (location < aLineEnd) {

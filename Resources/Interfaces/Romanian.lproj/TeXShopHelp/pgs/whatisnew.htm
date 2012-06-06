@@ -14,6 +14,671 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 2.46</h5></P>
+
+<ul>
+
+<li> Version 2.45 introduced a bug;  users had to save the source file before typesetting. This version fixes that inadvertent bug and returns to the standard
+TeXShop behavior. 
+
+</ul> 
+
+<P><h5>TeXShop Changes 2.44 and 2.45</h5></P>
+
+<ul>
+
+<li> TeXShop's Sparkle upgrade mechanism upgrades within the 2.** series
+and within the 3.** series, but not from one series to the other.
+
+<p>
+<li> The "--shell-escape'' flag has been removed from preference settings for pdftex and pdflatex. This flag
+presented security risks. Old users need to activate the
+change by selecting TeXShop Preferences, clicking the Engine tab, and pushing the "Default" buttons in
+the configuration section for pdfTeX and pdfLaTeX.
+
+<p>
+Recall that pdflatex can accept illustrations in several different formats, including pdf, jpg, and png. But
+it cannot accept eps illustrations used by many old TeX documents.  The epstopdf package 
+solved this problem by calling Ghostscript to convert eps files to pdf format automatically during typesetting.
+This package required --shell-escape and that is why previous versions of TeXShop set the flag.
+
+<p> Two years ago, TeXLive made conversion of eps files to pdf format easier and safer by introducing a restricted
+shell escape mode for pdflatex in which only a limited number of safe programs can be called during typesetting.
+This conversion was made automatic without including epstopdf, provided the graphicx package was included
+by the source document. 
+
+<p> We could have dropped the --shell-escape flag at that time, but there was another reason to continue
+using it. Originally, pdflatex accepted tif and tiff files. Eventually this feature was removed, but it was possible to
+convert these files to png format during typesetting using /usr/local/convert from ImageMagick. Unfortunately,
+TeX Live does not label convert as safe because in the Windows world there is an unrelated program which
+presents security risks. TeXShop 2.45 solves this problem by introducing a new method to convert tif and tiff
+files to png format.
+
+<p>
+<li> TeXShop 2.45 has a  menu command "Convert Tiff" which is active when a source window
+is active. This command opens a dialog which shows all tiff files in the folder containing the
+source file. Users can choose one tiff file or several. Push the "Convert" button to 
+create png forms of all such illustrations. This calls convert from ImageMagick if present, and otherwise
+calls the native sips program.
+
+<p> 
+<li> A new Latex Template is provided to reflect these changes. Old users can obtain this template
+by moving it from ~/Library/TeXShop/New/Templates to ~/Library/TeXShop/Templates.
+
+
+<p>
+<li> TeXShop 2.45 omits the Create Project Root menu item. Use the alternate "% !TEX root = "
+syntax instead. Old projects using Create Project Root will continue to typeset.
+
+<p>
+<li> 	The split window command for the Preview window has been improved. The second
+	portion now opens on the  section of the document shown in the top portion rather than the top of the
+	document. It has the same magnification as the top section of the window. Finally
+	the magnification toolbar button is now in sync with magnification in appropriate
+	sections of the split window.
+
+<p>
+<li> When a pdf document is printed, TeXShop now selects Portrait or Landscape mode
+	automatically. 
+
+<p>
+<li> Several problems cropped up in the German localization. 
+There was a bug in the Preview  Preferences
+for "Default page style." The buttons for 
+"Double Sided" and "Single Sided, Continuous" were reversed,
+ so they didn't do what they claimed to do. There was a similar problem in the
+ menu items to set the PDF display mode. Moreover, check marks in this menu
+ didn't work. These problems are fixed.
+
+	
+<p> The German localization now has a different key equivalent for the menu command which enlarges the font in the source document.
+
+
+<p>
+<li>  Herb Schulz fixed a bug in Command Completion. When multiple
+	windows were open, command completion in one window could interfere with command completion
+	in another window. This problem is fixed.
+
+<p>
+<li>  "TeXShop Tips & Tricks" is updated slightly.
+
+<p>
+<li> LatexMk was updated. This version of Latexmk  
+creates a file list named "file.fls", which helps latexmk keep
+track of all file dependencies. The TrashAUX command has been
+extended to remove files with this extension.
+
+<p>
+<li> pdflatexmk is now one of the default engines. Only new users will
+notice this change.
+
+<p>
+<li> TeXShop now creates a ~/Library/TeXShop/Documents folder containing 
+important documents. Currently many are duplicated from elsewhere in 
+~/Library/TeXShop, but this will be the spot to look in the future. 
+
+<p>
+<li>  New TeXShop releases will automatically update the Documents folder, just
+as they now automatically update 
+bin, Engines/inactive, and scripts.
+
+<p>
+<li> Yusuke Terada made the following changes:
+
+<ul>
+	<li> Double clicking on one of the end characters of a
+	"<" ...  ">"   pair selects both ends and all characters in between.
+
+	<p> <li> If the hidden preference MakeatletterEnabled is YES, 
+	selection of sequences containing  '@' by double-clicking is supported.
+	An example is "  \@latex@error" 
+	
+	<p> <li> As before, if text is selected and the "comment" item
+	is chosen, the entire paragraph containing the selection is
+	commented out. But now the text selection is preserved. This also
+	works with the "indent" command.
+
+	<p> <li> When the source window was active and split and a file was drag-and-dropped
+	to the bottom view, the action did not work. Now it does. 
+
+	<p> <li> AppleScript macros are now saved with UTF8 encoding, so scripts
+	can be written containing Japanese and other languages. This required
+	a small modification in the "ScriptRunner" program which runs scripts
+	which start with --applescript rather than --applescript direct.
+</ul>
+
+<p>
+<li> TSDocument-Jobs.m was modified to allow the BibTeX engine setting to have options.
+
+<p>
+<li> The program has a patch to TeXShop's syntax coloring routine by Daniel Toundykov. When this
+routine was made faster and more reliable in TeXShop 2.10, the modification broke the ability to 
+change the background and foreground colors in TeXShop's source window. Toundykov's patch fixes
+this problem.
+
+<p> To change the source background color's Red component
+<dl>
+<dd> defaults write TeXShop background_R 0.25
+</dl>
+Set background_G and background_B to change the corresponding Green and Blue components.
+
+<p> To change the source foregrounds color's Red component
+<dl>
+<dd> defaults write TeXShop foreground_R 0.25
+</dl>
+Set foreground_G and foreground_B to change the corresponding Green and Blue components.
+
+<p> To change the insertion point color's Red component
+<dl>
+<dd> defaults write TeXShop insertionpoint_R 0.25
+</dl>
+Set insertionpoint_G and insertionpoint_B to change the corresponding Green and Blue components.
+
+<p>
+<li> The folder ~/Library/TeXShop/CommandCompletion now contains a subfolder named
+GratzerMathCC with an expanded list of command completions. These new completions are
+by George Gratzer, and are useful when typesetting
+mathematics. The folder also has a pdf file documenting the additions.  
+To activate the new completions, drag CommandCompletion.txt from the GratzerMathCC folder to the main
+CommandCompletion folder, replacing the existing CommandCompletion.txt there.
+
+<p>
+<li> Added "md" to the file types TeXShop can edit, and typesetting engines can process. Such "markdown" files can be processed by pandoc
+and converted to latex, epub, and pdf. See <a href="http://johnmacfarlane.net/pandoc/">http://johnmacfarlane.net/pandoc/</a>
+
+<p>
+<li> When the Preference Item for Arabic, Hebrew, and Persian is activated,  lines containing one of these languages are right justified.
+The new rule is that a line is right justified if its first, second, or third letter is in one of these languages. For instance, this rule right justifies
+a line beginning with "\" containing Persian letters, but does not right justify the command "\section{ ... }" even if the section title is in Persian.
+
+<p>
+<li> There is a hidden preference to change this behavior. If the following command is entered in Terminal, a line containing any characters
+in Arabic, Hebrew, or Persian will be right justified:
+<dd>
+<dl> defaults write TeXShop RightJustifyIfAny YES
+</dd>
+
+
+<p>
+<li> The hidden preference
+<dd>
+<dl>defaults write TeXShop TagSections NO 
+</dd>
+turned off all tags, rather than just tags for sections and subsections. This is fixed.
+
+
+
+
+
+<p>
+<li> Automatic tagging of "% \chapter" in docstrip didn't work. Now it does.
+
+<p>
+<li> Choosing the "Print ..." menu  with the source window open started a print job
+which understood "Page Setup" changes. Choosing the same menu  with the preview
+window open started a print job that ignored "Page Setup." The print dialogs for these
+two operations were different: one was a standalone dialog and one was a drop-down
+dialog in a window. Both dialogs might be open at once on the screen.  This problem is fixed.
+
+
+
+</ul>
+
+
+
+
+
+<P><h5>TeXShop Changes 2.42 and 2.43</h5></P>
+
+<ul>
+
+<li> The only change in TeXShop 2.43 is a hidden file in ~/Library/TeXShop/New, which was not updated for version 2.42.
+As a result, users did not get the changed ConTeXt engines in  ~Library/TeXShop/Engines/Inactive. They will get them
+in version 2.43.
+
+<p>
+<li> The main change in TeXShop 2.42 is in the code to process SyncTeX. The new code is required for TeX Live 2011,
+and works with earlier TeX distributions as well.
+
+<p> Users will notice the change when they sync from source to preview. The selected portion in the Preview window is
+hilighted in yellow rather than circled in red. Moreover, a larger portion is hilighted.  Users may wish for the
+more precise synchronization in older versions of TeXShop. The new code, however, is faster and much more stable; using this foundation, more precise
+syncing will be possible in future versions of TeXShop.
+
+<p> If SyncTeX cannot find a match, TeXShop defaults to the earlier search synchronization method. This method still
+circles matching portions in red. So red circles rather than yellow selections indicate that SyncTeX could not find a match.
+
+
+<p>
+<li> Tags have been extended slightly to deal with dockstrip document. Thus the tags menu now recognizes
+<dl>
+<dd> % \chapter
+<dd> % \section
+<dd> % \subsection
+<dd> % \begin{macro}
+<dd> % \begin{environment}
+</dl>
+
+<p>
+<li> Both the log file and the console are shown using the document's encoding rather than MacRoman encoding.
+The primary advantage of this change is that users with Unicode source files will see unicode characters written correctly
+in the log and console output.
+
+<p>
+<li> TeXShop 2.42 contains latexmk 4.24.
+
+ 
+</ul>
+
+
+<P><h5>TeXShop Changes 2.41</h5></P>
+
+<ul>
+<li> The old Auto Completion facility in TeXShop has been given a more understandable name: Key Bindings. 
+All features remain the same. Internally in code, the feature is still called "AutoCompletion", but interface
+elements have been changed to the new name.
+
+<p>
+<li> The facilities Key Bindings and Command Completion have been made more prominent
+in the interface. The Source menu has a new "Key Bindings" menu and the "Command" menu
+just below it has been renamed "Command Completion". Both of these items have submenus. The
+Key Bindings menu has submenus
+<dl>
+<dd> Toggle On/Off
+<dd> Edit Key Bindings File...
+</dl>
+and the Command Completion menu has submenus
+<dl>
+<dd> Add Word
+<dd> Marks
+<dd> Edit Command Completion File...
+</dl>
+<p> The commands in the Command Completion menu were present in earlier versions and have been rearranged
+so make the two facilities  parallel. The Edit Key Bindings File... item is new, bringing up a new editor
+by Yusuke Terada. Thus users no longer need edit a configuration file in ~/Library/TeXShop.
+The "Toggle On/Off" item turns key bindings on or off on a file by file basis, duplicating functionality previously provided by an optional toolbar source item. The old Preference
+Panel item turning Key Bindings on or off remains, setting the default when files are first open.
+<p>
+<li> A new "Close Current Environment" item in the Source Menu closes the open environment nearest the cursor. This feature will remain
+in future versions of TeXShop, but it is likely that the menu will disappear in the future and users will access the feature using an item in Key Bindings, Auto Completion, or Macros,
+because these facilities already have short commands which insert text into the source code.
+
+<p>
+<li> The default values for "pdfTeX" and "TeX and DVI" under the Engine tab in the Preference dialog have become too long to be shown in the
+dialog. So instead, button are provided which insert these default values into the appropriate fields. After doing that, the values in the fields can
+be edited, of course. 
+
+<p>
+<li> If a portion of the source code is selected and then the Statistics panel is opened, the panel shows statistics for that selection, rather than statistics for the entire source file.
+
+<p>
+<li> TeXShop 2.41 contains latexmk 4.23a.
+
+ 
+</ul>
+
+<P><h5>TeXShop Changes 2.40</h5></P>
+
+TeXShop 2.40 fixes a small number of minor bugs.
+
+<ul>
+<li> When working with a project containing a root file, windows would sometimes move as new chapter source
+files were opened. This is fixed.
+
+<p>
+<li> TeXShop has a hidden preference, "RedConsoleAfterError", which colors console output red after an
+error occurs in the source. This preference stopped working several versions ago. It again works.
+
+<p>
+<li> A few users disliked the temporary red color of parentheses in the new parenthesis matching code,
+but didn't want to turn parenthesis matching completely off because they wanted the matching parenthesis
+to blink. These users can now change the temporary parenthesis color in the Preference Panel.
+
+<p>
+<li> Hidden preference items were added to change all of the colors used in the new 2.38 additions by
+Yusude Terada: the temporary parenthesis color (default is magenta), the highlight color for text between matching parentheses (default is yellow),
+and the color of invisible characters when shown (default is orange). 
+
+<dl>
+<dd> defaults write TeXShop highlightBracesRed 1.00
+<dd> defaults write TeXShop highlightBracesGreen 0.00
+<dd> defaults write TeXShop highlightBracesBlue 1.00
+</dl>
+<dl> 
+<dd> defaults write TeXShop highlightContentRed 1.00
+<dd> defaults write TeXShop highlightContentGreen 1.00
+<dd> defaults write TeXShop highlightContentBlue 0.00
+</dl>
+<dl> 
+<dd> defaults write TeXShop invisibleCharRed 1.00
+<dd> defaults write TeXShop invisibleCharGreen 0.50
+<dd> defaults write TeXShop invisibleCharBlue 0.00
+</dl>
+
+<p> 
+<li> On Snow Leopard and above, matching braces are briefly marked with a yellow badge over the brace; this
+fulfills a request for great visibility of the matching characters. The badge can now be turned off with a hidden preference:
+<dl>
+<dd> defaults write TeXShop brieflyFlashYellowForMatch NO
+</dl>
+
+</ul>
+
+<P><h5>TeXShop Changes 2.39</h5></P>
+
+TeXShop 2.39 fixes a significant bug for users who write in Hebrew and Arabic. In
+version 2.38, typesetting sometimes displaced diacritical marks left one character,
+even though the source looked correct. The problem was not in the typesetting, but
+instead in the source code, which was converted to an incorrect form when saved. This is fixed.
+See the explanation which follows.
+
+<ul>
+<li> Some languages use extensive diacritical marks, including more than one mark for each letter.
+For these languages, there are 
+two conventions about the order that the main character and diacritical
+marks are written. The two conventions are
+
+<dl>
+<dd>	UTF-8-Mac = NFD = Normalization Form Decomposition
+<dd>	UTF-8 = NFC = Normalization Form Composition
+</dl>
+<p>  A major problem is that the two forms look the same on the screen, but
+typeset differently (or in some cases not at all). Users in Japan
+sometimes copy and drag UTF-8-MAC text to TeXShop, but then find
+that they cannot typeset. So Yusuke Terada provided automatic conversion. This breaks Hebrew
+and Arabic typesetting.
+
+<p> In TeXShop 2.39, a new Preference item under the Miscellaneous tab turns this automatic conversion on. The
+preference item should be turned on by users in Japan, but most other users should leave it off.
+
+<li> The program  comes with French translations by Rene Fritz of Herbert Schulz' two documents on
+Command Conversion and TeXShop Tips and Tricks.
+
+<p>
+<li> Minor improvements have been made in the French, Spanish, German, and Chinese translations.
+
+</ul>
+
+<P><h5>TeXShop Changes 2.38</h5></P>
+
+<p> Version 2.38 contains some wonderful changes by Yusuke Terada,
+who made the changes at the request of employees in the company he works for in Tokyo. Most of Terada's changes are activated by new items in the TeXShop Preference
+Panel, which are turned off by default. So users need to turn these items on and
+experiment. You can easily return to the old behavior if desired. Here are Terada's changes:
+
+<ul>
+
+<li> Show Invisible Characters: TeXShop can now show ordinary space characters,
+Japanese full width space characters, tab characters, and newline characters visually
+in the source window. Preference items turn each choice on or off, so users can
+display only some items if desired. A Preference item determines whether invisible
+characters are shown when files are first opened, and a menu item then  toggles invisible
+characters on or off on a file-by-file basis.
+
+<p>
+<li> Much better handling of parentheses: { and }, ( and ), [ and ], and < and >. 
+When such a pair is closed, the matching opening parenthesis is clearly marked, 
+and the entire section between these parentheses is colored
+yellow. This yellow color remains until another character is typed, and then it
+vanishes. Thus it is much easier to close a parenthesis and then stop and make sure
+the scope of that parenthesis pair is correct. By default, this feature is on, but
+it can be turned off in Preferences.
+
+<p>
+<li> If a parenthesis is typed with not matching pair, the computer beeps, or
+if desired the screen flashes. This feature is off by default and must be turned on
+in preferences. 
+
+<p> 
+<li> The parenthesis matching settings are controlled by five preference items, which can be
+turned on or off individually. The first item, "Highlight Enclosed Characters", marks text
+between matching parentheses in yellow  when a parenthesis is closed.
+The yellow vanishes when additional characters are typed. The
+second item, "Show Indicator in Moving", activates this feature when using arrow keys
+to move through the text, so when the active position becomes a parenthesis, the area it 
+controls is shown in yellow.  The third item, "Blink Highlight", causes a matching parenthesis
+to switch temporarily to red and then blink back to its natural syntax color. When this item is
+off, the matching parenthesis will remain red until a new character is typed. The last two
+items, "Beep for Isolated Parens" and "Flash Back for Isolated Parens", cause the
+computer to beep, or momentarily flash the source window background, when a parenthesis
+is typed which has no match.
+
+<p>
+<li> Two new items were added to the Window menu: "Next Source Window" and "Previous
+Source Window". These cycle through source windows without changing the Preview Window.
+This is particularly useful in a project which inputs multiple source files.
+
+<p>
+<li>  The default preference setting which determines the position of  source  windows when first
+opened is 
+ "Remember last position on close".
+But an introductory movie in TeXShop's
+Help menu suggests changing this preference setting  to "All windows start
+at fixed position". Because this change is recommended, the original "Remember last
+position on close"  code in TeXShop did not work well.
+
+<p> Terada has improved the default greatly. New windows now appear cascading down and to the right as 
+recommended by Apple's Interface Guidelines, rather than on top of each other. Try this method
+ to get a feel for Terada's improvement. Similar remarks apply for positioning of Preview windows.
+
+<p> Note that if you use the "All windows start at fixed position" setting, Terada's changes
+do not apply and TeXShop works as it always has.
+
+<p>
+<li> TeXShop uses the default Cocoa behavior for window titles. Before considering
+Terada's modification, recall this  default behavior.
+Suppose a source file is titled "Sample.tex". Then the title
+at the top of the source window will read "Sample.tex" and the title at the top of the preview
+window will read "Sample.pdf". If you click on either title while holding the Command Key down,
+a pull down menu will appear listing the various components of the full path to the file. Choosing
+one of these items will open the corresponding folder in the Finder. In this way, it is very easy
+to go to the actual source or output file in the File system. Window titles are also listed in TeXShop's "Window" menu. 
+Selecting a window title there
+will bring the corresponding window to the front.
+
+<p> All this is fine unless your work flow includes the following sort of action: suppose you have folders named Sample1,
+Sample2, Sample3, and Sample4, and suppose each folder contains  a file
+named Data. Suppose  that your master document uses
+Sample1/Data and Sample2/Data. If your master and both data files are open on your desktop, 
+you may want to switch from one data file to another using the items in the Window menu. But these
+items will both be named "Data". It would be much better if  the Window menu listed "Sample1/Data" and
+"Sample2/Data" so you could keep them straight.
+
+<p> Terada's change makes this possible. An optional toolbar item named "Show Full Path" with a checkbox  is provided
+for the source window; this item must be added using "Customize Toolbar" and isn't in
+the default toolbar.  Checking this item will cause the source and preview windows to list 
+the full path to files rather than just the title of the files. Moreover, this full path will be listed in
+the Window menu.
+
+<p> Full path can be turned on or off on a file by file basis, so some files can show the full path
+while others show only the window title. The default checkbox state in the toolbar of a newly opened window will
+be the state last set by the user. Thus a user who always wants the full path displayed can check the
+item once and then forget it,  even when quitting and restarting TeXShop. If that user changes their
+mind, uncheck the item once and forget it. But some users will want to turn on full paths for some files and turn it
+off for other files.
+
+<p>
+<li> A new menu item in the TeXShop Help menu is provided, named "Open Style File". This
+item will open any style file in the texmf trees visible to TeX and LaTeX. This command uses
+"kpsetool" to find such style files, but the tool and its parameters can be changed in a new Engine file preference.
+
+<p>
+<li> Syntax coloring has been changed slightly. Previously, the @ symbol ended a TeX command,
+so "\@this" would only color "\@". But now the command is assumed to continue until a break character, so for example, every character of the following line
+will be colored:
+<dl>
+<dd>\ifx\@@input\@undefined\let\@@input\input\fi
+</dl>
+This will mainly affect users editing style files. 
+
+<p> We suspect that most users won't notice the change, and those who notice will like it. But
+the old behavior can be restored with a hidden preference:
+<dl>
+<dd>	defaults write TeXShop MakeatletterEnabled NO
+</dl>
+
+<p>
+<li> A minor bug fix to the "Uncomment" command: previously, TeXShop removed
+empty uncommented lines, but now it doesn't.
+
+
+<p>
+<li> A new preference "BibTeX Engine" is provided listing the default BibTeX engine. Most
+users will list "bibtex" as the default. This
+preference is mainly present for users in Japan, where users have access to
+<dl>
+<dd>	bibtex, jbibtex, pbibtex, and ubibtex
+</dl>
+
+<p>
+<li>  New hidden preference items named "backgroundAlpha" and "ConsoleBackgroundAlpha" are
+provided. For example, the following commands will provide source windows with translucent
+backgrounds:
+<dl>
+<dd>$ defaults write TeXShop SourceWindowAlpha 0.9
+<dd>$ defaults write TeXShop backgroundAlpha 0.6
+</dl>
+
+<p> (Actually my experiments show that both of these preference items are irrelevant, and the
+old SourceWindowAlpha and ConsoleWindowAlpha, documented in TeXShop Help, are
+enough to make transparent windows. I'll keep this item in the change document 'just in case.' -- Dick Koch)
+
+<li> When "utf export" is enabled to support pTeX in Japan, UTF-8-Mac encoded text
+is automatically converted to UTF-8 encoded text.
+
+</ul>
+
+<p> In addition to the work of Terada, TeXShop 2.38 has the following changes:
+
+<ul>
+<li> Version 2.38 contains a new Chinese localization by Linus Yang, from Fudan
+University in Shanghai, China. Thanks!
+
+<p> 
+<li> The Help menu now contains a link to a wonderful document by Herbert Shultz called
+"TeXShop Tips & Tricks." This document describes a number of useful TeXShop
+features in much more detail than the Help panel, including sections on working with large documents,  pdflatexmk, editing shortcuts,
+auto completion, and command completion.  
+<p>
+<li>  The following bug is fixed:  when a TeX source window is closed, the pdf Preview
+window is also closed. In previous versions, the Preview window was not deliberately closed in code, but it
+closed anyway because closing a document releases its nib file. This may have caused crashes
+in a small number of cases.  In Apple's forthcoming Lion system, the corresponding crash
+always happens. But version 2.38 of TeXShop fixes this problem. 
+
+<p> In short, this fix may help stability on earlier systems, and is required for Lion.
+
+<p>
+<li> The next addition is by Alvise Trevisan. In previous versions of TeXShop,
+ if you type begin{itemize} (or \begin{}} or a number of other
+typical fragments) and then push the Escape key, the corresponding \end{itemize} will appear
+on the following line and it is only necessary to fill in the intermediate lines. Unfortunately, if the
+opening \begin{itemize} is indented, the indentation is not preserved for the corresponding
+\end{itemize}. But with Trevisan's modification, it is preserved.
+
+<p>
+<li> Herb Schulz adopted Trevisan's code to provide a similar preservation of indentions throughout
+Command Completion. 
+
+<p>
+<li> The  ConTeXt-MKIV.engine and the document "About the Inactive Folder" in
+TeXShop/Engines/Inactive have been revised to indicate that users must run the following command ONCE
+in Terminal before using this engine:
+
+<dl>
+<dd>	luatools --generate
+</dl>
+
+<p>
+<li> Added the file extensions bbx, cbx, and lbx to the list of files which TeXShop can edit, and
+activated syntax coloring for such files.
+
+<p>
+<li> Added the extensions .bcf and .run.xml to Files->Trash Aux Files. This is needed to switch
+from biber to bibtex in latexmk.
+
+<p>
+<li> Alan Munn updated the help files advanced_otherfiles, advanced_syntaxcolor, basic_preferences,
+and advanced_personaltetex. The revisions document a couple of obscure features, but the key point
+is that Munn's formatting makes these files easier to read. It also introduces some
+inconsistency in the appearance of help pages, but we hope the remaining pages will be reformatted 
+in the same way over time.
+
+<p>
+<li> The program contains version 4.23 of Latexmk.
+
+<p>
+<li> For some time, TeXShop has contained a Substitutions submenu in the Edit Menu. This menu allows
+users to activate a number of operating system enhancements  for inputting text:
+<dl>
+<dd> Smart Copy/Paste
+<dd> Smart Quotes
+<dd> Smart Dashes
+<dd> Smart Links
+<dd> Data Detectors
+<dd> Text Replacement
+</dl>
+Consult Apple documentation for details.
+
+<p> Until version 2.38, users had to activate these items each time they opened a file. In TeXShop 2.38, the last choices
+a user makes are remembered and used when new files are opened, even after quitting TeXShop.
+
+<p> Warning: Operating system 10.4 (Tiger) only supports smart Copy/Paste. System 10.5 (Leopard) adds support for
+smart quotes and smart links. The remaining items are only available in system 10.6 (Snow Leopard) and beyond.
+All items are standard parts of Apple's text system, and some may not be appropriate when editing TeX/LaTeX
+documents.
+
+<p>
+<li> TeXShop 2.38 adds a new magic marker to select the spelling dictionary; this idea was first introduced in the
+latest release of TeXworks. Suppose a source file is written in German and  one of the first twenty lines
+in the file is
+<dl>
+<dd> % !TEX spellcheck = de-DE
+</dl>
+Then the spell checker will use the German dictionary with this document, but will use the default spelling dictionary
+for all other open documents without this line. TeXShop reads this line when opening the file, so when the magic marker
+is created, the file must be saved, closed, and reopened before TeXShop will use it.  If a project uses several include files,
+ each include file must contain the line. 
+ 
+ <p> When using this command, Apple dictionaries are specified using either the ISO 639-1 or ISO 639-2 standards for determining language designations, and the ISO 3166-1 standard for regional designations. The regional designation is used to distinguish between a language as used in one part of the world and that same language in another part of the world. For instance, French is "fr" in ISO 639-1 and "fre" in ISO 639-2; French (France) has regional designation "FR" and
+French (Canadian) has regional designation "CA". So to select a French dictionary in Canada, "spellcheck = fr" will work, and "spellcheck = fr-CA" would be even better.
+Since these are ISO standards, similar commands will work on other platforms, although TeXShop only runs on the Mac. The language standards are described in 
+<dl>
+			<dd><a href="http://www.loc.gov/standards/iso639-2/php/English_list.php">http://www.loc.gov/standards/iso639-2/php/English_list.php</a>
+		</dl>
+and the regional standards are at
+<dl>
+			<dd><a href="http:www.iso.ch">http:www.iso.ch</a>
+		</dl>
+although this second site is difficult to use.
+
+<p> Specifying a cocoAspell dictionary is slightly tricky. The Spelling Preference Pane installed by cocoAspell lists all cocoAspell dictionaries, including active dictionaries. Names in this list are the names to be used following "spellcheck". When these dictionaries appear in Apple's list in the Language & Text panel, they often have different names. Those names don't work.
+
+<p> For example, there  is a ocoAspell dictionary named German. If the German dictionary is selected in the Spelling Preference Panel, then the resulting dictionary will be listed in Apple's panel as Deutch (Aspell). In this case 
+<dl>
+			<dd>% !TEX spellcheck = de
+		</dl>
+will select Apple's German dictionary and 
+<dl>
+			<dd>% !TEX spellcheck = German
+		</dl>
+will select the cocoAspell German dictionary, while
+<dl>
+			<dd>% !TEX spellcheck = Deutsch (Aspell)
+		</dl>
+will select nothing. 
+
+<p> Similarly there is a cocoAspell dictionary named German (Germany) in the Spelling Preference Pane. To select it, the appropriate command is
+<dl>
+			<dd>% !TEX spellcheck = German (Germany)
+		</dl>
+
+
+
+
+
+</ul>
+
 <P><h5>TeXShop Changes 2.37</h5></P>
 
 <ul>

@@ -25,6 +25,7 @@
 #import <AppKit/AppKit.h>
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
+#import "MyPDFKitView.h"
 
 
 @interface MyPDFKitView : PDFView
@@ -90,6 +91,11 @@
 	NSRect							secondFullRect, secondVisibleRect;
 	BOOL							protectFind;
 	
+	BOOL							oldSync;
+	NSRect							syncRect[200];
+	int								numberSyncRect;
+
+	
 	
 }
 
@@ -105,6 +111,15 @@
 - (void) setupPageStyle;
 - (void) setupMagnificationStyle;
 - (BOOL) doReleaseDocument;
+
+- (int)pageStyle;
+- (int)firstPageStyle;
+- (int)resizeOption;
+- (void)setPageStyle: (int)thePageStyle;
+- (void)setFirstPageStyle: (int)theFirstPageStyle;
+- (void)setResizeOption: (int)theResizeOption;
+
+
 
 - (void) rotateClockwise:sender;
 - (void) rotateCounterclockwise:sender;
@@ -141,6 +156,9 @@
 
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 
+// printing
+- (void) printDocument: sender;
+
 
 - (void)selectARect: (NSEvent *)theEvent;
 - (void)selectAll: (id)sender;
@@ -175,5 +193,11 @@
 - (void)cancelSearch;
 - (void)setProtectFind: (BOOL)value;
 - (void) setShowSync: (BOOL)value;
+- (void)setNumberSyncRect: (int)value;
+- (void)setSyncRect: (int)which originX: (float)x originY: (float)y width: (float)width height: (float)height;
+- (void)setOldSync: (BOOL)value;
+
+
+
 @end
 

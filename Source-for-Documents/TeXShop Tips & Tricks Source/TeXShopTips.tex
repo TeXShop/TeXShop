@@ -9,14 +9,13 @@
 \usepackage{fourier}
 \usepackage[scaled=0.85]{berasans}
 \usepackage[scaled=0.85]{beramono}
+\usepackage{microtype}
 
 \usepackage{booktabs}
 
 % Include graphicx
 \usepackage{graphicx}
 %\usepackage{applekeys}
-
-\usepackage{microtype}
 
 \usepackage{xcolor}
 \usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
@@ -47,7 +46,7 @@
 \setlength{\fboxsep}{0pt}
 \newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
 
-\title{\TS\ Tips \& Tricks\\\small v0.5.0--2011/04/20}
+\title{\TS\ Tips \& Tricks\\\small v0.5.5--2012/05/17}
 \author{H. Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
 \date{}
 
@@ -60,7 +59,7 @@
 
 \section{Introduction}
 
-\TS\ is a ``Front End'' for a \TeX\ distribution on Mac OS~X. As such it allows the user to create and edit \TeX\ source files, interact with the \TeX\ distribution (e.g., typeset the source file) and, finally preview the final \acr{pdf} file. It also allows the user to go back and forth between preview and source.
+\TS\ is a ``Front End'' for a \TeX\ distribution on Mac OS~X. As such it allows the user to create and edit \TeX\ source files, interact with the \TeX\ distribution (e.g., typeset the source file) and finally preview the final \acr{pdf} file. It also allows the user to go back and forth between preview and source.
 
 Over the years \TS\ has added many features. Some of them are obvious and are meant to help a novice get started. Others are a bit more subtle in their use and the underlying power of these features needs to be coaxed out.
 
@@ -82,11 +81,11 @@ This is about as close to a beginner's section you will get in this document.
 
 The first thing you've got to do to create that great work is to type it into the source document that will be typeset and viewed later. This involves both putting \LaTeX\ markup as well as your wonderful words into the document.
 
-To get started you can open a new document using \mnu{File}\To\mnu{New} (\cmd{Cmd-N}) and then fill in the start of a new document by choosing a template from the \mnu{Templates} popup menu in the Source Window or use---new with \TS\ 2.36---the \mnu{File}\To\mnu{New From Stationery…} command and picking appropriate Stationery from the list. Note that the templates and stationery provided are certainly not complete; if you have some that you think are of general use feel free to submit them for inclusion in \TS. You can add personal Templates and Stationery to \path{~/Library/TeXShop/Templates/} and \path{~/Library/TeXShop/Stationery/} respectively. \textbf{Note: \path{~/Library/} is the \texttt{Library} folder in your \texttt{HOME} folder.}
+To get started you can open a new document using \mnu{File}\To\mnu{New} (\cmd{Cmd-N}) and then fill in the start of a new document by choosing a template from the \mnu{Templates} popup menu in the Source Window or use the \mnu{File}\To\mnu{New From Stationery…} command and picking appropriate Stationery from the list. Note that the templates and stationery provided are certainly not complete; if you have some that you think are of general use feel free to submit them for inclusion in \TS. You can add personal Templates and Stationery to \path{~/Library/TeXShop/Templates/} and \path{~/Library/TeXShop/Stationery/} respectively. \textbf{Note: \path{~/Library/} is the \texttt{Library} folder in your \texttt{HOME} folder. Note: Under \textsf{Mac OS X 10.7} the \texttt{Library} folder is ``hidden'' by default; in \texttt{Finder} hold the \cmd{Opt} key down and click on the \mnu{Go} menu and it will be available.}
 
 \subsubsection{\LaTeX\ \& Matrix Panels}
 
-While I believe that panels with a clickable interface actually hinder learning I'll mention that TeXShop has two panels to help with entering \LaTeX\ code (the \LaTeX\ Panel) and for setting up the basic structure of a matrix or tabular (the Matrix Panel). These are toggled on/off under the \mnu{Window} Menu or with the keyboard shortcuts\footnote{The given shortcuts are for the English localization and may be different with other localizations.} \texttt{Opt-Cmd-{}-} and \texttt{Opt-Cmd-=} respectively. Figure (\ref{fig:LandMPanels}) shows what the panels look like.
+While I believe that panels with a clickable interface actually hinder learning I'll mention that \TS\ has two panels to help with entering \LaTeX\ code (the \LaTeX\ Panel) and for setting up the basic structure of a matrix or tabular (the Matrix Panel). These are toggled on/off under the \mnu{Window} Menu or with the keyboard shortcuts\footnote{The given shortcuts are for the English localization and may be different with other localizations.} \texttt{Opt-Cmd-{}-} and \texttt{Opt-Cmd-=} respectively. Figure (\ref{fig:LandMPanels}) shows what the panels look like.
 \begin{figure}
 \includegraphics[width=2.5in]{figs/LaTeXPanel}\hfill\includegraphics[width=2.5in]
 {figs/MatrixPanel}
@@ -135,7 +134,7 @@ With more recent \TeX\ distributions you can also skip back and forth between a 
 \begin{figure}
 \centering
 \framebox{\includegraphics[width=2.75in]{figs/SourceToPreviewSync}}\qquad\framebox{\includegraphics[width=2.75in]{figs/PreviewToSourceSync}}
-\caption{Source\To Preview and Preview\To Source Synchronization.}
+\caption{Source\protect\To Preview and Preview\protect\To Source Synchronization.}
 \label{fig:SourcePreviewSync}
 \end{figure}
 
@@ -198,7 +197,7 @@ One example using Mac~OS~X~10.6 (Snow Leopard): \TS\ 2.36 has added a \mnu{File}
 
 This is done by creating a special file, \path{DefaultKeyBinding.dict}, and placing it in a particular location, \path{~/Library/KeyBindings/} (you may have to create the \path{KeyBindings} folder there if it doesn't already exist).
 
-You can get more information about this, as well as a (useful) sample, by downloading the \path{KeyBindings.zip} file from <\url{http://public.me.com/herbs2}>.
+You can get more information about this, as well as a (useful) sample, by downloading the \textsf{KeyBindings.zip} file at <\url{https://dl.dropbox.com/u/10932738/index.html}>.
 
 %\subsection{What is Broken}
 
@@ -219,11 +218,11 @@ You can add, remove or change the key bindings using the Key Bindings Editor (\m
 \end{figure}
 \begin{figure}
 \centering
-\includegraphics[height=2.00in]{figs/KeyBindingEditor}
+\includegraphics[height=3in]{figs/KeyBindingEditor}
 \caption{The Key Bindings Editor in \TS.}
 \label{fig:keybindeditor}
 \end{figure}
-
+Once in the Editor the left hand column displays the input keystroke while the right hand column shows what will be substituted for that keystroke. To see how you produce some of those keystrokes enable the Keyboard Viewer in \mnu{System Preferences}\To\mnu{Keyboard}\To\mnu{Keyboard} by checking the `\mnu{Show Keyboard \& Character Viewers in menu bar}' item and then clicking on the new keyboard icon in your Menu Bar.
 %You can add your own keybindings and/or remove those you don't need by editing \path{~/Library/TeXShop/Keyboard/autocompletion.plist}. To add a keybinding to the \verb|_| key so that pressing it with a selection will produce the selection surrounded by \verb|_{| and \verb|}| enter the lines
 %\begin{verbatim}
 %	<key>_</key>
@@ -246,12 +245,12 @@ You can remove or add additional macros to the menu by using the \mnu{Macro Edit
 \end{figure}
 
 Besides writing your own macros you can add macros supplied by others to the \mnu{Macros} menu one of two ways: copy and paste the text version of the macro into a \mnu{New Item} in the \mnu{Macro Editor}; or obtain the macro as a \texttt{plist} file and use the \mnu{Add macros from file…} command found in the \mnu{Macros} Menu when the \mnu{Macro Editor} is open (again, see Figure (\ref{fig:MacrosMenu})).
-%\begin{figure}
-%\centering
-%\framebox{\includegraphics[width=2.5in]{figs/MacrosMenu}}
-%\caption{The extra menu items when the Macro Editor is open.}
-%\label{fig:MacrosMenu}
-%\end{figure}
+\begin{figure}
+\centering
+\framebox{\includegraphics[width=2.5in]{figs/MacrosMenu}}
+\caption{The extra menu items when the Macro Editor is open.}
+\label{fig:MacrosMenu}
+\end{figure}
 
 More information on macros can be found by searching for \cmd{macros} in \mnu{Help}\To\mnu{TeXShop Help Panel…}.
 
@@ -269,12 +268,12 @@ You cannot distinguish Applescript macros in the \mnu{Macros} Menu from text mac
 \end{verbatim}
 line at the top of a file with your choice of engine substituted for \texttt{xxxx}. You can look at the Applescript code for this macro by clicking on its name in the \mnu{Macro Editor}.
 
-\begin{figure}
-\centering
-\framebox{\includegraphics[width=2.25in]{figs/MacrosMenu}}
-\caption{The extra menu items when the Macro Editor is open.}
-\label{fig:MacrosMenu}
-\end{figure}
+%\begin{figure}
+%\centering
+%\framebox{\includegraphics[width=2.25in]{figs/MacrosMenu}}
+%\caption{The extra menu items when the Macro Editor is open.}
+%\label{fig:MacrosMenu}
+%\end{figure}
 
 % Command Completion
 %	via ~/Library/TeXShop/CommandCompletion.txt & Macros
@@ -352,11 +351,12 @@ at the top of your source file; the example given will run the \texttt{xelatex} 
 
 \subsection{The \texttt{pdflatexmk} engine}
 
-If your document had cross-references, bibliographies or indexes it takes multiple \texttt{pdflatex} runs with intermediate runs of \texttt{bibtex} and/or \texttt{makeindex} to create the bibliographies, indexes and resolve all cross-references. The \texttt{pdflatexmk} engine automates this whole process.
+If your document had cross-references, bibliographies and/or indexes it takes multiple \texttt{pdflatex} runs with intermediate runs of \texttt{bibtex} and/or \texttt{makeindex} to create the bibliographies, indexes and resolve all cross-references. The \texttt{pdflatexmk} engine automates this whole process.
 
-To activate the engine simply move the \texttt{pdflatexmk.engine} file from \path{~/Library/TeXShop/Engines/Inactive/Latexmk/} two folders up, to \path{~/Library/TeXShop/Engines/}. When you restart \TS\ you can check that \cmd{pdflatexmk} in now in the popup menu.
+\TS\ 3.07 and later activate the pdflatexmk engine by default \emph{in a fresh installation}. If you are using an earlier version of \TS, or even updated to the latest version from an earlier version, you need to activate the engine. To activate the engine simply move the \texttt{pdflatexmk.engine} file from \path{~/Library/TeXShop/Engines/Inactive/Latexmk/} two folders up, to \path{~/Library/TeXShop/Engines/}. When you restart \TS\ you can check that \cmd{pdflatexmk} in now in the popup menu.
 
-Now place the line
+\pagebreak
+Then place the line
 \begin{verbatim}
 % !TEX TS-program = pdflatexmk
 \end{verbatim}

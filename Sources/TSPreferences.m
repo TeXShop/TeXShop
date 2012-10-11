@@ -123,6 +123,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	consoleBackgroundColorTouched = NO;
 	consoleForegroundColorTouched = NO;
 	sourceBackgroundColorTouched = NO;
+    sourceTextColorTouched = NO;
 	previewBackgroundColorTouched = NO;
 	externalEditorTouched = NO;
 	syntaxColorTouched = NO;
@@ -553,6 +554,34 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	sourceBackgroundColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
 }
+
+/*" This method is connected to the source window background color well.
+ "*/
+- (IBAction)setSourceTextColor:sender
+{
+	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+    
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:foreground_RKey] forKey:foreground_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:foreground_GKey] forKey:foreground_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:foreground_BKey] forKey:foreground_BKey];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:insertionpoint_RKey] forKey:insertionpoint_RKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:insertionpoint_GKey] forKey:insertionpoint_GKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:insertionpoint_BKey] forKey:insertionpoint_BKey];
+	
+	[SUD setFloat: [newColor redComponent] forKey:foreground_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:foreground_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey: foreground_BKey];
+    
+    [SUD setFloat: [newColor redComponent] forKey:insertionpoint_RKey];
+	[SUD setFloat: [newColor greenComponent] forKey:insertionpoint_GKey];
+	[SUD setFloat: [newColor blueComponent] forKey: insertionpoint_BKey];
+
+	
+	sourceTextColorTouched = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:SourceTextColorChangedNotification object:self];
+}
+
 
 /*" This method is connected to the preview window background color well.
 "*/
@@ -1309,6 +1338,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleForegroundColorChangedNotification object:self];
 	if (sourceBackgroundColorTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
+    if (sourceTextColorTouched)
+		[[NSNotificationCenter defaultCenter] postNotificationName:SourceTextColorChangedNotification object:self];
 	if (previewBackgroundColorTouched)
 		[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 	if (magnificationTouched)
@@ -1503,6 +1534,10 @@ This method retrieves the application preferences from the defaults object and s
 	NSColor *sourceBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:background_RKey]
 		green: [defaults floatForKey:background_GKey] blue: [defaults floatForKey:background_BKey] alpha:1.0];
 	[_sourceBackgroundColorWell setColor:sourceBackgroundColor];
+    
+    NSColor *sourceTextColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:foreground_RKey]
+                                                               green: [defaults floatForKey:foreground_GKey] blue: [defaults floatForKey:foreground_BKey] alpha:1.0];
+	[_sourceTextColorWell setColor:sourceTextColor];
 	
 	NSColor *previewBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:PdfPageBack_RKey]
 		green: [defaults floatForKey:PdfPageBack_GKey] blue: [defaults floatForKey:PdfPageBack_BKey] alpha:1.0];

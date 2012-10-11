@@ -1,0 +1,117 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Motores de composici&oacute;n adicionales y codificaci&oacute;n de caracteres</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="motor de composici&oacute;n; xetex; xelatex: codificaci&oacute;n; utf-8">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+<p> Recientemente, Jonathan Kew introdujo XeTeX y XeLaTeX. Estos programas pueden usar directamente los tipos de letra (&lsquo;fonts&rsquo;) de Macintosh en un documento TeX.
+XeTeX y XeLaTeX requieren c&oacute;digo unicode, y as&iacute; pueden manejar cualquier car&aacute;cer unicode; por ejemplo, con ellos puedes escribir en &aacute;rabe o en hebreo en el archivo con c&oacute;digo tex y luego ver &aacute;rabe o hebreo en la salida. El editor de c&oacute;digo de TeXShop se encarga de poner correctamente los caracteres de derecha a izquierda. XeTeX no es parte de la instalaci&oacute;n est&aacute;ndar de TeX de Gerben Wierda, pero se puede conseguir usando el i-Instaler de Wierda como una instalaci&oacute;n adicional directamente de Jonathan Kew. Los detalles adicionales puedes consultarlos en</p>
+		<dl>
+			<dd><a href="http://scripts.sil.org/xetex">http://scripts.sil.org/xetex</a>
+		</dl>
+<p> Para entender c&oacute;mo funciona esto, aqu&iacute; hay un breve documento con c&oacute;digo XeLaTeX, y lo que genera al componer p&aacute;ginas. Los caracteres &aacute;rabes y hebreos se pueden conseguir accediendo al panel Internacional en las Preferencias del Sistema, seleccionando Men&uacute; Teclado y activando &Aacute;rabe y Hebreo. Aparece una peque&ntilde;a bandera y el usaurio puede cambiar entre distintos teclados seleccionado la bandera apropiada.</p>
+<IMG HEIGHT="355" WIDTH="330" border="0" SRC="../gfx/source.jpg">
+
+<IMG HEIGHT="155" WIDTH="349" border="0" SRC="../gfx/output.jpg">
+
+<p> Ahora, TeXShop soporta XeTeX y XeLaTeX:</p>
+<dl>
+<li> XeTeX y XeLaTeX est&aacute;n disponibles en el men&uacute; desplegable que hay en la ventana de c&oacute;digo.
+<li> El usuario puede hacer que XeTeX o XeLaTeX sea el m&eacute;todo de composici&oacute;n predeterminado en las preferencias.
+<li> Si una de las primeras veinte l&iacute;neas del archivo con el c&oacute;digo tex es 
+<dl>
+<dd> %!TEX encoding = UTF-8 Unicode
+</dl>
+entonces ese archivo se abrir&aacute; y se guardar&aacute; con codificaci&oacute;n UTF-8 Unicode independientemente de cu&aacute;l sea la codificaci&oacute;n por defecto que est&eacute; establecida en las preferencias.
+<li> Si la primeras veinte l&iacute;nea del c&oacute;digo tiene la forma
+<dl>
+<dd> %!TEX TS-program = xetex or %!TEX TS-program = xelatex
+</dl>
+entonces TeXShop usar&aacute; el correspondiente programa sin tener en cuenta el m&eacute;todo de composici&oacute;n elegido en el men&uacute;.
+</dl>
+
+<p>Esto que hemos explicado para XeTeX es un caso especial de un nuevo m&eacute;todo general para a&ntilde;adir motores de composici&oacute;n a TeXShop. Ahora, en ~/Library/TeXShop hay una carpeta llamada Engines; los archivos de esta carpeta son scripts del shell de Unix que llaman a los programas que realizan la composici&oacute;n. Cuando arranca TeXShop, examina esta carpeta y a&ntilde;ade al men&uacute; desplegable antes mencionado los nombres de estos script. Para llamar al correspondiente script, basta elegir uno de estos &iacute;tem y pulsar el bot&oacute;n Componer. Los usuarios pueden a&ntilde;adir sus propios script y a&ntilde;adirlos a la carpeta Engines. Tales script deben tener un nombre sin espacios, la extensi&oacute;n &laquo;.engine&raquo;, y el bit de ser un archivo unix ejecutable activado.</p>
+
+<p> Mediante las Preferencias de TeXShop, podemos asignar que alguno de los &iacute;tem de ~/Library/TeXShop/Engines sea el m&eacute;todo de composici&oacute;n por defecto. N&oacute;tese que cuando estos m&eacute;todos aparecen listados en las Preferencias, su nombre aparece sin la extensi&oacute;n.</p>
+
+<p>En cada archivo con c&oacute;digo tex se puede asignar el programa que se va a usar al compilarlo; para ello, basta que una de las primeras veinte l&iacute;neas del archivo sea algo como
+<dl>
+<dd> %!TEX TS-program = xelatex
+</dl>
+
+<p>La codificaci&oacute;n usada al guardar o abrir un documento se puede asignar escribiendo una l&iacute;nea de la siguiente forma en alguna de las veinte primeras l&iacute;neas del documento. Esto se puede hacer con cualquier codificaci&oacute;n permitida. Para saltarnos este comportamiento, basta mantener pulsada la tecla opci&oacute;n al arir el archivo.
+<dl>
+<dd> %!TEX encoding = UTF-8 Unicode
+</dl>
+ <p>No puede haber espacios alrededor del signo igual; y los espacios en el nombre de la codificaci&oacute;n deben coincidir con los espacios en los nombres que listamos a continuaci&oacute;n. Tales nombres son los que usa Mac OS X internamente. He aqu&iacute; la lista de los nombres permitidos:</p>
+<dl>
+<li> MacOSRoman
+<li> IsoLatin
+<li> IsoLatin2
+<li> IsoLatin
+<li> IsoLatin9
+<li> IsoLatinGreek
+<li> Mac Central European Roman
+<li> MacJapanese
+<li> DOSJapanese
+<li> SJIS_X0213
+<li> EUC_JP
+<li> JISJapanese
+<li> MacKorean
+<li> UTF-8 Unicode
+<li> Standard Unicode
+<li> Mac Cyrillic
+<li> DOS Cyrillic
+<li> DOS Russian
+<li> WindowsCentralEurRoman
+<li> Windows Cyrillic
+<li> KOI8_R
+<li> Mac Chinese Traditional
+<li> Mac Chinese Simplified
+<li> DOS Chinese Traditional
+<li> DOS Chinese Simplified
+<li> GBK
+<li> GB 2312
+<li> GB 18030
+</dl>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda avanzada</div><div id="header_title">Motores de composici&oacute;n adicionales y codificaci&oacute;n de caracteres</div>
+	<div id="menu_border">
+		<ul>
+			<LI><a href="advanced_personaltetex.htm">Adici&oacute;n de estilos personales y men&uacute;s de macros a teTeX</a>
+			<LI><a href="advanced_addengine.htm">Motores de composici&oacute;n adicionales y codificaci&oacute;n de caracteres</a>
+			<LI><a href="advanced_removeaux.htm">Borrado de archivos AUX</a>
+			<li><a href="advanced_externaleditor.htm">Uso de un editor externo</a>
+			<li><a href="advanced_pdfcopypaste.htm">Copiar-pegar y arrastrar-soltar desde la ventana del PDF</a>
+			<li><a href="advanced_root.htm">Establecer un documento ra&iacute;z</a>
+			<li><a href="advanced_pdfsync.htm">Sincronizaci&oacute;n c&oacute;digo-pdf</a>
+			<li><a href="advanced_unicode.htm">Unicode</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">Creaci&oacute;n y uso de formatos de TeX</a>
+			<li><a href="advanced_otherfiles.htm">Abrir otros archivos con TeXShop</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">Localizaciones</a>
+			<li><a href="advanced_syntaxcolor.htm">Colores para sintaxis</a>
+			<li><a href="advanced_shellescape.htm">Protecci&oacute;n ante shell-escape</a>
+			<li><a href="advanced_coloredtext.htm">Texto coloreado en TeX</a>
+			<li><a href="advanced_moretetex.htm">M&aacute;s sobre teTeX</a>
+			<li><a href="advanced_fink.htm">Coexistencia con Fink</a>
+			<li><a href="advanced_otherdistributions.htm">Coexistencia con otras distribuciones de TeX</a>
+			<li><a href="advanced_context.htm">ConTeXt y MetaPost</a>
+			<li><a href="advanced_plist.htm">Archivos .plist</a>
+			<li><a href="advanced_menushortcuts.htm">Redefinici&oacute;n de atajos de teclado de men&uacute;s</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

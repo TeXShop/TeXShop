@@ -123,6 +123,8 @@ enum RootCommand
 	IBOutlet NSTextField		*lineBox;
 	IBOutlet NSButton			*typesetButton;
 	IBOutlet NSButton			*typesetButtonEE;
+    IBOutlet NSButton			*shareButton;
+	IBOutlet NSButton			*shareButtonEE;
 	IBOutlet NSPopUpButton		*programButton;
 	IBOutlet NSPopUpButton		*programButtonEE;
 
@@ -405,6 +407,8 @@ enum RootCommand
 - (void)enterFullScreen: (NSNotification *)notification;
 - (void)exitFullScreen: (NSNotification *)notification;
 - (BOOL)skipTextWindow;
+- (void)doShareSource:(id)sender;
+- (void)doSharePreview:(id)sender;
 
 // BibDesk Completion
 //---------------------------

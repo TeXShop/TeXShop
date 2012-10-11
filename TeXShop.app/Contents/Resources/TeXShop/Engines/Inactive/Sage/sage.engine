@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PATH=$PATH:/usr/texbin:/usr/local/bin
+filename=$1
+sagename=${filename/%tex/sage}
+soutname=${filename/%tex/sout}
+
+pdflatex "$filename"
+
+# do we need to run Sage?
+if [ -f "$soutname" ]
+then
+    new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | md5)
+    old_sum=$(egrep -o ^%[0-9a-f]{32}% "$soutname" | cut -b 2-33)
+    if [ "$new_sum" != "$old_sum" ]
+    then
+        run_sage=yes
+    fi
+else
+    # no .sout file, so run Sage
+    run_sage=yes
+fi
+
+if [ "$run_sage" = "yes" ]
+then
+    echo Running Sage, please wait a moment...
+    /Applications/sage/sage "$sagename"
+    pdflatex "$filename"
+else
+    echo No Sage commands have changed, so running Sage is unnecessary.
+fi

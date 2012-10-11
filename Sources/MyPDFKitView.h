@@ -200,5 +200,6 @@
 - (void)changePDFViewSizeTo: (NSInteger)newResizeOption;
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 - (NSInteger)index;
+- (NSImage *)imageFromSelection;
 @end
 

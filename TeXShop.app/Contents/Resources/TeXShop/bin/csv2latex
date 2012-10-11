@@ -1,0 +1,107 @@
+#!/usr/bin/ruby
+# csv2latex Version 1.2 2010/02/18
+#
+# (c) 2005 Tom Counsell <tom@counsell.org>
+# (c) 2009, 2010 Alan Munn <amunn@msu.edu>
+# Licenced under the GPL
+# 
+# Modified and renamed 2009-07-10 by Alan Munn <amunn@msu.edu>
+# Modified to allow for three different tabular packages in LaTeX
+# and the option of just pasting cells alone.
+#
+# Revision history: 
+# v 1.0 2009/09/13 	Initial release
+# v 1.1 2010/01/31 	Fixed bug in  Applescript and updated documentation
+#					Removed unneeded dependency in script
+# v 1.2 2010/02/18	Added error trap for empty clipboard.
+#
+# Usage: csv2latex <tablestyle>
+# 	where <tablestyle> = cells, simple, booktabs, longtable
+#
+# Converts spreadsheet tables into latex tables
+#
+# Requires Ruby 1.8, and Mac OS 10.4 although could be adapted for other platforms.
+# Uses the MacOS command line utilities pbcopy and pbpaste.  Under linux, these could be
+# reimplemented with xsel and xclip
+#
+# To use, copy the spreadsheet table you want to convert to the clipboard
+# Run this code.
+# The latex code will be in the clipboard ready to paste
+#
+# To use this seamlessly with your editor, use the supplied Applescript
+# which will automatically paste the result into your source:
+# This assumes installation of the script in /usr/local/bin
+# Change the Applescript accordingly to reflect some other location.
+#
+#--Applescript direct
+#	set mainList to {"cells","booktabs", "simple","longtable" }
+#	choose from list mainList with prompt "Choose a table format"
+#	if the result is not false then
+#		set tablestyle to result as text
+#		do shell script  "/usr/local/bin/csv2latex" & " " &  tablestyle
+#		tell application "System Events" to keystroke "v" using {command down}
+#	end if
+#--End of Applescript
+#
+# 
+
+def escape_latex( string )
+    string.gsub( %r{([&$#%])} ) { '\\' + $1 }
+end
+
+text = `pbpaste`.gsub( /(\r?\n)|\r/, "\r" )
+lines = text.split("\r")
+lines = lines.map { |line| line.split("\t") }
+columns = lines.map { |line| line.size }.max
+if columns.nil? then exit end
+header = lines.shift
+if ARGV.empty?
+	hstyle = "simple"
+else
+	hstyle = ARGV[0]
+end
+
+
+pbcopy = IO.popen('pbcopy','w+')
+
+if hstyle == "longtable"
+		pbcopy.puts "\\begin{longtable}{#{'l'*columns}}" 
+		pbcopy.puts header.map{ |entry| escape_latex entry }.join(' & ')+' \\\\'
+		pbcopy.puts "\\endfirsthead" 
+		pbcopy.puts header.map{ |entry| escape_latex entry }.join(' & ')+' \\\\'
+		pbcopy.puts "\\endhead" 
+		pbcopy.puts "\\multicolumn{#{columns}}{r}{{Continued\\ldots}} \\" 
+		pbcopy.puts "\\endfoot" 
+		pbcopy.puts "\\hline" 
+		pbcopy.puts "\\endlastfoot"
+		pbcopy.puts
+else
+	if hstyle != "cells"
+		pbcopy.puts "\\begin{tabular}{#{'l'*columns}}"
+		pbcopy.puts
+	end
+end
+if hstyle == "booktabs"
+	pbcopy.puts "\\toprule"
+	pbcopy.puts header.map{ |entry| escape_latex entry }.join(' & ')+' \\\\'
+	pbcopy.puts "\\midrule"
+end
+if hstyle == "simple" or hstyle == "cells"
+	pbcopy.puts header.map{ |entry| escape_latex entry }.join(' & ')+' \\\\'
+end
+		lines.each do |row| 
+    		pbcopy.puts row.map{ |entry| escape_latex entry }.join(' & ')+' \\\\' 
+		end
+		pbcopy.puts
+if hstyle == "booktabs"
+	pbcopy.puts "\\bottomrule"
+end
+if hstyle == "longtable"
+		pbcopy.puts "\\end{longtable}"
+else	
+	if hstyle != "cells"
+		pbcopy.puts "\\end{tabular}"
+	end
+end
+pbcopy.close_write
+puts pbcopy.gets || "Ok. In clipboard" 

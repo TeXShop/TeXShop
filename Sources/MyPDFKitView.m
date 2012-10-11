@@ -2254,8 +2254,13 @@
 			[theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic)
 		{
 			// restore the cached image in order to clear the rect
-			[self updateBackground: rect]; //[[self window] restoreCachedImage];
-			[[self window] flushWindow];
+            
+            // We replace rect by [self visibleRect] to solve the bug that in MountainLion,
+            // garbage is left on the screen. This fix could be improved!
+  			 // [self updateBackground: rect]; //[[self window] restoreCachedImage];
+            [self updateBackground: [self visibleRect]];
+ 			 [[self window] flushWindow];
+            
 			// get Mouse location and check if it is with the view's rect
 			if (!([theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic))
 			{
@@ -2539,7 +2544,7 @@
 
 	if (selRectTimer)
 	{
-		NSRect visRect = [[self documentView] visibleRect];
+        NSRect visRect = [[self documentView] visibleRect];
 		// if (NSEqualRects(visRect, oldVisibleRect))
 		//	[self updateBackground: rect]; // [[self window] restoreCachedImage];
 				// change by mitsu to cleanup marquee immediately
@@ -2554,7 +2559,7 @@
 			tempRect =  [self convertRect: NSInsetRect(
 				NSIntegralRect([[self documentView] convertRect: selectedRect toView: nil]), -2, -2)
 				fromView: nil];
-			[self displayRect: tempRect];
+ 			[self displayRect: tempRect];
 		}
 		oldVisibleRect.size.width = 0; // do not use this cache again
 		if (terminate)
@@ -2585,6 +2590,25 @@
 	return (selRectTimer != nil);
 }
 
+- (NSImage *)imageFromSelection
+{
+   if ([self hasSelection])
+   {
+    NSData *theData = [self imageDataFromSelectionType:IMAGE_TYPE_PDF];
+    if (! theData)
+        return nil;
+    NSPDFImageRep *imageRep = [NSPDFImageRep imageRepWithData: theData];
+    if (! imageRep)
+        return nil;
+    NSImage *theImage = [[NSImage alloc] init];
+    [theImage addRepresentation: imageRep];
+    [theImage autorelease];
+    return theImage;
+    }
+else
+    return nil;
+}
+    
 
 // get image data from the selected rectangle with specified type
 - (NSData *)imageDataFromSelectionType: (NSInteger)type

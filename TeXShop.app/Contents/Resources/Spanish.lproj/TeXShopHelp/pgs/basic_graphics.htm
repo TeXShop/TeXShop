@@ -1,0 +1,101 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Inclusi&oacute;n de gr&aacute;ficos</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="incluir gr&aacute;ficos; epstopdf; eps; pdf; jpg; tif; tiff; conversi&oacute;n aut&aacute;matica">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Los programas pdftex y pdflatex pueden usar archivos gr&aacute;ficos (previamente producidos por otros programas) que tengan formato pdf, jpg, png, o mps.  El formato nativo de gr&aacute;ficos de Mac OS X es pdf (portable document format), y tales archivos se imprimen bien en cualquier tama&ntilde;o. Es previsible que la mayor&iacute;a de los futuros programas gr&aacute;ficos para Mac generen archivos pdf.</P>
+		
+		<p>Para usar gr&aacute;ficos, incluye al comienzo del fichero con c&oacute;digo LaTeX la l&iacute;nea</p>
+		<dl>
+			<dd><tt>\usepackage{graphicx}</tt>
+		</dl>
+		<p>Cuando desees insertar un archivo gr&aacute;fico, digamos &laquo;f1.pdf&raquo;, usa el comando</p>
+		<dl>
+			<dd><tt>\includegraphics[width=2in]{f1}</tt>
+		</dl>
+		<p>Si cambias el ancho indicado por otro, el gr&aacute;fico se reescalar&aacute;
+		al componer p&aacute;ginas. Experimenta hasta que encuentres el tama&ntilde;o que deseas.</P>
+		
+		<p>Si usabas TeX en el pasado, tus ilustraciones estar&iacute;an, posiblemente, en formato eps. Pero pdftex y pdflatex no pueden usar tales archivos directamente, sino que las ilustraciones deben ser convertidas a formato pdf. Para convertir un archivo eps con una ilustraci&oacute;n, basta abrirlo con TeXShop. La ilustraci&oacute;n aparecer&aacute; en una ventana gr&aacute;fica y, simult&aacute;neamente, TeXShop guardar&aacute; el correspondiente archivo pdf en el disco, dejando el eps original sin alterar.</P>
+		
+		<p> Si tu documento contiene una gran cantidad de archivos eps, es m&aacute;s sencillo convertirlos autom&aacute;ticamente a pdf al componer p&aacute;ginas.
+		Esta conversi&oacute;n dejar&aacute; los archivos eps donde estaban y pondr&aacute; los correspondientes pdf en el mismo lugar. Una vez que los archivos est&aacute;n todos convertidos a pdf, ya no har&aacute; falta convertirlos m&aacute;s veces:
+		cuando en el futuro volvamos a componer p&aacute;ginas, pdflatex usar&aacute; autom&aacute;ticamente las versiones pdf. Para que esto ocurra, hay que seguir tres pasos:</p>
+		<ul>
+		<li> En la parte de arriba del c&oacute;digo fuente LaTeX, pon las l&iacute;neas
+		<dl>
+			<dd><tt>\usepackage{graphicx}</tt>
+			<dd><tt>\usepackage{epstopdf}</tt>
+		</dl>
+		<li> <p>Cuando desees incluir un archivo gr&aacute;fico, digamos &laquo;f1.eps&raquo;, usa el comando</p>
+		<dl>
+			<dd><tt>\includegraphics[width=2in]{f1}</tt>
+		</dl>
+		<p>Observa que hemos omitido la extensi&oacute;n &laquo;.eps&raquo;. Esto har&aacute; que TeX use el archivo &laquo;f1.pdf&raquo; si tal archivo existe y,
+		en caso contrario, que convierta &laquo;f1.eps&raquo; en &laquo;f1.pdf&raquo; antes de usarlo.</p>
+		<li> Aseg&uacute;rate de que tienes Ghostscript instalado en tu m&aacute;quina,
+		y de que est&aacute;s usando pdflatex con el flag &laquo;--shell-escape&raquo;.
+		Para la mayor&iacute;a de los usuarios, ambos pasos son autom&aacute;ticos. Si usas la distribuci&oacute;n TeX Live instalada con MacTeX, tendr&aacute;s Ghostscript instalado.
+		Y en las las preferencias por defecto de TeXShop el flag &laquo;--shell-escape&raquo; est&aacute; activado. Si no es &eacute;ste tu caso, act&iacute;valo en la solapa Motor del men&uacute; Preferencias, en el lado izquierdo.
+		</ul>
+	
+		<p>Los autores de pdflatex y los autores de paquete gr&aacute;fico graphicx han previsto una manera f&aacute;cil de incluir archivos en un documento LaTeX compuesto con pdflatex, incluso si el documento va a ser compuesto m&aacute;s tarde con latex est&aacute;ndar para generar un dvi que se podr&aacute; distribuir a otras personas. 
+		Esto puede ocurrir si compartes tus archivos de c&oacute;digo fuente con colegas que usan LaTeX ordinario y requieren ilustraciones eps en lugar de ilustraciones pdf. 
+		Cuando desees insertar un archivo gr&aacute;fico, digamos &laquo;f1.pdf&raquo;, usa el mismo comando que antes, omitiendo la extensi&oacute;n &laquo;.pdf&raquo; o &laquo;.eps&raquo;:</p>
+		<dl>
+			<dd><tt>\includegraphics[width=2in]{f1}</tt>
+		</dl>
+		<p>Este comando har&aacute; que tex use el archivo &laquo;f1.pdf&raquo; cuando el c&oacute;digo se compone con pdflatex, pero use el archivo &laquo;f1.eps&raquo; cuando el c&oacute;digo se compone con latex.</p>
+		
+		<p>Tambi&eacute;n puedes usar ilustraciones tiff si tienes instalada la utilidad &laquo;convert&raquo; de ImageMagick; seguro que la tienes si instalaste TeX con MacTeX. En ese caso, aseg&uacute;rate que la cabecera de tu archivo contiene las l&iacute;neas
+		<dl>
+			<dd><tt>\usepackage{graphicx}</tt>
+			<dd><tt>\usepackage{epstopdf}</tt>
+			<dd><tt>\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}</tt>
+		</dl>
+		Estas l&iacute;neas autom&aacute;ticamente convertir&aacute;n los archivos tiff en png al componer p&aacute;ginas. Una peculiaridad es que la extensi&oacute;n del archivo debe ser &laquo;.tif&raquo; en lugar de &laquo;.tiff&raquo;.</p>
+		
+		<p>Si tienes archivos antiguos con ilustraciones eps, o si usas con el paquete pstricks (que requiere postscript), puedes cmponer p&aacute;ginas con 
+		&laquo;TeX y DVI&raquo; en lugar de con pdflatex. 
+		Mira los detalles en la secci&oacute;n &laquo;M&eacute;todos alternativos de composici&oacute;n&raquo;. 
+		De ese modo, la conversi&oacute;n de archivos eps en pdf no es necesaria.
+		Sin embargo, no es una buena idea usar este m&eacute;todo con proyectos nuevos que tengan gran cantidad de archivos eps, porque los archivos eps deben ser convertidos impl&iacute;citamente en pdf cada vez que compones p&aacute;ginas, y esto ralentiza enormemente la composici&oacute;n cuando las ilustraciones eps son complicadas. Esto es as&iacute; porque la conversi&oacute;n de postscript a pdf tiene lugar justo al final del proceso de composic&oacute;n con el m&eacute;todo &laquo;TeX and DVI&raquo;, despu&eacute;s de que las ilustraciones ya han sido incrustadas en el documento final completo.</p>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda b&aacute;sica</div><div id="header_title">Inclusi&oacute;n de gr&aacute;ficos</div>
+		<div id="menu_border">
+		<ul>
+			<LI><a href="basic_preliminaries.htm">Preliminares</a>
+			<LI><a href="basic_installtetex.htm">C&oacute;mo obtener e instalar teTeX</a>
+			<LI><a href="basic_installtexshop.htm">C&oacute;mo obtener e instalar TeXShop</a>
+			<li><a href="basic_typesetting.htm">Componer (&lsquo;typeset&rsquo;) documentos</a>
+			<li><a href="basic_alternatetypeset.htm">M&eacute;todos alternativos de composici&oacute;n</a>
+			<li><a href="basic_spelling.htm">Correcci&oacute;n ortogr&aacute;fica</a>
+			<li><a href="basic_latexpanel.htm">Panel LaTeX</a>
+			<li><a href="basic_matrixpanel.htm">Panel matrices</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Barra de herramientas y AppleScript</a>
+			<li><a href="basic_graphics.htm">Inclusi&oacute;n de gr&aacute;ficos</a>
+			<li><a href="basic_printing.htm">Imprimir</a>
+			<li><a href="basic_preferences.htm">Establecer preferencias</a>
+			<li><a href="basic_templates.htm">Personalizaci&oacute;n del men&uacute; Plantillas</a>
+			<li><a href="basic_edittricks.htm">Trucos de edici&oacute;n</a>
+			<li><a href="basic_autocompletion.htm">Autocompleci&oacute;n</a>
+			<li><a href="basic_commandcompletion.htm">Compleci&oacute;n de comandos</a>
+			<li><a href="basic_bugs.htm">Notificaci&oacute;n de errores (&lsquo;bugs&rsquo;)</a>
+			<li><a href="basic_websites.htm">Sitios web &uacute;tiles</a>
+			<li><a href="basic_license.htm">Licencia</a>
+			<li><a href="basic_thistranslation.htm">Sobre la traducci&oacute;n a espa&ntilde;ol</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

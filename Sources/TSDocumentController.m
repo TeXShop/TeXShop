@@ -23,10 +23,10 @@
  *
  */
 
+
 #import "TSDocumentController.h"
 #import "TSEncodingSupport.h"
 #import "TSDocument.h"
-
 
 @implementation TSDocumentController : NSDocumentController
 
@@ -54,11 +54,18 @@
 	return _encoding;
 }
 
+- (NSString *)defaultType
+{
+    return @"org.tug.tex";
+}
+
 - (IBAction)newDocument:(id)sender
 {
 	_encoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
 	[super newDocument: sender];
 }
+
+
 
 - (IBAction)newDocumentFromStationery: (id)sender
 {
@@ -68,7 +75,7 @@
 - (IBAction)openDocument:(id)sender
 {
 	[super openDocument: sender];
-	_encoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
+	// _encoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; Terada Yusuke says to comment it out
 }
 
 
@@ -103,8 +110,10 @@
 	doList = value;
 }
 
+
 /* The code below was an attempt to support the "Stationery Bit", but I don't know how to find its
  value in Cocoa. NSFileImmutable isn't it.
+ 
  
 
 - (id)openDocumentWithContentsOfURL:(NSURL *)absoluteURL display:(BOOL)displayDocument error:(NSError **)outError

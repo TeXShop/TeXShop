@@ -77,6 +77,7 @@
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
 	IBOutlet NSButton		*_convertUTFButton;
 	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
+    IBOutlet NSColorWell	*_sourceTextColorWell;
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
 	IBOutlet NSColorWell	*_consoleForegroundColorWell;
@@ -115,6 +116,7 @@
 	BOOL			consoleBackgroundColorTouched;
 	BOOL			consoleForegroundColorTouched;
 	BOOL			sourceBackgroundColorTouched;
+    BOOL            sourceTextColorTouched;
 	BOOL			previewBackgroundColorTouched;
 	BOOL			syntaxColorTouched;		/*" if user fiddled with syntax and then cancelled,
 																we restore the old one "*/
@@ -205,6 +207,7 @@
 - (IBAction)convertUTFPressed:sender;
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
+- (IBAction)setSourceTextColor:sender;
 - (IBAction)setPreviewBackgroundColor:sender;
 - (IBAction)setHighlightBracesColor:sender;
 - (IBAction)setConsoleBackgroundColor:sender;

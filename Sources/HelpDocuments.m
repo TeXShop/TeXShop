@@ -40,9 +40,12 @@
 	myURL = [NSURL fileURLWithPath: fileName];
 	myController = [TSDocumentController sharedDocumentController];
 	myDocument = [myController documentForURL: myURL];
-	if (myDocument != nil) 
+	if (myDocument != nil) {
+        // NSLog(@"here");
 		[[myDocument pdfKitWindow] makeKeyAndOrderFront:self];
+    }
 	else {
+        // NSLog(@"there");
 		[myController listDocument:NO];
 		[myController openDocumentWithContentsOfURL: myURL display: YES error:&outError];
 		[myController listDocument:YES];

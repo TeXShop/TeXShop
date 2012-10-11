@@ -1,0 +1,68 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Einen externen Editor verwenden</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="Sie k&ouml;nnen auch einen externen Editor mit TeXShop benutzen.">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+<BODY>
+	<div id="content_border">	
+		<p>TeXShop kann auf verschiedene Weise f&uuml;r die Arbeit mit einem externen Editor konfiguriert werden. Einige der unten beschriebenen Funktionen sind hierzu n&uuml;tzlich und unabh&auml;ngig davon wie Ihr Editor funktioniert. In Zukunft werden eventuell Kofigurationshilfen Ihrem Editor beiliegen.</p>
+		<p>Wenn Sie den Men&uuml;punkt &bdquo;Zur Vorschau &ouml;ffnen...&ldquo; w&auml;hlen, werden Sie aufgefordert eine tex-Quelldatei zu bestimmen. Hierbei wird jedoch nur die zugeh&ouml;rige pdf-Datei angezeigt. Ist die gew&auml;hlte Quelldatei nicht gesetzt oder die pdf-Datei nicht auf dem aktuellesten Stand, so setzt TeXShop diese zuerst. Sie k&ouml;nnen die Quelldatei somit in jedem beliebeigen Editor bearbeiten. Wenn die Datei gesetzt werden soll, wechseln sie einfach zum Vorschau-Fenster und klicken Sie auf &bdquo;Setzen&ldquo;. In diesem Modus &auml;ndert TeXShop selbst die Quelldatei nicht, sondern leitet die Datei einfach den jeweiligenlatex oder tex Prozessen zu.</p>
+		<p>Das Vorschau-Fenster kann so angepasst werden, dass es einen Knopf zum Setzen enth&auml;lt. Sollten Sie diesen Knopf nicht sehen, so passen Sie Ihre Werkzeugleiste mit &bdquo;Werzeugleiste anpassen...&ldquo; aus dem Fenster-Men&uuml; an.</p>
+		<p>Benutzer, die die meiste Zeit mit externen Editoren arbeiten, k&ouml;nnen hierf&uuml;r die Einstellung  &bdquo;Externen Editor benutzen&ldquo; in den allgemeinen Einstellungen f&uuml;r TeXShop benutzen. Ist diese Option gew&auml;hlt, so verhalten sich die Men&uuml;punkte &bdquo;&Ouml;ffnen&ldquo; und &bdquo;Zuletzt benutzt...&ldquo; in der oben beschriebenen Weise. Dar&uuml;ber hinaus &auml;ndert sich der Punkt &bdquo;Zur Voransicht &ouml;ffnen...&ldquo; in &bdquo;Zum bearbeiten &ouml;ffnen...&ldquo;. Hierdurch kann man ausnahmsweise ein Dokument doch mit dem internen Editor bearbeiten. Die Funktion durch &bdquo;&Ouml;ffnen&ldquo; und &bdquo;Zuletzt benutzt...&ldquo; auch Dateien in den Formaten jpg, tiff, ps, pdf, dvi, log und anderer Dateien zu &ouml;ffnen wird hierdurch nicht beeintr&auml;chtigt.</p>
+		<p>Einige Editoren erlauben es die Unix Kommandos direkt aufzurufen. Um diese Editoren besser mit TeXShop nutzen zu k&ouml;nnen wurde eine neue Einstellung &bdquo;Vorschau autom. aktualisieren&ldquo; in den TeXShop-Einstellungen hinzugef&uuml;gt. Ist eine tex-Datei &bdquo;zur Voransicht&ldquo; ge&ouml;ffnet, so wird die Vorschau automatisch aktualisiert, wenn die Datei gesetzt wird. Dadurch k&ouml;nnen Sie mit einem externen Editor Ihre Dateien setzen und das Ergebnis automatisch in TeXShop betrachten. Diese Einstellung bezieht sich auch auf in TeXShop ge&ouml;ffnete pdf-Dateien. Dar&uuml;ber hinaus werden auch tex-Dateien mit einbezogen, die mit &bdquo;&Ouml;ffnen&ldquo; ge&ouml;ffnet wurden, wenn die Einstellung einen externen Editor zu benutzen aktiviert ist.</p>
+		<p>Folgende AppleScript Befehle wurden in TeXShop implementiert. Externe Editoren k&ouml;nnen diese direkt aufrufen:</p>
+		<dl>
+			<dd>typesetinteractive
+			<dd>texinteractive
+			<dd>latexinteractive
+			<dd>contextinteractive
+			<dd>bibtexinteractive
+			<dd>makeindexinteractive
+			<dd>metapostinteractive
+			<dd>taskdone
+			<dd>refreshpdf
+			<dd>open_for_externaleditor
+		</dl>
+		Die ersten sieben Befehle aktivieren die TeXShop Satzkommandos. AppleScript wartet nicht bis die Prozesse zuende gef&uuml;hrt sind. Der &bdquo;taskdone&ldquo;-Befehl kann &uuml;berpr&uuml;fen, ob der Satzprozess beendet ist. Er gibt &bdquo;NO&ldquo; zur&uuml;ck, falls dieser noch l&auml;uft und &bdquo;YES&ldquo; falls dieser abgeschlossen ist. Jeder dieser Befehle aktualisiert das Vorschau-Fenster nach dem Setzen. Ruft Ihr Editor hierdurch TeXShop zum Setzen auf, kann die Option &bdquo;Vorschau autom. aktualisieren&ldquo; ausgeschlatet werden.
+		<p>Modifiziert der externe Editor die pdf-Ausgabe direkt, kann das Vorschau-Fenster durch &bdquo;refreshpdf&ldquo; aktualisiert werden. Dies ist nat&uuml;rlich nur dann n&ouml;tig, wenn &bdquo;Vorschau autom. aktualisieren&ldquo; ausgeschaltet ist. Schlie&szlig;lich &ouml;ffnet &bdquo;open_for_externaleditor&ldquo; eine tex-Datei &uuml;ber den Befehl &bdquo;Zur Voransicht &ouml;ffnen&ldquo;.</p>
+		<p>Der Tcl-Code um diese Funktionen aus AlphaX auszuf&uuml;hren werden im AlphaTcl-Ordner der TeXShop-Distribution mitgelifert. Lesen Sie die ersten Zeilen dieser Datei um zu erfahren, wie man AlphaX f&uuml;r TeXShop konfiguriert.</p>
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Erweitert</div>
+<div id="header_title">Einen externen Editor verwenden</div>
+
+
+	<div id="menu_border">
+		<UL>
+			<li><a href="advanced_personaltetex.htm">Pers&ouml;nliche sty- und Makrodateien zu teTeX hinzuf&uuml;gen</a></li>
+			<LI><a href="advanced_addengine.htm">Zusätzliche Schriftsatz-Programme</a>
+			<LI><a href="advanced_removeaux.htm">AUX-Dateien entfernen</a>
+			<li><a href="advanced_externaleditor.htm">Einen externen Editor verwenden</a></li>
+			<li><a href="advanced_pdfcopypaste.htm">Kopieren-Einf&uuml;gen und Drag-Drop aus dem Vorschau-Fenster</a></li>
+			<li><a href="advanced_root.htm">Die Hauptdatei des Projekts festlegen</a></li>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a></li>
+			<li><a href="advanced_unicode.htm">Unicode</a></li>
+			<li><a href="advanced_bibtex.htm">BibTeX</a></li>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a></li>
+			<li><a href="advanced_otherfiles.htm">Andere Dateien mit TeXShop &ouml;ffnen</a></li>
+			<li><a href="advanced_mathematica.htm">Mathematica</a></li>
+			<li><a href="advanced_localization.htm">Lokalisierungen</a></li>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Farben </a></li>
+			<li><a href="advanced_shellescape.htm">Shell Escape Schutz</a></li>
+			<li><a href="advanced_coloredtext.htm">Farbiger Text in TeX</a></li>
+			<li><a href="advanced_moretetex.htm">Mehr &uuml;ber teTeX</a></li>
+			<li><a href="advanced_fink.htm">Zusammenarbeit mit Fink</a></li>
+			<li><a href="advanced_otherdistributions.htm">Zusammenarbeit mit anderen TeX Distributionen</a></li>
+			<li><a href="advanced_context.htm">ConTeXt und MetaPost</a></li>
+			<li><a href="advanced_plist.htm">Plist Dateien</a></li>
+			<li><a href="advanced_menushortcuts.htm">Tastaturk&uuml;rzel neubelegen</a></li>
+		</UL>
+	</div>
+	
+	</BODY>
+</HTML>

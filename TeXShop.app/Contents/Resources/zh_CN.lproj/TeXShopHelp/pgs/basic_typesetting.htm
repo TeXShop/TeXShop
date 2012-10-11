@@ -1,0 +1,75 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Typesetting Documents</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="typesetting; tag; open; multiple files; modify behavior">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>To use TeXShop, type your LaTeX input in the editing window it provides. Then push the &quot;Typeset&quot; button at the top of the window. The input will be saved and pdflatex will run. A second window will open displaying messages from tex. If there are errors, pdflatex will halt; type &quot;return&quot; to skip the errors one by one, or one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing command-1.</P>
+		<p>Press the mouse on a section of the pdf output display to magnify the region near the cursor. Double click to magnify a larger region; triple click to magnify a still larger region. Notice that the default region size can be selected using
+an element of the toolbar at the top of the page. </p>
+		<p>To typeset a TeX document, push the button labeled LaTeX and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.</p>
+		<p>If you notice an error, you can immediately fix it in the editing window and push the &quot;Typeset&quot; button again without halting the first invocation of pdflatex. The program will kill that invocation and run another. </p>
+		<p>TeXShop remembers the source lines of the first twenty errors. To cycle through these lines in the source file, choose &quot;Go To Error&quot; in the Edit menu or type the keyboard shortcut for this menu item.</p>
+		<p>When you fix errors and typeset again, the viewer will remember the page you were previously viewing.</p>
+		<p>If a line in the source begins with the characters &quot;%:&quot;, TeXShop interprets the remaining word or words on the line as a &quot;tag&quot; and adds these words to the Tag pulldown menu. Choosing a tag entry in this menu will scroll to the appropriate line in the source file. Lines which begin with the words \section, \subsection, \subsubsection, or \chapter are automatically added to the Tag menu. However, this behavior can be changed by typing the following command in Apple's Terminal program:</p>
+		<dl>
+			<dd><tt>defaults write TeXShop TagSections NO</tt>
+		</dl>
+		<p>TeXShop can show multiple documents. If you choose &quot;New&quot; or &quot;Open,&quot;  your original document will remain and additional windows for the new document will open. If you open a TeX file in a folder which contains a pdf file with the same name, this pdf will also appear.</p>
+		<p>Some users like to divide their source into multiple files controlled by a master file using an \input command. TeXShop always saves the source file before typesetting. If the preference item &quot;During File Save, Save Related Files&quot; is checked, the master file will be searched before typesetting and any input file open in TeXShop will also be saved. This feature is due to John Nairn.</p>
+		<p>You can start TeXShop by double clicking on a document with extension &quot;.tex&quot;. The program will open that input document and (if it exists) the associated pdf document.</p>
+		<p>You can close the pdf window at any time. It will reappear when the document is typeset again. If you close the input window then both the input and output windows will close (windows from other TeX documents will remain open). Therefore, if an input source window is cluttering the screen, hide it instead of closing it.</p>
+		<p>pdftex and pdflatex are unix programs derived from Knuth's TeX program. The syntax of TeX does not allow spaces in filenames, so source files created with TeXShop should be given names without spaces. TeXShop itself has no problem with spaces in filenames.</p>
+	<p>
+	The preview window's behavior can be changed using the "Magnification" and "Display Format" items in the Preview menu. For example, you can configure the scroller to scroll through all of the document pages; the preview window can show two pages at a time; resizing the window can be made to change the preview magnification. Experiment until you find the mode you prefer, and then select this mode in preferences to make it permanent.
+</p>
+	<p>
+	Use the magnification tools in the Preview window's toolbar to magnify portions of text. By double or triple clicking before holding down the mouse, a larger portion of the text will be magnified. The
+magnified region can be changed during magnification by pushing the apple, option, control, and shift keys.
+</p>
+	<p>
+	Use the pdf selection tool to select a portion of the preview window and drag it to the desktop or another program's window. The selection can also be copied and then pasted into another document. By default, this selected region contains only foreground text in pdf format. This is useful, for example, when dragging text to Keynote; the slide's background will show behind the text and the text can be
+resized without losing clarity. 
+</p>
+	<p>
+	Use the text selection tool to select text in the preview window. This text can be copied and then pasted to a word processor. If the preview contains links, these links can be activated by clicking with the text selection tool. Use the Back/Forward commands to return to the original page. Use the Find command in the window's drawer to search for text in the pdf document. 
+</p>
+
+<p> You can jump between the source and preview windows by holding down the Apple command key while clicking on a word or phrase. If the phrase is in the source window, the preview window will scroll to the appropriate spot and the typeset phrase will be circled in red. If the phrase is in the preview window, the source window will open (if necessary) and scroll to the appropriate spot, and the source phrase will
+be highlighted in yellow.</p>  
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Basic Help</div><div id="header_title">Typesetting Documents</div>
+
+		<div id="menu_border">
+		<ul>
+				<LI><a href="basic_preliminaries.htm">Preliminaries</a>
+			<LI><a href="basic_installtetex.htm">Installing TeX Live</a>
+			<LI><a href="basic_installtexshop.htm">Installing TeXShop</a>
+			<LI><a href="basic_typesetting.htm">Typesetting Documents</a>
+			<li><a href="basic_alternatetypeset.htm">Alternate Typesetting Mode</a>	
+			<li><a href="basic_spelling.htm">Checking Spelling</a>
+			<li><a href="basic_latexpanel.htm">Latex Panel</a>
+			<li><a href="basic_matrixpanel.htm">Matrix Panel</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Toolbar and Applescript</a>
+			<li><a href="basic_graphics.htm">Including Graphics</a>
+			<li><a href="basic_printing.htm">Printing</a>
+			<li><a href="basic_preferences.htm">Setting Preferences</a>
+			<li><a href="basic_templates.htm">Modifying the Templates Menu</a>
+			<li><a href="basic_edittricks.htm">Editing Tricks</a>
+			<li><a href="basic_autocompletion.htm">Key Bindings</a>
+			<li><a href="basic_commandcompletion.htm">Command Completion </a>
+			<li><a href="basic_bugs.htm">Sending Bug Reports</a>
+			<li><a href="basic_websites.htm">Useful Web Sites</a>
+			<li><a href="basic_license.htm">License</a>
+		</UL>
+	</div>
+	</BODY>

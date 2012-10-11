@@ -585,13 +585,18 @@
 	else
 		skipTextWindow = NO;
 
-/*
+// WARNING: May be dangerous!!
+// The code below was commented out for Lion, but it works and
+// and is definitely needed for Mountain Lion; otherwise a blank
+// edit window appears when opening graphic files and in external editor mode
+    
     if (skipTextWindow) {
-        [[[self windowControllers] objectAtIndex:0] setWindow: nil];
+        if (NSAppKitVersionNumber > NSAppKitVersionNumber10_7_2) //i.e., Mountain Lion or higher
+            [[[self windowControllers] objectAtIndex:0] setWindow: nil];
         // [[[self windowControllers] objectAtIndex:0] setShouldCloseDocument: NO];
         // [[[self windowControllers] objectAtIndex:0] close];
     }
-*/
+
 
 
 
@@ -1928,6 +1933,9 @@ in other code when an external editor is being used. */
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleForegroundColorFromPreferences:) name:ConsoleForegroundColorChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackgroundColorBoth:) name:SourceBackgroundColorChangedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setTextColorBoth:) name:SourceTextColorChangedNotification object:nil];
+
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
 	
@@ -2261,6 +2269,13 @@ in other code when an external editor is being used. */
 	[self setLogWindowBackgroundColorFromPreferences: notification];
 }
 
+- (void)setTextColorBoth:(NSNotification *)notification
+{
+	[self setSourceTextColorFromPreferences: notification];
+ 	[self setLogWindowForegroundColorFromPreferences: notification];
+}
+
+
 - (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification
 {
 	NSColor	*backgroundColor;
@@ -2272,6 +2287,30 @@ in other code when an external editor is being used. */
 	[textView1 setBackgroundColor: backgroundColor];
 	[textView2 setBackgroundColor: backgroundColor];
 }
+
+- (void)setSourceTextColorFromPreferences:(NSNotification *)notification
+{
+	NSColor	*textColor, *insertionpointColor;
+	
+	textColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
+												green: [SUD floatForKey:foreground_GKey]
+                                                 blue: [SUD floatForKey:foreground_BKey]
+												alpha:1.0];
+    
+    insertionpointColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:insertionpoint_RKey]
+													green: [SUD floatForKey:insertionpoint_GKey]
+													 blue: [SUD floatForKey:insertionpoint_BKey]
+													alpha:1.0];
+    
+	[textView1 setTextColor: textColor];
+	[textView2 setTextColor: textColor];
+    [textView1 setInsertionPointColor: insertionpointColor];
+	[textView2 setInsertionPointColor: insertionpointColor];
+    [self setupColors];
+    [self colorizeVisibleAreaInTextView:textView1];
+	[self colorizeVisibleAreaInTextView:textView2];
+}
+
 
 - (void)setLogWindowBackgroundColorFromPreferences:(NSNotification *)notification
 {
@@ -5185,6 +5224,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 */
 
 // mitsu 1.29 (T3)//rewritten Scott Lambert 3/1/2010
+
+/*
 - (void) doCommentOrIndentForTag: (NSInteger)tag
 {
 	NSString	*text, *oldString;
@@ -5279,6 +5320,129 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 }
 
 // end mitsu 1.29 //end rewritten Scott Lambert 3/1/2010
+*/
+
+
+//// TSDocument.m
+
+// mitsu 1.29 (T3) // rewritten Scott Lambert 3/1/2010 // rewritten Terada 2012
+- (void) doCommentOrIndentForTag: (NSInteger)tag
+{
+    NSString    *text, *oldString;
+    NSRange     modifyRange;
+    NSUInteger  blockStart, blockEnd, lineStart, lineContentsEnd, lineEnd;
+    NSInteger   theChar = 0, increment = 0, rangeIncrement;
+    NSString    *theCommand = 0;
+    
+    text = [textView string];
+    NSRange oldRange = [textView selectedRange];
+    
+    //Expand the selectedRange to include whole lines
+    [text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
+    
+    //Save the oldString for undo
+    modifyRange.location = blockStart;
+    modifyRange.length = (blockEnd - blockStart);
+    oldString = [[textView string] substringWithRange: modifyRange];
+    
+    lineStart = blockStart;
+    BOOL firstLine = YES;
+    BOOL fixRangeStart = NO;
+    //We want to make at least one attempt at modifying.
+    //This matters only the selection is empty and the cursor is on the last line of the file which happens to be blank.
+    do {
+        modifyRange.location = lineStart;
+        modifyRange.length = 0;
+        //Find the end of the line (for the next iteration). Detect if line is blank: avoid characterAtIndex exception.
+        [text getLineStart:NULL end:&lineEnd contentsEnd:&lineContentsEnd forRange:modifyRange];
+        switch (tag) {
+            case Mcomment:
+                [textView replaceCharactersInRange:modifyRange withString:@"%"];
+                blockEnd++;
+                lineEnd++;
+                increment++;
+                theCommand = NSLocalizedString(@"Comment", @"Comment");
+                break;
+                
+            case Muncomment:
+                if (lineStart<lineContentsEnd)
+                    theChar = [text characterAtIndex:lineStart];
+                else if(firstLine){
+                    fixRangeStart = YES;
+                    break;
+                }
+                else break;
+                if (theChar == '%') {
+                    modifyRange.length = 1;
+                    [textView replaceCharactersInRange:modifyRange withString:@""];
+                    blockEnd--;
+                    lineEnd--;
+                    increment--;
+                    if(oldRange.location == blockStart && firstLine) fixRangeStart = YES;
+                    theCommand = NSLocalizedString(@"Uncomment", @"Uncomment");
+                }else if(firstLine){
+                    fixRangeStart = YES;
+                }
+                break;
+                
+            case Mindent:
+                [textView replaceCharactersInRange:modifyRange withString:@"\t"];
+                blockEnd++;
+                lineEnd++;
+                increment++;
+                theCommand = NSLocalizedString(@"Indent", @"Indent");
+                break;
+                
+            case Munindent:
+                if (lineStart < lineContentsEnd)
+                    theChar = [text characterAtIndex:lineStart];
+                else if(firstLine){
+                    fixRangeStart = YES;
+                    break;
+                }
+                else break;
+                if (theChar == '\t') {
+                    modifyRange.length = 1;
+                    [textView replaceCharactersInRange:modifyRange withString:@""];
+                    blockEnd--;
+                    lineEnd--;
+                    increment--;
+                    if(oldRange.location == blockStart && firstLine) fixRangeStart = YES;
+                    theCommand = NSLocalizedString(@"Unindent", @"Unindent");
+                }else if(firstLine){
+                    fixRangeStart = YES;
+                }
+                break;
+        };
+        lineStart = lineEnd;
+        firstLine = NO;
+    } while (lineStart < blockEnd);
+    
+    if (!theCommand)
+        return; // If no change was made, do nothing (see bug #1488597).
+    
+    [self fixColor:blockStart :blockEnd];
+    modifyRange.location = blockStart;
+    modifyRange.length = (blockEnd - blockStart);
+    [textView setSelectedRange: modifyRange];
+    
+    [self registerUndoWithString:oldString location:modifyRange.location
+                          length:modifyRange.length key: theCommand];
+    
+    rangeIncrement = increment + ((increment > 0) ? (-1) : 1);
+    if(fixRangeStart){
+        rangeIncrement--;
+    }else{
+        oldRange.location += (increment > 0) ? 1 : -1;
+    }
+    if(!(oldRange.length == 0 && rangeIncrement < 0)) oldRange.length += rangeIncrement;
+    
+    [textView setSelectedRange: oldRange];
+}
+
+// end mitsu 1.29 // end rewritten Scott Lambert 3/1/2010 // end rewritten Terada 2012
+
+
 
 
 - (void)trashAUXFiles: sender
@@ -6644,6 +6808,100 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     return [[[self fileURL] path] pathExtension];
 }
 
+- (void)doShareSource:(id)sender
+{
+    NSUInteger      count = 0;
+    NSRange         theRange;
+    NSString        *theString, *path;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
+    
+    theRange = [textView1 selectedRange];
+    if (theRange.length > 0) {
+        theString = [[textView1 string] substringWithRange: theRange];
+        count++;
+        [items addObject: theString];
+    }
+    else {
+        theRange = [textView2 selectedRange];
+        if (theRange.length > 0) {
+            theString = [[textView2 string] substringWithRange: theRange];
+            count++;
+            [items addObject: theString];
+        }
+    }
+    
+    if (count == 0) {
+        NSURL *documentURL = [self fileURL];
+        if (documentURL) {
+            count++;
+            [items addObject:documentURL];
+            }
+    }
+    
+     if (count > 0) {
+         NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems: items];
+         [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+     }
+}
+
+- (void)doSharePreview:(id)sender
+{
+    NSURL           *previewURL;
+    NSUInteger      count = 0;
+    NSString        *path, *previewPath;
+    MyPDFKitView    *thePDFKitView;
+    NSData          *data;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
+
+    if ([self rootDocument])
+        thePDFKitView = [rootDocument pdfKitView];
+    else
+        thePDFKitView = [self pdfKitView];
+    
+    if (thePDFKitView) {
+        data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+        NSImage *theImage = [[NSImage alloc]initWithData:data];
+        
+        // NSImage *theImage = [myPDFKitView imageFromSelection];
+        if (theImage) {
+            count++;
+            [items addObject: theImage];
+        }
+        [theImage release];
+    }
+        
+    if (count == 0) {
+        NSURL *documentURL = [self fileURL];
+        if (documentURL) {
+            NSURL *rootURL = [[self rootDocument] fileURL];
+            if (rootURL) {
+                path = [rootURL path];
+                previewPath = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+                previewURL = [NSURL fileURLWithPath: previewPath];
+                }
+            else {
+                path = [documentURL path];
+                previewPath = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+                if (previewPath)
+                    previewURL = [NSURL fileURLWithPath: previewPath];
+                }
+            
+            if (previewURL) {
+                count++;
+                [items addObject: previewURL];
+                }
+            }
+
+        }
+
+
+    if (count > 0) {
+        NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems: items];
+        [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+    }
+}
 
 
 @end

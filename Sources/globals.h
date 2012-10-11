@@ -453,6 +453,7 @@ extern NSString *ConsoleFontChangedNotification;
 extern NSString *ConsoleBackgroundColorChangedNotification;
 extern NSString *ConsoleForegroundColorChangedNotification;
 extern NSString *SourceBackgroundColorChangedNotification;
+extern NSString *SourceTextColorChangedNotification;
 extern NSString *PreviewBackgroundColorChangedNotification;
 extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;

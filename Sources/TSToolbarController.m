@@ -56,7 +56,8 @@ static NSString*	kTagsTID 			= @"Tags";
 static NSString*	kTemplatesID 		= @"Templates";
 static NSString*	kAutoCompleteID		= @"AutoComplete";  //warning: used in TSDocument's fixAutoMenu
 static NSString*	kShowFullPathID		= @"ShowFullPath";  // added by Terada
-static NSString*    kColorIndexTID		= @"ColorIndex";
+static NSString* kColorIndexTID		= @"ColorIndex";
+static NSString* kSharingTID          = @"Sharing";
 // forsplit
 static NSString*	kSplitID			= @"Split";
 // end forsplit
@@ -91,6 +92,7 @@ static NSString*	kMagnificationKKTID 	= @"MagnificationKIT";
 static NSString*	kMouseModeKKTID 		= @"MouseModeKIT";
 static NSString*	kBackForthKKTID			= @"BackForthKIT";
 static NSString*	kDrawerKKTID			= @"DrawerKIT";
+static NSString* kSharingKKTID          = @"SharingKIT";
 static NSString*	kSplitKKTID				= @"SplitKIT";
 #endif
 
@@ -100,6 +102,13 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 // -----------------------------------------------------------------------------
 //
 // -----------------------------------------------------------------------------
+
+- (BOOL)sharingExists {
+if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_7)
+    return YES;
+else
+    return NO;
+}
 
 - (NSToolbar*)makeToolbar:(NSString*)inID
 {
@@ -174,6 +183,10 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 {
 	[typesetButton retain];
 	[typesetButton removeFromSuperview];
+    [shareButton retain];
+    [shareButton removeFromSuperview];
+    [shareButtonEE retain];
+    [shareButtonEE removeFromSuperview];
 	[programButton retain];
 	[programButton removeFromSuperview];
 	[typesetButtonEE retain];
@@ -276,7 +289,6 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 }
 
 
-
 // -----------------------------------------------------------------------------
 //
 // -----------------------------------------------------------------------------
@@ -300,12 +312,54 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	/*
 	 if ([itemIdent isEqual: kTypesetTID]) {
 		 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 customView:typesetButton];
+		NSImage									 customView:typesetButton];
 	 }
 	 */
+    
+    if ([itemIdent isEqual: kSharingTID]) {
+       [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        [[shareButton cell] setImageScaling: NSImageScaleProportionallyUpOrDown];
+        [shareButton sendActionOn: NSLeftMouseDownMask];
+        [shareButton setTarget: self];
+        [shareButton setAction:@selector(doShareSource:)];
+        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButton];
+        /*
+         menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+        [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
+      //  [menuFormRep sendActionOn:NSLeftMouseDownMask];
+        [menuFormRep setTarget: self];
+        [menuFormRep setAction:@selector(doShareSource:)];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+         */
+        return toolbarItem;
+    }
+    
+    if ([itemIdent isEqual: kSharingKKTID]) {
+        [[shareButtonEE cell] setImageScaling: NSImageScaleProportionallyUpOrDown];
+        [shareButtonEE setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        [shareButtonEE sendActionOn:NSLeftMouseDownMask];
+        [shareButtonEE setTarget: self];
+        [shareButtonEE setAction:@selector(doSharePreview:)];
+        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:shareButtonEE];
+        menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+        [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
+       // [menuFormRep sendActionOn:NSLeftMouseDownMask];
+        [menuFormRep setTarget: self];
+        [menuFormRep setAction:@selector(doSharePreview:)];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        return toolbarItem;
+    }
+
 
 	if ([itemIdent isEqual: kTypesetTID]) {
-		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:typesetButton];
+        NSButton *button = [[[NSButton alloc] init] retain];
+        [button setTitle: @"Share"];
+        // [button setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        [button sendActionOn:NSLeftMouseDownMask];
+        [button setTarget: self];
+        [button setAction:@selector(doShare:)];
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:
+                       typesetButton];
 
 		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
 		submenu = [[[NSMenu alloc] init] autorelease];
@@ -890,6 +944,29 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	NSString*	toolbarID = [toolbar identifier];
 
 	if ([toolbarID isEqual:kSourceToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
+            
+        return  [NSArray arrayWithObjects:
+                           kTypesetTID,
+                           kProgramTID,
+                           NSToolbarPrintItemIdentifier,
+                           // NSToolbarSeparatorItemIdentifier,
+                           // kLaTeXTID,
+                           // kBibTeXTID,
+                           kMacrosTID,
+                           kTagsTID,
+                           kTemplatesID,
+                           NSToolbarFlexibleSpaceItemIdentifier,
+                           kSharingTID,
+                           kSplitID,
+                           // NSToolbarFlexibleSpaceItemIdentifier,
+                           // NSToolbarSpaceItemIdentifier,
+                           nil];
+        }
+        else {
+
+            
 
 		return [NSArray arrayWithObjects:
 					kTypesetTID,
@@ -906,7 +983,8 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 					// NSToolbarFlexibleSpaceItemIdentifier,
 					// NSToolbarSpaceItemIdentifier,
 				nil];
-	}
+        }
+    }
 
 	if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
 
@@ -928,6 +1006,8 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	}
 
 	if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
 
 		return [NSArray arrayWithObjects:
 					// kPreviousPageButtonTID,
@@ -944,10 +1024,35 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 					kGotoPageKKTID,
 					kMouseModeKKTID, // mitsu 1.29 (O)
 					NSToolbarFlexibleSpaceItemIdentifier,
+                     kSharingKKTID,
 					kSplitKKTID,
 					// NSToolbarSpaceItemIdentifier,
 				nil];
 	}
+        
+        else {
+     
+        
+		return [NSArray arrayWithObjects:
+                // kPreviousPageButtonTID,
+                // kNextPageButtonTID,
+                kPreviousPageKKTID,
+                kNextPageKKTID,
+                kBackForthKKTID,
+                kDrawerKKTID,
+                // kTypesetEETID,
+                // kProgramEETID,
+                NSToolbarPrintItemIdentifier,
+                // NSToolbarSeparatorItemIdentifier,
+                kMagnificationKKTID,
+                kGotoPageKKTID,
+                kMouseModeKKTID, // mitsu 1.29 (O)
+                NSToolbarFlexibleSpaceItemIdentifier,
+                kSplitKKTID,
+                // NSToolbarSpaceItemIdentifier,
+				nil];
+	}
+}
 
 
 	return [NSArray array];
@@ -965,9 +1070,40 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	NSString*	toolbarID = [toolbar identifier];
 
 	if ([toolbarID isEqual:kSourceToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
 
 		return [NSArray arrayWithObjects:
 //					kSaveDocToolbarItemIdentifier,
+					kTypesetTID,
+					kProgramTID,
+					kTeXTID,
+					kLaTeXTID,
+					kBibTeXTID,
+					kMakeIndexTID,
+					kMetaPostTID,
+					kConTeXTID,
+					kMetaFontID,
+					kTagsTID,
+					kTemplatesID,
+					kAutoCompleteID,
+					kShowFullPathID, // added by Terada
+                     kSharingTID,
+					kSplitID,
+					kMacrosTID,
+					kColorIndexTID,
+					NSToolbarPrintItemIdentifier,
+					NSToolbarCustomizeToolbarItemIdentifier,
+					NSToolbarFlexibleSpaceItemIdentifier,
+					NSToolbarSpaceItemIdentifier,
+					NSToolbarSeparatorItemIdentifier,
+				nil];
+	}
+        
+        else {
+            
+            return [NSArray arrayWithObjects:
+                    //					kSaveDocToolbarItemIdentifier,
 					kTypesetTID,
 					kProgramTID,
 					kTeXTID,
@@ -989,8 +1125,10 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 					NSToolbarFlexibleSpaceItemIdentifier,
 					NSToolbarSpaceItemIdentifier,
 					NSToolbarSeparatorItemIdentifier,
-				nil];
-	}
+                    nil];
+        }
+
+        }
 
 	if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
 
@@ -1024,6 +1162,8 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 	}
 
 	if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
 
 		return [NSArray arrayWithObjects:
 //					kSaveDocToolbarItemIdentifier,
@@ -1056,6 +1196,43 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 				nil];
 
 	}
+        
+        else {
+       
+            return [NSArray arrayWithObjects:
+                    //					kSaveDocToolbarItemIdentifier,
+					kPreviousPageButtonKKTID,
+					kNextPageButtonKKTID,
+					kPreviousPageKKTID,
+					kNextPageKKTID,
+					kBackForthKKTID,
+					kDrawerKKTID,
+					kTypesetEETID,
+					kProgramEETID,
+					kMacrosEETID,
+					kTeXTID,
+					kLaTeXTID,
+					kBibTeXTID,
+					kMakeIndexTID,
+					kMetaPostTID,
+					kConTeXTID,
+					kMetaFontID,
+					kGotoPageKKTID,
+					kMagnificationKKTID,
+					kMouseModeKKTID,
+					kSyncMarksTID,
+                     kSharingKKTID,
+					kSplitKKTID,
+					NSToolbarPrintItemIdentifier,
+					NSToolbarCustomizeToolbarItemIdentifier,
+					NSToolbarFlexibleSpaceItemIdentifier,
+					NSToolbarSpaceItemIdentifier,
+					NSToolbarSeparatorItemIdentifier,
+                    nil];
+            
+        }
+            
+        }
 
 
 	return [NSArray array];
@@ -1129,7 +1306,7 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 - (BOOL) validateToolbarItem: (NSToolbarItem *) toolbarItem {
 	// Optional method   self message is sent to us since we are the target of some toolbar item actions
 	// (for example:  of the save items action)
-	
+    
 	BOOL 		enable 		= NO;
 	NSString	*toolbarID	= [[toolbarItem toolbar] identifier];
 	NSString	*itemID		= [toolbarItem itemIdentifier];

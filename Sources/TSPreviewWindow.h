@@ -84,13 +84,13 @@
 - (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
 - (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)
 #endif
-- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
-- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
+// - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
+// - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;
-- (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+// - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) setActiveView:(PDFView *)theView;
 - (void) changeMouseMode: sender;
 - (void) doStepper: sender;

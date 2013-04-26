@@ -351,7 +351,7 @@
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
-		newGSTeXCommand = [NSString stringWithString: @"simpdftex tex"];
+		newGSTeXCommand = @"simpdftex tex";
 		if ([gsTeXCommand length] > locationOfRest)
 		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
 		[SUD setObject:newGSTeXCommand forKey:TexGSCommandKey];
@@ -367,7 +367,7 @@
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
-		newGSTeXCommand = [NSString stringWithString: @"simpdftex latex"];
+		newGSTeXCommand = @"simpdftex latex";
 		if ([gsTeXCommand length] > locationOfRest)
 		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
 		[SUD setObject:newGSTeXCommand forKey:LatexGSCommandKey];
@@ -456,26 +456,26 @@
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
 				enginePath = [enginePath stringByAppendingString: @" --distiller /usr/bin/pstopdf"];
 			if (! writeable) {
-				argumentString = [[NSString stringWithString:@" --outdir "] stringByAppendingString: TempOutputKey];
+				argumentString = [@" --outdir " stringByAppendingString: TempOutputKey];
 				enginePath = [enginePath stringByAppendingString: argumentString];
 			}
 			enginePath = [self separate:enginePath into: args];
 			if ([SUD boolForKey:SavePSEnabledKey])
-				[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+				[args addObject: @"--keep-psfile"];
 		} else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
 			enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
-				[args addObject: [NSString stringWithString:@"Panther"]];
+				[args addObject: @"Panther"];
 			else
-				[args addObject: [NSString stringWithString:@"Ghostscript"]];
+				[args addObject: @"Ghostscript"];
 			gsPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
 			[args addObject: gsPath];
 		} else if  ([[myFileName pathExtension] isEqualToString:@"eps"]) {
 			enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdfwrap" ofType:nil];
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
-				[args addObject: [NSString stringWithString:@"Panther"]];
+				[args addObject: @"Panther"];
 			else
-				[args addObject: [NSString stringWithString:@"Ghostscript"]];
+				[args addObject: @"Ghostscript"];
 			gsPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
 			[args addObject: gsPath];
 			tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
@@ -1093,7 +1093,7 @@
 				enginePath = [self separate:myEngine into:args];
 
 				if ((theScript == kTypesetViaGhostScript) && ([SUD boolForKey:SavePSEnabledKey])) 
-					[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+					[args addObject: @"--keep-psfile"];
 			}
 			
 			// Koch: Feb 20; this allows spaces everywhere in path except

@@ -22,6 +22,8 @@
  *
  */
 
+// See MOUNTAINLIONFIX for patch for Mountain Lion and above
+
 #import "UseMitsu.h"
 #import <Carbon/Carbon.h>
 
@@ -586,13 +588,17 @@
 		skipTextWindow = NO;
 
 // WARNING: May be dangerous!!
+// MOUNTAINLIONFIX
 // The code below was commented out for Lion, but it works and
 // and is definitely needed for Mountain Lion; otherwise a blank
 // edit window appears when opening graphic files and in external editor mode
     
     if (skipTextWindow) {
-        if (NSAppKitVersionNumber > NSAppKitVersionNumber10_7_2) //i.e., Mountain Lion or higher
-            [[[self windowControllers] objectAtIndex:0] setWindow: nil];
+ //       if (NSAppKitVersionNumber > NSAppKitVersionNumber10_7_2) //i.e., Mountain Lion or higher
+          if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+              ; // on a version of Lion or lower
+            else
+                [[[self windowControllers] objectAtIndex:0] setWindow: nil];
         // [[[self windowControllers] objectAtIndex:0] setShouldCloseDocument: NO];
         // [[[self windowControllers] objectAtIndex:0] close];
     }
@@ -1189,8 +1195,8 @@ in other code when an external editor is being used. */
 
 
 
-- (NSData *)dataRepresentationOfType:(NSString *)aType {
-
+// - (NSData *)dataRepresentationOfType:(NSString *)aType {
+- (NSData *)dataOfType: (NSString *)typeName error: (NSError **)outError {
 	NSRange             encodingRange, newEncodingRange, myRange, theRange;
 	NSUInteger            length;
 	NSString            *encodingString, *text, *testString;
@@ -6416,7 +6422,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 			return;
 		}
 	else
-		newLogExtension = [NSString stringWithString:@"log"];
+	//	newLogExtension = [NSString stringWithString:@"log"];
+        newLogExtension = @"log";
 	
 	[newLogExtension retain];
 	if (logExtension != nil)
@@ -6590,10 +6597,9 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 
 - (void) placeBullet: (id)sender // modified by (HS) to be a simple insertion (replacing the selection)
 {
-    NSString		*text;
     NSRange		myRange;
 
-    text = [textView string];
+   //  text = [textView string];
     myRange = [textView selectedRange];
     [textView replaceCharactersInRange:myRange withString:placeholderString];//" •\n" puts • on previous line
     myRange.location += [placeholderString length];//= end+2;//start puts • on previous line
@@ -6604,10 +6610,9 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 
 - (void) placeComment: (id)sender // by (HS) to be a simple insertion (replacing the selection)
 {
-    NSString		*text;
     NSRange		myRange;
 
-    text = [textView string];
+  //   text = [textView string];
     myRange = [textView selectedRange];
     [textView replaceCharactersInRange:myRange withString:startcommentString];//" •\n" puts • on previous line
     myRange.location += [startcommentString length];//= end+2;//start puts • on previous line
@@ -6808,11 +6813,13 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     return [[[self fileURL] path] pathExtension];
 }
 
+
+
 - (void)doShareSource:(id)sender
 {
     NSUInteger      count = 0;
     NSRange         theRange;
-    NSString        *theString, *path;
+    NSString        *theString;
     
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
     
@@ -6841,7 +6848,11 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     
      if (count > 0) {
          NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems: items];
-         [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+        if ([sender isKindOfClass: [NSMenuItem class]])
+             [picker showRelativeToRect: [textView1 bounds] ofView:textView1 preferredEdge: NSMaxXEdge];
+         else
+             [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+         [picker release];
      }
 }
 
@@ -6852,6 +6863,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     NSString        *path, *previewPath;
     MyPDFKitView    *thePDFKitView;
     NSData          *data;
+    NSImage         *theImage;
     
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
 
@@ -6861,8 +6873,35 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
         thePDFKitView = [self pdfKitView];
     
     if (thePDFKitView) {
-        data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
-        NSImage *theImage = [[NSImage alloc]initWithData:data];
+        
+        // [thePDFKitView lockFocus];
+        // theImage = [thePDFKitView imageFromSelection];
+        data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PNG];
+        
+/* 
+ NOTE: PDF data would be preferable, but experiments show that the code sometimes works
+ and sometimes fails. When it fails, the error message is about drawing when the drawing context
+ is nil. This error MIGHT come from the mail widget in the sharing system.
+*/
+         // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: [SUD integerForKey: PdfExportTypeKey]]];
+        if (data != nil) {
+            theImage = [[NSImage alloc]initWithData:data];
+        
+       // if (theImage) {
+            count++;
+            [items addObject: theImage];
+            [theImage release];
+        }
+        // [thePDFKitView unlockFocus];
+    }
+    
+/*
+        // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+        data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PDF];
+        if (data == nil) NSLog(@"bad stuff");
+        // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+        if (data != nil)
+        theImage = [[NSImage alloc]initWithData:data];
         
         // NSImage *theImage = [myPDFKitView imageFromSelection];
         if (theImage) {
@@ -6871,7 +6910,8 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
         }
         [theImage release];
     }
-        
+*/
+    
     if (count == 0) {
         NSURL *documentURL = [self fileURL];
         if (documentURL) {
@@ -6899,7 +6939,11 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 
     if (count > 0) {
         NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems: items];
-        [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+        if ([sender isKindOfClass: [NSMenuItem class]])
+            [picker showRelativeToRect: [thePDFKitView bounds] ofView:thePDFKitView preferredEdge: NSMaxXEdge];
+        else
+            [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
+        [picker release];
     }
 }
 

@@ -317,25 +317,23 @@ else
 	 */
     
     if ([itemIdent isEqual: kSharingTID]) {
+        [[shareButton cell] setImageScaling: NSImageScaleAxesIndependently];
        [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
-        [[shareButton cell] setImageScaling: NSImageScaleProportionallyUpOrDown];
         [shareButton sendActionOn: NSLeftMouseDownMask];
         [shareButton setTarget: self];
         [shareButton setAction:@selector(doShareSource:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButton];
-        /*
          menuFormRep = [[[NSMenuItem alloc] init] autorelease];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
       //  [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doShareSource:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
-         */
         return toolbarItem;
     }
     
     if ([itemIdent isEqual: kSharingKKTID]) {
-        [[shareButtonEE cell] setImageScaling: NSImageScaleProportionallyUpOrDown];
+        [[shareButtonEE cell] setImageScaling: NSImageAlignCenter];
         [shareButtonEE setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [shareButtonEE sendActionOn:NSLeftMouseDownMask];
         [shareButtonEE setTarget: self];

@@ -650,7 +650,7 @@
 		@"mf",
 		nil];
 	i = [myController runModalOpenPanel: myPanel forTypes: myArray];
-	fileArray = [myPanel filenames];
+	fileArray = [myPanel URLs];
 	if (fileArray) {
 		for(i = 0; i < [fileArray count]; ++i) {
 			NSString*  myName = [fileArray objectAtIndex:i];

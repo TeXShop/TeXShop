@@ -56,7 +56,8 @@
 
 - (NSString *)defaultType
 {
-    return @"org.tug.tex";
+ //   return @"org.tug.tex";
+    return @"edu.uo.texshop.tex";
 }
 
 - (IBAction)newDocument:(id)sender

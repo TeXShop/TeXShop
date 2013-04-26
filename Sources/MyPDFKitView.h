@@ -185,7 +185,7 @@
 - (void)setupSourceFiles;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)updateBackground: (NSRect)aRect;
-- (void)goToKitPageNumber: (NSInteger) thePage; 
+// - (void)goToKitPageNumber: (NSInteger) thePage;
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 - (void)fixMagnificationControls;
 - (NSMutableArray *)getSearchResults;

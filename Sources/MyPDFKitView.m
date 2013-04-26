@@ -480,7 +480,6 @@
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 {
     PDFPage		*aPage;
-    NSInteger	theindex, oldindex, pages;
     
     aPage = [[self document] pageAtIndex: index];
     [self goToPage: aPage];

@@ -410,6 +410,7 @@ enum RootCommand
 - (void)doShareSource:(id)sender;
 - (void)doSharePreview:(id)sender;
 
+
 // BibDesk Completion
 //---------------------------
  - (NSConnection *)completionConnection; //Adam Maxwell

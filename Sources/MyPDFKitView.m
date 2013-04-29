@@ -3718,7 +3718,7 @@ else
 	
 	// find the page number in syncInfo and return if it is not there
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeStart = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeStart.location == NSNotFound)
 		return;
@@ -3733,7 +3733,7 @@ else
 	// Replace syncInfo by the information between these two numbers
 	pageNumber = pageNumber - 1;
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeStart = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeStart.location != NSNotFound) {
 		smallerRange.location = pageRangeStart.location;
@@ -3746,7 +3746,7 @@ else
 	}
 	pageNumber = pageNumber + 2;
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeEnd = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeEnd.location != NSNotFound) {
 		smallerRange.location = 0;
@@ -3762,7 +3762,7 @@ else
 	// Ignore lines beginning with "p* ".
 	pageNumber = pageNumber - 1;
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeStart = [syncInfo rangeOfString: pageSearchString];
 	
 	if (pageRangeStart.location == NSNotFound)
@@ -3771,7 +3771,7 @@ else
 	if (pageRangeStart.location != start)
 		return;
 	
-	searchString = [NSString stringWithString:@"p "];
+	searchString = @"p ";
 	searchRange.location = 0; searchRange.length = pageRangeStart.location;
 	
 	searchResultRange = [syncInfo rangeOfString: searchString options:NSBackwardsSearch range: searchRange];
@@ -3883,7 +3883,7 @@ else
 		oldSyncNumber = syncNumber;
 	
 	anotherNumber = [NSNumber numberWithInteger:oldSyncNumber];
-	pageSearchString = [[NSString stringWithString:@"l "] stringByAppendingString: [anotherNumber stringValue]];
+	pageSearchString = [@"l " stringByAppendingString: [anotherNumber stringValue]];
 	/*
 	 pageRangeStart = [syncInfo rangeOfString: pageSearchString];
 	 if (pageRangeStart.location == NSNotFound) {
@@ -3927,8 +3927,8 @@ else
 	NSMutableArray  *theStack;
 	NSInteger             stackPointer;
 	
-	searchCloseString = [NSString stringWithString:@")"];
-	searchOpenString = [NSString stringWithString:@"("];
+	searchCloseString = @")";
+	searchOpenString = @"(";
 	
 	theStack = [NSMutableArray arrayWithCapacity: 10];
 	stackPointer = -1;
@@ -4090,7 +4090,7 @@ else
 
 	// find the page number in syncInfo and return if it is not there
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeStart = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeStart.location == NSNotFound)
 		return;
@@ -4111,7 +4111,7 @@ else
 
 	pageNumber = pageNumber + 1;
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeEnd = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeEnd.location != NSNotFound) {
 		smallerRange.location = 0;

@@ -189,7 +189,7 @@ NSData *draggedData;
 
 	pageNumber = pageNumber + 1;
 	thePageNumber = [NSNumber numberWithInteger:pageNumber];
-	pageSearchString = [[NSString stringWithString:@"s "] stringByAppendingString: [thePageNumber stringValue]];
+	pageSearchString = [@"s " stringByAppendingString: [thePageNumber stringValue]];
 	pageRangeEnd = [syncInfo rangeOfString: pageSearchString];
 	if (pageRangeEnd.location != NSNotFound) {
 		smallerRange.location = 0;

@@ -823,12 +823,12 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 {
 	// NSRunAlertPanel(@"warning", @"not yet implemented", nil, nil, nil);
 
-	TSPreviewWindow	*activeWindow;
+	// TSPreviewWindow	*activeWindow;
 	double	mag, magnification;
 
-	activeWindow = (TSPreviewWindow *)[[TSWindowManager sharedInstance] activePDFWindow];
 
 	// The comment below fixes a bug; magnification didn't take if no pdf window open
+    // activeWindow = (TSPreviewWindow *)[[TSWindowManager sharedInstance] activePDFWindow];
 	//   if (activeWindow != nil)
 
 	{

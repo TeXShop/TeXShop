@@ -143,7 +143,7 @@
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;
-	id theFinder;
+//	id theFinder;
 	CGFloat oldVersion, newVersion;
 	BOOL needsUpdating;
     id item;
@@ -425,9 +425,9 @@
 
 
 	if ([SUD integerForKey:FindMethodKey] == 2) 
-		theFinder = [OgreTextFinder sharedTextFinder];
+		[OgreTextFinder sharedTextFinder];  //this line modifies menus and hooks up the OgreTextFinder
 	else 
-        theFinder = [TextFinder sharedInstance];
+        [TextFinder sharedInstance];
   
 	    
 	[self testForIntel];
@@ -627,6 +627,7 @@
 	NSDocumentController	*myController;
 	BOOL			externalEditor;
 	NSOpenPanel			*myPanel;
+    NSURL               *myURL;
 	
 	externalEditor = [SUD boolForKey:UseExternalEditorKey];
 	myController = [NSDocumentController sharedDocumentController];
@@ -649,12 +650,15 @@
 		@"dtx",
 		@"mf",
 		nil];
-	i = [myController runModalOpenPanel: myPanel forTypes: myArray];
+	[myController runModalOpenPanel: myPanel forTypes: myArray];
 	fileArray = [myPanel URLs];
 	if (fileArray) {
 		for(i = 0; i < [fileArray count]; ++i) {
-			NSString*  myName = [fileArray objectAtIndex:i];
-			[myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath:myName] display: YES error:NULL];
+	//	NSString*  myName = [fileArray objectAtIndex:i];
+    //  [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath:myName] display: YES error:NULL];
+            
+            myURL = [fileArray objectAtIndex:i];
+    		[myController openDocumentWithContentsOfURL: myURL display: YES error:NULL];
 		}
 	}
 	

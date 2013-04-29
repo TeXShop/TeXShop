@@ -545,9 +545,10 @@ static TSFilterMode savedFilter = kNoFilterMode;
 - (void)saveSelection: (id)sender
 {
 	NSSavePanel *aPanel = [NSSavePanel savePanel];
-	[aPanel setRequiredFileType: @"plist"];
-
-	[aPanel beginSheetForDirectory: nil //[MACRO_DATA_PATH stringByDeletingLastPathComponent]
+    NSArray *types = [NSArray arrayWithObject:@"plist"];
+	[aPanel setAllowedFileTypes:types];
+    
+ 	[aPanel beginSheetForDirectory: nil //[MACRO_DATA_PATH stringByDeletingLastPathComponent]
 				file: @"My macros" modalForWindow:window modalDelegate:self
 				didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 }
@@ -557,11 +558,11 @@ static TSFilterMode savedFilter = kNoFilterMode;
 {
 	if (returnCode == NSOKButton) {
 		NS_DURING
-		NSString *filePath = [sheet filename];
-		if (filePath) {
+		NSString *fileName = [sheet fileName];
+		if (fileName) {
 			NSArray *selectionArray = [TSMacroTreeNode minimumNodeCoverFromNodesInArray:
 										[outlineView allSelectedItems]];
-			[self saveNodes: selectionArray toFile: filePath];
+			[self saveNodes: selectionArray toFile: fileName];
 		}
 		NS_HANDLER
 			NSRunAlertPanel(@"Error", @"failed to save macros to the file.", nil, nil, nil);

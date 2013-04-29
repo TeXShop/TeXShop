@@ -1384,7 +1384,8 @@ in other code when an external editor is being used. */
 	return theEncoding;
 }
 
-- (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
+- (BOOL)readFromURL: (NSURL *)absoluteURL ofType: (NSString *)typeName error: (NSError **)outError {
+// - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 	NSData				*myData;
 	NSUInteger		theLength;
 	// NSString            *firstBytes, *encodingString, *testString;
@@ -1396,7 +1397,7 @@ in other code when an external editor is being used. */
 	if ([self doNotReadSource])
 		return YES;
 
-	myData = [NSData dataWithContentsOfFile:fileName];
+	myData = [NSData dataWithContentsOfURL:absoluteURL];
 	_encoding = _tempencoding = [self dataEncoding: myData];
 	
 /*

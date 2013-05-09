@@ -165,6 +165,9 @@
 		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
+    
+    //Set value of NSISOLatin9StringEncoding   NSMacOSRomanStringEncoding
+    NSISOLatin9StringEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
 	
 	// Make sure the ~/Library/TeXShop/ directory exists and is populated.
 	// To do this, we walk recursively through our private 'TeXShop' folder contained
@@ -566,7 +569,7 @@
 {
 	NSString            *completionPath;
 	NSData              *myData;
-
+    
 	unichar esc = 0x001B; // configure the key in Preferences?
 	unichar tab = 0x0009; // ditto
 	if (!g_commandCompletionChar) {
@@ -588,7 +591,7 @@
 			[[NSBundle mainBundle] pathForResource:@"CommandCompletion" ofType:@"txt"]];
 	if (!myData)
 		return;
-
+    
 	NSStringEncoding myEncoding = NSUTF8StringEncoding;
 	g_commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
 	if (! g_commandCompletionList) {
@@ -598,6 +601,7 @@
 
 	if (!g_commandCompletionList)
 		return;
+    
 	[g_commandCompletionList insertString: @"\n" atIndex: 0];
 	if ([g_commandCompletionList characterAtIndex: [g_commandCompletionList length]-1] != '\n')
 		[g_commandCompletionList appendString: @"\n"];
@@ -808,9 +812,15 @@
 // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender
 {
-	if ([[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:
-			[CommandCompletionPath stringByStandardizingPath] display: YES] != nil)
-		g_canRegisterCommandCompletion = NO;
+      
+	 [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:
+       [NSURL fileURLWithPath:[CommandCompletionPath stringByStandardizingPath]] display:YES
+                                                                   completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error) {
+                                                                       if (document != nil) {
+                                                                           g_canRegisterCommandCompletion = NO;
+                                                                       }
+                                                                   }];
+	  // g_canRegisterCommandCompletion = NO;
 }
 // end mitsu 1.29
 

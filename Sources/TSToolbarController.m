@@ -92,7 +92,7 @@ static NSString*	kMagnificationKKTID 	= @"MagnificationKIT";
 static NSString*	kMouseModeKKTID 		= @"MouseModeKIT";
 static NSString*	kBackForthKKTID			= @"BackForthKIT";
 static NSString*	kDrawerKKTID			= @"DrawerKIT";
-static NSString* kSharingKKTID          = @"SharingKIT";
+static NSString*    kSharingKKTID          = @"SharingKIT";
 static NSString*	kSplitKKTID				= @"SplitKIT";
 #endif
 
@@ -318,7 +318,8 @@ else
     
     if ([itemIdent isEqual: kSharingTID]) {
         [[shareButton cell] setImageScaling: NSImageScaleAxesIndependently];
-       [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        //  [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        [shareButton setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButton sendActionOn: NSLeftMouseDownMask];
         [shareButton setTarget: self];
         [shareButton setAction:@selector(doShareSource:)];
@@ -334,7 +335,8 @@ else
     
     if ([itemIdent isEqual: kSharingKKTID]) {
         [[shareButtonEE cell] setImageScaling: NSImageAlignCenter];
-        [shareButtonEE setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        // [shareButtonEE setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
+        [shareButtonEE setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButtonEE sendActionOn:NSLeftMouseDownMask];
         [shareButtonEE setTarget: self];
         [shareButtonEE setAction:@selector(doSharePreview:)];
@@ -1185,6 +1187,7 @@ else
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
+                    kSharingKKTID,
 					kSplitKKTID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
@@ -1219,8 +1222,7 @@ else
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
-                     kSharingKKTID,
-					kSplitKKTID,
+                    kSplitKKTID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,

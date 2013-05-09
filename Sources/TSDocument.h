@@ -285,7 +285,10 @@ enum RootCommand
 // END FIX RULER SCROLL
 
 // end addition
-
+// ULRICH BAUER PATCH
+    dispatch_source_t dispatch_source;
+// END PATCH
+    
 }
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
@@ -581,4 +584,13 @@ enum RootCommand
 */
 
 @end
+
+// ULRICH BAUER PATCH
+@interface TSDocument (FileWatching)
+
+- (void) watchFile:(NSString*)fileName;
+- (void) reloadFileOnExternalChange;
+@end
+
+// END PATCH
 

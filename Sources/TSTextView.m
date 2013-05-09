@@ -453,7 +453,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 	// Encoding tag is fixed to 0 (Mac OS Roman). At least it doesn't work when it is 5 (DOSJapanese; Shift JIS).
 	fileData = [NSData dataWithContentsOfFile:filePath];
-	fileContent = [[[NSString alloc] initWithData:fileData encoding:NSMacOSRomanStringEncoding] autorelease];
+	fileContent = [[[NSString alloc] initWithData:fileData encoding:NSISOLatin9StringEncoding] autorelease];
 	if( fileContent == nil ) return nil;
 
 	fileLength = [fileContent length];

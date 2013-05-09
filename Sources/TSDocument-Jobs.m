@@ -559,7 +559,7 @@
 		theSource = [[self textView] string];
 	else {
 		myData = [NSData dataWithContentsOfFile:[[self fileURL] path]];
-		theSource = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+		theSource = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
 	}
 
 	if ([self checkMasterFile:theSource forTask:RootForTexing]) {
@@ -1414,7 +1414,7 @@
 		command = [[texCommand stringValue] stringByAppendingString:@"\n"];
 		command = [self filterBackslashes:command];
 
-		myData = [command dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
+		myData = [command dataUsingEncoding: NSISOLatin9StringEncoding allowLossyConversion:YES];
 		[writeHandle writeData: myData];
 		// added by mitsu --(L) reflect tex input and clear tex input field in console window
 		NSRange selectedRange = [outputText selectedRange];

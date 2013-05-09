@@ -315,6 +315,7 @@ static TSEncoding _availableEncodings[] = {
 	return [self stringEncodingForKey: currentEncoding];
 }
 
+
 - (NSStringEncoding)stringEncodingForKey: (NSString *)key
 {
 
@@ -422,21 +423,18 @@ static TSEncoding _availableEncodings[] = {
 			aGlyph = [[dataView textStorage] attribute:NSGlyphInfoAttributeName
 											   atIndex:charRange.location effectiveRange:&aCIDRange];
 			if (aGlyph) {
-#warning 64BIT: Check formatting arguments
-				utfString = [NSMutableString stringWithFormat:@"%ldCID{%d}",
-					(long)g_texChar, [aGlyph characterIdentifier]];
+				utfString = [NSMutableString stringWithFormat:@"%CCID{%ld}",
+                             (unichar)g_texChar,(unsigned long)[aGlyph characterIdentifier]];
 			} else if (charRange.length > 1) {
 				NSLayoutManager *aLayout = [dataView layoutManager];
-#warning 64BIT: Check formatting arguments
-				utfString = [NSMutableString stringWithFormat:@"%ldCID{%d}", (long)g_texChar,
-					[aLayout glyphAtIndex:charRange.location]];
+				utfString = [NSMutableString stringWithFormat:@"%CCID{%d}", (unichar)g_texChar,
+                             [aLayout glyphAtIndex:charRange.location]];
 				// 0x2014,0x2015 fix (reported by Kino-san)
 			} else if ( [subString characterAtIndex: 0] == 0x2015) {
 				utfString = [NSMutableString stringWithFormat:@"%d", 0x2014];
 			} else {
-#warning 64BIT: Check formatting arguments
-				utfString = [NSMutableString stringWithFormat:@"%ldUTF{%04X}",
-					(long)g_texChar, [subString characterAtIndex: 0]];
+				utfString = [NSMutableString stringWithFormat:@"%CUTF{%04X}",
+                             (unichar)g_texChar, [subString characterAtIndex: 0]];
 			}
 			if ((charRange.location + charRange.length) == end) {
 				[utfString appendString: @"%"];

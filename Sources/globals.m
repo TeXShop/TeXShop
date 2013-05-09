@@ -211,6 +211,8 @@ NSString *AutoSaveKey = @"AutoSave"; // inactive
 NSString *FixLineNumberScrollKey = @"FixLineNumberScroll";
 NSString *RightJustifyIfAnyKey = @"RightJustifyIfAny";
 NSString *AutoSaveEnabledKey = @"AutoSaveEnabled";
+NSString *fullscreenPageStyleKey = @"fullscreenPageStyle";
+NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
 
 
 
@@ -273,6 +275,9 @@ NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
 BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
 BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
+
+// Encodings
+NSStringEncoding    NSISOLatin9StringEncoding;
 
 // command completion
 NSString *g_commandCompletionChar = nil;

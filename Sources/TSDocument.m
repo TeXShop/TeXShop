@@ -150,6 +150,10 @@
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
 
 	_textStorage = [[NSTextStorage alloc] init];
+    
+//ULRICH BAUER PATCH
+    dispatch_source = NULL;
+//END PATCH
 
 	return result;
 }
@@ -1282,7 +1286,7 @@ in other code when an external editor is being used. */
 	
 	// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
 	theEncoding = _encoding;
-	firstBytes = [[NSString alloc] initWithData:theData encoding:NSMacOSRomanStringEncoding];
+	firstBytes = [[NSString alloc] initWithData:theData encoding:NSISOLatin9StringEncoding];
 	
 	// First check for new spelling language
 	
@@ -1384,6 +1388,63 @@ in other code when an external editor is being used. */
 	return theEncoding;
 }
 
+//ULRICH BAUER PATCH
+- (void)watchFile:(NSString*)fileName {
+        if (!doAutoSave) {
+                return;
+            }
+    
+        dispatch_queue_t queue = dispatch_get_main_queue();
+        int fildes = open([fileName UTF8String], O_EVTONLY);
+    
+        [self cancelWatchFile];
+    
+        dispatch_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE,fildes,
+                                            DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_REVOKE,
+                                            queue);
+        __block TSDocument *blockSelf = self;
+    
+       dispatch_source_set_event_handler(dispatch_source, ^ {
+                if ([blockSelf hasUnautosavedChanges]) {
+                        [blockSelf cancelWatchFile];
+                    } else {
+                            unsigned long flags = dispatch_source_get_data(dispatch_source);
+                            if (flags & (DISPATCH_VNODE_WRITE)) {
+                                   NSError *outError = NULL;
+                                    [blockSelf revertToContentsOfURL:[blockSelf fileURL] ofType:[blockSelf fileType] error:&outError];
+                                } else if (flags & (DISPATCH_VNODE_DELETE)) {
+                                        if ([[NSFileManager defaultManager] isReadableFileAtPath: [[blockSelf fileURL] path]]) {
+                                                NSError *outError = NULL;
+                                                if (![blockSelf revertToContentsOfURL:[blockSelf fileURL] ofType:[blockSelf fileType] error:&outError])
+                                                        [blockSelf close];
+                                            } else {
+                                                    [blockSelf close];
+                                                }
+                                    } else if (flags & (DISPATCH_VNODE_REVOKE)) {
+                                            [blockSelf close];
+                                       }
+                        }
+        
+           });
+        
+        dispatch_source_set_cancel_handler(dispatch_source, ^ {
+                close(fildes);
+            });
+        
+        dispatch_resume(dispatch_source);
+    }
+
+- (void)cancelWatchFile {
+        if (dispatch_source != NULL) {
+                dispatch_source_cancel(dispatch_source);
+                dispatch_release(dispatch_source);
+                dispatch_source = NULL;
+            }
+    }
+
+//END PATCH
+
+
 - (BOOL)readFromURL: (NSURL *)absoluteURL ofType: (NSString *)typeName error: (NSError **)outError {
 // - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 	NSData				*myData;
@@ -1404,7 +1465,7 @@ in other code when an external editor is being used. */
 
 	// FIXME: Unify this with the code in dataRepresentationOfType:
 	if ((GetCurrentKeyModifiers() & optionKey) == 0) {
-		firstBytes = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding];
+		firstBytes = [[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding];
 		length = [firstBytes length];
 		done = NO;
 		linesTested = 0;
@@ -1450,13 +1511,16 @@ in other code when an external editor is being used. */
 	
 */
 
+//ULRICH BAUER PATCH
+    [self watchFile: [absoluteURL path]];
+//END PATCH
 
 	NSString *content;
 	content = [[[NSString alloc] initWithData:myData encoding:_encoding] autorelease];
 	if (!content) {
 		_badEncoding = _encoding;
 		showBadEncodingDialog = YES;
-		content = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+		content = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
 	}
 
 	if (content) {
@@ -1491,6 +1555,10 @@ in other code when an external editor is being used. */
 
 - (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
+//ULRICH BAUER PATCH
+    [self cancelWatchFile];
+//END PATCH
+    
 	BOOL		result;
 
 	result = [super writeToURL: absoluteURL ofType:typeName error:outError];
@@ -1501,6 +1569,11 @@ in other code when an external editor is being used. */
 		// dirty tricks to get acceptable behavior.
 		[textView breakUndoCoalescing];
 	}
+    
+//ULRICH BAUER PATCH
+    [self watchFile: [absoluteURL path]];
+//EMD PATCH
+    
 	return result;
 }
 
@@ -1516,6 +1589,11 @@ in other code when an external editor is being used. */
 
 - (BOOL)revertToContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
+    
+//ULRICH BAUER PATCH
+    [self cancelWatchFile];
+//END PATCH
+    
 	BOOL	value;
 
 	value = [super revertToContentsOfURL:absoluteURL ofType:typeName error:outError];
@@ -1530,6 +1608,12 @@ in other code when an external editor is being used. */
 	
 	return value;
 }
+
+//ULRICH BAUER PATCH
+- (void)revertDocumentToSaved:(id)sender {
+    [super revertDocumentToSaved: sender];
+}
+//END PATCH
 
 - (void)resetSpelling {
 	if (! spellLanguageChanged)
@@ -1646,7 +1730,11 @@ in other code when an external editor is being used. */
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
 		[CommandCompletionPath stringByStandardizingPath]])
 		g_canRegisterCommandCompletion = YES;
-	// end mitsu 1.29
+ 	// end mitsu 1.29
+    
+//ULRICH BAUER PATCH
+    [self cancelWatchFile];
+//END PATCH
 
 	[super close];
 }
@@ -1674,7 +1762,11 @@ in other code when an external editor is being used. */
 	// if CommandCompletion list is being saved, reload it.
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
 				[CommandCompletionPath stringByStandardizingPath]])
-		[[NSApp delegate] finishCommandCompletionConfigure];
+        {
+           // [[NSApp delegate] finishCommandCompletionConfigure];
+            // write is immediately followed by read and these can occur in the wrong order; so ...
+            [[NSApp delegate] performSelector:@selector(finishCommandCompletionConfigure) withObject: nil afterDelay:0.2];
+        }
      if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
 }
 
@@ -1793,7 +1885,7 @@ in other code when an external editor is being used. */
 	if (showBadEncodingDialog) {
 		NSString *theEncoding = [[TSEncodingSupport sharedInstance] localizedNameForStringEncoding: _badEncoding];
 #warning 64BIT: Check formatting arguments
-		NSBeginAlertSheet(NSLocalizedString(@"This file was opened with MacOSRoman encoding.", @"This file was opened with MacOSRoman encoding."),
+		NSBeginAlertSheet(NSLocalizedString(@"This file was opened with IsoLatin9 encoding.", @"This file was opened with IsoLatin9 encoding."),
 						  nil, nil, nil, theWindow, nil, nil, nil, nil,
 						  NSLocalizedString(@"The file could not be opened with %@ encoding because it was not saved with that encoding. If you wish to open in another encoding, close the window and open again.",
 											@"The file could not be opened with %@ encoding because it was not saved with that encoding. If you wish to open in another encoding, close the window and open again."), theEncoding);
@@ -2220,7 +2312,8 @@ in other code when an external editor is being used. */
 	if (fontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
-		[textView1 setFont:font];
+        // NSLog(@"got here");
+ 		[textView1 setFont:font];
 		[textView2 setFont:font];
 	}
 	[self fixUpTabs];
@@ -4369,7 +4462,7 @@ preference change is cancelled. "*/
 			
 			// 1.35 (F) fix --- suggested by Kino-san
 			if (newOutput == nil) {
-				newOutput = [[NSString alloc] initWithData: myData encoding: NSMacOSRomanStringEncoding];
+				newOutput = [[NSString alloc] initWithData: myData encoding: NSISOLatin9StringEncoding];
 			}
 			
 			// NSLog(newOutput);
@@ -4460,7 +4553,7 @@ preference change is cancelled. "*/
 	} else if (myFileHandle == detexHandle) {
 		detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
 		if ([detexData length]) {
-			detexString = [[NSString alloc] initWithData: detexData encoding: NSMacOSRomanStringEncoding];
+			detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];
 			NSScanner *myScanner = [NSScanner scannerWithString:detexString];
 			result = [myScanner scanInteger:&lineCount];
 			if (result)
@@ -6368,8 +6461,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSStringEncoding    defaultEncoding;
 	NSStringEncoding	theEncoding;
 
-	// theEncoding = NSMacOSRomanStringEncoding;
-    defaultEncoding = NSMacOSRomanStringEncoding;
+	// theEncoding = NSISOLatin9StringEncoding;
+    defaultEncoding = NSISOLatin9StringEncoding;
     theEncoding = _encoding;
 	// logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
 	if (logExtension == nil)
@@ -6778,12 +6871,16 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 
 - (void)enterFullScreen: (NSNotification *)notification
 {
+    
+    
     oldPageStyle = [myPDFKitView pageStyle];
     oldResizeOption = [myPDFKitView resizeOption];
-    if (fullscreenPageStyle == 0)
-        fullscreenPageStyle = 2;
-    if (fullscreenResizeOption == 0)
-        fullscreenResizeOption = 3;
+    fullscreenPageStyle = [SUD integerForKey: fullscreenPageStyleKey];
+    fullscreenResizeOption = [SUD integerForKey: fullscreenResizeOptionKey];
+    // if (fullscreenPageStyle == 0)
+    //     fullscreenPageStyle = 2;
+    // if (fullscreenResizeOption == 0)
+    //     fullscreenResizeOption = 3;
     if ([pdfKitWindow windowIsSplit])
         {
         [pdfKitWindow splitPdfKitWindow:self]; 
@@ -6796,8 +6893,14 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
 }
 - (void)exitFullScreen: (NSNotification *)notification
 {
-    fullscreenPageStyle = [myPDFKitView pageStyle];
-    fullscreenResizeOption = [myPDFKitView resizeOption];
+    NSInteger fullscreenPageStyleNew, fullscreenResizeOptionNew;
+    
+    fullscreenPageStyleNew = [myPDFKitView pageStyle];
+    fullscreenResizeOptionNew = [myPDFKitView resizeOption];
+    if (fullscreenPageStyleNew != fullscreenPageStyle)
+        [SUD setInteger: fullscreenPageStyleNew forKey: fullscreenPageStyleKey];
+    if (fullscreenResizeOptionNew != fullscreenResizeOption)
+        [SUD setInteger: fullscreenResizeOptionNew forKey: fullscreenResizeOptionKey];
     if ([pdfKitWindow windowIsSplit])
         {
         [pdfKitWindow splitPdfKitWindow:self]; 
@@ -6947,6 +7050,18 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
         [picker release];
     }
 }
+
+/*
+
++ (NSArray *)writeableTypes
+{
+    return @[@"edu.uo.texshop.tex",
+             @"edu.uo.texshop.ltx",
+             @"edu.uo.texshop.ctx",
+             @"edu.uo.texshop,texi"];
+    
+}
+*/
 
 
 @end

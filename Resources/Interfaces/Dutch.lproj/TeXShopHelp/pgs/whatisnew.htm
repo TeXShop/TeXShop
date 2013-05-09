@@ -14,6 +14,100 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.15</h5></P>
+
+Version 3.15 has the following features:
+
+<ul>
+
+<li> The default editing font has been changed to Menlo 12, which Apple now recommends
+as a fixed width font. This will not affect old users, whose original preference setting remains.
+
+<p> Some users have chosen Monoco 9 or 10 as an editing font. This font may look somewhat fuzzy
+on Mountain Lion because Apple has optimized the text and font rendering routines for the Retina display.
+To get back to the old behavior, type the following command in Terminal. This is not recommended
+unless you are unhappy with the appearance of text in the edit window.
+<dl>
+				<dd>
+					defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+			</dl>
+			
+<li> TeXShop 3.14 began the process of switching from Apple's old style indication of document types
+in the TeXShop Info.plist to the new style using Universal Type Identifiers (UTI).   The process is complete in TeXShop 3.15. The change involved
+extensively rewriting the Info.plist file, and replacing depcrecated Cocoa file commands with modern
+equivalents. The change may improve
+system acceptance of the new high resolution icons by William Adams, but I still expect trouble
+and recommend the techniques outlined in the description of 3.14 to fix them.
+
+
+<p>
+<li> There are a few Japanese localization changes and a code fix  by Yusuke Terada.
+Thanks.
+
+<p>
+<li> Small glitches have been reported when using magnification in the preview window. These
+glitches have been fixed. In case of remaining trouble, please give concrete details explaining
+how to reproduce the problem.
+
+<p>
+<li> The default encoding in TeXShop has been changed from MacOSRoman to ISOLatin9. This will
+not affect old users except at one minor spot.
+
+<p> To understand the change, recall a few encoding basics.
+A computer file is just a long sequence of bytes, each an integer between 0 and 255.
+Other data, including picture data and sound data, is encoded in this form when written to disk. The majority of computer files contain ordinary text.. Text was originally encoded in Ascii format, which assigns
+a byte to each key on an American typewriter; Ascii only uses the first 127 bytes, so the bytes from 128 to 255 are available for other purposes. The Ascii encoding
+was later extended for use in Europe and elsewhere by adding accents, umlauts, and other characters to
+the upper 128 vacent spots. Many such encodings were invented, and a number of them are available in
+TeXShop. ISO Latin 9 is such an encoding. It encodes ascii characters in the first 128 positions, and
+all symbols commonly used in Western Europe in the upper 128 positions. ISO Latin 9 is essentially the same
+as the earlier ISO Latin 1, except that it includes the Euro currency symbol.
+
+<p>
+Eventually, the computer industry invented Unicode, which is theoretically capable of handling
+the symbols used in all of the world's languages.
+Internally, TeXShop and other Mac OS X programs represent and process text in Unicode. There is no standard
+Unicode encoding for writing to disk, so all Apple routines which read text from disk or write text
+to disk require an extra parameter listing the encoding to be used.
+A commonly used encoding for Unicode is UTF-8. It has the advantage
+that ordinary ascii files are legal UTF-8 files. The disadvantage of UTF-8 is that random
+collections of bytes may do not contain legal UTF-8 code, so when the computer tries to open a file
+in UTF-8 which was written in another encoding, the computer sees garbage and returns nil. Encodings which
+extend ascii by adding symbols to the upper 128 places do not have this problem; if a file written
+with one such encoding is opened with a different encoding, the computer will not complain, but some
+symbols may appear with unexpected shapes.
+
+<p> TeXShop must deal with this design in two spots. When TeXShop is asked to open a file, it reads
+the first few bytes in MacOSRoman to check whether a "% !TEX encoding = ..." statement is at the top of the file. It now reads these bytes in ISOLatin9. And when TeXShop opens a file in UTF-8, but receives a report that the file does not contain legal UTF-8 code, is used to reopen the file in MacOSRoman encoding and now
+opens it in ISOLatin9.
+
+<p>Some users have requested that TeXShop's default encoding be UTF-8. Users can achieve this
+result by simply switching the default encoding to UTF-8 in TeXShop Preferences. UTF-8 is not the
+current default because I believe that many users have old files which were written with Ascii or
+some other earlier encoding. If these files contain straight ascii, they work fine as UTF-8 files.
+But if by chance a stray non-ascii character was entered by mistake, then users will see a mysterious
+dialog panic when  TeXShop reports that the file cannot open in UTF-8.
+
+<p> 
+<li> In version 3.14 the command "Edit Command Completion File" did not display the file to be
+edited. Now it does again.
+
+<p>
+<li> When displaying the Preview Page in fullscreen mode, users can mouse to the top of the screen
+and select menu options to change the Page Style and ResizeOption. In version 3.15, these new
+choices are remembered in TeXShop Preferences, and thus will be used again even if TeXShop quits between
+sessions.
+
+<p>
+<li> TeXShop 3.15 contains a patch by Ulrich Bauer for file handling. This patch will be
+important for users working with version control or with a server which might change the source
+while it is being edited in TeXShop.  For instance, one such user report stated "we are several authors on a paper and we use svn to keep the versions coordinated. If I have a version of the file in the editor and perform an svn update in the terminal, the file changes on disk. However, if I save or typeset, the local version in the editor gets saved and I get no conflict warnings!"  With Bauer's patch, "an open document is
+monitored for external changes to the file, and updated automatically if an external change
+occurs." Thanks very much to Ulrich Bauer for this important change.
+
+
+</ul>
+
 <P><h5>TeXShop Changes 3.12 - 3.14</h5></P>
 
 Versions 3.12 and 3.13 were never released. Some users downloaded beta copies
@@ -45,9 +139,7 @@ Go down to the "Open with" section and select TeXShop Then press the "Change All
 In one case on my system, a TeX source file was displayed in the Finder with an incorrect icon and no  ".tex" extension. Adding
 that extension caused the Finder to associate the correct icon. 
 
-
-
-<li> On Mountain Lion, sharing support has been added. New sharing items are available for both
+<<li> On Mountain Lion, sharing support has been added. New sharing items are available for both
 the source window toolbar and the Preview window toolbar. It may be necessary to execute the
 menu command "Customize Toolbar" to obtain them. 
 
@@ -72,7 +164,7 @@ an external editor, and also when the user opened a pdf, png, jpg, or eps file. 
 on the screen as the mouse moved. This bug is mostly fixed.
 
 <p>
-<li> Latex make is upgraded to version 4.34. A new engine, sepdflatexmk, is available in the
+<li> Latex make is upgraded to version 4.35. A new engine, sepdflatexmk, is available in the
 Inactive/LaTeXmk folder. This engine calls pdflatex with the --shell-escape flag, for users who
 need packages which call external programs during typesetting.
 
@@ -85,7 +177,8 @@ dialog; this is fixed. Second, problems in CommentOrIntentForTag were found and 
 <li> There is now a Preference interface to change the source text color. A preference to change
 the source background color was present in earlier versions.
 
-<p> There are new metafun and metapost engines by Nicola Vitacolonna.
+<p> 
+<li> There are new metafun and metapost engines by Nicola Vitacolonna.
 
 
 </ul>
@@ -1512,7 +1605,7 @@ Support for SyncTeX was added to TeXShop 2.18 at the last moment. Synctex is now
 <dd>			Central European (ISO Latin 2)
 <dd>			Central European Roman (Windows)
 </dl>
-	and the %!TEX encoding = *** abbreviations are
+	and the 
 <dl>
 <dd>			IsoLatinGreek
 <dd>			Mac Central European Roman

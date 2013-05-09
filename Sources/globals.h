@@ -38,7 +38,8 @@
 // Shortcut to access the standard user defaults more easily.
 #define SUD [NSUserDefaults standardUserDefaults]
 
-
+// Used to be NSMacOSRomanStringEncoding, which is in the headers
+// #define NSISOLatin9StringEncoding 0x8000020f
 
 // The following block defines constants used in the PDF code. 
 // TODO: Move this to a more appropriate header file.
@@ -413,6 +414,8 @@ extern NSString *AutoSaveKey;
 extern NSString *FixLineNumberScrollKey;
 extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Persian anywhere in the line
 extern NSString *AutoSaveEnabledKey;
+extern NSString *fullscreenPageStyleKey;
+extern NSString *fullscreenResizeOptionKey;
 
 
 // end defaults
@@ -476,6 +479,7 @@ extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by do
 extern BOOL					automaticLanguage; 
 extern NSString				*defaultLanguage;
 
+extern NSStringEncoding    NSISOLatin9StringEncoding;
 
 extern NSInteger					g_macroType; // = EngineCommand for current window
 

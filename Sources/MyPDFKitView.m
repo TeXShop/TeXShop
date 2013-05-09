@@ -34,7 +34,7 @@
  // best to leave the old code in place
  // -----------------------------------------------------
 
-
+// // QUESTIONABLE_BUG_FIX  (Search for this)
 
 #import "MyPDFKitView.h"
 #import "MyPDFView.h"
@@ -3366,7 +3366,7 @@ else
 			myData = [NSData dataWithContentsOfFile:[sourceFiles objectAtIndex:i]];
 
 			// data in source
-			firstBytes = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding];
+			firstBytes = [[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding];
 			length1 = [firstBytes length];
 			done = NO;
 			linesTested = 0;
@@ -3417,7 +3417,7 @@ else
 
 			aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
 			if (! aString) {
-				aString = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+				aString = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
 			}
 
 			sourceText[i + 1] = aString;
@@ -4366,6 +4366,7 @@ else
 	} while (YES);
 	
 	[[self window] enableFlushWindow];
+    
 	
 	[self updateBackground:rect]; // [[self window] restoreCachedImage];
 	// [[self window] flushWindow];
@@ -4376,6 +4377,10 @@ else
 	oldVisibleRect.size.width = 0;
 	[self cleanupMarquee: NO];
 	[self recacheMarquee];
+    // The line below was added to clean up marks in gray border
+    // QUESTIONABLE_BUG_FIX
+    [[self window] display];
+
 }
 // end Magnifying Glass
 

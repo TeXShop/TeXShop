@@ -416,7 +416,7 @@
 	if (!content) {
 		_badEncoding = _encoding;
 		showBadEncodingDialog = YES;
-		content = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+		content = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
 	}
 	
 	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSUTF8StringEncoding];

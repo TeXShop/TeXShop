@@ -65,6 +65,18 @@ to use the \cmd{pdflatexmk} engine which will use \cmd{pdflatex} to typeset your
 
 There is a set of ten \cmd{engine} files to be placed in \path{~/Library/TeXShop/Engines/}. There is a \cmd{tslatexmk} folder already placed in \path{~/Library/TeXShop/bin/}. The files in that folder consist of the \cmd{latexmk} program, ten basic initialization (\cmd{rc}) files used by the ten \cmd{engine} files, a common file for personal settings (\cmd{latexmkrcDONTedit}) and two shell scripts used for \cmd{pdftricks} and \cmd{pst-pdf} figure processing. When any of the new engines is first run the \cmd{latexmkrcDONTedit} file will automatically be copied to \path{~/Library/TeXShop/bin/latexmkrcedit} if it doesn't already exist. You may copy the file there manually if you wish. \textbf{Any changes or additions to the configuration (e.g., new dependencies and rules) should be placed in the \cmd{laxtexmkrcedit} file. When \TS\ is updated the files in the \path{~/Library/TeXShop/bin/tslatexmk} may automatically get updated; don't edit them or your changes may get lost.}
 
+\section{What is New with this Version}
+
+The engine files supplied with this version of latexmk for TeXShop now allow you to have a \cmd{platexmkrc} file, containing \cmd{latexmk} configuration information, in the same folder as the file you typeset (i.e., the root file for a distributed document). This can be useful if your project needs special configuration options for a certain task.
+
+E.g., you wish to use \cmd{texindy} instead of \cmd{makeindex} to process the \cmd{idx} file into a \cmd{ndx} file you might include a \cmd{platexmkrc} file in the same directory as the root file of a project with contents
+\begin{verbatim}
+$makeindex = "texindy %O -o %D %S";
+\end{verbatim}
+to use \cmd{texindy} rather than the default \cmd{makeindex}; make sure your end the file with a blank line. You could also add special options to the processing for a particular situation. Make sure you understand the syntax used by \cmd{latexmk} for customzing commands before playing with this feature.
+
+\textbf{One warning}: if you are going to use this feature understand that the \cmd{platexmkrc} file will be used for \emph{any} file in that folder that is typeset.
+
 \section{Using \latexmk\ with \TS.}
 
 \textbf{NOTE: If you are updating to this version of \latexmk\ for \TS\ from a previous version you need only activate the engine files, as noted above, and restart \TS\ after installing the files.}

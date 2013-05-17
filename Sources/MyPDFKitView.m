@@ -2899,13 +2899,34 @@ else
 	[self chooseExportImageType: imageTypePopup]; // this sets up required type
 	[savePanel setCanSelectHiddenExtension: YES];
 
-	[savePanel beginSheetForDirectory:nil file:nil
-		modalForWindow:[self window] modalDelegate:self
-		didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
-		contextInfo:nil];
+//	[savePanel beginSheetForDirectory:nil file:nil
+//		modalForWindow:[self window] modalDelegate:self
+//		didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
+//		contextInfo:nil];
+    
+    [savePanel beginSheetModalForWindow: [self window]
+            completionHandler:^(NSInteger result) {
+                if (NSFileHandlingPanelOKButton) {
+                    NSData *data = nil;
+                     data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+                    
+                    if ([SUD integerForKey: PdfExportTypeKey] == IMAGE_TYPE_PICT) {
+                        // PICT file needs to start with 512 bytes 0's
+                        NSMutableData *pictData = [NSMutableData dataWithLength: 512];//initialized by 0's
+                        [pictData appendData: data];
+                        data = pictData;
+                    }
+                    if (data)
+                        [data writeToFile:[[savePanel URL] path] atomically:YES];
+                    else
+                        NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
+                }
+            }];
 }
 
+
 // save the image data from selected rectangle to a file
+/*
 - (void)saveSelectionPanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo
 {
 	if (returnCode == NSFileHandlingPanelOKButton && [sheet filename]) {
@@ -2929,7 +2950,7 @@ else
 			NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
 	}
 }
-
+*/
 
 
 
@@ -2941,8 +2962,9 @@ else
 
 	imageExportType = [[sender selectedItem] tag];
 	savePanel = (NSSavePanel *)[sender window];
-	[savePanel setRequiredFileType: extensionForType(imageExportType)];// mitsu 1.29 drag & drop
-
+	// [savePanel setRequiredFileType: extensionForType(imageExportType)];// mitsu 1.29 drag & drop
+    NSArray *myTypes = [NSArray arrayWithObject: extensionForType(imageExportType)];
+    [savePanel setAllowedFileTypes: myTypes];
 	if (imageExportType != [SUD integerForKey: PdfExportTypeKey]) {
 		[SUD setInteger:imageExportType forKey:PdfExportTypeKey];
 	}
@@ -3321,7 +3343,7 @@ else
 	NSRange					foundRange = { 0, 0 };
 	NSUInteger			foundlength = 0;
 	NSRange					correctedFoundRange;
-	TSDocument				*newDocument;
+	TSDocument		*newDocument;
 	NSTextView				*myTextView;
 	NSWindow				*myTextWindow;
 	NSDictionary			*mySelectedAttributes;
@@ -3336,7 +3358,7 @@ else
 	NSInteger						linesTested, offset;
 	NSString				*aString;
 	NSInteger						correction;
-	
+	__block id              returnDocument;
 
 
 	NSPoint windowPosition = thePoint;
@@ -3478,8 +3500,45 @@ else
 				myTextView = [myDocument textView];
 				myTextWindow = [myDocument textWindow];
 				[myDocument setTextSelectionYellow: YES];
+                mySelectedAttributes = [myTextView selectedTextAttributes];
+                newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+                [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+                // FIXME: use temporary attributes instead of abusing the text selection
+                [myTextView setSelectedTextAttributes: newSelectedAttributes];
+                correction = theIndex - testIndex + 5;
+                correctedFoundRange.location = foundRange.location + correction;
+                correctedFoundRange.length = foundRange.length;
+                if ((correction < 0) || (correctedFoundRange.location + correctedFoundRange.length) > foundlength)
+                    correctedFoundRange = foundRange;
+                [myTextView setSelectedRange: correctedFoundRange];
+                [myTextView scrollRangeToVisible: correctedFoundRange];
+                [myTextWindow makeKeyAndOrderFront:self];
 			} else {
-				newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+				// newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+                [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL: [NSURL fileURLWithPath: [sourceFiles objectAtIndex:(foundIndex - 1)]] display:YES
+                                                                                                    completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error)
+                                                                                                 {
+                                                                                                     NSTextView *myTextView1 = [(TSDocument *)document textView];
+                                                                                                     NSWindow *myTextWindow1 = [(TSDocument *)document textWindow];
+                                                                                                     [(TSDocument *)document setTextSelectionYellow: YES];
+                                                                                                     NSDictionary *mySelectedAttributes1 = [myTextView1 selectedTextAttributes];
+                                                                                                     NSMutableDictionary *newSelectedAttributes1 = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes1];
+                                                                                                     [newSelectedAttributes1 setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+                                                                                                     // FIXME: use temporary attributes instead of abusing the text selection
+                                                                                                     [myTextView1 setSelectedTextAttributes: newSelectedAttributes1];
+                                                                                                     NSInteger correction1 = theIndex - testIndex + 5;
+                                                                                                     NSRange correctedFoundRange1;
+                                                                                                     correctedFoundRange1.location = foundRange.location + correction1;
+                                                                                                     correctedFoundRange1.length = foundRange.length;
+                                                                                                     if ((correction1 < 0) || (correctedFoundRange1.location + correctedFoundRange1.length) > foundlength)
+                                                                                                         correctedFoundRange1 = foundRange;
+                                                                                                     [myTextView1 setSelectedRange: correctedFoundRange1];
+                                                                                                     [myTextView1 scrollRangeToVisible: correctedFoundRange1];
+                                                                                                     [myTextWindow1 makeKeyAndOrderFront:self];
+                                                                                                }];
+           /*
+            newDocument = (TSDocument *)returnDocument;
+                // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
 				myTextView = [newDocument textView];
 				myTextWindow = [newDocument textWindow];
 				[newDocument setTextSelectionYellow: YES];
@@ -3497,6 +3556,7 @@ else
 			[myTextView setSelectedRange: correctedFoundRange];
 			[myTextView scrollRangeToVisible: correctedFoundRange];
 			[myTextWindow makeKeyAndOrderFront:self];
+            */
 			return YES;
 		}
 	}
@@ -3550,8 +3610,59 @@ else
 			if (foundIndex == 0) {
 				myTextView = [myDocument textView];
 				myTextWindow = [myDocument textWindow];
+                mySelectedAttributes = [myTextView selectedTextAttributes];
+                newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+                [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+                // FIXME: use temporary attributes instead of abusing the text selection
+                [myTextView setSelectedTextAttributes: newSelectedAttributes];
+                correction = testIndex - theIndex - 10;
+                if ((correction < 0) || (foundRange.location < correction))
+                    correctedFoundRange = foundRange;
+                else {
+                    correctedFoundRange.location = foundRange.location - correction;
+                    correctedFoundRange.length = foundRange.length;
+                }
+                [myTextView setSelectedRange: correctedFoundRange];
+                [myTextView scrollRangeToVisible: correctedFoundRange];
+                [myTextWindow makeKeyAndOrderFront:self];
 			} else {
-				newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+				// newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+                [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL: [NSURL fileURLWithPath: [sourceFiles objectAtIndex:(foundIndex - 1)]] display:YES
+                                                                             completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error)
+                 {
+                     NSTextView *myTextView1 = [(TSDocument *)document textView];
+                     NSWindow *myTextWindow1 = [(TSDocument *)document textWindow];
+                     [(TSDocument *)document setTextSelectionYellow: YES];
+                     NSDictionary *mySelectedAttributes1 = [myTextView1 selectedTextAttributes];
+                     NSMutableDictionary *newSelectedAttributes1 = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes1];
+                     [newSelectedAttributes1 setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+                     // FIXME: use temporary attributes instead of abusing the text selection
+                     [myTextView1 setSelectedTextAttributes: newSelectedAttributes1];
+                     NSInteger correction1 = theIndex - testIndex - 10;
+                     NSRange correctedFoundRange1;
+                     
+                     correctedFoundRange1.location = foundRange.location + correction1;
+                     correctedFoundRange1.length = foundRange.length;
+                      
+                     if ((correction1 < 0) || (foundRange.location < correction))
+                         correctedFoundRange1 = foundRange;
+                     else {
+                         correctedFoundRange1.location = foundRange.location - correction;
+                         correctedFoundRange1.length = foundRange.length;
+                         
+                     [myTextView1 setSelectedRange: correctedFoundRange1];
+                     [myTextView1 scrollRangeToVisible: correctedFoundRange1];
+                     [myTextWindow1 makeKeyAndOrderFront:self];
+
+                      }
+                 }];
+            }
+            return YES;
+        }
+                
+        /*
+                newDocument = (TSDocument *)returnDocument;
+                // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
 				myTextView = [newDocument textView];
 				myTextWindow = [newDocument textWindow];
 			}
@@ -3571,6 +3682,7 @@ else
 			[myTextView scrollRangeToVisible: correctedFoundRange];
 			[myTextWindow makeKeyAndOrderFront:self];
 			return YES;
+         */
 		}
 	}
 
@@ -3994,9 +4106,14 @@ else
 			includeFileName = [[newFileName stringByStandardizingPath] stringByAppendingPathExtension: @"tex"];
 		else
 			includeFileName = [newFileName stringByStandardizingPath];
-		newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:includeFileName display:YES];
-		[newDocument toLine:aNumber];
-		[[newDocument textWindow] makeKeyAndOrderFront:self];
+            // newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:includeFileName display:YES];
+            [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL: [NSURL fileURLWithPath: includeFileName] display:YES
+                    completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error)
+                                    {
+                                        [(TSDocument *)document toLine:aNumber];
+                                        [[(TSDocument *)document textWindow] makeKeyAndOrderFront:self];
+                                    }];
+       
 	}
 }
 

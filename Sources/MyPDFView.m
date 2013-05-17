@@ -1571,7 +1571,7 @@ failed. If you change the code below, be sure to test carefully!
 		[pageNumberWindow setFrameOrigin: aPoint];
 
 #warning 64BIT: Check formatting arguments
-		NSString *pageString = [NSString stringWithFormat: @"%d/%d", pageNumber, [myRep pageCount]];
+		NSString *pageString = [NSString stringWithFormat: @"%d/%d", (long)pageNumber, [myRep pageCount]];
 
 
 		NSView *theView = [pageNumberWindow contentView];
@@ -2069,12 +2069,14 @@ failed. If you change the code below, be sure to test carefully!
 			includeFileName = [[newFileName stringByStandardizingPath] stringByAppendingPathExtension: @"tex"];
 		else
 			includeFileName = [newFileName stringByStandardizingPath];
-		newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:includeFileName display:YES];
-		[newDocument toLine:aNumber];
-		[[newDocument textWindow] makeKeyAndOrderFront:self];
+		// newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:includeFileName display:YES];
+        [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL: [NSURL fileURLWithPath: includeFileName] display:YES
+                    completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error)
+                        {
+                            [(TSDocument *)document toLine:aNumber];
+                            [[(TSDocument *)document textWindow] makeKeyAndOrderFront:self];
+                        }];
 		}
-
-
 }
 
 
@@ -3183,6 +3185,7 @@ failed. If you change the code below, be sure to test carefully!
 		NSRunAlertPanel(@"Error", @"failed to copy selection.", nil, nil, nil);
 }
 
+
 // start save-dialog as a sheet
 -(void)saveSelectionToFile: (id)sender
 {
@@ -3194,33 +3197,60 @@ failed. If you change the code below, be sure to test carefully!
 	[imageTypePopup selectItemAtIndex: itemIndex];
 	[self chooseExportImageType: imageTypePopup]; // this sets up required type
 	[savePanel setCanSelectHiddenExtension: YES];
-
-	[savePanel beginSheetForDirectory:nil file:nil
-		modalForWindow:[self window] modalDelegate:self
-		didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
-		contextInfo:nil];
+    
+    //	[savePanel beginSheetForDirectory:nil file:nil
+    //		modalForWindow:[self window] modalDelegate:self
+    //		didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
+    //		contextInfo:nil];
+    
+    [savePanel beginSheetModalForWindow: [self window]
+                      completionHandler:^(NSInteger result) {
+                          if (NSFileHandlingPanelOKButton) {
+                              NSData *data = nil;
+                              data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+                              
+                              if ([SUD integerForKey: PdfExportTypeKey] == IMAGE_TYPE_PICT) {
+                                  // PICT file needs to start with 512 bytes 0's
+                                  NSMutableData *pictData = [NSMutableData dataWithLength: 512];//initialized by 0's
+                                  [pictData appendData: data];
+                                  data = pictData;
+                              }
+                              if (data)
+                                  [data writeToFile:[[savePanel URL] path] atomically:YES];
+                              else
+                                  NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
+                          }
+                      }];
 }
+
 
 // save the image data from selected rectangle to a file
-- (void)saveSelectionPanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo
-{
-	if (returnCode == NSFileHandlingPanelOKButton && [sheet filename])
-	{
-		NSData *data = nil;
-		data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+/*
+ - (void)saveSelectionPanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo
+ {
+ if (returnCode == NSFileHandlingPanelOKButton && [sheet filename]) {
+ NSData *data = nil;
+ //NSNumber *aNumber;
+ 
+ //aNumber = [NSNumber numberWithInt: [SUD integerForKey: PdfExportTypeKey]];
+ //NSLog([aNumber stringValue]);
+ 
+ data = [self imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
+ 
+ if ([SUD integerForKey: PdfExportTypeKey] == IMAGE_TYPE_PICT) {
+ // PICT file needs to start with 512 bytes 0's
+ NSMutableData *pictData = [NSMutableData dataWithLength: 512];//initialized by 0's
+ [pictData appendData: data];
+ data = pictData;
+ }
+ if (data)
+ [data writeToFile:[sheet filename] atomically:YES];
+ else
+ NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
+ }
+ }
+ */
 
-		if ([SUD integerForKey: PdfExportTypeKey] == IMAGE_TYPE_PICT)
-		{	// PICT file needs to start with 512 bytes 0's
-			NSMutableData *pictData = [NSMutableData dataWithLength: 512];//initialized by 0's
-			[pictData appendData: data];
-			data = pictData;
-		}
-		if (data)
-			[data writeToFile:[sheet filename] atomically:YES];
-		else
-			NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
-	}
-}
 
 
 // control image type popup
@@ -3228,16 +3258,18 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSInteger imageExportType;
 	NSSavePanel *savePanel;
-
+    
 	imageExportType = [[sender selectedItem] tag];
 	savePanel = (NSSavePanel *)[sender window];
-	[savePanel setRequiredFileType: extensionForType(imageExportType)];// mitsu 1.29 drag & drop
-
-	if (imageExportType != [SUD integerForKey: PdfExportTypeKey])
-	{
+	// [savePanel setRequiredFileType: extensionForType(imageExportType)];// mitsu 1.29 drag & drop
+    NSArray *myTypes = [NSArray arrayWithObject: extensionForType(imageExportType)];
+    [savePanel setAllowedFileTypes: myTypes];
+	if (imageExportType != [SUD integerForKey: PdfExportTypeKey]) {
 		[SUD setInteger:imageExportType forKey:PdfExportTypeKey];
 	}
 }
+
+
 
 // mitsu 1.29 drag & drop
 #pragma mark =====drag & drop=====

@@ -6,4 +6,9 @@ export LTMKEDIT="$HOME/Library/TeXShop/bin"
 if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then
 	cp "${LTMKBIN}/latexmkrcDONTedit" "${LTMKEDIT}/latexmkrcedit"
 fi
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/asymptotemkrc" "$1"
+# Use local rc file platexmkrc if it exists. p = project
+export localrc=""
+if [ -e ./platexmkrc ] ; then
+	export localrc="-r ./platexmkrc"
+fi
+"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/asymptotemkrc" ${localrc} "$1"

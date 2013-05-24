@@ -416,6 +416,7 @@ extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Pe
 extern NSString *AutoSaveEnabledKey;
 extern NSString *fullscreenPageStyleKey;
 extern NSString *fullscreenResizeOptionKey;
+extern NSString *ScreenFontForLogAndConsoleKey;
 
 
 // end defaults

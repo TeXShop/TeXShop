@@ -364,6 +364,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)associatedWindow:(id)sender
 {
+    if ([myDocument externalEditor])
+        return;
 	if ([myDocument documentType] == isTeX) {
 		if ([myDocument getCallingWindow] == nil)
 			[[myDocument textWindow] makeKeyAndOrderFront: self];

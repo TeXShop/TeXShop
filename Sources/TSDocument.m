@@ -2328,7 +2328,11 @@ in other code when an external editor is being used. */
 	if (fontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
-		[logTextView setFont:font];
+        
+        if ([SUD boolForKey:ScreenFontForLogAndConsoleKey])
+            [logTextView setFont:[font screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
+        else
+            [logTextView setFont: font];
 	}
 }
 
@@ -2338,7 +2342,11 @@ in other code when an external editor is being used. */
 	NSFont		*theFont;
 
 	theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
-	[outputText setFont: theFont];
+    
+    if ([SUD boolForKey:ScreenFontForLogAndConsoleKey])
+        [outputText setFont: [theFont screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
+    else
+        [outputText setFont: theFont];
 }
 
 - (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification

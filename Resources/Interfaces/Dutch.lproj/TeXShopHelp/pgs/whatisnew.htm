@@ -14,6 +14,63 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.17</h5></P>
+
+Version 3.17 has the following features:
+
+<ul>
+
+<li> In 3.15, we introduced a hidden default to fix the rendering of the Monoco font
+when used in the source window on Mountain Lion.
+
+<dl>
+				<dd>
+					defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+			</dl>
+
+<p> This fix does not alter the display of the Monoco font when used in the log window or the console. Another hidden preference can fix Monoco in these windows. This preference causes TeXShop to call the font routine [font screenFontWithRenderingMode:NSFontDefaultRenderingMode] and pass the resulting font to an AppKit object, although Apple's documentation says not to do this. So the new hidden preference should only be used if you cannot tolerate the Monoco font's default rendering.
+
+<dl>
+				<dd>
+					defaults write TeXShop ScreenFontForLogAndConsole -bool YES
+			</dl>
+<p>
+
+<p>
+<li> The spotlight indexer has not been distributed with the version 3 series
+	of TeXShop. Now it is again included. This indexer was written by Norm Gail
+	with additions by Max Horn. It was recently revised by Adam Maxwell.
+
+<li> 
+<p> Choosing the "Source <=> Preview" menu item in External 
+	Editor Mode caused a crash. This is fixed.
+
+
+<p>
+<li> The previous version of TeXShop introduced an improved version of latexmk. TeXShop
+contains two latexmk engines which are active by default: pdflatexmk.engine and sepdflatexmk.engine. The "About This Release" item in TeXShop 3.17's Help Menu explains
+how to update these engines.  
+
+<p>
+<li> A fix in version 3.16 replaced a deprecated method in the
+	"Search sync" routine with a modern equivalent. Unfortunately, this
+	fix had a bug which could crash TeXShop.
+
+<p>	Most users  use the SyncTeX method to sync. But when this method
+	fails to find a reasonable match, TeXShop reverts to the old Search Sync method, 
+	and thus could crash the program. The old Search sync method is now fixed.
+
+<p>	If by chance there are still problems with Search sync, a hidden TeXShop preference 
+	can turn off reverting to it when SyncTeX fails to find a match:
+	
+	<dl>
+				<dd>
+					defaults write TeXShop SyncTeXOnly YES
+			</dl> 
+
+
+</ul>
+
 <P><h5>TeXShop Changes 3.16</h5></P>
 
 Version 3.16 has the following features:

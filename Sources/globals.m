@@ -213,6 +213,7 @@ NSString *RightJustifyIfAnyKey = @"RightJustifyIfAny";
 NSString *AutoSaveEnabledKey = @"AutoSaveEnabled";
 NSString *fullscreenPageStyleKey = @"fullscreenPageStyle";
 NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
+NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
 
 
 

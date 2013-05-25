@@ -3358,6 +3358,17 @@ else
 	NSString				*aString;
 	NSInteger				correction = 0;
     
+// This routine causes hangs in version 3. Since it is old fashioned and no longer needed,
+// we temporarily comment it out. For most people who picked the modern SyncTeX, the only
+// effect will be that when that method doesn't find a match, it will not call Search TeX
+// and possibly hang. The slightly bigger problem is that some users misconfigured their
+// machines, disabling SyncTeX. They think they are using it, but they aren't. After this
+// fix, they won't sync at all.
+    
+    return NO;
+    
+// end of fig
+    
     
 	NSPoint windowPosition = thePoint;
 	NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];

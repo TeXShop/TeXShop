@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 3.17}
+\title{About TeXShop 3.18}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -38,6 +38,26 @@ New versions of TeXShop generally do not change these user modifications because
 
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version. 
 
+\section{Changes in 3.18}
+
+User action is only required if SyncTeX is incorrectly configured. Users should
+check that
+\begin{itemize}
+\item in TeXShop Preferences under the Typesetting tab, the ``Sync Method'' is set to SyncTeX;
+\item in TeXShop Preferences under the Engine tab, the two configuration lines for ``pdfTeX''
+each contain the following flags
+\begin{verbatim}
+     --file-line-error --syncTeX=1
+\end{verbatim}
+\item in TeXShop Preferences on the same page, the two ``TeX + dvips + distiller'' lines
+contain the following instruction
+\begin{verbatim}
+     --extratexopts "-file-line-error -synctex=1"
+\end{verbatim}
+	The easy way to do this is to push the four ``Default'' buttons beside these four entries.
+\end{itemize}
+
+\newpage
 \section{Changes in 3.17}
 
 The latexmk engines have been modified. By default, $\sim$/Library/TeXShop/Engines contains two such engines, pdflatexmk.engine and sepdflatexmk.engine. Drag the new versions of these engines,

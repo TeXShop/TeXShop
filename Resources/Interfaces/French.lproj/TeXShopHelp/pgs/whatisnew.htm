@@ -14,6 +14,45 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.18</h5></P>
+
+Version 3.18 has only a single change:
+
+<p>
+TeXShop contains an obsolete sync method called Search Sync, and a modern
+replacement by Jerome Laurens called SyncTeX. In recent versions of TeXShop, the
+obsolete Search Sync from the Preview Window to the Source Window randomly hangs,
+making TeXShop unresponsive This was supposed to be fixed in version 3.17, but it
+wasn't. Unfortunately, when the modern SyncTeX cannot find a match, it calls the old
+Search Sync, so SyncTeX can indirectly hang as well.
+
+<p> It is silly to waste time on an obsolete method, so in TeXShop 3.18,
+Search Sync from the Preview Window to the Source Window is disabled and does nothing.
+Most users will notice no change. Users who misconfigured SyncTeX will lose synchronization.
+
+<p> Users should check that
+<ul>
+<li> in TeXShop Preferences under the Typesetting tab, the "Sync Method" is set to SyncTeX;
+
+<p>
+<li> in TeXShop Preferences under the Engine tab, the two configuration lines for "pdfTeX"
+each contain the following flags
+<dl>
+<dd>     --file-line-error --syncTeX=1
+</dl>
+
+<p>
+<li> in TeXShop Preferences on the same page, the two "TeX + dvips + distiller" lines
+contain the following instruction
+<dl>
+<dd>     --extratexopts "-file-line-error -synctex=1"
+</dl>
+
+<p>	The easy way to do this is to push the four "Default" buttons beside these four entries.
+</ul>
+
+
+
 <P><h5>TeXShop Changes 3.17</h5></P>
 
 Version 3.17 has the following features:

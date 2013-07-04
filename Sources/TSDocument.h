@@ -544,10 +544,10 @@ enum RootCommand
 
 - (BOOL) checkMasterFile:(NSString *)theSource forTask:(NSInteger)task;
 - (BOOL) checkRootFile_forTask:(NSInteger)task;
-/* Ulrich Bauer patch
+/* Ulrich Bauer patch */
 - (void) checkFileLinks:(NSString *)theSource;
 - (void) checkFileLinksA;
-*/
+// End Bauer
 - (NSString *) readInputArg:(NSString *)fileLine atIndex:(NSUInteger)i
 		homePath:(NSString *)home job:(NSString *)jobname;
 - (NSString *) decodeFile:(NSString *)relFile homePath:(NSString *)home job:(NSString *)jobname;

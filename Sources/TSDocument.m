@@ -239,9 +239,9 @@
 
 + (BOOL)autosavesInPlace
 {
-    
-    return doAutoSave;
 
+    return doAutoSave;
+    
 }
 
 - (IBAction)convertTiff:(id)sender
@@ -1390,9 +1390,15 @@ in other code when an external editor is being used. */
 
 //ULRICH BAUER PATCH
 - (void)watchFile:(NSString*)fileName {
-        if (!doAutoSave) {
-                return;
-            }
+    
+      if (! activateBauerPatch)
+          return;
+    
+     //   if ( ! [SUD boolForKey:WatchServerKey] )
+     //       return;
+    
+     // if (![[self class] autosavesInPlace])
+     //      return;
     
         dispatch_queue_t queue = dispatch_get_main_queue();
         int fildes = open([fileName UTF8String], O_EVTONLY);
@@ -1435,6 +1441,10 @@ in other code when an external editor is being used. */
     }
 
 - (void)cancelWatchFile {
+    
+        if ( ! [SUD boolForKey:WatchServerKey] )
+            return;
+    
         if (dispatch_source != NULL) {
                 dispatch_source_cancel(dispatch_source);
                 dispatch_release(dispatch_source);

@@ -372,6 +372,8 @@
 
     doAutoSave = [SUD boolForKey:AutoSaveEnabledKey]; // this is a new hidden Preference, which can be used to turn it off
     
+    activateBauerPatch = doAutoSave && [SUD boolForKey: WatchServerKey] && (( ! [SUD objectForKey:@"ApplePersistence"]) || [SUD boolForKey:@"ApplePersistence"] );
+    
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];
 	[self configureExternalEditor];

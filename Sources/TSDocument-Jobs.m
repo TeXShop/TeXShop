@@ -148,7 +148,11 @@
 	whichError = 0;
 	makeError = error;
     
-/*
+// KOCH
+    
+    if (! doAutoSave) {
+    
+
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -158,7 +162,9 @@
 	} else {
 		[self saveDocumentWithDelegate: self didSaveSelector: @selector(saveFinished:didSave:contextInfo:) contextInfo: nil];
 	}
-*/
+    }
+    
+    else {
     
 // patch by Ulrich Bauer; remove commented lines above and replace with
     
@@ -184,7 +190,7 @@
             [self saveFinished: self didSave:YES contextInfo:nil];
         }
 
-    
+    }
     
 }
 
@@ -225,7 +231,10 @@
 	[self fixMacroMenu];
 	// end addition
 
-/*
+// KOCH
+    
+    
+    if (! doAutoSave) {
 	if (!_externalEditor)
 		[self checkFileLinksA];
 
@@ -236,7 +245,13 @@
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
 		[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 	}
-*/
+    }
+    
+    else
+ 
+    
+ {
+
     
 // bug fix by Ulrich Bauer; remove above lines and add
     
@@ -262,6 +277,7 @@
         } else {
             [self saveFinished: self didSave:YES contextInfo:nil];
         }
+    }
 }
 
     

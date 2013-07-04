@@ -2330,7 +2330,8 @@
 			}
 			//[path setLineWidth: 0.01];
 			// [[self superview] lockFocus];
-			[self lockFocus];
+            
+ 			[self lockFocus];
 			[[NSGraphicsContext currentContext] setShouldAntialias: NO];
 			[[NSColor whiteColor] set];
 			[path stroke];
@@ -2342,7 +2343,7 @@
 			 [self unlockFocus];
 			// display the image drawn in the buffer
 			[[self window] flushWindow];
-
+  
 #ifndef DO_NOT_SHOW_SELECTION_SIZE
 
 			// update the size window

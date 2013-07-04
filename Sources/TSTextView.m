@@ -1115,8 +1115,16 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         *idx = BDIndexOfItemInArrayWithPrefix(returnArray, hint);
     } else {
         // return the spellchecker's guesses
-        returnArray = (NSMutableArray *)[[NSSpellChecker sharedSpellChecker] completionsForPartialWordRange:charRange inString:s language:nil inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
-        *idx = BDIndexOfItemInArrayWithPrefix(returnArray, [s substringWithRange:charRange]);        
+        
+    // Comment by Koch on 6/6/2013 When the above code was written (I think by Adam Maxwell), the Mac probably got its list
+    // of completions from the spell checker. But modern versions of NSTextView are smarter and also find completions from
+        // the surrounding text, putting these at the top of the list. So instead of asking the spell checker, we just
+        // call super to provide the list
+        
+       //  returnArray = (NSMutableArray *)[[NSSpellChecker sharedSpellChecker] completionsForPartialWordRange:charRange inString:s language:nil inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
+        // *idx = BDIndexOfItemInArrayWithPrefix(returnArray, [s substringWithRange:charRange]);
+        
+        return  [super completionsForPartialWordRange: charRange indexOfSelectedItem: idx];
     }
 	return returnArray;
 }

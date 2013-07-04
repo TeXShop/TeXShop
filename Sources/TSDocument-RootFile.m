@@ -268,7 +268,7 @@
 	return [self checkRootFile:nameString forTask:task];
 }
 
-/* Removed by Ulrich Bauer patch
+/* Removed by Ulrich Bauer patch */
 
 - (void) checkFileLinksA
 {
@@ -360,7 +360,7 @@
 	[slist release];
 }
  
-*/
+// End Bauer
 
 // added by John A. Nairn
 // read argument to \input command and resolve to full path name

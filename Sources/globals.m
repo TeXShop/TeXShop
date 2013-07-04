@@ -214,6 +214,7 @@ NSString *AutoSaveEnabledKey = @"AutoSaveEnabled";
 NSString *fullscreenPageStyleKey = @"fullscreenPageStyle";
 NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
 NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
+NSString *WatchServerKey = @"WatchServer";
 
 
 
@@ -276,6 +277,7 @@ NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
 BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
 BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
+BOOL                activateBauerPatch; // this is set in 
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;

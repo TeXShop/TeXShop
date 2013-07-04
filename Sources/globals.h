@@ -417,6 +417,7 @@ extern NSString *AutoSaveEnabledKey;
 extern NSString *fullscreenPageStyleKey;
 extern NSString *fullscreenResizeOptionKey;
 extern NSString *ScreenFontForLogAndConsoleKey;
+extern NSString *WatchServerKey;
 
 
 // end defaults
@@ -488,6 +489,7 @@ extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly f
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern BOOL				fromMenu;
 extern BOOL             doAutoSave;
+extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

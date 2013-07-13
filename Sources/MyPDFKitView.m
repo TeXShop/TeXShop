@@ -34,6 +34,8 @@
  // best to leave the old code in place
  // -----------------------------------------------------
 
+ // See comments below for further changes required by Mavericks. Koch.
+
 // // QUESTIONABLE_BUG_FIX  (Search for this)
 
 #import "MyPDFKitView.h"
@@ -1953,8 +1955,13 @@
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
 			case NEW_MOUSE_MODE_SELECT_PDF:
-				if(selRectTimer && [self mouse: [self convertPoint:
+             if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
+                                                    [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
+                 [self startDragging: theEvent];
+            
+            else if (selRectTimer && [self mouse: [self convertPoint:
 							  [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
+                
 				{
 					// mitsu 1.29 drag & drop
 					// Koch: I commented out the moveSelection choice since it seems to be broken due to sync
@@ -1965,7 +1972,9 @@
 					[self startDragging: theEvent];
 					// end mitsu 1.29
 				}
-				else
+				else if (atLeastMavericks)
+                    [self selectARectForMavericks: theEvent];
+                else
 					[self selectARect: theEvent];
 				break;
 			case NEW_MOUSE_MODE_SELECT_TEXT:
@@ -2170,6 +2179,39 @@
 
 #pragma mark =====select and copy=====
 
+// REMARK: by Koch, July 10, 2013.
+//
+// The section below contains code which selects a region in the pdf window to be copied and pasted elsewhere
+// or saved to a file. It also contains the magnifying glass code.
+//
+// The "rubber band" code selecting a region, and the code controlling the magnifying glass,
+// have had periods of instability over the light of TeXShop.
+// The original magnifying glass code broke in Leopard and had to be replaced by a different routine. Indeed,
+// I talked to the author of PDFKit at WWDC in 2007 about the magnifying code.
+//
+// Both pieces of code broke again in OS X Mavericks. The fixes below work on Mavericks, but
+// don't work on earlier systems. So the old code is used on systems from Leopard through
+// Mountain Lion, and the new code is used on Mavericks and beyond.
+//
+// The key problem with these routines is that PDFView acts "sort of like an NSView" but is not a
+// subclass of NSView. So standard techniques for drawing on top of NsView objects often fail for
+// PDFView objects. Apple has not yet fully explained the PDFKit code changes in Mavericks. But it appears
+// that these code changes make the PDFView closer to a standard NSView.
+//
+// In a sense, our previous code for rubberbanding and for the magnifying glass depended on
+// special routines which "just happened to work" for these tasks. In contrast, the Mavericks code
+// is the "right way to handle temporary drawing over a view." It works by temporarily placing a
+// transparent view over the PDFView and drawing into that temporary view.
+//
+// Note that the new routines produce slightly different results. The old rubberbanding code drew
+// a dotted border around the seledted region, with a dotted pattern that slowly resolved. The
+// new code draws a solid, unchanging border. The magnifying glass does not support as many options
+// via using the Control, Shift, and Option keys as the old routines.
+//
+//
+
+
+// Previous remark about old routines by 
 // select and copy:
 // group of routines for selecting a rectangular region and copying as an image
 // routines:
@@ -2214,6 +2256,227 @@
 //		copy the routines and variables mentioned above
 //		set the imageCopyType elsewhere (in Preferences; see also TSAppDelegate's changeImageCopyType)
 //		supply the rescaling part of imageDataFromSelectionType for PDF/EPS (not necessary?)
+
+
+// Here are the routines used only by Mavericks
+// -----------------------------------------------------------------------
+
+- (void) setOverView:(OverView *)theOverView
+{
+    overView = theOverView;
+}
+
+- (OverView *)overView
+{
+    return overView;
+}
+ 
+ - (void)selectARectForMavericks: (NSEvent *)theEvent
+ {
+ NSPoint mouseLocWindow, startPoint, currentPoint;
+ BOOL startFromCenter = NO;
+ 
+ [self cleanupMarquee: NO];
+ 
+ OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
+ [self setOverView: theOverView];
+ [[self documentView] addSubview: [self overView]];
+ 
+ mouseLocWindow = [theEvent locationInWindow];
+ startPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+ rect = NSMakeRect(0, 0, 1, 1);
+ 
+ do {
+ if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+ {
+ 
+     
+ [self displayRect: [self visibleRect]];
+ [[self window] flushWindow];
+ 
+ // get Mouse location and check if it is with the view's rect
+ if (!([theEvent type]==NSFlagsChanged ))
+ {
+ mouseLocWindow = [theEvent locationInWindow];
+ // scroll if the mouse is out of visibleRect
+ [[self documentView] autoscroll: theEvent];
+ }
+ // calculate the rect to select
+ currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+ 
+selectedRect.size.width = abs(currentPoint.x-startPoint.x);
+selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+
+if ([theEvent modifierFlags] & NSShiftKeyMask)
+{
+    if (selectedRect.size.width > selectedRect.size.height)
+        selectedRect.size.height = selectedRect.size.width;
+    else
+        selectedRect.size.width = selectedRect.size.height;
+}
+
+if (currentPoint.x < startPoint.x || startFromCenter)
+selectedRect.origin.x = startPoint.x - selectedRect.size.width;
+else
+selectedRect.origin.x = startPoint.x;
+if (currentPoint.y < startPoint.y || startFromCenter)
+selectedRect.origin.y = startPoint.y - selectedRect.size.height;
+else
+selectedRect.origin.y = startPoint.y;
+if (startFromCenter)
+{
+    selectedRect.size.width *= 2;
+    selectedRect.size.height *= 2;
+}
+
+
+[[self overView] setDrawRubberBand: YES];
+[[self overView] setSelectionRect: selectedRect];
+[[self overView] drawRect: [[self documentView] visibleRect]];
+[[self window] flushWindow];
+
+}
+else if ([theEvent type]==NSLeftMouseUp)
+{
+    break;
+}
+theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+            NSLeftMouseDraggedMask | NSFlagsChangedMask ];
+} while (YES);
+
+[self flagsChanged: theEvent]; // update cursor
+}
+
+
+// Here is a routine used by both techniques to turn off the rubber band
+// ------------------------------------------------------------------------------
+
+// earses the frame of selected rectangle and cleans up the cached image
+- (void)cleanupMarquee: (BOOL)terminate
+{
+    // for Mavericks
+    OverView *theOverView = [self overView];
+    if (theOverView) {
+        [theOverView removeFromSuperview];
+        [self setOverView: nil];
+    }
+    
+    // for earlier systems
+    else {
+        
+        NSRect		tempRect;
+        
+        if (selRectTimer)
+        {
+            NSRect visRect = [[self documentView] visibleRect];
+            // if (NSEqualRects(visRect, oldVisibleRect))
+            //	[self updateBackground: rect]; // [[self window] restoreCachedImage];
+            // change by mitsu to cleanup marquee immediately
+            if (NSEqualRects(visRect, oldVisibleRect))
+            {
+                [self updateBackground: rect]; //[[self window] restoreCachedImage];
+                [[self window] flushWindow];
+            }
+            else // the view was moved--do not use the cached image
+            {
+                rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
+                tempRect =  [self convertRect: NSInsetRect(
+                                                           NSIntegralRect([[self documentView] convertRect: selectedRect toView: nil]), -2, -2)
+                                     fromView: nil];
+                [self displayRect: tempRect];
+            }
+            oldVisibleRect.size.width = 0; // do not use this cache again
+            if (terminate)
+            {
+                [selRectTimer invalidate]; // this will release the timer
+                selRectTimer = nil;
+            }
+        }
+        
+    }
+}
+
+
+
+
+// Here are the routines used only by Mountain Lion and lower
+// -------------------------------------------------------------------------
+
+// updates the frame of selected rectangle
+- (void)updateMarquee: (NSTimer *)timer
+{
+	static NSInteger phase = 0;
+	CGFloat pattern[2] = {3,3};
+	NSView *clipView;
+	NSRect selRectSuper, clipBounds;
+	NSRect mySelectedRect;
+	NSBezierPath *path;
+    
+	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
+    
+	if ([[self window] isMainWindow])
+	{
+		//clipView = [[self documentView] superview];
+		clipView = [[self documentView] superview];
+		clipBounds = [clipView bounds];
+		[clipView lockFocus];
+		[[NSGraphicsContext currentContext] setShouldAntialias: NO];
+		selRectSuper = [self convertRect:mySelectedRect toView: clipView];
+		// selRectSuper = [self convertRect: selRectSuper toView:self];
+		selRectSuper = NSInsetRect(NSIntegralRect(selRectSuper), 0.5, 0.5);
+		// if the eddges are slightly off the clip view, adjust them.
+		if (NSMinX(clipBounds)-1<NSMinX(selRectSuper) && NSMinX(selRectSuper)<NSMinX(clipBounds))
+		{
+			selRectSuper.origin.x += 1;
+			selRectSuper.size.width -= 1;
+		}
+		else if (NSMaxX(clipBounds)<NSMaxX(selRectSuper) && NSMaxX(selRectSuper)<NSMaxX(clipBounds)+1)
+			selRectSuper.size.width -= 1;
+		if (NSMinY(clipBounds)-1<NSMinY(selRectSuper) && NSMinY(selRectSuper)<NSMinY(clipBounds))
+		{
+			selRectSuper.origin.y += 1;
+			selRectSuper.size.height -= 1;
+		}
+		else if (NSMaxY(clipBounds)<NSMaxY(selRectSuper) && NSMaxY(selRectSuper)<NSMaxY(clipBounds)+1)
+			selRectSuper.size.height -= 1;
+		// create a bezier path and draw
+		path = [NSBezierPath bezierPathWithRect: selRectSuper];
+		[path setLineWidth: 0.01];
+		[[NSColor whiteColor] set];
+		[path stroke];
+		[path setLineDash: pattern count: 2 phase: phase];
+		[[NSColor blackColor] set];
+		[path stroke];
+		[clipView unlockFocus];
+		if (timer)
+			[[self window] flushWindow];
+		phase = (phase+1) % 6;
+	}
+}
+
+
+
+// recache the image around selected rectangle for quicker response
+- (void)recacheMarquee
+{
+    
+	NSRect	theRect;
+	
+	if (selRectTimer)
+	{
+		theRect = NSInsetRect([[self documentView] convertRect: selectedRect toView: nil], -2, -2);
+		// [[self window] cacheImageInRect: theRect];
+		rect = [self convertRect: theRect fromView: nil];
+		oldVisibleRect = [self visibleRect];
+	}
+}
+
+- (BOOL)hasSelection
+{
+	return (selRectTimer != nil);
+}
+
+
 
 - (void)selectARect: (NSEvent *)theEvent
 {
@@ -2476,6 +2739,9 @@
 
 }
 
+// end of routines for Mountain Lion and below
+// -------------------------------------------------------------------------
+
 - (void) printDocument: sender
 {
 	[myDocument printDocument: sender];
@@ -2483,112 +2749,6 @@
 
 
 
-
-// updates the frame of selected rectangle
-- (void)updateMarquee: (NSTimer *)timer
-{
-	static NSInteger phase = 0;
-	CGFloat pattern[2] = {3,3};
-	NSView *clipView;
-	NSRect selRectSuper, clipBounds;
-	NSRect mySelectedRect;
-	NSBezierPath *path;
-
-	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
-
-	if ([[self window] isMainWindow])
-	{
-		//clipView = [[self documentView] superview];
-		clipView = [[self documentView] superview];
-		clipBounds = [clipView bounds];
-		[clipView lockFocus];
-		[[NSGraphicsContext currentContext] setShouldAntialias: NO];
-		selRectSuper = [self convertRect:mySelectedRect toView: clipView];
-		// selRectSuper = [self convertRect: selRectSuper toView:self];
-		selRectSuper = NSInsetRect(NSIntegralRect(selRectSuper), 0.5, 0.5);
-		// if the eddges are slightly off the clip view, adjust them.
-		if (NSMinX(clipBounds)-1<NSMinX(selRectSuper) && NSMinX(selRectSuper)<NSMinX(clipBounds))
-		{
-			selRectSuper.origin.x += 1;
-			selRectSuper.size.width -= 1;
-		}
-		else if (NSMaxX(clipBounds)<NSMaxX(selRectSuper) && NSMaxX(selRectSuper)<NSMaxX(clipBounds)+1)
-			selRectSuper.size.width -= 1;
-		if (NSMinY(clipBounds)-1<NSMinY(selRectSuper) && NSMinY(selRectSuper)<NSMinY(clipBounds))
-		{
-			selRectSuper.origin.y += 1;
-			selRectSuper.size.height -= 1;
-		}
-		else if (NSMaxY(clipBounds)<NSMaxY(selRectSuper) && NSMaxY(selRectSuper)<NSMaxY(clipBounds)+1)
-			selRectSuper.size.height -= 1;
-		// create a bezier path and draw
-		path = [NSBezierPath bezierPathWithRect: selRectSuper];
-		[path setLineWidth: 0.01];
-		[[NSColor whiteColor] set];
-		[path stroke];
-		[path setLineDash: pattern count: 2 phase: phase];
-		[[NSColor blackColor] set];
-		[path stroke];
-		[clipView unlockFocus];
-		if (timer)
-			[[self window] flushWindow];
-		phase = (phase+1) % 6;
-	}
-}
-
-
-// earses the frame of selected rectangle and cleans up the cached image
-- (void)cleanupMarquee: (BOOL)terminate
-{
-	NSRect		tempRect;
-
-	if (selRectTimer)
-	{
-        NSRect visRect = [[self documentView] visibleRect];
-		// if (NSEqualRects(visRect, oldVisibleRect))
-		//	[self updateBackground: rect]; // [[self window] restoreCachedImage];
-				// change by mitsu to cleanup marquee immediately
-				if (NSEqualRects(visRect, oldVisibleRect))
-		{
-			[self updateBackground: rect]; //[[self window] restoreCachedImage];
-			[[self window] flushWindow];
-		}
-		else // the view was moved--do not use the cached image
-		{
-			rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
-			tempRect =  [self convertRect: NSInsetRect(
-				NSIntegralRect([[self documentView] convertRect: selectedRect toView: nil]), -2, -2)
-				fromView: nil];
- 			[self displayRect: tempRect];
-		}
-		oldVisibleRect.size.width = 0; // do not use this cache again
-		if (terminate)
-		{
-			[selRectTimer invalidate]; // this will release the timer
-			selRectTimer = nil;
-		}
-	}
-}
-
-// recache the image around selected rectangle for quicker response
-- (void)recacheMarquee
-{
-
-	NSRect	theRect;
-	
-	if (selRectTimer)
-	{
-		theRect = NSInsetRect([[self documentView] convertRect: selectedRect toView: nil], -2, -2);
-		// [[self window] cacheImageInRect: theRect];
-		rect = [self convertRect: theRect fromView: nil];
-		oldVisibleRect = [self visibleRect];
-	}
-}
-
-- (BOOL)hasSelection
-{
-	return (selRectTimer != nil);
-}
 
 - (NSImage *)imageFromSelection
 {
@@ -4362,7 +4522,198 @@ else
 }
 
 
+
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
+{
+    if (atLeastMavericks)
+        [self doMagnifyingGlassMavericks: theEvent level:level] ;
+    else
+        [self doMagnifyingGlassML: theEvent level:level] ;
+}
+
+// Routine for Mavericks
+// -------------------------------------------------------------------------
+
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level
+{
+	NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
+	NSRect oldBounds, newBounds, magRectWindow, magRectView;
+	BOOL postNote, cursorVisible;
+	CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
+	NSInteger originalLevel, currentLevel = 0.0;
+	CGFloat magScale = 0.0; 	//0.4	// you may want to change this
+	
+	// postNote = [[self documentView] postsBoundsChangedNotifications];
+	// [[self documentView] setPostsBoundsChangedNotifications: NO];
+	
+	oldBounds = [[self documentView] bounds];
+	cursorVisible = YES;
+	originalLevel = level+[theEvent clickCount];
+	
+	//[self cleanupMarquee: NO];
+	rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage]; // make sure not use the cached image
+	
+	// [[self window] disableFlushWindow];
+    
+    OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
+    [self setOverView: theOverView];
+    [[self documentView] addSubview: [self overView]];
+
+	
+	do {
+        
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+            
+			// [[self window] disableFlushWindow];
+            
+			// set up the size and magScale
+			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+				currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
+				if (currentLevel <= 1) {
+					magWidth = 150; magHeight = 100;
+					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+				} else if (currentLevel == 2) {
+					magWidth = 380; magHeight = 250;
+					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+				} else { // currentLevel >= 3 // need to cache the image
+					[self updateBackground: rect]; // [[self window] restoreCachedImage];
+					// [[self window] cacheImageInRect:[self convertRect:[self visibleRect] toView: nil]];
+					rect = [self visibleRect];
+				}
+				if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
+					if ([theEvent modifierFlags] & NSCommandKeyMask)
+						magScale = 0.25; 	// x4
+					else if ([theEvent modifierFlags] & NSControlKeyMask)
+						magScale = 0.66666; // x1.5
+					else
+						magScale = 0.4; 	// x2.5
+				} else { // shrink the image with shift key -- can be very slow
+					if ([theEvent modifierFlags] & NSCommandKeyMask)
+						magScale = 4.0; 	// /4
+					else if ([theEvent modifierFlags] & NSControlKeyMask)
+						magScale = 1.5; 	// /1.5
+					else
+						magScale = 2.5; 	// /2.5
+				}
+			}
+			// get Mouse location and check if it is with the view's rect
+			
+			if (!([theEvent type]==NSFlagsChanged))
+				mouseLocWindow = [theEvent locationInWindow];
+			mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+  			mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+			// check if the mouse is in the rect
+			
+			if([self mouse:mouseLocView inRect:[self visibleRect]]) {
+				if (cursorVisible) {
+					[NSCursor hide];
+					cursorVisible = NO;
+				}
+				// define rect for magnification in window coordinate
+				if (currentLevel >= 3) { // mitsu 1.29 (S5) set magRectWindow here
+					magRectWindow = [self convertRect:[self visibleRect] toView:nil];
+					rect = [self visibleRect];
+				} else { // currentLevel <= 2
+					magRectWindow = NSMakeRect(mouseLocDocumentView.x-magOffsetX, mouseLocDocumentView.y-magOffsetY,
+											   magWidth, magHeight);
+					// restore the cached image in order to clear the rect
+					[self updateBackground:rect]; // [[self window] restoreCachedImage];
+					// [[self window] cacheImageInRect:
+					//	NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2),
+					//					   [[self superview] convertRect:[[self superview] bounds]
+					//
+					rect = NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2), [[self superview] convertRect:[[self superview] bounds]  toView:nil]); // mitsu 1.29b
+					rect = [self convertRect: rect fromView: nil];
+				}
+				// draw marquee
+				if (selRectTimer)
+					[self updateMarquee: nil];
+                
+                
+                 [[self overView] setDrawRubberBand: NO];
+                [[self overView] setDrawMagnifiedRect: YES];
+                [[self overView] setSelectionRect: magRectWindow];
+                [[self overView] drawRect: [[self documentView] visibleRect]];
+                [self display];
+                [[self window] flushWindow];
+                
+                
+                /*
+                
+				
+				// resize bounds around mouseLocView
+				newBounds = NSMakeRect(mouseLocDocumentView.x+magScale*(oldBounds.origin.x-mouseLocDocumentView.x),
+									   mouseLocDocumentView.y+magScale*(oldBounds.origin.y-mouseLocDocumentView.y),
+									   magScale*(oldBounds.size.width), magScale*(oldBounds.size.height));
+				
+				// mitsu 1.29 (S1) fix for rotated view
+				
+				[[self documentView] setBounds: newBounds];
+				magRectView = NSInsetRect([self convertRect:magRectWindow fromView:nil],1,1);
+				[self displayRect: magRectView]; // this flushes the buffer
+                // reset bounds
+				[[self documentView] setBounds: oldBounds];
+                 
+                 */
+				
+			} else { // mouse is not in the rect
+                // show cursor
+				if (!cursorVisible) {
+					[NSCursor unhide];
+					cursorVisible = YES;
+				}
+				// restore the cached image in order to clear the rect
+				// [self updateBackground: rect]; // [[self window] restoreCachedImage];
+				[self updateBackground:rect];
+				// autoscroll
+				if (!([theEvent type]==NSFlagsChanged))
+					[self autoscroll: theEvent];
+				if (currentLevel >= 3)
+					; // [[self window] cacheImageInRect:magRectWindow];
+				else
+					rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
+			}
+			
+           // [[self window] enableFlushWindow];
+            [[self window] flushWindow];
+           // [[self window] disableFlushWindow];
+            
+		} else if ([theEvent type] == NSLeftMouseUp) {
+			break;
+		}
+		theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+                    NSLeftMouseDraggedMask | NSFlagsChangedMask];
+	} while (YES);
+    
+    if (theOverView) {
+        [theOverView removeFromSuperview];
+        [self setOverView: nil];
+    }
+
+	
+	// [[self window] enableFlushWindow];
+    
+	
+	[self updateBackground:rect]; // [[self window] restoreCachedImage];
+	// [[self window] flushWindow];
+	[NSCursor unhide];
+	[[self documentView] setPostsBoundsChangedNotifications: postNote];
+	[self flagsChanged: theEvent]; // update cursor
+    // recache the image around marquee for quicker response
+	oldVisibleRect.size.width = 0;
+	[self cleanupMarquee: NO];
+	[self recacheMarquee];
+    // The line below was added to clean up marks in gray border
+    // QUESTIONABLE_BUG_FIX
+    [[self window] display];
+    
+}
+
+
+// Routine for Mountain Lion and lower
+// -------------------------------------------------------------------------
+
+- (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level
 {
 	NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
 	NSRect oldBounds, newBounds, magRectWindow, magRectView;
@@ -4512,6 +4863,11 @@ else
 
 }
 // end Magnifying Glass
+//
+// End of special routines for Mountain Lion and below
+// -----------------------------------------------------------------
+
+
 
 // change mouse mode when a modifier key is pressed
 - (void)flagsChanged:(NSEvent *)theEvent

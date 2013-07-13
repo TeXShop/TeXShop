@@ -25,6 +25,7 @@
 #import <AppKit/AppKit.h>
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
+#import "OverView.h"
 
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
@@ -97,6 +98,7 @@
     BOOL							oldSync;
     NSRect							syncRect[200];
 	int								numberSyncRect;
+    OverView                        *overView;
 
 	
 	
@@ -172,6 +174,8 @@
 // drag & drop
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
+- (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)flagsChanged:(NSEvent *)theEvent;
 - (void)doSync: (NSPoint)thePoint;
 - (BOOL)doNewSync: (NSPoint)thePoint;
@@ -201,5 +205,7 @@
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
+- (void) setOverView:(OverView *)theOveView;
+- (OverView *)overView;
 @end
 

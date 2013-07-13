@@ -490,6 +490,7 @@ extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern BOOL				fromMenu;
 extern BOOL             doAutoSave;
 extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes
+extern BOOL             atLeastMavericks;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/
@@ -500,3 +501,5 @@ extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview
 NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
 #define LEOPARD 568 // added by Terada
+
+

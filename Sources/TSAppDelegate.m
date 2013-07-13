@@ -45,6 +45,8 @@
 #include <mach/machine.h>   // for testForIntel
 
 
+#define NSAppKitVersionNumber10_8 1187
+
 @class TSTextEditorWindow;
 
 
@@ -139,6 +141,13 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
+    
+     
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
+        atLeastMavericks = YES;
+    else
+        atLeastMavericks = NO;
+    
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;

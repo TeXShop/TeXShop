@@ -32,6 +32,13 @@ a line like </p>
 </dl>
 <p> There must be one space before and one space after the equal sign. A Macro supplied with TeXShop makes adding this line easy; the Macro lists all active engines, making it possible to select the desired engine from a dialog list.</p>
 
+<p> This syntax was later adopted by TeXworks and other front ends. To make life easier when
+collaborating, TeXShop also accepts the TeXworks form of the command:
+<dl>
+<dd> % !TEX program = xelatex
+</dl>
+
+
 <p> The "% !TEX TS-program = ..." line takes precedence over the typesetting method selected in the toolbar. For example, if the above line selecting "xelatex" is in the source document, then hitting the typeset button or selecting "Typeset" in the typesetting menu, or selecting the keyboard equivalent of this command, will typeset the document using xelatex, even if pdflatex is the default typesetting method selected in the toolbar's pulldown menu. If a project contains a root file and several associated chapter files, only the root file needs a "% !TEX TS-program " line.</p>
 
 <p>When writing a new engine file, it is convenient to start by duplicating an existing engine in ~/Library/Engines. The resulting file will automatically have its execute bit set. The file can then be edited with TeXShop to create the new engine.</p>

@@ -395,6 +395,8 @@ enum RootCommand
 - (void) setTextSelectionYellow:(BOOL)value;
 - (void) saveSourcePosition;
 - (void) savePreviewPosition;
+- (void) savePortableSourcePosition;
+- (void) savePortablePreviewPosition;
 - (void) fullscreen: (id)sender;
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;

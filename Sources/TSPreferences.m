@@ -180,8 +180,14 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	// register defaults
 	switch ([sender tag]) {
 		case 1: fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"]; break;
-		case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_sjis" ofType:@"plist"]; break;
-		case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_euc" ofType:@"plist"]; break;
+		case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_upTeX_ptex2pdf" ofType:@"plist"]; break;
+		case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_upTeX_latexmk" ofType:@"plist"]; break;
+		case 4: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_upTeX_script" ofType:@"plist"]; break;
+		case 5: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_ptex2pdf" ofType:@"plist"]; break;
+		case 6: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_latexmk" ofType:@"plist"]; break;
+		case 7: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_script" ofType:@"plist"]; break;
+		case 8: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_sjis" ofType:@"plist"]; break;
+		case 9: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_euc" ofType:@"plist"]; break;
 			/*
 			 case 2: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Inoue" ofType:@"plist"]; break;
 			 case 3: fileName = [[NSBundle mainBundle] pathForResource:@"Defaults_pTeX_Kiriki" ofType:@"plist"]; break;

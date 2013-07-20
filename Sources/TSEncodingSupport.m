@@ -25,6 +25,7 @@
 #import "TSEncodingSupport.h"
 #import "TSDocument.h" // mitsu 1.29 (P)
 #import "globals.h"
+#import "NSString-Extras.h"  //Terada
 
 static NSString *yenString = nil;
 
@@ -397,16 +398,13 @@ static TSEncoding _availableEncodings[] = {
 {
 	NSString *dataString;
 	
-	if ( [SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] ) 
-		dataString = [[dataView string] precomposedStringWithCanonicalMapping]; // modified by Terada;
-	else 
-		dataString = [dataView string]; // original
+    dataString = [dataView string];
 	NSMutableString *utfString, *newString = [NSMutableString string];
 	NSRange charRange, aCIDRange;
 	NSString *subString;
 	NSGlyphInfo *aGlyph;
 	NSUInteger startl, endl, end;
-
+    
 	charRange = NSMakeRange(0,1);
 	endl = 0;
 	while (charRange.location < [dataString length]) {
@@ -418,7 +416,7 @@ static TSEncoding _availableEncodings[] = {
 		charRange = [dataString rangeOfComposedCharacterSequenceAtIndex: charRange.location];
 		//        NSLog( @"%d %d", charRange.length, charRange.location);
 		subString = [dataString substringWithRange: charRange];
-
+        
 		if (![subString canBeConvertedToEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISO_2022_JP)]) {
 			aGlyph = [[dataView textStorage] attribute:NSGlyphInfoAttributeName
 											   atIndex:charRange.location effectiveRange:&aCIDRange];
@@ -431,7 +429,7 @@ static TSEncoding _availableEncodings[] = {
                              [aLayout glyphAtIndex:charRange.location]];
 				// 0x2014,0x2015 fix (reported by Kino-san)
 			} else if ( [subString characterAtIndex: 0] == 0x2015) {
-				utfString = [NSMutableString stringWithFormat:@"%d", 0x2014];
+				utfString = [NSMutableString stringWithFormat:@"%C", (unichar)0x2014];
 			} else {
 				utfString = [NSMutableString stringWithFormat:@"%CUTF{%04X}",
                              (unichar)g_texChar, [subString characterAtIndex: 0]];
@@ -446,7 +444,10 @@ static TSEncoding _availableEncodings[] = {
 		charRange.location += charRange.length;
 		charRange.length = 1;
 	}
-
+    
+    if ( [SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] )
+        newString = [NSMutableString stringWithString:[newString normalizedStringWithModifiedNFC]];
+    
 	return [newString dataUsingEncoding:enc allowLossyConversion:YES];
 }
 // end 1.35 (C)
@@ -459,7 +460,7 @@ NSMutableString *filterBackslashToYen(NSString *aString)
 {
 	NSMutableString *newString = [NSMutableString stringWithString: aString];
 	[newString replaceOccurrencesOfString: @"\\" withString: yenString
-						options: 0 range: NSMakeRange(0, [newString length])];
+                                  options: 0 range: NSMakeRange(0, [newString length])];
 	return newString;
 }
 
@@ -468,7 +469,10 @@ NSMutableString *filterYenToBackslash(NSString *aString)
 {
 	NSMutableString *newString = [NSMutableString stringWithString: aString];
 	[newString replaceOccurrencesOfString: yenString withString: @"\\"
-						options: 0 range: NSMakeRange(0, [newString length])];
+                                  options: 0 range: NSMakeRange(0, [newString length])];
 	return newString;
 }
+
+
+
 

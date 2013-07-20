@@ -14,6 +14,144 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.19, 3.20, 3.21</h5></P>
+
+Versions 3.19 and 3.20 were never released.
+<p>
+Version 3.21 has the following changes:
+
+<ul> 
+
+<li> Three bugs appeared when running on  OS X Mavericks: the magnifying
+	glass in the Preview window broke, rubber band selecting of a region of the Preview
+	window broke, and sharing the png of the selected region broke.	All three are fixed. The code which runs on Mountain Lion and below remains
+	in place, so small changes in behavior will only be seen on Mavericks.
+<p>	
+	The magnifying glass has an interesting history. The original code used
+	an unusual call in Cocoa. It broke in Leopard. This code was replaced by tricky
+	code relying on another unusual Cocoa routine. This broke in Mavericks. The new Mavericks code
+	in 3.21 is   straightforward, drawing in a temporary transparent overlay view for
+	both magnification and rubber banding.
+	
+<p>
+<li> In Mountain Lion, sharing of a region of the Preview window provides a png of this
+region. In Mavericks and above, it provides a pdf of the region, which can  be resized without losing detail.
+
+<p>
+<li> For a  long time we have recommended that users new to
+TeXShop  arrange the location and size of the Source and Preview windows on the desktop as desired. Most users prefer a side by side configuration with the Source window on the left and the Preview window on the right. Then activate the Source
+window and in the Source menu select ``Save Source Position''. Similarly activate the Preview window and in the Preview menu select ``Save Preview Position''. From that point on, all
+TeXShop source and preview windows will appear in the selected positions.
+<p>
+If you have a portable connected to a large monitor, this configuration works as long as you are attached to the monitor. But when you are traveling, the windows will appear on the screen of your portable, and probably not in ideal positions. TeXShop 3.21 has an extra configuration to fix this. Arrange a source and preview window on your portable screen  in ideal position; the portable can be attached to the large monitor at the time. Then activate the source window and in the Source menu select ``Save Source Position for Portable''. Activate the preview window and in the Preview menu select ``Save Preview Position for Portable''. After this step, windows will appear in the desired position when you are connected to the large monitor at home or office, and windows will appear in the desired position on the portable screen when you are traveling.
+
+<p> It will do no harm to skip this portable configuration. 
+
+<p> If you have multiple screens, Maverick has the ability to start applications on any screen. Thus it may be convenient to use the "portable" configuration for a second screen even if you do not have a portable.
+
+<p>
+<li> The following bug was pointed out by Simon C. Leemann. Until 3.21, double clicking on a blank space in the source window selected the space and the words on either side of the space. This is fixed and now only the space is selected.
+
+<p>
+<li> TeXShop allows users to select alternate engines on a file by file basis using the
+syntax
+
+<dl>
+<dd>  % !TEX TS-program = 
+</dl>
+TeXworks and other programs use the similar command
+<dl>
+<dd>  % !TEX program = 
+</dl> 
+TeXShop 3.21 now accepts this alternate syntax to specify an engine.
+
+<p>
+For compatibility reasons, the space between "%" and "!" is optional, but highly recommended.
+
+<p>
+<li> The next feature was requested by Alan Munn about a year ago. Apologies for the delay.
+In the meantime, Mark Everitt wrote an ingenious script to provide this feature. The feature provided by that script is now built into TeXShop.
+
+<p> The command BibTeX in the TeXShop typeset menu runs BibTeX; notice that this command has a keyboard shortcut. In Japan, a different program is used instead, so Yusuke Terada provided
+an item in TeXShop Preferences under the Engine tab to select the program to be run when this menu item is selected. Examples are bibtex, biber, pbibtex, etc. The Preferences item can also be used to add flags to the command.
+<p>
+In TeXShop 3.21, the BibTeX engine can be selected on a file-by-file basis using the syntax
+<dl>
+<dd>  % !BIB TS-program = 
+</dl>
+The alternate syntax
+<dl>
+<dd>  % !BIB program = 
+</dl>
+will also be accepted. The item after the equal sign gives the name of the program (for instance "biber") and any required flags. This line should be written within the first twenty lines of
+a source file.
+
+<p> The "% !BIB TS-program = " line takes precedence. If it is absent, the Preference item determines which command is run.
+
+<p>
+<li> TeXShop 3.21 contains latexmk 4.37.
+
+<p>
+<li> The following bug was pointed out by Basil Grammaticos, and is fixed in TeXShop 3.21.
+TeXShop has an AutoCompletion feature. If the user begins typing a phrase like
+<dl>
+<dd>  \begin{
+</dl>
+and then presses the escape key, TeXShop will complete the phrase. If there are several completions, TeXShop will cycle through the possibilities each time the escape key is pressed.
+These completions are listed in a file which users can edit using the command "Edit Command Completion File" in the Source menu. 
+<p>
+But if no completions are found,  TeXShop reverts to a different autocompletion method which is build into Cocoa. This time, pressing the escape key opens a small window  listing all possible completions. Click on one to complete the phrase. These completions come from the system dictionary. 
+<p>
+The first kind of completion is likely to appear when typing a TeX construction, and the
+second kind appears when typing an ordinary word or phrase. 
+<p>
+Basil pointed out that in many programs, the second completion list begins with phrases which
+already appear in the document. In earlier 
+versions of TeXShop, these nearby phrases were missing.
+<p> This bug was caused by adding Autocompletion to TeXShop too early. If no completion was
+found, the code called the dictionary to provide an autocompletion list. Then Apple added
+a similar call to TextEdit, which first finds nearby phrases and then asks the dictionary for further words. TeXShop now calls that TextEdit routine.
+
+<p>
+<li> TeXShop now has a hidden command to turn off AutoSaving:
+<dl>
+<dd>  defaults write TeXShop AutoSaveEnabled NO
+</dl>
+WARNING: This command will cause crashes on Lion, so it should only be used on Mountain Lion
+and above. The TeXShop developers use AutoSave. If you turn off AutoSave, you are entering
+untested waters.
+
+<p>
+<li> The Sage engine script was revised in TeXShop 3.21, and the Sage instruction document in
+~/Library/Engines/Inactive/Sage was rewritten.
+
+<p>
+<li> Ulrich Bauer added a patch to TeXShop 3.17 for users working with a server. This patch
+was supposed to be inactive unless AutoSave was on. But a mistake in the code caused it to be
+used by a few people who didn't use AutoSave. This is fixed.
+
+<p>
+<li> Many users thanked us for Bauer's code, but it caused trouble for a few. There is a
+hidden preference to turn to patch off:
+<dl>
+<dd> defaults write TeXShop WatchServer NO
+</dl>
+ 
+<p>
+<li> Finally, Yusuke Terada provided a number of changes for users in Japan.
+	<p>
+	<ul>
+	<li> At the bottom of the TeXShop Preference window, a pull down menu labeled "Defaults"
+	offers to change all preferences to their default values. The first item in this menu is labeled "Regular" and is for most users. The remaining items are for users in Japan, who interact with TeX in a variety of unusual ways. It contains six new items to replace the original two legacy items.
+	<p>
+	<li> An earlier version of TeXShop contained an automatic UTF-8-Mac to UFT-8 Conversion. 
+	But this routine converted some Japanese Kanji characters to different glyphs. This is
+	fixed by excluding certain characters from the conversion, as explained in the Unicode
+	Consortium Report <A HREF="http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table">http://tug.org/mactex"> http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table</A>.
+	</ul>
+ 
+</ul>
+
 <P><h5>TeXShop Changes 3.18</h5></P>
 
 Version 3.18 has only a single change:

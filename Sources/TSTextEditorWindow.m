@@ -169,6 +169,13 @@
 	[myDocument saveSourcePosition];
 }
 
+
+- (void)savePortableSourcePosition: sender
+{
+	[myDocument savePortableSourcePosition];
+}
+
+
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
 	NSRect	newFrame;

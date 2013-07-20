@@ -11,9 +11,23 @@
 
 @implementation OverView
 
+- (void) dealloc
+{
+    if (MagnifiedImage) {
+        [MagnifiedImage release];
+        MagnifiedImage = nil;
+    }
+    [super dealloc];
+}
+
 - (void) setSelectionRect: (NSRect) theRect
 {
     theSelectionRect = theRect;
+}
+
+- (void) setMagnifiedRect: (NSRect) theRect
+{
+    magnifiedRect = theRect;
 }
 
 - (void) setDrawRubberBand: (BOOL)value
@@ -26,8 +40,21 @@
     drawMagnifiedRect = value;
 }
 
+- (void) setMagnifiedImage: (NSImage *)theImage
+{
+    [theImage retain];
+    MagnifiedImage = theImage;
+}
+
+- (void) setDrawMagnifiedImage: (BOOL)value
+{
+    drawMagnifiedImage = value;
+}
+
+
 - (void)drawRect:(NSRect) theRect
 {
+    
     if (drawRubberBand) {
         NSBezierPath    *path;
         path = [NSBezierPath bezierPath];
@@ -54,6 +81,16 @@
         [path fill];
         NSRectFill(theSelectionRect);
         [self unlockFocus];
+    }
+else if (drawMagnifiedImage) {
+    [self lockFocus];
+    [[NSGraphicsContext currentContext] setShouldAntialias: NO];
+    [MagnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeCopy fraction: 1.0 ];
+    [[NSColor blackColor] set];
+    NSFrameRect(theSelectionRect);
+    [self unlockFocus];
+
+    
     }
 }
 

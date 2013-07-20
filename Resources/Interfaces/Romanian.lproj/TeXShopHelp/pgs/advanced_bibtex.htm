@@ -54,7 +54,32 @@
 		</dl>
 		<p>When this source is typeset, a reference to Felici's article will appear in the text, and a bibliography will be created at the end of the text containing the articles of Felici and Liang, but not the article of Knuth.</p>
 		<p>TeXShop can be used with this example in the following way. First edit and typeset the document &quot;myfile.tex&quot; as usual. Citations will appear in the output as &quot;[?]&quot; and the bibliography will be missing. Then select &quot;BibTeX&quot; under the Program button and run BibTeX. Next select &quot;LaTeX&quot; and typeset again. Citations will still appear as &quot;[?]&quot;, but the bibliography will be added to the output. Typeset a final time, and citations will have their correct values.</p>
-		<p>The file &quot;mybibliography.bib&quot; can be opened and edited by TeXShop. If you use TeXShop to create the file &quot;mybibliography.bib&quot; in the first place, use the pulldown tag labeled &quot;file format&quot; to save the file as a bib file rather than as a tex file.</p></div>
+<p> Notice that the BibTeX menu command has a keyboard equivalent.</p>
+		<p>The file &quot;mybibliography.bib&quot; can be opened and edited by TeXShop. If you use TeXShop to create the file &quot;mybibliography.bib&quot; in the first place, use the pulldown tag labeled &quot;file format&quot; to save the file as a bib file rather than as a tex file.</p>
+		
+<p> In recent years, additional programs like biber have been written to handle bibliographies.
+Japanese typesetting is done using a modified TeX and still other programs like pbibtex and
+ubibtex are available there for bibliographies. So TeXShop has a preference setting to set
+the program called when the BibTeX menu item is chosen. It is at the bottom of the Engine
+tab. Fill in with the appropriate name, and any flags that should be used when calling this command line program.
+
+<p> Often users use different bibliography programs for different projects, or when working with
+different coauthors. TeXShop allows the bibliography program to be set on a file-by-file basis.
+To set it for a given source file, include the following line within the first twenty lines of the
+source, replacing "biber" with the desired program names and any desired flags.
+<dl>
+<dd> % !BIB TS-program = biber
+</dl>		
+<p> For compatibility with other platforms, the following syntax is also acceptable
+<dl>
+<dd> % !BIB program = biber
+</dl>		
+<p> If this line is missing from the source file, the corresponding Preference entry will be used when the BibTeX menu command is selected.		
+		
+		
+		
+		
+		</div>
 <div id="header_background"></div>
 <div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
 <div id="header_chapter">Advanced Help</div><div id="header_title">BibTeX</div>

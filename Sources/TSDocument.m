@@ -53,6 +53,7 @@
 #import "TSDocumentController.h"
 #import "TSLayoutManager.h" // added by Terada 
 #import "TSToolbar.h"
+#import "NSString-Extras.h"  // Terada
 
 
 #define COLORTIME  0.02
@@ -1262,10 +1263,10 @@ in other code when an external editor is being used. */
 	// zenitani 1.35 (C) --- utf.sty output
 	if ( [SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] ) {
 		if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
-				[[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [[_textStorage string] precomposedStringWithCanonicalMapping] withEncoding: _encoding] ) { // modified by Terada
+				[[TSEncodingSupport sharedInstance] ptexUtfOutputCheck: [[_textStorage string] normalizedStringWithModifiedNFC] withEncoding: _encoding] ) { // modified by Terada
 			return [[TSEncodingSupport sharedInstance] ptexUtfOutput: textView withEncoding: _encoding];
 		} else 
-			return [[[_textStorage string] precomposedStringWithCanonicalMapping] dataUsingEncoding: _encoding allowLossyConversion:YES]; // modified by Terada
+			return [[[_textStorage string] normalizedStringWithModifiedNFC] dataUsingEncoding: _encoding allowLossyConversion:YES]; // modified by Terada
 		}
 	else {
 		if( [SUD boolForKey:ptexUtfOutputEnabledKey] &&
@@ -2161,6 +2162,99 @@ in other code when an external editor is being used. */
 /*" This method reads the NSUserDefaults and restores the settings before the document will actually be displayed.
 "*/
 {
+    NSScreen *mainScreen;
+    NSRect   mainRect;
+    BOOL     result;
+    float    floatValue, x, y, temp, LargeArea, LargePDFArea, SmallArea, SmallPDFArea, MainDisplayArea;
+    NSString *docWindowString, *pdfWindowString, *portableDocWindowString, *portablePDFWindowString;
+   
+   
+    if ( DocumentWindowPosFixed == [SUD integerForKey:DocumentWindowPosModeKey] ) {
+        docWindowString = [SUD stringForKey:DocumentWindowFixedPosKey];
+        if (docWindowString) {
+            NSScanner *docWindow = [NSScanner scannerWithString: docWindowString];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            result = [docWindow scanFloat: &floatValue];
+            x = floatValue;
+            result = [docWindow scanFloat: &floatValue];
+            y = floatValue;
+            LargeArea = x * y;
+            }
+        else
+            LargeArea = 0;
+        
+        portableDocWindowString = [SUD stringForKey:PortableDocumentWindowFixedPosKey];
+        if (portableDocWindowString) {
+            NSScanner *portableDocWindow = [NSScanner scannerWithString: portableDocWindowString];
+            result = [portableDocWindow scanFloat: &floatValue]; // origin.x for source
+            result = [portableDocWindow scanFloat: &floatValue]; // origin.y for source
+            result = [portableDocWindow scanFloat: &floatValue]; // size.width for source
+            result = [portableDocWindow scanFloat: &floatValue]; // size.height for source
+            result = [portableDocWindow scanFloat: &floatValue]; // origin.x for window where data defined
+            result = [portableDocWindow scanFloat: &floatValue]; // origin.y for window where data defined
+            result = [portableDocWindow scanFloat: &floatValue]; // size.width for window where data defined
+            x = floatValue;
+            result = [portableDocWindow scanFloat: &floatValue]; // size.height for window where data defined
+            y = floatValue;
+            SmallArea = x * y;
+            if ((x < 800) || (y < 600))
+                SmallArea = 0;
+            }
+        else   SmallArea = 0;
+    }
+                                    
+    if ( PdfWindowPosFixed == [SUD integerForKey:PdfWindowPosModeKey] ) {
+        pdfWindowString = [SUD stringForKey:PdfWindowFixedPosKey];
+        if (pdfWindowString) {
+            NSScanner *PDFWindow = [NSScanner scannerWithString: pdfWindowString];
+            result = [PDFWindow scanFloat: &floatValue]; // origin.x for pdf
+            result = [PDFWindow scanFloat: &floatValue]; // origin.y for pdf
+            result = [PDFWindow scanFloat: &floatValue]; // size.width for pdf
+            result = [PDFWindow scanFloat: &floatValue]; // size.height for pdf
+            result = [PDFWindow scanFloat: &floatValue]; // origin.x for window where pdf defined
+            result = [PDFWindow scanFloat: &floatValue]; // origin.y for window where pdf defined
+            result = [PDFWindow scanFloat: &floatValue]; // size.width for window where pdf defined
+                x = floatValue;
+            result = [PDFWindow scanFloat: &floatValue]; // size.height for window where pdf defined
+                y = floatValue;
+            LargePDFArea = x * y;
+            }
+        else
+            LargePDFArea = 0;
+        
+        portablePDFWindowString = [SUD stringForKey:PortablePdfWindowFixedPosKey];
+        if (portablePDFWindowString) {
+            NSScanner *portablePDFWindow = [NSScanner scannerWithString: portablePDFWindowString];
+            result = [portablePDFWindow scanFloat: &floatValue]; // origin.x for pdf
+            result = [portablePDFWindow scanFloat: &floatValue]; // origin.y for pdf
+            result = [portablePDFWindow scanFloat: &floatValue]; // size.width for pdf
+            result = [portablePDFWindow scanFloat: &floatValue]; // size.height for pdf
+            result = [portablePDFWindow scanFloat: &floatValue]; // origin.x for window where pdf defined
+            result = [portablePDFWindow scanFloat: &floatValue]; // origin.y for window where pdf defined
+            result = [portablePDFWindow scanFloat: &floatValue]; // size.width for window where pdf defined
+                x = floatValue;
+            result = [portablePDFWindow scanFloat: &floatValue]; // size.height for window where pdf defined
+                y = floatValue;
+            SmallPDFArea = x * y;
+            if ((x < 800) || (y < 600))
+                SmallPDFArea = 0;
+            }
+        else
+            SmallPDFArea = 0;
+        }
+            
+
+    mainScreen = [NSScreen mainScreen];
+    mainRect = [mainScreen frame];
+    MainDisplayArea = mainRect.size.width * mainRect.size.height;
+    
+    
 	// inhibit ordering of windows by windowController.
 	[windowController setShouldCascadeWindows:NO];
 
@@ -2180,9 +2274,32 @@ in other code when an external editor is being used. */
 				// added by Terada (until this line)
 				break;
 
+
 			case DocumentWindowPosFixed:
-				[textWindow setFrameFromString:[SUD stringForKey:DocumentWindowFixedPosKey]];
-				break;
+             //   NSLog(@"Main");
+             //   NSLog([SUD stringForKey:DocumentWindowFixedPosKey]);
+             //   NSLog([SUD stringForKey:PdfWindowFixedPosKey]);
+             //   NSLog(@"Portable");
+             //   NSLog([SUD stringForKey:PortableDocumentWindowFixedPosKey]);
+             //   NSLog([SUD stringForKey:PortablePdfWindowFixedPosKey]);
+                
+                if (LargeArea < SmallArea) {
+                    temp = LargeArea;
+                    LargeArea = SmallArea;
+                    SmallArea = temp;
+                }
+               
+               if ((SmallArea < 10) || (MainDisplayArea > (LargeArea + SmallArea) / 2))
+                   [textWindow setFrameFromString:[SUD stringForKey:DocumentWindowFixedPosKey]];
+               else
+                    [textWindow setFrameFromString:[SUD stringForKey:PortableDocumentWindowFixedPosKey]];
+               break;
+            
+            /*
+            case DocumentWindowPosFixed:
+                [textWindow setFrameFromString:[SUD stringForKey:DocumentWindowFixedPosKey]];
+                break;
+            */
 		}
 	
 	// restore window position for the pdf window
@@ -2215,10 +2332,31 @@ in other code when an external editor is being used. */
 			// added by Terada (until this line)
 			break;
 
+
 		case PdfWindowPosFixed:
-			[pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
-			[pdfKitWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
-	}
+            
+            if (LargePDFArea < SmallPDFArea) {
+                temp = LargePDFArea;
+                LargePDFArea = SmallPDFArea;
+                SmallPDFArea = temp;
+            }
+           
+            if ((SmallPDFArea < 10) || (MainDisplayArea > (LargePDFArea + SmallPDFArea) / 2)) {
+                [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
+                [pdfKitWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
+                }
+            else {
+                [pdfWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
+                [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
+                }
+ 
+/*
+        case PdfWindowPosFixed:
+            [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
+            [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
+*/
+            
+        }
 
 
 /*
@@ -2322,8 +2460,7 @@ in other code when an external editor is being used. */
 	if (fontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
-        // NSLog(@"got here");
- 		[textView1 setFont:font];
+       [textView1 setFont:font];
 		[textView2 setFont:font];
 	}
 	[self fixUpTabs];
@@ -6384,6 +6521,34 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 }
 
+- (void) savePortableSourcePosition
+{
+	NSWindow	*activeWindow;
+	activeWindow = [[TSWindowManager sharedInstance] activeTextWindow];
+    
+	if (activeWindow != nil) {
+		[self fixPreferences];
+		[SUD setInteger:DocumentWindowPosFixed forKey:DocumentWindowPosModeKey];
+		[SUD setObject:[activeWindow stringWithSavedFrame] forKey:PortableDocumentWindowFixedPosKey];
+		[SUD synchronize];
+    }
+}
+
+- (void) savePortablePreviewPosition
+{
+	NSWindow	*activeWindow;
+	activeWindow = [[TSWindowManager sharedInstance] activePDFWindow];
+    
+	if (activeWindow != nil) {
+		[self fixPreferences];
+		[SUD setInteger:DocumentWindowPosFixed forKey:PdfWindowPosModeKey];
+		[SUD setObject:[activeWindow stringWithSavedFrame] forKey:PortablePdfWindowFixedPosKey];
+		[SUD synchronize];
+    }
+    
+}
+
+
 - (void) fullscreen: sender
 {
 	NSInteger				windowLevel;
@@ -6986,6 +7151,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     MyPDFKitView    *thePDFKitView;
     NSData          *data;
     NSImage         *theImage;
+    NSPDFImageRep   *thePDFImageRep;
     
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
 
@@ -6998,25 +7164,35 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
         
         // [thePDFKitView lockFocus];
         // theImage = [thePDFKitView imageFromSelection];
-        data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PNG];
         
-/* 
- NOTE: PDF data would be preferable, but experiments show that the code sometimes works
- and sometimes fails. When it fails, the error message is about drawing when the drawing context
- is nil. This error MIGHT come from the mail widget in the sharing system.
-*/
+        if (atLeastMavericks) {
+            data = [thePDFKitView PDFImageDataFromSelection];
+            if (data != nil) {
+                thePDFImageRep = [NSPDFImageRep imageRepWithData: data];
+                theImage = [[[NSImage alloc] init] autorelease];
+                [theImage addRepresentation:thePDFImageRep];
+                count++;
+                [items addObject: theImage];
+                }
+            }
+        
+        else {
+         
+           //  NOTE: PDF data would be preferable, but experiments show that the code sometimes works
+           //  and sometimes fails. When it fails, the error message is about drawing when the drawing context
+           //  is nil. This error MIGHT come from the mail widget in the sharing system.
+            // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: [SUD integerForKey: PdfExportTypeKey]]];
+        
+            data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PNG];
+            if (data != nil) {
+                theImage = [[[NSImage alloc] initWithData:data] autorelease];
+                count++;
+                [items addObject: theImage];
+                }
+            }
+        
          // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: [SUD integerForKey: PdfExportTypeKey]]];
-        if (data != nil) {
-            theImage = [[NSImage alloc]initWithData:data];
-        
-       // if (theImage) {
-            count++;
-            [items addObject: theImage];
-            [theImage release];
-        }
-        // [thePDFKitView unlockFocus];
-    }
-    
+     
 /*
         // data = [thePDFKitView imageDataFromSelectionType: [SUD integerForKey: PdfExportTypeKey]];
         data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PDF];
@@ -7067,6 +7243,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
             [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
         [picker release];
     }
+}
 }
 
 /*

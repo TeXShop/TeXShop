@@ -617,6 +617,14 @@
 			programRange = [testString rangeOfString:@"% !TEX TS-program ="];
 			offset = 19;
 			}
+        if (programRange.location == NSNotFound) {
+			programRange = [testString rangeOfString:@"% !TEX program ="];
+			offset = 16;
+            }
+        if (programRange.location == NSNotFound) {
+			programRange = [testString rangeOfString:@"%!TEX program ="];
+			offset = 15;
+        }
 		if (programRange.location != NSNotFound) {
 			newProgramRange.location = programRange.location + offset;
 			newProgramRange.length = [testString length] - newProgramRange.location;
@@ -1137,6 +1145,58 @@
 				texTask = nil;
 			}
 			 } else if (whichEngineLocal == BibtexEngine) {
+                 
+                 // New Stuff
+                 NSUInteger length;
+                 BOOL       done;
+                 NSUInteger linesTested, offset;
+                 NSRange    myRange, theRange, bibRange, newBibRange;
+                 NSString   *theSource, *testString, *bibString;
+                 NSUInteger start, end, irrelevant;
+                 
+                 theSource = [[self textView] string];
+                 
+                 length = [theSource length];
+                 done = NO;
+                 linesTested = 0;
+                 myRange.location = 0;
+                 myRange.length = 1;
+                 
+                 
+                 while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+                         [theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+                         myRange.location = end;
+                         myRange.length = 1;
+                         linesTested++;
+                         
+                         theRange.location = start; theRange.length = (end - start);
+                         testString = [theSource substringWithRange: theRange];
+                         
+                         bibRange = [testString rangeOfString:@"% !BIB TS-program ="];
+                         offset = 19;
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"%!BIB TS-program ="];
+                             offset = 18;
+                         }
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"% !BIB program ="];
+                             offset = 16;
+                         }
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"%!BIB program ="];
+                             offset = 15;
+                         }
+                         if (bibRange.location != NSNotFound) {
+                             newBibRange.location = bibRange.location + offset;
+                             newBibRange.length = [testString length] - newBibRange.location;
+                             if (newBibRange.length > 0) {
+                                 bibString = [[testString substringWithRange: newBibRange]
+                                                  stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                                 done = YES;
+                             }
+                         }
+                 }
+                    
 				 NSString* bibPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto; allow spaces in path
 				 [args addObject: [bibPath lastPathComponent]];
@@ -1146,15 +1206,52 @@
 					 [bibTask release];
 					 bibTask = nil;
 				 }
-				 bibTask = [[NSTask alloc] init];
+				
+                 
+                 NSMutableArray *bibtexArgs;
+                 NSString *bibtexEngineString;
+                 NSString *bibProgramPath, *tetexBinPath;;
+                 
+                 if (done) {
+                     bibtexArgs = [NSMutableArray arrayWithCapacity:0];
+                     bibtexEngineString = [self separate: bibString into:bibtexArgs];
+                     [bibtexArgs addObjectsFromArray:args];
+                     
+                     tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+                     bibProgramPath = [tetexBinPath stringByAppendingString: bibtexEngineString];
+                    }
+                 
+                
+                 else {
                  
                  // modified by Terada
-                 NSMutableArray *bibtexArgs = [NSMutableArray arrayWithCapacity:0];
-                 NSString* bibtexEngineString = [self separate:[SUD objectForKey:BibTeXengineKey] into:bibtexArgs];
+                 bibtexArgs = [NSMutableArray arrayWithCapacity:0];
+                 bibtexEngineString = [self separate:[SUD objectForKey:BibTeXengineKey] into:bibtexArgs];
                  [bibtexArgs addObjectsFromArray:args];
+                 }
                  
-				 [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-				 
+                 
+                 tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+                 bibProgramPath = [tetexBinPath stringByAppendingString: bibtexEngineString];
+                 
+                 if ( ! [[NSFileManager defaultManager] fileExistsAtPath: bibProgramPath]) {
+                     NSString *message = NSLocalizedString(@"The program ", @"The program ");
+                     message = [[message stringByAppendingString: bibtexEngineString] stringByAppendingString: NSLocalizedString(@" does not exist.", @" does not exist.")];
+                     
+                     NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), message, 
+                                  nil,
+                                     nil, nil);
+                 }
+                 else {
+                     
+                     
+                     bibTask = [[NSTask alloc] init];
+                     [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+                 }
+             
+        
+		 
+                 
                   /*
 				 NSString* bibtexEngineString;
 				
@@ -1167,7 +1264,7 @@
                  [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
                  */
                  
-			 } else if (whichEngineLocal == IndexEngine) {
+             }  else if (whichEngineLocal == IndexEngine) {
 				 NSString* indexPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto, spaces in path
 				 [args addObject: [indexPath lastPathComponent]];

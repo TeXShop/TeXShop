@@ -519,7 +519,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
         
         if(replacementRange.location < [textString length]){
             c = [textString characterAtIndex:replacementRange.location];
-            if((c != '{') && (c != '(') && (c != '[') && (c != '<') ){
+            if((c != '{') && (c != '(') && (c != '[') && (c != '<') && (c != ' ')){  // Koch, July 19, 2013, double click on space selects space
                 do {
                     if (replacementRange.location >= 1){
                         c = [textString characterAtIndex: replacementRange.location-1];

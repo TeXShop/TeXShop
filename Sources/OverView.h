@@ -15,12 +15,20 @@
 @interface OverView : NSView
 {
     NSRect          theSelectionRect;
+    NSRect          magnifiedRect;
+    NSImage         *MagnifiedImage;
     BOOL            drawRubberBand;
     BOOL            drawMagnifiedRect;
+    BOOL            drawMagnifiedImage;
 }
 
+- (void) dealloc;
 - (void) setDrawRubberBand: (BOOL)value;
 - (void) setDrawMagnifiedRect: (BOOL)value;
 - (void) setSelectionRect: (NSRect) theRect;
+- (void) setMagnifiedRect: (NSRect) theRect;
+- (void) setMagnifiedImage: (NSImage *)theImage;
+- (void) setDrawMagnifiedImage: (BOOL)value;
+
 
 @end

@@ -74,6 +74,7 @@
 - (void) rotateClockwise: sender;
 - (void) rotateCounterclockwise: sender;
 - (void) savePreviewPosition: sender;
+- (void) savePortablePreviewPosition: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow: sender;

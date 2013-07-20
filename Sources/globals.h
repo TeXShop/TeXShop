@@ -231,6 +231,7 @@ extern NSString *ConsoleBehaviorKey;
 extern NSString *SaveRelatedKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
+extern NSString *PortableDocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
 extern NSString *DocumentWindowPosModeKey;
 extern NSString *LatexPanelNameKey;
@@ -267,6 +268,7 @@ extern NSString *MakeatletterEnabledKey; // added by Terada
 extern NSString *PdfMagnificationKey;
 extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
+extern NSString *PortablePdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
 extern NSString *PdfKitWindowNameKey;
 extern NSString *PdfWindowPosModeKey;

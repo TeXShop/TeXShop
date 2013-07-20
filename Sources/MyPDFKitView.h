@@ -169,6 +169,7 @@
 - (void)recacheMarquee;
 - (BOOL)hasSelection;
 - (NSData *)imageDataFromSelectionType: (NSInteger)type;
+- (NSData *)PDFImageDataFromSelection;
 // - (void)saveSelectionToFile: (id)sender;
 - (void) chooseExportImageType: sender;
 // drag & drop

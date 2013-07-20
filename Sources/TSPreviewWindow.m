@@ -615,6 +615,12 @@ extern NSPanel *pageNumberWindow;
 	[myDocument savePreviewPosition];
 }
 
+- (void) savePortablePreviewPosition: sender
+{
+	[myDocument savePortablePreviewPosition];
+}
+
+
 - (void)copy: (id)sender
 {
 	if ([myDocument fromKit])

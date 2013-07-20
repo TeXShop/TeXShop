@@ -36,6 +36,7 @@
 // end addition
 - (void) doChooseMethod: sender;
 - (void) saveSourcePosition: sender;
+- (void) savePortableSourcePosition: sender;
 - (void) makeKeyAndOrderFront:(id)sender;
 - (void) trashAUXFiles: sender;
 - (void) abort: sender;

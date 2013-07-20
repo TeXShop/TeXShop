@@ -1955,14 +1955,16 @@
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
 			case NEW_MOUSE_MODE_SELECT_PDF:
+                
              if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
                                                     [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
                  [self startDragging: theEvent];
             
+            
             else if (selRectTimer && [self mouse: [self convertPoint:
 							  [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
                 
-				{
+				
 					// mitsu 1.29 drag & drop
 					// Koch: I commented out the moveSelection choice since it seems to be broken due to sync
 					// if (([theEvent modifierFlags] & NSCommandKeyMask) &&
@@ -1971,11 +1973,13 @@
 					// else
 					[self startDragging: theEvent];
 					// end mitsu 1.29
-				}
+            
 				else if (atLeastMavericks)
                     [self selectARectForMavericks: theEvent];
+                
                 else
 					[self selectARect: theEvent];
+                 
 				break;
 			case NEW_MOUSE_MODE_SELECT_TEXT:
 #ifndef SELECTION_SHOUND_PERSIST
@@ -2270,7 +2274,9 @@
 {
     return overView;
 }
- 
+
+// Obsolete Version
+/*
  - (void)selectARectForMavericks: (NSEvent *)theEvent
  {
  NSPoint mouseLocWindow, startPoint, currentPoint;
@@ -2290,9 +2296,9 @@
  if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
  {
  
-     
- [self displayRect: [self visibleRect]];
- [[self window] flushWindow];
+ 
+ // [self displayRect: [self visibleRect]];
+ // [[self window] flushWindow];
  
  // get Mouse location and check if it is with the view's rect
  if (!([theEvent type]==NSFlagsChanged ))
@@ -2304,47 +2310,122 @@
  // calculate the rect to select
  currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
  
-selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+ selectedRect.size.width = abs(currentPoint.x-startPoint.x);
+ selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+ 
+ if ([theEvent modifierFlags] & NSShiftKeyMask)
+ {
+ if (selectedRect.size.width > selectedRect.size.height)
+ selectedRect.size.height = selectedRect.size.width;
+ else
+ selectedRect.size.width = selectedRect.size.height;
+ }
+ 
+ if (currentPoint.x < startPoint.x || startFromCenter)
+ selectedRect.origin.x = startPoint.x - selectedRect.size.width;
+ else
+ selectedRect.origin.x = startPoint.x;
+ if (currentPoint.y < startPoint.y || startFromCenter)
+ selectedRect.origin.y = startPoint.y - selectedRect.size.height;
+ else
+ selectedRect.origin.y = startPoint.y;
+ if (startFromCenter)
+ {
+ selectedRect.size.width *= 2;
+ selectedRect.size.height *= 2;
+ }
+ 
+ 
+ [[self overView] setDrawRubberBand: YES];
+ [[self overView] setSelectionRect: selectedRect];
+ // [[self overView] drawRect: [[self documentView] visibleRect]];
+ [[self overView] displayRect: [[self documentView] visibleRect]];
+ //[[self window] flushWindow];
+ 
+ }
+ else if ([theEvent type]==NSLeftMouseUp)
+ {
+ break;
+ }
+ theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+ NSLeftMouseDraggedMask | NSFlagsChangedMask ];
+ } while (YES);
+ 
+ [self flagsChanged: theEvent]; // update cursor
+ }
 
-if ([theEvent modifierFlags] & NSShiftKeyMask)
+ */
+ 
+- (void)selectARectForMavericks: (NSEvent *)theEvent
 {
-    if (selectedRect.size.width > selectedRect.size.height)
-        selectedRect.size.height = selectedRect.size.width;
-    else
-        selectedRect.size.width = selectedRect.size.height;
-}
-
-if (currentPoint.x < startPoint.x || startFromCenter)
-selectedRect.origin.x = startPoint.x - selectedRect.size.width;
-else
-selectedRect.origin.x = startPoint.x;
-if (currentPoint.y < startPoint.y || startFromCenter)
-selectedRect.origin.y = startPoint.y - selectedRect.size.height;
-else
-selectedRect.origin.y = startPoint.y;
-if (startFromCenter)
-{
-    selectedRect.size.width *= 2;
-    selectedRect.size.height *= 2;
-}
-
-
-[[self overView] setDrawRubberBand: YES];
-[[self overView] setSelectionRect: selectedRect];
-[[self overView] drawRect: [[self documentView] visibleRect]];
-[[self window] flushWindow];
-
-}
-else if ([theEvent type]==NSLeftMouseUp)
-{
-    break;
-}
-theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
-            NSLeftMouseDraggedMask | NSFlagsChangedMask ];
-} while (YES);
-
-[self flagsChanged: theEvent]; // update cursor
+    NSPoint mouseLocWindow, startPoint, currentPoint;
+    BOOL startFromCenter = NO;
+    
+    [self cleanupMarquee: NO];
+    
+    OverView *theOverView = [[[OverView alloc] initWithFrame: [[self documentView] frame] ] autorelease];
+    [self setOverView: theOverView];
+    [[self documentView] addSubview: [self overView]];
+    
+    mouseLocWindow = [theEvent locationInWindow];
+    startPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+    rect = NSMakeRect(0, 0, 1, 1);
+    
+    do {
+        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+        {
+            
+            
+             // get Mouse location and check if it is with the view's rect
+            if (!([theEvent type]==NSFlagsChanged ))
+            {
+                mouseLocWindow = [theEvent locationInWindow];
+                // scroll if the mouse is out of visibleRect
+                [[self documentView] autoscroll: theEvent];
+            }
+            // calculate the rect to select
+            currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+            
+            selectedRect.size.width = abs(currentPoint.x-startPoint.x);
+            selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            
+            if ([theEvent modifierFlags] & NSShiftKeyMask)
+            {
+                if (selectedRect.size.width > selectedRect.size.height)
+                    selectedRect.size.height = selectedRect.size.width;
+                else
+                    selectedRect.size.width = selectedRect.size.height;
+            }
+            
+            if (currentPoint.x < startPoint.x || startFromCenter)
+                selectedRect.origin.x = startPoint.x - selectedRect.size.width;
+            else
+                selectedRect.origin.x = startPoint.x;
+            if (currentPoint.y < startPoint.y || startFromCenter)
+                selectedRect.origin.y = startPoint.y - selectedRect.size.height;
+            else
+                selectedRect.origin.y = startPoint.y;
+            if (startFromCenter)
+            {
+                selectedRect.size.width *= 2;
+                selectedRect.size.height *= 2;
+            }
+            
+            
+            [[self overView] setDrawRubberBand: YES];
+            [[self overView] setSelectionRect: selectedRect];
+            [[self overView] displayRect: [[self documentView] visibleRect]];
+            
+        }
+        else if ([theEvent type]==NSLeftMouseUp)
+        {
+            break;
+        }
+        theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+                    NSLeftMouseDraggedMask | NSFlagsChangedMask ];
+    } while (YES);
+    
+    [self flagsChanged: theEvent]; // update cursor
 }
 
 
@@ -2355,16 +2436,16 @@ theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
 - (void)cleanupMarquee: (BOOL)terminate
 {
     // for Mavericks
-    OverView *theOverView = [self overView];
-    if (theOverView) {
-        [theOverView removeFromSuperview];
-        [self setOverView: nil];
+    if (atLeastMavericks) {
+        OverView *theOverView = [self overView];
+        if (theOverView) {
+            [theOverView removeFromSuperview];
+            [self setOverView: nil];
+            }
+        return;
     }
     
-    // for earlier systems
-    else {
-        
-        NSRect		tempRect;
+    NSRect		tempRect;
         
         if (selRectTimer)
         {
@@ -2392,8 +2473,6 @@ theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
                 selRectTimer = nil;
             }
         }
-        
-    }
 }
 
 
@@ -2768,7 +2847,24 @@ theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
 else
     return nil;
 }
+
+// The next routine is only used in Mavericks
+- (NSData *)PDFImageDataFromSelection
+{
+    NSRect  aRect;
     
+    aRect = selectedRect;
+    
+    if ([self overView] == nil)
+        return nil;
+    
+    if ((aRect.size.width < 5.0) || (aRect.size.height < 5.0))
+        return nil;
+    
+    [self cleanupMarquee: NO];
+    
+    return [[self documentView] dataWithPDFInsideRect:aRect];
+}
 
 // get image data from the selected rectangle with specified type
 - (NSData *)imageDataFromSelectionType: (NSInteger)type
@@ -4531,40 +4627,273 @@ else
         [self doMagnifyingGlassML: theEvent level:level] ;
 }
 
+// Obsolte Mavericks Routine
+/*
+ - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level
+ {
+ NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
+ NSRect oldBounds, newBounds, magRectWindow, magRectView, tempRect;
+ BOOL postNote, cursorVisible;
+ CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
+ NSInteger originalLevel, currentLevel = 0.0;
+ CGFloat magScale = 0.0; 	//0.4	// you may want to change this
+ NSData *thePDFData;
+ NSPDFImageRep *thePDFImageRep;
+ NSImage *theImage;
+ NSRect theOriginalRect;
+ 
+ // postNote = [[self documentView] postsBoundsChangedNotifications];
+ // [[self documentView] setPostsBoundsChangedNotifications: NO];
+ 
+ oldBounds = [[self documentView] bounds];
+ cursorVisible = YES;
+ originalLevel = level+[theEvent clickCount];
+ 
+ //[self cleanupMarquee: NO];
+ rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage]; // make sure not use the cached image
+ 
+ //[[self window] disableFlushWindow];
+ 
+ OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
+ [self setOverView: theOverView];
+ [[self documentView] addSubview: [self overView]];
+ 
+ tempRect = [[self documentView] visibleRect];
+ thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
+ thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+ theImage = [[NSImage alloc] init];
+ [theImage addRepresentation:thePDFImageRep];
+ 
+ [[self overView] setDrawRubberBand: NO];
+ [[self overView] setDrawMagnifiedRect: NO];
+ [[self overView] setDrawMagnifiedImage: NO];
+ [[self overView] setMagnifiedImage: theImage];
+ 
+ 
+ // [[self window] disableFlushWindow];
+ 
+ 
+ do {
+ 
+ if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+ 
+ // set up the size and magScale
+ if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+ currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
+ if (currentLevel <= 1) {
+ magWidth = 150; magHeight = 100;
+ magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+ } else if (currentLevel == 2) {
+ magWidth = 380; magHeight = 250;
+ magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+ } else {
+ 
+ // currentLevel >= 3 // need to cache the image
+ [self updateBackground: rect]; // [[self window] restoreCachedImage];
+ // [[self window] cacheImageInRect:[self convertRect:[self visibleRect] toView: nil]];
+ rect = [self visibleRect];
+ 
+OR  magWidth = 1800; magHeight = 1500;
+magOffsetX = magWidth / 2; magOffsetY = magHeight / 2;
+}
+
+ if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
+ if ([theEvent modifierFlags] & NSCommandKeyMask)
+ magScale = 0.25; 	// x4
+ else if ([theEvent modifierFlags] & NSControlKeyMask)
+ magScale = 0.66666; // x1.5
+ else
+ magScale = 0.4; 	// x2.5
+ } else { // shrink the image with shift key -- can be very slow
+ if ([theEvent modifierFlags] & NSCommandKeyMask)
+ magScale = 4.0; 	// /4
+ else if ([theEvent modifierFlags] & NSControlKeyMask)
+ magScale = 1.5; 	// /1.5
+ else
+ magScale = 2.5; 	// /2.5
+ }
+ 
+}
+// get Mouse location and check if it is with the view's rect
+
+if (!([theEvent type]==NSFlagsChanged))
+mouseLocWindow = [theEvent locationInWindow];
+mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+// check if the mouse is in the rect
+
+if([self mouse:mouseLocView inRect:[self visibleRect]]) {
+    if (cursorVisible) {
+        [NSCursor hide];
+        cursorVisible = NO;
+    }
+    // define rect for magnification in window coordinate
+ 
+     if (currentLevel >= 3) { // mitsu 1.29 (S5) set magRectWindow here
+     magRectWindow = [self convertRect:[self visibleRect] toView:nil];
+     rect = [self visibleRect];
+     } else
+ 
+    { // currentLevel <= 2
+        
+        // [[self overView] setDrawRubberBand: NO];
+        //  [[self overView] setDrawMagnifiedRect: NO];
+        //  [[self overView] setDrawMagnifiedImage: NO];
+        //  [[self overView] drawRect: [[self documentView] visibleRect]];
+        //  [self display];
+        
+        magRectWindow = NSMakeRect(mouseLocDocumentView.x-magOffsetX, mouseLocDocumentView.y-magOffsetY,
+                                   magWidth, magHeight);
+        // theOriginalRect = NSMakeRect(mouseLocDocumentView.x - magOffsetX / 4.0, mouseLocDocumentView.y - magOffsetY / 4.0,
+        //                         magWidth / 4.0, magHeight / 4.0);
+        
+        
+        theOriginalRect = NSMakeRect(mouseLocDocumentView.x - tempRect.origin.x - magOffsetX / 4.0,
+                                     mouseLocDocumentView.y - tempRect.origin.y - magOffsetY / 4.0,
+                                     magWidth / 4.0, magHeight / 4.0);
+        
+        // thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
+        // thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+        // theImage = [[NSImage alloc] init];
+        // [theImage addRepresentation:thePDFImageRep];
+        
+        // restore the cached image in order to clear the rect
+        [self updateBackground:rect]; // [[self window] restoreCachedImage];
+        // [[self window] cacheImageInRect:
+        //	NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2),
+        //					   [[self superview] convertRect:[[self superview] bounds]
+        //
+        rect = NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2), [[self superview] convertRect:[[self superview] bounds]  toView:nil]); // mitsu 1.29b
+        rect = [self convertRect: rect fromView: nil];
+    }
+    // draw marquee
+    if (selRectTimer)
+        [self updateMarquee: nil];
+    
+    
+    [[self overView] setDrawRubberBand: NO];
+    [[self overView] setDrawMagnifiedRect: NO];
+    [[self overView] setDrawMagnifiedImage: YES];
+    [[self overView] setSelectionRect: magRectWindow];
+    [[self overView] setMagnifiedRect: theOriginalRect];
+    //[[self overView] drawRect: [[self documentView] visibleRect]];
+    [[self overView] displayRect: [[self documentView] visibleRect]];
+    // [[self window] enableFlushWindow];
+    
+    // [[self window] flushWindow];
+    
+    // [[self window] disableFlushWindow];
+ 
+     
+     
+     // resize bounds around mouseLocView
+     newBounds = NSMakeRect(mouseLocDocumentView.x+magScale*(oldBounds.origin.x-mouseLocDocumentView.x),
+     mouseLocDocumentView.y+magScale*(oldBounds.origin.y-mouseLocDocumentView.y),
+     magScale*(oldBounds.size.width), magScale*(oldBounds.size.height));
+     
+     // mitsu 1.29 (S1) fix for rotated view
+     
+     [[self documentView] setBounds: newBounds];
+     magRectView = NSInsetRect([self convertRect:magRectWindow fromView:nil],1,1);
+     [self displayRect: magRectView]; // this flushes the buffer
+     // reset bounds
+     [[self documentView] setBounds: oldBounds];
+     
+ 
+    
+} else { // mouse is not in the rect
+    // show cursor
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
+    // restore the cached image in order to clear the rect
+    // [self updateBackground: rect]; // [[self window] restoreCachedImage];
+    [self updateBackground:rect];
+    // autoscroll
+    if (!([theEvent type]==NSFlagsChanged))
+        [self autoscroll: theEvent];
+    if (currentLevel >= 3)
+        ; // [[self window] cacheImageInRect:magRectWindow];
+    else
+        rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
+}
+
+// [[self window] enableFlushWindow];
+//  [[self window] flushWindow];
+// [[self window] disableFlushWindow];
+
+} else if ([theEvent type] == NSLeftMouseUp) {
+    break;
+}
+theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+            NSLeftMouseDraggedMask | NSFlagsChangedMask];
+} while (YES);
+
+if (theOverView) {
+    [theOverView removeFromSuperview];
+    [self setOverView: nil];
+}
+
+
+// [[self window] enableFlushWindow];
+
+
+[self updateBackground:rect]; // [[self window] restoreCachedImage];
+// [[self window] flushWindow];
+[NSCursor unhide];
+[[self documentView] setPostsBoundsChangedNotifications: postNote];
+[self flagsChanged: theEvent]; // update cursor
+// recache the image around marquee for quicker response
+oldVisibleRect.size.width = 0;
+[self cleanupMarquee: NO];
+[self recacheMarquee];
+// The line below was added to clean up marks in gray border
+// QUESTIONABLE_BUG_FIX
+[[self window] display];
+
+}
+*/
+
 // Routine for Mavericks
 // -------------------------------------------------------------------------
 
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level
 {
 	NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
-	NSRect oldBounds, newBounds, magRectWindow, magRectView;
-	BOOL postNote, cursorVisible;
+	NSRect magRectWindow, tempRect;
+	BOOL cursorVisible;
 	CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
 	NSInteger originalLevel, currentLevel = 0.0;
-	CGFloat magScale = 0.0; 	//0.4	// you may want to change this
+    CGFloat magScale = 2.5; // 4.0
+    
+    NSData          *thePDFData;
+    NSPDFImageRep   *thePDFImageRep;
+    NSImage         *theImage;
+    NSRect          theOriginalRect;
 	
-	// postNote = [[self documentView] postsBoundsChangedNotifications];
-	// [[self documentView] setPostsBoundsChangedNotifications: NO];
-	
-	oldBounds = [[self documentView] bounds];
 	cursorVisible = YES;
 	originalLevel = level+[theEvent clickCount];
 	
-	//[self cleanupMarquee: NO];
-	rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage]; // make sure not use the cached image
-	
-	// [[self window] disableFlushWindow];
-    
     OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
     [self setOverView: theOverView];
     [[self documentView] addSubview: [self overView]];
-
-	
+    
+    tempRect = [[self documentView] visibleRect];
+    thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
+    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+    theImage = [[[NSImage alloc] init] autorelease];
+    [theImage addRepresentation:thePDFImageRep];
+    
+    [[self overView] setDrawRubberBand: NO];
+    [[self overView] setDrawMagnifiedRect: NO];
+    [[self overView] setDrawMagnifiedImage: NO];
+    [[self overView] setMagnifiedImage: theImage];
+   
+    
 	do {
         
 		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
-            
-			// [[self window] disableFlushWindow];
             
 			// set up the size and magScale
 			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
@@ -4575,27 +4904,12 @@ else
 				} else if (currentLevel == 2) {
 					magWidth = 380; magHeight = 250;
 					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
-				} else { // currentLevel >= 3 // need to cache the image
-					[self updateBackground: rect]; // [[self window] restoreCachedImage];
-					// [[self window] cacheImageInRect:[self convertRect:[self visibleRect] toView: nil]];
-					rect = [self visibleRect];
+				} else {
+                    magWidth = 1800; magHeight = 1500;
+                    magOffsetX = magWidth / 2; magOffsetY = magHeight / 2;
 				}
-				if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
-					if ([theEvent modifierFlags] & NSCommandKeyMask)
-						magScale = 0.25; 	// x4
-					else if ([theEvent modifierFlags] & NSControlKeyMask)
-						magScale = 0.66666; // x1.5
-					else
-						magScale = 0.4; 	// x2.5
-				} else { // shrink the image with shift key -- can be very slow
-					if ([theEvent modifierFlags] & NSCommandKeyMask)
-						magScale = 4.0; 	// /4
-					else if ([theEvent modifierFlags] & NSControlKeyMask)
-						magScale = 1.5; 	// /1.5
-					else
-						magScale = 2.5; 	// /2.5
-				}
-			}
+ 			}
+            
 			// get Mouse location and check if it is with the view's rect
 			
 			if (!([theEvent type]==NSFlagsChanged))
@@ -4608,77 +4922,31 @@ else
 				if (cursorVisible) {
 					[NSCursor hide];
 					cursorVisible = NO;
-				}
-				// define rect for magnification in window coordinate
-				if (currentLevel >= 3) { // mitsu 1.29 (S5) set magRectWindow here
-					magRectWindow = [self convertRect:[self visibleRect] toView:nil];
-					rect = [self visibleRect];
-				} else { // currentLevel <= 2
-					magRectWindow = NSMakeRect(mouseLocDocumentView.x-magOffsetX, mouseLocDocumentView.y-magOffsetY,
+                    }
+				            
+                
+                magRectWindow = NSMakeRect(mouseLocDocumentView.x-magOffsetX, mouseLocDocumentView.y-magOffsetY,
 											   magWidth, magHeight);
-					// restore the cached image in order to clear the rect
-					[self updateBackground:rect]; // [[self window] restoreCachedImage];
-					// [[self window] cacheImageInRect:
-					//	NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2),
-					//					   [[self superview] convertRect:[[self superview] bounds]
-					//
-					rect = NSIntersectionRect(NSInsetRect(magRectWindow, -2, -2), [[self superview] convertRect:[[self superview] bounds]  toView:nil]); // mitsu 1.29b
-					rect = [self convertRect: rect fromView: nil];
-				}
-				// draw marquee
-				if (selRectTimer)
-					[self updateMarquee: nil];
+                theOriginalRect = NSMakeRect(mouseLocDocumentView.x - tempRect.origin.x - magOffsetX / magScale,
+                                                 mouseLocDocumentView.y - tempRect.origin.y - magOffsetY / magScale,
+                                                                         magWidth / magScale, magHeight / magScale);
                 
-                
-                 [[self overView] setDrawRubberBand: NO];
-                [[self overView] setDrawMagnifiedRect: YES];
+                [[self overView] setDrawRubberBand: NO];
+                [[self overView] setDrawMagnifiedRect: NO];
+                [[self overView] setDrawMagnifiedImage: YES];
                 [[self overView] setSelectionRect: magRectWindow];
-                [[self overView] drawRect: [[self documentView] visibleRect]];
-                [self display];
-                [[self window] flushWindow];
-                
-                
-                /*
-                
-				
-				// resize bounds around mouseLocView
-				newBounds = NSMakeRect(mouseLocDocumentView.x+magScale*(oldBounds.origin.x-mouseLocDocumentView.x),
-									   mouseLocDocumentView.y+magScale*(oldBounds.origin.y-mouseLocDocumentView.y),
-									   magScale*(oldBounds.size.width), magScale*(oldBounds.size.height));
-				
-				// mitsu 1.29 (S1) fix for rotated view
-				
-				[[self documentView] setBounds: newBounds];
-				magRectView = NSInsetRect([self convertRect:magRectWindow fromView:nil],1,1);
-				[self displayRect: magRectView]; // this flushes the buffer
-                // reset bounds
-				[[self documentView] setBounds: oldBounds];
-                 
-                 */
-				
-			} else { // mouse is not in the rect
+                [[self overView] setMagnifiedRect: theOriginalRect];
+                [[self overView] displayRect: [[self documentView] visibleRect]];
+
+ 			} else { // mouse is not in the rect
                 // show cursor
 				if (!cursorVisible) {
 					[NSCursor unhide];
 					cursorVisible = YES;
 				}
-				// restore the cached image in order to clear the rect
-				// [self updateBackground: rect]; // [[self window] restoreCachedImage];
-				[self updateBackground:rect];
-				// autoscroll
-				if (!([theEvent type]==NSFlagsChanged))
-					[self autoscroll: theEvent];
-				if (currentLevel >= 3)
-					; // [[self window] cacheImageInRect:magRectWindow];
-				else
-					rect = NSMakeRect(0, 0, 1, 1); // [[self window] discardCachedImage];
 			}
 			
-           // [[self window] enableFlushWindow];
-            [[self window] flushWindow];
-           // [[self window] disableFlushWindow];
-            
-		} else if ([theEvent type] == NSLeftMouseUp) {
+ 		} else if ([theEvent type] == NSLeftMouseUp) {
 			break;
 		}
 		theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
@@ -4689,23 +4957,9 @@ else
         [theOverView removeFromSuperview];
         [self setOverView: nil];
     }
-
 	
-	// [[self window] enableFlushWindow];
-    
-	
-	[self updateBackground:rect]; // [[self window] restoreCachedImage];
-	// [[self window] flushWindow];
 	[NSCursor unhide];
-	[[self documentView] setPostsBoundsChangedNotifications: postNote];
 	[self flagsChanged: theEvent]; // update cursor
-    // recache the image around marquee for quicker response
-	oldVisibleRect.size.width = 0;
-	[self cleanupMarquee: NO];
-	[self recacheMarquee];
-    // The line below was added to clean up marks in gray border
-    // QUESTIONABLE_BUG_FIX
-    [[self window] display];
     
 }
 

@@ -14,7 +14,60 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.22</h5></P>
+
+Version 3.22 has the following changes:
+<ul>
+<li> If the option key is pressed, the "Typeset" menu changes to "Trash Aux & Typeset".
+Selecting it trashes aux and related files before typesetting. Recall that command-T is
+a keyboard shortcut for "Typeset". Similarly option-command-T is a keyboard shortcut for
+"Trash Aux & Typeset." This ingenious addition was suggested and made by Paul Smyth.
+
+<p>
+<li> There is a new engine for pythontex in ~/Library/TeXShop/Engines/Inactive.
+This folder also has a README explaining how to install pythontex, and a tex source file from
+the author of pythontex which can be used to test the engine and simultaneously see some of the features of pythontex in use.
+
+
+
+<p>
+<li> There is a new engine for Sage in ~/Library/TeXShop/Engines/Inactive/Sage. The method of
+installing sagetex.sty in TeX Live explained in "About Sage" in the Sage directory has also changed. These changes was suggested by Daniel Grambihler and 
+improve the ease of use of Sage in TeX.
+
+<p> There were two basic problems with the previous method. First, the TeX file sagetex.sty
+changed with the version of Sage and thus had to be reinstalled each time Sage was updated. Second, the engine file calls the Sage binary, which is inside the Sage program wrapper. But
+the authors of Sage distribute the program with a name that includes the version number,
+so the engine file had to be rewritten whenever Sage was updated.
+
+<p> Daniel Gramhihler recommended that we ask users to change the name of the program to "Sage"
+whenever they update, and that we install a symbolic link to sagetex.tex in TeX Live rather than the actual style file. The result is that when Sage is updated, the engine file automatically finds the new binary and TeX Live automatically uses the new style file.
+
+
+
+
+
+<p>
+<li> TeXShop now opens and edits files of type fdd.
+
+<p>
+<li> There is a new hidden preference to set the line spacing in the source window:
+<dd>
+<dl> defaults write TeXShop SourceInterlineSpace 1.0
+</dd>
+Only values between .5 and 40.0 will be accepted. The standard line spacing is given
+by the default 1.0, and double spacing is given by the value 10.0.
+
+<p>
+<li> Nicola Vitacolonna made extensive changes to the Italian localization of TeXShop.
+Minor changes for other localizations were also made by their localizers.
+</ul>
+
+
+
+
 <P><h5>TeXShop Changes 3.19, 3.20, 3.21</h5></P>
+
 
 Versions 3.19 and 3.20 were never released.
 <p>

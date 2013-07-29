@@ -481,7 +481,8 @@
         [aTextView setUsesFindBar:YES];
     else
         [aTextView setUsesFindPanel: YES];
-   //  [aTextView setUsesFindBar: YES]; // 
+    
+    //  [aTextView setUsesFindBar: YES]; //
     // [aTextView setUsesInspectorBar: YES]; // this worked!
  
 	[(TSTextView *)aTextView setDocument: self];
@@ -1171,6 +1172,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"bbx"])
 		|| ([extension isEqualToString: @"cbx"])
         || ([extension isEqualToString: @"md"])
+        || ([extension isEqualToString: @"fdd"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -5117,14 +5119,22 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		} else
             font = [NSFont userFontOfSize:12.0];
 	}
+    
 	
+    CGFloat                     interlinespace      = [SUD floatForKey: SourceInterlineSpaceKey];
 	NSUInteger					tabWidth			= [SUD integerForKey: tabsKey];
 	NSUInteger					textStorageLength	= [_textStorage length];
     NSArray					*	desiredTabStops		= tabStopArrayForFontAndTabWidth(font, tabWidth);
 	NSParagraphStyle 		*	paraStyle			= [NSParagraphStyle defaultParagraphStyle];
     NSMutableParagraphStyle	*	newStyle			= [[paraStyle mutableCopyWithZone:[_textStorage zone]] autorelease];
+    
+    if (interlinespace < 0.5)
+        interlinespace = 1.0;
+    if (interlinespace > 40.0)
+        interlinespace = 1.0;
 	
 	[newStyle setTabStops:desiredTabStops];
+    [newStyle setLineSpacing: interlinespace]; 
 	
 	if (textStorageLength)
 		[_textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:NSMakeRange(0, textStorageLength)];
@@ -5703,7 +5713,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void)trashAUXFiles: sender
 {
 	NSString        *theSource;
-	
+    
 	aggressiveTrash = NO;
 	if ((GetCurrentKeyModifiers() & optionKey) != 0)
 		aggressiveTrash = YES;

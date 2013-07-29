@@ -217,7 +217,7 @@ NSString *fullscreenPageStyleKey = @"fullscreenPageStyle";
 NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
 NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
 NSString *WatchServerKey = @"WatchServer";
-
+NSString *SourceInterlineSpaceKey = @"SourceInterlineSpace";
 
 
 // Paths

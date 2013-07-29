@@ -420,6 +420,7 @@ extern NSString *fullscreenPageStyleKey;
 extern NSString *fullscreenResizeOptionKey;
 extern NSString *ScreenFontForLogAndConsoleKey;
 extern NSString *WatchServerKey;
+extern NSString *SourceInterlineSpaceKey;
 
 
 // end defaults

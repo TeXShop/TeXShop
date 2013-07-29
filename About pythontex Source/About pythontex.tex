@@ -1,0 +1,97 @@
+\documentclass[11pt, oneside]{amsart}
+\usepackage{geometry}     
+\geometry{letterpaper}         
+\usepackage[parfill]{parskip} 
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+
+\usepackage[hidelinks, colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue]{hyperref}
+
+\usepackage{url}
+
+\title{The pythontex Engine}
+\author{Richard Koch}
+
+\begin{document}
+\maketitle
+\vspace{-.3in}
+\section{pythontex}
+Pythontex is ``a LaTeX package that allows Python code entered within a TeX document to be
+executed, and the output to be included in the original document.'' The package is by
+Geoffrey Poore, who wrote the system for use in his PhD thesis.
+
+Pythontex is available through CTAN at \href{http://www.ctan.org/pkg/pythontex}{www.ctan.org/pkg/pythontex}. 
+
+\section{Installing Pythontex}
+
+At the above TUG site, click on the CTAN path link, ``macros/latex/contrib/pythontex''
+In the right column of the resulting page, click on the link at the top to download everything.
+This will give a folder named pythontex.
+
+The author recommends installing pythontex directly in the main TeX Live directory, rather than
+say in /usr/local/texlive/texmf-local, because eventually pythontex will become a standard package and then the TeX Live update system will automatically update it. We'll follow
+his advice.
+
+Assuming you have TeX Live 2013, run Terminal in /Applications/Utilities and type the following commands:
+\begin{verbatim}
+     cd /usr/local/texlive/2013
+     open .
+\end{verbatim}
+A window will open showing the contents of TeX Live. In the directory texmf-dist/scripts, create a folder
+named pythontex and drag the following files into this folder; you will have to type your password several times:
+\begin{verbatim}
+     pythontex.py, pythontex2.py, pythontex3.py
+     pythontex_types2.py, pythontex_types3.py
+     pythontex_utils.py
+     depythontex.py, depythontex2.py, depythontex3.py
+\end{verbatim}
+
+In the directory texmf-dist/tex/latex, create a folder named pythontex and drag the following file into this folder:
+\begin{verbatim}
+     pythontex.sty
+\end{verbatim}
+
+Create two symbolic links in the binary directory using Terminal by running the following
+commands:
+
+\begin{verbatim}
+     cd /usr/texbin
+     sudo ln -s ../../texmf-dist/scripts/pythontex/pythontex.py pythontex.py
+     sudo ln -s ../../texmf-dist/scripts/pythontex/depythotex.py depythontex.py
+\end{verbatim}
+
+Change permissions on the python scripts using Terminal by running the following commands:
+
+\begin{verbatim}
+     cd /usr/local/texlive/2013/texmf-dist/scripts/pythontex
+     chmod 755 *
+\end{verbatim}
+
+Finally, in Terminal run the command
+\begin{verbatim}
+     sudo mktexlsr
+\end{verbatim}
+
+\section{Installing Python}
+Python is already installed on OS X, but unfortunately the pythontex system requires
+a number of Python packages which are not part of the default installation: NumPy, SciPy, mathplotlib, SymPy, and Pygments. If you are a Python expert, you may already have these packages or understand how to install them for the system Python.
+
+I found it easier to install the Anaconda release of Python from Continuum Analytics, which contains these packages. It installs in the home directory and does not interfere with the system version of Python. To read about it, go to \href{https://store.continuum.io/cshop/anaconda/}{https://store.continuum.io/cshop/anaconda/}. To download, go to \href{http://www.continuum.io/downloads}{http://www.continuum.io/downloads} and click on the MacOSX link to the GUI installer for 10.7 and higher (another link is provided for 10.5 and 10.6).
+
+Install  this package as usual. It will install Python in a folder named anaconda in your home directory. The installer adds ``/Users/Name/anaconda.bin:'' to the start of the bash \$PATH variable;
+edit this if you don't want to automatically use Anaconda Python.
+
+\section{Adding an Engine File}
+Drag the pythontex.engine file from ~/Library/TeXShop/Engines/Inactive/pythontex to ~/Library/TeXShop/Engines. If you installed anaconda, you are done. Otherwise edit the engine file with TeXShop to use the system python instead of the anaconda python. The required edit is explained in the engine file.
+
+\section{Testing the System}
+The ~/Library/TeXShop/Engines/Inactive/pythontex folder contains a source file named "pythontex\_gallery1.tex'', which is also part of the pythontex package in CTAN. I've edited
+the copy in TeXShop to automatically use the pythontex engine. Typeset this file. You'll
+have to push RETURN once as pdflatex encounters a graph which Python has not yet produced. If the file
+typesets after that, your pythontex system is working. Read the pdf output to see some capabilities of pythontex.
+
+
+\end{document}
+

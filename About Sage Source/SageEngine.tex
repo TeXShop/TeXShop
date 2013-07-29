@@ -17,9 +17,19 @@
 Sage is a mathematical software system providing an open source alternative to Magma, Maple, Mathematica, and Matlab. It is available from 
 \url{http://www.sagemath.org/} as a free download. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
-Download sage from this web site. Move the resulting ``Sage'' program to /Applications. 
+Download sage from this web site. Move the resulting ``Sage'' program to /Applications. The
+application will have a strange name, something like Sage-5.10..64bit-10.8.
 
-SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five. In the source file, the initial line
+The Sage command line program is inside this wrapper, and our engine folder is going to have
+to use that binary. If we keep the current name, the engine file will be tied to one particular
+version of Sage. To fix this, change the name to just ``Sage''. This clever step, which
+simplifies several steps below, is due to Daniel Grambihler.
+
+SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five.
+
+\section{How SageTeX Works}
+
+ In the source file, the initial line
 \begin{verbatim}
      % !TEX TS-program = sage
 \end{verbatim}
@@ -36,24 +46,39 @@ These line cause sage to process commands and output LaTeX source fragments, whi
 
 Notice in particular that sage can plot standard functions. Sage can also compute integrals symbolically; for example, look carefully at the command which processes $\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}$. This command contains standard LaTeX code to display the integral, but then Sage integrates and returns a typeset copy of the result.
 
-\newpage
+
 \section{Setting Up the Engine}
 
-This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. This changes whenever Sage is updated, so edit the line appropriately. In the initial engine, the line reads
-\begin{verbatim}
-/Applications/Sage-5.9-OSX-64bit-10.8.app/Contents/Resources/sage/sage "$sagename"
-\end{verbatim}
-Here ``/Applications/Sage-5.9-OSX-64bit-10.8.app'' is the name of the current Sagetex being
-used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
-sage binary it contains.
-
+This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines.
+% The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. This changes whenever Sage is updated, so edit the line appropriately. In the initial engine, the line reads
+%\begin{verbatim}
+%/Applications/Sage-5.9-OSX-64bit-10.8.app/Contents/Resources/sage/sage "$sagename"
+%\end{verbatim}
+%Here ``/Applications/Sage-5.9-OSX-64bit-10.8.app'' is the name of the current Sagetex being
+%used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
+%sage binary it contains.
 Dan Drake, who is responsible for SageTeX, wrote this engine.
 
-One final step is required to use SageTeX. The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file must be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you also need to upgrade sagetex.sty in your TeX distribution.
+The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this. So rather than copying the style file, we just
+create a symbolic link from it's location in TeX Live to its location in Sage.
 
-The sagetex.sty file is inside the Sage application. Recall that  OS X has a  control-click command to "Show Package Contents" of an application. Do
-that with Sage, and navigate to Contents/Resources/sage/data/texmf/tex/generic/sagetex/sagetex.sty.
-Copy this file  to ~/Library/texmf/tex/sagetex.sty.
+Run Terminal in /Applications/Utilities. Type the following
+\begin{verbatim}
+     cd /usr/local/texlive/texmf-local/tex/latex
+\end{verbatim}
+Then type the following on a single line. Terminal may make a linefeed when
+the line  grows too long and that is fine, but do not for instance make a linefeed
+after the top "sage" and before the bottom "/data".
+\begin{verbatim}
+     sudo ln -s /Applications/Sage.app/Contents/Resources/sage
+        /data/texmf/tex/generic/sagetex/sagetex.sty sagetex.sty
+\end{verbatim}
+
+Finally issue the command
+\begin{verbatim}		
+     sudo mktexlsr
+\end{verbatim}
+	
 
 
 

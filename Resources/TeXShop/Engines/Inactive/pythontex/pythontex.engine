@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# For anaconda distribution of Python, use
+PATH=~/anaconda/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin
+
+# For system distribution of Python, use
+# PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin
+
+filename=$1
+
+pdflatex --file-line-error --synctex=1 $1
+
+pythontex.py $1
+
+pdflatex --file-line-error --synctex=1 $1

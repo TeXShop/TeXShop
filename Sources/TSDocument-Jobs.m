@@ -1488,6 +1488,10 @@
 {
 //    NSString	*titleString;
 	BOOL	useError;
+    
+   if ([sender tag] == -2)
+       [self trashAUXFiles:self];
+
 
    fromMenu = NO;
    useError = NO;

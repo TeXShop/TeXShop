@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# WARNING: Unfortunately, the fifth line from the bottom requires an absolute
-# path to the sage binary file, and this is likely to change with each new version
-# of sage. So adopt the habit of changing this file as needed.
 
 PATH=$PATH:/usr/texbin:/usr/local/bin
 filename=$1
@@ -28,8 +25,7 @@ fi
 if [ "$run_sage" = "yes" ]
 then
     echo Running Sage, please wait a moment...
-#   /Applications/sage/sage "$sagename"
-    /Applications/Sage-5.9-OSX-64bit-10.8.app/Contents/Resources/sage/sage "$sagename"
+    /Applications/Sage.app/Contents/Resources/sage/sage "$sagename"
     pdflatex --file-line-error --synctex=1 "$filename"
 else
     echo No Sage commands have changed, so running Sage is unnecessary.

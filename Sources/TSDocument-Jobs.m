@@ -1489,8 +1489,8 @@
 //    NSString	*titleString;
 	BOOL	useError;
     
-   if ([sender tag] == -2)
-       [self trashAUXFiles:self];
+   if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))
+        [self trashAUXFiles:self];
 
 
    fromMenu = NO;

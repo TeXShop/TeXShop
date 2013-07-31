@@ -1,0 +1,27 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf390
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red170\green13\blue145;\red46\green13\blue110;\red28\green0\blue207;
+\red38\green71\blue75;}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 3.23 fixes one bug in 3.22:\
+\
+	If a user configures for an external editor, and sets the hidden preference\
+\
+		defaults write TeXShop ExternalEditorTypesetAtStart YES\
+\
+	then 3.22 crashes when a file is opened.\
+\
+	Typesetting when a file is opened is done by calling\
+	- doTypeset:sender from TSDocument, and setting sender to the\
+	document rather than to a menu item. In 3.22, code was added\
+	to trash aux files if [sender tag] equals -2. But TSDocument\
+	objects do not respond to the tag method.\
+\
+	The fix is in the following line\
+\
+	
+\f1\fs22 \CocoaLigature0  \cf2 if\cf0  (([sender \cf3 respondsToSelector\cf0 : \cf2 @selector\cf0 (tag)]) && ([sender \cf3 tag\cf0 ] == -\cf4 2\cf0 ))\
+\pard\tx529\pardeftab529\pardirnatural
+\cf0         [\cf2 self\cf0  \cf5 trashAUXFiles\cf0 :\cf2 self\cf0 ];}

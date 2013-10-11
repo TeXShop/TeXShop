@@ -1030,10 +1030,13 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 "*/
 - (IBAction)tetexBinPathChanged:sender
 {
+    NSString *newValue;
+    
 	// register the undo messages first
 	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:TetexBinPath] 				forKey:TetexBinPath];
 
-	[SUD setObject:[_tetexBinPathField stringValue] forKey:TetexBinPath];
+    newValue = [[_tetexBinPathField stringValue] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	[SUD setObject: newValue forKey:TetexBinPath];
 }
 
 //==============================================================================
@@ -1041,10 +1044,14 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 "*/
 - (IBAction)gsBinPathChanged:sender
 {
+     NSString *newValue;
+    
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:GSBinPath] 				forKey:GSBinPath];
+    
+    newValue = [[_gsBinPathField stringValue] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-	[SUD setObject:[_gsBinPathField stringValue] forKey:GSBinPath];
+	[SUD setObject: newValue forKey:GSBinPath];
 }
 
 //==============================================================================

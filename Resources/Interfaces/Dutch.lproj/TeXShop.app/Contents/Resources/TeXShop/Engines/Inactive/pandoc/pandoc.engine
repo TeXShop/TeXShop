@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# pandoc takes an input file (usually markdown) and writes an output file (latex, epub, ...)
+# There is a shortcut to create pdf from markdown via latex called markdown2pdf.
+# See   http://johnmacfarlane.net/pandoc/
+
+
+PATH=$PATH:/usr/texbin:/usr/local/bin
+
+pandoc -r markdown -t epub "$1" -o "`basename '$1' .md`".epub

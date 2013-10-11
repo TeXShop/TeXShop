@@ -1,0 +1,54 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Macros AppleScript</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="macros; applescript">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Si una macro comienza con la cadena</P>
+		<div id="source">
+			--AppleScript
+		</div>
+o
+		<div id="source">
+			--AppleScript direct
+		</div>
+		<p>entonces, al ejecutar la macro, se ejecutar&aacute; el correspondiente c&oacute;digo AppleScript. Por ejemplo, consid&eacute;rese la macro titulada &laquo;View pdf with Acrobat&raquo;. Al elegirla cuando la ventada con c&oacute;digo TeX est&aacute; activa (y el archivo pdf est&aacute; ya creado), se cargar&aacute; Adobe Acrobat Reader, que a su vez abrir&aacute; el archivo pdf. El correspondiente c&oacute;digo AppleScript para esto es</p>
+		<div id="source">
+			--AppleScript direct <br>
+			tell application &quot;Acrobat Reader 5.0&quot;<br>
+			<br>
+				<dd>activate</dd>
+				<dd>open POSIX file #PDFPATH#</dd>
+			<br>
+			end tell
+		</div>
+<p> Los comandos que comienzan por &laquo;--AppleScript direct&raquo; son ejecutados directamente por TeXShop. Durante el tiempo que ese applescript est&aacute; corriendo, el bucle de eventos de TeXShop no est&aacute; activo. Como consecuencia, el script no puede llamar a TeXShop para que haga algo que requiera la atenci&oacute;n del usuario. Por ejemplo, no le puede decir a TeXShop que ejecute LaTeX porque, si el archivo LaTeX tiene un error, aparecer&aacute; la consola y esperar&aacute; la respuesta del usario, pero esa respuesta no ser&aacute; reconocida.</p>
+<p> Los comandos que comienzan por &laquo;--AppleScript direct&raquo; son ejecutados por una peque&ntilde;o programa auxiliar interno que acompa&ntilde;a a TeXShop (dentro de su &lsquo;application bundle&rsquo;). Tales comandos le pueden pedir a TeXShop que ejecute una tarea que quiz&aacute;s necesite la intervenci&oacute;n del usuario, porque en este caso el programa auxiliar se parar&aacute; temporalmente pero TeXShop se mantendr&aacute; activo.</p>
+<p> As&iacute; que la sintaxis &laquo;--AppleScript direct&raquo; es apropiada para las macros ordinarias, pero puede ser necesario usar &laquo;--AppleScript&raquo; para las m&aacute;s imaginativas.</p>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda para macros</div><div id="header_title">Macros AppleScript</div>
+		<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminares</a>
+			<LI><a href="macros_default.htm">Comprensi&oacute;n de las macros predefinidas</a>
+			<LI><a href="macros_rearrange.htm">Reajuste del men&uacute; Macros</a>
+			<LI><a href="macros_define.htm">Definici&oacute;n de nuevas macros</a>
+			<li><a href="macros_applescript.htm">Macros AppleScript</a>
+			<li><a href="macros_includedscripts.htm">Macros AppleScript predefinidas</a>
+			<li><a href="macros_defapplescript.htm">Definici&oacute;n de macros AppleScript</a>
+			<li><a href="macros_dialogs.htm">Creaci&oacute;n de di&aacute;logos</a>
+			<li><a href="macros_writingcompletescripts.htm">Scripts con comandos de composici&oacute;n de TeXShop</a>
+			<li><a href="macros_writingcommandscripts.htm">Scripts con comandos del Shell</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

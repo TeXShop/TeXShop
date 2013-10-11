@@ -1,0 +1,8 @@
+#!/bin/tcsh
+
+# Set the following variable LILYPONDFOLDER to the absolute path
+# of the folder containing the Lilypond application
+set LILYPONDFOLDER = /Applications
+set path = ($path $LILYPONDFOLDER/Lilypond.app/Contents/Resources/bin/)
+convert-ly -e "$1"
+open -a TeXShop "$1"

@@ -1,0 +1,77 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Definici&oacute;n de macros AppleScript</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="applescript">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>AppleScript tiene su propia sintaxis: para aprender m&aacute;s sobre ella, lee uno de los diversos libros que hay sobre el tema. Si has instalado las herramientas de desarrollo de Mac OS X, hay un gran documentación (un libro &lsquo;online&rsquo;) sobre AppleScript en la carpeta Developers.</p>
+		<P>Cuando TeXShop interpreta una macro AppleScript, lo primero que hace es reemplazar cada palabra #FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#, #LOGPATH#, #AUXPATH# con la ruta (&lsquo;path&rsquo;) completa de los correspondientes archivos tex, pdf, dvi, ps, log o aux.  De modo similar, reemplaza las palabras #INDPATH#, #BBLPATH# y #HTMLPATH# con la ruta completa de los archivos ind, bbl o html. </P>
+		<P>Adem&aacute;s, reemplaza cada cadena #NAMEPATH# con la ruta completa al archivo tex sin su extensi&oacute;n, y cada cadena #DOCUMENTNAME# con el nombre del documento que se est&aacute; usando.
+Ese reemplazamienteo es a veces sutil; da el nombre del documento tal como aparece en el t&iacute;tulo de la ventana de c&oacute;digo. Si hemos guardado un documento con la preferencia &laquo;ocultar extensi&oacute;n&raquo; activada, #DOCUMENTNAME# contendr&aacute; s&oacute;lo el nombre del documento. Pero si lo hemos guardado sin &laquo;ocultar extensi&oacute;n&raquo;, #DOCUMENTNAME# contendr&aacute; el nombre del documento y su extensi&oacute;n. Esta informaci&oacute;n se puede usar para localizar el documento con c&oacute;digo AppleScript como sigue:
+<dl> 
+<dd>tell document #DOCUMENTNAME# of application "TeXShop"
+<dd> latex
+<dd> end tell
+</dl>
+</P>
+
+		<P>Hay al menos dos maneras de escribir comandos AppleScript. Se pueden ejecutar comandos del shell de unix, as&iacute; que, tras un proceso preliminar con un AppleScript, se puede llamar a un comando del shell para que haga el trabajo. TeXShop viene con varios ejemplos de esta t&eacute;cnica; algunos de estos ejemplos se explican en una secci&oacute;n posterior de esta ayuda. Tambi&eacute;n se pueden usar comandos AppleScript que llamen a otros comandos AppleScript ya incluidos en TeXShop. Otra secci&oacute;n posterior muestra ejemplos de esta t&eacute;cnica.</P>
+
+<P>
+TeXShop entiende los siguientes comandos:
+<dl>
+<dd> typeset
+<dd> latex
+<dd> tex
+<dd> context
+<dd> bibtex
+<dd> makeindex
+<dd> metapost
+<dd> typesetinteractive
+<dd> latexinteractive
+<dd> texinteractive
+<dd> contextinteractive
+<dd> bibtexinteractive
+<dd> makeindexinteractive
+<dd> metapostinteractive
+<dd> taskdone
+<dd> refreshpdf
+<dd> refreshtext
+<dd> goto line
+</dl>
+Los primeros siete comandos llaman a las rutinas de TeXShop para componer c&oacute;digo tex.
+Lo hacen de manera continua, sin detenerse en los errores. Los siguientes siete comandos llaman a las mismas rutinas, pero, esta vez, si hay un error, el usuario puede interactuar con la consola. Cuando se llama a cualquiera de estos comandos, el control vuelve al AppleScript inmediatamente, sin esperar a que la operaci&oacute;n haya acabado. La llamada &laquo;taskdone&raquo; devuelve NO si a&uacute;n se est&aacute;n componiendo las p&aacute;ginas, y YES si ya ha acabado. Las llamadas &laquo;refreshpdf&raquo; y &laquo;refreshtext&raquo; fuerzan a que las ventanas muestren las &uacute;ltimas versiones de los archivos pdf y text.
+El comando &laquo;goto line&raquo; le dice al editor que seleccione una l&iacute;nea dada; por ejemplo:
+<dl> 
+<dd>tell document #DOCUMENTNAME# of application "TeXShop"
+<dd> goto line 37
+<dd> end tell
+</dl>
+</P>
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda para macros</div><div id="header_title">Definici&oacute;n de macros AppleScript</div>
+		<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Preliminares</a>
+			<LI><a href="macros_default.htm">Comprensi&oacute;n de las macros predefinidas</a>
+			<LI><a href="macros_rearrange.htm">Reajuste del men&uacute; Macros</a>
+			<LI><a href="macros_define.htm">Definici&oacute;n de nuevas macros</a>
+			<li><a href="macros_applescript.htm">Macros AppleScript</a>
+			<li><a href="macros_includedscripts.htm">Macros AppleScript predefinidas</a>
+			<li><a href="macros_defapplescript.htm">Definici&oacute;n de macros AppleScript</a>
+			<li><a href="macros_dialogs.htm">Creaci&oacute;n de di&aacute;logos</a>
+			<li><a href="macros_writingcompletescripts.htm">Scripts con comandos de composici&oacute;n de TeXShop</a>
+			<li><a href="macros_writingcommandscripts.htm">Scripts con comandos del Shell</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

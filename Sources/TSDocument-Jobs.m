@@ -880,8 +880,8 @@
 #warning 64BIT: Check formatting arguments
 		NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
-						  NSLocalizedString(@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution.",
-											@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution."),
+						  NSLocalizedString(@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions.",
+											@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions."),
 						  filename);
 		return FALSE;
 	}
@@ -1490,9 +1490,12 @@
 	BOOL	useError;
     
    if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))
+   {
         [self trashAUXFiles:self];
+       
+   }
 
-
+   
    fromMenu = NO;
    useError = NO;
 	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))

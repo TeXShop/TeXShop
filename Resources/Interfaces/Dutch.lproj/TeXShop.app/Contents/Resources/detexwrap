@@ -1,0 +1,14 @@
+#!/bin/tcsh
+
+# This short script calls "detex myfile | wc" to get file statistics
+# Richard Koch; March 21, 2004
+
+set mytexexecpath = "$argv[1]"
+if (-x ${mytexexecpath}detex) then
+	setenv PATH "${mytexexecpath}:${PATH}"
+	rehash
+endif
+
+set filename = "$argv[2]"
+
+detex "${filename}" | wc 

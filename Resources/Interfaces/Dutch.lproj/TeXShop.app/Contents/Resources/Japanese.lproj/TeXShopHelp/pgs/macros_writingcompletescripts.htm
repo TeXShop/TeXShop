@@ -1,0 +1,125 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>TeXShop のタイプセットコマンドでスクリプトを書く</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="AppleScriptによるタイプセットの自動化について">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+
+<BODY>
+<div id="content_border">
+
+<p>
+TeX プロジェクトが参考文献目録を含んでいる場合には、一連のタイプセットコマンドを実行して目録をアップデートしなければなりません。まず LaTeX を実行して .aux ファイルを作成する。BibTeX を実行して .aux ファイルから .bbl および .blg ファイルを作成する。再度 LaTeX を実行して参考文献目録を文書に付け加える。LaTeX を最終的に実行して目録に対する文書内の参照をアップデートする。
+</p>
+
+<p>
+複数のプロジェクトに、一連の同様なタイプセットコマンドが含まれていることもあるでしょう。AppleScript を使えば、こうした作業を自動化することができます。
+</p>
+
+<p>
+どんなふうにすればいいのか、TeXShop に付属する「OtherScripts->Bibliography」というコマンドを例に調べてみます。このコマンドの本体は次のようになっています。
+</p>
+
+<tt>
+<dl>
+	<dd>--Applescript
+	<p>
+	<dd>set fileName to #FILEPATH#
+	<dd>if fileName is equal to  ""
+	<dd>activate
+	<dd>display dialog "Please save the file first"  buttons {"OK"} default button "OK"
+	<dd>return
+	<dd>end if
+	<p>
+	<dd>set frontName to #DOCUMENTNAME#
+	<dd>tell application "TeXShop"
+	<dd>save document frontName
+	<dd>end tell
+	<p>
+	<dd>tell document frontName of application "TeXShop" 
+	<p>
+		<dl>
+			<dd>latexinteractive
+			<p>
+			<dd>repeat
+				<dl>
+					<dd>delay 2
+					<dd>if taskdone
+					<dd>exit repeat
+					<dd>end if
+					<p>
+				</dl>
+			<dd>end repeat
+			<p>
+			<dd>
+			<dd>bibtex
+			<p>
+			<dd>repeat
+				<dl>
+					<dd>delay 2
+					<dd>if taskdone
+					<dd>exit repeat
+					<dd>end if
+				</dl>
+			<dd>end repeat
+			<p>
+			<dd>latex
+			<p>
+			<dd>repeat
+				<dl>
+					<dd>delay 2
+					<dd>if taskdone
+					<dd>exit repeat
+					<dd>end if
+				</dl>
+			<dd>end repeat
+			<p>
+			<dd>latex
+			<p>
+		</dl>
+	<dd>end tell
+</dl>
+</tt>
+
+
+<p>
+コマンドの第１行目は、これが AppleScript マクロであることを示しています。次の行では #FILEPATH#（ TeX ソースのフルパス名を与えるパラメータ）をチェックしています。このパラメータは、新規書類が作成されていながらまだ保存されていないと、空っぽの文字列になります。その場合、ユーザは文書を保存するように言われ、スクリプトは終了します。
+</p>
+
+<p>
+次につづく行では、文書を保存するよう TeXShop に命じています。対象となる文書を参照するのに #DOCUMENTNAME# を使っていることに注意します。
+</p>
+
+<p>
+残りのコマンドで latexinteractive ・ bibtex ・ latex それに latex を実行しています。タイプセットコマンドを呼び出した後、タイプセット作業が完了する前に、コントロールはすぐに AppleScript に戻ることを思い出してください。repeat のループ部分では、次のタイプセット処理が実行される前に、先立つ作業が完了したかどうかをチェックするようスクリプトに命じています。「delay 2」という行は、作業が完了したかどうかを絶えず問い合わせつづけることでコンピュータ全体の速度を低下させないよう AppleScript に間合いを取らせています。
+</p>
+
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">マクロ・ヘルプ</div>
+<div id="header_title">TeXShop のタイプセットコマンドでスクリプトを書く</div>
+
+<div id="menu_border">
+
+	<UL>
+		<li><a href="macros_preliminaries.htm">まえがき</a> 
+		<li><a href="macros_default.htm">デフォルトのマクロを理解する</a>
+		<li><a href="macros_rearrange.htm">マクロの項目名を並べ替える</a>
+		<li><a href="macros_define.htm">新しいマクロを定義する</a>
+		<li><a href="macros_applescript.htm">AppleScript マクロ</a>
+
+		<li><a href="macros_includedscripts.htm">デフォルトの AppleScript マクロ</a>
+		<li><a href="macros_defapplescript.htm">AppleScript マクロを定義する</a>
+		<li><a href="macros_dialogs.htm">ダイアログを作る</a>
+		<li><a href="macros_writingcompletescripts.htm">TeXShop のタイプセットコマンドでスクリプトを書く</a>
+		<li><a href="macros_writingcommandscripts.htm">シェルコマンドでスクリプトを書く</a>
+	</UL>
+</div>
+</BODY>
+
+</HTML>

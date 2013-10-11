@@ -1,0 +1,123 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Editing Tricks</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="editing tricks; comment; indent; split window; drag and drop; backup file">
+<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+		<div id="content_border">
+
+<p> Double clicking on a bracket of the form (, {, [, ], }, or ) will select everything between that bracket and its matching bracket. Double clicking on a bracket with the option key down will select the bracket alone.</p>
+<p> TeXShop has a new Find panel by Isao Sonobe. This panel supports regular expressions. Users can switch
+between this panel and the original one in Preferences. The Find panel depends on OgreKit, a Cocoa framework
+for handling regular expressions by Sonobe. See</p>
+<dl>
+<dd> <dd><a href="http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit">http://www-gauge.scphys.kyoto-u.ac.jp/~sonobe/OgreKit</a>
+</dl>
+
+<p> OgreKit is distributed using a slightly modified version of the BSD license; this license can be found
+in the TeXShop source code distribution. OgreKit requires Panther, so the new panel will only appear on
+machines running system 10.3 or later.</p>
+<p> There are many nice features of this new Find panel. OgreKit modifies the "Find" submenu of the TeXShop
+edit menu, replacing it with a more extensive menu. The Find panel presents buttons controlling how it will
+find words; the settings of these buttons will be remembered from session to session. Adjust them
+until Find words as expected and then relax.</p>
+
+		<P>Groups of lines can be commented out using a menu command, and later activated again. Groups of lines can be indented with a menu command, and later moved back. If a line starts with a series of tabs or spaces, new lines will start at the same position until the behavior is cancelled by backspacing. This behavior was added to TeXShop by Nicol&aacute;s Ojeda B&auml;r in Argentina, who can be reached at <a href="mailto:lojedaortiz@interlink.com.ar">lojedaortiz@interlink.com.ar</a>. Thanks!</P>
+
+<P>
+The source window can be split in two pieces using the split tool at the top of the window. When it is split, two views of the same source are
+shown. You can type in either piece and your changes will immediately appear in the other as well. Thus you can modify one section of
+source while reading a second part of the source.
+</P>
+
+<P>
+TeXShop can be instructed to create a backup file every time a file is saved or typeset. This is set using a hidden preference.
+To create backup files, open Terminal and type the following command:
+</P>
+		<dl>
+			<dd><tt>defaults write TeXShop SaveBackup YES</tt>
+		</dl>
+<P> Change YES to NO to stop creating backups.
+</P>
+
+<p> A Statistics panel lists the number of words, line, and characters in a document. Internally, this
+panel calls</p>
+<dl>
+<dd> detex myfile | wc
+</dl>
+<p> The detex command removes tex commands, but the word count is still only approximate. Input and
+include files are counted automatically by this command.</p>
+
+<P>
+File icons can be dragged and dropped onto the source text. If the file is a tex file, an \input command will be
+added with a relative path to the file. If the file is a graphic file, an \includegraphics command will be
+added instead. The following graphic types are recognized: pdf, jpg, jpeg, tif, tiff, eps, ps.
+</P>
+
+<P>
+Dropping a cls file produces \documentclass and a file reference, dropping a sty file produces
+\usepackage, dropping a bib file produces \bibliographystyle, and dropping other text files
+produces \input.
+</P>
+
+<p> Drag and drop resolves aliases. For example, if a graphic file is really an alias, the file can
+be drag-and-dropped to the source and this source will typeset fine. TeX itself cannot resolve aliases,
+although it can resolve symbolic links. So if the name of the graphic alias is typed directly into
+the source, it will cause an error during typesetting.</p>
+
+<P>
+The behavior of drag and drop is user customizable. Customization is done with the Macro menu. Insert a new submenu
+titled "Drag & Drop". Inside this submenu place items named with the extension whose behavior
+you wish to customize, and place the code that should be inserted in the body of this item.
+For instance, if the item is .pdf, the code might be \includegraphics[#INS#]{%r}. In these inclusions,
+the following abbreviations may be used:
+
+<dl>
+<dd>	%F full path of an dropped file
+<dd>	%f dropped filename
+<dd>	%r relative path of the dropped file
+<dd>	%n filename without extension
+<dd>	%e extension.
+</dl>
+</P>
+
+<P>
+If an extension is not mentioned in the Macro Editor, then it is
+handled in the default manner mentioned earlier. Thus for
+most people, no macro "Drag & Drop" submenu is needed.
+</P></div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Basic Help</div><div id="header_title">Editing Tricks</div>
+		<div id="menu_border">
+		<ul>
+				<LI><a href="basic_preliminaries.htm">Preliminaries</a>
+			<LI><a href="basic_installtetex.htm">Installing TeX Live</a>
+			<LI><a href="basic_installtexshop.htm">Installing TeXShop</a>
+			<LI><a href="basic_typesetting.htm">Typesetting Documents</a>
+			<li><a href="basic_alternatetypeset.htm">Alternate Typesetting Mode</a>	
+			<li><a href="basic_spelling.htm">Checking Spelling</a>
+			<li><a href="basic_latexpanel.htm">Latex Panel</a>
+			<li><a href="basic_matrixpanel.htm">Matrix Panel</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Toolbar and Applescript</a>
+			<li><a href="basic_graphics.htm">Including Graphics</a>
+			<li><a href="basic_printing.htm">Printing</a>
+			<li><a href="basic_preferences.htm">Setting Preferences</a>
+			<li><a href="basic_templates.htm">Modifying the Templates Menu</a>
+			<li><a href="basic_edittricks.htm">Editing Tricks</a>
+			<li><a href="basic_autocompletion.htm">Key Bindings</a>
+			<li><a href="basic_commandcompletion.htm">Command Completion </a>
+			<li><a href="basic_bugs.htm">Sending Bug Reports</a>
+			<li><a href="basic_websites.htm">Useful Web Sites</a>
+			<li><a href="basic_license.htm">License</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

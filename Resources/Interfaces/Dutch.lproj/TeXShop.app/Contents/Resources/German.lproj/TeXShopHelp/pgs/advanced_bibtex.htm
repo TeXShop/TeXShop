@@ -1,0 +1,92 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>BibTeX</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch und Martin Kerz unter der GNU FDL">
+		<META NAME="description" CONTENT="Verwalten Sie Ihr Literaturverzeichnis komfortabel mit BiBTeX.">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+<BODY>
+	<div id="content_border">	
+		<P>BibTeX ist ein Hilfsprogramm um Bibliographien in Latex-Dokumenten zu erstellen. Es wird davon ausgegangen, dass gro&szlig;e Datenbanken mit Quellenangaben vorhaben sind, die h&auml;ufig zitiert werden. Einfache Befehle erlauben es bestimmte dieser Quellen im Latex-Sourcecode zu zitieren. BibTeX erstellt dann automatisch eine Bibliographie in Ihrem Dokument, die ausschlie&szlig;lich die von Ihnen zitierten Werke enth&auml;lt.</P>
+		<p>Hier ein kleines Beispiel aus The Latex Companion von Goossens, Mittelbach und Samarin. Konsultieren Sie dieses Buch f&uuml;r weitere Details. Nehmen wir an, die Datenbank hei&szlig;t &bdquo;meinebibliographie.bib&ldquo; und enth&auml;lt den untenstehenden Text. In diesem Text sind &bdquo;Felici:1991, Knuth:WEB&ldquo; und &bdquo;Liang:1983&ldquo; Schl&uuml;sselbegriffe um die Werke im Text zu zitieren.</p>
+		<dl>
+			<dd><tt>@article{Felici:1991,</tt>
+			<dd><tt>author	={James Felici},</tt>
+			<dd><tt>title	={{PostScript versus TrueType}},</tt>
+			<dd><tt>journal	={Macworld},</tt>
+			<dd><tt>volume	=8, pages={195--201},</tt>
+			<dd><tt>month	=sep, year = 1991		}</tt>
+			<dd>
+			<dd><tt>@techreport{Knuth:WEB,</tt>
+			<dd><tt>title	={{The \textsf{WEB} System of</tt>
+			<dd><tt>Structured Documentation}},</tt>
+			<dd><tt>month	=sep, year = 1983,</tt>
+			<dd><tt>author	={Donald E. Knuth},</tt>
+			<dd><tt>address	={Stanford, CA 94305},</tt>
+			<dd><tt>number	={STAN-CS-83-980},</tt>
+			<dd><tt>institution={Department of Computer</tt>
+			<dd><tt>Science, Stanford University}  }</tt>
+			<dd>
+			<dd><tt>@phdthesis{Liang:1983,</tt>
+			<dd><tt>author	={Franklin Mark Liang},</tt>
+			<dd><tt>month	=jun, year = 1983,</tt>
+			<dd><tt>school	={Stanford University},</tt>
+			<dd><tt>address	={Stanford, CA 94305},</tt>
+			<dd><tt>title	={{Word Hy-phen-a-tion by</tt>
+			<dd><tt>Com-pu-ter}},</tt>
+			<dd><tt>note	={Also available as Stanford</tt>
+			<dd><tt>University, Department of</tt>
+			<dd><tt>Computer Science Report</tt>
+			<dd><tt>No. STAN-CS-83-977}   }</tt>
+		</dl>
+		<p>Die latex-Quelldatei hei&szlig;e &bdquo;meinedatei.tex&ldquo; und beinhalte folgenden Text:</p>
+		<dl>
+			<dd><tt>\begin{document}</tt>
+			<dd><tt>Consider the  argument of Felici~\cite{Felici:1991} in light of these comments.</tt>
+			<dd><tt>\nocite{Liang:1983} We provide further remarks later.</tt>
+			<dd>
+			<dd><tt>\bibliographystyle{plain}</tt>
+			<dd><tt>\bibliography{mybibliography}</tt>
+			<dd><tt>\end{document}</tt>
+		</dl>
+		<p>Wenn dieser Text gesetzt wird, wird eine Referenz zu Felicis Artikel im Text erscheinen und eine Bibliographie am Ende des Dokuments angef&uuml;gt. In dieser werden die Artikel von Felici und Liang, jedoch nicht der Artikel von Knuth aufgef&uuml;hrt.</p>
+		<p>Um BibTeX mit TeXShop zu benutzen, m&uuml;ssen Sie wie folgt vorgehen: Erstellen und setzen Sie die Datei &bdquo;meinedatei.tex&ldquo;. Die Zitate werden in der Ausgabe als &bdquo;[&ldquo;]&ldquo; dargestellt. W&auml;hlen Sie danach &bdquo;Bibtex&ldquo; aus dem Auswahlmen&uuml; im oberen Teil des Eingabefensters und f&uuml;hren Sie BibTeX aus. W&auml;hlen Sie jetzt wieder LaTeX und setzen Sie das Dokument ein zweites Mal. Wieder werden die Zitate als &bdquo;[&ldquo;]&ldquo; erscheinen, jedoch ist die Bibliographie schon eingef&uuml;gt. Erst wenn Sie das Dokument ein drittes Mal setzen, werden auch die Zitate korrekt erscheinen.</p>
+		<p>Die Datei &bdquo;meinebibliographie.bib&ldquo; kann mit TeXShop ge&ouml;ffnet und bearbeitet werden. &Ouml;ffnet TeXShop eine Datei, die nicht die Endung &bdquo;.tex&ldquo; oder &bdquo;.TEX&ldquo; tr&auml;gt, wird der Knopf zum Starten des Satzvorgangs deaktiviert. Wird die Datei sp&auml;ter mit &bdquo;Speichern&ldquo; oder &bdquo;Speichern als...&ldquo; abgespeichert wird die Endung &bdquo;.tex&ldquo; nicht angeh&auml;ngt. Auf diese Weise k&ouml;nnen Sie neue Eintr&auml;ge in die Bibliographie eintragen w&auml;hrend Sie gleichzeitig ein neues Dokument erstellen.</p>
+		<p>(Wenn Sie jedoch die Datei &bdquo;meinebibliographie.bib&ldquo; unter TeXShop direkt erstellen, wird der Datei die Endung &bdquo;.tex&ldquo; angeh&auml;ngt. Diesen Fehler hoffen wir bald zu beheben. Entfernen Sie die Endung einfach im Finder und laden Sie die Datei erneut in TeXShop.)</p>
+	</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Erweitert</div>
+<div id="header_title">BibTeX</div>
+
+
+	<div id="menu_border">
+		<UL>
+			<li><a href="advanced_personaltetex.htm">Pers&ouml;nliche sty- und Makrodateien zu teTeX hinzuf&uuml;gen</a></li>
+			<LI><a href="advanced_addengine.htm">Zusätzliche Schriftsatz-Programme</a>
+			<LI><a href="advanced_removeaux.htm">AUX-Dateien entfernen</a>
+			<li><a href="advanced_externaleditor.htm">Einen externen Editor verwenden</a></li>
+			<li><a href="advanced_pdfcopypaste.htm">Kopieren-Einf&uuml;gen und Drag-Drop aus dem Vorschau-Fenster</a></li>
+			<li><a href="advanced_root.htm">Die Hauptdatei des Projekts festlegen</a></li>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a></li>
+			<li><a href="advanced_unicode.htm">Unicode</a></li>
+			<li><a href="advanced_bibtex.htm">BibTeX</a></li>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a></li>
+			<li><a href="advanced_otherfiles.htm">Andere Dateien mit TeXShop &ouml;ffnen</a></li>
+			<li><a href="advanced_mathematica.htm">Mathematica</a></li>
+			<li><a href="advanced_localization.htm">Lokalisierungen</a></li>
+			<li><a href="advanced_syntaxcolor.htm">Syntax Farben </a></li>
+			<li><a href="advanced_shellescape.htm">Shell Escape Schutz</a></li>
+			<li><a href="advanced_coloredtext.htm">Farbiger Text in TeX</a></li>
+			<li><a href="advanced_moretetex.htm">Mehr &uuml;ber teTeX</a></li>
+			<li><a href="advanced_fink.htm">Zusammenarbeit mit Fink</a></li>
+			<li><a href="advanced_otherdistributions.htm">Zusammenarbeit mit anderen TeX Distributionen</a></li>
+			<li><a href="advanced_context.htm">ConTeXt und MetaPost</a></li>
+			<li><a href="advanced_plist.htm">Plist Dateien</a></li>
+			<li><a href="advanced_menushortcuts.htm">Tastaturk&uuml;rzel neubelegen</a></li>
+		</UL>
+	</div>
+	</BODY>
+</HTML>

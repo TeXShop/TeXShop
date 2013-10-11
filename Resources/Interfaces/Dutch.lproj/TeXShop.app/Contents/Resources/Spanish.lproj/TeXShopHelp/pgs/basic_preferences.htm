@@ -1,0 +1,80 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Establecer preferencias</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch bajo licencia FDL de GNU">
+		<META NAME="description" CONTENT="preferencias; aumento; posici&oacute;n de ventana; c&oacute;digo de caracteres; encoding">
+		<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+	<div id="content_border">
+		<P>Hay varias cosas que pueden cambiarse usando el men&uacute; Preferencias: la tipograf&iacute;a por defecto en la ventana de c&oacute;digo, la escala por defecto de la ventana de salida (pdf previsto), y la posici&oacute;n de estas ventanas cuando aparecen por primera vez. Se puede configurar la consola para que aparezca siempre que componemos un documento, o s&oacute;lo aparezca cuando hay alg&uacute;n error.
+Puedes configurar la ventana con c&oacute;digo para que, al hacer un click sobre ella, s&oacute;lo se active, o para que, adem&aacute;s, este click se use para colocar el punto de inserci&oacute;n de texto.</P>
+		<p>El di&aacute;logo de preferencias se puede usar tambi&eacute;n para cambiar los comandos que se ejecutan al pulsar los botones &laquo;TeX&raquo; y &laquo;LaTeX&raquo;. Esto es &uacute;til pues algunos usuarios prefieren usar una versi&oacute;n de TeX llamada etex, y existen versiones pdf de etex llamadas pdfetex y pdfelatex. Obviamente, los comandos sustitutivos deben producir como salida un archivo pdf. Si los nuevos programas est&aacute;n en el directorio del c&oacute;digo binario de teTeX, basta con poner su nombre en la correspondiente casilla del di&aacute;logo de preferencias; el di&aacute;logo tambi&eacute;n aceptar&aacute; el nombre completo de la ruta (&lsquo;path&rsquo;) si el programa se encuentra en otra parte.</p>
+		<p>TeXShop edita archivos utilizando las clases Cocoa de Apple, que usan Unicode para su funcionamiento interno. Pero cuando TeXShop guarda archivos en disco, generalmente los convierte a c&oacute;digo ASCII de 8 bits, porque esto es lo que espera encontrar TeX en un archivo. Hay varias maneras de efectuar esta conversi&oacute;n: Mac OS Roman, Iso Latin 1, Iso Latin 2, y otras. Por medio de las preferencias podemos elegir la que deseemos. Para muchos usuarios, la elecci&oacute;n no representar&aacute; ninguna diferencia. Algunos paquetes de TeX permiten al usuario introducir caracteres acentuados europeos directamente del teclado; estos paquetes requieren la conversi&oacute;n Iso Latin. Gracias a Martin Heusse por proporcionar el c&oacute;digo que implementa esta elecci&oacute;n. El m&eacute;todo de conversi&oacute;n se puede seleccionar tambi&eacute;n directametne en los paneles de Abrir y Guardar.</p>
+		<p>Los usuarios de Jap&oacute;n y Corea pueden preferir otros tipos de conversi&oacute;n, tambi&eacute;n disponibles.</p>
+	<p>Es posible cambiar el color de fondo de la ventana destinada al c&oacute;digo fuente TeX. Sin embargo, el di&aacute;logo de preferencias no dispone de la interfaz para efectuar este cambio. Para asignar (r, g, b) = (.42, .39, .77) como color de fondo, ejecuta en el Terminal los siguientes comandos:</p>
+		<dl>
+			<dd>defaults write TeXShop background_R 0.42
+			<dd>defaults write TeXShop background_G 0.39
+			<dd>defaults write TeXShop background_B 0.77
+		</dl>
+
+<p>As&iacute; mismo, se puede configurar el color del texto en la ventana con el c&oacute;digo fuente. Aunque esto s&oacute;lo tiene efecto si los colores para sintaxis est&aacute;n activados. Para asignar al texto el color (r, g, b) = (.42, .39, .77), ejecuta en el Terminal los siguientes comandos:</p>
+		<dl>
+			<dd>defaults write TeXShop foreground_R 0.42
+			<dd>defaults write TeXShop foreground_G 0.39
+			<dd>defaults write TeXShop foreground_B 0.77
+		</dl>
+<p>Y tambi&eacute;n se puede modificar el color del punto de inserci&oacute;n de la ventana de c&oacute;digo. Por ejemplo, para asignar al punto de inserci&oacute;n el color (r, g, b) = (.42, .39, .77), ejecuta en el Terminal los siguientes comandos:</p>
+		<dl>
+			<dd>defaults write TeXShop insertionpoint_R 0.42
+			<dd>defaults write TeXShop insertionpoint_G 0.39
+			<dd>defaults write TeXShop insertionpoint_B 0.77
+		</dl>
+<p>Usando los tres conjuntos de preferencias anteriores de manera simult&aacute;nea, se puede escribir texto blanco sobre fondo negro, o usar en el editor cualquier otra combinaci&oacute;n de colores.</p> 
+
+<p>Hay unas preferencias ocultas para asignar transparencia a las ventanas con el c&oacute;digo, el pdf previsto, y la consola:</p>
+		<dl>
+			<dd>defaults write TeXShop ConsoleWindowAlpha 0.75
+			<dd>defaults write TeXShop SourceWindowAlpha 0.75
+			<dd>defaults write TeXShop PreviewWindowAlpha 0.75
+		</dl>
+<p>Aqu&iacute;, un valor alpha 0.00 significa completamente transparente, y un valor alpha 1.00 es completamente opcaco. &iexcl;Usa estos comandos con precauci&oacute;n!</p>
+
+<p>En la parte de abajo del panel de preferencias hay un men&uacute; desplegable que sirve para restituir las preferencias a sus valores predeterminados. Esto es particularmente &uacute;til en Jap&oacute;n, ya que hay diferentes conjuntos predeterminados destinados a los usuarios de varias distribuciones de pTeX.
+</p>			
+</div>
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Ayuda b&aacute;sica</div><div id="header_title">Establecer preferencias</div>
+		<div id="menu_border">
+		<ul>
+			<LI><a href="basic_preliminaries.htm">Preliminares</a>
+			<LI><a href="basic_installtetex.htm">C&oacute;mo obtener e instalar teTeX</a>
+			<LI><a href="basic_installtexshop.htm">C&oacute;mo obtener e instalar TeXShop</a>
+			<li><a href="basic_typesetting.htm">Componer (&lsquo;typeset&rsquo;) documentos</a>
+			<li><a href="basic_alternatetypeset.htm">M&eacute;todos alternativos de composici&oacute;n</a>
+			<li><a href="basic_spelling.htm">Correcci&oacute;n ortogr&aacute;fica</a>
+			<li><a href="basic_latexpanel.htm">Panel LaTeX</a>
+			<li><a href="basic_matrixpanel.htm">Panel matrices</a>
+			<li><a href="basic_macros.htm">Macros</a>
+			<li><a href="basic_toolbar.htm">Barra de herramientas y AppleScript</a>
+			<li><a href="basic_graphics.htm">Inclusi&oacute;n de gr&aacute;ficos</a>
+			<li><a href="basic_printing.htm">Imprimir</a>
+			<li><a href="basic_preferences.htm">Establecer preferencias</a>
+			<li><a href="basic_templates.htm">Personalizaci&oacute;n del men&uacute; Plantillas</a>
+			<li><a href="basic_edittricks.htm">Trucos de edici&oacute;n</a>
+			<li><a href="basic_autocompletion.htm">Autocompleci&oacute;n</a>
+			<li><a href="basic_commandcompletion.htm">Compleci&oacute;n de comandos</a>
+			<li><a href="basic_bugs.htm">Notificaci&oacute;n de errores (&lsquo;bugs&rsquo;)</a>
+			<li><a href="basic_websites.htm">Sitios web &uacute;tiles</a>
+			<li><a href="basic_license.htm">Licencia</a>
+			<li><a href="basic_thistranslation.htm">Sobre la traducci&oacute;n a espa&ntilde;ol</a>
+		</UL>
+	</div>
+	</BODY>
+
+</HTML>

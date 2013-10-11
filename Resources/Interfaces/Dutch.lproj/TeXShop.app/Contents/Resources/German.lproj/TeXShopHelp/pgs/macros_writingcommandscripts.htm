@@ -1,0 +1,139 @@
+<HTML>
+
+<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Skripte mit Shell-Befehlen erstellen</TITLE>
+		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+		<META NAME="description" CONTENT="applescript">
+	<link href="../sty/screen.css" rel="stylesheet" media="all">
+	</HEAD>
+
+<BODY>
+
+<div id="content_border">
+		<P>Um zu demonstrieren wie man ein Unix Shell-Skript aus einem AppleScript aufruft werden wir das AppleScript &bdquo;pdflatexc&ldquo; von Claus Gerhardt analysieren. Dieses Skript erf&uuml;llt lediglich die Aufgabe den Ort der teTeX-Binaries an die $PATH-Variable zu &uuml;bergeben und dann pdflatex zum Setzen aufzurufen.</P>
+
+	<P>Das Shell-Skript selbst ist von TeXShop unabh&auml;ngig und kann im Terminal mit dem Befehl &bdquo;pdflatexc myfile.tex&ldquo; aufgerufen werden, wenn sich pdflatexc sich in einem Ordner befindet, der sich im Durchsuchungspfad f&uuml;r auf&uuml;hrbare Dateien befindet. 
+		<dl>
+<dd><tt>#!/bin/tcsh
+</tt><dd><tt># pdflatexc
+</tt><dd><tt># Claus Gerhardt
+</tt><dd><tt>#
+</tt><dd><tt># Usage
+</tt><dd><tt># pdflatexc filename.tex
+</tt>
+				<p>
+			
+<dd><tt>set path= ($path /usr/local/teTeX/bin/powerpc-apple-darwin-current /usr/local/bin)
+</tt>
+				<p>
+			
+<dd><tt>pdflatex --shell-escape "$1"
+</tt></dl>
+		<p>Nat&uuml;rlich k&ouml;nnen Sie auch kompliziertere Skripte erstellen, die verschiedene Operationen in Folge ausf&uuml;hren k&ouml;nnen. Erst dann werden die hier dargestellten Techniken wirklich n&uuml;tzlich.</p>
+		<P>Das AppleScript, durch das dieses Shell-Skript aufgerufen wird ist wesentlich interessanter:
+		<dl>
+<dd><tt>--Applescript
+</tt><dd><tt>-- Apply only to an already saved file.
+</tt><dd><tt>-- Claus Gerhardt, Nov. 2003
+</tt>
+				<p>
+			
+<dd><tt>set scriptPath to (do shell script "dirname " & "~/Library/TeXShop/Scripts/ex")
+</tt><dd><tt>set scriptPath to scriptPath & "/setname.scpt"
+</tt><dd><tt>set scriptName to POSIX file scriptPath as alias
+</tt><dd><tt>set scriptLiB to (load script scriptName)
+</tt><dd><tt>tell scriptLib
+</tt><dd><tt>set frontName to setname(#NAMEPATH#,#TEXPATH#)
+</tt><dd><tt>end tell
+</tt>
+				<p>
+			
+<dd><tt>set fileName to  #TEXPATH#
+</tt><dd><tt>set n to (number of characters of contents of fileName)
+</tt><dd><tt>set fileNamequoted to quoted form of fileName
+</tt><dd><tt>set baseName to do shell script "basename " & fileNamequoted
+</tt><dd><tt>set m to (number of characters of contents of baseName)
+</tt><dd><tt>set dirName to quoted form of (characters 1 thru (n - m - 1) of fileName as string)
+</tt>
+				<p>
+			
+<dd><tt>set shellScript to "cd " & dirName & ";"
+</tt><dd><tt>set shellScript to shellScript & "~/Library/TeXShop/bin/pdflatexc  " & baseName
+</tt><dd><tt>do shell script shellScript
+</tt>
+				<p>
+			
+<dd><tt>tell document frontName
+</tt><dd><tt>	refreshpdf
+</tt><dd><tt>end tell
+</tt></dl>
+		<P>Wenn man die einf&uuml;hrenden Kommentare au&szlig;er Acht l&auml;sst, bilden die ersten sieben Zeilen einen zauberhaften Weg die Quelldatei zu sichern, den Namen des Dokumentes heraus zu bekommen und ihn in die Variable &bdquo;frontName&ldquo; zu sichern. Es wird ein kompiliertes Skript mit dem Namen &bdquo;setpath.scpt&ldquo; in ~/Library/TeXShop/Scripts f&uuml;r den schwierigen Teil benutzt. Wenn man genau hin sieht, kann man erkennen, dass der Code den Pfad  &bdquo;~/Library/TeXShop/Scripts/setname.scpt&ldquo; findet und dieses Skript mit den Parametern #NAMEPATH# und #TEXPATH# aufruft. </P>
+		<P>In vielen AppleScripts k&ouml;nnte dies einfacher auch mit Hilfe der folgenden Befehle erreicht werden:<dl>
+<dd><tt> set frontName to #DOCUMENTNAME#
+</tt><dd><tt> tell document frontName of application "TeXShop"
+</tt><dd><tt> save
+</tt><dd><tt> end tell
+</tt></dl><P>Gerhardts Skript hat jedoch zwei Vorteile. Als erstes kann sein Skript auch dann aufgerufen werden, wenn das vorderste Dokument eine log-Datei ist (z.B. /Users/koch/Examples/myfile.log), das sp&auml;ter nicht die Befehle aufnehmen soll. Zum Zweiten gibt Gerhardts Skript beim Sichern eine Fehlermeldung aus. Der Befehl &bdquo;Sichern&ldquo; w&uuml;rde im Gegensatz dazu TeXShop in Sichern-Dialog aufh&auml;ngen. (Lesen Sie das Hilfe-Dokument &bdquo;Skripte mit TeXShop-Satzkommandos erstellen&ldquo; f&uuml;r weitere Hinweise.)</P>
+		<P>Die n&auml;chsten sechs Zeilen des Skripts definieren die Variablen &bdquo;dirName&ldquo; und &bdquo;baseName&ldquo;. Ist die Quelldatei &bdquo;/Users/koch/This directory/Stuff/myfile.tex&ldquo;, so wird &bdquo;dirName&ldquo; &quot; '/Users/koch/This directory/Stuff' &ldquo; inklusive der einfachen und doppelten Anf&uuml;hrungszeichen. &bdquo;baseName&ldquo; wird zu &quot;myfile.tex.&quot;. Diese Schritte sind notwendig, damit Leerzeichen in den Pfaden enthalten sein k&ouml;nnen. Wie immer erlaubt TeX keine Leerzeichen im letztendlichen Dateinamen.</P>
+		<P>Die n&auml;chsten drei Zeilen rufen das Shell-Skipt auf. Das Ergebnis kommt das dem Auf&uuml;hren von &quot;cd dirName; ~/Library/TeXShop/bin/pdflatexc baseName&quot; in einem Terminal gleich.</P>
+
+<P>Shell-Befehle in AppleScript werden in folgender Form aufgerufen:
+		<dl>
+<dd><tt>do shell script "cmd input"
+</tt></dl>
+		Will man mehrere Shell-Skripte kombinieren, sollte man besser folgende Form verwenden:
+		<dl>
+			<dd><tt>do shell script "cmd " & "input"
+</tt>
+		</dl>
+		Beachten Sie das Leerzeichen hinter &bdquo;cmd&ldquo; sowie die Anf&uuml;hrungszeichen. Das kaufm&auml;nnische &bdquo;und&ldquo; ist ein bin&auml;rer Operator. Das hei&szlig;t:
+		<dl>
+			<dd><tt>"cmd " & "input" = "cmd input"
+</tt>
+		</dl>
+		Wird die Shell mit Hilfe eines AppleScripts aufgerufen, so ist das Standard-Arbeitsverzeichnis das root-Verzeichnis. Das Kommando
+		<dl>
+			<dd><tt>do shell script "cd " dirName
+</tt>
+		</dl>
+		<p>&auml;ndert das Verzeichnis zu dem in dirName spezifizierten. dirName ist schon in Anf&uuml;hrungszeichen, so dass diese hier entbehrlich sind.</p>
+		<p>Will man das Arbeitsverzeichnis behalten und wetiere Befehle ausf&uuml;hren, so k&ouml;nnen diese nicht mehr durch &quot;do shell script&quot; auferufen werden, da hierdurch eine neue Shell aufgerufen w&uuml;rde. Im Terminal w&uuml;rden aufeinander folgende Befehle mit einem Semikolon getrennt. Im AppleScript muss das Semikolon deshalb mit dem kaufm&auml;nnischen &bdquo;und&ldquo; eingebettet werden:
+		<dl>
+			<dd><tt>do shell script "cmd(1) " & "input(1)" & ";" & "cmd(2) " & "input(2)"
+</tt>
+		</dl>
+		Dies wird im obigen Beispiel ausgef&uuml;hrt: cmd(1) = cd, &quot;input(1)&quot; = dirName, cmd(2) = ~/Library/TeX/bin/pdflatexc - ruft das Shell-Skript auf - und &quot;input(2)&quot; = baseName.
+		<p>Die Zeilen<dl>
+			<dd><tt>set shellScript to "cd " & dirName & ";"
+</tt>
+			<dd><tt>set shellScript to shellScript & "~/Library/TeX/bin/pdflatexc  " & baseName
+</tt></dl>
+		sind einfach ein Weg Befehlsketten in einer Variable zusammenzuf&uuml;gen.
+		<P>Die letzten drei Zeilen aktualisieren das Vorschau-Fenster.</P>
+		<P>Sicherlich sind einige Zeilen schwer verst&auml;ndlich. Sie k&ouml;nnen sie aber ohne Probleme in eiigene Skripte kopieren.</P>
+</div>		
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">Hilfe zu Makros</div>
+<div id="header_title">Skripte mit Shell-Befehlen erstellen</div>
+
+
+	<div id="menu_border">
+		<UL>
+			<LI><a href="macros_preliminaries.htm">Einleitung</a></li>
+			
+			<LI><a href="macros_default.htm">Die Standardmakros verstehen</a></li>
+			<LI><a href="macros_rearrange.htm">Das Makromen&uuml; neu anordnen</a></li>
+			<LI><a href="macros_define.htm">Neue Makros erstellen</a></li>
+			<li><a href="macros_applescript.htm">AppleScript Makros</a></li>
+			<li><a href="macros_includedscripts.htm">Standard AppleScript Makros</a></li>
+			<li><a href="macros_defapplescript.htm">AppleScript Makros erstellen</a></li>
+			<li><a href="macros_dialogs.htm">Dialoge erstellen</a></li>
+			<li><a href="macros_writingcompletescripts.htm">Skripte mit TeXShop-Satzkommandos erstellen</a></li>
+			<li><a href="macros_writingcommandscripts.htm">Skripte mit Shell-Befehlen erstellen</a></li>
+		</UL>
+	</div>
+	
+	</BODY>
+</HTML>

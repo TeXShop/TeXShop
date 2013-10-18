@@ -3580,6 +3580,304 @@ else
 }
 
 
+//-----------------------------
+
+/*
+
+- (BOOL)doNewSync: (NSPoint) thePoint
+{
+    return NO;
+}
+ 
+*/
+
+//  This is the "old version" with variables upgraded to 64 bits;
+//    should be the GOOD version.
+
+ - (BOOL)doNewSync: (NSPoint) thePoint
+ {
+ NSInteger						theIndex;
+ NSInteger						testIndex;
+ NSInteger						pageNumber, numberOfTests;
+ NSInteger						searchWindow;
+ NSUInteger			sourcelength[NUMBER_OF_SOURCE_FILES + 1];
+ NSInteger						startIndex, endIndex;
+ NSRange					searchRange, newSearchRange, maskRange, theRange;
+ NSString				*searchText;
+ NSString				*sourceText[NUMBER_OF_SOURCE_FILES + 1];
+ BOOL					found;
+ NSInteger						length;
+ NSInteger						numberOfFiles;
+ NSInteger						i;
+ BOOL					foundOne, foundMoreThanOne;
+ NSInteger						foundIndex = 0;
+ NSRange					foundRange = { 0, 0 };
+ NSUInteger			foundlength = 0;
+ NSRange					correctedFoundRange;
+ TSDocument				*newDocument;
+ NSTextView				*myTextView;
+ NSWindow				*myTextWindow;
+ NSDictionary			*mySelectedAttributes;
+ NSMutableDictionary		*newSelectedAttributes;
+ 
+ id						myData;
+ NSStringEncoding		theEncoding;
+ NSString				*firstBytes, *encodingString, *testString;
+ NSRange					encodingRange, newEncodingRange, myRange, theRange1;
+ NSUInteger				length1, start, end, irrelevant;
+ BOOL					done;
+ NSInteger						linesTested, offset;
+ NSString				*aString;
+ NSInteger						correction;
+ 
+ 
+ 
+ NSPoint windowPosition = thePoint;
+ NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
+ PDFPage *thePage = [self pageForPoint: kitPosition nearest:YES];
+ if (thePage == NULL)
+ return NO;
+ NSPoint viewPosition = [self convertPoint: kitPosition toPage: thePage];
+ pageNumber = [[self document] indexForPage: thePage];
+ NSString *fullText = [thePage string];
+ length = [fullText length];
+ theIndex = [thePage characterIndexAtPoint:viewPosition];
+ if (theIndex < 0)
+ return NO;
+ 
+ if (sourceFiles == nil)
+ [self setupSourceFiles];
+ numberOfFiles = [sourceFiles count];
+ 
+ sourceText[0] = [[myDocument textView] string];
+ sourcelength[0] = [sourceText[0] length];
+ 
+ if (numberOfFiles > 0) {
+ for (i = 0; i < numberOfFiles; i++) {
+ 
+ theEncoding = [myDocument encoding];
+ myData = [NSData dataWithContentsOfFile:[sourceFiles objectAtIndex:i]];
+ 
+ // data in source
+ firstBytes = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding];
+ length1 = [firstBytes length];
+ done = NO;
+ linesTested = 0;
+ myRange.location = 0;
+ myRange.length = 1;
+ 
+ while ((myRange.location < length1) && (!done) && (linesTested < 20)) {
+ [firstBytes getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+ myRange.location = end;
+ myRange.length = 1;
+ linesTested++;
+ 
+ theRange1.location = start; theRange1.length = (end - start);
+ testString = [firstBytes substringWithRange: theRange1];
+ encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
+ offset = 16;
+ if (encodingRange.location == NSNotFound) {
+ encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
+ offset = 17;
+ }
+ if (encodingRange.location != NSNotFound) {
+ done = YES;
+ newEncodingRange.location = encodingRange.location + offset;
+ newEncodingRange.length = [testString length] - newEncodingRange.location;
+ if (newEncodingRange.length > 0) {
+ encodingString = [[testString substringWithRange: newEncodingRange]
+ stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+ theEncoding = [[TSEncodingSupport sharedInstance] stringEncodingForKey: encodingString];
+ }
+ } else if ([SUD boolForKey:UseOldHeadingCommandsKey]) {
+ encodingRange = [testString rangeOfString:@"%&encoding="];
+ if (encodingRange.location != NSNotFound) {
+ done = YES;
+ newEncodingRange.location = encodingRange.location + 11;
+ newEncodingRange.length = [testString length] - newEncodingRange.location;
+ if (newEncodingRange.length > 0) {
+ encodingString = [[testString substringWithRange: newEncodingRange]
+ stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+ theEncoding = [[TSEncodingSupport sharedInstance] stringEncodingForKey: encodingString];
+ }
+ }
+ }
+ }
+ 
+ [firstBytes release];
+ 
+ 
+ 
+ aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
+ if (! aString) {
+ aString = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+ }
+ 
+ sourceText[i + 1] = aString;
+ sourcelength[i + 1] = [sourceText[i + 1] length];
+ }
+ }
+ 
+ found = NO;
+ searchWindow = 10;
+ testIndex = theIndex;
+ numberOfTests = 1;
+ 
+ while ((! found) && (numberOfTests < 20) && (testIndex >= 0)) {
+ 
+ // get surrounding letters back and forward
+ if (testIndex >= searchWindow)
+ startIndex = testIndex - searchWindow;
+ else
+ startIndex = 0;
+ if (testIndex < (length - (searchWindow + 1)))
+ endIndex = testIndex + searchWindow;
+ else
+ endIndex = length - 1;
+ 
+ myRange.location = startIndex;
+ myRange.length = endIndex - startIndex;
+ searchText = [fullText substringWithRange: myRange];
+ testIndex = testIndex - 5;
+ numberOfTests++;
+ 
+ // search for this in the source
+ 
+ foundOne = NO;
+ foundMoreThanOne = NO;
+ for (i = 0; i < numberOfFiles + 1; i++) {
+ if (foundMoreThanOne)
+ break;
+ maskRange.location = 0;
+ maskRange.length = sourcelength[i];
+ searchRange = [sourceText[i] rangeOfString: searchText options:NSLiteralSearch range:maskRange];
+ if (searchRange.location != NSNotFound) {
+ maskRange.location = searchRange.location + searchRange.length;
+ maskRange.length = sourcelength[i] - maskRange.location;
+ newSearchRange = [sourceText[i] rangeOfString: searchText options: NSLiteralSearch range:maskRange];
+ if (newSearchRange.location == NSNotFound) {
+ if (foundOne)
+ foundMoreThanOne = YES;
+ foundOne = YES;
+ foundIndex = i;
+ foundlength = sourcelength[i];
+ foundRange = searchRange;
+ }
+ }
+ }
+ if (foundOne && (!foundMoreThanOne)) {
+ found = YES;
+ if (foundIndex == 0) {
+ myTextView = [myDocument textView];
+ myTextWindow = [myDocument textWindow];
+ [myDocument setTextSelectionYellow: YES];
+ } else {
+ newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+ myTextView = [newDocument textView];
+ myTextWindow = [newDocument textWindow];
+ [newDocument setTextSelectionYellow: YES];
+ }
+ mySelectedAttributes = [myTextView selectedTextAttributes];
+ newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+ [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+ // FIXME: use temporary attributes instead of abusing the text selection
+ [myTextView setSelectedTextAttributes: newSelectedAttributes];
+ correction = theIndex - testIndex + 5;
+ correctedFoundRange.location = foundRange.location + correction;
+ correctedFoundRange.length = foundRange.length;
+ if ((correction < 0) || (correctedFoundRange.location + correctedFoundRange.length) > foundlength)
+ correctedFoundRange = foundRange;
+ [myTextView setSelectedRange: correctedFoundRange];
+ [myTextView scrollRangeToVisible: correctedFoundRange];
+ [myTextWindow makeKeyAndOrderFront:self];
+ return YES;
+ }
+ }
+ 
+ testIndex = theIndex + 5;
+ numberOfTests = 2;
+ while ((! found) && (numberOfTests < 20) && (testIndex < length)) {
+ 
+ // get surrounding letters back and forward
+ if (testIndex > searchWindow)
+ startIndex = testIndex - searchWindow;
+ else
+ startIndex = 0;
+ if (testIndex < (length - (searchWindow + 1)))
+ endIndex = testIndex + searchWindow;
+ else
+ endIndex = length - 1;
+ 
+ theRange.location = startIndex;
+ theRange.length = endIndex - startIndex;
+ searchText = [fullText substringWithRange: myRange];
+ testIndex = testIndex + 5;
+ numberOfTests++;
+ 
+ // search for this in the source
+ // search for this in the source
+ foundOne = NO;
+ foundMoreThanOne = NO;
+ for (i = 0; i < (numberOfFiles + 1); i++) {
+ if (foundMoreThanOne)
+ break;
+ maskRange.location = 0;
+ maskRange.length = sourcelength[i];
+ searchRange = [sourceText[i] rangeOfString: searchText options:NSLiteralSearch range:maskRange];
+ if (searchRange.location != NSNotFound) {
+ maskRange.location = searchRange.location + searchRange.length;
+ maskRange.length = sourcelength[i] - maskRange.location;
+ newSearchRange = [sourceText[i] rangeOfString: searchText options: NSLiteralSearch range:maskRange];
+ if (newSearchRange.location == NSNotFound) {
+ if (foundOne)
+ foundMoreThanOne = YES;
+ foundOne = YES;
+ foundIndex = i;
+ foundlength = sourcelength[i];
+ foundRange = searchRange;
+ }
+ }
+ }
+ if (foundOne && (!foundMoreThanOne)) {
+ found = YES;
+ if (foundIndex == 0) {
+ myTextView = [myDocument textView];
+ myTextWindow = [myDocument textWindow];
+ } else {
+ newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+ myTextView = [newDocument textView];
+ myTextWindow = [newDocument textWindow];
+ }
+ mySelectedAttributes = [myTextView selectedTextAttributes];
+ newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+ [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+ // FIXME: use temporary attributes instead of abusing the text selection
+ [myTextView setSelectedTextAttributes: newSelectedAttributes];
+ correction = testIndex - theIndex - 10;
+ if ((correction < 0) || (foundRange.location < correction))
+ correctedFoundRange = foundRange;
+ else {
+ correctedFoundRange.location = foundRange.location - correction;
+ correctedFoundRange.length = foundRange.length;
+ }
+ [myTextView setSelectedRange: correctedFoundRange];
+ [myTextView scrollRangeToVisible: correctedFoundRange];
+ [myTextWindow makeKeyAndOrderFront:self];
+ return YES;
+ }
+ }
+ 
+ return NO;
+ 
+ }
+ 
+
+//
+
+
+//-----------------------------------------------------
+
+/*
 - (BOOL)doNewSync: (NSPoint) thePoint
 {
 	NSInteger				theIndex;
@@ -3805,27 +4103,27 @@ else
                          [myTextWindow1 makeKeyAndOrderFront:self];
                         }
                  }];
-                /*
-                 newDocument = (TSDocument *)returnDocument;
-                 // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
-                 myTextView = [newDocument textView];
-                 myTextWindow = [newDocument textWindow];
-                 [newDocument setTextSelectionYellow: YES];
-                 }
-                 mySelectedAttributes = [myTextView selectedTextAttributes];
-                 newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
-                 [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
-                 // FIXME: use temporary attributes instead of abusing the text selection
-                 [myTextView setSelectedTextAttributes: newSelectedAttributes];
-                 correction = theIndex - testIndex + 5;
-                 correctedFoundRange.location = foundRange.location + correction;
-                 correctedFoundRange.length = foundRange.length;
-                 if ((correction < 0) || (correctedFoundRange.location + correctedFoundRange.length) > foundlength)
-                 correctedFoundRange = foundRange;
-                 [myTextView setSelectedRange: correctedFoundRange];
-                 [myTextView scrollRangeToVisible: correctedFoundRange];
-                 [myTextWindow makeKeyAndOrderFront:self];
-                 */
+                // WARNING: Next was commented out
+                // newDocument = (TSDocument *)returnDocument;
+                // // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+                // myTextView = [newDocument textView];
+                // myTextWindow = [newDocument textWindow];
+                // [newDocument setTextSelectionYellow: YES];
+                // }
+                // mySelectedAttributes = [myTextView selectedTextAttributes];
+                 // newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+                // [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+                 // // FIXME: use temporary attributes instead of abusing the text selection
+                // [myTextView setSelectedTextAttributes: newSelectedAttributes];
+                // correction = theIndex - testIndex + 5;
+                // correctedFoundRange.location = foundRange.location + correction;
+                // correctedFoundRange.length = foundRange.length;
+                // if ((correction < 0) || (correctedFoundRange.location + correctedFoundRange.length) > foundlength)
+                // correctedFoundRange = foundRange;
+                // [myTextView setSelectedRange: correctedFoundRange];
+                // [myTextView scrollRangeToVisible: correctedFoundRange];
+                // [myTextWindow makeKeyAndOrderFront:self];
+                // END OF COMMENT
                 return YES;
             }
         }
@@ -3930,35 +4228,36 @@ else
                 }
             }
             
-            /*
-             newDocument = (TSDocument *)returnDocument;
-             // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
-             myTextView = [newDocument textView];
-             myTextWindow = [newDocument textWindow];
-             }
-             mySelectedAttributes = [myTextView selectedTextAttributes];
-             newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
-             [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
-             // FIXME: use temporary attributes instead of abusing the text selection
-             [myTextView setSelectedTextAttributes: newSelectedAttributes];
-             correction = testIndex - theIndex - 10;
-             if ((correction < 0) || (foundRange.location < correction))
-             correctedFoundRange = foundRange;
-             else {
-             correctedFoundRange.location = foundRange.location - correction;
-             correctedFoundRange.length = foundRange.length;
-             }
-             [myTextView setSelectedRange: correctedFoundRange];
-             [myTextView scrollRangeToVisible: correctedFoundRange];
-             [myTextWindow makeKeyAndOrderFront:self];
-             return YES;
-             */
+            // WARNING Next was commented out
+             // newDocument = (TSDocument *)returnDocument;
+             // // newDocument = [[NSDocumentController sharedDocumentController] currentDocument];
+            //  myTextView = [newDocument textView];
+            //  myTextWindow = [newDocument textWindow];
+            //  }
+            //  mySelectedAttributes = [myTextView selectedTextAttributes];
+            //  newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
+             // [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+            //  // FIXME: use temporary attributes instead of abusing the text selection
+            //  [myTextView setSelectedTextAttributes: newSelectedAttributes];
+            //  correction = testIndex - theIndex - 10;
+            //  if ((correction < 0) || (foundRange.location < correction))
+            //  correctedFoundRange = foundRange;
+            //  else {
+            //  correctedFoundRange.location = foundRange.location - correction;
+            //  correctedFoundRange.length = foundRange.length;
+            //  }
+            //  [myTextView setSelectedRange: correctedFoundRange];
+            //  [myTextView scrollRangeToVisible: correctedFoundRange];
+            //  [myTextWindow makeKeyAndOrderFront:self];
+            //  return YES;
+             // END OF WARNING
 		}
 	}
     
 	return NO;
     
 }
+*/
 
 
 // TODO: This method is way too big and should be split up / simplified

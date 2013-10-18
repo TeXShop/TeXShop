@@ -38,12 +38,16 @@
         // NSLog(@"considered");
         if (skip) {
             // NSLog(@"will close");
-            if ([[(TSDocument *)obj pdfWindow] isVisible]) 
-                [[(TSDocument *)obj pdfWindow]  performClose:self];
-            else if ([[(TSDocument *)obj pdfKitWindow]  isVisible]) 
-                [[(TSDocument *)obj pdfKitWindow] performClose: self];
+// Yusuke Terada patch to avoid crash at close
+            id pdfWindow = [(TSDocument *)obj pdfWindow];
+            id pdfKitWindow = [(TSDocument *)obj pdfKitWindow];
+            
+            if (pdfWindow && [pdfWindow respondsToSelector:@selector(isVisible)] && [pdfWindow isVisible] && [pdfWindow respondsToSelector:@selector(performClose:)])[pdfWindow performClose:self];
+            else if (pdfKitWindow && [pdfKitWindow respondsToSelector:@selector(isVisible)] && [pdfKitWindow isVisible] && [pdfKitWindow respondsToSelector:@selector(performClose:)])
+                [pdfKitWindow performClose:self];
+// end of patch
             // [(TSDocument *)obj close];
-           // NSLog(@"called close");
+            // NSLog(@"called close");
         }
     }
 

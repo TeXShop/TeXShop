@@ -26,6 +26,7 @@
 #import "TSTextEditorWindow.h"
 #import "TSDocument.h" // for the definition of isTeX (move this to a separate file!!)
 #import "globals.h"
+#import "TSDocumentController.h"
 
 
 
@@ -122,9 +123,12 @@
 
 - (void)close
 {
-    
-	[[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]]; // this fixes a bug; the application crashed when closing
-	// the last window in multi-page mode; investigation shows that the
+// Yusuke Terada addition to fix crash at close
+    if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && myDocument && [myDocument respondsToSelector:@selector(pdfView)] && [myDocument pdfView])
+        [[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]];
+// end of patch
+    // this fixes a bug; the application crashed when closing
+ 	// the last window in multi-page mode; investigation shows that the
 	// myPDFView "wasScrolled" method was called from the notification center before dealloc, but after other items in the window
 	// were released
 	NSArray *myDocuments = [[NSDocumentController sharedDocumentController] documents];

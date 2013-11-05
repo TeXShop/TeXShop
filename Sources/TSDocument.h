@@ -249,6 +249,7 @@ enum RootCommand
 
 	NSDate              *_pdfLastModDate;
 	NSTimer             *_pdfRefreshTimer;
+    id                  _pdfActivity;
 	BOOL                _pdfRefreshTryAgain;
 
 	BOOL                typesetContinuously;

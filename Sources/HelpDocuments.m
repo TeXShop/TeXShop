@@ -77,6 +77,14 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayNotesonApplescript:sender
+{
+    NSString				*fileName;
+ 	
+	fileName = [[NSBundle mainBundle] pathForResource:@"Notes on Applescript in TeXShop" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
 - (IBAction)displayGettingStartedLatex:sender
 {
 	NSString				*fileName;

@@ -26,6 +26,7 @@
 
 #import "UseMitsu.h"
 #import <Carbon/Carbon.h>
+#import <Foundation/Foundation.h>
 
 #import "TSDocument.h"
 #import <OgreKit/OgreKit.h> // zenitani 1.35 (A)
@@ -104,6 +105,7 @@
 	taskDone = YES;
 	_pdfLastModDate = nil;
 	_pdfRefreshTimer = nil;
+    _pdfActivity = nil;
 	typesetContinuously = NO;
 	_pdfRefreshTryAgain = NO;
 	useTempEngine = NO;
@@ -186,6 +188,9 @@
 		[tagTimer release];
 	}
 
+    if ((_pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
+        [[NSProcessInfo processInfo] endActivity: _pdfActivity];
+    _pdfActivity = nil;
 	[_pdfRefreshTimer invalidate];
 	[_pdfRefreshTimer release];
 	_pdfRefreshTimer = nil;
@@ -866,6 +871,8 @@ if (! skipTextWindow) {
 				if ((_documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
 					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
 																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
+                    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+                        _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
 				}
 			} else {
 				[pdfView setImageType: _documentType];
@@ -878,6 +885,8 @@ if (! skipTextWindow) {
 				if ((_documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
 					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
 																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
+                    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+                       _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
 				}
 			}
             return;
@@ -998,7 +1007,8 @@ if (! skipTextWindow) {
 	if (_externalEditor && ([SUD boolForKey: PdfRefreshKey] == YES)) {
 
 		_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
-
+        if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
+            _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
 	}
 
 	if (_externalEditor && [SUD boolForKey: ExternalEditorTypesetAtStartKey]) {
@@ -1723,7 +1733,10 @@ in other code when an external editor is being used. */
 	[tagTimer invalidate];
 	[tagTimer release];
 	tagTimer = nil;
-
+    
+    if ((_pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
+        [[NSProcessInfo processInfo] endActivity: _pdfActivity];
+    _pdfActivity = nil;
 	[_pdfRefreshTimer invalidate];
 	[_pdfRefreshTimer release];
 	_pdfRefreshTimer = nil;

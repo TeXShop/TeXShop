@@ -15,32 +15,23 @@ Boolean GetMetadataForFile(void* thisInterface,
 
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; //  we need an autorelease pool
-
-    // get the entire contents of the file
-    NSData *data = [NSData dataWithContentsOfFile:(NSString *)pathToFile];
+    
+    NSStringEncoding enc;
+    
+    /*
+     As of 10.5, this method will at least
+     - check com.apple.TextEncoding xattr
+     - try UTF-8
+     */
+    NSString *str = [[NSString alloc] initWithContentsOfFile:(NSString *)pathToFile usedEncoding:&enc error:NULL];
 	
-	if (data == nil) {
-		// if we failed to read the file, abort
-        [pool release]; // everyone out of the pool
-		return FALSE;
-	}
+    // try MacRoman as the fallback, since it's a gapless encoding
+    if(str == nil)
+        str = [[NSString alloc] initWithContentsOfFile:(NSString *)pathToFile encoding:NSMacOSRomanStringEncoding error:NULL];
 
-    // guess the encoding is UTF-8
-    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-
+    // !!! early return on failure to load the file
     if(str == nil){
-        // bad encoding choice
-        str = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
-	}
-	
-    if(str == nil){
-        // bad encoding choice
-        str = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding]; 
-    }
-
-    if(str == nil){
-        // catastrophic failure; run like hell
-        [pool release]; // everyone out of the pool
+        [pool release];
         return FALSE;
     }
 
@@ -51,17 +42,19 @@ Boolean GetMetadataForFile(void* thisInterface,
 	NSScanner *scanner = [[NSScanner alloc] initWithString:str];
 	
 	NSString *tmp = nil;
-	NSString *authorTag = @"\\author{";
-	NSString *titleTag = @"\\title{";
-	NSString *endTag = @"}\n";
-
+    
+#define AUTHOR_TOKEN @"\\author{"
+#define TITLE_TOKEN  @"\\title{"
+#define END_TOKEN    @"}\n"
+    
 	// find author tag
-	if ([scanner scanUpToString:authorTag intoString:nil]) {
-		[scanner scanString:authorTag intoString:nil]; // skip over the start tag we found
-		[scanner scanUpToString:endTag intoString:&tmp]; // then scan up to the end tag in the result
+	if ([scanner scanUpToString:AUTHOR_TOKEN intoString:NULL]) {
+		[scanner scanString:AUTHOR_TOKEN intoString:NULL]; // skip over the start tag we found
+		[scanner scanUpToString:END_TOKEN intoString:&tmp]; // then scan up to the end tag in the result
 		// see if the end tag actually exists, if so store, if not start next scan
-		if ([scanner scanString:endTag intoString:nil])
-			if(tmp) [(NSMutableDictionary *)attributes setObject:[tmp componentsSeparatedByString:@" \\and "] forKey:(NSArray *)kMDItemAuthors];
+		if ([scanner scanString:END_TOKEN intoString:NULL] && tmp)
+			[(NSMutableDictionary *)attributes setObject:[tmp componentsSeparatedByString:@" \\and "]
+                                                  forKey:(NSArray *)kMDItemAuthors];
 	}
 	
 	// restart scan for next tag
@@ -69,12 +62,13 @@ Boolean GetMetadataForFile(void* thisInterface,
 	tmp = nil;
 	
 	// find title tag
-	if ([scanner scanUpToString:titleTag intoString:nil]) {
-		[scanner scanString:titleTag intoString:nil]; // skip over the start tag we found
-		[scanner scanUpToString:endTag intoString:&tmp]; // then scan up to the end tag in the result
+	if ([scanner scanUpToString:TITLE_TOKEN intoString:NULL]) {
+		[scanner scanString:TITLE_TOKEN intoString:NULL]; // skip over the start tag we found
+		[scanner scanUpToString:END_TOKEN intoString:&tmp]; // then scan up to the end tag in the result
 		// see if the end tag actually exists, if so store, if not start next scan
-		if ([scanner scanString:endTag intoString:nil])
-			if(tmp) [(NSMutableDictionary *)attributes setObject:tmp forKey:(NSString *)kMDItemTitle];	
+		if ([scanner scanString:END_TOKEN intoString:NULL] && tmp)
+			[(NSMutableDictionary *)attributes setObject:tmp
+                                                  forKey:(NSString *)kMDItemTitle];
 	}
 	
 	[str release]; // don't forget this next time

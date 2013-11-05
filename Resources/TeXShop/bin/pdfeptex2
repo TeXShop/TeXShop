@@ -1,0 +1,6 @@
+#!/bin/sh
+eptex -synctex=1 "$1" && \
+dvips -Ppdf -z -f "`basename "$1" .tex`.dvi" | \
+convbkmk -g > "`basename "$1" .tex`.ps" && \
+ps2pdf "`basename "$1" .tex`.ps"
+

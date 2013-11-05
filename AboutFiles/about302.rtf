@@ -1,0 +1,36 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 Version 3.02 is renamed TeXShop rather than TeXShop-64. This fixes some\
+Applescript bugs caused by renaming the program.\
+\
+TeXShop's Sparkle upgrade mechanism still upgrades within the 2.** series\
+and within the 3.** series, but not from one series to the other.\
+\
+In previous versions of TeXShop, line numbers did not scroll when the source\
+window scrolled using overlay scrollers. They did scroll with legacy scrollers.\
+If the source window was split, the top portion scrolled with overlay scrollers.\
+\
+Debugging experiments show that this is a Lion bug. We can reproduce it with a small\
+15 line program. \
+\
+TeXShop 3.02 has an ingenious patch by Yusuke Terada to temporarily fix the\
+problem. TeXShop has a hidden preference to turn this on; by default it is on. To\
+turn the fix off\
+\
+	defaults write TeXShop FixLineNumberScroll NO\
+\
+We hope that ultimately Apple will fix the bug. When they do, the patch\
+will be turned off automatically.\
+\
+Automatic tags for docstrip were slightly broken; % \\chapter was not recognized.\
+Now it is.\
+\
+All three "Find" methods: OgreKit, Find Panel, Find Bar work for the\
+source window, and log window. The OgreKit method also works\
+in the console window, but (at least temporarily) the other methods don't.\
+\
+}

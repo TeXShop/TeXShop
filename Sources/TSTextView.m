@@ -145,10 +145,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 #pragma mark =====pdfSync=====
 - (void)doSync:(NSEvent *)theEvent
 {
-	int             line;
+	NSInteger             line;
 	NSString        *text;
 	BOOL            found;
-	unsigned        start, end, irrelevant, stringlength, theIndex;
+	NSUInteger        start, end, irrelevant, stringlength, theIndex;
 	NSRange         myRange;
 	NSPoint         screenPosition;
 	NSString        *theSource;
@@ -234,7 +234,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 #pragma mark =====others=====
 
 // drag & drop support --- added by zenitani, Feb 13, 2003
-- (unsigned int) dragOperationForDraggingInfo : (id <NSDraggingInfo>) sender
+- (NSUInteger) dragOperationForDraggingInfo : (id <NSDraggingInfo>) sender
 {
 	NSPasteboard *pb = [sender draggingPasteboard];
 	NSString *type = [pb availableTypeFromArray:
@@ -245,10 +245,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			NSPoint location = [self convertPoint:[sender draggingLocation] fromView:nil];
 			NSLayoutManager *layoutManager = [self layoutManager];
 			NSTextContainer *textContainer = [self textContainer];
-			float tmp;
-			int glyphIndex = [layoutManager glyphIndexForPoint:location
+			CGFloat tmp;
+			NSInteger glyphIndex = [layoutManager glyphIndexForPoint:location
 				inTextContainer:textContainer fractionOfDistanceThroughGlyph:&tmp];
-			int characterIndex = [layoutManager characterIndexForGlyphAtIndex:glyphIndex];
+			NSInteger characterIndex = [layoutManager characterIndexForGlyphAtIndex:glyphIndex];
 			NSRange selRange = [self selectedRange];
 			// moves cursor's position if necessary
 			if(( selRange.location != characterIndex ) || ( selRange.length != 0 )){
@@ -260,11 +260,11 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	return NSDragOperationNone;
 }
 
-- (unsigned int) draggingEntered : (id <NSDraggingInfo>) sender
+- (NSUInteger) draggingEntered : (id <NSDraggingInfo>) sender
 {
 	return [self dragOperationForDraggingInfo:sender];
 }
-- (unsigned int) draggingUpdated : (id <NSDraggingInfo>) sender
+- (NSUInteger) draggingUpdated : (id <NSDraggingInfo>) sender
 {
 	return [self dragOperationForDraggingInfo:sender];
 }
@@ -287,18 +287,18 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 // zenitani 1.33 begin
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
-	[_window makeFirstResponder:self]; // added by Terada (required in the case of split window)
+    [_window makeFirstResponder:self]; // added by Terada (required in the case of split window)
 	NSPasteboard *pb = [ sender draggingPasteboard ];
 	NSString *type = [ pb availableTypeFromArray:
 		[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
 
 	if ([type isEqualToString:NSFilenamesPboardType]) {
 		NSArray *ar = [pb propertyListForType:NSFilenamesPboardType];
-		unsigned cnt = [ar count];
+		NSUInteger cnt = [ar count];
 		if (cnt == 0)
 			return;
-		NSString *thisFile = [_document fileName];
-		unsigned i;
+		NSString *thisFile = [[_document fileURL] path];
+		NSUInteger i;
 		for (i = 0; i < cnt; i++) {
 			// NSString *filePath = [ar objectAtIndex:i];
 			NSString *tempPath = [ar objectAtIndex:i];
@@ -441,19 +441,19 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	NSDictionary *fileAttr;
 	NSNumber    *fileSize;
 	NSString    *fileContent;
-	unsigned    fileLength;
+	NSUInteger    fileLength;
 	NSMutableString *equationString;
 	NSData      *fileData;
 	NSRange myRange, searchRange;
 
 	// check filesize. (< 1MB)
-	fileAttr = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
+	fileAttr = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:NULL];
 	fileSize = [fileAttr objectForKey:NSFileSize];
-	if(! ( fileSize && [fileSize intValue] < 1024 * 1024 ) ){  return nil; }
+	if(! ( fileSize && [fileSize integerValue] < 1024 * 1024 ) ){  return nil; }
 
 	// Encoding tag is fixed to 0 (Mac OS Roman). At least it doesn't work when it is 5 (DOSJapanese; Shift JIS).
 	fileData = [NSData dataWithContentsOfFile:filePath];
-	fileContent = [[[NSString alloc] initWithData:fileData encoding:NSMacOSRomanStringEncoding] autorelease];
+	fileContent = [[[NSString alloc] initWithData:fileData encoding:NSISOLatin9StringEncoding] autorelease];
 	if( fileContent == nil ) return nil;
 
 	fileLength = [fileContent length];
@@ -499,9 +499,9 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 {
 	NSRange	replacementRange = { 0, 0 };
 	NSString	*textString;
-	int		length, i, j;
+	NSInteger		length, i, j;
 	BOOL	done;
-	int		leftpar, rightpar, nestingLevel, uchar;
+	NSInteger		leftpar, rightpar, nestingLevel, uchar;
 
 	textString = [self string];
 	if (textString == nil)
@@ -512,15 +512,14 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// Extend word selection to cover an initial backslash (TeX command)
 	if (granularity == NSSelectByWord)
 	{
-		
-		// added by Terada (from this line)
+        // added by Terada (from this line)
         BOOL flag;
         unichar c;
         
         
         if(replacementRange.location < [textString length]){
             c = [textString characterAtIndex:replacementRange.location];
-            if((c != '{') && (c != '(') && (c != '[') && (c != '<') ){
+            if((c != '{') && (c != '(') && (c != '[') && (c != '<') && (c != ' ')){  // Koch, July 19, 2013, double click on space selects space
                 do {
                     if (replacementRange.location >= 1){
                         c = [textString characterAtIndex: replacementRange.location-1];
@@ -554,8 +553,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 		
         // added by Terada (until this line)
 		
-		
-		if (replacementRange.location >= 1 && [textString characterAtIndex: replacementRange.location-1] == BACKSLASH)
+        if (replacementRange.location >= 1 && [textString characterAtIndex: replacementRange.location-1] == BACKSLASH)
 		{
 			replacementRange.location--;
 			replacementRange.length++;
@@ -578,8 +576,9 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// If the users double clicks an opening or closing parenthesis / bracket / brace,
 	// then the following code will extend the selection to the matching opposite
 	// parenthesis / bracket / brace.
+     
+    
 	if ((uchar == '}') || (uchar == ')') || (uchar == ']') || (uchar == '>')) { // modified by Terada
-
 		j = i;
 		rightpar = uchar;
 		if (rightpar == '}')
@@ -608,7 +607,6 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 		}
 	}
 	else if ((uchar == '{') || (uchar == '(') || (uchar == '[') ||  (uchar == '<') ) { // modified by Terada
-
 		j = i;
 		leftpar = uchar;
 		if (leftpar == '{')
@@ -646,7 +644,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// AutoCompletion
 	// Code added by Greg Landweber for auto-completions of '^', '_', etc.
 	// First, avoid completing \^, \_, \"
-	if ([aString length] == 1 &&  [_document isDoAutoCompleteEnabled]) {
+	if ([(NSString *)aString length] == 1 &&  [_document isDoAutoCompleteEnabled]) {
 		if ([aString characterAtIndex:0] >= 128 ||
 			[self selectedRange].location == 0 ||
 			[[self string] characterAtIndex:[self selectedRange].location - 1 ] != g_texChar )
@@ -743,14 +741,15 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	[ self registerForDraggedTypes:
 			[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil] ];
 	_document = nil;
-	wasCompleted = NO; // was completed on last keyDown
+    wasCompleted = NO; // was completed on last keyDown
 	latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
 	originalString = nil; // string before completion, starts at replaceLocation
 	currentString = nil; // completed string
 	replaceLocation = NSNotFound; // completion started here
 	completionListLocation = 0; // location to start search in the list
 	textLocation = NSNotFound; // location of insertion point
-	
+
+    
 	return self;
 }
 
@@ -762,13 +761,13 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 
 static inline 
-NSRange SafeBackwardSearchRange(NSRange startRange, unsigned seekLength){
-    unsigned minLoc = ( (startRange.location > seekLength) ? seekLength : startRange.location);
+NSRange SafeBackwardSearchRange(NSRange startRange, NSUInteger seekLength){
+    NSUInteger minLoc = ( (startRange.location > seekLength) ? seekLength : startRange.location);
     return NSMakeRange(startRange.location - minLoc, minLoc);
 }
 
 static inline
-NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned maxLoc ){
+NSRange SafeForwardSearchRange( NSUInteger startLoc, NSUInteger seekLength, NSUInteger maxLoc ){
     seekLength = ( (startLoc + seekLength > maxLoc) ? maxLoc - startLoc : seekLength );
     return NSMakeRange(startLoc, seekLength);
 }
@@ -848,7 +847,7 @@ NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned
     NSRange r = [self selectedRange]; // here's the insertion point
     NSRange commaRange;
     NSRange finalRange;
-    unsigned maxLoc;
+    NSUInteger maxLoc;
     
     NSRange braceRange = [str rangeOfString:@"{" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(r, 100)]; // look for an opening brace
     NSRange closingBraceRange = [str rangeOfString:@"}" options:NSBackwardsSearch | NSLiteralSearch range:SafeBackwardSearchRange(r, 100)];
@@ -926,7 +925,7 @@ NSRange SafeForwardSearchRange( unsigned startLoc, unsigned seekLength, unsigned
 		// could also be an autoref (hyperref)
 		foundRange = [s rangeOfString:@"\\autoref{" options:NSBackwardsSearch range:searchRange];
 	
-	unsigned idx = NSMaxRange(foundRange);
+	NSUInteger idx = NSMaxRange(foundRange);
 	idx = (idx < r.location ? r.location - idx : 0);
 	
 	return NSMakeRange(NSMaxRange(foundRange), idx);
@@ -955,10 +954,10 @@ static BOOL isCompletingTeX = NO;
 }
 
 // this returns -1 instead of NSNotFound for compatibility with the completion controller indexOfSelectedItem parameter
-static inline int
+static inline NSInteger
 BDIndexOfItemInArrayWithPrefix(NSArray *array, NSString *prefix)
 {
-    unsigned idx, count = [array count];
+    NSUInteger idx, count = [array count];
     for(idx = 0; idx < count; idx++){
         if([[array objectAtIndex:idx] hasPrefix:prefix])
             return idx;
@@ -980,6 +979,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     
     if (noErr == err) {
         LSLaunchURLSpec spec;
+#warning 64BIT: Inspect use of sizeof
         memset(&spec, 0, sizeof(LSLaunchURLSpec));
         spec.appURL = appURL;
         spec.itemURLs = (CFArrayRef)fileURLs;
@@ -1059,7 +1059,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 // Should check whether Bibdesk is available first.  
 // Setting initial selection in list to second item doesn't work.  
 // Requires X.3
-- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(int *)idx{
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)idx{
 
 	NSString *s = [self string];
     NSRange refLabelRange = [self refLabelRange];
@@ -1077,7 +1077,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         NSEnumerator *compEnum = [[self completionsWithSearchString:end] objectEnumerator];
         id object;
         while ((object = [compEnum nextObject])) {
-            int nameCount = [[object valueForKey:@"numberOfNames"] intValue];
+            NSInteger nameCount = [[object valueForKey:@"numberOfNames"] integerValue];
             NSString *title = [object valueForKey:@"title"];
             NSString *citeKey = [object valueForKey:@"citeKey"];
             NSString *name = [object valueForKey:@"lastName"];
@@ -1085,6 +1085,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
                 name = @"";
             else if (nameCount > 2)
                 name = [name stringByAppendingString:@" et al"];
+#warning 64BIT: Check formatting arguments
             NSString *compValue = [NSString stringWithFormat:@"%@%@%% %@, %@", citeKey, COMPLETIONSTRING, name, title];
             [returnArray addObject:compValue];
         }
@@ -1114,8 +1115,16 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         *idx = BDIndexOfItemInArrayWithPrefix(returnArray, hint);
     } else {
         // return the spellchecker's guesses
-        returnArray = (NSMutableArray *)[[NSSpellChecker sharedSpellChecker] completionsForPartialWordRange:charRange inString:s language:nil inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
-        *idx = BDIndexOfItemInArrayWithPrefix(returnArray, [s substringWithRange:charRange]);        
+        
+    // Comment by Koch on 6/6/2013 When the above code was written (I think by Adam Maxwell), the Mac probably got its list
+    // of completions from the spell checker. But modern versions of NSTextView are smarter and also find completions from
+        // the surrounding text, putting these at the top of the list. So instead of asking the spell checker, we just
+        // call super to provide the list
+        
+       //  returnArray = (NSMutableArray *)[[NSSpellChecker sharedSpellChecker] completionsForPartialWordRange:charRange inString:s language:nil inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
+        // *idx = BDIndexOfItemInArrayWithPrefix(returnArray, [s substringWithRange:charRange]);
+        
+        return  [super completionsForPartialWordRange: charRange indexOfSelectedItem: idx];
     }
 	return returnArray;
 }
@@ -1125,12 +1134,12 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     NSString *string = [self string];
     
     NSRange selRange = [self selectedRange];
-    unsigned minLoc = ( (selRange.location > 100) ? 100 : selRange.location);
+    NSUInteger minLoc = ( (selRange.location > 100) ? 100 : selRange.location);
     NSRange safeRange = NSMakeRange(selRange.location - minLoc, minLoc);
     
     NSRange braceRange = [string rangeOfString:@"{" options:NSBackwardsSearch | NSLiteralSearch range:safeRange]; // look for an opening brace
     NSRange commaRange = [string rangeOfString:@"," options:NSBackwardsSearch | NSLiteralSearch range:safeRange]; // look for a comma
-    unsigned maxLoc = [[self string] length];
+    NSUInteger maxLoc = [[self string] length];
     
     if(braceRange.location != NSNotFound && braceRange.location < range->location){
         // we found the brace, which must exist if we're here; if not, we won't adjust anything, though
@@ -1142,7 +1151,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 }
 
 // finish off the completion, inserting just the cite key
-- (void)insertCompletion:(NSString *)word forPartialWordRange:(NSRange)charRange movement:(int)movement isFinal:(BOOL)flag {
+- (void)insertCompletion:(NSString *)word forPartialWordRange:(NSRange)charRange movement:(NSInteger)movement isFinal:(BOOL)flag {
     
     if(isCompletingTeX || [self refLabelRange].location != NSNotFound)
         [self fixRange:&charRange];
@@ -1171,8 +1180,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	NSDictionary *dictionary = [theMenu representedObject];
 	NSNumber *selectedLocationObj = [dictionary valueForKey:@"sloc"];
 	NSNumber *replaceLocationObj = [dictionary valueForKey:@"rloc"];
-	int selectedLocation = [selectedLocationObj intValue];
-	int replaceLocation = [replaceLocationObj intValue];
+	NSInteger selectedLocation = [selectedLocationObj integerValue];
+	NSInteger replaceLocation = [replaceLocationObj integerValue];
 	NSString *originalString = [dictionary valueForKey:@"originalString"];
 	NSString *newString = [theMenu title];
 	NSRange replaceRange;
@@ -1190,11 +1199,11 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	//		length:[newString length]
 	//		key:NSLocalizedString(@"Completion", @"Completion")];
 	// clean up
-	int from, to;
+	NSInteger from, to;
 	NSString* currentString;
 	NSRange insRange;
 	bool wasCompleted;
-	static unsigned textLocation = NSNotFound; // location of insertion point
+	static NSUInteger textLocation = NSNotFound; // location of insertion point
 	if (_document) {
 		from =replaceLocation;
 		to = from + [newString length];
@@ -1261,18 +1270,18 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// static BOOL latexSpecial = NO; // was last time LaTeX Special?  \begin{...}
 	// static NSString *originalString = nil; // string before completion, starts at replaceLocation
 	// static NSString *currentString = nil; // completed string
-	// static unsigned replaceLocation = NSNotFound; // completion started here
-	// static unsigned int completionListLocation = 0; // location to start search in the list
-	// static unsigned textLocation = NSNotFound; // location of insertion point
+	// static NSUInteger replaceLocation = NSNotFound; // completion started here
+	// static NSUInteger completionListLocation = 0; // location to start search in the list
+	// static NSUInteger textLocation = NSNotFound; // location of insertion point
 	BOOL foundCandidate;
 	NSString *textString, *foundString, *latexString = 0;
 	NSMutableString *indentString = [NSMutableString stringWithString:@""]; // Alvise Trevisan; preserve tabs code
 	NSMutableString *newString;
-	unsigned selectedLocation, currentLength, from, to;
+	NSUInteger selectedLocation, currentLength, from, to;
 	NSRange foundRange, searchRange, spaceRange, insRange, replaceRange;
 	// Start Changed by (HS) - define ins2Range, selectlength
 	NSRange ins2Range;
-	unsigned selectlength = 0;
+	NSUInteger selectlength = 0;
 	NSMutableString *indentRETString = [NSMutableString stringWithString:@"\n"]; // **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
 	// End Changed by (HS) - define ins2Range, selectlength, 
 	NSCharacterSet *charSet;
@@ -1307,7 +1316,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixed by (HS)
+						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1320,9 +1329,9 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 							NSMakeRange(foundRange.location, selectedLocation-foundRange.location)];
 				
 				// Alvise Trevisan; preserve tabs code (begin addition)
-				int indentSpace;
-				int indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
-				int n;
+				NSInteger indentSpace;
+				NSInteger indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
+				NSInteger n;
 				
 				for (n = 0; n < indentTab; ++ n)
 					[indentString appendString:@"\t"];
@@ -1386,7 +1395,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // fixed by (HS)
+						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -1453,9 +1462,9 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					newString = [NSMutableString stringWithString: foundString];
 					// replace #RET# by linefeed -- this could be tab -> \n
 					// **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
-					int indentSpace;
-					int indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
-					int n;
+					NSInteger indentSpace;
+					NSInteger indentTab = [_document textViewCountTabs:self andSpaces: &indentSpace];
+					NSInteger n;
 					for (n = 0; n < indentTab; ++ n)
 					    [indentRETString appendString:@"\t"];
 					for (n = 0; n < indentSpace; ++ n)
@@ -1608,7 +1617,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; //should be global? -- fixxed by (HS)
+					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1674,7 +1683,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;:{}()%C", g_texChar]]; // -- fixed by (HS)
+					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -1835,8 +1844,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	backupPath = [backupPath stringByAppendingString:@"~"];
 	backupPath = [backupPath stringByAppendingPathExtension:@"txt"];
 	NS_DURING
-		[[NSFileManager defaultManager] removeFileAtPath:backupPath handler:nil];
-		[[NSFileManager defaultManager] copyPath:completionPath toPath:backupPath handler:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:backupPath error:NULL];
+    [[NSFileManager defaultManager] copyItemAtPath:completionPath toPath:backupPath error:NULL];
 	NS_HANDLER
 	NS_ENDHANDLER
 	// save the new list to file

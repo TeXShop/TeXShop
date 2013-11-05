@@ -1,0 +1,51 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 The changes in 3.17 are as follows:\
+\
+	1) The spotlight indexer has not been distributed with the 3.** series\
+	of TeXShop. Now it is again. This indexer was written by Norm Gail\
+	with additions by Max Horn. It has been revised by Adam Maxwell.\
+\
+	2) A new hidden preference item was added\
+\
+	defaults write TeXShop ScreenFontForLogAndConsole 
+\f1\fs22 -bool 
+\f0\fs24 YES\
+\
+	This item is dangerous and I recommend that users not set it;\
+	the default value is NO. The item is provided for users who\
+	use Monoco as a source font and want it displayed without\
+	antialiasing. This can be accomplished by changing a hidden\
+	preference, as described in earlier versions of the change file:\
+\
+	defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES\
+\
+	But this change does not affect Monoco in the log window or console.\
+	The new hidden preference changes these as well.\
+\
+	3) Choosing the "Source <=> Preview" menu item in External \
+	Editor Mode caused a crash. This is fixed.\
+\
+	4) Reach into ~/Library/TeXShop/Engines/Inactive/latexmk and update\
+	the active pdflatexmk.engine and sjepdflatexmk.engine\
+\
+	5) A fix in version 3.16 replaced a deprecated method in the\
+	"Search sync" routine with a modern equivalent. Unfortunately, this\
+	fix had a bug which could crash TeXShop.\
+\
+	Most users now use the SyncTeX method to sync. But when this method\
+	fails to find a reasonable sync, TeXShop reverts to the old Search Sync method, \
+	and thus could crash. The old Search sync method is now fixed.\
+\
+	But if, by chance, there are still problems in it, a hidden TeXShop preference \
+	described in the TeXShop Help Panel turns off reverting to Search sync when \
+	Synctex fails.\
+\
+	\
+	\
+\
+}

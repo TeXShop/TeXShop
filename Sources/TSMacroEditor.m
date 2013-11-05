@@ -98,7 +98,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		// set up menu items
 		NSMenu *macroMenu = [[[NSApp mainMenu] itemWithTitle:
 					NSLocalizedString(@"Macros", @"Macros")] submenu];
-		id <NSMenuItem> item = [macroMenu itemWithTitle:
+		id item = [macroMenu itemWithTitle:
 						NSLocalizedString(@"Open Macro Editor...", @"Open Macro Editor...")];
 		if (item)
 		{
@@ -197,8 +197,8 @@ static TSFilterMode savedFilter = kNoFilterMode;
 					NSString *backupPath = [pathStr stringByDeletingPathExtension];
 					backupPath = [backupPath stringByAppendingString:@"~"];
 					backupPath = [backupPath stringByAppendingPathExtension:@"plist"];
-					[[NSFileManager defaultManager] removeFileAtPath:backupPath handler:nil];
-					[[NSFileManager defaultManager] copyPath:pathStr toPath:backupPath handler:nil];
+					[[NSFileManager defaultManager] removeItemAtPath:backupPath error:NULL];
+					[[NSFileManager defaultManager] copyItemAtPath:pathStr toPath:backupPath error:NULL];
 				}
 				NS_HANDLER
 					NS_ENDHANDLER
@@ -331,7 +331,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		BOOL hasKeyEquiv = ([KeyEquiv length] > 0);
 		[keyField setStringValue: (hasKeyEquiv)?(KeyEquiv):@""];
 		[keyField setEditable: YES];
-		unsigned int modifier = getKeyModifierMaskFromString([newItem key]);
+		NSUInteger modifier = getKeyModifierMaskFromString([newItem key]);
 		[shiftCheckBox setState: (hasKeyEquiv && (modifier & NSShiftKeyMask))?NSOnState:NSOffState];
 		[shiftCheckBox setEnabled: YES];
 		[optionCheckBox setState: (hasKeyEquiv && (modifier & NSAlternateKeyMask))?NSOnState:NSOffState];
@@ -385,7 +385,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 }
 
 // handler for "Save Macros?" sheet
-- (void) saveMacrosSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+- (void) saveMacrosSheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
 	switch (returnCode) {
 		case NSAlertDefaultReturn:
@@ -412,7 +412,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	// restore menu item
 	NSMenu *macroMenu = [[[NSApp mainMenu] itemWithTitle:
 				NSLocalizedString(@"Macros", @"Macros")] submenu];
-	id <NSMenuItem> item = [macroMenu itemWithTitle:
+	id item = [macroMenu itemWithTitle:
 					NSLocalizedString(@"Close Macro Editor", @"Close Macro Editor")];
 	if (item) {
 		[item setTitle: NSLocalizedString(@"Open Macro Editor...", @"Open Macro Editor...")];
@@ -545,29 +545,52 @@ static TSFilterMode savedFilter = kNoFilterMode;
 - (void)saveSelection: (id)sender
 {
 	NSSavePanel *aPanel = [NSSavePanel savePanel];
-	[aPanel setRequiredFileType: @"plist"];
-
-	[aPanel beginSheetForDirectory: nil //[MACRO_DATA_PATH stringByDeletingLastPathComponent]
-				file: @"My macros" modalForWindow:window modalDelegate:self
-				didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    NSArray *types = [NSArray arrayWithObject:@"plist"];
+	[aPanel setAllowedFileTypes:types];
+    [aPanel setNameFieldStringValue:@"My macros"];
+    
+ //	[aPanel beginSheetForDirectory: nil //[MACRO_DATA_PATH stringByDeletingLastPathComponent]
+    //          file: @"My macros" modalForWindow:window modalDelegate:self
+	//			didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    [aPanel beginSheetModalForWindow:window
+        completionHandler: ^ (NSInteger result ) {
+        if (result == NSFileHandlingPanelOKButton) {
+            NS_DURING
+            // NSString *fileName = [sheet fileName];
+            NSURL *fileURL = [aPanel URL];
+            NSString *fileName = [fileURL path];
+            if (fileName) {
+                NSArray *selectionArray = [TSMacroTreeNode minimumNodeCoverFromNodesInArray:
+                                           [outlineView allSelectedItems]];
+                [self saveNodes: selectionArray toFile: fileName];
+            }
+            NS_HANDLER
+			NSRunAlertPanel(@"Error", @"failed to save macros to the file.", nil, nil, nil);
+            NS_ENDHANDLER
+       }
+            }];
 }
 
 // handler for savePanel for macros saving
-- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
+/*
+- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo
 {
 	if (returnCode == NSOKButton) {
 		NS_DURING
-		NSString *filePath = [sheet filename];
-		if (filePath) {
+		// NSString *fileName = [sheet fileName];
+        NSURL *fileURL = [sheet URL];
+        NSString *fileName = [fileURL path];
+		if (fileName) {
 			NSArray *selectionArray = [TSMacroTreeNode minimumNodeCoverFromNodesInArray:
 										[outlineView allSelectedItems]];
-			[self saveNodes: selectionArray toFile: filePath];
+			[self saveNodes: selectionArray toFile: fileName];
 		}
 		NS_HANDLER
 			NSRunAlertPanel(@"Error", @"failed to save macros to the file.", nil, nil, nil);
 		NS_ENDHANDLER
 	}
 }
+*/
 
 // action for "Add macros from file"
 - (void)readDictionaryToMacroEditor: (id)sender
@@ -577,14 +600,44 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	[aPanel setCanChooseDirectories: NO];
 	[aPanel setAllowsMultipleSelection: NO];
 	[aPanel setResolvesAliases: YES];
+    // [aPanel setDirectoryUrl: nil];
+    // [aPanel setAllowedFileTypes: nil];
 
-	[aPanel beginSheetForDirectory: nil file: nil types: nil modalForWindow: window
-		modalDelegate: self didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
-		contextInfo:nil];
+// 	[aPanel beginSheetForDirectory: nil file: nil types: nil modalForWindow: window
+//		modalDelegate: self didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
+//		contextInfo:nil];
+    
+    [aPanel beginSheetModalForWindow:window
+                   completionHandler: ^ (NSInteger result ) {
+                       if (result == NSFileHandlingPanelOKButton) {
+                           NSDictionary *newDict = nil;
+                           NSURL *myURL = [aPanel URL];
+                           NSString *fileName = [myURL path];
+                           NS_DURING
+                           NSData *myData = [NSData dataWithContentsOfFile: fileName];
+                           NSString *aString = [[[NSString alloc] initWithData:myData encoding:
+                                                     NSUTF8StringEncoding] autorelease];
+                           if (aString)
+                                   newDict = (NSDictionary *)[aString propertyList];
+                           if (newDict) {
+                                   NSArray *newNodeArray = [TSMacroTreeNode nodeArrayFromPropertyList: newDict];
+                                   [outlineController addNewDataArrayToSelection: newNodeArray];
+                               }
+                           NS_HANDLER
+                           newDict = nil;
+                           NS_ENDHANDLER
+                           if (newDict == nil)
+                                   NSRunAlertPanel(@"Error", @"failed to read the file as a dictionary", nil, nil, nil);
+                        }
+                   }];
 }
 
+    
+
+
 // handler for openPanel for loading macros
-- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
+/*
+- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(NSInteger)returnCode contextInfo:(void  *)contextInfo
 {
 	NSDictionary *newDict = nil;
 	if (returnCode == NSOKButton) {
@@ -606,6 +659,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 			NSRunAlertPanel(@"Error", @"failed to read the file as a dictionary", nil, nil, nil);
 	}
 }
+ */
 
 
 

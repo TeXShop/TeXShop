@@ -1,3 +1,4 @@
+
  \documentclass[11pt, oneside]{amsart}
 \usepackage{multicol}
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
@@ -8,10 +9,14 @@
 \usepackage{amssymb}
 \usepackage{epstopdf}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue]{hyperref}
+            
 \usepackage{url}
 
 
-\title{About TeXShop 2.47}
+\title{About TeXShop 3.26}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -31,9 +36,101 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 
-In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version. 
+In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
 
-\section{Changes in 2.47}
+\section{Changes in 3.26}
+
+Four Applescript macros have problems with recent versions of OS X:  Open Quickly, Insert Reference, New Array, and New Tabular. These  were fixed by
+Michael Sharpe. If you use 
+default Applescript Macros and haven't edited them or added your own Macros, you can obtain
+the new versions by quitting TeXshop, going to $\sim$/Library/TeXShop and moving the Macros
+folder to the desktop, and then restarting TeXShop. A new version of the Macros file will be
+created. If all is well, the old Macros folder can be thrown away.
+
+Otherwise, find the files InsertReference-OpenQuickly.plist and NewTabular-NewArray.plist
+in $\sim$/Library/TeXShop/New. In the Macros menu select ``Open Macro Editor''. Then
+select ``Add macros from file...'' and add the macros from both of these files. The
+new macros will appear at the bottom of the Macro List. Use the Macro Editor to
+replace the old contents of the four macros with the new contents using Copy and Paste.
+Finally throw the new copies at the end of the Macro list away.
+
+ 
+\section{Changes in 3.25} 
+
+The TeXShop web site is \url{http://pages.uoregon.edu/koch/texshop/texshop.html}, but used to be \url{http://www.uoregon.edu/~koch/texshop/texshop.html}. This is changed throughout TeXShop. Users need to edit one of the TeXShop macros to make the change there. Open the Macros editor and edit the 
+``Applescript/TeXShop home page'' macro to point to the modern link.
+ 
+\section{Changes in 3.24}
+
+No user actions are required for this version. Just one bug is fixed. The Sparkle
+upgrade mechanism failed on Mavericks for many version up to and including 3.23. This
+is fixed.
+
+\section{Changes in 3.22 and 3.23}
+
+TeXShop 3.23 fixed one bug. In 3.22, if the user configured TeXShop to use an external editor
+and then set the hidden preference ExternalEditorTypesetAtStart to YES,  the program crashed when opening a file. This is fixed in 3.23.
+
+No user actions are required for version 3.22 unless you use the Sage engine. If you use Sage, go to $\sim$/Library/TeXShop/Engines/Inactive/Sage, read ``About Sage'', make the required changes, and switch to the new Engine file.
+
+\section{Changes in 3.21}
+
+Versions 3.19 and 3.20 were never released. No user actions are required for version 3.21.
+
+Users with Portables connected to large monitors may want to make one change. For a  long time we have recommended that users new to
+TeXShop  arrange the location and size of the Source and Preview windows on the desktop as desired. Most users prefer a side by side configuration with the Source window on the left and the Preview window on the right. Then activate the source
+window and in the Source menu select ``Save Source Position''. Similarly activate the preview window and in the Preview menu select ``Save Preview Position''. From that point on, all
+TeXShop source and preview windows will appear in the selected positions.
+
+If you have a portable connected to a large monitor, this configuration works as long as you are attached to the monitor. But when you are traveling, the windows will appear on the screen of your portable, and probably not in ideal positions. To fix this, arrange a source and preview window on your portable screen; the portable can be attached to the large monitor at the time. Then activate the source window and in the Source menu select ``Save Source Position for Portable''. Activate the preview window and in the Preview menu select ``Save Preview Position for Portable''. After this step, windows will appear in the desired position when you are connected to the large monitor at home or office, and windows will appear in the desired position on the portable screen when you are traveling.
+
+
+\section{Changes in 3.18}
+
+User action is only required if SyncTeX is incorrectly configured. Users should
+check that
+\begin{itemize}
+\item in TeXShop Preferences under the Typesetting tab, the ``Sync Method'' is set to SyncTeX;
+\item in TeXShop Preferences under the Engine tab, the two configuration lines for ``pdfTeX''
+each contain the following flags
+\begin{verbatim}
+     --file-line-error --syncTeX=1
+\end{verbatim}
+\item in TeXShop Preferences on the same page, the two ``TeX + dvips + distiller'' lines
+contain the following instruction
+\begin{verbatim}
+     --extratexopts "-file-line-error -synctex=1"
+\end{verbatim}
+	The easy way to do this is to push the four ``Default'' buttons beside these four entries.
+\end{itemize}
+
+\section{Changes in 3.17}
+
+The latexmk engines have been modified. By default, $\sim$/Library/TeXShop/Engines contains two such engines, pdflatexmk.engine and sepdflatexmk.engine. Drag the new versions of these engines,
+which are in $\sim$/Library/TeXShop/Engines/Inactive/Latexmk, into this location.
+
+
+\section{Changes in 3.16}
+
+No changes require user action.
+
+\section{Changes in 3.15}
+
+No changes require user action {\em unless} you use Monoco as an editing font. Apple has optimized the
+text and font rendering in Mountain Lion for the Retina display. On a non-Retina display running on Mountain Lion, some fonts in small sizes will appear slightly blurry. To switch back to the old behavior, issue the following
+command in Terminal:
+\begin{verbatim}
+defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+\end{verbatim}
+
+\section{Changes in 3.12 - 3.14}
+
+Versions 3.12 and 3.13 were never released. If you have already made changes for 3.11,
+the only change required for 3.14 is to move the files {\em nv-metafun.engine} and {\em nv-metapost.engine} from $\sim$/Library/TeXShop/New/Engines to
+$\sim$/Library/TeXShop/Engines, replacing old versions of these engines. The new metapost engines are by Nicola Vitacolonna. Documentation
+about them is in $\sim$/Library/TeXShop/Engines/Inactive/MetaPostEngines-1.4.4.
+
+\section{Changes in 3.11}
 
 The ConTeXt engines have been renamed. This is the only change. I promised to make this change a year ago, but checking MacTeX-2012 shortly
 before release, I found that the promise was ignored. The old and new names are
@@ -44,26 +141,21 @@ before release, I found that the promise was ignored. The old and new names are
 \end{itemize}
 The new names make explicit the TeX program which will run the ConTeXt macros for that engine.
 
-The new files were placed in  ~/Library/TeXShop/Engines/Inactive folder. To complete the change,
-remove the old files from ~/Library/TeXShop/Engines/Inactive/ConTeXt, and rename
- ConTeXt-MKiv.engine to ConTeXt (LuaTeX).engine  in ~/Library/TeXShop/Engines.
+The new files were placed in  $\sim$/Library/TeXShop/Engines/Inactive folder. To complete the change,
+remove the old files from $\sim$/Library/TeXShop/Engines/Inactive/ConTeXt, and rename
+ ConTeXt-MKiv.engine to ConTeXt (LuaTeX).engine  in $\sim$/Library/TeXShop/Engines.
 
+\section{Changes in 3.10}
 
-\section {Changes in 2.46}
-
-Version 2.45 introduced a bug;  users had to save the source file before typesetting. This version fixes that inadvertent bug and returns to the standard
-TeXShop behavior. 
-
-\section{Changes in 2.45 Related to Shell Escape}
-It is very important that users make the two changes listed first. You may want to read this entire section before making the changes, but here are instructions when you are ready:
+Two important changes in TeXShop 3.10 require user intervention. You may want to read this entire section before making the changes, but here are instructions when you are ready:
 \begin{itemize}
 \item Go to TeXShop Preferences and select the Engine tab. Press both ``Default'' buttons in the pdfTeX section of the pane in the middle of the left side.
-\item Go to the Library folder in your home directory.   In this Library folder, there is a TeXShop folder containing several subfolders. Inside TeXShop/New/Templates is a template named
+\item Go to the Library folder in your home directory. This folder is hidden in Lion, but you can get to it from the Finder's ``Go'' menu by pressing the option key while the menu is selected.  In this Library folder, there is a TeXShop folder containing several subfolders. Inside TeXShop/New/Templates is a template named
 ``LatexTemplate.tex''. Move this to TeXShop/Templates, overwriting the old template with the same name. If you edited this old template, you'll need to merge
 your changes with the changes from the new version.
 \end{itemize}
 
-The key feature of TeXShop 2.45 (and TeXShop 3.10)  is removal of the ``--shell-escape'' flag for the pdftex and pdflatex engines. This flag gives \TeX\  permission to
+The key feature of TeXShop 3.10 is removal of the ``--shell-escape'' flag for the pdftex and pdflatex engines. This flag gives \TeX\  permission to
 call other programs during typesetting. Unfortunately, the flag allows {\em any} shell program to be run, including for instance a short command which erases everything in your home folder. So when the flag is set, you could download a \TeX\ file from a malicious web site, typeset it, and lose all of your files.
 
 Pushing the two ``Default'' buttons in Preferences removes the flags.
@@ -79,7 +171,7 @@ shell escape list because in the Windows world there is a program with this name
 Recently, we discovered that while the tex4ht {\em script} calls convert, the convert program is not called by the pdflatex portion of the script. So the flag is not needed for
 tex4ht. 
 
-TeXShop 2.45 contains a new command in the File menu called ``Convert tiff.'' This item is active when a TeX source window is active. Selecting the item brings up a  dialog listing all files and folders in the
+TeXShop 3.10 contains a new command in the File menu called ``Convert tiff.'' This item is active when a TeX source window is active. Selecting the item brings up a  dialog listing all files and folders in the
 directory containing the source file. Only tiff files are active in this dialog; others are grayed out. Multiple items can be chosen in the dialog. Pushing the  ``Convert''
 button at the bottom of the dialog will create png versions of all selected tif or tiff illustrations. 
 
@@ -90,32 +182,20 @@ The new Latex Template removes the inclusion of epstopdf because it is no longer
 
 
 
-
-
-\section{Other Changes in 2.44 and 2.45}
-
-The purpose of TeXShop 2.45 is to bring to the Series 2 versions of TeXShop most features of the
-Series 3 versions of TeXShop that do not require Lion. Version 2.44 was not widely distributed.
-
-Currently, there are two primary forms of TeXShop, the series 2.** releases  for Tiger, Leopard, and Snow Leopard and the series 3.** releases for Lion
-and Mountain Lion. The Sparkle update
-system will only upgrade TeXShop 2.** to later 2.** releases and will only upgrade TeXShop 3.** to later 3.** releases. It will never upgrade, say, TeXShop 2.45 to
-TeXShop 3.10.
-
-We list here changes which may require user intervention.
-
-The pdflatexmk engine is now active by default for new users. Older users can activate it by finding ``pdflatexmk.engine'' in $\sim$/Library/TeXShop/Engines/Inactive/Latexmk
-and dragging it to $\sim$/Library/TeXShop/Engines.
-
-
-Previously TeXShop provided two ways to create projects governed by a master root file with several include files. The earlier method used a menu command {\em Create Project Root}. The later more powerful method involves adding ''\% !TEX root = ...'' to the
+There is one final change in TeXShop 3.10. For many years, TeXShop has provided two different ways to create projects governed by a master root file with several include files. The earlier method used a menu command {\em Create Project Root}. The later more powerful method involves adding ''\% !TEX root = ...'' to the
 first few lines of included files. This is the preferred method.
 
 We have  removed the menu item {\em Create Project Root}. Old projects using this mechanism will still typeset correctly, but new projects should use the  
 ''\% !TEX root = ...'' syntax instead.
 
+\section{Changes in 3.07, 3.08, and 3.09}
 
-The folder $\sim$/Library/TeXShop/CommandCompletion  has a new subfolder named GratzerMathCC. This folder contains
+The pdflatexmk engine is now active by default for new users. Older users can activate it by finding ``pdflatexmk.engine'' in $\sim$/Library/TeXShop/Engines/Inactive/Latexmk
+and drag it to $\sim$/Library/TeXShop/Engines. No other 3.07, 3.08, or 3.09 changes require user intervention.
+
+\section{Changes in 3.05 and 3.06}
+
+In 3.05, the folder $\sim$/Library/TeXShop/CommandCompletion  has a new subfolder named GratzerMathCC. This folder contains
 an optional CommandCompletion.txt file with additional completions by George Gratzer, useful when typesetting mathematics.
 It also contains documentation by Gratzer and Herbert Shultz about these extensions.
 
@@ -124,19 +204,35 @@ To activate the new completions, move CommandCompletion.txt from the new folder 
 folder, replacing the similarly named file there now.
 
 
+No additional changes were made in 3.06.
 
+\section{Changes in 3.00 - 3.04}
+
+Version 3 requires Lion. It is the start of a new sequence of TeXShop Lion releases. 
+
+For some time to come, the old 2.** series of TeXShop releases for Tiger, Leopard, and Snow Leopard and the new 3.** releases for Lion
+will be developed in parallel. The Sparkle update
+system will only upgrade TeXShop 2.** to later 2.** releases and will only upgrade TeXShop 3.** to later 3.** releases. It will never upgrade, say, TeXShop 2.43 to
+TeXShop 3.02.
+
+Versions 3.00 and 3.01 were renamed TeXShop-64. This broke several applescript macros, and turns out to be unnecessary for separating the 2.** and 3.** releases in Sparkle. So version 3.02 has the old TeXShop name. 
+
+For a detailed list of Lion features, see the Lion section of the TeXShop Help Panel, available under the TeXShop Help menu. The Internationalized versions of
+this Panel are often out of date. Changes are also described at \url{http://pages.uoregon.edu/koch/texshop} under the Lion tab.
 
 \section{Changes in 2.42 and 2.43}
 There are revised engines in $\sim$/Library/TeXShop/Engines/Inactive for ConTeXt running on top of LuaTeX, XeTeX, and pdfTeX.
 In particular, the ConTeXt (LuaTeX) engine is now a default engine, replacing ConTeXt-MKIV in previous versions of TeXShop. Drag this file
 from $\sim$/Library/TeXShop/Engines/Inactive/ConTeXt to $\sim$/Library/TeXShop/Engines.
 
+
+
 \section{Changes in 2.41}
 
-The only change is an updated Command Completion.pdf document and various French translations of the documents. Find these documents in 
+The only change is an updated Command Completion.pdf document. Find this document in
 \begin{quotation}
  $\sim$/Library/TeXShop/New/CommandCompletion
- \end{quotation}  and move them to  \begin{quotation}$\sim$/Library/TeXShop/CommandCompletion\end{quotation}
+ \end{quotation}  and move it to  \begin{quotation}$\sim$/Library/TeXShop/CommandCompletion\end{quotation}
 
 \section{Changes in 2.40}
 

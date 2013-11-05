@@ -36,9 +36,8 @@
 {
 	NSString			*title, *title1, *path, *comment;
 	BOOL				isDirectory;
-	int					i;
+	NSInteger					i;
 	NSStringEncoding	enc;
-	BOOL				result;
 	
 	if (sourceData == nil) {
 		
@@ -81,14 +80,14 @@
 	[tableView reloadData];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return [sourceData count];
 }
 
 - (id)tableView:(NSTableView *)tableView
 objectValueForTableColumn:(NSTableColumn *)tableColumn
-			row:(int)row
+			row:(NSInteger)row
 {
 	if ([[tableColumn identifier] isEqualToString:@"Description"])
 		return [commentData objectAtIndex: row];
@@ -102,13 +101,13 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 {
 	NSDocumentController	*myController;
 	NSURL					*myURL;
-	int						index;
+	NSInteger						index1;
 	
-	index = [tableView selectedRow];
+	index1 = [tableView selectedRow];
 	[stationeryWindow close];
-	if (index >= 0) {
+	if (index1 >= 0) {
 		NSString *basePath = [ StationeryPath stringByStandardizingPath ];
-		NSString *fullPath = [basePath stringByAppendingPathComponent: [fullSourceData objectAtIndex: index]];
+		NSString *fullPath = [basePath stringByAppendingPathComponent: [fullSourceData objectAtIndex: index1]];
 		// NSLog([sourceData objectAtIndex:index]);
 		// NSLog(fullPath);
 		myURL = [NSURL fileURLWithPath: fullPath];

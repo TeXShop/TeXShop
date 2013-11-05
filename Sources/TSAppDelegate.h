@@ -38,7 +38,7 @@
 - (IBAction)displayMatrixPanel:(id)sender; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
 - (IBAction)openForPreview:(id)sender;
 - (IBAction)displayLatexPanel:(id)sender;
-- (IBAction)displayMatrixPanel:(id)sender;
+// - (IBAction)displayMatrixPanel:(id)sender;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (IBAction)nextTeXWindow:(id)sender; // added by Taylor
@@ -58,11 +58,5 @@
 - (IBAction)checkForUpdate:(id)sender; // Update checker
 - (void)configureMovieMenu;
 - (IBAction)doMovie:(id)sender;
-- (IBAction)newFromStationery: (id)sender;
-
-- (int)numberOfRowsInTableView:(NSTableView *)tableView;
-- (id)tableView:(NSTableView *)tableView
-objectValueForTableColumn:(NSTableColumn *)tableColumn
-			row:(int)row;
-
+// - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 @end

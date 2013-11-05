@@ -2,19 +2,20 @@
 // Created by Terada, Apr 2011
 
 #import "TSListEditorTableView.h"
+#import "TSAutoCompletionListEditor.h"
 
 @implementation NSIndexSet (Extension)
--(uint)countOfIndexesInRange:(NSRange)range
+-(NSUInteger)countOfIndexesInRange:(NSRange)range
 {
-	uint start, end, count;
+	NSUInteger start, end, count;
 	
-	if ((start == 0) && (range.length == 0)) return 0;	
+	if ((range.location == 0) && (range.length == 0)) return 0;	
 	
 	start	= range.location;
 	end		= start + range.length;
 	count	= 0;
 	
-	uint currentIndex = [self indexGreaterThanOrEqualToIndex:start];
+	NSUInteger currentIndex = [self indexGreaterThanOrEqualToIndex:start];
 	
 	while ((currentIndex != NSNotFound) && (currentIndex < end)){
 		count++;
@@ -88,7 +89,7 @@
 {
     if(operation == NSDragOperationNone && draggingOut)
     {
-		[[self dataSource] removeDraggedOutRows];
+		[(TSAutoCompletionListEditor *)[self dataSource] removeDraggedOutRows];
         NSShowAnimationEffect(NSAnimationEffectPoof,
                               NSMakePoint(aPoint.x + offset.x, aPoint.y + offset.y),
 							  NSZeroSize,
@@ -118,10 +119,10 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	unsigned int keyCode = [theEvent keyCode];
+	NSUInteger keyCode = [theEvent keyCode];
 	NSIndexSet *selectedRows = [self selectedRowIndexes];
 	if (keyCode == 51 && [selectedRows count] > 0) { // delete key
-		[[self dataSource] removeObjectsAtIndexes:selectedRows]; 
+		[(TSAutoCompletionListEditor *)[self dataSource] removeObjectsAtIndexes:selectedRows]; 
 		[self selectRowIndexes:nil byExtendingSelection:NO];
 	}else {
 		[super keyDown:theEvent];

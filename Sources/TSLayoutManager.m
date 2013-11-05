@@ -92,7 +92,7 @@
 	invisibleCharactersShowing = enabled;
 }
 
-- (NSPoint)pointToDrawGlyphAtIndex:(unsigned int)inGlyphIndex adjust:(NSSize)inSize
+- (NSPoint)pointToDrawGlyphAtIndex:(NSUInteger)inGlyphIndex adjust:(NSSize)inSize
 {
     NSPoint outPoint = [self locationForGlyphAtIndex:inGlyphIndex];
     NSRect theGlyphRect = [self lineFragmentRectForGlyphAtIndex:inGlyphIndex effectiveRange:NULL];
@@ -106,18 +106,18 @@
 - (void)drawGlyphsForGlyphRange:(NSRange)inGlyphRange atPoint:(NSPoint)inContainerOrigin
 {
     NSString *theCompleteStr = [[self textStorage] string];
-    unsigned int theLengthToRedraw = NSMaxRange(inGlyphRange);
-    unsigned int theGlyphIndex, theCharIndex = 0;
+    NSUInteger theLengthToRedraw = NSMaxRange(inGlyphRange);
+    NSUInteger theGlyphIndex, theCharIndex = 0;
     unichar theCharacter;
     NSPoint thePointToDraw;
 	
-	float theInsetWidth = 0.0;
-	float theInsetHeight = 4.0;
+	CGFloat theInsetWidth = 0.0;
+	CGFloat theInsetHeight = 4.0;
 	NSSize theSize = NSMakeSize(theInsetWidth, theInsetHeight);
 	
     NSFont *theFont = [[self textStorage] font];
 	
-	float r, g, b;
+	CGFloat r, g, b;
 	r = [SUD floatForKey: invisibleCharRedKey];
 	g = [SUD floatForKey: invisibleCharGreenKey];
 	b = [SUD floatForKey: invisibleCharBlueKey];

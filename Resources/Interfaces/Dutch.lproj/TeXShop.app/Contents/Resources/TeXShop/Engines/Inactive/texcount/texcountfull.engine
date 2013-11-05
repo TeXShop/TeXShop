@@ -1,0 +1,18 @@
+#!/bin/tcsh
+
+# engine by Daniel Becker
+# daniel.becker@uni-rostock.de
+#
+# This engine calls texcount. See /usr/local/texlive/2008/texmf-dist/doc/support/texcount
+# for documentation
+
+set path= ($path /usr/texbin /usr/local/bin)
+set filename = "$1"
+set htmlname = "${filename:r}-texcount.html"
+set htmlname2 = "${filename:r}-texcount-short.html"
+
+# all details
+# run texcount and produce an html-file with the result
+texcount -html -inc -v "$1" > "$htmlname"
+#open the html-file
+open "$htmlname"

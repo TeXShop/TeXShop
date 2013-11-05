@@ -37,7 +37,7 @@
 - (void)notifyActiveTextWindowClosed;	// FIXME: Get rid of this
 
 // added by mitsu --(J+) check mark in "Typeset" menu
-- (void)checkProgramMenuItem: (int)programID checked: (BOOL)flag;
+- (void)checkProgramMenuItem: (NSInteger)programID checked: (BOOL)flag;
 // end addition
 
 @end

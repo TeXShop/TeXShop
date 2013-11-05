@@ -1,6 +1,6 @@
 //
 //  NoodleLineNumberView.m
-//  Line View Test
+//  NoodleKit
 //
 //  Created by Paul Kim on 9/28/08.
 //  Copyright (c) 2008 Noodlesoft, LLC. All rights reserved.
@@ -29,6 +29,10 @@
 
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
+#import <tgmath.h>
+// FIX RULER SCROLL
+#import "globals.h"
+// END FIX RULER SCROLL
 
 #define DEFAULT_THICKNESS	22.0
 #define RULER_MARGIN		5.0
@@ -38,7 +42,7 @@
 - (NSMutableArray *)lineIndices;
 - (void)invalidateLineIndices;
 - (void)calculateLines;
-- (unsigned)lineNumberForCharacterIndex:(unsigned)index inText:(NSString *)text;
+- (NSUInteger)lineNumberForCharacterIndex:(NSUInteger)index inText:(NSString *)text;
 - (NSDictionary *)textAttributes;
 - (NSDictionary *)markerTextAttributes;
 
@@ -46,11 +50,11 @@
 
 @implementation NoodleLineNumberView
 
-- (id)initWithScrollView:(NSScrollView *)aScrollView
+- (id)initWithScrollView: (NSScrollView *)aScrollView
 {
     if ((self = [super initWithScrollView:aScrollView orientation:NSVerticalRuler]) != nil)
     {
-		linesToMarkers = [[NSMutableDictionary alloc] init];
+		_linesToMarkers = [[NSMutableDictionary alloc] init];
 		
         [self setClientView:[aScrollView documentView]];
     }
@@ -59,7 +63,7 @@
 
 - (void)awakeFromNib
 {
-	linesToMarkers = [[NSMutableDictionary alloc] init];
+	_linesToMarkers = [[NSMutableDictionary alloc] init];
 	[self setClientView:[[self scrollView] documentView]];
 }
 
@@ -67,82 +71,79 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [lineIndices release];
-	[linesToMarkers release];
-    [font release];
-
-// The next line was added by Koch to avoid a crash when closing; the crash seemed to occur only on PPC machines
-//	[self setClientView: nil];
+    [_lineIndices release];
+	[_linesToMarkers release];
+    [_font release];
     
     [super dealloc];
 }
 
 - (void)setFont:(NSFont *)aFont
 {
-    if (font != aFont)
+    if (_font != aFont)
     {
-		[font autorelease];		
-		font = [aFont retain];
+		[_font autorelease];		
+		_font = [aFont retain];
     }
 }
 
 - (NSFont *)font
 {
-	if (font == nil)
+	if (_font == nil)
 	{
 		return [NSFont labelFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
 	}
-    return font;
+    return _font;
 }
 
 - (void)setTextColor:(NSColor *)color
 {
-	if (textColor != color)
+	if (_textColor != color)
 	{
-		[textColor autorelease];
-		textColor  = [color retain];
+		[_textColor autorelease];
+		_textColor  = [color retain];
 	}
 }
 
 - (NSColor *)textColor
 {
-	if (textColor == nil)
+	if (_textColor == nil)
 	{
 		return [NSColor colorWithCalibratedWhite:0.42 alpha:1.0];
 	}
-	return textColor;
+	return _textColor;
 }
 
 - (void)setAlternateTextColor:(NSColor *)color
 {
-	if (alternateTextColor != color)
+	if (_alternateTextColor != color)
 	{
-		[alternateTextColor autorelease];
-		alternateTextColor = [color retain];
+		[_alternateTextColor autorelease];
+		_alternateTextColor = [color retain];
 	}
 }
 
 - (NSColor *)alternateTextColor
 {
-	if (alternateTextColor == nil)
+	if (_alternateTextColor == nil)
 	{
 		return [NSColor whiteColor];
 	}
-	return alternateTextColor;
+	return _alternateTextColor;
 }
 
 - (void)setBackgroundColor:(NSColor *)color
 {
-	if (backgroundColor != color)
+	if (_backgroundColor != color)
 	{
-		[backgroundColor autorelease];
-		backgroundColor = [color retain];
+		[_backgroundColor autorelease];
+		_backgroundColor = [color retain];
 	}
 }
 
 - (NSColor *)backgroundColor
 {
-	return backgroundColor;
+	return _backgroundColor;
 }
 
 - (void)setClientView:(NSView *)aView
@@ -166,17 +167,17 @@
 
 - (NSMutableArray *)lineIndices
 {
-	if (lineIndices == nil)
+	if (_lineIndices == nil)
 	{
 		[self calculateLines];
 	}
-	return lineIndices;
+	return _lineIndices;
 }
 
 - (void)invalidateLineIndices
 {
-	[lineIndices release];
-	lineIndices = nil;
+	[_lineIndices release];
+	_lineIndices = nil;
 }
 
 - (void)textDidChange:(NSNotification *)notification
@@ -187,9 +188,9 @@
     [self setNeedsDisplay:YES];
 }
 
-- (unsigned)lineNumberForLocation:(float)location
+- (NSUInteger)lineNumberForLocation:(CGFloat)location
 {
-	unsigned		line, count, index, rectCount, i;
+	NSUInteger		line, count, index, rectCount, i;
 	NSRectArray		rects;
 	NSRect			visibleRect;
 	NSLayoutManager	*layoutManager;
@@ -214,7 +215,7 @@
 		
 		for (line = 0; line < count; line++)
 		{
-			index = [[lines objectAtIndex:line] unsignedIntValue];
+			index = [[lines objectAtIndex:line] unsignedIntegerValue];
 			
 			rects = [layoutManager rectArrayForCharacterRange:NSMakeRange(index, 0)
 								 withinSelectedCharacterRange:nullRange
@@ -233,9 +234,9 @@
 	return NSNotFound;
 }
 
-- (NoodleLineNumberMarker *)markerAtLine:(unsigned)line
+- (NoodleLineNumberMarker *)markerAtLine:(NSUInteger)line
 {
-	return [linesToMarkers objectForKey:[NSNumber numberWithUnsignedInt:line - 1]];
+	return [_linesToMarkers objectForKey:[NSNumber numberWithUnsignedInteger:line - 1]];
 }
 
 
@@ -247,21 +248,21 @@
     
     if ([view isKindOfClass:[NSTextView class]])
     {
-        unsigned        index, numberOfLines, stringLength, lineEnd, contentEnd;
+        NSUInteger      index, numberOfLines, stringLength, lineEnd, contentEnd;
         NSString        *text;
-        float         oldThickness, newThickness;
+        CGFloat         oldThickness, newThickness;
         
         text = [view string];
         stringLength = [text length];
-        [lineIndices release];
-        lineIndices = [[NSMutableArray alloc] init];
+        [_lineIndices release];
+        _lineIndices = [[NSMutableArray alloc] init];
         
         index = 0;
         numberOfLines = 0;
         
         do
         {
-            [lineIndices addObject:[NSNumber numberWithUnsignedInt:index]];
+            [_lineIndices addObject:[NSNumber numberWithUnsignedInteger:index]];
             
             index = NSMaxRange([text lineRangeForRange:NSMakeRange(index, 0)]);
             numberOfLines++;
@@ -269,10 +270,10 @@
         while (index < stringLength);
 
         // Check if text ends with a new line.
-        [text getLineStart:NULL end:&lineEnd contentsEnd:&contentEnd forRange:NSMakeRange([[lineIndices lastObject] unsignedIntValue], 0)];
+        [text getLineStart:NULL end:&lineEnd contentsEnd:&contentEnd forRange:NSMakeRange([[_lineIndices lastObject] unsignedIntegerValue], 0)];
         if (contentEnd < lineEnd)
         {
-            [lineIndices addObject:[NSNumber numberWithUnsignedInt:index]];
+            [_lineIndices addObject:[NSNumber numberWithUnsignedInteger:index]];
         }
 
         oldThickness = [self ruleThickness];
@@ -293,9 +294,9 @@
 	}
 }
 
-- (unsigned)lineNumberForCharacterIndex:(unsigned)index inText:(NSString *)text
+- (NSUInteger)lineNumberForCharacterIndex:(NSUInteger)index inText:(NSString *)text
 {
-    unsigned			left, right, mid, lineStart;
+    NSUInteger			left, right, mid, lineStart;
 	NSMutableArray		*lines;
 
 	lines = [self lineIndices];
@@ -307,7 +308,7 @@
     while ((right - left) > 1)
     {
         mid = (right + left) / 2;
-        lineStart = [[lines objectAtIndex:mid] unsignedIntValue];
+        lineStart = [[lines objectAtIndex:mid] unsignedIntegerValue];
         
         if (index < lineStart)
         {
@@ -341,14 +342,14 @@
 				nil];
 }
 
-- (float)requiredThickness
+- (CGFloat)requiredThickness
 {
-    unsigned			lineCount, digits, i;
+    NSUInteger			lineCount, digits, i;
     NSMutableString     *sampleString;
     NSSize              stringSize;
     
     lineCount = [[self lineIndices] count];
-    digits = (unsigned)log10(lineCount) + 1;
+    digits = (NSUInteger)log10(lineCount) + 1;
 	sampleString = [NSMutableString string];
     for (i = 0; i < digits; i++)
     {
@@ -362,26 +363,40 @@
 
 	// Round up the value. There is a bug on 10.4 where the display gets all wonky when scrolling if you don't
 	// return an integral value here.
-    return ceilf(MAX(DEFAULT_THICKNESS, stringSize.width + RULER_MARGIN * 2));
+    return ceil(MAX(DEFAULT_THICKNESS, stringSize.width + RULER_MARGIN * 2));
 }
+
+// FIX RULER SCROLL
+- (void)setDocument:(TSDocument*)document  // added by Terada (for Lion bug)
+{
+    _document = document;    
+}
+// END FIX RULER SCROLL
 
 - (void)drawHashMarksAndLabelsInRect:(NSRect)aRect
 {
     id			view;
 	NSRect		bounds;
+    
+    
+ 	bounds = [self bounds];
+    view = [self clientView];
 
-	bounds = [self bounds];
+// FIX RULER SCROLL
+    if ([SUD boolForKey:FixLineNumberScrollKey])
+        [_document redrawLineNumbers:view];
+// END FIX RULER SCROLL
 
-	if (backgroundColor != nil)
+	if (_backgroundColor != nil)
 	{
-		[backgroundColor set];
+		[_backgroundColor set];
 		NSRectFill(bounds);
-		
+        
 		[[NSColor colorWithCalibratedWhite:0.58 alpha:1.0] set];
 		[NSBezierPath strokeLineFromPoint:NSMakePoint(NSMaxX(bounds) - 0/5, NSMinY(bounds)) toPoint:NSMakePoint(NSMaxX(bounds) - 0.5, NSMaxY(bounds))];
 	}
 	
-    view = [self clientView];
+    // view = [self clientView];
 	
     if ([view isKindOfClass:[NSTextView class]])
     {
@@ -390,9 +405,9 @@
         NSRect					visibleRect, markerRect;
         NSRange					range, glyphRange, nullRange;
         NSString				*text, *labelText;
-        unsigned				rectCount, index, line, count;
+        NSUInteger				rectCount, index, line, count;
         NSRectArray				rects;
-        float					ypos, yinset;
+        CGFloat					ypos, yinset;
         NSDictionary			*textAttributes, *currentTextAttributes;
         NSSize					stringSize, markerSize;
 		NoodleLineNumberMarker	*marker;
@@ -420,11 +435,11 @@
         range.length++;
         
         count = [lines count];
-        index = 0;
+        
         
         for (line = [self lineNumberForCharacterIndex:range.location inText:text]; line < count; line++)
         {
-            index = [[lines objectAtIndex:line] unsignedIntValue];
+            index = [[lines objectAtIndex:line] unsignedIntegerValue];
             
             if (NSLocationInRange(index, range))
             {
@@ -439,11 +454,12 @@
                     // portion. Need to compensate for the clipview's coordinates.
                     ypos = yinset + NSMinY(rects[0]) - NSMinY(visibleRect);
 					
-					marker = [linesToMarkers objectForKey:[NSNumber numberWithUnsignedInt:line]];
+					marker = [_linesToMarkers objectForKey:[NSNumber numberWithUnsignedInteger:line]];
 					
 					if (marker != nil)
 					{
-						markerImage = [marker image];
+						
+                        markerImage = [marker image];
 						markerSize = [markerImage size];
 						markerRect = NSMakeRect(0.0, 0.0, markerSize.width, markerSize.height);
 
@@ -451,11 +467,11 @@
 						markerRect.origin.x = NSWidth(bounds) - [markerImage size].width - 1.0;
 						markerRect.origin.y = ypos + NSHeight(rects[0]) / 2.0 - [marker imageOrigin].y;
 
-						[markerImage drawInRect:markerRect fromRect:NSMakeRect(0, 0, markerSize.width, markerSize.height) operation:NSCompositeSourceOver fraction:1.0];
+                        [markerImage drawInRect:markerRect fromRect:NSMakeRect(0, 0, markerSize.width, markerSize.height) operation:NSCompositeSourceOver fraction:1.0];
 					}
                     
                     // Line numbers are internally stored starting at 0
-                    labelText = [NSString stringWithFormat:@"%d", line + 1];
+                    labelText = [NSString stringWithFormat:@"%jd", (intmax_t)line + 1];
                     
                     stringSize = [labelText sizeWithAttributes:textAttributes];
 
@@ -489,7 +505,7 @@
 	NSEnumerator		*enumerator;
 	NSRulerMarker		*marker;
 	
-	[linesToMarkers removeAllObjects];
+	[_linesToMarkers removeAllObjects];
 	[super setMarkers:nil];
 
 	enumerator = [markers objectEnumerator];
@@ -503,8 +519,8 @@
 {
 	if ([aMarker isKindOfClass:[NoodleLineNumberMarker class]])
 	{
-		[linesToMarkers setObject:aMarker
-							forKey:[NSNumber numberWithUnsignedInt:[(NoodleLineNumberMarker *)aMarker lineNumber] - 1]];
+		[_linesToMarkers setObject:aMarker
+							forKey:[NSNumber numberWithUnsignedInteger:[(NoodleLineNumberMarker *)aMarker lineNumber] - 1]];
 	}
 	else
 	{
@@ -516,7 +532,7 @@
 {
 	if ([aMarker isKindOfClass:[NoodleLineNumberMarker class]])
 	{
-		[linesToMarkers removeObjectForKey:[NSNumber numberWithUnsignedInt:[(NoodleLineNumberMarker *)aMarker lineNumber] - 1]];
+		[_linesToMarkers removeObjectForKey:[NSNumber numberWithUnsignedInteger:[(NoodleLineNumberMarker *)aMarker lineNumber] - 1]];
 	}
 	else
 	{
@@ -537,20 +553,20 @@
 	{
 		if ([decoder allowsKeyedCoding])
 		{
-			font = [[decoder decodeObjectForKey:NOODLE_FONT_CODING_KEY] retain];
-			textColor = [[decoder decodeObjectForKey:NOODLE_TEXT_COLOR_CODING_KEY] retain];
-			alternateTextColor = [[decoder decodeObjectForKey:NOODLE_ALT_TEXT_COLOR_CODING_KEY] retain];
-			backgroundColor = [[decoder decodeObjectForKey:NOODLE_BACKGROUND_COLOR_CODING_KEY] retain];
+			_font = [[decoder decodeObjectForKey:NOODLE_FONT_CODING_KEY] retain];
+			_textColor = [[decoder decodeObjectForKey:NOODLE_TEXT_COLOR_CODING_KEY] retain];
+			_alternateTextColor = [[decoder decodeObjectForKey:NOODLE_ALT_TEXT_COLOR_CODING_KEY] retain];
+			_backgroundColor = [[decoder decodeObjectForKey:NOODLE_BACKGROUND_COLOR_CODING_KEY] retain];
 		}
 		else
 		{
-			font = [[decoder decodeObject] retain];
-			textColor = [[decoder decodeObject] retain];
-			alternateTextColor = [[decoder decodeObject] retain];
-			backgroundColor = [[decoder decodeObject] retain];
+			_font = [[decoder decodeObject] retain];
+			_textColor = [[decoder decodeObject] retain];
+			_alternateTextColor = [[decoder decodeObject] retain];
+			_backgroundColor = [[decoder decodeObject] retain];
 		}
 		
-		linesToMarkers = [[NSMutableDictionary alloc] init];
+		_linesToMarkers = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -561,17 +577,17 @@
 	
 	if ([encoder allowsKeyedCoding])
 	{
-		[encoder encodeObject:font forKey:NOODLE_FONT_CODING_KEY];
-		[encoder encodeObject:textColor forKey:NOODLE_TEXT_COLOR_CODING_KEY];
-		[encoder encodeObject:alternateTextColor forKey:NOODLE_ALT_TEXT_COLOR_CODING_KEY];
-		[encoder encodeObject:backgroundColor forKey:NOODLE_BACKGROUND_COLOR_CODING_KEY];
+		[encoder encodeObject:_font forKey:NOODLE_FONT_CODING_KEY];
+		[encoder encodeObject:_textColor forKey:NOODLE_TEXT_COLOR_CODING_KEY];
+		[encoder encodeObject:_alternateTextColor forKey:NOODLE_ALT_TEXT_COLOR_CODING_KEY];
+		[encoder encodeObject:_backgroundColor forKey:NOODLE_BACKGROUND_COLOR_CODING_KEY];
 	}
 	else
 	{
-		[encoder encodeObject:font];
-		[encoder encodeObject:textColor];
-		[encoder encodeObject:alternateTextColor];
-		[encoder encodeObject:backgroundColor];
+		[encoder encodeObject:_font];
+		[encoder encodeObject:_textColor];
+		[encoder encodeObject:_alternateTextColor];
+		[encoder encodeObject:_backgroundColor];
 	}
 }
 

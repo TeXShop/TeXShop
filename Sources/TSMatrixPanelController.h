@@ -43,7 +43,7 @@
 	IBOutlet id vstep;
 	IBOutlet id vtf;
 	
-	int			MatrixSize;
+	NSInteger			MatrixSize;
 
 	BOOL shown; //YES if user has chosen to display panel
 
@@ -69,27 +69,27 @@
 
 @interface MatrixData : NSObject {
 	NSMutableArray    *rows;
-	int activeRows;
-	int activeCols;
+	NSInteger activeRows;
+	NSInteger activeCols;
 }
 
-- (int)rowCount;
-- (int)colCount;
-- (id)objectInRow:(unsigned)row inCol:(unsigned)col;
-- (id)myRowAtIndex:(unsigned)row;
-- (void)replaceObjectInRow:(unsigned)row inCol:(unsigned)col withObject:(id) anObj;
+- (NSInteger)rowCount;
+- (NSInteger)colCount;
+- (id)objectInRow:(NSUInteger)row inCol:(NSUInteger)col;
+- (id)myRowAtIndex:(NSUInteger)row;
+- (void)replaceObjectInRow:(NSUInteger)row inCol:(NSUInteger)col withObject:(id) anObj;
 - (void)addRow;
-- (void)insertRow:(NSMutableArray*)row atIndex:(int)ind;
-- (void)removeRowAtIndex:(unsigned int)ind;
+- (void)insertRow:(NSMutableArray*)row atIndex:(NSInteger)ind;
+- (void)removeRowAtIndex:(NSUInteger)ind;
 - (void)removeRow:(id)row;
 - (void)removeRowIdenticalTo:(id)row;
 - (void)addCol;
 - (void)removeLastCol;
 - (void)removeLastRow;
-- (int)actRows;
+- (NSInteger)actRows;
 - (NSMutableArray*)rows;
-- (void)setActRows:(int)num;
-- (int)actCols;
-- (void)setActCols:(int)num;
+- (void)setActRows:(NSInteger)num;
+- (NSInteger)actCols;
+- (void)setActCols:(NSInteger)num;
 
 @end

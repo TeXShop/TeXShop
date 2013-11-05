@@ -183,7 +183,7 @@ static id sharedMacroMenuController = nil;
 {
 	NSDictionary *dict;
 	NSEnumerator *enumerator = [array objectEnumerator];
-	id <NSMenuItem> newItem;
+	id newItem;
 	NSMenu *submenu;
 	NSString *nameStr;
 	
@@ -203,7 +203,7 @@ static id sharedMacroMenuController = nil;
 			[newItem setRepresentedObject: [dict objectForKey: CONTENT_KEY]];
 			if (flag) {
 				NSString *keyEquiv = (NSString *)[dict objectForKey: KEYEQUIV_KEY];
-				unsigned int modifier = getKeyModifierMaskFromString(keyEquiv);
+				NSUInteger modifier = getKeyModifierMaskFromString(keyEquiv);
 				keyEquiv = getKeyEquivalentFromString(keyEquiv);
 				if (keyEquiv && ![self isAlreadyDefined: keyEquiv modifier: modifier]) {
 					[newItem setKeyEquivalent: keyEquiv];
@@ -218,7 +218,7 @@ static id sharedMacroMenuController = nil;
 - (void)addItemsToPopupButton: (NSPopUpButton *)popupButton
 {
 	NSDictionary *dict;
-	id <NSMenuItem> newItem;
+	id newItem;
 	NSMenu *submenu;
 	NSString *nameStr;
 	
@@ -298,7 +298,7 @@ static id sharedMacroMenuController = nil;
 		
 		// do AppleScript
 		NSMutableString *newString = [NSMutableString stringWithString: macroString];
-		NSString *filePath = [[(TSTextEditorWindow *)[NSApp mainWindow] document] fileName];
+		NSString *filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
 		NSString *displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
 		if (!filePath)
 			filePath = @"";
@@ -368,7 +368,7 @@ static id sharedMacroMenuController = nil;
 				// create the necessary directories
 				NS_DURING
 					// create ~/Library/TeXShop/Temp
-					result = [fileManager createDirectoryAtPath:[TempPath stringByStandardizingPath] attributes:nil];
+                result = [fileManager createDirectoryAtPath:[TempPath stringByStandardizingPath] withIntermediateDirectories:NO attributes:nil error:NULL];
 				NS_HANDLER
 					result = NO;
 					reason = [localException reason];
@@ -382,10 +382,10 @@ static id sharedMacroMenuController = nil;
 			NSString *scriptFileName = [scriptFilePath stringByAppendingString: @"/tempscript"];
 			
 			NS_DURING
-			// [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
+				// [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
             //[newString writeToFile: scriptFileName atomically: NO encoding:NSISOLatin1StringEncoding error:NULL];
             [newString writeToFile: scriptFileName atomically: NO encoding:NSUTF8StringEncoding error:NULL]; // modified by Terada
-			
+
 			NS_HANDLER
 				return;
 			NS_ENDHANDLER
@@ -441,13 +441,13 @@ static id sharedMacroMenuController = nil;
 	while ((item = (NSMenuItem *)[enumerator nextObject])) {
 		if (![[item keyEquivalent] isEqualToString: @""]) {
 			NSString *keyEquiv = [item keyEquivalent];
-			unsigned int modifier = [item keyEquivalentModifierMask];
+			NSUInteger modifier = [item keyEquivalentModifierMask];
 			if (![keyEquiv isEqualToString: [keyEquiv lowercaseString]]) {
 				keyEquiv = [keyEquiv lowercaseString];
 				modifier |= NSShiftKeyMask;
 			}
 			NSArray *keyPair = [NSArray arrayWithObjects: keyEquiv,
-				[NSNumber numberWithUnsignedInt: modifier], nil];
+				[NSNumber numberWithUnsignedInteger:modifier], nil];
 			[keyEquivalents addObject: keyPair];
 		}
 		if ([item hasSubmenu]) {
@@ -457,17 +457,17 @@ static id sharedMacroMenuController = nil;
 }
 
 // check with the list of key equivalents which are already assigned
-- (BOOL)isAlreadyDefined: (NSString *)keyEquiv modifier: (unsigned int)modifier
+- (BOOL)isAlreadyDefined: (NSString *)keyEquiv modifier: (NSUInteger)modifier
 {
 	NSEnumerator *enumerator = [keyEquivalents objectEnumerator];
 	NSArray *item;
 	keyEquiv = [keyEquiv lowercaseString];
 	while ((item = (NSArray *)[enumerator nextObject])) {
 		if ([[item objectAtIndex: 0] isEqualToString: keyEquiv]
-			&& [[item objectAtIndex: 1] unsignedIntValue] == modifier)
+			&& [[item objectAtIndex: 1] unsignedIntegerValue] == modifier)
 		{
 			NSArray *keyPair = [NSArray arrayWithObjects: keyEquiv,
-				[NSNumber numberWithUnsignedInt: modifier], nil];
+				[NSNumber numberWithUnsignedInteger:modifier], nil];
 			[keyEquivalents addObject: keyPair];	// add to our list of predefined key equivalents
 			return YES;
 		}
@@ -490,9 +490,9 @@ NSString *getKeyEquivalentFromString(NSString *string)
 		return @"";
 }
 
-unsigned int getKeyModifierMaskFromString(NSString *string)
+NSUInteger getKeyModifierMaskFromString(NSString *string)
 {
-	unsigned int mask = NSCommandKeyMask;
+	NSUInteger mask = NSCommandKeyMask;
 	NSString *modifiersStr = ([string length]>1)?[string substringFromIndex: 1]:@"";
 	NSRange range = [modifiersStr rangeOfString: @"ShiftKey"];
 	if (range.location != NSNotFound)

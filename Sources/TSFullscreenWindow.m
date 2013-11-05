@@ -79,11 +79,12 @@ Change History (most recent first):
 
 
 #import "TSFullscreenWindow.h"
+#import "TSDocument.h"
 
 @implementation TSFullscreenWindow
 
 //In Interface Builder we set TSFullscreenWindow to be the class for our window, so our own initializer is called here.
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
     //Call NSWindow's version of this function, but pass in the all-important value of NSBorderlessWindowMask
     //for the styleMask so that the window doesn't have a title bar
@@ -112,7 +113,7 @@ Change History (most recent first):
 		key = 0;
 	
 	if (key == 27)
-		[myDocument endFullScreen];
+		[(TSDocument *)myDocument endFullScreen];
 	else 
 		[super keyDown:theEvent];
 }

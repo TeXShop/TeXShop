@@ -1,6 +1,6 @@
 //
 //  NoodleLineNumberMarker.m
-//  Line View Test
+//  NoodleKit
 //
 //  Created by Paul Kim on 9/30/08.
 //  Copyright (c) 2008 Noodlesoft, LLC. All rights reserved.
@@ -32,23 +32,23 @@
 
 @implementation NoodleLineNumberMarker
 
-- (id)initWithRulerView:(NSRulerView *)aRulerView lineNumber:(float)line image:(NSImage *)anImage imageOrigin:(NSPoint)imageOrigin
+- (id)initWithRulerView:(NSRulerView *)aRulerView lineNumber:(CGFloat)line image:(NSImage *)anImage imageOrigin:(NSPoint)imageOrigin
 {
 	if ((self = [super initWithRulerView:aRulerView markerLocation:0.0 image:anImage imageOrigin:imageOrigin]) != nil)
 	{
-		lineNumber = line;
+		_lineNumber = line;
 	}
 	return self;
 }
 
-- (void)setLineNumber:(unsigned)line
+- (void)setLineNumber:(NSUInteger)line
 {
-	lineNumber = line;
+	_lineNumber = line;
 }
 
-- (unsigned)lineNumber
+- (NSUInteger)lineNumber
 {
-	return lineNumber;
+	return _lineNumber;
 }
 
 #pragma mark NSCoding methods
@@ -61,11 +61,11 @@
 	{
 		if ([decoder allowsKeyedCoding])
 		{
-			lineNumber = [[decoder decodeObjectForKey:NOODLE_LINE_CODING_KEY] unsignedIntValue];
+			_lineNumber = [[decoder decodeObjectForKey:NOODLE_LINE_CODING_KEY] unsignedIntegerValue];
 		}
 		else
 		{
-			lineNumber = [[decoder decodeObject] unsignedIntValue];
+			_lineNumber = [[decoder decodeObject] unsignedIntegerValue];
 		}
 	}
 	return self;
@@ -77,11 +77,11 @@
 	
 	if ([encoder allowsKeyedCoding])
 	{
-		[encoder encodeObject:[NSNumber numberWithUnsignedInt:lineNumber] forKey:NOODLE_LINE_CODING_KEY];
+		[encoder encodeObject:[NSNumber numberWithUnsignedInteger:_lineNumber] forKey:NOODLE_LINE_CODING_KEY];
 	}
 	else
 	{
-		[encoder encodeObject:[NSNumber numberWithUnsignedInt:lineNumber]];
+		[encoder encodeObject:[NSNumber numberWithUnsignedInteger:_lineNumber]];
 	}
 }
 
@@ -93,7 +93,7 @@
 	id		copy;
 	
 	copy = [super copyWithZone:zone];
-	[copy setLineNumber:lineNumber];
+	[copy setLineNumber:_lineNumber];
 	
 	return copy;
 }

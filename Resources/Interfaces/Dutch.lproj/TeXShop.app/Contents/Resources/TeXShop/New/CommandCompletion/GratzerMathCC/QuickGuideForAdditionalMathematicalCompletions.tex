@@ -1,0 +1,210 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[body={6.0in,9.0in}, vmarginratio=1:1]{geometry}
+\usepackage[small,compact]{titlesec}
+
+%\usepackage[expert]{fourier}
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+
+\usepackage{booktabs}
+
+% Include graphicx
+\usepackage{graphicx}
+%\usepackage{applekeys}
+
+\usepackage{microtype}
+
+\usepackage{xcolor}
+\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+%\newcommand{\MacTeX}{Mac\TeX}
+\newcommand{\MacTeX}{Mac\kern-.12em\TeX}
+\newcommand{\BibTeX}{B\textsc{i\kern-.025em  b}\kern-.13em\TeX}
+\newcommand{\conTeXt}{Con\kern-.12em\TeX t}
+\newcommand{\TS}{\textsf{\TeX Shop}}
+% default small caps used for utopia are ugly; don't want to use [expert] here.
+%\newcommand{\acr}[1]{\textsc{#1}}
+%\usepackage{relsize}
+%\newcommand{\acr}[1]{\textrm{\smaller\uppercase{#1}}}
+\newcommand{\acr}[1]{\textsf{#1}}
+%\newcommand{\cmd}[1]{\texttt{#1}}
+%\newcommand{\mnu}[1]{\texttt{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+% set | as a command character within verbatim so you can execute commands there
+\usepackage{verbatim}
+\makeatletter
+\addto@hook\every@verbatim{\catcode`|=0}
+\makeatother
+
+% define colored items to be inserted in verbatim environments
+\setlength{\fboxsep}{0pt}
+\newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+
+\usepackage{amsmath, amssymb}
+
+\title{Command Completion\\A Quick Guide}
+\author{G. Gr\"atzer and H. Schulz}
+\date{}                                           
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Who has not been frustrated by having to type
+\begin{verbatim}
+\begin{theorem}\label{T:}
+
+\end{theorem}
+\end{verbatim}
+just to get started to declare a theorem? \emph{Command Completion} 
+to the rescue! Type
+\begin{verbatim}
+\mt
+\end{verbatim}
+hit \cmd{Esc} (the escape key), and \TS\ will type
+\begin{verbatim}
+\begin{theorem}\label{T:|selmark}
+•
+\end{theorem}
+•
+\end{verbatim}
+for you. The • symbol is a \emph{placeholder} marking where you have to type
+your own stuff (like the label of the theorem and the theorem itself).
+
+\TS\ comes with \emph{Command Completion} all set up for you. 
+It does hundreds of things, we concentrate here only on a few. 
+For complete documentation see the pdf file
+\emph{Command Completion for \TS} (you find it in \emph{your} \path{Library} folder
+in \path{TeXShop/CommandCompletion}).
+
+\section{Math proclamations}
+
+To type a proclamation (all these commands start with \verb|m| 
+for \textbf{m}ath):\\ 
+for a \textbf{t}heorem, type \verb|\mt|,\\
+for a \textbf{l}emma, type \verb|\ml|,\\
+for a \textbf{c}orollary, type \verb|\mc|,\\
+for a \textbf{d}efinition, type \verb|\md|,\\
+for a \textbf{p}roof, type \verb|\mp|,\\
+for a \textbf{r}emark, type \verb|\mr|,\\
+and hit \cmd{Esc}. %If you hit Esc twice, you get the unnumbered version.
+
+Note that the first placeholder is already selected; once you start
+typing, the placeholder disappears. To get to the next placeholder, type \cmd{Opt-Esc}.
+
+\section{Environments}
+
+All environments are invoked 
+with \verb!\bx + Esc! or \verb!\bx + Esc + Esc!, 
+where \verb|x| is the first letter of the name of the environment
+and you hit \cmd{Esc} once, twice, \dots, up~to five times!
+
+\medskip
+
+\noindent \begin{tabular}{l|l|l|l|l|l}
+Type & + \cmd{Esc} & + \cmd{Esc} twice & + \cmd{Esc} 3 x & + \cmd{Esc} 4 x & + \cmd{Esc} 5 x\\\hline
+\verb|\ba| & \textbf{a}lign & \textbf{a}lign*&\textbf{a}lignat&\textbf{a}lignat*&\textbf{a}rray\\
+\verb|\bar|&\textbf{ar}ray&&\\
+\verb|\bc| & \textbf{c}ases&&\\
+\verb|\bd| & \textbf{d}escription&&\\
+\verb|\be| & \textbf{e}quation & \textbf{e}quation*&\textbf{e}numerate\\
+\verb|\ben|&\textbf{en}umerate&&\\
+\verb|\bfig|&\textbf{fig}ure&&\\
+\verb|\bg| & \textbf{g}ather & \textbf{g}ather*&\\
+\verb|\bi| & \textbf{i}temize&&\\
+\verb|\bm| & \textbf{m}atrix & p\textbf{m}atrix&v\textbf{m}atrix\\
+\verb|\bs| & multline & multline*\\
+\verb|\bmu| & \textbf{mu}ltline & \textbf{mu}ltline*\\
+\end{tabular}
+
+\medskip
+
+\noindent So if you type \verb|\bfig| and hit \cmd{Esc}, \TS\ types:
+\begin{verbatim}
+\begin{figure}
+\centering\includegraphics[scale=1]{|selmark}
+\caption{•}\label{Fi:•}
+\end{figure}
+•
+\end{verbatim}
+Try it!
+
+To type an environment not provided, \emph{Command Completion} provides a shortcut.
+\begin{verbatim}
+\b + Esc
+\end{verbatim}
+(\verb|b| for \textbf{b}egin) types:
+\begin{verbatim}
+\begin{
+\end{verbatim}
+Now type the name of the environment, say, \verb|myown| and the closing \texttt{\}}:
+\begin{verbatim}
+\begin{myown}
+\end{verbatim}
+and hit \cmd{Esc}. You get:
+\begin{verbatim}
+\begin{myown}
+\end{myown}
+\end{verbatim}
+with the cursor at the end of the first line.
+
+\newpage
+
+\section{Commands}
+There are a number of frequently used commands for which 
+\emph{Command Completion} provides a shortcut:
+\begin{center}
+\begin{tabular}{l|l|l}
+Type & + \cmd{Esc} & + \cmd{Esc} + \cmd{Esc} \\\hline
+\verb|\ch| & chapter&chapter*\\
+\verb|\s| & section & section*\\
+\verb|\ss| & subsection & subsection*\\
+\verb|\sss| & subsubsection & subsubsection*\\
+\verb|\ol|&overline\\
+\verb|\ul| & underline
+\end{tabular}
+\end{center}
+So to start a section, type \verb|\s| and hit \cmd{Esc}.
+
+\section{Greek letters}
+\emph{Command Completion} provides shortcuts for all Greek letters.
+
+Type \verb|\gx| for the Greek letter corresponding to \textbf{x}, where 
+x is
+
+\smallskip
+
+\noindent a, b, c, d, e, f, g, h, i, k, l, m, n, o, p, q, r, s, t, u, v, x, y, z,\\
+D, F, G, L, O, P, Q, S, U, X, Y.
+
+\smallskip
+
+So \verb|\gb| types \verb|\beta|. Note that \verb|\ge| types \verb|\varepsilon|.
+
+\section{Customizing}
+
+The label for a theorem starts with \verb|T:|, 
+for a lemma with \verb|L:|. This is useful; 
+you can have a \verb|main| theorem (label: \verb|T:main)|
+and also a \verb|main| lemma (label: \verb|L:main)|.
+
+You do not like this convention? Open the command completion file:
+\mnu{Source}\To\mnu{Command Completion}\To\mnu{Edit Command Completion File…}
+and delete the \verb|T:| and \verb|L:|, and whatever else you do not like. The complete documentation explains how to make more profound customization; we mention here only one more: \emph{text expansion}: in your papers, you type the phrase ``subdirectly irreducible'' often. So type
+\begin{verbatim}
+\si:=subdirectly irreducible
+\end{verbatim}
+select it, type Shift-Cmd-W and then delete that selection. This adds \verb|\si| to the command completion file. So if you now type \verb|\si| and hit \cmd{Esc}, the phrase ``\texttt{subdirectly irreducible}'' is typed in your source file.
+
+
+
+
+
+
+\end{document}  

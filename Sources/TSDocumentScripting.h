@@ -39,11 +39,11 @@
 @interface MySelection : NSObject {
 	TSDocument*		mDocument;
 }
-- (id)initWithDocument:(TSDocument*)doc;
-- (unsigned)offset;
-- (unsigned)length;
-- (void)setOffset:(unsigned)off;
-- (void)setLength:(unsigned)len;
+- (id)initWithMyDocument:(TSDocument *)doc;
+- (NSUInteger)offset;
+- (NSUInteger)length;
+- (void)setOffset:(NSUInteger)off;
+- (void)setLength:(NSUInteger)len;
 - (NSString*)content;
 - (void)setContent:(NSString*)ts;
 @end
@@ -86,7 +86,7 @@
 
 - (NSArray *)orderedDocuments;
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key;
-- (void)insertInOrderedDocuments:(TSDocument *)doc atIndex:(int)idx;
+- (void)insertInOrderedDocuments:(TSDocument *)doc atIndex:(NSInteger)idx;
 - (id)handleOpenForExternalEditorCommand:(NSScriptCommand*)command;
 @end
 

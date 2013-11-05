@@ -26,5 +26,6 @@
 @interface NSString (TeXShop)
 
 - (BOOL)contains:(NSString *)str;
+- (NSString*)normalizedStringWithModifiedNFC; // Terada
 
 @end

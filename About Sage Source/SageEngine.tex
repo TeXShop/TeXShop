@@ -17,9 +17,19 @@
 Sage is a mathematical software system providing an open source alternative to Magma, Maple, Mathematica, and Matlab. It is available from 
 \url{http://www.sagemath.org/} as a free download. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
-Download sage from this web site. Move the resulting ``sage'' directory to /Applications. Open the sage directory and double click the ``sage'' icon to initialize sage.
+Download sage from this web site. Move the resulting ``Sage'' program to /Applications. The
+application will have a strange name, something like Sage-5.10..64bit-10.8.
 
-SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five. In the source file, the initial line
+The Sage command line program is inside this wrapper, and our engine folder is going to have
+to use that binary. If we keep the current name, the engine file will be tied to one particular
+version of Sage. To fix this, change the name to just ``Sage''. This clever step, which
+simplifies several steps below, is due to Daniel Grambihler.
+
+SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five.
+
+\section{How SageTeX Works}
+
+ In the source file, the initial line
 \begin{verbatim}
      % !TEX TS-program = sage
 \end{verbatim}
@@ -36,29 +46,39 @@ These line cause sage to process commands and output LaTeX source fragments, whi
 
 Notice in particular that sage can plot standard functions. Sage can also compute integrals symbolically; for example, look carefully at the command which processes $\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}$. This command contains standard LaTeX code to display the integral, but then Sage integrates and returns a typeset copy of the result.
 
-\newpage
+
 \section{Setting Up the Engine}
 
-This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. This engine file assumes that Sage was installed in /Applications. If Sage was installed in a different location, edit sage.engine appropriately. Dan Drake, who is responsible for SageTeX, wrote this engine.
+This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines.
+% The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. This changes whenever Sage is updated, so edit the line appropriately. In the initial engine, the line reads
+%\begin{verbatim}
+%/Applications/Sage-5.9-OSX-64bit-10.8.app/Contents/Resources/sage/sage "$sagename"
+%\end{verbatim}
+%Here ``/Applications/Sage-5.9-OSX-64bit-10.8.app'' is the name of the current Sagetex being
+%used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
+%sage binary it contains.
+Dan Drake, who is responsible for SageTeX, wrote this engine.
 
-One final step is required to use SageTeX. The ``sage'' directory contains a style file named ``sagetex.sty'' and a number of support files. These files must be copied to your TeX distribution. The files depend on other features of sage, so whenever you upgrade sage, you also need to upgrade the copies in your TeX distribution.
+The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this. So rather than copying the style file, we just
+create a symbolic link from it's location in TeX Live to its location in Sage.
 
-Read the sage web page \url{http://sagemath.org/doc/installation/sagetex.html} for instructions on copying the files. It is easiest to install them in $\sim$/Library/texmf. If you installed sage in /Applications, the web page instructions are easily summarized: open Terminal and issue the command
+Run Terminal in /Applications/Utilities. Type the following
 \begin{verbatim}
-     cp -R /Applications/sage/local/share/texmf/tex ~/Library/texmf
+     cd /usr/local/texlive/texmf-local/tex/latex
+\end{verbatim}
+Then type the following on a single line. Terminal may make a linefeed when
+the line  grows too long and that is fine, but do not for instance make a linefeed
+after the top "sage" and before the bottom "/data".
+\begin{verbatim}
+     sudo ln -s /Applications/Sage.app/Contents/Resources/sage
+        /data/texmf/tex/generic/sagetex/sagetex.sty sagetex.sty
 \end{verbatim}
 
-
-There is one final problem. The release version of TeX Live 2009 contained sagetex.sty. This file is updated whenever sage is updated, so the copy in TeX Live easily gets out of sync with sage. Therefore the authors of sage requested that TeX Live remove their copy of sagetex.sty. If you updated TeX Live 2009 with TeX Live Utility or tlmgr, it should be gone. But just to make sure, type the following commands in Terminal:
-\begin{verbatim}
-     cd /usr/local/texlive/2009/texmf-dist/tex/latex/sagetex
-     ls
+Finally issue the command
+\begin{verbatim}		
+     sudo mktexlsr
 \end{verbatim}
-If this location contains sagetex.sty, type
-\begin{verbatim}
-     sudo mv sagetex.sty sagetex-old.sty
-\end{verbatim}
-Experts will remark that it shouldn't make any difference because $\sim$/Library/texmf takes precedence. True enough for TeX, but experiments show that the old copy texmf-dist breaks sage. We don't quite know why that is. 
+	
 
 
 

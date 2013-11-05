@@ -63,12 +63,12 @@ static id _sharedInstance = nil;
 
 - (void)windowDidLoad
 {
-	int			i;
+	NSInteger			i;
 	NSPoint		aPoint;
 	NSString		*completionPath;
 	NSDictionary	*completionDictionary;
 	// added by G.K. (Georg Klein)
-	int			aButtons;
+	NSInteger			aButtons;
 	//
 
 	NSBundle *myBundle=[NSBundle mainBundle];
@@ -181,7 +181,7 @@ static id _sharedInstance = nil;
 
 - (IBAction)putgreek:(id)sender
 {
-	int i=[[sender selectedCell] tag];
+	NSInteger i=[[sender selectedCell] tag];
 	if (i>29)
 		i=i-14;
 	[notifcenter postNotificationName:@"completionpanel" object:[arrayGreek objectAtIndex:i]];
@@ -189,7 +189,7 @@ static id _sharedInstance = nil;
 
 - (IBAction)putintl:(id)sender
 {
-	int i=[[sender selectedCell] tag];
+	NSInteger i=[[sender selectedCell] tag];
 	if (i>34)
 		i=i-9;
 	[notifcenter postNotificationName:@"completionpanel" object:[arrayInternational objectAtIndex:i]];
@@ -197,13 +197,13 @@ static id _sharedInstance = nil;
 
 - (IBAction)putmath:(id)sender
 {
-	int i=[[sender selectedCell] tag];
+	NSInteger i=[[sender selectedCell] tag];
 	[notifcenter postNotificationName:@"completionpanel" object:[arrayMath objectAtIndex:i]];
 }
 
 - (IBAction)putsymbols:(id)sender
 {
-	int i=[[sender selectedCell] tag];
+	NSInteger i=[[sender selectedCell] tag];
 	[notifcenter postNotificationName:@"completionpanel" object:[arraySymbols objectAtIndex:i]];
 }
 
@@ -256,7 +256,7 @@ static id _sharedInstance = nil;
 - (void)panelDidMove:(NSNotification *)notification
 {
 	NSRect	myFrame;
-	float	x, y;
+	CGFloat	x, y;
 
 	myFrame = [[self window] frame];
 	x = myFrame.origin.x; y = myFrame.origin.y;

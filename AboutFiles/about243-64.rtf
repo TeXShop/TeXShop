@@ -1,0 +1,85 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1128
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 (Both 2.42 and 2.43 were released at the same time. 2.42 is about 64 bits, and 2.43 is about Lion.\
+See below for 2.43.)\
+\
+2.42 runs in 64 bits. The source code uses XCode 4 rather than\
+earlier versions of XCode.\
+\
+During the conversion, I cleaned up the code A LOT. Deprecated calls\
+have been replaced by modern calls, and a large number of warning\
+messages were dealt with.\
+\
+In addition, there are the following changes:\
+\
+a) Tags have been extended slightly to deal with dockstrip documents.\
+Thus the tags menu now recognizes\
+\
+% \\chapter\
+% \\section\
+% \\subsection\
+% \\subsubsection\
+% \\begin\{macro\}\
+% \\begin\{environment\}\
+\
+\
+b) Both the log file and the console are shown using the document's\
+encoding rather than MacRoman encoding. (Encoding defaults to\
+MacRoman if the document's encoding doesn't work; mainly this\
+might happen with UTF-8 encoding.\
+\
+c) Latexmk 4.24\
+\
+\
+Version 2.43 is about Lion.\
+\
+a) Cocoa programmers automatically inherit the ability to recall documents\
+that were open when they quit, and restore these documents. Thus if you\
+had two TeX documents open when you quit, both documents will appear\
+with their windows in exactly the position they were when closed, and source\
+scrolled to the exact spot where closed. Also Preview windows will appear\
+in exactly the same position they were when closed.\
+\
+However, small details will not be preserved. For instance, Preview windows\
+won't be scrolled to the old spot, but instead will show the document's first page.\
+You can use SyncTeX to immediately get back to the old position because\
+the source is correctly scrolled. If you selected a different engine than the\
+default engine in the Source Toolbar, this selection will not be made, and\
+if you opened a document with an encoding different than the default encoding,\
+that will not be respected. (IMPORTANT: however, the % !TEX encoding = \
+and % !TEX program = magic lines will be preserved, so please use these\
+magic lines when you pick engines or encodings that aren't your default\
+choices.\
+\
+I mention all of this because over time these minor flaws will be fixed. I have\
+concentrated on other features in the initial release because Apple's \
+automatic method for Cocoa works surprisingly well.\
+\
+b) In Preferences, there are now THREE choices for Finding:\
+\
+	Apple Find Panel\
+	Apple Find Bar\
+	Ogrekit Find Panel\
+\
+The first and third choices work as before. The middle choice is new in Lion,\
+and gives Apple's minimal "find bar" at the top of the source window. There is\
+a surprising amount of functionality hidden in this minimal bar, so don't \
+reject it before a little experimentation. In the initial 2.43 release, the bar\
+has exactly the default Apple functionality. In particular, when first bringing\
+up the Find Bar, apple-G and apple-shift-G to find more occurrences are\
+inactive, and instead these functions must be done using the arrows in the\
+bar. Just click on the source to make it active, and then apple-G and apple-shift-G\
+work. Similarly it might be nice to have "Find and Replace" in the menu, but they\
+are missing in Apple's default menu; instead use the button in the bar. Over\
+time, I'll improve this feature.\
+\
+c) The program implements Apple's AutoSave features. This is off by default.\
+To turn it off, check "AutoSave" in Preference Panel under the source tab.\
+\
+d) Both the Source Window and the Preview Window support full screen mode.\
+This make look strange if you have a large monitor, but the feature is wonderful\
+on a portable. }

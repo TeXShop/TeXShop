@@ -40,7 +40,7 @@
 
 @class TSMacroTreeNode;
 
-@interface TSMacroOutlineController : NSObject
+@interface TSMacroOutlineController : NSObject 
 {
 	TSMacroTreeNode	*rootOfTree;
 	NSArray	 		*draggedNodes;

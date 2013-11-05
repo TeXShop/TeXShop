@@ -47,8 +47,8 @@
 - (void) close;
 - (void) doTextMagnify: sender;   // for toolbar in text mode
 - (void) doTextPage: sender;      // for toolbar in text mode
-- (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
-- (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
+- (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
 - (void) zoomIn: sender;
@@ -74,6 +74,7 @@
 - (void) rotateClockwise: sender;
 - (void) rotateCounterclockwise: sender;
 - (void) savePreviewPosition: sender;
+- (void) savePortablePreviewPosition: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow: sender;
@@ -83,14 +84,14 @@
 - (void)changePageStyle: (id)sender; // mitsu 1.29 (O)
 - (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
 - (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)
-#endif MITSU_PDF
-- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
-- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+#endif
+// - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
+// - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;
-- (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+// - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) setActiveView:(PDFView *)theView;
 - (void) changeMouseMode: sender;
 - (void) doStepper: sender;

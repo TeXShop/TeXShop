@@ -26,9 +26,22 @@
 		}
 
 		autocompletionValues = [NSMutableArray arrayWithCapacity:0];
-		NSEnumerator *enumerator = [autocompletionKeys objectEnumerator];
+        NSArray *autocompletionKeysCopy = [NSArray arrayWithArray:autocompletionKeys];
+		NSEnumerator *enumerator = [autocompletionKeysCopy objectEnumerator];
 		while ((key = [enumerator nextObject])) {
-			[autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+			if ([[g_autocompletionDictionary allKeys] containsObject:key]){
+                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+            }else{
+                [autocompletionKeys removeObjectIdenticalTo:key];
+            }
+		}
+
+		enumerator = [[g_autocompletionDictionary allKeys] objectEnumerator];
+		while ((key = [enumerator nextObject])) {
+            if (![autocompletionKeys containsObject:key]) {
+                [autocompletionKeys addObject:key];
+                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+            }
 		}
 		
 		[autocompletionKeys retain];
@@ -46,9 +59,9 @@
 	if ([newKey isEqualToString:@""]) {
 		NSBeep();
 	}else{
-		unsigned int _index = [autocompletionKeys indexOfObject:newKey];
+		NSUInteger _index = [autocompletionKeys indexOfObject:newKey];
 		if (_index != NSNotFound) {
-			int result = NSRunAlertPanel(NSLocalizedString(@"Warning", @"Warning"), 
+			NSInteger result = NSRunAlertPanel(NSLocalizedString(@"Warning", @"Warning"), 
 										 [NSString stringWithFormat:NSLocalizedString(@"Your current setting of %@ will be replaced. OK?", @"Your current setting of %@ will be replaced. OK?"), newKey], 
 										 @"OK", NSLocalizedString(@"Cancel", @"Cancel"), nil);
 			if (result == NSAlertDefaultReturn) {
@@ -86,7 +99,7 @@
 - (IBAction)savePressed:(id)sender
 {
 	NSMutableDictionary *newAutoCompletionList = [NSMutableDictionary dictionaryWithCapacity:0];
-	int i;
+	NSInteger i;
 	for(i=0;i<[autocompletionKeys count];i++){
 		[newAutoCompletionList setObject:[autocompletionValues objectAtIndex:i] forKey:[autocompletionKeys objectAtIndex:i]];
 	}
@@ -116,12 +129,12 @@
 	[tableView selectRowIndexes:nil byExtendingSelection:NO];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView*)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView*)aTableView
 {
 	return [autocompletionKeys count];
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
 	return [[aTableColumn identifier] isEqualToString:@"key"] ? [autocompletionKeys objectAtIndex:rowIndex] :[autocompletionValues objectAtIndex:rowIndex];
 }
@@ -129,7 +142,7 @@
 - (void)tableView:(NSTableView *)aTableView
    setObjectValue:(id)object 
    forTableColumn:(NSTableColumn *)tableColumn 
-			  row:(int)rowIndex;
+			  row:(NSInteger)rowIndex;
 {
 	if ([[tableColumn identifier] isEqualToString:@"key"]) {
 		[autocompletionKeys replaceObjectAtIndex:rowIndex withObject:object];
@@ -165,7 +178,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (NSDragOperation)tableView:(NSTableView*)aTableView 
 				validateDrop:(id <NSDraggingInfo>)info 
-				 proposedRow:(int)row 
+				 proposedRow:(NSInteger)row 
 	   proposedDropOperation:(NSTableViewDropOperation)op
 {
 	// Accept drop between rows. (not on a row)
@@ -176,11 +189,11 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (NSIndexSet*)moveObjectsOf:(NSMutableArray*)anArray
 				 fromIndexes:(NSIndexSet*)fromIndexSet 
-					 toIndex:(uint)insertIndex
+					 toIndex:(NSUInteger)insertIndex
 {	
 	// If any of the removed objects come before the insertion index,
 	// we need to decrement the index appropriately
-	uint adjustedInsertIndex = insertIndex - [fromIndexSet countOfIndexesInRange:(NSRange){0, insertIndex}];
+	NSUInteger adjustedInsertIndex = insertIndex - [fromIndexSet countOfIndexesInRange:(NSRange){0, insertIndex}];
 	NSRange destinationRange = NSMakeRange(adjustedInsertIndex, [fromIndexSet count]);
 	NSIndexSet *destinationIndexes = [NSIndexSet indexSetWithIndexesInRange:destinationRange];
 	
@@ -193,7 +206,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (BOOL)tableView:(NSTableView*)aTableView
 	   acceptDrop:(id <NSDraggingInfo>)info
-			  row:(int)insertionRow
+			  row:(NSInteger)insertionRow
 	dropOperation:(NSTableViewDropOperation)op
 {
     if (insertionRow < 0)
@@ -204,7 +217,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     if ([info draggingSource] == tableView)
 	{
 		NSEvent *currentEvent = [NSApp currentEvent];
-		int optionKeyPressed = [currentEvent modifierFlags] & NSAlternateKeyMask;
+		NSInteger optionKeyPressed = [currentEvent modifierFlags] & NSAlternateKeyMask;
 		
 		if (optionKeyPressed == 0)
 		{

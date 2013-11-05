@@ -56,10 +56,10 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 
 - (void)listKeyEquivalents: (NSMenu *)menu;
-- (BOOL)isAlreadyDefined: (NSString *)keyEquiv modifier: (unsigned int)modifier;
+- (BOOL)isAlreadyDefined: (NSString *)keyEquiv modifier: (NSUInteger)modifier;
 @end
 
 NSString *getKeyEquivalentFromString(NSString *string);
-unsigned int getKeyModifierMaskFromString(NSString *string);
+NSUInteger getKeyModifierMaskFromString(NSString *string);
 NSString *getStringFormKeyEquivalent(NSString *key, BOOL shift, BOOL option, BOOL control);
 NSString *getMenuItemString(NSString *string);

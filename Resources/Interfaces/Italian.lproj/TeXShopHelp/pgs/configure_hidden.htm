@@ -10,6 +10,56 @@
 	</HEAD>
 	<BODY>
 		<div id="content_border">
+		
+			<p> By default, AutoSaving is on. This feature can be turned off using the
+			hidden preference
+			<dl>
+			<dd> defaults write TeXShop AutoSaveEnabled NO 
+			</dl>
+			<p> WARNING: This will cause crashes on  Lion, so only use it on
+			Mountain Lion and above. The developers use AutoSave, so if you turn
+			AutoSave off, you are entering untested waters.
+			
+			<p> Ulrich Bauer added a patch to make TeXShop perform better
+			when used with a server, if AutoSave is on. Many users thank us for
+			this patch, but it caused problems for a few. To turn it off:
+			<dl>
+			<dd> defaults write TeXShop WatchServer NO
+			</dl>
+		
+		
+		
+		
+		
+		
+		
+			<P>
+				On Mountain Lion, Apple has optimized text and font drawing for the Retina display.
+				This causes a few fonts to appear slightly blurry in small sizes on a non Retina display.
+				This primarily affects the Monoco font. To switch back to the old behavior,
+			</P>
+			<dl>
+				<dd>
+					defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+			</dl>
+			
+			<P>
+				The previous fix does not alter the display of the Monoco font when used in the log
+				window or the console. Another hidden preference can fix Monoco
+				in these windows. This preference causes TeXShop to call the font routine 
+				[font screenFontWithRenderingMode:NSFontDefaultRenderingMode] and pass the resulting
+				font to an AppKit object, although Apple's documentation says not to do this. So this
+				hidden preference should only be used if you cannot tolerate the Monoco
+				font's default rendering.
+			</P>
+			<dl>
+				<dd>
+					defaults write TeXShop ScreenFontForLogAndConsole -bool YES
+			</dl>
+			
+			</P>
+			
+
 			<P>
 				TeXShop adds lines which begin with the words \section, \subsection, \subsubsection, or \chapter to the Tag menu. To turn this off, run Terminal and type the following command. Change the word NO to YES to turn the behavior back on.
 			</P>
@@ -101,6 +151,16 @@ following preferences adds the words \subsubsubsection, \subsubsubsubsection, \p
 			</dl>
 			<p>
 				Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is completely opaque. Using these commands cautiously.
+			</p>
+			<p>
+			There is a hidden command to set the line spacing in the source window. For example,
+			</p>
+			<dl>
+			<dd> defaults write TeXShop SourceInterlineSpace 1.0
+			</dl>
+			<p> Here the default value 1.0 corresponds to standard single spacing,
+			the value 10.0 corresponds to double spacing, and values outside the range
+			0.5 <= value <= 40.0 will be ignored.
 			</p>
 			<p>
 				TeXShop can be configured to save a backup file whenever it saves or typesets a source file. To turn this on, run Terminal and type the following command. Change YES to NO to turn it off.

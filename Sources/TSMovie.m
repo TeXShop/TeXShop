@@ -17,7 +17,7 @@
 {
 	NSRect		currWindowBounds, newWindowBounds;
     NSPoint		topLeft;
-	float		fixedHeight;
+	CGFloat		fixedHeight;
 	NSString	*fileName;
 	
 	if (movieWindow == nil) {
@@ -41,7 +41,14 @@
     topLeft.x = currWindowBounds.origin.x;
     topLeft.y = currWindowBounds.origin.y + currWindowBounds.size.height;
 	
-    NSSize contentSize = [[myMovie attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
+    // QTMovieCurrentSizeAttribute is deprecated, but no replacement is given in the
+    // documentation. Since currently there are only two movies, we hard code their size
+    // for now
+    
+    NSSize contentSize; // = [[myMovie attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
+    contentSize.width = 635;
+    contentSize.height = 406;
+    
 	fixedHeight = [myMovieView movieControllerBounds].size.height;
 	contentSize.height += fixedHeight;
 

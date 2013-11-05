@@ -40,9 +40,12 @@
 	myURL = [NSURL fileURLWithPath: fileName];
 	myController = [TSDocumentController sharedDocumentController];
 	myDocument = [myController documentForURL: myURL];
-	if (myDocument != nil) 
+	if (myDocument != nil) {
+        // NSLog(@"here");
 		[[myDocument pdfKitWindow] makeKeyAndOrderFront:self];
+    }
 	else {
+        // NSLog(@"there");
 		[myController listDocument:NO];
 		[myController openDocumentWithContentsOfURL: myURL display: YES error:&outError];
 		[myController listDocument:YES];
@@ -71,6 +74,14 @@
 	NSString				*fileName;
  	
 	fileName = [[NSBundle mainBundle] pathForResource:@"TeXShop Tips & Tricks" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
+- (IBAction)displayNotesonApplescript:sender
+{
+    NSString				*fileName;
+ 	
+	fileName = [[NSBundle mainBundle] pathForResource:@"Notes on Applescript in TeXShop" ofType:@"pdf"];
 	[self displayFile: fileName];
 }
 
@@ -111,7 +122,7 @@
 	NSMutableArray		*args;
 	NSMutableDictionary	*env;
 	NSMutableString		*path, *enginePath;
-	int					result;
+	NSInteger					result;
 	
 	result = [NSApp runModalForWindow: packageHelpPanel];
 	[packageHelpPanel close];
@@ -221,9 +232,9 @@
 			NSWindow *theWindow = [NSApp mainWindow];
 			NSString *cd;
 			if ([theWindow isKindOfClass:[TSTextEditorWindow class]])
-				cd = [[[theWindow document] fileName] stringByDeletingLastPathComponent];
+				cd = [[[[(TSTextEditorWindow *)theWindow document] fileURL] path] stringByDeletingLastPathComponent];
 			else if ([theWindow isKindOfClass:[TSPreviewWindow class]]) 
-				cd = [[[theWindow document] fileName] stringByDeletingLastPathComponent];
+				cd = [[[[(TSPreviewWindow *)theWindow document] fileURL] path] stringByDeletingLastPathComponent];
 			else 
 				cd = @"";
 			
@@ -251,6 +262,7 @@
 			}
 			if(pclose(fp) != 0) {
 				NSBeep();
+#warning 64BIT: Check formatting arguments
 				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), [NSString stringWithFormat:NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), target], @"OK", nil, nil);
 			}
 		}
@@ -458,13 +470,14 @@
 		if (!dstExists) {
 			NS_DURING
 				// create the missing directory
-				result = [fileManager createDirectoryAtPath:dstPath attributes:nil];
+            result = [fileManager createDirectoryAtPath:dstPath withIntermediateDirectories:NO attributes:nil error:NULL];
 			NS_HANDLER
 				result = NO;
 				reason = [localException reason];
 			NS_ENDHANDLER
 			if (!result) {
 				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), reason,
+#warning 64BIT: Check formatting arguments
 					[NSString stringWithFormat: NSLocalizedString(@"Couldn't create folder:\n%@", @"Message when creating a directory failed"), dstPath],
 					nil, nil);
 				return;
@@ -474,7 +487,7 @@
 		// Iterate over the content of the source dir and copy it recursively
 		NSEnumerator 	*fileEnumerator;
 		NSString		*fileName;
-		fileEnumerator = [[fileManager directoryContentsAtPath:srcPath] objectEnumerator];
+		fileEnumerator = [[fileManager contentsOfDirectoryAtPath:srcPath error:NULL] objectEnumerator];
 		while ((fileName = [fileEnumerator nextObject])) {
 			[self mirrorPath:[srcPath stringByAppendingPathComponent:fileName]
 					  toPath:[dstPath stringByAppendingPathComponent:fileName]];
@@ -484,7 +497,7 @@
 		if (!dstExists) {
 			NS_DURING
 				// file doesn't exist -> copy it
-				result = [fileManager copyPath:srcPath toPath:dstPath handler:nil];
+            result = [fileManager copyItemAtPath:srcPath toPath:dstPath error:NULL];
 			NS_HANDLER
 				result = NO;
 				reason = [localException reason];

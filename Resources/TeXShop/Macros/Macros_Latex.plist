@@ -867,7 +867,7 @@ end tell</string>
 		</dict>
 		<dict>
 			<key>content</key>
-			<string>--Applescript
+			<string>--Applescript direct
 
 -- "INSERT REFERENCE"
 -- This script searches through the current file (or within every file in the current folder) for \label{...} commands, then pops up a list for you to choose from which you may insert one.
@@ -875,7 +875,7 @@ end tell</string>
 -- It will cut down the list to include only those entries that contain the current selection. So if you type "sec" and select it, then run this script, you will get a choice of only, e.g., "sec:intro","sec:conc","fig:secunia", but not other labels in your document e.g., "cha:monkey","equ:maxwell",etc. 
 
 -- v2004-08-24
-
+--Modified to work with Lion/TeXShop 3.06 by Michael Sharpe 2012-01-18
 
 -- CUSTOMISE TO YOUR LIKING:
 
@@ -898,11 +898,18 @@ property save_before_run : true
 --THE SCRIPT:
 
 
-if save_before_run then
-	tell application "TeXShop" to save the front document
+set docname to #DOCUMENTNAME#
+if docname is equal to "" then
+	display dialog "No document---bailing out."
+	return
 end if
 
-tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
+if save_before_run then
+	tell application "TeXShop" to save docname
+end if
+
+--tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
+set texpath to #FILEPATH#--full path
 
 if only_scan_current_file then
 	set texfiles_tosearch to the quoted form of the texpath -- search the current file
@@ -913,55 +920,55 @@ else
 	set texfiles_tosearch to the quoted form of texdir &amp; "*.tex" -- search all .tex files: "/path/to/*.tex"
 end if
 
-tell application "TeXShop"
+tell application "TeXShop" to set current_selection to the content of selection of document docname
+
+-- DO SHELL SCRIPT COMPONENTS:
+--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
+set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
+-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
+set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
+set filter_selection to " | grep " &amp; quoted form of the current_selection
+if sort_output then
+	set sort to " | sort -u"
+else
+	set sort to ""
+end if
 	
-	set current_selection to the content of the selection of the front document
+-- glue the shell scripts together:
+set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
 	
-	-- DO SHELL SCRIPT COMPONENTS:
-	--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
-	set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
-	-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
-	set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
-	set filter_selection to " | grep " &amp; quoted form of the current_selection
-	if sort_output then
-		set sort to " | sort -u"
+try
+	-- filter choices with the current selection:
+	set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
+on error
+	-- If it fails (e.g., nothing found) ask to diplay all labels:
+	activate
+	display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+	if the button returned of the result is "View all" then
+		set choose_labels to every paragraph of (do shell script get_labels_shell_script)
 	else
-		set sort to ""
+		return -- exit script
 	end if
+end try
 	
-	-- glue the shell scripts together:
-	set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
-	
-	try
-		-- filter choices with the current selection:
-		set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
-	on error
-		-- If it fails (e.g., nothing found) ask to diplay all labels:
-		display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
-		if the button returned of the result is "View all" then
-			set choose_labels to every paragraph of (do shell script get_labels_shell_script)
-		else
-			return -- exit script
-		end if
-	end try
-	
-	-- In case the document doesn't contain any labels:
-	if choose_labels = {""} then
-		display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
+-- In case the document doesn't contain any labels:
+if choose_labels = {""} then
+	display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
 		return
-	end if
+end if
 	
-	set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
-	if label_insert ≠ false then
-		if ref_command = "" then
-			set ref_insert to label_insert
-		else
-			set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
-		end if
-		set the selection of the front document to ref_insert as string
+
+set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
+if label_insert ≠ false then
+	if ref_command = "" then
+		set ref_insert to label_insert
+	else
+		set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
 	end if
+	tell application "TeXShop" to set the selection of document docname to ref_insert as string
+end if
 	
-end tell</string>
+</string>
 			<key>key</key>
 			<string>R+ShiftKey</string>
 			<key>name</key>
@@ -998,7 +1005,7 @@ tell application "TeXShop" to set openfiles to choose from list texfiles with pr
 if openfiles is not false then
 	repeat with this_filename in openfiles
 		set file_to_open to POSIX file (texdir &amp; this_filename)
-		tell application "TeXShop" to open file_to_open
+                 set cdate to (current date) + 30 -- allow 30 seconds for timeout                 tell application "TeXShop"                    try                         open  file_to_open                   on error errmsg number errnum                        if (errnum = -1712) and ((current date) &lt; cdate) then                          --applescript direct often provokes error number -1712                          else                              display dialog errmsg                        end if                   end try                 end tell		
 	end repeat
 end if</string>
 			<key>key</key>
@@ -1047,7 +1054,7 @@ end try</string>
 -- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
 -- example: show TeXShop home page in a web browser
 
-open location "http://darkwing.uoregon.edu/~koch/texshop/texshop.html"</string>
+open location "http://pages.uoregon.edu/koch/texshop/texshop.htmll"</string>
 					<key>name</key>
 					<string>TeXShop home page</string>
 				</dict>
@@ -1270,11 +1277,11 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New tabular" &amp; return &amp; return &amp; "Enter the number of columns you'd like and then select the type of tabular you want." default answer "3" buttons {"Cancel", "Plain", "Booktabs"} default button default_tabular_type
-	set NCOLS to the text returned of q1
+	set theNCOLS to the text returned of q1
 	set tabtype to the button returned of q1
 	
 	set q2 to display dialog "Enter the number of rows you'd like (not including a header row) and select whether you'd like a floating or simply centred table." default answer "3" buttons {"Cancel", "Centred", "Floating"} default button default_table_type
-	set NROWS to the text returned of q2
+	set theNROWS to the text returned of q2
 	set floattype to the button returned of q2
 	
 	if the tabtype = "Booktabs" then
@@ -1311,8 +1318,8 @@ tell application texapp
 	set the column_preamble to "{@{} c"
 	set the one_row_text to indent &amp; indent &amp; cell_text
 	
-	if NCOLS &gt; 1 then
-		repeat with c from 2 to NCOLS
+	if theNCOLS &gt; 1 then
+		repeat with c from 2 to theNCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1327,7 +1334,7 @@ tell application texapp
 		one_row_text &amp; return &amp; ¬
 		indent &amp; indent &amp; midrule &amp; return
 	
-	repeat with r from 1 to NROWS
+	repeat with r from 1 to theNROWS
 		set the midtext to midtext &amp; one_row_text &amp; return
 	end repeat
 	
@@ -1367,10 +1374,10 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New maths array." &amp; return &amp; return &amp; "Enter the number of rows you'd like." default answer "3"
-	set NROWS to the text returned of q1
+	set theNROWS to the text returned of q1
 	
 	set q2 to display dialog "How many columns would you like? Would you like me to indent the array?" default answer "3" buttons {"Cancel", "Flush left", "Indent"} default button default_array_location
-	set NCOLS to the text returned of q2
+	set theNCOLS to the text returned of q2
 	set indentyesno to the button returned of q2
 	
 	if the indentyesno = "Indent" then
@@ -1382,8 +1389,8 @@ tell application texapp
 	set the column_preamble to "{c"
 	set the one_row_text to preindent &amp; indent &amp; cell_text
 	
-	if NCOLS &gt; 1 then
-		repeat with c from 2 to NCOLS
+	if theNCOLS &gt; 1 then
+		repeat with c from 2 to theNCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1393,7 +1400,7 @@ tell application texapp
 	set the one_row_text to one_row_text &amp; "\\\\ " &amp; return
 	
 	set midtext to ""
-	repeat with r from 1 to NROWS
+	repeat with r from 1 to theNROWS
 		set the midtext to midtext &amp; one_row_text
 	end repeat
 	

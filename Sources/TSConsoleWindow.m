@@ -30,12 +30,12 @@
 
 @implementation TSConsoleWindow : NSWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
 	firstResize = NO;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
-	float alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
+	CGFloat alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
 	if (alpha < 0.999)
 		 [self setAlphaValue:alpha];
 	return result;
@@ -80,7 +80,7 @@
 {
 	NSRect	oldFrame;
 	NSRect	newFrame;
-	float	newWidth;
+	CGFloat	newWidth;
 	
 	oldFrame = [window frame];
 	newFrame = defaultFrame;
@@ -119,7 +119,6 @@
 {
     [(TSDocument *)myDocument convertTiff:sender];
 }
-
 
 
 // for scripting

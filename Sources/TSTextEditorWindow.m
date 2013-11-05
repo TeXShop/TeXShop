@@ -26,25 +26,41 @@
 #import "TSTextEditorWindow.h"
 #import "TSDocument.h" // for the definition of isTeX (move this to a separate file!!)
 #import "globals.h"
+#import "TSDocumentController.h"
 
 
 
 @implementation TSTextEditorWindow : NSWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
-	float alpha = [SUD floatForKey: SourceWindowAlphaKey];
+	CGFloat alpha = [SUD floatForKey: SourceWindowAlphaKey];
 	if (alpha < 0.999)
-		 [self setAlphaValue:alpha];
+        //[self setAlphaValue:alpha]; // removed by Terada
+        [self performSelector:@selector(setAlpha:) withObject:[NSNumber numberWithFloat:alpha] afterDelay:0.5]; // added by Terada   
+    [self performSelector:@selector(refreshTitle) withObject:nil afterDelay:1]; // added by Terada
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshTitle) name:NSApplicationDidBecomeActiveNotification object:NSApp]; // added by Terada
 	return result;
 }
+
+-(void)setAlpha:(NSNumber*)alpha // added by Terada
+{
+    [self setAlphaValue:[alpha floatValue]];
+}
+
+- (void)refreshTitle // added by Terada
+{
+	if([myDocument fileURL] != nil) [self setTitle:[myDocument fileTitleName]];
+}
+
+
 
 
 - (void) becomeMainWindow
 {
-	if([myDocument fileName] != nil ) [self setTitle:[myDocument fileTitleName]]; // added by Terada
+	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[myDocument resetSpelling];
 	[myDocument fixMacroMenuForWindowChange];
@@ -57,9 +73,9 @@
 }
 // end addition
 
-
 - (void)makeKeyAndOrderFront:(id)sender
 {
+    
 	if (
 		(! [myDocument externalEditor]) &&
 		(([myDocument documentType] == isTeX) || ([myDocument documentType] == isOther))
@@ -107,8 +123,12 @@
 
 - (void)close
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]]; // this fixes a bug; the application crashed when closing
-	// the last window in multi-page mode; investigation shows that the
+// Yusuke Terada addition to fix crash at close
+    if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && myDocument && [myDocument respondsToSelector:@selector(pdfView)] && [myDocument pdfView])
+        [[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]];
+// end of patch
+    // this fixes a bug; the application crashed when closing
+ 	// the last window in multi-page mode; investigation shows that the
 	// myPDFView "wasScrolled" method was called from the notification center before dealloc, but after other items in the window
 	// were released
 	NSArray *myDocuments = [[NSDocumentController sharedDocumentController] documents];
@@ -120,6 +140,9 @@
 				[anObject setCallingWindow: nil];
 		}
 	}
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self]; // added by Terada
+
 	[super close];
 }
 
@@ -150,6 +173,13 @@
 	[myDocument saveSourcePosition];
 }
 
+
+- (void)savePortableSourcePosition: sender
+{
+	[myDocument savePortableSourcePosition];
+}
+
+
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
 	NSRect	newFrame;
@@ -159,6 +189,7 @@
 		newFrame.size.width = 1024;
 	return newFrame;
 }
+
 
 
 @end

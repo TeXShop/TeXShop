@@ -1,0 +1,788 @@
+% !TEX TS-program = pdflatexmk
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage[parfill]{parskip}%Begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{upquote}
+%\usepackage{amssymb}% do not use with mtpro2 except lite version
+%\usepackage{lmodern}
+%\usepackage[T1]{fontenc}
+%SetFonts
+%fbb+newtxmath
+\usepackage[full]{textcomp} % to get the right copyright, etc.
+\usepackage[lining,tabular]{fbb}
+\usepackage[scaled=.95]{cabin}
+\usepackage[varqu,varl]{zi4}% typewriter
+\usepackage[libertine,cmbraces]{newtxmath}
+\usepackage[bb=boondox,frak=boondox]{mathalfa}
+\usepackage[T1]{fontenc}
+\useosf
+%SetFonts
+\usepackage{microtype}
+%\DisableLigatures{encoding =*, family =*}
+\usepackage{xspace}
+\def\UNIX{\textsc{unix}\xspace}
+\def\Macros{\textsf{Macros}\xspace}
+\hyphenation{Script-Runner Apple-Script}
+\title{Notes on AppleScript in TeXShop}
+\author{Michael Sharpe}
+\date{\today}  % Activate to display a given date or no date
+\begin{document}
+\maketitle
+These are notes made in the course of attempts to write and debug some AppleScripts for  TeXShop. The current TeXShop version is $3.25$, running  under OS X (Mavericks) $10.9$. Both Finder and AppleScript (and especially the Finder AppleScript dictionary) can and do change from time to time, and may require rewriting previously functional scripts to accommodate the changes. AppleScript is a head-banger of a language, or perhaps I have to say  {\tt language as head-banger}, or {\tt class of AppleScript is head-banger}, or even {\tt language of head-banger as alias}.  (In fact, the hyphen in {\tt head-banger} makes it not legal as an AppleScript variable.) The motivating force is that it's the only way to script most Mac GUI applications, like TeXShop.
+
+\section{Why Macros?}
+TeXShop's Macros menu has items whose functions overlap to some extent with engines and their associated executables. (Recall that engines are usually simple shell scripts located in TeXShop's {\tt Engines} folder. These are the possible targets for a line like
+\begin{verbatim}
+% !TEX TS-program = latexmk
+\end{verbatim}
+near the top of your tex source file, which instructs TeXShop to process the file with the engine program {\tt latexmk.engine}. The engine files call executable programs located in TeXShop's {\tt bin} folder. (Eg, {\tt latexmk.engine} calls the executable {\tt latexmk}.)  If there is an engine available to perform the processing you want, then your experience with the engine will most likely be better than with a macro, for several reasons:
+\begin{itemize}
+\item
+shell scripts, \textsc{perl} scripts and, to a lesser extent, python scripts are likely to prove much more robust than AppleScripts, due in part to the changes that occur from time to time in the latter;
+\item those other script languages are faster than AppleScript and are more intimately connected to the \UNIX shell;
+\item engines and the executables they call will most likely have had much more intensive testing and public exposure, reducing the likelihood of bugs.
+\end{itemize}
+Engines like {\tt latexmk} perform all the operations needed, as many times as needed, to produce the final {\tt pdf} output, and there is no longer much need to write AppleScripts to run bibtex and the like. So, in my opinion, the main use for AppleScript macros is operations that either (a) modify your source file but do not involve any TeX processing; (b) provide you with  choices of items for your source document; (c) bring up information about command options, etc.
+
+For this reason, I'm going to ignore all verbs in the TeXShop dictionary that initiate document processing (eg, {\tt typeset, latex}) that are best performed by an engine.
+
+\section{The ways of using AppleScript macros in TeXShop}
+Macros are triggered in one of three ways in TeXShop:
+\begin{itemize}
+\item
+choose the name of the macro from the \textsf{Macros} menu in the document menu bar;
+\item
+choose the name of the macro from the \textsf{Macros} menu in the main menu bar on the top line of the screen---in the sequel, this is what we shall mean by the \textsf{Macros} menu;
+\item press the associated key combination, if one has been defined. (A key combination may be defined using the \textsf{Macros} menu.)
+\end{itemize}
+Writing an AppleScript for the \Macros menu can be as simple as the following example, which is not at all useful as it stands.
+\begin{verbatim}
+--applescript direct
+do shell script("/bin/ls") --the parens are optional
+\end{verbatim}
+This is not useful because it does nothing with the output from {\tt ls} and does not check for possible errors. The point is that an AppleScript macro can simply run an external executable program in an arbitrary language. A slightly more realistic example would be
+\begin{verbatim}
+--applescript direct
+try
+    set s to do shell script("/bin/ls")
+on error number errnum
+    display dialog "Command ls returned error number " & errnum
+end try
+\end{verbatim}
+so that the standard output from {\tt ls} is captured in the AppleScript variable {\tt s} and the exit status is passed along to be handled by AppleScript's {\tt on error}. Note that it is important to give a full path to \UNIX commands, because you should not make any assumptions about the {\tt path} used by the shell and, in addition, you want to avoid any localizations of the command made by the user so you can be sure the output is in the expected format.
+
+AppleScripts may be involved in the definition of a macro in the \Macros menu in four rather different ways.
+\begin{itemize}
+\item \textbf{Mode $(1)$:}
+The AppleScript code is placed in the body of a Macro Editor window following  \verb|--applescript direct|. In this case, the code is interpreted by TeXShop's internal interpreter and the TeXShop event loop comes to a halt so that TeXShop does not respond to external stimuli until the event loop restarts. (This could be triggered, for example, by a TeXShop error message popping up.)
+\item \textbf{Mode $(2)$:} The AppleScript code is placed in the body of a Macro Editor window following  \verb|--applescript|. In this case, the code is interpreted by a copy of ScriptRunner in the TeXShop bundle. The TeXShop event loop continues but messages from ScriptRunner need to be brought to the front with an {\tt activate} command or may be easily missed.
+\item \textbf{Mode $(3)$:}
+This refers to AppleScript code that is in an external compiled AppleScript which is loaded by your macro script as an external AppleScript library. In this case, handlers in the external library are not subject to the limitations of  {\tt-{}-applescript [direct]}. This may be the optimal strategy, at the cost of having to write replacement macros for methods such as  {\tt save}, {\tt close} and {\tt open} which can be problematic in mode $(1)$. Note though that a handler in an external library that has commands from the TeXShop dictionary in a {\tt tell "TeXShop"} block will behave the same way as the same commands in a similar block in the main script. The main advantage of external scripts is that the error handling can be written just once.
+\item \textbf{Mode $(4)$:} Save an AppleScript as an application called by \verb|do shell script|.  The interface does not differ in any way from applications written in other languages, and we shall not discuss it any further except to say that other languages are usually much more capable and better-suited for stand-alone use.
+\end{itemize}
+
+%One of the biggest problems in using AppleScript is the dictionary format, which, when laid out without examples, can seem quite impenetrable. This small document aims to provide as many of the missing examples as I can for the TeXShop AppleScript dictionary.
+
+\section{General advice on writing AppleScript macros for TeXShop}
+Please understand that the following advice applies only to use in TeXShop---in other settings, it might not be helpful.
+\begin{itemize}
+\item
+Do all work with files using names in POSIX string format. This will keep the number of conversions and coercions to a minimum. You need to be aware of the difference between a simple POSIX string (eg, \verb|set fstr to "/Users/Al/Documents"|) and the result of 
+\begin{verbatim}
+set f to (POSIX file fstr)
+\end{verbatim} which is no longer a string, but an object of type {\tt file}. The latter can be coerced to the former by 
+\begin{verbatim}
+set fstr to (POSIX path of f)
+\end{verbatim}
+\item One of the first things to do, early in your script, is to gives names to some key folders to permit easier path construction. Eg,
+\begin{verbatim}
+set docf to POSIX path of (path to documents folder)
+set homef to POSIX path of (path to home folder)
+\end{verbatim}
+(You should never use \verb|~| as an abbreviation for your home folder as it can fail.)
+\item Make use of the special constants TeXShop provides. Most useful are \verb|#DOCUMENTNAME#| and \verb|#FILEPATH#|. See the full list and description in Section .
+\item To open a file named {\tt eg1.txt} in your Documents folder for writing output:
+\begin{verbatim}
+set txtfile to docf & "eg1.txt" --docf ends with /
+set outf to (open for access (POSIX file txtfile) with write permission)
+write "xyz" to outf
+close access outf
+\end{verbatim}
+To read from that same file:
+\begin{verbatim}
+set inf to (open for access (POSIX file txtfile))
+set thetext to (read inf for (get eof inf)) --Mac OS Roman
+close access inf
+\end{verbatim}
+\item Make use of {\tt TSLib.scpt}, which contains a number of workarounds for TeXShop scripting issues. (It is described in detail later in these notes.)
+\item Mode $(1)$ is a little easier to work with than Mode $(2)$, but suffers from some serious limitations when you want to open, close or save files without making use of \textsf{TSLib}. Use Mode $(2)$ if you need to perform extensive file manipulation while keeping  TeXShop responsive to changes.
+\item The command {\tt do shell script} offers many possibilities but there is an overhead cost when using it for small external scripts. Whenever possible, pipe commands together within one {\tt do shell script} to avoid repeated opening and closing of shells.
+\item AppleScript is fine for small jobs, but large amounts of data should be handled externally.
+\item Whenever possible, make changes to a source file by working with the {\tt selection}, adjusting its {\tt offset} and {\tt length} and then manipulating its {\tt content}. The {\tt search} handler can be of much use in this connection.
+\end{itemize}
+
+\section{Starting a new script}
+Unless your script is only a few lines long, you will find it much easier to develop it using the AppleScript Editor to get the basic layout correct. It provides specific (though sometimes puzzling) error messages, but provides the exact location of the error, unlike  the TeXShop Macro Editor. The fly in the ointment is that from the AppleScript Editor you cannot make use of some of the best features of TeXShop's AppleScript interpreters---the special constants with names like \verb|#FILEPATH#|, which greatly simplify the assembly of filenames and window names. I find it useful to work as follows. 
+\begin{itemize}
+\item
+Decide which constants you will need. At  a minimum, you will most likely make use of \verb|#FILEPATH#|, \verb|#NAMEPATH#| and \verb|#DOCUMENTNAME#|, so in the Macro Editor, make your first lines following the initial comments 
+\begin{verbatim}
+set filepath to #FILEPATH#
+set namepath to #NAMEPATH#
+set docname to #DOCUMENTNAME#
+\end{verbatim}
+and make no further use of the \verb|#..#| constants in your script. Then, in the AppleScript Editor, place the corresponding definitions at the top of the file.
+\begin{verbatim}
+set filepath to "/path/to/tex_file"
+set namepath to "/path/to/tex_file_less_extension"
+set docname to "name_of_frontmost_tex_document"
+\end{verbatim}
+so they correspond exactly to the output from \verb|#FILEPATH#|, \verb|#NAMEPATH#| and \verb|#DOCUMENTNAME#|. 
+\item
+The remainder of your script (call it the body) should be developed in AppleScript Editor to take advantage of its better error diagnoses. Copy the body of the finished script from AppleScript Editor when it works there, then focus on issues that arise in Macro Editor. (See below.)
+\end{itemize}
+Because of the problems with AppleScript macros running in the Macro Editor (documented below), I find it useful to make use of an external library of handlers which, being compiled outside TeXShop, do not have the same problems, acting as if they were running in AppleScript Editor. (An exception is commands running inside a {\tt tell "TeXShop"} block, which have the same issues they would in the main script.) To load the routines, place these lines following the lines discussed above.
+\begin{verbatim}
+set TSLibAlias to alias ((path to home folder as string) &
+  "Library:TeXShop:Scripts:TSLib.scpt") --join to previous line
+set TSLib to (load script TSLibAlias)
+set mytex to POSIX path of (path to documents folder) & "texfiles/"
+\end{verbatim}
+The last line is not needed to load the library, but makes it easy for me to construct the POSIX paths to files in that folder.
+
+
+Here then are how my templates appear:\\
+In Macro Editor:
+\begin{verbatim}
+--applescript direct
+--possibly without "direct"
+set filepath to #FILEPATH#
+set namepath to #NAMEPATH#
+set docname to #DOCUMENTNAME#
+# CUT HERE
+# Start of script body
+set TSLibAlias to alias ((path to home folder as string) &
+   "Library:TeXShop:Scripts:TSLib.scpt") --join to previous line
+set TSLib to (load script TSLibAlias) --to use handlers in TSLib
+set mytex to POSIX path of (path to documents folder) & "texfiles/"
+\end{verbatim}
+
+In AppleScript Editor:
+\begin{verbatim}
+set filepath to "/path/to/tex_file"
+set namepath to "/path/to/tex_file_minus_extension"
+set docname to "name_of_document"
+# CUT HERE
+# Start of script body
+set TSLibAlias to alias ((path to home folder as string) &
+   "Library:TeXShop:Scripts:TSLib.scpt") --join to previous line
+set TSLib to (load script TSLibAlias) --to use handlers in TSLib
+set mytex to POSIX path of (path to documents folder) & "texfiles/"
+\end{verbatim}
+
+{\tt TSLib.scpt} contains the following handlers. In all cases, the arguments should be strings. Arguments representing files should be in POSIX path form and the names of documents in TeXShop should be as (used to be) displayed in the TeXShop document window, just as provided by \verb|#DOCUMENTNAME#|. Note that it not safe to use the abbreviation \verb|~| for the home folder in specifying a POSIX path. Use instead
+\begin{verbatim}
+POSIX path of (path to home folder)
+\end{verbatim}
+for the equivalent POSIX path, a string ending with `/'.
+
+All handlers involving files or folders return the the number $1$ on failure. Those that do not return a string value return the number $0$ on success.
+\begin{itemize}
+\item
+{\tt opendoc(f)} opens the POSIX path {\tt f} in TeXShop. It replaces the troubled {\tt open()} handler in TeXShop. Eg, \verb|opendoc(mytex & "eg.tex")|.
+\item {\tt savedoc(f)} saves document {\tt f} in TeXShop using its current location. An error is returned if it has not been saved previously. Eg, \verb|savedoc("eg.tex")|.
+\item {\tt savedocIn(f,g)} saves document {\tt f} in TeXShop to a POSIX file {\tt g}, overwriting {\tt g} if it exists. Note that the document {\tt f} is not closed and file {\tt g} is not opened. Eg, \verb|savedocIn("eg.tex",mytex & "eg1.tex")|.
+\item {\tt closedoc(f)} closes the TeXShop document named {\tt f}. If the document has been modified since it was last saved, it will be saved under its own name. Eg, \verb|closedoc("eg.tex")|. If the document has never been saved (eg, "Untitled") and has been modified, you will be asked for a name and can choose not to save it.
+\item {\tt closedocIn(f,g)} closes the TeXShop document named {\tt f}, saving its contents in the POSIX file {\tt g} but not saving changes to the original file. Eg, 
+\begin{verbatim}
+closedocIn("eg.tex",mytex & "eg1.tex")
+\end{verbatim}
+\item {\tt docexists(f)} takes the POSIX path {\tt f} and returns the number $0$ if it specifies an existing  file or folder, $1$ if not. 
+\item {\tt dirbase(f)} takes the POSIX path {\tt f} and returns a list with two items, the first being the POSIX path to the parent folder, the second the name of the file within the parent folder. These should give the same output as the \UNIX commands {\tt dirname} and {\tt basename} without the overhead of {\tt do shell script}.
+\item {\tt docname(f)} takes the POSIX path {\tt f} of an existing  {\tt.tex} file and returns a list with three items, the first being the POSIX path to the parent folder, the second the name of the file within the parent folder with {\tt.tex} removed, and the third provides the name by which the document \emph{should} be known if opened in TeXShop. For example, assuming \verb|"/Users/Al/Documents/eg.tex"| exists, \verb|docname("/Users/Al/Documents/eg.tex")| would return 
+\begin{verbatim}
+{"/Users/Al/Documents","eg","eg.tex"}
+\end{verbatim}
+ if the file had not been saved with extension hidden, and otherwise it would return \begin{verbatim}
+{"/Users/Al/Documents","eg","eg"}
+\end{verbatim}
+ This gives you an easy way to construct the equivalents of 
+\verb|#..#| items when you open a new {\tt.tex} file in a script. Eg, having specified an existing tex file with POSIX path string s,
+\begin{verbatim}
+tell TSLib to set {pdir, shortname, displayname} to docname(s)
+set dviname to pdir & "/" & shortname & ".dvi"
+\end{verbatim}
+\item {\tt mkdir(f)} traverses the POSIX path {\tt f}, recursively creating any folders necessary. Every component of {\tt f} will be created as a folder, if such a folder is not present, so do not pass the POSIX path to a file. Eg
+\begin{verbatim}
+mkdir("/x/y/z")
+\end{verbatim}
+will try first to create the folder \verb|x| in the root folder. (This will fail because users do not have permission to write to the root folder.) However, had it succeeded, it would then create a subfolder {\tt y} of \verb|/x| and a further subfolder {\tt z} of \verb|/x/y|. It would not overwrite any existing folder with a new, empty folder, so it is a safe command.
+\item {\tt stroffset(a,b)} is a synonym for the usual {\tt offset of a in b} which is unavailable in modes $(1,2)$ because the meaning of {\tt offset} has been pre-empted there. Eg, {\tt stroffset("b","abc")} returns $2$.
+\item {\tt trim(s)}, where {\tt s} is a string, removes white-space characters (space, tab, line-feed) from both ends of s. Actually, you can specify what to remove by temporarily changing the value of {\tt trimitems}. From modes $(1,2)$, you could use
+\begin{verbatim}
+set TSLib's trimitems to {ASCII character 10, ASCII character 0,tab}
+tell TSLib to set s to trim(s)
+set TSLib's trimitems to origtrimitems  --reset
+\end{verbatim}
+\end{itemize}
+%\section{The three modes of AppleScript}
+%AppleScript in TeXShop may be invoked in three different modes.
+%\begin{itemize}
+%\item
+%{\tt AppleScript direct} mode: the first line of the macro is \verb|--applescript direct|. In this mode, not all TeXShop dictionary items are implemented, but execution is controlled by TeXShop and error messages come from TeXShop and function reliably. 
+%\item {\tt AppleScript} mode: the first line of the macro is \verb|--applescript|. In this mode, most (but not all) TeXShop dictionary items are implemented, execution is controlled by ScriptRunner and error messages come from ScriptRunner. This complicates things a little, as the command {\tt activate} must be inserted in the script before the first possible error message might appear.
+%\item {\tt External AppleScript} mode: these are the parts of the script that are interpreted by neither the TeXShop internal interpreter, nor the TeXShop ScriptRunner application, but by the system AppleScript interpreter. Commands which are run from an external library use this mode, and suffer the fewest limitations. They behave as if they were run from AppleScript Editor.
+%\end{itemize}
+%For short, let's refer to  these modes as $(1)$, $(2)$ and $(3)$ respectively. In all modes, all TeXShop dictionary nouns and verbs should be enclosed within a {\tt tell application "TeXShop"} block. (Actually, even outside such a block, TeXShop's dictionary can interfere with normal AppleScript commands. For example, in modes $(1)$ and $(2)$, the simple AppleScript fragment
+%\begin{verbatim}
+%set n to offset of "b" in "abc" --should set n to 2
+%\end{verbatim}
+%fails even outside a TeXShop tell block, apparently because the TeXShop dictionary uses {\tt offset} (and {\tt length}) as properties attached to  a text selection, and this prevents customary AppleScript usage of both terms in these modes.
+
+\section{TeXShop constants} %\hspace*{1pt}\\[6pt]
+In modes $(1,2)$, one has access to special named constants described below. \textbf{CAUTION:} these constants do not function while the Macro Editor is open, making it impossible to use the \textsf{Test} button if the script depends on those constants. The values depend on which window is frontmost in TeXShop at the instant the script started. Let's say that the front window is any one of {\tt eg.tex} (or just {\tt eg}, if you saved the file with \textsf{hide extension} checked) or {\tt eg.pdf} or {\tt eg console}. Then the following constants are defined:
+\begin{itemize}
+\item
+\verb|#FILEPATH#| is the full POSIX path string to the file {\tt eg.tex};
+\item
+\verb|#TEXPATH#| is the same as \verb|#FILEPATH#|;
+\item
+\verb|#PDFPATH#| is the full POSIX path string to the file {\tt eg.pdf}, if it exists;
+\item
+\verb|#DVIPATH#| is the full POSIX path string to the file {\tt eg.dvi}, if it exists;
+\item
+\verb|#PSPATH#| is the full POSIX path string to the file {\tt eg.ps}, if it exists;
+\item
+\verb|#LOGPATH#| is the full POSIX path string to the file {\tt eg.log}, if it exists;
+\item
+\verb|#AUXPATH#| is the full POSIX path string to the file {\tt eg.aux}, if it exists;
+\item
+\verb|#INDPATH#| is the full POSIX path string to the file {\tt eg.ind}, if it exists;
+\item
+\verb|#BBLPATH#| is the full POSIX path string to the file {\tt eg.bbl}, if it exists;
+\item
+\verb|#HTMLPATH#| is the full POSIX path string to the file {\tt eg.html}, if it exists;
+\item
+\verb|#NAMEPATH#| is the full POSIX path string to the file {\tt eg.tex}, minus the {\tt.tex};
+\item
+\verb|#DOCUMENTNAME#| is the name as it \emph{should} appear in the source window, either {\tt eg} or {\tt eg.tex}, depending on whether the document was saved with \textsf{hide extension} checked or not. (This used to be true, but is not the case at the moment. Nonetheless, it is the name used internally to refer to the document.)
+\end{itemize}
+To emphasize what is perhaps an obvious point, these are fixed for the duration of the script and may not reflect current values correctly if windows were closed or opened by the script. 
+\section{Working with a Selection}
+This is not quite as obvious as it seems. A text selection has an offset, a length and a content, and you should think of these as a snapshot of the current selection at the instant  you read a selection, but which will change whenever you modify (ie, {\tt set}) any one of them. Note that offset $0$ corresponds to a cursor position immediately before the first character of the document and, if the document has N characters (including EndOfLine characters), an offset value of N corresponds to the cursor immediately after the last character of the document. 
+
+When you set a selection property, the other properties may also change. Eg, with
+\begin{verbatim}
+tell application "TeXShop"
+    set offset of selection of document docname to n --0\le n\le N
+end tell
+\end{verbatim}
+the effect is:
+\begin{itemize}
+\item
+the beginning of the selection changes to offset {\tt n}---if {\tt n} is set to a value out of range, the length is set to $0$ and the offset to N, so a good way to send the cursor to the end of the file is: 
+\begin{verbatim}
+tell application "TeXShop"
+    set offset of selection of document docname to -1
+end tell
+\end{verbatim}
+If you then ask for the offset of the current selection, you will get the number of characters in the document, which is otherwise not so obvious to determine. You might think
+\begin{verbatim}
+tell application "TeXShop"
+    set n to count of characters of document docname
+end tell
+\end{verbatim}
+ might  work, but the \TeX Shop dictionary does not know about \verb|characters of document ...|. You can write
+\begin{verbatim}
+tell application "TeXShop"
+    set n to count of characters of text of document docname
+end tell
+\end{verbatim}
+but that is highly inefficient for long documents.
+\item the length stays the same except for an adjustment so the end of the selection stays in range---ie, the {\tt length} will change to {\tt newlength=N-n} if \verb|N-n < length| 
+\item  the {\tt content} changes to the text fragment of the document from {\tt n} thru {\tt n+newlength}.
+\end{itemize}
+Similarly, with
+\begin{verbatim}
+tell application "TeXShop"
+%    set length of selection of document docname to k --k\ge 0
+%
+end tell
+\end{verbatim}
+the effect is:
+\begin{itemize}
+\item
+the beginning of the selection is unchanged if \verb|k >= 0|, but effectively, nothing is selected (cursor not visible) if \verb|k < 0|;
+\item the end  changes to {\tt newend=Min(offset+k,N)};
+\item  the {\tt content} changes to the text fragment of the document from {\tt offset} thru {\tt newend}.
+\end{itemize}
+Likewise, with
+\begin{verbatim}
+tell application "TeXShop"
+    set content of selection of document docname to s
+end tell
+\end{verbatim}
+the effect is:
+\begin{itemize}
+\item
+the offset of the selection is unchanged;
+\item the end  changes to {\tt offset+(count of s)};
+\item  the {\tt content} changes to s;
+\item that is, the previous selection is replaced by s, and its length is modified accordingly.
+\end{itemize}
+The interaction with TeXShop's {\tt goto} command calls for some clarification.
+First of all, it fails in Mode$(1)$. Assuming now that we are not using Mode$(1)$, if there are {\tt k-1} linefeeds in a document, there are {\tt k} lines with indices {\tt 1..k}. The effect of 
+\begin{verbatim}
+tell application "TeXShop" to tell document docname to goto line j
+\end{verbatim}
+depends on the location of the current selection.
+\begin{itemize}
+\item If {\tt j<1} or {\tt j>k-1}, there is no effect. (Note: {\tt goto} cannot be used to move to the last line of a document. You may use {\tt set offset to -1}, as described above.)
+\item
+If the current selection is completely contained in line {\tt j}, the selection remains unchanged;
+\item In all other cases, provided {\tt 0<j<k} the selection changes to all of line {\tt j} including the EndOfLine character.
+\end{itemize}
+Suppose you want to expand the current selection to include every complete line touched by the selection. The following would handle the job.
+\begin{verbatim}
+set docname to #DOCUMENTNAME#
+set lf to (ASCII character 10)
+tell application "TeXShop"
+    set offs to offset of the selection of document docname
+    set thelast to (length of the selection of document docname) + offs
+    set strt to 0
+    if offs > 0 then 
+        set strt to search document docname for lf with searching backwards
+    end if
+    set offset of selection of document docname to -1
+    set endofdoc to offset of selection of document docname
+    set offset of selection of document docname to thelast
+    set length of selection of document docname to 0
+    set theend to endofdoc
+    if thelast < endofdoc then set theend to search document docname for lf
+    if theend = 0 then set theend to endofdoc
+    set offset of selection of document docname to strt
+    set length of selection of document docname to theend - strt
+    set s to content of selection of document docname
+end tell
+\end{verbatim}
+Note that {\tt search} is $1$-based, not $0$-based and to get the result you expect, you may need to subtract $1$ in some cases  to get the {\tt offset} right. (Not so in the example above.)
+\section{Problems with document names} %\hspace*{1pt}\\[6pt]
+The document name is important in addressing a TeXShop window correctly. If you are in a position to use \verb|#DOCUMENTNAME#|, that will serve  for addressing the tex source window. Currently, it may not in fact be the title of that window in TeXShop. If you saved a tex {\tt eg.tex} file with hidden extension, then in earlier version of Mac OS X and TeXShop (several years ago), the following took place:
+\begin{itemize}
+\item
+the file system would use {eg.tex} as the name of the file;
+\item the name would display as {\tt eg} in a Finder folder window;
+\item the AppleScript Finder command {\tt exists eg} would return {\tt true} and {\tt exists eg.tex} would return {\tt false};
+\item TeXShop would open the file with title \textsf{eg}, not \textsf{eg.tex}, and would refer to the document by the name {\tt eg}.
+\end{itemize}
+The current behavior is different:
+\begin{itemize}
+\item
+the file system would continue to use {eg.tex} as the name of the file;
+\item the name would still display as {\tt eg} in a Finder folder window;
+\item the AppleScript Finder command {\tt exists eg} would return {\tt false} and {\tt exists eg.tex} would return {\tt true};
+\item TeXShop would open the file with title \textsf{eg.tex}, not \textsf{eg}, but would continue to refer to the document by the name {\tt eg}, not {\tt eg.tex}.
+\end{itemize}
+This change breaks
+the external library {\tt setname.scpt} by Claus Gerhardt that used to provide the document name but which no longer a gives correct result when a tex file was saved with a hidden extension. 
+
+Fortunately, the \verb|#DISPLAYNAME#| constant makes it unnecessary to use this external library in case you work with files that are already open and are frontmost in TeXShop, and the library {\tt TSLib.scpt} contains a suitable replacement, {\tt docname}, that can be used if your script opens a new tex file or brings a different window to the front. The replacement handler consults the file metadata for the correct display name. You may also use a construction like
+\begin{verbatim}
+tell application "Finder" to set dn to displayed name of file POSIX file f
+\end{verbatim}
+(Oddly, the {\tt file} preceding {\tt POSIX file} really is necessary.)
+
+%For example, his macro {\tt pdflatexc} could now be rewritten more simply as
+%\begin{verbatim}
+%--Applescript
+%-- Apply only to an already saved file.
+%set frontName to #DISPLAYNAME#
+%tell application "TeXShop" to save document frontName
+%set fileName to  #TEXPATH#
+%set baseName to do shell script "/usr/bin/basename " & quoted form of fileName
+%set m to (number of characters of contents of baseName)
+%set dirName to quoted form of (characters 1 thru (- m - 1) of fileName as string)
+%set shellScript to "cd " & dirName & ";"
+%set shellScript to shellScript & "~/Library/TeXShop/bin/pdflatexc  " & baseName
+%do shell script shellScript
+%tell document frontName of application "TeXShop" to refreshpdf
+%\end{verbatim}
+\section{Specific Problem Areas}
+\subsection{Problems with {\tt -{}-applescript} mode}
+
+There are three main problems aside from the ones mentioned in the preceding subsection.
+\begin{itemize}
+\item
+The usual AppleScript line continuation character generated by Option-lower case L is not recognized as such, though it is in {\tt -{}-applescript direct} mode.
+\item The method by which messages are passed back to the user are not reliable. Despite the presence of an {\tt activate} line near the top of the script, errors that occur may not come to the front and there may be no visual indicator that an error occurred unless you think to check the ScriptRunner icon in the dock.
+\item You may realize after a while that there are several copies of ScriptRunner working at one, each with its own error message, and it is at least easier to shut them all down than in mode $(1)$.
+\end{itemize}
+Principally for the second reason, I try to use only the {\tt -{}-applescript direct} mode even though its understanding of the TeXShop dictionary is more limited, because it is not hard to work around those limitations using the external library {\tt TSLib}.
+
+\subsection{Problems with {\tt -{}-applescript direct} mode}\hspace*{1pt}\\[6pt]
+It's possible to get into a truly puzzling mess if the script crashes before completion and there are files left open at the time of the crash. (I'm talking about files you've opened using something like
+\begin{verbatim}
+open for access mylog with write permission
+\end{verbatim}
+and are written to periodically, like a log file.) What happens in this case is repeated error message (when trying the execute the line above) that the file is already open. The only solution is to close the TeXShop application and restart it. This may be the downside to having TeXShop running the AppleScript interpreter. 
+
+It would seem to be good practice to save log messages in a list, then write the list to file at the end so there are no interruptions and the file can be closed as quickly as possible.
+
+In this mode, many forms of {\tt save}, {\tt open} and {\tt close} do not work, or work but produce an AppleEvent {\tt time out} error. For this reason, you should always either (a) filter out error $-1712$ in a {\tt try .. on error} block, or use the corresponding handler from \textsf{TSLib}.  For specific problems, see the next section.. \\[3pt]
+
+\subsection{Problematic commands in TeXShop's AppleScript dictionary}\hspace*{1pt}\\[6pt]
+Here is an example of the defensive code you should employ in mode $(1)$ where {\tt save}, {\tt open} and {\tt close} can produce spurious AppleEvent timed out errors (error number $-1712$.)
+%If one works with filenames in POSIX form, there is a way to specify {\tt open} that works in all modes. (This is essentially what {\tt opendoc} in {\tt TSLib} does.)
+\begin{verbatim}
+-- assumes f in POSIX string format
+set cdate to (current date) + 30 -- allow 30 seconds for timeout
+tell application "TeXShop"
+    try --the following form works in all modes
+        open f as POSIX file
+    on error errmsg number errnum
+        if (errnum = -1712) and ((current date) < cdate) then 
+        --applescript direct often provokes error number -1712
+            --set errmsg to ""
+        else
+            display dialog errmsg 
+        end if
+    end try
+end tell
+\end{verbatim}
+In all examples and tests below, it is assumed that there is an existing  tex file {\tt f} specified by\begin{verbatim}
+set f to (POSIX path of (path to documents folder) & "eg.tex")
+\end{verbatim}
+and a (possibly non-existent) file {\tt fn} defined by
+\begin{verbatim}
+set fn to (POSIX path of (path to documents folder) & "eg1.tex")
+set pfn to POSIX file fn
+\end{verbatim}
+Let {\tt dn} be the name of a document open in TeXShop.\\[6pt]
+The column heading \textsf{Mode$1$N} stands for \texttt{Mode (1) with no errors},  \textsf{Mode$1$E} stands for \texttt{works in Mode (1) but provokes AppleEvent timed out error}, while \textsf{OtherModes} stands for {\tt works in Modes (2,3)}.
+
+\textbf{\textsc{Save}}\\[3pt]
+\begin{tabular}{l c c  c c}
+Command & Mode$1$N & Mode$1$E &  OtherModes&Remarks\\
+{\tt save dn} &  \checkmark &&\checkmark&Not saved unless modified\\
+{\tt save document dn} & & \checkmark&  \checkmark& Saves regardless\\
+{\tt save front document} & &\checkmark &  \checkmark& Saves regardless\\
+{\tt tell document f to save}&&\checkmark&\checkmark&Saves regardless\\
+{\tt save document dn saving in pfn} & & \checkmark &  \checkmark\\
+{\tt save dn in pfn} & & &&Did not work, no error msg\\
+{\tt tell TSLib to savedoc(dn)} &\checkmark&&\checkmark\\
+{\tt tell TSLib to savedocIn(dn,fn)} &\checkmark&&\checkmark\\
+\end{tabular}
+
+\textbf{\textsc{Open}}\nopagebreak[4]\\[3pt]
+\begin{tabular}{l c c  c c}
+Command & Mode$1$N & Mode$1$E &  OtherModes&Remarks\\
+{\tt open pfn} & & \checkmark &\checkmark&\\
+{\tt open fn as POSIX file} & & \checkmark&  \checkmark& \\
+{\tt tell TSLib to opendoc(fn)} &\checkmark&&\checkmark\\
+\end{tabular}
+
+Another option is to use the \UNIX\ {\tt open} command (works in all modes)
+\begin{verbatim}
+open -a "TeXShop" '/Users/Joe/Documents/test.tex' --(via do shell script)
+\end{verbatim}
+but this has some problems in  mode $(1)$ because the TeXShop event processing loop is suspended---TeXShop does not see that the file has been opened, and does not modify its document list until TeXShop once again receives the focus. This can lead to very puzzling behavior in scripts.
+
+\textbf{\textsc{Close}}\nopagebreak[4]\\[3pt]
+\begin{tabular}{l c c  c c}
+Command & Mode$1$N & Mode$1$E &  OtherModes&Remarks\\
+{\tt close dn} &   &&&Does not close, no error msg\\
+{\tt close document dn} & & \checkmark&  \checkmark& Saves if modified\\
+{\tt close front document} & &\checkmark &  \checkmark& Saves if modified\\
+{\tt tell document f to close}&&\checkmark&\checkmark&Saves if modified\\
+{\tt close document dn saving in pfn} && \checkmark &\checkmark&Saves to fn, not dn\\
+{\tt save dn in pfn} & & &&Did not work, no error msg\\
+{\tt tell TSLib to closedoc(dn)} &\checkmark&&\checkmark&Saves if modified\\
+{\tt tell TSLib to savedocIn(dn,fn)} &\checkmark&&\checkmark&Saves to fn, not to dn\\
+\end{tabular}
+
+Other supposedly possible forms, like
+\begin{verbatim}
+close document dn saving ask
+\end{verbatim}
+provoked an AppleEvent timed out error in mode $(1)$, but saved the changes, and did not ask at all in either of modes $(2,3)$, so its effect is identical there to
+\verb|close document dn|.\\[6pt]
+\textbf{\textsc{Count}}\\[3pt]
+This works as you would expect in all modes and makes a satisfactory replacement for the non-functional {\tt length} command.
+\begin{verbatim}
+set n to count documents
+\end{verbatim}
+results in a count of all tex source documents currently open in TeXShop.\\[3pt]
+\textbf{\textsc{Document}}\\[3pt]
+This behaves mostly as you would expect, with one peculiarity in mode $(1)$.
+\begin{verbatim}
+set doclst to documents --returns list of all open tex source documents
+\end{verbatim}
+Within the same TeXShop tell block,
+\begin{verbatim}
+repeat with f in doclst
+    set s to (name of f)
+    set p to (path of f)
+    set b to (modified of f)
+end repeat
+\end{verbatim}
+all function correctly, but outside the TeXShop tell block, the first fails in mode $(1)$.\\[3pt]
+\textbf{\textsc{Search}}\nopagebreak[4]\\[3pt]
+The {\tt search} method is not problematic---it seems to work correctly in all modes but the documentation is a bit sparse and the meaning is slightly unintuitive.  It is called with a line like
+\begin{verbatim}
+search document "eg.tex" for "\\begin{" --need to escape backslashes
+-- additional options as below
+-- [case sensitive <boolean>] : if omitted, default value false
+-- [matching as whole word <boolean>] : if omitted, default value false
+-- [searching backwards <boolean>] : if omitted, default value false
+-- [starting from <integer>] : if omitted, beginning of current selection.
+\end{verbatim}
+The returned value is an integer, the index (starting from $1$) of the first character of the found string---$0$ if not found. (If found, this is the offset of the found string $+1$.) This method modifies neither the current selection nor the cursor position. Because this search method uses native TeXShop code rather than AppleScript string search, it should be more efficient in practice, and with a couple of searches one may build a {\tt selection}, from which the {\tt content} may be extracted. One more thing to keep in mind with a search:
+\begin{itemize}
+\item
+with a forward search, the search begins at the cursor (ie, the offset of the selection), but with a backward search, the search starts at the character before the cursor. Eg, if the document looks like \verb+12|34+ (with \verb+|+ representing the cursor), then
+\begin{verbatim}
+tell application "TeXShop"
+    search document docname for "3"
+    search document docname for "3" searching backwards
+    search document docname for "2" searching backwards    
+end tell
+\end{verbatim}
+results respectively in  $3$, $0$, $2$.
+\end{itemize}
+The unintuitive part is what happens at the beginnings of lines. Suppose the document has just five characters, laid out like
+\begin{verbatim}
+12
+|45
+\end{verbatim}
+where \verb+|+ represents the cursor and the character with index {\tt 3} is the linefeed character with ASCII number $10$. The {\tt offset} would report that the cursor is at position $3$, and if you search forwards for the next linefeed, the result is {\tt 3} again. To find the end of the line, you need to start at a position $1$ past the cursor in this case.
+
+
+\section{Using refreshtext}
+If you change the contents of a TeXShop file within a macro headed\begin{verbatim}
+--AppleScript direct
+\end{verbatim}
+you can't use {\tt refreshtext} with any effect because TeXShop's event loop is suspended. This leave the document without syntax coloring, for example. One solution is to run as the last command of a script an external command that instructs TeXShop to run {\tt refreshtext} on the front document. To do this, I make a shell script named {\tt refreshfront} that I saved in \verb|~/bin|  with contents
+\begin{verbatim}
+#!/bin/bash
+exec osascript <<END
+tell application "TeXShop"
+  tell front document to refreshtext
+end tell
+END
+\end{verbatim}
+This script has to be made executable with the command
+\begin{verbatim}
+chmod 755 ~/bin/refreshfront 
+\end{verbatim}
+To call this from your macro, the last executed line of the macro should be
+\begin{verbatim}
+do shell script "~/bin/refreshfront &> /dev/null &"
+\end{verbatim}
+which seems to return control to TeXShop without waiting for the shell script to finish execution, so that TeXShop's event loop is running when the osascript completes.
+
+
+\section{Appendix: File paths, AppleScript aliases and Path references}
+AppleScript macro writers need to have a firm grip on the differences between file paths, AppleScript aliases and AppleScript \emph{Path references}, the first form being strings in either traditional HFS format like \verb|"Macintosh HD:Users:"| or POSIX format like \verb|"/Users/"|. AppleScript aliases are a bit more slippery. To create an AppleScript alias:
+\begin{verbatim}
+alias "Macintosh HD:Users:" --provided this folder exists
+\end{verbatim}
+AppleScript will raise a run-time error if the file path you specify following {\tt alias} does not resolve to an existing file or folder. So, an AppleScript alias is really a form of reference (ie, a pointer) to an existing file or folder---one that is understood by all scriptable applications. The need for a method of referring to  an incipient file or folder is clear, but the means of doing so is somewhat less so. AppleScript uses (or used to use) the term \emph{Path reference form} for an object whose text representation is like
+\begin{verbatim}
+file "Macintosh HD:Userz:"  --the folder need not exist
+\end{verbatim}
+but the file object  cannot be created just by entering that expression in an AppleScript.  The peculiar thing about these objects is that they seem to be permitted to be constructed only in special situations that call for them. The output from a Choose File Name dialog is just such an object. For other examples, in the AppleScript Editor, the following all work:
+\begin{verbatim}
+set newf to POSIX path of (path to documents folder)&"newfile.txt" as file specification
+POSIX path of file "Macintosh HD:Userz:" 
+  -- result is incorrect "/Macintosh HD/Userz/" if no "Macintosh HD:"
+  -- otherwise result is "/Userz/"
+tell application "TeXShop"
+    save front document in file ((path to documents folder as string) & "eg.tex")
+end tell
+tell application "TeXShop"
+    save front document in (file ((path to documents folder as string) & "eg.tex"))
+end tell
+tell application "Finder"
+    if the file theFile exists then set x to 1 -- theFile in HFS format
+end tell
+\end{verbatim}
+even though \verb|file ((path to documents folder as string) & "eg.tex")| produces an error if run by itself. What seems to be happening in some cases is that a Path reference may be accepted in place of an AppleScript alias even when the dictionary documentation specifies the need for an alias.
+
+For the TeXShop scripter, the most important means of creating a Path reference is {\tt POSIX file}, which always works. For example
+\begin{verbatim}
+POSIX file "/Users/" --result like 'file "Macintosh HD:Users:"'
+POSIX file "/Users" --result like 'file "Macintosh HD:Users"'
+\end{verbatim}
+which may be coerced to AppleScript aliases, if they exist, by appending {\tt as alias}.
+
+It may be helpful to think of an alias as something you can copy \emph{from}, and a Path reference as something you can copy \emph{to}. 
+
+
+By and large, POSIX style filenames are useful only when working on the \UNIX side, where applications understand neither aliases nor the HFS style file path, or when using handlers in {\tt TSLib} which expect files to be specified in that form.
+
+To convert between these formats is usually simple but slightly odd in some cases:
+\begin{itemize}
+\item
+\begin{verbatim}
+alias "Macintosh HD:Users:" --create an alias from a folder name
+\end{verbatim}
+\item
+\begin{verbatim}
+POSIX path of "Macintosh HD:Users:"
+  -- result is incorrect "/Macintosh HD/Users/" if no "Macintosh HD:"
+  -- otherwise result is "/Users/"
+\end{verbatim}
+\item
+\begin{verbatim}
+POSIX path of file "Macintosh HD:Users:"
+  -- result is incorrect "/Macintosh HD/Users/" if no "Macintosh HD:"
+  -- otherwise result is "/Users/"
+\end{verbatim}
+\item
+\begin{verbatim}
+POSIX path of alias "Macintosh HD:Users:" --returns "/Users/" if it exists
+  --error if non-existent
+\end{verbatim}
+\item
+\begin{verbatim}
+"/Users/" as POSIX file --result like 'file "Macintosh HD:Users:"'
+\end{verbatim}
+\item
+\begin{verbatim}
+"/Users/" as POSIX file as string --result like "Macintosh HD:Users:"
+\end{verbatim}
+\item
+\begin{verbatim}
+"/Users/" as POSIX file as alias --result is 'alias "Macintosh HD:Users:"'
+\end{verbatim}
+\item
+\begin{verbatim}
+<any alias> as string --result is like "Macintosh HD:Users:"
+\end{verbatim}
+\item
+\begin{verbatim}
+POSIX path of (file "Macintosh HD:Users:" as string) --fails
+\end{verbatim}
+\item
+\begin{verbatim}
+POSIX path of (file "Macintosh HD:Users:") --works
+\end{verbatim}
+\item
+\begin{verbatim}
+file "Macintosh HD:Users:" --fails
+\end{verbatim}
+\end{itemize}
+When passing a POSIX style path to a \UNIX command, one should guard again the possibility of spaces somewhere in the POSIX path by referring to the {\tt quoted form of}:
+\begin{verbatim}
+set ppath to POSIX path of "Macintosh HD:Users:Joe Blow:"
+quoted form of ppath  --result is '/Users/Joe Blow/'
+\end{verbatim}
+\subsection{Checking for existence}
+Finder has an {\tt exists} method which must be called as part of a Finder tell block. The method has one problem---the name used by Finder may be different from the name shown in a Finder window if the file was saved with hidden extension. 
+\subsection{Creating a chain of folders}
+AppleScript's syntax is painful if you need to create a deeply nested chain of folders. The {\tt mkdir -p} command from {\tt bash} (AKA {\tt sh}) does the work efficiently, creating the entire chain of nested subfolders, as necessary.
+\begin{verbatim}
+--expects a folder f specified in POSIX form
+try
+    do shell script("/bin/mkdir -p " & quoted form of f)
+on error errmsg
+    display dialog errmsg
+end try
+\end{verbatim}
+It's important to catch a possible error with an {\tt on error} fragment, as it may be the only way to know whether the command succeeded.
+%\subsection{Finding the parent folder}
+%There are many ways to do this, depending on the form taken by the input. The following is useful when the input is an alias rather than a string and the item returned is an alias.
+%\begin{verbatim}
+%on getparent(anAlias)
+%    tell application "System Events"
+%        set theParent to POSIX path to (container of anAlias)
+%    end tell
+%    return (theParent as POSIX file as alias)
+%end getparent
+%\end{verbatim}
+%On the other hand, if you want to get the POSIX path of the parent of a POSIX path, it would be better to use
+%\begin{verbatim}
+%on getparentP(ppath)
+%    set tid to AppleScript's text item delimiters
+%    set AppleScript's text item delimiters to "/"
+%    set lst to text items of ppath
+%    set n to -2
+%    if count of (last item of lst) is equal to 0 then set n to -3
+%    set s to (items 1 thru n of lst) as string
+%    set AppleScript's text item delimiters to "/"
+%    return s&"/"	
+%end getparentP
+%\end{verbatim}
+\subsection{Finder operations}
+If you need to deal with files and folders using Finder, you may need to be aware of some terms from its dictionary. In Finder, you use terms
+\begin{verbatim}
+folder "Macintosh HD:Users:joe:" --note final :
+\end{verbatim}
+that are special to Finder and must be wrapped in a Finder tell block. There are also useful terms for special locations in your file system, all returning Finder aliases:
+\begin{verbatim}
+home, home folder -- returns something like 'folder "Macintosh HD:Users:joe:"'
+desktop
+startup disk  -- returns something like 'folder "Macintosh HD:"'
+\end{verbatim} 
+all of which may be coerced to string form by appending {\tt as string} or used directly in Finder operations.
+
+Finder example:
+\begin{verbatim}
+tell application "Finder"
+  if not (exists folder "TeXShop_test" of home) then
+    make new folder at home with properties {name:"TeXShop_test"}
+  end if
+  set the_folder to POSIX path of ((folder "TeXShop_test" of home) as string)
+end tell
+\end{verbatim}
+{\tt StandardAdditions.osax}, which is loaded automatically, also defines {\tt path to}   with defined locations including
+\begin{verbatim}
+path to application support
+path to applications folder
+path to documents folder
+path to downloads folder
+path to favorites folder
+path to Folder Action scripts
+path to fonts
+path to home folder
+path to library folder -- like 'alias "Macintosh HD:Library:"'
+path to library folder from user domain 
+  -- returns alias to your home library provided it is visible in Finder
+path to preferences
+path to public folder
+path to shared libraries
+path to system folder
+path to system preferences
+path to temporary items
+path to users folder
+\end{verbatim}
+The result in each case is an AppleScript alias, which may coerced to a string by appending {\tt as string}. The commands need not be run only in a Finder tell block.
+
+
+\end{document}
+
+\section{Commands for use only in {\tt -{}-applescript} mode}
+In mode$(1)$, the TeXShop event loop is inactive and it is not possible to process some verbs in the TeXShop AppleScript dictionary. These include:
+\begin{itemize}
+\item bibtex
+\item bibtexinteractive
+\item context
+\item contextinteractive
+\item latex
+\item latexinteractive
+\item makeindex
+\item makeindexinteractive
+\item metapost
+\item metapostinteractive
+\item \verb|open_for_externaleditor|
+\item refreshpdf
+\item refreshpdfbackground
+\item refreshtext
+\item taskdone
+\item tex
+\item texinteractive
+\item typeset
+\item typesetinteractive
+\end{itemize}
+\end{document}  

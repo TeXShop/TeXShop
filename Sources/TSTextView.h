@@ -23,22 +23,20 @@
 #import <Cocoa/Cocoa.h>
 #import "TSDocument.h"
 
-@interface TSTextView : NSTextView
+@interface TSTextView : NSTextView <NSTextFinderClient>
 {
 	TSDocument		*_document;
 	BOOL			_alternateDown;
-	
-	// (HS) variables for Command Completion now instance/member variables --- moved from keyDown --- 2012/05/15.
+    // (HS) variables for Command Completion now instance/member variables --- moved from keyDown --- 2012/05/15.
     BOOL wasCompleted; // was completed on last keyDown
     BOOL latexSpecial; // was last time LaTeX Special?  \begin{...}
     NSString *originalString; // string before completion, starts at replaceLocation
     NSString *currentString; // completed string
-    int replaceLocation; // completion started here
-    int completionListLocation; // location to start search in the list
-    unsigned textLocation; // location of insertion point
+    NSUInteger replaceLocation; // completion started here
+    NSUInteger completionListLocation; // location to start search in the list
+    NSUInteger textLocation; // location of insertion point
     // end variables for Command Completion
-	
-	
+
 }
 
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity;

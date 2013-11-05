@@ -10,8 +10,32 @@
 
 <BODY>
 	<div id="content_border">
-		<P>To use TeXShop, type your LaTeX input in the editing window it provides. Then push the &quot;Typeset&quot; button at the top of the window. The input will be saved and pdflatex will run. A second window will open displaying messages from tex. If there are errors, pdflatex will halt; type &quot;return&quot; to skip the errors one by one, or one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing command-1.</P>
-		<p>Press the mouse on a section of the pdf output display to magnify the region near the cursor. Double click to magnify a larger region; triple click to magnify a still larger region. Notice that the default region size can be selected using
+		<P>To use TeXShop, type your LaTeX input in the editing window it provides. Then push the &quot;Typeset&quot; button at the top of the window. The input will be saved and pdflatex will run. A second window will open displaying messages from tex. If there are errors, pdflatex will halt; push &quot;return&quot; to skip the errors one by one, or type one of the standard TeX inputs to quit, run continuously, etc. After the document has been typeset, a new window will appear showing the resulting pdf file. You can switch between the two windows by typing command-1.</P>
+		
+<p> A standard editing session consists of repeating this operation over and over. New additions
+are made to the source, when enough additions are made the document is typeset again, and the preview window is consulted to see if the additions typeset correctly. Some users like to enter substantial amounts of information before typesetting, while others tend to typeset after every new line. LaTeX can typeset 400 page books in just a few seconds, so it is not "expensive" to typeset often.
+</p>
+<p> Because typesetting is so common, there is a keyboard shortcut to do it: push command-T,
+the command key and the "T" key simultaneously, to typeset. Later on it will turn out
+that there are many typesetting engines: TeX, LaTeX, XeTeX, LuaTeX, and on an on. TeXShop has been designed so the choice of typesetting engine can be made once, and from then on the menu command command-T typesets with the correct engine. So this shortcut always works.
+</p>
+<p> When LaTeX typesets, it goes through the source just once. But a few operations require multiple passes. For instance, if a document has a table of contents, LaTeX has to read through the entire document to determine chapter titles, and their starting pages. LaTeX records this information in a file with extension ".aux". When the document is typeset again, this file is read and the additional information needed is filled in. 
+</p>
+<p>
+While the document is being written, this structure can be ignored, and a single typeset suffices. Occasionally references to future material will be off a few pages. When the document is ready to final checking, it will be run through LaTeX two or three times to update all necessary information.
+</p>
+<p> It is common to find typesetting errors which must be fixed before proceeding. Even the
+best TeX users run into them often. On very rare occasions, these errors can corrupt the .aux
+file, so that even after the error is fixed, the document will not typeset. In these situations,
+it is necessary to throw away the .aux file before proceeding. TeXShop has several commands to
+do this, but the easiest is to use the keyboard shortcut option-command-T to typeset; this
+command throws away the .aux file and then typesets. Notice that option-command-T should only
+be used if you suspect a corrupt aux file, since the aux file is required to for typesetting
+operations which require multiple passes.
+</p>
+
+
+		<p>After typesetting, press the mouse on a section of the pdf output display to magnify the region near the cursor. Double click to magnify a larger region; triple click to magnify a still larger region. Notice that the default region size can be selected using
 an element of the toolbar at the top of the page. </p>
 		<p>To typeset a TeX document, push the button labeled LaTeX and select TeX instead of LaTeX. If you usually use TeX, choose it as your default program in the Preferences Dialog.</p>
 		<p>If you notice an error, you can immediately fix it in the editing window and push the &quot;Typeset&quot; button again without halting the first invocation of pdflatex. The program will kill that invocation and run another. </p>

@@ -31,6 +31,7 @@ NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
 NSString *SaveRelatedKey = @"SaveRelated";
 NSString *DocumentFontKey = @"DocumentFont";
 NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";
+NSString *PortableDocumentWindowFixedPosKey = @"PortableDocumentWindowFixedPosition";
 NSString *DocumentWindowNameKey = @"DocumentWindow";
 NSString *DocumentWindowPosModeKey = @"DocumentWindowPositionMode";
 NSString *LatexPanelNameKey = @"LatexPanel";
@@ -67,6 +68,7 @@ NSString *MakeatletterEnabledKey = @"MakeatletterEnabled"; // added by Terada
 NSString *PdfMagnificationKey = @"PdfMagnification";
 NSString *NoScrollEnabledKey = @"NoScrollEnabled";
 NSString *PdfWindowFixedPosKey = @"PdfWindowFixedPosition";
+NSString *PortablePdfWindowFixedPosKey = @"PortablePdfWindowFixedPosition";
 NSString *PdfWindowNameKey = @"PdfWindow";
 NSString *PdfKitWindowNameKey = @"PdfKitWindow";
 NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
@@ -206,11 +208,16 @@ NSString *invisibleCharRedKey = @"invisibleCharRed"; //Koch
 NSString *invisibleCharGreenKey = @"invisibleCharGreen"; //Koch
 NSString *invisibleCharBlueKey = @"invisibleCharBlue"; //Koch
 NSString *brieflyFlashYellowForMatchKey = @"brieflyFlashYellowForMatch"; //Koch
-NSString *syncWithRedOvalsKey = @"syncWithRedOvals"; //Koch
+NSString *syncWithRedOvalsKey = @"syncWithRedOvals";
+NSString *AutoSaveKey = @"AutoSave"; // inactive
+NSString *FixLineNumberScrollKey = @"FixLineNumberScroll";
 NSString *RightJustifyIfAnyKey = @"RightJustifyIfAny";
-
-
-
+NSString *AutoSaveEnabledKey = @"AutoSaveEnabled";
+NSString *fullscreenPageStyleKey = @"fullscreenPageStyle";
+NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
+NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
+NSString *WatchServerKey = @"WatchServer";
+NSString *SourceInterlineSpaceKey = @"SourceInterlineSpace";
 
 
 // Paths
@@ -249,8 +256,9 @@ NSString *DocumentFontRevertNotification = @"DocumentFontRevertNotification";
 NSString *ConsoleFontChangedNotification = @"ConsoleFontChangedNotification";
 NSString *ConsoleBackgroundColorChangedNotification = @"ConsoleBackgroundColorChangedNotification";
 NSString *ConsoleForegroundColorChangedNotification = @"ConsoleForegroundColorChangedNotification";
-NSString *SourceBackgroundColorChangedNotification = @"DocumentBackgroundColorChangedNotification";;
-NSString *PreviewBackgroundColorChangedNotification = @"PreviewBackgroundColorChangedNotification";;
+NSString *SourceBackgroundColorChangedNotification = @"DocumentBackgroundColorChangedNotification";
+NSString *SourceTextColorChangedNotification = @"DocumentTextColorChangedNotification";;
+NSString *PreviewBackgroundColorChangedNotification = @"PreviewBackgroundColorChangedNotification";
 NSString *MagnificationChangedNotification = @"MagnificationChangedNotification";
 NSString *MagnificationRememberNotification = @"MagnificationRememberNotification";
 NSString *MagnificationRevertNotification = @"MagnificationRevertNotification";
@@ -262,14 +270,20 @@ NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotificatio
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;
-int					g_texChar;
-int					g_commentChar;
+NSInteger			g_texChar;
+NSInteger           g_commentChar;
 NSDictionary		*g_autocompletionDictionary;
 NSArray				*g_autocompletionKeys;  // added by Terada
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
 BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
+BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
+BOOL                activateBauerPatch; // this is set in
+BOOL                atLeastMavericks;
+
+// Encodings
+NSStringEncoding    NSISOLatin9StringEncoding;
 
 // command completion
 NSString *g_commandCompletionChar = nil;
@@ -283,4 +297,4 @@ BOOL		automaticLanguage;
 NSString	*defaultLanguage;
 
 // Koch 8/24/03
-int	g_macroType;	// FIXME: get rid of this
+NSInteger	g_macroType;	// FIXME: get rid of this

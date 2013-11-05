@@ -63,8 +63,7 @@
 	myRect = [self bounds];
 	if ([_imageRep isKindOfClass:[NSPDFImageRep class]]) {
 		NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
-		float scale = [[[printInfo dictionary] objectForKey:NSPrintScalingFactor]
-						floatValue];
+		CGFloat scale = [[[printInfo dictionary] objectForKey:NSPrintScalingFactor] doubleValue];
 		myRect.size.height = myRect.size.height * scale;
 		myRect.size.width = myRect.size.width * scale;
 
@@ -87,12 +86,12 @@
 	}
 }
 
-- (NSRect)rectForPage:(int)pageNumber
+- (NSRect)rectForPage:(NSInteger)pageNumber
 {
 	// This method will only be called when knowsPageRange: return YES, i.e. only
 	// if _imageRep is a NSPDFImageRep.
 	NSPDFImageRep *pdfRep = (NSPDFImageRep *)_imageRep;
-	int		thePage;
+	NSInteger		thePage;
 	NSRect	aRect;
 
 	thePage = pageNumber;
@@ -107,8 +106,7 @@
 	aRect.size = [pdfRep bounds].size;
 
 	NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
-	float scale = [[[printInfo dictionary] objectForKey:NSPrintScalingFactor]
-					floatValue];
+	CGFloat scale = [[[printInfo dictionary] objectForKey:NSPrintScalingFactor] doubleValue];
 	aRect.size.height = aRect.size.height * scale;
 	aRect.size.width = aRect.size.width * scale;
 

@@ -145,7 +145,7 @@ static id _sharedInstance = nil;
 				NSLocalizedString(@"Preview", @"Preview")] submenu];
 		NSMenu *menu = [[previewMenu itemWithTitle:
 				NSLocalizedString(@"Display Format", @"Display Format")] submenu];
-		id <NSMenuItem> item = [menu itemWithTag:[[doc pdfView] pageStyle]];
+		id item = [menu itemWithTag:[[doc pdfView] pageStyle]];
 		[item setState: flag ? NSOnState : NSOffState];
 		menu = [[previewMenu itemWithTitle:
 				NSLocalizedString(@"Magnification", @"Magnification")] submenu];
@@ -189,7 +189,7 @@ static id _sharedInstance = nil;
 }
 
 
-- (void)checkProgramMenuItem: (int)programID checked: (BOOL)flag
+- (void)checkProgramMenuItem: (NSInteger)programID checked: (BOOL)flag
 {
 	[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu]
 		itemWithTag:programID] setState: (flag)?NSOnState:NSOffState];

@@ -1,0 +1,91 @@
+<HTML>
+
+<HEAD>
+			<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=Shift_JIS">
+			<TITLE>作業ファイルを削除する</TITLE>
+			<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
+			<META NAME="description" CONTENT="拡張子に aux や log が付いたファイルの除去">
+			<link href="../sty/screen.css" rel="stylesheet" media="all">
+</HEAD>
+
+<!--コメントアウトしてある部分はバージョン1.35の旧文です。-->
+
+<body>	
+
+<div id="content_border">
+
+
+<p>
+ドキュメントをタイプセットすると、「.aux」 「.log」 「.bbl」などの拡張子が付いた補助的なファイルが生成されます。こうしたファイルはときどき、おかしくなったり、予期せぬタイプセット・エラーを招いたりすることがあります。TeXShop には「作業ファイルを削除」というメニューコマンドがあり、こうしたファイルをすべて取り除けるので、ひきつづきタイプセットを行なうことができます。同様な名前のボタンがコンソールウインドウにもあります。このいずれかを実行すると、現在のソースがあるディレクトリ内にあり、ソースファイルと名前が同じで、拡張子が aux ・ blg ・ brf ・ ccs ・ ent ・ fff ・ glo ・ idx ・ idv ・ ilg ・ ind ・ ioa ・ lg ・ log ・ lot ・ mtc ・ mlf ・ out ・ pdfsync ・ toc ・ ttt ・ wrm ・ xref ・ 4ct ・ 4tc となっているファイルがすべてゴミ箱へと移動されます。
+</p>
+
+<p>
+このリストに拡張子を追加することもできます。「dvi」を加えるには、ターミナルを実行し、以下のようにタイプします──
+</P>
+	<dl>
+		<dd><tt>defaults write TeXShop OtherTrashExtensions -array-add "dvi"</tt>
+	</dl>
+
+<p>
+追加した分を取り除いて元々のデフォルトのリストに戻すには、次のようにタイプします──
+</p>
+	<dl>
+		<dd><tt>defaults write TeXShop OtherTrashExtensions -array</tt>
+	</dl>
+
+<p>
+時として、さらに徹底したクリーンナップが必要になることがあります。たとえば、main.tex で「本」を管理しており、各章がサブフォルダ内にあって \include{chapter1/chapter1} のようなコマンドでアクセスしている場合、「本」をタイプセットすると、メインのフォルダ内には main.aux ・ main.pdfsync ・ main.log が生成され、chapter1 フォルダには chapter1.aux が生成されます。
+</p>
+
+<p>
+これに応じた徹底的なクリーンナップは、オプションキーを押しながら「作業ファイルを削除」を選択することで実行できます。これを行なうと：
+<ul>
+<!--		<li>SourceDoc とルートファイルの情報が、ルート文書とそのフォルダを探し当てるのに使われます-->
+		<li><tt>%!TEX root</tt> とルートファイルの情報が、ルート文書とそのフォルダを探し当てるのに使われます
+		<li>このフォルダまたはいずれかのサブフォルダ内にあり、該当する拡張子の付いたファイルはすべて、ファイル名の如何によらずゴミ箱に移されます
+</ul>
+
+<p>
+「作業ファイルを削除」の動作を、オプションキーを押すことなく上記のようにする方法もあります：
+</p>
+<dl>
+	<dd><tt>defaults write TeXShop AggressiveTrashAUX YES</tt>
+</dl>
+
+
+
+<div id="header_background"></div>
+<div id="header_logo"><a href="../TeXShop%20Help.html"><IMG HEIGHT="40" WIDTH="40" border="0" SRC="../gfx/xicnsc.gif"></a></div>
+<div id="header_chapter">上級向けのヘルプ</div>
+<div id="header_title">作業ファイルを削除する</div>
+
+		<div id="menu_border">
+		<ul>
+			<li><a href="advanced_personaltetex.htm">スタイルとマクロを teTeX に追加する</a>
+			<li><a href="advanced_addengine.htm">追加のタイプセットエンジン</a>
+			<li><a href="advanced_removeaux.htm">作業ファイルを削除する</a>
+			<li><a href="advanced_externaleditor.htm">外部エディタを使用する</a>
+			<li><a href="advanced_pdfcopypaste.htm">プレビューウインドウからのコピー＆ペーストおよびドラッグ＆ドロップ </a>
+			<li><a href="advanced_root.htm">プロジェクトのルートファイルを設定する</a>
+			<li><a href="advanced_pdfsync.htm">Pdfsync</a>
+			<li><a href="advanced_unicode.htm">Unicode（ユニコード）</a>
+			<li><a href="advanced_bibtex.htm">BibTeX</a>
+			<li><a href="advanced_makeindex.htm">MakeIndex</a>
+			<li><a href="advanced_formats.htm">新規フォーマットの作成と利用</a>
+			<li><a href="advanced_otherfiles.htm">その他のファイルを TeXShop で開く</a>
+			<li><a href="advanced_mathematica.htm">Mathematica</a>
+			<li><a href="advanced_localization.htm">各国語版へのローカライズ</a>
+			<li><a href="advanced_syntaxcolor.htm">ソースのカラー表示</a>
+			<li><a href="advanced_shellescape.htm">Shell-Escape の保護</a>			
+			<li><a href="advanced_coloredtext.htm">TeX における文字の色指定</a>			
+			<li><a href="advanced_moretetex.htm">teTeX についてさらに</a>
+			<li><a href="advanced_fink.htm">Fink との共存</a>
+			<li><a href="advanced_otherdistributions.htm">他の TeX ディストリビューションとの共存</a>
+			<li><a href="advanced_context.htm">ConTeXt と MetaPost</a>
+			<li><a href="advanced_plist.htm">Plist ファイル</a>
+			<li><a href="advanced_menushortcuts.htm">メニュー項目のショートカットキーを再定義する</a>
+		</ul>
+	</div>
+	</body>
+
+</HTML>

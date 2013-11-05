@@ -1,0 +1,12 @@
+#!/bin/tcsh
+
+# This short script calls "synctex edit -o ... " to get synchronization data
+# Richard Koch; March 21, 2004
+
+set mytexexecpath = "$argv[1]"
+setenv PATH "${mytexexecpath}:${PATH}"
+rehash
+
+set argument = "$argv[2]"
+
+synctex edit -o "${argument}"

@@ -26,19 +26,20 @@
 #import <AppKit/AppKit.h>
 
 // This nifty macro computes the size of a static array.
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#define ARRAYSIZE(x) ((NSInteger)(sizeof(x) / sizeof(x[0])))
 
 // The yen and backslash characters are both used to start LaTeX commands. Used
 // frequently throughout the code to detect commands.
 #define	YEN			0x00a5
 #define	BACKSLASH	'\\'
-#define	COMMENT		'%'
+#define COMMENT     '%'
 
 
 // Shortcut to access the standard user defaults more easily.
 #define SUD [NSUserDefaults standardUserDefaults]
 
-
+// Used to be NSMacOSRomanStringEncoding, which is in the headers
+// #define NSISOLatin9StringEncoding 0x8000020f
 
 // The following block defines constants used in the PDF code. 
 // TODO: Move this to a more appropriate header file.
@@ -230,6 +231,7 @@ extern NSString *ConsoleBehaviorKey;
 extern NSString *SaveRelatedKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentWindowFixedPosKey;
+extern NSString *PortableDocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
 extern NSString *DocumentWindowPosModeKey;
 extern NSString *LatexPanelNameKey;
@@ -266,6 +268,7 @@ extern NSString *MakeatletterEnabledKey; // added by Terada
 extern NSString *PdfMagnificationKey;
 extern NSString *NoScrollEnabledKey;
 extern NSString *PdfWindowFixedPosKey;
+extern NSString *PortablePdfWindowFixedPosKey;
 extern NSString *PdfWindowNameKey;
 extern NSString *PdfKitWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
@@ -409,9 +412,18 @@ extern NSString *invisibleCharGreenKey; //Koch
 extern NSString *invisibleCharBlueKey; //Koch
 extern NSString *brieflyFlashYellowForMatchKey; //Koch
 extern NSString *syncWithRedOvalsKey;
+extern NSString *AutoSaveKey;
+extern NSString *FixLineNumberScrollKey;
 extern NSString *RightJustifyIfAnyKey; //Koch; right justify lines containing Persian anywhere in the line
+extern NSString *AutoSaveEnabledKey;
+extern NSString *fullscreenPageStyleKey;
+extern NSString *fullscreenResizeOptionKey;
+extern NSString *ScreenFontForLogAndConsoleKey;
+extern NSString *WatchServerKey;
+extern NSString *SourceInterlineSpaceKey;
 
-// end of defaults
+
+// end defaults
 
 
 /*" Paths "*/
@@ -449,6 +461,7 @@ extern NSString *ConsoleFontChangedNotification;
 extern NSString *ConsoleBackgroundColorChangedNotification;
 extern NSString *ConsoleForegroundColorChangedNotification;
 extern NSString *SourceBackgroundColorChangedNotification;
+extern NSString *SourceTextColorChangedNotification;
 extern NSString *PreviewBackgroundColorChangedNotification;
 extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
@@ -462,8 +475,8 @@ extern NSString *CommandCompletionCharNotification;
 
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
-extern int					g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
-extern int					g_commentChar;
+extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
+extern NSInteger            g_commentChar;
 extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
 extern NSArray				*g_autocompletionKeys; // added by Terada
 
@@ -471,12 +484,16 @@ extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by do
 extern BOOL					automaticLanguage; 
 extern NSString				*defaultLanguage;
 
+extern NSStringEncoding    NSISOLatin9StringEncoding;
 
-extern int					g_macroType; // = EngineCommand for current window
+extern NSInteger					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern BOOL				fromMenu;
+extern BOOL             doAutoSave;
+extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes
+extern BOOL             atLeastMavericks;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/
@@ -487,3 +504,5 @@ extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview
 NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
 #define LEOPARD 568 // added by Terada
+
+

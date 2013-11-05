@@ -34,6 +34,8 @@
 #import "TSMatrixPanelController.h"
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
+#import "TSTextEditorWindow.h"
+
 
 
 #import "OgreKit/OgreTextFinder.h"
@@ -42,6 +44,8 @@
 #include <sys/sysctl.h>     // for testForIntel
 #include <mach/machine.h>   // for testForIntel
 
+
+#define NSAppKitVersionNumber10_8 1187
 
 @class TSTextEditorWindow;
 
@@ -95,6 +99,7 @@
 	
 		// Determine CPU type
 		cpu_type_t cputype;
+#warning 64BIT: Inspect use of sizeof
 		size_t s = sizeof cputype;
 		if (sysctlbyname("hw.cputype", &cputype, &s, NULL, 0) == 0 && cputype == CPU_TYPE_I386) {
 			[SUD setObject:@"/usr/local/teTeX/bin/i386-apple-darwin-current" forKey:TetexBinPath];
@@ -103,19 +108,27 @@
 	}
 }
 
+/*
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+    NSLog(@"called");
+    return NO;
+}
+*/
+
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-	NSString *folderPath, *filename;
+    NSString *folderPath, *filename;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	folderPath = [[DraggedImagePath stringByStandardizingPath]
 								stringByDeletingLastPathComponent];
-	NSEnumerator *enumerator = [[fileManager directoryContentsAtPath: folderPath]
+	NSEnumerator *enumerator = [[fileManager contentsOfDirectoryAtPath: folderPath error:NULL]
 								objectEnumerator];
 	while ((filename = [enumerator nextObject])) {
 		if ([filename characterAtIndex: 0] != '.')
-			[fileManager removeFileAtPath:[folderPath stringByAppendingPathComponent:
-								filename] handler: nil];
+			[fileManager removeItemAtPath:[folderPath stringByAppendingPathComponent:
+                                           filename] error: NULL];
 	}
 }
 
@@ -128,115 +141,42 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
+    
+     
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
+        atLeastMavericks = YES;
+    else
+        atLeastMavericks = NO;
+    
+    
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;
-	id theFinder;
-	float oldVersion, newVersion;
+//	id theFinder;
+	CGFloat oldVersion, newVersion;
 	BOOL needsUpdating;
+    id item;
+
 
 	g_macroType = LatexEngine;
 
 	
-	// WARNING: g_taggedTeXSections may be reset in EncodingSupport
-	
-	if ([SUD boolForKey: ConTeXtTagsKey]) {
-
-		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
-					@"\\section",
-					@"\\subsection",
-					@"\\subsubsection",
-					@"\\subsubsubsection",
-					@"\\subsubsubsubsection",
-					@"\\part",
-					@"\\title",
-					@"\\subject",
-					@"\\subsubject",
-					@"\\subsubsubject",
-					@"\\subsubsubsubject",
-					@"\\subsubsubsubsubject",
-					nil];
-					
-		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
-					@"section: ",
-					@"subsection: ",
-					@"subsubsection: ",
-					@"subsubsubsection: ",
-					@"subsubsubsubsection: ",
-					@"part: ",
-					@"title: ",
-					@"subject: ",
-					@"subsubject: ",
-					@"subsubsubject: ",
-					@"subsubsubsubject: ",
-					@"subsubsubsubsubject: ",
-					nil];
-	} else {
-	 
-
-		
-/*
-		
-		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
-					@"\\section",
-					@"\\subsection",
-					@"\\subsubsection",
-					nil];
-					
-		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
-					@"section: ",
-					@"subsection: ",
-					@"subsubsection: ",
-					nil];
- */
-
-
-		
-		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
-                               @"\\section",
-                               @"\\subsection",
-                               @"\\subsubsection",
-                               @"% \\section",
-                               @"% \\subsection",
-                               @"% \\subsubsection",
-                               @"% \\begin{macro}",
-                               @"% \\begin{environment}",
-                               nil];
-        
-		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
-                               @"section: ",
-                               @"subsection: ",
-                               @"subsubsection: ",
-                               @"section: ",
-                               @"subsection: ",
-                               @"subsubsection: ",
-                               @"macro: ",
-                               @"environment: ",
-                               nil];
-		
-	}
- 
- 
-	
-
 		
 	// if this is the first time the app is used, register a set of defaults to make sure
 	// that the app is useable.
 	if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
 		([[NSUserDefaults standardUserDefaults] objectForKey:TetexBinPath] == nil)) {
 		[[TSPreferences sharedInstance] registerFactoryDefaults];
-	} 
-	
-	
-      {
+	} else {
 		// register defaults
 		fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 		NSParameterAssert(fileName != nil);
-		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error: NULL] propertyList];
+		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
-	
-
+    
+    //Set value of NSISOLatin9StringEncoding   NSMacOSRomanStringEncoding
+    NSISOLatin9StringEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
 	
 	// Make sure the ~/Library/TeXShop/ directory exists and is populated.
 	// To do this, we walk recursively through our private 'TeXShop' folder contained
@@ -252,35 +192,31 @@
 	oldVersion = 0.0;
 	currentVersion = [[[NSBundle bundleForClass:[self class]]
 					   infoDictionary] objectForKey:@"CFBundleVersion"];
-	newVersion = [currentVersion floatValue];
-	
-	
+	newVersion = [currentVersion doubleValue];
 
 	if ([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]] ) {
 		versionString = [[NewPath stringByAppendingPathComponent:@".Version"] stringByStandardizingPath];
 		if ([fileManager fileExistsAtPath: versionString]) {
 			myVersion = [NSString stringWithContentsOfFile:versionString encoding:NSASCIIStringEncoding error:nil];
-			oldVersion = [myVersion floatValue];
+			oldVersion = [myVersion doubleValue];
 			}
 		}
 	if (newVersion > (oldVersion + 0.005))
 		needsUpdating = TRUE;
 	else 
 		needsUpdating = FALSE;
-	
+
 		
 	if (! [fileManager fileExistsAtPath: [TeXShopPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop"]
 			  toPath:[TeXShopPath stringByStandardizingPath]];
 		}
-	
 		
 	if (! [fileManager fileExistsAtPath: [CommandCompletionFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/CommandCompletion"]
 			  toPath:[CommandCompletionFolderPath stringByStandardizingPath]];
 		}
-	
-	
+    
     if (! [fileManager fileExistsAtPath: [DocumentsPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
                   toPath:[DocumentsPath stringByStandardizingPath]];
@@ -289,7 +225,6 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Documents"]
 				  toPath:[DocumentsPath stringByStandardizingPath]];
 	}
-	
 		
 	if (! [fileManager fileExistsAtPath: [DraggedImageFolderPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/DraggedImages"]
@@ -358,7 +293,7 @@
 
 		
 	if (([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]]) && needsUpdating)
-			[fileManager removeFileAtPath: [NewPath stringByStandardizingPath] handler: nil];
+        [fileManager removeItemAtPath: [NewPath stringByStandardizingPath] error: NULL];
 	
 	if (needsUpdating)
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/New"]
@@ -366,6 +301,88 @@
 
 	
 // Finish configuration of various pieces
+    
+    
+    // WARNING: g_taggedTeXSections may be reset in EncodingSupport
+	
+	if ([SUD boolForKey: ConTeXtTagsKey]) {
+        
+		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+                               @"\\section",
+                               @"\\subsection",
+                               @"\\subsubsection",
+                               @"\\subsubsubsection",
+                               @"\\subsubsubsubsection",
+                               @"\\part",
+                               @"\\title",
+                               @"\\subject",
+                               @"\\subsubject",
+                               @"\\subsubsubject",
+                               @"\\subsubsubsubject",
+                               @"\\subsubsubsubsubject",
+                               nil];
+        
+		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"subsubsubsection: ",
+                               @"subsubsubsubsection: ",
+                               @"part: ",
+                               @"title: ",
+                               @"subject: ",
+                               @"subsubject: ",
+                               @"subsubsubject: ",
+                               @"subsubsubsubject: ",
+                               @"subsubsubsubsubject: ",
+                               nil];
+        
+        
+	} else {
+		
+        /*
+         g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+         @"\\section",
+         @"\\subsection",
+         @"\\subsubsection",
+         nil];
+         
+         g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+         @"section: ",
+         @"subsection: ",
+         @"subsubsection: ",
+         nil];
+         */
+        
+        g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+                               @"\\section",
+                               @"\\subsection",
+                               @"\\subsubsection",
+                               @"% \\chapter",
+                               @"% \\section",
+                               @"% \\subsection",
+                               @"% \\subsubsection",
+                               @"% \\begin{macro}",
+                               @"% \\begin{environment}",
+                               nil];
+        
+		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"chapter: ",
+                               @"section: ",
+                               @"subsection: ",
+                               @"subsubsection: ",
+                               @"macro: ",
+                               @"environment: ",
+                               nil];
+	}
+
+    doAutoSave = [SUD boolForKey:AutoSaveEnabledKey]; // this is a new hidden Preference, which can be used to turn it off
+    
+    activateBauerPatch = doAutoSave && [SUD boolForKey: WatchServerKey] && (( ! [SUD objectForKey:@"ApplePersistence"]) || [SUD boolForKey:@"ApplePersistence"] );
+    
 	[[TSMacroMenuController sharedInstance] loadMacros];
 	[self finishAutoCompletionConfigure];
 	[self configureExternalEditor];
@@ -375,6 +392,7 @@
 		g_texChar = YEN;
 	else
 		g_texChar = BACKSLASH;
+    g_commentChar = COMMENT; 
 	
 // Configure Spelling
 	spellLanguageChanged = NO;
@@ -390,19 +408,23 @@
 // added by mitsu --(H) Macro menu and (G) TSEncodingSupport
 	[[TSEncodingSupport sharedInstance] setupForEncoding];        // this must come after
 	[[TSMacroMenuController sharedInstance] setupMainMacroMenu];
-	[[TSDocumentController sharedDocumentController] initializeEncoding];  // so when first document is created, it has correct default
+   // NSLog(@"one");
+   // TSDocumentController *myController = [TSDocumentController sharedDocumentController];
+   //  NSLog(@"two");
+    
+ 	[[TSDocumentController sharedDocumentController] initializeEncoding];  // so when first document is created, it has correct default
 // end addition
 
 	[self finishCommandCompletionConfigure]; // mitsu 1.29 (P) need to call after setupForEncoding
 
 #ifdef MITSU_PDF
 	// mitsu 1.29b check menu item for image format for copying and exporting
-	int imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
+	NSInteger imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
 	if (!imageCopyType)
 		imageCopyType = IMAGE_TYPE_JPEG_MEDIUM; // default PdfCopyTypeKey
 	NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:
 							NSLocalizedString(@"Preview", @"Preview")] submenu];
-	id <NSMenuItem> item = [previewMenu itemWithTitle:
+	item = [previewMenu itemWithTitle:
 							NSLocalizedString(@"Copy Format", @"format")];
 	if (item) {
 		NSMenu *formatMenu = [item submenu];
@@ -413,11 +435,14 @@
 	[NSColor setIgnoresAlpha:NO]; // it seesm necessary to call this to activate alpha
 	// end mitsu 1.29b
 #endif
+    
 
-	if ([SUD boolForKey:UseOgreKitKey])
-		theFinder = [OgreTextFinder sharedTextFinder];
-	else
-		theFinder = [TextFinder sharedInstance];
+
+	if ([SUD integerForKey:FindMethodKey] == 2) 
+		[OgreTextFinder sharedTextFinder];  //this line modifies menus and hooks up the OgreTextFinder
+	else 
+        [TextFinder sharedInstance];
+  
 	    
 	[self testForIntel];
 	
@@ -474,10 +499,10 @@
 	NSDictionary	*shortcutsDictionary, *menuDictionary;
 	NSEnumerator	*mainMenuEnumerator, *menuItemsEnumerator, *subMenuItemsEnumerator;
 	NSMenu		*mainMenu, *theMenu, *subMenu;
-	id <NSMenuItem>		theMenuItem;
+	id 		theMenuItem;
 	id			key, key1, key2, object;
-	unsigned int	mask;
-	int			value;
+	NSUInteger	mask;
+	NSInteger			value;
 	
 	// The code below is copied from Sarah Chambers' code
 	
@@ -491,7 +516,7 @@
 	mainMenu = [NSApp mainMenu];
 	mainMenuEnumerator = [shortcutsDictionary keyEnumerator];
 	while ((key = [mainMenuEnumerator nextObject])) {
-		value = [key intValue];
+		value = [key integerValue];
 		if (value == 0)
 			theMenu = [[mainMenu itemWithTitle: key] submenu];
 		else
@@ -501,7 +526,7 @@
 		if (theMenu && menuDictionary) {
 			menuItemsEnumerator = [menuDictionary keyEnumerator];
 			while ((key1 = [menuItemsEnumerator nextObject])) {
-				value = [key1 intValue];
+				value = [key1 integerValue];
 				if (value == 0)
 					theMenuItem = [theMenu itemWithTitle: key1];
 				else
@@ -512,7 +537,7 @@
 					subMenu = [theMenuItem submenu];
 					subMenuItemsEnumerator = [object keyEnumerator];
 					while ((key2 = [subMenuItemsEnumerator nextObject])) {
-						value = [key2 intValue];
+						value = [key2 integerValue];
 						if (value == 0)
 							theMenuItem = [subMenu itemWithTitle: key2];
 						else
@@ -555,7 +580,7 @@
 {
 	NSString            *completionPath;
 	NSData              *myData;
-
+    
 	unichar esc = 0x001B; // configure the key in Preferences?
 	unichar tab = 0x0009; // ditto
 	if (!g_commandCompletionChar) {
@@ -577,7 +602,7 @@
 			[[NSBundle mainBundle] pathForResource:@"CommandCompletion" ofType:@"txt"]];
 	if (!myData)
 		return;
-
+    
 	NSStringEncoding myEncoding = NSUTF8StringEncoding;
 	g_commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
 	if (! g_commandCompletionList) {
@@ -587,6 +612,7 @@
 
 	if (!g_commandCompletionList)
 		return;
+    
 	[g_commandCompletionList insertString: @"\n" atIndex: 0];
 	if ([g_commandCompletionList characterAtIndex: [g_commandCompletionList length]-1] != '\n')
 		[g_commandCompletionList appendString: @"\n"];
@@ -611,11 +637,12 @@
 
 - (IBAction)openForPreview:(id)sender
 {
-	int				i;
+	NSInteger				i;
 	NSArray			*myArray, *fileArray;
 	NSDocumentController	*myController;
 	BOOL			externalEditor;
 	NSOpenPanel			*myPanel;
+    NSURL               *myURL;
 	
 	externalEditor = [SUD boolForKey:UseExternalEditorKey];
 	myController = [NSDocumentController sharedDocumentController];
@@ -637,14 +664,16 @@
 		@"ins",
 		@"dtx",
 		@"mf",
-		@"md",
 		nil];
-	i = [myController runModalOpenPanel: myPanel forTypes: myArray];
-	fileArray = [myPanel filenames];
+	[myController runModalOpenPanel: myPanel forTypes: myArray];
+	fileArray = [myPanel URLs];
 	if (fileArray) {
 		for(i = 0; i < [fileArray count]; ++i) {
-			NSString*  myName = [fileArray objectAtIndex:i];
-			[myController openDocumentWithContentsOfFile: myName display: YES];
+	//	NSString*  myName = [fileArray objectAtIndex:i];
+    //  [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath:myName] display: YES error:NULL];
+            
+            myURL = [fileArray objectAtIndex:i];
+    		[myController openDocumentWithContentsOfURL: myURL display: YES error:NULL];
 		}
 	}
 	
@@ -694,7 +723,7 @@
 	NSArray       *fileList;
 	// NSMenu 	  *submenu;
 	BOOL	   isDirectory;
-	unsigned i;
+	NSUInteger i;
 	// unsigned lv = 3;
 	
 	NSMenu *helpMenu = [[[NSApp mainMenu] itemWithTitle:
@@ -709,7 +738,7 @@
 		
 	fm       = [ NSFileManager defaultManager ];
 	basePath = [[ MoviesPath stringByAppendingString:@"/TeXShop"] stringByStandardizingPath ];
-	fileList = [ fm directoryContentsAtPath: basePath ];
+	fileList = [ fm contentsOfDirectoryAtPath: basePath error:NULL ];
 
 	for (i = 0; i < [fileList count]; i++) {
 		title = [ fileList objectAtIndex: i ];
@@ -746,18 +775,18 @@
 }
 
 // added by Terada (- (NSArray*)searchTeXWindows:)
-- (NSArray*)searchTeXWindows:(int*)ptrToCurrentIndexInReturnedArray
+- (NSArray*)searchTeXWindows:(NSInteger*)ptrToCurrentIndexInReturnedArray
 {
 	NSArray* windows = [NSApp windows];
-	uint currentIndex = [windows indexOfObject:[NSApp keyWindow]];
+	NSUInteger currentIndex = [windows indexOfObject:[NSApp keyWindow]];
 	NSMutableArray *matchIndexes = [[NSMutableArray arrayWithCapacity:0] retain];
 	*ptrToCurrentIndexInReturnedArray = -1;
-	int count = 0;
-	uint i;
+	NSInteger count = 0;
+	NSUInteger i;
 	
 	for(i=0; i<[windows count]; i++){
 		if ([[windows objectAtIndex:i] isKindOfClass:[TSTextEditorWindow class]]) {
-			[matchIndexes addObject:[NSNumber numberWithInt:i]];
+			[matchIndexes addObject:[NSNumber numberWithInteger:i]];
 			if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
 			count++;
 		}
@@ -769,10 +798,10 @@
 // added by Terada (- (IBAction)nextTeXWindow:)
 - (IBAction)nextTeXWindow:(id)sender 
 {
-	int currentIndexInReturnedArray;
+	NSInteger currentIndexInReturnedArray;
 	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
 	if (matchIndexes) {
-		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] intValue];
+		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
 	[matchIndexes release];
@@ -781,10 +810,10 @@
 // added by Terada (- (IBAction)previousTeXWindow:)
 - (IBAction)previousTeXWindow:(id)sender 
 {
-	int currentIndexInReturnedArray;
+	NSInteger currentIndexInReturnedArray;
 	NSArray* matchIndexes = [self searchTeXWindows:&currentIndexInReturnedArray];
 	if (matchIndexes) {
-		int nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] intValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] intValue];
+		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
 	[matchIndexes release];
@@ -794,9 +823,15 @@
 // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender
 {
-	if ([[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:
-			[CommandCompletionPath stringByStandardizingPath] display: YES] != nil)
-		g_canRegisterCommandCompletion = NO;
+      
+	 [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:
+       [NSURL fileURLWithPath:[CommandCompletionPath stringByStandardizingPath]] display:YES
+                                                                   completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error) {
+                                                                       if (document != nil) {
+                                                                           g_canRegisterCommandCompletion = NO;
+                                                                       }
+                                                                   }];
+	  // g_canRegisterCommandCompletion = NO;
 }
 // end mitsu 1.29
 
@@ -804,10 +839,10 @@
 // mitsu 1.29 (O)
 - (void)changeImageCopyType: (id)sender
 {
-	id <NSMenuItem> item;
+	id  item;
 
 	if ([sender isKindOfClass: [NSMenuItem class]]) {
-		int imageCopyType;
+		NSInteger imageCopyType;
 
 		imageCopyType = [SUD integerForKey:PdfCopyTypeKey]; // mitsu 1.29b
 		item = [[sender menu] itemWithTag: imageCopyType];
@@ -821,7 +856,7 @@
 		NSPopUpButton *popup = [[TSPreferences sharedInstance] imageCopyTypePopup];
 		if (popup)
 		{
-			int idx = [popup indexOfItemWithTag: imageCopyType];
+			NSInteger idx = [popup indexOfItemWithTag: imageCopyType];
 			if (idx != -1)
 				[popup selectItemAtIndex: idx];
 		}
@@ -835,7 +870,10 @@
 
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder
 {
-	[textFinder setShouldHackFindMenu:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseOgreKit"]];
+    if ([SUD integerForKey:FindMethodKey] == 2)
+        [textFinder setShouldHackFindMenu:YES];
+    else
+        [textFinder setShouldHackFindMenu:NO];
 }
 
 // The routine below is no longer used; it has been replaced by Sparkle. Koch, 1/11/2009.
@@ -867,7 +905,7 @@
 
 	NSString *latestVersion = [texshopVersionDictionary valueForKey:@"TeXShop"];
 	
-	int button;
+	NSInteger button;
 	if(latestVersion == nil){
 		NSRunAlertPanel(NSLocalizedString(@"Error",
 										  @"Error"),
@@ -889,6 +927,7 @@
 	{
 		button = NSRunAlertPanel(NSLocalizedString(@"New version available",
 													   @"New version available"),
+#warning 64BIT: Check formatting arguments
 									 [NSString stringWithFormat:
 										 NSLocalizedString(@"A new version of TeXShop is available (version %@). Would you like to download it now?",
 														   @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestVersion],
@@ -933,13 +972,14 @@
 		if (!dstExists) {
 			NS_DURING
 				// create the missing directory
-				result = [fileManager createDirectoryAtPath:dstPath attributes:nil];
+            result = [fileManager createDirectoryAtPath:dstPath withIntermediateDirectories:NO attributes:nil error: NULL];
 			NS_HANDLER
 				result = NO;
 				reason = [localException reason];
 			NS_ENDHANDLER
 			if (!result) {
 				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), reason,
+#warning 64BIT: Check formatting arguments
 					[NSString stringWithFormat: NSLocalizedString(@"Couldn't create folder:\n%@", @"Message when creating a directory failed"), dstPath],
 					nil, nil);
 				return;
@@ -949,7 +989,7 @@
 		// Iterate over the content of the source dir and copy it recursively
 		NSEnumerator 	*fileEnumerator;
 		NSString		*fileName;
-		fileEnumerator = [[fileManager directoryContentsAtPath:srcPath] objectEnumerator];
+		fileEnumerator = [[fileManager contentsOfDirectoryAtPath:srcPath error: NULL] objectEnumerator];
 		while ((fileName = [fileEnumerator nextObject])) {
 			[self mirrorPath:[srcPath stringByAppendingPathComponent:fileName]
 					  toPath:[dstPath stringByAppendingPathComponent:fileName]];
@@ -958,7 +998,7 @@
 		// Copy source to destination
 		if (dstExists) {
 			NS_DURING
-			result = [fileManager removeFileAtPath: dstPath handler:nil];
+			result = [fileManager removeItemAtPath: dstPath error: NULL];
 			NS_HANDLER
 				result = NO;
 				reason = [localException reason];
@@ -971,7 +1011,7 @@
 		
 			NS_DURING
 				// file doesn't exist -> copy it
-				result = [fileManager copyPath:srcPath toPath:dstPath handler:nil];
+        result = [fileManager copyItemAtPath:srcPath toPath:dstPath error:NULL];
 			NS_HANDLER
 				result = NO;
 				reason = [localException reason];

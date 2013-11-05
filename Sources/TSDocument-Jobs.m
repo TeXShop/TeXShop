@@ -63,6 +63,7 @@
 	//   end tell
 	NSMutableString *script = [NSMutableString string];
 
+#warning 64BIT: Check formatting arguments
 	[script appendFormat:@"open -a '%@' '%%s' &&", [[NSBundle mainBundle] bundlePath]];
 	[script appendString:@" osascript"];
 	[script appendString:@" -e 'tell application \"TeXShop\"'"];
@@ -127,11 +128,13 @@
 }
 
 
-- (void) doJobForScript:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous
+
+- (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
-	SEL saveFinished;
 	
-	if (! fileIsTex)
+    SEL saveFinished;
+    
+    if (! fileIsTex)
 		return;
 
 	useTempEngine = YES;
@@ -144,9 +147,12 @@
 	errorNumber = 0;
 	whichError = 0;
 	makeError = error;
-	
-	
-	
+    
+// KOCH
+    
+    if (! doAutoSave) {
+    
+
 
 	if (!_externalEditor)
 		[self checkFileLinksA];
@@ -156,39 +162,40 @@
 	} else {
 		[self saveDocumentWithDelegate: self didSaveSelector: @selector(saveFinished:didSave:contextInfo:) contextInfo: nil];
 	}
-
-/*
-	// patch by Ulrich Bauer; remove commented lines above and replace with
+    }
+    
+    else {
+    
+// patch by Ulrich Bauer; remove commented lines above and replace with
     
     if (!_externalEditor) {
-		id wlist = [NSApp orderedDocuments];
-		id en = [wlist objectEnumerator];
-		id obj;
-		while (obj = [en nextObject]) {
-			if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
-			{
-				[obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
-			}
-		}
-		
-		saveFinished = @selector(saveFinished:didSave:contextInfo:);
-		if ([self fileURL])
-			[self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
-		else
-			[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
-		
-	} 
-	else {
-		[self saveFinished: self didSave:YES contextInfo:nil];
-	}
- */
-	
-	
-	
+            id wlist = [NSApp orderedDocuments];
+            id en = [wlist objectEnumerator];
+            id obj;
+            while (obj = [en nextObject]) {
+                if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+                    {
+                        [obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+                    }
+                }
+                
+            saveFinished = @selector(saveFinished:didSave:contextInfo:);
+            if ([self fileURL])
+                    [self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+            else
+                    [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+                
+            } 
+        else {
+            [self saveFinished: self didSave:YES contextInfo:nil];
+        }
+
+    }
+    
 }
 
 
-- (void) doJob:(int)type withError:(BOOL)error runContinuously:(BOOL)continuous
+- (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
 	SEL		saveFinished;
 
@@ -223,8 +230,11 @@
 	
 	[self fixMacroMenu];
 	// end addition
-	
 
+// KOCH
+    
+    
+    if (! doAutoSave) {
 	if (!_externalEditor)
 		[self checkFileLinksA];
 
@@ -235,49 +245,55 @@
 		saveFinished = @selector(saveFinished:didSave:contextInfo:);
 		[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
 	}
- 
-/*
-	// bug fix by Ulrich Bauer; remove above lines and add
+    }
     
-	if (!_externalEditor) {
-		id wlist = [NSApp orderedDocuments];
-		id en = [wlist objectEnumerator];
-		id obj;
-		while (obj = [en nextObject]) {
-			if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
-			{
-				[obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
-			}
-		}
-		
+    else
+ 
+    
+ {
+
+    
+// bug fix by Ulrich Bauer; remove above lines and add
+    
+    	if (!_externalEditor) {
+            id wlist = [NSApp orderedDocuments];
+            id en = [wlist objectEnumerator];
+            id obj;
+            while (obj = [en nextObject]) {
+                if (([[obj windowNibName] isEqualToString:@"TSDocument"]) && (obj != self) && ([obj hasUnautosavedChanges])) 
+                    {
+                    [obj autosaveDocumentWithDelegate: self didAutosaveSelector: @selector(autosaveFinished:didSave:contextInfo:) contextInfo: nil];
+                    }
+                }
+         
         
         
  		saveFinished = @selector(saveFinished:didSave:contextInfo:);
         if ([self fileURL])
-			[self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
+                [self autosaveDocumentWithDelegate: self didAutosaveSelector: saveFinished contextInfo: nil];
         else
-			[self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
+                [self saveDocumentWithDelegate: self didSaveSelector: saveFinished contextInfo: nil];
         
-	} else {
-		[self saveFinished: self didSave:YES contextInfo:nil];
-	}
-*/
-
+        } else {
+            [self saveFinished: self didSave:YES contextInfo:nil];
+        }
+    }
 }
 
+    
 - (void) autosaveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo
 {
     if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
 }
 
-
+    
 
 
 - (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args
 {
 	NSArray		*myList;
 	NSString		*myString, *middleString = 0;
-	int			size, i, pos;
+	NSInteger			size, i, pos;
 	BOOL		programFound, inMiddle;
 	NSString		*theEngine = 0;
 	NSRange		aRange;
@@ -340,7 +356,7 @@
     NSFileManager   *fileManager;
     NSString	    *newGSTeXCommand;
     BOOL			changed;
-	int				locationOfRest;
+	NSInteger				locationOfRest;
     
     changed = NO;
     gsTeXCommand = [SUD stringForKey:TexGSCommandKey];
@@ -351,7 +367,7 @@
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
-		newGSTeXCommand = [NSString stringWithString: @"simpdftex tex"];
+		newGSTeXCommand = @"simpdftex tex";
 		if ([gsTeXCommand length] > locationOfRest)
 		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
 		[SUD setObject:newGSTeXCommand forKey:TexGSCommandKey];
@@ -367,7 +383,7 @@
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
-		newGSTeXCommand = [NSString stringWithString: @"simpdftex latex"];
+		newGSTeXCommand = @"simpdftex latex";
 		if ([gsTeXCommand length] > locationOfRest)
 		    newGSTeXCommand = [newGSTeXCommand stringByAppendingString: [gsTeXCommand substringFromIndex: locationOfRest]];
 		[SUD setObject:newGSTeXCommand forKey:LatexGSCommandKey];
@@ -397,7 +413,7 @@
 	NSString		*argumentString;
 	NSString           *tempDestinationString;
 
-	myFileName = [self fileName];
+	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 
 		fileManager = [NSFileManager defaultManager];
@@ -411,7 +427,7 @@
 
 				// create the necessary directories
 				NS_DURING
-					result = [fileManager createDirectoryAtPath:TempOutputKey attributes:nil];
+                result = [fileManager createDirectoryAtPath:TempOutputKey withIntermediateDirectories:NO attributes:nil error:NULL];
 				NS_HANDLER
 					result = NO;
 					reason = [localException reason];
@@ -425,15 +441,15 @@
 				tempDestinationString = [[TempOutputKey stringByAppendingString:@"/"]
 								stringByAppendingString: [myFileName lastPathComponent]];
 				if ([fileManager fileExistsAtPath: tempDestinationString])
-					[fileManager removeFileAtPath:tempDestinationString handler: nil];
-				[fileManager copyPath:myFileName toPath:tempDestinationString handler:nil];
+					[fileManager removeItemAtPath:tempDestinationString error:NULL];
+				[fileManager copyItemAtPath:myFileName toPath:tempDestinationString error:NULL];
 			}
 		}
 
-		imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+		imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-			myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 		}
 		else
@@ -456,26 +472,26 @@
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
 				enginePath = [enginePath stringByAppendingString: @" --distiller /usr/bin/pstopdf"];
 			if (! writeable) {
-				argumentString = [[NSString stringWithString:@" --outdir "] stringByAppendingString: TempOutputKey];
+				argumentString = [@" --outdir " stringByAppendingString: TempOutputKey];
 				enginePath = [enginePath stringByAppendingString: argumentString];
 			}
 			enginePath = [self separate:enginePath into: args];
 			if ([SUD boolForKey:SavePSEnabledKey])
-				[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+				[args addObject: @"--keep-psfile"];
 		} else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
 			enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
-				[args addObject: [NSString stringWithString:@"Panther"]];
+				[args addObject: @"Panther"];
 			else
-				[args addObject: [NSString stringWithString:@"Ghostscript"]];
+				[args addObject: @"Ghostscript"];
 			gsPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
 			[args addObject: gsPath];
 		} else if  ([[myFileName pathExtension] isEqualToString:@"eps"]) {
 			enginePath = [[NSBundle mainBundle] pathForResource:@"epstopdfwrap" ofType:nil];
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
-				[args addObject: [NSString stringWithString:@"Panther"]];
+				[args addObject: @"Panther"];
 			else
-				[args addObject: [NSString stringWithString:@"Ghostscript"]];
+				[args addObject: @"Ghostscript"];
 			gsPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
 			[args addObject: gsPath];
 			tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
@@ -537,13 +553,13 @@
 	NSArray			*myList;
 	NSString		*theSource, *theKey, *myEngine, *testString, *programString;
 	NSRange			aRange, myRange, theRange, programRange, newProgramRange;
-	unsigned int	mystart, myend;
-	unsigned int    start, end, irrelevant;
-	int             whichEngineLocal;
-	int             i, j;
+	NSUInteger      mystart, myend;
+	NSUInteger      start, end, irrelevant;
+	NSInteger             whichEngineLocal;
+	NSInteger             i, j;
 	BOOL            done;
-	unsigned        length;
-	int             linesTested, offset;
+	NSUInteger        length;
+	NSInteger             linesTested, offset;
 	NSData          *myData;
 
 
@@ -558,8 +574,8 @@
 	if (!_externalEditor)
 		theSource = [[self textView] string];
 	else {
-		myData = [NSData dataWithContentsOfFile:[self fileName]];
-		theSource = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+		myData = [NSData dataWithContentsOfFile:[[self fileURL] path]];
+		theSource = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
 	}
 
 	if ([self checkMasterFile:theSource forTask:RootForTexing]) {
@@ -572,10 +588,10 @@
 	}
 
 /* // Ulrich Bauer patch
-	 if (!_externalEditor)
-	 [self checkFileLinks:theSource];
+	if (!_externalEditor)
+		[self checkFileLinks:theSource];
 */
-	
+
 	// New Stuff
 	length = [theSource length];
 	done = NO;
@@ -601,6 +617,14 @@
 			programRange = [testString rangeOfString:@"% !TEX TS-program ="];
 			offset = 19;
 			}
+        if (programRange.location == NSNotFound) {
+			programRange = [testString rangeOfString:@"% !TEX program ="];
+			offset = 16;
+            }
+        if (programRange.location == NSNotFound) {
+			programRange = [testString rangeOfString:@"%!TEX program ="];
+			offset = 15;
+        }
 		if (programRange.location != NSNotFound) {
 			newProgramRange.location = programRange.location + offset;
 			newProgramRange.length = [testString length] - newProgramRange.location;
@@ -804,7 +828,8 @@
 		if (aRange.location == NSNotFound)
 			warningGiven = YES;
 		else {
-			NSBeginCriticalAlertSheet(nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"),
+#warning 64BIT: Check formatting arguments
+			NSBeginCriticalAlertSheet (nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"),
 									  textWindow, self, @selector(sheetDidEnd:returnCode:contextInfo:), NULL, nil,
 									  NSLocalizedString(@"Warning: Using Shell Escape", @"Warning: Using Shell Escape"));
 			useTempEngine = NO;
@@ -816,7 +841,7 @@
 }
 
 
-- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (int)theEngine
+- (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine
 {
 	BOOL    isFile;
 	BOOL    isExecutable;
@@ -834,6 +859,7 @@
 	if (theEngine >= UserEngine) {
 		isFile = [[NSFileManager defaultManager] fileExistsAtPath: filename];
 		if (! isFile) {
+#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil, nil, nil,[textView window], nil, nil, nil, nil,
 							  NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), filename);
@@ -841,6 +867,7 @@
 		} else
 			isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 		if (! isExecutable) {
+#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil,nil,nil,[textView window],nil,nil,nil,nil,
 							  NSLocalizedString(@"%@ does not have the executable bit set.", @"%@ does not have the executable bit set."), filename);
@@ -850,10 +877,11 @@
 	else
 		isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 	if (filename == nil || [filename length] == 0 || isExecutable == FALSE) {
+#warning 64BIT: Check formatting arguments
 		NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
-						  NSLocalizedString(@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution.",
-											@"%@ does not exist. Perhaps TeXLive was not installed or was removed during a system upgrade. If so, go to the TeXShop web site and follow the instructions to (re)install TeXLive. Another possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the fink teTeX distribution."),
+						  NSLocalizedString(@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions.",
+											@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions."),
 						  filename);
 		return FALSE;
 	}
@@ -880,10 +908,10 @@
 	NSString		*sourcePath;
 	NSString            *gsPath;
 	NSRange		aRange;
-	unsigned		here;
+	NSUInteger		here;
 	BOOL                continuous;
 	BOOL                fixPath;
-	int                 whichEngineLocal;
+	NSInteger                 whichEngineLocal;
 
 	whichEngineLocal = useTempEngine ? tempEngine : whichEngine;
 
@@ -891,7 +919,7 @@
 	continuous = typesetContinuously;
 	typesetContinuously = NO;
 
-	myFileName = [self fileName];
+	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 		
 		if (startDate != nil) {
@@ -899,10 +927,10 @@
 			startDate = nil;
 		}
 		
-		imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+		imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 		
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-			myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
 		} else
 			startDate = nil;
@@ -1089,7 +1117,7 @@
 				enginePath = [self separate:myEngine into:args];
 
 				if ((theScript == kTypesetViaGhostScript) && ([SUD boolForKey:SavePSEnabledKey])) 
-					[args addObject: [NSString stringWithString:@"--keep-psfile"]];
+					[args addObject: @"--keep-psfile"];
 			}
 			
 			// Koch: Feb 20; this allows spaces everywhere in path except
@@ -1117,6 +1145,58 @@
 				texTask = nil;
 			}
 			 } else if (whichEngineLocal == BibtexEngine) {
+                 
+                 // New Stuff
+                 NSUInteger length;
+                 BOOL       done;
+                 NSUInteger linesTested, offset;
+                 NSRange    myRange, theRange, bibRange, newBibRange;
+                 NSString   *theSource, *testString, *bibString;
+                 NSUInteger start, end, irrelevant;
+                 
+                 theSource = [[self textView] string];
+                 
+                 length = [theSource length];
+                 done = NO;
+                 linesTested = 0;
+                 myRange.location = 0;
+                 myRange.length = 1;
+                 
+                 
+                 while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+                         [theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+                         myRange.location = end;
+                         myRange.length = 1;
+                         linesTested++;
+                         
+                         theRange.location = start; theRange.length = (end - start);
+                         testString = [theSource substringWithRange: theRange];
+                         
+                         bibRange = [testString rangeOfString:@"% !BIB TS-program ="];
+                         offset = 19;
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"%!BIB TS-program ="];
+                             offset = 18;
+                         }
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"% !BIB program ="];
+                             offset = 16;
+                         }
+                         if (bibRange.location == NSNotFound) {
+                             bibRange = [testString rangeOfString:@"%!BIB program ="];
+                             offset = 15;
+                         }
+                         if (bibRange.location != NSNotFound) {
+                             newBibRange.location = bibRange.location + offset;
+                             newBibRange.length = [testString length] - newBibRange.location;
+                             if (newBibRange.length > 0) {
+                                 bibString = [[testString substringWithRange: newBibRange]
+                                                  stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                                 done = YES;
+                             }
+                         }
+                 }
+                    
 				 NSString* bibPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto; allow spaces in path
 				 [args addObject: [bibPath lastPathComponent]];
@@ -1126,48 +1206,65 @@
 					 [bibTask release];
 					 bibTask = nil;
 				 }
-				 bibTask = [[NSTask alloc] init];
-				 
-				 
-				 
-                 // modified by Terada
-                 NSMutableArray *bibtexArgs = [NSMutableArray arrayWithCapacity:0];
-                 NSString* bibtexEngineString = [self separate:[SUD objectForKey:BibTeXengineKey] into:bibtexArgs];
-                 [bibtexArgs addObjectsFromArray:args];
+				
                  
-				 [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-				 
-				 /*
-				  NSString* bibtexEngineString;
-				  
-				  switch ([SUD integerForKey:BibtexCommandKey]) {
-				  case 0: bibtexEngineString = @"bibtex"; break;
-				  case 1: bibtexEngineString = @"jbibtex"; break;
-				  default: bibtexEngineString = @"bibtex"; break;
-				  } // comment out by Terada
-				  bibtexEngineString = [SUD objectForKey:BibTeXengineKey]; // modified by Terada
-				  [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-				  */			 
-				 
-					 
-				 
-				 
-	/*			 
-				 
+                 NSMutableArray *bibtexArgs;
+                 NSString *bibtexEngineString;
+                 NSString *bibProgramPath, *tetexBinPath;;
+                 
+                 if (done) {
+                     bibtexArgs = [NSMutableArray arrayWithCapacity:0];
+                     bibtexEngineString = [self separate: bibString into:bibtexArgs];
+                     [bibtexArgs addObjectsFromArray:args];
+                     
+                     tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+                     bibProgramPath = [tetexBinPath stringByAppendingString: bibtexEngineString];
+                    }
+                 
+                
+                 else {
+                 
+                 // modified by Terada
+                 bibtexArgs = [NSMutableArray arrayWithCapacity:0];
+                 bibtexEngineString = [self separate:[SUD objectForKey:BibTeXengineKey] into:bibtexArgs];
+                 [bibtexArgs addObjectsFromArray:args];
+                 }
+                 
+                 
+                 tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+                 bibProgramPath = [tetexBinPath stringByAppendingString: bibtexEngineString];
+                 
+                 if ( ! [[NSFileManager defaultManager] fileExistsAtPath: bibProgramPath]) {
+                     NSString *message = NSLocalizedString(@"The program ", @"The program ");
+                     message = [[message stringByAppendingString: bibtexEngineString] stringByAppendingString: NSLocalizedString(@" does not exist.", @" does not exist.")];
+                     
+                     NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), message, 
+                                  nil,
+                                     nil, nil);
+                 }
+                 else {
+                     
+                     
+                     bibTask = [[NSTask alloc] init];
+                     [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+                 }
+             
+        
+		 
+                 
+                  /*
 				 NSString* bibtexEngineString;
-				 /*
+				
 				  switch ([SUD integerForKey:BibtexCommandKey]) {
 				  case 0: bibtexEngineString = @"bibtex"; break;
 				  case 1: bibtexEngineString = @"jbibtex"; break;
 				  default: bibtexEngineString = @"bibtex"; break;
 				  } // comment out by Terada
 				 bibtexEngineString = [SUD objectForKey:BibTeXengineKey]; // modified by Terada
-				 [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
-	*/
-				 
-				 
-				 
-			 } else if (whichEngineLocal == IndexEngine) {
+                 [self startTask: bibTask running: bibtexEngineString withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+                 */
+                 
+             }  else if (whichEngineLocal == IndexEngine) {
 				 NSString* indexPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto, spaces in path
 				 [args addObject: [indexPath lastPathComponent]];
@@ -1206,7 +1303,7 @@
 }
 
 
--(void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+-(void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
 	switch (returnCode) {
 		case NSAlertDefaultReturn:
@@ -1256,7 +1353,7 @@
 	[self doJob:LatexEngine withError:YES runContinuously:NO];
 }
 
-- (void) doUser: (int)theEngine
+- (void) doUser: (NSInteger)theEngine
 {
 	fromMenu = NO;
 	[programButton selectItemAtIndex:(theEngine - 1)];
@@ -1391,7 +1488,14 @@
 {
 //    NSString	*titleString;
 	BOOL	useError;
+    
+   if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))
+   {
+        [self trashAUXFiles:self];
+       
+   }
 
+   
    fromMenu = NO;
    useError = NO;
 	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
@@ -1430,7 +1534,7 @@
 		command = [[texCommand stringValue] stringByAppendingString:@"\n"];
 		command = [self filterBackslashes:command];
 
-		myData = [command dataUsingEncoding: NSMacOSRomanStringEncoding allowLossyConversion:YES];
+		myData = [command dataUsingEncoding: NSISOLatin9StringEncoding allowLossyConversion:YES];
 		[writeHandle writeData: myData];
 		// added by mitsu --(L) reflect tex input and clear tex input field in console window
 		NSRange selectedRange = [outputText selectedRange];
@@ -1490,11 +1594,15 @@
 	NSString		*alternatePath;
 	NSDictionary	*myAttributes;
 	NSDate			*endDate;
-	int				status;
+	NSInteger				status;
 	BOOL			alreadyFound;
 	BOOL			front;
 
 	[outputText setSelectable: YES];
+    // [texCommand setSelectable: NO];
+    // [outputText setEditable: YES];
+    
+    // [outputText setEditable: YES];
 
 	if (([aNotification object] == bibTask) || ([aNotification object] == indexTask) || ([aNotification object] == metaFontTask)) {
 		if (inputPipe == [[aNotification object] standardInput]) {
@@ -1527,11 +1635,11 @@
 		status = [[aNotification object] terminationStatus];
 
 		if ((status == 0) || (status == 1))  {
-			imagePath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+			imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 
 			alreadyFound = NO;
 			if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-				myAttributes = [[NSFileManager defaultManager] fileAttributesAtPath: imagePath traverseLink:NO];
+				myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 				endDate = [myAttributes objectForKey:NSFileModificationDate];
 				if ((startDate == nil) || ! [startDate isEqualToDate: endDate]) {
 					alreadyFound = YES;
@@ -1548,7 +1656,7 @@
 					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 					if ((front) || (! [pdfKitWindow isVisible]))
 						[pdfKitWindow makeKeyAndOrderFront: self];
-					[self allocateSyncScanner];
+                    [self allocateSyncScanner];
 				}
 			}
 
@@ -1556,7 +1664,7 @@
 				alternatePath = [[TempOutputKey stringByAppendingString:@"/"] stringByAppendingString:[imagePath lastPathComponent]];
 				if ([[NSFileManager defaultManager] fileExistsAtPath: alternatePath]) {
 					texRep = [[NSPDFImageRep imageRepWithContentsOfFile: alternatePath] retain];
-					[[NSFileManager defaultManager] removeFileAtPath: alternatePath handler:nil];
+					[[NSFileManager defaultManager] removeItemAtPath: alternatePath error:NULL];
 					if (texRep) {
 						[pdfWindow setTitle: [imagePath lastPathComponent]];
 						[pdfView setImageRep: texRep];
@@ -1587,7 +1695,6 @@
 {
 	willClose = value;
 }
-
 
 
 

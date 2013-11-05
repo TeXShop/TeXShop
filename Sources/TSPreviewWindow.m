@@ -48,7 +48,7 @@ extern NSPanel *pageNumberWindow;
 @implementation TSPreviewWindow
 
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
 	NSColor	*backColor;
@@ -59,7 +59,7 @@ extern NSPanel *pageNumberWindow;
 	backColor = [NSColor colorWithCalibratedRed:0.9 green:0.9 blue:0.9 alpha: 1.0];
 	[self setBackgroundColor: backColor];
 
-	float alpha = [SUD floatForKey: PreviewWindowAlphaKey];
+	CGFloat alpha = [SUD floatForKey: PreviewWindowAlphaKey];
 	if (alpha < 0.999)
 		[self setAlphaValue:alpha];
 
@@ -69,6 +69,7 @@ extern NSPanel *pageNumberWindow;
 	return result;
 }
 
+
 - (void)close
 {
 	[myPDFKitView setDocument: nil];
@@ -77,6 +78,7 @@ extern NSPanel *pageNumberWindow;
 	
 	[super close];
 }
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
@@ -103,7 +105,7 @@ extern NSPanel *pageNumberWindow;
 - (void) becomeMainWindow
 {
 	willClose = NO;
-	if([myDocument fileName] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
+	if([myDocument fileURL] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 
 	[myDocument fixMacroMenuForWindowChange];
@@ -123,7 +125,7 @@ extern NSPanel *pageNumberWindow;
 			contextInfo: nil];
 }
 
-- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
 {
 	// [sheet close];
 	[sheet orderOut: self];
@@ -142,7 +144,7 @@ extern NSPanel *pageNumberWindow;
 			contextInfo: nil];
 }
 
-- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (int)returnCode contextInfo: (void *)contextInfo
+- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
 {
 	// [sheet close];
 	[sheet orderOut: self];
@@ -362,6 +364,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)associatedWindow:(id)sender
 {
+    if ([myDocument externalEditor])
+        return;
 	if ([myDocument documentType] == isTeX) {
 		if ([myDocument getCallingWindow] == nil)
 			[[myDocument textWindow] makeKeyAndOrderFront: self];
@@ -611,6 +615,12 @@ extern NSPanel *pageNumberWindow;
 	[myDocument savePreviewPosition];
 }
 
+- (void) savePortablePreviewPosition: sender
+{
+	[myDocument savePortablePreviewPosition];
+}
+
+
 - (void)copy: (id)sender
 {
 	if ([myDocument fromKit])
@@ -641,7 +651,7 @@ extern NSPanel *pageNumberWindow;
 {
 	NSSize		newSize;
 	NSRect		theFrame;
-	BOOL		result;
+    BOOL        result;
 	
 	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
 	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
@@ -650,7 +660,7 @@ extern NSPanel *pageNumberWindow;
 	if (windowIsSplit) {
 		windowIsSplit = NO;
 		activeView = myPDFKitView;
-		result = [activeView becomeFirstResponder];
+        result = [activeView becomeFirstResponder];
 		[(MyPDFKitView *)activeView resetSearchDelegate];
 	}
 	else {
@@ -670,18 +680,18 @@ extern NSPanel *pageNumberWindow;
         [(MyPDFKitView *)myPDFKitView2 setPageStyle:[(MyPDFKitView *)myPDFKitView pageStyle]];
         [(MyPDFKitView *)myPDFKitView2 setFirstPageStyle:[(MyPDFKitView *)myPDFKitView firstPageStyle]];
         if ( [(MyPDFKitView *)myPDFKitView resizeOption] == NEW_PDF_FIT_TO_NONE)
-			[(MyPDFKitView *)myPDFKitView2 setMagnification: [(MyPDFKitView *)myPDFKitView magnification]];
+          [(MyPDFKitView *)myPDFKitView2 setMagnification: [(MyPDFKitView *)myPDFKitView magnification]];
         else {
             [(MyPDFKitView *)myPDFKitView2 setResizeOption:[(MyPDFKitView *)myPDFKitView resizeOption]];
             [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
-		}
+            }
         [(MyPDFKitView *)myPDFKitView2 setupPageStyle];
-		//  [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
-		
+       //  [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
+
 		if ([myPDFKitView2 document] == nil) {
 			// [[myPDFKitView document] retain];
 			[myPDFKitView2 setDocument:[myPDFKitView document]];
-		}
+           		}
         [(MyPDFKitView *)myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)myPDFKitView index]];
 	}
 	else
@@ -743,12 +753,6 @@ extern NSPanel *pageNumberWindow;
 	[(MyPDFKitView *)activeView goToKitPage: sender]; 
 }
 
-- (IBAction)convertTiff:(id)sender
-{
-    [(TSDocument *)myDocument convertTiff:sender];
-}
-
-
 /*
 - (void) doFind: sender
 {
@@ -761,12 +765,14 @@ extern NSPanel *pageNumberWindow;
 	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
 }
 
-
+- (IBAction)convertTiff:(id)sender
+{
+    [(TSDocument *)myDocument convertTiff:sender];
+}
 
 - (BOOL)windowIsSplit
 {
     return windowIsSplit;
 }
-
 
 @end

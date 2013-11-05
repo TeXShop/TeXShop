@@ -16,7 +16,7 @@
 
 <p>The restriction to ascii characters caused problems for users in Europe, who regularly use accents, umlauts, upside down question marks, and other special characters. TeX allows these characters to be input as markup commands, but unfortunately markup commands divide words, so a word with an accented vowel looks like two words to TeX. This then broke automatic hyphenation for Europeans.</p>
 
-<p>Version 3 of TeXShop, which is the current version, fixed this problem by expanding font tables from 128 characters to 256 characters. This made it possible to design fonts containing accented characters and other special symbols, so markup commands are not needed to input these characters. It made it possible for TeX to process input files containing bytes with all 256 values,  rather than the original 128 ascii symbols.</p>
+<p>Version 3 of TeX, which is the current version, fixed this problem by expanding font tables from 128 characters to 256 characters. This made it possible to design fonts containing accented characters and other special symbols, so markup commands are not needed to input these characters. It made it possible for TeX to process input files containing bytes with all 256 values,  rather than the original 128 ascii symbols.</p>
 
 <p>Simultaneously, computer manufacturers faced their own form of the same problem, and they responded in a similar manner by extending the ascii table to a full 256 characters. But unfortunately, 256 is too small to include all characters used in Europe: Cyrilic, Greek, etc. So manufacturers invented several different extensions of ascii, which were called "encodings".</p>
 
@@ -30,7 +30,8 @@
 
 <p>The various 256-character encodings behave differently than the few Unicode encodings. Every sequence of bytes is legal in the 256 character encodings. So if a file is written with one such encoding, and then read back with another, there will be no computer error, but some characters will be replaced by nonsense characters. If this happens, it is important not to immediately save the file, because then the nonsense characters will replace the desired characters on disk.</p>
 
-<p> On the other hand, if a file is written to disk with a 256-character encoding, and later read back as a UTF-8 Unicode file, the computer is likely to report an error and give up because the file is not legal UTF-8. In that case, TeXShop will reread the file using Mac OS Roman encoding. This will eliminate the computer error, but will likely replace characters by nonsense characters.</p>
+<p> On the other hand, if a file is written to disk with a 256-character encoding, and later read back as a UTF-8 Unicode file, the computer is likely to report an error and give up because the file is not legal UTF-8. In that case, TeXShop will reread the file using ISOLatin 9 encoding. This will eliminate the computer error, but will likely replace characters by nonsense characters. ISOLatin 9 has full ascii support as well as
+support for all symbols commonly used throughout Western Europe.</p>
 
 <p>Two issues remain. First, how is TeX informed that a particular encoding is being used? And second, how does TeXShop administer encodings when loading and saving files?</p>
 
@@ -39,7 +40,7 @@
 <dl>
 <dd> \usepackage[german]{babel}
 <dd>\usepackage[T1]{fontenc}
-<dd>\usepackage[latin1]{inputenc}
+<dd>\usepackage[latin9]{inputenc}
 </dl>
 
 <p> From now on, we explain how to configure TeXShop to handle encodings. Notice first that there is a preference setting under the 

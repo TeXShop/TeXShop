@@ -123,6 +123,7 @@
 
 - (void)close
 {
+/*
 // Yusuke Terada addition to fix crash at close
     if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && myDocument && [myDocument respondsToSelector:@selector(pdfView)] && [myDocument pdfView])
         [[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]];
@@ -140,6 +141,7 @@
 				[anObject setCallingWindow: nil];
 		}
 	}
+ */
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // added by Terada
 

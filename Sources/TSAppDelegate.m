@@ -119,6 +119,13 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+    
+    NSString *spellingLanguage = [[NSSpellChecker sharedSpellChecker] language];
+    BOOL    spellingAutomatic = [[NSSpellChecker sharedSpellChecker] automaticallyIdentifiesLanguages];
+    [SUD setBool: spellingAutomatic forKey: SpellingAutomaticLanguageKey];
+    [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
+    [SUD synchronize];
+    
     NSString *folderPath, *filename;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	folderPath = [[DraggedImagePath stringByStandardizingPath]
@@ -185,7 +192,14 @@
 	//
 	// This must come before dealing with TSEncodingSupport and MacoMenuController below
 	
-	// First see if we already updated. 
+	// First see if we already updated.;
+    
+    BOOL spellingAutomatic = [[NSUserDefaults standardUserDefaults] boolForKey:SpellingAutomaticLanguageKey];
+    NSString *spellingLanguage = [[NSUserDefaults standardUserDefaults] objectForKey:SpellingLanguageKey];
+    [[NSSpellChecker sharedSpellChecker] setAutomaticallyIdentifiesLanguages: spellingAutomatic];
+    if (! spellingAutomatic)
+        [[NSSpellChecker sharedSpellChecker] setLanguage: spellingLanguage];
+     
 	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	

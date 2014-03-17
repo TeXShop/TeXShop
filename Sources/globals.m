@@ -218,6 +218,9 @@ NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
 NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
 NSString *WatchServerKey = @"WatchServer";
 NSString *SourceInterlineSpaceKey = @"SourceInterlineSpace";
+NSString *SpellingLanguageKey = @"SpellingLanguage";
+NSString *SpellingAutomaticLanguageKey = @"SpellingAutomaticLanguage";
+
 
 
 // Paths

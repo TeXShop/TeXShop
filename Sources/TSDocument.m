@@ -872,7 +872,7 @@ if (! skipTextWindow) {
 					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
 																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
                     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-                        _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
+                        _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 				}
 			} else {
 				[pdfView setImageType: _documentType];
@@ -886,7 +886,7 @@ if (! skipTextWindow) {
 					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
 																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
                     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-                       _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
+                       _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 				}
 			}
             return;
@@ -1008,7 +1008,7 @@ if (! skipTextWindow) {
 
 		_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
         if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-            _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"update pdf when rewritten"];
+            _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 	}
 
 	if (_externalEditor && [SUD boolForKey: ExternalEditorTypesetAtStartKey]) {
@@ -1183,6 +1183,7 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"cbx"])
         || ([extension isEqualToString: @"md"])
         || ([extension isEqualToString: @"fdd"])
+        || ([extension isEqualToString: @"lhs"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		

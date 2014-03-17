@@ -111,8 +111,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.39';
-$version_details = "$My_name, John Collins, 10 Nov 2013";
+$version_num = '4.40';
+$version_details = "$My_name, John Collins, 15 Jan 2014";
 
 use Config;
 use File::Basename;
@@ -147,7 +147,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2013
+## Copyright John Collins 1998-2014
 ##           (username collins at node phys.psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -184,6 +184,10 @@ else {
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
+##     15 Jan 2014  John Collins  Fix failure to clean up correctly when
+##                                   root filename contains [, which is
+##                                   a glob metacharacter.
+##                                V. 4.40
 ##     10 Nov 2013  John Collins  Change split / /, ... to split /\s*/, ...
 ##                                   so as to be immune from extra white space.
 ##                                Clean up $clean_ext and $clean_full_ext by removing 
@@ -3128,11 +3132,12 @@ sub execute_code_string {
 sub cleanup1 {
     # Usage: cleanup1( directory, exts_without_period, ... )
     #
-    # The directory is a fixed name, so I must escape any glob metacharacters
-    #   in it:
+    # The directory and the root file name are fixed names, so I must escape
+    #   any glob metacharacters in them:
     my $dir = fix_pattern( shift );
+    my $root_fixed = fix_pattern( $root_filename );
     foreach (@_) { 
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_filename/;
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_fixed/;
         unlink_or_move( glob( "$name" ) );
     }
 } #END cleanup1

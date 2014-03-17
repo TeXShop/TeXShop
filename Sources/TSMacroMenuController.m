@@ -212,6 +212,14 @@ static id sharedMacroMenuController = nil;
 			}
 		}
 	}
+    
+    // [menu addItem: [NSMenuItem separatorItem]];
+    // newItem = [menu addItemWithTitle: @"Select Macro File" action: nil keyEquivalent: @""];
+    // submenu = [[[NSMenu alloc] init] autorelease];
+    // [self addItemsToMenu: submenu fromArray: childlenArray withKey: flag];
+    //[newItem setSubmenu: submenu];
+    //[menu addItem: newItem];
+    
 }
 
 // build a menu for popup button in the toolbar

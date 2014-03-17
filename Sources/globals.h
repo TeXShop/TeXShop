@@ -421,6 +421,8 @@ extern NSString *fullscreenResizeOptionKey;
 extern NSString *ScreenFontForLogAndConsoleKey;
 extern NSString *WatchServerKey;
 extern NSString *SourceInterlineSpaceKey;
+extern NSString *SpellingLanguageKey;
+extern NSString *SpellingAutomaticLanguageKey;
 
 
 // end defaults

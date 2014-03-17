@@ -27,8 +27,6 @@
     NSInteger i, j;
     BOOL skip;
     
-/*
-    
     NSArray *myDocuments = [[TSDocumentController sharedDocumentController]  documents];
     id obj;
     i = 0;
@@ -52,7 +50,6 @@
             // NSLog(@"called close");
         }
     }
-*/
 
     [super terminate:sender];
 }

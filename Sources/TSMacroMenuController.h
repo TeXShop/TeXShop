@@ -37,13 +37,16 @@
 @interface TSMacroMenuController : NSObject
 {
 	IBOutlet NSMenu *macroMenu;
-	NSDictionary *macroDict;
-	NSMutableArray *keyEquivalents;
+//	NSDictionary *macroDict;
+//	NSMutableArray *keyEquivalents;
 }
+
+@property (retain) NSDictionary *macroDict;
+@property (retain) NSMutableArray *keyEquivalents;
 
 + (id)sharedInstance;
 
-- (NSDictionary *)macroDictionary;
+// - (NSDictionary *)macroDictionary;
 - (void)loadMacros;
 - (void)setupMainMacroMenu;
 - (void)reloadMacros: (id)sender;

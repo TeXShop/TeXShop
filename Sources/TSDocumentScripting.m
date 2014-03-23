@@ -122,7 +122,8 @@
 
 	if (theIndex != NSNotFound) {
 		NSScriptClassDescription *desc = (NSScriptClassDescription *)[NSScriptClassDescription classDescriptionForClass:[NSApplication class]];
-		return [[[NSIndexSpecifier allocWithZone:[self zone]] initWithContainerClassDescription:desc containerSpecifier:nil key:@"orderedDocuments" index:theIndex] autorelease];
+	//	return [[[NSIndexSpecifier allocWithZone:[self zone]] initWithContainerClassDescription:desc containerSpecifier:nil key:@"orderedDocuments" index:theIndex] autorelease];
+        return [[NSIndexSpecifier alloc] initWithContainerClassDescription:desc containerSpecifier:nil key:@"orderedDocuments" index:theIndex];
 	} else {
 		return nil;
 	}
@@ -362,7 +363,7 @@
 
 - (id)initWithMyDocument:(TSDocument*)doc
 {
-	mDocument = doc;
+	self.mDocument = doc;
 	return self;
 }
 
@@ -372,7 +373,7 @@
 
 - (NSUInteger)offset
 {
-	NSUInteger	x = [[mDocument firstTextView] selectedRange].location;
+	NSUInteger	x = [[self.mDocument firstTextView] selectedRange].location;
     
 	return x;
 }
@@ -383,7 +384,7 @@
 
 - (NSUInteger)length
 {
-	NSUInteger x = [[mDocument firstTextView] selectedRange].length;
+	NSUInteger x = [[self.mDocument firstTextView] selectedRange].length;
    
 	return x;
 }
@@ -394,8 +395,8 @@
 
 - (void)setOffset:(NSUInteger)off
 {
-	NSRange		range 		= [[mDocument firstTextView] selectedRange];
-	NSUInteger	textLength	= [[[mDocument firstTextView] string] length];
+	NSRange		range 		= [[self.mDocument firstTextView] selectedRange];
+	NSUInteger	textLength	= [[[self.mDocument firstTextView] string] length];
 
 	if (off > textLength)
 		off = textLength;
@@ -403,7 +404,7 @@
 	if ((range.location + range.length) > textLength)
 		range.length = textLength - range.location;
 
-		[[mDocument firstTextView] setSelectedRange:range];
+		[[self.mDocument firstTextView] setSelectedRange:range];
 }
 
 // -----------------------------------------------------------------------------
@@ -412,14 +413,14 @@
 
 - (void)setLength:(NSUInteger)len
 {
-	NSRange		range 		= [[mDocument firstTextView] selectedRange];
-	NSUInteger	textLength	= [[[mDocument firstTextView] string] length];
+	NSRange		range 		= [[self.mDocument firstTextView] selectedRange];
+	NSUInteger	textLength	= [[[self.mDocument firstTextView] string] length];
 
 	range.length = len;
 	if ((range.location + range.length) > textLength)
 		range.length = textLength - range.location;
 
-		[[mDocument firstTextView] setSelectedRange:range];
+		[[self.mDocument firstTextView] setSelectedRange:range];
 }
 
 // -----------------------------------------------------------------------------
@@ -428,10 +429,10 @@
 
 - (NSString*)content
 {
-	NSRange		range 		= [[mDocument firstTextView] selectedRange];
+	NSRange		range 		= [[self.mDocument firstTextView] selectedRange];
 	if (range.length == 0)
 		return [NSString string];
-	return [[[mDocument firstTextView] string] substringWithRange:range];
+	return [[[self.mDocument firstTextView] string] substringWithRange:range];
 }
 
 
@@ -441,7 +442,7 @@
 
 - (void)setContent:(NSString*)ts
 {
-	[mDocument setSelection:ts];
+	[self.mDocument setSelection:ts];
 }
 
 /*
@@ -499,12 +500,12 @@
 // -----------------------------------------------------------------------------
 
 - (void)insertInOrderedDocuments:(TSDocument *)doc atIndex:(NSInteger)idx {
-	[doc retain];	// Keep it around...
-	[[doc firstTextView] setSelectedRange:NSMakeRange(0, 0)];
+//??    [doc retain];	// Keep it around...
+        [[doc firstTextView] setSelectedRange:NSMakeRange(0, 0)];
 //	[doc setDocumentName:nil];
 //	[doc setDocumentEdited:NO];
 //	[doc setPotentialSaveDirectory:[TSDocument openSavePanelDirectory]];
-	[[doc window] makeKeyAndOrderFront:nil];
+        [[doc window] makeKeyAndOrderFront:nil];
 }
 
 // -----------------------------------------------------------------------------

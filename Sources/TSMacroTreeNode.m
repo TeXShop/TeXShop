@@ -37,16 +37,17 @@
 	// NOTE: children will be nil for a  non-group item.
 	
 	if ((self = [super init])) {
-		_nodeParent = parent;
-		_nodeChildren = [children mutableCopy];
+		self.nodeParent = parent;
+		self.nodeChildren = [children mutableCopy];
 
-		_name = nil;
-		_content = nil;
-		_key = nil;
+		self.name = nil;
+		self.content = nil;
+		self.key = nil;
 	}
 	return self;
 }
 
+/*
 - (void)dealloc {
 #ifdef DEBUG_TREE
 	NODE_INFO(@"dealloc", self);
@@ -58,7 +59,9 @@
 
 	[super dealloc];
 }
+*/
 
+/*
 #ifdef DEBUG_TREE
 - (id)retain
 {
@@ -72,69 +75,72 @@
 	[super release];
 }
 #endif
+*/
 
 // ================================================================
 // Methods used to manage a node and its children.
 // ================================================================
 
+/*
 - (void)setNodeParent:(TSMacroTreeNode*)parent
 {
-	_nodeParent = parent;
+	nodeParent = parent;
 }
 
 - (TSMacroTreeNode*)nodeParent
 {
 	return _nodeParent;
 }
+*/
 
 - (BOOL)isAlive	// usually an item is alive if and only if it has nodeParent except forthe root of tree
 {
-	return (_nodeParent != nil);
+	return (self.nodeParent != nil);
 }
 
 - (void)addChild:(TSMacroTreeNode*)child
 {
 	if (!child)
 		return;
-	if (!_nodeChildren)
-		_nodeChildren = [[NSMutableArray alloc] init];
-	[_nodeChildren addObject: child];
+	if (!self.nodeChildren)
+		self.nodeChildren = [[NSMutableArray alloc] init];
+	[self.nodeChildren addObject: child];
 	[child setNodeParent: self];
 }
 
 - (void)addChildren:(NSArray*)children
 {
-	if (!_nodeChildren)
-		_nodeChildren = [[NSMutableArray alloc] init];
-	[_nodeChildren addObjectsFromArray: children];
+	if (!self.nodeChildren)
+		self.nodeChildren = [[NSMutableArray alloc] init];
+	[self.nodeChildren addObjectsFromArray: children];
 	[children makeObjectsPerformSelector:@selector(setNodeParent:) withObject:self];
 }
 
 - (void)insertChild:(TSMacroTreeNode*)child atIndex:(NSInteger)idx
 {
-	if (!_nodeChildren)
-		_nodeChildren = [[NSMutableArray alloc] init];
-	[_nodeChildren insertObject:child atIndex:idx];
+	if (!self.nodeChildren)
+		self.nodeChildren = [[NSMutableArray alloc] init];
+	[self.nodeChildren insertObject:child atIndex:idx];
 	[child setNodeParent: self];
 }
 
 - (void)insertChildren:(NSArray*)children atIndex:(NSInteger)idx
 {
-	if (!_nodeChildren)
-		_nodeChildren = [[NSMutableArray alloc] init];
-	[_nodeChildren insertObjectsFromArray: children atIndex: idx];
+	if (!self.nodeChildren)
+		self.nodeChildren = [[NSMutableArray alloc] init];
+	[self.nodeChildren insertObjectsFromArray: children atIndex: idx];
 	[children makeObjectsPerformSelector:@selector(setNodeParent:) withObject:self];
 }
 
 - (void)removeChildrenIdenticalTo:(NSArray*)children
 {
-	if (!children || !_nodeChildren)
+	if (!children || !self.nodeChildren)
 		return;
 	TSMacroTreeNode *child;
 	NSEnumerator *childEnumerator = [children objectEnumerator];
 	[children makeObjectsPerformSelector:@selector(setNodeParent:) withObject:nil];
 	while ((child=[childEnumerator nextObject])) {
-		[_nodeChildren removeObjectIdenticalTo:child];
+		[self.nodeChildren removeObjectIdenticalTo:child];
 	}
 }
 
@@ -154,46 +160,46 @@
 
 - (NSInteger)indexOfChild:(TSMacroTreeNode*)child
 {
-	if (_nodeChildren)
-		return [_nodeChildren indexOfObject: child];
+	if (self.nodeChildren)
+		return [self.nodeChildren indexOfObject: child];
 	else
 		return NSNotFound;
 }
 
 - (NSInteger)indexOfChildIdenticalTo:(TSMacroTreeNode*)child
 {
-	if (_nodeChildren)
-		return [_nodeChildren indexOfObjectIdenticalTo: child];
+	if (self.nodeChildren)
+		return [self.nodeChildren indexOfObjectIdenticalTo: child];
 	else
 		return NSNotFound;
 }
 
 - (NSInteger)numberOfChildren
 {
-	return [_nodeChildren count];
+	return [self.nodeChildren count];
 }
 
 - (NSArray*)children
 {
-	if (_nodeChildren)
-		return [NSArray arrayWithArray: _nodeChildren];
+	if (self.nodeChildren)
+		return [NSArray arrayWithArray: self.nodeChildren];
 	else
 		return [NSArray array];
 }
 
 - (TSMacroTreeNode*)firstChild
 {
-	return [_nodeChildren objectAtIndex:0];
+	return [self.nodeChildren objectAtIndex:0];
 }
 
 - (TSMacroTreeNode*)lastChild
 {
-	return [_nodeChildren lastObject];
+	return [self.nodeChildren lastObject];
 }
 
 - (TSMacroTreeNode*)childAtIndex:(NSInteger)idx
 {
-	return [_nodeChildren objectAtIndex:idx];
+	return [self.nodeChildren objectAtIndex:idx];
 }
 
 - (BOOL)isDescendantOfNode:(TSMacroTreeNode*)node
@@ -222,8 +228,8 @@
 
 - (void)recursiveSortChildren
 {
-	[_nodeChildren sortUsingSelector:@selector(compare:)];
-	[_nodeChildren makeObjectsPerformSelector: @selector(recursiveSortChildren)];
+	[self.nodeChildren sortUsingSelector:@selector(compare:)];
+	[self.nodeChildren makeObjectsPerformSelector: @selector(recursiveSortChildren)];
 }
 
 - (NSString*)description
@@ -266,7 +272,7 @@
 
 + (id)nodeWithName: (NSString*)aName content: (NSString*)aContent key: (NSString*)keyEquiv
 {
-	TSMacroTreeNode *node = [[[TSMacroTreeNode alloc] initWithParent: nil children: nil] autorelease];
+	TSMacroTreeNode *node = [[TSMacroTreeNode alloc] initWithParent: nil children: nil];
 	[node setName: (aName)?aName:@""];
 	if (aContent)
 		[node setContent: aContent];
@@ -281,7 +287,7 @@
 + (id)submenuNodeWithName: (NSString*)aName
 {
 	NSMutableArray *children = [[NSMutableArray alloc] init];
-	TSMacroTreeNode *node = [[[TSMacroTreeNode alloc] initWithParent: nil children: children] autorelease];
+	TSMacroTreeNode *node = [[TSMacroTreeNode alloc] initWithParent: nil children: children];
 	[node setName: (aName)?aName:@""];
 #ifdef DEBUG_TREE
 	PRINT(@"SubmenuNode created", aName);
@@ -291,7 +297,7 @@
 
 + (id)separatorNode
 {
-	TSMacroTreeNode *node = [[[TSMacroTreeNode alloc] initWithParent: nil children: nil] autorelease];
+	TSMacroTreeNode *node = [[TSMacroTreeNode alloc] initWithParent: nil children: nil];
 	[node setName: SEPARATOR];
 #ifdef DEBUG_TREE
 	PRINT(@"SeparatorNode created", SEPARATOR);
@@ -304,57 +310,68 @@
 
 - (NSString*)name
 {
-	return _name ? _name : @"";
+	return self.realName ? self.realName : @"";
 }
+
+
 
 - (void)setName: (NSString*)aName
 {
-	[aName retain];
-	[_name release];
-	_name = aName;
+    self.realName = aName;
+//	[aName retain];
+//	[self.name release];
+//	_name = aName;
 }
+
+
 
 
 - (NSString*)content
 {
-	return _content ? _content : @"";
+	return self.realContent ? self.realContent : @"";
 }
+
 
 - (void)setContent:(NSString*)aContent
 {
-	[aContent retain];
-	[_content release];
-	_content = aContent;
+    self.realContent = aContent;
+//	[aContent retain];
+//	[_content release];
+//	_content = aContent;
 }
+
 
 
 - (NSString*)key
 {
-	return _key ? _key : @"";
+	return self.realKey ? self.realKey : @"";
 }
+
 
 - (void)setKey: (NSString*)aKey
 {
-	[aKey retain];
-	[_key release];
-	_key = aKey;
+    self.realKey = aKey;
+//	[aKey retain];
+//	[_key release];
+//	_key = aKey;
 }
+
 
 
 - (BOOL)isLeaf
 {
-	return (_nodeChildren == nil);
+	return (self.nodeChildren == nil);
 }
 
 - (BOOL)isGroup
 {
-	return (_nodeChildren != nil);
+	return (self.nodeChildren != nil);
 }
 
 
 - (BOOL)isExpandable
 {
-	return (_nodeChildren != nil);
+	return (self.nodeChildren != nil);
 }
 
 - (BOOL)isEditable
@@ -364,12 +381,12 @@
 
 - (BOOL)isStandardItem // not Group, not Separator
 {
-	return ((_nodeChildren == nil) && ![_name isEqualToString: SEPARATOR]);
+	return ((self.nodeChildren == nil) && ![self.name isEqualToString: SEPARATOR]);
 }
 
 - (BOOL)isSeparator
 {
-	return ((_nodeChildren == nil) && [_name isEqualToString: SEPARATOR]);
+	return ((self.nodeChildren == nil) && [self.name isEqualToString: SEPARATOR]);
 }
 
 
@@ -393,15 +410,15 @@
 
 - (TSMacroTreeNode *)duplicateNode
 {
-	TSMacroTreeNode *newNode = [[[TSMacroTreeNode alloc] initWithParent: nil
-						children: (_nodeChildren)?[NSArray array]:nil] autorelease];
+	TSMacroTreeNode *newNode = [[TSMacroTreeNode alloc] initWithParent: nil
+						children: (self.nodeChildren)?[NSArray array]:nil];
 	[newNode setName: [self name]];
 	if ([self content])
 		[newNode setContent: [self content]];
 	//if ([self key])
 	//	[newNode setKey: [self key]];	// do not copy key
-	if (_nodeChildren) {
-		NSEnumerator *enumerator = [_nodeChildren objectEnumerator];
+	if (self.nodeChildren) {
+		NSEnumerator *enumerator = [self.nodeChildren objectEnumerator];
 		TSMacroTreeNode *srcChild, *newChild;
 		while ((srcChild = [enumerator nextObject])) {
 			newChild = [srcChild duplicateNode];
@@ -440,7 +457,7 @@
 	aName = [dict objectForKey: NAME_KEY];
 	if (aName == nil)
 		return nil;
-	node = [[[TSMacroTreeNode alloc]  initWithParent: nil children: nil] autorelease];
+	node = [[TSMacroTreeNode alloc]  initWithParent: nil children: nil];
 #ifdef DEBUG_TREE
 	NODE_INFO(@"DictNode created", node);
 #endif
@@ -511,7 +528,7 @@
 						[nameStr replaceOccurrencesOfString: @"\n" withString: @""
 													options: 0 range: NSMakeRange(0, [nameStr length])];
 						node = [TSMacroTreeNode nodeWithName: nameStr content: obj key: @""];
-						[nameStr release];
+						// [nameStr release];
 						[submenu addChild: node];
 					}
 				}
@@ -581,15 +598,15 @@
 - (NSMutableDictionary*)makeDictionary
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	if (_name)
-		[dict setObject: _name forKey: NAME_KEY];
-	if (_content)
-		[dict setObject: _content forKey: CONTENT_KEY];
-	if (_key)
-		[dict setObject: _key forKey: KEYEQUIV_KEY];
-	if (_nodeChildren) {
+	if (self.name)
+		[dict setObject: self.name forKey: NAME_KEY];
+	if (self.content)
+		[dict setObject: self.content forKey: CONTENT_KEY];
+	if (self.key)
+		[dict setObject: self.key forKey: KEYEQUIV_KEY];
+	if (self.nodeChildren) {
 		NSMutableArray *array = [NSMutableArray array];
-		NSEnumerator *enumerator = [_nodeChildren objectEnumerator];
+		NSEnumerator *enumerator = [self.nodeChildren objectEnumerator];
 		TSMacroTreeNode *child;
 		while ((child = (TSMacroTreeNode *)[enumerator nextObject])) {
 			NSMutableDictionary *newdict = [child makeDictionary];

@@ -16,18 +16,20 @@
 {
     NSRect          theSelectionRect;
     NSRect          magnifiedRect;
-    NSImage         *MagnifiedImage;
+//  NSImage         *MagnifiedImage;
     BOOL            drawRubberBand;
     BOOL            drawMagnifiedRect;
     BOOL            drawMagnifiedImage;
 }
 
-- (void) dealloc;
+@property (retain) NSImage *magnifiedImage;
+
+// - (void) dealloc;
 - (void) setDrawRubberBand: (BOOL)value;
 - (void) setDrawMagnifiedRect: (BOOL)value;
 - (void) setSelectionRect: (NSRect) theRect;
 - (void) setMagnifiedRect: (NSRect) theRect;
-- (void) setMagnifiedImage: (NSImage *)theImage;
+// - (void) setMagnifiedImage: (NSImage *)theImage;
 - (void) setDrawMagnifiedImage: (BOOL)value;
 
 

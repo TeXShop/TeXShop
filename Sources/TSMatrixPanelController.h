@@ -47,12 +47,23 @@
 
 	BOOL shown; //YES if user has chosen to display panel
 
-	NSArray *arrayMatrix;
+//	NSArray *arrayMatrix;
 	NSNotificationCenter *notifcenter;
-	NSMutableArray	    *draggedRows;
+//	NSMutableArray	    *draggedRows;
 
-	MatrixData *myMatrix;
+//	MatrixData *myMatrix;
 }
+
+@property (retain) NSArray *arrayMatrix;
+@property (retain) NSMutableArray	    *draggedRows;
+
+@property (retain) MatrixData *myMatrix;
+
+
+
+
+
+
 + (id)sharedInstance;
 
 - (void)hideWindow:(id)sender;
@@ -62,16 +73,18 @@
 - (IBAction)insertMatrix:(id)sender;
 - (IBAction)resetMatrix:(id)sender;
 - (IBAction)resizeMatrix:(id)sender;
-- (NSArray*)draggedRows;
+// - (NSArray*)draggedRows;
 
 @end
 
 
 @interface MatrixData : NSObject {
-	NSMutableArray    *rows;
+//	NSMutableArray    *rows;
 	NSInteger activeRows;
 	NSInteger activeCols;
 }
+
+@property (retain) NSMutableArray   *rows;
 
 - (NSInteger)rowCount;
 - (NSInteger)colCount;
@@ -87,7 +100,7 @@
 - (void)removeLastCol;
 - (void)removeLastRow;
 - (NSInteger)actRows;
-- (NSMutableArray*)rows;
+// - (NSMutableArray*)rows;
 - (void)setActRows:(NSInteger)num;
 - (NSInteger)actCols;
 - (void)setActCols:(NSInteger)num;

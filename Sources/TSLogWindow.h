@@ -28,8 +28,10 @@
 
 @interface TSLogWindow : NSWindow
 {
-	TSDocument	*myDocument;
+//	TSDocument	*myDocument;
 }
+
+@property (retain) TSDocument	*myDocument;
 
 - (void) displayLog: sender;
 - (void) displayConsole: sender;

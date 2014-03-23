@@ -68,14 +68,14 @@ static id _sharedInstance = nil;
 - (id)init
 {
 	if (_sharedInstance != nil) {
-		[super dealloc]; // huh? Weird code; Feb 24, 2009, RMK
+//		[super dealloc]; // huh? Weird code; Feb 24, 2009, RMK
 		return _sharedInstance;
 	}
 	_sharedInstance = self;
 	_undoManager = [[NSUndoManager alloc] init];
 	// setup the default font here so it's defined when we run for the first time.
-	_documentFont = [NSFont userFontOfSize:12.0];
-	// _consoleFont = [NSFont userFixedPitchedFontOfSize:10.0];
+	self.documentFont = [NSFont userFontOfSize:12.0];
+	// self.consoleFont = [NSFont userFixedPitchedFontOfSize:10.0];
 
 	// register for changes in the user defaults
 	
@@ -85,11 +85,13 @@ static id _sharedInstance = nil;
 	return self;
 }
 
+/*
 - (void)dealloc
 {
 	[_undoManager release];
 	[super dealloc];
 }
+*/
 
 //==============================================================================
 // target/action methods
@@ -203,8 +205,8 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 
 	// also register the default font. _documentFont was set in -init, dump it here to
 	// the user defaults
-	[SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
-	// [SUD setObject:[NSArchiver archivedDataWithRootObject:_consoleFont] forKey:ConsoleFontKey];
+	[SUD setObject:[NSArchiver archivedDataWithRootObject:self.documentFont] forKey:DocumentFontKey];
+	// [SUD setObject:[NSArchiver archivedDataWithRootObject:self.consoleFont] forKey:ConsoleFontKey];
 	[SUD synchronize];
 
 	[self updateControlsFromUserDefaults:SUD];
@@ -223,7 +225,7 @@ Clicking this button will bring up the font panel.
 	// become first responder so we will see the envents that NSFontManager sends
 	// up the responder chain
 	[_prefsWindow makeFirstResponder:_prefsWindow];
-	[[NSFontManager sharedFontManager] setSelectedFont:_documentFont isMultiple:NO];
+	[[NSFontManager sharedFontManager] setSelectedFont:self.documentFont isMultiple:NO];
 	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
 }
 
@@ -240,12 +242,12 @@ Clicking this button will bring up the font panel.
 
 - (IBAction)changeConsoleFont:sender
 {
-	_consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+	self.consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
 	
 	// become first responder so we will see the envents that NSFontManager sends
 	// up the responder chain
 	[_prefsWindow makeFirstResponder:_prefsWindow];
-	[[NSFontManager sharedFontManager] setSelectedFont:_consoleFont isMultiple:NO];
+	[[NSFontManager sharedFontManager] setSelectedFont:self.consoleFont isMultiple:NO];
 	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
 }
 
@@ -262,7 +264,7 @@ Clicking this button will bring up the font panel.
 	if ([theTab isEqualToString: @"Document"])
 		{
 
-		_documentFont = [fontManager convertFont:_documentFont];
+		self.documentFont = [fontManager convertFont:self.documentFont];
 		fontTouched = YES;
 
 		// register the undo message first
@@ -271,7 +273,7 @@ Clicking this button will bring up the font panel.
 		[self updateDocumentFontTextField];
 
 		// update the userDefaults
-		fontData = [NSArchiver archivedDataWithRootObject:_documentFont];
+		fontData = [NSArchiver archivedDataWithRootObject:self.documentFont];
 		[SUD setObject:fontData forKey:DocumentFontKey];
 		[SUD setBool:YES forKey:SaveDocumentFontKey];
 
@@ -281,11 +283,11 @@ Clicking this button will bring up the font panel.
 		
 	else if ([theTab isEqualToString: @"Console"])
 		{
-		_consoleFont = [fontManager convertFont:_consoleFont];
+		self.consoleFont = [fontManager convertFont:self.consoleFont];
 		[[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:ConsoleFontNameKey] forKey:ConsoleFontNameKey];
 		[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleFontSizeKey] forKey:ConsoleFontSizeKey];
-		[SUD setObject: [_consoleFont fontName] forKey:ConsoleFontNameKey];
-		[SUD setFloat: [_consoleFont pointSize] forKey: ConsoleFontSizeKey];
+		[SUD setObject: [self.consoleFont fontName] forKey:ConsoleFontNameKey];
+		[SUD setFloat: [self.consoleFont pointSize] forKey: ConsoleFontSizeKey];
 		[self updateConsoleFontTextField];
 		consoleFontTouched = YES;
 		[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
@@ -605,11 +607,11 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	
 	previewBackgroundColorTouched = YES;
 	
-	[PreviewBackgroundColor release];
+//	[PreviewBackgroundColor release];
 	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [newColor redComponent]
 													   green: [newColor greenComponent] blue: [newColor blueComponent]
 													   alpha: 1];
-	[PreviewBackgroundColor retain];
+//	[PreviewBackgroundColor retain];
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
 }
@@ -1332,11 +1334,11 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	// close the window
 	[_prefsWindow performClose:self];
 	
-	[PreviewBackgroundColor release];
+//	[PreviewBackgroundColor release];
 	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
 													   green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 													   alpha: 1];
-	[PreviewBackgroundColor retain];
+//	[PreviewBackgroundColor retain];
 	
 	/* koch: undo font changes */
 	if (externalEditorTouched)
@@ -1459,9 +1461,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setPersistentDomain:factoryDefaults forName:@"TeXShop"];
 	[SUD synchronize]; /* added by Koch Feb 19, 2001 to fix pref bug when no defaults present */
 
-	// also register the default font. _documentFont was set in -init, dump it here to
+	// also register the default font. documentFont was set in -init, dump it here to
 	// the user defaults
-	[SUD setObject:[NSArchiver archivedDataWithRootObject:_documentFont] forKey:DocumentFontKey];
+	[SUD setObject:[NSArchiver archivedDataWithRootObject:self.documentFont] forKey:DocumentFontKey];
 	[SUD synchronize];
 }
 
@@ -1485,7 +1487,7 @@ This method retrieves the application preferences from the defaults object and s
 	fontData = [defaults objectForKey:DocumentFontKey];
 	if (fontData != nil)
 	{
-		_documentFont = [NSUnarchiver unarchiveObjectWithData:fontData];
+		self.documentFont = [NSUnarchiver unarchiveObjectWithData:fontData];
 	}
 	[self updateDocumentFontTextField];
 	[self updateConsoleFontTextField];
@@ -1728,7 +1730,7 @@ This method updates the textField that represents the name of the selected font 
 	NSString *fontDescription;
 
 #warning 64BIT: Check formatting arguments
-	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [_documentFont displayName], [_documentFont pointSize]];
+	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [self.documentFont displayName], [self.documentFont pointSize]];
 	[_documentFontTextField setStringValue:fontDescription];
 }
 

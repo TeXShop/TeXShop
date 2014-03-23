@@ -35,23 +35,26 @@
 	return value;
 }
 
+/*
+
 - (void)dealloc
 {
 	// [myRep release];
 	[super dealloc];
 }
+*/
 
 - (void) setImageRep: (NSPDFImageRep *)theRep
 {	
 	if (theRep != nil)
-		myRep = theRep;
+		self.myRep = theRep;
 }
 
 #pragma mark =====drawRect=====
 
 - (void)drawRect:(NSRect)aRect
 {
-		[myRep draw];
+		[self.myRep draw];
 }
 
 @end

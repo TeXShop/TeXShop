@@ -26,14 +26,21 @@
 
 @interface TSWindowManager : NSObject
 {
-	NSWindow		*_activeTextWindow;
-	NSWindow 		*_activePDFWindow;
+// 	NSWindow		*_activeTextWindow;
+//	NSWindow 		*_activePDFWindow;
 }
+
+@property (retain) 	NSWindow		*activeTextWindow;
+@property (retain)  NSWindow 		*activePDFWindow;
+
 
 + (id)sharedInstance;
 
+/*
 - (NSWindow *)activeTextWindow;
 - (NSWindow *)activePDFWindow;
+*/
+
 - (void)notifyActiveTextWindowClosed;	// FIXME: Get rid of this
 
 // added by mitsu --(J+) check mark in "Typeset" menu

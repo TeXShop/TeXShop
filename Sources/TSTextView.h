@@ -30,8 +30,8 @@
     // (HS) variables for Command Completion now instance/member variables --- moved from keyDown --- 2012/05/15.
     BOOL wasCompleted; // was completed on last keyDown
     BOOL latexSpecial; // was last time LaTeX Special?  \begin{...}
-    NSString *originalString; // string before completion, starts at replaceLocation
-    NSString *currentString; // completed string
+ //   NSString *originalString; // string before completion, starts at replaceLocation
+ //   NSString *currentString; // completed string
     NSUInteger replaceLocation; // completion started here
     NSUInteger completionListLocation; // location to start search in the list
     NSUInteger textLocation; // location of insertion point
@@ -39,9 +39,13 @@
 
 }
 
+@property (retain) TSDocument   *document;
+@property (retain) NSString     *originalString;
+@property (retain) NSString     *currentString;
+
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity;
 
-- (void)setDocument: (TSDocument *)doc;
+// - (void)setDocument: (TSDocument *)doc;
 - (void)registerForCommandCompletion: (id)sender;
 - (NSString *)getDragnDropMacroString: (NSString *)fileExt;
 - (NSString *)readSourceFromEquationEditorPDF: (NSString *)filePath;

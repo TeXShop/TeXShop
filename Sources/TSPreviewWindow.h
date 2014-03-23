@@ -32,15 +32,24 @@
 
 @interface TSPreviewWindow : NSWindow
 {
-	TSDocument	*myDocument;
-	BOOL		windowIsSplit;
-	BOOL		firstClose;
-	PDFView		*activeView;
-	PDFView		*myPDFKitView;
-	PDFView		*myPDFKitView2;
-	NSSplitView	*pdfKitSplitView;
-	BOOL		willClose;
+//	TSDocument	*myDocument;
+//	BOOL		windowIsSplit;
+//	BOOL		firstClose;
+//	PDFView		*activeView;
+//	PDFView		*myPDFKitView;
+//	PDFView		*myPDFKitView2;
+//	NSSplitView	*pdfKitSplitView;
+//	BOOL		willClose;
 }
+
+@property               BOOL            willClose;
+@property               BOOL            windowIsSplit;
+@property               BOOL            firstClose;
+@property (retain)      PDFView         *activeView;
+@property (retain)      PDFView         *myPDFKitView;
+@property (retain)      PDFView         *myPDFKitView2;
+@property (retain)      NSSplitView    *pdfKitSplitView;
+@property (retain)      TSDocument      *myDocument;
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 

@@ -20,7 +20,7 @@
 	CGFloat		fixedHeight;
 	NSString	*fileName;
 	
-	if (movieWindow == nil) {
+	if (self.movieWindow == nil) {
 		// we need to load the nib
 		if ([NSBundle loadNibNamed:@"Movie" owner:self] == NO) {
 			NSRunAlertPanel(@"Error", @"Could not load Movie.nib", @"shit happens", nil, nil);
@@ -33,11 +33,11 @@
 	
 	fileName = [[[MoviesPath stringByAppendingString:@"/TeXShop/"] stringByAppendingString: title] stringByStandardizingPath];
 	NSData	*myData =  [NSData dataWithContentsOfFile:fileName];
-	myMovie = [QTMovie movieWithData: myData error:nil];
-	[myMovieView setMovie: myMovie];
+	self.myMovie = [QTMovie movieWithData: myData error:nil];
+	[self.myMovieView setMovie: self.myMovie];
 	
 	
-	currWindowBounds = [[myMovieView window] frame];
+	currWindowBounds = [[self.myMovieView window] frame];
     topLeft.x = currWindowBounds.origin.x;
     topLeft.y = currWindowBounds.origin.y + currWindowBounds.size.height;
 	
@@ -49,20 +49,20 @@
     contentSize.width = 635;
     contentSize.height = 406;
     
-	fixedHeight = [myMovieView movieControllerBounds].size.height;
+	fixedHeight = [self.myMovieView movieControllerBounds].size.height;
 	contentSize.height += fixedHeight;
 
     if (contentSize.width == 0)
         contentSize.width = currWindowBounds.size.width;
 	
-    newWindowBounds = [[myMovieView window] frameRectForContentRect:NSMakeRect(0, 0, contentSize.width, contentSize.height)];
-    [[myMovieView window] setFrame:NSMakeRect(topLeft.x, topLeft.y - newWindowBounds.size.height, newWindowBounds.size.width, newWindowBounds.size.height) display:NO];
+    newWindowBounds = [[self.myMovieView window] frameRectForContentRect:NSMakeRect(0, 0, contentSize.width, contentSize.height)];
+    [[self.myMovieView window] setFrame:NSMakeRect(topLeft.x, topLeft.y - newWindowBounds.size.height, newWindowBounds.size.width, newWindowBounds.size.height) display:NO];
 	
-	[myMovieView setPreservesAspectRatio: YES];
+	[self.myMovieView setPreservesAspectRatio: YES];
 
-	[movieWindow makeKeyAndOrderFront:self];
+	[self.movieWindow makeKeyAndOrderFront:self];
 	
-	[myMovieView play:self];
+	[self.myMovieView play:self];
 }
 
 

@@ -28,8 +28,9 @@
 
 @interface TSTextEditorWindow : NSWindow
 {
-	TSDocument	*myDocument;
 }
+
+@property (retain) TSDocument   *myDocument;
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window
 - (TSDocument *)document;

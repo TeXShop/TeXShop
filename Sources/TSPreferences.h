@@ -108,8 +108,8 @@
 //	IBOutlet NSButton *_makeatletterButton; // added by Terada
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
-	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
-	NSFont			*_consoleFont;			/*" used to track the font that the user has selected for the console window "*/
+//	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
+//	NSFont			*_consoleFont;			/*" used to track the font that the user has selected for the console window "*/
 	BOOL			fontTouched;			/*" if user fiddled with fonts and then cancelled,
 																we restore the old one "*/
 	BOOL			consoleFontTouched;
@@ -146,6 +146,9 @@
 	IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)
 	IBOutlet NSMatrix		*_afterTypesettingMatrix;
 }
+
+@property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
+@property (retain) NSFont		*consoleFont;			/*" used to track the font that the user has selected for the console window "*/
 
 + (id)sharedInstance;
 

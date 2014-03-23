@@ -63,18 +63,18 @@ extern NSPanel *pageNumberWindow;
 	if (alpha < 0.999)
 		[self setAlphaValue:alpha];
 
-	activeView = nil;
-	windowIsSplit = NO;
-	willClose = NO;
+	self.activeView = nil;
+	self.windowIsSplit = NO;
+	self.willClose = NO;
 	return result;
 }
 
 
 - (void)close
 {
-	[myPDFKitView setDocument: nil];
-	[myPDFKitView2 setDocument: nil];
-	willClose = YES;
+	[self.myPDFKitView setDocument: nil];
+	[self.myPDFKitView2 setDocument: nil];
+	self.willClose = YES;
 	
 	[super close];
 }
@@ -104,11 +104,11 @@ extern NSPanel *pageNumberWindow;
 
 - (void) becomeMainWindow
 {
-	willClose = NO;
-	if([myDocument fileURL] != nil ) [self setTitle:[[[myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
+	self.willClose = NO;
+	if([self.myDocument fileURL] != nil ) [self setTitle:[[[self.myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 
-	[myDocument fixMacroMenuForWindowChange];
+	[self.myDocument fixMacroMenuForWindowChange];
 }
 
 
@@ -116,7 +116,7 @@ extern NSPanel *pageNumberWindow;
 {
 	id	thePanel;
 
-	thePanel = [myDocument magnificationPanel];
+	thePanel = [self.myDocument magnificationPanel];
 
 	[NSApp beginSheet: thePanel
 			modalForWindow: self
@@ -135,7 +135,7 @@ extern NSPanel *pageNumberWindow;
 {
 	id	thePanel;
 
-	thePanel = [myDocument pagenumberPanel];
+	thePanel = [self.myDocument pagenumberPanel];
 
 	[NSApp beginSheet: thePanel
 			modalForWindow: self
@@ -152,192 +152,192 @@ extern NSPanel *pageNumberWindow;
 
 - (void) displayLog: sender
 {
-	[myDocument displayLog: sender];
+	[self.myDocument displayLog: sender];
 }
 
 - (void) displayConsole: sender
 {
-	[myDocument displayConsole: sender];
+	[self.myDocument displayConsole: sender];
 }
 
 - (void) abort: sender
 {
-	[myDocument abort: sender];
+	[self.myDocument abort: sender];
 }
 
 - (void) trashAUXFiles: sender
 {
-	[myDocument trashAUXFiles: sender];
+	[self.myDocument trashAUXFiles: sender];
 }
 
 - (void) runPageLayout: sender
 {
-	[myDocument runPageLayout: sender];
+	[self.myDocument runPageLayout: sender];
 }
 
 - (void) printDocument: sender
 {
-	[myDocument printDocument: sender];
+	[self.myDocument printDocument: sender];
 }
 
 - (void) printSource: sender
 {
-	[myDocument printSource: sender];
+	[self.myDocument printSource: sender];
 }
 
 - (void) doTypeset: sender
 {
-	[myDocument doTypeset: sender];
+	[self.myDocument doTypeset: sender];
 }
 
 - (void) flipShowSync: sender
 {
-	[myDocument flipShowSync: sender];
+	[self.myDocument flipShowSync: sender];
 }
 
 - (void) doTex: sender
 {
-	[myDocument doTex: sender];
+	[self.myDocument doTex: sender];
 }
 
 - (void) doLatex: sender
 {
-	[myDocument doLatex: sender];
+	[self.myDocument doLatex: sender];
 }
 
 - (void) doBibtex: sender
 {
-	[myDocument doBibtex: sender];
+	[self.myDocument doBibtex: sender];
 }
 
 - (void) doIndex: sender
 {
-	[myDocument doIndex: sender];
+	[self.myDocument doIndex: sender];
 }
 
 - (void) doMetapost: sender
 {
-	[myDocument doMetapost: sender];
+	[self.myDocument doMetapost: sender];
 }
 
 - (void) doContext: sender
 {
-	[myDocument doContext: sender];
+	[self.myDocument doContext: sender];
 }
 
 - (void) doMetaFont: sender
 {
-	[myDocument doMetaFont: sender];
+	[self.myDocument doMetaFont: sender];
 }
 
 - (void) previousPage: sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] previousPage: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] previousPage: sender];
 	else
-		[[myDocument pdfView] previousPage: sender];
+		[[self.myDocument pdfView] previousPage: sender];
 }
 
 - (void) nextPage: sender;
 {	
 	
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] nextPage: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] nextPage: sender];
 	else
-		[[myDocument pdfView] nextPage: sender];
+		[[self.myDocument pdfView] nextPage: sender];
 }
 
 
 - (void) doChooseMethod: sender
 {
-	[myDocument doChooseMethod: sender];
+	[self.myDocument doChooseMethod: sender];
 }
 
 - (void) doError: sender
 {
-	[myDocument doError: sender];
+	[self.myDocument doError: sender];
 }
 
 - (void) setProjectFile: sender
 {
-	[myDocument setProjectFile: sender];
+	[self.myDocument setProjectFile: sender];
 }
 
 - (void) rotateClockwise: sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] rotateClockwise: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] rotateClockwise: sender];
 	else {
-		[[myDocument pdfView] rotateClockwise: sender];
+		[[self.myDocument pdfView] rotateClockwise: sender];
 	}
 }
 
 - (void) rotateCounterclockwise: sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] rotateCounterclockwise: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] rotateCounterclockwise: sender];
 	else {
-		[[myDocument pdfView] rotateCounterclockwise: sender];
+		[[self.myDocument pdfView] rotateCounterclockwise: sender];
 	}
 }
 
 ////////////////////// key movement ///////////////////////////////////
 
 - (void) firstPage: sender;
-{	if ([myDocument fromKit])
-		[[myDocument pdfKitView] firstPage: sender];
+{	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] firstPage: sender];
 	else
-		[[myDocument pdfView] firstPage: sender];
+		[[self.myDocument pdfView] firstPage: sender];
 }
 
 - (void) lastPage: sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] lastPage: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] lastPage: sender];
 	else
-		[[myDocument pdfView] lastPage: sender];
+		[[self.myDocument pdfView] lastPage: sender];
 }
 
 - (void) up: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] up: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] up: sender];
 	}
 }
 
 - (void) down: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] down: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] down: sender];
 	}
 }
 
 - (void) top: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] top: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] top: sender];
 	}
 }
 
 - (void) bottom: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] bottom: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] bottom: sender];
 	}
 }
 
 // mitsu 1.29 (O)
 - (void) left: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] left: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] left: sender];
 	}
 }
 
 - (void) right: sender
 {
-	if (![myDocument fromKit]) {
-		[[myDocument pdfView] right: sender];
+	if (![self.myDocument fromKit]) {
+		[[self.myDocument pdfView] right: sender];
 	}
 }
 
@@ -345,17 +345,17 @@ extern NSPanel *pageNumberWindow;
 
 - (void) orderOut:sender
 {
-	willClose = YES;
-	if ([myDocument externalEditor]) {
-		if (! [myDocument getWillClose]) {
-			[myDocument setWillClose: YES];
-			[myDocument close];
+	self.willClose = YES;
+	if ([self.myDocument externalEditor]) {
+		if (! [self.myDocument getWillClose]) {
+			[self.myDocument setWillClose: YES];
+			[self.myDocument close];
 		}
 	}
-	else if (([myDocument documentType] != isTeX) && ([myDocument documentType] != isOther)) {
-		if (! [myDocument getWillClose]) {
-			[myDocument setWillClose: YES];
-			[myDocument close];
+	else if (([self.myDocument documentType] != isTeX) && ([self.myDocument documentType] != isOther)) {
+		if (! [self.myDocument getWillClose]) {
+			[self.myDocument setWillClose: YES];
+			[self.myDocument close];
 		}		
 	}
 	else
@@ -364,40 +364,40 @@ extern NSPanel *pageNumberWindow;
 
 - (void)associatedWindow:(id)sender
 {
-    if ([myDocument externalEditor])
+    if ([self.myDocument externalEditor])
         return;
-	if ([myDocument documentType] == isTeX) {
-		if ([myDocument getCallingWindow] == nil)
-			[[myDocument textWindow] makeKeyAndOrderFront: self];
+	if ([self.myDocument documentType] == isTeX) {
+		if ([self.myDocument getCallingWindow] == nil)
+			[[self.myDocument textWindow] makeKeyAndOrderFront: self];
 		else
-			[[myDocument getCallingWindow] makeKeyAndOrderFront: self];
+			[[self.myDocument getCallingWindow] makeKeyAndOrderFront: self];
 
 		}
 }
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-	 if (willClose) {
+	 if (self.willClose) {
 		[super sendEvent: theEvent];
 		return;
 	}
 	
-	if ([myDocument fromKit] && ([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+	if ([self.myDocument fromKit] && ([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		if ([[theEvent characters] characterAtIndex:0] == '[') {
-			// [[myDocument pdfKitView] goBack: self];
-			[activeView zoomOut:nil];
+			// [[self.myDocument pdfKitView] goBack: self];
+			[self.activeView zoomOut:nil];
 			return;
 		} 
 		
 		if ([[theEvent characters] characterAtIndex:0] == ']') {
-			// [[myDocument pdfKitView] goForward: self];
-			[activeView zoomIn:nil];
+			// [[self.myDocument pdfKitView] goForward: self];
+			[self.activeView zoomIn:nil];
 			return;
 		} 
 	
 	}
 
-	if (![myDocument fromKit]) {
+	if (![self.myDocument fromKit]) {
 		
 		unichar	theChar;
 
@@ -457,16 +457,16 @@ extern NSPanel *pageNumberWindow;
 
 		else if ([theEvent type] == NSFlagsChanged) // mitsu 1.29 (S2)
 		{
-			[[myDocument pdfView] flagsChanged: theEvent];
+			[[self.myDocument pdfView] flagsChanged: theEvent];
 			return;
 		}
 		else if ([theEvent type] == NSLeftMouseDown) // mitsu 1.29 (O) resize PDF view
 		{
 			// check if mouse was in vertical scroller's knob
-			MyPDFView *pdfView = [myDocument pdfView];
+			MyPDFView *pdfView = [self.myDocument pdfView];
 			NSScroller *scroller = [[pdfView enclosingScrollView] verticalScroller];
 			if (([scroller testPart: [theEvent locationInWindow]] == NSScrollerKnob) &&
-				([myDocument documentType] == isTeX || [myDocument documentType] == isPDF) &&
+				([self.myDocument documentType] == isTeX || [self.myDocument documentType] == isPDF) &&
 				([pdfView pageStyle] == PDF_MULTI_PAGE_STYLE ||
 				 [pdfView pageStyle] == PDF_DOUBLE_MULTI_PAGE_STYLE) &&
 				([pdfView rotationAmount] == 0 || [pdfView rotationAmount] == 180))
@@ -486,7 +486,7 @@ extern NSPanel *pageNumberWindow;
 				[pageNumberWindow setHasShadow: PAGE_WINDOW_HAS_SHADOW];
 				[pageNumberWindow orderFront: nil];
 				[pageNumberWindow setFloatingPanel: YES];
-				[[myDocument pdfView] updateCurrentPage]; // draw page number
+				[[self.myDocument pdfView] updateCurrentPage]; // draw page number
 
 				[super sendEvent: theEvent]; // let the scroller handle the situation
 
@@ -505,7 +505,7 @@ extern NSPanel *pageNumberWindow;
 {
 	
 	if ([anItem action] == @selector(splitWindow:)) {
-		if (windowIsSplit)
+		if (self.windowIsSplit)
 			[anItem setState:NSOnState];
 		else
 			[anItem setState:NSOffState];
@@ -526,14 +526,14 @@ extern NSPanel *pageNumberWindow;
 
 	if ([anItem action] == @selector(doError:) ||
 		[anItem action] == @selector(printSource:))
-		return ((![myDocument externalEditor]) && ([myDocument documentType] == isTeX));
+		return ((![self.myDocument externalEditor]) && ([self.myDocument documentType] == isTeX));
 
 	if ([anItem action] == @selector(setProjectFile:))
-		return ([myDocument documentType] == isTeX);
+		return ([self.myDocument documentType] == isTeX);
 
-	if ([myDocument documentType] != isTeX) {
+	if ([self.myDocument documentType] != isTeX) {
 		if ([anItem action] == @selector(saveDocument:))
-			return ([myDocument documentType] == isOther);
+			return ([self.myDocument documentType] == isOther);
 		if ([anItem action] == @selector(doTex:) ||
 			[anItem action] == @selector(doLatex:) ||
 			[anItem action] == @selector(doBibtex:) ||
@@ -544,9 +544,9 @@ extern NSPanel *pageNumberWindow;
 			[anItem action] == @selector(doTypeset:))
 			return NO;
 		if ([anItem action] == @selector(printDocument:))
-			return (([myDocument documentType] == isPDF) ||
-					([myDocument documentType] == isJPG) ||
-					([myDocument documentType] == isTIFF));
+			return (([self.myDocument documentType] == isPDF) ||
+					([self.myDocument documentType] == isJPG) ||
+					([self.myDocument documentType] == isTIFF));
 	}
 
 #ifdef MITSU_PDF
@@ -554,11 +554,11 @@ extern NSPanel *pageNumberWindow;
 		// mitsu 1.29 (O)
 	if ([anItem action] == @selector(changePageStyle:)) {
 		
-		return (([myDocument documentType] == isTeX) || ([myDocument documentType] == isPDF));
+		return (([self.myDocument documentType] == isTeX) || ([self.myDocument documentType] == isPDF));
 	}
 
 	if ([anItem action] == @selector(copy:) || [anItem action] == @selector(saveSelectionToFile:))
-		return ([[myDocument pdfView] hasSelection]);
+		return ([[self.myDocument pdfView] hasSelection]);
 	// end mitsu 1.29 (O)
 
 #endif
@@ -569,7 +569,7 @@ extern NSPanel *pageNumberWindow;
 
 - (TSDocument *)document
 {
-	return myDocument;
+	return self.myDocument;
 }
 
 #ifdef MITSU_PDF
@@ -578,62 +578,62 @@ extern NSPanel *pageNumberWindow;
 // mitsu 1.29 (O)
 - (void)changePageStyle: (id)sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] changePageStyle: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] changePageStyle: sender];
 	else
-		[[myDocument pdfView] changePageStyle: sender];
+		[[self.myDocument pdfView] changePageStyle: sender];
 }
 
 - (void)changePDFViewSize: (id)sender
-{	if ([myDocument fromKit])
-		[[myDocument pdfKitView] changePDFViewSize: sender];
+{	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] changePDFViewSize: sender];
 	else
-		[[myDocument pdfView] changePDFViewSize: sender];
+		[[self.myDocument pdfView] changePDFViewSize: sender];
 }
 
 - (void)zoomIn: (id)sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] zoomIn: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] zoomIn: sender];
 }
 
 - (void)zoomOut: (id)sender
 {
 	
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] zoomOut: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] zoomOut: sender];
 }
 
 - (void)fullscreen: (id)sender
 {
-	if ([myDocument fromKit])
-		[myDocument fullscreen: sender];
+	if ([self.myDocument fromKit])
+		[self.myDocument fullscreen: sender];
 }
 
 - (void) savePreviewPosition: sender
 {
-	[myDocument savePreviewPosition];
+	[self.myDocument savePreviewPosition];
 }
 
 - (void) savePortablePreviewPosition: sender
 {
-	[myDocument savePortablePreviewPosition];
+	[self.myDocument savePortablePreviewPosition];
 }
 
 
 - (void)copy: (id)sender
 {
-	if ([myDocument fromKit])
-		[[myDocument pdfKitView] copy: sender];
+	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] copy: sender];
 	else
-		[[myDocument pdfView] copy: sender];
+		[[self.myDocument pdfView] copy: sender];
 }
 
 -(void)saveSelectionToFile: (id)sender
-{	if ([myDocument fromKit])
-		[[myDocument pdfKitView] saveSelectionToFile: sender];
+{	if ([self.myDocument fromKit])
+		[[self.myDocument pdfKitView] saveSelectionToFile: sender];
 	else
-		[[myDocument pdfView] saveSelectionToFile: sender];
+		[[self.myDocument pdfView] saveSelectionToFile: sender];
 }
 // end mitsu 1.29 (O)
 // end mitsu 1.29
@@ -653,49 +653,49 @@ extern NSPanel *pageNumberWindow;
 	NSRect		theFrame;
     BOOL        result;
 	
-	[(MyPDFKitView *)myPDFKitView cleanupMarquee: YES];
-	[(MyPDFKitView *)myPDFKitView2 cleanupMarquee: YES];
+	[(MyPDFKitView *)self.myPDFKitView cleanupMarquee: YES];
+	[(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];
 	
 	
-	if (windowIsSplit) {
-		windowIsSplit = NO;
-		activeView = myPDFKitView;
-        result = [activeView becomeFirstResponder];
-		[(MyPDFKitView *)activeView resetSearchDelegate];
+	if (self.windowIsSplit) {
+		self.windowIsSplit = NO;
+		self.activeView = self.myPDFKitView;
+        result = [self.activeView becomeFirstResponder];
+		[(MyPDFKitView *)self.activeView resetSearchDelegate];
 	}
 	else {
-		windowIsSplit = YES;
-		activeView = myPDFKitView;
+		self.windowIsSplit = YES;
+		self.activeView = self.myPDFKitView;
 		}
 	
-	if (windowIsSplit) {
-		theFrame = [myPDFKitView frame];
+	if (self.windowIsSplit) {
+		theFrame = [self.myPDFKitView frame];
 		newSize.width = theFrame.size.width;
 		newSize.height = 100;
-		[myPDFKitView setFrameSize:newSize];
-		[myPDFKitView2 setFrameSize:newSize];
-		[pdfKitSplitView addSubview: myPDFKitView2];
-		[pdfKitSplitView adjustSubviews];
+		[self.myPDFKitView setFrameSize:newSize];
+		[self.myPDFKitView2 setFrameSize:newSize];
+		[self.pdfKitSplitView addSubview: self.myPDFKitView2];
+		[self.pdfKitSplitView adjustSubviews];
         
-        [(MyPDFKitView *)myPDFKitView2 setPageStyle:[(MyPDFKitView *)myPDFKitView pageStyle]];
-        [(MyPDFKitView *)myPDFKitView2 setFirstPageStyle:[(MyPDFKitView *)myPDFKitView firstPageStyle]];
-        if ( [(MyPDFKitView *)myPDFKitView resizeOption] == NEW_PDF_FIT_TO_NONE)
-          [(MyPDFKitView *)myPDFKitView2 setMagnification: [(MyPDFKitView *)myPDFKitView magnification]];
+        [(MyPDFKitView *)self.myPDFKitView2 setPageStyle:[(MyPDFKitView *)self.myPDFKitView pageStyle]];
+        [(MyPDFKitView *)self.myPDFKitView2 setFirstPageStyle:[(MyPDFKitView *)self.myPDFKitView firstPageStyle]];
+        if ( [(MyPDFKitView *)self.myPDFKitView resizeOption] == NEW_PDF_FIT_TO_NONE)
+          [(MyPDFKitView *)self.myPDFKitView2 setMagnification: [(MyPDFKitView *)self.myPDFKitView magnification]];
         else {
-            [(MyPDFKitView *)myPDFKitView2 setResizeOption:[(MyPDFKitView *)myPDFKitView resizeOption]];
-            [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
+            [(MyPDFKitView *)self.myPDFKitView2 setResizeOption:[(MyPDFKitView *)self.myPDFKitView resizeOption]];
+            [(MyPDFKitView *)self.myPDFKitView2 setupMagnificationStyle];
             }
-        [(MyPDFKitView *)myPDFKitView2 setupPageStyle];
-       //  [(MyPDFKitView *)myPDFKitView2 setupMagnificationStyle];
+        [(MyPDFKitView *)self.myPDFKitView2 setupPageStyle];
+       //  [(MyPDFKitView *)self.myPDFKitView2 setupMagnificationStyle];
 
-		if ([myPDFKitView2 document] == nil) {
-			// [[myPDFKitView document] retain];
-			[myPDFKitView2 setDocument:[myPDFKitView document]];
+		if ([self.myPDFKitView2 document] == nil) {
+			// [[self.myPDFKitView document] retain];
+			[self.myPDFKitView2 setDocument:[self.myPDFKitView document]];
            		}
-        [(MyPDFKitView *)myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)myPDFKitView index]];
+        [(MyPDFKitView *)self.myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)self.myPDFKitView index]];
 	}
 	else
-		[myPDFKitView2 removeFromSuperview];
+		[self.myPDFKitView2 removeFromSuperview];
 }
 
 // Procedure called by menu item which splits both source and preview windows
@@ -707,22 +707,23 @@ extern NSPanel *pageNumberWindow;
 - (void) fixAfterRotation: (BOOL) clockwise
 {
 	if (clockwise)
-		[(MyPDFKitView *)myPDFKitView rotateClockwisePrimary];
+		[(MyPDFKitView *)self.myPDFKitView rotateClockwisePrimary];
 	else
-		[(MyPDFKitView *)myPDFKitView rotateCounterclockwisePrimary];
-	[myPDFKitView layoutDocumentView];
-	[myPDFKitView2 layoutDocumentView];
+		[(MyPDFKitView *)self.myPDFKitView rotateCounterclockwisePrimary];
+	[self.myPDFKitView layoutDocumentView];
+	[self.myPDFKitView2 layoutDocumentView];
 }
 
 // Among other times, this is called by TSDocument at nib initialization time
+/*
 - (void) setActiveView:(PDFView *)theView
 {
 	
-	if (activeView) {
-		[(MyPDFKitView *)activeView setDrawMark: NO];
-		[activeView display];
+	if (self.activeView) {
+		[(MyPDFKitView *)self.activeView setDrawMark: NO];
+		[self.activeView display];
 		}
-	activeView = theView;
+	self.activeView = theView;
 }
 
 - (PDFView *)activeView;
@@ -731,48 +732,51 @@ extern NSPanel *pageNumberWindow;
 		activeView = myPDFKitView;
 	return activeView;
 }
+*/
 
 - (void) changeMouseMode: sender
 {
-	[(MyPDFKitView *)myPDFKitView changeMouseMode: sender];
-	[(MyPDFKitView *)myPDFKitView2 changeMouseMode: sender];
+	[(MyPDFKitView *)self.myPDFKitView changeMouseMode: sender];
+	[(MyPDFKitView *)self.myPDFKitView2 changeMouseMode: sender];
 }
 
 - (void) doStepper: sender;
 {
-		[(MyPDFKitView *)activeView doStepper: sender]; 
+		[(MyPDFKitView *)self.activeView doStepper: sender];
 }
 
 - (void) changeScale: sender;
 {
-	[(MyPDFKitView *)activeView changeScale: sender]; 
+	[(MyPDFKitView *)self.activeView changeScale: sender];
 }
 
 - (void) goToKitPage: sender
 {
-	[(MyPDFKitView *)activeView goToKitPage: sender]; 
+	[(MyPDFKitView *)self.activeView goToKitPage: sender];
 }
 
 /*
 - (void) doFind: sender
 {
-	[(MyPDFKitView *)activeView doFind: sender]; 
+	[(MyPDFKitView *)self.activeView doFind: sender];
 }
 */
 
 - (IBAction) takeDestinationFromOutline: (id) sender
 {
-	[(MyPDFKitView *)activeView takeDestinationFromOutline: sender]; 
+	[(MyPDFKitView *)self.activeView takeDestinationFromOutline: sender];
 }
 
 - (IBAction)convertTiff:(id)sender
 {
-    [(TSDocument *)myDocument convertTiff:sender];
+    [(TSDocument *)self.myDocument convertTiff:sender];
 }
 
+/*
 - (BOOL)windowIsSplit
 {
-    return windowIsSplit;
+    return self.windowIsSplit;
 }
+*/
 
 @end

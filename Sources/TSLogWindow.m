@@ -32,17 +32,17 @@
 
 - (void) doTypeset: sender
 {
-	[myDocument doTypeset: sender];
+	[self.myDocument doTypeset: sender];
 }
 
 - (void) displayLog: sender
 {
-	[myDocument displayLog: sender];
+	[self.myDocument displayLog: sender];
 }
 
 - (void) displayConsole: sender
 {
-	[myDocument displayConsole: sender];
+	[self.myDocument displayConsole: sender];
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame

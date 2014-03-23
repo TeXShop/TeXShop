@@ -26,8 +26,10 @@
 
 @interface TSPrintView : NSView
 {
-	NSImageRep	*_imageRep;
+//	NSImageRep	*_imageRep;
 }
+
+@property (retain)  NSImageRep      *imageRep;
 
 - (TSPrintView *) initWithImageRep: (NSImageRep *) aRep;
 - (BOOL) knowsPageRange:(NSRangePointer)range;

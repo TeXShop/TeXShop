@@ -86,7 +86,7 @@
 
 	// Set an accessory view, with the encoding popup button in it.
 	[openPanel setAccessoryView: encodingView];
-	[encodingView retain];	// FIXME: Is this line really necessary?
+//	[encodingView retain];	// FIXME: Is this line really necessary?
 
 	// Create the contents of the encoding menu on the fly & select the active encoding
 	[encodingMenu removeAllItems];

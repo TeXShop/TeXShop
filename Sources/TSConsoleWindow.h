@@ -28,9 +28,12 @@
 
 @interface TSConsoleWindow : NSWindow
 {
-	TSDocument	*myDocument;
-	BOOL		firstResize;
+//	TSDocument	*myDocument;
+//	BOOL		firstResize;
 }
+
+@property           BOOL        firstResize;
+@property (retain)  TSDocument   *myDocument;
 
 - (void) doChooseMethod: sender;
 - (void) doError: sender;

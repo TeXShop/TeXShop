@@ -46,12 +46,10 @@ static id sharedMacroMenuController = nil;
 
 - (id)init
 {
-	if (sharedMacroMenuController)
-		[super dealloc];
-	else
+	if (!sharedMacroMenuController)
 	{
 		sharedMacroMenuController = [super init];
-		macroDict = nil;
+		self.macroDict = nil;
 				// the next command was commented out by koch because it was moved to NSAppDelegate
 		// [self loadMacros];
 				// the next stuff was commented out by mitsu
@@ -61,16 +59,21 @@ static id sharedMacroMenuController = nil;
 	return sharedMacroMenuController;
 }
 
+/*
 - (void)dealloc
 {
 	if (self != sharedMacroMenuController)
 		[super dealloc];	// Don't free our shared instance
 }
+*/
+
+/*
 
 - (NSDictionary *)macroDictionary
 {
 	return macroDict;
 }
+*/
 
 // load macros from Macros.plist
 - (void)loadMacros
@@ -105,24 +108,25 @@ static id sharedMacroMenuController = nil;
 			myData = [NSData dataWithContentsOfFile:defaultPathStr];
 		
 		NSPropertyListFormat format;
-		macroDict = [NSPropertyListSerialization propertyListFromData:myData
+		self.macroDict = [NSPropertyListSerialization propertyListFromData:myData
 													 mutabilityOption:NSPropertyListImmutable
 															   format:&format
 													 errorDescription:&error];
 	NS_HANDLER
-		macroDict = nil;
+		self.macroDict = nil;
 	NS_ENDHANDLER
 	
-	if (!macroDict || ![macroDict isKindOfClass: [NSDictionary class]]) {
+	if (!self.macroDict || ![self.macroDict isKindOfClass: [NSDictionary class]]) {
 		// alert: failed to parse Macros.plist
 		NSRunAlertPanel(@"Error", @"failed to parse ~/Library/TeXShop/Macros/Macros_??.plist file",
 						nil, nil, nil);
-		if (error) [error release]; // mitsu 1.29 (U) added
-		macroDict = nil;
+//		if (error) [error release]; // mitsu 1.29 (U) added
+        error = nil;
+		self.macroDict = nil;
 		return;
 	}
 	
-	[macroDict retain];
+//	[macroDict retain];
 }
 
 
@@ -131,7 +135,7 @@ static id sharedMacroMenuController = nil;
 {
 	NSMenuItem *newItem;
 
-	if (!macroDict)
+	if (!self.macroDict)
 		return;
 	// remove old items
 	while ([macroMenu numberOfItems] > 1) {
@@ -145,11 +149,11 @@ static id sharedMacroMenuController = nil;
 	[macroMenu addItem: [NSMenuItem separatorItem]];
 
 	// check predefined key equivalents
-	keyEquivalents = [NSMutableArray array];
+	self.keyEquivalents = [NSMutableArray array];
 	[self listKeyEquivalents: [NSApp mainMenu]];
 
 	// now add macros from dictionary
-	[self addItemsToMenu: macroMenu fromArray: [macroDict objectForKey: SUBMENU_KEY] withKey: YES];
+	[self addItemsToMenu: macroMenu fromArray: [self.macroDict objectForKey: SUBMENU_KEY] withKey: YES];
 
 	// set dummy actions to submenu items so that they can be disabled
 	NSEnumerator *enumerator = [[macroMenu itemArray] objectEnumerator];
@@ -170,8 +174,8 @@ static id sharedMacroMenuController = nil;
 
 - (void)reloadMacrosOnly
 {
-	[macroDict release];
-	macroDict = nil;
+//	[macroDict release];
+	self.macroDict = nil;
 	[self loadMacros];
 	[self setupMainMacroMenu];
 }
@@ -192,7 +196,7 @@ static id sharedMacroMenuController = nil;
 		NSArray *childlenArray = [dict objectForKey: SUBMENU_KEY];
 		if (childlenArray) {	// submenu item
 			newItem = [menu addItemWithTitle: nameStr action: nil keyEquivalent: @""];
-			submenu = [[[NSMenu alloc] init] autorelease];
+			submenu = [[NSMenu alloc] init];
 			[self addItemsToMenu: submenu fromArray: childlenArray withKey: flag];
 			[newItem setSubmenu: submenu];
 		} else if ([nameStr isEqualToString: SEPARATOR]) {	// separator item
@@ -212,14 +216,6 @@ static id sharedMacroMenuController = nil;
 			}
 		}
 	}
-    
-    // [menu addItem: [NSMenuItem separatorItem]];
-    // newItem = [menu addItemWithTitle: @"Select Macro File" action: nil keyEquivalent: @""];
-    // submenu = [[[NSMenu alloc] init] autorelease];
-    // [self addItemsToMenu: submenu fromArray: childlenArray withKey: flag];
-    //[newItem setSubmenu: submenu];
-    //[menu addItem: newItem];
-    
 }
 
 // build a menu for popup button in the toolbar
@@ -230,12 +226,12 @@ static id sharedMacroMenuController = nil;
 	NSMenu *submenu;
 	NSString *nameStr;
 	
-	if (!macroDict)
+	if (!self.macroDict)
 		return;
 	[popupButton removeAllItems];
 	[popupButton addItemWithTitle: NSLocalizedString(@"Macros", @"Macros")];
 	
-	NSArray *array = [macroDict objectForKey: SUBMENU_KEY];
+	NSArray *array = [self.macroDict objectForKey: SUBMENU_KEY];
 	NSEnumerator *enumerator = [array objectEnumerator];
 	while ((dict = (NSDictionary *)[enumerator nextObject])) {
 		nameStr = [dict objectForKey: NAME_KEY];
@@ -248,7 +244,7 @@ static id sharedMacroMenuController = nil;
 			newItem = [popupButton lastItem];
 			[newItem setTitle: nameStr];
 			
-			submenu = [[[NSMenu alloc] init] autorelease];
+			submenu = [[NSMenu alloc] init];
 			[self addItemsToMenu: submenu fromArray: childlenArray withKey: NO];
 			[newItem setSubmenu: submenu];
 		} else if ([nameStr isEqualToString: SEPARATOR]) {	// separator item
@@ -366,7 +362,7 @@ static id sharedMacroMenuController = nil;
 				NSRunAlertPanel(@"AppleScript Error",
 								[errorInfo objectForKey: NSAppleScriptErrorMessage], nil, nil, nil);
 			}
-			[aScript release];
+		//	[aScript release];
 			
 		} else {
 			
@@ -456,7 +452,7 @@ static id sharedMacroMenuController = nil;
 			}
 			NSArray *keyPair = [NSArray arrayWithObjects: keyEquiv,
 				[NSNumber numberWithUnsignedInteger:modifier], nil];
-			[keyEquivalents addObject: keyPair];
+			[self.keyEquivalents addObject: keyPair];
 		}
 		if ([item hasSubmenu]) {
 			[self listKeyEquivalents: [item submenu]];
@@ -467,7 +463,7 @@ static id sharedMacroMenuController = nil;
 // check with the list of key equivalents which are already assigned
 - (BOOL)isAlreadyDefined: (NSString *)keyEquiv modifier: (NSUInteger)modifier
 {
-	NSEnumerator *enumerator = [keyEquivalents objectEnumerator];
+	NSEnumerator *enumerator = [self.keyEquivalents objectEnumerator];
 	NSArray *item;
 	keyEquiv = [keyEquiv lowercaseString];
 	while ((item = (NSArray *)[enumerator nextObject])) {
@@ -476,7 +472,7 @@ static id sharedMacroMenuController = nil;
 		{
 			NSArray *keyPair = [NSArray arrayWithObjects: keyEquiv,
 				[NSNumber numberWithUnsignedInteger:modifier], nil];
-			[keyEquivalents addObject: keyPair];	// add to our list of predefined key equivalents
+			[self.keyEquivalents addObject: keyPair];	// add to our list of predefined key equivalents
 			return YES;
 		}
 	}

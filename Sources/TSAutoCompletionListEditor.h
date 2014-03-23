@@ -9,9 +9,13 @@
 	IBOutlet NSTextField *newKeyField;
 	IBOutlet NSTextField *newValueField;
 	IBOutlet TSListEditorTableView *tableView;
-	NSMutableArray *autocompletionKeys;
-	NSMutableArray *autocompletionValues;
+//	NSMutableArray *autocompletionKeys;
+//	NSMutableArray *autocompletionValues;
 }
+
+@property (retain) 	NSMutableArray *autocompletionKeys;
+@property (retain)  NSMutableArray *autocompletionValues;
+
 - (IBAction)openAutoCompletionListEditor: (id)sender;
 - (IBAction)savePressed:(id)sender;
 - (IBAction)cancelPressed:(id)sender;

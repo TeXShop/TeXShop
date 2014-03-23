@@ -35,6 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 #import "TSTextEditorWindow.h"
+#import "GlobalData.h"
 
 
 
@@ -61,12 +62,14 @@
 "*/
 @implementation TSAppDelegate
 
+/*
 - (void)dealloc
 {
 	[g_autocompletionDictionary release];
 	[defaultLanguage release];
 	[super dealloc];
 }
+*/
 
 
 - (void)testForIntel;
@@ -411,7 +414,7 @@
 // Configure Spelling
 	spellLanguageChanged = NO;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
-	defaultLanguage = [[theChecker language] retain];
+	defaultLanguage = [theChecker language];
 	// NSLog(defaultLanguage);
 	if ([theChecker respondsToSelector:@selector(automaticallyIdentifiesLanguages)])
 		automaticLanguage = [theChecker automaticallyIdentifiesLanguages];
@@ -463,21 +466,23 @@
 	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
 										  green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 										  alpha: 1];
-	[PreviewBackgroundColor retain];
+	// [PreviewBackgroundColor retain];
 	[self finishMenuKeyEquivalentsConfigure];
 
 }
 
+/*
 
 - (void)setForPreview: (BOOL)value
 {
-	_forPreview = value;
+	self.forPreview = value;
 }
 
 - (BOOL)forPreview
 {
-	return _forPreview;
+	return self.forPreview;
 }
+*/
 
 // Added by Greg Landweber to load the autocompletion dictionary
 // This code is modified from the code to load the LaTeX panel
@@ -489,18 +494,18 @@
 	autocompletionPath = [autocompletionPath stringByAppendingPathComponent:@"autocompletion"];
 	autocompletionPath = [autocompletionPath stringByAppendingPathExtension:@"plist"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath])
-		g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
+		[GlobalData sharedGlobalData].g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
 	else
-		g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:
+		[GlobalData sharedGlobalData].g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:
 			[[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
-	[g_autocompletionDictionary retain];
+//	[g_autocompletionDictionary retain];
 	// end of code added by Greg Landweber
 	
 	// added by Terada
 	autocompletionPath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletionDisplayOrder"] stringByAppendingPathExtension:@"plist"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]){
-		g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
-		[g_autocompletionKeys retain];
+		[GlobalData sharedGlobalData].g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
+//		[g_autocompletionKeys retain];
 	}
 	
 }
@@ -599,13 +604,13 @@
 	unichar tab = 0x0009; // ditto
 	if (!g_commandCompletionChar) {
 		if ([[SUD stringForKey: CommandCompletionCharKey] isEqualToString:@"ESCAPE"]) 
-			g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &esc length: 1];
 		else
-			g_commandCompletionChar = [[NSString stringWithCharacters: &tab length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &tab length: 1];
 		
 	}
 			
-	[g_commandCompletionList release];
+	// [g_commandCompletionList release];
 	g_commandCompletionList = nil;
 	g_canRegisterCommandCompletion = NO;
 	completionPath = [CommandCompletionPath stringByStandardizingPath];
@@ -727,7 +732,7 @@
 - (IBAction)doMovie:(id)sender
 {
 	NSString *title = [[sender title] stringByAppendingString:@".mov"];
-	[myMovie doMovie:title];
+	[self.myMovie doMovie:title];
 }
 
 - (void)configureMovieMenu
@@ -793,7 +798,7 @@
 {
 	NSArray* windows = [NSApp windows];
 	NSUInteger currentIndex = [windows indexOfObject:[NSApp keyWindow]];
-	NSMutableArray *matchIndexes = [[NSMutableArray arrayWithCapacity:0] retain];
+	NSMutableArray *matchIndexes = [NSMutableArray arrayWithCapacity:0];
 	*ptrToCurrentIndexInReturnedArray = -1;
 	NSInteger count = 0;
 	NSUInteger i;
@@ -818,7 +823,7 @@
 		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
-	[matchIndexes release];
+//	[matchIndexes release];
 }
 
 // added by Terada (- (IBAction)previousTeXWindow:)
@@ -830,7 +835,7 @@
 		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
-	[matchIndexes release];
+//	[matchIndexes release];
 }
 
 

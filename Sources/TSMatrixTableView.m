@@ -97,7 +97,7 @@ static NSColor *sStripeColor = nil;
 		stripeRect.size.height = fullRowHeight;
 		// set the color
 		if (sStripeColor == nil)
-			sStripeColor = [[NSColor colorWithCalibratedRed:STRIPE_RED green:STRIPE_GREEN blue:STRIPE_BLUE alpha:1.0] retain];
+			sStripeColor = [NSColor colorWithCalibratedRed:STRIPE_RED green:STRIPE_GREEN blue:STRIPE_BLUE alpha:1.0];  //retain];
 		[sStripeColor set];
 		// and draw the stripes
 		while (stripeRect.origin.y < clipBottom) {

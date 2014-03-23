@@ -36,9 +36,13 @@
 //						the Text suite. When there are fixed it should
 //						return a NSTextStorage object, or even better serve as a reference
 //						to the selected part of the text -- it should not store the actual text itself.
+
 @interface MySelection : NSObject {
-	TSDocument*		mDocument;
+//	TSDocument*		mDocument;
 }
+
+@property (retain) TSDocument *mDocument;
+
 - (id)initWithMyDocument:(TSDocument *)doc;
 - (NSUInteger)offset;
 - (NSUInteger)length;

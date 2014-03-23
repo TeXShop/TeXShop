@@ -49,6 +49,7 @@ static id _sharedInstance = nil;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+/*
 	[arrayFunctions1 release];
 	[arrayEnvironments release];
 	[arrayTypeface release];
@@ -59,6 +60,7 @@ static id _sharedInstance = nil;
 	[arrayCustomized release];
 
 	[super dealloc];
+ */
 }
 
 - (void)windowDidLoad

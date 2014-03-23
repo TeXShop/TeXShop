@@ -83,11 +83,11 @@
 
 	colorStart = 0;
 	colorEnd = 0;
-	regularColorAttribute = 0;
-	commandColorAttribute = 0;
-	commentColorAttribute = 0;
-	indexColorAttribute = 0;
-	markerColorAttribute = 0;
+	self.regularColorAttribute = 0;
+	self.commandColorAttribute = 0;
+	self.commentColorAttribute = 0;
+	self.indexColorAttribute = 0;
+	self.markerColorAttribute = 0;
     
     fullscreenPageStyle = 0;
     fullscreenResizeOption = 0;
@@ -96,7 +96,7 @@
 
 
 	tagLine = NO;
-	texRep = nil;
+	self.texRep = nil;
 	fileIsTex = YES;
 	mSelection = nil;
 	rootDocument = nil;
@@ -195,11 +195,11 @@
 	[_pdfRefreshTimer release];
 	_pdfRefreshTimer = nil;
 
-	[regularColorAttribute release];
-	[commentColorAttribute release];
-	[commandColorAttribute release];
-	[markerColorAttribute release];
-	[indexColorAttribute release];
+	[self.regularColorAttribute release];
+	[self.commentColorAttribute release];
+	[self.commandColorAttribute release];
+	[self.markerColorAttribute release];
+	[self.indexColorAttribute release];
 
 	[mSelection release];
 	[_textStorage release];
@@ -828,7 +828,7 @@ if (! skipTextWindow) {
 				 ([fileExtension isEqualToString: @"jpeg"]) ||
 				 ([fileExtension isEqualToString: @"JPG"])) {
 			imageFound = YES;
-			texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
+			self.texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
 			[pdfWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
 			_documentType = isJPG;
@@ -838,7 +838,7 @@ if (! skipTextWindow) {
 				 ([fileExtension isEqualToString: @"png"]) ||
 				 ([fileExtension isEqualToString: @"tif"])) {
 			imageFound = YES;
-			texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
+			self.texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
 			[pdfWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
 			_documentType = isTIFF;
@@ -876,9 +876,9 @@ if (! skipTextWindow) {
 				}
 			} else {
 				[pdfView setImageType: _documentType];
-				[pdfView setImageRep: texRep]; // this releases old one!
+				[pdfView setImageRep: self.texRep]; // this releases old one!
 
-				if (texRep != nil)
+				if (self.texRep != nil)
 					[pdfView display];
 				[pdfWindow makeKeyAndOrderFront: self];
 
@@ -900,14 +900,14 @@ if (! skipTextWindow) {
 	if (_externalEditor)
 		[self setHasUndoManager: NO];  // so reporting no changes does not lead to error messages
 
-	texTask = nil;
-	bibTask = nil;
-	indexTask = nil;
-	metaFontTask = nil;
-	detexTask = nil;
-	detexPipe = nil;
-	synctexTask = nil;
-	synctexPipe = nil;
+	self.texTask = nil;
+	self.bibTask = nil;
+	self.indexTask = nil;
+	self.metaFontTask = nil;
+	self.detexTask = nil;
+	self.detexPipe = nil;
+	// synctexTask = nil;
+	// synctexPipe = nil;
 
 	if (!_externalEditor) {
 		[self setupTags];
@@ -1837,36 +1837,36 @@ in other code when an external editor is being used. */
 			return;
 		}
 	
-	if (detexTask != nil) {
-		[detexTask terminate];
+	if (self.detexTask != nil) {
+		[self.detexTask terminate];
 		myDate = [NSDate date];
-		while (([detexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[detexTask release];
-		[detexPipe release];
-		detexTask = nil;
-		detexPipe = nil;
+		while (([self.detexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+		[self.detexTask release];
+		[self.detexPipe release];
+		self.detexTask = nil;
+		self.detexPipe = nil;
 	}
 	
-	detexTask = [[NSTask alloc] init];
-	[detexTask setCurrentDirectoryPath: [myFileName stringByDeletingLastPathComponent]];
-	[detexTask setEnvironment: [self environmentForSubTask]];
+	self.detexTask = [[NSTask alloc] init];
+	[self.detexTask setCurrentDirectoryPath: [myFileName stringByDeletingLastPathComponent]];
+	[self.detexTask setEnvironment: [self environmentForSubTask]];
 	enginePath = [[NSBundle mainBundle] pathForResource:@"detexwrap" ofType:nil];
 	tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	args = [NSMutableArray array];
 	[args addObject:tetexBinPath];
 	[args addObject: [myFileName  stringByStandardizingPath]];
-	detexPipe = [[NSPipe pipe] retain];
-	detexHandle = [detexPipe fileHandleForReading];
-	[detexHandle readInBackgroundAndNotify];
-	[detexTask setStandardOutput: detexPipe];
+	self.detexPipe = [[NSPipe pipe] retain];
+	self.detexHandle = [self.detexPipe fileHandleForReading];
+	[self.detexHandle readInBackgroundAndNotify];
+	[self.detexTask setStandardOutput: self.detexPipe];
 	if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
-		[detexTask setLaunchPath:enginePath];
-		[detexTask setArguments:args];
-		[detexTask launch];
+		[self.detexTask setLaunchPath:enginePath];
+		[self.detexTask setArguments:args];
+		[self.detexTask launch];
 	} else {
-		if (detexPipe)
-			[detexTask release];
-		detexTask = nil;
+		if (self.detexPipe)
+			[self.detexTask release];
+		self.detexTask = nil;
 	}
 	
 }
@@ -3912,7 +3912,7 @@ preference change is cancelled. "*/
 
 - (NSPDFImageRep *) myTeXRep
 {
-	return texRep;
+	return self.texRep;
 }
 
 - (BOOL)fileIsTex
@@ -4624,7 +4624,7 @@ preference change is cancelled. "*/
 	NSString	*searchText;
 
 	NSFileHandle *myFileHandle = [aNotification object];
-	if (myFileHandle == readHandle) {
+	if (myFileHandle == self.readHandle) {
 		myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
 		if ([myData length]) {
 			// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
@@ -4719,9 +4719,9 @@ preference change is cancelled. "*/
 			}
 			[outputText scrollRangeToVisible: [outputText selectedRange]];
 			[newOutput release];
-			[readHandle readInBackgroundAndNotify];
+			[self.readHandle readInBackgroundAndNotify];
 		}
-	} else if (myFileHandle == detexHandle) {
+	} else if (myFileHandle == self.detexHandle) {
 		detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
 		if ([detexData length]) {
 			detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];

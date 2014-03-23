@@ -179,25 +179,25 @@ enum RootCommand
 
 
 	BOOL                typesetStart;		/*" YES if tex output "*/
-	NSFileHandle        *writeHandle;
-	NSFileHandle        *readHandle;
-	NSPipe              *inputPipe;
-	NSPipe              *outputPipe;
-	NSTask              *texTask;
-	NSTask              *bibTask;
-	NSTask              *indexTask;
-	NSTask              *metaFontTask;
-	NSTask              *detexTask;
-	NSPipe              *detexPipe;
-	NSFileHandle        *detexHandle;
-	NSTask              *synctexTask;
-	NSPipe              *synctexPipe;
-	NSFileHandle        *synctexHandle;
+//	NSFileHandle        *writeHandle;
+//	NSFileHandle        *readHandle;
+//	NSPipe              *inputPipe;
+//	NSPipe              *outputPipe;
+//	NSTask              *texTask;
+//	NSTask              *bibTask;
+//	NSTask              *indexTask;
+//	NSTask              *metaFontTask;
+//	NSTask              *detexTask;
+//	NSPipe              *detexPipe;
+//	NSFileHandle        *detexHandle;
+//	NSTask              *synctexTask;
+//	NSPipe              *synctexPipe;
+//	NSFileHandle        *synctexHandle;
     synctex_scanner_t	scanner;
 
 
-	NSDate		*startDate;
-	NSPDFImageRep	*texRep;
+//	NSDate		*startDate;
+//	NSPDFImageRep	*texRep;
 	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
 	TSDocumentType			_documentType;
@@ -209,11 +209,11 @@ enum RootCommand
 	DefaultTypesetMode			theScript;		/*" script currently executing; 100, 101, 102 "*/
 	
 	NSUInteger	colorStart, colorEnd;
-	NSDictionary		*regularColorAttribute;
-	NSDictionary		*commandColorAttribute;
-	NSDictionary		*commentColorAttribute;
-	NSDictionary		*markerColorAttribute;
-	NSDictionary		*indexColorAttribute;
+//	NSDictionary		*regularColorAttribute;
+//	NSDictionary		*commandColorAttribute;
+//	NSDictionary		*commentColorAttribute;
+//	NSDictionary		*markerColorAttribute;
+//	NSDictionary		*indexColorAttribute;
     
     // for full screen operation
     NSInteger           oldPageStyle;
@@ -291,6 +291,34 @@ enum RootCommand
 // END PATCH
     
 }
+
+
+@property (retain)  NSDictionary		*regularColorAttribute;
+@property (retain)  NSDictionary		*commandColorAttribute;
+@property (retain)  NSDictionary		*commentColorAttribute;
+@property (retain)  NSDictionary		*markerColorAttribute;
+@property (retain)  NSDictionary		*indexColorAttribute;
+
+@property (retain)      NSTask              *synctexTask;
+@property (retain)      NSPipe              *synctexPipe;
+@property (retain)      NSFileHandle        *synctexHandle;
+
+@property (retain) NSFileHandle        *writeHandle;
+@property (retain) NSFileHandle        *readHandle;
+@property (retain) NSPipe              *inputPipe;
+@property (retain) NSPipe              *outputPipe;
+@property (retain) NSTask              *texTask;
+@property (retain) NSTask              *bibTask;
+@property (retain) NSTask              *indexTask;
+@property (retain) NSTask              *metaFontTask;
+@property (retain) NSTask              *detexTask;
+@property (retain) NSPipe              *detexPipe;
+@property (retain) NSFileHandle        *detexHandle;
+@property (retain) NSDate               *startDate;
+@property (retain) NSPDFImageRep        *texRep;
+
+
+
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;

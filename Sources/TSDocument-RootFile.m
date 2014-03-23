@@ -335,7 +335,7 @@
 	numFiles = [slist count];
 
 	if (numFiles==0) {
-		[slist release];
+	//	[slist release];
 		return;
 	}
 
@@ -357,7 +357,7 @@
 	}
 
 	// release file list
-	[slist release];
+//	[slist release];
 }
  
 // End Bauer

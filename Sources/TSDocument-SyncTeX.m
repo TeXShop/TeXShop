@@ -702,26 +702,26 @@
 	
 
 	
-	if (synctexTask != nil) {
-		[synctexTask terminate];
+	if (self.synctexTask != nil) {
+		[self.synctexTask terminate];
 		myDate = [NSDate date];
-		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[synctexTask release];
-		[synctexPipe release];
-		synctexTask = nil;
-		synctexPipe = nil;
+		while (([self.synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+	//	[self.synctexTask release];
+	//	[self.synctexPipe release];
+		self.synctexTask = nil;
+		self.synctexPipe = nil;
 		}
 
 
-	synctexTask = [[NSTask alloc] init];
+	self.synctexTask = [[NSTask alloc] init];
 	mainSourceString = [[self fileURL] path]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
-	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
-	synctexPipe = [[NSPipe pipe] retain];
-	synctexHandle = [synctexPipe fileHandleForReading];
-	[synctexTask setStandardOutput: synctexPipe];
+	[self.synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
+	self.synctexPipe = [NSPipe pipe];
+	self.synctexHandle = [self.synctexPipe fileHandleForReading];
+	[self.synctexTask setStandardOutput: self.synctexPipe];
 	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex" ofType:nil];
 	// enginePath = [[NSBundle mainBundle] pathForResource:@"synctexviewwrap" ofType:nil];
-	[synctexTask setLaunchPath:enginePath];
+	[self.synctexTask setLaunchPath:enginePath];
 	
 /*
 	args = [NSMutableArray array];
@@ -802,20 +802,20 @@
 	 
 	
 	
-	[synctexTask setArguments:args];
-	[synctexTask launch];
+	[self.synctexTask setArguments:args];
+	[self.synctexTask launch];
 	
-	NSData *myData = [synctexHandle readDataToEndOfFile];
+	NSData *myData = [self.synctexHandle readDataToEndOfFile];
 	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
 	
-	if (synctexTask != nil) {
-		[synctexTask terminate];
+	if (self.synctexTask != nil) {
+		[self.synctexTask terminate];
 		myDate = [NSDate date];
-		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[synctexTask release];
-		[synctexPipe release];
-		synctexTask = nil;
-		synctexPipe = nil;
+		while (([self.synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+	//	[self.synctexTask release];
+	//	[self.synctexPipe release];
+		self.synctexTask = nil;
+		self.synctexPipe = nil;
 		}
 
 	// NSLog(outputString);
@@ -1483,25 +1483,25 @@
 	// GET SYNCTEX INFO	
 	
 	
-	if (synctexTask != nil) {
-		[synctexTask terminate];
+	if (self.synctexTask != nil) {
+		[self.synctexTask terminate];
 		myDate = [NSDate date];
-		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[synctexTask release];
-		[synctexPipe release];
-		synctexTask = nil;
-		synctexPipe = nil;
+		while (([self.synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+	//	[self.synctexTask release];
+	//	[self.synctexPipe release];
+		self.synctexTask = nil;
+		self.synctexPipe = nil;
 	}
 	
-	synctexTask = [[NSTask alloc] init];
+	self.synctexTask = [[NSTask alloc] init];
 	mainSourceString = [[self fileURL] path]; // note: this will be the root document when the doPeviewSyncTeXWithFilename is called
-	[synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
-	synctexPipe = [[NSPipe pipe] retain];
-	synctexHandle = [synctexPipe fileHandleForReading];
-	[synctexTask setStandardOutput: synctexPipe];
+	[self.synctexTask setCurrentDirectoryPath: [mainSourceString stringByDeletingLastPathComponent]];
+	self.synctexPipe = [NSPipe pipe];
+	self.synctexHandle = [self.synctexPipe fileHandleForReading];
+	[self.synctexTask setStandardOutput: self.synctexPipe];
 	enginePath = [[NSBundle mainBundle] pathForResource:@"synctex_2010" ofType:nil];
 	// enginePath = [[NSBundle mainBundle] pathForResource:@"synctexviewwrap" ofType:nil];
-	[synctexTask setLaunchPath:enginePath];
+	[self.synctexTask setLaunchPath:enginePath];
 	
 	args = [NSMutableArray array];
 	
@@ -1539,23 +1539,23 @@
 	
 	
 	
-	[synctexTask setArguments:args];
-	[synctexTask launch];
+	[self.synctexTask setArguments:args];
+	[self.synctexTask launch];
 	
 	
 	
 	
-	NSData *myData = [synctexHandle readDataToEndOfFile];
+	NSData *myData = [self.synctexHandle readDataToEndOfFile];
 	NSString *outputString = [[NSString alloc] initWithData: myData encoding: NSASCIIStringEncoding];
 	
-	if (synctexTask != nil) {
-		[synctexTask terminate];
+	if (self.synctexTask != nil) {
+		[self.synctexTask terminate];
 		myDate = [NSDate date];
-		while (([synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[synctexTask release];
-		[synctexPipe release];
-		synctexTask = nil;
-		synctexPipe = nil;
+		while (([self.synctexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+	//	[self.synctexTask release];
+	//	[self.synctexPipe release];
+		self.synctexTask = nil;
+		self.synctexPipe = nil;
 	}
 	
 	

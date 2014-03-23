@@ -191,7 +191,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	// [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
     
     // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
-    [layoutManager addTemporaryAttributes:regularColorAttribute forCharacterRange:colorRange];
+    [layoutManager addTemporaryAttributes:self.regularColorAttribute forCharacterRange:colorRange];
     
 	// Now we iterate over the whole text and perform the actual recoloring.
 	location = aLineStart;
@@ -202,7 +202,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			// The three special characters { } $ get an extra color.
 			colorRange.location = location;
 			colorRange.length = 1;
-			[layoutManager addTemporaryAttributes:markerColorAttribute forCharacterRange:colorRange];
+			[layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:colorRange];
 			location++;
 		} else if (theChar == '%') {
 			// Comments are started by %. Everything after that on the same line is a comment.
@@ -210,7 +210,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			colorRange.length = 1;
 			[textString getLineStart:nil end:nil contentsEnd:&end forRange:colorRange];
 			colorRange.length = (end - location);
-			[layoutManager addTemporaryAttributes:commentColorAttribute forCharacterRange:colorRange];
+			[layoutManager addTemporaryAttributes:self.commentColorAttribute forCharacterRange:colorRange];
 			location = end;
 		} else if (theChar == g_texChar) {
 			// A backslash (or a yen): a new TeX command starts here.
@@ -284,13 +284,13 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 						if (theChar == ']')
 							optparens = NO;
 					}
-					[layoutManager addTemporaryAttributes:indexColorAttribute forCharacterRange:colorRange];
+					[layoutManager addTemporaryAttributes:self.indexColorAttribute forCharacterRange:colorRange];
 				}
 				else
-					[layoutManager addTemporaryAttributes:commandColorAttribute forCharacterRange:colorRange];
+					[layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
 				}
 			else
-				[layoutManager addTemporaryAttributes:commandColorAttribute forCharacterRange:colorRange];
+				[layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
 		} else
 			location++;
 	}
@@ -305,11 +305,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	//
 	// Free the old text attributes
 	//
-	[regularColorAttribute release];
-	[commandColorAttribute release];
-	[commentColorAttribute release];
-	[markerColorAttribute release];
-	[indexColorAttribute release];
+	// [regularColorAttribute release];
+	// [commandColorAttribute release];
+	// [commentColorAttribute release];
+	// [markerColorAttribute release];
+	// [indexColorAttribute release];
 
 	//
 	// Setup the new ones. Note that only color and underline attributes are supported!
@@ -318,31 +318,31 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	g = [SUD floatForKey:foreground_GKey];
 	b = [SUD floatForKey:foreground_BKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-	regularColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+	self.regularColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
 
 	r = [SUD floatForKey:commandredKey];
 	g = [SUD floatForKey:commandgreenKey];
 	b = [SUD floatForKey:commandblueKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-	commandColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+	self.commandColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
 
 	r = [SUD floatForKey:commentredKey];
 	g = [SUD floatForKey:commentgreenKey];
 	b = [SUD floatForKey:commentblueKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-	commentColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+	self.commentColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
 
 	r = [SUD floatForKey:markerredKey];
 	g = [SUD floatForKey:markergreenKey];
 	b = [SUD floatForKey:markerblueKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-	markerColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+	self.markerColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
 	
 	r = [SUD floatForKey:indexredKey];
 	g = [SUD floatForKey:indexgreenKey];
 	b = [SUD floatForKey:indexblueKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-	indexColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+	self.indexColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
 }
 
 // This method is invoked when the syntax highlighting preferences are changed.

@@ -30,19 +30,19 @@
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
-	id								currentPage;
-	id								totalPage;
-	id								myScale;
-	id								myStepper;
-	id								currentPage1;
-	id								totalPage1;
-	id								myScale1;
-	id								myStepper1;
-	id								myDocument;
-	NSDrawer						*_drawer;
-	PDFOutline						*_outline;
-	NSTextField						*_noOutlineText;
-	NSOutlineView					*_outlineView;
+IBOutlet	id								currentPage;
+IBOutlet    id								totalPage;
+IBOutlet	id								myScale;
+IBOutlet	id								myStepper;
+IBOutlet	id								currentPage1;
+IBOutlet	id								totalPage1;
+IBOutlet	id								myScale1;
+IBOutlet	id								myStepper1;
+IBOutlet	id								myDocument;
+IBOutlet	NSDrawer						*_drawer;
+            PDFOutline						*_outline;
+IBOutlet	NSTextField						*_noOutlineText;
+IBOutlet	NSOutlineView					*_outlineView;
 
 	NSMutableArray					*_searchResults;
 	IBOutlet NSTableView			*_searchTable;

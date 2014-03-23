@@ -63,20 +63,20 @@ NSData *draggedData;
 	if ([SUD boolForKey:ShowSyncMarksKey])
 		showSync = YES;
 	
-	myRep = nil;
+	self.myRep = nil;
 	rotationAmount = 0;
 	//largeMagnify = NO; // mitsu 1.29 (O) not used
 
 	// mitsu 1.29 (O)
-	myDocument = nil; // can be connected in InterfaceBuilder
+	self.myDocument = nil; // can be connected in InterfaceBuilder
 	pageStyle = [SUD integerForKey: PdfPageStyleKey]; // set in "initWithFrame:"
 		firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
 	if (!pageStyle) pageStyle = PDF_MULTI_PAGE_STYLE; // should be single? set also in "updateControlsFromUserDefaults"
 	mouseMode = [SUD integerForKey:PdfMouseModeKey];
 	if (!mouseMode) mouseMode = MOUSE_MODE_MAG_GLASS;
 	currentMouseMode = mouseMode;
-	selRectTimer = nil;
-	pageBackgroundColor = [[NSColor whiteColor] retain];
+	self.selRectTimer = nil;
+	self.pageBackgroundColor = [NSColor whiteColor];
 	// end mitsu 1.29
 
 	return value;
@@ -85,9 +85,11 @@ NSData *draggedData;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[pageBackgroundColor release];
-	[myRep release];
+/*
+	[self.pageBackgroundColor release];
+	[self.myRep release];
 	[super dealloc];
+*/
 }
 
 // mitsu 1.29 (O)
@@ -131,7 +133,7 @@ NSData *draggedData;
 
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [[myDocument fileURL] path];
+	NSString *fileName = [[self.myDocument fileURL] path];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -303,7 +305,7 @@ NSData *draggedData;
 
 - (void) setDocument: (id) theDocument
 {
-	myDocument = theDocument;
+	self.myDocument = theDocument;
 }
 
 /*
@@ -334,12 +336,12 @@ scroller position.
 	{
 		if (theRep != nil)
 		{
-			if (theRep != myRep && myRep != nil)
-				[myRep release];
-			myRep = theRep;
+//			if (theRep != self.myRep && self.myRep != nil)
+//				[self.myRep release];
+            self.myRep = theRep;
 			pageStyle = PDF_SINGLE_PAGE_STYLE;
-			totalWidth = pageWidth = [myRep size].width;
-			totalHeight = pageHeight = [myRep size].height;
+			totalWidth = pageWidth = [self.myRep size].width;
+			totalHeight = pageHeight = [self.myRep size].height;
 			theMagSize = [SUD floatForKey:PdfMagnificationKey];
 			NSInteger magPercent = round(theMagSize * 100.0);
 			[myScale setIntegerValue:magPercent];
@@ -363,18 +365,18 @@ scroller position.
 		}
 	}
 
-	[pageBackgroundColor release];
+//	[self.pageBackgroundColor release];
 	[SUD synchronize];
 	if ([SUD stringForKey:PdfPageBack_RKey])
 	{
-		pageBackgroundColor = [[NSColor colorWithCalibratedRed:
+		self.pageBackgroundColor = [NSColor colorWithCalibratedRed:
 			[SUD floatForKey:PdfPageBack_RKey]
 			green: [SUD floatForKey:PdfPageBack_GKey]
 			blue: [SUD floatForKey:PdfPageBack_BKey]
-			alpha: 1] retain];
+			alpha: 1];
 	}
 	else
-		pageBackgroundColor = [[NSColor whiteColor] retain];
+		self.pageBackgroundColor = [NSColor whiteColor];
 
 	[[self enclosingScrollView] setNeedsDisplay:YES];
 }
@@ -396,10 +398,10 @@ scroller position.
 	copiesOnScroll = [(NSClipView *)[self superview] copiesOnScroll];
 	[(NSClipView *)[self superview] setCopiesOnScroll: NO]; // this prevents annoying flashing effect
 
-	if (myRep != nil) // if there is previous one, remember the size, pagenumber and top left
+	if (self.myRep != nil) // if there is previous one, remember the size, pagenumber and top left
 	{
 		modifiedRep = YES;
-		if (selRectTimer) // if there was a selection
+		if (self.selRectTimer) // if there was a selection
 		{
 			[[self window] discardCachedImage];
 			oldVisibleRect.size.width = 0;
@@ -408,7 +410,7 @@ scroller position.
 		oldSize = NSMakeSize(totalWidth, totalHeight);
 		if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 		{
-			pagenumber = [myRep currentPage];
+			pagenumber = [self.myRep currentPage];
 			topLeft.x = [self visibleRect].origin.x;
 			topLeft.y = [self visibleRect].origin.y + [self visibleRect].size.height;
 		}
@@ -422,8 +424,8 @@ scroller position.
 			topLeft.x = visRect.origin.x - aPoint.x; // relative position to page origin
 			topLeft.y = visRect.origin.y + visRect.size.height - aPoint.y;
 		}
-		if (newRep != myRep)
-			[myRep release];
+//		if (newRep != self.myRep)
+//			[self.myRep release];
 	}
 	else // this is a new one
 	{
@@ -443,43 +445,43 @@ scroller position.
 		//[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	}
 	// replace the image rep and the style
-	myRep = newRep;
+	self.myRep = newRep;
 	pageStyle = newPageStyle;
-	[totalPage setIntegerValue:[myRep pageCount]];
-		[totalPage1 setIntegerValue:[myRep pageCount]];
+	[totalPage setIntegerValue:[self.myRep pageCount]];
+		[totalPage1 setIntegerValue:[self.myRep pageCount]];
 	if (pagenumber < 0) pagenumber = 0;
-	if (pagenumber >= [myRep pageCount]) pagenumber = [myRep pageCount]-1;
-		[myRep setCurrentPage: pagenumber];
+	if (pagenumber >= [self.myRep pageCount]) pagenumber = [self.myRep pageCount]-1;
+		[self.myRep setCurrentPage: pagenumber];
 	// set up page size--pageWidth, pageHeight, totalWidth, totalHeight
 	if (newPageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		// [myRep setCurrentPage: pagenumber];
-		totalWidth = pageWidth = [myRep size].width;
-		totalHeight = pageHeight = [myRep size].height;
+		totalWidth = pageWidth = [self.myRep size].width;
+		totalHeight = pageHeight = [self.myRep size].height;
 		[[self superview] setPostsBoundsChangedNotifications: NO];
 	}
 	else if (newPageStyle == PDF_MULTI_PAGE_STYLE)
 	{
-		totalWidth = pageWidth = [myRep size].width;
-		pageHeight = [myRep size].height;
-		totalHeight = (pageHeight + PAGE_SPACE_V)*[myRep pageCount] - PAGE_SPACE_V;
+		totalWidth = pageWidth = [self.myRep size].width;
+		pageHeight = [self.myRep size].height;
+		totalHeight = (pageHeight + PAGE_SPACE_V)*[self.myRep pageCount] - PAGE_SPACE_V;
 		[[self superview] setPostsBoundsChangedNotifications: YES];
 	}
 	else // PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 	{
-				pageWidth = [myRep size].width;
-		if ([myRep pageCount] > 1)
+				pageWidth = [self.myRep size].width;
+		if ([self.myRep pageCount] > 1)
 			totalWidth = 2*pageWidth + PAGE_SPACE_H;
 		else
 			totalWidth = pageWidth;
-		pageHeight = [myRep size].height;
+		pageHeight = [self.myRep size].height;
 		if (newPageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE) {
 						switch (firstPageStyle) {
 							case PDF_FIRST_LEFT:
-								totalHeight = (pageHeight + PAGE_SPACE_V)*(([myRep pageCount]+1)/2) - PAGE_SPACE_V;
+								totalHeight = (pageHeight + PAGE_SPACE_V)*(([self.myRep pageCount]+1)/2) - PAGE_SPACE_V;
 								break;
 							case PDF_FIRST_RIGHT:
-								totalHeight = (pageHeight + PAGE_SPACE_V)*(([myRep pageCount]+2)/2) - PAGE_SPACE_V;
+								totalHeight = (pageHeight + PAGE_SPACE_V)*(([self.myRep pageCount]+2)/2) - PAGE_SPACE_V;
 								break;
 						}
 				}
@@ -519,10 +521,10 @@ scroller position.
 			theOrigin.y = myBounds.origin.y + myBounds.size.height - visRect.size.height;
 		visRect.origin = theOrigin;
 		[self scrollRectToVisible:visRect];
-		if (selRectTimer) // if there was a selection
+		if (self.selRectTimer) // if there was a selection
 		{
-			[selRectTimer invalidate]; // this will release the timer
-			selRectTimer = nil;
+			[self.selRectTimer invalidate]; // this will release the timer
+			self.selRectTimer = nil;
 		}
 	}
 	// update currentPage text field
@@ -790,7 +792,7 @@ failed. If you change the code below, be sure to test carefully!
 			NSInteger pagenumber;
 			if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 			{
-				pagenumber = [myRep currentPage]+1;
+				pagenumber = [self.myRep currentPage]+1;
 			}
 			else
 			{
@@ -860,7 +862,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSRect   pageRect, boxRect;
 	NSPoint  p;
 
-	if (myRep == nil) return;
+	if (self.myRep == nil) return;
 
 	// the following draws the background for dataWithPDFInsideRect etc.
 	if (![NSGraphicsContext currentContextDrawingToScreen])
@@ -885,13 +887,13 @@ failed. If you change the code below, be sure to test carefully!
 			pageRect = NSMakeRect(0,0,totalWidth,totalHeight);
 			if ([NSGraphicsContext currentContextDrawingToScreen])
 			{
-				[pageBackgroundColor set];
+				[self.pageBackgroundColor set];
 				NSRectFill(pageRect);
 			}
 			NSRectClip(pageRect);
-			[myRep draw];
+			[self.myRep draw];
 						p.x = 0; p.y = 0;
-						[self drawDotsForPage:[myRep currentPage] atPoint: p];
+						[self drawDotsForPage:[self.myRep currentPage] atPoint: p];
 		}
 		else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 		{
@@ -912,7 +914,7 @@ failed. If you change the code below, be sure to test carefully!
 			{
 				thePoint = [self pointForPage: i];
 				pageRect.origin = thePoint;
-				if ( i>= 0 && i< [myRep pageCount])
+				if ( i>= 0 && i< [self.myRep pageCount])
 				{
 					[NSGraphicsContext saveGraphicsState];
 										boxRect.origin.x = pageRect.origin.x -2;
@@ -924,11 +926,11 @@ failed. If you change the code below, be sure to test carefully!
 					NSRectClip(pageRect);
 					if ([NSGraphicsContext currentContextDrawingToScreen])
 					{
-						[pageBackgroundColor set];
+						[self.pageBackgroundColor set];
 						NSRectFill(pageRect);
 					}
-					[myRep setCurrentPage: i];
-					[myRep drawAtPoint: thePoint];
+					[self.myRep setCurrentPage: i];
+					[self.myRep drawAtPoint: thePoint];
 										[self drawDotsForPage: i atPoint: thePoint];
 										[NSGraphicsContext restoreGraphicsState];
 				}
@@ -940,11 +942,11 @@ failed. If you change the code below, be sure to test carefully!
 		pageRect = NSMakeRect(0,0,totalWidth,totalHeight);
 		if ([NSGraphicsContext currentContextDrawingToScreen])
 		{
-			[pageBackgroundColor set];
+			[self.pageBackgroundColor set];
 			NSRectFill(pageRect);
 		}
 		NSRectClip(pageRect);
-		[myRep draw];
+		[self.myRep draw];
 	}
 }
 
@@ -973,10 +975,10 @@ failed. If you change the code below, be sure to test carefully!
 	{
 		switch (firstPageStyle) {
 
-					case PDF_FIRST_LEFT: return  (2 * ([myRep currentPage]/2)
+					case PDF_FIRST_LEFT: return  (2 * ([self.myRep currentPage]/2)
 			+ ((aPoint.x >= pageWidth + PAGE_SPACE_H/2)?1:0));
 
-					case PDF_FIRST_RIGHT: return  (2 * (([myRep currentPage] + 1)/2) - 1
+					case PDF_FIRST_RIGHT: return  (2 * (([self.myRep currentPage] + 1)/2) - 1
 			+ ((aPoint.x >= pageWidth + PAGE_SPACE_H/2)?1:0));
 					}
 	}
@@ -1009,7 +1011,7 @@ failed. If you change the code below, be sure to test carefully!
 	}
 	else // PDF_TWO_PAGE_STYLE
 	{
-		[myRep setCurrentPage: aPage];
+		[self.myRep setCurrentPage: aPage];
 				switch (firstPageStyle) {
 					case PDF_FIRST_LEFT:   thePoint.x = (pageWidth + PAGE_SPACE_H)*(aPage % 2);
 											break;
@@ -1063,7 +1065,8 @@ failed. If you change the code below, be sure to test carefully!
 	[self drawRect: aRect];
 	//[NSGraphicsContext restoreGraphicsState];
 	[image unlockFocus];
-	return [image autorelease];
+//	return [image autorelease];
+    return image;
 }
 
 #pragma mark =====moving=====
@@ -1073,18 +1076,18 @@ failed. If you change the code below, be sure to test carefully!
 	NSInteger		pagenumber;
 	NSRect	myBounds, myVisible, newVisible;
 
-	if (!myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
+	if (!self.myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
 
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		if ([SUD boolForKey:NoScrollEnabledKey]) {
-			pagenumber = [myRep currentPage];
+			pagenumber = [self.myRep currentPage];
 			if (pagenumber > 0) {
 				[self cleanupMarquee: YES];
 				pagenumber--;
 				[currentPage setIntegerValue:(pagenumber + 1)];
 								[currentPage1 setIntegerValue:(pagenumber + 1)];
-				[myRep setCurrentPage: pagenumber];
+				[self.myRep setCurrentPage: pagenumber];
 				[currentPage display];
 				[self display];
 				}
@@ -1098,13 +1101,13 @@ failed. If you change the code below, be sure to test carefully!
 			if (newVisible.origin.y > (myBounds.size.height - myVisible.size.height))
 				newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
 			if (! [self scrollRectToVisible:newVisible]) {
-				pagenumber = [myRep currentPage];
+				pagenumber = [self.myRep currentPage];
 								if (pagenumber > 0) {
 					[self cleanupMarquee: YES];
 					pagenumber--;
 					[currentPage setIntegerValue:(pagenumber + 1)];
 										[currentPage1 setIntegerValue:(pagenumber + 1)];
-					[myRep setCurrentPage: pagenumber];
+					[self.myRep setCurrentPage: pagenumber];
 					[currentPage display];
 					newVisible = myVisible;
 					newVisible.origin.y = 0;
@@ -1158,16 +1161,16 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSInteger		pagenumber;
 
-	if (!myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
+	if (!self.myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
 
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		pagenumber = 0;
-		if (pagenumber != [myRep currentPage])
+		if (pagenumber != [self.myRep currentPage])
 			[self cleanupMarquee: YES];
 		[currentPage setIntegerValue:(pagenumber + 1)];
 				[currentPage1 setIntegerValue:(pagenumber + 1)];
-		[myRep setCurrentPage: pagenumber];
+		[self.myRep setCurrentPage: pagenumber];
 		[currentPage display];
 		[self display];
 	}
@@ -1183,7 +1186,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSRect	myBounds, myVisible, newVisible;
 	// mitsu 1.29 (O)  commented out--this should work with TIFF etc.
 	//if ((documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	myBounds = [self bounds];
 	myVisible = [self visibleRect];
@@ -1202,7 +1205,7 @@ failed. If you change the code below, be sure to test carefully!
 
 	// mitsu 1.29 (O)  commented out--this should work with TIFF etc.
 	//if ((documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	myBounds = [self bounds];
 	myVisible = [self visibleRect];
@@ -1219,18 +1222,18 @@ failed. If you change the code below, be sure to test carefully!
 	NSInteger		pagenumber;
 	NSRect	myBounds, myVisible, newVisible;
 
-	if (!myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
+	if (!self.myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
 
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		if ([SUD boolForKey:NoScrollEnabledKey]) {
-			pagenumber = [myRep currentPage];
-			if (pagenumber < ([myRep pageCount]) - 1) {
+			pagenumber = [self.myRep currentPage];
+			if (pagenumber < ([self.myRep pageCount]) - 1) {
 				[self cleanupMarquee: YES];
 				pagenumber++;
 				[currentPage setIntegerValue:(pagenumber + 1)];
 								[currentPage1 setIntegerValue:(pagenumber + 1)];
-				[myRep setCurrentPage: pagenumber];
+				[self.myRep setCurrentPage: pagenumber];
 				[currentPage display];
 				[self display];
 				}
@@ -1243,13 +1246,13 @@ failed. If you change the code below, be sure to test carefully!
 			newVisible.origin.y = myVisible.origin.y - myVisible.size.height;
 			if (newVisible.origin.y < 0) newVisible.origin.y = 0;
 			if (! [self scrollRectToVisible:newVisible]) {
-				pagenumber = [myRep currentPage];
-				if (pagenumber < ([myRep pageCount]) - 1) {
+				pagenumber = [self.myRep currentPage];
+				if (pagenumber < ([self.myRep pageCount]) - 1) {
 					[self cleanupMarquee: YES];
 					pagenumber++;
 					[currentPage setIntegerValue:(pagenumber + 1)];
 										[currentPage1 setIntegerValue:(pagenumber + 1)];
-					[myRep setCurrentPage: pagenumber];
+					[self.myRep setCurrentPage: pagenumber];
 					[currentPage display];
 					newVisible = myVisible;
 					newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
@@ -1277,7 +1280,7 @@ failed. If you change the code below, be sure to test carefully!
 							pagenumber++;
 							break;
 						}
-		if (pagenumber < ([myRep pageCount]) - 1)
+		if (pagenumber < ([self.myRep pageCount]) - 1)
 		{
 			pagenumber++;
 						[self cleanupMarquee: YES];
@@ -1290,22 +1293,22 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSInteger		pagenumber;
 
-	if (!myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
+	if (!self.myRep || (documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
 
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
-		pagenumber = [myRep pageCount] - 1;
-		if (pagenumber != [myRep currentPage])
+		pagenumber = [self.myRep pageCount] - 1;
+		if (pagenumber != [self.myRep currentPage])
 			[self cleanupMarquee: YES];
 		[currentPage setIntegerValue:(pagenumber + 1)];
 		[currentPage1 setIntegerValue:(pagenumber + 1)];
-		[myRep setCurrentPage: pagenumber];
+		[self.myRep setCurrentPage: pagenumber];
 		[currentPage display];
 		[self display];
 	}
 	else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 	{
-		[self displayPage: [myRep pageCount] - 1];
+		[self displayPage: [self.myRep pageCount] - 1];
 	}
 }
 
@@ -1315,7 +1318,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSRect	myBounds, myVisible, newVisible;
 	// mitsu 1.29 (O)  commented out--this should work with TIFF etc.
 	//if ((documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	myBounds = [self bounds];
 	myVisible = [self visibleRect];
@@ -1332,7 +1335,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSRect	myBounds, myVisible, newVisible;
 	// mitsu 1.29 (O)  commented out--this should work with TIFF etc.
 	//if ((documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS)) return;
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	myBounds = [self bounds];
 	myVisible = [self visibleRect];
@@ -1346,7 +1349,7 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSRect	myBounds, newVisible;
 
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	if ((documentType == isTeX) || (documentType == isPDF))
 	{
@@ -1369,12 +1372,12 @@ failed. If you change the code below, be sure to test carefully!
 						{
 								 switch (firstPageStyle) {
 									case PDF_FIRST_LEFT:
-										if ([myRep currentPage] > 1)
-											[self displayPage: 2*([myRep currentPage]/2)-1];
+										if ([self.myRep currentPage] > 1)
+											[self displayPage: 2*([self.myRep currentPage]/2)-1];
 										break;
 									case PDF_FIRST_RIGHT:
-										if ([myRep currentPage] > 0)
-											[self displayPage: 2*(([myRep currentPage] + 1)/2)-2];
+										if ([self.myRep currentPage] > 0)
+											[self displayPage: 2*(([self.myRep currentPage] + 1)/2)-2];
 										break;
 									}
 								return;
@@ -1407,7 +1410,7 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSRect	myBounds, newVisible;
 
-	if (!myRep) return;
+	if (!self.myRep) return;
 
 	if ((documentType == isTeX) || (documentType == isPDF))
 	{
@@ -1431,12 +1434,12 @@ failed. If you change the code below, be sure to test carefully!
 			{
 								switch (firstPageStyle) {
 									case PDF_FIRST_LEFT:
-										if (2*([myRep currentPage]/2)+2 <[myRep pageCount])
-											[self displayPage: 2*([myRep currentPage]/2)+2];
+										if (2*([self.myRep currentPage]/2)+2 <[self.myRep pageCount])
+											[self displayPage: 2*([self.myRep currentPage]/2)+2];
 										break;
 									case PDF_FIRST_RIGHT:
-										if (2*(([myRep currentPage] + 1)/2)+1 < [myRep pageCount])
-											[self displayPage: 2*(([myRep currentPage] + 1)/2)+1];
+										if (2*(([self.myRep currentPage] + 1)/2)+1 < [self.myRep pageCount])
+											[self displayPage: 2*(([self.myRep currentPage] + 1)/2)+1];
 										break;
 									}
 								return;
@@ -1477,23 +1480,23 @@ failed. If you change the code below, be sure to test carefully!
 		[currentPage display];
 		return;
 	}
-	if (myRep == nil) return;
+	if (self.myRep == nil) return;
 
 		if (sender == currentPage1)
 				pagenumber = [currentPage1 integerValue];
 			else
 	pagenumber = [currentPage integerValue];
 	if (pagenumber < 1) pagenumber = 1;
-	if (pagenumber > [myRep pageCount]) pagenumber = [myRep pageCount];
+	if (pagenumber > [self.myRep pageCount]) pagenumber = [self.myRep pageCount];
 	[currentPage setIntegerValue:pagenumber];
 		[currentPage1 setIntegerValue:pagenumber];
 	[currentPage display];
 		[[self window] makeFirstResponder: currentPage];
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
-		if (pagenumber != [myRep currentPage])
+		if (pagenumber != [self.myRep currentPage])
 			[self cleanupMarquee: YES];
-		[myRep setCurrentPage: (pagenumber - 1)];
+		[self.myRep setCurrentPage: (pagenumber - 1)];
 		if (![SUD boolForKey:NoScrollEnabledKey]) {
 			myBounds = [self bounds];
 			myVisible = [self visibleRect];
@@ -1515,7 +1518,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSRect myBounds, newVisible;
 	NSPoint thePoint;
 
-	if (pageStyle == PDF_TWO_PAGE_STYLE && pagenumber/2 != [myRep currentPage]/2)
+	if (pageStyle == PDF_TWO_PAGE_STYLE && pagenumber/2 != [self.myRep currentPage]/2)
 		[self cleanupMarquee: YES];
 	[currentPage setIntegerValue:(pagenumber + 1)];
 		[currentPage1 setIntegerValue:(pagenumber + 1)];
@@ -1571,7 +1574,7 @@ failed. If you change the code below, be sure to test carefully!
 		[pageNumberWindow setFrameOrigin: aPoint];
 
 #warning 64BIT: Check formatting arguments
-		NSString *pageString = [NSString stringWithFormat: @"%d/%d", (long)pageNumber, [myRep pageCount]];
+		NSString *pageString = [NSString stringWithFormat: @"%d/%d", (long)pageNumber, [self.myRep pageCount]];
 
 
 		NSView *theView = [pageNumberWindow contentView];
@@ -1665,12 +1668,12 @@ failed. If you change the code below, be sure to test carefully!
 
 - (void) printDocument: sender
 {
-	[myDocument printDocument: sender];
+	[self.myDocument printDocument: sender];
 }
 
 - (void) printSource: sender
 {
-	[myDocument printSource: sender];
+	[self.myDocument printSource: sender];
 }
 
 #pragma mark =====sync=====
@@ -1712,7 +1715,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSPoint windowPosition = [theEvent locationInWindow];
 	NSPoint viewPosition = [self convertPoint: windowPosition fromView:nil];
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
-		pageNumber = [myRep currentPage];
+		pageNumber = [self.myRep currentPage];
 	else {
 		pageNumber = [self pageNumberForPoint:viewPosition];
 		NSPoint originPoint = [self pointForPage: pageNumber];
@@ -1740,7 +1743,7 @@ failed. If you change the code below, be sure to test carefully!
 
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [[myDocument fileURL] path];
+	NSString *fileName = [[self.myDocument fileURL] path];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -2058,11 +2061,11 @@ failed. If you change the code below, be sure to test carefully!
 
 
 	if (includeFileName == nil) {
-		[myDocument toLine:aNumber];
-		[[myDocument  textWindow] makeKeyAndOrderFront:self];
+		[self.myDocument toLine:aNumber];
+		[[self.myDocument  textWindow] makeKeyAndOrderFront:self];
 		}
 	else {
-		newFileName = [[[[myDocument fileURL] path] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+		newFileName = [[[[self.myDocument fileURL] path] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 		newFileName = [newFileName stringByAppendingString: includeFileName];
 		theExtension = [newFileName pathExtension];
 		if ([theExtension length] == 0)
@@ -2153,7 +2156,7 @@ failed. If you change the code below, be sure to test carefully!
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
 			case MOUSE_MODE_SELECT:
-				if(selRectTimer && [self mouse: [self convertPoint:
+				if(self.selRectTimer && [self mouse: [self convertPoint:
 					[theEvent locationInWindow] fromView: nil] inRect: selectedRect])
 				{
 					// mitsu 1.29 drag & drop
@@ -2221,7 +2224,7 @@ failed. If you change the code below, be sure to test carefully!
 			break;
 		case MOUSE_MODE_SELECT:
 			[self addCursorRect:[self visibleRect] cursor:[NSCursor crosshairCursor]];
-			if (selRectTimer)
+			if (self.selRectTimer)
 				[self addCursorRect:selectedRect cursor:[NSCursor arrowCursor]];
 			break;
 				case MOUSE_MODE_NULL:
@@ -2340,7 +2343,7 @@ failed. If you change the code below, be sure to test carefully!
 						toView:nil])]; // mitsu 1.29b
 				}
 				// draw marquee
-				if (selRectTimer)
+				if (self.selRectTimer)
 					[self updateMarquee: nil];
 
 				// resize bounds around mouseLocView
@@ -2688,13 +2691,13 @@ failed. If you change the code below, be sure to test carefully!
 	[NSEvent stopPeriodicEvents];
 	if (selectedRect.size.width > 3 && selectedRect.size.height > 3)
 	{
-		selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
+		self.selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
 			selector:@selector(updateMarquee:) userInfo:nil repeats:YES];
 		oldVisibleRect = [self visibleRect];
 	}
 	else
 	{
-		selRectTimer = nil;
+		self.selRectTimer = nil;
 		[[self window] restoreCachedImage];
 		[[self window] flushWindow];
 		[[self window] discardCachedImage];
@@ -2708,7 +2711,7 @@ failed. If you change the code below, be sure to test carefully!
 - (void)selectAll: (id)sender
 {
 	if ((mouseMode == MOUSE_MODE_SELECT) &&
-		((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE) || ([myRep pageCount] <= 20)))
+		((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE) || ([self.myRep pageCount] <= 20)))
 		{
 	NSRect selRectWindow, selRectSuper;
 	NSBezierPath *path = [NSBezierPath bezierPath];
@@ -2759,7 +2762,7 @@ failed. If you change the code below, be sure to test carefully!
 		// display the image drawn in the buffer
 		[[self window] flushWindow];
 
-	selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
+	self.selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
 			selector:@selector(updateMarquee:) userInfo:nil repeats:YES];
 	oldVisibleRect = [self visibleRect];
 		}
@@ -2817,7 +2820,7 @@ failed. If you change the code below, be sure to test carefully!
 // earses the frame of selected rectangle and cleans up the cached image
 - (void)cleanupMarquee: (BOOL)terminate
 {
-	if (selRectTimer)
+	if (self.selRectTimer)
 	{
 		NSRect visRect = [self visibleRect];
 		// if (NSEqualRects(visRect, oldVisibleRect))
@@ -2838,8 +2841,8 @@ failed. If you change the code below, be sure to test carefully!
 		oldVisibleRect.size.width = 0; // do not use this cache again
 		if (terminate)
 		{
-			[selRectTimer invalidate]; // this will release the timer
-			selRectTimer = nil;
+			[self.selRectTimer invalidate]; // this will release the timer
+			self.selRectTimer = nil;
 		}
 	}
 }
@@ -2847,7 +2850,7 @@ failed. If you change the code below, be sure to test carefully!
 // recache the image around selected rectangle for quicker response
 - (void)recacheMarquee
 {
-	if (selRectTimer)
+	if (self.selRectTimer)
 	{
 		[[self window] cacheImageInRect:
 					NSInsetRect([self convertRect: selectedRect toView: nil], -2, -2)];
@@ -2863,7 +2866,7 @@ failed. If you change the code below, be sure to test carefully!
 	NSBezierPath *path = [NSBezierPath bezierPath];
 	static NSInteger phase = 0;
 
-	if (!selRectTimer) return;
+	if (!self.selRectTimer) return;
 	startPointWindow = mouseLocWindow = [theEvent locationInWindow];
 	startPointView = mouseLocView = [self convertPoint: startPointWindow fromView:nil];
 	originalSelRect = selectedRect;
@@ -2951,8 +2954,8 @@ failed. If you change the code below, be sure to test carefully!
 	}
 	else
 	{
-		[selRectTimer invalidate]; // this will release the timer
-		selRectTimer = nil;
+		[self.selRectTimer invalidate]; // this will release the timer
+		self.selRectTimer = nil;
 		[[self window] restoreCachedImage];
 		[[self window] flushWindow];
 		[[self window] discardCachedImage];
@@ -2963,7 +2966,7 @@ failed. If you change the code below, be sure to test carefully!
 
 - (BOOL)hasSelection
 {
-	return (selRectTimer != nil);
+	return (self.selRectTimer != nil);
 }
 
 
@@ -3013,8 +3016,8 @@ failed. If you change the code below, be sure to test carefully!
 			newRect = selectedRect;
 			// get a bit map image from window for the rect in view coordinate
 			[self lockFocus];
-			bitmap = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:
-											newRect] autorelease];
+			bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:
+											newRect];
 			[self unlockFocus];
 		}
 		else // there is some portion which is not visible
@@ -3027,8 +3030,8 @@ failed. If you change the code below, be sure to test carefully!
 				[image setScalesWhenResized: NO];
 				[image setSize: NSMakeSize(floor(selRectWindow.size.width),
 											floor(selRectWindow.size.height))];
-				bitmap = [[[NSBitmapImageRep alloc] initWithData:
-										[image TIFFRepresentation]] autorelease];
+				bitmap = [[NSBitmapImageRep alloc] initWithData:
+										[image TIFFRepresentation]];
 			}
 		}
 		// color mapping
@@ -3191,7 +3194,7 @@ failed. If you change the code below, be sure to test carefully!
 {
 	NSSavePanel *savePanel = [NSSavePanel savePanel];
 	[savePanel  setAccessoryView: imageTypeView];
-	[imageTypeView retain];
+//	[imageTypeView retain];
 	NSInteger itemIndex = [imageTypePopup indexOfItemWithTag: [SUD integerForKey: PdfExportTypeKey]];
 	if (itemIndex == -1) itemIndex = 0; // default PdfExportTypeKey
 	[imageTypePopup selectItemAtIndex: itemIndex];
@@ -3307,7 +3310,7 @@ failed. If you change the code below, be sure to test carefully!
 			if ([data writeToFile: filePath atomically: NO])
 				[pboard setPropertyList:[NSArray arrayWithObject: filePath]
 									forType:NSFilenamesPboardType];
-			image = [[[NSImage alloc] initWithData: data] autorelease];
+			image = [[NSImage alloc] initWithData: data];
 			if (image)
 			{
 				[self dragImage:image at:selectedRect.origin offset:dragOffset
@@ -3410,7 +3413,7 @@ failed. If you change the code below, be sure to test carefully!
 		// end mitsu 1.29b
 
 		// change page style
-		[self setupForPDFRep: myRep style: [sender tag]];
+		[self setupForPDFRep: self.myRep style: [sender tag]];
 		// redisplay
 		[[self enclosingScrollView] setNeedsDisplay: YES];
 
@@ -3420,10 +3423,10 @@ failed. If you change the code below, be sure to test carefully!
 		// end mitsu 1.29b
 
 		// clean up the timer for selected rectangle
-		if (selRectTimer)
+		if (self.selRectTimer)
 		{
-			[selRectTimer invalidate]; // this will release the timer
-			selRectTimer = nil;
+			[self.selRectTimer invalidate]; // this will release the timer
+			self.selRectTimer = nil;
 			[[self window] discardCachedImage];
 		}
 	}
@@ -3610,7 +3613,8 @@ NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor
 		}
 	}
 
-	return [newBitmap autorelease];
+//	return [newBitmap autorelease];
+    return newBitmap;
 }
 
 #pragma mark =====getPICTDataFromBitmap=====

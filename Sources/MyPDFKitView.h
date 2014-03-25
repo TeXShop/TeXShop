@@ -40,18 +40,18 @@ IBOutlet	id								myScale1;
 IBOutlet	id								myStepper1;
 IBOutlet	id								myDocument;
 IBOutlet	NSDrawer						*_drawer;
-            PDFOutline						*_outline;
+ //           PDFOutline						*_outline;
 IBOutlet	NSTextField						*_noOutlineText;
 IBOutlet	NSOutlineView					*_outlineView;
 
-	NSMutableArray					*_searchResults;
+//	NSMutableArray					*_searchResults;
 	IBOutlet NSTableView			*_searchTable;
 	IBOutlet NSProgressIndicator	*_searchProgress;
 	IBOutlet NSMatrix				*mouseModeMatrix;
 	IBOutlet NSMenu					*mouseModeMenu;
 
 
-	NSWindow						*myPDFWindow;
+//	NSWindow						*myPDFWindow;
 	NSInteger								pageStyle;
     // NSInteger                               oldPageStyle;
     // NSInteger                               fullscreenPageStyle;
@@ -70,17 +70,17 @@ IBOutlet	NSOutlineView					*_outlineView;
 
 	NSRect							selectedRect;
 	NSRect							oldVisibleRect;
-	NSTimer							*selRectTimer;
+//	NSTimer							*selRectTimer;
 
 	// copy/paste stuff
-	id								imageTypeView;
-	id								imageTypePopup;
+//	id								imageTypeView;
+//	id								imageTypePopup;
 
 	NSInteger								pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
 	BOOL							showSync;
-	NSMutableArray					*sourceFiles;
+//	NSMutableArray					*sourceFiles;
 
 	double							oldMagnification;
 
@@ -98,11 +98,20 @@ IBOutlet	NSOutlineView					*_outlineView;
     BOOL							oldSync;
     NSRect							syncRect[200];
 	int								numberSyncRect;
-    OverView                        *overView;
+//    OverView                        *overView;
 
 	
 	
 }
+
+@property (retain) PDFOutline						*outline;
+@property (retain) NSMutableArray					*searchResults;
+@property (retain) NSWindow						*myPDFWindow;
+@property (retain) NSTimer							*selRectTimer;
+@property (retain) id								imageTypeView;
+@property (retain) id								imageTypePopup;
+@property (retain) NSMutableArray					*sourceFiles;
+@property (retain) OverView                        *overView;
 
 // - (void) scheduleAddintToolips;
 - (id) init;
@@ -206,7 +215,7 @@ IBOutlet	NSOutlineView					*_outlineView;
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
-- (void) setOverView:(OverView *)theOveView;
-- (OverView *)overView;
+// - (void) setOverView:(OverView *)theOveView;
+// - (OverView *)overView;
 @end
 

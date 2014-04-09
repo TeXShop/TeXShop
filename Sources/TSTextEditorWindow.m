@@ -123,6 +123,9 @@
 
 - (void)close
 {
+    
+// MAYBE NOW IRRELEVANT?
+ 
 // Yusuke Terada addition to fix crash at close
     if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && self.myDocument && [self.myDocument respondsToSelector:@selector(pdfView)] && [self.myDocument pdfView])
         [[NSNotificationCenter defaultCenter] removeObserver:[self.myDocument pdfView]];
@@ -142,6 +145,13 @@
 	}
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // added by Terada
+    
+/*
+    TSDocument *aDocument = self.myDocument;
+    self.myDocument = nil;
+    [aDocument close];
+*/
+    
 
 	[super close];
 }

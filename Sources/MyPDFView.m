@@ -85,6 +85,8 @@ NSData *draggedData;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+   
 /*
 	[self.pageBackgroundColor release];
 	[self.myRep release];
@@ -2257,6 +2259,11 @@ failed. If you change the code below, be sure to test carefully!
 
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
+    
+    [self doMagnifyingGlassMavericks:theEvent level: level];
+     return;
+     
+     
 	NSPoint mouseLocWindow = {0,0}, mouseLocView;
 	NSRect oldBounds, newBounds, magRectWindow, magRectView;
 	BOOL postNote, cursorVisible;
@@ -2424,6 +2431,117 @@ failed. If you change the code below, be sure to test carefully!
 	[self recacheMarquee];
 }
 // end Magnifying Glass
+
+
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level
+{
+	NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
+	NSRect magRectWindow, tempRect;
+	BOOL cursorVisible;
+	CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
+	NSInteger originalLevel, currentLevel = 0.0;
+    CGFloat magScale = 2.5; // 4.0
+    
+    NSData          *thePDFData;
+    NSPDFImageRep   *thePDFImageRep;
+    NSImage         *theImage;
+    NSRect          theOriginalRect;
+	
+	cursorVisible = YES;
+	originalLevel = level+[theEvent clickCount];
+	
+    OverView *theOverView = [[OverView alloc] initWithFrame: [[[self window] contentView] frame] ];
+    [self setOverView: theOverView];
+    [self addSubview: [self overView]];
+    
+    tempRect = [[[self window] contentView] visibleRect];
+    thePDFData = [[[self window] contentView] dataWithPDFInsideRect:[[[self window] contentView  ]visibleRect]];
+    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+    theImage = [[NSImage alloc] init] ;
+    [theImage addRepresentation:thePDFImageRep];
+    
+    [[self overView] setDrawRubberBand: NO];
+    [[self overView] setDrawMagnifiedRect: NO];
+    [[self overView] setDrawMagnifiedImage: NO];
+    [[self overView] setMagnifiedImage: theImage];
+    
+    
+	do {
+        
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+            
+			// set up the size and magScale
+			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+				currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
+				if (currentLevel <= 1) {
+					magWidth = 150; magHeight = 100;
+					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+				} else if (currentLevel == 2) {
+					magWidth = 380; magHeight = 250;
+					magOffsetX = magWidth/2; magOffsetY = magHeight/2;
+				} else {
+                    magWidth = 1800; magHeight = 1500;
+                    magOffsetX = magWidth / 2; magOffsetY = magHeight / 2;
+				}
+ 			}
+            
+			// get Mouse location and check if it is with the view's rect
+			
+			if (!([theEvent type]==NSFlagsChanged))
+				mouseLocWindow = [theEvent locationInWindow];
+            mouseLocView = [[self overView  ]convertPoint: mouseLocWindow fromView: nil];
+           //  mouseLocView = [[[self window] contentView] convertPoint:mouseLocWindow toView: nil];
+			// mouseLocView = [mouseLocWindow; // [self convertPoint: mouseLocWindow fromView:nil];
+  			mouseLocDocumentView = [[[self window] contentView] convertPoint:mouseLocWindow toView: [[self window] contentView]]; // [self convertPoint: mouseLocWindow fromView:nil];
+			// check if the mouse is in the rect
+			
+			if([self mouse:mouseLocView inRect:[[[self window] contentView] visibleRect]]) {
+				if (cursorVisible) {
+					[NSCursor hide];
+					cursorVisible = NO;
+                }
+                
+                
+                magRectWindow = NSMakeRect(mouseLocView.x   -magOffsetX, mouseLocView.y  -magOffsetY,
+                                           magWidth, magHeight);
+                
+                
+                theOriginalRect = NSMakeRect(mouseLocDocumentView.x - tempRect.origin.x - magOffsetX / magScale,
+                                             mouseLocDocumentView.y  - tempRect.origin.y - magOffsetY / magScale,
+                                             magWidth / magScale, magHeight / magScale);
+                
+                [[self overView] setDrawRubberBand: NO];
+                [[self overView] setDrawMagnifiedRect: NO];
+                [[self overView] setDrawMagnifiedImage: YES];
+                [[self overView] setSelectionRect: magRectWindow];
+                [[self overView] setMagnifiedRect: theOriginalRect];
+                [[self overView] displayRect: [[[self window] contentView] visibleRect]];
+                
+ 			} else { // mouse is not in the rect
+                // show cursor
+				if (!cursorVisible) {
+					[NSCursor unhide];
+					cursorVisible = YES;
+				}
+			}
+			
+ 		} else if ([theEvent type] == NSLeftMouseUp) {
+			break;
+		}
+		theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+                    NSLeftMouseDraggedMask | NSFlagsChangedMask];
+	} while (YES);
+    
+    if (theOverView) {
+        [theOverView removeFromSuperview];
+        [self setOverView: nil];
+    }
+	
+	[NSCursor unhide];
+	[self flagsChanged: theEvent]; // update cursor
+    
+}
+
 
 // mitsu 1.29 (S2)
 // derived from Apple's Sample code PDFView/DraggableScrollView.m

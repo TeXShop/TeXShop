@@ -23,6 +23,7 @@
  */
 
 #import <AppKit/NSView.h>
+#import "OverView.h"
 
 @class TSDocument;
 
@@ -72,6 +73,7 @@ IBOutlet		id                  myStepper1;
 @property (unsafe_unretained) TSDocument       *myDocument;
 @property (retain) NSTimer          *selRectTimer;
 @property (retain) NSColor          *pageBackgroundColor;
+@property (retain) OverView                        *overView;
 
 // set up the view
 - (void) setImageType: (NSInteger)theType;
@@ -139,6 +141,8 @@ IBOutlet		id                  myStepper1;
 - (void)doSync: (NSEvent *)theEvent;
 - (void)drawDotsForPage:(NSInteger)page atPoint: (NSPoint)p;
 - (void)setShowSync: (BOOL)value;
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
+
 @end
 
 @interface FlippedClipView : NSClipView {

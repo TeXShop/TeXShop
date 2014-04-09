@@ -158,7 +158,6 @@
     else
         atLeastMavericks = NO;
     
-    
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;

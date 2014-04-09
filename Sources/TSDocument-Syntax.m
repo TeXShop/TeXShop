@@ -355,7 +355,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 		NSRange theRange;
 
 		theRange.location = 0;
-		theRange.length = [_textStorage length];
+		theRange.length = [self.textStorage length];
 		[[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
 		[[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
 	}
@@ -425,7 +425,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
 		return;
 
-	length = [_textStorage length];
+	length = [self.textStorage length];
 	if (length == 0)
 		return;
 

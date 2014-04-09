@@ -88,10 +88,7 @@ enum RootCommand
 	IBOutlet NSTextView			*textView;		/*" textView displaying the current TeX source "*/
 	IBOutlet NSScrollView		*scrollView;		/*" scrollView for textView"*/
 	IBOutlet NSWindow			*textWindow;		/*" window displaying the current document "*/
-	NoodleLineNumberView		*lineNumberView1;
-	NoodleLineNumberView		*lineNumberView2;
-	NoodleLineNumberView		*logLineNumberView;
-
+	
 	IBOutlet MyPDFView			*pdfView;		/*" view displaying the current preview "*/
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
 
@@ -139,41 +136,44 @@ enum RootCommand
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
-	
-	NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
-
 	IBOutlet NSPopUpButton		*macroButton;		/*" pull-down list for macros "*/
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
 	IBOutlet NSButton           *showFullPathButton; // added by Terada
-	NSWindow					*logWindow;
-	NSTextView					*logTextView;
-	NSScrollView				*logScrollView;
-	NSString					*logExtension;
+    
+    IBOutlet	id              gotopageOutlet;
+    IBOutlet	id              magnificationOutlet;
+    IBOutlet	id              previousButton;
+    IBOutlet	id              nextButton;
 
-	id			gotopageOutlet;
-	id			magnificationOutlet;
-	id			previousButton;
-	id			nextButton;
+    
+    
+    NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
+    
+//	NSWindow					*logWindow;
+//	NSTextView					*logTextView;
+//	NSScrollView				*logScrollView;
+//	NSString					*logExtension;
 
-	NSConnection    *_completionConnection; //Adam Maxwell
-    id               _completionServer; //Adam Maxwell
-
-	NSTextStorage				*_textStorage;
+//  NSConnection    *_completionConnection; //Adam Maxwell
+//  id              _completionServer; //Adam Maxwell
+    
+    
 	BOOL		windowIsSplit;
 	BOOL		lineNumbersShowing;
 	BOOL		invisibleCharactersShowing; // added by Terada
-	
 	BOOL				isFullScreen;
-	TSFullscreenWindow	*fullscreenWindow;
-	PDFView				*fullscreenPDFView;
+    
+//	TSFullscreenWindow	*fullscreenWindow;
+//	PDFView				*fullscreenPDFView;
+//   TSDocument          *rootDocument;
+
 
 	NSStringEncoding	_encoding;
 	NSStringEncoding	_tempencoding;
 	DefaultTypesetMode			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
 	NSInteger			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
 													7 = metafont "*/
-	TSDocument	*rootDocument;
 	BOOL		tagLine;
     BOOL        skipTextWindow;
 
@@ -198,9 +198,9 @@ enum RootCommand
 
 //	NSDate		*startDate;
 //	NSPDFImageRep	*texRep;
-	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
+//	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
-	TSDocumentType			_documentType;
+//    TSDocumentType			_documentType;
 	NSInteger			errorLine[NUMBEROFERRORS];
 	NSString	*errorLinePath[NUMBEROFERRORS];
 	NSString	*errorText[NUMBEROFERRORS];
@@ -222,17 +222,16 @@ enum RootCommand
     NSInteger           fullscreenResizeOption;
 
 
-	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+//	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
 	NSUInteger	tagLocation;
 	NSUInteger	tagLocationLine;
 
 	BOOL				makeError;
 	SEL					tempSEL;
-	MySelection			*mSelection;
 	BOOL                taskDone;
 	NSInteger                 pdfSyncLine;
-	id                  syncBox;
-	id					indexColorBox;
+//	id                  syncBox;
+//	id					indexColorBox;
 	BOOL                aggressiveTrash;
 	BOOL				willClose;
 
@@ -247,16 +246,16 @@ enum RootCommand
 	BOOL		omitShellEscape;
 	BOOL		withLatex;
 
-	NSDate              *_pdfLastModDate;
-	NSTimer             *_pdfRefreshTimer;
-    id                  _pdfActivity;
+//	NSDate              *_pdfLastModDate;
+//	NSTimer             *_pdfRefreshTimer;
+//  id                  _pdfActivity;
 	BOOL                _pdfRefreshTryAgain;
 
 	BOOL                typesetContinuously;
 	NSInteger                 tempEngine;
 	BOOL                useTempEngine;
 	BOOL                realEngine;
-	NSWindow            *callingWindow;
+//	NSWindow            *callingWindow;
 	NSStringEncoding	_badEncoding;
 	BOOL                showBadEncodingDialog;
 	BOOL				PDFfromKit;
@@ -267,9 +266,9 @@ enum RootCommand
 	BOOL				isLoading;
 	BOOL				firstTime;
 	NSTimeInterval		colorTime;
-	NSString			*spellLanguage;
+//	NSString			*spellLanguage;
 	BOOL				consoleCleanStart;
-	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
+//	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 
 	NSInteger lastCursorLocation; // added by Terada
 	NSInteger lastStringLength; // added by Terada
@@ -287,8 +286,22 @@ enum RootCommand
 
 // end addition
 // ULRICH BAUER PATCH
-    dispatch_source_t dispatch_source;
+   dispatch_source_t dispatch_source;
 // END PATCH
+    
+// NSDate              *_pdfLastModDate;
+// NSTimer             *_pdfRefreshTimer;
+// id                  _pdfActivity;
+    
+//    NoodleLineNumberView		*lineNumberView1;
+//	NoodleLineNumberView		*lineNumberView2;
+//	NoodleLineNumberView		*logLineNumberView;
+
+ 
+//  MySelection		*mSelection;
+//  NSTextStorage	*_textStorage;
+
+
     
 }
 
@@ -299,9 +312,9 @@ enum RootCommand
 @property (retain)  NSDictionary		*markerColorAttribute;
 @property (retain)  NSDictionary		*indexColorAttribute;
 
-@property (retain)      NSTask              *synctexTask;
-@property (retain)      NSPipe              *synctexPipe;
-@property (retain)      NSFileHandle        *synctexHandle;
+@property (retain)  NSTask              *synctexTask;
+@property (retain)  NSPipe              *synctexPipe;
+@property (retain)  NSFileHandle        *synctexHandle;
 
 @property (retain) NSFileHandle        *writeHandle;
 @property (retain) NSFileHandle        *readHandle;
@@ -316,6 +329,40 @@ enum RootCommand
 @property (retain) NSFileHandle        *detexHandle;
 @property (retain) NSDate               *startDate;
 @property (retain) NSPDFImageRep        *texRep;
+
+@property (retain)  NSString			*spellLanguage;
+@property (retain)  NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
+@property (retain)  NSWindow            *ourCallingWindow;
+@property (retain)  NSDate              *pdfLastModDate;
+@property (retain) NSTimer             *pdfRefreshTimer;
+@property (retain) id                  pdfActivity;
+@property (retain) NSTimer              *tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+
+@property (retain)	id                  syncBox;
+@property (retain)  id					indexColorBox;
+
+@property (retain) 	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
+@property TSDocumentType			documentType;
+
+@property (retain) 	NSConnection    *completionConnection; //Adam Maxwell
+@property (retain) id               completionServer; //Adam Maxwell
+
+@property (retain)  NoodleLineNumberView		*lineNumberView1;
+@property (retain)  NoodleLineNumberView		*lineNumberView2;
+@property (retain)  NoodleLineNumberView		*logLineNumberView;
+
+@property (retain) NSWindow                     *logWindow;
+@property (retain) NSTextView					*logTextView;
+@property (retain) NSScrollView                 *logScrollView;
+@property (retain) NSString                     *logExtension;
+
+@property (retain) 	TSFullscreenWindow	*fullscreenWindow;
+@property (retain)  PDFView				*fullscreenPDFView;
+@property (retain)  TSDocument          *rootDocument;
+
+@property (retain)   MySelection         *mSelection;
+@property (retain)   NSTextStorage       *textStorage;
+
 
 
 

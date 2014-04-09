@@ -382,8 +382,16 @@
 	NSInteger			i, amount, newAmount;
 	PDFPage		*myPage;
 	NSData		*theData;
-	
-	[[self window] disableFlushWindow];
+
+	// A note below explains dangers of NSDisableScreenUpdates
+    // but these dangers don't apply to Intel on recent systems.
+    // Experiments show that in single page mode, "disableFlushWindow"
+    // adds a flash showing the initial page before switching to the
+    // current page. NSDisableScreenUpdates fixes that.
+    
+    
+	// [[self window] disableFlushWindow];
+    NSDisableScreenUpdates();
 
 	[self cleanupMarquee: YES];
 	
@@ -462,12 +470,35 @@
 	aPage = [[self document] pageAtIndex: theindex];
 	[self goToPage: aPage];
 	
-	NSRect newFullRect = [[self documentView] bounds];
-	NSInteger difference = newFullRect.size.height - fullRect.size.height;
-	visibleRect.origin.y = visibleRect.origin.y + difference;
-		// [self display];
+    NSRect newFullRect = [[self documentView] bounds];
+    NSInteger difference = newFullRect.size.height - fullRect.size.height;
+    
+	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
-	[[self window] enableFlushWindow];
+
+/*
+//   The test just below seems to show that we need to adjust by -1, and then
+//   the visible rect ends up in the correct spot. Perhaps this is the width of the
+//   line around the rectange (?)
+    
+    NSNumber *myNumber = [NSNumber numberWithInteger: visibleRect.origin.y];
+    NSLog([myNumber stringValue]);
+    myNumber = [NSNumber numberWithInteger: visibleRect.size.height];
+    NSLog([myNumber stringValue]);
+//
+   NSInteger difference = -1;
+    
+//    NSRect  modifiedVisibleRect = NSInsetRect(visibleRect, 1, 1);
+ //   if (NSIsEmptyRect(modifiedVisibleRect))
+ //       modifiedVisibleRect = visibleRect;
+    
+	visibleRect.origin.y = visibleRect.origin.y + difference;
+	[[self documentView] scrollRectToVisible: visibleRect];
+    
+//    [self scrollRectToVisible: modifiedVisibleRect];
+*/
+	//[[self window] enableFlushWindow];
+    NSEnableScreenUpdates();
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
 
@@ -4924,10 +4955,14 @@ else
 
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
-    if (atLeastMavericks)
+    
+// Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
+// and the old routine has problems in all of these places.
+    
+//    if (atLeastMavericks)
         [self doMagnifyingGlassMavericks: theEvent level:level] ;
-    else
-        [self doMagnifyingGlassML: theEvent level:level] ;
+//    else
+//        [self doMagnifyingGlassML: theEvent level:level] ;
 }
 
 // Obsolte Mavericks Routine

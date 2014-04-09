@@ -876,7 +876,7 @@ else
 
 	if ([itemIdent isEqual: kSyncMarksTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-												   customView:syncBox];
+												   customView:self.syncBox];
 		menuFormRep = [[NSMenuItem alloc] init];
 		submenu = [[NSMenu alloc] init];
 		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Sync Marks", @"Sync Marks")
@@ -891,7 +891,7 @@ else
 	
 	if ([itemIdent isEqual: kColorIndexTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-												   customView:indexColorBox];
+												   customView:self.indexColorBox];
 		menuFormRep = [[NSMenuItem alloc] init];
 		submenu = [[NSMenu alloc] init];
 		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Color Index", @"Color Index")
@@ -1345,17 +1345,17 @@ else
 	}
 	else if ([itemID isEqual: kSaveDocToolbarItemIdentifier]) {
 
-		enable = (_documentType == isOther);
+		enable = (self.documentType == isOther);
 
 	}
 	else if ([itemID isEqual: NSToolbarPrintItemIdentifier]) {
 
 		if ([toolbarID isEqual:kSourceToolbarIdentifier]) {
-			enable = (_documentType == isOther);
+			enable = (self.documentType == isOther);
 		} else if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
-			enable = ((_documentType == isPDF) || (_documentType == isJPG) || (_documentType == isTIFF));
+			enable = ((self.documentType == isPDF) || (self.documentType == isJPG) || (self.documentType == isTIFF));
 		} else if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
-			enable = ((_documentType == isPDF) || (_documentType == isJPG) || (_documentType == isTIFF));
+			enable = ((self.documentType == isPDF) || (self.documentType == isJPG) || (self.documentType == isTIFF));
 		}
 
 	}
@@ -1364,14 +1364,14 @@ else
 			([itemID isEqual: kPreviousPageButtonKKTID]) ||
 			([itemID isEqual: kPreviousPageKKTID])) {
 						// TODO: Check whether we are on the first page
-						enable = (_documentType == isPDF);
+						enable = (self.documentType == isPDF);
 	}
 	else if	(([itemID isEqual: kNextPageButtonTID]) ||
 			([itemID isEqual: kNextPageTID]) ||
 			([itemID isEqual: kNextPageButtonKKTID]) ||
 			([itemID isEqual: kNextPageKKTID])) {
 						// TODO: Check whether we are on the last page
-						enable = (_documentType == isPDF);
+						enable = (self.documentType == isPDF);
 	}
 
 	return enable;

@@ -98,18 +98,18 @@
 	tagLine = NO;
 	self.texRep = nil;
 	fileIsTex = YES;
-	mSelection = nil;
-	rootDocument = nil;
+	self.mSelection = nil;
+	self.rootDocument = nil;
 	warningGiven = NO;
 	omitShellEscape = NO;
 	taskDone = YES;
-	_pdfLastModDate = nil;
-	_pdfRefreshTimer = nil;
-    _pdfActivity = nil;
+	self.pdfLastModDate = nil;
+	self.pdfRefreshTimer = nil;
+    self.pdfActivity = nil;
 	typesetContinuously = NO;
 	_pdfRefreshTryAgain = NO;
 	useTempEngine = NO;
-	callingWindow = nil;
+	self.ourCallingWindow = nil;
 	_badEncoding = 0;
 	showBadEncodingDialog = NO;
 	PDFfromKit = NO;
@@ -120,14 +120,14 @@
 	firstTime = NO;
 	fromMenu = NO;
 	willClose = NO;
-	spellLanguage = nil;
+	self.spellLanguage = nil;
 	
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
-	lineNumberView1 = nil;
-	lineNumberView2 = nil;
-	logLineNumberView = nil;
-	logExtension = nil;
+	self.lineNumberView1 = nil;
+	self.lineNumberView2 = nil;
+	self.logLineNumberView = nil;
+	self.logExtension = nil;
 
 	lastCursorLocation = 0; // added by Terada
 	lastStringLength = 0; // added by Terada
@@ -137,14 +137,14 @@
 	r = [SUD floatForKey: highlightBracesRedKey];
 	g = [SUD floatForKey: highlightBracesGreenKey];
 	b = [SUD floatForKey: highlightBracesBlueKey];
-	highlightBracesColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
-								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada
+	highlightBracesColorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSForegroundColorAttributeName, nil ] ;	 // added by Terada
 	
 	r = [SUD floatForKey: highlightContentRedKey];
 	g = [SUD floatForKey: highlightContentGreenKey];
 	b = [SUD floatForKey: highlightContentBlueKey];
-	highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
-								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada 
+	highlightContentColorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+								 [NSColor colorWithDeviceRed:r green:g blue:b alpha:1], NSBackgroundColorAttributeName, nil ] ;	 // added by Terada
 	// highlightBracesColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
 	// 							 [NSColor magentaColor], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada magentaColor
 	// highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
@@ -171,50 +171,53 @@
 	
 	for (i = 0; i < NUMBEROFERRORS; i++) {
 		if (errorLinePath[i] != nil)
-			[errorLinePath[i] release];
+//			[errorLinePath[i] release];
 		errorLinePath[i] = nil;
 	}
 	
 	for (i = 0; i < NUMBEROFERRORS; i++) {
 		if (errorText[i] != nil)
-			[errorText[i] release];
+//			[errorText[i] release];
 		errorText[i] = nil;
 	}
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:pdfView];// mitsu 1.29 (O) need to remove here, otherwise updateCurrentPage fails
-	if (tagTimer != nil) {
-		[tagTimer invalidate];
-		[tagTimer release];
+	if (self.tagTimer != nil) {
+		[self.tagTimer invalidate];
+//		[self.tagTimer release];
 	}
 
-    if ((_pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
-        [[NSProcessInfo processInfo] endActivity: _pdfActivity];
-    _pdfActivity = nil;
-	[_pdfRefreshTimer invalidate];
-	[_pdfRefreshTimer release];
-	_pdfRefreshTimer = nil;
+    if ((self.pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
+        [[NSProcessInfo processInfo] endActivity: self.pdfActivity];
+    self.pdfActivity = nil;
+	[self.pdfRefreshTimer invalidate];
+//	[self.pdfRefreshTimer release];
+	self.pdfRefreshTimer = nil;
 
+    /*
 	[self.regularColorAttribute release];
 	[self.commentColorAttribute release];
 	[self.commandColorAttribute release];
 	[self.markerColorAttribute release];
 	[self.indexColorAttribute release];
 
-	[mSelection release];
+	[self.mSelection release];
 	[_textStorage release];
-	[lineNumberView1 release];
-	[lineNumberView2 release];
-	[logLineNumberView release];
+	[self.lineNumberView1 release];
+	[self.lineNumberView2 release];
+	[self.logLineNumberView release];
+     */
 	 /* The next line line could be dangerous! It is needed if the source window 
 	is initialized, so without it there is a small memory leak. 
 	But if a pdf file is opened and doesn't open the source window, 
 	then the line causes a crash when TeXShop quits.
 	(Later this was fixed by retaining it even if the source window doesn't open) 
 	*/
-	[scrollView2 release];
+//	[scrollView2 release];
 
 /* toolbar stuff */
+    /*
 	[typesetButton release];
 	[programButton release];
 	[typesetButtonEE release];
@@ -229,18 +232,19 @@
 	[macroButtonEE release];
 	[mouseModeMatrix release]; // mitsu 1.29 (O)
 
-	[_pdfLastModDate release];
+	[self.pdfLastModDate release];
 	
-	[spellLanguage release];
+	[self.spellLanguage release];
 	
-	if (logExtension != nil)
-		[logExtension release];
+	if (self.logExtension != nil)
+		[self.logExtension release];
+*/
 	
 	[self invalidateCompletionConnection];
 	
-	[myPDFKitView2 release];
+//	[myPDFKitView2 release];
 
-	[super dealloc];
+//	[super dealloc];
 }
 
 + (BOOL)autosavesInPlace
@@ -318,19 +322,19 @@
 - (void) showHideLineNumbers: sender
 {
 	if (!lineNumbersShowing) {
-		if (lineNumberView1 == nil) {
-			lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
-			lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
-			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
+		if (self.lineNumberView1 == nil) {
+			self.lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
+			self.lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			self.logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:self.logScrollView];
 			
-			[scrollView setVerticalRulerView:lineNumberView1];
-            [scrollView2 setVerticalRulerView:lineNumberView2];
-            [logScrollView setVerticalRulerView:logLineNumberView];
+			[scrollView setVerticalRulerView:self.lineNumberView1];
+            [scrollView2 setVerticalRulerView:self.lineNumberView2];
+            [self.logScrollView setVerticalRulerView:self.logLineNumberView];
             
 // FIX RULER SCROÒL
-            [lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
-            [lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
-            [logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
+            [self.lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
+            [self.lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
+            [self.logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
 // END FIX RULER SCROLL
 			
 			[scrollView setHasVerticalRuler:YES];
@@ -339,17 +343,17 @@
 			[scrollView2 setHasVerticalRuler:YES];
 			[scrollView2 setHasHorizontalRuler:NO];
 			
-			[logScrollView setHasVerticalRuler:YES];
-			[logScrollView setHasHorizontalRuler:NO];
+			[self.logScrollView setHasVerticalRuler:YES];
+			[self.logScrollView setHasHorizontalRuler:NO];
 		}
 		[scrollView setRulersVisible:YES];
 		[scrollView2 setRulersVisible:YES];
-		[logScrollView setRulersVisible:YES];
+		[self.logScrollView setRulersVisible:YES];
 		lineNumbersShowing = YES;
 	} else {
 		[scrollView setRulersVisible:NO];
 		[scrollView2 setRulersVisible:NO];
-		[logScrollView setRulersVisible:NO];
+		[self.logScrollView setRulersVisible:NO];
 		lineNumbersShowing = NO;
 	}
 }
@@ -438,11 +442,11 @@
 	[self setLogWindowForegroundColorFromPreferences: nil];
 	[self setLogWindowFontFromPreferences:nil];
     if ([SUD integerForKey: FindMethodKey] == 0)
-        [logTextView setUsesFindPanel: YES];
+        [self.logTextView setUsesFindPanel: YES];
     else if ([SUD integerForKey: FindMethodKey] == 1)
-        [logTextView setUsesFindBar:YES];
+        [self.logTextView setUsesFindBar:YES];
     else
-        [logTextView setUsesFindPanel: YES];
+        [self.logTextView setUsesFindPanel: YES];
 }
 
 
@@ -575,7 +579,7 @@
 	if ((theFileName == nil) && _externalEditor)
 		_externalEditor = NO;
 		
-	_documentType = isTeX;
+	self.documentType = isTeX;
 	
 	fileIsTex = YES;
 	
@@ -585,7 +589,7 @@
 		[self setFileType: fileExtension];
 		[typesetButton setEnabled: NO];
 		[typesetButtonEE setEnabled: NO];
-		_documentType = isOther;
+		self.documentType = isOther;
 		fileIsTex = NO;
 	}
 
@@ -663,14 +667,14 @@
 	*/
 	
 	// The next lines are needed because we may access scrollView2 even if the source window doesn't open
-	[scrollView2 retain];
+//	[scrollView2 retain];
 	[scrollView2 removeFromSuperview];
 	
-	[myPDFKitView2 retain];
+//	[myPDFKitView2 retain];
 	[myPDFKitView2 removeFromSuperview];
 	
 	// The following line is needed because otherwise there is a crash if a document is closed but the log file was never opened. Mysterious!
-	[logScrollView retain];
+//	[self.logScrollView retain];
 
 	[self setupConsole];
 	[self setupLogWindow];
@@ -707,20 +711,20 @@ if (! skipTextWindow) {
 	//  endforsplit
 	
 	if (lineNumbersShowing) {
-		if (lineNumberView1 == nil) {
+		if (self.lineNumberView1 == nil) {
             
-           	 lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
-			 lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
-			logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:logScrollView];
+           	 self.lineNumberView1 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
+			 self.lineNumberView2 = [[NoodleLineNumberView alloc] initWithScrollView:scrollView2];
+			self.logLineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:self.logScrollView];
 			
-			 [scrollView setVerticalRulerView:lineNumberView1];
-			 [scrollView2 setVerticalRulerView:lineNumberView2];
-			 [logScrollView setVerticalRulerView: logLineNumberView];
+			 [scrollView setVerticalRulerView:self.lineNumberView1];
+			 [scrollView2 setVerticalRulerView:self.lineNumberView2];
+			 [self.logScrollView setVerticalRulerView: self.logLineNumberView];
             
 // FIX RULER SCROLL
-            [lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
-            [lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
-            [logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
+            [self.lineNumberView1 setDocument:self]; // added by Terada (for Lion bug)
+            [self.lineNumberView2 setDocument:self]; // added by Terada (for Lion bug)
+            [self.logLineNumberView setDocument:self]; // added by Terada (for Lion bug)
 // END FIX RULER SCROLL
 			
 			 [scrollView setHasVerticalRuler:YES];
@@ -729,12 +733,12 @@ if (! skipTextWindow) {
 			 [scrollView2 setHasVerticalRuler:YES];
 			 [scrollView2 setHasHorizontalRuler:NO];
 			
-			[logScrollView setHasVerticalRuler:YES];
-			[logScrollView setHasHorizontalRuler:NO];
+			[self.logScrollView setHasVerticalRuler:YES];
+			[self.logScrollView setHasHorizontalRuler:NO];
 			}
 		  [scrollView setRulersVisible:YES];
 		 [scrollView2 setRulersVisible:YES];
-		[logScrollView setRulersVisible:YES];
+		[self.logScrollView setRulersVisible:YES];
 		}
 
 	}
@@ -748,7 +752,7 @@ if (! skipTextWindow) {
 	[self setupToolbar];
 
 	if ([SUD boolForKey:ShowSyncMarksKey]) {
-		[syncBox setState:1];
+		[self.syncBox setState:1];
 		showSync = YES;
 	}
 
@@ -786,7 +790,7 @@ if (! skipTextWindow) {
 
 	// mitsu 1.29 (S4)-- flipped clip view
 	// the following code allows the window to be anchored at top left when scrolled
-	[pdfView retain]; // hold it when clipView is released
+//	[pdfView retain]; // hold it when clipView is released
 	NSScrollView *pdfScrollView = [pdfView enclosingScrollView];
 	NSClipView *pdfClipView = [pdfScrollView contentView];
 	NSRect clipFrame = [pdfClipView frame];
@@ -794,9 +798,9 @@ if (! skipTextWindow) {
 	[pdfScrollView setContentView: pdfClipView];
 	[pdfClipView setBackgroundColor: [NSColor windowBackgroundColor]];
 	[pdfClipView setDrawsBackground: YES];
-	[pdfClipView release];
+//	[pdfClipView release];
 	[pdfScrollView setDocumentView: pdfView];
-	[pdfView release];
+//	[pdfView release];
 	[pdfView setAutoresizingMask: NSViewNotSizable];
 	// notification for scroll
 	[[NSNotificationCenter defaultCenter] addObserver:pdfView selector:@selector(wasScrolled:)
@@ -806,7 +810,7 @@ if (! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(colorizeAll)
 												 name:@"NeedsForRecolorNotification" object:nil]; // added by Terada
 
-	[pdfView setImageType: _documentType];
+	[pdfView setImageType: self.documentType];
 
 	if (!fileIsTex) {
 		imageFound = NO;
@@ -817,46 +821,46 @@ if (! skipTextWindow) {
 
 			if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
 				myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
-				_pdfLastModDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+				self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate] ;
 			}
 
 			[pdfKitWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4;
 			// supposed to allow command click of window title to lead to file, but doesn't
-			_documentType = isPDF;
+			self.documentType = isPDF;
 		} else if (([fileExtension isEqualToString: @"jpg"]) ||
 				 ([fileExtension isEqualToString: @"jpeg"]) ||
 				 ([fileExtension isEqualToString: @"JPG"])) {
 			imageFound = YES;
-			self.texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
+			self.texRep = [NSBitmapImageRep imageRepWithContentsOfFile: imagePath];
 			[pdfWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
-			_documentType = isJPG;
+			self.documentType = isJPG;
 			[previousButton setEnabled:NO];
 			[nextButton setEnabled:NO];
 		} else if (([fileExtension isEqualToString: @"tiff"]) ||
 				 ([fileExtension isEqualToString: @"png"]) ||
 				 ([fileExtension isEqualToString: @"tif"])) {
 			imageFound = YES;
-			self.texRep = [[NSBitmapImageRep imageRepWithContentsOfFile: imagePath] retain];
+			self.texRep = [NSBitmapImageRep imageRepWithContentsOfFile: imagePath];
 			[pdfWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
-			_documentType = isTIFF;
+			self.documentType = isTIFF;
 			[previousButton setEnabled:NO];
 			[nextButton setEnabled:NO];
 		} else if (([fileExtension isEqualToString: @"dvi"]) ||
 				 ([fileExtension isEqualToString: @"ps"]) ||
 				 ([fileExtension isEqualToString:@"eps"]))
 		{
-			_documentType = isPDF;
-			[pdfView setImageType: _documentType];
+			self.documentType = isPDF;
+			[pdfView setImageType: self.documentType];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4
 			[self convertDocument];
 			return;
 		}
 
 		if (imageFound) {
-			if (_documentType == isPDF) {
+			if (self.documentType == isPDF) {
 
 				PDFfromKit = YES;
 				[myPDFKitView showWithPath: imagePath];
@@ -868,25 +872,25 @@ if (! skipTextWindow) {
 				[pdfKitWindow setTitle: [imagePath lastPathComponent]];
 				[pdfKitWindow makeKeyAndOrderFront: self];
 				[self fillLogWindowIfVisible];
-				if ((_documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
-					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
-																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
+				if ((self.documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
+					self.pdfRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
+																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES];
                     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-                        _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
+                        self.pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 				}
 			} else {
-				[pdfView setImageType: _documentType];
+				[pdfView setImageType: self.documentType];
 				[pdfView setImageRep: self.texRep]; // this releases old one!
 
 				if (self.texRep != nil)
 					[pdfView display];
 				[pdfWindow makeKeyAndOrderFront: self];
 
-				if ((_documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
-					_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
-																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
+				if ((self.documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
+					self.pdfRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
+																		target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES];
                     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-                       _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
+                       self.pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 				}
 			}
             return;
@@ -974,7 +978,7 @@ if (! skipTextWindow) {
 
 		PDFfromKit = YES;
 		myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
-		_pdfLastModDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+		self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate];
 
 		[myPDFKitView showWithPath: imagePath];
 		// [myPDFKitView2 prepareSecond];
@@ -1006,9 +1010,9 @@ if (! skipTextWindow) {
 
 	if (_externalEditor && ([SUD boolForKey: PdfRefreshKey] == YES)) {
 
-		_pdfRefreshTimer = [[NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] retain];
+		self.pdfRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey] target:self selector:@selector(refreshPDFWindow:) userInfo:nil repeats:YES] ;
         if ([[NSProcessInfo processInfo] respondsToSelector:@selector(beginActivityWithOptions:reason:)])
-            _pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
+            self.pdfActivity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason:@"update pdf when rewritten"];
 	}
 
 	if (_externalEditor && [SUD boolForKey: ExternalEditorTypesetAtStartKey]) {
@@ -1017,7 +1021,7 @@ if (! skipTextWindow) {
 		if (texName && [[NSFileManager defaultManager] fileExistsAtPath:texName]) {
 			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: texName error:NULL];
 			NSDate *texDate = [myAttributes objectForKey:NSFileModificationDate];
-			if ((_pdfLastModDate == nil) || ([texDate compare:_pdfLastModDate] == NSOrderedDescending))
+			if ((self.pdfLastModDate == nil) || ([texDate compare:self.pdfLastModDate] == NSOrderedDescending))
 				[self doTypeset:self];
 		}
 	}
@@ -1067,16 +1071,16 @@ if (! skipTextWindow) {
         
     }
     
-    if ((sender == logTextView) && ([logScrollView scrollerStyle] == NSScrollerStyleOverlay)) {
+    if ((sender == self.logTextView) && ([self.logScrollView scrollerStyle] == NSScrollerStyleOverlay)) {
     
-    NSRect currentRectConsole = [logScrollView documentVisibleRect];
+    NSRect currentRectConsole = [self.logScrollView documentVisibleRect];
     if(!NSEqualRects(currentRectConsole, lastDocumentVisibleRectConsole)){
-        theFrame = [logScrollView frame];
+        theFrame = [self.logScrollView frame];
         newSize.width = theFrame.size.width;
         newSize.height = theFrame.size.height+1;
-        [logScrollView setFrameSize:newSize];
+        [self.logScrollView setFrameSize:newSize];
         newSize.height = theFrame.size.height;
-        [logScrollView setFrameSize:newSize];
+        [self.logScrollView setFrameSize:newSize];
         lastDocumentVisibleRectConsole = currentRectConsole;
     }
         
@@ -1133,7 +1137,7 @@ if (! skipTextWindow) {
 	while ((anObject = [enumerator nextObject]))
 		[openSaveView addSubview: anObject];
 
-	[openSaveView retain];	// FIXME: Why is this retain needed?
+//	[openSaveView retain];	// FIXME: Why is this retain needed?
 
 	[savePanel setAccessoryView: openSaveView];
 	return YES;
@@ -1339,9 +1343,9 @@ in other code when an external editor is being used. */
 					spellLanguageChanged = YES;
 					if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
 						[theChecker setAutomaticallyIdentifiesLanguages:NO];
-					if (spellLanguage != nil)
-						[spellLanguage release];
-					spellLanguage = [spellcheckString retain];
+					if (self.spellLanguage != nil)
+	//					[self.spellLanguage release];
+					self.spellLanguage = spellcheckString;
 					}
 			}
 		}
@@ -1397,7 +1401,7 @@ in other code when an external editor is being used. */
 		}
 	}
 	
-	[firstBytes release];
+//	[firstBytes release];
 	
 	return theEncoding;
 }
@@ -1540,11 +1544,11 @@ in other code when an external editor is being used. */
 //END PATCH
 
 	NSString *content;
-	content = [[[NSString alloc] initWithData:myData encoding:_encoding] autorelease];
+	content = [[NSString alloc] initWithData:myData encoding:_encoding] ;
 	if (!content) {
 		_badEncoding = _encoding;
 		showBadEncodingDialog = YES;
-		content = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
+		content = [[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] ;
 	}
 
 	if (content) {
@@ -1643,8 +1647,8 @@ in other code when an external editor is being used. */
 	if (! spellLanguageChanged)
 		return;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
-	if (spellLanguage != nil) {
-		[theChecker setLanguage:spellLanguage]; 
+	if (self.spellLanguage != nil) {
+		[theChecker setLanguage:self.spellLanguage];
 		if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
 			[theChecker setAutomaticallyIdentifiesLanguages:NO];
 	}
@@ -1672,7 +1676,7 @@ in other code when an external editor is being used. */
 	
     fileName = [[self fileURL] path];
     
-	if (_documentType == isTeX) {
+	if (self.documentType == isTeX) {
 		
 		if (!_externalEditor) {
 			theSource = [_textStorage string];
@@ -1684,16 +1688,16 @@ in other code when an external editor is being used. */
 		
 		imagePath = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 	}
-	else if (_documentType == isPDF)
+	else if (self.documentType == isPDF)
 		imagePath = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 	else
 		imagePath = fileName;
 	
 	aRep = nil;
 	if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
-		if ((_documentType == isTeX) || (_documentType == isPDF))
+		if ((self.documentType == isTeX) || (self.documentType == isPDF))
 			aRep = [NSPDFImageRep imageRepWithContentsOfFile: imagePath];
-		else if (_documentType == isJPG || _documentType == isTIFF)
+		else if (self.documentType == isJPG || self.documentType == isTIFF)
 			aRep = [NSImageRep imageRepWithContentsOfFile: imagePath];
 		if (aRep == nil)
 			return;
@@ -1709,14 +1713,68 @@ in other code when an external editor is being used. */
              }
         
  		printOperation = [NSPrintOperation printOperationWithView:printView printInfo: [self printInfo]];
+        
+        
+  // Dirk-Willem van Gulik: code to add job title to print job
+         // try to set some sensible job title - and try to improve on it by
+        // checking if there is a /title in the PDF.
+        //
+        [printOperation setJobTitle:[[imagePath lastPathComponent] stringByDeletingPathExtension]];
+        
+		if ((_documentType == isTeX) || (_documentType == isPDF)) {
+            NSData * raw = [aRep PDFRepresentation];
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1040)
+            PDFDocument * doc = [[PDFDocument alloc] initWithData:raw];
+            for(NSString * entry in @[PDFDocumentTitleAttribute, PDFDocumentSubjectAttribute]) {
+                if ([[[doc documentAttributes] objectForKey:entry] length]) {
+                    [printOperation setJobTitle:[[doc documentAttributes] objectForKey:entry]];
+                    break;
+                }
+            }
+#else
+#define TITLESIG "/Title("
+#define SUBJCSIG "/Subject("
+            for(const void *endptr, * ptr = [raw bytes] + MAX(0, [raw length] - 16 * 1024);
+                ptr < [raw bytes] + [raw length] - MAX(sizeof(TITLESIG), sizeof(SUBJCSIG)) - 4;
+                ptr++) {
+                
+                if ((*((char*)ptr) == '/') && (bcmp(ptr,TITLESIG,sizeof(TITLESIG)-1) == 0) && ((endptr = index(ptr, ')')) != NULL)) {
+                    [printOperation setJobTitle:[[NSString alloc] initWithBytes:ptr+sizeof(TITLESIG)-1
+                                                                         length:endptr-ptr-sizeof(TITLESIG)+1
+                                                                       encoding:NSUTF8StringEncoding]];
+                    break;
+                }
+                if ((*(char*)ptr == '/') && (bcmp(ptr,SUBJCSIG,sizeof(SUBJCSIG)-1)  == 0) && ((endptr = index(ptr, ')')) != NULL)) {
+                    [printOperation setJobTitle:[[NSString alloc] initWithBytes:ptr+sizeof(SUBJCSIG)-1
+                                                                         length:endptr-ptr-sizeof(SUBJCSIG)+1
+                                                                       encoding:NSUTF8StringEncoding]];
+                    break;
+                }
+            }
+#endif
+        }
+        
+ // Dirk-Willem van Gulik: end of job title addition
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         [printOperation setShowsPrintPanel:flag];
         [printOperation setShowsProgressPanel:flag];
         printPanel = [printOperation printPanel];
         [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
        //  [printPanel setOptions: (NSPrintPanelShowsPreview | NSPrintPanelShowsOrientation | NSPrintPanelShowsPageRange) ]; //( NSPrintPanelShowsPageSetupAccessory & [printPanel options])]; // NSPrintPanelShowsOrientation)];
 		[printOperation runOperation];
-		[printView release];
-	} else if (_documentType == isTeX)
+//		[printView release];
+	} else if (self.documentType == isTeX)
 		{
 		result = [NSApp runModalForWindow: printRequestPanel];
 		[printRequestPanel close];
@@ -1731,16 +1789,16 @@ in other code when an external editor is being used. */
 - (void)close
 {
 	
-	[tagTimer invalidate];
-	[tagTimer release];
-	tagTimer = nil;
+	[self.tagTimer invalidate];
+//	[self.tagTimer release];
+	self.tagTimer = nil;
     
-    if ((_pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
-        [[NSProcessInfo processInfo] endActivity: _pdfActivity];
-    _pdfActivity = nil;
-	[_pdfRefreshTimer invalidate];
-	[_pdfRefreshTimer release];
-	_pdfRefreshTimer = nil;
+    if ((self.pdfActivity != nil) && ([[NSProcessInfo processInfo] respondsToSelector: @selector(endActivity:)]))
+        [[NSProcessInfo processInfo] endActivity: self.pdfActivity];
+    self.pdfActivity = nil;
+	[self.pdfRefreshTimer invalidate];
+//	[self.pdfRefreshTimer release];
+	self.pdfRefreshTimer = nil;
 
 	// [[pdfWindow toolbar] setVisible: NO];
 	// [[pdfKitWindow toolbar] setVisible: NO];
@@ -1748,6 +1806,8 @@ in other code when an external editor is being used. */
 	[(TSToolbar *)[pdfKitWindow toolbar] turnVisibleOff:YES];
 	[pdfWindow close];
 	[pdfKitWindow close];
+    [outputWindow close];
+    [self.logWindow close];
 	
 	/* The next line fixes a crash bug in Jaguar; see notifyActiveTextWindowClosed for
 	a description. */
@@ -1826,7 +1886,7 @@ in other code when an external editor is being used. */
 		NSString *tempDir = NSTemporaryDirectory();
 #warning 64BIT: Check formatting arguments
 		myFileName = [tempDir stringByAppendingPathComponent: [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"txt"]];
-		statTempFile = [myFileName retain]; // when we are done, the file will be erased and the variable released and set to zero
+		self.statTempFile = myFileName; // when we are done, the file will be erased and the variable released and set to zero
 		[statString writeToFile:myFileName atomically:YES encoding:_encoding error: NULL];
 		doSelection = YES;
 	}
@@ -1841,8 +1901,8 @@ in other code when an external editor is being used. */
 		[self.detexTask terminate];
 		myDate = [NSDate date];
 		while (([self.detexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[self.detexTask release];
-		[self.detexPipe release];
+//		[self.detexTask release];
+//		[self.detexPipe release];
 		self.detexTask = nil;
 		self.detexPipe = nil;
 	}
@@ -1854,8 +1914,8 @@ in other code when an external editor is being used. */
 	tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	args = [NSMutableArray array];
 	[args addObject:tetexBinPath];
-	[args addObject: [myFileName  stringByStandardizingPath]];
-	self.detexPipe = [[NSPipe pipe] retain];
+ 	[args addObject: [myFileName  stringByStandardizingPath]];
+	self.detexPipe = [NSPipe pipe];
 	self.detexHandle = [self.detexPipe fileHandleForReading];
 	[self.detexHandle readInBackgroundAndNotify];
 	[self.detexTask setStandardOutput: self.detexPipe];
@@ -1863,9 +1923,12 @@ in other code when an external editor is being used. */
 		[self.detexTask setLaunchPath:enginePath];
 		[self.detexTask setArguments:args];
 		[self.detexTask launch];
+        NSLog(enginePath);
+        NSLog(tetexBinPath);
+        NSLog([myFileName stringByStandardizingPath]);
 	} else {
-		if (self.detexPipe)
-			[self.detexTask release];
+//		if (self.detexPipe)
+//			[self.detexTask release];
 		self.detexTask = nil;
 	}
 	
@@ -2275,7 +2338,8 @@ in other code when an external editor is being used. */
 	[windowController setShouldCascadeWindows:NO];
 
 	// restore window position for the document window
-	
+	NSWindow *activeTextWindow;
+    
 	// strangely, the "setFrameFromString" below causes a long delay is the file type is "pdf" but not for "tiff" or other types!
 	if (! [[[[self fileURL] path] pathExtension] isEqualToString: @"pdf"])
 		switch ([SUD integerForKey:DocumentWindowPosModeKey])
@@ -2283,7 +2347,7 @@ in other code when an external editor is being used. */
 			case DocumentWindowPosSave:
 				[textWindow setFrameAutosaveName:DocumentWindowNameKey];
 				// added by Terada (from this line)
-				NSWindow *activeTextWindow = [[TSWindowManager sharedInstance] activeTextWindow];
+				activeTextWindow = [[TSWindowManager sharedInstance] activeTextWindow];
 				if(activeTextWindow){
 					[self repositionWindow:textWindow activeWindow:activeTextWindow];
 				}
@@ -2329,13 +2393,14 @@ in other code when an external editor is being used. */
 			NSInteger i;
 			NSInteger *listOfWindows;
 			
-			NSCountWindowsForContext([NSApp contextID], &numberOfWindows);
+		//	NSCountWindowsForContext([NSApp contextID], &numberOfWindows);
+            NSCountWindows(&numberOfWindows);
 			
 			if (numberOfWindows>0){
 #warning 64BIT: Inspect use of sizeof
 				listOfWindows = malloc(numberOfWindows * sizeof(NSInteger));
-				NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
-				
+				//NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
+				NSWindowList(numberOfWindows, listOfWindows);
 				for(i=0; i<numberOfWindows; i++){
 					NSWindow *aWindow = [NSApp windowWithWindowNumber:listOfWindows[i]];
 					if ([aWindow isKindOfClass:[TSPreviewWindow class]]) {
@@ -2404,7 +2469,7 @@ in other code when an external editor is being used. */
 				[popupButton addItemWithTitle: @""];
 				newItem = [popupButton lastItem];
 				[newItem setTitle: title];
-				submenu = [[[NSMenu alloc] init] autorelease];
+				submenu = [[NSMenu alloc] init];
 				[self makeMenuFromDirectory: submenu basePath: path
 									 action: @selector(doTemplate:) level: lv];
 				[newItem setSubmenu: submenu];
@@ -2444,7 +2509,7 @@ in other code when an external editor is being used. */
 			if (isDirectory) {
 				newItem = [menu addItemWithTitle: title action: nil keyEquivalent: @""];
 				if (level > 0) {
-					submenu = [[[NSMenu alloc] init] autorelease];
+					submenu = [[NSMenu alloc] init] ;
 					[self makeMenuFromDirectory: submenu basePath: path
 										 action: action level: level];
 					[newItem setSubmenu: submenu];
@@ -2493,9 +2558,9 @@ in other code when an external editor is being used. */
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
         
         if ([SUD boolForKey:ScreenFontForLogAndConsoleKey])
-            [logTextView setFont:[font screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
+            [self.logTextView setFont:[font screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
         else
-            [logTextView setFont: font];
+            [self.logTextView setFont: font];
 	}
 }
 
@@ -2591,7 +2656,7 @@ in other code when an external editor is being used. */
 												green: [SUD floatForKey:background_GKey]
 												 blue: [SUD floatForKey:background_BKey]
 												alpha:1.0];
-	[logTextView setBackgroundColor: backgroundColor];
+	[self.logTextView setBackgroundColor: backgroundColor];
 }
 
 - (void)setLogWindowForegroundColorFromPreferences:(NSNotification *)notification
@@ -2603,7 +2668,7 @@ in other code when an external editor is being used. */
 												 blue: [SUD floatForKey:foreground_BKey]
 												alpha:1.0];
 	
-	[logTextView setTextColor: foregroundColor];
+	[self.logTextView setTextColor: foregroundColor];
 }
 
 
@@ -2631,11 +2696,11 @@ in other code when an external editor is being used. */
 {
 	NSFont 	*font;
 
-	if (previousFontData != nil)
-			[previousFontData release];
+//	if (self.previousFontData != nil)
+//			[self.previousFontData release];
 	{
 		font = [textView font];
-		previousFontData = [[NSArchiver archivedDataWithRootObject: font] retain];
+		self.previousFontData = [NSArchiver archivedDataWithRootObject: font];
 	}
 }
 	 
@@ -2644,13 +2709,13 @@ in other code when an external editor is being used. */
 	{
 		unichar esc = 0x001B; // configure the key in Preferences?
 		unichar tab = 0x0009; // ditto
-		if (g_commandCompletionChar)
-			[g_commandCompletionChar release];
+	//	if (g_commandCompletionChar)
+	//		[g_commandCompletionChar release];
 		
 		if ([[SUD stringForKey: CommandCompletionCharKey] isEqualToString:@"ESCAPE"]) 
-			g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &esc length: 1] ;
 		else
-			g_commandCompletionChar = [[NSString stringWithCharacters: &tab length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &tab length: 1];
 		
 	}
 
@@ -2660,12 +2725,12 @@ preference change is cancelled. "*/
 {
 	NSFont 	*font;
 
-	if (previousFontData != nil)
+	if (self.previousFontData != nil)
 	{
-		font = [NSUnarchiver unarchiveObjectWithData:previousFontData];
+		font = [NSUnarchiver unarchiveObjectWithData:self.previousFontData];
 		[textView1 setFont:font];
 		[textView2 setFont:font];
-		[logTextView setFont:font];
+		[self.logTextView setFont:font];
 	}
 	[self fixUpTabs];
 }
@@ -2972,7 +3037,7 @@ preference change is cancelled. "*/
 		// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
 		myData = [NSData dataWithContentsOfFile:nameString];
 		theEncoding = [self dataEncoding: myData];
-		templateString = [[[NSMutableString alloc] initWithData:myData encoding:theEncoding] autorelease];
+		templateString = [[NSMutableString alloc] initWithData:myData encoding:theEncoding] ;
 
 		// check and rebuild the trailing string...
 #warning 64BIT: Inspect pointer casting
@@ -3090,15 +3155,15 @@ preference change is cancelled. "*/
 {
 // The test below is an error, since it completely turns off tagging.
 //	if ([SUD boolForKey: TagSectionsKey]) { 
-		[tagTimer invalidate];
-		[tagTimer release];
-		tagTimer = nil;
+		[self.tagTimer invalidate];
+	//	[self.tagTimer release];
+		self.tagTimer = nil;
 
 		tagLocation = 0;
 		tagLocationLine = 0;
 		[tags removeAllItems];
 		[tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
-		tagTimer = [[NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] retain];
+		self.tagTimer = [NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] ;
 //	}
 }
 
@@ -3215,9 +3280,9 @@ preference change is cancelled. "*/
 	tagLocationLine = lineNumber;
 	if (tagLocation >= length)
 	{
-		[tagTimer invalidate];
-		[tagTimer release];
-		tagTimer = nil;
+		[self.tagTimer invalidate];
+//		[self.tagTimer release];
+		self.tagTimer = nil;
 	}
 
 }
@@ -3693,16 +3758,16 @@ preference change is cancelled. "*/
 	myRoot = nil;
 	doError = NO;
 	
-	if (rootDocument != nil) {
+	if (self.rootDocument != nil) {
 		wlist = [NSApp orderedDocuments];
 		en = [wlist objectEnumerator];
 		while ((obj = [en nextObject])) {
-			if (obj == rootDocument)
-				myRoot = rootDocument;
+			if (obj == self.rootDocument)
+				myRoot = self.rootDocument;
 		}
 	}
 	
-	if (rootDocument == nil) {
+	if (self.rootDocument == nil) {
 		if (errorNumber > 0) {
 			doError = YES;
 			if (whichError >= errorNumber)
@@ -3715,14 +3780,14 @@ preference change is cancelled. "*/
 				whichError = 0;
 		}
 	} else {
-		myErrorNumber = [rootDocument totalErrors];
+		myErrorNumber = [self.rootDocument totalErrors];
 		if (myErrorNumber > 0) {
 			doError = YES;
 			if (whichError >= myErrorNumber)
 				whichError = 0;
-			myErrorLine = [rootDocument errorLineFor: whichError];
-			myErrorPath = [rootDocument errorLinePathFor: whichError];
-			myErrorText = [rootDocument errorTextFor: whichError];
+			myErrorLine = [self.rootDocument errorLineFor: whichError];
+			myErrorPath = [self.rootDocument errorLinePathFor: whichError];
+			myErrorText = [self.rootDocument errorTextFor: whichError];
 			whichError++;
 			if (whichError >= myErrorNumber)
 				whichError = 0;
@@ -3905,10 +3970,12 @@ preference change is cancelled. "*/
 }
 
 
+/*
 - (TSDocumentType) documentType
 {
-	return _documentType;
+	return self.documentType;
 }
+*/
 
 - (NSPDFImageRep *) myTeXRep
 {
@@ -3925,7 +3992,7 @@ preference change is cancelled. "*/
 	if (!fileIsTex) {
 		if ([anItem action] == @selector(saveDocument:) ||
 			[anItem action] == @selector(printSource:))
-			return (_documentType == isOther);
+			return (self.documentType == isOther);
 		if ([anItem action] == @selector(doTex:) ||
 			[anItem action] == @selector(doLatex:) ||
 			[anItem action] == @selector(doBibtex:) ||
@@ -3934,9 +4001,9 @@ preference change is cancelled. "*/
 			[anItem action] == @selector(doContext:))
 			return NO;
 		if ([anItem action] == @selector(printDocument:))
-			return ((_documentType == isPDF) ||
-					(_documentType == isJPG) ||
-					(_documentType == isTIFF));
+			return ((self.documentType == isPDF) ||
+					(self.documentType == isJPG) ||
+					(self.documentType == isTIFF));
 		if ([anItem action] == @selector(setProjectFile:))
 			return NO;
 
@@ -4029,12 +4096,12 @@ preference change is cancelled. "*/
 
 - (NSWindow *)getCallingWindow
 {
-	return callingWindow;
+	return self.ourCallingWindow;
 }
 
 - (void)setCallingWindow: (NSWindow *)thisWindow
 {
-	callingWindow = thisWindow;
+	self.ourCallingWindow = thisWindow;
 }
 
 - (void)setPdfSyncLine:(NSInteger)line
@@ -4509,7 +4576,7 @@ preference change is cancelled. "*/
 //=============================================================================
 
 // Reload the PDF file associated with this document (if any). This method is called
-// at regular intervals by _pdfRefreshTimer.
+// at regular intervals by pdfRefreshTimer.
 - (void) refreshPDFWindow:(NSTimer *)timer
 {
 	NSString		*pdfPath;
@@ -4524,12 +4591,12 @@ preference change is cancelled. "*/
 		// The PDF exists. Now check whether its modification date changed.
 		myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: pdfPath error:NULL];
 		newDate = [myAttributes objectForKey:NSFileModificationDate];
-		if ((_pdfLastModDate == nil) || ([newDate compare:_pdfLastModDate] == NSOrderedDescending) || _pdfRefreshTryAgain) {
+		if ((self.pdfLastModDate == nil) || ([newDate compare:self.pdfLastModDate] == NSOrderedDescending) || _pdfRefreshTryAgain) {
 			
 			_pdfRefreshTryAgain = NO;
-			[newDate retain];
-			[_pdfLastModDate release];
-			_pdfLastModDate = newDate;
+//			[newDate retain];
+//			[self.pdfLastModDate release];
+			self.pdfLastModDate = newDate;
 			
 			front = [SUD boolForKey: BringPdfFrontOnAutomaticUpdateKey];
 			[self refreshPDFAndBringFront: front];
@@ -4590,7 +4657,7 @@ preference change is cancelled. "*/
 
 		if (theString != nil) {
 			[textView setString: theString];
-			[theString release];
+	//		[theString release];
 			if (fileIsTex) {
 				if (windowIsSplit)
 					[self splitWindow: self];
@@ -4663,7 +4730,7 @@ preference change is cancelled. "*/
 							
 							// new code to find text just before error
 							if (errorText[errorNumber] != nil)
-								[errorText[errorNumber] release];
+				//				[errorText[errorNumber] release];
 							errorText[errorNumber] = nil;
 							
 							searchDotsRange = [numberOutput rangeOfString: @"..."];
@@ -4672,20 +4739,20 @@ preference change is cancelled. "*/
 								if (searchDotsRange.location != NSNotFound) {
 									searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 1)];
 									if (searchText != nil)
-										errorText[errorNumber] = [searchText retain];
+										errorText[errorNumber] = searchText ;
 								}
 							}
 							else {
 								searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 3)];
 								if (searchText != nil)
-									errorText[errorNumber]  = [searchText retain];
+									errorText[errorNumber]  = searchText ;
 							}
 								
 							
 							// new code to find file containing error
 							// ----------
-							if (errorLinePath[errorNumber] != nil)
-								[errorLinePath[errorNumber] release];
+					//		if (errorLinePath[errorNumber] != nil)
+					//			[errorLinePath[errorNumber] release];
 							errorLinePath[errorNumber] = nil;
 							
 							theNumber = [NSNumber numberWithInteger:error];
@@ -4697,7 +4764,7 @@ preference change is cancelled. "*/
 								pathRange.location = start1;
 								pathRange.length = errorRange.location - pathRange.location;
 								thePath = [newOutput substringWithRange: pathRange];
-								errorLinePath[errorNumber] = [thePath retain];
+								errorLinePath[errorNumber] = thePath ;
 							}
 							// end of new code
 							// -----------
@@ -4718,7 +4785,7 @@ preference change is cancelled. "*/
 				[outputText setTextColor:[NSColor redColor] range: theRange];
 			}
 			[outputText scrollRangeToVisible: [outputText selectedRange]];
-			[newOutput release];
+	//		[newOutput release];
 			[self.readHandle readInBackgroundAndNotify];
 		}
 	} else if (myFileHandle == self.detexHandle) {
@@ -4740,10 +4807,10 @@ preference change is cancelled. "*/
 				[[statisticsForm cellAtIndex:2] setObjectValue:[charNumber stringValue]];
 			}
 		}
-		if (statTempFile) { // we got statistics for a selection and need to erase the temp file
-			[[NSFileManager defaultManager] removeItemAtPath:statTempFile error: NULL];
-			[statTempFile release];
-			statTempFile = nil;
+		if (self.statTempFile) { // we got statistics for a selection and need to erase the temp file
+			[[NSFileManager defaultManager] removeItemAtPath:self.statTempFile error: NULL];
+		//	[self.statTempFile release];
+			self.statTempFile = nil;
 			}
 	}
 }
@@ -4941,9 +5008,9 @@ preference change is cancelled. "*/
 
 - (void) flipShowSync: sender
 {
-	NSInteger theState = [(NSCell *)syncBox state];
+	NSInteger theState = [(NSCell *)self.syncBox state];
 	NSInteger newState = 1 - theState;
-	[syncBox setState: newState];
+	[self.syncBox setState: newState];
 	if ( newState == 1 )
 		showSync = YES;
 	else
@@ -4957,9 +5024,9 @@ preference change is cancelled. "*/
 - (void) flipIndexColorState: sender
 {
 
-	NSInteger theState = [(NSCell *)indexColorBox state];
+	NSInteger theState = [(NSCell *)self.indexColorBox state];
 	NSInteger newState = 1 - theState;
-	[indexColorBox setState: newState];
+	[self.indexColorBox setState: newState];
 	if (newState == 1)
 		showIndexColor = YES;
 	else
@@ -5026,46 +5093,51 @@ preference change is cancelled. "*/
 
 // BibDesk Completion; Adam Maxwell
 
+/*
  - (NSConnection *)completionConnection{
  
-	return _completionConnection;
+	return self.completionConnection;
  }
  
  - (void)setCompletionConnection:(NSConnection *)completionConnection{
 	
-	_completionConnection = completionConnection;
+	self.completionConnection = completionConnection;
 	}
- 
+ */
+
+/*
  - (id)completionServer{
  
-	return _completionServer;
+	return self.completionServer;
 }
+
 
  - (void)setCompletionServer:(id)completionServer{
 	
-	_completionServer = completionServer;
+	self.completionServer = completionServer;
 }
+*/
 
 - (void)invalidateCompletionConnection
 {
-    [[_completionConnection sendPort] invalidate];
-    [[_completionConnection receivePort] invalidate];
-    [_completionConnection invalidate];
-    [_completionConnection release];
-    _completionConnection = nil;
-    [_completionServer release];
-    _completionServer = nil;
+    [[self.completionConnection sendPort] invalidate];
+    [[self.completionConnection receivePort] invalidate];
+    [self.completionConnection invalidate];
+ //   [self.completionConnection release];
+    self.completionConnection = nil;
+ //   [self.completionServer release];
+    self.completionServer = nil;
 }
 
 - (void)registerForConnectionDidDieNotification
 {
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleConnectionDied:) name:NSConnectionDidDieNotification object:_completionConnection];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleConnectionDied:) name:NSConnectionDidDieNotification object:self.completionConnection];
 }
 
 - (void)handleConnectionDied:(NSNotification *)aNote
 {
-   if ([aNote object] == _completionConnection) {
-       [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:_completionConnection];
+   if ([aNote object] == self.completionConnection) {
+       [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:self.completionConnection];
        [self invalidateCompletionConnection];
    }
 }
@@ -5108,7 +5180,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		for (i = 1; i <= 100; i++) {
 			NSTextTab *tab = [[NSTextTab alloc] initWithType:NSLeftTabStopType location:widthOfTab * i];
 			[array addObject:tab];
-			[tab release];
+//			[tab release];
 		}
 		currentWidthOfTab = widthOfTab;
 	}
@@ -5140,7 +5212,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	NSUInteger					textStorageLength	= [_textStorage length];
     NSArray					*	desiredTabStops		= tabStopArrayForFontAndTabWidth(font, tabWidth);
 	NSParagraphStyle 		*	paraStyle			= [NSParagraphStyle defaultParagraphStyle];
-    NSMutableParagraphStyle	*	newStyle			= [[paraStyle mutableCopyWithZone:[_textStorage zone]] autorelease];
+    NSMutableParagraphStyle	*	newStyle			= [paraStyle mutableCopy] ;
     
     if (interlinespace < 0.5)
         interlinespace = 1.0;
@@ -5156,11 +5228,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	// Warning: the next six lines are needed to insure that new text added at the start of a line
 	// does not revert back to the old tab style
 		
-	NSMutableDictionary *theTypingAttributes = [[[NSMutableDictionary alloc] initWithCapacity:1] autorelease];
+	NSMutableDictionary *theTypingAttributes = [[NSMutableDictionary alloc] initWithCapacity:1] ;
 	[theTypingAttributes setObject:newStyle forKey:NSParagraphStyleAttributeName];
 	[textView1 setTypingAttributes:theTypingAttributes];
 	
-	NSMutableDictionary *theTypingAttributes2 = [[[NSMutableDictionary alloc] initWithCapacity:1] autorelease];
+	NSMutableDictionary *theTypingAttributes2 = [[NSMutableDictionary alloc] initWithCapacity:1];
 	[theTypingAttributes2 setObject:newStyle forKey:NSParagraphStyleAttributeName];
 	[textView2 setTypingAttributes:theTypingAttributes2];
         
@@ -6003,7 +6075,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void) showSyncMarks: sender
 {
-	if ([(NSCell *)syncBox state] == 1)
+	if ([(NSCell *)self.syncBox state] == 1)
 		showSync = YES;
 	else
 		showSync = NO;
@@ -6015,7 +6087,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void) showIndexColor: sender
 {
-	if ([(NSCell *)indexColorBox state] == 1)
+	if ([(NSCell *)self.indexColorBox state] == 1)
 		showIndexColor = YES;
 	else
 		showIndexColor = NO;
@@ -6346,13 +6418,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSMutableParagraphStyle		*	styleNew;
     if (textStorageLength)
     {
-        styleNew = [[[_textStorage attribute: NSParagraphStyleAttributeName atIndex: 0 effectiveRange: nil] mutableCopyWithZone: [_textStorage zone]] autorelease];
+        styleNew = [[_textStorage attribute: NSParagraphStyleAttributeName atIndex: 0 effectiveRange: nil] mutableCopy] ;
         [styleNew setLineBreakMode: lineBreakMode];
         [_textStorage addAttribute: NSParagraphStyleAttributeName value: styleNew range: NSMakeRange(0, textStorageLength)];
     }
     
 	//This is so that the when everything is deleted, the format remains the same.
-    styleNew = [[[textView defaultParagraphStyle] mutableCopy] autorelease];
+    styleNew = [[textView defaultParagraphStyle] mutableCopy];
     [styleNew setLineBreakMode: lineBreakMode];
     
 	[textView  setDefaultParagraphStyle: styleNew];
@@ -6365,7 +6437,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	NSRange				charRange			= [textView selectedRange];
     NSUInteger            textStorageIndexLast= [_textStorage length] - 1;
 	NSString		*	textStorageString	= [_textStorage string];
-	NSMutableArray	*	newlineIndexes		= [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray	*	newlineIndexes		= [[NSMutableArray alloc] init] ;
 	NSLayoutManager	*	layoutManager   	= [textView layoutManager];
 	
 	if ((charRange.length == 0) && ((charRange = [textView2 selectedRange]).length == 0))
@@ -6404,7 +6476,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void)removeNewLinesFromSelection: (id)sender
 {
 	NSString		*	textStorageString	= [_textStorage string];
-	NSMutableArray	*	newlineIndexes		= [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray	*	newlineIndexes		= [[NSMutableArray alloc] init] ;
 	NSRange				charRange			= [textView selectedRange];
 	
 	if (charRange.length == 0)
@@ -6430,7 +6502,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void)insertNewlinesFromSelectionUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName //added by mfwitten@mit.edu
 {	
 	NSUndoManager	*	undoManager			= [textView undoManager];
-	NSMutableArray	*	indexesReversed		= [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray	*	indexesReversed		= [[NSMutableArray alloc] init] ;
 	NSEnumerator	*	indexesEnumerator	= [indexes objectEnumerator];
 	NSNumber		*	idx;
     
@@ -6443,7 +6515,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	
 	while ((idx = (NSNumber*)[indexesEnumerator nextObject]))
 	{
-		[_textStorage insertAttributedString: [[[NSAttributedString alloc] initWithString: @"\n"] autorelease] atIndex: [idx unsignedIntegerValue]];
+		[_textStorage insertAttributedString: [[NSAttributedString alloc] initWithString: @"\n"]  atIndex: [idx unsignedIntegerValue]];
 		[indexesReversed insertObject: idx atIndex: 0];
 	}
     
@@ -6471,7 +6543,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void)removeNewlinesUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName //added by mfwitten@mit.edu
 {	
 	NSUndoManager	*	undoManager					= [textView undoManager];
-	NSMutableArray	*	indexesReversed				= [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray	*	indexesReversed				= [[NSMutableArray alloc] init] ;
 	NSEnumerator	*	indexesEnumerator			= [indexes objectEnumerator];
 	NSNumber		*	idx;
 	
@@ -6595,22 +6667,22 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	else {
 		isFullScreen = YES;
 		windowLevel = CGShieldingWindowLevel();
-		[fullscreenWindow setLevel:windowLevel];
+		[self.fullscreenWindow setLevel:windowLevel];
 		screenRect = [[NSScreen mainScreen] frame];
-		[fullscreenWindow setFrame: screenRect display: NO];
-		[fullscreenWindow setBackgroundColor:[NSColor darkGrayColor]];
+		[self.fullscreenWindow setFrame: screenRect display: NO];
+		[self.fullscreenWindow setBackgroundColor:[NSColor darkGrayColor]];
 	
-		[fullscreenPDFView setDisplayMode: kPDFDisplaySinglePage];
-		[fullscreenPDFView setAutoScales: YES];
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease];
-		[fullscreenPDFView setDocument: pdfDoc];
+		[self.fullscreenPDFView setDisplayMode: kPDFDisplaySinglePage];
+		[self.fullscreenPDFView setAutoScales: YES];
+		pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] ;
+		[self.fullscreenPDFView setDocument: pdfDoc];
 		
 		myCurrentPage = [myPDFKitView currentPage];
 		currentPageIndex = [[myPDFKitView document] indexForPage: myCurrentPage];
-		newPage = [[fullscreenPDFView document] pageAtIndex: currentPageIndex];
-		[fullscreenPDFView goToPage: newPage];
+		newPage = [[self.fullscreenPDFView document] pageAtIndex: currentPageIndex];
+		[self.fullscreenPDFView goToPage: newPage];
 		
-		[fullscreenWindow makeKeyAndOrderFront:nil];
+		[self.fullscreenWindow makeKeyAndOrderFront:nil];
 		}
 
 }
@@ -6624,8 +6696,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	if (isFullScreen) {
 		isFullScreen = NO;
 		
-		myCurrentPage = [fullscreenPDFView currentPage];
-		currentPageNumber = [[fullscreenPDFView document] indexForPage: myCurrentPage];
+		myCurrentPage = [self.fullscreenPDFView currentPage];
+		currentPageNumber = [[self.fullscreenPDFView document] indexForPage: myCurrentPage];
 		currentPageNumber++;
 		[myPDFKitView goToKitPageNumber: currentPageNumber];
 		
@@ -6637,7 +6709,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         	// or the user won't see anything.
 			}
 			
-		[fullscreenWindow orderOut:self];
+		[self.fullscreenWindow orderOut:self];
 		}
 }
 
@@ -6656,7 +6728,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void)fillLogWindowIfVisible
 {
 	
-	if ([logWindow isVisible])
+	if ([self.logWindow  isVisible])
 		[self fillLogWindow];
 }
 
@@ -6672,23 +6744,23 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     defaultEncoding = NSISOLatin9StringEncoding;
     theEncoding = _encoding;
 	// logPath = [[[self fileName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
-	if (logExtension == nil)
+	if (self.logExtension == nil)
 		return NO;
-	logPath = [[[[self fileURL] path]stringByDeletingPathExtension] stringByAppendingPathExtension:logExtension];
+	logPath = [[[[self fileURL] path]stringByDeletingPathExtension] stringByAppendingPathExtension:self.logExtension];
 
 	if ([[NSFileManager defaultManager] fileExistsAtPath: logPath] && [[NSFileManager defaultManager] isReadableFileAtPath: logPath]) 
 		{
 			logData = [[NSFileManager defaultManager] contentsAtPath:logPath];
 			if (!logData)
 				return NO;
-			content = [[[NSString alloc] initWithData:logData encoding:theEncoding] autorelease];
+			content = [[NSString alloc] initWithData:logData encoding:theEncoding] ;
             if (!content)
-                content = [[[NSString alloc] initWithData:logData encoding:defaultEncoding] autorelease];
+                content = [[NSString alloc] initWithData:logData encoding:defaultEncoding] ;
             if (!content) 
                 return NO;
-			[logTextView setString: content];
-			[logWindow setRepresentedFilename: logPath];
-			[logWindow setTitle:[logPath lastPathComponent]];
+			[self.logTextView setString: content];
+			[self.logWindow setRepresentedFilename: logPath];
+			[self.logWindow setTitle:[logPath lastPathComponent]];
 			return YES;
 		}
 	else
@@ -6726,10 +6798,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	//	newLogExtension = [NSString stringWithString:@"log"];
         newLogExtension = @"log";
 	
-	[newLogExtension retain];
-	if (logExtension != nil)
-		[logExtension release];
-	logExtension = newLogExtension;
+//	[newLogExtension retain];
+//	if (self.logExtension != nil)
+//		[self.logExtension release];
+	self.logExtension = newLogExtension;
 	
 	theSource = [_textStorage string];
 	if ([self checkMasterFile: theSource forTask:RootForLogFile])
@@ -6737,7 +6809,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	if ([self checkRootFile_forTask: RootForLogFile])
 		return;	
 	if ([self fillLogWindow])
-		[logWindow makeKeyAndOrderFront: self];	
+		[self.logWindow makeKeyAndOrderFront: self];
 }
 
 // // // // // // // //begin BULLET (H. Neary) (modified by (HS))
@@ -7163,7 +7235,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
              [picker showRelativeToRect: [textView1 bounds] ofView:textView1 preferredEdge: NSMaxXEdge];
          else
              [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
-         [picker release];
+  //       [picker release];
      }
 }
 
@@ -7179,8 +7251,8 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:10];
 
-    if ([self rootDocument])
-        thePDFKitView = [rootDocument pdfKitView];
+    if (self.rootDocument)
+        thePDFKitView = [self.rootDocument pdfKitView];
     else
         thePDFKitView = [self pdfKitView];
     
@@ -7193,7 +7265,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
             data = [thePDFKitView PDFImageDataFromSelection];
             if (data != nil) {
                 thePDFImageRep = [NSPDFImageRep imageRepWithData: data];
-                theImage = [[[NSImage alloc] init] autorelease];
+                theImage = [[NSImage alloc] init] ;
                 [theImage addRepresentation:thePDFImageRep];
                 count++;
                 [items addObject: theImage];
@@ -7209,7 +7281,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
         
             data = [thePDFKitView imageDataFromSelectionType: IMAGE_TYPE_PNG];
             if (data != nil) {
-                theImage = [[[NSImage alloc] initWithData:data] autorelease];
+                theImage = [[NSImage alloc] initWithData:data];
                 count++;
                 [items addObject: theImage];
                 }
@@ -7237,7 +7309,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
     if (count == 0) {
         NSURL *documentURL = [self fileURL];
         if (documentURL) {
-            NSURL *rootURL = [[self rootDocument] fileURL];
+            NSURL *rootURL = [self.rootDocument fileURL];
             if (rootURL) {
                 path = [rootURL path];
                 previewPath = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
@@ -7265,7 +7337,7 @@ NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcomme
             [picker showRelativeToRect: [thePDFKitView bounds] ofView:thePDFKitView preferredEdge: NSMaxXEdge];
         else
             [picker showRelativeToRect: NSZeroRect ofView:sender preferredEdge: NSMinYEdge];
-        [picker release];
+ //       [picker release];
     }
 }
 }

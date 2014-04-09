@@ -71,9 +71,9 @@
 
 - (MySelection*)selection
 {
-	if (!mSelection)
-		mSelection = [[MySelection alloc] initWithMyDocument:self];
-	return mSelection;
+	if (!self.mSelection)
+		self.mSelection = [[MySelection alloc] initWithMyDocument:self];
+	return self.mSelection;
 }
 
 // -----------------------------------------------------------------------------

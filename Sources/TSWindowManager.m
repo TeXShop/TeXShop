@@ -174,7 +174,7 @@ static id _sharedInstance = nil;
 - (void)pdfWindowWillClose:(NSNotification *)note
 {
 	self.activePDFWindow = nil;
-
+    
 }
 
 /*

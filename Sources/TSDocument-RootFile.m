@@ -29,10 +29,12 @@
 
 @implementation TSDocument (RootFile)
 
+/*
 - (id) rootDocument
 {
 	return rootDocument;
 }
+*/
 
 - (BOOL) checkRootFile: (NSString *)nameString forTask:(NSInteger)task
 {
@@ -51,7 +53,7 @@
 			if ([[obj fileName] isEqualToString:nameString]) {
 				if (obj == self)
 					return NO;
-				rootDocument = obj;
+				self.rootDocument = obj;
 				if (task == RootForConsole){
 					[obj displayConsole:nil];
 				} else if (task == RootForLogFile){
@@ -278,7 +280,7 @@
 	id theRoot;
 
 	// first save all related, open, dirty files
-	theRoot = rootDocument ? rootDocument : self;
+	theRoot = self.rootDocument ? self.rootDocument : self;
 
 	wlist = [NSApp orderedDocuments];
 	en = [wlist objectEnumerator];
@@ -286,7 +288,7 @@
 
 		if (([[obj windowNibName] isEqualToString:@"TSDocument"]) &&
 			(obj != self) &&
-			(([obj rootDocument] == theRoot) || (obj == rootDocument)) &&
+			(([obj rootDocument] == theRoot) || (obj == self.rootDocument)) &&
 			([obj isDocumentEdited])) {
 			[obj saveDocument:self];
 		}

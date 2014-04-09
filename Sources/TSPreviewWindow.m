@@ -72,10 +72,14 @@ extern NSPanel *pageNumberWindow;
 
 - (void)close
 {
+    TSDocument *theDocument = self.myDocument;
+    
 	[self.myPDFKitView setDocument: nil];
 	[self.myPDFKitView2 setDocument: nil];
 	self.willClose = YES;
-	
+    self.myDocument = nil;
+    if ([theDocument externalEditor]) [theDocument close];
+    
 	[super close];
 }
 

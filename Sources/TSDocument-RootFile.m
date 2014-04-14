@@ -58,6 +58,8 @@
 					[obj displayConsole:nil];
 				} else if (task == RootForLogFile){
 					[obj displayLog:nil];
+                } else if (task == RootForRedisplayLog){
+					[obj reDisplayLog];
 				} else if (task == RootForPrinting) {
 					[obj printDocument:nil];
 				} else if (task == RootForPdfSync) {

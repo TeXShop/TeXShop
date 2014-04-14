@@ -1923,9 +1923,9 @@ in other code when an external editor is being used. */
 		[self.detexTask setLaunchPath:enginePath];
 		[self.detexTask setArguments:args];
 		[self.detexTask launch];
-        NSLog(enginePath);
-        NSLog(tetexBinPath);
-        NSLog([myFileName stringByStandardizingPath]);
+  //      NSLog(enginePath);
+  //      NSLog(tetexBinPath);
+  //      NSLog([myFileName stringByStandardizingPath]);
 	} else {
 //		if (self.detexPipe)
 //			[self.detexTask release];
@@ -4676,8 +4676,8 @@ preference change is cancelled. "*/
 
 - (void) writeTexOutput: (NSNotification *)aNotification
 {
-	NSString		*newOutput, *numberOutput, *searchString, *tempString, *detexString;
-	NSData		*myData, *detexData;
+	NSString		*newOutput, *numberOutput, *searchString, *tempString, *detexString, *texloganalyserString;
+	NSData		*myData, *detexData, *texloganalyserData;
 	NSRange		myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange;
 	NSInteger			error;
 	NSInteger                 lineCount, wordCount, charCount;
@@ -4788,7 +4788,34 @@ preference change is cancelled. "*/
 	//		[newOutput release];
 			[self.readHandle readInBackgroundAndNotify];
 		}
-	} else if (myFileHandle == self.detexHandle) {
+	}
+    else if (myFileHandle == self.texloganalyserHandle) {
+        
+        texloganalyserData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+        if ([texloganalyserData length]) {
+            texloganalyserString = [[NSString alloc] initWithData: texloganalyserData encoding: NSISOLatin9StringEncoding];
+            // NSLog(texloganalyserString);
+            
+            // [self.logTextView insertText: texloganalyserString];
+            
+            NSRange theRange = [self.logTextView selectedRange];
+			theRange.length = [texloganalyserString length];
+			[self.logTextView replaceCharactersInRange: [self.logTextView selectedRange] withString: texloganalyserString];
+			[self.logTextView scrollRangeToVisible: [self.logTextView selectedRange]];
+ 			[self.texloganalyserHandle readInBackgroundAndNotify];
+        }
+        
+        
+        
+        
+        
+        
+        
+    }
+    
+   
+    
+    else if (myFileHandle == self.detexHandle) {
 		detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
 		if ([detexData length]) {
 			detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];
@@ -6732,6 +6759,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		[self fillLogWindow];
 }
 
+
 - (BOOL)fillLogWindow
 {
 	NSString			*logPath;
@@ -6739,6 +6767,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	NSData				*logData;
     NSStringEncoding    defaultEncoding;
 	NSStringEncoding	theEncoding;
+    NSString            *flags;
+    NSDate              *myDate;
+    NSString            *enginePath, *tetexBinPath;
+    NSMutableArray      *args;
 
 	// theEncoding = NSISOLatin9StringEncoding;
     defaultEncoding = NSISOLatin9StringEncoding;
@@ -6758,7 +6790,83 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 content = [[NSString alloc] initWithData:logData encoding:defaultEncoding] ;
             if (!content) 
                 return NO;
-			[self.logTextView setString: content];
+            
+            flags = @"-";
+            if ([eLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"s"];
+            if ([fLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"f"];
+            if ([hLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"h"];
+            if ([iLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"i"];
+            if ([oLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"o"];
+            if ([pLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"p"];
+            if ([rLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"r"];
+            if ([sLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"s"];
+            if ([tLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"t"];
+            if ([uLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"u"];
+            if ([vLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"v"];
+            if ([wLog intValue] != 0)
+                flags = [flags stringByAppendingString: @"w"];
+            
+            if (([flags length] == 1) || (! [self.logExtension isEqualToString:@"log"]))
+                [self.logTextView setString: content];
+            else {
+                [self.logTextView setString:@""];
+                if (self.texloganalyserTask != nil) {
+                    [self.texloganalyserTask terminate];
+                    myDate = [NSDate date];
+                    while (([self.texloganalyserTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+                    self.texloganalyserTask = nil;
+                    self.texloganalyserPipe = nil;
+                    }
+
+                self.texloganalyserTask = [[NSTask alloc] init];
+                [self.texloganalyserTask setCurrentDirectoryPath: [logPath stringByDeletingLastPathComponent]];
+                [self.texloganalyserTask setEnvironment: [self environmentForSubTask]];
+                enginePath = [[NSBundle mainBundle] pathForResource:@"texloganalyserwrap" ofType:nil];
+                tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+                args = [NSMutableArray array];
+                [args addObject:tetexBinPath];
+                [args addObject: [logPath  stringByStandardizingPath]];
+                [args addObject: flags];
+                self.texloganalyserPipe = [NSPipe pipe];
+                self.texloganalyserHandle = [self.texloganalyserPipe fileHandleForReading];
+                [self.texloganalyserHandle readInBackgroundAndNotify];
+                [self.texloganalyserTask setStandardOutput: self.texloganalyserPipe];
+                if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+                    [self.texloganalyserTask setLaunchPath:enginePath];
+                    [self.texloganalyserTask setArguments:args];
+                    [self.texloganalyserTask launch];
+                    }
+                else {
+                    self.texloganalyserTask = nil;
+                    }
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            }
+            
 			[self.logWindow setRepresentedFilename: logPath];
 			[self.logWindow setTitle:[logPath lastPathComponent]];
 			return YES;
@@ -6767,6 +6875,26 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		return NO;
 }
 
+
+
+- (IBAction)reFillLog: sender
+{
+    [self reDisplayLog];
+}
+
+-(void)reDisplayLog
+{
+    NSString *theSource;
+    
+    self.logExtension = @"log";
+    
+    theSource = [_textStorage string];
+	if ([self checkMasterFile: theSource forTask:RootForRedisplayLog])
+		return;
+	if ([self checkRootFile_forTask: RootForRedisplayLog])
+		return;
+	[self fillLogWindow];
+}
 
 
 - (void)displayLog: (id)sender

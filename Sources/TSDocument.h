@@ -67,7 +67,8 @@ enum RootCommand
 	RootForPdfSync = 5,
 	RootForTrashAUX = 6,
 	RootForLogFile = 7,
-	RootForConsole = 8
+	RootForConsole = 8,
+    RootForRedisplayLog = 9
 };
 
 @class MyPDFKitView;
@@ -145,7 +146,19 @@ enum RootCommand
     IBOutlet	id              magnificationOutlet;
     IBOutlet	id              previousButton;
     IBOutlet	id              nextButton;
-
+    
+    IBOutlet    NSControl       *eLog;
+    IBOutlet    NSControl       *fLog;
+    IBOutlet    NSControl       *hLog;
+    IBOutlet    NSControl       *iLog;
+    IBOutlet    NSControl       *oLog;
+    IBOutlet    NSControl       *pLog;
+    IBOutlet    NSControl       *rLog;
+    IBOutlet    NSControl       *sLog;
+    IBOutlet    NSControl       *tLog;
+    IBOutlet    NSControl       *uLog;
+    IBOutlet    NSControl       *vLog;
+    IBOutlet    NSControl       *wLog;
     
     
     NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
@@ -327,10 +340,13 @@ enum RootCommand
 @property (retain) NSTask              *detexTask;
 @property (retain) NSPipe              *detexPipe;
 @property (retain) NSFileHandle        *detexHandle;
-@property (retain) NSDate               *startDate;
-@property (retain) NSPDFImageRep        *texRep;
+@property (retain) NSTask              *texloganalyserTask;
+@property (retain) NSPipe              *texloganalyserPipe;
+@property (retain) NSFileHandle        *texloganalyserHandle;
+@property (retain) NSDate              *startDate;
+@property (retain) NSPDFImageRep       *texRep;
 
-@property (retain)  NSString			*spellLanguage;
+@property (retain)  NSString            *spellLanguage;
 @property (retain)  NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 @property (retain)  NSWindow            *ourCallingWindow;
 @property (retain)  NSDate              *pdfLastModDate;
@@ -373,6 +389,8 @@ enum RootCommand
 // FIX RULER SCROLL
 - (void) redrawLineNumbers: sender;
 // END FIX RULER SCROLL
+
+- (IBAction)reFillLog: sender;
 
 // forsplit
 - (void) splitWindow: sender;
@@ -477,6 +495,7 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
+- (void)reDisplayLog;
 - (void)resetSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
 - (void)invalidateCompletionConnection;

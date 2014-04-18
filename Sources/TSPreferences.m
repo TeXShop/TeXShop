@@ -712,6 +712,18 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:LineNumberEnabledKey];
 }
 
+/*" This method is connected to the 'tags menu' checkbox.
+ "*/
+- (IBAction)tagMenuButtonPressed:sender
+{
+	// register the undo message first
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:TagMenuInMenuBarKey] forKey:TagMenuInMenuBarKey];
+    
+	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:TagMenuInMenuBarKey];
+     [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
+}
+
+
 // added by Terada (-(IBAction)showInvisibleCharacterButtonPressed:)
 - (IBAction)showInvisibleCharacterButtonPressed:sender
 {
@@ -1318,6 +1330,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 	[SUD synchronize];
 
+    [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
+
 
 	// close the window
 	[_prefsWindow performClose:self];
@@ -1331,6 +1345,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[_undoManager endUndoGrouping];
 	[_undoManager undo];
 
+     [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
 	// close the window
 	[_prefsWindow performClose:self];
 	
@@ -1504,6 +1519,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
+    [_tagMenuButton setState:[defaults boolForKey:TagMenuInMenuBarKey]];
 	[_showInvisibleCharactersButton setState:[defaults boolForKey:ShowInvisibleCharactersEnabledKey]];
 	[_midEastButton setState:[defaults boolForKey:RightJustifyKey]];
     [_autoSaveButton setState:[defaults boolForKey:AutoSaveKey]];

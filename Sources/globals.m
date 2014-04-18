@@ -220,6 +220,7 @@ NSString *WatchServerKey = @"WatchServer";
 NSString *SourceInterlineSpaceKey = @"SourceInterlineSpace";
 NSString *SpellingLanguageKey = @"SpellingLanguage";
 NSString *SpellingAutomaticLanguageKey = @"SpellingAutomaticLanguage";
+NSString *TagMenuInMenuBarKey = @"TagMenuInMenuBar";
 
 
 

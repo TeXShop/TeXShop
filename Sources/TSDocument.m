@@ -3163,7 +3163,11 @@ preference change is cancelled. "*/
 		tagLocationLine = 0;
 		[tags removeAllItems];
 		[tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
-		self.tagTimer = [NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] ;
+        NSMenu *tagsMenu = [[[NSApp mainMenu] itemWithTitle:
+							NSLocalizedString(@"Tags", @"Tags")] submenu];
+        [tagsMenu removeAllItems];
+
+        self.tagTimer = [NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] ;
 //	}
 }
 
@@ -3174,6 +3178,7 @@ preference change is cancelled. "*/
 	NSRange	myRange, nameRange;
 	NSUInteger	length, idx;
 	NSUInteger	lineNumber;
+    NSMenuItem  *anItem;
 	id newItem;
 	BOOL enableAutoTagSections;
 
@@ -3272,7 +3277,15 @@ preference change is cancelled. "*/
 				[newItem setTag: lineNumber];
 				[newItem setTitle: titleString];
 				[newItem setRepresentedObject: line];
-			}
+          
+                NSMenu *tagsMenu = [[[NSApp mainMenu] itemWithTitle:
+                                     NSLocalizedString(@"Tags", @"Tags")] submenu];
+                anItem = [[NSMenuItem alloc] initWithTitle: titleString action: @selector(doTag:) keyEquivalent: @""];
+                [anItem setTarget: self];
+                [anItem setTag: lineNumber];
+                [anItem setRepresentedObject: line];
+                [tagsMenu addItem: anItem];
+  			}
 		}
 	}
 

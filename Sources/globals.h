@@ -423,6 +423,7 @@ extern NSString *WatchServerKey;
 extern NSString *SourceInterlineSpaceKey;
 extern NSString *SpellingLanguageKey;
 extern NSString *SpellingAutomaticLanguageKey;
+extern NSString *TagMenuInMenuBarKey;
 
 
 // end defaults

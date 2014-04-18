@@ -43,6 +43,7 @@
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
+    IBOutlet NSButtonCell	*_tagMenuButton;			/*" connected to Line Number "*/
 	IBOutlet NSButtonCell	*_midEastButton; /*" connected to Arabic, Persian, Hebrew "*/
     IBOutlet NSButtonCell   *_autoSaveButton; /*" connected to AutoSave "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
@@ -167,7 +168,7 @@
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
-- (IBAction)lineNumberButtonPressed:sender;
+- (IBAction)tagMenuButtonPressed:sender;
 - (IBAction)showInvisibleCharacterButtonPressed:sender; // added by Terada
 - (IBAction)midEastButtonPressed:sender;
 - (IBAction)autoSaveButtonPressed:sender;

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-#     Copyright © 2009-2010 by Nicola Vitacolonna. All rights reserved.
+#     Copyright © 2009-2014 by Nicola Vitacolonna. All rights reserved.
 #
 #     This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@ use warnings;
 #===============================================================================
 # Start of configurable parameters
 #===============================================================================
-my $LILYPONDFOLDER = '/Applications'; # Path to Lilypond.app
-# TODO: change also the 'pdflatex' part below when $TEX is set…
+my $LILYPONDFOLDER = '/Applications/TeX'; # Custom path to Lilypond.app
 my $TEX = 'pdflatex'; # TeX processor
 my $LILYDIR = '-lily'; # Default suffix for directory for lily-XXX files
 my $OUTPUTDIR = '-out'; # Default suffix for output directory
@@ -31,20 +30,30 @@ my $DEBUG = 0; # Set to 1 for debugging purposes only
 #===============================================================================
 # End of configurable parameters
 #===============================================================================
-$ENV{'PATH'} = $ENV{'PATH'} . ':' . $LILYPONDFOLDER . '/LilyPond.app/Contents/Resources/bin/:/opt/local/bin';
-my $VERSION = '2.0.1b';
-my $RELEASE_DATE = '2010/6/22';
+$ENV{'PATH'} .= ':/Applications/LilyPond.app/Contents/Resources/bin:/opt/local/bin:/sw/bin';
+if ($LILYPONDFOLDER) {
+	$ENV{'PATH'} .= ':' . $LILYPONDFOLDER . '/LilyPond.app/Contents/Resources/bin:'
+}
+my $VERSION = '2.0.4';
+my $RELEASE_DATE = '2014/03/23';
 my $LILYPONDBOOK = 'lilypond-book'; # Executable
 my $extra_options = ''; # Extra options to be passed to lilypond-book
 $extra_options .= ' --verbose' if $VERBOSE;
 
 print "This is LilyPond-Book engine $VERSION ($RELEASE_DATE) by Nicola Vitacolonna\n";
 print 'Filename: ' . $ARGV[0] . "\n" if $VERBOSE;
-print 'rsync path: ' . `which rsync` . "\n" if $DEBUG;
-print `$RSYNC --version` if $DEBUG;
+if ($DEBUG) {
+	print 'Environment PATH: ' . $ENV{'PATH'} . "\n";
+	print 'lilypond-book path: ' . `which $LILYPONDBOOK`;
+	print "$TEX path: " . `which $TEX`;
+	print "dvips path: " . `which dvips`;
+	print "ps2pdf path: " . `which ps2pdf`;
+	print 'rsync path: ' . `which rsync`;
+	print `$RSYNC --version`;
+}
 if ($ARGV[0] =~ /(\\|\%)/) {
-	print "Sorry, your filename must not contain the character '$1'.";
-	print " Please rename your file.\n";
+  print "Sorry, the file name must not contain the character '$1'.";
+  print " Please rename the source file and try again.\n";
 	exit(1);
 }
 my ($suffix) = ($ARGV[0] =~ /(\.(tex|ly|lytex|tely))$/);
@@ -53,12 +62,10 @@ unless (defined $suffix) {
 	exit(1);
 }
 my ($jobname) = ($ARGV[0] =~ /^(.+)$suffix$/);
-die "Please give a non-empty name to your file." unless (defined $jobname);
+die "Gosh! Empty file name!." unless (defined $jobname);
 if ($jobname =~ /\s/) {
-	print "WARNING: '$jobname$suffix' contain spaces,";
-	print "	which *may* cause trouble.";
-	print "	If compilation fails, try to rename '$jobname$suffix'";
-	print "	without using spaces.\n";
+  print "WARNING: '$jobname$suffix' contain spaces, which *may* cause trouble.\n";
+  print " If compilation fails, try to rename '$jobname$suffix' without spaces.\n";
 }
 
 # Search for %! LILYPOND directives in the source file
@@ -133,22 +140,21 @@ runbabyrun($rsync_cmd, 'rsync');
 # (these may cause lilypond-book to fail with:
 # "lilypond-book: error: Output would overwrite input file; use --output.")
 system("cd $jobname$OUTPUTDIR && rm -f $jobname.tex *.ly");
-if ($TEX eq 'pdflatex') {
+if ($TEX =~ /^pdflatex/ or $TEX =~ /^xelatex/) {
 	$extra_options .= ' --pdf';
 }
 # Run lilypond-book!
-my $lily_cmd = "$LILYPONDBOOK --latex-program=$TEX --output \"$jobname$OUTPUTDIR\" --lily-output-dir \"$jobname$LILYDIR\" $extra_options \"$jobname$suffix\"";
+my $lily_cmd = "$LILYPONDBOOK --latex-program='$TEX' --output \"$jobname$OUTPUTDIR\" --lily-output-dir \"$jobname$LILYDIR\" $extra_options \"$jobname$suffix\"";
 print "Going to process $jobname$suffix...\n";
 runbabyrun($lily_cmd, 'lilypond-book',
 	"Sorry, an error has occurred during the engraving process\n");
-# TODO: Copy .tex files (@texfiles) before typesetting with pdflatex?
 
 # Typeset with (pdf|xe|)latex
-if ($TEX eq 'xelatex') {
+if ($TEX =~ /^xelatex/) {
 	$TEX .= ' --output-driver="xdvipdfmx -q -E"';
 }
 runbabyrun("cd $jobname$OUTPUTDIR && $TEX $jobname.tex", $TEX);
-if ($TEX eq 'latex') {
+if ($TEX =~ /^latex/) {
 	runbabyrun("cd $jobname$OUTPUTDIR && dvips -Ppdf $jobname.dvi", 'dvips');
 	runbabyrun("cd $jobname$OUTPUTDIR && ps2pdf $jobname.ps", 'ps2pdf');
 }

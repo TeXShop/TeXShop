@@ -201,9 +201,8 @@
     [[NSSpellChecker sharedSpellChecker] setAutomaticallyIdentifiesLanguages: spellingAutomatic];
     if (! spellingAutomatic)
         [[NSSpellChecker sharedSpellChecker] setLanguage: spellingLanguage];
-     
-	
-	NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+ 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	
 	oldVersion = 0.0;
 	currentVersion = [[[NSBundle bundleForClass:[self class]]
@@ -403,6 +402,18 @@
 	[self finishAutoCompletionConfigure];
 	[self configureExternalEditor];
 	[self configureMovieMenu];
+    
+    if ( ![[NSUserDefaults standardUserDefaults] boolForKey:TagMenuInMenuBarKey])
+    {   
+       [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:YES];
+        
+    }
+	
+
+    
+    
+    
+    
 
 	if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
 		g_texChar = YEN;

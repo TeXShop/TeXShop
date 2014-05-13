@@ -485,9 +485,9 @@ extern NSInteger            g_commentChar;
 // extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
 // extern NSArray				*g_autocompletionKeys; // added by Terada
 
-extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag) 
-extern BOOL					automaticLanguage; 
-extern NSString				*defaultLanguage;
+// extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag)
+extern BOOL                 specialWindowOpened; // YES if a window containing a % !TEX language directive was opened
+extern BOOL					automaticLanguage;
 
 extern NSStringEncoding    NSISOLatin9StringEncoding;
 

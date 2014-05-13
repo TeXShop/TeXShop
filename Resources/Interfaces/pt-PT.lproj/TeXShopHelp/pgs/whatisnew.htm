@@ -14,6 +14,130 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.36</h5></P>
+
+This is a minor update to clear up  issues in the important version 3.35 release. It has the following changes:
+<ul>
+<li> The "remember and restore" operation has been improved to remember the position and size of both the Source and Preview windows
+for all open files and restore them the next time TeXShop is restarted. 
+
+<p> Recall that holding down the option key while quitting closes and forgets all
+windows; in that case, TeXShop will restart with a clean slate. Similarly, holding down the shift key while restarting TeXShop
+will restart with a clean slate.
+
+<p> It would be possible to remember other window positions: Console, Log File, etc. For the moment TeXShop does remember these
+positions since the operation seemed more confusing than helpful.
+
+<p>
+<li> Herbert Schulz improve Command Completion by fixing bugs and controlling whether a forward or reverse search is done
+during the operation.
+
+<p>
+<li> Fixed a bug for "Edit the Key Binding File." Closing this dialog and then bringing it up a second time produced a blank dialog window.
+The bug was pointed out by Emerson Mello and is now fixed.
+
+<p>
+<li> The "Enter Fullscreen" menu item was not localized, but as soon as a source window opened, it switched to the user's language.
+Now it is localized even when no file is open.
+
+<p>
+<li> Protected against a rare bug in which a Notification was sent to a closed Source Window.
+
+<p>
+<li> Attempted to make TeXShop Icon behavior more reliable by providing the extension of the Icon file in the Info.plist, by changing UTI types
+belonging to com.tug to instead belong to org.tug, and by using Apple defined UTI's when available. The Apple mechanism linking icons with
+particular applications continues to have problems in the open source world, where a particular file type
+can be claimed by multiple applications.
+ 
+</ul>
+
+<P><h5>TeXShop Changes 3.35</h5></P>
+
+The step from TeXShop 2 to TeXShop 3 marked a significant boundary; version 3 has 64 bit code rather than 32 bit code and was compiled on Lion.
+The step from TeXShop 3.26 to TeXShop 3.35 marks a second significant boundary; version 3.35 uses Automatic Reference Counting rather than
+ manual memory management  and is compiled on Mavericks.
+
+<p>
+When Mavericks appeared a year ago,  magnification code used in earlier TeXShop versions broke. It was replaced in 3.26 with code
+which worked on Mavericks, but not on earlier systems. TeXShop 3.26 used the older magnification code on older systems.
+
+<p> Later versions of TeXShop were compiled on Mavericks. Then the new magnification code worked on earlier systems,
+but the old magnification code broke. So TeXShop 3.35 uses the new magnification code on all systems. However, over the
+last couple of weeks testers discovered that this code leads to obscure crashes on Lion, but not on Mountain Lion and higher.
+
+<p> Consequently, in version 3.35,  both magnification in the Preview window and selection of rectangular regions in the Preview window
+are disabled on Lion. Users of Lion should upgrade to Mountain Lion if at all possible, since these features will  be active again. Users who cannot upgrade
+should consider moving to version 3.26 because the two disabled features work with that version. But version 3.26 will not be
+further upgraded and TeXShop Lion users will be stuck there in the same way that Snow Leopard users are stuck with TeXShop 2.
+
+<p> TeXShop 3.35 has the following additional changes:
+<ul>
+<li> The OgreKit Find Panel was upgraded to the latest version by Yusuke Terada, and additional bugs in it were fixed.  About the
+changes, he wrote "This version is based on the latest OgreKit. The latest OgreKit adopts Onigumo as its regular expression engine instead of Oniguruma, which OgreKit used previously.
+The development of Oniguruma is now stopped, and Onigumo is its fork version.
+Ruby also used to adopt Oniguruma until Ruby 1.9, but it was replaced by Onigumo since Ruby 2.0.
+By using Onigumo, new regular expressions like \K, \R, \X can be used.
+
+<p> " I built the latest OgreKit specialized for TeXShop. In order to solve the problems in which OS X replaced ordinary quotes with smart quotes, etc, I disabled the meddling functions by default:
+<dl>
+<dd> - Smart Copy/Paste
+<dd> - Smart Quotes
+<dd> - Smart Dashes
+<dd> - Smart Links
+<dd> - Automatic Data Detection
+<dd> - Automatic Text Replacement
+<dd> - Automatic Spelling Correction
+</dl>
+
+<p> "A message from Juan Luis Varona Malumbres said: Yusuke, please let to me to explain a small problem with the Ogrekit Find Panel in TeXShop:
+The election Origin: Top/Cursor (in Spanish Origen: Principio/Cursor) works very well in English,
+but not in Spanish: it always does a 'Cursor' search.
+Can you fix it, please?
+
+<p>  "I've fixed it today.
+
+<p> "I found another bug of OgreKit in Spanish environment.
+When you select some range in TeX source and do 'replace all' with OgreKit Find Panel, the entire document is set to the replacement scope, even if you choose "Selection" as the scope of search.
+This issue occurred only in the Spanish environment.
+I've fixed this issue"
+
+<p>
+<li> Previous versions of TeXShop allowed paths with a tilde in the TeX Binary Path Setting Preference. For instance, this setting could be
+"~/Library/TeX/texbin". But such paths caused problems in a small number of minor TeXShop features. A full audit of the TeXShop code was
+performed and now such tilde's should always work in the setting.
+
+<p>
+<li> TeXShop now contains Michael Sharpe's GotoLabel Macro. Here is his description. "This is macro for TeXShop's Macro Menu, 
+allowing you to bring up a list of labels containing specified text, and move to the chosen label.
+
+<p> "To install, choose Macros/Open Macro Editor... (in the TeXShop main menus) and then from the Macros menu, choose Add Macros from File. This brings up a file selector with which you may select GotoLabel.plist. This install the macro in the Macro Menu, where you may move it to any convenient position, and, if you wish, give it a hot key.
+
+<p> "This provides an alternative to adding an item to TeXShop's tags by inserting a line  %:tag_name in the source. With a lengthy document with many labels, it seems advantageous to be able to filter the list of labels."
+
+<p>
+<li> If you open the Edit Menu --> Spelling and Grammar panel, you can set the dictionary using
+by the Spell Checker at the bottom of the Panel. TeXShop now remembers this choice, and will
+automatically use it the next time the program is started.
+
+<p> Unfortunately another feature of TeXShop can interfere with this process, the optional "% !TEX spellcheck = " command at the top of a file. 
+ I suspect that many users don't use the "% !TEX spellcheck" syntax. They will run into no problems.
+
+<p> If no files containing  "% !TEX spellcheck" have been opened since TeXShop was opened, and the user chooses a different dictionary, then that different
+dictionary will be remembered as the new TeXShop default dictionary.
+
+<p> But if the user chooses a different dictionary AFTER opening some files containing the  "% !TEX spellcheck" line, then that
+choice will not be remembered when TeXShop closes. 
+
+<p> So if you do not use the "% !TEX spellcheck" syntax,  you can change the default dictionary used by TeXShop
+by opening the Spelling and Grammar panel and making the change. But if you sometimes use the "% !TEX spellcheck" syntax, the
+foolproof way to change the default dictionary is to open TeXShop without opening files, change the dictionary with the Spelling
+and Grammar panel, and quit.
+
+
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.27 - 3.34</h5></P>
 
 Versions 3.27 - 3.31 were never released. Versions 3.32 and 3.33 were only provided as experimental releases.
@@ -81,7 +205,7 @@ is first opened, it shows the full log file. Twelve check boxes at the top set v
 pull various pieces of information from the log file. The Redo button then displays this information. For instance, texloganalyser can display
 all warniings, or all overfull boxes, or all fonts used in a document. Unchecking all boxes and pushing Redo again displays the full log file.
 
-<p> If "Show Log File" is selected while holding down the Control key, a dialog appears asking for an extension. If the user types the extension
+<p> If "Show Log File" is selected while holding down the Command key, a dialog appears asking for an extension. If the user types the extension
 "aux", then the window will display the aux file rather than the log file. Since texloganalyser only works on log files, checking boxes will then
 have no effect.
 

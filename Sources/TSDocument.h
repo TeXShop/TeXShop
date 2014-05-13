@@ -386,6 +386,10 @@ enum RootCommand
 - (void)configureTypesetButton;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
 
+- (void)restoreStateWithCoder:(NSCoder *)coder;
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder;
+
+
 // FIX RULER SCROLL
 - (void) redrawLineNumbers: sender;
 // END FIX RULER SCROLL
@@ -497,6 +501,7 @@ enum RootCommand
 - (void)displayLog: (id)sender;
 - (void)reDisplayLog;
 - (void)resetSpelling;
+- (void)resignSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
 - (void)invalidateCompletionConnection;
 // Forward Routines Not Found by Source
@@ -573,6 +578,10 @@ enum RootCommand
 - (void)registerForNotifications;
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification;
+- (void)reColor:(NSNotification *)notification;
+- (void)viewBoundsDidChange:(NSNotification *)notification;
+- (void)viewFrameDidChange:(NSNotification *)notification;
+- (void)checkATaskStatus:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
 - (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(NSUInteger)level; // added by S. Zenitani
 - (void)resetMacroButton:(NSNotification *)notification;

@@ -48,7 +48,7 @@
 	NSMutableString *path;
 	path = [NSMutableString stringWithString: [env objectForKey:@"PATH"]];
 	[path appendString:@":"];
-	[path appendString:[SUD stringForKey:TetexBinPath]];
+	[path appendString:[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath]];
 	[path appendString:@":"];
 	[path appendString:[SUD stringForKey:GSBinPath]];
 	[env setObject: path forKey: @"PATH"];
@@ -363,7 +363,7 @@
     theRange = [gsTeXCommand rangeOfString: @"altpdftex"];
     if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
     locationOfRest = theRange.location + 9;
-	binaryLocation = [SUD stringForKey:TetexBinPath];
+	binaryLocation = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
@@ -379,7 +379,7 @@
     theRange = [gsTeXCommand rangeOfString: @"altpdflatex"];
     if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
     locationOfRest = theRange.location + 11;
-	binaryLocation = [SUD stringForKey:TetexBinPath];
+	binaryLocation = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {

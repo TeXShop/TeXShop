@@ -691,7 +691,7 @@
 		if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
 			return NO;
 		}
-	mySyncTeX = [[SUD stringForKey:TetexBinPath] stringByAppendingPathComponent: @"synctex"];
+	mySyncTeX = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingPathComponent: @"synctex"];
 	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeX])
 		{
 		return NO;
@@ -1472,7 +1472,7 @@
 		if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
 			return NO;
 	}
-	mySyncTeX = [[SUD stringForKey:TetexBinPath] stringByAppendingPathComponent: @"synctex"];
+	mySyncTeX = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingPathComponent: @"synctex"];
 	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeX])
 	{
 		return NO;

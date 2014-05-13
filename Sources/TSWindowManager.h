@@ -47,4 +47,10 @@
 - (void)checkProgramMenuItem: (NSInteger)programID checked: (BOOL)flag;
 // end addition
 
+- (void)textWindowDidBecomeKey:(NSNotification *)note;
+- (void)documentWindowWillClose:(NSNotification *)note;
+- (void)pdfWindowDidBecomeKey:(NSNotification *)note;
+- (void)pdfWindowWillClose:(NSNotification *)note;
+- (void)documentWindowDidResignKey:(NSNotification *)note;
+- (void)pdfWindowDidResignKey:(NSNotification *)note;
 @end

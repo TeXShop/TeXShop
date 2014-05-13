@@ -112,4 +112,5 @@
 
 - (PDFView *)activeView;
 - (BOOL)windowIsSplit;
+
 @end

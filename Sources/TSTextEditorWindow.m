@@ -55,15 +55,29 @@
 	if([self.myDocument fileURL] != nil) [self setTitle:[self.myDocument fileTitleName]];
 }
 
+// In the pair of commands below, becomeMainWindow and resignMainWindow should do nothing
+// unless the window has a "% !TEX" command. In this case
+// becomeMainWindow should remember the current language, set the spell to the
+// % !TEX choice, and set a global saying "don't use UID to record language
+
+// If the window has % !TEX, then resign Main Window should
+// reset the language to the remebered current language, and unset
+// the global for "dont use UID to record language"
 
 
 
 - (void) becomeMainWindow
 {
-	[self refreshTitle]; // added by Terada
+ 	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
 	[self.myDocument fixMacroMenuForWindowChange];
+}
+
+- (void) resignMainWindow
+{
+    [super resignMainWindow];
+    [self.myDocument resignSpelling];
 }
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window

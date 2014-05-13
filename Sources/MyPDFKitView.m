@@ -326,6 +326,8 @@
 {
 	PDFDocument	*pdfDoc;
 	NSData	*theData;
+    
+     NSDisableScreenUpdates();
 	
 	self.sourceFiles = nil;
 	
@@ -353,6 +355,7 @@
 	[totalPage1 display];
 	[[self document] setDelegate: self];
 	[self setupOutline];
+    NSEnableScreenUpdates();
 	
 	[self.myPDFWindow makeKeyAndOrderFront: self];
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
@@ -1989,7 +1992,8 @@
 				break;
 			case NEW_MOUSE_MODE_SELECT_PDF:
                 
-             if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
+      //       if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
+                if ([self overView] && [self mouse: [self convertPoint:
                                                     [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
                  [self startDragging: theEvent];
             
@@ -2007,11 +2011,12 @@
 					[self startDragging: theEvent];
 					// end mitsu 1.29
             
-				else if (atLeastMavericks)
+            else
                     [self selectARectForMavericks: theEvent];
                 
-                else
-					[self selectARect: theEvent];
+                
+        //        else
+		//			[self selectARect: theEvent];
                  
 				break;
 			case NEW_MOUSE_MODE_SELECT_TEXT:
@@ -2393,6 +2398,18 @@
  
 - (void)selectARectForMavericks: (NSEvent *)theEvent
 {
+  
+//    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) &&
+//        ([self displayMode] != kPDFDisplaySinglePageContinuous) && ([self displayMode] != kPDFDisplayTwoUpContinuous))
+    
+      if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+        
+        return;
+    
+   //    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+   //         return;
+    
+    
     NSPoint mouseLocWindow, startPoint, currentPoint;
     BOOL startFromCenter = NO;
     
@@ -2449,7 +2466,8 @@
             
             [[self overView] setDrawRubberBand: YES];
             [[self overView] setSelectionRect: selectedRect];
-            [[self overView] displayRect: [[self documentView] visibleRect]];
+            // [[self overView] displayRect: [[self documentView] visibleRect]];
+            [[self overView] setNeedsDisplayInRect:[[self documentView] visibleRect]];
             
         }
         else if ([theEvent type]==NSLeftMouseUp)
@@ -2471,7 +2489,8 @@
 - (void)cleanupMarquee: (BOOL)terminate
 {
     // for Mavericks
-    if (atLeastMavericks) {
+   //  if (atLeastMavericks) {
+    {
         OverView *theOverView = [self overView];
         if (theOverView) {
             [theOverView removeFromSuperview];
@@ -4959,10 +4978,23 @@ else
 // Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
 // and the old routine has problems in all of these places.
     
+ //      if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) &&
+ //          ([self displayMode] != kPDFDisplaySinglePageContinuous) && ([self displayMode] != kPDFDisplayTwoUpContinuous))
+           
+ //          [self doMagnifyingGlassML: theEvent level:level] ;
+    
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+ //        [self doMagnifyingGlassML: theEvent level:level] ;
+        
+        return;
+    
+    else [self doMagnifyingGlassMavericks: theEvent level:level] ;
+
+    
 //    if (atLeastMavericks)
-        [self doMagnifyingGlassMavericks: theEvent level:level] ;
+//         [self doMagnifyingGlassMavericks: theEvent level:level] ;
 //    else
-//        [self doMagnifyingGlassML: theEvent level:level] ;
+//         [self doMagnifyingGlassML: theEvent level:level] ;
 }
 
 // Obsolte Mavericks Routine
@@ -5274,7 +5306,9 @@ oldVisibleRect.size.width = 0;
                 [[self overView] setDrawMagnifiedImage: YES];
                 [[self overView] setSelectionRect: magRectWindow];
                 [[self overView] setMagnifiedRect: theOriginalRect];
-                [[self overView] displayRect: [[self documentView] visibleRect]];
+                // [[self overView] displayRect: [[self documentView] visibleRect]];
+                [[self overView] setNeedsDisplayInRect: [[self documentView] visibleRect]];
+                
 
  			} else { // mouse is not in the rect
                 // show cursor
@@ -5300,6 +5334,7 @@ oldVisibleRect.size.width = 0;
 	[self flagsChanged: theEvent]; // update cursor
     
 }
+
 
 
 // Routine for Mountain Lion and lower

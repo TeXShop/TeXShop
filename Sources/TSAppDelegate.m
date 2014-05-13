@@ -81,7 +81,7 @@
 	// then change that preference permanently to /usr/local/tetex/bin/i386-apple-darwin-current
 	
 	BOOL canRevisePath = [SUD boolForKey:RevisePathKey];
-    NSString *binPath = [SUD stringForKey:TetexBinPath];
+    NSString *binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	
 	if (canRevisePath) {
 		if ( [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"] ||
@@ -123,11 +123,15 @@
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
     
-    NSString *spellingLanguage = [[NSSpellChecker sharedSpellChecker] language];
-    BOOL    spellingAutomatic = [[NSSpellChecker sharedSpellChecker] automaticallyIdentifiesLanguages];
-    [SUD setBool: spellingAutomatic forKey: SpellingAutomaticLanguageKey];
-    [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
-    [SUD synchronize];
+    // Remember spell checker setting, but don't want to do this if a "% !TEX" language is in place
+    if (! specialWindowOpened)
+    {
+        NSString *spellingLanguage = [[NSSpellChecker sharedSpellChecker] language];
+        BOOL    spellingAutomatic = [[NSSpellChecker sharedSpellChecker] automaticallyIdentifiesLanguages];
+        [SUD setBool: spellingAutomatic forKey: SpellingAutomaticLanguageKey];
+        [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
+        [SUD synchronize];
+    }
     
     NSString *folderPath, *filename;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -196,11 +200,15 @@
 	
 	// First see if we already updated.;
     
+    // Set spell checker's dictionary = remember setting by user
     BOOL spellingAutomatic = [[NSUserDefaults standardUserDefaults] boolForKey:SpellingAutomaticLanguageKey];
     NSString *spellingLanguage = [[NSUserDefaults standardUserDefaults] objectForKey:SpellingLanguageKey];
     [[NSSpellChecker sharedSpellChecker] setAutomaticallyIdentifiesLanguages: spellingAutomatic];
     if (! spellingAutomatic)
         [[NSSpellChecker sharedSpellChecker] setLanguage: spellingLanguage];
+    [GlobalData sharedGlobalData].g_defaultLanguage = spellingLanguage;
+    automaticLanguage = spellingAutomatic;
+    specialWindowOpened = NO;
     
  	NSFileManager *fileManager = [NSFileManager defaultManager];
 	
@@ -422,6 +430,8 @@
     g_commentChar = COMMENT; 
 	
 // Configure Spelling
+    
+/*
 	spellLanguageChanged = NO;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
 	defaultLanguage = [theChecker language];
@@ -430,6 +440,7 @@
 		automaticLanguage = [theChecker automaticallyIdentifiesLanguages];
 	else
 		automaticLanguage = NO;
+ */
 	
 
 // added by mitsu --(H) Macro menu and (G) TSEncodingSupport

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>content</key>
+	<string></string>
+	<key>key</key>
+	<string></string>
 	<key>name</key>
 	<string>ROOT</string>
 	<key>submenu</key>
@@ -174,6 +178,8 @@ on sort(the_list)
 	set AppleScript's text item delimiters to old_delims
 	return new_list
 end sort</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Program</string>
 		</dict>
@@ -341,6 +347,8 @@ on sort(the_list)
 	set AppleScript's text item delimiters to old_delims
 	return new_list
 end sort</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Encoding</string>
 		</dict>
@@ -510,16 +518,24 @@ tell application "TeXShop"
 	-- Restore the length of the selection
 	set length of the selection of the front document to selection_length
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Root</string>
 		</dict>
 		<dict>
 			<key>content</key>
 			<string>% !TEX root =  #INS#</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Root (Short Version)</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Separator</string>
 		</dict>
@@ -625,6 +641,8 @@ tell application "TeXShop"
 			insertion_point
 	end if
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Insert Begin/End</string>
 		</dict>
@@ -862,12 +880,14 @@ tell application "TeXShop"
 	end try
 	
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Close Begin/End</string>
 		</dict>
 		<dict>
 			<key>content</key>
-			<string>--Applescript direct
+			<string>--Applescript
 
 -- "INSERT REFERENCE"
 -- This script searches through the current file (or within every file in the current folder) for \label{...} commands, then pops up a list for you to choose from which you may insert one.
@@ -875,7 +895,7 @@ end tell</string>
 -- It will cut down the list to include only those entries that contain the current selection. So if you type "sec" and select it, then run this script, you will get a choice of only, e.g., "sec:intro","sec:conc","fig:secunia", but not other labels in your document e.g., "cha:monkey","equ:maxwell",etc. 
 
 -- v2004-08-24
---Modified to work with Lion/TeXShop 3.06 by Michael Sharpe 2012-01-18
+
 
 -- CUSTOMISE TO YOUR LIKING:
 
@@ -898,18 +918,11 @@ property save_before_run : true
 --THE SCRIPT:
 
 
-set docname to #DOCUMENTNAME#
-if docname is equal to "" then
-	display dialog "No document---bailing out."
-	return
-end if
-
 if save_before_run then
-	tell application "TeXShop" to save docname
+	tell application "TeXShop" to save the front document
 end if
 
---tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
-set texpath to #FILEPATH#--full path
+tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
 
 if only_scan_current_file then
 	set texfiles_tosearch to the quoted form of the texpath -- search the current file
@@ -920,59 +933,90 @@ else
 	set texfiles_tosearch to the quoted form of texdir &amp; "*.tex" -- search all .tex files: "/path/to/*.tex"
 end if
 
-tell application "TeXShop" to set current_selection to the content of selection of document docname
-
--- DO SHELL SCRIPT COMPONENTS:
---set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
-set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
--- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
-set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
-set filter_selection to " | grep " &amp; quoted form of the current_selection
-if sort_output then
-	set sort to " | sort -u"
-else
-	set sort to ""
-end if
+tell application "TeXShop"
 	
--- glue the shell scripts together:
-set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+	set current_selection to the content of the selection of the front document
 	
-try
-	-- filter choices with the current selection:
-	set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
-on error
-	-- If it fails (e.g., nothing found) ask to diplay all labels:
-	activate
-	display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
-	if the button returned of the result is "View all" then
-		set choose_labels to every paragraph of (do shell script get_labels_shell_script)
+	-- DO SHELL SCRIPT COMPONENTS:
+	--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
+	set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
+	-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
+	set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
+	set filter_selection to " | grep " &amp; quoted form of the current_selection
+	if sort_output then
+		set sort to " | sort -u"
 	else
-		return -- exit script
+		set sort to ""
 	end if
-end try
 	
--- In case the document doesn't contain any labels:
-if choose_labels = {""} then
-	display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
+	-- glue the shell scripts together:
+	set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+	
+	try
+		-- filter choices with the current selection:
+		set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
+	on error
+		-- If it fails (e.g., nothing found) ask to diplay all labels:
+		display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+		if the button returned of the result is "View all" then
+			set choose_labels to every paragraph of (do shell script get_labels_shell_script)
+		else
+			return -- exit script
+		end if
+	end try
+	
+	-- In case the document doesn't contain any labels:
+	if choose_labels = {""} then
+		display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
 		return
-end if
-	
-
-set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
-if label_insert ≠ false then
-	if ref_command = "" then
-		set ref_insert to label_insert
-	else
-		set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
 	end if
-	tell application "TeXShop" to set the selection of document docname to ref_insert as string
-end if
 	
-</string>
+	set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
+	if label_insert ≠ false then
+		if ref_command = "" then
+			set ref_insert to label_insert
+		else
+			set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
+		end if
+		set the selection of the front document to ref_insert as string
+	end if
+	
+end tell</string>
 			<key>key</key>
 			<string>R+ShiftKey</string>
 			<key>name</key>
 			<string>Insert reference</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--applescript direct
+property sort_output : false-- If false, displays labels in the order they're found in the document.-- Otherwise, displays them in alphabetical order.property save_before_run : true-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
+--Adapted from Will Robertson's Insert Reference by Michael Sharpe, 2012
+--THE SCRIPT:set tid to Applescript's text item delimiters
+set docname to #DOCUMENTNAME#if docname is equal to "" then	display dialog "No document---bailing out."	returnend ifif save_before_run then	tell application "TeXShop" to save docnameend ifset texpath to #FILEPATH#set texfiles_tosearch to the quoted form of the texpath -- search the current fileset q1 to display dialog "Choose from labels containing text:" default answer "" buttons {"Cancel", "Go"} default button "Go"if the button returned of q1 is "Go" then	set current_selection to text returned of q1else	return -- exit scriptend if-- DO SHELL SCRIPT COMPONENTS:set find_label_lines to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep '\\\\label{' ") as stringset trim_to_raw_labels to " | /usr/bin/sed 's/.*\\\\label{//' | /usr/bin/sed 's/}.*//'"set filter_selection to ""if (count of current_selection) &gt; 0 then	set filter_selection to " | /usr/bin/grep -i " &amp; quoted form of the current_selectionend ifif sort_output then	set sort to " | /usr/bin/sort -u"else	set sort to ""end if-- glue the shell scripts together:set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+
+try	-- filter choices with the current selection:	set s to (do shell script get_labels_shell_script &amp; filter_selection)
+	set choose_labels to every paragraph of son error	-- If it fails (e.g., nothing found) ask to diplay all labels:
+          if (count of current_selection) &gt; 0 then	    display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"	    if the button returned of the result is "View all" then	   	set s to (do shell script get_labels_shell_script)		set choose_labels to every paragraph of s	    else		return -- exit script	    end if
+        end ifend try-- In case the document doesn't contain any labels:if (count of choose_labels) is 0 then	display dialog "Sorry, no \\label{} items have been found." buttons {"OK"} default button "OK"	returnend if
+
+set label_chosen to choose from list choose_labels with prompt "Please choose from names of matching labels:"if label_chosen ≠ false then
+   --set find_label_line to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep -n '\\\\label{" &amp; label_chosen &amp;"}'") as string
+   --set s to (do shell script find_label_line)
+   --set Applescript's text item delimiters to ":"
+   --set j to item 1 of (s as list)
+   --set Applescript's text item delimiters to tid
+   set j to 7+(count of (item 1 of label_chosen))
+   tell application "TeXShop" --to tell document docname to goto line j
+            set i to search document docname for "\\label{" &amp; label_chosen &amp; "}" starting from 1
+            set offset of selection of document docname to i
+            set length of selection of document docname to j
+            tell application "System Events" to tell process "TeXShop" to keystroke (ASCII character 28) using {shift down}
+    end tellend if</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>Goto label</string>
 		</dict>
 		<dict>
 			<key>content</key>
@@ -1005,7 +1049,7 @@ tell application "TeXShop" to set openfiles to choose from list texfiles with pr
 if openfiles is not false then
 	repeat with this_filename in openfiles
 		set file_to_open to POSIX file (texdir &amp; this_filename)
-                 set cdate to (current date) + 30 -- allow 30 seconds for timeout                 tell application "TeXShop"                    try                         open  file_to_open                   on error errmsg number errnum                        if (errnum = -1712) and ((current date) &lt; cdate) then                          --applescript direct often provokes error number -1712                          else                              display dialog errmsg                        end if                   end try                 end tell		
+		tell application "TeXShop" to open file_to_open
 	end repeat
 end if</string>
 			<key>key</key>
@@ -1014,6 +1058,10 @@ end if</string>
 			<string>Open quickly…</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Applescript</string>
 			<key>submenu</key>
@@ -1027,6 +1075,8 @@ tell application "Adobe Reader"
   open POSIX file #PDFPATH#
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>View pdf with Acrobat</string>
 				</dict>
@@ -1045,6 +1095,8 @@ tell application "Finder"
 end tell
 on error
 end try</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Show files</string>
 				</dict>
@@ -1054,7 +1106,9 @@ end try</string>
 -- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
 -- example: show TeXShop home page in a web browser
 
-open location "http://pages.uoregon.edu/koch/texshop/texshop.htmll"</string>
+open location "http://darkwing.uoregon.edu/~koch/texshop/texshop.html"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>TeXShop home page</string>
 				</dict>
@@ -1064,6 +1118,8 @@ open location "http://pages.uoregon.edu/koch/texshop/texshop.htmll"</string>
 -- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
 
 open location "http://tug.org/mactex/"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>MacTeX home page</string>
 				</dict>
@@ -1088,6 +1144,8 @@ on error
 	display dialog ("There don't seem to be any files in the teTeX tree with the filename: " &amp; filename_to_open) buttons {"OK"} default button "OK"
 end try
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>View TeX Live file</string>
 				</dict>
@@ -1113,6 +1171,8 @@ do shell script shellScript
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to MAC</string>
 				</dict>
@@ -1136,6 +1196,8 @@ set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupT
 set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -u  " &amp; backupTexName &amp; "'"
 do shell script shellScript
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to Unix</string>
 				</dict>
@@ -1159,6 +1221,8 @@ set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupT
 set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -d  " &amp; backupTexName &amp; "'"
 do shell script shellScript
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to Windows</string>
 				</dict>
@@ -1216,6 +1280,8 @@ tell document frontName of application "TeXShop"
 end tell
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Bibliography</string>
 				</dict>
@@ -1231,6 +1297,8 @@ do shell script "defaults write TeXShop background_B 0.3"
 do shell script "defaults write TeXShop foreground_R 1.0"
 do shell script "defaults write TeXShop foreground_G 1.0"
 do shell script "defaults write TeXShop foreground_B 1.0"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Colored source</string>
 				</dict>
@@ -1246,12 +1314,18 @@ do shell script "defaults write TeXShop background_B 1.00"
 do shell script "defaults write TeXShop foreground_R .0"
 do shell script "defaults write TeXShop foreground_G .0"
 do shell script "defaults write TeXShop foreground_B .0"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Default Colored source</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Column macros</string>
 			<key>submenu</key>
@@ -1277,11 +1351,11 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New tabular" &amp; return &amp; return &amp; "Enter the number of columns you'd like and then select the type of tabular you want." default answer "3" buttons {"Cancel", "Plain", "Booktabs"} default button default_tabular_type
-	set theNCOLS to the text returned of q1
+	set NCOLS to the text returned of q1
 	set tabtype to the button returned of q1
 	
 	set q2 to display dialog "Enter the number of rows you'd like (not including a header row) and select whether you'd like a floating or simply centred table." default answer "3" buttons {"Cancel", "Centred", "Floating"} default button default_table_type
-	set theNROWS to the text returned of q2
+	set NROWS to the text returned of q2
 	set floattype to the button returned of q2
 	
 	if the tabtype = "Booktabs" then
@@ -1318,8 +1392,8 @@ tell application texapp
 	set the column_preamble to "{@{} c"
 	set the one_row_text to indent &amp; indent &amp; cell_text
 	
-	if theNCOLS &gt; 1 then
-		repeat with c from 2 to theNCOLS
+	if NCOLS &gt; 1 then
+		repeat with c from 2 to NCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1334,7 +1408,7 @@ tell application texapp
 		one_row_text &amp; return &amp; ¬
 		indent &amp; indent &amp; midrule &amp; return
 	
-	repeat with r from 1 to theNROWS
+	repeat with r from 1 to NROWS
 		set the midtext to midtext &amp; one_row_text &amp; return
 	end repeat
 	
@@ -1374,10 +1448,10 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New maths array." &amp; return &amp; return &amp; "Enter the number of rows you'd like." default answer "3"
-	set theNROWS to the text returned of q1
+	set NROWS to the text returned of q1
 	
 	set q2 to display dialog "How many columns would you like? Would you like me to indent the array?" default answer "3" buttons {"Cancel", "Flush left", "Indent"} default button default_array_location
-	set theNCOLS to the text returned of q2
+	set NCOLS to the text returned of q2
 	set indentyesno to the button returned of q2
 	
 	if the indentyesno = "Indent" then
@@ -1389,8 +1463,8 @@ tell application texapp
 	set the column_preamble to "{c"
 	set the one_row_text to preindent &amp; indent &amp; cell_text
 	
-	if theNCOLS &gt; 1 then
-		repeat with c from 2 to theNCOLS
+	if NCOLS &gt; 1 then
+		repeat with c from 2 to NCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1400,7 +1474,7 @@ tell application texapp
 	set the one_row_text to one_row_text &amp; "\\\\ " &amp; return
 	
 	set midtext to ""
-	repeat with r from 1 to theNROWS
+	repeat with r from 1 to NROWS
 		set the midtext to midtext &amp; one_row_text
 	end repeat
 	
@@ -1518,6 +1592,8 @@ end tell
 
 -- 2004 Will Robertson
 -- (You may do what you like with this script)</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Add column</string>
 				</dict>
@@ -1618,6 +1694,8 @@ end tell
 
 -- 2004 Will Robertson
 -- (You may do what you like with this script)</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Delete column</string>
 				</dict>
@@ -1640,10 +1718,16 @@ if the result is not false then
 end if
 --End of Applescript
 </string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Paste Spreadsheet Cells</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Claus Gerhardt Macros</string>
 			<key>submenu</key>
@@ -1703,6 +1787,8 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>bibtexc</string>
 				</dict>
@@ -1766,10 +1852,16 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>bibtexcpl</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -1822,6 +1914,8 @@ refreshpdf
 end tell
 
  </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>mpostc</string>
 				</dict>
@@ -1878,10 +1972,16 @@ refreshpdf
 end tell
 
  </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>mpostcpl</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -1958,10 +2058,16 @@ tell application "Safari"
   open htmlFile
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>htlatexr</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2028,10 +2134,16 @@ tell document frontName of application "TeXShop"
 	refreshpdf
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>pdflatexc</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2076,10 +2188,16 @@ do shell script shellScript
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>pdfselectc</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2102,6 +2220,10 @@ set pdfFile to alias POSIX file thePDF
 					<string>openpdf</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2162,21 +2284,35 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>latex-makeindex-mpost</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Separator</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Headings</string>
 			<key>submenu</key>
 			<array>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>11pt</string>
 					<key>submenu</key>
@@ -2212,6 +2348,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
@@ -2228,12 +2366,18 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>12pt</string>
 					<key>submenu</key>
@@ -2251,6 +2395,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>article</string>
 						</dict>
@@ -2267,6 +2413,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
@@ -2283,6 +2431,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
@@ -2291,6 +2441,10 @@ end tell
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Subdivisions</string>
 			<key>submenu</key>
@@ -2299,6 +2453,8 @@ end tell
 					<key>content</key>
 					<string>\chapter{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>chapter</string>
 				</dict>
@@ -2306,6 +2462,8 @@ end tell
 					<key>content</key>
 					<string>\paragraph{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>paragraph</string>
 				</dict>
@@ -2313,6 +2471,8 @@ end tell
 					<key>content</key>
 					<string>\subparagraph{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subparagraph</string>
 				</dict>
@@ -2320,6 +2480,8 @@ end tell
 					<key>content</key>
 					<string>\section{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>section</string>
 				</dict>
@@ -2327,6 +2489,8 @@ end tell
 					<key>content</key>
 					<string>\subsection{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subsection</string>
 				</dict>
@@ -2334,12 +2498,18 @@ end tell
 					<key>content</key>
 					<string>\subsubsection{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subsubsection</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Mathematics</string>
 			<key>submenu</key>
@@ -2356,6 +2526,8 @@ end tell
 \right)
 \]
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>array</string>
 				</dict>
@@ -2365,6 +2537,8 @@ end tell
 #INS#
 \end{equation}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>equation</string>
 				</dict>
@@ -2374,6 +2548,8 @@ end tell
 #INS#
 \end{equation*}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>equation*</string>
 				</dict>
@@ -2383,6 +2559,8 @@ end tell
 #INS#
 \end{eqnarray}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>eqnarray</string>
 				</dict>
@@ -2392,12 +2570,18 @@ end tell
 #INS#
 \end{eqnarray*}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>eqnarray*</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Text Styles</string>
 			<key>submenu</key>
@@ -2405,10 +2589,16 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\emph{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>emphasize</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>typeface</string>
 					<key>submenu</key>
@@ -2416,42 +2606,58 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>\mathbf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Bold</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathcal{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>CAL</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathit{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Italic</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathrm{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Roman</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathsf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Sans Serif</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathtt{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>TypeWriter</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>size</string>
 					<key>submenu</key>
@@ -2459,66 +2665,90 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>{\tiny #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>tiny</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\scriptsize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>scriptsize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\footnotesize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>footnotesize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\small #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>small</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\normalsize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>normalsize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\large #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>large</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\Large #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Large</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\LARGE #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>LARGE</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\huge #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>huge</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\Huge #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Huge</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>style</string>
 					<key>submenu</key>
@@ -2526,54 +2756,72 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>\textbf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Bold</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsc{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Small Caps</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textmd{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Medium</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textit{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Italic</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsl{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Slanted</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textrm{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Roman</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Sans Serif</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\texttt{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>TypeWriter</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textup{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Upright</string>
 						</dict>
@@ -2582,12 +2830,18 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\underline{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Underline</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Lists</string>
 			<key>submenu</key>
@@ -2598,6 +2852,8 @@ end tell
 \item[ ] #SEL##INS#
 \end{description}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>description</string>
 				</dict>
@@ -2607,6 +2863,8 @@ end tell
 \item #SEL##INS#
 \end{enumerate}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>enumerate</string>
 				</dict>
@@ -2616,12 +2874,18 @@ end tell
 \item #SEL##INS#
 \end{itemize}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>itemize</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Offsets</string>
 			<key>submenu</key>
@@ -2629,18 +2893,26 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\footnote{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>footnote</string>
 				</dict>
 				<dict>
 					<key>content</key>
 					<string>\marginpar{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>marginpar</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Insertions</string>
 			<key>submenu</key>
@@ -2650,6 +2922,8 @@ end tell
 					<string>\begin{quotation}
 #SEL##INS#
 \end{quotation}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>quotation</string>
 				</dict>
@@ -2658,6 +2932,8 @@ end tell
 					<string>\begin{quote}
 #SEL##INS#
 \end{quote}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>quote</string>
 				</dict>
@@ -2667,6 +2943,8 @@ end tell
 #SEL##INS#
 \end{verbatim}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>verbatim</string>
 				</dict>
@@ -2675,12 +2953,18 @@ end tell
 					<string>\begin{verse}
 #SEL##INS#
 \end{verse}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>verse</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Tables</string>
 			<key>submenu</key>
@@ -2688,6 +2972,8 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\hline</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>hline</string>
 				</dict>
@@ -2703,12 +2989,18 @@ end tell
 \label{default}
 \end{table}%
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>table</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Figures</string>
 			<key>submenu</key>
@@ -2723,6 +3015,8 @@ end tell
 \end{center}
 \end{figure}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>regular</string>
 				</dict>
@@ -2736,6 +3030,8 @@ end tell
 \end{center}
 \end{figure}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>epsfile</string>
 				</dict>

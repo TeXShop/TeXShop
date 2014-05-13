@@ -40,6 +40,7 @@
 #import "MyPDFKitView.h"
 
 #import "globals.h"
+#import "GlobalData.h"
 
 #import "TSPrintView.h"
 #import "TSPreferences.h"
@@ -253,6 +254,29 @@
     return doAutoSave;
     
 }
+
+- (void)restoreStateWithCoder:(NSCoder *)coder
+{
+    [super restoreStateWithCoder:coder];
+    
+    NSString *windowState;
+    
+    windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
+    [pdfKitWindow setFrameFromString:windowState];
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    [super encodeRestorableStateWithCoder: coder];
+    
+    // record PDF window's size and position
+    NSString *theCode;
+    
+	theCode = [pdfKitWindow stringWithSavedFrame];
+    [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
+}
+
+
 
 - (IBAction)convertTiff:(id)sender
 { 
@@ -709,7 +733,7 @@ if (! skipTextWindow) {
 	// [scrollView2 removeFromSuperview];
 	windowIsSplit = NO;
 	//  endforsplit
-	
+    
 	if (lineNumbersShowing) {
 		if (self.lineNumberView1 == nil) {
             
@@ -1339,15 +1363,24 @@ in other code when an external editor is being used. */
 									stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				// NSLog(spellcheckString);
 				NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
-				if ([theChecker setLanguage:spellcheckString]) {
-					spellLanguageChanged = YES;
-					if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
-						[theChecker setAutomaticallyIdentifiesLanguages:NO];
-					if (self.spellLanguage != nil)
-	//					[self.spellLanguage release];
-					self.spellLanguage = spellcheckString;
-					}
-			}
+                if (! specialWindowOpened) {
+                    // get language and spellingAutomatic and set SUD to those
+                    NSString *spellingLanguage = [[NSSpellChecker sharedSpellChecker] language];
+                    BOOL    spellingAutomatic = [[NSSpellChecker sharedSpellChecker] automaticallyIdentifiesLanguages];
+                    [GlobalData sharedGlobalData].g_defaultLanguage = spellingLanguage;
+                    automaticLanguage = spellingAutomatic;
+                    [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
+                    [SUD setBool: spellingAutomatic forKey: SpellingAutomaticLanguageKey];
+                    [SUD synchronize];
+                    }
+                
+                if ([theChecker setLanguage:spellcheckString])
+                {
+                    [theChecker setAutomaticallyIdentifiesLanguages:NO];
+                    specialWindowOpened = YES;
+                    self.spellLanguage = spellcheckString;
+                }
+            }
 		}
 	}
 	
@@ -1644,19 +1677,31 @@ in other code when an external editor is being used. */
 //END PATCH
 
 - (void)resetSpelling {
-	if (! spellLanguageChanged)
-		return;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
 	if (self.spellLanguage != nil) {
-		[theChecker setLanguage:self.spellLanguage];
-		if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
-			[theChecker setAutomaticallyIdentifiesLanguages:NO];
+ 		[theChecker setLanguage:self.spellLanguage];
+		[theChecker setAutomaticallyIdentifiesLanguages:NO];
 	}
 	else {
-		[theChecker setLanguage:defaultLanguage]; 
-		if ([theChecker respondsToSelector:@selector(setAutomaticallyIdentifiesLanguages:)])
-			[theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
+ 		[theChecker setLanguage:[GlobalData sharedGlobalData].g_defaultLanguage];
+        [theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
 	}
+}
+
+- (void)resignSpelling {
+    
+    return;
+
+/*
+    if (self.spellLanguage == nil)
+        return;
+    NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+    NSString *theLanguage = [theChecker language];
+    self.spellLanguage = theLanguage;
+    [theChecker setLanguage:[GlobalData sharedGlobalData].g_defaultLanguage];
+    [theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
+ */
+
 }
 
 
@@ -2093,12 +2138,15 @@ in other code when an external editor is being used. */
 
 	// register for notifications when the document window becomes key so we can remember which window was
 	// the frontmost. This is needed for the preferences.
+    
+if ( ! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:textWindow];
+}
 // end addition
 
 
@@ -2112,7 +2160,9 @@ in other code when an external editor is being used. */
 // end addition
 
 
-	// register for notification when the document font changes in preferences
+	// register for notification when the document font changes in preference
+    
+if ( ! skipTextWindow)
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setDocumentFontBoth:) name:DocumentFontChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleFontFromPreferences:) name:ConsoleFontChangedNotification object:nil];
@@ -2120,13 +2170,15 @@ in other code when an external editor is being used. */
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleBackgroundColorFromPreferences:) name:ConsoleBackgroundColorChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleForegroundColorFromPreferences:) name:ConsoleForegroundColorChangedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
 	
+
+
+if ( ! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackgroundColorBoth:) name:SourceBackgroundColorChangedNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setTextColorBoth:) name:SourceTextColorChangedNotification object:nil];
-
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(revertDocumentFont:) name:DocumentFontRevertNotification object:nil];
 
@@ -2142,7 +2194,45 @@ in other code when an external editor is being used. */
 	
 	// register for notification when bibdesk completion changes in preferences
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changePrefBibDeskComplete:) name:DocumentBibDeskCompleteNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doCompletion:)
+                                                 name:@"completionpanel" object:nil];
+    
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doMatrix:)
+												 name:@"matrixpanel" object:nil]; // Matrix addition by Jonas
+    
+    // added by mitsu --(D) reset tags when the encoding is switched
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetTagsMenu:)
+                                                 name:@"ResetTagsMenuNotification" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resetTagsMenu:)
+                                                 name:@"NSUndoManagerDidRedoChangeNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resetTagsMenu:)
+                                                 name:@"NSUndoManagerDidUndoChangeNotification" object:nil];
+    
+	// Register for notifcations when the text view(s) get scrolled, so that syntax highlighting can be updated.
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(viewBoundsDidChange:)
+												 name:NSViewBoundsDidChangeNotification
+											   object:[scrollView contentView]];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(viewBoundsDidChange:)
+												 name:NSViewBoundsDidChangeNotification
+											   object:[scrollView2 contentView]];
+    
+	// Register for resizing
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(viewFrameDidChange:)
+												 name:NSViewFrameDidChangeNotification
+											   object:textView1];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(viewFrameDidChange:)
+												 name:NSViewFrameDidChangeNotification
+											   object:textView2];
 
+}
 	// externalEditChange
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(externalEditorChange:) name:ExternalEditorNotification object:nil];
 
@@ -2153,16 +2243,6 @@ in other code when an external editor is being used. */
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
 		name:NSFileHandleReadCompletionNotification object:nil];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doCompletion:)
-		name:@"completionpanel" object:nil];
-
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doMatrix:)
-												 name:@"matrixpanel" object:nil]; // Matrix addition by Jonas
-
-// added by mitsu --(D) reset tags when the encoding is switched
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetTagsMenu:)
-		name:@"ResetTagsMenuNotification" object:nil];
-
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetMacroButton:)
 		name:@"ResetMacroButtonNotification" object:nil];
@@ -2170,32 +2250,6 @@ in other code when an external editor is being used. */
 
 // end addition
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
-		selector:@selector(resetTagsMenu:)
-		name:@"NSUndoManagerDidRedoChangeNotification" object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-		selector:@selector(resetTagsMenu:)
-		name:@"NSUndoManagerDidUndoChangeNotification" object:nil];
-
-	// Register for notifcations when the text view(s) get scrolled, so that syntax highlighting can be updated.
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(viewBoundsDidChange:)
-												 name:NSViewBoundsDidChangeNotification
-											   object:[scrollView contentView]];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(viewBoundsDidChange:)
-												 name:NSViewBoundsDidChangeNotification
-											   object:[scrollView2 contentView]];
-
-	// Register for resizing
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(viewFrameDidChange:)
-												 name:NSViewFrameDidChangeNotification
-											   object:textView1];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(viewFrameDidChange:)
-												 name:NSViewFrameDidChangeNotification
-											   object:textView2];
 }
 
 // added by Terada (- (void)repositionWindow:(NSWindow*)targetWindow activeWindow:(NSWindow*)activeWindow )

@@ -96,7 +96,6 @@ extern NSPanel *pageNumberWindow;
 }
 
 
-
 /*
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
@@ -108,7 +107,7 @@ extern NSPanel *pageNumberWindow;
 
 - (void) becomeMainWindow
 {
-	self.willClose = NO;
+   self.willClose = NO;
 	if([self.myDocument fileURL] != nil ) [self setTitle:[[[self.myDocument fileTitleName] stringByDeletingPathExtension] stringByAppendingString: @".pdf"]]; // added by Terada
 	[super becomeMainWindow];
 

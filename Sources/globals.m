@@ -298,9 +298,8 @@ BOOL g_canRegisterCommandCompletion = NO;
 NSColor *PreviewBackgroundColor = nil;
 
 // Spelling (defaults if not changed by document tag)
-BOOL		spellLanguageChanged;
+BOOL        specialWindowOpened; // YES if a window containing a % !TEX language directive is the main window
 BOOL		automaticLanguage;
-NSString	*defaultLanguage;
 
 // Koch 8/24/03
 NSInteger	g_macroType;	// FIXME: get rid of this

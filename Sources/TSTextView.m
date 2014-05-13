@@ -1319,7 +1319,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+						[NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]]; //should be global?
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1398,7 +1398,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-						[NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+						[NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]];
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 						options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -1419,7 +1419,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				replaceLocation = 0; // start from the beginning
 			}
 			self.originalString = [textString substringWithRange:
-						NSMakeRange(replaceLocation, selectedLocation-replaceLocation)];
+            NSMakeRange(replaceLocation, selectedLocation-replaceLocation)];
 			// [self.originalString retain];
 			completionListLocation = 0;
 		}
@@ -1427,7 +1427,9 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		// try to find a completion candidate
 		if (!latexSpecial) { // ordinary case -- find from the list
 			while (YES) { // look for a candidate which is not equal to originalString
-				if ([theEvent modifierFlags] && wasCompleted) {
+// (HS) modification to reverse search 2014/05/11
+/* original code
+                if (([theEvent modifierFlags] & NSShiftKeyMask) && wasCompleted) {
 					// backward
 					searchRange.location = 0;
 					searchRange.length = completionListLocation-1;
@@ -1439,9 +1441,24 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				// search the string in the completion list
 				foundRange = [g_commandCompletionList rangeOfString:
 						[@"\n" stringByAppendingString: self.originalString]
-						options: ([theEvent modifierFlags]?NSBackwardsSearch:0)
+						options: (([theEvent modifierFlags] & NSShiftKeyMask)?NSBackwardsSearch:0)
 						range: searchRange];
-
+*/
+                if (!([theEvent modifierFlags] & NSShiftKeyMask) && wasCompleted) {
+					// backward
+					searchRange.location = 0;
+					searchRange.length = completionListLocation-1;
+				} else {
+					// forward
+					searchRange.location = completionListLocation;
+					searchRange.length = [g_commandCompletionList length] - completionListLocation;
+				}
+				// search the string in the completion list
+				foundRange = [g_commandCompletionList rangeOfString:
+                        [@"\n" stringByAppendingString: self.originalString]
+                        options: (!(([theEvent modifierFlags] & NSShiftKeyMask))?NSBackwardsSearch:0)
+                        range: searchRange];
+// End of modification to reverse search
 				if (foundRange.location == NSNotFound) { // a completion candidate was not found
 					foundCandidate = NO;
 					break;
@@ -1620,7 +1637,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			&& !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]]; //should be global?
+					   [NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]]; //should be global?
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -1686,7 +1703,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-					   [NSString stringWithFormat: @"\n \t.,;;{}()%C", g_texChar]];
+					   [NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]];
 			foundRange = [textString rangeOfCharacterFromSet:charSet
 													 options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {

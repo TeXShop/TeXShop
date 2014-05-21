@@ -77,8 +77,11 @@ extern NSPanel *pageNumberWindow;
 	[self.myPDFKitView setDocument: nil];
 	[self.myPDFKitView2 setDocument: nil];
 	self.willClose = YES;
-    self.myDocument = nil;
-    if ([theDocument externalEditor]) [theDocument close];
+ // self.myDocument = nil;
+    if ([theDocument skipTextWindow]) {
+        self.myDocument = nil;
+        [theDocument close];
+        }
     
 	[super close];
 }
@@ -369,9 +372,10 @@ extern NSPanel *pageNumberWindow;
 {
     if ([self.myDocument externalEditor])
         return;
-	if ([self.myDocument documentType] == isTeX) {
-		if ([self.myDocument getCallingWindow] == nil)
-			[[self.myDocument textWindow] makeKeyAndOrderFront: self];
+ 	if ([self.myDocument documentType] == isTeX) {
+ 		if ([self.myDocument getCallingWindow] == nil) {
+            [[self.myDocument textWindow] makeKeyAndOrderFront: self];
+            }
 		else
 			[[self.myDocument getCallingWindow] makeKeyAndOrderFront: self];
 

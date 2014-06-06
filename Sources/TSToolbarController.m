@@ -326,7 +326,7 @@ else
 	 */
     
     if ([itemIdent isEqual: kSharingTID]) {
-        [[shareButton cell] setImageScaling: NSImageScaleAxesIndependently];
+        [[shareButton cell] setImageScaling: NSImageAlignCenter];
         //  [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [shareButton setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButton sendActionOn: NSLeftMouseDownMask];

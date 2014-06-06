@@ -970,7 +970,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 
 	item = [formatMenu itemWithTag: [[sender selectedCell] tag]];
 	if (item)
-		[[NSApp delegate] changeImageCopyType: item];
+		[(TSAppDelegate *)[NSApp delegate] changeImageCopyType: item];
 	// end mitsu 1.29b
 }
 

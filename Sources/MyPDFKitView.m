@@ -773,8 +773,8 @@
 	pageNumber = [[self document] indexForPage: aPage] + 1;
 	[currentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
-
-	// Skip out if there is no outline.
+    
+ 	// Skip out if there is no outline.
 	if ([[self document] outlineRoot] == NULL)
 		return;
 

@@ -703,7 +703,6 @@
 	[self setupConsole];
 	[self setupLogWindow];
     
-
     
 	
 if (! skipTextWindow) {
@@ -789,6 +788,8 @@ if (! skipTextWindow) {
 	[self fixShowFullPathButton]; // added by Terada
 
 	[self registerForNotifications];
+    
+    
 	
 	// The following line was moved to the top of the routine to speed up document loading; Koch
 	// However, the portion of this routine which sets the font needs to wait until now. 
@@ -1049,6 +1050,7 @@ if (! skipTextWindow) {
 				[self doTypeset:self];
 		}
 	}
+    
 }
 
 
@@ -1897,7 +1899,7 @@ in other code when an external editor is being used. */
         {
            // [[NSApp delegate] finishCommandCompletionConfigure];
             // write is immediately followed by read and these can occur in the wrong order; so ...
-            [[NSApp delegate] performSelector:@selector(finishCommandCompletionConfigure) withObject: nil afterDelay:0.2];
+            [(TSAppDelegate *)[NSApp delegate] performSelector:@selector(finishCommandCompletionConfigure) withObject: nil afterDelay:0.2];
         }
      if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
 }

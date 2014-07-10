@@ -41,7 +41,7 @@
 //	TSDocument*		mDocument;
 }
 
-@property (retain) TSDocument *mDocument;
+@property (weak) TSDocument *mDocument;
 
 - (id)initWithMyDocument:(TSDocument *)doc;
 - (NSUInteger)offset;

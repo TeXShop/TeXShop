@@ -304,7 +304,7 @@
 	// mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	// [[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
 	
-	[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+	[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	currentMouseMode = mouseMode;
 	self.selRectTimer = nil;
 	
@@ -752,7 +752,7 @@
 	theScale = [self scaleFactor];
 	magsize = theScale * 100;
 	scaleMag = magsize;
-	if (self == [myDocument topView]) {
+	if (self == [self.myDocument topView]) {
 		[myScale setIntegerValue:magsize];
 		[myScale1 setIntegerValue:magsize];
 		[myScale display];
@@ -883,7 +883,7 @@
 	magSize = [self magnification];
 	[self setScaleFactor: magSize];
 	if (sender == myScale1) {
-		[NSApp endSheet: [myDocument magnificationPanel]];
+		[NSApp endSheet: [self.myDocument magnificationPanel]];
 	}
 
 /*
@@ -981,7 +981,7 @@
 		[self cleanupMarquee: YES];
 	thePage = [sender integerValue];
 	if (sender == currentPage1)
-		[NSApp endSheet:[myDocument pagenumberPanel]];
+		[NSApp endSheet:[self.myDocument pagenumberPanel]];
 	[self goToKitPageNumber: thePage];
 
 
@@ -1305,7 +1305,7 @@
 	if ([notification object] != [self document])
 		return;
 	// Empty arrays.
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		; 
 	else {
 	[_searchResults removeAllObjects];
@@ -1329,7 +1329,7 @@
 	if ([notification object] != [self document])
 		return;
 
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		; 
 	else {
 	
@@ -1348,7 +1348,7 @@
 		return;
 	}
 	
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		;
 		else {
 	// Add page label to our array.
@@ -1373,7 +1373,7 @@
 	if ([notification object] != [self document])
 		return;
 	
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		;
 	else {
 	[_searchProgress stopAnimation: self];
@@ -1390,8 +1390,8 @@
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) aTableView
 {
-	if (self != [myDocument topView])
-		return ([[myDocument topView] numberOfRowsInTableView: aTableView]);
+	if (self != [self.myDocument topView])
+		return ([[self.myDocument topView] numberOfRowsInTableView: aTableView]);
 	else
 		return ([_searchResults count]);
 }
@@ -1401,8 +1401,8 @@
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) theColumn
 		row: (NSInteger) rowIndex
 {
-	if (self != [myDocument topView])
-		return ([[myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
+	if (self != [self.myDocument topView])
+		return ([[self.myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
 
 	else {
 		if ([[theColumn identifier] isEqualToString: @"page"])
@@ -1428,8 +1428,8 @@
 	rowIndex = [(NSTableView *)[notification object] selectedRow];
 	if (rowIndex >= 0)
 	{
-		if (self != [myDocument topView]) {
-			_firstSearchResults = [[myDocument topView] getSearchResults];
+		if (self != [self.myDocument topView]) {
+			_firstSearchResults = [[self.myDocument topView] getSearchResults];
 			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
 			}
 		else
@@ -1446,17 +1446,17 @@
 
 	if ([sender isKindOfClass: [NSButton class]] || [sender isKindOfClass: [NSMenuItem class]])
 	{
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
 		mouseMode = currentMouseMode = [sender tag];
-		[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+		[[self.myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	}
 	else if ([sender isKindOfClass: [NSMatrix class]])
 	{
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
 		mouseMode = currentMouseMode = [[sender selectedCell] tag];
-		[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+		[[self.myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	}
 
 	if ((oldMouseMode == NEW_MOUSE_MODE_SELECT_PDF) && (mouseMode != NEW_MOUSE_MODE_SELECT_PDF) &&
@@ -2885,7 +2885,7 @@
 
 - (void) printDocument: sender
 {
-	[myDocument printDocument: sender];
+	[self.myDocument printDocument: sender];
 }
 
 
@@ -3406,10 +3406,10 @@ else
 
 	manager = [NSFileManager defaultManager];
 
-	rootPath = [[myDocument fileName] stringByDeletingLastPathComponent];
+	rootPath = [[self.myDocument fileName] stringByDeletingLastPathComponent];
 	self.sourceFiles = [NSMutableArray arrayWithCapacity: NUMBER_OF_SOURCE_FILES] ;
 	currentIndex = 0;
-	sourceText = [[myDocument textView] string];
+	sourceText = [[self.myDocument textView] string];
 	sourceLength = [sourceText length];
 	
 	
@@ -3609,7 +3609,7 @@ else
 
 /* // this section moved to TSDocument-SyncTeX
 
-	myFileName = [myDocument fileName];
+	myFileName = [self.myDocument fileName];
 	if (! myFileName)
 		return NO;
 	mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
@@ -3638,7 +3638,7 @@ else
 	CGFloat yCoordinate = pageSize.size.height - viewPosition.y;
 	
 	
-	return [myDocument doSyncTeXForPage: pageNumber x: xCoordinate y: yCoordinate yOriginal: yOriginalCoordinate]; 
+	return [self.myDocument doSyncTeXForPage: pageNumber x: xCoordinate y: yCoordinate yOriginal: yOriginalCoordinate];
 }
 
 
@@ -3711,13 +3711,13 @@ else
  [self setupSourceFiles];
  numberOfFiles = [self.sourceFiles count];
  
- sourceText[0] = [[myDocument textView] string];
+ sourceText[0] = [[self.myDocument textView] string];
  sourcelength[0] = [sourceText[0] length];
  
  if (numberOfFiles > 0) {
  for (i = 0; i < numberOfFiles; i++) {
  
- theEncoding = [myDocument encoding];
+ theEncoding = [self.myDocument encoding];
  myData = [NSData dataWithContentsOfFile:[self.sourceFiles objectAtIndex:i]];
  
  // data in source
@@ -3830,9 +3830,9 @@ else
  if (foundOne && (!foundMoreThanOne)) {
  found = YES;
  if (foundIndex == 0) {
- myTextView = [myDocument textView];
- myTextWindow = [myDocument textWindow];
- [myDocument setTextSelectionYellow: YES];
+ myTextView = [self.myDocument textView];
+ myTextWindow = [self.myDocument textWindow];
+ [self.myDocument setTextSelectionYellow: YES];
  } else {
  newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[self.sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
  myTextView = [newDocument textView];
@@ -3903,8 +3903,8 @@ else
  if (foundOne && (!foundMoreThanOne)) {
  found = YES;
  if (foundIndex == 0) {
- myTextView = [myDocument textView];
- myTextWindow = [myDocument textWindow];
+ myTextView = [self.myDocument textView];
+ myTextWindow = [self.myDocument textWindow];
  } else {
  newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[self.sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
  myTextView = [newDocument textView];
@@ -4004,13 +4004,13 @@ else
 		[self setupSourceFiles];
 	numberOfFiles = [sourceFiles count];
     
-	sourceText[0] = [[myDocument textView] string];
+	sourceText[0] = [[self.myDocument textView] string];
 	sourcelength[0] = [sourceText[0] length];
     
 	if (numberOfFiles > 0) {
 		for (i = 0; i < numberOfFiles; i++) {
             
-			theEncoding = [myDocument encoding];
+			theEncoding = [self.myDocument encoding];
 			myData = [NSData dataWithContentsOfFile:[sourceFiles objectAtIndex:i]];
             
 			// data in source
@@ -4123,9 +4123,9 @@ else
 		if (foundOne && (!foundMoreThanOne)) {
 			found = YES;
 			if (foundIndex == 0) {
-				myTextView = [myDocument textView];
-				myTextWindow = [myDocument textWindow];
-				[myDocument setTextSelectionYellow: YES];
+				myTextView = [self.myDocument textView];
+				myTextWindow = [self.myDocument textWindow];
+				[self.myDocument setTextSelectionYellow: YES];
                 mySelectedAttributes = [myTextView selectedTextAttributes];
                 newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
                 [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
@@ -4237,8 +4237,8 @@ else
             if (foundOne && (!foundMoreThanOne)) {
                 found = YES;
                 if (foundIndex == 0) {
-                    myTextView = [myDocument textView];
-                    myTextWindow = [myDocument textWindow];
+                    myTextView = [self.myDocument textView];
+                    myTextWindow = [self.myDocument textWindow];
                     mySelectedAttributes = [myTextView selectedTextAttributes];
                     newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
                     [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
@@ -4414,7 +4414,7 @@ else
 	
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [myDocument fileName];
+	NSString *fileName = [self.myDocument fileName];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -4725,10 +4725,10 @@ else
 		includeFileName = [theStack objectAtIndex: stackPointer];
 	
 	if (includeFileName == nil) {
-		[myDocument toLine:aNumber];
-		[[myDocument  textWindow] makeKeyAndOrderFront:self];
+		[self.myDocument toLine:aNumber];
+		[[self.myDocument  textWindow] makeKeyAndOrderFront:self];
 	} else {
-		newFileName = [[[myDocument fileName] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+		newFileName = [[[self.myDocument fileName] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 		newFileName = [newFileName stringByAppendingString: includeFileName];
 		theExtension = [newFileName pathExtension];
 		if ([theExtension length] == 0)
@@ -4785,7 +4785,7 @@ else
         NSStringEncoding theEncoding;
 
 // BUG: This causes a crash if NSDocument is being closed and the pdf window needs to be redrawn
-//	if (! [myDocument syncState])
+//	if (! [self.myDocument syncState])
 //	 	return;
 	
 	if (! showSync)
@@ -4798,7 +4798,7 @@ else
 
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [myDocument fileName];
+	NSString *fileName = [self.myDocument fileName];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -5749,12 +5749,12 @@ oldVisibleRect.size.width = 0;
         fullscreenPageStyle = 2;
     if (fullscreenResizeOption == 0)
         fullscreenResizeOption = 3;
-    [[myDocument myPdfKitView] changePDFViewSizeTo:fullscreenResizeOption];
-    [[myDocument myPdfKitView] changePageStyleTo: fullscreenPageStyle];
-    [[myDocument myPdfKitView2] changePDFViewSizeTo:fullscreenResizeOption];
-    [[myDocument myPdfKitView2] changePageStyleTo: fullscreenPageStyle];
+    [[self.myDocument myPdfKitView] changePDFViewSizeTo:fullscreenResizeOption];
+    [[self.myDocument myPdfKitView] changePageStyleTo: fullscreenPageStyle];
+    [[self.myDocument myPdfKitView2] changePDFViewSizeTo:fullscreenResizeOption];
+    [[self.myDocument myPdfKitView2] changePageStyleTo: fullscreenPageStyle];
 */
-    [myDocument enterFullScreen: notification];
+    [self.myDocument enterFullScreen: notification];
 
 }
 
@@ -5765,12 +5765,12 @@ oldVisibleRect.size.width = 0;
 /*
     fullscreenPageStyle = pageStyle;
     fullscreenResizeOption = resizeOption;
-    [[myDocument myPdfKitView] changePDFViewSizeTo: oldResizeOption];
-    [[myDocument myPdfKitView] changePageStyleTo:oldPageStyle];
-    [[myDocument myPdfKitView2] changePDFViewSizeTo: oldResizeOption];
-    [[myDocument myPdfKitView2] changePageStyleTo:oldPageStyle];
+    [[self.myDocument myPdfKitView] changePDFViewSizeTo: oldResizeOption];
+    [[self.myDocument myPdfKitView] changePageStyleTo:oldPageStyle];
+    [[self.myDocument myPdfKitView2] changePDFViewSizeTo: oldResizeOption];
+    [[self.myDocument myPdfKitView2] changePageStyleTo:oldPageStyle];
 */
-    [myDocument exitFullScreen: notification];
+    [self.myDocument exitFullScreen: notification];
 }
 
 

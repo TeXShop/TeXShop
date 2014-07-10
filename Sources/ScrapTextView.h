@@ -45,7 +45,7 @@
 	
 }
 
-@property (retain) TSDocument   *document;
+@property (weak) TSDocument   *document;
 @property (retain) NSString     *originalString;
 @property (retain) NSString     *currentString;
 

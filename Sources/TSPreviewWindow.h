@@ -45,11 +45,11 @@
 @property               BOOL            willClose;
 @property               BOOL            windowIsSplit;
 @property               BOOL            firstClose;
-@property (retain)      PDFView         *activeView;
-@property (retain)      PDFView         *myPDFKitView;
-@property (retain)      PDFView         *myPDFKitView2;
-@property (retain)      NSSplitView    *pdfKitSplitView;
-@property (retain)      TSDocument      *myDocument;
+@property (weak)      PDFView         *activeView;
+@property (weak)      PDFView         *myPDFKitView;
+@property (weak)      PDFView         *myPDFKitView2;
+@property (weak)      NSSplitView    *pdfKitSplitView;
+@property (weak)      TSDocument      *myDocument;
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 

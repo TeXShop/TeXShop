@@ -369,10 +369,12 @@
 }
 
 // FIX RULER SCROLL
+/*
 - (void)setDocument:(TSDocument*)document  // added by Terada (for Lion bug)
 {
     _document = document;    
 }
+*/
 // END FIX RULER SCROLL
 
 - (void)drawHashMarksAndLabelsInRect:(NSRect)aRect
@@ -386,7 +388,7 @@
 
 // FIX RULER SCROLL
     if ([SUD boolForKey:FixLineNumberScrollKey])
-        [_document redrawLineNumbers:view];
+        [self.document redrawLineNumbers:view];
 // END FIX RULER SCROLL
 
 	if (_backgroundColor != nil)

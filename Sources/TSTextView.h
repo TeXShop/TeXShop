@@ -25,7 +25,7 @@
 
 @interface TSTextView : NSTextView <NSTextFinderClient>
 {
-	TSDocument		*_document;
+//	TSDocument		*_document;
 	BOOL			_alternateDown;
     // (HS) variables for Command Completion now instance/member variables --- moved from keyDown --- 2012/05/15.
     BOOL wasCompleted; // was completed on last keyDown
@@ -39,7 +39,7 @@
 
 }
 
-@property (retain) TSDocument   *document;
+@property (weak) TSDocument   *document;
 @property (retain) NSString     *originalString;
 @property (retain) NSString     *currentString;
 

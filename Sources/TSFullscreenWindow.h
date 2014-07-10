@@ -29,6 +29,6 @@
 	
 }
 
-@property (retain) NSDocument  *myDocument;
+@property (weak) NSDocument  *myDocument;
 
 @end

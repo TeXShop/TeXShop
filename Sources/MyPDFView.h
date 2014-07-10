@@ -43,7 +43,7 @@ IBOutlet		id                  myStepper1;
 	BOOL                fixScroll;
 	BOOL                showSync;
 //	NSPDFImageRep       *myRep;
-    TSDocument          *myDocument;
+//  TSDocument          *myDocument;
 	NSInteger			rotationAmount;  // will be 0, 90, -90, 180
 	double              theMagSize;
 	//BOOL              largeMagnify; // for magnifying glass // mitsu 1.29 (O) not used

@@ -591,9 +591,15 @@
 	NSInteger				i;
 	BOOL			done;
 	NSString		*defaultCommand;
+    NSEvent         *currentEvent;
+    NSUInteger      optionKeyPressed;
+    
 
 	[super windowControllerDidLoadNib:aController];
 	[self applyInvisibleCharactersShowing]; // added by Terada
+    
+    currentEvent = [NSApp currentEvent];
+    optionKeyPressed = [currentEvent modifierFlags] & NSAlternateKeyMask;
     
 	
 	// WARNING: I moved this to the start from much further on; the original location is still present
@@ -1012,7 +1018,7 @@ if (! skipTextWindow) {
 		return;
 
 	imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
-	if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
+	if (([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) && (!optionKeyPressed)) {
 
 		PDFfromKit = YES;
 		myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];

@@ -52,9 +52,11 @@
 	NSColor				*_alternateTextColor;
 	NSColor				*_backgroundColor;
 // FIX RULER SCROLL
-    TSDocument          *_document;
+//    TSDocument          *_document;
 // END FIX RULER SCROLL
 }
+
+@property (weak)  TSDocument    *document;
 
 - (id)initWithScrollView:(NSScrollView *)aScrollView;
 
@@ -74,7 +76,7 @@
 - (NoodleLineNumberMarker *)markerAtLine:(NSUInteger)line;
 
 // FIX RULER SCROLL
-- (void)setDocument:(TSDocument *)document;
+// - (void)setDocument:(TSDocument *)document;
 // END FIX RULER SCROLL
 
 @end

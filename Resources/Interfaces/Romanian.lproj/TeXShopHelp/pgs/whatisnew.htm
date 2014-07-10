@@ -14,6 +14,32 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.38</h5></P>
+<ul>
+<li> If the option key is down when a source file is opened, the associated pdf file will not be opened.
+<p>
+<li> TeXShop is written in Cocoa, an object oriented framework inherited from NeXT. Object oriented programs
+create a large number of objects dynamically during program operation. "Memory management" is the
+task of disposing of these objects when they are no longer being used. If an object is disposed too soon,
+ the program crashes when another part of the program tries to use it. If an object is left dangling and not
+disposed, memory gradually clogs up.
+
+<p>
+Recently Apple introduced "automatic reference counting", a technology which leaves the memory management task to the compiler, allowing the programmer to ignore it. TeXShop adopted this technology
+in version 3.35, leading to increased stability and significantly fewer crashes. 
+
+<p> In reference counting, each object keeps a reference number counting  the number of parts of the program using it.
+When a piece of the program is done with the object, that part sends the object a "release" message
+and the object decreases its reference count by one. When the count reaches zero, the object is automatically removed from memory.
+
+<p> There is one situation which the compiler cannot handle automatically. Suppose object A is using object B and object B is using object A. Each object then has a reference count at least one, and usually higher if the objects are being used by other parts of the program. Suppose now that the rest of the program is done with the two objects. The objects are sent a number of "release" messages, until eventually each has reference count one. Since the count is not zero, object A does not go away, so it does not send a release message to object B.
+Similarly ...
+
+<p> The solution of this problem is to manually introduce a "weak reference" from one object to the other. We give object A a reference to object B, but only give object B a weak reference to object A. A weak reference does not increase the reference count. Thus when all other objects are done with the pair, object A has reference count zero, but object B has reference count one. So object A is removed from memory, and just before that happens it sends a "release" to object B. Now object B has reference number zero, and it too is removed from memory.
+
+<p> TeXShop 3.38 completes the process of conversion to automatic reference counting, by correctly indicating weak references. Thus versions 3.35 through 3.37 could leave unused objects in memory,  but 3.38 fixes that problem.
+</ul>
+
 <P><h5>TeXShop Changes 3.37</h5></P>
 <ul>
 <li> Added a  preference setting for the Preview window: ``smooth text and line art.''  By default this is on.

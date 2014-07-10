@@ -30,10 +30,11 @@
 {
 }
 
-@property (retain) TSDocument   *myDocument;
+@property (weak) TSDocument   *myDocument;
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window
-- (TSDocument *)document;
+// following is OK; it returns myDocument
+ - (TSDocument *)document;
 // end addition
 - (void) doChooseMethod: sender;
 - (void) saveSourcePosition: sender;

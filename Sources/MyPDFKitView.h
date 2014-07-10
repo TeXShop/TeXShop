@@ -26,29 +26,30 @@
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
 #import "OverView.h"
+#import "TSDocument.h"
 
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
-IBOutlet	id								currentPage;
-IBOutlet    id								totalPage;
-IBOutlet	id								myScale;
-IBOutlet	id								myStepper;
-IBOutlet	id								currentPage1;
-IBOutlet	id								totalPage1;
-IBOutlet	id								myScale1;
-IBOutlet	id								myStepper1;
-IBOutlet	id								myDocument;
-IBOutlet	NSDrawer						*_drawer;
- //           PDFOutline						*_outline;
-IBOutlet	NSTextField						*_noOutlineText;
-IBOutlet	NSOutlineView					*_outlineView;
+                    IBOutlet	id								currentPage;
+                    IBOutlet    id								totalPage;
+                    IBOutlet	id								myScale;
+                    IBOutlet	id								myStepper;
+                    IBOutlet	id								currentPage1;
+                    IBOutlet	id								totalPage1;
+                    IBOutlet	id								myScale1;
+                    IBOutlet	id								myStepper1;
+// @property (weak) IBOutlet	TSDocument						*myDocument;
+                    IBOutlet	NSDrawer						*_drawer;
+//           PDFOutline						*_outline;
+                    IBOutlet	NSTextField						*_noOutlineText;
+                    IBOutlet	NSOutlineView					*_outlineView;
 
 //	NSMutableArray					*_searchResults;
-	IBOutlet NSTableView			*_searchTable;
-	IBOutlet NSProgressIndicator	*_searchProgress;
-	IBOutlet NSMatrix				*mouseModeMatrix;
-	IBOutlet NSMenu					*mouseModeMenu;
+                    IBOutlet    NSTableView                     *_searchTable;
+                    IBOutlet    NSProgressIndicator             *_searchProgress;
+                    IBOutlet    NSMatrix                        *mouseModeMatrix;
+                    IBOutlet    NSMenu                          *mouseModeMenu;
 
 
 //	NSWindow						*myPDFWindow;
@@ -106,13 +107,15 @@ IBOutlet	NSOutlineView					*_outlineView;
 
 @property (retain) PDFOutline						*outline;
 @property (retain) NSMutableArray					*searchResults;
-@property (retain) NSWindow						*myPDFWindow;
+@property (retain) NSWindow                         *myPDFWindow;
 @property (retain) NSTimer							*selRectTimer;
 @property (retain) id								imageTypeView;
 @property (retain) id								imageTypePopup;
 @property (retain) NSMutableArray					*sourceFiles;
 @property (retain) OverView                        *overView;
 @property           BOOL                            waiting;
+@property (weak)    IBOutlet	TSDocument          *myDocument;
+
 
 // - (void) scheduleAddintToolips;
 - (id) init;

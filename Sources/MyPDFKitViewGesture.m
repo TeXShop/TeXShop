@@ -30,6 +30,7 @@
 
 @implementation MyPDFKitView (Gesture)
 
+
 /* Explanation: In Single Window or Double Window mode, TeXShop doesn't interact
  well with TrackPad Gestures. A gesture will change the page, but not with a lot of
  feedback. 

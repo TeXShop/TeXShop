@@ -33,7 +33,7 @@
 }
 
 @property           BOOL        firstResize;
-@property (retain)  TSDocument   *myDocument;
+@property (weak)  TSDocument   *myDocument;
 
 - (void) doChooseMethod: sender;
 - (void) doError: sender;

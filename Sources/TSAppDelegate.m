@@ -618,8 +618,25 @@
 // mitsu 1.29 (P)
 - (void) finishCommandCompletionConfigure
 {
-	NSString            *completionPath;
+	NSString            *completionPath, *small;
 	NSData              *myData;
+    
+    unichar bullet = 0x2022;
+    unichar smallless = 0x2039;
+    unichar smallgreater = 0x203A;
+    
+    /*
+    NSString *placeholderString = @"¥";
+    NSString *startcommentString = @"¥Ü";
+    NSString *endcommentString = @"Ý";
+    */
+
+    
+    placeholderString = [NSString stringWithCharacters: &bullet length: 1];
+    small = [NSString stringWithCharacters: &smallless length: 1];
+    startcommentString= [placeholderString stringByAppendingString: small];
+    endcommentString = [NSString stringWithCharacters: &smallgreater length: 1];
+
     
 	unichar esc = 0x001B; // configure the key in Preferences?
 	unichar tab = 0x0009; // ditto

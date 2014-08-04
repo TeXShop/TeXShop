@@ -1852,7 +1852,15 @@
     
     
 	[NSGraphicsContext restoreGraphicsState];
+    
+    [NSGraphicsContext saveGraphicsState];
+    BOOL shouldAntiAlias = [SUD boolForKey: AntiAliasKey];
+    if (shouldAntiAlias) {
+        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+        }
 	[page drawWithBox:[self displayBox]];
+    [NSGraphicsContext restoreGraphicsState];
+
     
 	// Set up transform to handle rotated page.
     /*

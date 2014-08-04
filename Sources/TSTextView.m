@@ -1294,7 +1294,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		( ! [[SUD stringForKey: CommandCompletionAlternateMarkShortcutKey] isEqualToString:@"NO"] ) &&
 		(([theEvent modifierFlags] & NSAlternateKeyMask) != 0))
 			{
-				[self.document doNextBullet:self];
+ 				[self.document doNextBullet:self];
 				return;
 			}
 		
@@ -1302,7 +1302,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		( ! [[SUD stringForKey: CommandCompletionAlternateMarkShortcutKey] isEqualToString:@"NO"] ) &&
 		(([theEvent modifierFlags] & NSControlKeyMask) != 0))
 			{
-				[self.document doPreviousBullet:self];
+ 				[self.document doPreviousBullet:self];
 				return;
 			}
 
@@ -1312,7 +1312,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 	  //  if ([[theEvent characters] isEqualToString: g_commandCompletionChar] && (![self hasMarkedText]) && g_commandCompletionList)
 	{
-				textString = [self string]; // this will change during operations (such as undo)
+        textString = [self string]; // this will change during operations (such as undo)
 		selectedLocation = [self selectedRange].location;
 		// check for LaTeX \begin{...}
 		if (selectedLocation > 0 && [textString characterAtIndex: selectedLocation-1] == '}'
@@ -1347,12 +1347,12 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			}
 		}
 		else
-			latexSpecial = NO;
-
+            latexSpecial = NO;
+ 
 		// if it was completed last time, revert to the uncompleted stage
 		if (wasCompleted)
 		{
-			currentLength = (self.currentString)?[self.currentString length]:0;
+ 			currentLength = (self.currentString)?[self.currentString length]:0;
 			// make sure that it was really completed last time
 			// check: insertion point, string before insertion point, undo title
 			if ( selectedLocation == textLocation &&
@@ -1363,7 +1363,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				[[[self undoManager] undoActionName] isEqualToString:
 						NSLocalizedString(@"Completion", @"Completion")])
 			{
-				// revert the completion:
+                // revert the completion:
 				// by doing this, even after showing several completion candidates
 				// you can get back to the uncompleted string by one undo.
 				[[self undoManager] undo];

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -61,6 +61,10 @@
                 <outlet property="rLog" destination="19P-tE-rO1" id="vAd-kr-TOw"/>
                 <outlet property="requestWindow" destination="209" id="213"/>
                 <outlet property="sLog" destination="MPh-hb-AgE" id="69Q-Qb-YQI"/>
+                <outlet property="scrapPDFKitView" destination="MbT-oX-bqD" id="4ZA-pP-PG2"/>
+                <outlet property="scrapPDFWindow" destination="RiK-Eh-uDi" id="uZS-Zu-Hrt"/>
+                <outlet property="scrapTextView" destination="Mqy-WO-pUA" id="LhB-uZ-y3p"/>
+                <outlet property="scrapWindow" destination="US4-ee-2FL" id="pVS-Iy-o8b"/>
                 <outlet property="scrollView" destination="22" id="431"/>
                 <outlet property="scrollView2" destination="443" id="449"/>
                 <outlet property="shareButton" destination="3926" id="3930"/>
@@ -1988,6 +1992,74 @@ Gw
                             <action selector="cancelForPanel:" target="-2" id="2438"/>
                         </connections>
                     </button>
+                </subviews>
+            </view>
+        </window>
+        <window title="Try This" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapWindow" animationBehavior="default" id="US4-ee-2FL" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="272" y="172" width="276" height="378"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="Rdg-sl-Tzu">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="378"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="zR6-h5-H5c">
+                        <rect key="frame" x="-1" y="54" width="278" height="325"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="aeW-V0-9W2">
+                            <rect key="frame" x="1" y="1" width="276" height="323"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="Mqy-WO-pUA" customClass="ScrapTextView">
+                                    <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="276" height="323"/>
+                                    <size key="maxSize" width="463" height="10000000"/>
+                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="276" height="323"/>
+                                    <size key="maxSize" width="463" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="SyQ-Ex-YDS">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="IJW-Cj-jvn">
+                            <rect key="frame" x="261" y="1" width="16" height="323"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <button verticalHuggingPriority="750" id="nHT-PN-LW5">
+                        <rect key="frame" x="160" y="19" width="105" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="roundRect" title="タイプセット" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mcx-f5-PRl">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="12" name="STHeitiSC-Light"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="typesetScrap:" target="-2" id="f8l-ua-smF"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+        </window>
+        <window title="Try This Output" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapPDFWindow" animationBehavior="default" id="RiK-Eh-uDi" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="272" y="172" width="276" height="378"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="zHq-aY-ic6">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="378"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <pdfView autoresizesSubviews="NO" wantsLayer="YES" id="MbT-oX-bqD" customClass="ScrapPDFKitView">
+                        <rect key="frame" x="0.0" y="-10" width="276" height="388"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </pdfView>
                 </subviews>
             </view>
         </window>

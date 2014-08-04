@@ -74,6 +74,7 @@ NSString *PdfKitWindowNameKey = @"PdfKitWindow";
 NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
 NSString *PdfPageStyleKey = @"PdfPageStyle"; // mitsu 1.29 (O)
 NSString *PdfRefreshKey = @"PdfRefresh";
+NSString *AntiAliasKey = @"AntiAlias";
 NSString *RefreshTimeKey = @"RefreshTime";
 NSString *PdfFileRefreshKey = @"PdfFileRefresh";
 NSString *PdfFirstPageStyleKey = @"PdfFirstPageStyle";
@@ -303,3 +304,13 @@ BOOL		automaticLanguage;
 
 // Koch 8/24/03
 NSInteger	g_macroType;	// FIXME: get rid of this
+
+/*
+NSString *placeholderString = @"¥";
+NSString *startcommentString = @"¥Ü";
+NSString *endcommentString = @"Ý";
+*/
+NSString *placeholderString;
+NSString *startcommentString;
+NSString *endcommentString;
+

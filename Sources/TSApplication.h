@@ -11,6 +11,6 @@
 @interface TSApplication : NSApplication
 
 - (void)terminate:(id)sender;
-
+- (void)sendEvent:(NSEvent *)anEvent;
 
 @end

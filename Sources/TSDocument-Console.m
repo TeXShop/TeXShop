@@ -1,6 +1,6 @@
 /*
  * TeXShop - TeX editor for Mac OS
- * Copyright (C) 2000-2005 Richard Koch
+ * Copyright (C) 2000-2014 Richard Koch
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocument-Jobs.m 254 2007-06-03 21:09:25Z fingolfin $
+ * $Id: TSDocument-Jobs.m 254 2014-06-28 21:09:25Z fingolfin $
  *
  */
+
 
 #import "UseMitsu.h"
 

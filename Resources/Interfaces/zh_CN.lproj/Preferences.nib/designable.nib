@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -14,6 +14,7 @@
                 <outlet property="_TabCharacterKindMatrix" destination="1034" id="1067"/>
                 <outlet property="_afterTypesettingMatrix" destination="678" id="682"/>
                 <outlet property="_alwaysHighlightButton" destination="942" id="1004"/>
+                <outlet property="_antialiasButton" destination="vsR-8M-hEX" id="0Mm-YP-qrD"/>
                 <outlet property="_autoCompleteButton" destination="842" id="853"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
                 <outlet property="_beepButton" destination="944" id="1005"/>
@@ -807,7 +808,7 @@
                             <tabViewItem label="预览" identifier="2" id="8">
                                 <view key="view" id="10">
                                     <rect key="frame" x="10" y="33" width="524" height="570"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="预览窗口位置" id="47">
                                             <rect key="frame" x="19" y="439" width="253" height="103"/>
@@ -1090,6 +1091,30 @@
                                                             <action selector="setPreviewBackgroundColor:" target="-2" id="802"/>
                                                         </connections>
                                                     </colorWell>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="STHeitiSC-Light"/>
+                                        </box>
+                                        <box title="显示" id="eBt-9V-WkE">
+                                            <rect key="frame" x="19" y="146" width="253" height="66"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="249" height="46"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="vsR-8M-hEX">
+                                                        <rect key="frame" x="19" y="14" width="215" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="平滑文字和线稿" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="KOp-zA-4il">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="STHeitiSC-Light"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="antialiasChanged:" target="-2" id="vw5-bh-umV"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>

@@ -112,6 +112,7 @@ IBOutlet	NSOutlineView					*_outlineView;
 @property (retain) id								imageTypePopup;
 @property (retain) NSMutableArray					*sourceFiles;
 @property (retain) OverView                        *overView;
+@property           BOOL                            waiting;
 
 // - (void) scheduleAddintToolips;
 - (id) init;
@@ -218,4 +219,10 @@ IBOutlet	NSOutlineView					*_outlineView;
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
 @end
+
+@interface MyPDFKitView (Gesture)
+// - (void)beginGestureWithEvent:(NSEvent *)event;
+// - (void)endGestureWithEvent:(NSEvent *)event;
+@end
+
 

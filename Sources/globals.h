@@ -274,6 +274,7 @@ extern NSString *PdfKitWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
 extern NSString *PdfPageStyleKey; // mitsu 1.29 (O)
 extern NSString *PdfRefreshKey;
+extern NSString *AntiAliasKey;
 extern NSString *RefreshTimeKey;
 extern NSString *PdfFileRefreshKey;
 extern NSString *PdfFirstPageStyleKey;
@@ -510,4 +511,6 @@ NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
 #define LEOPARD 568 // added by Terada
 
-
+extern NSString *placeholderString;
+extern NSString *startcommentString;
+extern NSString *endcommentString;

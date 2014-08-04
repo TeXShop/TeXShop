@@ -892,6 +892,12 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	[SUD setBool:[(NSCell *)sender state] forKey:PdfRefreshKey];
 }
 
+- (IBAction)antialiasChanged:sender
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AntiAliasKey] forKey:AntiAliasKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:AntiAliasKey];
+}
+
 #ifdef MITSU_PDF
 
 // mitsu 1.29 (O)
@@ -1526,6 +1532,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_autoCompleteButton setState:[defaults boolForKey:AutoCompleteEnabledKey]];
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
+    [_antialiasButton setState:[defaults boolForKey:AntiAliasKey]];
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
 	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)

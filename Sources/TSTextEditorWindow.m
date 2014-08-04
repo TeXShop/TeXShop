@@ -72,6 +72,7 @@
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
 	[self.myDocument fixMacroMenuForWindowChange];
+    [self.myDocument setSourceTextColorFromPreferences:nil]; // added by Terada
 }
 
 - (void) resignMainWindow

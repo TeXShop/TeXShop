@@ -255,6 +255,19 @@
     
 }
 
+- (NSPopUpButton *)programButton
+{
+    return programButton;
+}
+
+- (BOOL)useDVI
+{
+    if (whichScript == 101)
+        return YES;
+    else
+        return NO;
+}
+
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     [super restoreStateWithCoder:coder];
@@ -1855,6 +1868,8 @@ in other code when an external editor is being used. */
 	[pdfKitWindow close];
     [outputWindow close];
     [self.logWindow close];
+    [scrapPDFWindow close];
+    [scrapWindow close];
 	
 	/* The next line fixes a crash bug in Jaguar; see notifyActiveTextWindowClosed for
 	a description. */
@@ -2241,6 +2256,10 @@ if ( ! skipTextWindow) {
 	// notifications for pdftex and pdflatex
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkATaskStatus:)
 		name:NSTaskDidTerminateNotification object:nil];
+    
+    // notification for scrap
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkScrapTaskStatus:)
+                                                 name:NSTaskDidTerminateNotification object:nil];
 		
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
 		name:NSFileHandleReadCompletionNotification object:nil];
@@ -7021,13 +7040,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 // selectors are used there.
 //
 
-NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcommentString = @"›";
+// NSString *placeholderString = @"•", *startcommentString = @"•‹", *endcommentString = @"›";
 
 - (void) doNextBullet: (id)sender // modified by (HS)
 {
     NSRange tempRange, forwardRange, markerRange, commentRange;
     NSString *text;
-	
+    
     text = [textView string];
     tempRange = [textView selectedRange];
     tempRange.location += tempRange.length; // move the range to after the selection (a la Find) to avoid re-finding (HS)

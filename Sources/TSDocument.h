@@ -29,6 +29,8 @@
 #import "NoodleLineNumberMarker.h"
 #import "TSPreviewWindow.h"
 #import "synctex_parser.h"
+#import "ScrapTextView.h"
+#import "ScrapPDFKitView.h"
 
 #define NUMBEROFERRORS	20
 
@@ -72,8 +74,10 @@ enum RootCommand
 };
 
 @class MyPDFKitView;
+@class TSTextView;
 @class MyPDFView;
 @class MySelection;
+@class ScrapTextView;
 
 // FIX RULER SCROLL
 @class NoodleLineNumberView;
@@ -92,6 +96,11 @@ enum RootCommand
 	
 	IBOutlet MyPDFView			*pdfView;		/*" view displaying the current preview "*/
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
+    
+    IBOutlet NSPanel            *scrapWindow;
+    IBOutlet NSPanel            *scrapPDFWindow;
+    IBOutlet ScrapTextView     *scrapTextView;
+    IBOutlet ScrapPDFKitView    *scrapPDFKitView;
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
@@ -334,6 +343,7 @@ enum RootCommand
 @property (retain) NSPipe              *inputPipe;
 @property (retain) NSPipe              *outputPipe;
 @property (retain) NSTask              *texTask;
+@property (retain) NSTask              *scrapTask;
 @property (retain) NSTask              *bibTask;
 @property (retain) NSTask              *indexTask;
 @property (retain) NSTask              *metaFontTask;
@@ -379,7 +389,13 @@ enum RootCommand
 @property (retain)   MySelection         *mSelection;
 @property (retain)   NSTextStorage       *textStorage;
 
-
+// forScrap
+@property (retain)  NSURL       *scrapDirectoryURL;
+@property (retain)  NSString    *scrapImagePath;
+@property (retain)  NSString    *scrapEncoding;
+@property (retain)  NSString    *scrapProgram;
+@property (retain)  NSString    *scrapMenuEngine;
+@property           BOOL        scrapDVI;
 
 
 + (BOOL)autosavesInPlace;
@@ -413,6 +429,9 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
+
+// - (void) tryScrap:(id)sender;
+// - (IBAction) typesetScrap:(id)sender;
 
 - (IBAction) convertTiff:(id)sender;
 // - (void) okForRequest: sender;
@@ -514,6 +533,9 @@ enum RootCommand
 - (BOOL)skipTextWindow;
 - (void)doShareSource:(id)sender;
 - (void)doSharePreview:(id)sender;
+- (void)setupTextView:(NSTextView *)aTextView;
+- (NSPopUpButton *)programButton;
+- (BOOL) useDVI;
 
 
 // BibDesk Completion
@@ -576,6 +598,7 @@ enum RootCommand
 // private API
 //-----------------------------------------------------------------------------
 - (void)registerForNotifications;
+- (void)setSourceTextColorFromPreferences:(NSNotification *)notification; // added by Terada
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification;
 - (void)reColor:(NSNotification *)notification;
@@ -639,6 +662,7 @@ enum RootCommand
 - (void) sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
 - (BOOL) getWillClose;
 - (void) setWillClose: (BOOL)value;
+- (void) killRunningTasks;
 
 @end
 
@@ -690,6 +714,13 @@ enum RootCommand
 */
 
 @end
+
+@interface TSDocument (Scrap)
+- (void) tryScrap:(id)sender;
+- (IBAction) typesetScrap:(id)sender;
+- (void)checkScrapTaskStatus:(NSNotification *)notification;
+@end
+
 
 // ULRICH BAUER PATCH
 @interface TSDocument (FileWatching)

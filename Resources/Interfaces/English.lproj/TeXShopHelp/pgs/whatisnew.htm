@@ -14,6 +14,62 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.37</h5></P>
+<ul>
+<li> Added a  preference setting for the Preview window: ``smooth text and line art.''  By default this is on.
+The setting was requested by Tom Burke, who created an illustration using GeoGebra which
+looked pixelated when displayed at small size in TeXShop. Mysteriously, the illustration looked fine under
+the magnifying glass, or when printed. It also looked fine on a Retina display, but in that case the circles and
+lines were very thin.
+<p>
+The same preference setting is provided by Apple's Preview and other programs. Users with a Retina display may wish to turn it off.
+<p>
+<li> Yusuke Terada added small changes for users in Japan. He wrote "during the time Hiragana is input until it is converted to Kanji, `undecided characters' are displayed, but the source text color is not applied and they are displayed in black. This behavior has been modified."
+
+<p>
+<li> A new item, "Experiment...", was added to the Edit menu and is available when the source window is active. This addition has been a recurring request of Wendy McKay. The item allows users to experiment with short, but complicated, fragments of TeX before copying the source into the main document. 
+
+<p>
+When the item is chosen, a panel appears. Type a TeX fragment into the panel, say $$\sqrt{x^2 + y^2}$$. Push the Typeset button at the bottom of the panel, and a second panel appears showing the result of typesetting the fragment. The fragment can contain anything: a displayed formula, ordinary text, several pages of mixed material.
+To typeset, TeXShop creates a new source file with the header of the current document up until "\begin{document}", the new fragment, and a final "\end{document}." This also works in a project with a root file. In that case the contents of the root file up until "\begin{document}" are used.
+
+<p> Both panels have close buttons. The "escape" key will also close panels when they are active.
+
+<p> Although the two panels do not have resize buttons, they can both be resized. TeXShop will remember
+the new sizes and locations and use them the next time "Experiment..." is selected. The font in the source panel will be the default TeXShop source font. The keyboard shortcuts "command +" and "command -" work in the source panel to enlarge the text if desired. Key bindings and command completion are available in the source panel, but with one caveat. Command completion uses the tab key in the panel even if it uses the escape key for regular source, since the escape key in a panel closes the panel.
+
+<p> The "Experiment..." feature requires a latex-like engine. It will not work with ordinary plain tex. The
+source panel's Typeset button looks at the main source window's toolbar to determine a typesetting engine.,
+and also uses the "% $TEX engine = ..." mechanism if available at the top of the source window.
+If "Plain TeX" or "Context" is selected, nothing happens. If "bibtex" or "make index" are chosen, pdflatex is used. 
+Obviousy "pdflatex, xelatex, and lualatex" can be used. The panel will try to use any user-defined engine selected, but  some such engines may fail if they don't expect latex-like code or output pdf.
+
+<p> The preview panel understands mouse scroll commands and trackpad gesture commands to scroll and resize. It understands "command-shift +" and "command-shift -" to resize contents. 
+
+<p> If you close a panel during work and later reopen it, the contents will be remembered. But the contents
+are lost when quitting TeXShop. It is assumed that the panels will be used for short fragments of work; when
+the user is satisfied, they will transfer the source to the main document using copy and paste. Panel
+contents are not auto-saved and cannot be manually saved except via the copy mechanism.
+
+<p> Each document has its own source and preview panels, so if you have multiple documents open, you could also have multiple source and preview panels open, leading to a confusing mess. I expect users to exercise common sense and only experiment with one fragment at a time.  One way to avoid confusion would be to hide the panels when a document becomes inactive. I didn't want to do that because  a user  constructing
+a complicated example might want to temporarily open a second document and copy source from that
+document into the panel as a starting point.
+
+
+
+</ul>
+<P><h5>TeXShop Changes 3.36.2</h5></P>
+
+<ul>
+<li> Fixed magnification on Yosemite
+<p>
+<li> Fixed sharing icon on source toolbar
+<p>
+<li> fixed two broken IB connections
+<p>
+<li> changed [NSApp delegate] to (TSAppDelegate *)[NSApp delegate] in two spots to make the code compile on XCode 6
+</ul>
+
 <P><h5>TeXShop Changes 3.36.1</h5></P>
 
 This version was released with version number 3.36.1 to test the operation of adding a final digit to the version number. In the future, this

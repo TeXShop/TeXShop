@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -61,6 +61,10 @@
                 <outlet property="rLog" destination="JrH-zc-3su" id="EAI-7Y-i0g"/>
                 <outlet property="requestWindow" destination="209" id="213"/>
                 <outlet property="sLog" destination="tey-Ba-mLd" id="hy7-pA-deO"/>
+                <outlet property="scrapPDFKitView" destination="tu2-YB-FwA" id="xCc-ps-6Vc"/>
+                <outlet property="scrapPDFWindow" destination="VPv-WF-4Pu" id="RbS-y5-8Xp"/>
+                <outlet property="scrapTextView" destination="OUc-g5-Efa" id="yWF-Bq-9n2"/>
+                <outlet property="scrapWindow" destination="z7m-ub-8CN" id="4f9-GC-2sf"/>
                 <outlet property="scrollView" destination="22" id="431"/>
                 <outlet property="scrollView2" destination="443" id="449"/>
                 <outlet property="shareButton" destination="3925" id="3929"/>
@@ -1807,10 +1811,10 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <size key="minSize" width="642" height="484"/>
-                                    <size key="maxSize" width="642" height="10000000"/>
+                                    <size key="maxSize" width="644" height="10000000"/>
                                     <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <size key="minSize" width="642" height="484"/>
-                                    <size key="maxSize" width="642" height="10000000"/>
+                                    <size key="maxSize" width="644" height="10000000"/>
                                 </textView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1993,6 +1997,74 @@ Gw
                             <action selector="cancelForPanel:" target="-2" id="2438"/>
                         </connections>
                     </button>
+                </subviews>
+            </view>
+        </window>
+        <window title="Try This" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapWindow" animationBehavior="default" id="z7m-ub-8CN" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="272" y="172" width="276" height="378"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="Kec-Q3-Uqo">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="378"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="SRP-4l-sMd">
+                        <rect key="frame" x="-1" y="54" width="278" height="325"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="2id-pY-79i">
+                            <rect key="frame" x="1" y="1" width="276" height="323"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="OUc-g5-Efa" customClass="ScrapTextView">
+                                    <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="276" height="323"/>
+                                    <size key="maxSize" width="463" height="10000000"/>
+                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="276" height="323"/>
+                                    <size key="maxSize" width="463" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="xT4-Li-5fu">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Yha-RF-c03">
+                            <rect key="frame" x="261" y="1" width="16" height="323"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <button verticalHuggingPriority="750" id="3Sr-Ob-Rxg">
+                        <rect key="frame" x="197" y="19" width="59" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="roundRect" title="Typeset" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Ce-pw-DXU">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="cellTitle"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="typesetScrap:" target="-2" id="m6h-h9-7rH"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+        </window>
+        <window title="Try This Output" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapPDFWindow" animationBehavior="default" id="VPv-WF-4Pu" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="272" y="172" width="276" height="378"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="Elr-wI-6cG">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="378"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <pdfView autoresizesSubviews="NO" wantsLayer="YES" id="tu2-YB-FwA" customClass="ScrapPDFKitView">
+                        <rect key="frame" x="0.0" y="-10" width="276" height="388"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </pdfView>
                 </subviews>
             </view>
         </window>

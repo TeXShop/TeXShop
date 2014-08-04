@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -14,6 +14,7 @@
                 <outlet property="_TabCharacterKindMatrix" destination="954" id="1009"/>
                 <outlet property="_afterTypesettingMatrix" destination="678" id="682"/>
                 <outlet property="_alwaysHighlightButton" destination="1035" id="1038"/>
+                <outlet property="_antialiasButton" destination="fjQ-he-GFL" id="6Ic-qg-dkP"/>
                 <outlet property="_autoCompleteButton" destination="842" id="853"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
                 <outlet property="_beepButton" destination="938" id="1010"/>
@@ -106,7 +107,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView initialItem="9" id="7">
-                        <rect key="frame" x="4" y="61" width="544" height="625"/>
+                        <rect key="frame" x="7" y="61" width="544" height="625"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -808,7 +809,7 @@
                             <tabViewItem label="Preview" identifier="2" id="8">
                                 <view key="view" id="10">
                                     <rect key="frame" x="10" y="33" width="524" height="579"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Preview Window Position" id="47">
                                             <rect key="frame" x="19" y="448" width="253" height="103"/>
@@ -1068,6 +1069,30 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="autoPDFChanged:" target="-2" id="558"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Display" id="5HT-3x-Zr6">
+                                            <rect key="frame" x="19" y="155" width="253" height="66"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="249" height="46"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="fjQ-he-GFL">
+                                                        <rect key="frame" x="19" y="14" width="215" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Smooth text and line art" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="jgT-n6-lh0">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="antialiasChanged:" target="-2" id="6WU-zq-Zod"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

@@ -24,8 +24,6 @@
 
 - (void)terminate:(id)sender;
 {
-    NSInteger i, j;
-    BOOL skip;
     
 /*
     
@@ -56,6 +54,11 @@
  */
 
     [super terminate:sender];
+}
+
+- (void)sendEvent:(NSEvent *)anEvent
+{
+    [super sendEvent:anEvent];
 }
 
 @end

@@ -51,6 +51,7 @@
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
 	IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
+    IBOutlet NSButton       *_antialiasButton;      /* connect to antialias checkbox */
 
 	IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/
 	IBOutlet NSButton	*_scrollButton;			/*" connected to scroll button "*/
@@ -207,6 +208,7 @@
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
+- (IBAction)antialiasChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
 - (IBAction)convertUTFPressed:sender;
 - (IBAction)afterTypesettingChanged:sender;

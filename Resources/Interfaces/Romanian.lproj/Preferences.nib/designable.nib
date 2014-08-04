@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -13,6 +13,7 @@
                 <outlet property="_TabCharacterKindMatrix" destination="1068" id="1101"/>
                 <outlet property="_afterTypesettingMatrix" destination="678" id="682"/>
                 <outlet property="_alwaysHighlightButton" destination="976" id="1038"/>
+                <outlet property="_antialiasButton" destination="g3b-Sm-0Og" id="nd3-El-mur"/>
                 <outlet property="_autoCompleteButton" destination="686" id="696"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
                 <outlet property="_beepButton" destination="978" id="1039"/>
@@ -168,7 +169,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="918">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="277">
                                                                 <items>
                                                                     <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
@@ -806,7 +807,7 @@
                             <tabViewItem label="Previzualizare" identifier="2" id="8">
                                 <view key="view" id="10">
                                     <rect key="frame" x="10" y="33" width="587" height="578"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Poziția Ferestrei de Previzualizare" id="47">
                                             <rect key="frame" x="17" y="451" width="289" height="103"/>
@@ -927,7 +928,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Select Text" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="2" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="636" id="910">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="341">
                                                                 <items>
                                                                     <menuItem title="Scroll" tag="1" id="328"/>
@@ -960,7 +961,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Adaptează la Fereastră" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="3" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="339" id="911">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="348">
                                                                 <items>
                                                                     <menuItem title="Actual Size" tag="1" id="637"/>
@@ -991,7 +992,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Pagină Simplă" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="1" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="333" id="909">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="336">
                                                                 <items>
                                                                     <menuItem title="Pagină Simplă" state="on" tag="1" id="333"/>
@@ -1089,6 +1090,30 @@
                                                             <action selector="setPreviewBackgroundColor:" target="-2" id="802"/>
                                                         </connections>
                                                     </colorWell>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Display" id="hI9-DQ-pcp">
+                                            <rect key="frame" x="17" y="158" width="289" height="66"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="285" height="46"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="g3b-Sm-0Og">
+                                                        <rect key="frame" x="19" y="14" width="215" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Smooth text and line art" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="vZ4-Jj-8br">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="antialiasChanged:" target="-2" id="lE5-f1-LFg"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -1840,7 +1865,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="0 (normal)" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="428" id="943">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="442">
                                                                 <items>
                                                                     <menuItem title="-2" tag="-2" id="438"/>
@@ -1893,7 +1918,7 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="PDF" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="31" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="416" id="940">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="377">
                                                                 <items>
                                                                     <menuItem title="PDF" state="on" tag="31" id="416"/>
@@ -2109,7 +2134,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <popUpButtonCell key="cell" type="push" title="Set Default Values" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1161" id="1150">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" title="OtherViews" id="1151">
                                 <items>
                                     <menuItem title="Set Default Values" hidden="YES" id="1161"/>

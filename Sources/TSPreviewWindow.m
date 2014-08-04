@@ -47,7 +47,6 @@ extern NSPanel *pageNumberWindow;
 
 @implementation TSPreviewWindow
 
-
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;

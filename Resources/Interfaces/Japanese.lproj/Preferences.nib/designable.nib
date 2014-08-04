@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -13,6 +13,7 @@
                 <outlet property="_TabCharacterKindMatrix" destination="1118" id="1183"/>
                 <outlet property="_afterTypesettingMatrix" destination="678" id="682"/>
                 <outlet property="_alwaysHighlightButton" destination="1213" id="1216"/>
+                <outlet property="_antialiasButton" destination="fyB-vX-69R" id="twA-MY-t3O"/>
                 <outlet property="_autoCompleteButton" destination="686" id="696"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
                 <outlet property="_beepButton" destination="1138" id="1160"/>
@@ -96,15 +97,15 @@
         <window title="TeXShop 環境設定" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="5" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="267" y="188" width="570" height="658"/>
+            <rect key="contentRect" x="267" y="188" width="576" height="659"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
             <view key="contentView" id="6">
-                <rect key="frame" x="0.0" y="0.0" width="570" height="658"/>
+                <rect key="frame" x="0.0" y="0.0" width="576" height="659"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="7">
-                        <rect key="frame" x="13" y="33" width="544" height="617"/>
+                        <rect key="frame" x="13" y="34" width="544" height="617"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -1099,6 +1100,30 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="ディスプレイ" id="cS3-3U-4so">
+                                            <rect key="frame" x="121" y="161" width="294" height="66"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="290" height="46"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="fyB-vX-69R">
+                                                        <rect key="frame" x="15" y="15" width="279" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="テキストとラインアートを滑らかに表示" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="lFh-PC-EDX">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="STHeitiSC-Light"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="antialiasChanged:" target="-2" id="ipo-4q-BWV"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="STHeitiSC-Light"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -2078,7 +2103,7 @@
                         </tabViewItems>
                     </tabView>
                     <button verticalHuggingPriority="750" id="40">
-                        <rect key="frame" x="367" y="6" width="105" height="33"/>
+                        <rect key="frame" x="367" y="7" width="105" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="キャンセル" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1055">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2092,7 +2117,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="39">
-                        <rect key="frame" x="472" y="6" width="84" height="32"/>
+                        <rect key="frame" x="472" y="7" width="84" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1054">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2106,7 +2131,7 @@ DQ
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" id="1263">
-                        <rect key="frame" x="17" y="10" width="161" height="26"/>
+                        <rect key="frame" x="17" y="11" width="161" height="26"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <popUpButtonCell key="cell" type="push" title="設定プロファイル" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1273" id="1264">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>

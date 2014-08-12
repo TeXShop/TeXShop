@@ -3,6 +3,8 @@
 
 #import "globals.h"
 #import "TSAutoCompletionListEditor.h"
+#import "GlobalData.h"
+
 #define AutoCompletionRowsType @"TSAutoCompletionRowsType"
 
 @implementation TSAutoCompletionListEditor
@@ -19,33 +21,33 @@
 		
 		NSString *key;
 
-		if (g_autocompletionKeys) {
-			autocompletionKeys = [NSMutableArray arrayWithArray:g_autocompletionKeys];
+		if ([GlobalData sharedGlobalData].g_autocompletionKeys) {
+			self.autocompletionKeys = [NSMutableArray arrayWithArray:[GlobalData sharedGlobalData].g_autocompletionKeys];
 		}else {
-			autocompletionKeys = [NSMutableArray arrayWithArray:[g_autocompletionDictionary allKeys]];
+			self.autocompletionKeys = [NSMutableArray arrayWithArray:[[GlobalData sharedGlobalData].g_autocompletionDictionary allKeys]];
 		}
 
-		autocompletionValues = [NSMutableArray arrayWithCapacity:0];
-        NSArray *autocompletionKeysCopy = [NSArray arrayWithArray:autocompletionKeys];
+		self.autocompletionValues = [NSMutableArray arrayWithCapacity:0];
+        NSArray *autocompletionKeysCopy = [NSArray arrayWithArray:self.autocompletionKeys];
 		NSEnumerator *enumerator = [autocompletionKeysCopy objectEnumerator];
 		while ((key = [enumerator nextObject])) {
-			if ([[g_autocompletionDictionary allKeys] containsObject:key]){
-                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+			if ([[[GlobalData sharedGlobalData].g_autocompletionDictionary allKeys] containsObject:key]){
+                [self.autocompletionValues addObject:[[GlobalData sharedGlobalData].g_autocompletionDictionary objectForKey:key]];
             }else{
-                [autocompletionKeys removeObjectIdenticalTo:key];
+                [self.autocompletionKeys removeObjectIdenticalTo:key];
             }
 		}
 
-		enumerator = [[g_autocompletionDictionary allKeys] objectEnumerator];
+		enumerator = [[[GlobalData sharedGlobalData].g_autocompletionDictionary allKeys] objectEnumerator];
 		while ((key = [enumerator nextObject])) {
-            if (![autocompletionKeys containsObject:key]) {
-                [autocompletionKeys addObject:key];
-                [autocompletionValues addObject:[g_autocompletionDictionary objectForKey:key]];
+            if (![self.autocompletionKeys containsObject:key]) {
+                [self.autocompletionKeys addObject:key];
+                [self.autocompletionValues addObject:[[GlobalData sharedGlobalData].g_autocompletionDictionary objectForKey:key]];
             }
 		}
 		
-		[autocompletionKeys retain];
-		[autocompletionValues retain];
+//		[autocompletionKeys retain];
+//		[autocompletionValues retain];
 	}
 	
 	[window makeKeyAndOrderFront:nil];
@@ -59,19 +61,19 @@
 	if ([newKey isEqualToString:@""]) {
 		NSBeep();
 	}else{
-		NSUInteger _index = [autocompletionKeys indexOfObject:newKey];
+		NSUInteger _index = [self.autocompletionKeys indexOfObject:newKey];
 		if (_index != NSNotFound) {
 			NSInteger result = NSRunAlertPanel(NSLocalizedString(@"Warning", @"Warning"), 
 										 [NSString stringWithFormat:NSLocalizedString(@"Your current setting of %@ will be replaced. OK?", @"Your current setting of %@ will be replaced. OK?"), newKey], 
 										 @"OK", NSLocalizedString(@"Cancel", @"Cancel"), nil);
 			if (result == NSAlertDefaultReturn) {
-				[autocompletionValues replaceObjectAtIndex:_index withObject:[newValueField stringValue]];
+				[self.autocompletionValues replaceObjectAtIndex:_index withObject:[newValueField stringValue]];
 			}else {
 				return;
 			}
 		}else {
-			[autocompletionKeys insertObject:newKey atIndex:0];
-			[autocompletionValues insertObject:[newValueField stringValue] atIndex:0];
+			[self.autocompletionKeys insertObject:newKey atIndex:0];
+			[self.autocompletionValues insertObject:[newValueField stringValue] atIndex:0];
 		}
 
 		[newKeyField setStringValue:@""];
@@ -81,18 +83,20 @@
 	}
 }
 
+/*
 - (void)windowWillClose:(NSNotification *)notification
 {
-	[autocompletionKeys	release];
-	[autocompletionValues release];
+	[self.autocompletionKeys	release];
+	[self.autocompletionValues release];
 	window = nil;
 }
+*/
 
 
 - (void)removeObjectsAtIndexes:(NSIndexSet*)indexes
 {
-	[autocompletionKeys removeObjectsAtIndexes:indexes];
-	[autocompletionValues removeObjectsAtIndexes:indexes];
+	[self.autocompletionKeys removeObjectsAtIndexes:indexes];
+	[self.autocompletionValues removeObjectsAtIndexes:indexes];
 	[tableView reloadData];
 }
 
@@ -100,20 +104,26 @@
 {
 	NSMutableDictionary *newAutoCompletionList = [NSMutableDictionary dictionaryWithCapacity:0];
 	NSInteger i;
-	for(i=0;i<[autocompletionKeys count];i++){
-		[newAutoCompletionList setObject:[autocompletionValues objectAtIndex:i] forKey:[autocompletionKeys objectAtIndex:i]];
+	for(i=0;i<[self.autocompletionKeys count];i++){
+		[newAutoCompletionList setObject:[self.autocompletionValues objectAtIndex:i] forKey:[self.autocompletionKeys objectAtIndex:i]];
 	}
+    
+/*
 	if (g_autocompletionDictionary) [g_autocompletionDictionary release];
 	g_autocompletionDictionary = [newAutoCompletionList retain];
 	if (g_autocompletionKeys) [g_autocompletionKeys release];
-	g_autocompletionKeys = [autocompletionKeys retain];
+	g_autocompletionKeys = [self.autocompletionKeys retain];
+*/
+    
+    [GlobalData sharedGlobalData].g_autocompletionDictionary = newAutoCompletionList;
+    [GlobalData sharedGlobalData].g_autocompletionKeys = self.autocompletionKeys;
 	
 	NSString	*filePath;
 	filePath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletion"] stringByAppendingPathExtension:@"plist"];
-	[g_autocompletionDictionary writeToFile:filePath atomically:NO];
+	[[GlobalData sharedGlobalData].g_autocompletionDictionary writeToFile:filePath atomically:NO];
 
 	filePath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletionDisplayOrder"] stringByAppendingPathExtension:@"plist"];
-	[g_autocompletionKeys writeToFile:filePath atomically:NO];
+	[[GlobalData sharedGlobalData].g_autocompletionKeys writeToFile:filePath atomically:NO];
 
 	[window close];
 }
@@ -131,12 +141,12 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView*)aTableView
 {
-	return [autocompletionKeys count];
+	return [self.autocompletionKeys count];
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
-	return [[aTableColumn identifier] isEqualToString:@"key"] ? [autocompletionKeys objectAtIndex:rowIndex] :[autocompletionValues objectAtIndex:rowIndex];
+	return [[aTableColumn identifier] isEqualToString:@"key"] ? [self.autocompletionKeys objectAtIndex:rowIndex] :[self.autocompletionValues objectAtIndex:rowIndex];
 }
 
 - (void)tableView:(NSTableView *)aTableView
@@ -145,9 +155,9 @@
 			  row:(NSInteger)rowIndex;
 {
 	if ([[tableColumn identifier] isEqualToString:@"key"]) {
-		[autocompletionKeys replaceObjectAtIndex:rowIndex withObject:object];
+		[self.autocompletionKeys replaceObjectAtIndex:rowIndex withObject:object];
     }else {
-		[autocompletionValues replaceObjectAtIndex:rowIndex withObject:object];
+		[self.autocompletionValues replaceObjectAtIndex:rowIndex withObject:object];
 	}
 
 }
@@ -223,8 +233,8 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 		{
 			NSData *rowsData = [[info draggingPasteboard] dataForType:AutoCompletionRowsType];
 			NSIndexSet *indexSet = [NSKeyedUnarchiver unarchiveObjectWithData:rowsData];
-			NSIndexSet *newIndexes = [self moveObjectsOf:autocompletionKeys fromIndexes:indexSet toIndex:insertionRow];
-			[self moveObjectsOf:autocompletionValues fromIndexes:indexSet toIndex:insertionRow];
+			NSIndexSet *newIndexes = [self moveObjectsOf:self.autocompletionKeys fromIndexes:indexSet toIndex:insertionRow];
+			[self moveObjectsOf:self.autocompletionValues fromIndexes:indexSet toIndex:insertionRow];
 			[aTableView selectRowIndexes:newIndexes byExtendingSelection:NO]; // select the row which has just been moved
 			[aTableView reloadData];
 			return YES;

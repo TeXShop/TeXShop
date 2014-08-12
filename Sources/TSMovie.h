@@ -12,11 +12,12 @@
 #import	"TSMovieWindow.h"
 
 @interface TSMovie : NSObject {
-TSMovieWindow	*movieWindow;
-QTMovieView		*myMovieView;
-QTMovie			*myMovie;
-
+    
 }
+
+@property (retain) TSMovieWindow	*movieWindow;
+@property (retain) QTMovieView		*myMovieView;
+@property (retain) QTMovie			*myMovie;
 
 - (void)doMovie:(NSString *)title;
 

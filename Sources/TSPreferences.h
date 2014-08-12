@@ -43,6 +43,7 @@
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
+    IBOutlet NSButtonCell	*_tagMenuButton;			/*" connected to Line Number "*/
 	IBOutlet NSButtonCell	*_midEastButton; /*" connected to Arabic, Persian, Hebrew "*/
     IBOutlet NSButtonCell   *_autoSaveButton; /*" connected to AutoSave "*/
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
@@ -50,6 +51,7 @@
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
 	IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
+    IBOutlet NSButton       *_antialiasButton;      /* connect to antialias checkbox */
 
 	IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/
 	IBOutlet NSButton	*_scrollButton;			/*" connected to scroll button "*/
@@ -108,8 +110,8 @@
 //	IBOutlet NSButton *_makeatletterButton; // added by Terada
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
-	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
-	NSFont			*_consoleFont;			/*" used to track the font that the user has selected for the console window "*/
+//	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
+//	NSFont			*_consoleFont;			/*" used to track the font that the user has selected for the console window "*/
 	BOOL			fontTouched;			/*" if user fiddled with fonts and then cancelled,
 																we restore the old one "*/
 	BOOL			consoleFontTouched;
@@ -147,6 +149,9 @@
 	IBOutlet NSMatrix		*_afterTypesettingMatrix;
 }
 
+@property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
+@property (retain) NSFont		*consoleFont;			/*" used to track the font that the user has selected for the console window "*/
+
 + (id)sharedInstance;
 
 //------------------------------------------------------------------------------
@@ -164,7 +169,7 @@
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
-- (IBAction)lineNumberButtonPressed:sender;
+- (IBAction)tagMenuButtonPressed:sender;
 - (IBAction)showInvisibleCharacterButtonPressed:sender; // added by Terada
 - (IBAction)midEastButtonPressed:sender;
 - (IBAction)autoSaveButtonPressed:sender;
@@ -203,6 +208,7 @@
 - (IBAction)consoleBehaviorChanged:sender;
 - (IBAction)saveRelatedButtonPressed:sender;
 - (IBAction)autoPDFChanged:sender;
+- (IBAction)antialiasChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
 - (IBAction)convertUTFPressed:sender;
 - (IBAction)afterTypesettingChanged:sender;

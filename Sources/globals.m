@@ -74,6 +74,7 @@ NSString *PdfKitWindowNameKey = @"PdfKitWindow";
 NSString *PdfWindowPosModeKey = @"PdfWindowPositionMode";
 NSString *PdfPageStyleKey = @"PdfPageStyle"; // mitsu 1.29 (O)
 NSString *PdfRefreshKey = @"PdfRefresh";
+NSString *AntiAliasKey = @"AntiAlias";
 NSString *RefreshTimeKey = @"RefreshTime";
 NSString *PdfFileRefreshKey = @"PdfFileRefresh";
 NSString *PdfFirstPageStyleKey = @"PdfFirstPageStyle";
@@ -218,6 +219,11 @@ NSString *fullscreenResizeOptionKey = @"fullscreenResizeOption";
 NSString *ScreenFontForLogAndConsoleKey = @"ScreenFontForLogAndConsole";
 NSString *WatchServerKey = @"WatchServer";
 NSString *SourceInterlineSpaceKey = @"SourceInterlineSpace";
+NSString *SpellingLanguageKey = @"SpellingLanguage";
+NSString *SpellingAutomaticLanguageKey = @"SpellingAutomaticLanguage";
+NSString *TagMenuInMenuBarKey = @"TagMenuInMenuBar";
+NSString *ResetSourceTextColorEachTimeKey = @"ResetSourceTextColorEachTime";
+
 
 
 // Paths
@@ -272,8 +278,10 @@ NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotificatio
 TSFilterMode		g_shouldFilter;
 NSInteger			g_texChar;
 NSInteger           g_commentChar;
-NSDictionary		*g_autocompletionDictionary;
-NSArray				*g_autocompletionKeys;  // added by Terada
+
+// Now in GlobalData
+// NSDictionary		*g_autocompletionDictionary;
+// NSArray			*g_autocompletionKeys;  // added by Terada
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
@@ -292,9 +300,18 @@ BOOL g_canRegisterCommandCompletion = NO;
 NSColor *PreviewBackgroundColor = nil;
 
 // Spelling (defaults if not changed by document tag)
-BOOL		spellLanguageChanged;
+BOOL        specialWindowOpened; // YES if a window containing a % !TEX language directive is the main window
 BOOL		automaticLanguage;
-NSString	*defaultLanguage;
 
 // Koch 8/24/03
 NSInteger	g_macroType;	// FIXME: get rid of this
+
+/*
+NSString *placeholderString = @"¥";
+NSString *startcommentString = @"¥Ü";
+NSString *endcommentString = @"Ý";
+*/
+NSString *placeholderString;
+NSString *startcommentString;
+NSString *endcommentString;
+

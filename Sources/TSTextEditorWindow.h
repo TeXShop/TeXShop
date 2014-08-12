@@ -28,11 +28,13 @@
 
 @interface TSTextEditorWindow : NSWindow
 {
-	TSDocument	*myDocument;
 }
 
+@property (weak) TSDocument   *myDocument;
+
 // added by mitsu --(H) Macro menu; used to detect the document from a window
-- (TSDocument *)document;
+// following is OK; it returns myDocument
+ - (TSDocument *)document;
 // end addition
 - (void) doChooseMethod: sender;
 - (void) saveSourcePosition: sender;
@@ -41,6 +43,7 @@
 - (void) trashAUXFiles: sender;
 - (void) abort: sender;
 - (void) becomeMainWindow;
+- (void) resignMainWindow;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow:(id)sender;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;

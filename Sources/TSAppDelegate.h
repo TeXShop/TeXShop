@@ -31,9 +31,10 @@
 
 @interface TSAppDelegate : NSObject
 {
-	BOOL				_forPreview;
-	TSMovie				*myMovie;
 }
+
+@property           BOOL      forPreview;
+@property (retain)  TSMovie   *myMovie;
 
 - (IBAction)displayMatrixPanel:(id)sender; //  MatrixPanel Addition by Jonas 1.32 Nov 28 03
 - (IBAction)openForPreview:(id)sender;
@@ -43,7 +44,7 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (IBAction)nextTeXWindow:(id)sender; // added by Taylor
 - (IBAction)previousTeXWindow:(id)sender; // added by Taylor
-- (BOOL)forPreview;
+// - (BOOL)forPreview;
 - (void)finishCommandCompletionConfigure; // mitsu 1.29 (P)
 - (void)openCommandCompletionList: (id)sender; // mitsu 1.29 (P)
 #ifdef MITSU_PDF
@@ -52,7 +53,7 @@
 - (void)finishAutoCompletionConfigure;
 - (void)finishMenuKeyEquivalentsConfigure;
 - (void)configureExternalEditor;
-- (void)setForPreview: (BOOL)value;
+// - (void)setForPreview: (BOOL)value;
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 - (void)ogreKitWillHackFindMenu:(OgreTextFinder*)textFinder;
 - (IBAction)checkForUpdate:(id)sender; // Update checker

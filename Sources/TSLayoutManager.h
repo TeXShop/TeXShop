@@ -36,11 +36,17 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TSLayoutManager : NSLayoutManager {
-    NSArray *tabCharacters;
-    NSArray *newLineCharacters;
-    NSArray *fullwidthSpaceCharacters;
-    NSArray *spaceCharacters;
+//    NSArray *tabCharacters;
+//    NSArray *newLineCharacters;
+//    NSArray *fullwidthSpaceCharacters;
+//    NSArray *spaceCharacters;
 	BOOL invisibleCharactersShowing;
 }
+
+@property (retain) NSArray *tabCharacters;
+@property (retain) NSArray *nextLineCharacters;
+@property (retain) NSArray *fullwidthSpaceCharacters;
+@property (retain) NSArray *spaceCharacters;
+
 - (void)setInvisibleCharactersEnabled:(BOOL)enabled;
 @end

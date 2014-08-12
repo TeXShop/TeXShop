@@ -35,16 +35,18 @@
 	frame.origin.y = 0;
 	frame.size = [aRep size];
 	if ((self = [super initWithFrame: frame])) {
-		_imageRep = [aRep retain];
+		self.imageRep = aRep;
 	}
 	// end
 	return self;
 }
 
+/*
 - (void)dealloc {
-	[_imageRep release];
+	[self.imageRep release];
 	[super dealloc];
 }
+*/
 
 - (BOOL)isVerticallyCentered
 {
@@ -61,25 +63,25 @@
 	NSRect  myRect;
 
 	myRect = [self bounds];
-	if ([_imageRep isKindOfClass:[NSPDFImageRep class]]) {
+	if ([self.imageRep isKindOfClass:[NSPDFImageRep class]]) {
 		NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
 		CGFloat scale = [[[printInfo dictionary] objectForKey:NSPrintScalingFactor] doubleValue];
 		myRect.size.height = myRect.size.height * scale;
 		myRect.size.width = myRect.size.width * scale;
 
-		[_imageRep drawInRect: myRect];
+		[self.imageRep drawInRect: myRect];
 	} else {
 		NSEraseRect(myRect);
-		[_imageRep draw];
+		[self.imageRep draw];
 	}
 }
 
 
 - (BOOL)knowsPageRange:(NSRangePointer)range
 {
-	if ([_imageRep isKindOfClass:[NSPDFImageRep class]]) {
+	if ([self.imageRep isKindOfClass:[NSPDFImageRep class]]) {
 		range->location = 1;
-		range->length = [(NSPDFImageRep *)_imageRep pageCount];
+		range->length = [(NSPDFImageRep *)self.imageRep pageCount];
 		return YES;
 	} else {
 		return NO;
@@ -89,8 +91,8 @@
 - (NSRect)rectForPage:(NSInteger)pageNumber
 {
 	// This method will only be called when knowsPageRange: return YES, i.e. only
-	// if _imageRep is a NSPDFImageRep.
-	NSPDFImageRep *pdfRep = (NSPDFImageRep *)_imageRep;
+	// if self.imageRep is a NSPDFImageRep.
+	NSPDFImageRep *pdfRep = (NSPDFImageRep *)self.imageRep;
 	NSInteger		thePage;
 	NSRect	aRect;
 

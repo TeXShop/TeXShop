@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="TSMatrixPanelController">
+            <connections>
+                <outlet property="borderbutton" destination="2441" id="2444"/>
+                <outlet property="brselcl" destination="2352" id="2378"/>
+                <outlet property="brselop" destination="2360" id="2377"/>
+                <outlet property="brtfcl" destination="2359" id="2380"/>
+                <outlet property="brtfop" destination="2356" id="2379"/>
+                <outlet property="chbfig" destination="2462" id="2463"/>
+                <outlet property="envsel" destination="2430" id="2443"/>
+                <outlet property="gridbutton" destination="2442" id="2445"/>
+                <outlet property="hstep" destination="2390" id="2399"/>
+                <outlet property="htf" destination="2388" id="2405"/>
+                <outlet property="matmod" destination="2357" id="2375"/>
+                <outlet property="matrixtable" destination="2383" id="2409"/>
+                <outlet property="mtscrv" destination="2384" id="2427"/>
+                <outlet property="vstep" destination="2389" id="2400"/>
+                <outlet property="vtf" destination="2387" id="2406"/>
+                <outlet property="window" destination="5" id="955"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window title="Painel Matriz" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" frameAutosaveName="matpal" animationBehavior="default" id="5" userLabel="Panel" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="202" y="434" width="398" height="391"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <value key="minSize" type="size" width="398" height="305"/>
+            <value key="maxSize" type="size" width="600" height="600"/>
+            <view key="contentView" id="6">
+                <rect key="frame" x="0.0" y="0.0" width="398" height="391"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button toolTip="Insert matrix into project" verticalHuggingPriority="750" id="2349">
+                        <rect key="frame" x="30" y="8" width="112" height="28"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
+                        <buttonCell key="cell" type="push" title="Inserir" bezelStyle="rounded" alignment="center" controlSize="small" state="on" borderStyle="border" id="2483">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="label"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="insertMatrix:" target="-2" id="2429"/>
+                        </connections>
+                    </button>
+                    <matrix toolTip="Right matrix delimiter" verticalHuggingPriority="750" allowsEmptySelection="NO" id="2352">
+                        <rect key="frame" x="17" y="85" width="230" height="18"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        <size key="cellSize" width="29" height="18"/>
+                        <size key="intercellSpacing" width="4" height="2"/>
+                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="2495">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="miniSystem"/>
+                        </buttonCell>
+                        <cells>
+                            <column>
+                                <buttonCell type="radio" title=")" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" state="on" inset="2" id="2347">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="]" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="1" inset="2" id="2346">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="}" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="2" inset="2" id="2361">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="|" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="3" inset="2" id="2365">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="||" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="6" inset="2" id="2367">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="." bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="4" inset="2" id="2363">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" toolTip="custom right delimiter" tag="5" inset="2" id="2368">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                        </cells>
+                        <connections>
+                            <action selector="brselChange:" target="-2" id="2448"/>
+                        </connections>
+                    </matrix>
+                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" id="2357">
+                        <rect key="frame" x="30" y="34" width="339" height="28"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        <size key="cellSize" width="113" height="28"/>
+                        <size key="intercellSpacing" width="0.0" height="-2"/>
+                        <buttonCell key="prototype" type="push" title="Löschen" bezelStyle="rounded" alignment="center" borderStyle="border" tag="-1" inset="2" id="2496">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="label"/>
+                        </buttonCell>
+                        <cells>
+                            <column>
+                                <buttonCell type="push" title="Limpar tudo" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" toolTip="Delete all entries" inset="2" id="2351">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="label"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="push" title="Matriz identidade" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" toolTip="Set matrix to identity" tag="1" inset="2" id="2350">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="label"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="push" title="Matriz com zeros" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" toolTip="Set all matrix entries to zero" tag="2" inset="2" id="2348">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="label"/>
+                                </buttonCell>
+                            </column>
+                        </cells>
+                        <connections>
+                            <action selector="resetMatrix:" target="-2" id="2428"/>
+                        </connections>
+                    </matrix>
+                    <textField toolTip="Custom right delimiter" verticalHuggingPriority="750" id="2359">
+                        <rect key="frame" x="235" y="87" width="38" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" bezelStyle="round" id="2485">
+                            <font key="font" metaFont="miniSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <matrix toolTip="Left matrix delimiter" verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="2360">
+                        <rect key="frame" x="17" y="108" width="230" height="18"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        <size key="cellSize" width="29" height="18"/>
+                        <size key="intercellSpacing" width="4" height="2"/>
+                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="2497">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="miniSystem"/>
+                        </buttonCell>
+                        <cells>
+                            <column>
+                                <buttonCell type="radio" title="(" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" state="on" inset="2" id="2369">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="[" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="1" inset="2" id="2362">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="{" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="2" inset="2" id="2353">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="|" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="3" inset="2" id="2366">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="||" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="6" inset="2" id="2364">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="." bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" tag="4" inset="2" id="2354">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" toolTip="Custom left delimiter" tag="5" inset="2" id="2358">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="miniSystem"/>
+                                </buttonCell>
+                            </column>
+                        </cells>
+                        <connections>
+                            <action selector="brselChange:" target="-2" id="2447"/>
+                        </connections>
+                    </matrix>
+                    <scrollView toolTip="Only blue cells are being inserted" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="2384">
+                        <rect key="frame" x="20" y="160" width="360" height="169"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="mZa-jR-1Ot">
+                            <rect key="frame" x="1" y="17" width="358" height="151"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" emptySelection="NO" autosaveName="matrixtable" headerView="2501" id="2383" customClass="MatrixTableView">
+                                    <rect key="frame" x="0.0" y="0.0" width="358" height="151"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <size key="intercellSpacing" width="3" height="2"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
+                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                    <connections>
+                                        <outlet property="dataSource" destination="-2" id="2414"/>
+                                        <outlet property="delegate" destination="-2" id="2415"/>
+                                        <outlet property="myController" destination="-2" id="2416"/>
+                                    </connections>
+                                </tableView>
+                            </subviews>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" controlSize="small" horizontal="YES" id="2500">
+                            <rect key="frame" x="1" y="-22" width="317" height="11"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" controlSize="small" horizontal="NO" id="2499">
+                            <rect key="frame" x="-22" y="0.0" width="11" height="198"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <tableHeaderView key="headerView" id="2501">
+                            <rect key="frame" x="0.0" y="0.0" width="358" height="17"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </tableHeaderView>
+                    </scrollView>
+                    <textField verticalHuggingPriority="750" id="2387">
+                        <rect key="frame" x="71" y="133" width="35" height="19"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" title="3" bezelStyle="round" id="2486">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="resizeMatrix:" target="-2" id="2422"/>
+                        </connections>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="2388">
+                        <rect key="frame" x="192" y="133" width="35" height="19"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" title="3" bezelStyle="round" id="2487">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="resizeMatrix:" target="-2" id="2423"/>
+                        </connections>
+                    </textField>
+                    <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" id="2389">
+                        <rect key="frame" x="112" y="131" width="15" height="22"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <stepperCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="1" maxValue="40" doubleValue="3" id="2488"/>
+                        <connections>
+                            <action selector="resizeMatrix:" target="-2" id="2421"/>
+                        </connections>
+                    </stepper>
+                    <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" id="2390">
+                        <rect key="frame" x="233" y="132" width="15" height="21"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <stepperCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="1" maxValue="40" doubleValue="3" id="2489"/>
+                        <connections>
+                            <action selector="resizeMatrix:" target="-2" id="2420"/>
+                        </connections>
+                    </stepper>
+                    <textField verticalHuggingPriority="750" id="2392">
+                        <rect key="frame" x="17" y="121" width="48" height="28"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Linhas:" id="2490">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="2424">
+                        <rect key="frame" x="131" y="135" width="56" height="14"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Colunas:" id="2491">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <box title="Ambiente" id="2439">
+                        <rect key="frame" x="17" y="333" width="366" height="52"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <view key="contentView">
+                            <rect key="frame" x="2" y="2" width="362" height="35"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <matrix toolTip="Select environment: matrix for math and tabular for text" verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="2430">
+                                    <rect key="frame" x="9" y="10" width="124" height="18"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="cellSize" width="60" height="18"/>
+                                    <size key="intercellSpacing" width="4" height="2"/>
+                                    <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="2498">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <cells>
+                                        <column>
+                                            <buttonCell type="radio" title="matrix" imagePosition="left" alignment="left" controlSize="mini" state="on" inset="2" id="2434">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="miniSystem"/>
+                                            </buttonCell>
+                                        </column>
+                                        <column>
+                                            <buttonCell type="radio" title="tabular" imagePosition="left" alignment="left" controlSize="mini" tag="1" inset="2" id="2435">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="miniSystem"/>
+                                            </buttonCell>
+                                        </column>
+                                    </cells>
+                                    <connections>
+                                        <action selector="envselChange:" target="-2" id="2446"/>
+                                    </connections>
+                                </matrix>
+                                <button id="2462">
+                                    <rect key="frame" x="136" y="7" width="156" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="check" title="Dentro de um ambiente table" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="mini" enabled="NO" inset="2" id="2492">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="miniSystem"/>
+                                    </buttonCell>
+                                </button>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                    <button toolTip="Draw border" id="2441">
+                        <rect key="frame" x="278" y="87" width="46" height="38"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="mat02" imagePosition="overlaps" alignment="left" borderStyle="border" inset="2" id="2493">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="label"/>
+                        </buttonCell>
+                    </button>
+                    <button toolTip="Draw grid" id="2442">
+                        <rect key="frame" x="332" y="87" width="46" height="38"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="mat01" imagePosition="overlaps" alignment="left" borderStyle="border" inset="2" id="2494">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="label"/>
+                        </buttonCell>
+                    </button>
+                    <textField toolTip="Custom left delimiter" verticalHuggingPriority="750" id="2356">
+                        <rect key="frame" x="235" y="110" width="38" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" bezelStyle="round" id="2484">
+                            <font key="font" metaFont="miniSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <box title="Box" boxType="oldStyle" borderType="line" titlePosition="noTitle" id="2460">
+                        <rect key="frame" x="20" y="70" width="358" height="1"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                        <view key="contentView">
+                            <rect key="frame" x="1" y="1" width="356" height="0.0"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                </subviews>
+            </view>
+        </window>
+    </objects>
+    <resources>
+        <image name="mat01" width="45.882354736328125" height="38.117645263671875"/>
+        <image name="mat02" width="45.882354736328125" height="38.117645263671875"/>
+    </resources>
+</document>

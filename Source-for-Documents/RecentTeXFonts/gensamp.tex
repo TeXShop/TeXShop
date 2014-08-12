@@ -1,0 +1,77 @@
+% !TEX TS-program = pdflatexmk
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line, no indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+%\usepackage[full]{textcomp}
+\usepackage[scaled=.95]{gentium}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[varqu,varl]{zi4}% inconsolata
+%\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\pagestyle{empty}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+\begin{document}
+\thispagestyle{empty}
+\begin{description}
+\item[Package name:] {\tt gentium} (Gentium-tug)
+\item[Derived from:] Original font design
+\item[Weights and shapes:]  \{m, b\}, \{n, it\}. 
+\item[Features:]{\color{white}x}\\[-15pt]  
+\begin{itemize}
+\item many encodings available, supporting a wide variety of languages/scripts;
+\item
+full set of f-ligatures in Roman scripts;
+\item \textsc{Small Caps} in Regular and Italic, not in Bold weights;
+\item only text figure choice is monospaced lining figures $0123456789$;
+\item superior and inferior figures, but no \LaTeX\ support; 
+%\item full set of {\tt textcomp} glyphs; 
+%\item \verb|\textcircled| macro: Eg, \verb|\textcircled{A}| gives \textcircled{A}. (Must load {\tt textcomp} with {\tt full} option.)
+%\item Tall ascenders, overarching f, calligraphic appearance.
+\item after scaling down 5\%, {\tt gentium}'s size and italic angle are close enough to Libertine's that it works tolerably well with the {\tt libertine} option to {\tt newtxmath} as math accompaniment.
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[scaled=.95]{gentium} 
+\usepackage{textcomp}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[varqu,varl]{inconsolata}
+\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\end{verbatim}
+\item[Example using this preamble:]{\color{white}x}\\[6pt]
+\lipsum[1]
+%\textit{\lipsum[2]}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+%\thispagestyle{empty}
+The typeset math below follows the ISO recommendations that only variables
+be set in italic. Note the use of upright shapes for $\d$, $\mathrm{e}$
+and $\mathrm{\pi}$. (The first two are entered as \verb|\mathrm{d}| and
+\verb|\mathrm{e}|, and in fonts derived from {\tt mtpro2} and  {\tt newtxmath},
+ the latter is entered as \verb|\uppi|.)
+
+\textbf{Simplest form of the \textit{Central Limit Theorem}:} \textit{Let
+$X_1$, $X_2,\cdots$ be a sequence of iid random variables with mean~$0$ 
+and variance $1$ on a probability space $(\Omega,\mathcal{F},\Pr)$. Then}
+\[\Pr\left(\frac{X_1+\cdots+X_n}{\sqrt{n}}\le y\right)\to\mathfrak{N}(y)\coloneq
+\int_{-\infty}^y \frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,
+\mathrm{d}t\quad\mbox{as $n\to\infty$,}\]
+\textit{or, equivalently, letting} $S_n\coloneq\sum_1^n X_k$,
+\[\mathbb{E} f\left(S_n/\sqrt{n}\right)\to \int_{-\infty}^\infty f(t)
+\frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,\mathrm{d}t
+\quad\mbox{as $n\to\infty$, for every $f\in\mathrm{b}
+\mathcal{C}(\mathbb{R})$.}\]
+\end{description}
+\end{document}  

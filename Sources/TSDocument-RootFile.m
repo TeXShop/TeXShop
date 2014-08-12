@@ -29,10 +29,12 @@
 
 @implementation TSDocument (RootFile)
 
+/*
 - (id) rootDocument
 {
 	return rootDocument;
 }
+*/
 
 - (BOOL) checkRootFile: (NSString *)nameString forTask:(NSInteger)task
 {
@@ -51,11 +53,13 @@
 			if ([[obj fileName] isEqualToString:nameString]) {
 				if (obj == self)
 					return NO;
-				rootDocument = obj;
+				self.rootDocument = obj;
 				if (task == RootForConsole){
 					[obj displayConsole:nil];
 				} else if (task == RootForLogFile){
 					[obj displayLog:nil];
+                } else if (task == RootForRedisplayLog){
+					[obj reDisplayLog];
 				} else if (task == RootForPrinting) {
 					[obj printDocument:nil];
 				} else if (task == RootForPdfSync) {
@@ -278,7 +282,7 @@
 	id theRoot;
 
 	// first save all related, open, dirty files
-	theRoot = rootDocument ? rootDocument : self;
+	theRoot = self.rootDocument ? self.rootDocument : self;
 
 	wlist = [NSApp orderedDocuments];
 	en = [wlist objectEnumerator];
@@ -286,7 +290,7 @@
 
 		if (([[obj windowNibName] isEqualToString:@"TSDocument"]) &&
 			(obj != self) &&
-			(([obj rootDocument] == theRoot) || (obj == rootDocument)) &&
+			(([obj rootDocument] == theRoot) || (obj == self.rootDocument)) &&
 			([obj isDocumentEdited])) {
 			[obj saveDocument:self];
 		}
@@ -335,7 +339,7 @@
 	numFiles = [slist count];
 
 	if (numFiles==0) {
-		[slist release];
+	//	[slist release];
 		return;
 	}
 
@@ -357,7 +361,7 @@
 	}
 
 	// release file list
-	[slist release];
+//	[slist release];
 }
  
 // End Bauer

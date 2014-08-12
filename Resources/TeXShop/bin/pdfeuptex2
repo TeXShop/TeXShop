@@ -1,5 +1,5 @@
 #!/bin/sh
-euptex -synctex=1 "$1" && \
+euptex -synctex=1 -file-line-error "$1" && \
 dvips -Ppdf -z -f "`basename "$1" .tex`.dvi" | \
 convbkmk -u > "`basename "$1" .tex`.ps" && \
 ps2pdf "`basename "$1" .tex`.ps"

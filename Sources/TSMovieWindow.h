@@ -13,9 +13,9 @@
 
 @interface TSMovieWindow : NSWindow {
 
-QTMovieView	*myMovieView;
-
 }
+
+@property (retain) QTMovieView	*myMovieView;
 
 - (void)close;
 

@@ -113,7 +113,7 @@ else
 - (NSToolbar*)makeToolbar:(NSString*)inID
 {
 	// Create a new toolbar instance, and attach it to our document window
-	TSToolbar *toolbar = [[[TSToolbar alloc] initWithIdentifier: inID] autorelease];
+	TSToolbar *toolbar = [[TSToolbar alloc] initWithIdentifier: inID];
 	[toolbar turnVisibleOff:NO];
 
 	// Set up toolbar properties: Allow customization, give a default display mode, and remember state 		in user defaults
@@ -133,7 +133,7 @@ else
 
 - (NSToolbarItem*) makeToolbarItemWithItemIdentifier:(NSString*)itemIdent key:(NSString*)itemKey
 {
-	NSToolbarItem*	toolbarItem = [[[NSToolbarItem alloc] initWithItemIdentifier: itemIdent] 	autorelease];
+	NSToolbarItem*	toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier: itemIdent] ;
 	NSString*	labelKey = [NSString stringWithFormat:@"tiLabel%@", itemKey];
 	NSString*	paletteLabelKey	= [NSString stringWithFormat:@"tiPaletteLabel%@", itemKey];
 	NSString*	toolTipKey = [NSString stringWithFormat:@"tiToolTip%@", itemKey];
@@ -181,6 +181,7 @@ else
 
 - (void) setupToolbar
 {
+/*
 	[typesetButton retain];
 	[typesetButton removeFromSuperview];
     [shareButton retain];
@@ -208,10 +209,11 @@ else
 	[macroButtonEE removeFromSuperview];
 	[indexColorBox retain];
 	[indexColorBox removeFromSuperview];
+*/
 	// end addition
 	[[self textWindow] setToolbar: [self makeToolbar: kSourceToolbarIdentifier]];
 
-
+/*
 	[previousButton retain];
 	[previousButton removeFromSuperview];
 	[nextButton retain];
@@ -224,11 +226,14 @@ else
 	[gotopageOutletKK removeFromSuperview];
 	[magnificationOutletKK retain];
 	[magnificationOutletKK removeFromSuperview];
+ */
 #ifdef MITSU_PDF
+/*
 	[mouseModeMatrix retain];
 	[mouseModeMatrix removeFromSuperview];
 	[mouseModeMatrixKK retain];
 	[mouseModeMatrixKK removeFromSuperview];
+ */
 	// WARNING: this must be called now, because calling it when the matrix is active but offscreen causes defective toolbar display
 	NSInteger mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	[mouseModeMatrixKK selectCellWithTag: mouseMode];
@@ -236,10 +241,12 @@ else
 	
 
 #endif
+/*
 	[syncBox retain];
 	[syncBox removeFromSuperview];
 	[backforthKK retain];
 	[backforthKK removeFromSuperview];
+*/
 
 	// HACK: The following is a trick to get the NSSegmentedControl to display correctly
 	// (i.e. the same way as in Preview.app). There seems to be a bug (or misfeature?) in
@@ -248,8 +255,10 @@ else
 	[backforthKK setLabel:0 forSegment:0];
 	[backforthKK setLabel:0 forSegment:1];
 
+/*
 	[drawerKK retain];
 	[drawerKK removeFromSuperview];
+*/
 
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 	[[self pdfKitWindow] setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
@@ -317,14 +326,14 @@ else
 	 */
     
     if ([itemIdent isEqual: kSharingTID]) {
-        [[shareButton cell] setImageScaling: NSImageScaleAxesIndependently];
+        [[shareButton cell] setImageScaling: NSImageAlignCenter];
         //  [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [shareButton setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButton sendActionOn: NSLeftMouseDownMask];
         [shareButton setTarget: self];
         [shareButton setAction:@selector(doShareSource:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButton];
-         menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+        menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
       //  [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
@@ -341,7 +350,7 @@ else
         [shareButtonEE setTarget: self];
         [shareButtonEE setAction:@selector(doSharePreview:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:shareButtonEE];
-        menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+        menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
        // [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
@@ -352,7 +361,7 @@ else
 
 
 	if ([itemIdent isEqual: kTypesetTID]) {
-        NSButton *button = [[[NSButton alloc] init] retain];
+        NSButton *button = [[NSButton alloc] init];
         [button setTitle: @"Share"];
         // [button setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [button sendActionOn:NSLeftMouseDownMask];
@@ -361,9 +370,9 @@ else
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:
                        typesetButton];
 
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) keyEquivalent:@""] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -381,7 +390,7 @@ else
 
 	if ([itemIdent isEqual: kProgramTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [programButton menu]];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -443,7 +452,7 @@ else
 
 	if ([itemIdent isEqual: kTagsTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:tags];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [tags menu]];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -453,7 +462,7 @@ else
 
 	if ([itemIdent isEqual: kTemplatesID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:popupButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [popupButton menu]];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -465,10 +474,10 @@ else
 	if ([itemIdent isEqual: kAutoCompleteID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 												   customView:autoCompleteButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"AutoComplete", @"AutoComplete")
-												  action: @selector(changeAutoComplete:) keyEquivalent:@""] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"AutoComplete", @"AutoComplete")
+												  action: @selector(changeAutoComplete:) keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -480,10 +489,10 @@ else
 	if ([itemIdent isEqual: kShowFullPathID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 												   customView:showFullPathButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"ShowFullPath", @"ShowFullPath")
-												  action: @selector(changeShowFullPath:) keyEquivalent:@""] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"ShowFullPath", @"ShowFullPath")
+												  action: @selector(changeShowFullPath:) keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -495,7 +504,7 @@ else
 	// added by mitsu --(H) Macro menu; macroButton
 	if ([itemIdent isEqual: kMacrosTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [macroButton menu]];
 		[[TSMacroMenuController sharedInstance] addItemsToPopupButton: macroButton];
@@ -519,9 +528,9 @@ else
 	if ([itemIdent isEqual: kTypesetEETID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:typesetButtonEE];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) 				keyEquivalent:@""] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Typeset", @"Typeset") action: @selector(doTypeset:) 				keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -554,10 +563,10 @@ else
 	if ([itemIdent isEqual: kProgramEETID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButtonEE];
 
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 
-		submenu = [[[NSMenu alloc] init] autorelease];
+		submenu = [[NSMenu alloc] init];
 		id tempsubmenuItem;
 		NSString *tempString;
 		id tempTarget;
@@ -569,7 +578,7 @@ else
 			tempString = [tempsubmenuItem title];
 			tempTarget = [tempsubmenuItem target];
 			tempAction = [tempsubmenuItem action];
-			submenuItem = [[[NSMenuItem alloc] initWithTitle: tempString action:@selector(chooseProgramFF:)  keyEquivalent:@""] autorelease];
+			submenuItem = [[NSMenuItem alloc] initWithTitle: tempString action:@selector(chooseProgramFF:)  keyEquivalent:@""];
 			[submenuItem setTarget: self];
 			[submenuItem setTag: i];
 			[submenu addItem: submenuItem];
@@ -597,7 +606,7 @@ else
 
 	if ([itemIdent isEqual: kMacrosEETID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButtonEE];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [macroButtonEE menu]];
 		[[TSMacroMenuController sharedInstance] addItemsToPopupButton: macroButtonEE];
@@ -637,7 +646,7 @@ else
 	if ([itemIdent isEqual: kPreviousPageButtonTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:previousButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 		[menuFormRep setAction: @selector(previousPage:)];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -647,7 +656,7 @@ else
 	if ([itemIdent isEqual: kNextPageButtonTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:nextButton];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 		[menuFormRep setAction: @selector(nextPage:)];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -668,14 +677,14 @@ else
 	if ([itemIdent isEqual: kBackForthKKTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:backforthKK];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: @"Back" action: @selector(doBack:) keyEquivalent:@""] autorelease];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: @"Back" action: @selector(doBack:) keyEquivalent:@""];
 		[submenuItem setTarget: self];
 		[submenu addItem: submenuItem];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: @"Forward" action: @selector(doForward:) keyEquivalent:@""] autorelease];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: @"Forward" action: @selector(doForward:) keyEquivalent:@""];
 		[submenuItem setTarget: self];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
@@ -721,7 +730,7 @@ else
 	if ([itemIdent isEqual: kGotoPageTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutlet];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		/*
 		 submenu = [[[NSMenu alloc] init] autorelease];
 		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
@@ -737,7 +746,7 @@ else
 	if ([itemIdent isEqual: kGotoPageKKTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutletKK];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		/*
 		 submenu = [[[NSMenu alloc] init] autorelease];
 		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
@@ -754,7 +763,7 @@ else
 	if ([itemIdent isEqual: kMagnificationTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutlet];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		/* submenu = [[[NSMenu alloc] init] autorelease];
 		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
 		[submenu addItem: submenuItem];
@@ -770,7 +779,7 @@ else
 	if ([itemIdent isEqual: kMagnificationKKTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutletKK];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		/* submenu = [[[NSMenu alloc] init] autorelease];
 		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
 		[submenu addItem: submenuItem];
@@ -786,7 +795,7 @@ else
 	// mitsu 1.29 (O)
 	if ([itemIdent isEqual: kMouseModeTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrix];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setSubmenu: mouseModeMenu];
 
 		/* or one can set up menu by hand
@@ -825,7 +834,7 @@ else
 	// mitsu 1.29 (O)
 	if ([itemIdent isEqual: kMouseModeKKTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrixKK];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
+		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setSubmenu: mouseModeMenuKit];
 
 		/* or one can set up menu by hand
@@ -867,12 +876,12 @@ else
 
 	if ([itemIdent isEqual: kSyncMarksTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-												   customView:syncBox];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Sync Marks", @"Sync Marks")
+												   customView:self.syncBox];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Sync Marks", @"Sync Marks")
 							   //                 action: @selector(changeShowSync:) keyEquivalent:@""] autorelease];
-												  action: @selector(flipShowSync:) keyEquivalent:@""] autorelease];
+												  action: @selector(flipShowSync:) keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -882,11 +891,11 @@ else
 	
 	if ([itemIdent isEqual: kColorIndexTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-												   customView:indexColorBox];
-		menuFormRep = [[[NSMenuItem alloc] init] autorelease];
-		submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Color Index", @"Color Index")
-												  action: @selector(flipIndexColorState:) keyEquivalent:@""] autorelease];
+												   customView:self.indexColorBox];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Color Index", @"Color Index")
+												  action: @selector(flipIndexColorState:) keyEquivalent:@""];
 		[submenu addItem: submenuItem];
 		[menuFormRep setSubmenu: submenu];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -1336,17 +1345,17 @@ else
 	}
 	else if ([itemID isEqual: kSaveDocToolbarItemIdentifier]) {
 
-		enable = (_documentType == isOther);
+		enable = (self.documentType == isOther);
 
 	}
 	else if ([itemID isEqual: NSToolbarPrintItemIdentifier]) {
 
 		if ([toolbarID isEqual:kSourceToolbarIdentifier]) {
-			enable = (_documentType == isOther);
+			enable = (self.documentType == isOther);
 		} else if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
-			enable = ((_documentType == isPDF) || (_documentType == isJPG) || (_documentType == isTIFF));
+			enable = ((self.documentType == isPDF) || (self.documentType == isJPG) || (self.documentType == isTIFF));
 		} else if ([toolbarID isEqual:kPDFKitToolbarIdentifier]) {
-			enable = ((_documentType == isPDF) || (_documentType == isJPG) || (_documentType == isTIFF));
+			enable = ((self.documentType == isPDF) || (self.documentType == isJPG) || (self.documentType == isTIFF));
 		}
 
 	}
@@ -1355,14 +1364,14 @@ else
 			([itemID isEqual: kPreviousPageButtonKKTID]) ||
 			([itemID isEqual: kPreviousPageKKTID])) {
 						// TODO: Check whether we are on the first page
-						enable = (_documentType == isPDF);
+						enable = (self.documentType == isPDF);
 	}
 	else if	(([itemID isEqual: kNextPageButtonTID]) ||
 			([itemID isEqual: kNextPageTID]) ||
 			([itemID isEqual: kNextPageButtonKKTID]) ||
 			([itemID isEqual: kNextPageKKTID])) {
 						// TODO: Check whether we are on the last page
-						enable = (_documentType == isPDF);
+						enable = (self.documentType == isPDF);
 	}
 
 	return enable;

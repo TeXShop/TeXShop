@@ -20,12 +20,15 @@ typedef NSInteger NSInteger;
 	
 	IBOutlet NSPanel	*stationeryWindow;
 	IBOutlet NSTableView *tableView;
-	NSMutableArray		*fullSourceData;
-	NSMutableArray		*sourceData;
-	NSMutableArray		*commentData;
-	
+//	NSMutableArray		*fullSourceData;
+//	NSMutableArray		*sourceData;
+//	NSMutableArray		*commentData;
 	
 }
+
+@property (retain) NSMutableArray		*fullSourceData;
+@property (retain)NSMutableArray		*sourceData;
+@property (retain)NSMutableArray		*commentData;
 
 - (IBAction)newFromStationery: (id)sender;
 

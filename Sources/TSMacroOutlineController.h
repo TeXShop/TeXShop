@@ -42,17 +42,21 @@
 
 @interface TSMacroOutlineController : NSObject 
 {
-	TSMacroTreeNode	*rootOfTree;
-	NSArray	 		*draggedNodes;
+//	TSMacroTreeNode	*rootOfTree;
+//	NSArray	 		*draggedNodes;
 
 	IBOutlet id outlineView;
 }
 
+@property (retain) TSMacroTreeNode	*rootOfTree;
+@property (retain) TSMacroTreeNode  *specialRootOfTree;
+@property (retain) NSArray	 		*draggedNodes;
+
 + (TSMacroOutlineController *)sharedInstance;
 
-- (void)setRootOfTree: (TSMacroTreeNode *)newRootOfTree;
-- (TSMacroTreeNode *)rootOfTree;
-- (NSArray*)draggedNodes;
+// - (void)setRootOfTree: (TSMacroTreeNode *)newRootOfTree;
+// - (TSMacroTreeNode *)rootOfTree;
+// - (NSArray*)draggedNodes;
 - (NSArray *)selectedNodes;
 
 - (void)deleteSelection: (id)sender;
@@ -83,12 +87,14 @@
 
 @interface ImageAndTextCell : NSTextFieldCell
 {
-@private
-	NSImage	*image;
+// @private
+//	NSImage	*image;
 }
 
-- (void)setImage:(NSImage *)anImage;
-- (NSImage *)image;
+@property (retain) NSImage *image;
+
+// - (void)setImage:(NSImage *)anImage;
+// - (NSImage *)image;
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView;
 - (NSSize)cellSize;

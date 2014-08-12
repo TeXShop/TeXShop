@@ -52,24 +52,43 @@
 
 - (void)refreshTitle // added by Terada
 {
-	if([myDocument fileURL] != nil) [self setTitle:[myDocument fileTitleName]];
+	if([self.myDocument fileURL] != nil) [self setTitle:[self.myDocument fileTitleName]];
 }
 
+// In the pair of commands below, becomeMainWindow and resignMainWindow should do nothing
+// unless the window has a "% !TEX" command. In this case
+// becomeMainWindow should remember the current language, set the spell to the
+// % !TEX choice, and set a global saying "don't use UID to record language
+
+// If the window has % !TEX, then resign Main Window should
+// reset the language to the remebered current language, and unset
+// the global for "dont use UID to record language"
 
 
 
 - (void) becomeMainWindow
 {
-	[self refreshTitle]; // added by Terada
+ 	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
-	[myDocument resetSpelling];
-	[myDocument fixMacroMenuForWindowChange];
+	[self.myDocument resetSpelling];
+	[self.myDocument fixMacroMenuForWindowChange];
+// WARNING: The following line caused a BIG delay when switching from the pdf window to the text window!!
+// It can be turned on with a hidden preference, but the only users who need it
+// a) use Japanese input methods and b) customize the background and foreground source colors and c) have a dark background color
+    if ([SUD boolForKey:ResetSourceTextColorEachTimeKey])
+        [self.myDocument setSourceTextColorFromPreferences:nil]; // added by Terada
+}
+
+- (void) resignMainWindow
+{
+    [super resignMainWindow];
+    [self.myDocument resignSpelling];
 }
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window
 - (TSDocument *)document
 {
-	return myDocument;
+	return self.myDocument;
 }
 // end addition
 
@@ -77,33 +96,33 @@
 {
     
 	if (
-		(! [myDocument externalEditor]) &&
-		(([myDocument documentType] == isTeX) || ([myDocument documentType] == isOther))
+		(! [self.myDocument externalEditor]) &&
+		(([self.myDocument documentType] == isTeX) || ([self.myDocument documentType] == isOther))
 		)
 		[super makeKeyAndOrderFront: sender];
-	[myDocument tryBadEncodingDialog:self];
+	[self.myDocument tryBadEncodingDialog:self];
 }
 
 - (void)associatedWindow:(id)sender
 {
-	if ([myDocument documentType] == isTeX) {
-		[myDocument bringPdfWindowFront];
+	if ([self.myDocument documentType] == isTeX) {
+		[self.myDocument bringPdfWindowFront];
 	}
 }
 
 - (void) doChooseMethod: sender
 {
-	[myDocument doChooseMethod: sender];
+	[self.myDocument doChooseMethod: sender];
 }
 
 - (void) abort: sender
 {
-	[myDocument abort: sender];
+	[self.myDocument abort: sender];
 }
 
 - (void) trashAUXFiles: sender
 {
-	[myDocument trashAUXFiles: sender];
+	[self.myDocument trashAUXFiles: sender];
 }
 
 
@@ -115,7 +134,7 @@
 	result = [super makeFirstResponder:aResponder];
 	// FIXME: This is kind of ugly...
 	if (result && [[aResponder className] isEqualTo:@"TSTextView"]) {
-		[myDocument setTextView:aResponder];
+		[self.myDocument setTextView:aResponder];
 	}
 	return result;
 }
@@ -123,9 +142,12 @@
 
 - (void)close
 {
+    
+// MAYBE NOW IRRELEVANT?
+ 
 // Yusuke Terada addition to fix crash at close
-    if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && myDocument && [myDocument respondsToSelector:@selector(pdfView)] && [myDocument pdfView])
-        [[NSNotificationCenter defaultCenter] removeObserver:[myDocument pdfView]];
+    if(([[[TSDocumentController sharedDocumentController] documents] count] > 0) && self.myDocument && [self.myDocument respondsToSelector:@selector(pdfView)] && [self.myDocument pdfView])
+        [[NSNotificationCenter defaultCenter] removeObserver:[self.myDocument pdfView]];
 // end of patch
     // this fixes a bug; the application crashed when closing
  	// the last window in multi-page mode; investigation shows that the
@@ -142,6 +164,13 @@
 	}
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // added by Terada
+    
+/*
+    TSDocument *aDocument = self.myDocument;
+    self.myDocument = nil;
+    [aDocument close];
+*/
+    
 
 	[super close];
 }
@@ -155,12 +184,12 @@
 	if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		
 		if  ([[theEvent characters] characterAtIndex:0] == '[') {
-			[myDocument doCommentOrIndentForTag:Munindent];
+			[self.myDocument doCommentOrIndentForTag:Munindent];
 			return;
 		} 
 	
 		if  ([[theEvent characters] characterAtIndex:0] == ']') {
-			[myDocument doCommentOrIndentForTag:Mindent];
+			[self.myDocument doCommentOrIndentForTag:Mindent];
 			return;
 		} 
 	}
@@ -170,13 +199,13 @@
 
 - (void)saveSourcePosition: sender
 {
-	[myDocument saveSourcePosition];
+	[self.myDocument saveSourcePosition];
 }
 
 
 - (void)savePortableSourcePosition: sender
 {
-	[myDocument savePortableSourcePosition];
+	[self.myDocument savePortableSourcePosition];
 }
 
 

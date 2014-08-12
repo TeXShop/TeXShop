@@ -1,0 +1,116 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red16\green73\blue188;\red56\green110\blue255;\red13\green98\blue18;
+}
+\margl1440\margr1440\vieww17900\viewh20380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 3.35 has the following changes:\
+\
+1) Yusuke Terada wrote\
+\
+\pard\pardeftab720
+\cf0 Previously I wrote:\
+\
+\pard\pardeftab720
+\cf2 In addition, I've faced a small problem in using TeXshop on Mavericks. \
+If you type "--", "---", or single/double quotations on OgreKit Find Panel, they are automatically replaced by Unicode characters like \'97, \'93 \'94, \'a0\'91 \'92 .\
+This is because the functions "smart dash" and "smart quotes" are enabled by default on Mavericks.\
+By turning off the checkbox "System Preferences -> Keyboard -> Text -> Use smart quotes and dashes", smart quotes/dashes become disabled on standard applications like TextEdit.app.\
+However, this setting doesn't seem to affect the NSTextView in OgreKit Find Panel.\
+To disable these automatic substitutions, users need to right-click the text view and turn off "Substitutions -> Smart Quotes/Dashes."\
+Users need to turn them off both in Find view and in Replace view respectively, and each time they launch TeXShop.\
+\
+This is annoying, so I tried to rebuild OgreKit to turn them off automatically, but I haven't succeeded in building it on Mavericks.\
+Since Mac OS X and Xcode is making rapid progress, it is getting difficult to build a project for previous generations.\
+\pard\pardeftab720
+\cf0 \
+\
+I've finally solved this issue and succeeded in building a revised OgreKit.\
+This version is based on the latest OgreKit. The latest OgreKit adopts Onigumo ( {\field{\*\fldinst{HYPERLINK "https://github.com/k-takata/Onigmo"}}{\fldrslt \cf3 \ul \ulc3 https://github.com/k-takata/Onigmo}} ) as its regular expression engine instead of Oniguruma, which OgreKit had been ever adopting.\
+The development of Oniguruma is now stopped, and Onigumo is its fork version.\
+Ruby also used to adopt Oniguruma until Ruby 1.9, but it was replaced by Onigumo since Ruby 2.0.\
+By using Onigumo, new regular expressions like \\K, \\R, \\X can be used.\
+\
+I built the latest OgreKit specialized for TeXShop. In order to solve the problems which I mentioned above, I disabled the meddling functions by default:\
+- Smart Copy/Paste\
+- Smart Quotes\
+- Smart Dashes\
+- Smart Links\
+- Automatic Data Detection\
+- Automatic Text Replacement\
+- Automatic Spelling Correction\
+\
+2) He also wrote\
+\
+Last year, JUAN LUIS VARONA MALUMBRES reported to me:\
+\
+\pard\pardeftab720
+\cf2 On 2013/07/20, at 10:07, JUAN LUIS VARONA MALUMBRES <{\field{\*\fldinst{HYPERLINK "mailto:jvarona@unirioja.es"}}{\fldrslt \cf3 \ul \ulc3 jvarona@unirioja.es}}> wrote:\
+\
+\pard\pardeftab720
+\cf4 Yusuke, please let to me to explain a small problem with the ogrekit find panel in TeXShop:\
+The election Origin: Top/Cursor (in Spanish Origen: Principio/Cursor) works very well in English,\
+but not in Spanish: it always do a "Cursor" search.\
+Can you fix it, please?\
+\pard\pardeftab720
+\cf0 \
+In addition to yesterday's modification, I've fixed it today.\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+3) Previous versions of TeXShop mainly allowed relative paths to the TeX Binaries, like\
+~/Library/TeX/bin. In a small number of cases, this syntax failed. I have now "audited" the\
+entire program and fixed all remaining locations where a relative reference might make a\
+difference.\
+\
+4) Fixed a significant bug involving the magnifying glass and selection rectangle in the\
+PDF window. This bug caused problems in Lion and Mountain Lion, but TeXShop\
+seemed to work fine in Mavericks. But actually there was an "amateur mistake'' in my\
+code which also made life dangerous in Mavericks. Two users reported crashes in that\
+system.  All this is now fixed.\
+\
+5) There is a related bug, this time in PDFKit in Lion. As a result of the bug, the magnifying glass\
+and the "selection tool for copying a rectangle from the PDF window" crash the system in Lion\
+if the display is in Single Page and Double Page mode. In particular, a double click in the\
+PDFWindow causes this crash, since it attempts to magnify. Note that magnification and selection\
+work fine in Multiple Page and Multiple Double Page modes. The fix disables magnification and\
+selection on Lion, but only in the two defective modes.\
+\
+6) Now contains Michael Scharpe's GotoLabel Macro. Here is his description:\
+\
+"This is macro for TeXShop's Macro Menu, allowing you to bring up a list of labels containing specified text, and move to the chosen label.\
+\
+To install, choose Macros/Open Macro Editor... (in the TeXShop main menus) and then from the Macros menu, choose Add Macros from File. This brings up a file selector with which you may select GotoLabel.plist. This instaall the macro in the Macro Menu, where you may move it to any convenient position, and, if you wish, give it a hot key.\
+\
+This provides an alternative to adding an item to TeXShop's tags by inserting a line\
+\
+%:tag_name\
+\
+in the source. With a lengthy document with many labels, it seems advantageous to be able to filter the list of labels."\
+\
+\
+\
+7) If you open the Edit Menu --> Spelling and Grammer panel, you can set the dictionary using\
+by the Spell Checker at the bottom of the Panel. TeXShop now remembers this choice, and will\
+automatically use it the next time the program is started.\
+\
+Unfortunately when writing this code I forgot about the "% !TEX spellcheck = " command at the top of a file and\
+it broke in strange ways. This problem is now fixed.\
+\
+Rules: I suspect that most users don't use the "% !TEX spellcheck" syntax. They will run into no problems.\
+Note that "% !TEX spellcheck" applies to individual source files, not to root files. If there is a root file and several\
+included files, then all of the includled files need this text at the top.\
+\
+When such a file is open, changing its dictionary in the Spelling and Grammar panel works. Then as long as the file\
+is open (even if it becomes inactive and later is activated) will use the new dictionary chosen by the pane.\
+\
+The synax "% !TEX spellcheck" interferes with setting a new choice for the default spelling dictionary, and consequently\
+the preference setting is only used up to the time that such a file is opened. Thus if you CHANGE the spelling dictionary\
+before opening any file with a "% !TEX spellcheck = ..." header, then the Mac will remember this change as the\
+new choice. But if you change a dictionary AFTER opening such a file, the Mac won't remember the change\
+any more.\
+\
+}

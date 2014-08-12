@@ -33,7 +33,7 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
-	firstResize = NO;
+	self.firstResize = NO;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
 	CGFloat alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
 	if (alpha < 0.999)
@@ -43,37 +43,37 @@
 
 - (void) doChooseMethod: sender
 {
-	[myDocument doChooseMethod: sender];
+	[self.myDocument doChooseMethod: sender];
 }
 
 - (void) doError: sender
 {
-	[myDocument doError: sender];
+	[self.myDocument doError: sender];
 }
 
 - (void) doTypeset: sender
 {
-	[myDocument doTypeset: sender];
+	[self.myDocument doTypeset: sender];
 }
 
 - (void) displayLog: sender
 {
-	[myDocument displayLog: sender];
+	[self.myDocument displayLog: sender];
 }
 
 - (void) displayConsole: sender
 {
-	[myDocument displayConsole: sender];
+	[self.myDocument displayConsole: sender];
 }
 
 - (void) abort: sender
 {
-	[myDocument abort: sender];
+	[self.myDocument abort: sender];
 }
 
 - (void) trashAUXFiles: sender
 {
-	[myDocument trashAUXFiles: sender];
+	[self.myDocument trashAUXFiles: sender];
 }
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
@@ -103,28 +103,28 @@
 	if ([SUD boolForKey:ConsoleWidthResizeKey])
 		return proposedFrameSize;
 	
-	if (firstResize) {
+	if (self.firstResize) {
 		newFrameSize = proposedFrameSize;
 		oldFrame = [window frame];
 		newFrameSize.width = oldFrame.size.width;
 		return newFrameSize;
 		}
 	else {
-		firstResize = YES;
+		self.firstResize = YES;
 		return proposedFrameSize;
 		}
 }
 
 - (IBAction) convertTiff:(id)sender
 {
-    [(TSDocument *)myDocument convertTiff:sender];
+    [(TSDocument *)self.myDocument convertTiff:sender];
 }
 
 
 // for scripting
 - (TSDocument *)document
 {
-	return myDocument;
+	return self.myDocument;
 }
 // end addition
 

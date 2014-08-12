@@ -39,7 +39,7 @@
 @implementation TSLayoutManager
 - (id)init
 {
-	[super init];
+	self = [super init];
 	unichar _tabCharacter0 = 0x2023;
 	unichar _tabCharacter1 = 0x25B9;
 //	unichar _tabCharacter2 = 0x21E5;
@@ -56,34 +56,34 @@
 	unichar _spaceCharacter1 = 0x00B7;
 //	unichar _spaceCharacter2 = 0x02D0;
 //	unichar _spaceCharacter3 = 0x00B0;
-	tabCharacters = [[NSArray arrayWithObjects:
+	self.tabCharacters = [NSArray arrayWithObjects:
 					 [NSString stringWithCharacters:&_tabCharacter0 length:1],
 					 [NSString stringWithCharacters:&_tabCharacter1 length:1],
 //					 [NSString stringWithCharacters:&_tabCharacter2 length:1],
 //					 [NSString stringWithCharacters:&_tabCharacter3 length:1],
 					 nil
-					 ] retain];
-	newLineCharacters = [[NSArray arrayWithObjects:
+                    ];
+	self.nextLineCharacters = [NSArray arrayWithObjects:
 					 [NSString stringWithCharacters:&_newLineCharacter0 length:1],
 					 [NSString stringWithCharacters:&_newLineCharacter1 length:1],
 //					 [NSString stringWithCharacters:&_newLineCharacter2 length:1],
 //					 [NSString stringWithCharacters:&_newLineCharacter3 length:1],
 					 nil
-					 ] retain];
-    fullwidthSpaceCharacters = [[NSArray arrayWithObjects:
+                    ];
+    self.fullwidthSpaceCharacters = [NSArray arrayWithObjects:
 								[NSString stringWithCharacters:&_fullwidthSpaceCharacter0 length:1],
 								[NSString stringWithCharacters:&_fullwidthSpaceCharacter1 length:1],
 //								[NSString stringWithCharacters:&_fullwidthSpaceCharacter2 length:1],
 //								[NSString stringWithCharacters:&_fullwidthSpaceCharacter3 length:1],
 								nil
-								] retain];
-	spaceCharacters = [[NSArray arrayWithObjects:
+                                ];
+	self.spaceCharacters = [NSArray arrayWithObjects:
 					   [NSString stringWithCharacters:&_spaceCharacter0 length:1],
 					   [NSString stringWithCharacters:&_spaceCharacter1 length:1],
 //					   [NSString stringWithCharacters:&_spaceCharacter2 length:1],
 //					   [NSString stringWithCharacters:&_spaceCharacter3 length:1],
 					   nil
-					   ] retain];
+                        ];
 	return self;
 }
 
@@ -133,10 +133,10 @@
 	BOOL showFullwidthSpaceCharacter = (invisibleCharactersShowing && [SUD boolForKey:showFullwidthSpaceCharacterKey]);
 	BOOL showSpaceCharacter = (invisibleCharactersShowing && [SUD boolForKey:showSpaceCharacterKey]);
 
-	NSString *tabCharacter = [tabCharacters objectAtIndex:[SUD integerForKey:TabCharacterKindKey]];
-    NSString *newLineCharacter = [newLineCharacters objectAtIndex:[SUD integerForKey:NewLineCharacterKindKey]];
-    NSString *fullwidthSpaceCharacter = [fullwidthSpaceCharacters objectAtIndex:[SUD integerForKey:FullwidthSpaceCharacterKindKey]];
-    NSString *spaceCharacter = [spaceCharacters objectAtIndex:[SUD integerForKey:SpaceCharacterKindKey]];
+	NSString *tabCharacter = [self.tabCharacters objectAtIndex:[SUD integerForKey:TabCharacterKindKey]];
+    NSString *nextLineCharacter = [self.nextLineCharacters objectAtIndex:[SUD integerForKey:NewLineCharacterKindKey]];
+    NSString *fullwidthSpaceCharacter = [self.fullwidthSpaceCharacters objectAtIndex:[SUD integerForKey:FullwidthSpaceCharacterKindKey]];
+    NSString *spaceCharacter = [self.spaceCharacters objectAtIndex:[SUD integerForKey:SpaceCharacterKindKey]];
 	
 	for (theGlyphIndex = inGlyphRange.location; theGlyphIndex < theLengthToRedraw; theGlyphIndex++) {
 		theCharIndex = [self characterIndexForGlyphAtIndex:theGlyphIndex];
@@ -147,7 +147,7 @@
 			[tabCharacter drawAtPoint:thePointToDraw withAttributes:_attributes];
 		} else if (theCharacter == '\n' && showNewLineCharacter) {
 			thePointToDraw = [self pointToDrawGlyphAtIndex:theGlyphIndex adjust:theSize];
-			[newLineCharacter drawAtPoint:thePointToDraw withAttributes:_attributes];
+			[nextLineCharacter drawAtPoint:thePointToDraw withAttributes:_attributes];
 		} else if (theCharacter == 0x3000 && showFullwidthSpaceCharacter) { // Fullwidth-space (JP)
 			thePointToDraw = [self pointToDrawGlyphAtIndex:theGlyphIndex adjust:theSize];
 			[fullwidthSpaceCharacter drawAtPoint:thePointToDraw withAttributes:_attributes];

@@ -1,0 +1,184 @@
+%%!TEX TS-program = pdflatexmk
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line rather than an indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+\usepackage[full]{textcomp}
+\usepackage[sups,osf,scaled=.96]{garamondx}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[varqu,varl]{zi4}% inconsolata
+\usepackage{amsmath,amsthm}
+\usepackage[garamondx,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+%\usepackage[supstfm=libertinesups,%
+%  supscaled=1.2,%
+%  raised=-.13em]{superiors}
+%SetFonts
+\usepackage[pdftex,colorlinks=true, pdfstartview=FitV, linkcolor=blue, citecolor=blue, urlcolor=blue,bookmarks,bookmarksnumbered]{hyperref}
+%
+\newcommand{\myref}[1]{`\nameref{#1}' (p.\pageref{#1})}
+%
+\title{A Look at some Recent \TeX\ Fonts}
+\author{Michael Sharpe}
+\date{\today}  % Activate to display a given date or no date
+\font\zifourzero=t1-zi4r-0 at 10pt
+\begin{document}
+\maketitle
+This document examines a number of more recent additions to \TeX's font repertoire, focussing on \LaTeX\ packages exclusively, and, for the most part, on text fonts, though I will make some biased suggestions about suitable math packages to accompany them.
+
+For each font package,  there is a single page describing the package, important options and macros, and the features (figure choices, \textsc{smc} and so on) available in the package.
+
+The font packages (and Common Names) described on the following pages are:\\[6pt]
+\textsc{Serifed text fonts:}
+\begin{description}
+\item[\hspace*{1cm}\hyperlink{lnk:fbb}{fbb}] (Bembo)
+\item[\hspace*{1cm}\hyperlink{lnk:garamondx}{garamondx}] (Garamond)
+\item[\hspace*{1cm}\hyperlink{lnk:newpx}{newpx}] (Palatino)
+\item[\hspace*{1cm}\hyperlink{lnk:kpfonts}{kpfonts}] (Palatino-like)
+\item[\hspace*{1cm}\hyperlink{lnk:newtx}{newtx}] (Times)
+\item[\hspace*{1cm}\hyperlink{lnk:stix}{stix}] (Times)
+\item[\hspace*{1cm}\hyperlink{lnk:libertine}{libertine}]
+\item[\hspace*{1cm}\hyperlink{lnk:baskervaldx}{Baskervaldx}] (Baskerville)
+\item[\hspace*{1cm}\hyperlink{lnk:xcharter}{XCharter}] (Charter)
+\item[\hspace*{1cm}\hyperlink{lnk:heuristica}{heuristica}] (Utopia)
+\item[\hspace*{1cm}\hyperlink{lnk:gentium}{gentium}] (Gentium-tug)
+\end{description}
+\textsc{Typewriter fonts:}
+\begin{description}
+\item[\hspace*{1cm}\hyperlink{lnk:inconsolata}{inconsolata}]
+\item[\hspace*{1cm}\hyperlink{lnk:zlmtt}{zlmtt}] (Typewriter fonts from Latin Modern)
+\item[\hspace*{1cm}\hyperlink{lnk:newtxtt}{newtxtt}] (Typewriter fonts from {\tt txfonts})\end{description}
+
+\newpage
+\hypertarget{lnk:fbb}{}
+\includegraphics{fbbsamp-crop}
+\newpage
+\hypertarget{lnk:garamondx}{}
+\begin{description}
+\item[Package name:] {\tt garamondx}.
+\item[Derived from:] URW Garamond No 8 (package {\tt garamond} on \textsc{ctan}, not \TeX Live.)
+\item[Weights and shapes:]  \{m, b\}, \{n, it\}. (Bold weight is in fact medium-bold.)
+\item[Features:]{\color{white}x}\\[-16pt]  
+\begin{itemize}
+\item
+full set of f-ligatures---original had only \verb|f_i| and \verb|f_l|;
+\item \textsc{Small Caps} in all weights and shapes;
+\item superior figures \textsu{0123456789}---with the {\tt sups} option, these will be used for footnote markers\footnote{For example};
+\item taboldstyle figures 0123456789 or 0\textosfI{1}23456789;
+\item swash Q glyph  activated by \verb|\swashQ|:  \swashQ
+\item full set of {\tt textcomp} glyphs; 
+\item \verb|\textcircled| macro: Eg, \verb|\textcircled{A}| gives \textcircled{A}. (Must load {\tt textcomp} with {\tt full} option.)
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[full]{textcomp}
+\usepackage[sups,osf,scaled=.96]{garamondx} % osf (or osfI) for text, not math
+\usepackage[scaled=.95]{cabin} % sans serif
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\usepackage[garamondx,bigdelims,vvarbb]{newtxmath} % bb from STIX
+\usepackage[cal=boondoxo]{mathalfa} % mathcal
+\end{verbatim}
+\item[Example using this preamble:]{\color{white}x}\\[6pt]
+\lipsum[1]
+%\textit{\lipsum[2]}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+%\thispagestyle{empty}
+The typeset math below follows the ISO recommendations that only variables
+be set in italic. Note the use of upright shapes for $\d$, $\mathrm{e}$
+and $\uppi$. (The first two are entered as \verb|\mathrm{d}| and
+\verb|\mathrm{e}|, and in fonts derived from {\tt mtpro2} or {\tt newtxmath},
+ the latter is entered as \verb|\uppi|.)
+
+\textbf{Simplest form of the \textit{Central Limit Theorem}:} \textit{Let
+$X_1$, $X_2,\cdots$ be a sequence of iid random variables with mean~$0$ 
+and variance $1$ on a probability space $(\Omega,\mathcal{F},\Pr)$. Then}
+\[\Pr\left(\frac{X_1+\cdots+X_n}{\sqrt{n}}\le y\right)\to\mathfrak{N}(y)\coloneq
+\int_{-\infty}^y \frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,
+\mathrm{d}t\quad\mbox{as $n\to\infty$,}\]
+\textit{or, equivalently, letting} $S_n\coloneq\sum_1^n X_k$,
+\[\mathbb{E} f\left(S_n/\sqrt{n}\right)\to \int_{-\infty}^\infty f(t)
+\frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,\mathrm{d}t
+\quad\mbox{as $n\to\infty$, for every $f\in\mathrm{b}
+\mathcal{C}(\mathbb{R})$.}\]
+\end{description}
+\newpage
+\hypertarget{lnk:newpx}{}
+\includegraphics{zplsamp-crop}
+\newpage
+\hypertarget{lnk:kpfonts}{}
+\includegraphics{kpsamp-crop}
+\newpage
+\hypertarget{lnk:newtx}{}
+\includegraphics{ntxsamp-crop}
+\newpage
+\hypertarget{lnk:stix}{}
+\includegraphics{stixsamp-crop}
+\newpage
+\hypertarget{lnk:libertine}{}
+\includegraphics{libsamp-crop}
+\newpage
+\hypertarget{lnk:baskervaldx}{}
+\includegraphics{zbvsamp-crop}
+\newpage
+\hypertarget{lnk:xcharter}{}
+\includegraphics{xchsamp-crop} 
+\newpage
+\hypertarget{lnk:heuristica}{}
+\includegraphics{heusamp-crop}
+\newpage
+\hypertarget{lnk:gentium}{}
+\includegraphics{gensamp-crop}
+\newpage
+\hypertarget{lnk:zi4}{}
+\begin{description}
+\item[Package name:] {\tt inconsolata/zi4}.
+\item[Derived from:] Raph Levien's {\tt inconsolata} TrueType fonts, reminiscent of Consolas.
+\item[Weights and shapes:]  \{m, b\}, \{n\}. 
+\item[Features:]{\color{white}x}\\[-16pt]  
+\begin{itemize}
+\item available encodings are {\tt OT1}, {\tt LY1}, {\tt T1}, {\tt TS1}, {\tt QX1};\item
+the default zero in {\tt inconsolata} is now slashed---the unslashed zero may be specified with the option {\tt var0};
+\item for those who find the default lower-case L({\zifourzero l}) a bit too close to the numeral {\tt 1}, there is an option {\tt varl} which substitutes a more distinctive shape for all glyphs related to lower-case L;
+\item the default double quote have a small slant---use
+the {\tt varqu} option for upright quotes; 
+\item the package loads {\tt upquote} by default, but provides an option {\tt noupquote} to override it.
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\end{verbatim}
+\item[Example using this preamble:] (with \verb|\texttt|)\\[6pt]
+\texttt{\lipsum[1]
+0123456789\\
+\textbf{0123456789}}
+\newpage
+\hypertarget{lnk:zlmtt}{}
+\includegraphics{zlmsamp-crop}
+\newpage
+\hypertarget{lnk:newtxtt}{}
+\includegraphics{newtxttsamp-crop}
+\end{description}
+
+
+%\begin{center}
+%  \begin{tabular}{@{} cccc @{}}
+%    \toprule
+%    • & • & • & • \\ 
+%    \midrule
+%    • & • & • & • \\ 
+%    • & • & • & • \\ 
+%    • & • & • & • \\ 
+%    • & • & • & • \\ 
+%    • & • & • & • \\ 
+%    \bottomrule
+%  \end{tabular}
+%\end{center}
+\end{document}  

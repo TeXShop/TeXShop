@@ -77,6 +77,15 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayRecentTeXFonts:sender;
+{
+    NSString				*fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"RecentTexFonts" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
+
 - (IBAction)displayNotesonApplescript:sender
 {
     NSString				*fileName;
@@ -121,16 +130,20 @@
 	NSString			*packageString;
 	NSMutableArray		*args;
 	NSMutableDictionary	*env;
-	NSMutableString		*path, *enginePath;
+	NSString		*path, *enginePath;
 	NSInteger					result;
-	
+    
 	result = [NSApp runModalForWindow: packageHelpPanel];
-	[packageHelpPanel close];
-	if (result == 0) 
+	// [packageHelpPanel close];
+	if (result == 0) {
 		packageString = [packageResult stringValue];
-	else
-		return;
-	
+        [packageHelpPanel close];
+    }
+	else {
+        [packageHelpPanel close];
+        return;
+    }
+    
 	if ([packageString isEqualToString:@""])
 		return;
 	
@@ -138,20 +151,20 @@
 		[displayPackageHelpTask terminate];
 		myDate = [NSDate date];
 		while (([displayPackageHelpTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-		[displayPackageHelpTask release];
+	//	[displayPackageHelpTask release];
 		displayPackageHelpTask = nil;
 	}
 	
-	enginePath = [NSMutableString stringWithString:[SUD stringForKey:TetexBinPath]];
-	[enginePath appendString:@"/texdoc"];
+	enginePath = [[NSString stringWithString:[SUD stringForKey:TetexBinPath]] stringByExpandingTildeInPath];
+	enginePath = [enginePath stringByAppendingString:@"/texdoc"];
 	
 	// get copy of environment and add the preferences paths
-	env = [[NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]] retain];
-	path = [NSMutableString stringWithString: [env objectForKey:@"PATH"]];
-	[path appendString:@":"];
+	env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
+	path = [NSString stringWithString: [env objectForKey:@"PATH"]];
+	path = [path stringByAppendingString:@":"];
 	// [path appendString:[SUD stringForKey:TetexBinPath]];
-	[path appendString:[SUD stringForKey:TetexBinPath]];
-	[env setObject: path forKey: @"PATH"];
+	path = [path stringByAppendingString:[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath]];
+ 	[env setObject: path forKey: @"PATH"];
 	
 	
 	displayPackageHelpTask = [[NSTask alloc] init];

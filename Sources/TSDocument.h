@@ -29,6 +29,8 @@
 #import "NoodleLineNumberMarker.h"
 #import "TSPreviewWindow.h"
 #import "synctex_parser.h"
+#import "ScrapTextView.h"
+#import "ScrapPDFKitView.h"
 
 #define NUMBEROFERRORS	20
 
@@ -67,12 +69,15 @@ enum RootCommand
 	RootForPdfSync = 5,
 	RootForTrashAUX = 6,
 	RootForLogFile = 7,
-	RootForConsole = 8
+	RootForConsole = 8,
+    RootForRedisplayLog = 9
 };
 
 @class MyPDFKitView;
+@class TSTextView;
 @class MyPDFView;
 @class MySelection;
+@class ScrapTextView;
 
 // FIX RULER SCROLL
 @class NoodleLineNumberView;
@@ -88,12 +93,14 @@ enum RootCommand
 	IBOutlet NSTextView			*textView;		/*" textView displaying the current TeX source "*/
 	IBOutlet NSScrollView		*scrollView;		/*" scrollView for textView"*/
 	IBOutlet NSWindow			*textWindow;		/*" window displaying the current document "*/
-	NoodleLineNumberView		*lineNumberView1;
-	NoodleLineNumberView		*lineNumberView2;
-	NoodleLineNumberView		*logLineNumberView;
-
+	
 	IBOutlet MyPDFView			*pdfView;		/*" view displaying the current preview "*/
 	IBOutlet NSWindow			*pdfWindow;		/*" window displaying the current pdf preview "*/
+    
+    IBOutlet NSPanel            *scrapWindow;
+    IBOutlet NSPanel            *scrapPDFWindow;
+    IBOutlet ScrapTextView     *scrapTextView;
+    IBOutlet ScrapPDFKitView    *scrapPDFKitView;
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
@@ -139,68 +146,83 @@ enum RootCommand
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
-	
-	NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
-
 	IBOutlet NSPopUpButton		*macroButton;		/*" pull-down list for macros "*/
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
 	IBOutlet NSButton           *showFullPathButton; // added by Terada
-	NSWindow					*logWindow;
-	NSTextView					*logTextView;
-	NSScrollView				*logScrollView;
-	NSString					*logExtension;
+    
+    IBOutlet	id              gotopageOutlet;
+    IBOutlet	id              magnificationOutlet;
+    IBOutlet	id              previousButton;
+    IBOutlet	id              nextButton;
+    
+    IBOutlet    NSControl       *eLog;
+    IBOutlet    NSControl       *fLog;
+    IBOutlet    NSControl       *hLog;
+    IBOutlet    NSControl       *iLog;
+    IBOutlet    NSControl       *oLog;
+    IBOutlet    NSControl       *pLog;
+    IBOutlet    NSControl       *rLog;
+    IBOutlet    NSControl       *sLog;
+    IBOutlet    NSControl       *tLog;
+    IBOutlet    NSControl       *uLog;
+    IBOutlet    NSControl       *vLog;
+    IBOutlet    NSControl       *wLog;
+    
+    
+    NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
+    
+//	NSWindow					*logWindow;
+//	NSTextView					*logTextView;
+//	NSScrollView				*logScrollView;
+//	NSString					*logExtension;
 
-	id			gotopageOutlet;
-	id			magnificationOutlet;
-	id			previousButton;
-	id			nextButton;
-
-	NSConnection    *_completionConnection; //Adam Maxwell
-    id               _completionServer; //Adam Maxwell
-
-	NSTextStorage				*_textStorage;
+//  NSConnection    *_completionConnection; //Adam Maxwell
+//  id              _completionServer; //Adam Maxwell
+    
+    
 	BOOL		windowIsSplit;
 	BOOL		lineNumbersShowing;
 	BOOL		invisibleCharactersShowing; // added by Terada
-	
 	BOOL				isFullScreen;
-	TSFullscreenWindow	*fullscreenWindow;
-	PDFView				*fullscreenPDFView;
+    
+//	TSFullscreenWindow	*fullscreenWindow;
+//	PDFView				*fullscreenPDFView;
+//   TSDocument          *rootDocument;
+
 
 	NSStringEncoding	_encoding;
 	NSStringEncoding	_tempencoding;
 	DefaultTypesetMode			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/
 	NSInteger			whichEngine;		/*" 1 = tex, 2 = latex, 3 = bibtex, 4 = makeindex, 5 = megapost, 6 = context,
 													7 = metafont "*/
-	TSDocument	*rootDocument;
 	BOOL		tagLine;
     BOOL        skipTextWindow;
 
 
 	BOOL                typesetStart;		/*" YES if tex output "*/
-	NSFileHandle        *writeHandle;
-	NSFileHandle        *readHandle;
-	NSPipe              *inputPipe;
-	NSPipe              *outputPipe;
-	NSTask              *texTask;
-	NSTask              *bibTask;
-	NSTask              *indexTask;
-	NSTask              *metaFontTask;
-	NSTask              *detexTask;
-	NSPipe              *detexPipe;
-	NSFileHandle        *detexHandle;
-	NSTask              *synctexTask;
-	NSPipe              *synctexPipe;
-	NSFileHandle        *synctexHandle;
+//	NSFileHandle        *writeHandle;
+//	NSFileHandle        *readHandle;
+//	NSPipe              *inputPipe;
+//	NSPipe              *outputPipe;
+//	NSTask              *texTask;
+//	NSTask              *bibTask;
+//	NSTask              *indexTask;
+//	NSTask              *metaFontTask;
+//	NSTask              *detexTask;
+//	NSPipe              *detexPipe;
+//	NSFileHandle        *detexHandle;
+//	NSTask              *synctexTask;
+//	NSPipe              *synctexPipe;
+//	NSFileHandle        *synctexHandle;
     synctex_scanner_t	scanner;
 
 
-	NSDate		*startDate;
-	NSPDFImageRep	*texRep;
-	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
+//	NSDate		*startDate;
+//	NSPDFImageRep	*texRep;
+//	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
-	TSDocumentType			_documentType;
+//    TSDocumentType			_documentType;
 	NSInteger			errorLine[NUMBEROFERRORS];
 	NSString	*errorLinePath[NUMBEROFERRORS];
 	NSString	*errorText[NUMBEROFERRORS];
@@ -209,11 +231,11 @@ enum RootCommand
 	DefaultTypesetMode			theScript;		/*" script currently executing; 100, 101, 102 "*/
 	
 	NSUInteger	colorStart, colorEnd;
-	NSDictionary		*regularColorAttribute;
-	NSDictionary		*commandColorAttribute;
-	NSDictionary		*commentColorAttribute;
-	NSDictionary		*markerColorAttribute;
-	NSDictionary		*indexColorAttribute;
+//	NSDictionary		*regularColorAttribute;
+//	NSDictionary		*commandColorAttribute;
+//	NSDictionary		*commentColorAttribute;
+//	NSDictionary		*markerColorAttribute;
+//	NSDictionary		*indexColorAttribute;
     
     // for full screen operation
     NSInteger           oldPageStyle;
@@ -222,17 +244,16 @@ enum RootCommand
     NSInteger           fullscreenResizeOption;
 
 
-	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+//	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
 	NSUInteger	tagLocation;
 	NSUInteger	tagLocationLine;
 
 	BOOL				makeError;
 	SEL					tempSEL;
-	MySelection			*mSelection;
 	BOOL                taskDone;
 	NSInteger                 pdfSyncLine;
-	id                  syncBox;
-	id					indexColorBox;
+//	id                  syncBox;
+//	id					indexColorBox;
 	BOOL                aggressiveTrash;
 	BOOL				willClose;
 
@@ -247,16 +268,16 @@ enum RootCommand
 	BOOL		omitShellEscape;
 	BOOL		withLatex;
 
-	NSDate              *_pdfLastModDate;
-	NSTimer             *_pdfRefreshTimer;
-    id                  _pdfActivity;
+//	NSDate              *_pdfLastModDate;
+//	NSTimer             *_pdfRefreshTimer;
+//  id                  _pdfActivity;
 	BOOL                _pdfRefreshTryAgain;
 
 	BOOL                typesetContinuously;
 	NSInteger                 tempEngine;
 	BOOL                useTempEngine;
 	BOOL                realEngine;
-	NSWindow            *callingWindow;
+//	NSWindow            *callingWindow;
 	NSStringEncoding	_badEncoding;
 	BOOL                showBadEncodingDialog;
 	BOOL				PDFfromKit;
@@ -267,9 +288,9 @@ enum RootCommand
 	BOOL				isLoading;
 	BOOL				firstTime;
 	NSTimeInterval		colorTime;
-	NSString			*spellLanguage;
+//	NSString			*spellLanguage;
 	BOOL				consoleCleanStart;
-	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
+//	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 
 	NSInteger lastCursorLocation; // added by Terada
 	NSInteger lastStringLength; // added by Terada
@@ -287,17 +308,109 @@ enum RootCommand
 
 // end addition
 // ULRICH BAUER PATCH
-    dispatch_source_t dispatch_source;
+   dispatch_source_t dispatch_source;
 // END PATCH
     
+// NSDate              *_pdfLastModDate;
+// NSTimer             *_pdfRefreshTimer;
+// id                  _pdfActivity;
+    
+//    NoodleLineNumberView		*lineNumberView1;
+//	NoodleLineNumberView		*lineNumberView2;
+//	NoodleLineNumberView		*logLineNumberView;
+
+ 
+//  MySelection		*mSelection;
+//  NSTextStorage	*_textStorage;
+
+
+    
 }
+
+
+@property (retain)  NSDictionary		*regularColorAttribute;
+@property (retain)  NSDictionary		*commandColorAttribute;
+@property (retain)  NSDictionary		*commentColorAttribute;
+@property (retain)  NSDictionary		*markerColorAttribute;
+@property (retain)  NSDictionary		*indexColorAttribute;
+
+@property (retain)  NSTask              *synctexTask;
+@property (retain)  NSPipe              *synctexPipe;
+@property (retain)  NSFileHandle        *synctexHandle;
+
+@property (retain) NSFileHandle        *writeHandle;
+@property (retain) NSFileHandle        *readHandle;
+@property (retain) NSPipe              *inputPipe;
+@property (retain) NSPipe              *outputPipe;
+@property (retain) NSTask              *texTask;
+@property (retain) NSTask              *scrapTask;
+@property (retain) NSTask              *bibTask;
+@property (retain) NSTask              *indexTask;
+@property (retain) NSTask              *metaFontTask;
+@property (retain) NSTask              *detexTask;
+@property (retain) NSPipe              *detexPipe;
+@property (retain) NSFileHandle        *detexHandle;
+@property (retain) NSTask              *texloganalyserTask;
+@property (retain) NSPipe              *texloganalyserPipe;
+@property (retain) NSFileHandle        *texloganalyserHandle;
+@property (retain) NSDate              *startDate;
+@property (retain) NSPDFImageRep       *texRep;
+
+@property (retain)  NSString            *spellLanguage;
+@property (retain)  NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
+@property (retain)  NSWindow            *ourCallingWindow;
+@property (retain)  NSDate              *pdfLastModDate;
+@property (retain) NSTimer             *pdfRefreshTimer;
+@property (retain) id                  pdfActivity;
+@property (retain) NSTimer              *tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+
+@property (retain)	id                  syncBox;
+@property (retain)  id					indexColorBox;
+
+@property (retain) 	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
+@property TSDocumentType			documentType;
+
+@property (retain) 	NSConnection    *completionConnection; //Adam Maxwell
+@property (retain) id               completionServer; //Adam Maxwell
+
+@property (retain)  NoodleLineNumberView		*lineNumberView1;
+@property (retain)  NoodleLineNumberView		*lineNumberView2;
+@property (retain)  NoodleLineNumberView		*logLineNumberView;
+
+@property (retain) NSWindow                     *logWindow;
+@property (retain) NSTextView					*logTextView;
+@property (retain) NSScrollView                 *logScrollView;
+@property (retain) NSString                     *logExtension;
+
+@property (retain) 	TSFullscreenWindow	*fullscreenWindow;
+@property (retain)  PDFView				*fullscreenPDFView;
+@property (retain)  TSDocument          *rootDocument;
+
+@property (retain)   MySelection         *mSelection;
+@property (retain)   NSTextStorage       *textStorage;
+
+// forScrap
+@property (retain)  NSURL       *scrapDirectoryURL;
+@property (retain)  NSString    *scrapImagePath;
+@property (retain)  NSString    *scrapEncoding;
+@property (retain)  NSString    *scrapProgram;
+@property (retain)  NSString    *scrapMenuEngine;
+@property           BOOL        scrapDVI;
+
+
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel;
 
+- (void)restoreStateWithCoder:(NSCoder *)coder;
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder;
+
+
 // FIX RULER SCROLL
 - (void) redrawLineNumbers: sender;
 // END FIX RULER SCROLL
+
+- (IBAction)reFillLog: sender;
 
 // forsplit
 - (void) splitWindow: sender;
@@ -316,6 +429,9 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
+
+// - (void) tryScrap:(id)sender;
+// - (IBAction) typesetScrap:(id)sender;
 
 - (IBAction) convertTiff:(id)sender;
 // - (void) okForRequest: sender;
@@ -402,7 +518,9 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
+- (void)reDisplayLog;
 - (void)resetSpelling;
+- (void)resignSpelling;
 - (void)closeCurrentEnvironment:(id)sender;
 - (void)invalidateCompletionConnection;
 // Forward Routines Not Found by Source
@@ -415,6 +533,9 @@ enum RootCommand
 - (BOOL)skipTextWindow;
 - (void)doShareSource:(id)sender;
 - (void)doSharePreview:(id)sender;
+- (void)setupTextView:(NSTextView *)aTextView;
+- (NSPopUpButton *)programButton;
+- (BOOL) useDVI;
 
 
 // BibDesk Completion
@@ -477,8 +598,13 @@ enum RootCommand
 // private API
 //-----------------------------------------------------------------------------
 - (void)registerForNotifications;
+- (void)setSourceTextColorFromPreferences:(NSNotification *)notification; // added by Terada
 - (void)setDocumentFontFromPreferences:(NSNotification *)notification;
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification;
+- (void)reColor:(NSNotification *)notification;
+- (void)viewBoundsDidChange:(NSNotification *)notification;
+- (void)viewFrameDidChange:(NSNotification *)notification;
+- (void)checkATaskStatus:(NSNotification *)notification;
 - (void)setupFromPreferencesUsingWindowController:(NSWindowController *)windowController;
 - (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(NSUInteger)level; // added by S. Zenitani
 - (void)resetMacroButton:(NSNotification *)notification;
@@ -536,6 +662,7 @@ enum RootCommand
 - (void) sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
 - (BOOL) getWillClose;
 - (void) setWillClose: (BOOL)value;
+- (void) killRunningTasks;
 
 @end
 
@@ -587,6 +714,13 @@ enum RootCommand
 */
 
 @end
+
+@interface TSDocument (Scrap)
+- (void) tryScrap:(id)sender;
+- (IBAction) typesetScrap:(id)sender;
+- (void)checkScrapTaskStatus:(NSNotification *)notification;
+@end
+
 
 // ULRICH BAUER PATCH
 @interface TSDocument (FileWatching)

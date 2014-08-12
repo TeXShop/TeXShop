@@ -53,24 +53,27 @@ static id _sharedInstance = nil;
 
 - (void)dealloc
 {
-	[myMatrix release];
-	[arrayMatrix release];
-	myMatrix = nil;
-	arrayMatrix = nil;
+//	[myMatrix release];
+//	[arrayMatrix release];
+//	myMatrix = nil;
+//	arrayMatrix = nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
-	[super dealloc];
+//	[super dealloc];
 }
 
 - (MatrixData *)theMatrix
 {
-	return myMatrix;
+	return self.myMatrix;
 }
+
+/*
 
 - (NSArray*)draggedRows
 {
 	return draggedRows;
 }
+*/
 
 -(void)awakeFromNib
 {
@@ -86,24 +89,24 @@ static id _sharedInstance = nil;
 	
 	[hstep setMaxValue:MatrixSize];
 	[vstep setMaxValue:MatrixSize];
-	myMatrix=[[MatrixData alloc]init];
+	self.myMatrix=[[MatrixData alloc]init];
 	NSInteger j;
 	for (j = 0; j < MatrixSize; j++) {
-		[myMatrix addRow];
+		[self.myMatrix addRow];
 	}
 	
-	while ([myMatrix colCount]<MatrixSize) {
-		[myMatrix addCol];
+	while ([self.myMatrix colCount]<MatrixSize) {
+		[self.myMatrix addCol];
 		MatrixTableColumn *newcol;
-		newcol = [[MatrixTableColumn alloc] initWithIdentifier:[[NSNumber numberWithInteger:[myMatrix colCount]-1] stringValue]];
-		[[newcol headerCell] setStringValue:[[NSNumber numberWithInteger:[myMatrix colCount]] stringValue]];
+		newcol = [[MatrixTableColumn alloc] initWithIdentifier:[[NSNumber numberWithInteger:[self.myMatrix colCount]-1] stringValue]];
+		[[newcol headerCell] setStringValue:[[NSNumber numberWithInteger:[self.myMatrix colCount]] stringValue]];
 		[newcol setMinWidth:40];
 		[newcol setWidth:60];
 		[matrixtable addTableColumn:newcol];
 	}
 
-	[myMatrix setActRows:3];
-	[myMatrix setActCols:3];
+	[self.myMatrix setActRows:3];
+	[self.myMatrix setActCols:3];
 	
 	upArray = [NSArray arrayWithObjects:[NSNumber numberWithDouble:2.0], nil];
 	downArray = [NSArray arrayWithObjects:[NSNumber numberWithDouble:.5], nil];
@@ -156,14 +159,14 @@ static id _sharedInstance = nil;
 	// [self window] is actually an NSPanel, so it responds to the message below
 	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: NO];
 
-	arrayMatrix = [[NSArray alloc] initWithArray:[matrixDictionary objectForKey:@"Matrix" ]];
+	self.arrayMatrix = [[NSArray alloc] initWithArray:[matrixDictionary objectForKey:@"Matrix" ]];
 
 	notifcenter = [NSNotificationCenter defaultCenter];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-	return [myMatrix rowCount];
+	return [self.myMatrix rowCount];
 }
 
 // Mandatory tableview data source method
@@ -171,11 +174,11 @@ static id _sharedInstance = nil;
 {
 	NSString  *theValue, *colid;
 	colid = [tableColumn identifier];
-	NSParameterAssert(row >= 0 && row < [myMatrix rowCount]);
+	NSParameterAssert(row >= 0 && row < [self.myMatrix rowCount]);
 	if ([colid isEqualToString:@"col"]) {
 		return [NSNumber numberWithInteger:row+1];
 	} else {
-		theValue = [myMatrix objectInRow:row inCol:[colid integerValue]];
+		theValue = [self.myMatrix objectInRow:row inCol:[colid integerValue]];
 		return theValue;
 	}
 
@@ -188,7 +191,7 @@ static id _sharedInstance = nil;
 
 - (void)tableView:(NSTableView *)tv setObjectValue:(id)objectValue forTableColumn:(NSTableColumn *)tc row:(NSInteger)row
 {
-	[myMatrix replaceObjectInRow:row inCol:[[tc identifier] integerValue] withObject:objectValue];
+	[self.myMatrix replaceObjectInRow:row inCol:[[tc identifier] integerValue] withObject:objectValue];
 }
 
 	// when a drag-and-drop operation comes through, and a filename is being dropped on the table,
@@ -207,10 +210,10 @@ static id _sharedInstance = nil;
 	[pboard declareTypes:[NSArray arrayWithObject:MatPboardType] owner:self];
 	
 	for (i = 0; i < [rows count]; i++) {
-		[j addObject:[myMatrix myRowAtIndex:[[rows objectAtIndex:i] integerValue]]];
+		[j addObject:[self.myMatrix myRowAtIndex:[[rows objectAtIndex:i] integerValue]]];
 	}
 	[pboard setPropertyList:j forType:MatPboardType];
-	draggedRows = j;
+	self.draggedRows = j;
 	
 	return YES;
 	
@@ -239,15 +242,15 @@ static id _sharedInstance = nil;
 	
 	for (i = 0; i < [_draggedrows count]; i++) {
 		matRow = [_draggedrows objectAtIndex:i];
-		if (row > [[myMatrix rows] indexOfObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]])
+		if (row > [[self.myMatrix rows] indexOfObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]])
 			row--;
-		[[myMatrix rows] removeObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]];
+		[[self.myMatrix rows] removeObjectIdenticalTo:[[(TSMatrixPanelController *)[[info draggingSource] dataSource] draggedRows] objectAtIndex:i]];
 		
-		[[myMatrix rows] insertObject:matRow atIndex:row+i];
+		[[self.myMatrix rows] insertObject:matRow atIndex:row+i];
 	}
 	for (i = 0; i < [_draggedrows count]; i++) {
 		matRow = [_draggedrows objectAtIndex:i];
-		[indset addIndex:[[myMatrix rows] indexOfObjectIdenticalTo:matRow]];
+		[indset addIndex:[[self.myMatrix rows] indexOfObjectIdenticalTo:matRow]];
 	}
 	
 	[matrixtable reloadData];
@@ -267,37 +270,37 @@ static id _sharedInstance = nil;
 		ival = 1;
 
 	if ((sender == hstep) || (sender == htf)) {
-		while ((ival != [myMatrix actCols]) && (ival <= MatrixSize) && (ival > 0)) {
-			if (ival > [myMatrix actCols]) {
-				[myMatrix setActCols:[myMatrix actCols]+1];
+		while ((ival != [self.myMatrix actCols]) && (ival <= MatrixSize) && (ival > 0)) {
+			if (ival > [self.myMatrix actCols]) {
+				[self.myMatrix setActCols:[self.myMatrix actCols]+1];
 			} else {
-				[myMatrix setActCols:[myMatrix actCols]-1];
+				[self.myMatrix setActCols:[self.myMatrix actCols]-1];
 				
 			}
 		}
 		
 		if (sender == hstep)
-			[htf setIntegerValue:[myMatrix actCols]];
+			[htf setIntegerValue:[self.myMatrix actCols]];
 		else {
-			[hstep setIntegerValue:[myMatrix actCols]];
-			[htf setIntegerValue:[myMatrix actCols]];
+			[hstep setIntegerValue:[self.myMatrix actCols]];
+			[htf setIntegerValue:[self.myMatrix actCols]];
 		}
 		
 	} else if ((sender == vstep) || (sender == vtf)) {
 		
-		while ((ival != [myMatrix actRows]) && (ival <= MatrixSize) && (ival > 0)) {
-			if (ival > [myMatrix actRows]) {
-				[myMatrix setActRows:[myMatrix actRows]+1];
+		while ((ival != [self.myMatrix actRows]) && (ival <= MatrixSize) && (ival > 0)) {
+			if (ival > [self.myMatrix actRows]) {
+				[self.myMatrix setActRows:[self.myMatrix actRows]+1];
 			} else {
-				[myMatrix setActRows:[myMatrix actRows]-1];
+				[self.myMatrix setActRows:[self.myMatrix actRows]-1];
 			}
 		}
 		
 		if (sender == vstep)
-			[vtf setIntegerValue:[myMatrix actRows]];
+			[vtf setIntegerValue:[self.myMatrix actRows]];
 		else {
-			[vstep setIntegerValue:[myMatrix actRows]];
-			[vtf setIntegerValue:[myMatrix actRows]];
+			[vstep setIntegerValue:[self.myMatrix actRows]];
+			[vtf setIntegerValue:[self.myMatrix actRows]];
 		}
 		
 	}
@@ -314,81 +317,81 @@ static id _sharedInstance = nil;
 	NSInteger tablenv = ([chbfig state] == NSOnState);
 	NSInteger drawborder = ([borderbutton state] == NSOnState);
 	NSInteger drawgrid = ([gridbutton state] == NSOnState);
-	NSInteger hsize = [myMatrix actCols];
-	NSInteger vsize = [myMatrix actRows];
+	NSInteger hsize = [self.myMatrix actCols];
+	NSInteger vsize = [self.myMatrix actRows];
 
 	if (environment == 0) {
 		if ((brstyleop == 4) && (brstylecl == 4)) {
 		} else {
-			[insertion appendString:[arrayMatrix objectAtIndex:6]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:6]];
 			if (brstyleop == 0) {
-				[insertion appendString:[arrayMatrix objectAtIndex:8]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:8]];
 			} else if (brstyleop == 1) {
-				[insertion appendString:[arrayMatrix objectAtIndex:10]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:10]];
 			} else if (brstyleop == 2) {
-				[insertion appendString:[arrayMatrix objectAtIndex:12]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:12]];
 			} else if (brstyleop == 3) {
-				[insertion appendString:[arrayMatrix objectAtIndex:14]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:14]];
 			} else if (brstyleop == 5) {
-				[insertion appendString:[arrayMatrix objectAtIndex:15]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:15]];
 				[insertion appendString:[brtfop stringValue]];
 			} else if (brstyleop == 4) {
-				[insertion appendString:[arrayMatrix objectAtIndex:15]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:15]];
 			} else if (brstylecl == 6) {
-				[insertion appendString:[arrayMatrix objectAtIndex:16]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:16]];
 			}
 
 		}
 	}
 
 	if (environment == 0) {
-		[insertion appendString:[arrayMatrix objectAtIndex:0]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:0]];
 	} else {
 		if (tablenv) {
-			[insertion appendString:[arrayMatrix objectAtIndex:20]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:20]];
 		}
-		[insertion appendString:[arrayMatrix objectAtIndex:17]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:17]];
 	}
 
 	if (drawborder)
-		[insertion appendString:[arrayMatrix objectAtIndex:14]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:14]];
 
 	for (i = 0; i < hsize; i++)  {
-		[insertion appendString:[arrayMatrix objectAtIndex:1]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:1]];
 		if ((drawgrid) && (i<hsize-1))
-			[insertion appendString:[arrayMatrix objectAtIndex:14]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:14]];
 	}
 	if (drawborder)
-		[insertion appendString:[arrayMatrix objectAtIndex:14]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:14]];
 
-	[insertion appendString:[arrayMatrix objectAtIndex:2]];
+	[insertion appendString:[self.arrayMatrix objectAtIndex:2]];
 	if (drawborder)
-		[insertion appendString:[arrayMatrix objectAtIndex:19]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:19]];
 
 	for (j = 0; j < vsize; j++) {
 		for (i = 0; i < hsize; i++) {
-			[insertion appendString:[myMatrix objectInRow:j inCol:[[[[matrixtable tableColumns] objectAtIndex:i] identifier] integerValue] ]];
+			[insertion appendString:[self.myMatrix objectInRow:j inCol:[[[[matrixtable tableColumns] objectAtIndex:i] identifier] integerValue] ]];
 			if (i < hsize-1)
-				[insertion appendString:[arrayMatrix objectAtIndex:3]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:3]];
 		}
 		if (j < vsize-1) {
-			[insertion appendString:[arrayMatrix objectAtIndex:4]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:4]];
 			if (drawgrid)
-				[insertion appendString:[arrayMatrix objectAtIndex:19]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:19]];
 		}
 
 	}
 	if (drawborder) {
-		[insertion appendString:[arrayMatrix objectAtIndex:4]];
-		[insertion appendString:[arrayMatrix objectAtIndex:19]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:4]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:19]];
 	}
 
 	if (environment == 0) {
-		[insertion appendString:[arrayMatrix objectAtIndex:5]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:5]];
 	} else {
-		[insertion appendString:[arrayMatrix objectAtIndex:18]];
+		[insertion appendString:[self.arrayMatrix objectAtIndex:18]];
 		if (tablenv) {
-			[insertion appendString:[arrayMatrix objectAtIndex:21]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:21]];
 		}
 
 	}
@@ -396,22 +399,22 @@ static id _sharedInstance = nil;
 	if (environment == 0) {
 		if ((brstyleop == 4) && (brstylecl == 4)) {
 		} else {
-			[insertion appendString:[arrayMatrix objectAtIndex:7]];
+			[insertion appendString:[self.arrayMatrix objectAtIndex:7]];
 			if (brstylecl == 0) {
-				[insertion appendString:[arrayMatrix objectAtIndex:9]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:9]];
 			} else if (brstylecl == 1) {
-				[insertion appendString:[arrayMatrix objectAtIndex:11]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:11]];
 			} else if (brstylecl == 2) {
-				[insertion appendString:[arrayMatrix objectAtIndex:13]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:13]];
 			} else if (brstylecl == 3) {
-				[insertion appendString:[arrayMatrix objectAtIndex:14]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:14]];
 			} else if (brstylecl == 5) {
-				[insertion appendString:[arrayMatrix objectAtIndex:15]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:15]];
 				[insertion appendString:[brtfcl stringValue]];
 			} else if (brstylecl == 4) {
-				[insertion appendString:[arrayMatrix objectAtIndex:15]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:15]];
 			} else if (brstylecl == 6) {
-				[insertion appendString:[arrayMatrix objectAtIndex:16]];
+				[insertion appendString:[self.arrayMatrix objectAtIndex:16]];
 			}
 		}
 	}
@@ -458,31 +461,31 @@ static id _sharedInstance = nil;
 {
 	NSInteger i, j, action;
 	NSInteger mwdth, mhght;
-	mwdth = [myMatrix colCount];
-	mhght = [myMatrix rowCount];
+	mwdth = [self.myMatrix colCount];
+	mhght = [self.myMatrix rowCount];
 	
 	if (sender == matmod) {
 		action = [[sender selectedCell] tag];
 		if (action == 2) {
 			for (i = 0; i < mhght; i++) {
 				for (j = 0; j < mwdth; j++) {
-					[myMatrix replaceObjectInRow:i inCol:j withObject:@"0"];
+					[self.myMatrix replaceObjectInRow:i inCol:j withObject:@"0"];
 				}
 			}
 		} else if (action == 0) {
 			for (i = 0; i < mhght; i++) {
 				for (j = 0; j < mwdth; j++) {
-					[myMatrix replaceObjectInRow:i inCol:j withObject:@" "];
+					[self.myMatrix replaceObjectInRow:i inCol:j withObject:@" "];
 				}
 			}
 		} else {
 			for (i = 0; i < mhght; i++) {
 				for (j = 0; j < mwdth; j++) {
-					[myMatrix replaceObjectInRow:i inCol:j withObject:@"0"];
+					[self.myMatrix replaceObjectInRow:i inCol:j withObject:@"0"];
 				}
 			}
 			for(i = 0; (i < mwdth) && (i < mhght); i++)
-				[myMatrix replaceObjectInRow:i inCol:[[[[matrixtable tableColumns]objectAtIndex:i] identifier] integerValue] withObject:@"1"];
+				[self.myMatrix replaceObjectInRow:i inCol:[[[[matrixtable tableColumns]objectAtIndex:i] identifier] integerValue] withObject:@"1"];
 			
 		}
 	}
@@ -548,23 +551,28 @@ static id _sharedInstance = nil;
 -(id) init
 {
 	if ((self = [super init])) {
-		rows = [[NSMutableArray alloc] init];
+		self.rows = [[NSMutableArray alloc] init];
 		activeRows = 0;
 		activeCols = 0;
 	}
 	return self;
 }
 
+/*
 - (void)dealloc
 {
 	[rows release];
 	[super dealloc];
 }
+*/
+
+/*
 
 - (NSMutableArray*)rows
 {
 	return rows;
 }
+*/
 
 - (NSInteger)actRows
 {
@@ -588,12 +596,12 @@ static id _sharedInstance = nil;
 
 -(id)myRowAtIndex:(NSUInteger)row
 {
-	return [[rows objectAtIndex:row]retain];
+	return [self.rows objectAtIndex:row];  //retain];
 }
 
 -(NSInteger)rowCount
 {
-	return [rows count];
+	return [self.rows count];
 }
 
 -(NSInteger)colCount
@@ -615,9 +623,9 @@ static id _sharedInstance = nil;
 -(void)addRow
 {
 	NSInteger i;
-	[rows addObject:[[NSMutableArray arrayWithCapacity:[self colCount]]retain]];
-	for (i = [[rows objectAtIndex:[rows count]-1] count]; i < [self colCount]; i++) {
-		[[rows objectAtIndex:[rows count]-1] addObject:@"0"];
+	[self.rows addObject:[NSMutableArray arrayWithCapacity:[self colCount]]]; //retain]];
+	for (i = [[self.rows objectAtIndex:[self.rows count]-1] count]; i < [self colCount]; i++) {
+		[[self.rows objectAtIndex:[self.rows count]-1] addObject:@"0"];
 	}
 	activeRows++;
 
@@ -625,22 +633,22 @@ static id _sharedInstance = nil;
 
 - (void)insertRow:(NSMutableArray*)row atIndex:(NSInteger)ind
 {
-	[rows insertObject:row atIndex:ind];
+	[self.rows insertObject:row atIndex:ind];
 }
 
 - (void)removeRow:(id )row
 {
-	[rows removeObject:row];
+	[self.rows removeObject:row];
 }
 
 - (void)removeRowIdenticalTo:(id)row
 {
-	[rows removeObjectIdenticalTo:row];
+	[self.rows removeObjectIdenticalTo:row];
 }
 
 - (void)removeRowAtIndex:(NSUInteger )ind
 {
-	[rows removeObjectAtIndex:ind];
+	[self.rows removeObjectAtIndex:ind];
 }
 
 -(void)addCol
@@ -663,7 +671,7 @@ static id _sharedInstance = nil;
 
 -(void)removeLastRow
 {
-	[rows removeLastObject];
+	[self.rows removeLastObject];
 	activeRows--;
 }
 

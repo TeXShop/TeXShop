@@ -38,41 +38,44 @@ static id sharedEncodingSupport = nil;
 typedef struct {
 	NSStringEncoding	nsEnc;
 	CFStringEncoding	cfEnc;
-	NSString			*name;
+    //	NSString			*name;
 } TSEncoding;
+
 
 // List of the supported encodings.
 static TSEncoding _availableEncodings[] = {
-	{ 0, kCFStringEncodingMacRoman,				@"MacOSRoman" },
-	{ 0, kCFStringEncodingISOLatin1,			@"IsoLatin" },
-	{ 0, kCFStringEncodingISOLatin2,			@"IsoLatin2" },
-	{ 0, kCFStringEncodingISOLatin5,			@"IsoLatin5" },
-	{ 0, kCFStringEncodingISOLatin9,			@"IsoLatin9" },
-	{ 0, kCFStringEncodingISOLatinGreek,		@"IsoLatinGreek" }, //Greek ISO 8859-7
-	{ 0, kCFStringEncodingMacCentralEurRoman,	@"Mac Central European Roman" }, // added at request of Czech Republic respondent 
-	{ 0, kCFStringEncodingMacJapanese,			@"MacJapanese" },
-	{ 0, kCFStringEncodingDOSJapanese,			@"DOSJapanese" },
-	{ 0, kCFStringEncodingShiftJIS_X0213_00,	@"SJIS_X0213" },
-	{ 0, kCFStringEncodingEUC_JP,				@"EUC_JP" },
-	{ 0, kCFStringEncodingISO_2022_JP,			@"JISJapanese" },
-	{ 0, kCFStringEncodingMacKorean,			@"MacKorean" },
-	{ 0, kCFStringEncodingUTF8,					@"UTF-8 Unicode" },
-	{ 0, kCFStringEncodingUnicode,				@"Standard Unicode" },
-	{ 0, kCFStringEncodingMacCyrillic,			@"Mac Cyrillic" },
-	{ 0, kCFStringEncodingDOSCyrillic,			@"DOS Cyrillic" },
-	{ 0, kCFStringEncodingDOSRussian,			@"DOS Russian" },
-	{ 0, kCFStringEncodingWindowsLatin1,		@"Windows Latin 1" }, // code page 1252
-	{ 0, kCFStringEncodingWindowsLatin2,		@"WindowsCentralEurRoman" }, // code page 1250
-	{ 0, kCFStringEncodingWindowsCyrillic,		@"Windows Cyrillic" },
-	{ 0, kCFStringEncodingKOI8_R,				@"KOI8_R" },
-	{ 0, kCFStringEncodingMacChineseTrad,		@"Mac Chinese Traditional" },
-	{ 0, kCFStringEncodingMacChineseSimp,		@"Mac Chinese Simplified" },
-	{ 0, kCFStringEncodingDOSChineseTrad,		@"DOS Chinese Traditional" },
-	{ 0, kCFStringEncodingDOSChineseSimplif,	@"DOS Chinese Simplified" },
-	{ 0, kCFStringEncodingGBK_95,				@"GBK" },
-	{ 0, kCFStringEncodingGB_2312_80,			@"GB 2312" },
-	{ 0, kCFStringEncodingGB_18030_2000,		@"GB 18030" },
+	{ 0, kCFStringEncodingMacRoman }, //				@"MacOSRoman" },
+	{ 0, kCFStringEncodingISOLatin1}, //			@"IsoLatin" },
+	{ 0, kCFStringEncodingISOLatin2}, //			@"IsoLatin2" },
+	{ 0, kCFStringEncodingISOLatin5}, //			@"IsoLatin5" },
+	{ 0, kCFStringEncodingISOLatin9}, //			@"IsoLatin9" },
+	{ 0, kCFStringEncodingISOLatinGreek}, //		@"IsoLatinGreek" }, //Greek ISO 8859-7
+	{ 0, kCFStringEncodingMacCentralEurRoman}, //	@"Mac Central European Roman" }, // added at request of Czech Republic respondent
+	{ 0, kCFStringEncodingMacJapanese}, //			@"MacJapanese" },
+	{ 0, kCFStringEncodingDOSJapanese}, //			@"DOSJapanese" },
+	{ 0, kCFStringEncodingShiftJIS_X0213_00}, //	@"SJIS_X0213" },
+	{ 0, kCFStringEncodingEUC_JP}, //				@"EUC_JP" },
+	{ 0, kCFStringEncodingISO_2022_JP}, //			@"JISJapanese" },
+	{ 0, kCFStringEncodingMacKorean}, //			@"MacKorean" },
+	{ 0, kCFStringEncodingUTF8}, //					@"UTF-8 Unicode" },
+	{ 0, kCFStringEncodingUnicode}, //				@"Standard Unicode" },
+	{ 0, kCFStringEncodingMacCyrillic}, //			@"Mac Cyrillic" },
+	{ 0, kCFStringEncodingDOSCyrillic}, //			@"DOS Cyrillic" },
+	{ 0, kCFStringEncodingDOSRussian}, //			@"DOS Russian" },
+	{ 0, kCFStringEncodingWindowsLatin1}, //		@"Windows Latin 1" }, // code page 1252
+	{ 0, kCFStringEncodingWindowsLatin2}, //		@"WindowsCentralEurRoman" }, // code page 1250
+	{ 0, kCFStringEncodingWindowsCyrillic}, //		@"Windows Cyrillic" },
+	{ 0, kCFStringEncodingKOI8_R}, //				@"KOI8_R" },
+	{ 0, kCFStringEncodingMacChineseTrad}, //		@"Mac Chinese Traditional" },
+	{ 0, kCFStringEncodingMacChineseSimp}, //		@"Mac Chinese Simplified" },
+	{ 0, kCFStringEncodingDOSChineseTrad}, //		@"DOS Chinese Traditional" },
+	{ 0, kCFStringEncodingDOSChineseSimplif}, //	@"DOS Chinese Simplified" },
+	{ 0, kCFStringEncodingGBK_95}, //				@"GBK" },
+	{ 0, kCFStringEncodingGB_2312_80}, //			@"GB 2312" },
+	{ 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
 };
+
+
 
 + (void)initialize
 {
@@ -83,7 +86,7 @@ static TSEncoding _availableEncodings[] = {
 
 	// initialize yen string
 	unichar yenChar = YEN;
-	yenString = [[NSString stringWithCharacters: &yenChar length:1] retain];
+	yenString = [NSString stringWithCharacters: &yenChar length:1];
 }
 
 + (id)sharedInstance
@@ -96,10 +99,17 @@ static TSEncoding _availableEncodings[] = {
 
 - (id)init
 {
+    NSMutableArray  *myArray;
+    
 	if (sharedEncodingSupport) {
-		[super dealloc];
+		// [super dealloc];
 	} else {
 		sharedEncodingSupport = [super init];
+        
+       myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", nil];
+        
+        self.availableEncodingsNames = myArray;
+
 
 		g_shouldFilter = kNoFilterMode;
 
@@ -116,11 +126,13 @@ static TSEncoding _availableEncodings[] = {
 	return sharedEncodingSupport;
 }
 
+/*
 - (void)dealloc
 {
 	if (self != sharedEncodingSupport)
 		[super dealloc];	// Don't free our shared instance
 }
+*/
 
 // Delegate method for text fields
 - (void)controlTextDidChange:(NSNotification *)note
@@ -172,7 +184,7 @@ static TSEncoding _availableEncodings[] = {
 	if ([currentEncoding isEqualToString:@"MacJapanese"] ||
 			[currentEncoding isEqualToString:@"SJIS_X0213"] ) {
 		g_texChar = YEN; // yen
-		[g_taggedTeXSections release];
+		// ARC [g_taggedTeXSections release];
 
 		if ([SUD boolForKey: ConTeXtTagsKey]) {
 			g_taggedTeXSections = [[NSArray alloc] initWithObjects:
@@ -322,7 +334,8 @@ static TSEncoding _availableEncodings[] = {
 
 	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
-		if ([key isEqualToString:_availableEncodings[i].name])
+//		if ([key isEqualToString:_availableEncodings[i].name])
+        if ([key isEqualToString:self.availableEncodingsNames[i]])
 			return _availableEncodings[i].nsEnc;
 	}
 	
@@ -343,10 +356,10 @@ static TSEncoding _availableEncodings[] = {
 	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		if (_availableEncodings[i].nsEnc == encoding)
-			return _availableEncodings[i].name;
+			return self.availableEncodingsNames[i];
 	}
 	// If the encoding is unknown, use the first encoding in our list (MacOS Roman).
-	return _availableEncodings[0].name;
+	return self.availableEncodingsNames[0];
 }
 
 - (NSString *)localizedNameForKey: (NSString *)key
@@ -368,9 +381,9 @@ static TSEncoding _availableEncodings[] = {
 
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i) {
 		enc = _availableEncodings[i].nsEnc;
-		name = [self localizedNameForKey:_availableEncodings[i].name];
+		name = [self localizedNameForKey:self.availableEncodingsNames[i]];
 
-		item = [[[NSMenuItem alloc] initWithTitle: name action:anAction keyEquivalent:@""] autorelease];
+		item = [[NSMenuItem alloc] initWithTitle: name action:anAction keyEquivalent:@""];
 		if (aTarget)
 			[item setTarget: aTarget];
 		[item setTag: enc];

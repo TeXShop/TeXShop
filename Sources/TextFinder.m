@@ -35,14 +35,14 @@ static id sharedFindObject = nil;
 
 + (id)sharedInstance {
 	if (!sharedFindObject) {
-		[[self allocWithZone:[[NSApplication sharedApplication] zone]] init];
+		[[self alloc] init];
 	}
 	return sharedFindObject;
 }
 
 - (id)init {
 	if (sharedFindObject) {
-		[super dealloc];
+	//	[super dealloc];
 		return sharedFindObject;
 	}
 
@@ -107,8 +107,8 @@ static id sharedFindObject = nil;
 - (void)dealloc {
 	if (self != sharedFindObject) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self];
-		[findString release];
-		[super dealloc];
+	//	[findString release];
+	//	[super dealloc];
 	}
 }
 
@@ -118,8 +118,8 @@ static id sharedFindObject = nil;
 
 - (void)setFindString:(NSString *)string {
 	if ([string isEqualToString:findString]) return;
-	[findString autorelease];
-	findString = [string copyWithZone:[self zone]];
+//	[findString autorelease];
+	findString = [string copy];
 	if (findTextField) {
 		[findTextField setStringValue:string];
 		[findTextField selectText:nil];
@@ -236,7 +236,7 @@ Turns out this approach of building the new string and inserting it at the appro
 		// Find the first occurence of the string being replaced; if not found, we're done!
 		firstOccurence = [textContents rangeOfString:[self findString] options:searchOption range:replaceRange];
 		if (firstOccurence.length > 0) {
-		NSAutoreleasePool *pool;
+	//	NSAutoreleasePool *pool;
 		NSString *targetString = [self findString];
 		NSString *replaceString = [replaceTextField stringValue];
 			NSMutableAttributedString *temp;	/* This is the temporary work string in which we will do the replacements... */
@@ -254,7 +254,7 @@ Turns out this approach of building the new string and inserting it at the appro
 		// the loop, we do it every so often. We can only do this as long as autoreleased items are not supposed to
 		// survive between the invocations of the pool!
 
-			pool = [[NSAutoreleasePool alloc] init];
+//			pool = [[NSAutoreleasePool alloc] init];
 
 			while (rangeInOriginalString.length > 0) {
 				NSRange foundRange = [textContents rangeOfString:targetString options:searchOption range:rangeInOriginalString];
@@ -266,12 +266,12 @@ Turns out this approach of building the new string and inserting it at the appro
 				rangeInOriginalString.location = NSMaxRange(foundRange);
 				replaced++;
 		if (replaced % 100 == 0) {	// Refresh the pool... See warning above!
-			[pool release];
-			pool = [[NSAutoreleasePool alloc] init];
+	//		[pool release];
+	//		pool = [[NSAutoreleasePool alloc] init];
 		}
 			}
 
-		[pool release];
+	//	[pool release];
 
 			[temp endEditing];
 
@@ -283,7 +283,7 @@ Turns out this approach of building the new string and inserting it at the appro
 				replaced = 0;
 			}
 
-			[temp release];
+	//		[temp release];
 		}
 		if (replaced == 0) {
 			NSBeep();

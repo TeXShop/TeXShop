@@ -1,0 +1,14 @@
+#!/bin/tcsh
+
+# This short script calls "texloganalyser myfile" to get pieces of log information
+# Richard Koch; March 21, 2004
+
+set mytexexecpath = "$argv[1]"
+if (-x ${mytexexecpath}/texloganalyser) then
+	setenv PATH "${mytexexecpath}:${PATH}"
+	rehash
+endif
+
+set filename = "$argv[2]"
+
+texloganalyser "$argv[3]" "${filename}" 

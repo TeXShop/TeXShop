@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>content</key>
+	<string></string>
+	<key>key</key>
+	<string></string>
 	<key>name</key>
 	<string>ROOT</string>
 	<key>submenu</key>
@@ -174,6 +178,8 @@ on sort(the_list)
 	set AppleScript's text item delimiters to old_delims
 	return new_list
 end sort</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Program</string>
 		</dict>
@@ -341,6 +347,8 @@ on sort(the_list)
 	set AppleScript's text item delimiters to old_delims
 	return new_list
 end sort</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Encoding</string>
 		</dict>
@@ -510,16 +518,24 @@ tell application "TeXShop"
 	-- Restore the length of the selection
 	set length of the selection of the front document to selection_length
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Root</string>
 		</dict>
 		<dict>
 			<key>content</key>
 			<string>% !TEX root =  #INS#</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Root (Short Version)</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Separator</string>
 		</dict>
@@ -625,6 +641,8 @@ tell application "TeXShop"
 			insertion_point
 	end if
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Insert Begin/End</string>
 		</dict>
@@ -862,12 +880,14 @@ tell application "TeXShop"
 	end try
 	
 end tell</string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Close Begin/End</string>
 		</dict>
 		<dict>
 			<key>content</key>
-			<string>--Applescript direct
+			<string>--Applescript
 
 -- "INSERT REFERENCE"
 -- This script searches through the current file (or within every file in the current folder) for \label{...} commands, then pops up a list for you to choose from which you may insert one.
@@ -875,7 +895,7 @@ end tell</string>
 -- It will cut down the list to include only those entries that contain the current selection. So if you type "sec" and select it, then run this script, you will get a choice of only, e.g., "sec:intro","sec:conc","fig:secunia", but not other labels in your document e.g., "cha:monkey","equ:maxwell",etc. 
 
 -- v2004-08-24
---Modified to work with Lion/TeXShop 3.06 by Michael Sharpe 2012-01-18
+
 
 -- CUSTOMISE TO YOUR LIKING:
 
@@ -898,18 +918,11 @@ property save_before_run : true
 --THE SCRIPT:
 
 
-set docname to #DOCUMENTNAME#
-if docname is equal to "" then
-	display dialog "No document---bailing out."
-	return
-end if
-
 if save_before_run then
-	tell application "TeXShop" to save docname
+	tell application "TeXShop" to save the front document
 end if
 
---tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
-set texpath to #FILEPATH#--full path
+tell application "TeXShop" to set texpath to the path of the front document -- the current tex file: "/path/to/docu.tex"
 
 if only_scan_current_file then
 	set texfiles_tosearch to the quoted form of the texpath -- search the current file
@@ -920,59 +933,157 @@ else
 	set texfiles_tosearch to the quoted form of texdir &amp; "*.tex" -- search all .tex files: "/path/to/*.tex"
 end if
 
-tell application "TeXShop" to set current_selection to the content of selection of document docname
-
--- DO SHELL SCRIPT COMPONENTS:
---set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
-set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
--- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
-set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
-set filter_selection to " | grep " &amp; quoted form of the current_selection
-if sort_output then
-	set sort to " | sort -u"
-else
-	set sort to ""
-end if
+tell application "TeXShop"
 	
--- glue the shell scripts together:
-set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+	set current_selection to the content of the selection of the front document
 	
-try
-	-- filter choices with the current selection:
-	set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
-on error
-	-- If it fails (e.g., nothing found) ask to diplay all labels:
-	activate
-	display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
-	if the button returned of the result is "View all" then
-		set choose_labels to every paragraph of (do shell script get_labels_shell_script)
+	-- DO SHELL SCRIPT COMPONENTS:
+	--set find_label_lines to ("grep -h '\\\\label' " &amp; texfiles_tosearch) as string
+	set find_label_lines to ("cat " &amp; texfiles_tosearch &amp; " | tr '\\r' '\\n'  | grep '\\\\label{' " &amp; texfiles_tosearch) as string
+	-- (Better commmand suggested by Matthew Hills which also converts the line-endings to UNIX form - thanks!)
+	set trim_to_raw_labels to " | sed 's/.*\\\\label{//' | sed 's/}.*//'"
+	set filter_selection to " | grep " &amp; quoted form of the current_selection
+	if sort_output then
+		set sort to " | sort -u"
 	else
-		return -- exit script
+		set sort to ""
 	end if
-end try
 	
--- In case the document doesn't contain any labels:
-if choose_labels = {""} then
-	display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
+	-- glue the shell scripts together:
+	set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+	
+	try
+		-- filter choices with the current selection:
+		set choose_labels to every paragraph of (do shell script get_labels_shell_script &amp; filter_selection)
+	on error
+		-- If it fails (e.g., nothing found) ask to diplay all labels:
+		display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+		if the button returned of the result is "View all" then
+			set choose_labels to every paragraph of (do shell script get_labels_shell_script)
+		else
+			return -- exit script
+		end if
+	end try
+	
+	-- In case the document doesn't contain any labels:
+	if choose_labels = {""} then
+		display dialog "Sorry, no \\label{} items have been found." buttons {"No worries"} default button "No worries"
 		return
-end if
-	
-
-set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
-if label_insert ≠ false then
-	if ref_command = "" then
-		set ref_insert to label_insert
-	else
-		set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
 	end if
-	tell application "TeXShop" to set the selection of document docname to ref_insert as string
-end if
 	
-</string>
+	set label_insert to choose from list choose_labels with prompt "Please choose the label of the reference to insert:"
+	if label_insert ≠ false then
+		if ref_command = "" then
+			set ref_insert to label_insert
+		else
+			set ref_insert to "\\" &amp; ref_command &amp; "{" &amp; label_insert &amp; "}"
+		end if
+		set the selection of the front document to ref_insert as string
+	end if
+	
+end tell</string>
 			<key>key</key>
 			<string>R+ShiftKey</string>
 			<key>name</key>
 			<string>Insert reference</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--applescript direct
+
+property sort_output : false
+-- If false, displays labels in the order they're found in the document.
+-- Otherwise, displays them in alphabetical order.
+
+property save_before_run : true
+-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
+
+--Adapted from Will Robertson's Insert Reference by Michael Sharpe, 2012
+--THE SCRIPT:
+
+
+set tid to Applescript's text item delimiters
+set docname to #DOCUMENTNAME#
+if docname is equal to "" then
+	display dialog "No document---bailing out."
+	return
+end if
+
+if save_before_run then
+	tell application "TeXShop" to save docname
+end if
+
+set texpath to #FILEPATH#
+
+set texfiles_tosearch to the quoted form of the texpath -- search the current file
+
+set q1 to display dialog "Choose from labels containing text:" default answer "" buttons {"Cancel", "Go"} default button "Go"
+if the button returned of q1 is "Go" then
+	set current_selection to text returned of q1
+else
+	return -- exit script
+end if
+
+-- DO SHELL SCRIPT COMPONENTS:
+set find_label_lines to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep '\\\\label{' ") as string
+set trim_to_raw_labels to " | /usr/bin/sed 's/.*\\\\label{//' | /usr/bin/sed 's/}.*//'"
+set filter_selection to ""
+if (count of current_selection) &gt; 0 then
+	set filter_selection to " | /usr/bin/grep -i " &amp; quoted form of the current_selection
+end if
+if sort_output then
+	set sort to " | /usr/bin/sort -u"
+else
+	set sort to ""
+end if
+-- glue the shell scripts together:
+set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+
+try
+	-- filter choices with the current selection:
+	set s to (do shell script get_labels_shell_script &amp; filter_selection)
+	set choose_labels to every paragraph of s
+on error
+	-- If it fails (e.g., nothing found) ask to diplay all labels:
+          if (count of current_selection) &gt; 0 then
+	    display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+	    if the button returned of the result is "View all" then
+	   	set s to (do shell script get_labels_shell_script)
+		set choose_labels to every paragraph of s
+	    else
+		return -- exit script
+	    end if
+        end if
+end try
+
+-- In case the document doesn't contain any labels:
+if (count of choose_labels) is 0 then
+	display dialog "Sorry, no \\label{} items have been found." buttons {"OK"} default button "OK"
+	return
+end if
+
+set label_chosen to choose from list choose_labels with prompt "Please choose from names of matching labels:"
+if label_chosen ≠ false then
+   --set find_label_line to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep -n '\\\\label{" &amp; label_chosen &amp;"}'") as string
+   --set s to (do shell script find_label_line)
+   --set Applescript's text item delimiters to ":"
+   --set j to item 1 of (s as list)
+   --set Applescript's text item delimiters to tid
+   set j to 7+(count of (item 1 of label_chosen))
+
+   tell application "TeXShop" --to tell document docname to goto line j
+            set i to search document docname for "\\label{" &amp; label_chosen &amp; "}" starting from 1
+            set offset of selection of document docname to i
+            set length of selection of document docname to j
+            tell application "System Events" to tell process "TeXShop" to keystroke (ASCII character 28) using {shift down}
+    end tell
+end if
+
+</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>Goto label</string>
 		</dict>
 		<dict>
 			<key>content</key>
@@ -1005,7 +1116,7 @@ tell application "TeXShop" to set openfiles to choose from list texfiles with pr
 if openfiles is not false then
 	repeat with this_filename in openfiles
 		set file_to_open to POSIX file (texdir &amp; this_filename)
-                 set cdate to (current date) + 30 -- allow 30 seconds for timeout                 tell application "TeXShop"                    try                         open  file_to_open                   on error errmsg number errnum                        if (errnum = -1712) and ((current date) &lt; cdate) then                          --applescript direct often provokes error number -1712                          else                              display dialog errmsg                        end if                   end try                 end tell		
+		tell application "TeXShop" to open file_to_open
 	end repeat
 end if</string>
 			<key>key</key>
@@ -1014,6 +1125,638 @@ end if</string>
 			<string>Open quickly…</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Choose a font set defined in ~/Library/TeXShop/Templates/SetFonts.tex
+-- The companion script SaveFontSet allows you to save your font set to that file.
+-- Font set commands are inserted between an existing pair of %SetFonts lines.
+-- In none are found, they are created following the documentclass line.
+-- Michael Sharpe, msharpe@ucsd.edu
+--Last revision: 8/11/2014
+
+property lf: linefeed
+set path_to_setfonts to (POSIX path of (((path to home folder) as string) &amp; "Library:TeXShop:bin:SetFonts.tex"))
+set msg to 0
+tell application "Finder" to if exists path_to_setfonts as POSIX file then set msg to 1
+set thefile to POSIX file path_to_setfonts
+if msg = 0 then
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write lf &amp; "%SetFonts" &amp; lf to ref_num
+	write "% Latin Modern" &amp; lf to ref_num
+	write "% Extension of CM text+math" &amp; lf to ref_num
+	write "\\usepackage{lmodern} % math, rm, ss, tt" &amp; lf to ref_num
+	write "\\usepackage[T1]{fontenc}" &amp; lf to ref_num
+	write "\\usepackage{textcomp}" &amp; lf to ref_num
+	write "\\usepackage[bb=boondox,frak=boondox,cal=rsfso]{mathalfa}" &amp; lf to ref_num
+	close access thefile
+end if
+open for access thefile
+set file_contents to (read thefile)
+close access (thefile)
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set fontlist to the text items of file_contents
+--check for DEFAULT setting in item 1
+set dflt to ""
+try
+	set AppleScript's text item delimiters to lf
+	set defline to last paragraph of (item 1 of fontlist)
+	--display dialog "defline=" &amp; defline
+	if (count of defline) &gt; 8 then
+		if (text 1 thru 8 of defline) = "DEFAULT=" then
+			set dflt to trim(true, text 9 thru (count of defline) of defline)
+		end if
+	end if
+on error
+	
+end try
+
+--display dialog "Dflt=" &amp; dflt
+set namelist to {}
+set fcnt to count (fontlist)
+--display dialog "fcnt=" &amp; fcnt as string
+if fcnt &gt; 1 then
+	repeat with i from 2 to fcnt
+		try
+			set s to trim(true, item i of fontlist)
+			set end of namelist to trim(true, text 2 thru -1 of first paragraph of s)
+		on error
+			set end of namelist to "---"
+		end try
+	end repeat
+end if
+set sortednamelist to {"&lt;none&gt;"} &amp; sort(namelist)
+set dfltndx to 1
+if (count of dflt) &gt; 0 then set dfltndx to getidx(dflt, sortednamelist)
+if dfltndx = 0 then set dfltndx to 1
+choose from list sortednamelist with prompt "Pick a font set:" default items item dfltndx of sortednamelist OK button name "OK" cancel button name "Cancel" without multiple selections allowed and empty selection allowed
+if the result is false then
+	return
+else
+	set fs to result as string
+end if
+set fsidx to getidx(fs, namelist) + 1
+if fsidx = 1 then
+	set newfs to lf
+else
+	set newfs to lf &amp; (item fsidx of fontlist)
+	repeat while item -1 of newfs is lf
+		set newfs to text 1 thru -2 of newfs
+	end repeat
+end if
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+if n &gt; 3 then
+	display dialog "Your preamble contains more than two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+else
+	if n = 2 then
+		display dialog "Your preamble contains only one %SetFonts line. Bailing out." buttons "OK" default button "OK"
+		return
+	end if
+end if
+if n = 3 then
+	set item 2 of doc_items to lf &amp; trim(true, newfs)
+	set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+	set preamble to doc_items as string
+	set whole_document to preamble &amp; lf &amp; "\\begin{document}" &amp; (item 2 of prepost)
+	set AppleScript's text item delimiters to oldtid	
+else
+	if n = 1 then
+		--set shortdoc to text 1 thru 1000 of whole_document
+		set AppleScript's text item delimiters to lf
+		set doclines to text items of whole_document
+		set k to count of doclines
+		if k&gt;20 then set k to 20
+		set j to 0
+		repeat with i from 1 to k
+			set j to stroffset("documentclass",item i of doclines)
+			if j &gt; 0 then exit repeat
+		end repeat
+		if i = k then
+			display dialog "Your document contains no \\documentclass line. Bailing out." buttons "OK" default button "OK"
+		else
+			set i to (i + 1)
+			--set doclines to text items of whole_document
+			set item i of doclines to "%SetFonts" &amp; lf &amp; trim(true,newfs) &amp; lf &amp; "%SetFonts" &amp; lf &amp; (item i of doclines)
+			set whole_document to doclines as string
+		end if
+	end if
+end if
+tell application "TeXShop"
+	set (the text of the front document) to whole_document
+	-- save front document using its current location        set cdate to (current date) + 30 -- allow 30 seconds for timeout
+	try		tell application "TeXShop" to save front document	on error number errnum		if (errnum = -1712) and ((current date) &lt; cdate) then			set Liberrmsg to ""		end if	end tryend tell
+set AppleScript's text item delimiters to oldtid
+
+do shell script "~/Library/TeXShop/bin/refreshfront &amp;&gt; /dev/null &amp;"
+
+on getidx(this_item, this_list)
+	if this_item = "&lt;none&gt;" then
+		return 0
+	else
+		set n to the count of this_list
+		repeat with i from 1 to n
+			if item i of this_list is this_item then return i
+		end repeat
+		return 0
+	end if
+end getidx
+
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10}
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{space, tab, lf, return}
+	
+	try
+		repeat until first character of someText is not in theseCharacters
+			if (count someText) &gt; 1 then				set someText to text 2 thru -1 of someText			else				set someText to ""				exit repeat			end if		end repeat
+	on error
+		set someText to ""
+	end try
+	try
+		repeat until last character of someText is not in theseCharacters
+			set someText to text 1 thru -2 of someText
+		end repeat
+	on error
+		set someText to ""
+	end try
+	return someText
+end trim
+
+on stroffset(find_str,whole_str) 
+--replacement for offset, which fails in late 2011 TeXShop applescript direct
+--note that length fails too, but may be replaced by count
+	if (count of whole_str)=0 then return 0
+	if (count of find_str)=0 then return 0
+	set tid to Applescript's text item delimiters
+	set Applescript's text item delimiters to {find_str}
+	set lst to text items of whole_str
+	set Applescript's text item delimiters to tid
+	if (count of lst)=1 then
+		return 0
+	else
+		return (count of (item 1 of lst)+1)
+	end if
+end stroffset</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>GetFontSet</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Save a font set to ~/Library/TeXShop/bin/SetFonts.tex
+-- The companion script setfonts allows you to choose a font set from that file.
+-- Font set commands are delimited by %SetFonts lines.
+-- In none are found, the script fails.
+-- If you add DELETE after the first %SetFonts (same line), SaveFontSet deletes the item.
+-- The line following the first %SetFonts must be %&lt;title&gt;, where &lt;title&gt; is the ID for the set..
+-- If you add DEFAULT after the first %SetFonts (same line), 
+-- SaveFontSet makes it the default selection when using setfonts.
+--Last revised 01/11/2011
+-- Michael Sharpe, msharpe@ucsd.edu
+global lf
+set lf to (ASCII character 10)
+set path_to_setfonts to (POSIX path of (((path to home folder) as string) &amp; "Library:TeXShop:bin:SetFonts.tex"))
+set msg to 0
+tell application "Finder" to if exists path_to_setfonts as POSIX file then set msg to 1
+set thefile to POSIX file path_to_setfonts
+if msg = 0 then
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write lf &amp; "%SetFonts" &amp; lf to ref_num
+	write "% Latin Modern" &amp; lf to ref_num
+	write "% Extension of CM text+math" &amp; lf to ref_num
+	write "\\usepackage{lmodern} % math, rm, ss, tt" &amp; lf to ref_num
+	write "\\usepackage[T1]{fontenc}" &amp; lf to ref_num
+	write "\\usepackage{textcomp}" &amp; lf to ref_num
+	write "\\usepackage[bb=boondox,frak=boondox,cal=rsfso]{mathalfa}" &amp; lf to ref_num
+	close access thefile
+end if
+open for access thefile
+set file_contents to (read thefile)
+close access (thefile)
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf&amp;"%SetFonts"
+set fontlist to the text items of file_contents
+set namelist to {}
+set fcnt to count (fontlist)
+if fcnt &gt; 1 then
+	repeat with i from 2 to fcnt
+		try
+			set s to trim(true, item i of fontlist)
+			set end of namelist to trim(true, text 2 thru -1 of first paragraph of s)
+		on error
+			set end of namelist to "---"
+		end try
+		--set end of namelist to trim(true, text 2 thru -1 of first paragraph of item i of fontlist)
+	end repeat
+end if
+
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+
+if not (n = 3) then
+	display dialog "Your preamble does not contains exactly two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set s to item 2 of doc_items
+set L to stroffset(lf,s) - 1
+set flag to 0 --1 for DELETE, 2 for DEFAULT
+if L &gt; 5 then
+	set t to trim(true, text 1 thru L of s)
+	if t = "DELETE" then
+		set flag to 1
+	else
+		if t = "DEFAULT" then
+			set flag to 2
+		end if
+	end if
+end if
+
+set newfs to trim(true, text (L + 2) thru (count of s) of s)
+if first character of newfs is not "%" then
+	display dialog "Your %SetFonts block lacks a title beginning with %. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fs to trim(true, text 2 thru -1 of first paragraph of newfs)
+if count of fs is 0 then
+	display dialog "Your %SetFonts block lacks a non-empty title. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fsidx to getidx(fs, namelist) + 1
+--check for existing DEFAULT
+set dfltflag to false
+try
+	set AppleScript's text item delimiters to lf
+	set defline to last paragraph of (trim(true, item 1 of fontlist))
+	--display dialog "defline=" &amp; defline
+	if (count of defline) &gt; 8 then
+		if (text 1 thru 8 of defline) = "DEFAULT=" then
+			set dfltflag to true
+		end if
+	end if
+on error
+	
+end try
+if flag = 2 then
+	if dfltflag then --there is an existing DEFAULT
+		set deflines to text items of trim(true, item 1 of fontlist)
+		--display dialog "deflines(-1)=" &amp; item -1 of deflines
+		set item -1 of deflines to "DEFAULT=" &amp; fs
+		set (item 1 of fontlist) to deflines as string
+	else
+		set (item 1 of fontlist) to (item 1 of fontlist) &amp; lf &amp; "DEFAULT=" &amp; fs
+	end if
+end if
+if fsidx = 1 then --not in current list
+	if flag = 0 then
+		set end of fontlist to lf &amp; trim(true, newfs)
+	else
+		if flag = 1 then --DELETE
+			display dialog "Cannot delete--name not found. Bailing out." buttons "OK" default button "OK"
+			return
+		end if
+	end if
+else
+	if flag = 0 then
+		set item fsidx of fontlist to lf &amp; trim(true, newfs)
+	else
+		if flag = 1 then --DELETE
+			if fsidx = (count of fontlist) then
+				set fontlist to items 1 thru -2 of fontlist
+			else
+				set fontlist to items 1 thru (fsidx - 1) of fontlist &amp; items (fsidx + 1) thru -1 of fontlist
+			end if
+		end if
+	end if
+end if
+set ref_num to open for access thefile with write permission
+set eof of ref_num to 0
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+write (fontlist as string) to ref_num
+close access thefile
+display dialog "Your %SetFonts block was saved to SetFonts.tex." buttons "OK" default button "OK"
+--whole_document
+
+on getidx(this_item, this_list)
+	if this_item = "&lt;none&gt;" then
+		return 0
+	else
+		set n to the count of this_list
+		repeat with i from 1 to n
+			if item i of this_list is this_item then return i
+		end repeat
+		return 0
+	end if
+end getidx
+
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10}
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{" ", tab, ASCII character 10}
+	
+	repeat until first character of someText is not in theseCharacters
+		set someText to text 2 thru -1 of someText
+	end repeat
+	
+	repeat until last character of someText is not in theseCharacters
+		set someText to text 1 thru -2 of someText
+	end repeat
+	
+	return someText
+end trim
+
+on stroffset(find_str,whole_str) 
+--replacement for offset, which fails in late 2011 TeXShop applescript direct
+--note that length fails too, but may be replaced by count
+	if (count of whole_str)=0 then return 0
+	if (count of find_str)=0 then return 0
+	set tid to Applescript's text item delimiters
+	set Applescript's text item delimiters to {find_str}
+	set lst to text items of whole_str
+	set Applescript's text item delimiters to tid
+	if (count of lst)=1 then
+		return 0
+	else
+		return (count of (item 1 of lst)+1)
+	end if
+end stroffset</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>SaveFontSet</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--AppleScript direct
+
+--- Test a font set.
+-- Font set commands are delimited by %SetFonts lines.
+-- In none are found, the script fails.
+--Prepares a report showing relative sizes of fonts in the set.
+--Useful for fine-tuning the scale factors to better match your fonts.
+
+--Last revised 01/12/2011
+-- Michael Sharpe, msharpe@ucsd.edu
+global lf
+set lf to (ASCII character 10)
+
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+
+if not (n = 3) then
+	display dialog "Your preamble does not contains exactly two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fontblock to trim(true,item 2 of doc_items)
+set pre to "\\documentclass{article}" &amp; lf ¬
+	&amp; "%\\batchmode" &amp; lf ¬
+	&amp; "\\setlength\\parindent{0pt}" &amp; lf ¬
+	&amp; "\\usepackage[papersize={3in,2.5in},margin=0in]{geometry}" &amp; lf ¬
+	&amp; "\\usepackage{lmodern,amsfonts,mathrsfs}" &amp; lf ¬
+	&amp; "\\usepackage{graphicx}" &amp; lf ¬
+	&amp; "\\pagestyle{empty}" &amp; lf ¬
+	&amp; "\\setlength\\unitlength{1in}"&amp; lf¬
+	&amp; fontblock &amp; lf ¬
+	&amp; "\\begin{document}" &amp; lf ¬
+	&amp; "\\begin{picture}(3,2.5)" &amp; lf¬
+	&amp; "\\put(.25,0){\\scalebox{20}{"
+set post to "}}\\end{picture}" &amp;lf &amp; "\\end{document}"&amp;lf
+
+set cmds to {"X", "\\textsf{X}", "\\texttt{X}", "$X$", ¬
+	"$\\mathcal{X}$", "$\\mathbb{X}$", "$\\mathfrak{X}$", "$\\mathscr{X}$","x", "\\textsf{x}", "\\texttt{x}", "$x$"}
+set sizes to {"", "", "", "", "", "", "", "","","","",""}
+set glyphsource to {"", "", "", "", "", "", "", "","","","",""}
+
+repeat with i from 1 to 12
+	set t to ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".tex")
+	set thefile to (POSIX path of t)
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write pre to ref_num
+	write (item i of cmds) &amp; post to ref_num
+--	write "\\setbox0=\\hbox{"&amp;(item i of cmds)&amp;"}"&amp;lf to ref_num
+--	write "\\newwrite\\foo \\immediate\\openout\\foo=tempfn"&amp;(i as string)&amp;".txt \\immediate\\write\\foo{\\the\\dp0}" to ref_num
+--	write "\\closeout\\foo"&amp;lf to ref_num
+--	write "\\end{document}" &amp; lf to ref_num
+	close access thefile
+
+	try
+		set s to (do shell script ("cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;/usr/texbin/pdflatex tempfn" &amp; (i as string)))
+	on error errmsg number errnum
+		set AppleScript's text item delimiters to oldtid
+		display dialog "pdflatex returned error :"&amp; (errnum as string)&amp;": "&amp;errmsg &amp;" while processing tempfn"&amp;(i as string)&amp;".tex --bailing out."
+		return
+	end try
+	set logfile to (POSIX path of ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".log"))
+	open for access logfile
+	set file_contents to (read logfile)
+	close access (logfile)
+	set AppleScript's text item delimiters to "you used:"
+	set lst to the text items of file_contents
+	if (count of lst) is not equal to 2 then
+		set AppleScript's text item delimiters to oldtid
+		display dialog "Pdflatex log error--bailing out"
+		return
+	end if
+	set s to (item 2 of lst)
+	set AppleScript's text item delimiters to {"&lt;", "&gt;"}
+	set lst to the text items of s
+	if (count of lst)&lt;2 then
+		set AppleScript's text item delimiters to oldtid
+		display dialog "Unexpected log contents---bailing out."
+		return
+	end if
+	set AppleScript's text item delimiters to "/"
+	set fpath to text items of (item 2 of lst)
+	set (item i of glyphsource) to clean(item -1 of fpath)
+	try
+		set s to (do shell script (¬
+			"cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;" &amp; ¬
+			"/usr/local/bin/gs  -dSAFER -dBATCH -dNOPAUSE -q -r3600 -sDEVICE=bbox -sOutputFile=- " &amp; "-c \"/setpagedevice {pop} def\" -f tempfn" &amp; (i as string) &amp; ¬
+			".pdf -c quit 2&gt;&amp;1 | " &amp; "/usr/bin/awk '/HiRes/ { printf \"%4u\", ($5 - $3)*5.01875+0.5 }'"))
+		--set k to (s as integer)
+		--set t to ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".txt")
+		--set thefile to (POSIX path of t)
+		--open for access thefile
+		--set dp to (read thefile)
+		--close access (thefile)
+		--set dp to (text 1 thru -3 of trim(true,dp))
+		--set k to k-(((dp as number)*100+.5) as integer)
+		--set s to (k as string)
+	on error
+		set s to "0"
+	end try
+	set (item i of sizes) to trim(true,s)
+end repeat
+
+--finally, create report--bg8.pdf must be available somewhere in the texmf (tex/latex) trees
+--must first close file if open in texshop
+try
+	tell application "TeXShop"
+		if (exists  document "tempfnrep.tex") then
+			close document "tempfnrep.tex"
+		else
+			if  (exists  document "tempfnrep") then close document "tempfnrep"
+		end if
+	end tell
+on error --catch errors like timeout errors
+end try
+set repcontent to "\\documentclass{article}"&amp;lf¬
+&amp;"%\\batchmode"&amp;lf¬
+&amp;"\\setlength\\parindent{0pt}"&amp;lf¬
+&amp;"\\usepackage[landscape,margin=.5in]{geometry}"&amp;lf¬
+&amp; "\\usepackage{lmodern,amsfonts,mathrsfs}" &amp; lf ¬
+&amp;"\\usepackage{xcolor,graphicx}"&amp;lf¬
+&amp;"\\usepackage{multido}"&amp;lf¬
+&amp;"\\setlength\\unitlength{80pt}"&amp;lf¬
+&amp;"\\def\\myr{\\color{red!50}}"&amp;lf¬
+&amp;fontblock&amp;lf¬
+&amp;"\\pagestyle{empty}"&amp;lf¬
+&amp;"\\def\\wid{8.89pt}"&amp;lf¬
+&amp;"\\begin{document}"&amp;lf¬
+&amp;"\\begin{picture}(8,1.1)"&amp;lf¬
+&amp;"\\put(0,0){\\includegraphics{bg8.pdf}}"&amp;lf¬
+&amp;"\\put(0,.16){\\scalebox{9}{\\hbox to \\wid{X\\hfil}}}"&amp;lf¬
+&amp;"\\put(0,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil x}}}"&amp;lf¬
+&amp;"\\put(1,.16){\\scalebox{9}{\\hbox to \\wid{\\textsf{X}\\hfil}}}"&amp;lf¬
+&amp;"\\put(1,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil\\textsf{x}}}}"&amp;lf¬
+&amp;"\\put(2,.16){\\scalebox{9}{\\hbox to \\wid{\\texttt{X}\\hfil}}}"&amp;lf¬
+&amp;"\\put(2,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil\\texttt{x}}}}"&amp;lf¬
+&amp;"\\put(3,.16){\\scalebox{9}{\\hbox to \\wid{$X$\\hfil}}}"&amp;lf¬
+&amp;"\\put(3,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil$x$}}}"&amp;lf¬
+&amp;"\\put(4,.16){\\scalebox{9}{\\hbox to \\wid{{\\hfil$\\mathcal{X}$\\hfil}}}}"&amp;lf¬
+&amp;"\\put(5,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathbb{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\put(6,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathfrak{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\put(7,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathscr{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\multido{\\i=0+1,\\ia=1+1}{8}"&amp;lf¬
+&amp;"{\\put (\\i,-.2){\\hbox to 80pt{\\hfil\\ia\\hfil}}}"&amp;lf¬
+&amp;"\\end{picture}"&amp;lf¬
+&amp;"\\vspace{2pc}"&amp;lf¬
+&amp;"\\begin{tabbing}"&amp;lf¬
+&amp;"Key \\= Height----- \\= Type\\hspace{7pc} \\= \\verb|$\\mathfrak{XXX}$| \\= \\kill"&amp;lf¬
+&amp;"Key \\&gt; Height \\&gt; Type\\&gt; Command \\&gt; Glyph source file\\\\"&amp;lf¬
+&amp;"1 \\&gt; "&amp;(item 1 of sizes)&amp;"/"&amp;(item 9 of sizes)&amp;" \\&gt; Roman \\&gt;X/x \\&gt; \\texttt{"&amp;(item 1 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"2 \\&gt; "&amp;(item 2 of sizes)&amp;"/"&amp;(item 10 of sizes)&amp;" \\&gt; Sans Serif \\&gt; \\verb|\\textsf{X/x}| \\&gt; \\texttt{"&amp;(item 2 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"3 \\&gt; "&amp;(item 3 of sizes)&amp;"/"&amp;(item 11 of sizes)&amp;" \\&gt; Typewriter \\&gt; \\verb|\\texttt{X/x}| \\&gt; \\texttt{"&amp;(item 3 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"4 \\&gt; "&amp;(item 4 of sizes)&amp;"/"&amp;(item 12 of sizes)&amp;" \\&gt; Math Italic \\&gt; \\verb|$X/x$| \\&gt; \\texttt{"&amp;(item 4 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"5 \\&gt; "&amp;(item 5 of sizes)&amp;" \\&gt; Math Calligraphic \\&gt;\\verb|$\\mathcal{X}$| \\&gt; \\texttt{"&amp;(item 5 of glyphsource)&amp;"}\\\\" &amp;lf¬
+&amp;"6 \\&gt; "&amp;(item 6 of sizes)&amp;" \\&gt; Math Blackboard Bold \\&gt; \\verb|$\\mathbb{X}$| \\&gt; \\texttt{"&amp;(item 6 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"7 \\&gt; "&amp;(item 7 of sizes)&amp;" \\&gt; Math Fraktur \\&gt; \\verb|$\\mathfrak{X}$| \\&gt; \\texttt{"&amp;(item 7 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"8 \\&gt; "&amp;(item 8 of sizes)&amp;" \\&gt; Math Script \\&gt; \\verb|$\\mathscr{X}$| \\&gt; \\texttt{"&amp;(item 8 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"\\end{tabbing}"&amp;lf¬
+&amp;"\\vspace{1pc}"&amp;lf¬
+&amp;"\\textbf{Font commands:}"&amp;lf¬
+&amp;"\\begin{verbatim}"&amp;lf¬
+&amp;fontblock&amp;lf¬
+&amp;"\\end{verbatim}"&amp;lf¬
+&amp;"\\end{document}"
+
+set t to ((path to temporary items) as string &amp; "tempfnrep.tex")
+set thefile to (POSIX path of t)
+set ref_num to open for access thefile with write permission
+set eof of ref_num to 0
+write repcontent to ref_num
+close access thefile
+try
+	set s to (do shell script ("cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;/usr/texbin/pdflatex tempfnrep"))
+on error errmsg
+	set AppleScript's text item delimiters to oldtid
+	display dialog "pdflatex returned error: "&amp;errmsg&amp;lf&amp;"while processing tempfnref.tex --bailing out."
+	return
+end try
+set s to do shell script "open -a TeXShop.app " &amp; quoted form of (POSIX path of t)
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{" ", tab, ASCII character 10}
+	
+	repeat until first character of someText is not in theseCharacters
+		set someText to text 2 thru -1 of someText
+	end repeat
+	
+	repeat until last character of someText is not in theseCharacters
+		set someText to text 1 thru -2 of someText
+	end repeat
+	
+	return someText
+end trim
+
+on clean(someText)
+	--get rid of all internal lf
+	set thetid to Applescript's text item delimiters
+	set Applescript's text item delimiters to lf
+	set fields to text items of someText
+	set Applescript's text item delimiters to ""
+	set someText to (fields as string)
+	set Applescript's text item delimiters to thetid
+	return someText
+end clean</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>TestFontSet</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Applescript</string>
 			<key>submenu</key>
@@ -1027,6 +1770,8 @@ tell application "Adobe Reader"
   open POSIX file #PDFPATH#
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>View pdf with Acrobat</string>
 				</dict>
@@ -1045,6 +1790,8 @@ tell application "Finder"
 end tell
 on error
 end try</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Show files</string>
 				</dict>
@@ -1054,7 +1801,9 @@ end try</string>
 -- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
 -- example: show TeXShop home page in a web browser
 
-open location "http://pages.uoregon.edu/koch/texshop/texshop.htmll"</string>
+open location "http://darkwing.uoregon.edu/~koch/texshop/texshop.html"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>TeXShop home page</string>
 				</dict>
@@ -1064,6 +1813,8 @@ open location "http://pages.uoregon.edu/koch/texshop/texshop.htmll"</string>
 -- If the content field starts with "--AppleScript" then it will be interpreted as an AppleScript and will be executed.  
 
 open location "http://tug.org/mactex/"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>MacTeX home page</string>
 				</dict>
@@ -1088,6 +1839,8 @@ on error
 	display dialog ("There don't seem to be any files in the teTeX tree with the filename: " &amp; filename_to_open) buttons {"OK"} default button "OK"
 end try
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>View TeX Live file</string>
 				</dict>
@@ -1113,6 +1866,8 @@ do shell script shellScript
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to MAC</string>
 				</dict>
@@ -1136,6 +1891,8 @@ set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupT
 set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -u  " &amp; backupTexName &amp; "'"
 do shell script shellScript
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to Unix</string>
 				</dict>
@@ -1159,6 +1916,8 @@ set shellScript to shellScript &amp; "cp  " &amp; texName &amp;" " &amp; backupT
 set shellScript to shellScript &amp; "/bin/tcsh -c '~/Library/TeXShop/bin/flip -d  " &amp; backupTexName &amp; "'"
 do shell script shellScript
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Convert to Windows</string>
 				</dict>
@@ -1216,6 +1975,8 @@ tell document frontName of application "TeXShop"
 end tell
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Bibliography</string>
 				</dict>
@@ -1231,6 +1992,8 @@ do shell script "defaults write TeXShop background_B 0.3"
 do shell script "defaults write TeXShop foreground_R 1.0"
 do shell script "defaults write TeXShop foreground_G 1.0"
 do shell script "defaults write TeXShop foreground_B 1.0"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Colored source</string>
 				</dict>
@@ -1246,12 +2009,18 @@ do shell script "defaults write TeXShop background_B 1.00"
 do shell script "defaults write TeXShop foreground_R .0"
 do shell script "defaults write TeXShop foreground_G .0"
 do shell script "defaults write TeXShop foreground_B .0"</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Default Colored source</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Column macros</string>
 			<key>submenu</key>
@@ -1277,11 +2046,11 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New tabular" &amp; return &amp; return &amp; "Enter the number of columns you'd like and then select the type of tabular you want." default answer "3" buttons {"Cancel", "Plain", "Booktabs"} default button default_tabular_type
-	set theNCOLS to the text returned of q1
+	set NCOLS to the text returned of q1
 	set tabtype to the button returned of q1
 	
 	set q2 to display dialog "Enter the number of rows you'd like (not including a header row) and select whether you'd like a floating or simply centred table." default answer "3" buttons {"Cancel", "Centred", "Floating"} default button default_table_type
-	set theNROWS to the text returned of q2
+	set NROWS to the text returned of q2
 	set floattype to the button returned of q2
 	
 	if the tabtype = "Booktabs" then
@@ -1318,8 +2087,8 @@ tell application texapp
 	set the column_preamble to "{@{} c"
 	set the one_row_text to indent &amp; indent &amp; cell_text
 	
-	if theNCOLS &gt; 1 then
-		repeat with c from 2 to theNCOLS
+	if NCOLS &gt; 1 then
+		repeat with c from 2 to NCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1334,7 +2103,7 @@ tell application texapp
 		one_row_text &amp; return &amp; ¬
 		indent &amp; indent &amp; midrule &amp; return
 	
-	repeat with r from 1 to theNROWS
+	repeat with r from 1 to NROWS
 		set the midtext to midtext &amp; one_row_text &amp; return
 	end repeat
 	
@@ -1374,10 +2143,10 @@ property texapp : "TeXShop"
 tell application texapp
 	
 	set q1 to display dialog "New maths array." &amp; return &amp; return &amp; "Enter the number of rows you'd like." default answer "3"
-	set theNROWS to the text returned of q1
+	set NROWS to the text returned of q1
 	
 	set q2 to display dialog "How many columns would you like? Would you like me to indent the array?" default answer "3" buttons {"Cancel", "Flush left", "Indent"} default button default_array_location
-	set theNCOLS to the text returned of q2
+	set NCOLS to the text returned of q2
 	set indentyesno to the button returned of q2
 	
 	if the indentyesno = "Indent" then
@@ -1389,8 +2158,8 @@ tell application texapp
 	set the column_preamble to "{c"
 	set the one_row_text to preindent &amp; indent &amp; cell_text
 	
-	if theNCOLS &gt; 1 then
-		repeat with c from 2 to theNCOLS
+	if NCOLS &gt; 1 then
+		repeat with c from 2 to NCOLS
 			set the column_preamble to column_preamble &amp; "c"
 			set the one_row_text to one_row_text &amp; "&amp; " &amp; cell_text
 		end repeat
@@ -1400,7 +2169,7 @@ tell application texapp
 	set the one_row_text to one_row_text &amp; "\\\\ " &amp; return
 	
 	set midtext to ""
-	repeat with r from 1 to theNROWS
+	repeat with r from 1 to NROWS
 		set the midtext to midtext &amp; one_row_text
 	end repeat
 	
@@ -1518,6 +2287,8 @@ end tell
 
 -- 2004 Will Robertson
 -- (You may do what you like with this script)</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Add column</string>
 				</dict>
@@ -1618,6 +2389,8 @@ end tell
 
 -- 2004 Will Robertson
 -- (You may do what you like with this script)</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Delete column</string>
 				</dict>
@@ -1640,10 +2413,16 @@ if the result is not false then
 end if
 --End of Applescript
 </string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Paste Spreadsheet Cells</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Claus Gerhardt Macros</string>
 			<key>submenu</key>
@@ -1703,6 +2482,8 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>bibtexc</string>
 				</dict>
@@ -1766,10 +2547,16 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>bibtexcpl</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -1822,6 +2609,8 @@ refreshpdf
 end tell
 
  </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>mpostc</string>
 				</dict>
@@ -1878,10 +2667,16 @@ refreshpdf
 end tell
 
  </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>mpostcpl</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -1958,10 +2753,16 @@ tell application "Safari"
   open htmlFile
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>htlatexr</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2028,10 +2829,16 @@ tell document frontName of application "TeXShop"
 	refreshpdf
 end tell
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>pdflatexc</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2076,10 +2883,16 @@ do shell script shellScript
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>pdfselectc</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2102,6 +2915,10 @@ set pdfFile to alias POSIX file thePDF
 					<string>openpdf</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Separator</string>
 				</dict>
@@ -2162,21 +2979,35 @@ end tell
 
 
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>latex-makeindex-mpost</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Separator</string>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Headings</string>
 			<key>submenu</key>
 			<array>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>11pt</string>
 					<key>submenu</key>
@@ -2212,6 +3043,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
@@ -2228,12 +3061,18 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>12pt</string>
 					<key>submenu</key>
@@ -2251,6 +3090,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>article</string>
 						</dict>
@@ -2267,6 +3108,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>book</string>
 						</dict>
@@ -2283,6 +3126,8 @@ end tell
 
 \end{document}
 </string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>report</string>
 						</dict>
@@ -2291,6 +3136,10 @@ end tell
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Subdivisions</string>
 			<key>submenu</key>
@@ -2299,6 +3148,8 @@ end tell
 					<key>content</key>
 					<string>\chapter{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>chapter</string>
 				</dict>
@@ -2306,6 +3157,8 @@ end tell
 					<key>content</key>
 					<string>\paragraph{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>paragraph</string>
 				</dict>
@@ -2313,6 +3166,8 @@ end tell
 					<key>content</key>
 					<string>\subparagraph{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subparagraph</string>
 				</dict>
@@ -2320,6 +3175,8 @@ end tell
 					<key>content</key>
 					<string>\section{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>section</string>
 				</dict>
@@ -2327,6 +3184,8 @@ end tell
 					<key>content</key>
 					<string>\subsection{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subsection</string>
 				</dict>
@@ -2334,12 +3193,18 @@ end tell
 					<key>content</key>
 					<string>\subsubsection{#SEL##INS#}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>subsubsection</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Mathematics</string>
 			<key>submenu</key>
@@ -2356,6 +3221,8 @@ end tell
 \right)
 \]
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>array</string>
 				</dict>
@@ -2365,6 +3232,8 @@ end tell
 #INS#
 \end{equation}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>equation</string>
 				</dict>
@@ -2374,6 +3243,8 @@ end tell
 #INS#
 \end{equation*}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>equation*</string>
 				</dict>
@@ -2383,6 +3254,8 @@ end tell
 #INS#
 \end{eqnarray}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>eqnarray</string>
 				</dict>
@@ -2392,12 +3265,18 @@ end tell
 #INS#
 \end{eqnarray*}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>eqnarray*</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Text Styles</string>
 			<key>submenu</key>
@@ -2405,10 +3284,16 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\emph{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>emphasize</string>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>typeface</string>
 					<key>submenu</key>
@@ -2416,42 +3301,58 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>\mathbf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Bold</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathcal{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>CAL</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathit{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Italic</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathrm{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Roman</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathsf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Sans Serif</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\mathtt{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>TypeWriter</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>size</string>
 					<key>submenu</key>
@@ -2459,66 +3360,90 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>{\tiny #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>tiny</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\scriptsize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>scriptsize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\footnotesize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>footnotesize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\small #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>small</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\normalsize #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>normalsize</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\large #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>large</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\Large #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Large</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\LARGE #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>LARGE</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\huge #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>huge</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>{\Huge #SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Huge</string>
 						</dict>
 					</array>
 				</dict>
 				<dict>
+					<key>content</key>
+					<string></string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>style</string>
 					<key>submenu</key>
@@ -2526,54 +3451,72 @@ end tell
 						<dict>
 							<key>content</key>
 							<string>\textbf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Bold</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsc{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Small Caps</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textmd{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Medium</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textit{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Italic</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsl{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Slanted</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textrm{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Roman</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textsf{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Sans Serif</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\texttt{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>TypeWriter</string>
 						</dict>
 						<dict>
 							<key>content</key>
 							<string>\textup{#SEL##INS#}</string>
+							<key>key</key>
+							<string></string>
 							<key>name</key>
 							<string>Upright</string>
 						</dict>
@@ -2582,12 +3525,18 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\underline{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>Underline</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Lists</string>
 			<key>submenu</key>
@@ -2598,6 +3547,8 @@ end tell
 \item[ ] #SEL##INS#
 \end{description}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>description</string>
 				</dict>
@@ -2607,6 +3558,8 @@ end tell
 \item #SEL##INS#
 \end{enumerate}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>enumerate</string>
 				</dict>
@@ -2616,12 +3569,18 @@ end tell
 \item #SEL##INS#
 \end{itemize}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>itemize</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Offsets</string>
 			<key>submenu</key>
@@ -2629,18 +3588,26 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\footnote{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>footnote</string>
 				</dict>
 				<dict>
 					<key>content</key>
 					<string>\marginpar{#SEL##INS#}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>marginpar</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Insertions</string>
 			<key>submenu</key>
@@ -2650,6 +3617,8 @@ end tell
 					<string>\begin{quotation}
 #SEL##INS#
 \end{quotation}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>quotation</string>
 				</dict>
@@ -2658,6 +3627,8 @@ end tell
 					<string>\begin{quote}
 #SEL##INS#
 \end{quote}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>quote</string>
 				</dict>
@@ -2667,6 +3638,8 @@ end tell
 #SEL##INS#
 \end{verbatim}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>verbatim</string>
 				</dict>
@@ -2675,12 +3648,18 @@ end tell
 					<string>\begin{verse}
 #SEL##INS#
 \end{verse}</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>verse</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Tables</string>
 			<key>submenu</key>
@@ -2688,6 +3667,8 @@ end tell
 				<dict>
 					<key>content</key>
 					<string>\hline</string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>hline</string>
 				</dict>
@@ -2703,12 +3684,18 @@ end tell
 \label{default}
 \end{table}%
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>table</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
+			<key>content</key>
+			<string></string>
+			<key>key</key>
+			<string></string>
 			<key>name</key>
 			<string>Figures</string>
 			<key>submenu</key>
@@ -2723,6 +3710,8 @@ end tell
 \end{center}
 \end{figure}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>regular</string>
 				</dict>
@@ -2736,6 +3725,8 @@ end tell
 \end{center}
 \end{figure}
 </string>
+					<key>key</key>
+					<string></string>
 					<key>name</key>
 					<string>epsfile</string>
 				</dict>

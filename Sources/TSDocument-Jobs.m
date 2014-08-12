@@ -41,14 +41,14 @@
 
 
 	// get copy of environment and add the preferences paths
-	env = [[NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]] retain];
+	env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
 
 
 	// Customize 'PATH'
 	NSMutableString *path;
 	path = [NSMutableString stringWithString: [env objectForKey:@"PATH"]];
 	[path appendString:@":"];
-	[path appendString:[SUD stringForKey:TetexBinPath]];
+	[path appendString:[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath]];
 	[path appendString:@":"];
 	[path appendString:[SUD stringForKey:GSBinPath]];
 	[env setObject: path forKey: @"PATH"];
@@ -86,44 +86,44 @@
 		system tries to save a new version. If the source file is open,
 		NSDocument makes a backup in /tmp which is never removed. */
 
-	if (texTask != nil) {
+	if (self.texTask != nil) {
 		if (theScript == kTypesetViaGhostScript) {
-			kill( -[texTask processIdentifier], SIGTERM);
+			kill( -[self.texTask processIdentifier], SIGTERM);
 		} else {
-			[texTask terminate];
+			[self.texTask terminate];
 			}
 		myDate = [NSDate date];
-		while (([texTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
+		while (([self.texTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
 			;
-		[texTask release];
-		texTask = nil;
+	//	[self.texTask release];
+		self.texTask = nil;
 	}
 
-	if (bibTask != nil) {
-		[bibTask terminate];
+	if (self.bibTask != nil) {
+		[self.bibTask terminate];
 		myDate = [NSDate date];
-		while (([bibTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
+		while (([self.bibTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
 			;
-		[bibTask release];
-		bibTask = nil;
+	//	[self.bibTask release];
+		self.bibTask = nil;
 	}
 
-	if (indexTask != nil) {
-		[indexTask terminate];
+	if (self.indexTask != nil) {
+		[self.indexTask terminate];
 		myDate = [NSDate date];
-		while (([indexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
+		while (([self.indexTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
 			;
-		[indexTask release];
-		indexTask = nil;
+	//	[self.indexTask release];
+		self.indexTask = nil;
 	}
 
-	if (metaFontTask != nil) {
-		[metaFontTask terminate];
+	if (self.metaFontTask != nil) {
+		[self.metaFontTask terminate];
 		myDate = [NSDate date];
-		while (([metaFontTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
+		while (([self.metaFontTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5))
 			;
-		[metaFontTask release];
-		metaFontTask = nil;
+	//	[self.metaFontTask release];
+		self.metaFontTask = nil;
 	}
 }
 
@@ -363,7 +363,7 @@
     theRange = [gsTeXCommand rangeOfString: @"altpdftex"];
     if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
     locationOfRest = theRange.location + 9;
-	binaryLocation = [SUD stringForKey:TetexBinPath];
+	binaryLocation = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
@@ -379,7 +379,7 @@
     theRange = [gsTeXCommand rangeOfString: @"altpdflatex"];
     if (theRange.location != NSNotFound) { // && (theRange.location == 0)) {
     locationOfRest = theRange.location + 11;
-	binaryLocation = [SUD stringForKey:TetexBinPath];
+	binaryLocation = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	path = [binaryLocation stringByAppendingString:@"/simpdftex"];
 	fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:path]) {
@@ -450,20 +450,20 @@
 
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
 			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
-			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+			self.startDate = [myAttributes objectForKey:NSFileModificationDate];
 		}
 		else
-			startDate = nil;
+			self.startDate = nil;
 
 		args = [NSMutableArray array];
 		sourcePath = myFileName;
 
-		texTask = [[NSTask alloc] init];
+		self.texTask = [[NSTask alloc] init];
 		if ((! writeable) && (! [[myFileName pathExtension] isEqualToString:@"dvi"]))
-			[texTask setCurrentDirectoryPath: TempOutputKey];
+			[self.texTask setCurrentDirectoryPath: TempOutputKey];
 		else
-			[texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
-		[texTask setEnvironment: [self environmentForSubTask]];
+			[self.texTask setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
+		[self.texTask setEnvironment: [self environmentForSubTask]];
 
 		if ([[myFileName pathExtension] isEqualToString:@"dvi"]) {
 			[self testGSCommandKey];
@@ -529,16 +529,16 @@
 				enginePath = [tetexBinPath stringByAppendingString:enginePath];
 			}
 		}
-		inputPipe = [[NSPipe pipe] retain];
-		[texTask setStandardInput: inputPipe];
+		self.inputPipe = [NSPipe pipe];
+		[self.texTask setStandardInput: self.inputPipe];
 		if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
-			[texTask setLaunchPath:enginePath];
-			[texTask setArguments:args];
-			[texTask launch];
+			[self.texTask setLaunchPath:enginePath];
+			[self.texTask setArguments:args];
+			[self.texTask launch];
 		} else {
-			[inputPipe release];
-			[texTask release];
-			texTask = nil;
+	//		[self.inputPipe release];
+	//		[self.texTask release];
+			self.texTask = nil;
 		}
 	}
 }
@@ -575,7 +575,7 @@
 		theSource = [[self textView] string];
 	else {
 		myData = [NSData dataWithContentsOfFile:[[self fileURL] path]];
-		theSource = [[[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] autorelease];
+		theSource = [[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding];
 	}
 
 	if ([self checkMasterFile:theSource forTask:RootForTexing]) {
@@ -891,9 +891,9 @@
 	[task setArguments: args];
 	[task setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
 	[task setEnvironment: [self environmentForSubTask]];
-	[task setStandardOutput: outputPipe];
-	[task setStandardError: outputPipe];
-	[task setStandardInput: inputPipe];
+	[task setStandardOutput: self.outputPipe];
+	[task setStandardError: self.outputPipe];
+	[task setStandardInput: self.inputPipe];
 	[task launch];
 	return TRUE;
 }
@@ -922,18 +922,18 @@
 	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 		
-		if (startDate != nil) {
-			[startDate release];
-			startDate = nil;
+		if (self.startDate != nil) {
+	//		[self.startDate release];
+			self.startDate = nil;
 		}
 		
 		imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
 		
 		if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
 			myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
-			startDate = [[myAttributes objectForKey:NSFileModificationDate] retain];
+			self.startDate = [myAttributes objectForKey:NSFileModificationDate];
 		} else
-			startDate = nil;
+			self.startDate = nil;
 		
 		sourcePath = myFileName;
 		
@@ -941,11 +941,11 @@
 		
 		args = [NSMutableArray array];
 		
-		outputPipe = [[NSPipe pipe] retain];
-		readHandle = [outputPipe fileHandleForReading];
-		[readHandle readInBackgroundAndNotify];
-		inputPipe = [[NSPipe pipe] retain];
-		writeHandle = [inputPipe fileHandleForWriting];
+		self.outputPipe = [NSPipe pipe];
+		self.readHandle = [self.outputPipe fileHandleForReading];
+		[self.readHandle readInBackgroundAndNotify];
+		self.inputPipe = [NSPipe pipe];
+		self.writeHandle = [self.inputPipe fileHandleForWriting];
 		
 		consoleCleanStart = YES;
 		[outputText setSelectable: YES];
@@ -990,12 +990,12 @@
 				&& (whichEngineLocal != MetapostEngine) && (whichEngineLocal != ContextEngine))
 					[args addObject: [NSString stringWithString:@"--keep-psfile"]];
 */			
-			if (texTask != nil) {
-				[texTask terminate];
-				[texTask release];
-				texTask = nil;
+			if (self.texTask != nil) {
+				[self.texTask terminate];
+		//		[self.texTask release];
+				self.texTask = nil;
 			}
-			texTask = [[NSTask alloc] init];
+			self.texTask = [[NSTask alloc] init];
 			
 			if (whichEngineLocal == ContextEngine) {
 				if (theScript == kTypesetViaPDFTeX) {
@@ -1138,11 +1138,11 @@
 			 }
 			 else {
 				 */
-			if ([self startTask: texTask running: enginePath withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal] == FALSE) {
-				[inputPipe release];
-				[outputPipe release];
-				[texTask release];
-				texTask = nil;
+			if ([self startTask: self.texTask running: enginePath withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal] == FALSE) {
+		//		[self.inputPipe release];
+		//		[self.outputPipe release];
+		//		[self.texTask release];
+				self.texTask = nil;
 			}
 			 } else if (whichEngineLocal == BibtexEngine) {
                  
@@ -1201,10 +1201,10 @@
 				 // Koch: ditto; allow spaces in path
 				 [args addObject: [bibPath lastPathComponent]];
 				 
-				 if (bibTask != nil) {
-					 [bibTask terminate];
-					 [bibTask release];
-					 bibTask = nil;
+				 if (self.bibTask != nil) {
+					 [self.bibTask terminate];
+			//		 [self.bibTask release];
+					 self.bibTask = nil;
 				 }
 				
                  
@@ -1245,8 +1245,8 @@
                  else {
                      
                      
-                     bibTask = [[NSTask alloc] init];
-                     [self startTask: bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+                     self.bibTask = [[NSTask alloc] init];
+                     [self startTask: self.bibTask running: bibtexEngineString withArgs: bibtexArgs inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
                  }
              
         
@@ -1269,13 +1269,13 @@
 				 // Koch: ditto, spaces in path
 				 [args addObject: [indexPath lastPathComponent]];
 				 
-				 if (indexTask != nil) {
-					 [indexTask terminate];
-					 [indexTask release];
-					 indexTask = nil;
+				 if (self.indexTask != nil) {
+					 [self.indexTask terminate];
+			//		 [self.indexTask release];
+					 self.indexTask = nil;
 				 }
-				 indexTask = [[NSTask alloc] init];
-				 [self startTask: indexTask running: @"makeindex" withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
+				 self.indexTask = [[NSTask alloc] init];
+				 [self startTask: self.indexTask running: @"makeindex" withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal];
 			  } else if (whichEngineLocal >= UserEngine) {
 				 NSString* userEngineName = [[[programButton itemAtIndex:(whichEngineLocal - 1)] title] stringByAppendingString:@".engine"];
 				 NSString* userEnginePath = [[EnginePath stringByAppendingString:@"/"] stringByAppendingString: userEngineName];
@@ -1284,18 +1284,18 @@
 				 // [args addObject: [userPath lastPathComponent]];
 				 [args addObject: [sourcePath lastPathComponent]];
 				 
-				 if (texTask != nil) {
-					 [texTask terminate];
-					 [texTask release];
-					 texTask = nil;
+				 if (self.texTask != nil) {
+					 [self.texTask terminate];
+		//			 [self.texTask release];
+					 self.texTask = nil;
 				 }
-				 texTask = [[NSTask alloc] init];
+				 self.texTask = [[NSTask alloc] init];
 				 
-				 if ([self startTask: texTask running: userEnginePath withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal] == FALSE) {
-					 [inputPipe release];
-					 [outputPipe release];
-					 [texTask release];
-					 texTask = nil;
+				 if ([self startTask: self.texTask running: userEnginePath withArgs: args inDirectoryContaining: sourcePath withEngine:whichEngineLocal] == FALSE) {
+		//			 [self.inputPipe release];
+		//			 [self.outputPipe release];
+		//			 [self.texTask release];
+					 self.texTask = nil;
 				 }
 			 }
 			}
@@ -1530,12 +1530,12 @@
 	NSData *myData;
 	NSString *command;
 
-	if ((typesetStart) && (inputPipe)) {
+	if ((typesetStart) && (self.inputPipe)) {
 		command = [[texCommand stringValue] stringByAppendingString:@"\n"];
 		command = [self filterBackslashes:command];
 
 		myData = [command dataUsingEncoding: NSISOLatin9StringEncoding allowLossyConversion:YES];
-		[writeHandle writeData: myData];
+		[self.writeHandle writeData: myData];
 		// added by mitsu --(L) reflect tex input and clear tex input field in console window
 		NSRange selectedRange = [outputText selectedRange];
 		
@@ -1584,8 +1584,8 @@
 
 	[self killRunningTasks];
 
-	[inputPipe release];
-	inputPipe = 0;
+//	[self.inputPipe release];
+	self.inputPipe = 0;
 }
 
 - (void)checkATaskStatus:(NSNotification *)aNotification
@@ -1604,34 +1604,34 @@
     
     // [outputText setEditable: YES];
 
-	if (([aNotification object] == bibTask) || ([aNotification object] == indexTask) || ([aNotification object] == metaFontTask)) {
-		if (inputPipe == [[aNotification object] standardInput]) {
-			[outputPipe release];
-			[writeHandle closeFile];
-			[inputPipe release];
-			inputPipe = 0;
-			if ([aNotification object] == bibTask) {
-				[bibTask terminate];
-				[bibTask release];
-				bibTask = nil;
-			} else if ([aNotification object] == indexTask) {
-				[indexTask terminate];
-				[indexTask release];
-				indexTask = nil;
-			} else if ([aNotification object] == metaFontTask) {
-				[metaFontTask terminate];
-				[metaFontTask release];
-				metaFontTask = nil;
+	if (([aNotification object] == self.bibTask) || ([aNotification object] == self.indexTask) || ([aNotification object] == self.metaFontTask)) {
+		if (self.inputPipe == [[aNotification object] standardInput]) {
+	//		[self.outputPipe release];
+			[self.writeHandle closeFile];
+	//		[self.inputPipe release];
+			self.inputPipe = 0;
+			if ([aNotification object] == self.bibTask) {
+				[self.bibTask terminate];
+	//			[self.bibTask release];
+				self.bibTask = nil;
+			} else if ([aNotification object] == self.indexTask) {
+				[self.indexTask terminate];
+	//			[self.indexTask release];
+				self.indexTask = nil;
+			} else if ([aNotification object] == self.metaFontTask) {
+				[self.metaFontTask terminate];
+	//			[self.metaFontTask release];
+				self.metaFontTask = nil;
 			}
 		}
 	}
 
 	taskDone = YES;  // for Applescript
 
-	if ([aNotification object] != texTask)
+	if ([aNotification object] != self.texTask)
 		return;
 
-	if (inputPipe == [[aNotification object] standardInput]) {
+	if (self.inputPipe == [[aNotification object] standardInput]) {
 		status = [[aNotification object] terminationStatus];
 
 		if ((status == 0) || (status == 1))  {
@@ -1641,7 +1641,7 @@
 			if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
 				myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 				endDate = [myAttributes objectForKey:NSFileModificationDate];
-				if ((startDate == nil) || ! [startDate isEqualToDate: endDate]) {
+				if ((self.startDate == nil) || ! [self.startDate isEqualToDate: endDate]) {
 					alreadyFound = YES;
 					PDFfromKit = YES;
 					[myPDFKitView reShowWithPath: imagePath];
@@ -1663,26 +1663,26 @@
 			if (! alreadyFound)  { // see if there is a temporary file
 				alternatePath = [[TempOutputKey stringByAppendingString:@"/"] stringByAppendingString:[imagePath lastPathComponent]];
 				if ([[NSFileManager defaultManager] fileExistsAtPath: alternatePath]) {
-					texRep = [[NSPDFImageRep imageRepWithContentsOfFile: alternatePath] retain];
+					self.texRep = [NSPDFImageRep imageRepWithContentsOfFile: alternatePath] ;
 					[[NSFileManager defaultManager] removeItemAtPath: alternatePath error:NULL];
-					if (texRep) {
+					if (self.texRep) {
 						[pdfWindow setTitle: [imagePath lastPathComponent]];
-						[pdfView setImageRep: texRep];
+						[pdfView setImageRep: self.texRep];
 						[pdfView setNeedsDisplay:YES];
 						[pdfWindow makeKeyAndOrderFront: self];
 					}
 				}
 
 			}
-			[texTask terminate];
-			[texTask release];
+			[self.texTask terminate];
+	//		[self.texTask release];
 		}
 
-		[outputPipe release];
-		[writeHandle closeFile];
-		[inputPipe release];
-		inputPipe = 0;
-		texTask = nil;
+	//	[self.outputPipe release];
+		[self.writeHandle closeFile];
+	//	[self.inputPipe release];
+		self.inputPipe = 0;
+		self.texTask = nil;
 	}
 }
 

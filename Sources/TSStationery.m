@@ -15,12 +15,13 @@
 - (id)init
 {
 	id result = [super init];
-	sourceData = nil;
-	fullSourceData = nil;
-	commentData = nil;
+	self.sourceData = nil;
+	self.fullSourceData = nil;
+	self.commentData = nil;
 	return result;
 }
 
+/*
 - (void)dealloc
 {
 	if (sourceData)
@@ -30,7 +31,8 @@
 	if (commentData)
 		[commentData release];
 	[super dealloc];
-}	
+}
+*/
 
 - (IBAction)newFromStationery: (id)sender
 {
@@ -39,14 +41,14 @@
 	NSInteger					i;
 	NSStringEncoding	enc;
 	
-	if (sourceData == nil) {
+	if (self.sourceData == nil) {
 		
-		sourceData = [[NSMutableArray alloc] initWithCapacity:10];
-		[sourceData retain];
-		fullSourceData = [[NSMutableArray alloc] initWithCapacity:10];
-		[fullSourceData retain];
-		commentData = [[NSMutableArray alloc] initWithCapacity:10];
-		[commentData retain];
+		self.sourceData = [[NSMutableArray alloc] initWithCapacity:10];
+		// [sourceData retain];
+		self.fullSourceData = [[NSMutableArray alloc] initWithCapacity:10];
+		// [fullSourceData retain];
+		self.commentData = [[NSMutableArray alloc] initWithCapacity:10];
+		// [commentData retain];
 		
 		NSFileManager *fileManager = [ NSFileManager defaultManager ];
 		NSString *basePath = [ StationeryPath stringByStandardizingPath ];
@@ -58,18 +60,18 @@
 			if (([fileManager fileExistsAtPath:path isDirectory: &isDirectory]) && (! isDirectory)) {
 				if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
 					title1 = [title stringByDeletingPathExtension];
-					[sourceData addObject: title1];
-					[fullSourceData addObject: title];
+					[self.sourceData addObject: title1];
+					[self.fullSourceData addObject: title];
 					path = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"comment"];
 					if (([fileManager fileExistsAtPath:path isDirectory: &isDirectory]) && (! isDirectory)) {
 						comment = [NSString stringWithContentsOfFile:path usedEncoding:&enc error: nil];
 						if (comment)
-							[commentData addObject: comment];
+							[self.commentData addObject: comment];
 						else 
-							[commentData addObject:@" "];
+							[self.commentData addObject:@" "];
 					}
 					else 
-						[commentData addObject:@" "];
+						[self.commentData addObject:@" "];
 					
 				}
 			}
@@ -82,7 +84,7 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [sourceData count];
+    return [self.sourceData count];
 }
 
 - (id)tableView:(NSTableView *)tableView
@@ -90,9 +92,9 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 			row:(NSInteger)row
 {
 	if ([[tableColumn identifier] isEqualToString:@"Description"])
-		return [commentData objectAtIndex: row];
+		return [self.commentData objectAtIndex: row];
 	else
-		return [sourceData objectAtIndex: row];
+		return [self.sourceData objectAtIndex: row];
 }
 
 
@@ -107,7 +109,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	[stationeryWindow close];
 	if (index1 >= 0) {
 		NSString *basePath = [ StationeryPath stringByStandardizingPath ];
-		NSString *fullPath = [basePath stringByAppendingPathComponent: [fullSourceData objectAtIndex: index1]];
+		NSString *fullPath = [basePath stringByAppendingPathComponent: [self.fullSourceData objectAtIndex: index1]];
 		// NSLog([sourceData objectAtIndex:index]);
 		// NSLog(fullPath);
 		myURL = [NSURL fileURLWithPath: fullPath];

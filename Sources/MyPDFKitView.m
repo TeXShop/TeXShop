@@ -61,15 +61,17 @@
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 
 	// Clean up.
-	if (_searchResults != NULL) {
-		[_searchResults removeAllObjects];
-		[_searchResults release];
-		_searchResults = NULL;
+/*
+	if (self.searchResults != NULL) {
+		[self.searchResults removeAllObjects];
+		[self.searchResults release];
+		self.searchResults = NULL;
 	}
-	[sourceFiles release];
+	[self.sourceFiles release];
 
 
 	[super dealloc];
+ */
 }
 
 - (id)init
@@ -145,7 +147,7 @@
 {
     
 
-    [myPDFWindow setDelegate: self];
+    [self.myPDFWindow setDelegate: self];
     
 	downOverLink = NO;
 	
@@ -247,11 +249,11 @@
 	if (![SUD boolForKey: UseOutlineKey])
 		return;
 
-	if (_outline)
-		[_outline release];
-	_outline = NULL;
-	_outline = [[[self document] outlineRoot] retain];
-	if (_outline)
+//	if (_outline)
+//		[_outline release];
+//	_outline = NULL;
+	self.outline = [[self document] outlineRoot];
+	if (self.outline)
 	{
 		// Remove text that says, "No outline."
 //		[_noOutlineText removeFromSuperview];
@@ -302,9 +304,9 @@
 	// mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	// [[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
 	
-	[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+	[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	currentMouseMode = mouseMode;
-	selRectTimer = nil;
+	self.selRectTimer = nil;
 	
 	totalRotation = 0;
 	
@@ -324,8 +326,10 @@
 {
 	PDFDocument	*pdfDoc;
 	NSData	*theData;
+    
+     NSDisableScreenUpdates();
 	
-	sourceFiles = nil;
+	self.sourceFiles = nil;
 	
 	// For the next line, we initialize once, but then when reshowing, 
 	// or even closing and opening the window, we keep the previous value
@@ -334,12 +338,12 @@
 	
 	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 	if ([self doReleaseDocument]) {
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+		pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
 		[self setDocument: pdfDoc];
 		// [pdfDoc release];
 	} else {
 		theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
-		pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+		pdfDoc = [[PDFDocument alloc] initWithData: theData];
 		[self setDocument: pdfDoc];
 	}
 		
@@ -351,8 +355,9 @@
 	[totalPage1 display];
 	[[self document] setDelegate: self];
 	[self setupOutline];
+    NSEnableScreenUpdates();
 	
-	[myPDFWindow makeKeyAndOrderFront: self];
+	[self.myPDFWindow makeKeyAndOrderFront: self];
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
 }
@@ -360,7 +365,7 @@
 - (void) showForSecond;
 {
 	// totalRotation = 0;
-	sourceFiles = nil;
+	self.sourceFiles = nil;
 	
 	if (mouseMode == 0)
 		mouseMode = currentMouseMode = [SUD integerForKey: PdfKitMouseModeKey];
@@ -380,14 +385,22 @@
 	NSInteger			i, amount, newAmount;
 	PDFPage		*myPage;
 	NSData		*theData;
-	
-	[[self window] disableFlushWindow];
+
+	// A note below explains dangers of NSDisableScreenUpdates
+    // but these dangers don't apply to Intel on recent systems.
+    // Experiments show that in single page mode, "disableFlushWindow"
+    // adds a flash showing the initial page before switching to the
+    // current page. NSDisableScreenUpdates fixes that.
+    
+    
+	// [[self window] disableFlushWindow];
+    NSDisableScreenUpdates();
 
 	[self cleanupMarquee: YES];
 	
-	if (sourceFiles != nil) {
-		[sourceFiles release];
-		sourceFiles = nil;
+	if (self.sourceFiles != nil) {
+//		[self.sourceFiles release];
+		self.sourceFiles = nil;
 	}
 	if ([self document] == nil)
 		needsInitialization = YES;
@@ -407,25 +420,25 @@
 	if (_searchResults != NULL) {
 		[_searchResults removeAllObjects];
 		[_searchTable reloadData];
-		[_searchResults release];
+//		[_searchResults release];
 		_searchResults = NULL;
 	}
 			
 	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 	if ([self doReleaseDocument]) {
 		// NSLog(@"texshop release");
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
+		pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
 		[self setDocument: pdfDoc];
 		// [pdfDoc release];
 	} else {
 		oldDoc = [self document];
 		theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
-		pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
+		pdfDoc = [[PDFDocument alloc] initWithData: theData];
 		// pdfDoc = [[PDFDocument alloc] initWithData: theData];
 		[self setDocument: pdfDoc];
 		if (oldDoc != NULL) {
 			[oldDoc setDelegate: NULL];
-			[oldDoc release];
+//			[oldDoc release];
 		}
 	}
 
@@ -460,12 +473,35 @@
 	aPage = [[self document] pageAtIndex: theindex];
 	[self goToPage: aPage];
 	
-	NSRect newFullRect = [[self documentView] bounds];
-	NSInteger difference = newFullRect.size.height - fullRect.size.height;
-	visibleRect.origin.y = visibleRect.origin.y + difference;
-		// [self display];
+    NSRect newFullRect = [[self documentView] bounds];
+    NSInteger difference = newFullRect.size.height - fullRect.size.height;
+    
+	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
-	[[self window] enableFlushWindow];
+
+/*
+//   The test just below seems to show that we need to adjust by -1, and then
+//   the visible rect ends up in the correct spot. Perhaps this is the width of the
+//   line around the rectange (?)
+    
+    NSNumber *myNumber = [NSNumber numberWithInteger: visibleRect.origin.y];
+    NSLog([myNumber stringValue]);
+    myNumber = [NSNumber numberWithInteger: visibleRect.size.height];
+    NSLog([myNumber stringValue]);
+//
+   NSInteger difference = -1;
+    
+//    NSRect  modifiedVisibleRect = NSInsetRect(visibleRect, 1, 1);
+ //   if (NSIsEmptyRect(modifiedVisibleRect))
+ //       modifiedVisibleRect = visibleRect;
+    
+	visibleRect.origin.y = visibleRect.origin.y + difference;
+	[[self documentView] scrollRectToVisible: visibleRect];
+    
+//    [self scrollRectToVisible: modifiedVisibleRect];
+*/
+	//[[self window] enableFlushWindow];
+    NSEnableScreenUpdates();
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 }
 
@@ -619,9 +655,9 @@
 	// but it doesn't seem to work there. If changes are made, be sure to test on
 	// Intel and on PowerPC.
 	
-	if (sourceFiles != nil) {
-		[sourceFiles release];
-		sourceFiles = nil;
+	if (self.sourceFiles != nil) {
+//		[self.sourceFiles release];
+		self.sourceFiles = nil;
 	}
 	aPage = [[self document] pageAtIndex: secondTheIndex];
 	[self goToPage: aPage];
@@ -660,7 +696,7 @@
 	[self cleanupMarquee: YES];
 
 	// [self rotateClockwisePrimary];
-	[(TSPreviewWindow *)myPDFWindow fixAfterRotation: YES];
+	[(TSPreviewWindow *)self.myPDFWindow fixAfterRotation: YES];
 	// [self layoutDocumentView];
 }
 
@@ -690,7 +726,7 @@
 	
 	// [self rotateCounterclockwisePrimary];
 
-	[(TSPreviewWindow *)myPDFWindow fixAfterRotation: NO];
+	[(TSPreviewWindow *)self.myPDFWindow fixAfterRotation: NO];
 	// [self layoutDocumentView];
 }
 
@@ -716,7 +752,7 @@
 	theScale = [self scaleFactor];
 	magsize = theScale * 100;
 	scaleMag = magsize;
-	if (self == [myDocument topView]) {
+	if (self == [self.myDocument topView]) {
 		[myScale setIntegerValue:magsize];
 		[myScale1 setIntegerValue:magsize];
 		[myScale display];
@@ -737,8 +773,8 @@
 	pageNumber = [[self document] indexForPage: aPage] + 1;
 	[currentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
-
-	// Skip out if there is no outline.
+    
+ 	// Skip out if there is no outline.
 	if ([[self document] outlineRoot] == NULL)
 		return;
 
@@ -847,7 +883,7 @@
 	magSize = [self magnification];
 	[self setScaleFactor: magSize];
 	if (sender == myScale1) {
-		[NSApp endSheet: [myDocument magnificationPanel]];
+		[NSApp endSheet: [self.myDocument magnificationPanel]];
 	}
 
 /*
@@ -945,7 +981,7 @@
 		[self cleanupMarquee: YES];
 	thePage = [sender integerValue];
 	if (sender == currentPage1)
-		[NSApp endSheet:[myDocument pagenumberPanel]];
+		[NSApp endSheet:[self.myDocument pagenumberPanel]];
 	[self goToKitPageNumber: thePage];
 
 
@@ -1162,7 +1198,10 @@
 			[pboard declareTypes:[NSArray arrayWithObjects: dataType, nil] owner:self];
 			[pboard setData:data forType:dataType];
 		} else
-			NSRunAlertPanel(@"Error", @"failed to copy selection.", nil, nil, nil);
+			NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                            NSLocalizedString(@"failed to copy selection.", @"failed to copy selection."),
+                            nil, nil, nil);
+
 		}
 }
 
@@ -1192,8 +1231,8 @@
 {
 	if (item == NULL)
 	{
-		if (_outline)
-			return [_outline numberOfChildren];
+		if (self.outline)
+			return [self.outline numberOfChildren];
 		else
 			return 0;
 	}
@@ -1207,13 +1246,13 @@
 {
 	if (item == NULL)
 	{
-		if (_outline)
-			return [[_outline childAtIndex: idx] retain];
+		if (self.outline)
+			return [self.outline childAtIndex: idx];
 		else
 			return NULL;
 	}
 	else
-		return [[(PDFOutline *)item childAtIndex: idx] retain];
+		return [(PDFOutline *)item childAtIndex: idx];
 }
 
 // ----------------------------------------------------------------------------------------- outlineView:isItemExpandable
@@ -1222,8 +1261,8 @@
 {
 	if (item == NULL)
 	{
-		if (_outline)
-			return ([_outline numberOfChildren] > 0);
+		if (self.outline)
+			return ([self.outline numberOfChildren] > 0);
 		else
 			return NO;
 	}
@@ -1252,7 +1291,7 @@
 
 	// Lazily allocate _searchResults.
 	if (_searchResults == NULL)
-		_searchResults = [[NSMutableArray arrayWithCapacity: 10] retain];
+		_searchResults = [NSMutableArray arrayWithCapacity: 10];
 
 	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
 }
@@ -1269,7 +1308,7 @@
 	if ([notification object] != [self document])
 		return;
 	// Empty arrays.
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		; 
 	else {
 	[_searchResults removeAllObjects];
@@ -1293,7 +1332,7 @@
 	if ([notification object] != [self document])
 		return;
 
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		; 
 	else {
 	
@@ -1312,7 +1351,7 @@
 		return;
 	}
 	
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		;
 		else {
 	// Add page label to our array.
@@ -1337,7 +1376,7 @@
 	if ([notification object] != [self document])
 		return;
 	
-	if (self != [myDocument topView])
+	if (self != [self.myDocument topView])
 		;
 	else {
 	[_searchProgress stopAnimation: self];
@@ -1354,8 +1393,8 @@
 
 - (NSInteger) numberOfRowsInTableView: (NSTableView *) aTableView
 {
-	if (self != [myDocument topView])
-		return ([[myDocument topView] numberOfRowsInTableView: aTableView]);
+	if (self != [self.myDocument topView])
+		return ([[self.myDocument topView] numberOfRowsInTableView: aTableView]);
 	else
 		return ([_searchResults count]);
 }
@@ -1365,8 +1404,8 @@
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) theColumn
 		row: (NSInteger) rowIndex
 {
-	if (self != [myDocument topView])
-		return ([[myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
+	if (self != [self.myDocument topView])
+		return ([[self.myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
 
 	else {
 		if ([[theColumn identifier] isEqualToString: @"page"])
@@ -1392,8 +1431,8 @@
 	rowIndex = [(NSTableView *)[notification object] selectedRow];
 	if (rowIndex >= 0)
 	{
-		if (self != [myDocument topView]) {
-			_firstSearchResults = [[myDocument topView] getSearchResults];
+		if (self != [self.myDocument topView]) {
+			_firstSearchResults = [[self.myDocument topView] getSearchResults];
 			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
 			}
 		else
@@ -1410,17 +1449,17 @@
 
 	if ([sender isKindOfClass: [NSButton class]] || [sender isKindOfClass: [NSMenuItem class]])
 	{
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
 		mouseMode = currentMouseMode = [sender tag];
-		[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+		[[self.myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	}
 	else if ([sender isKindOfClass: [NSMatrix class]])
 	{
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
 		mouseMode = currentMouseMode = [[sender selectedCell] tag];
-		[[myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
-		[[[myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+		[[self.myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
 	}
 
 	if ((oldMouseMode == NEW_MOUSE_MODE_SELECT_PDF) && (mouseMode != NEW_MOUSE_MODE_SELECT_PDF) &&
@@ -1496,7 +1535,7 @@
 {
 	NSRect	mySelectedRect;
 
-	if (selRectTimer)
+	if (self.selRectTimer)
 		mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
 
 	switch (currentMouseMode)
@@ -1511,7 +1550,7 @@
 		case NEW_MOUSE_MODE_SELECT_PDF:
 			[super resetCursorRects];
 			[self addCursorRect:[self visibleRect] cursor:[NSCursor crosshairCursor]];
-			if (selRectTimer)
+			if (self.selRectTimer)
 				[self addCursorRect:mySelectedRect cursor:[NSCursor arrowCursor]];
 			break;
 		case NEW_MOUSE_MODE_MAG_GLASS: // want magnifying glass cursor?
@@ -1816,7 +1855,15 @@
     
     
 	[NSGraphicsContext restoreGraphicsState];
+    
+    [NSGraphicsContext saveGraphicsState];
+    BOOL shouldAntiAlias = [SUD boolForKey: AntiAliasKey];
+    if (shouldAntiAlias) {
+        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+        }
 	[page drawWithBox:[self displayBox]];
+    [NSGraphicsContext restoreGraphicsState];
+
     
 	// Set up transform to handle rotated page.
     /*
@@ -1956,12 +2003,13 @@
 				break;
 			case NEW_MOUSE_MODE_SELECT_PDF:
                 
-             if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
+      //       if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
+                if ([self overView] && [self mouse: [self convertPoint:
                                                     [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
                  [self startDragging: theEvent];
             
             
-            else if (selRectTimer && [self mouse: [self convertPoint:
+            else if (self.selRectTimer && [self mouse: [self convertPoint:
 							  [theEvent locationInWindow] fromView: nil] inRect: [self convertRect:selectedRect fromView: [self documentView]]])
                 
 				
@@ -1974,11 +2022,12 @@
 					[self startDragging: theEvent];
 					// end mitsu 1.29
             
-				else if (atLeastMavericks)
+            else
                     [self selectARectForMavericks: theEvent];
                 
-                else
-					[self selectARect: theEvent];
+                
+        //        else
+		//			[self selectARect: theEvent];
                  
 				break;
 			case NEW_MOUSE_MODE_SELECT_TEXT:
@@ -2265,6 +2314,7 @@
 // Here are the routines used only by Mavericks
 // -----------------------------------------------------------------------
 
+/*
 - (void) setOverView:(OverView *)theOverView
 {
     overView = theOverView;
@@ -2274,6 +2324,7 @@
 {
     return overView;
 }
+*/
 
 // Obsolete Version
 /*
@@ -2358,12 +2409,24 @@
  
 - (void)selectARectForMavericks: (NSEvent *)theEvent
 {
+  
+//    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) &&
+//        ([self displayMode] != kPDFDisplaySinglePageContinuous) && ([self displayMode] != kPDFDisplayTwoUpContinuous))
+    
+      if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+        
+        return;
+    
+   //    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+   //         return;
+    
+    
     NSPoint mouseLocWindow, startPoint, currentPoint;
     BOOL startFromCenter = NO;
     
     [self cleanupMarquee: NO];
     
-    OverView *theOverView = [[[OverView alloc] initWithFrame: [[self documentView] frame] ] autorelease];
+    OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ] ;
     [self setOverView: theOverView];
     [[self documentView] addSubview: [self overView]];
     
@@ -2414,7 +2477,8 @@
             
             [[self overView] setDrawRubberBand: YES];
             [[self overView] setSelectionRect: selectedRect];
-            [[self overView] displayRect: [[self documentView] visibleRect]];
+            // [[self overView] displayRect: [[self documentView] visibleRect]];
+            [[self overView] setNeedsDisplayInRect:[[self documentView] visibleRect]];
             
         }
         else if ([theEvent type]==NSLeftMouseUp)
@@ -2436,7 +2500,8 @@
 - (void)cleanupMarquee: (BOOL)terminate
 {
     // for Mavericks
-    if (atLeastMavericks) {
+   //  if (atLeastMavericks) {
+    {
         OverView *theOverView = [self overView];
         if (theOverView) {
             [theOverView removeFromSuperview];
@@ -2447,7 +2512,7 @@
     
     NSRect		tempRect;
         
-        if (selRectTimer)
+        if (self.selRectTimer)
         {
             NSRect visRect = [[self documentView] visibleRect];
             // if (NSEqualRects(visRect, oldVisibleRect))
@@ -2469,8 +2534,8 @@
             oldVisibleRect.size.width = 0; // do not use this cache again
             if (terminate)
             {
-                [selRectTimer invalidate]; // this will release the timer
-                selRectTimer = nil;
+                [self.selRectTimer invalidate]; // this will release the timer
+                self.selRectTimer = nil;
             }
         }
 }
@@ -2541,7 +2606,7 @@
     
 	NSRect	theRect;
 	
-	if (selRectTimer)
+	if (self.selRectTimer)
 	{
 		theRect = NSInsetRect([[self documentView] convertRect: selectedRect toView: nil], -2, -2);
 		// [[self window] cacheImageInRect: theRect];
@@ -2552,7 +2617,7 @@
 
 - (BOOL)hasSelection
 {
-	return (selRectTimer != nil);
+	return (self.selRectTimer != nil);
 }
 
 
@@ -2726,13 +2791,13 @@
 	[NSEvent stopPeriodicEvents];
 	if (selectedRect.size.width > 3 && selectedRect.size.height > 3)
 	{
-		selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
+		self.selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
 			selector:@selector(updateMarquee:) userInfo:nil repeats:YES];
 		oldVisibleRect = [[self documentView] visibleRect];
 	}
 	else
 	{
-		selRectTimer = nil;
+		self.selRectTimer = nil;
 		[self updateBackground: rect]; //[[self window] restoreCachedImage];
 		[[self window] flushWindow];
 		rect = NSMakeRect(0, 0, 1, 1); //[[self window] discardCachedImage];
@@ -2811,7 +2876,7 @@
 		// display the image drawn in the buffer
 		[[self window] flushWindow];
 
-	selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
+	self.selRectTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target:self
 			selector:@selector(updateMarquee:) userInfo:nil repeats:YES];
 	oldVisibleRect = [self visibleRect];
 	}
@@ -2823,7 +2888,7 @@
 
 - (void) printDocument: sender
 {
-	[myDocument printDocument: sender];
+	[self.myDocument printDocument: sender];
 }
 
 
@@ -2841,7 +2906,7 @@
         return nil;
     NSImage *theImage = [[NSImage alloc] init];
     [theImage addRepresentation: imageRep];
-    [theImage autorelease];
+  //  [theImage autorelease];
     return theImage;
     }
 else
@@ -2865,6 +2930,42 @@ else
     
     return [[self documentView] dataWithPDFInsideRect:aRect];
 }
+
+- (NSImage *)imageFromRect:(NSRect)myRect
+{
+    NSPoint myLocation = [[self window] mouseLocationOutsideOfEventStream];
+    myLocation = [self convertPoint: myLocation fromView:nil];
+    PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
+    NSData	*myData = [myPage dataRepresentation];
+    NSPDFImageRep *myRep = [NSPDFImageRep imageRepWithData: myData];
+    
+    NSRect pageDataRect = [self convertRect:myRect toPage:myPage];
+    NSRect pageRect = [myPage boundsForBox: kPDFDisplayBoxMediaBox];
+    pageDataRect = NSIntersectionRect(pageDataRect, pageRect);
+    
+    MyDragView *myDragView = [[MyDragView alloc] initWithFrame: pageRect];
+    [myDragView setImageRep: myRep];
+    
+    double amount;
+    amount = [self magnification];
+    NSRect frameRect = [myDragView frame];
+    frameRect.size.width = frameRect.size.width * amount;
+    frameRect.size.height = frameRect.size.height * amount;
+    [myDragView setFrame: frameRect];
+    
+    NSSize mySize;
+    mySize.width = amount;
+    mySize.height = amount;
+    [myDragView scaleUnitSquareToSize: mySize];
+    
+    pageDataRect.size.height = pageDataRect.size.height * amount;
+    pageDataRect.size.width = pageDataRect.size.width * amount;
+    
+    return [[NSImage alloc] initWithData:[myDragView dataWithPDFInsideRect: pageDataRect]];
+    
+}
+
+
 
 // get image data from the selected rectangle with specified type
 - (NSData *)imageDataFromSelectionType: (NSInteger)type
@@ -2902,8 +3003,14 @@ else
 	NS_DURING
 	if (type != IMAGE_TYPE_PDF && type != IMAGE_TYPE_EPS)
 	{
-		if (NSContainsRect(visRect, mySelectedRect))
-		{	// if the rect is contained in visible rect
+        // Yusuke Terada Patch
+        if(mySelectedRect.size.width == 0 || mySelectedRect.size.height == 0){
+            bitmap = nil;
+        }
+        // end of patch
+        
+		else if (NSContainsRect(visRect, mySelectedRect))
+ 		{	// if the rect is contained in visible rect
 			[self cleanupMarquee: NO];
 			[self recacheMarquee];
 
@@ -2914,11 +3021,13 @@ else
 			// is near integer, then the size can be off by one (larger or smaller).
 			// So for safety, one might need to use the modified size.
 
+// Yusuke Terada replaced
+        /*
 			newRect = mySelectedRect;
 			// get a bit map image from window for the rect in view coordinate
 			[self lockFocus];
-			bitmap = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:
-											newRect] autorelease];
+			bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:
+											newRect] ;
 			[self unlockFocus];
 		}
 		else // there is some portion which is not visible
@@ -2938,6 +3047,28 @@ else
 			}
 #endif
 		}
+        */
+// by the following to end YT
+            
+            newRect = mySelectedRect;
+			// get a bit map image from window for the rect in view coordinate
+			[self lockFocus];
+            bitmap = [[NSBitmapImageRep alloc] initWithData:[[self imageFromRect:newRect] TIFFRepresentation]];
+			[self unlockFocus];
+		}
+		else // there is some portion which is not visible
+		{
+			NSImage *image = [self imageFromRect: mySelectedRect];
+            
+			if (image) {
+				[image setScalesWhenResized: NO];
+				[image setSize: NSMakeSize(floor(selRectWindow.size.width),
+                                           floor(selRectWindow.size.height))];
+				bitmap = [[NSBitmapImageRep alloc] initWithData:[image TIFFRepresentation]];
+			}
+		}
+            
+// end YT
 		// color mapping
 		if (bitmap && [SUD boolForKey:PdfColorMapKey]) {
 			if ([SUD stringForKey:PdfFore_RKey]) {
@@ -3119,7 +3250,7 @@ else
 			else
 				data = nil;
 				
-			[myDragView release];
+	//		[myDragView release];
 			
 			
 		// else // IMAGE_TYPE_EPSfile://localhost/Users/koch/Library/TeXShop/DraggedImages/texshop_image.pdf
@@ -3148,12 +3279,12 @@ else
 -(void)saveSelectionToFile: (id)sender
 {
 	NSSavePanel *savePanel = [NSSavePanel savePanel];
-	[savePanel  setAccessoryView: imageTypeView];
-	[imageTypeView retain];
-	NSInteger itemIndex = [imageTypePopup indexOfItemWithTag: [SUD integerForKey: PdfExportTypeKey]];
+	[savePanel  setAccessoryView: self.imageTypeView];
+//	[self.imageTypeView retain];
+	NSInteger itemIndex = [self.imageTypePopup indexOfItemWithTag: [SUD integerForKey: PdfExportTypeKey]];
 	if (itemIndex == -1) itemIndex = 0; // default PdfExportTypeKey
-	[imageTypePopup selectItemAtIndex: itemIndex];
-	[self chooseExportImageType: imageTypePopup]; // this sets up required type
+	[self.imageTypePopup selectItemAtIndex: itemIndex];
+	[self chooseExportImageType: self.imageTypePopup]; // this sets up required type
 	[savePanel setCanSelectHiddenExtension: YES];
 
 //	[savePanel beginSheetForDirectory:nil file:nil
@@ -3176,7 +3307,9 @@ else
                     if (data)
                         [data writeToFile:[[savePanel URL] path] atomically:YES];
                     else
-                        NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
+                        NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                                        NSLocalizedString(@"failed to save selection to the file.", @"failed to save selection to the file."),
+                                        nil, nil, nil);
                 }
             }];
 }
@@ -3270,7 +3403,7 @@ else
 			// WARNING: the next line causes a crash at program end!
 				[pboard setPropertyList:[NSArray arrayWithObject: filePath]
 									forType:NSFilenamesPboardType];
-			image = [[[NSImage alloc] initWithData: data] autorelease];
+			image = [[NSImage alloc] initWithData: data] ;
 			if (image) {
 				// drag pdf image here
 				offset = mySelectedRect.origin;
@@ -3344,10 +3477,10 @@ else
 
 	manager = [NSFileManager defaultManager];
 
-	rootPath = [[myDocument fileName] stringByDeletingLastPathComponent];
-	sourceFiles = [[NSMutableArray arrayWithCapacity: NUMBER_OF_SOURCE_FILES] retain];
+	rootPath = [[self.myDocument fileName] stringByDeletingLastPathComponent];
+	self.sourceFiles = [NSMutableArray arrayWithCapacity: NUMBER_OF_SOURCE_FILES] ;
 	currentIndex = 0;
-	sourceText = [[myDocument textView] string];
+	sourceText = [[self.myDocument textView] string];
 	sourceLength = [sourceText length];
 	
 	
@@ -3379,7 +3512,7 @@ else
 			    filePath = [filePath stringByStandardizingPath];
 			    // add this to the array
 			    if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
-					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					[self.sourceFiles insertObject: filePath atIndex: currentIndex];
 					currentIndex++;
 				}
 			}
@@ -3411,7 +3544,7 @@ else
 			    filePath = [filePath stringByStandardizingPath];
 			    // add this to the array
 			    if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
-					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					[self.sourceFiles insertObject: filePath atIndex: currentIndex];
 					currentIndex++;
 				}
 			}
@@ -3446,7 +3579,7 @@ else
 				filePath = [filePath stringByStandardizingPath];
 				// add this to the array
 				if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
-					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					[self.sourceFiles insertObject: filePath atIndex: currentIndex];
 					currentIndex++;
 				}
 			}
@@ -3484,14 +3617,14 @@ else
 				filePathNew = [filePathNew stringByStandardizingPath];
 				// add this to the array
 				if (([manager fileExistsAtPath: filePathNew isDirectory:&isDir]) && (!isDir)) {
-					[sourceFiles insertObject: filePathNew atIndex: currentIndex];
+					[self.sourceFiles insertObject: filePathNew atIndex: currentIndex];
 					currentIndex++;
 				} else {
 					filePath = [[rootPath stringByAppendingString:@"/"] stringByAppendingString: filePath];
 					filePath = [filePath stringByStandardizingPath];
 					// add this to the array
 					if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
-						[sourceFiles insertObject: filePath atIndex: currentIndex];
+						[self.sourceFiles insertObject: filePath atIndex: currentIndex];
 						currentIndex++;
 					}
 				}
@@ -3526,7 +3659,7 @@ else
 				filePath = [filePath stringByStandardizingPath];
 				// add this to the array
 				if (([manager fileExistsAtPath: filePath isDirectory:&isDir]) && (!isDir)) {
-					[sourceFiles insertObject: filePath atIndex: currentIndex];
+					[self.sourceFiles insertObject: filePath atIndex: currentIndex];
 					currentIndex++;
 				}
 			}
@@ -3547,7 +3680,7 @@ else
 
 /* // this section moved to TSDocument-SyncTeX
 
-	myFileName = [myDocument fileName];
+	myFileName = [self.myDocument fileName];
 	if (! myFileName)
 		return NO;
 	mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
@@ -3576,7 +3709,7 @@ else
 	CGFloat yCoordinate = pageSize.size.height - viewPosition.y;
 	
 	
-	return [myDocument doSyncTeXForPage: pageNumber x: xCoordinate y: yCoordinate yOriginal: yOriginalCoordinate]; 
+	return [self.myDocument doSyncTeXForPage: pageNumber x: xCoordinate y: yCoordinate yOriginal: yOriginalCoordinate];
 }
 
 
@@ -3645,18 +3778,18 @@ else
  if (theIndex < 0)
  return NO;
  
- if (sourceFiles == nil)
+ if (self.sourceFiles == nil)
  [self setupSourceFiles];
- numberOfFiles = [sourceFiles count];
+ numberOfFiles = [self.sourceFiles count];
  
- sourceText[0] = [[myDocument textView] string];
+ sourceText[0] = [[self.myDocument textView] string];
  sourcelength[0] = [sourceText[0] length];
  
  if (numberOfFiles > 0) {
  for (i = 0; i < numberOfFiles; i++) {
  
- theEncoding = [myDocument encoding];
- myData = [NSData dataWithContentsOfFile:[sourceFiles objectAtIndex:i]];
+ theEncoding = [self.myDocument encoding];
+ myData = [NSData dataWithContentsOfFile:[self.sourceFiles objectAtIndex:i]];
  
  // data in source
  firstBytes = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding];
@@ -3704,13 +3837,13 @@ else
  }
  }
  
- [firstBytes release];
+// [firstBytes release];
  
  
  
- aString = [[[NSString alloc] initWithData:myData encoding:theEncoding] autorelease];
+ aString = [[NSString alloc] initWithData:myData encoding:theEncoding] ;
  if (! aString) {
- aString = [[[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] autorelease];
+ aString = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] ;
  }
  
  sourceText[i + 1] = aString;
@@ -3768,11 +3901,11 @@ else
  if (foundOne && (!foundMoreThanOne)) {
  found = YES;
  if (foundIndex == 0) {
- myTextView = [myDocument textView];
- myTextWindow = [myDocument textWindow];
- [myDocument setTextSelectionYellow: YES];
+ myTextView = [self.myDocument textView];
+ myTextWindow = [self.myDocument textWindow];
+ [self.myDocument setTextSelectionYellow: YES];
  } else {
- newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+ newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[self.sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
  myTextView = [newDocument textView];
  myTextWindow = [newDocument textWindow];
  [newDocument setTextSelectionYellow: YES];
@@ -3841,10 +3974,10 @@ else
  if (foundOne && (!foundMoreThanOne)) {
  found = YES;
  if (foundIndex == 0) {
- myTextView = [myDocument textView];
- myTextWindow = [myDocument textWindow];
+ myTextView = [self.myDocument textView];
+ myTextWindow = [self.myDocument textWindow];
  } else {
- newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
+ newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[self.sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
  myTextView = [newDocument textView];
  myTextWindow = [newDocument textWindow];
  }
@@ -3942,13 +4075,13 @@ else
 		[self setupSourceFiles];
 	numberOfFiles = [sourceFiles count];
     
-	sourceText[0] = [[myDocument textView] string];
+	sourceText[0] = [[self.myDocument textView] string];
 	sourcelength[0] = [sourceText[0] length];
     
 	if (numberOfFiles > 0) {
 		for (i = 0; i < numberOfFiles; i++) {
             
-			theEncoding = [myDocument encoding];
+			theEncoding = [self.myDocument encoding];
 			myData = [NSData dataWithContentsOfFile:[sourceFiles objectAtIndex:i]];
             
 			// data in source
@@ -4061,9 +4194,9 @@ else
 		if (foundOne && (!foundMoreThanOne)) {
 			found = YES;
 			if (foundIndex == 0) {
-				myTextView = [myDocument textView];
-				myTextWindow = [myDocument textWindow];
-				[myDocument setTextSelectionYellow: YES];
+				myTextView = [self.myDocument textView];
+				myTextWindow = [self.myDocument textWindow];
+				[self.myDocument setTextSelectionYellow: YES];
                 mySelectedAttributes = [myTextView selectedTextAttributes];
                 newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
                 [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
@@ -4175,8 +4308,8 @@ else
             if (foundOne && (!foundMoreThanOne)) {
                 found = YES;
                 if (foundIndex == 0) {
-                    myTextView = [myDocument textView];
-                    myTextWindow = [myDocument textWindow];
+                    myTextView = [self.myDocument textView];
+                    myTextWindow = [self.myDocument textWindow];
                     mySelectedAttributes = [myTextView selectedTextAttributes];
                     newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
                     [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
@@ -4352,7 +4485,7 @@ else
 	
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [myDocument fileName];
+	NSString *fileName = [self.myDocument fileName];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -4663,10 +4796,10 @@ else
 		includeFileName = [theStack objectAtIndex: stackPointer];
 	
 	if (includeFileName == nil) {
-		[myDocument toLine:aNumber];
-		[[myDocument  textWindow] makeKeyAndOrderFront:self];
+		[self.myDocument toLine:aNumber];
+		[[self.myDocument  textWindow] makeKeyAndOrderFront:self];
 	} else {
-		newFileName = [[[myDocument fileName] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+		newFileName = [[[self.myDocument fileName] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 		newFileName = [newFileName stringByAppendingString: includeFileName];
 		theExtension = [newFileName pathExtension];
 		if ([theExtension length] == 0)
@@ -4723,7 +4856,7 @@ else
         NSStringEncoding theEncoding;
 
 // BUG: This causes a crash if NSDocument is being closed and the pdf window needs to be redrawn
-//	if (! [myDocument syncState])
+//	if (! [self.myDocument syncState])
 //	 	return;
 	
 	if (! showSync)
@@ -4736,7 +4869,7 @@ else
 
 	// now see if the sync file exists
 	fileManager = [NSFileManager defaultManager];
-	NSString *fileName = [myDocument fileName];
+	NSString *fileName = [self.myDocument fileName];
 	NSString *infoFile = [[fileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"pdfsync"];
 	if (![fileManager fileExistsAtPath: infoFile])
 		return;
@@ -4920,10 +5053,27 @@ else
 
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
-    if (atLeastMavericks)
-        [self doMagnifyingGlassMavericks: theEvent level:level] ;
-    else
-        [self doMagnifyingGlassML: theEvent level:level] ;
+    
+// Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
+// and the old routine has problems in all of these places.
+    
+ //      if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) &&
+ //          ([self displayMode] != kPDFDisplaySinglePageContinuous) && ([self displayMode] != kPDFDisplayTwoUpContinuous))
+           
+ //          [self doMagnifyingGlassML: theEvent level:level] ;
+    
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
+ //        [self doMagnifyingGlassML: theEvent level:level] ;
+        
+        return;
+    
+    else [self doMagnifyingGlassMavericks: theEvent level:level] ;
+
+    
+//    if (atLeastMavericks)
+//         [self doMagnifyingGlassMavericks: theEvent level:level] ;
+//    else
+//         [self doMagnifyingGlassML: theEvent level:level] ;
 }
 
 // Obsolte Mavericks Routine
@@ -5181,7 +5331,7 @@ oldVisibleRect.size.width = 0;
     tempRect = [[self documentView] visibleRect];
     thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
     thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
-    theImage = [[[NSImage alloc] init] autorelease];
+    theImage = [[NSImage alloc] init] ;
     [theImage addRepresentation:thePDFImageRep];
     
     [[self overView] setDrawRubberBand: NO];
@@ -5235,7 +5385,9 @@ oldVisibleRect.size.width = 0;
                 [[self overView] setDrawMagnifiedImage: YES];
                 [[self overView] setSelectionRect: magRectWindow];
                 [[self overView] setMagnifiedRect: theOriginalRect];
-                [[self overView] displayRect: [[self documentView] visibleRect]];
+                // [[self overView] displayRect: [[self documentView] visibleRect]];
+                [[self overView] setNeedsDisplayInRect: [[self documentView] visibleRect]];
+                
 
  			} else { // mouse is not in the rect
                 // show cursor
@@ -5261,6 +5413,7 @@ oldVisibleRect.size.width = 0;
 	[self flagsChanged: theEvent]; // update cursor
     
 }
+
 
 
 // Routine for Mountain Lion and lower
@@ -5353,7 +5506,7 @@ oldVisibleRect.size.width = 0;
 					rect = [self convertRect: rect fromView: nil];
 				}
 				// draw marquee
-				if (selRectTimer)
+				if (self.selRectTimer)
 					[self updateMarquee: nil];
 				
 				// resize bounds around mouseLocView
@@ -5591,7 +5744,7 @@ oldVisibleRect.size.width = 0;
 {
 	BOOL	result;
     
-	[(TSPreviewWindow *)myPDFWindow setActiveView: self];
+	[(TSPreviewWindow *)self.myPDFWindow setActiveView: self];
 	result =  [super becomeFirstResponder];
 	[self fixStuff];
 	[self resetSearchDelegate];
@@ -5667,12 +5820,12 @@ oldVisibleRect.size.width = 0;
         fullscreenPageStyle = 2;
     if (fullscreenResizeOption == 0)
         fullscreenResizeOption = 3;
-    [[myDocument myPdfKitView] changePDFViewSizeTo:fullscreenResizeOption];
-    [[myDocument myPdfKitView] changePageStyleTo: fullscreenPageStyle];
-    [[myDocument myPdfKitView2] changePDFViewSizeTo:fullscreenResizeOption];
-    [[myDocument myPdfKitView2] changePageStyleTo: fullscreenPageStyle];
+    [[self.myDocument myPdfKitView] changePDFViewSizeTo:fullscreenResizeOption];
+    [[self.myDocument myPdfKitView] changePageStyleTo: fullscreenPageStyle];
+    [[self.myDocument myPdfKitView2] changePDFViewSizeTo:fullscreenResizeOption];
+    [[self.myDocument myPdfKitView2] changePageStyleTo: fullscreenPageStyle];
 */
-    [myDocument enterFullScreen: notification];
+    [self.myDocument enterFullScreen: notification];
 
 }
 
@@ -5683,12 +5836,12 @@ oldVisibleRect.size.width = 0;
 /*
     fullscreenPageStyle = pageStyle;
     fullscreenResizeOption = resizeOption;
-    [[myDocument myPdfKitView] changePDFViewSizeTo: oldResizeOption];
-    [[myDocument myPdfKitView] changePageStyleTo:oldPageStyle];
-    [[myDocument myPdfKitView2] changePDFViewSizeTo: oldResizeOption];
-    [[myDocument myPdfKitView2] changePageStyleTo:oldPageStyle];
+    [[self.myDocument myPdfKitView] changePDFViewSizeTo: oldResizeOption];
+    [[self.myDocument myPdfKitView] changePageStyleTo:oldPageStyle];
+    [[self.myDocument myPdfKitView2] changePDFViewSizeTo: oldResizeOption];
+    [[self.myDocument myPdfKitView2] changePageStyleTo:oldPageStyle];
 */
-    [myDocument exitFullScreen: notification];
+    [self.myDocument exitFullScreen: notification];
 }
 
 

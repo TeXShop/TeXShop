@@ -26,53 +26,59 @@ Pythontex is available through CTAN at \href{http://www.ctan.org/pkg/pythontex}{
 
 \section{Installing Pythontex}
 
-At the above TUG site, click on the CTAN path link, ``macros/latex/contrib/pythontex''
-In the right column of the resulting page, click on the link at the top to download everything.
-This will give a folder named pythontex.
+PythonTeX is now part of TeX Live. If you update TeX Live 2013 regularly using TeX Live Utility, you
+ already have it. Check /usr/local/texlive/2013/texmf-dist/scripts/pythontex. If this location does not
+exist, run TeX Live Utility and either upgrade your entire distribution or else add the pythontex package.
 
-The author recommends installing pythontex directly in the main TeX Live directory, rather than
-say in /usr/local/texlive/texmf-local, because eventually pythontex will become a standard package and then the TeX Live update system will automatically update it. We'll follow
-his advice.
-
-Assuming you have TeX Live 2013, run Terminal in /Applications/Utilities and type the following commands:
-\begin{verbatim}
-     cd /usr/local/texlive/2013
-     open .
-\end{verbatim}
-A window will open showing the contents of TeX Live. In the directory texmf-dist/scripts, create a folder
-named pythontex and drag the following files into this folder; you will have to type your password several times:
-\begin{verbatim}
-     pythontex.py, pythontex2.py, pythontex3.py
-     pythontex_types2.py, pythontex_types3.py
-     pythontex_utils.py
-     depythontex.py, depythontex2.py, depythontex3.py
-\end{verbatim}
-
-In the directory texmf-dist/tex/latex, create a folder named pythontex and drag the following file into this folder:
-\begin{verbatim}
-     pythontex.sty
-\end{verbatim}
-
-Create two symbolic links in the binary directory using Terminal by running the following
-commands:
-
-\begin{verbatim}
-     cd /usr/texbin
-     sudo ln -s ../../texmf-dist/scripts/pythontex/pythontex.py pythontex.py
-     sudo ln -s ../../texmf-dist/scripts/pythontex/depythotex.py depythontex.py
-\end{verbatim}
-
-Change permissions on the python scripts using Terminal by running the following commands:
-
-\begin{verbatim}
-     cd /usr/local/texlive/2013/texmf-dist/scripts/pythontex
-     chmod 755 *
-\end{verbatim}
-
-Finally, in Terminal run the command
-\begin{verbatim}
-     sudo mktexlsr
-\end{verbatim}
+%
+%
+%At the above TUG site, click on the CTAN path link, ``macros/latex/contrib/pythontex''
+%In the right column of the resulting page, click on the link at the top to download everything.
+%This will give a folder named pythontex.
+%
+%The author recommends installing pythontex directly in the main TeX Live directory, rather than
+%say in /usr/local/texlive/texmf-local, because eventually pythontex will become a standard package and then the TeX Live update system will automatically update it. We'll follow
+%his advice.
+%
+%Assuming you have TeX Live 2013, run Terminal in /Applications/Utilities and type the following commands:
+%\begin{verbatim}
+%     cd /usr/local/texlive/2013
+%     open .
+%\end{verbatim}
+%A window will open showing the contents of TeX Live. In the directory texmf-dist/scripts, create a folder
+%named pythontex and drag the following files into this folder; you will have to type your password several times:
+%\begin{verbatim}
+%     pythontex.py, pythontex2.py, pythontex3.py
+%     pythontex_2to3.py
+%     pythontex_utils.py
+%     depythontex.py, depythontex2.py, depythontex3.py
+%\end{verbatim}
+%
+%In the directory texmf-dist/tex/latex, create a folder named pythontex and drag the following file into this folder:
+%\begin{verbatim}
+%     pythontex.sty
+%\end{verbatim}
+%
+%Create two symbolic links in the binary directory using Terminal by running the following
+%commands:
+%
+%\begin{verbatim}
+%     cd /usr/texbin
+%     sudo ln -s ../../texmf-dist/scripts/pythontex/pythontex.py pythontex.py
+%     sudo ln -s ../../texmf-dist/scripts/pythontex/depythotex.py depythontex.py
+%\end{verbatim}
+%
+%Change permissions on the python scripts using Terminal by running the following commands:
+%
+%\begin{verbatim}
+%     cd /usr/local/texlive/2013/texmf-dist/scripts/pythontex
+%     chmod 755 *
+%\end{verbatim}
+%
+%Finally, in Terminal run the command
+%\begin{verbatim}
+%     sudo mktexlsr
+%\end{verbatim}
 
 \section{Installing Python}
 Python is already installed on OS X, but unfortunately the pythontex system requires

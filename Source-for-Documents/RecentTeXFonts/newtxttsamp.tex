@@ -1,0 +1,49 @@
+% !TEX TS-program = pdflatexmk
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line, no indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+%\usepackage[full]{textcomp}
+\usepackage[scaled=.95]{garamondx}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage{newtxtt}%  
+%\usepackage{amsmath,amsthm}
+\usepackage[garamondx,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\pagestyle{empty}
+%\def\lctt#1{{\fontfamily{zlmtt}\fontseries{lc}\selectfont #1}}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+\begin{document}
+\thispagestyle{empty}
+\begin{description}
+\item[Package name:] {\tt newtxtt} (Typewriter fonts from {\tt txfonts})
+\item[Derived from:] Original design to match width of {\tt cmtt}, but weight and height of Times. 
+\item[Weights and shapes:]  \{m, b\}, \{n, sl\}. 
+\item[Features:]{\color{white}x}\\[-15pt]  
+\begin{itemize}
+\item few encodings available: T1, TS1;
+\item four forms of `zero' to choose from with option {\tt zerostyle} one of {\tt a, b, c, d}---the default is {\tt a}, an unslashed {\tt 0}, narrower than the capital letter {\tt O}; 
+\item \texttt{\textsc{Small Caps}} variant in upright shapes only;
+\item variants are available (option {\tt space}) which provide a limited form of text font, having the same monospaced glyphs, but permitting hyphenation and smaller (and variable) interword spacing---the macros \verb|\ttzdefault|, \verb|\ttzfamily|, \verb|\ttz| behave like their monospace cousins, while \verb|\nomono| changes the meanings of the \verb|\tt| macros to their \verb|\ttz| forms;
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[scaled=1.02]{newtxtt}% txfonts typewriter
+\end{verbatim}
+\item[Example using this preamble:] (with \verb|\texttt|)\\[6pt]
+\texttt{\lipsum[1]}
+%\textit{\lipsum[2]}
+\texttt{0123456789 (medium)}\\
+\texttt{\textbf{0123456789} (bold)}\\[6pt]
+(With \verb|space| option,)\\
+{\usefont{T1}{newtxttz}{m}{n}\lipsum[1]}
+\end{description}
+\end{document}  

@@ -48,12 +48,14 @@
 	IBOutlet NSButton *optionCheckBox;
 	IBOutlet NSButton *controlCheckBox;
 
-	TSMacroTreeNode *previousItem;	// record previously selected item
+//	TSMacroTreeNode *previousItem;	// record previously selected item
 	BOOL dataTouched;
 	BOOL nameTouched;
 	BOOL contentTouched;
 	BOOL keyTouched;
 }
+
+@property (retain) TSMacroTreeNode *previousItem;	// record previously selected item
 
 + (id)sharedInstance;
 

@@ -1,0 +1,18 @@
+#!/bin/tcsh
+
+# Version 2.0.4
+# Author: Nicola Vitacolonna (nvitacolonna@gmail.com)
+
+# Uncomment the following to debug:
+#set echo
+#set verbose
+
+set lilypondfolder = /Applications/TeX  # Custom LilyPond folder
+set path = ($path /Applications/Lilypond.app/Contents/Resources/bin/)
+set path = ($path /opt/local/bin)
+set path = ($path /sw/bin)
+if ( $?lilypondfolder ) then
+	set path = ($path $lilypondfolder/Lilypond.app/Contents/Resources/bin/)
+endif
+convert-ly -e "$1"
+open -a TeXShop "$1"

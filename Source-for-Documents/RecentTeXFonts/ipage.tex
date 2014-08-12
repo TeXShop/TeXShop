@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[margin=1.18in]{geometry} 
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line, no indent
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line rather than an indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+\usepackage[full]{textcomp}
+\usepackage[sups,osf]{fbb}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[varqu,varl]{zi4}% inconsolata
+\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\pagestyle{empty}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+\begin{document}
+\thispagestyle{empty}
+\lipsum[1]
+The typeset math below follows the ISO recommendations that only variables
+be set in italic. Note the use of upright shapes for $\d$, $\mathrm{e}$
+and $\uppi$. (The first two are entered as \verb|\mathrm{d}| and
+\verb|\mathrm{e}|, and in fonts derived from {\tt mtpro2} or {\tt newtxmath},
+ the latter is entered as \verb|\uppi|.)
+
+\textbf{Simplest form of the \textit{Central Limit Theorem}:} \textit{Let
+$X_1$, $X_2,\cdots$ be a sequence of iid random variables with mean $0$ 
+and variance $1$ on a probability space $(\Omega,\mathcal{F},\Pr)$. Then}
+\[\Pr\left(\frac{X_1+\cdots+X_n}{\sqrt{n}}\le y\right)\to\mathfrak{N}(y)\coloneq
+\int_{-\infty}^y \frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,
+\mathrm{d}t\quad\mbox{as $n\to\infty$,}\]
+\textit{or, equivalently, letting} $S_n\coloneq\sum_1^n X_k$,
+\[\mathbb{E} f\left(S_n/\sqrt{n}\right)\to \int_{-\infty}^\infty f(t)
+\frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,\mathrm{d}t
+\quad\mbox{as $n\to\infty$, for every $f\in\mathrm{b}
+\mathcal{C}(\mathbb{R})$.}\]
+\end{document}  

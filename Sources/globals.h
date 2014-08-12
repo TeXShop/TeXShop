@@ -274,6 +274,7 @@ extern NSString *PdfKitWindowNameKey;
 extern NSString *PdfWindowPosModeKey;
 extern NSString *PdfPageStyleKey; // mitsu 1.29 (O)
 extern NSString *PdfRefreshKey;
+extern NSString *AntiAliasKey;
 extern NSString *RefreshTimeKey;
 extern NSString *PdfFileRefreshKey;
 extern NSString *PdfFirstPageStyleKey;
@@ -421,6 +422,10 @@ extern NSString *fullscreenResizeOptionKey;
 extern NSString *ScreenFontForLogAndConsoleKey;
 extern NSString *WatchServerKey;
 extern NSString *SourceInterlineSpaceKey;
+extern NSString *SpellingLanguageKey;
+extern NSString *SpellingAutomaticLanguageKey;
+extern NSString *TagMenuInMenuBarKey;
+extern NSString *ResetSourceTextColorEachTimeKey;
 
 
 // end defaults
@@ -477,12 +482,14 @@ extern NSString *CommandCompletionCharNotification;
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
 extern NSInteger            g_commentChar;
-extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
-extern NSArray				*g_autocompletionKeys; // added by Terada
 
-extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag) 
-extern BOOL					automaticLanguage; 
-extern NSString				*defaultLanguage;
+// Now in Global Data
+// extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
+// extern NSArray				*g_autocompletionKeys; // added by Terada
+
+// extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag)
+extern BOOL                 specialWindowOpened; // YES if a window containing a % !TEX language directive was opened
+extern BOOL					automaticLanguage;
 
 extern NSStringEncoding    NSISOLatin9StringEncoding;
 
@@ -505,4 +512,6 @@ NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
 #define LEOPARD 568 // added by Terada
 
-
+extern NSString *placeholderString;
+extern NSString *startcommentString;
+extern NSString *endcommentString;

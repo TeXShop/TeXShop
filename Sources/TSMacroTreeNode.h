@@ -47,11 +47,21 @@
 	NSString *_key;
 }
 
+@property (retain) TSMacroTreeNode *nodeParent;
+@property (retain) NSMutableArray *nodeChildren;
+@property (retain) NSString       *name;
+@property (retain) NSString       *content;
+@property (retain) NSString       *key;
+
+@property (retain) NSString      *realName;
+@property (retain) NSString      *realContent;
+@property (retain) NSString      *realKey;
+
 - (id)initWithParent:(TSMacroTreeNode*)parent children:(NSArray*)children;
 
 // basic tree structure from Apple Sample code DragNDropOutlineView/TreeNode
-- (void)setNodeParent:(TSMacroTreeNode*)parent;
-- (TSMacroTreeNode*)nodeParent;
+// - (void)setNodeParent:(TSMacroTreeNode*)parent;
+// - (TSMacroTreeNode*)nodeParent;
 - (BOOL)isAlive;	// usually an item is alive if and only if it has nodeParent except forthe root of tree
 
 - (void)addChild:(TSMacroTreeNode*)child;
@@ -91,14 +101,14 @@
 + (id)separatorNode;
 
 // getting and setting properties
-- (NSString*)name;
-- (void)setName: (NSString*)name;
+// - (NSString*)name;
+// - (void)setName: (NSString*)name;
 
-- (NSString*)content;
-- (void)setContent:(NSString*)aContent;
+// - (NSString*)content;
+// - (void)setContent:(NSString*)aContent;
 
-- (NSString*)key;
-- (void)setKey:(NSString*)key;
+// - (NSString*)key;
+// - (void)setKey:(NSString*)key;
 
 - (BOOL)isLeaf;
 - (BOOL)isGroup;

@@ -60,31 +60,32 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 + (TSMacroOutlineController *)sharedInstance
 {
 	if (_sharedOutlineViewController == nil)
-		_sharedOutlineViewController = [[[TSMacroOutlineController alloc] init] autorelease];
+		_sharedOutlineViewController = [[TSMacroOutlineController alloc] init];
 	return _sharedOutlineViewController;
 }
 
 - (id)init
 {
-	if (_sharedOutlineViewController)
-		[super dealloc];
-	else {
-		_sharedOutlineViewController = [super init];
-		rootOfTree = nil; //[[TSMacroTreeNode alloc] init];
-		draggedNodes = nil;
+	if (!_sharedOutlineViewController)
+    {
+        _sharedOutlineViewController = [super init];
+		self.rootOfTree = nil; //[[TSMacroTreeNode alloc] init];
+		self.draggedNodes = nil;
 	}
 	return _sharedOutlineViewController;
 }
 
+/*
 - (void)dealloc
 {
-	if (rootOfTree)
-		[rootOfTree release];
-	if (draggedNodes)
-		[draggedNodes release];
+	if (self.rootOfTree)
+		[self.rootOfTree release];
+	if (self.draggedNodes)
+		[self.draggedNodes release];
 	[super dealloc];
 	_sharedOutlineViewController = nil;
 }
+*/
 
 - (void)awakeFromNib
 {
@@ -94,7 +95,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	// Insert custom cell types into the table view, the standard one does text only.
 	// We want one column to have text and images, and one to have check boxes.
 	tableColumn = [outlineView tableColumnWithIdentifier: COLUMNID_NAME];
-	imageAndTextCell = [[[ImageAndTextCell alloc] init] autorelease];
+	imageAndTextCell = [[ImageAndTextCell alloc] init];
 	[imageAndTextCell setEditable: YES];
 	[tableColumn setDataCell:imageAndTextCell];
 
@@ -109,26 +110,29 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)setRootOfTree: (TSMacroTreeNode *)newRootOfTree
 {
-	[newRootOfTree retain];
-	[rootOfTree release];
-	rootOfTree = newRootOfTree;
-	draggedNodes = nil;
+	self.specialRootOfTree = newRootOfTree;
+//    [newRootOfTree retain];
+//	[rootOfTree release];
+//	rootOfTree = newRootOfTree;
+	self.draggedNodes = nil;
 	[outlineView reloadData];
 }
 
 - (TSMacroTreeNode *)rootOfTree
 {
-	return rootOfTree;
+	return self.specialRootOfTree;
 }
 
 // ================================================================
 //  NSOutlineView related methods.
 // ================================================================
 
+/*
 - (NSArray*)draggedNodes
 {
 	return draggedNodes;
 }
+*/
 
 - (NSArray *)selectedNodes
 {
@@ -155,7 +159,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	NSIndexSet		*myIndexSet;
 	NSInteger childIndex = 0, newRow = 0;
 	NSArray *selectedNodes = [self selectedNodes];
-	TSMacroTreeNode *selectedNode = ([selectedNodes count] ? [selectedNodes lastObject] : rootOfTree);
+	TSMacroTreeNode *selectedNode = ([selectedNodes count] ? [selectedNodes lastObject] : self.rootOfTree);
 	TSMacroTreeNode *parentNode = nil;
 	
 	if ([selectedNode isGroup]) {
@@ -192,8 +196,8 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	TSMacroTreeNode *parentNode = nil;
 
 	if ([selectedNodes count] == 0) {
-		parentNode = rootOfTree;
-		childIndex = [rootOfTree numberOfChildren];
+		parentNode = self.rootOfTree;
+		childIndex = [self.rootOfTree numberOfChildren];
 	} else {
 		selectedNode = [selectedNodes lastObject];
 		parentNode = [selectedNode nodeParent];
@@ -246,7 +250,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 - (void)sortData: (id)sender
 {
 	NSArray *itemsToSelect = [self selectedNodes];
-	[rootOfTree recursiveSortChildren];
+	[self.rootOfTree recursiveSortChildren];
 	[outlineView reloadData];
 	[outlineView selectItems: itemsToSelect byExtendingSelection: NO];
 }
@@ -261,7 +265,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 // Required methods.
 - (id)outlineView:(NSOutlineView *)olv child:(NSInteger)idx ofItem:(id)item
 {
-	return [(item)?((TSMacroTreeNode*)item):rootOfTree childAtIndex:idx];
+	return [(item)?((TSMacroTreeNode*)item):self.rootOfTree childAtIndex:idx];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)olv isItemExpandable:(id)item
@@ -271,7 +275,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (NSInteger)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item
 {
-	return [(item)?((TSMacroTreeNode*)item):rootOfTree numberOfChildren];
+	return [(item)?((TSMacroTreeNode*)item):self.rootOfTree numberOfChildren];
 }
 
 - (id)outlineView:(NSOutlineView *)olv objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
@@ -345,7 +349,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (BOOL)outlineView:(NSOutlineView *)olv writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard
 {
-	draggedNodes = items; // Don't retain since this is just holding temporaral drag information, and it is only used during a drag!  We could put this in the pboard actually.
+	self.draggedNodes = items; // Don't retain since this is just holding temporaral drag information, and it is only used during a drag!  We could put this in the pboard actually.
 
 	// Provide data for our custom type, and simple NSStrings.
 	[pboard declareTypes:[NSArray arrayWithObjects: DragDropSimplePboardType, NSStringPboardType, nil] owner:self];
@@ -354,7 +358,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	[pboard setData:[NSData data] forType:DragDropSimplePboardType];
 
 	// Put string data on the pboard... notice you candrag into TextEdit!
-	NSString *draggedString = ([draggedNodes count]>0)?([[draggedNodes objectAtIndex: 0] content]):@"";
+	NSString *draggedString = ([self.draggedNodes count]>0)?([[self.draggedNodes objectAtIndex: 0] content]):@"";
 	if (!draggedString)
 		draggedString = @"";	// content may be nil?
 	if (g_shouldFilter == kMacJapaneseFilterMode) {
@@ -387,7 +391,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 		// Refuse if: dropping "on" the view itself unless we have no data in the view.
 		if ((targetNode==nil) && (childIndex==NSOutlineViewDropOnItemIndex) &&
-								([rootOfTree numberOfChildren]!=0))
+								([self.rootOfTree numberOfChildren]!=0))
 			targetNodeIsValid = NO;
 
 		if ((targetNode==nil) && (childIndex==NSOutlineViewDropOnItemIndex) && ((allowOnDropOnLeaf)==NO))
@@ -401,8 +405,8 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 		// Check to make sure we don't allow a node to be inserted into one of its descendants!
 		if (targetNodeIsValid && ([info draggingSource]==outlineView) && [[info draggingPasteboard] availableTypeFromArray:[NSArray arrayWithObject: DragDropSimplePboardType]] != nil) {
-			NSArray *_draggedNodes = [(TSMacroOutlineController *)[[info draggingSource] dataSource] draggedNodes];
-			targetNodeIsValid = ![targetNode isDescendantOfNodeInArray: _draggedNodes];
+			NSArray *myDraggedNodes = [(TSMacroOutlineController *)[[info draggingSource] dataSource] draggedNodes];
+			targetNodeIsValid = ![targetNode isDescendantOfNodeInArray: myDraggedNodes];
 		}
 	}
 
@@ -421,19 +425,19 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 	// Do the appropriate thing depending on whether the data is DragDropSimplePboardType or NSStringPboardType.
 	if ([pboard availableTypeFromArray:[NSArray arrayWithObjects:DragDropSimplePboardType, nil]] != nil) {
 		TSMacroOutlineController *dragDataSource = [[info draggingSource] dataSource];
-		NSArray *_draggedNodes = [TSMacroTreeNode minimumNodeCoverFromNodesInArray: [dragDataSource draggedNodes]];
-		NSEnumerator *draggedNodesEnum = [_draggedNodes objectEnumerator];
-		TSMacroTreeNode *_draggedNode = nil, *_draggedNodeParent = nil;
+		NSArray *myDraggedNodes = [TSMacroTreeNode minimumNodeCoverFromNodesInArray: [dragDataSource draggedNodes]];
+		NSEnumerator *draggedNodesEnum = [myDraggedNodes objectEnumerator];
+		TSMacroTreeNode *aDraggedNode = nil, *aDraggedNodeParent = nil;
 		
 		itemsToSelect = [NSMutableArray arrayWithArray:[self selectedNodes]];
 		
-		while ((_draggedNode = [draggedNodesEnum nextObject])) {
-			_draggedNodeParent = (TSMacroTreeNode *)[_draggedNode nodeParent];
-			if (parentNode==_draggedNodeParent && [parentNode indexOfChild: _draggedNode]<childIndex)
+		while ((aDraggedNode = [draggedNodesEnum nextObject])) {
+			aDraggedNodeParent = (TSMacroTreeNode *)[aDraggedNode nodeParent];
+			if (parentNode==aDraggedNodeParent && [parentNode indexOfChild: aDraggedNode]<childIndex)
 				childIndex--;
-			[_draggedNodeParent removeChild: _draggedNode];
+			[aDraggedNodeParent removeChild: aDraggedNode];
 		}
-		[parentNode insertChildren: _draggedNodes atIndex: childIndex];
+		[parentNode insertChildren: myDraggedNodes atIndex: childIndex];
 	} else if ([pboard availableTypeFromArray:[NSArray arrayWithObject: NSStringPboardType]]) {
 		NSString *string = [pboard stringForType: NSStringPboardType];
 		NSString *tempStr = string;
@@ -447,7 +451,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 		if (g_shouldFilter)	// we only use backslashes
 			string = filterYenToBackslash(string);
 		TSMacroTreeNode *newItem = [TSMacroTreeNode nodeWithName: nameStr content: string key: nil];
-		[nameStr release];
+	//	[nameStr release];
 		
 		itemsToSelect = [NSMutableArray arrayWithObject: newItem];
 		[parentNode insertChild: newItem atIndex:childIndex++];
@@ -466,7 +470,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 		parentNode = (childIndex == NSOutlineViewDropOnItemIndex ? [targetItem nodeParent] : targetItem);
 		childIndex = (childIndex == NSOutlineViewDropOnItemIndex ? [[targetItem nodeParent] indexOfChild: targetItem] + 1 : 0);
 	} else {
-		parentNode = (targetItem ? targetItem : rootOfTree);
+		parentNode = (targetItem ? targetItem : self.rootOfTree);
 		childIndex = (childIndex == NSOutlineViewDropOnItemIndex ? 0 : childIndex);
 	}
 
@@ -557,18 +561,22 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 @implementation ImageAndTextCell
 
+/*
 - (void)dealloc {
 	[image release];
 	image = nil;
 	[super dealloc];
 }
+*/
 
 - copyWithZone:(NSZone *)zone {
 	ImageAndTextCell *cell = (ImageAndTextCell *)[super copyWithZone:zone];
-	cell->image = [image retain];
+//	cell->image = [image retain];
+    cell.image = self.image;
 	return cell;
 }
 
+/*
 - (void)setImage:(NSImage *)anImage {
 	if (anImage != image) {
 		[image release];
@@ -579,11 +587,12 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 - (NSImage *)image {
 	return image;
 }
+*/
 
 - (NSRect)imageFrameForCellFrame:(NSRect)cellFrame {
-	if (image != nil) {
+	if (self.image != nil) {
 		NSRect imageFrame;
-		imageFrame.size = [image size];
+		imageFrame.size = [self.image size];
 		imageFrame.origin = cellFrame.origin;
 		imageFrame.origin.x += 3;
 		imageFrame.origin.y += ceil((cellFrame.size.height - imageFrame.size.height) / 2);
@@ -595,22 +604,22 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject event:(NSEvent *)theEvent {
 	NSRect textFrame, imageFrame;
-	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image size].width, NSMinXEdge);
 	[super editWithFrame: textFrame inView: controlView editor:textObj delegate:anObject event: theEvent];
 }
 
 - (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(NSInteger)selStart length:(NSInteger)selLength {
 	NSRect textFrame, imageFrame;
-	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image size].width, NSMinXEdge);
 	[super selectWithFrame: textFrame inView: controlView editor:textObj delegate:anObject start:selStart length:selLength];
 }
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-	if (image != nil) {
+	if (self.image != nil) {
 		NSSize	imageSize;
 		NSRect	imageFrame;
 
-		imageSize = [image size];
+		imageSize = [self.image size];
 		NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + imageSize.width, NSMinXEdge);
 		if ([self drawsBackground]) {
 			[[self backgroundColor] set];
@@ -630,7 +639,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 		NSRect imageSrcRect;
 		imageSrcRect.size = imageSize;
 		imageSrcRect.origin = NSMakePoint(0,0);
-		[image drawInRect: imageFrame fromRect: imageSrcRect
+		[self.image drawInRect: imageFrame fromRect: imageSrcRect
 						operation: NSCompositeSourceOver fraction: 1.0];
 // original was:
 		//imageFrame.size = imageSize;

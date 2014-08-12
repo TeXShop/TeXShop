@@ -28,6 +28,7 @@
 #import "TSMacroMenuController.h"
 #import "TSTextView.h"
 #import "TSEncodingSupport.h"
+#import "NSText-Extras.h"
 #import "globals.h"
 
 
@@ -45,20 +46,21 @@ static TSFilterMode savedFilter = kNoFilterMode;
 
 - (id)init
 {
-	if (sharedMacroEditor)
-		[super dealloc];
-	else {
+	if (!sharedMacroEditor)
+    {
 		sharedMacroEditor = [super init];
-		previousItem = nil;
+		self.previousItem = nil;
 	}
 	return sharedMacroEditor;
 }
 
+/*
 - (void)dealloc
 {
 	if (self != sharedMacroEditor)
 		[super dealloc];	// Don't free our shared instance
 }
+*/
 
 - (void)awakeFromNib
 {
@@ -72,7 +74,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[self loadUI];
 		// load tree from macroDictionary
 		TSMacroTreeNode *newRoot = [TSMacroTreeNode nodeFromDictionary:
-							[[TSMacroMenuController sharedInstance] macroDictionary]];
+							[[TSMacroMenuController sharedInstance] macroDict]];
 		savedFilter = g_shouldFilter;
 
 		// register for ntification
@@ -90,7 +92,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 					name: TSMacroOutlineViewAcceptedDropNotification object: outlineView];
 		// set up variables
 		[outlineController setRootOfTree: newRoot]; // one can use [outlineView dataSource] instead
-		previousItem = nil;
+		self.previousItem = nil;
 		dataTouched = NO;
 		nameTouched = NO;
 		contentTouched = NO;
@@ -143,9 +145,9 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setAllowsUndo:YES];
 		[contentTextView setRichText:NO];
 		[contentTextView setUsesFontPanel:YES];
-		[contentTextView setFont:[NSFont userFontOfSize:12.0]];
+		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
 		[scrollView setDocumentView:contentTextView];
-		[contentTextView release];
+		// [contentTextView release];
 		// text fields
 		[nameField setDelegate: [TSEncodingSupport sharedInstance]];
 		[keyField setDelegate: [TSEncodingSupport sharedInstance]];
@@ -287,35 +289,35 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	[duplicateButton setEnabled: ([selectedNodes count] > 0)];
 	
 	TSMacroTreeNode *newItem = ([selectedNodes count] == 1)?[selectedNodes objectAtIndex: 0]:nil;
-	if (newItem == previousItem && !forceUpdate)
+	if (newItem == self.previousItem && !forceUpdate)
 		return;	// maybe item was simply dragged and dropped
 	
-	if (previousItem) {
-		if (![previousItem isSeparator] && nameTouched) {
-			[previousItem setName: [nameField stringValue]];
+	if (self.previousItem) {
+		if (![self.previousItem isSeparator] && nameTouched) {
+			[self.previousItem setName: [nameField stringValue]];
 			dataTouched = YES;
 		}
-		if ([previousItem isStandardItem]) {
+		if ([self.previousItem isStandardItem]) {
 			if (contentTouched) {
 				// note: [NSTextView string] returns currently edited string. make sure to copy it
 				if (savedFilter != kMacJapaneseFilterMode)
 					contentString = [NSString stringWithString: [contentTextView string]];
 				else
 					contentString = filterYenToBackslash([contentTextView string]);
-				[previousItem setContent: contentString];
+				[self.previousItem setContent: contentString];
 				dataTouched = YES;
 			}
 			if (keyTouched)
 			{
-				[previousItem setKey: getStringFormKeyEquivalent([keyField stringValue],
+				[self.previousItem setKey: getStringFormKeyEquivalent([keyField stringValue],
 																 ([shiftCheckBox state] == NSOnState), ([optionCheckBox state] == NSOnState),
 																 ([controlCheckBox state] == NSOnState))];
 				dataTouched = YES;
 			}
 		}
-		if ([previousItem isAlive])
-			[outlineView reloadItem: previousItem]; //this causes a problem if the item is dead
-		[previousItem release];
+		if ([self.previousItem isAlive])
+			[outlineView reloadItem: self.previousItem]; //this causes a problem if the item is dead
+		self.previousItem = nil;
 	}
 	
 	[nameField setStringValue: (newItem)?[newItem name]:@""];
@@ -352,7 +354,11 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[controlCheckBox setEnabled: NO];
 		[testButton setEnabled: NO];
 	}
-	previousItem = (newItem)?[newItem retain]:nil;
+    if (newItem)
+        self.previousItem = newItem;
+    else
+        self.previousItem = nil;
+//	self.previousItem = (newItem)?[newItem retain]:nil;
 	nameTouched = NO;
 	contentTouched = NO;
 	keyTouched = NO;
@@ -403,9 +409,9 @@ static TSFilterMode savedFilter = kNoFilterMode;
 - (void) windowWillClose: (NSNotification *)aNotification
 {
 	// clean up
-	if (previousItem)
-		[previousItem release];
-	previousItem = nil;
+	if (self.previousItem)
+		self.previousItem = nil;
+	self.previousItem = nil;
 	[outlineController setRootOfTree: nil]; // this release the tree structure
 	outlineView = nil;
 	window = nil;
@@ -537,7 +543,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	NS_HANDLER
 		NSRunAlertPanel(@"Error", [NSString stringWithFormat:
 			@"failed to save macros to %@\n%@", filePath, error], nil, nil, nil);
-				if (error) [error release]; // mitsu 1.29 (U) added
+	//			if (error) [error release]; // mitsu 1.29 (U) added
 	NS_ENDHANDLER
 }
 
@@ -615,8 +621,8 @@ static TSFilterMode savedFilter = kNoFilterMode;
                            NSString *fileName = [myURL path];
                            NS_DURING
                            NSData *myData = [NSData dataWithContentsOfFile: fileName];
-                           NSString *aString = [[[NSString alloc] initWithData:myData encoding:
-                                                     NSUTF8StringEncoding] autorelease];
+                           NSString *aString = [[NSString alloc] initWithData:myData encoding:
+                                                NSUTF8StringEncoding];
                            if (aString)
                                    newDict = (NSDictionary *)[aString propertyList];
                            if (newDict) {

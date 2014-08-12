@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 3.26}
+\title{About TeXShop 3.39}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -37,6 +37,86 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
+
+\section{Changes in 3.39}
+
+The most significant change in 3.39 is the addition of Michael Sharpe's ``Recent TeX Fonts'' document and associated font Macros.  Michael and I attended the TeX User Group meeting in Portland, Oregon at the end of July, 2014. I knew him as an Applescript expert; several of his scripts are in TeXShop. Other macros from him will appear in a future version. To see his scripts, go to 
+\url{https://dl.dropboxusercontent.com/u/3825336/TeX/index.html}. Pay particular attention to 
+{\em macrocopier.zip} on this location, a stand alone program which makes it easy to maintain and extend TeXShop macros.
+
+At the TUG meeting, I discovered that Sharpe is a font expert widely known to users on other platforms.
+TeX Live contains a very large number of \TeX\ fonts, but it is not that easy to use them.
+Most font sets don't have mathematical symbols, and it becomes a design task to find pleasing combinations of fonts for text, sans-serif sections, and mathematics.
+
+Sharpe wrote a document called {\em Recent TeX Fonts}, now available in the TeXShop Help menu. This document describes a number of pleasing font combinations, one per page. Each page lists the features of a set, provides an extensive sample of text and mathematics typeset using
+it, and contains the exact La\TeX\ code needed to use the font set. These sets are the result
+of extensive work by Sharpe; I understand that some of them took four months to perfect.
+
+One way to use the document is to select an article or book written with standard fonts and  copy Sharpe's implementation section into the document's header and retypeset. 
+
+To make this even easier, Sharpe slightly modified the LaTeX template which comes with TeXShop, 
+defining a  section in the header bounded by {\em \%SetFonts} comments. The space between two such comments can be empty when the document is originally written.  Sharpe defined three
+macros called ``GetFontSet,'' ``SaveFontSet,'' and ``TestFontSet.'' The first of these brings up
+a small dialog listing known font sets. When one is selected, its implementation code is written to the source document between the {\em \%SetFonts} comments, replacing other implementation code there. So with one click and one typeset, the document can be seen written with a new set of fonts.
+
+Users can also put their own implementation code between the  {\em \%SetFonts} comments.
+The SaveFontSet macro reaches between the comments and saves the implementation code to a file in \path{~/Library/TeXShop/bin} named {\em SetFonts}, which is used by the GetFontSet macro to list known font combinations. Thus {\em SetFonts}  gradually builds into a library of known font combinations. 
+
+I'll let the TestFontSet macro speak for itself.
+
+To use these Sharpe additions, it is necessary to use the full TeX Live as installed by MacTeX,
+because BasicTeX doesn't contain many fonts. All the font sets defined by Sharpe have been
+tested and are available with TeX Live 2014, except two. The garamondx font has a license permitting free personal use provided the font is not sold. This font is on CTAN, but it cannot
+be in TeX Live because TUG sells a DVD containing TeX Live. However, a script named getnonfreefonts is available to download and install this font. See \url{https://www.tug.org/fonts/getnonfreefonts/}.
+
+The {\em SetFonts} template also has a Lucida entry. Lucida is a commercial font, sold by TUG and others. 
+See \url{https://www.tug.org/store/lucida/index.html}. Many users own this set, and Sharpe's detailed and non-trivial code to use them will help them obtain the most from the fonts.
+
+It is our hope that the existence of these easy techniques will lead to more \TeX\ documents that don't scream out ``I was written with \TeX,'' and instead have a professional printed look.
+
+To use these new features, some customization of TeXShop is required. (The customization isn't
+necessary if you are running TeXShop for the first time.) To perform the steps, use the
+Finder's ``Go'' menu to go to $\sim$/Library/TeXShop, a folder which contains many subfolders.
+\begin{itemize}
+\item The TeXShop folder contains a subfolder named New, which has a subfolder named Templates. This folder contains one template: LaTeXTemplate.tex. Copy it to the
+active $\sim$/Library/TeXShop/Templates folder. The LaTeXTemplate.tex folder will replace an existing template. If, of course, you edited this template, then you won't want to overwrite it and instead you'll need to merge the {\em \%SetFonts} comments from the new LaTeXTemplate.tx into your customized template.
+\item Inside New there is another folder named Macros/FontSets. This folder contains five items. 
+The ``refreshfront'' item can be ignored, since a copy has already been placed in $\sim$/Library/TeXShop/bin. The ``bg8.pdf'' file needs to be placed in $\sim$/Library/texmf/tex/latex, and you may have to create these folders inside $\sim$/Library. Finally, the three files GetFontset.plist, SaveFontSet.plist, and TestFontSet.plist contain the new macros, which need to be loaded into
+the Macros menu.
+\item If you have never modified the Macros which come from TeXShop, then quit TeXShop and
+move the entire Macros folder at $\sim$/Library/TeXShop/Macros to the trash. When you restart TeXShop, a  new Macros folder
+will be created containing the old macros and the three new macros, and you are done.
+
+But if you  edited the macros, then run TeXShop and select Open Macro Editor in the Macros menu. In the TeXShop  Macros menu,   select the item {\em Add macros from file.} Navigate to 
+one of GetFontset.plist, SaveFontSet.plist, or TestFontSet.plist and select it.  A new macro will appear. Drag it to an appropriate spot, perhaps just under ``Open quickly..." Repeat for the other two macro files, and then save the changes.
+\end{itemize}
+
+
+
+\section{Changes in 3.36, 3.36.1,  3.36.2, 3.37, and 3.38}
+
+No user actions are required for these versions.
+
+\section{Changes in 3.35}
+
+TeXShop 3.35 is compiled on Mavericks. Due to bugs in Lion, it was necessary to disable magnification in the Preview window and selection of rectangles in the Preview window on that system. If at all possible, Lion users should upgrade to Mountain Lion or Mavericks, where these features are restored. Lion users who cannot
+upgrade might consider using version 3.26 of TeXShop, permanently available on the TeXShop web page. Magnification and rectangle selection work on that version (but the necessary code does not compile on Mavericks). Version 3.26 will not be upgraded.
+
+TeXShop 3.35 contains a GotoLabel macro by Micael Sharpe. New users will obtain it automatically, but older users need to go to \textasciitilde/Library/TeXShop/New/Macros
+and find the macro in a folder named GotoLabel, which also has a  README explaining how to install it.
+
+
+
+\section{Changes in 3.32, 3.33, 3.34}
+
+Versions 3.27 - 3.31 were never released. For version 3.32, TeXShop source code was converted to ARC and compiled with Automatic Reference Counting
+turned on. Thus memory management is done automatically by Apple's compiler.
+
+Version 3.34 has new LilyPond and MetaPost engines by Nicola Vitacolonna.  Active versions of the metapost engines are included in TeXShop. To update
+the active  engines, go to  $\sim$/Library/TeXShop/Engines and replace the current engines named ``nv-metafun.engine'' and ``nv-metapost.engine'' by the new
+versions of these engines in 
+
+\hspace{.5in} $\sim$/Library/TeXShop/Engines/Inactive/MetapostEngines/Engines.
 
 \section{Changes in 3.26}
 

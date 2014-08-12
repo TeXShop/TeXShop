@@ -26,32 +26,33 @@
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
 #import "OverView.h"
+#import "TSDocument.h"
 
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
-	id								currentPage;
-	id								totalPage;
-	id								myScale;
-	id								myStepper;
-	id								currentPage1;
-	id								totalPage1;
-	id								myScale1;
-	id								myStepper1;
-	id								myDocument;
-	NSDrawer						*_drawer;
-	PDFOutline						*_outline;
-	NSTextField						*_noOutlineText;
-	NSOutlineView					*_outlineView;
+                    IBOutlet	id								currentPage;
+                    IBOutlet    id								totalPage;
+                    IBOutlet	id								myScale;
+                    IBOutlet	id								myStepper;
+                    IBOutlet	id								currentPage1;
+                    IBOutlet	id								totalPage1;
+                    IBOutlet	id								myScale1;
+                    IBOutlet	id								myStepper1;
+// @property (weak) IBOutlet	TSDocument						*myDocument;
+                    IBOutlet	NSDrawer						*_drawer;
+//           PDFOutline						*_outline;
+                    IBOutlet	NSTextField						*_noOutlineText;
+                    IBOutlet	NSOutlineView					*_outlineView;
 
-	NSMutableArray					*_searchResults;
-	IBOutlet NSTableView			*_searchTable;
-	IBOutlet NSProgressIndicator	*_searchProgress;
-	IBOutlet NSMatrix				*mouseModeMatrix;
-	IBOutlet NSMenu					*mouseModeMenu;
+//	NSMutableArray					*_searchResults;
+                    IBOutlet    NSTableView                     *_searchTable;
+                    IBOutlet    NSProgressIndicator             *_searchProgress;
+                    IBOutlet    NSMatrix                        *mouseModeMatrix;
+                    IBOutlet    NSMenu                          *mouseModeMenu;
 
 
-	NSWindow						*myPDFWindow;
+//	NSWindow						*myPDFWindow;
 	NSInteger								pageStyle;
     // NSInteger                               oldPageStyle;
     // NSInteger                               fullscreenPageStyle;
@@ -70,17 +71,17 @@
 
 	NSRect							selectedRect;
 	NSRect							oldVisibleRect;
-	NSTimer							*selRectTimer;
+//	NSTimer							*selRectTimer;
 
 	// copy/paste stuff
-	id								imageTypeView;
-	id								imageTypePopup;
+//	id								imageTypeView;
+//	id								imageTypePopup;
 
 	NSInteger								pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
 	BOOL							showSync;
-	NSMutableArray					*sourceFiles;
+//	NSMutableArray					*sourceFiles;
 
 	double							oldMagnification;
 
@@ -98,11 +99,23 @@
     BOOL							oldSync;
     NSRect							syncRect[200];
 	int								numberSyncRect;
-    OverView                        *overView;
+//    OverView                        *overView;
 
 	
 	
 }
+
+@property (retain) PDFOutline						*outline;
+@property (retain) NSMutableArray					*searchResults;
+@property (retain) NSWindow                         *myPDFWindow;
+@property (retain) NSTimer							*selRectTimer;
+@property (retain) id								imageTypeView;
+@property (retain) id								imageTypePopup;
+@property (retain) NSMutableArray					*sourceFiles;
+@property (retain) OverView                        *overView;
+@property           BOOL                            waiting;
+@property (weak)    IBOutlet	TSDocument          *myDocument;
+
 
 // - (void) scheduleAddintToolips;
 - (id) init;
@@ -206,7 +219,13 @@
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
-- (void) setOverView:(OverView *)theOveView;
-- (OverView *)overView;
+// - (void) setOverView:(OverView *)theOveView;
+// - (OverView *)overView;
 @end
+
+@interface MyPDFKitView (Gesture)
+// - (void)beginGestureWithEvent:(NSEvent *)event;
+// - (void)endGestureWithEvent:(NSEvent *)event;
+@end
+
 

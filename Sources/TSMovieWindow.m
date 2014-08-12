@@ -13,7 +13,7 @@
 
 - (void)close
 {
-	[[myMovieView movie] stop];
+	[[self.myMovieView movie] stop];
 	[super close];
 }
 

@@ -24,8 +24,8 @@
 
 - (void)terminate:(id)sender;
 {
-    NSInteger i, j;
-    BOOL skip;
+    
+/*
     
     NSArray *myDocuments = [[TSDocumentController sharedDocumentController]  documents];
     id obj;
@@ -50,8 +50,15 @@
             // NSLog(@"called close");
         }
     }
+ 
+ */
 
     [super terminate:sender];
+}
+
+- (void)sendEvent:(NSEvent *)anEvent
+{
+    [super sendEvent:anEvent];
 }
 
 @end

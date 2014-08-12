@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -377,6 +377,12 @@
                             <menuItem isSeparatorItem="YES" id="352">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
+                            <menuItem title="实验台..." id="UgQ-Zu-6OS">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="tryScrap:" target="-1" id="fMb-5J-xTl"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="行号..." keyEquivalent="l" id="341">
                                 <connections>
                                     <action selector="doLine:" target="-1" id="346"/>
@@ -627,6 +633,10 @@
                             </menuItem>
                         </items>
                     </menu>
+                </menuItem>
+                <menuItem title="标签" id="nyk-mn-Fkz">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="标签" id="bNe-hJ-CYI"/>
                 </menuItem>
                 <menuItem title="排版" id="344">
                     <menu key="submenu" title="排版" id="343">
@@ -902,7 +912,7 @@
                                     <action selector="fullscreen:" target="-1" id="694"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="1165">
+                            <menuItem title="进入全屏幕" keyEquivalent="f" id="1165">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleFullScreen:" target="-1" id="1166"/>
@@ -1000,6 +1010,12 @@
                                     <action selector="displayTipsandTricks:" target="705" id="1060"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="最近使用的 TeX 字体" id="MOP-CJ-Rvn">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayRecentTeXFonts:" target="705" id="E5X-f6-7LR"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="在 TeXShop 中使用 AppleScript" id="dxu-Z4-tmW">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1063,8 +1079,6 @@
         <customObject id="382" userLabel="TSAppDelegate" customClass="TSAppDelegate">
             <connections>
                 <outlet property="myMovie" destination="706" id="773"/>
-                <outlet property="stationeryWindow" destination="1006" id="1024"/>
-                <outlet property="tableView" destination="1011" id="1027"/>
             </connections>
         </customObject>
         <customObject id="485" userLabel="TSMacroMenuConroller" customClass="TSMacroMenuController">
@@ -1117,7 +1131,7 @@
         </customObject>
         <customObject id="706" userLabel="TSMovie" customClass="TSMovie"/>
         <customObject id="837" userLabel="SUUpdater" customClass="SUUpdater"/>
-        <window title="Tex 文档" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="854" userLabel="PackageHelp" customClass="NSPanel">
+        <window title="Tex 文档" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="854" userLabel="PackageHelp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>
@@ -1288,7 +1302,7 @@ Gw
                 <outlet property="tableView" destination="1011" id="1050"/>
             </connections>
         </customObject>
-        <window title="Kpsetool" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="1065" userLabel="StyleHelp" customClass="NSPanel">
+        <window title="Kpsetool" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="1065" userLabel="StyleHelp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>

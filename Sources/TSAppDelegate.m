@@ -35,6 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 #import "TSTextEditorWindow.h"
+#import "GlobalData.h"
 
 
 
@@ -61,12 +62,14 @@
 "*/
 @implementation TSAppDelegate
 
+/*
 - (void)dealloc
 {
 	[g_autocompletionDictionary release];
 	[defaultLanguage release];
 	[super dealloc];
 }
+*/
 
 
 - (void)testForIntel;
@@ -78,7 +81,7 @@
 	// then change that preference permanently to /usr/local/tetex/bin/i386-apple-darwin-current
 	
 	BOOL canRevisePath = [SUD boolForKey:RevisePathKey];
-    NSString *binPath = [SUD stringForKey:TetexBinPath];
+    NSString *binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
 	
 	if (canRevisePath) {
 		if ( [binPath isEqualToString:@"/usr/local/teTeX/bin/powerpc-apple-darwin-current"] ||
@@ -119,6 +122,17 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+    
+    // Remember spell checker setting, but don't want to do this if a "% !TEX" language is in place
+    if (! specialWindowOpened)
+    {
+        NSString *spellingLanguage = [[NSSpellChecker sharedSpellChecker] language];
+        BOOL    spellingAutomatic = [[NSSpellChecker sharedSpellChecker] automaticallyIdentifiesLanguages];
+        [SUD setBool: spellingAutomatic forKey: SpellingAutomaticLanguageKey];
+        [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
+        [SUD synchronize];
+    }
+    
     NSString *folderPath, *filename;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	folderPath = [[DraggedImagePath stringByStandardizingPath]
@@ -147,7 +161,6 @@
         atLeastMavericks = YES;
     else
         atLeastMavericks = NO;
-    
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
@@ -185,9 +198,19 @@
 	//
 	// This must come before dealing with TSEncodingSupport and MacoMenuController below
 	
-	// First see if we already updated. 
-	
-	NSFileManager *fileManager = [NSFileManager defaultManager];
+	// First see if we already updated.;
+    
+    // Set spell checker's dictionary = remember setting by user
+    BOOL spellingAutomatic = [[NSUserDefaults standardUserDefaults] boolForKey:SpellingAutomaticLanguageKey];
+    NSString *spellingLanguage = [[NSUserDefaults standardUserDefaults] objectForKey:SpellingLanguageKey];
+    [[NSSpellChecker sharedSpellChecker] setAutomaticallyIdentifiesLanguages: spellingAutomatic];
+    if (! spellingAutomatic)
+        [[NSSpellChecker sharedSpellChecker] setLanguage: spellingLanguage];
+    [GlobalData sharedGlobalData].g_defaultLanguage = spellingLanguage;
+    automaticLanguage = spellingAutomatic;
+    specialWindowOpened = NO;
+    
+ 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	
 	oldVersion = 0.0;
 	currentVersion = [[[NSBundle bundleForClass:[self class]]
@@ -387,6 +410,18 @@
 	[self finishAutoCompletionConfigure];
 	[self configureExternalEditor];
 	[self configureMovieMenu];
+    
+    if ( ![[NSUserDefaults standardUserDefaults] boolForKey:TagMenuInMenuBarKey])
+    {   
+       [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:YES];
+        
+    }
+	
+
+    
+    
+    
+    
 
 	if ([[SUD stringForKey:EncodingKey] isEqualToString:@"MacJapanese"])
 		g_texChar = YEN;
@@ -395,14 +430,17 @@
     g_commentChar = COMMENT; 
 	
 // Configure Spelling
+    
+/*
 	spellLanguageChanged = NO;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
-	defaultLanguage = [[theChecker language] retain];
+	defaultLanguage = [theChecker language];
 	// NSLog(defaultLanguage);
 	if ([theChecker respondsToSelector:@selector(automaticallyIdentifiesLanguages)])
 		automaticLanguage = [theChecker automaticallyIdentifiesLanguages];
 	else
 		automaticLanguage = NO;
+ */
 	
 
 // added by mitsu --(H) Macro menu and (G) TSEncodingSupport
@@ -449,21 +487,23 @@
 	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
 										  green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 										  alpha: 1];
-	[PreviewBackgroundColor retain];
+	// [PreviewBackgroundColor retain];
 	[self finishMenuKeyEquivalentsConfigure];
 
 }
 
+/*
 
 - (void)setForPreview: (BOOL)value
 {
-	_forPreview = value;
+	self.forPreview = value;
 }
 
 - (BOOL)forPreview
 {
-	return _forPreview;
+	return self.forPreview;
 }
+*/
 
 // Added by Greg Landweber to load the autocompletion dictionary
 // This code is modified from the code to load the LaTeX panel
@@ -475,18 +515,18 @@
 	autocompletionPath = [autocompletionPath stringByAppendingPathComponent:@"autocompletion"];
 	autocompletionPath = [autocompletionPath stringByAppendingPathExtension:@"plist"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath])
-		g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
+		[GlobalData sharedGlobalData].g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:autocompletionPath];
 	else
-		g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:
+		[GlobalData sharedGlobalData].g_autocompletionDictionary = [NSDictionary dictionaryWithContentsOfFile:
 			[[NSBundle mainBundle] pathForResource:@"autocompletion" ofType:@"plist"]];
-	[g_autocompletionDictionary retain];
+//	[g_autocompletionDictionary retain];
 	// end of code added by Greg Landweber
 	
 	// added by Terada
 	autocompletionPath = [[[AutoCompletionPath stringByStandardizingPath] stringByAppendingPathComponent:@"autocompletionDisplayOrder"] stringByAppendingPathExtension:@"plist"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath: autocompletionPath]){
-		g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
-		[g_autocompletionKeys retain];
+		[GlobalData sharedGlobalData].g_autocompletionKeys = [NSArray arrayWithContentsOfFile:autocompletionPath];
+//		[g_autocompletionKeys retain];
 	}
 	
 }
@@ -578,20 +618,37 @@
 // mitsu 1.29 (P)
 - (void) finishCommandCompletionConfigure
 {
-	NSString            *completionPath;
+	NSString            *completionPath, *small;
 	NSData              *myData;
+    
+    unichar bullet = 0x2022;
+    unichar smallless = 0x2039;
+    unichar smallgreater = 0x203A;
+    
+    /*
+    NSString *placeholderString = @"¥";
+    NSString *startcommentString = @"¥Ü";
+    NSString *endcommentString = @"Ý";
+    */
+
+    
+    placeholderString = [NSString stringWithCharacters: &bullet length: 1];
+    small = [NSString stringWithCharacters: &smallless length: 1];
+    startcommentString= [placeholderString stringByAppendingString: small];
+    endcommentString = [NSString stringWithCharacters: &smallgreater length: 1];
+
     
 	unichar esc = 0x001B; // configure the key in Preferences?
 	unichar tab = 0x0009; // ditto
 	if (!g_commandCompletionChar) {
 		if ([[SUD stringForKey: CommandCompletionCharKey] isEqualToString:@"ESCAPE"]) 
-			g_commandCompletionChar = [[NSString stringWithCharacters: &esc length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &esc length: 1];
 		else
-			g_commandCompletionChar = [[NSString stringWithCharacters: &tab length: 1] retain];
+			g_commandCompletionChar = [NSString stringWithCharacters: &tab length: 1];
 		
 	}
 			
-	[g_commandCompletionList release];
+	// [g_commandCompletionList release];
 	g_commandCompletionList = nil;
 	g_canRegisterCommandCompletion = NO;
 	completionPath = [CommandCompletionPath stringByStandardizingPath];
@@ -713,7 +770,7 @@
 - (IBAction)doMovie:(id)sender
 {
 	NSString *title = [[sender title] stringByAppendingString:@".mov"];
-	[myMovie doMovie:title];
+	[self.myMovie doMovie:title];
 }
 
 - (void)configureMovieMenu
@@ -779,7 +836,7 @@
 {
 	NSArray* windows = [NSApp windows];
 	NSUInteger currentIndex = [windows indexOfObject:[NSApp keyWindow]];
-	NSMutableArray *matchIndexes = [[NSMutableArray arrayWithCapacity:0] retain];
+	NSMutableArray *matchIndexes = [NSMutableArray arrayWithCapacity:0];
 	*ptrToCurrentIndexInReturnedArray = -1;
 	NSInteger count = 0;
 	NSUInteger i;
@@ -804,7 +861,7 @@
 		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == 0) ? [[matchIndexes objectAtIndex:[matchIndexes count]-1] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray-1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
-	[matchIndexes release];
+//	[matchIndexes release];
 }
 
 // added by Terada (- (IBAction)previousTeXWindow:)
@@ -816,7 +873,7 @@
 		NSInteger nextIndex = (currentIndexInReturnedArray == -1 || currentIndexInReturnedArray == [matchIndexes count]-1) ? [[matchIndexes objectAtIndex:0] integerValue] : [[matchIndexes objectAtIndex:currentIndexInReturnedArray+1] integerValue];
 		[[[NSApp windows] objectAtIndex:nextIndex] makeKeyAndOrderFront:nil];
 	}
-	[matchIndexes release];
+//	[matchIndexes release];
 }
 
 

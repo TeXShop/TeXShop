@@ -26,6 +26,9 @@
 
 @interface TSFullscreenWindow : NSWindow
 {
-	NSDocument	*myDocument;
+	
 }
+
+@property (weak) NSDocument  *myDocument;
+
 @end

@@ -23,50 +23,57 @@
  */
 
 #import <AppKit/NSView.h>
+#import "OverView.h"
 
 @class TSDocument;
 
 @interface MyPDFView : NSView
 {
-	id			currentPage;
-	id			totalPage;
-	id			myScale;
-	id			myStepper;
-	id			currentPage1;
-	id			totalPage1;
-	id			myScale1;
-	id			myStepper1;
+IBOutlet		id                  currentPage;
+IBOutlet		id                  totalPage;
+IBOutlet		id                  myScale;
+IBOutlet		id                  myStepper;
+IBOutlet		id                  currentPage1;
+IBOutlet		id                  totalPage1;
+IBOutlet		id                  myScale1;
+IBOutlet		id                  myStepper1;
 	NSInteger			documentType;
-	double		oldMagnification;
-	//double		oldWidth, oldHeight; // mitsu 1.29 (O) not used
-	BOOL		fixScroll;
-	BOOL		showSync;
-	NSPDFImageRep	*myRep;
-	TSDocument		*myDocument;
+	double              oldMagnification;
+	//double            oldWidth, oldHeight; // mitsu 1.29 (O) not used
+	BOOL                fixScroll;
+	BOOL                showSync;
+//	NSPDFImageRep       *myRep;
+//  TSDocument          *myDocument;
 	NSInteger			rotationAmount;  // will be 0, 90, -90, 180
-	double		theMagSize;
-	//BOOL		largeMagnify; // for magnifying glass // mitsu 1.29 (O) not used
+	double              theMagSize;
+	//BOOL              largeMagnify; // for magnifying glass // mitsu 1.29 (O) not used
 
 	// mitsu 1.29 (O)
-	NSInteger 	pageStyle;
-		NSInteger     firstPageStyle;
-	CGFloat 	pageWidth;
-	CGFloat 	pageHeight;
-	CGFloat 	totalWidth;
-	CGFloat 	totalHeight;
-	NSInteger 	resizeOption;
-	NSRect selectedRect;
-	NSRect oldVisibleRect;
-	NSTimer *selRectTimer;
-	NSInteger mouseMode;
-	NSInteger currentMouseMode;
-	IBOutlet NSMatrix *mouseModeMatrix;
-	IBOutlet NSMenu *mouseModeMenu;
-	IBOutlet NSView *imageTypeView;
+	NSInteger               pageStyle;
+    NSInteger               firstPageStyle;
+	CGFloat                 pageWidth;
+	CGFloat                 pageHeight;
+	CGFloat                 totalWidth;
+	CGFloat                 totalHeight;
+	NSInteger               resizeOption;
+	NSRect                  selectedRect;
+	NSRect                  oldVisibleRect;
+//	NSTimer                 *selRectTimer;
+	NSInteger               mouseMode;
+	NSInteger               currentMouseMode;
+	IBOutlet NSMatrix       *mouseModeMatrix;
+	IBOutlet NSMenu         *mouseModeMenu;
+	IBOutlet NSView         *imageTypeView;
 	IBOutlet NSPopUpButton *imageTypePopup;
-		NSColor *pageBackgroundColor;
+//    NSColor                 *pageBackgroundColor;
 	// end mitsu 1.29
 }
+
+@property (retain) NSPDFImageRep    *myRep;
+@property (unsafe_unretained) TSDocument       *myDocument;
+@property (retain) NSTimer          *selRectTimer;
+@property (retain) NSColor          *pageBackgroundColor;
+@property (retain) OverView                        *overView;
 
 // set up the view
 - (void) setImageType: (NSInteger)theType;
@@ -134,6 +141,8 @@
 - (void)doSync: (NSEvent *)theEvent;
 - (void)drawDotsForPage:(NSInteger)page atPoint: (NSPoint)p;
 - (void)setShowSync: (BOOL)value;
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
+
 @end
 
 @interface FlippedClipView : NSClipView {

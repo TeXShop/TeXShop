@@ -28,8 +28,10 @@
 
 @interface MyDragView : NSView
 {
-	NSPDFImageRep	*myRep;
+//	NSPDFImageRep	*myRep;
 }
+
+@property (retain) NSPDFImageRep	*myRep;
 
 // set up the view
 - (void) setImageRep: (NSPDFImageRep *)theRep;

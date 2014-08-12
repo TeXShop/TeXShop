@@ -25,8 +25,11 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TSEncodingSupport : NSObject {
-
+  
 }
+
+@property (retain)  NSArray *availableEncodingsNames;
+
 
 + (id)sharedInstance;
 

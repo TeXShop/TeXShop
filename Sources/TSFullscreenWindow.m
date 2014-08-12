@@ -113,7 +113,7 @@ Change History (most recent first):
 		key = 0;
 	
 	if (key == 27)
-		[(TSDocument *)myDocument endFullScreen];
+		[(TSDocument *)self.myDocument endFullScreen];
 	else 
 		[super keyDown:theEvent];
 }

@@ -1198,7 +1198,10 @@
 			[pboard declareTypes:[NSArray arrayWithObjects: dataType, nil] owner:self];
 			[pboard setData:data forType:dataType];
 		} else
-			NSRunAlertPanel(@"Error", @"failed to copy selection.", nil, nil, nil);
+			NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                            NSLocalizedString(@"failed to copy selection.", @"failed to copy selection."),
+                            nil, nil, nil);
+
 		}
 }
 
@@ -2928,6 +2931,42 @@ else
     return [[self documentView] dataWithPDFInsideRect:aRect];
 }
 
+- (NSImage *)imageFromRect:(NSRect)myRect
+{
+    NSPoint myLocation = [[self window] mouseLocationOutsideOfEventStream];
+    myLocation = [self convertPoint: myLocation fromView:nil];
+    PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
+    NSData	*myData = [myPage dataRepresentation];
+    NSPDFImageRep *myRep = [NSPDFImageRep imageRepWithData: myData];
+    
+    NSRect pageDataRect = [self convertRect:myRect toPage:myPage];
+    NSRect pageRect = [myPage boundsForBox: kPDFDisplayBoxMediaBox];
+    pageDataRect = NSIntersectionRect(pageDataRect, pageRect);
+    
+    MyDragView *myDragView = [[MyDragView alloc] initWithFrame: pageRect];
+    [myDragView setImageRep: myRep];
+    
+    double amount;
+    amount = [self magnification];
+    NSRect frameRect = [myDragView frame];
+    frameRect.size.width = frameRect.size.width * amount;
+    frameRect.size.height = frameRect.size.height * amount;
+    [myDragView setFrame: frameRect];
+    
+    NSSize mySize;
+    mySize.width = amount;
+    mySize.height = amount;
+    [myDragView scaleUnitSquareToSize: mySize];
+    
+    pageDataRect.size.height = pageDataRect.size.height * amount;
+    pageDataRect.size.width = pageDataRect.size.width * amount;
+    
+    return [[NSImage alloc] initWithData:[myDragView dataWithPDFInsideRect: pageDataRect]];
+    
+}
+
+
+
 // get image data from the selected rectangle with specified type
 - (NSData *)imageDataFromSelectionType: (NSInteger)type
 {
@@ -2964,8 +3003,14 @@ else
 	NS_DURING
 	if (type != IMAGE_TYPE_PDF && type != IMAGE_TYPE_EPS)
 	{
-		if (NSContainsRect(visRect, mySelectedRect))
-		{	// if the rect is contained in visible rect
+        // Yusuke Terada Patch
+        if(mySelectedRect.size.width == 0 || mySelectedRect.size.height == 0){
+            bitmap = nil;
+        }
+        // end of patch
+        
+		else if (NSContainsRect(visRect, mySelectedRect))
+ 		{	// if the rect is contained in visible rect
 			[self cleanupMarquee: NO];
 			[self recacheMarquee];
 
@@ -2976,6 +3021,8 @@ else
 			// is near integer, then the size can be off by one (larger or smaller).
 			// So for safety, one might need to use the modified size.
 
+// Yusuke Terada replaced
+        /*
 			newRect = mySelectedRect;
 			// get a bit map image from window for the rect in view coordinate
 			[self lockFocus];
@@ -3000,6 +3047,28 @@ else
 			}
 #endif
 		}
+        */
+// by the following to end YT
+            
+            newRect = mySelectedRect;
+			// get a bit map image from window for the rect in view coordinate
+			[self lockFocus];
+            bitmap = [[NSBitmapImageRep alloc] initWithData:[[self imageFromRect:newRect] TIFFRepresentation]];
+			[self unlockFocus];
+		}
+		else // there is some portion which is not visible
+		{
+			NSImage *image = [self imageFromRect: mySelectedRect];
+            
+			if (image) {
+				[image setScalesWhenResized: NO];
+				[image setSize: NSMakeSize(floor(selRectWindow.size.width),
+                                           floor(selRectWindow.size.height))];
+				bitmap = [[NSBitmapImageRep alloc] initWithData:[image TIFFRepresentation]];
+			}
+		}
+            
+// end YT
 		// color mapping
 		if (bitmap && [SUD boolForKey:PdfColorMapKey]) {
 			if ([SUD stringForKey:PdfFore_RKey]) {
@@ -3238,7 +3307,9 @@ else
                     if (data)
                         [data writeToFile:[[savePanel URL] path] atomically:YES];
                     else
-                        NSRunAlertPanel(@"Error", @"failed to save selection to the file.", nil, nil, nil);
+                        NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                                        NSLocalizedString(@"failed to save selection to the file.", @"failed to save selection to the file."),
+                                        nil, nil, nil);
                 }
             }];
 }

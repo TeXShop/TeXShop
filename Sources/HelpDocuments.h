@@ -27,6 +27,7 @@
 - (IBAction)displayStyleFile:sender;
 - (IBAction)displayTipsandTricks:sender;
 - (IBAction)displayNotesonApplescript:sender;
+- (IBAction)displayRecentTeXFonts:sender;
 
 - (IBAction)displayShortCourse:sender;
 - (IBAction)displayHG:sender;

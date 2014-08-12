@@ -990,29 +990,96 @@ end tell</string>
 		<dict>
 			<key>content</key>
 			<string>--applescript direct
-property sort_output : false-- If false, displays labels in the order they're found in the document.-- Otherwise, displays them in alphabetical order.property save_before_run : true-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
+
+property sort_output : false
+-- If false, displays labels in the order they're found in the document.
+-- Otherwise, displays them in alphabetical order.
+
+property save_before_run : true
+-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
+
 --Adapted from Will Robertson's Insert Reference by Michael Sharpe, 2012
---THE SCRIPT:set tid to Applescript's text item delimiters
-set docname to #DOCUMENTNAME#if docname is equal to "" then	display dialog "No document---bailing out."	returnend ifif save_before_run then	tell application "TeXShop" to save docnameend ifset texpath to #FILEPATH#set texfiles_tosearch to the quoted form of the texpath -- search the current fileset q1 to display dialog "Choose from labels containing text:" default answer "" buttons {"Cancel", "Go"} default button "Go"if the button returned of q1 is "Go" then	set current_selection to text returned of q1else	return -- exit scriptend if-- DO SHELL SCRIPT COMPONENTS:set find_label_lines to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep '\\\\label{' ") as stringset trim_to_raw_labels to " | /usr/bin/sed 's/.*\\\\label{//' | /usr/bin/sed 's/}.*//'"set filter_selection to ""if (count of current_selection) &gt; 0 then	set filter_selection to " | /usr/bin/grep -i " &amp; quoted form of the current_selectionend ifif sort_output then	set sort to " | /usr/bin/sort -u"else	set sort to ""end if-- glue the shell scripts together:set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+--THE SCRIPT:
 
-try	-- filter choices with the current selection:	set s to (do shell script get_labels_shell_script &amp; filter_selection)
-	set choose_labels to every paragraph of son error	-- If it fails (e.g., nothing found) ask to diplay all labels:
-          if (count of current_selection) &gt; 0 then	    display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"	    if the button returned of the result is "View all" then	   	set s to (do shell script get_labels_shell_script)		set choose_labels to every paragraph of s	    else		return -- exit script	    end if
-        end ifend try-- In case the document doesn't contain any labels:if (count of choose_labels) is 0 then	display dialog "Sorry, no \\label{} items have been found." buttons {"OK"} default button "OK"	returnend if
 
-set label_chosen to choose from list choose_labels with prompt "Please choose from names of matching labels:"if label_chosen ≠ false then
+set tid to Applescript's text item delimiters
+set docname to #DOCUMENTNAME#
+if docname is equal to "" then
+	display dialog "No document---bailing out."
+	return
+end if
+
+if save_before_run then
+	tell application "TeXShop" to save docname
+end if
+
+set texpath to #FILEPATH#
+
+set texfiles_tosearch to the quoted form of the texpath -- search the current file
+
+set q1 to display dialog "Choose from labels containing text:" default answer "" buttons {"Cancel", "Go"} default button "Go"
+if the button returned of q1 is "Go" then
+	set current_selection to text returned of q1
+else
+	return -- exit script
+end if
+
+-- DO SHELL SCRIPT COMPONENTS:
+set find_label_lines to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep '\\\\label{' ") as string
+set trim_to_raw_labels to " | /usr/bin/sed 's/.*\\\\label{//' | /usr/bin/sed 's/}.*//'"
+set filter_selection to ""
+if (count of current_selection) &gt; 0 then
+	set filter_selection to " | /usr/bin/grep -i " &amp; quoted form of the current_selection
+end if
+if sort_output then
+	set sort to " | /usr/bin/sort -u"
+else
+	set sort to ""
+end if
+-- glue the shell scripts together:
+set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
+
+try
+	-- filter choices with the current selection:
+	set s to (do shell script get_labels_shell_script &amp; filter_selection)
+	set choose_labels to every paragraph of s
+on error
+	-- If it fails (e.g., nothing found) ask to diplay all labels:
+          if (count of current_selection) &gt; 0 then
+	    display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"
+	    if the button returned of the result is "View all" then
+	   	set s to (do shell script get_labels_shell_script)
+		set choose_labels to every paragraph of s
+	    else
+		return -- exit script
+	    end if
+        end if
+end try
+
+-- In case the document doesn't contain any labels:
+if (count of choose_labels) is 0 then
+	display dialog "Sorry, no \\label{} items have been found." buttons {"OK"} default button "OK"
+	return
+end if
+
+set label_chosen to choose from list choose_labels with prompt "Please choose from names of matching labels:"
+if label_chosen ≠ false then
    --set find_label_line to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep -n '\\\\label{" &amp; label_chosen &amp;"}'") as string
    --set s to (do shell script find_label_line)
    --set Applescript's text item delimiters to ":"
    --set j to item 1 of (s as list)
    --set Applescript's text item delimiters to tid
    set j to 7+(count of (item 1 of label_chosen))
-   tell application "TeXShop" --to tell document docname to goto line j
+
+   tell application "TeXShop" --to tell document docname to goto line j
             set i to search document docname for "\\label{" &amp; label_chosen &amp; "}" starting from 1
             set offset of selection of document docname to i
             set length of selection of document docname to j
             tell application "System Events" to tell process "TeXShop" to keystroke (ASCII character 28) using {shift down}
-    end tellend if</string>
+    end tell
+end if
+
+</string>
 			<key>key</key>
 			<string></string>
 			<key>name</key>
@@ -1056,6 +1123,634 @@ end if</string>
 			<string>O+ShiftKey</string>
 			<key>name</key>
 			<string>Open quickly…</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Choose a font set defined in ~/Library/TeXShop/Templates/SetFonts.tex
+-- The companion script SaveFontSet allows you to save your font set to that file.
+-- Font set commands are inserted between an existing pair of %SetFonts lines.
+-- In none are found, they are created following the documentclass line.
+-- Michael Sharpe, msharpe@ucsd.edu
+--Last revision: 8/11/2014
+
+property lf: linefeed
+set path_to_setfonts to (POSIX path of (((path to home folder) as string) &amp; "Library:TeXShop:bin:SetFonts.tex"))
+set msg to 0
+tell application "Finder" to if exists path_to_setfonts as POSIX file then set msg to 1
+set thefile to POSIX file path_to_setfonts
+if msg = 0 then
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write lf &amp; "%SetFonts" &amp; lf to ref_num
+	write "% Latin Modern" &amp; lf to ref_num
+	write "% Extension of CM text+math" &amp; lf to ref_num
+	write "\\usepackage{lmodern} % math, rm, ss, tt" &amp; lf to ref_num
+	write "\\usepackage[T1]{fontenc}" &amp; lf to ref_num
+	write "\\usepackage{textcomp}" &amp; lf to ref_num
+	write "\\usepackage[bb=boondox,frak=boondox,cal=rsfso]{mathalfa}" &amp; lf to ref_num
+	close access thefile
+end if
+open for access thefile
+set file_contents to (read thefile)
+close access (thefile)
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set fontlist to the text items of file_contents
+--check for DEFAULT setting in item 1
+set dflt to ""
+try
+	set AppleScript's text item delimiters to lf
+	set defline to last paragraph of (item 1 of fontlist)
+	--display dialog "defline=" &amp; defline
+	if (count of defline) &gt; 8 then
+		if (text 1 thru 8 of defline) = "DEFAULT=" then
+			set dflt to trim(true, text 9 thru (count of defline) of defline)
+		end if
+	end if
+on error
+	
+end try
+
+--display dialog "Dflt=" &amp; dflt
+set namelist to {}
+set fcnt to count (fontlist)
+--display dialog "fcnt=" &amp; fcnt as string
+if fcnt &gt; 1 then
+	repeat with i from 2 to fcnt
+		try
+			set s to trim(true, item i of fontlist)
+			set end of namelist to trim(true, text 2 thru -1 of first paragraph of s)
+		on error
+			set end of namelist to "---"
+		end try
+	end repeat
+end if
+set sortednamelist to {"&lt;none&gt;"} &amp; sort(namelist)
+set dfltndx to 1
+if (count of dflt) &gt; 0 then set dfltndx to getidx(dflt, sortednamelist)
+if dfltndx = 0 then set dfltndx to 1
+choose from list sortednamelist with prompt "Pick a font set:" default items item dfltndx of sortednamelist OK button name "OK" cancel button name "Cancel" without multiple selections allowed and empty selection allowed
+if the result is false then
+	return
+else
+	set fs to result as string
+end if
+set fsidx to getidx(fs, namelist) + 1
+if fsidx = 1 then
+	set newfs to lf
+else
+	set newfs to lf &amp; (item fsidx of fontlist)
+	repeat while item -1 of newfs is lf
+		set newfs to text 1 thru -2 of newfs
+	end repeat
+end if
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+if n &gt; 3 then
+	display dialog "Your preamble contains more than two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+else
+	if n = 2 then
+		display dialog "Your preamble contains only one %SetFonts line. Bailing out." buttons "OK" default button "OK"
+		return
+	end if
+end if
+if n = 3 then
+	set item 2 of doc_items to lf &amp; trim(true, newfs)
+	set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+	set preamble to doc_items as string
+	set whole_document to preamble &amp; lf &amp; "\\begin{document}" &amp; (item 2 of prepost)
+	set AppleScript's text item delimiters to oldtid	
+else
+	if n = 1 then
+		--set shortdoc to text 1 thru 1000 of whole_document
+		set AppleScript's text item delimiters to lf
+		set doclines to text items of whole_document
+		set k to count of doclines
+		if k&gt;20 then set k to 20
+		set j to 0
+		repeat with i from 1 to k
+			set j to stroffset("documentclass",item i of doclines)
+			if j &gt; 0 then exit repeat
+		end repeat
+		if i = k then
+			display dialog "Your document contains no \\documentclass line. Bailing out." buttons "OK" default button "OK"
+		else
+			set i to (i + 1)
+			--set doclines to text items of whole_document
+			set item i of doclines to "%SetFonts" &amp; lf &amp; trim(true,newfs) &amp; lf &amp; "%SetFonts" &amp; lf &amp; (item i of doclines)
+			set whole_document to doclines as string
+		end if
+	end if
+end if
+tell application "TeXShop"
+	set (the text of the front document) to whole_document
+	-- save front document using its current location        set cdate to (current date) + 30 -- allow 30 seconds for timeout
+	try		tell application "TeXShop" to save front document	on error number errnum		if (errnum = -1712) and ((current date) &lt; cdate) then			set Liberrmsg to ""		end if	end tryend tell
+set AppleScript's text item delimiters to oldtid
+
+do shell script "~/Library/TeXShop/bin/refreshfront &amp;&gt; /dev/null &amp;"
+
+on getidx(this_item, this_list)
+	if this_item = "&lt;none&gt;" then
+		return 0
+	else
+		set n to the count of this_list
+		repeat with i from 1 to n
+			if item i of this_list is this_item then return i
+		end repeat
+		return 0
+	end if
+end getidx
+
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10}
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{space, tab, lf, return}
+	
+	try
+		repeat until first character of someText is not in theseCharacters
+			if (count someText) &gt; 1 then				set someText to text 2 thru -1 of someText			else				set someText to ""				exit repeat			end if		end repeat
+	on error
+		set someText to ""
+	end try
+	try
+		repeat until last character of someText is not in theseCharacters
+			set someText to text 1 thru -2 of someText
+		end repeat
+	on error
+		set someText to ""
+	end try
+	return someText
+end trim
+
+on stroffset(find_str,whole_str) 
+--replacement for offset, which fails in late 2011 TeXShop applescript direct
+--note that length fails too, but may be replaced by count
+	if (count of whole_str)=0 then return 0
+	if (count of find_str)=0 then return 0
+	set tid to Applescript's text item delimiters
+	set Applescript's text item delimiters to {find_str}
+	set lst to text items of whole_str
+	set Applescript's text item delimiters to tid
+	if (count of lst)=1 then
+		return 0
+	else
+		return (count of (item 1 of lst)+1)
+	end if
+end stroffset</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>GetFontSet</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+
+-- Save a font set to ~/Library/TeXShop/bin/SetFonts.tex
+-- The companion script setfonts allows you to choose a font set from that file.
+-- Font set commands are delimited by %SetFonts lines.
+-- In none are found, the script fails.
+-- If you add DELETE after the first %SetFonts (same line), SaveFontSet deletes the item.
+-- The line following the first %SetFonts must be %&lt;title&gt;, where &lt;title&gt; is the ID for the set..
+-- If you add DEFAULT after the first %SetFonts (same line), 
+-- SaveFontSet makes it the default selection when using setfonts.
+--Last revised 01/11/2011
+-- Michael Sharpe, msharpe@ucsd.edu
+global lf
+set lf to (ASCII character 10)
+set path_to_setfonts to (POSIX path of (((path to home folder) as string) &amp; "Library:TeXShop:bin:SetFonts.tex"))
+set msg to 0
+tell application "Finder" to if exists path_to_setfonts as POSIX file then set msg to 1
+set thefile to POSIX file path_to_setfonts
+if msg = 0 then
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write lf &amp; "%SetFonts" &amp; lf to ref_num
+	write "% Latin Modern" &amp; lf to ref_num
+	write "% Extension of CM text+math" &amp; lf to ref_num
+	write "\\usepackage{lmodern} % math, rm, ss, tt" &amp; lf to ref_num
+	write "\\usepackage[T1]{fontenc}" &amp; lf to ref_num
+	write "\\usepackage{textcomp}" &amp; lf to ref_num
+	write "\\usepackage[bb=boondox,frak=boondox,cal=rsfso]{mathalfa}" &amp; lf to ref_num
+	close access thefile
+end if
+open for access thefile
+set file_contents to (read thefile)
+close access (thefile)
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf&amp;"%SetFonts"
+set fontlist to the text items of file_contents
+set namelist to {}
+set fcnt to count (fontlist)
+if fcnt &gt; 1 then
+	repeat with i from 2 to fcnt
+		try
+			set s to trim(true, item i of fontlist)
+			set end of namelist to trim(true, text 2 thru -1 of first paragraph of s)
+		on error
+			set end of namelist to "---"
+		end try
+		--set end of namelist to trim(true, text 2 thru -1 of first paragraph of item i of fontlist)
+	end repeat
+end if
+
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+
+if not (n = 3) then
+	display dialog "Your preamble does not contains exactly two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set s to item 2 of doc_items
+set L to stroffset(lf,s) - 1
+set flag to 0 --1 for DELETE, 2 for DEFAULT
+if L &gt; 5 then
+	set t to trim(true, text 1 thru L of s)
+	if t = "DELETE" then
+		set flag to 1
+	else
+		if t = "DEFAULT" then
+			set flag to 2
+		end if
+	end if
+end if
+
+set newfs to trim(true, text (L + 2) thru (count of s) of s)
+if first character of newfs is not "%" then
+	display dialog "Your %SetFonts block lacks a title beginning with %. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fs to trim(true, text 2 thru -1 of first paragraph of newfs)
+if count of fs is 0 then
+	display dialog "Your %SetFonts block lacks a non-empty title. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fsidx to getidx(fs, namelist) + 1
+--check for existing DEFAULT
+set dfltflag to false
+try
+	set AppleScript's text item delimiters to lf
+	set defline to last paragraph of (trim(true, item 1 of fontlist))
+	--display dialog "defline=" &amp; defline
+	if (count of defline) &gt; 8 then
+		if (text 1 thru 8 of defline) = "DEFAULT=" then
+			set dfltflag to true
+		end if
+	end if
+on error
+	
+end try
+if flag = 2 then
+	if dfltflag then --there is an existing DEFAULT
+		set deflines to text items of trim(true, item 1 of fontlist)
+		--display dialog "deflines(-1)=" &amp; item -1 of deflines
+		set item -1 of deflines to "DEFAULT=" &amp; fs
+		set (item 1 of fontlist) to deflines as string
+	else
+		set (item 1 of fontlist) to (item 1 of fontlist) &amp; lf &amp; "DEFAULT=" &amp; fs
+	end if
+end if
+if fsidx = 1 then --not in current list
+	if flag = 0 then
+		set end of fontlist to lf &amp; trim(true, newfs)
+	else
+		if flag = 1 then --DELETE
+			display dialog "Cannot delete--name not found. Bailing out." buttons "OK" default button "OK"
+			return
+		end if
+	end if
+else
+	if flag = 0 then
+		set item fsidx of fontlist to lf &amp; trim(true, newfs)
+	else
+		if flag = 1 then --DELETE
+			if fsidx = (count of fontlist) then
+				set fontlist to items 1 thru -2 of fontlist
+			else
+				set fontlist to items 1 thru (fsidx - 1) of fontlist &amp; items (fsidx + 1) thru -1 of fontlist
+			end if
+		end if
+	end if
+end if
+set ref_num to open for access thefile with write permission
+set eof of ref_num to 0
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+write (fontlist as string) to ref_num
+close access thefile
+display dialog "Your %SetFonts block was saved to SetFonts.tex." buttons "OK" default button "OK"
+--whole_document
+
+on getidx(this_item, this_list)
+	if this_item = "&lt;none&gt;" then
+		return 0
+	else
+		set n to the count of this_list
+		repeat with i from 1 to n
+			if item i of this_list is this_item then return i
+		end repeat
+		return 0
+	end if
+end getidx
+
+on sort(the_list)
+	set old_delims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to {ASCII character 10}
+	set list_string to (the_list as string)
+	set new_string to do shell script "echo " &amp; quoted form of list_string &amp; " | sort -f -u"
+	set new_list to (paragraphs of new_string)
+	set AppleScript's text item delimiters to old_delims
+	return new_list
+end sort
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{" ", tab, ASCII character 10}
+	
+	repeat until first character of someText is not in theseCharacters
+		set someText to text 2 thru -1 of someText
+	end repeat
+	
+	repeat until last character of someText is not in theseCharacters
+		set someText to text 1 thru -2 of someText
+	end repeat
+	
+	return someText
+end trim
+
+on stroffset(find_str,whole_str) 
+--replacement for offset, which fails in late 2011 TeXShop applescript direct
+--note that length fails too, but may be replaced by count
+	if (count of whole_str)=0 then return 0
+	if (count of find_str)=0 then return 0
+	set tid to Applescript's text item delimiters
+	set Applescript's text item delimiters to {find_str}
+	set lst to text items of whole_str
+	set Applescript's text item delimiters to tid
+	if (count of lst)=1 then
+		return 0
+	else
+		return (count of (item 1 of lst)+1)
+	end if
+end stroffset</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>SaveFontSet</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--AppleScript direct
+
+--- Test a font set.
+-- Font set commands are delimited by %SetFonts lines.
+-- In none are found, the script fails.
+--Prepares a report showing relative sizes of fonts in the set.
+--Useful for fine-tuning the scale factors to better match your fonts.
+
+--Last revised 01/12/2011
+-- Michael Sharpe, msharpe@ucsd.edu
+global lf
+set lf to (ASCII character 10)
+
+--break the document into 3 pieces--part before 1st %SetFonts,between and after 2nd
+tell application "TeXShop"
+	set whole_document to (the text of the front document) as string
+end tell
+set oldtid to AppleScript's text item delimiters
+set AppleScript's text item delimiters to lf &amp; "\\begin{document}"
+set prepost to text items of whole_document
+set preamble to (item 1 of prepost)
+set AppleScript's text item delimiters to lf &amp; "%SetFonts"
+set doc_items to the text items of preamble
+set AppleScript's text item delimiters to oldtid
+set n to count of doc_items
+
+if not (n = 3) then
+	display dialog "Your preamble does not contains exactly two %SetFonts lines. Bailing out." buttons "OK" default button "OK"
+	return
+end if
+set fontblock to trim(true,item 2 of doc_items)
+set pre to "\\documentclass{article}" &amp; lf ¬
+	&amp; "%\\batchmode" &amp; lf ¬
+	&amp; "\\setlength\\parindent{0pt}" &amp; lf ¬
+	&amp; "\\usepackage[papersize={3in,2.5in},margin=0in]{geometry}" &amp; lf ¬
+	&amp; "\\usepackage{lmodern,amsfonts,mathrsfs}" &amp; lf ¬
+	&amp; "\\usepackage{graphicx}" &amp; lf ¬
+	&amp; "\\pagestyle{empty}" &amp; lf ¬
+	&amp; "\\setlength\\unitlength{1in}"&amp; lf¬
+	&amp; fontblock &amp; lf ¬
+	&amp; "\\begin{document}" &amp; lf ¬
+	&amp; "\\begin{picture}(3,2.5)" &amp; lf¬
+	&amp; "\\put(.25,0){\\scalebox{20}{"
+set post to "}}\\end{picture}" &amp;lf &amp; "\\end{document}"&amp;lf
+
+set cmds to {"X", "\\textsf{X}", "\\texttt{X}", "$X$", ¬
+	"$\\mathcal{X}$", "$\\mathbb{X}$", "$\\mathfrak{X}$", "$\\mathscr{X}$","x", "\\textsf{x}", "\\texttt{x}", "$x$"}
+set sizes to {"", "", "", "", "", "", "", "","","","",""}
+set glyphsource to {"", "", "", "", "", "", "", "","","","",""}
+
+repeat with i from 1 to 12
+	set t to ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".tex")
+	set thefile to (POSIX path of t)
+	set ref_num to open for access thefile with write permission
+	set eof of ref_num to 0
+	write pre to ref_num
+	write (item i of cmds) &amp; post to ref_num
+--	write "\\setbox0=\\hbox{"&amp;(item i of cmds)&amp;"}"&amp;lf to ref_num
+--	write "\\newwrite\\foo \\immediate\\openout\\foo=tempfn"&amp;(i as string)&amp;".txt \\immediate\\write\\foo{\\the\\dp0}" to ref_num
+--	write "\\closeout\\foo"&amp;lf to ref_num
+--	write "\\end{document}" &amp; lf to ref_num
+	close access thefile
+
+	try
+		set s to (do shell script ("cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;/usr/texbin/pdflatex tempfn" &amp; (i as string)))
+	on error errmsg number errnum
+		set AppleScript's text item delimiters to oldtid
+		display dialog "pdflatex returned error :"&amp; (errnum as string)&amp;": "&amp;errmsg &amp;" while processing tempfn"&amp;(i as string)&amp;".tex --bailing out."
+		return
+	end try
+	set logfile to (POSIX path of ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".log"))
+	open for access logfile
+	set file_contents to (read logfile)
+	close access (logfile)
+	set AppleScript's text item delimiters to "you used:"
+	set lst to the text items of file_contents
+	if (count of lst) is not equal to 2 then
+		set AppleScript's text item delimiters to oldtid
+		display dialog "Pdflatex log error--bailing out"
+		return
+	end if
+	set s to (item 2 of lst)
+	set AppleScript's text item delimiters to {"&lt;", "&gt;"}
+	set lst to the text items of s
+	if (count of lst)&lt;2 then
+		set AppleScript's text item delimiters to oldtid
+		display dialog "Unexpected log contents---bailing out."
+		return
+	end if
+	set AppleScript's text item delimiters to "/"
+	set fpath to text items of (item 2 of lst)
+	set (item i of glyphsource) to clean(item -1 of fpath)
+	try
+		set s to (do shell script (¬
+			"cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;" &amp; ¬
+			"/usr/local/bin/gs  -dSAFER -dBATCH -dNOPAUSE -q -r3600 -sDEVICE=bbox -sOutputFile=- " &amp; "-c \"/setpagedevice {pop} def\" -f tempfn" &amp; (i as string) &amp; ¬
+			".pdf -c quit 2&gt;&amp;1 | " &amp; "/usr/bin/awk '/HiRes/ { printf \"%4u\", ($5 - $3)*5.01875+0.5 }'"))
+		--set k to (s as integer)
+		--set t to ((path to temporary items) as string &amp; "tempfn" &amp; (i as string) &amp; ".txt")
+		--set thefile to (POSIX path of t)
+		--open for access thefile
+		--set dp to (read thefile)
+		--close access (thefile)
+		--set dp to (text 1 thru -3 of trim(true,dp))
+		--set k to k-(((dp as number)*100+.5) as integer)
+		--set s to (k as string)
+	on error
+		set s to "0"
+	end try
+	set (item i of sizes) to trim(true,s)
+end repeat
+
+--finally, create report--bg8.pdf must be available somewhere in the texmf (tex/latex) trees
+--must first close file if open in texshop
+try
+	tell application "TeXShop"
+		if (exists  document "tempfnrep.tex") then
+			close document "tempfnrep.tex"
+		else
+			if  (exists  document "tempfnrep") then close document "tempfnrep"
+		end if
+	end tell
+on error --catch errors like timeout errors
+end try
+set repcontent to "\\documentclass{article}"&amp;lf¬
+&amp;"%\\batchmode"&amp;lf¬
+&amp;"\\setlength\\parindent{0pt}"&amp;lf¬
+&amp;"\\usepackage[landscape,margin=.5in]{geometry}"&amp;lf¬
+&amp; "\\usepackage{lmodern,amsfonts,mathrsfs}" &amp; lf ¬
+&amp;"\\usepackage{xcolor,graphicx}"&amp;lf¬
+&amp;"\\usepackage{multido}"&amp;lf¬
+&amp;"\\setlength\\unitlength{80pt}"&amp;lf¬
+&amp;"\\def\\myr{\\color{red!50}}"&amp;lf¬
+&amp;fontblock&amp;lf¬
+&amp;"\\pagestyle{empty}"&amp;lf¬
+&amp;"\\def\\wid{8.89pt}"&amp;lf¬
+&amp;"\\begin{document}"&amp;lf¬
+&amp;"\\begin{picture}(8,1.1)"&amp;lf¬
+&amp;"\\put(0,0){\\includegraphics{bg8.pdf}}"&amp;lf¬
+&amp;"\\put(0,.16){\\scalebox{9}{\\hbox to \\wid{X\\hfil}}}"&amp;lf¬
+&amp;"\\put(0,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil x}}}"&amp;lf¬
+&amp;"\\put(1,.16){\\scalebox{9}{\\hbox to \\wid{\\textsf{X}\\hfil}}}"&amp;lf¬
+&amp;"\\put(1,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil\\textsf{x}}}}"&amp;lf¬
+&amp;"\\put(2,.16){\\scalebox{9}{\\hbox to \\wid{\\texttt{X}\\hfil}}}"&amp;lf¬
+&amp;"\\put(2,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil\\texttt{x}}}}"&amp;lf¬
+&amp;"\\put(3,.16){\\scalebox{9}{\\hbox to \\wid{$X$\\hfil}}}"&amp;lf¬
+&amp;"\\put(3,.16){\\scalebox{9}{\\myr\\hbox to \\wid{\\hfil$x$}}}"&amp;lf¬
+&amp;"\\put(4,.16){\\scalebox{9}{\\hbox to \\wid{{\\hfil$\\mathcal{X}$\\hfil}}}}"&amp;lf¬
+&amp;"\\put(5,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathbb{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\put(6,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathfrak{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\put(7,.16){\\scalebox{9}{\\hbox to \\wid{\\hfil$\\mathscr{X}$\\hfil}}}"&amp;lf¬
+&amp;"\\multido{\\i=0+1,\\ia=1+1}{8}"&amp;lf¬
+&amp;"{\\put (\\i,-.2){\\hbox to 80pt{\\hfil\\ia\\hfil}}}"&amp;lf¬
+&amp;"\\end{picture}"&amp;lf¬
+&amp;"\\vspace{2pc}"&amp;lf¬
+&amp;"\\begin{tabbing}"&amp;lf¬
+&amp;"Key \\= Height----- \\= Type\\hspace{7pc} \\= \\verb|$\\mathfrak{XXX}$| \\= \\kill"&amp;lf¬
+&amp;"Key \\&gt; Height \\&gt; Type\\&gt; Command \\&gt; Glyph source file\\\\"&amp;lf¬
+&amp;"1 \\&gt; "&amp;(item 1 of sizes)&amp;"/"&amp;(item 9 of sizes)&amp;" \\&gt; Roman \\&gt;X/x \\&gt; \\texttt{"&amp;(item 1 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"2 \\&gt; "&amp;(item 2 of sizes)&amp;"/"&amp;(item 10 of sizes)&amp;" \\&gt; Sans Serif \\&gt; \\verb|\\textsf{X/x}| \\&gt; \\texttt{"&amp;(item 2 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"3 \\&gt; "&amp;(item 3 of sizes)&amp;"/"&amp;(item 11 of sizes)&amp;" \\&gt; Typewriter \\&gt; \\verb|\\texttt{X/x}| \\&gt; \\texttt{"&amp;(item 3 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"4 \\&gt; "&amp;(item 4 of sizes)&amp;"/"&amp;(item 12 of sizes)&amp;" \\&gt; Math Italic \\&gt; \\verb|$X/x$| \\&gt; \\texttt{"&amp;(item 4 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"5 \\&gt; "&amp;(item 5 of sizes)&amp;" \\&gt; Math Calligraphic \\&gt;\\verb|$\\mathcal{X}$| \\&gt; \\texttt{"&amp;(item 5 of glyphsource)&amp;"}\\\\" &amp;lf¬
+&amp;"6 \\&gt; "&amp;(item 6 of sizes)&amp;" \\&gt; Math Blackboard Bold \\&gt; \\verb|$\\mathbb{X}$| \\&gt; \\texttt{"&amp;(item 6 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"7 \\&gt; "&amp;(item 7 of sizes)&amp;" \\&gt; Math Fraktur \\&gt; \\verb|$\\mathfrak{X}$| \\&gt; \\texttt{"&amp;(item 7 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"8 \\&gt; "&amp;(item 8 of sizes)&amp;" \\&gt; Math Script \\&gt; \\verb|$\\mathscr{X}$| \\&gt; \\texttt{"&amp;(item 8 of glyphsource)&amp;"}\\\\"&amp;lf¬
+&amp;"\\end{tabbing}"&amp;lf¬
+&amp;"\\vspace{1pc}"&amp;lf¬
+&amp;"\\textbf{Font commands:}"&amp;lf¬
+&amp;"\\begin{verbatim}"&amp;lf¬
+&amp;fontblock&amp;lf¬
+&amp;"\\end{verbatim}"&amp;lf¬
+&amp;"\\end{document}"
+
+set t to ((path to temporary items) as string &amp; "tempfnrep.tex")
+set thefile to (POSIX path of t)
+set ref_num to open for access thefile with write permission
+set eof of ref_num to 0
+write repcontent to ref_num
+close access thefile
+try
+	set s to (do shell script ("cd \"${TMPDIR}/TemporaryItems\"&amp;&amp;/usr/texbin/pdflatex tempfnrep"))
+on error errmsg
+	set AppleScript's text item delimiters to oldtid
+	display dialog "pdflatex returned error: "&amp;errmsg&amp;lf&amp;"while processing tempfnref.tex --bailing out."
+	return
+end try
+set s to do shell script "open -a TeXShop.app " &amp; quoted form of (POSIX path of t)
+
+on trim(theseCharacters, someText)
+	-- Lazy default (AppleScript doesn't support default values)
+	if theseCharacters is true then set theseCharacters to ¬
+		{" ", tab, ASCII character 10}
+	
+	repeat until first character of someText is not in theseCharacters
+		set someText to text 2 thru -1 of someText
+	end repeat
+	
+	repeat until last character of someText is not in theseCharacters
+		set someText to text 1 thru -2 of someText
+	end repeat
+	
+	return someText
+end trim
+
+on clean(someText)
+	--get rid of all internal lf
+	set thetid to Applescript's text item delimiters
+	set Applescript's text item delimiters to lf
+	set fields to text items of someText
+	set Applescript's text item delimiters to ""
+	set someText to (fields as string)
+	set Applescript's text item delimiters to thetid
+	return someText
+end clean</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>TestFontSet</string>
 		</dict>
 		<dict>
 			<key>content</key>

@@ -14,6 +14,120 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.39</h5></P>
+<ul>
+<li> The most significant change in 3.39 is the addition of Michael Sharpe's "Recent TeX Fonts" document and associated font Macros.  Michael and I attended the TeX User Group meeting in Portland, Oregon at the end of July, 2014. I knew him as an Applescript expert; several of his scripts are in TeXShop. Other macros from him will appear in a future version. To see his scripts, go to
+<A HREF="https://dl.dropboxusercontent.com/u/3825336/TeX/index.html"> https://dl.dropboxusercontent.com/u/3825336/TeX/index.html. </A>  
+Pay particular attention to 
+macrocopier.zip on this location, a stand alone program which makes it easy to maintain and extend TeXShop macros.
+
+<p>
+At the TUG meeting, I discovered that Sharpe is a font expert widely known to users on other platforms.
+TeX Live contains a very large number of TeX fonts, but it is not that easy to use them.
+Most font sets don't have mathematical symbols, and it becomes a design task to find pleasing combinations of fonts for text, sans-serif sections, and mathematics.
+
+<p>
+Sharpe wrote a document called "Recent TeX Fonts", now available in the TeXShop Help menu. This document describes a number of pleasing font combinations, one per page. Each page lists the features of a set, provides an extensive sample of text and mathematics typeset using
+it, and contains the exact LaTeX code needed to use the font set. These sets are the result
+of extensive work by Sharpe; I understand that some of them took four months to perfect.
+
+<p>
+One way to use the document is to select an article or book written with standard fonts and  copy Sharpe's implementation section into the document's header and retypeset. 
+
+<p>
+To make this even easier, Sharpe slightly modified the LaTeX template which comes with TeXShop, 
+defining a  section in the header bounded by %SetFonts comments. The space between two such comments can be empty when the document is originally written.  Sharpe defined three
+macros called "GetFontSet," "SaveFontSet," and "TestFontSet." The first of these brings up
+a small dialog listing known font sets. When one is selected, its implementation code is written to the source document between the %SetFonts comments, replacing other implementation code there. So with one click and one typeset, the document can be seen written with a new set of fonts.
+
+<p>
+Users can also put their own implementation code between the  %SetFonts comments.
+The SaveFontSet macro reaches between the comments and saves the implementation code to a file in ~/Library/TeXShop/bin named "SetFonts", which is used by the GetFontSet macro to list known font combinations. Thus "SetFonts"  gradually builds into a library of known font combinations. 
+
+<p>
+I'll let the TestFontSet macro speak for itself.
+
+<p>
+To use these Sharpe additions, it is necessary to use the full TeX Live as installed by MacTeX,
+because BasicTeX doesn't contain many fonts. All the font sets defined by Sharpe have been
+tested and are available with TeX Live 2014, except two. The garamondx font has a license permitting free personal use provided the font is not sold. This font is on CTAN, but it cannot
+be in TeX Live because TUG sells a DVD containing TeX Live. However, a script named getnonfreefonts is available to download and install this font. See 
+<A HREF="https://www.tug.org/fonts/getnonfreefonts/">https://www.tug.org/fonts/getnonfreefonts/.</A> 
+
+<p>
+The "SetFonts" template also has a Lucida entry. Lucida is a commercial font, sold by TUG and others. 
+See <A HREF="https://www.tug.org/store/lucida/index.html"> https://www.tug.org/store/lucida/index.html.</A>  
+Many users own this set, and Sharpe's detailed and non-trivial code to use them will help them obtain the most from the fonts.
+
+It is our hope that the existence of these easy techniques will lead to more LaTeX documents that don't scream out "I was written with \TeX," and instead have a professional printed look.
+
+<p>
+<li> TeXShop has a new icon by Thiemo Gamma in Switzerland, designed for Yosemite. Gamma
+also redesigned the dialog which appears when you select the menu item "About TeXShop".
+
+<p>
+The story of TeXShop icons is complicated. The original icon was designed by Jérôme Laurens. 
+Jérôme also designed the TeX Live Utility icon, and I like both a lot.
+
+<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for Jérôme's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  Jérôme's icon and I like it a lot. Adams also provided a document icon.
+
+<p> But Apple revised the look of icons in Yosemite. I intended to ignore the new design.
+
+<p>Then completely unexpectedly, Gamma sent a new icon. I think it is wonderful for a reason I'll explain in a moment. Gamma is extremely modest about it. When he learns how difficult it is for others to make icons and how much in demand good designers are, he'll have a happy life.
+
+<p> My goal for TeXShop has always been that it should  vanish into the background, allowing writers to concentrate  on the document they are writing without distraction. Sometimes this goal is met, and sometimes not. Gamma's icon is a symbol of this goal. It is simple and subdued, sitting there
+in the background.
+
+<p> TeXShop still contains Adams' icon for documents. The source code also still contains his
+program icon. 
+
+<p>
+<li> TeXShop 3.38 has a significant bug, first discovered by James Crippen.  When a source document is long and the preview window is active, clicking on the source window leads to a several second delay before the source window becomes active. This bug was caused by a single line of code, added to help a few users in Japan.
+The bug is fixed in 3.39.
+
+<p> The line of code creating the bug was added for users who meet all of the following
+conditions:
+<ul>
+<li> They use Japanese input methods
+<li> They customize the background and foreground colors of the source window
+<li> They choose a dark color for the background
+</ul>
+
+<p>
+These users can activate the bad line and live with the bug by typing the following in Terminal
+<dl>
+<dd>defaults write TeXShop ResetSourceTextColorEachTime  YES
+</dl>
+
+<p>
+<li> Herbert Shultz provided a new version of the Help document TeXShop Tips and Tricks,
+and René Fritz provided a French translation.
+
+<p>
+<li> The Brazilian localization in TeXShop 3.38 was mistakenly added by Koch to the
+localization for Portuguese in Portugal. This is fixed in 3.39.
+
+<p>
+<li> Will Robertson asked that the TeXShop "indent" command insert spaces rather than a tab.
+This makes fine adjustments afterward easier. Version 3.39 gives Robertson his wish.
+
+<p>
+<li> Yusuke Terada provided fixes for a number of small problems in TeXShop:
+<dl>
+<dd> The color matching options for copying from the Preview window, set in TeXShop Preferences under the Copy tab, were broken in recent versions. This is fixed.
+<dd> The routine which selects an image from the Preview window has been improved.
+<dd> Toolbar tips for mouse actions in the Preview window have been added and localized.
+</dl>
+
+<p>
+<li> Yusuke Terada also fixed a more significant bug. If a particular font is set in TeXShop
+Preferences, either by the user or by default, but that font is no longer in the system,
+then TeXShop would refuse to run. This may explain some very obscure problems reported in the past. The bug is fixed.
+
+
+
+</ul>
+
 <P><h5>TeXShop Changes 3.38</h5></P>
 <ul>
 <li> If the option key is down when a source file is opened, the associated pdf file will not be opened.

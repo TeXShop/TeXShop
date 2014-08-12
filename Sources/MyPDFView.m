@@ -3303,7 +3303,10 @@ failed. If you change the code below, be sure to test carefully!
 		[pboard setData:data forType:dataType];
 	}
 	else
-		NSRunAlertPanel(@"Error", @"failed to copy selection.", nil, nil, nil);
+		// NSRunAlertPanel(@"Error", @"failed to copy selection.", nil, nil, nil);
+        NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                        NSLocalizedString(@"failed to copy selection.", @"failed to copy selection."),
+                        nil, nil, nil);
 }
 
 
@@ -3673,6 +3676,7 @@ NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor
 	// setup address etc
 	srcPixels = [srcBitmap bitmapData];
 	srcSamplesPerPixel = [srcBitmap samplesPerPixel]; // 3 (no alpha) or 4 (has alpha)
+    BOOL srcHasAlpha = (srcSamplesPerPixel == 4);
 	srcBytesPerRow = [srcBitmap bytesPerRow];
 	newPixels = [newBitmap bitmapData];
 	destBytesPerRow = [newBitmap bytesPerRow];
@@ -3688,7 +3692,23 @@ NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor
 			rgbPixel *destpix = (rgbPixel *)
 						(newPixels + destBytesPerRow * row + destSamplesPerPixel * column);
 			// source level: level=0 black, level=1 white
-			level = ((CGFloat)srcpix->red + (CGFloat)srcpix->green + (CGFloat)srcpix->blue)/765;
+            
+            // Yusuke Terada replaced the following line ...
+ 			// level = ((CGFloat)srcpix->red + (CGFloat)srcpix->green + (CGFloat)srcpix->blue)/765;
+            // with the next lines until "end Yusuke Terada"
+            CGFloat srcR = (CGFloat)srcpix->red;
+            CGFloat srcG = (CGFloat)srcpix->green;
+            CGFloat srcB = (CGFloat)srcpix->blue;
+            if(srcHasAlpha){
+                // composite background white
+                CGFloat a = (CGFloat)(((rgbaPixel *)srcpix)->alpha) / 255;
+                srcR = (1-a)*255 + a*srcR;
+                srcG = (1-a)*255 + a*srcG;
+                srcB = (1-a)*255 + a*srcB;
+            }
+            level = (srcR + srcG + srcB)/765;
+            // end Yusuke Terada
+            
 			// modify the level
 			switch (param1) // just testing various functions
 			{

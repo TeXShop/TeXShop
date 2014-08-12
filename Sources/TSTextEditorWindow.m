@@ -72,7 +72,11 @@
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
 	[self.myDocument fixMacroMenuForWindowChange];
-    [self.myDocument setSourceTextColorFromPreferences:nil]; // added by Terada
+// WARNING: The following line caused a BIG delay when switching from the pdf window to the text window!!
+// It can be turned on with a hidden preference, but the only users who need it
+// a) use Japanese input methods and b) customize the background and foreground source colors and c) have a dark background color
+    if ([SUD boolForKey:ResetSourceTextColorEachTimeKey])
+        [self.myDocument setSourceTextColorFromPreferences:nil]; // added by Terada
 }
 
 - (void) resignMainWindow

@@ -77,6 +77,15 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayRecentTeXFonts:sender;
+{
+    NSString				*fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"RecentTexFonts" ofType:@"pdf"];
+	[self displayFile: fileName];
+}
+
+
 - (IBAction)displayNotesonApplescript:sender
 {
     NSString				*fileName;

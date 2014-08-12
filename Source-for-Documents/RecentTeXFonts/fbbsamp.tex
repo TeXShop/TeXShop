@@ -1,0 +1,75 @@
+% !TEX TS-program = pdflatexmk
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line, no indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+\usepackage[full]{textcomp}
+\usepackage[sups,osf]{fbb}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[varqu,varl]{zi4}% inconsolata
+\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\pagestyle{empty}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+\begin{document}
+\thispagestyle{empty}
+\begin{description}
+\item[Package name:] {\tt fbb} (Free Bembo)
+\item[Derived from:] Cardo by David Perry (not available on \textsc{ctan})
+\item[Weights and shapes:]  \{m, b\}, \{n, it\}. (Cardo had no BoldItalic.)
+\item[Features:]{\color{white}x}\\[-15pt]  
+\begin{itemize}
+\item
+full set of f-ligatures---Cardo f-ligatures were modified;
+\item \textsc{Small Caps} in all weights and shapes---Cardo had \textsc{smc} only in Regular;
+\item lining figures, both proportionally spaced (option {\tt lining}) and tabular (options {\tt lining, tabular});
+\item taboldstyle figures \texttosf{0123456789} (options {\tt oldstyle, tabular});
+\item proportional oldstyle figures \textosf{0123456789} (option {\tt oldstyle});
+\item superior figures \textsu{0123456789} in all weights and shapes. With the {\tt sups} option, these will be used for footnote markers;
+\item full set of {\tt textcomp} glyphs; 
+\item \verb|\textcircled| macro: Eg, \verb|\textcircled{A}| gives \textcircled{A}. (Must load {\tt textcomp} with {\tt full} option.)
+\item tall ascenders, overarching f, calligraphic appearance. 
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[full]{textcomp}
+\usepackage[sups,osf]{fbb} % osf (or tosf) for text, not math
+\usepackage[scaled=.95]{cabin} % sans serif
+\usepackage[varqu,varl]{inconsolata} % sans serif typewriter
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath} % bb from STIX
+\usepackage[cal=boondoxo]{mathalfa} % mathcal
+\end{verbatim}
+\item[Example using this preamble:]{\color{white}x}\\[6pt]
+\lipsum[1]
+%\textit{\lipsum[2]}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+%\thispagestyle{empty}
+The typeset math below follows the ISO recommendations that only variables
+be set in italic. Note the use of upright shapes for $\d$, $\mathrm{e}$
+and $\uppi$. (The first two are entered as \verb|\mathrm{d}| and
+\verb|\mathrm{e}|, and in fonts derived from {\tt mtpro2} or {\tt newtxmath},
+ the latter is entered as \verb|\uppi|.)
+
+\textbf{Simplest form of the \textit{Central Limit Theorem}:} \textit{Let
+$X_1$, $X_2,\cdots$ be a sequence of iid random variables with mean~$0$ 
+and variance $1$ on a probability space $(\Omega,\mathcal{F},\Pr)$. Then}
+\[\Pr\left(\frac{X_1+\cdots+X_n}{\sqrt{n}}\le y\right)\to\mathfrak{N}(y)\coloneq
+\int_{-\infty}^y \frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,
+\mathrm{d}t\quad\mbox{as $n\to\infty$,}\]
+\textit{or, equivalently, letting} $S_n\coloneq\sum_1^n X_k$,
+\[\mathbb{E} f\left(S_n/\sqrt{n}\right)\to \int_{-\infty}^\infty f(t)
+\frac{\mathrm{e}^{-t^2/2}}{\sqrt{2\uppi}}\,\mathrm{d}t
+\quad\mbox{as $n\to\infty$, for every $f\in\mathrm{b}
+\mathcal{C}(\mathbb{R})$.}\]
+\end{description}
+\end{document}  

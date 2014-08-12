@@ -56,7 +56,7 @@
 #import "TSLayoutManager.h" // added by Terada 
 #import "TSToolbar.h"
 #import "NSString-Extras.h"  // Terada
-
+#import "NSText-Extras.h"  // Terada
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
@@ -516,7 +516,7 @@
 	[aTextView setAllowsUndo:YES];
 	[aTextView setRichText:NO];
 	[aTextView setUsesFontPanel:YES];
-	[aTextView setFont:[NSFont userFontOfSize:12.0]];
+	[aTextView setFontSafely:[NSFont userFontOfSize:12.0]];
 	[aTextView setTextColor: foregroundColor];
 	[aTextView setBackgroundColor: backgroundColor];
 	[aTextView setInsertionPointColor: insertionpointColor];
@@ -2622,8 +2622,8 @@ if ( ! skipTextWindow) {
 	if (fontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
-       [textView1 setFont:font];
-		[textView2 setFont:font];
+       [textView1 setFontSafely:font];
+		[textView2 setFontSafely:font];
 	}
 	[self fixUpTabs];
 }
@@ -2639,9 +2639,9 @@ if ( ! skipTextWindow) {
 		font = [NSUnarchiver unarchiveObjectWithData:fontData];
         
         if ([SUD boolForKey:ScreenFontForLogAndConsoleKey])
-            [self.logTextView setFont:[font screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
+            [self.logTextView setFontSafely:[font screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
         else
-            [self.logTextView setFont: font];
+            [self.logTextView setFontSafely: font];
 	}
 }
 
@@ -2653,9 +2653,9 @@ if ( ! skipTextWindow) {
 	theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
     
     if ([SUD boolForKey:ScreenFontForLogAndConsoleKey])
-        [outputText setFont: [theFont screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
+        [outputText setFontSafely: [theFont screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
     else
-        [outputText setFont: theFont];
+        [outputText setFontSafely: theFont];
 }
 
 - (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification
@@ -2809,9 +2809,9 @@ preference change is cancelled. "*/
 	if (self.previousFontData != nil)
 	{
 		font = [NSUnarchiver unarchiveObjectWithData:self.previousFontData];
-		[textView1 setFont:font];
-		[textView2 setFont:font];
-		[self.logTextView setFont:font];
+		[textView1 setFontSafely:font];
+		[textView2 setFontSafely:font];
+		[self.logTextView setFontSafely:font];
 	}
 	[self fixUpTabs];
 }
@@ -5322,7 +5322,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         fontData = [SUD objectForKey:DocumentFontKey];
         if (fontData != nil) {
             font = [NSUnarchiver unarchiveObjectWithData:fontData];
-            // [textView setFont:font];
+            // [textView setFontSafely:font];
 		} else
             font = [NSFont userFontOfSize:12.0];
 	}
@@ -5357,9 +5357,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	[theTypingAttributes2 setObject:newStyle forKey:NSParagraphStyleAttributeName];
 	[textView2 setTypingAttributes:theTypingAttributes2];
         
-	[textView1 setFont:font];
+	[textView1 setFontSafely:font];
 	[textView1 setDefaultParagraphStyle: newStyle];
-	[textView2 setFont:font];
+	[textView2 setFontSafely:font];
 	[textView2 setDefaultParagraphStyle: newStyle];
 
 }
@@ -5805,12 +5805,16 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSUInteger  blockStart, blockEnd, lineStart, lineContentsEnd, lineEnd;
     NSInteger   theChar = 0, increment = 0, rangeIncrement;
     NSString    *theCommand = 0;
+    NSUInteger  tabWidth, i;
+    NSString    *indentString;
     
     text = [textView string];
     NSRange oldRange = [textView selectedRange];
     
+    
     //Expand the selectedRange to include whole lines
     [text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
+    tabWidth = [SUD integerForKey: tabsKey];
     
     //Save the oldString for undo
     modifyRange.location = blockStart;
@@ -5857,14 +5861,30 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 }
                 break;
                 
+            // The routine below was modified to use spaces rather than tabs.
             case Mindent:
+                indentString = @"";
+                if (tabWidth > 0)
+                    for (i = 1; i <= tabWidth; i++)
+                        indentString = [indentString stringByAppendingString: @" "];
+                /*
                 [textView replaceCharactersInRange:modifyRange withString:@"\t"];
                 blockEnd++;
                 lineEnd++;
                 increment++;
+                */
+                [textView replaceCharactersInRange:modifyRange withString:indentString];
+                blockEnd = blockEnd + tabWidth;
+                lineEnd = lineEnd + tabWidth;
+                increment = increment + tabWidth;
+                
                 theCommand = NSLocalizedString(@"Indent", @"Indent");
                 break;
                 
+            // The routine below was modified to use spaces rather than tabs.
+            // When reading the code, notice that "text" is OUR COPY of the original text
+            // while "[textView ...]" affects the actual source text; these objects are not
+            // in sync as the routine continues to make changes
             case Munindent:
                 if (lineStart < lineContentsEnd)
                     theChar = [text characterAtIndex:lineStart];
@@ -5873,6 +5893,30 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                     break;
                 }
                 else break;
+                
+                if (theChar == ' ') {
+                    modifyRange.location = lineStart;
+                    modifyRange.length = 1;
+                    [textView replaceCharactersInRange:modifyRange withString:@""];
+                    blockEnd--;
+                    lineEnd--;
+                    increment--;
+                    i = 1;
+                    theChar = [text characterAtIndex:(lineStart + 1)];
+                    while (((lineStart + i) < lineContentsEnd) && (i < tabWidth) && (theChar == ' '))
+                        {
+                            modifyRange.location = lineStart;
+                            modifyRange.length = 1;
+                            [textView replaceCharactersInRange:modifyRange withString:@""];
+                            blockEnd--;
+                            lineEnd--;
+                            increment--;
+                            i++;
+                        }
+                    if(oldRange.location == blockStart && firstLine) fixRangeStart = YES;
+                    theCommand = NSLocalizedString(@"Unindent", @"Unindent");
+                }
+   /*
                 if (theChar == '\t') {
                     modifyRange.length = 1;
                     [textView replaceCharactersInRange:modifyRange withString:@""];
@@ -5881,7 +5925,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                     increment--;
                     if(oldRange.location == blockStart && firstLine) fixRangeStart = YES;
                     theCommand = NSLocalizedString(@"Unindent", @"Unindent");
-                }else if(firstLine){
+                }
+   */
+                else if(firstLine){
                     fixRangeStart = YES;
                 }
                 break;
@@ -5910,6 +5956,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     if(!(oldRange.length == 0 && rangeIncrement < 0)) oldRange.length += rangeIncrement;
     
     [textView setSelectedRange: oldRange];
+    
+    // we now fix the selected range, which was sometimes one or two of
+    text = [textView string];
+    [text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
+    modifyRange.location = blockStart;
+    modifyRange.length = (blockEnd - blockStart);
+    [textView setSelectedRange: modifyRange];
 }
 
 // end mitsu 1.29 // end rewritten Scott Lambert 3/1/2010 // end rewritten Terada 2012

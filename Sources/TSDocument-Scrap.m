@@ -32,6 +32,7 @@
 
 #import "TSWindowManager.h"
 #import "TSEncodingSupport.h"
+#import "NSText-Extras.h"
 
 
 
@@ -87,7 +88,7 @@
         if (fontData != nil)
             {
             font = [NSUnarchiver unarchiveObjectWithData:fontData];
-            [scrapTextView setFont:font];
+            [scrapTextView setFontSafely:font];
             }
         }
 

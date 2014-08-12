@@ -1,0 +1,110 @@
+%% LaTeX Preamble - Font choices
+
+%%Package options:
+% nfss: osf, sc, slantedGreek, noBBpl, osfeqnnum
+% nfssext-cfr: (used automatically by otfinst---extensions to nfss) 
+ % \textlf (lining figures),
+ % \textos (oldstyle figures),
+ % \textin (inferior figures), 
+ % \textsu (superior figures),
+ % \textsw (swash italic),
+ % \textsi (italic sc),
+ % \textdf (reset to default shape---usually n),
+ % and many other, more esoteric, choices.
+% eulervm: small (=.95), euler-digits, euler-hat-accent, icomma---OT1, T1, LY1
+% fourier: widespace, poorman (default), expert, oldstyle, fulloldstyle, sloped (default), upright--T1+TS1
+% helvet: (nfss) scaled---OT1, T1+TS1 (for Sans Serif only)
+% lmodern: nomath, variablett, lighttt---OT1, T1+TS1, LY1
+% lucidabr: expert, noexpert, lucidascale, nolucidascale, lucidasmallscale, mathitalic1
+ % mathitalic2, mathitalic3, slantedgreek, uprightgreek, vargreek, noamssymbols,
+ % seriftt, fax, casual, calligraphic, handwriting, altbullet, errorshow, warningshow, nofontinfo--- 
+ % T1+TS1, LY1 (defaults=noexpert,lucidascale,slantedgreek,mathitalic1,errorshow)
+% mathdesign: utopia, mdput, adobe-utopia, garamond, mdugm, urw-garamond,
+ % charter, mdbch, bitstream-charter, mdfga, fontsite-garamond, expert---OT1, T1+TS1
+% mathpazo: osf & sc (needs fpls.map enabled), slantedGreek, noBBpl---OT1, T1+TS1
+% mathtime: slantedgreek, uprightgreek, nobold, cmbold, mtbold, heavybold, 
+  % nosubscriptcorrection, subscriptcorrection, cmcal, lucidacal, mtplusscr, mtpluscal, 
+  % lucidascr, noTS1, errorshow---OT1, T1, LY1
+  % (defaults= slantedgreek,nobold,nosubscriptcorrection,cmcal,errorshow)
+% MinionPro: onlytext, onlymath, slides, noopticals, opticals, smallfamily, medfamily,
+ % fullfamily, normalsize, nonormalsize, textosf, mathosf, mathlf, textlf, osf, lf, mathtabular
+ % mnsy, cmsy, abx, swash, frenchmath, mixedgreek, italicgreek, amsbb, lucidabb, fourierbb,
+ % minionint, footnotefigures, openg, eufrak, loosequotes---OT1, OT2, T1+TS1, T2
+%
+%% Each block below selects new math, roman (serif), sans serif, and typewriter fonts.
+%% Delete or comment out all but one to make your choice.
+DEFAULT=libertine+newtxmath
+%SetFonts
+% Latin Modern
+% Extension of CM text+math
+\usepackage{lmodern} % math, rm, ss, tt
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[scr=boondoxo,frak=boondox,bb=boondox]{mathalfa}
+%SetFonts
+% mathpazo
+\usepackage[noBBpl,sc,osf]{mathpazo} % math & rm
+\linespread{1.05} % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{zlmtt} % tt
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\normalfont
+\usepackage{amssymb}
+%SetFonts
+% Lucida Bright complete
+\usepackage{amsmath}%must come before lucidabr
+\usepackage[T1]{fontenc}% must come before lucidabr to get correct accents
+\usepackage{textcomp} % to get the right copyright, etc.
+%must load fontenc before lucidabr, or no \mathfrak
+\usepackage[expert,vargreek,altbullet]{lucidabr}%use \mathbf,\mathfrak
+\DeclareEncodingSubset{TS1}{hlh}{1}  % including \oldstylenums
+\usepackage{mathalfa} %set math alphabets here
+%amsfonts, amssymb not needed
+%SetFonts
+% libertine+newtxmath
+\usepackage[osf]{libertine} %loads biolinum ss, similar to optima
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[varqu,varl]{inconsolata} %tt
+\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa} % less slanted than STIX
+\usepackage[supstfm=libertinesups,%
+  supscaled=1.2,%
+  raised=-.13em]{superiors}
+%SetFonts
+% newtxtext+newtxmath
+\usepackage{newtxtext} %loads helv for ss, txtt for tt
+\usepackage{amsmath}
+\usepackage[bigdelims]{newtxmath}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+%SetFonts
+% newpxtext+newpxmath
+\usepackage{newpxtext}
+\usepackage[scaled=.97]{cabin} %ss
+\usepackage[varqu,varl]{inconsolata} % tt
+\usepackage{amsmath}
+\usepackage[bigdelims]{newpxmath}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+%SetFonts
+% garamondx+newtxmath
+\usepackage[scaled,osf]{garamondx} %osf for text, lining for math
+\usepackage[scaled=.95]{cabin} %ss
+\usepackage[varqu,scaled=.95]{inconsolata} %tt
+\usepackage[garamondx,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondox]{mathalfa}
+\usepackage{textcomp}
+%SetFonts
+% fbb+newtxmath
+\usepackage[full]{textcomp} % to get the right copyright, etc.
+\usepackage{fbb} % osf for text, lining for math
+\usepackage[scaled=.95]{cabin}
+\usepackage[varqu,varl]{inconsolata}% typewriter
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}% less slanted than STIX
+\usepackage[T1]{fontenc}
+\useosf
+

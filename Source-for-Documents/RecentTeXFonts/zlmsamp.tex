@@ -1,0 +1,53 @@
+% !TEX TS-program = pdflatexmk
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage[parfill]{parskip}% Begin paragraphs with an empty line, no indent
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{microtype}
+%SetFonts
+% libertine+newtxmath
+%\usepackage[full]{textcomp}
+\usepackage[scaled=.95]{garamondx}
+\usepackage[T1]{fontenc}
+\usepackage{cabin}
+\usepackage[scaled=1.05]{zlmtt}% inconsolata
+%\usepackage{amsmath,amsthm}
+\usepackage[libertine,bigdelims,vvarbb]{newtxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\pagestyle{empty}
+%\def\lctt#1{{\fontfamily{zlmtt}\fontseries{lc}\selectfont #1}}
+\def\Pr{\ensuremath{\mathbb{P}}}
+\def\d{\mathrm{d}}
+\begin{document}
+\thispagestyle{empty}
+\begin{description}
+\item[Package name:] {\tt zlmtt} (Latin Modern Typewriter)
+\item[Derived from:] {\tt Computer Modern Typewriter (cmtt)}
+\item[Weights and shapes:]  \{l, lc, m, b\}, \{n, it\}. (Bold is only 20\% thicker than medium. Not all combinations are available.)
+\item[Features:]{\color{white}x}\\[-15pt]  
+\begin{itemize}
+\item many encodings available: T1, TS1, LY1, OT1, IL2, L7x, OT4, QX, T5;
+\item medium weight has a \texttt{\textsc{Small Caps}} variant in upright shape only;
+\item each weight has a proportionally spaced variant (i.e., not monospaced) with fewer features (e.g., no lightcondensed variant), activated by option {\tt proportional}, or simply {\tt p};
+\item each weight has an \texttt{\textit{italic style}} in addition to the default upright style---this style is not simply a slanted version of the upright style except in the proportionally spaced variant; 
+\item independently of the choices made for ``medium'' and ``bold'' in other font families, you may choose which weights will be chosen for Typewriter by specifying {\tt light} (or just {\tt l}) to make \verb|\mdseries| render as {\tt light}, {\tt lightcondensed} or {\tt lc} for {\tt lightcondensed}, while {\tt med} or {\tt m} make \verb|\bfseries| render using {\tt medium};
+\item the macros \verb|\proptt| and \verb|\monott| render their arguments using proportional and monospaced {\tt tt}, no matter what options were specified for the package. The macro \verb|\lctt| renders its argument as lightcondensed.
+\end{itemize}
+\item[Typical invocation:]{\color{white}x}
+\begin{verbatim}
+\usepackage[scaled=1.05]{zlmtt}% latin modern typewriter
+\end{verbatim}
+\item[Example using this preamble:] (with \verb|\texttt|)\\[6pt]
+\texttt{\lipsum[1]}
+%\textit{\lipsum[2]}
+\texttt{0123456789 (medium)}\\
+\texttt{\textbf{0123456789} (bold)}\\[6pt]
+(With \verb|\proptt|,)\\
+\proptt{\lipsum[1]}
+(With \verb|\lctt|,)\\
+\lctt{A little bit of lightcondensed, which is not available in proportional mode.}
+\end{description}
+\end{document}  

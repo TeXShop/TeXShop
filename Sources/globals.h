@@ -425,6 +425,7 @@ extern NSString *SourceInterlineSpaceKey;
 extern NSString *SpellingLanguageKey;
 extern NSString *SpellingAutomaticLanguageKey;
 extern NSString *TagMenuInMenuBarKey;
+extern NSString *ResetSourceTextColorEachTimeKey;
 
 
 // end defaults

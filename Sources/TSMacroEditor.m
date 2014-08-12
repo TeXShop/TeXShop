@@ -28,6 +28,7 @@
 #import "TSMacroMenuController.h"
 #import "TSTextView.h"
 #import "TSEncodingSupport.h"
+#import "NSText-Extras.h"
 #import "globals.h"
 
 
@@ -144,7 +145,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setAllowsUndo:YES];
 		[contentTextView setRichText:NO];
 		[contentTextView setUsesFontPanel:YES];
-		[contentTextView setFont:[NSFont userFontOfSize:12.0]];
+		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
 		[scrollView setDocumentView:contentTextView];
 		// [contentTextView release];
 		// text fields

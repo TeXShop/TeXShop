@@ -663,6 +663,7 @@ enum RootCommand
 - (BOOL) getWillClose;
 - (void) setWillClose: (BOOL)value;
 - (void) killRunningTasks;
+- (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args;
 
 @end
 

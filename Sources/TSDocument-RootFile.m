@@ -213,9 +213,10 @@
 			newSourceDocRange.location = sourcedocRange.location + offset;
 			newSourceDocRange.length = [testString length] - newSourceDocRange.location;
 			if (newSourceDocRange.length > 0) {
-				done = YES;
 				sourcedocString = [[testString substringWithRange: newSourceDocRange]
 						stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if ([sourcedocString length] > 0)
+                    done = YES;
 			}
 		}
 	}
@@ -227,8 +228,9 @@
 		if (aRange.location != NSNotFound) {
 			bRange = [theSource lineRangeForRange:aRange];
 			if (bRange.length > 12 && aRange.location == bRange.location) {
-				done = YES;
 				sourcedocString = [theSource substringWithRange:NSMakeRange(bRange.location+11,bRange.length-12)];
+                if ([sourcedocString length] > 0)
+                    done = YES;
 			}
 		}
 	}

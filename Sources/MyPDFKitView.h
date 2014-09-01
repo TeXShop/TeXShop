@@ -32,7 +32,9 @@
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
+                    IBOutlet	id								scurrentPage;
                     IBOutlet    id								totalPage;
+                    IBOutlet    NSTextField                     *stotalPage;
                     IBOutlet	id								myScale;
                     IBOutlet	id								myStepper;
                     IBOutlet	id								currentPage1;
@@ -219,6 +221,7 @@
 - (void)moveSplitToCorrectSpot:(NSInteger)index;
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
+- (NSDrawer *)drawer;
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
 @end

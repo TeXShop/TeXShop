@@ -14,6 +14,114 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.40 and 3.41</h5></P>
+
+Version 3.40 was never released. Version 3.41 has the following changes
+<ul>
+
+<br>
+<center><img src="Graphics/onewindow.png" border=1>
+</center>
+</br>
+
+<li> When editing a document, it is possible to place the source view and preview view in a
+single window rather than dealing with two windows for these views. This is particularly useful when using the "full screen" option, since the screen will contain both source and preview views. 
+
+<p> To implement this feature, a number of minor changes were required throughout the TeXShop source code. The initial implementation is therefore rather conservative. At the moment, for instance, no Preference
+item is  provided to automatically open documents in this form.
+
+<p> If a document has both source and preview windows, activate the source window and then select the item "Use One
+Window" in the Windows menu. The two windows will be replaced by a single window containing both views. With this window active, select "Use Separate Windows" to replace the single window
+with a pair of windows.
+
+<p> The first time this happens, the single window will not have an appropriate size and position. Resize it appropriately. TeXShop will remember this size and position, but it is even better to
+carefully select an optimal size and position, and then with the window active choose "Save Source Position" in the Source menu. TeXShop will use that size and position in the future.
+
+<p> A source window cannot be converted to single window form unless the corresponding preview window also exists.
+
+<p> If a project has a root view and additional chapter views, only the root view can be converted to single window form. Thus the new feature is not likely to be useful for projects divided in this way. 
+
+<p>
+<li> In previous versions of TeXShop, duplicate copies of many documents in the Help menu were placed in the Localized directories of TeXShop, even though these documents had never been Localized. This duplication is cleaned up in version 3.41, reducing the size of the program by almost a third. The English versions of the documents will still appear when TeXShop is used in another language.
+
+<p>
+<li> Yusuke Terada provided a new menu item in the Edit menu called "Character Info." To use it,
+select one or more letters in the source file and then select the menu item. If only one letter
+is chosen, a  balloon will appear showing a magnified version of the glyph, its full unicode name, and its unicode character. When glyphs require two or three characters, all required characters will  be displayed.
+
+<p> If several letters are selected, the 
+ balloon will list the number of characters, words, and lines in the selection, and show the unicode character for each glyph.
+
+
+<p> 
+Below are sample balloons provided by this feature:
+
+<br>
+<center><img src="Graphics/charinfo1.png" border=1>
+<img src="Graphics/charinfo2.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo3.png" border=1>
+<img src="Graphics/charinfo4.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo5.png" border=1>
+<img src="Graphics/charinfo6.png" border=1></center>
+</br>
+
+<br>
+<center>
+<img src="Graphics/charinfo7.png" border=1></center>
+</br>
+
+<p>
+<li> Christian Icking discovered that TeXShop became inoperative or
+crashed when opening a file containing
+
+	% !TEX root = 
+
+but with no non-space characters after the equal sign. This bug
+is fixed.
+
+<p>
+<li> Typesetting for "Experiment" is more robust. It now uses the
+Preference settings for pdflatex and simpdftex latex and the
+personallatex setting. If the user's pulldown menu is set
+to latex, the three choices of  1) pdflatex, 2) tex + dvi, 3) personal
+script are obeyed. This should make the command work for
+TeX in Japan.
+
+<p>
+<li> The commands Next Source Window and Previous Source Window
+in the Window menu again work, and do not bring up "ghosts" of
+closed windows.
+
+<p>
+<li> In the previous version, the Indent and Unindent commands were
+modified to insert spaces rather than tabs in the source. A few users
+preferred tabs. There is now a  preference item for these users; they
+should check "Use Tabs" in TeXShop Preferences, under the Source tab.
+
+<p>
+<li> The Preference command to select the source font
+was broken when TeXShop was used in English, due to a missing connection
+in the English Localization File. This is fixed.
+
+<p>
+<li> Yusuke Terada doubled the maximum magnification level allowed for PDF files,
+so it is now possible to look at very small details of the preview output. 
+
+<p>
+<li> Yusuke Terada  provided new Preference settings under the Miscellaneous
+tab for projects with a root file. When opening a chapter file, TeXShop previously 
+also opened the root file and then immediately miniaturized the root source. Users can choose to
+avoid this miniaturization, or to avoid opening the root file at all. In the second case, the root
+will open when needed, for instance during typesetting.
+</ul>
+
+
 <P><h5>TeXShop Changes 3.39</h5></P>
 <ul>
 <li> The most significant change in 3.39 is the addition of Michael Sharpe's "Recent TeX Fonts" document and associated font Macros.  Michael and I attended the TeX User Group meeting in Portland, Oregon at the end of July, 2014. I knew him as an Applescript expert; several of his scripts are in TeXShop. Other macros from him will appear in a future version. To see his scripts, go to

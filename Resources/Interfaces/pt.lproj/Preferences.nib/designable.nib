@@ -57,8 +57,10 @@
                 <outlet property="_lineNumberButton" destination="689" id="704"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="901" id="903"/>
+                <outlet property="_miniaturizeRootFileButton" destination="MgN-wY-x3t" id="gcK-a4-xdZ"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
+                <outlet property="_openRootFileButton" destination="yN6-6F-K4G" id="xly-ML-Kg6"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
                 <outlet property="_parensMatchButton" destination="684" id="692"/>
                 <outlet property="_pdfWindowPosButton" destination="46" id="110"/>
@@ -83,6 +85,7 @@
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_tabIndentButton" destination="rsl-HO-9FW" id="BM9-wr-ssn"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tabsTextField" destination="287" id="290"/>
                 <outlet property="_tagMenuButton" destination="kQL-uw-ZyN" id="bbF-Z4-ccR"/>
@@ -162,10 +165,10 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="26" y="193" width="148" height="22"/>
+                                                        <rect key="frame" x="7" y="194" width="143" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="148" height="22"/>
+                                                        <size key="cellSize" width="143" height="22"/>
                                                         <size key="intercellSpacing" width="1" height="8"/>
                                                         <formCell key="prototype" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="Field:" id="954">
                                                             <font key="font" metaFont="system"/>
@@ -183,6 +186,98 @@
                                                             <action selector="tabsChanged:" target="-2" id="288"/>
                                                         </connections>
                                                     </form>
+                                                    <button id="rsl-HO-9FW">
+                                                        <rect key="frame" x="156" y="192" width="75" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Use Tab" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="XRA-H0-tTl">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="useTabPressed:" target="-2" id="wmR-mU-Nzq"/>
+                                                        </connections>
+                                                    </button>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
+                                                        <rect key="frame" x="25" y="8" width="190" height="178"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="190" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="956">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="Colorir a sintaxe" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="683">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="syntaxColorPressed:" target="-2" id="691"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Equilibrar parênteses" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="684">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="parensMatchPressed:" target="-2" id="693"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Ortografia" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="685">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckPressed:" target="-2" id="695"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Auto Completar" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="3" inset="2" id="686">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="autoCompletePressed:" target="-2" id="697"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Complemento BibDesk" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="4" inset="2" id="687">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="bibDeskCompletePressed:" target="-2" id="699"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Selecionar ao ativar" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="5" inset="2" id="688">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="selectActivatePressed:" target="-2" id="701"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Número de linhas" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="6" inset="2" id="689">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="lineNumberButtonPressed:" target="-2" id="702"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Arabic, Hebrew, Persian" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="901">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="midEastButtonPressed:" target="-2" id="902"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Marcas na barra de menus" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="kQL-uw-ZyN">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="tagMenuButtonPressed:" target="-2" id="96H-fQ-gBx"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="autoSaveButtonPressed:" target="-2" id="1142"/>
+                                                        </connections>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -335,87 +430,6 @@
                                             </cells>
                                             <connections>
                                                 <action selector="findPanelChanged:" target="-2" id="587"/>
-                                            </connections>
-                                        </matrix>
-                                        <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
-                                            <rect key="frame" x="306" y="273" width="190" height="178"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="190" height="18"/>
-                                            <size key="intercellSpacing" width="0.0" height="2"/>
-                                            <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="956">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <cells>
-                                                <column>
-                                                    <buttonCell type="check" title="Colorir a sintaxe" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="683">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="syntaxColorPressed:" target="-2" id="691"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Equilibrar parênteses" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="684">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="parensMatchPressed:" target="-2" id="693"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Ortografia" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="685">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="spellCheckPressed:" target="-2" id="695"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Auto Completar" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="3" inset="2" id="686">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="autoCompletePressed:" target="-2" id="697"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Complemento BibDesk" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="4" inset="2" id="687">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="bibDeskCompletePressed:" target="-2" id="699"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Selecionar ao ativar" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="5" inset="2" id="688">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="selectActivatePressed:" target="-2" id="701"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Número de linhas" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="6" inset="2" id="689">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="lineNumberButtonPressed:" target="-2" id="702"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Arabic, Hebrew, Persian" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="901">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="midEastButtonPressed:" target="-2" id="902"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="Marcas na barra de menus" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="kQL-uw-ZyN">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="tagMenuButtonPressed:" target="-2" id="96H-fQ-gBx"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                </column>
-                                            </cells>
-                                            <connections>
-                                                <action selector="autoSaveButtonPressed:" target="-2" id="1142"/>
                                             </connections>
                                         </matrix>
                                         <box title="Cores de fundo e de texto" id="790">
@@ -1918,18 +1932,18 @@
                                                     <popUpButton verticalHuggingPriority="750" id="405">
                                                         <rect key="frame" x="54" y="8" width="210" height="26"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="PDF" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" tag="31" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="416" id="940">
+                                                        <popUpButtonCell key="cell" type="push" title="PDF" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="31" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="416" id="940">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="menu"/>
                                                             <menu key="menu" title="OtherViews" id="377">
                                                                 <items>
-                                                                    <menuItem title="PDF" tag="31" id="416"/>
+                                                                    <menuItem title="PDF" state="on" tag="31" id="416"/>
                                                                     <menuItem title="TIFF (não comprimido)" tag="1" id="380"/>
                                                                     <menuItem title="TIFF (LZW)" tag="2" id="409"/>
                                                                     <menuItem title="TIFF (PackBits)" tag="3" id="404"/>
                                                                     <menuItem title="JPEG (Alta)" tag="11" id="375"/>
                                                                     <menuItem title="JPEG (Média)" tag="13" id="423"/>
-                                                                    <menuItem title="JPEG (Baixa)" state="on" tag="15" id="407"/>
+                                                                    <menuItem title="JPEG (Baixa)" tag="15" id="407"/>
                                                                     <menuItem title="PNG" tag="21" id="395"/>
                                                                 </items>
                                                             </menu>
@@ -2088,6 +2102,41 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="convertUTFPressed:" target="-2" id="1114"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Arquivo raiz do projeto" id="FWa-Vu-Fwl">
+                                            <rect key="frame" x="86" y="141" width="352" height="95"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="348" height="75"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="yN6-6F-K4G">
+                                                        <rect key="frame" x="18" y="41" width="263" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Abrir automaticamente o arquivo raiz " bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="KPt-1D-0Ce">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="openRootFilePressed:" target="-2" id="Xf1-b6-v6j"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="MgN-wY-x3t">
+                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Minimizar a janela do arquivo raiz" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="PU1-Zb-2tQ">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="miniaturizeRootFilePressed:" target="-2" id="h8E-2M-crp"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

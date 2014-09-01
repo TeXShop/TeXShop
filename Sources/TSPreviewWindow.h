@@ -105,7 +105,7 @@
 - (void) changeMouseMode: sender;
 - (void) doStepper: sender;
 - (void) changeScale: sender;
-- (void) goToKitPage: sender;
+- (IBAction) goToKitPage: sender;
 // - (void) doFind: sender;
 - (IBAction) takeDestinationFromOutline: (id) sender;
 - (IBAction) convertTiff:(id)sender;

@@ -45,6 +45,7 @@
 #import "TSEncodingSupport.h"
 #import "MyDragView.h"
 #import "TSPreviewWindow.h"
+#import "TSFullSplitWindow.h"
 
 #define NUMBER_OF_SOURCE_FILES	60
 
@@ -242,6 +243,8 @@
 									break;
 
 		}
+    [myStepper setMaxValue:PDF_MAX_SCALE];
+    [myStepper1 setMaxValue:PDF_MAX_SCALE];
 }
 
 - (void) setupOutline
@@ -350,14 +353,16 @@
 	[self setup];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
 	[totalPage1 setIntegerValue:totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
 	[[self document] setDelegate: self];
 	[self setupOutline];
     NSEnableScreenUpdates();
 	
-	[self.myPDFWindow makeKeyAndOrderFront: self];
+    [self.myPDFWindow makeKeyAndOrderFront: self];
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
 }
@@ -445,8 +450,10 @@
 	[[self document] setDelegate: self];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
 	[totalPage1 setIntegerValue:totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
 	if (theindex > totalPages)
 		theindex = totalPages;
@@ -623,8 +630,10 @@
 	totalPages = [[self document] pageCount];
 /*
 	[totalPage setIntValue:totalPages];
+    [atotalPage setIntValue:totalPages];
 	[totalPage1 setIntValue: totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
  */
 	if (secondTheIndex > totalPages)
@@ -772,6 +781,7 @@
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
 	[currentPage setIntegerValue:pageNumber];
+    [scurrentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
     
  	// Skip out if there is no outline.
@@ -906,6 +916,15 @@
 
 - (void) doStepper: sender
 {
+    if (sender == myStepper)
+        [myScale setStringValue:[myStepper stringValue]]; // Strangely, setIntegerValue doesn't work correctly
+    else
+		[myScale setStringValue:[myStepper1 stringValue]];
+	scaleMag = [myScale integerValue];
+	[self changeScale: self];
+}
+/*
+{
 	if (sender == myStepper)
 		[myScale setIntegerValue:[myStepper integerValue]];
 	else
@@ -913,6 +932,7 @@
 	scaleMag = [myScale integerValue];
 	[self changeScale: self];
 }
+*/
 
 
 - (void) previousPage: (id)sender
@@ -962,8 +982,11 @@
 		myPage = totalPages;
 
 	[currentPage setIntegerValue:myPage];
+    [scurrentPage setIntegerValue:myPage];
 	[currentPage1 setIntegerValue:myPage];
 	[currentPage display];
+    [scurrentPage display];
+    
 	[[self window] makeFirstResponder: currentPage];
 
 	myPage = myPage - 1;
@@ -3677,7 +3700,7 @@ else
 
 - (BOOL)doSyncTeX: (NSPoint) thePoint
 {
-
+    
 /* // this section moved to TSDocument-SyncTeX
 
 	myFileName = [self.myDocument fileName];
@@ -3762,8 +3785,6 @@ else
  NSInteger						linesTested, offset;
  NSString				*aString;
  NSInteger						correction;
- 
- 
  
  NSPoint windowPosition = thePoint;
  NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
@@ -3922,7 +3943,8 @@ else
  correctedFoundRange = foundRange;
  [myTextView setSelectedRange: correctedFoundRange];
  [myTextView scrollRangeToVisible: correctedFoundRange];
- [myTextWindow makeKeyAndOrderFront:self];
+ if (! [self.myDocument useFullSplitWindow])
+     [myTextWindow makeKeyAndOrderFront:self];
  return YES;
  }
  }
@@ -3995,7 +4017,8 @@ else
  }
  [myTextView setSelectedRange: correctedFoundRange];
  [myTextView scrollRangeToVisible: correctedFoundRange];
- [myTextWindow makeKeyAndOrderFront:self];
+ if (! [self.myDocument useFullSplitWindow])
+     [myTextWindow makeKeyAndOrderFront:self];
  return YES;
  }
  }
@@ -4209,7 +4232,8 @@ else
                     correctedFoundRange = foundRange;
                 [myTextView setSelectedRange: correctedFoundRange];
                 [myTextView scrollRangeToVisible: correctedFoundRange];
-                [myTextWindow makeKeyAndOrderFront:self];
+                if (! useFullSplitWindow)
+                    [myTextWindow makeKeyAndOrderFront:self];
                 return YES;
 			} else {
 				// newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
@@ -4233,7 +4257,8 @@ else
                              correctedFoundRange1 = foundRange;
                          [myTextView1 setSelectedRange: correctedFoundRange1];
                          [myTextView1 scrollRangeToVisible: correctedFoundRange1];
-                         [myTextWindow1 makeKeyAndOrderFront:self];
+                        if (! useFullSplitWindow)
+                            [myTextWindow1 makeKeyAndOrderFront:self];
                         }
                  }];
                 // WARNING: Next was commented out
@@ -4255,7 +4280,8 @@ else
                 // correctedFoundRange = foundRange;
                 // [myTextView setSelectedRange: correctedFoundRange];
                 // [myTextView scrollRangeToVisible: correctedFoundRange];
-                // [myTextWindow makeKeyAndOrderFront:self];
+                // if (! useFullSplitWindow)
+                //      [myTextWindow makeKeyAndOrderFront:self];
                 // END OF COMMENT
                 return YES;
             }
@@ -4324,7 +4350,8 @@ else
                     }
                     [myTextView setSelectedRange: correctedFoundRange];
                     [myTextView scrollRangeToVisible: correctedFoundRange];
-                    [myTextWindow makeKeyAndOrderFront:self];
+                    if (! useFullSplitWindow)
+                        [myTextWindow makeKeyAndOrderFront:self];
                     return YES;
                 } else {
                     // newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
@@ -4354,7 +4381,8 @@ else
                              }
                              [myTextView1 setSelectedRange: correctedFoundRange1];
                              [myTextView1 scrollRangeToVisible: correctedFoundRange1];
-                             [myTextWindow1 makeKeyAndOrderFront:self];
+                            if (! useFullSplitWindow)
+                                [myTextWindow1 makeKeyAndOrderFront:self];
                             }
                      }];
                     return YES;
@@ -4381,7 +4409,8 @@ else
             //  }
             //  [myTextView setSelectedRange: correctedFoundRange];
             //  [myTextView scrollRangeToVisible: correctedFoundRange];
-            //  [myTextWindow makeKeyAndOrderFront:self];
+            //  if (! useFullSplitWindow)
+            //      [myTextWindow makeKeyAndOrderFront:self];
             //  return YES;
              // END OF WARNING
 		}
@@ -5601,8 +5630,8 @@ oldVisibleRect.size.width = 0;
 	scale = magnification * 100.0;
 	if (scale < 20)
 		scale = 20;
-	if (scale > 1000)
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE)
+		scale = PDF_MAX_SCALE;
 
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
@@ -5845,6 +5874,9 @@ oldVisibleRect.size.width = 0;
 }
 
 
-
+- (NSDrawer *)drawer
+{
+    return _drawer;
+}
 
 @end

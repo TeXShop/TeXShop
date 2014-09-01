@@ -42,6 +42,7 @@
         [self performSelector:@selector(setAlpha:) withObject:[NSNumber numberWithFloat:alpha] afterDelay:0.5]; // added by Terada   
     [self performSelector:@selector(refreshTitle) withObject:nil afterDelay:1]; // added by Terada
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshTitle) name:NSApplicationDidBecomeActiveNotification object:NSApp]; // added by Terada
+    self.wasClosed = NO;
 	return result;
 }
 
@@ -142,6 +143,7 @@
 
 - (void)close
 {
+    self.wasClosed = YES;
     
 // MAYBE NOW IRRELEVANT?
  

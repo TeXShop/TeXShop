@@ -57,8 +57,10 @@
                 <outlet property="_lineNumberButton" destination="689" id="704"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="901" id="903"/>
+                <outlet property="_miniaturizeRootFileButton" destination="ev8-IL-aCz" id="yyG-JU-VXk"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
+                <outlet property="_openRootFileButton" destination="aYO-zj-Pn0" id="pig-xw-9ei"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
                 <outlet property="_parensMatchButton" destination="684" id="692"/>
                 <outlet property="_pdfWindowPosButton" destination="46" id="110"/>
@@ -83,6 +85,7 @@
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_tabIndentButton" destination="fjx-q1-Asx" id="6Pg-mc-0fE"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tabsTextField" destination="287" id="290"/>
                 <outlet property="_tagMenuButton" destination="mMK-aG-f5r" id="Krb-JS-rYj"/>
@@ -162,7 +165,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="26" y="193" width="127" height="22"/>
+                                                        <rect key="frame" x="12" y="192" width="127" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="127" height="22"/>
@@ -183,6 +186,17 @@
                                                             <action selector="tabsChanged:" target="-2" id="288"/>
                                                         </connections>
                                                     </form>
+                                                    <button id="fjx-q1-Asx">
+                                                        <rect key="frame" x="152" y="194" width="75" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Use Tab" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1mm-jc-Ex1">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="useTabPressed:" target="-2" id="4dk-K6-WaT"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -1950,7 +1964,7 @@
                             <tabViewItem label="Misc" identifier="2" id="127">
                                 <view key="view" id="136">
                                     <rect key="frame" x="10" y="33" width="533" height="568"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Script pessoal" id="154">
                                             <rect key="frame" x="81" y="419" width="357" height="119"/>
@@ -2088,6 +2102,41 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="convertUTFPressed:" target="-2" id="1114"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Project Root File" id="thQ-Cc-bti">
+                                            <rect key="frame" x="86" y="143" width="352" height="95"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="348" height="75"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="aYO-zj-Pn0">
+                                                        <rect key="frame" x="18" y="41" width="320" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Open root file automatically on opening a child" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="uEI-Tf-NHe">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="openRootFilePressed:" target="-2" id="fue-b3-J1v"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="ev8-IL-aCz">
+                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Miniaturize the opened root window" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="BOZ-eO-q5W">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="miniaturizeRootFilePressed:" target="-2" id="tWZ-SJ-EIE"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

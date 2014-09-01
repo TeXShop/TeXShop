@@ -887,8 +887,8 @@
 	}
 	
 	// We know the executable is okay, so give it a go...
-	[task setLaunchPath: filename];
-	[task setArguments: args];
+ 	[task setLaunchPath: filename];
+ 	[task setArguments: args];
 	[task setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
 	[task setEnvironment: [self environmentForSubTask]];
 	[task setStandardOutput: self.outputPipe];
@@ -1332,6 +1332,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"Plain TeX"];
+    [sprogramButton selectItemWithTitle: @"Plain TeX"];
 	[programButtonEE selectItemWithTitle: @"Plain TeX"];
 // end addition
 
@@ -1348,6 +1349,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"LaTeX"];
+    [sprogramButton selectItemWithTitle: @"LaTeX"];
 	[programButtonEE selectItemWithTitle: @"LaTeX"];
 // end addition
 	[self doJob:LatexEngine withError:YES runContinuously:NO];
@@ -1357,6 +1359,7 @@
 {
 	fromMenu = NO;
 	[programButton selectItemAtIndex:(theEngine - 1)];
+    [sprogramButton selectItemAtIndex:(theEngine - 1)];
 	[programButtonEE selectItemAtIndex:(theEngine - 1)];
 	whichEngine = theEngine;
 
@@ -1373,6 +1376,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"ConTeXt"];
+    [sprogramButton selectItemWithTitle: @"ConTeXt"];
 	[programButtonEE selectItemWithTitle: @"ConTeXt"];
 // end addition
 	[self doJob:ContextEngine withError:YES runContinuously:NO];
@@ -1388,6 +1392,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"MetaPost"];
+    [sprogramButton selectItemWithTitle: @"MetaPost"];
 	[programButtonEE selectItemWithTitle: @"MetaPost"];
 // end addition
 
@@ -1398,6 +1403,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	// [programButton selectItemWithTitle: @"BibTeX"];
+    // [sprogramButton selectItemWithTitle: @"BibTeX"];
 	// [programButtonEE selectItemWithTitle: @"BibTeX"];
 // end addition
 	fromMenu = NO;
@@ -1408,6 +1414,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	// [programButton selectItemWithTitle: @"MakeIndex"];
+    // [sprogramButton selectItemWithTitle: @"MakeIndex"];
 	// [programButtonEE selectItemWithTitle: @"MakeIndex"];
 // end addition
 	fromMenu = NO;
@@ -1424,6 +1431,7 @@
 {
 // added by mitsu --(J++) Program popup button indicating Program name
 	// [programButton selectItemWithTitle: @"MetaFont"];
+    // [sprogramButton selectItemWithTitle: @"MetaFont"];
 	// [programButtonEE selectItemWithTitle: @"MetaFont"];
 // end addition
 	// [self doJob:MetafontEngine withError:NO runContinuously:NO];
@@ -1649,14 +1657,21 @@
 					// [[myPDFKitView document] retain];
 					[myPDFKitView2 setDocument: [myPDFKitView document]];
 					[myPDFKitView2 reShowForSecond];
-					[pdfKitWindow setRepresentedFilename: imagePath];
-					//[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
-					[pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
-					[self fillLogWindowIfVisible];
-					front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
-					if ((front) || (! [pdfKitWindow isVisible]))
-						[pdfKitWindow makeKeyAndOrderFront: self];
-                    [self allocateSyncScanner];
+                    if (! useFullSplitWindow) {
+                        [pdfKitWindow setRepresentedFilename: imagePath];
+                        //[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+                        [pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
+                        [self fillLogWindowIfVisible];
+                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                        if ((front) || (! [pdfKitWindow isVisible]))
+                            [pdfKitWindow makeKeyAndOrderFront: self];
+                        [self allocateSyncScanner];
+                        }
+                    else {
+                        [self fillLogWindowIfVisible];
+                        [fullSplitWindow makeKeyAndOrderFront: self];
+                        [self allocateSyncScanner];
+                    }
 				}
 			}
 

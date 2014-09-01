@@ -58,8 +58,10 @@
                 <outlet property="_lineNumberButton" destination="845" id="859"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="846" id="862"/>
+                <outlet property="_miniaturizeRootFileButton" destination="lPg-WB-RRa" id="QR6-2I-VT3"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
+                <outlet property="_openRootFileButton" destination="zqB-9J-WUc" id="caY-b5-wFW"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
                 <outlet property="_parensMatchButton" destination="840" id="849"/>
                 <outlet property="_pdfWindowPosButton" destination="46" id="110"/>
@@ -84,6 +86,7 @@
                 <outlet property="_spellCheckButton" destination="841" id="851"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="839" id="847"/>
+                <outlet property="_tabIndentButton" destination="P4v-Lw-RHd" id="eYv-hj-YBM"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tabsTextField" destination="287" id="290"/>
                 <outlet property="_tagMenuButton" destination="0Sd-Qt-10H" id="ZwD-HW-EKc"/>
@@ -234,10 +237,10 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="26" y="194" width="127" height="22"/>
+                                                        <rect key="frame" x="28" y="193" width="83" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="127" height="22"/>
+                                                        <size key="cellSize" width="83" height="22"/>
                                                         <size key="intercellSpacing" width="1" height="8"/>
                                                         <formCell key="prototype" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="Field:" id="913">
                                                             <font key="font" metaFont="system"/>
@@ -245,7 +248,7 @@
                                                         </formCell>
                                                         <cells>
                                                             <column>
-                                                                <formCell scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="Tab 空格数:" stringValue="4" id="287">
+                                                                <formCell scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="缩进" stringValue="4" id="287">
                                                                     <font key="font" metaFont="system"/>
                                                                     <font key="titleFont" metaFont="system"/>
                                                                 </formCell>
@@ -255,6 +258,98 @@
                                                             <action selector="tabsChanged:" target="-2" id="288"/>
                                                         </connections>
                                                     </form>
+                                                    <button id="P4v-Lw-RHd">
+                                                        <rect key="frame" x="140" y="195" width="75" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="制表符" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="4RZ-AZ-eCe">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="useTabPressed:" target="-2" id="ZBF-79-v2h"/>
+                                                        </connections>
+                                                    </button>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
+                                                        <rect key="frame" x="28" y="12" width="252" height="178"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="252" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="915">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="语法高亮" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="839">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="syntaxColorPressed:" target="-2" id="848"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="配对括号" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="840">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="parensMatchPressed:" target="-2" id="850"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="检查拼写" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="841">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckPressed:" target="-2" id="852"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="自动更正" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="3" inset="2" id="842">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="autoCompletePressed:" target="-2" id="854"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="BibDesk 补全" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="4" inset="2" id="843">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="bibDeskCompletePressed:" target="-2" id="856"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="点选窗口时激活光标" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="5" inset="2" id="844">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="selectActivatePressed:" target="-2" id="858"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="显示行号" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="6" inset="2" id="845">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="lineNumberButtonPressed:" target="-2" id="860"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="阿拉伯语、希伯来语、波斯语" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="7" inset="2" id="846">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="midEastButtonPressed:" target="-2" id="861"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="在菜单栏显示标签菜单" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="0Sd-Qt-10H">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="tagMenuButtonPressed:" target="-2" id="IfR-W2-s74"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="autoSaveButtonPressed:" target="-2" id="1108"/>
+                                                        </connections>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -379,87 +474,6 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
-                                        <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
-                                            <rect key="frame" x="306" y="275" width="252" height="178"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="252" height="18"/>
-                                            <size key="intercellSpacing" width="0.0" height="2"/>
-                                            <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="915">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <cells>
-                                                <column>
-                                                    <buttonCell type="check" title="语法高亮" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="839">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="syntaxColorPressed:" target="-2" id="848"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="配对括号" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="840">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="parensMatchPressed:" target="-2" id="850"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="检查拼写" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="841">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="spellCheckPressed:" target="-2" id="852"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="自动更正" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="3" inset="2" id="842">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="autoCompletePressed:" target="-2" id="854"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="BibDesk 补全" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="4" inset="2" id="843">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="bibDeskCompletePressed:" target="-2" id="856"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="点选窗口时激活光标" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="5" inset="2" id="844">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="selectActivatePressed:" target="-2" id="858"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="显示行号" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="6" inset="2" id="845">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="lineNumberButtonPressed:" target="-2" id="860"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="阿拉伯语、希伯来语、波斯语" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="7" inset="2" id="846">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="midEastButtonPressed:" target="-2" id="861"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                    <buttonCell type="check" title="在菜单栏显示标签菜单" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="0Sd-Qt-10H">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                        <connections>
-                                                            <action selector="tagMenuButtonPressed:" target="-2" id="IfR-W2-s74"/>
-                                                        </connections>
-                                                    </buttonCell>
-                                                </column>
-                                            </cells>
-                                            <connections>
-                                                <action selector="autoSaveButtonPressed:" target="-2" id="1108"/>
-                                            </connections>
-                                        </matrix>
                                         <box title="文本和背景颜色" id="790">
                                             <rect key="frame" x="312" y="511" width="198" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1949,7 +1963,7 @@
                             <tabViewItem label="其他" identifier="2" id="127">
                                 <view key="view" id="136">
                                     <rect key="frame" x="10" y="33" width="524" height="570"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="个性化脚本" id="154">
                                             <rect key="frame" x="82" y="417" width="357" height="119"/>
@@ -2095,6 +2109,41 @@
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="HiraKakuProN-W3"/>
+                                        </box>
+                                        <box title="项目根文件" id="l2P-w7-iVA">
+                                            <rect key="frame" x="82" y="129" width="357" height="95"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="353" height="75"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="zqB-9J-WUc">
+                                                        <rect key="frame" x="18" y="41" width="191" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="打开子文件时自动打开根文件" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="XHU-fV-Nm1">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="openRootFilePressed:" target="-2" id="WkK-65-olv"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="lPg-WB-RRa">
+                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="最小化打开的根窗口" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="LXu-qO-Dft">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="miniaturizeRootFilePressed:" target="-2" id="MR7-hw-BSV"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
                                     </subviews>
                                 </view>

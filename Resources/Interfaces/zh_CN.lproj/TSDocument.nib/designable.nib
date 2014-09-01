@@ -15,6 +15,7 @@
                 <outlet property="extensionPanel" destination="2430" id="2436"/>
                 <outlet property="extensionResult" destination="2434" id="2437"/>
                 <outlet property="fLog" destination="RuP-8c-fxc" id="Jp5-YL-uxe"/>
+                <outlet property="fullSplitWindow" destination="qXv-Bu-Cm1" id="c32-ha-bFA"/>
                 <outlet property="fullscreenPDFView" destination="1023" id="1217"/>
                 <outlet property="fullscreenWindow" destination="1021" id="1216"/>
                 <outlet property="gotopageOutlet" destination="374" id="390"/>
@@ -22,6 +23,7 @@
                 <outlet property="hLog" destination="j9T-Bb-B6B" id="VgQ-nr-tfI"/>
                 <outlet property="iLog" destination="bRd-8X-n9q" id="RIE-PG-6VA"/>
                 <outlet property="indexColorBox" destination="923" id="924"/>
+                <outlet property="leftView" destination="FGz-Z5-IJ0" id="OJq-i9-FsZ"/>
                 <outlet property="lineBox" destination="217" id="221"/>
                 <outlet property="linePanel" destination="214" id="220"/>
                 <outlet property="logScrollView" destination="1607" id="1611"/>
@@ -37,6 +39,7 @@
                 <outlet property="mouseModeMatrixKK" destination="692" id="795"/>
                 <outlet property="mouseModeMenu" destination="828" id="907"/>
                 <outlet property="mouseModeMenuKit" destination="577" id="839"/>
+                <outlet property="myDrawer" destination="739" id="xWE-rT-sqR"/>
                 <outlet property="myPDFKitView" destination="852" id="918"/>
                 <outlet property="myPDFKitView2" destination="1616" id="1620"/>
                 <outlet property="nextButton" destination="392" id="zJz-a1-0MA"/>
@@ -60,6 +63,7 @@
                 <outlet property="projectPanel" destination="191" id="204"/>
                 <outlet property="rLog" destination="Qxb-S8-Zoq" id="swY-Iy-vbm"/>
                 <outlet property="requestWindow" destination="209" id="213"/>
+                <outlet property="rightView" destination="0LL-rZ-DQ5" id="kxb-74-fYK"/>
                 <outlet property="sLog" destination="8LD-T8-Vwi" id="mUb-LQ-p6Q"/>
                 <outlet property="scrapPDFKitView" destination="hyT-HC-wxw" id="jcA-pN-Lxr"/>
                 <outlet property="scrapPDFWindow" destination="NbS-A9-hOz" id="j1A-DH-7tk"/>
@@ -67,10 +71,14 @@
                 <outlet property="scrapWindow" destination="tgQ-v1-NKw" id="poP-Py-GN7"/>
                 <outlet property="scrollView" destination="22" id="431"/>
                 <outlet property="scrollView2" destination="443" id="449"/>
+                <outlet property="sgotopageOutletKK" destination="h3o-MV-na4" id="iAI-9T-ssq"/>
                 <outlet property="shareButton" destination="3937" id="3941"/>
                 <outlet property="shareButtonEE" destination="3938" id="3942"/>
                 <outlet property="showFullPathButton" destination="3933" id="3936"/>
+                <outlet property="smacroButton" destination="JFu-FM-EXF" id="GGc-hv-faN"/>
                 <outlet property="splitView" destination="445" id="446"/>
+                <outlet property="sprogramButton" destination="I3R-G3-LiT" id="Xua-mI-xYP"/>
+                <outlet property="stags" destination="q8p-HG-N2w" id="gzG-cR-dzx"/>
                 <outlet property="statisticsForm" destination="661" id="666"/>
                 <outlet property="statisticsPanel" destination="658" id="665"/>
                 <outlet property="syncBox" destination="672" id="674"/>
@@ -1037,6 +1045,108 @@ DQ
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
+                <popUpButton verticalHuggingPriority="750" id="JFu-FM-EXF">
+                    <rect key="frame" x="624" y="60" width="84" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="Macros" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="PiQ-PJ-wjq" id="sD5-0b-ggi">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="T6P-BF-RNh">
+                            <items>
+                                <menuItem title="Macros" hidden="YES" id="PiQ-PJ-wjq"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="q8p-HG-N2w">
+                    <rect key="frame" x="835" y="24" width="71" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="EHh-fd-IE4" id="Tlr-G6-cTq">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="Ech-1N-Vzf">
+                            <items>
+                                <menuItem title="Tags" hidden="YES" id="EHh-fd-IE4"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doTag:" target="-2" id="CzG-6J-E0c"/>
+                    </connections>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="I3R-G3-LiT">
+                    <rect key="frame" x="582" y="22" width="111" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="ConTeXt" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="6" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="zII-1O-QSk" id="377-RR-7uh">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="MWL-mL-63M">
+                            <items>
+                                <menuItem title="Plain TeX" tag="1" id="xf4-uL-Mfm"/>
+                                <menuItem title="LaTeX" tag="2" id="dQg-zt-k6k"/>
+                                <menuItem title="BibTeX" tag="3" id="X8L-d4-ftP"/>
+                                <menuItem title="MakeIndex" tag="4" id="TIi-zq-qgF"/>
+                                <menuItem title="MetaPost" tag="5" id="hve-ka-A59"/>
+                                <menuItem title="ConTeXt" state="on" tag="6" id="zII-1O-QSk"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="chooseProgram:" target="-2" id="Z8G-yK-gcL"/>
+                    </connections>
+                </popUpButton>
+                <box title="go to page" boxType="oldStyle" borderType="none" titlePosition="noTitle" id="h3o-MV-na4">
+                    <rect key="frame" x="730" y="58" width="153" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                    <view key="contentView">
+                        <rect key="frame" x="0.0" y="0.0" width="153" height="30"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" id="UiN-tN-b47">
+                                <rect key="frame" x="0.0" y="5" width="34" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Page" id="0UI-eW-YBn">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="lte-dv-25Q">
+                                <rect key="frame" x="33" y="3" width="47" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="1" drawsBackground="YES" id="316-30-okW">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="goToKitPage:" target="675" id="Jl5-rd-uQD"/>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="Tmd-Bw-uf9">
+                                <rect key="frame" x="81" y="5" width="19" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="of" id="CeL-DF-dMD">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="1NI-CG-fbS">
+                                <rect key="frame" x="102" y="3" width="46" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="1" drawsBackground="YES" id="qW1-Q9-h2p">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <font key="titleFont" metaFont="message"/>
+                </box>
             </subviews>
         </customView>
         <window title="页码" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="457" userLabel="PageNumberPanel" customClass="NSPanel">
@@ -1376,6 +1486,8 @@ DQ
                                     <outlet property="myScale1" destination="807" id="874"/>
                                     <outlet property="myStepper" destination="691" id="862"/>
                                     <outlet property="myStepper1" destination="806" id="875"/>
+                                    <outlet property="scurrentPage" destination="lte-dv-25Q" id="27a-ge-qle"/>
+                                    <outlet property="stotalPage" destination="1NI-CG-fbS" id="V0n-FY-Ezc"/>
                                     <outlet property="totalPage" destination="685" id="863"/>
                                     <outlet property="totalPage1" destination="818" id="873"/>
                                 </connections>
@@ -2065,6 +2177,40 @@ Gw
                     </pdfView>
                 </subviews>
             </view>
+        </window>
+        <window title="Full Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="FullSplitWindow" animationBehavior="default" id="qXv-Bu-Cm1" customClass="TSFullSplitWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="283" y="305" width="791" height="336"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <view key="contentView" id="9Sj-ol-hTp">
+                <rect key="frame" x="0.0" y="0.0" width="791" height="336"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <splitView vertical="YES" id="6MY-Pv-sk3">
+                        <rect key="frame" x="0.0" y="0.0" width="791" height="336"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <customView id="FGz-Z5-IJ0">
+                                <rect key="frame" x="0.0" y="0.0" width="396" height="336"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </customView>
+                            <customView id="0LL-rZ-DQ5">
+                                <rect key="frame" x="405" y="0.0" width="386" height="336"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
+                        </subviews>
+                        <holdingPriorities>
+                            <real value="250"/>
+                            <real value="250"/>
+                        </holdingPriorities>
+                    </splitView>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="myDocument" destination="-2" id="H9u-GW-5SR"/>
+            </connections>
         </window>
     </objects>
     <resources>

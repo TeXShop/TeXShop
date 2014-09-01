@@ -29,7 +29,7 @@
 
 @class OgreTextFinder;
 
-@interface TSAppDelegate : NSObject
+@interface TSAppDelegate : NSObject <NSUserNotificationCenterDelegate>
 {
 }
 

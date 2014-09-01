@@ -35,6 +35,7 @@
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
 #import "TSTextEditorWindow.h"
+#import "TSFullSplitWindow.h"
 #import "GlobalData.h"
 
 
@@ -823,10 +824,14 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
+    BOOL value1, value2;
+    
+    value1 = [[NSApp mainWindow] isKindOfClass:[TSTextEditorWindow class]];
+    value2 = [[NSApp mainWindow] isKindOfClass:[TSFullSplitWindow class]];
 	if ([anItem action] == @selector(displayLatexPanel:)) {
-		return [[NSApp mainWindow] isKindOfClass:[TSTextEditorWindow class]];
+		return (value1 || value2);
 	} else if ([anItem action] == @selector(displayMatrixPanel:)) {
-		return [[NSApp mainWindow] isKindOfClass:[TSTextEditorWindow class]];
+		return (value1 || value2);
 	} else
 		return YES;
 }
@@ -840,12 +845,29 @@
 	*ptrToCurrentIndexInReturnedArray = -1;
 	NSInteger count = 0;
 	NSUInteger i;
+    TSTextEditorWindow *theWindow;
+    TSFullSplitWindow *theFullWindow;
 	
 	for(i=0; i<[windows count]; i++){
-		if ([[windows objectAtIndex:i] isKindOfClass:[TSTextEditorWindow class]]) {
-			[matchIndexes addObject:[NSNumber numberWithInteger:i]];
-			if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
-			count++;
+		if ([[windows objectAtIndex:i] isKindOfClass:[TSTextEditorWindow class]])
+        {
+            theWindow = [windows objectAtIndex:i];
+            if ((! theWindow.wasClosed) && (! [theWindow.myDocument useFullSplitWindow]))
+                {
+                    [matchIndexes addObject:[NSNumber numberWithInteger:i]];
+                    if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
+                    count++;
+                }
+		}
+        else if ([[windows objectAtIndex:i] isKindOfClass:[TSFullSplitWindow class]])
+        {
+            theFullWindow = [windows objectAtIndex:i];
+            if ((! theFullWindow.wasClosed) && ( [theFullWindow.myDocument useFullSplitWindow]))
+            {
+                [matchIndexes addObject:[NSNumber numberWithInteger:i]];
+                if (currentIndex == i) *ptrToCurrentIndexInReturnedArray = count;
+                count++;
+            }
 		}
 	}
 	
@@ -1088,6 +1110,23 @@
 		}
 	}
 }
+
+#pragma mark implementation of NSUserNotificationCenterDelegate protocol
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
+{
+    
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+    
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
+{
+    return YES;
+}
+
 
 
 @end

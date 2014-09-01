@@ -297,6 +297,20 @@
     
 }
 
+- (NSString*)absoluteEnginePath:(NSString*)enginePath
+{
+    NSString *absolutePath = [enginePath stringByExpandingTildeInPath];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:absolutePath isDirectory:nil]){
+        absolutePath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingPathComponent:enginePath];
+    }
+    
+    return absolutePath;
+}
+
+
+
+
 
 
 - (void)typesetFile: (NSURL *)fileURL withAdditionalPath: (NSString *)additionalPath
@@ -400,9 +414,11 @@
         NSLog(@"got here");
         theProgramWithFlags = [[SUD stringForKey: LatexScriptCommandKey] stringByExpandingTildeInPath];
         enginePath = [self separate:theProgramWithFlags into:args];
+        // [args addObject: [sourcePath lastPathComponent]];
+        // tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+        // enginePath = [tetexBinPath stringByAppendingString: enginePath];
+        enginePath = [self absoluteEnginePath:enginePath];
         [args addObject: [sourcePath lastPathComponent]];
-        tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
-        enginePath = [tetexBinPath stringByAppendingString: enginePath];
         }
     
 // LatexCommandKey
@@ -410,19 +426,23 @@
     else if ([userEngine isEqualToString:@"pdflatex"]) {
         theProgramWithFlags = [[SUD stringForKey: LatexCommandKey] stringByExpandingTildeInPath];
         enginePath = [self separate:theProgramWithFlags into:args];
-            [args addObject: [sourcePath lastPathComponent]];
-            tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
-            enginePath = [tetexBinPath stringByAppendingString: enginePath];
-            }
+          //  [args addObject: [sourcePath lastPathComponent]];
+          //   tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+          //   enginePath = [tetexBinPath stringByAppendingString: enginePath];
+        enginePath = [self absoluteEnginePath:enginePath];
+        [args addObject: [sourcePath lastPathComponent]];
+        }
 
 // LatexGSCommandKey
     
     else if ([userEngine isEqualToString:@"latex"]) {
             theProgramWithFlags = [[SUD stringForKey: LatexGSCommandKey] stringByExpandingTildeInPath];
             enginePath = [self separate:theProgramWithFlags into:args];
-            tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
-            enginePath = [tetexBinPath stringByAppendingString: enginePath];
-            [args addObject: sourcePath];;
+            //tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+            //enginePath = [tetexBinPath stringByAppendingString: enginePath];
+            //[args addObject: sourcePath];;
+            enginePath = [self absoluteEnginePath:enginePath];
+            [args addObject: sourcePath];
             }
     
 //  End of fix RMK

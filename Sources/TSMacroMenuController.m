@@ -25,6 +25,7 @@
 #import "TSMacroMenuController.h"
 
 #import "TSTextEditorWindow.h"
+#import "TSFullSplitWindow.h"
 #import "globals.h"
 #import "TSEncodingSupport.h"
 // mistu 1.29
@@ -420,17 +421,19 @@ static id sharedMacroMenuController = nil;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
+    
 	if ([anItem action] == @selector(reloadMacros:))
 		return YES;
 	
 	NSString *macroString = [anItem representedObject];
 	if (macroString == nil)
 		return YES;
-	
+    
 	if ([macroString length] <14 ||
 		(![[[macroString substringToIndex: 13] lowercaseString] isEqualToString:@"--applescript"]
 		 && ![[[macroString substringToIndex: 14] lowercaseString] isEqualToString:@"-- applescript"]))
-		return [[NSApp mainWindow] isMemberOfClass: [TSTextEditorWindow class]];
+		return ([[NSApp mainWindow] isMemberOfClass: [TSTextEditorWindow class]] ||
+                [[NSApp mainWindow] isMemberOfClass: [TSFullSplitWindow class]]);
 	else
 		return YES;
 	

@@ -57,8 +57,10 @@
                 <outlet property="_lineNumberButton" destination="689" id="704"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="1006" id="1008"/>
+                <outlet property="_miniaturizeRootFileButton" destination="irw-yn-ghY" id="Ji9-hS-ikQ"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
+                <outlet property="_openRootFileButton" destination="8pX-l6-YF6" id="0l1-2v-HBd"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
                 <outlet property="_parensMatchButton" destination="684" id="692"/>
                 <outlet property="_pdfWindowPosButton" destination="46" id="110"/>
@@ -83,6 +85,7 @@
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_tabIndentButton" destination="0Ad-oh-5Ny" id="776-bV-FiD"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tabsTextField" destination="287" id="290"/>
                 <outlet property="_tagMenuButton" destination="k06-Ik-w4h" id="eef-q6-C9j"/>
@@ -162,10 +165,10 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="26" y="191" width="127" height="22"/>
+                                                        <rect key="frame" x="17" y="190" width="129" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="127" height="22"/>
+                                                        <size key="cellSize" width="129" height="22"/>
                                                         <size key="intercellSpacing" width="1" height="8"/>
                                                         <formCell key="prototype" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="Field:" id="1060">
                                                             <font key="font" metaFont="system"/>
@@ -173,7 +176,7 @@
                                                         </formCell>
                                                         <cells>
                                                             <column>
-                                                                <formCell scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="タブ幅" stringValue="4" id="287">
+                                                                <formCell scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="justified" title="インデント幅" stringValue="4" id="287">
                                                                     <font key="font" metaFont="system"/>
                                                                     <font key="titleFont" metaFont="system"/>
                                                                 </formCell>
@@ -183,15 +186,6 @@
                                                             <action selector="tabsChanged:" target="-2" id="288"/>
                                                         </connections>
                                                     </form>
-                                                    <textField verticalHuggingPriority="750" id="896">
-                                                        <rect key="frame" x="158" y="193" width="38" height="17"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="1021">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
                                                     <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
                                                         <rect key="frame" x="18" y="7" width="204" height="178"/>
                                                         <autoresizingMask key="autoresizingMask"/>
@@ -270,6 +264,17 @@
                                                             </column>
                                                         </cells>
                                                     </matrix>
+                                                    <button id="0Ad-oh-5Ny">
+                                                        <rect key="frame" x="159" y="191" width="54" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="タブ" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hlo-et-iCo">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="useTabPressed:" target="-2" id="Hu0-g8-Inj"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -2095,6 +2100,41 @@
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="プロジェクトルートファイル" id="Ckj-Uf-YoO">
+                                            <rect key="frame" x="66" y="136" width="370" height="95"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="366" height="75"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button id="8pX-l6-YF6">
+                                                        <rect key="frame" x="18" y="41" width="334" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="ファイルオープン時にルートファイルを自動的に開く" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="W9b-bq-1UH">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="openRootFilePressed:" target="-2" id="NMo-FK-OrA"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="irw-yn-ghY">
+                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="開いたルートファイルを最小化する" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="RB8-Yw-gtO">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="miniaturizeRootFilePressed:" target="-2" id="vgc-lU-HOA"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="AquaKana"/>
                                         </box>
                                     </subviews>
                                 </view>

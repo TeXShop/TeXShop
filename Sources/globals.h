@@ -74,6 +74,8 @@
 #define JPEG_COMPRESSION_MEDIUM	0.95
 #define JPEG_COMPRESSION_LOW	0.85
 
+#define PDF_MAX_SCALE           2000
+
 
 #endif
 
@@ -402,6 +404,8 @@ extern NSString *AutomaticTextReplacementKey; // Koch
 extern NSString *AutomaticDashSubstitutionKey; // Koch
 extern NSString *AutomaticQuoteSubstitutionKey; // Koch
 extern NSString *AutomaticUTF8MACtoUTF8ConversionKey; //Koch
+extern NSString *AutoOpenRootFileKey;
+extern NSString *MiniaturizeRootFileKey;
 extern NSString *highlightBracesRedKey; //Koch
 extern NSString *highlightBracesBlueKey; //Koch
 extern NSString *highlightBracesGreenKey; //Koch
@@ -426,6 +430,10 @@ extern NSString *SpellingLanguageKey;
 extern NSString *SpellingAutomaticLanguageKey;
 extern NSString *TagMenuInMenuBarKey;
 extern NSString *ResetSourceTextColorEachTimeKey;
+extern NSString *SourceAndPreviewInSameWindowKey;
+extern NSString *DocumentSplitWindowPositionKey;
+extern NSString *TabIndentKey;
+
 
 
 // end defaults

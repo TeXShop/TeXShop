@@ -31,6 +31,7 @@
 }
 
 @property (weak) TSDocument   *myDocument;
+@property BOOL wasClosed;
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window
 // following is OK; it returns myDocument

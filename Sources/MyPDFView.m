@@ -736,8 +736,8 @@ failed. If you change the code below, be sure to test carefully!
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
-	if (scale > 1000) {
-		scale = 1000;
+    if (scale > PDF_MAX_SCALE) {
+		scale = PDF_MAX_SCALE;
 		[myScale setIntegerValue:scale];
 		[myScale1 setIntegerValue:scale];
 		[myScale display];

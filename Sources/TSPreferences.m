@@ -149,6 +149,10 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	[_undoManager beginUndoGrouping];
 
 	[_prefsWindow makeKeyAndOrderFront:self];
+    
+    [_tabsTextField setEnabled:NO]; // prevent _tabsTextField from expanding too long
+    [_tabsTextField setEnabled:YES];
+
 }
 
 //==============================================================================
@@ -257,10 +261,9 @@ Clicking this button will bring up the font panel.
 - (void)changeFont:(id)fontManager
 {
 	NSData	*fontData;
-	
-	
+		
 	NSString *theTab = [[_tabView selectedTabViewItem] identifier];
-	
+
 	if ([theTab isEqualToString: @"Document"])
 		{
 
@@ -530,6 +533,13 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setInteger:value forKey:tabsKey];
 }
 
+- (IBAction)useTabPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:TabIndentKey] forKey:TabIndentKey];
+    
+    [SUD setBool:[(NSButton*)sender state] forKey:TabIndentKey];
+}
 
 
 
@@ -898,6 +908,13 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	[SUD setBool:[(NSCell *)sender state] forKey:AntiAliasKey];
 }
 
+- (IBAction)oneWindowChanged:sender
+{
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SourceAndPreviewInSameWindowKey] forKey:SourceAndPreviewInSameWindowKey];
+	[SUD setBool:[(NSCell *)sender state] forKey:SourceAndPreviewInSameWindowKey];
+}
+
+
 #ifdef MITSU_PDF
 
 // mitsu 1.29 (O)
@@ -1251,6 +1268,23 @@ person script. See also: DefaultTypesetMode.
 }
 
 
+- (IBAction)openRootFilePressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutoOpenRootFileKey] forKey:AutoOpenRootFileKey];
+    
+    [SUD setBool:[(NSButton *)sender state] forKey:AutoOpenRootFileKey];
+}
+
+- (IBAction)miniaturizeRootFilePressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:MiniaturizeRootFileKey] forKey:MiniaturizeRootFileKey];
+    
+    [SUD setBool:[(NSButton *)sender state] forKey:MiniaturizeRootFileKey];
+}
+
+
 
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
@@ -1519,6 +1553,7 @@ This method retrieves the application preferences from the defaults object and s
 		[_docWindowPosButton setEnabled: YES];
 	else
 		[_docWindowPosButton setEnabled: NO];
+    [_tabIndentButton setState:[defaults boolForKey:TabIndentKey]];
 	[_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
 	[_selectActivateButton setState:[defaults boolForKey:AcceptFirstMouseKey]];
 	[_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
@@ -1533,10 +1568,13 @@ This method retrieves the application preferences from the defaults object and s
 	[_bibDeskCompleteButton setState:[defaults boolForKey:BibDeskCompletionKey]];
 	[_autoPDFButton setState:[defaults boolForKey:PdfRefreshKey]];
     [_antialiasButton setState:[defaults boolForKey:AntiAliasKey]];
+    [oneWindowButton setState:[defaults boolForKey:SourceAndPreviewInSameWindowKey]];
 	[_openEmptyButton setState:[defaults boolForKey:MakeEmptyDocumentKey]];
 	[_externalEditorButton setState:[defaults boolForKey:UseExternalEditorKey]];
 	[_ptexUtfOutputButton setState:[defaults boolForKey:ptexUtfOutputEnabledKey]]; // zenitani 1.35 (C)
 	[_convertUTFButton setState:[defaults boolForKey:AutomaticUTF8MACtoUTF8ConversionKey]];
+    [_openRootFileButton  setState:[defaults boolForKey:AutoOpenRootFileKey]];
+    [_miniaturizeRootFileButton setState:[defaults boolForKey:MiniaturizeRootFileKey]];
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada

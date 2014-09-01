@@ -25,7 +25,7 @@
 #import "TSDocument.h"
 #import "globals.h"
 #import "TSEncodingSupport.h"
-
+#import "TSAppDelegate.h"
 
 @implementation TSDocument (RootFile)
 
@@ -60,7 +60,7 @@
 					[obj displayLog:nil];
                 } else if (task == RootForRedisplayLog){
 					[obj reDisplayLog];
-				} else if (task == RootForPrinting) {
+   				} else if (task == RootForPrinting) {
 					[obj printDocument:nil];
 				} else if (task == RootForPdfSync) {
 					[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
@@ -69,6 +69,7 @@
 					[obj bringPdfWindowFront];
 				} else if (task == RootForTexing) {
 					// FIXME: The following code block exists twice in this function
+  
 					theEngine = useTempEngine ? tempEngine : whichEngine;
 					if (whichEngine >= UserEngine) {
 						[obj doUser:whichEngine];
@@ -121,11 +122,26 @@
 		if (obj == self)
 			return NO;
 		if (task == RootForPrinting) {
+            
+            if([SUD boolForKey:MiniaturizeRootFileKey])
+                [[obj textWindow] performSelector:@selector(miniaturize:) withObject:self afterDelay:0];
+			[obj printDocument:nil];
+		} else if (task == RootForPdfSync) {
+            if([SUD boolForKey:MiniaturizeRootFileKey])
+                [[obj textWindow] performSelector:@selector(miniaturize:) withObject:self afterDelay:0];
+			[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
+		} else if (task == RootForTexing) {
+            if([SUD boolForKey:MiniaturizeRootFileKey])
+                [[obj textWindow] performSelector:@selector(miniaturize:) withObject:self afterDelay:0];
+			// FIXME: The following code block exists twice in this function
+
+/*
 			[obj printDocument:nil];
 		} else if (task == RootForPdfSync) {
 			[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
 		} else if (task == RootForTexing) {
 			// FIXME: The following code block exists twice in this function
+*/
 			theEngine = useTempEngine ? tempEngine : whichEngine;
 			if (whichEngine >= UserEngine) {
 				[obj doUser:whichEngine];
@@ -152,6 +168,38 @@
 				NSRect newFrame = NSMakeRect(minX, minY, NSWidth(activeWindowFrame), NSHeight(activeWindowFrame));
 				[[obj textWindow] setFrame:newFrame display:YES];
 			}
+            
+            if([SUD boolForKey:MiniaturizeRootFileKey])
+                [[obj textWindow] performSelector:@selector(miniaturize:) withObject:self afterDelay:0];
+            else
+                [(TSAppDelegate*)[NSApp delegate] performSelector:@selector(nextTeXWindow:) withObject:nil afterDelay:0];
+            // added by Terada (until this line)
+        } else if (task == RootForSwitchWindow) {
+            if([SUD boolForKey:MiniaturizeRootFileKey])
+                [[obj textWindow] performSelector:@selector(miniaturize:) withObject:self afterDelay:0];
+            [obj setCallingWindow: textWindow];
+            [obj bringPdfWindowFront];
+        } else if (task == RootForTrashAUX) {
+			[obj trashAUX];
+		}
+		return YES;
+	} else {
+        NSString *msg = NSLocalizedString(@"The source LaTeX document cannot be found.", @"The source LaTeX document cannot be found.");
+        if(NSClassFromString(@"NSUserNotification")){
+            NSUserNotification *notification = [[NSUserNotification alloc] init];
+            [notification setTitle:NSLocalizedString(@"Error", @"Error")];
+            [notification setSubtitle:msg];
+            [notification setInformativeText:nameString];
+            [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:(TSAppDelegate*)[NSApp delegate]];
+            [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+        }else{
+            NSBeginAlertSheet(msg,nil,nil,nil,nil,nil,nil,nil,nil,@"Path Name: %@",nameString);
+        }
+	}
+        return YES;
+}
+
+/*
 			// added by Terada (until this line)
 			[[obj textWindow] miniaturize:self];
 		} else if (task == RootForTrashAUX) {
@@ -165,6 +213,7 @@
 	}
 	return YES;
 }
+*/
 
 - (BOOL)checkMasterFile:(NSString *)theSource forTask:(NSInteger)task
 {
@@ -234,6 +283,10 @@
 			}
 		}
 	}
+    
+    if(task == RootForOpening && ![SUD boolForKey:AutoOpenRootFileKey])
+        return NO;
+
 
 	if (done) {
 

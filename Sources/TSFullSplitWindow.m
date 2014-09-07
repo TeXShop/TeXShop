@@ -242,9 +242,9 @@
 }
 
 - (void)splitWindow: (id)sender
-{
-    [self.myDocument splitWindow: sender];
-}
+ {
+     [self.myDocument splitWindow: sender];
+ }
 
 - (void)close
 {

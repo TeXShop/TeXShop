@@ -36,7 +36,9 @@
                     IBOutlet    id								totalPage;
                     IBOutlet    NSTextField                     *stotalPage;
                     IBOutlet	id								myScale;
+                    IBOutlet	id								smyScale;
                     IBOutlet	id								myStepper;
+                    IBOutlet	id								smyStepper;
                     IBOutlet	id								currentPage1;
                     IBOutlet	id								totalPage1;
                     IBOutlet	id								myScale1;
@@ -153,8 +155,8 @@
 - (void) nextPage: (id)sender;
 - (void) firstPage: (id)sender;
 - (void) lastPage: (id)sender;
-- (void) changeScale: sender;
-- (void) doStepper: sender;
+- (IBAction) changeScale: sender;
+- (IBAction) doStepper: sender;
 - (double)magnification;
 - (void) setMagnification: (double)magnification;
 - (void) changePageStyle: (id)sender;

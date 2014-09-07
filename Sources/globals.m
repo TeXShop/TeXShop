@@ -228,6 +228,8 @@ NSString *ResetSourceTextColorEachTimeKey = @"ResetSourceTextColorEachTime";
 NSString *SourceAndPreviewInSameWindowKey = @"SourceAndPreviewInSameWindow";
 NSString *DocumentSplitWindowPositionKey = @"DocumentSplitWindowPosition";
 NSString *TabIndentKey = @"TabIndent";
+NSString *SwitchSidesKey = @"SwitchSides";
+
 
 
 // Paths

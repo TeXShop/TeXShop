@@ -5274,10 +5274,16 @@ if (! useFullSplitWindow) {
 
 - (void) flipIndexColorState: sender
 {
-
-	NSInteger theState = [(NSCell *)self.indexColorBox state];
+    
+    NSInteger   theState;
+    
+    if (useFullSplitWindow)
+        theState = [(NSCell *)indexColorSplitBox state];
+    else
+        theState = [(NSCell *)self.indexColorBox state];
 	NSInteger newState = 1 - theState;
 	[self.indexColorBox setState: newState];
+    [indexColorSplitBox setState: newState];
 	if (newState == 1)
 		showIndexColor = YES;
 	else
@@ -5305,6 +5311,7 @@ if (! useFullSplitWindow) {
 - (void) fixAutoMenu
 {
 	  [autoCompleteButton setState: doAutoComplete];
+    [autoCompleteSplitButton setState: doAutoComplete];
 	  NSEnumerator* enumerator = [[[textWindow toolbar] items] objectEnumerator];
 	  id anObject;
 	  while ((anObject = [enumerator nextObject])) {
@@ -5340,6 +5347,7 @@ if (! useFullSplitWindow) {
 {
 	doAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
 	[autoCompleteButton setState: doAutoComplete];
+    [autoCompleteSplitButton setState: doAutoComplete];
 }
 
 // BibDesk Completion; Adam Maxwell
@@ -6558,10 +6566,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void) showIndexColor: sender
 {
-	if ([(NSCell *)self.indexColorBox state] == 1)
-		showIndexColor = YES;
-	else
-		showIndexColor = NO;
+    NSInteger myState;
+    
+    myState = [(NSButton *)sender state];
+    if (myState == 1)
+        showIndexColor = YES;
+    else
+        showIndexColor = NO;
 	[self colorizeVisibleAreaInTextView:textView1];
 	[self colorizeVisibleAreaInTextView:textView2];
 }
@@ -7941,6 +7952,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSRange         theRange;
     NSString        *theFileName, *thePDFName;
     NSFileManager   *theManager;
+    BOOL            interchange;
+    
+    interchange = [SUD boolForKey: SwitchSidesKey];
     
     if ((! useFullSplitWindow) && (! self.rootDocument) && (fileIsTex) && (! _externalEditor))
         {
@@ -7964,11 +7978,23 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 [myDrawer toggle: self];
             [myDrawer close];
             [splitView removeFromSuperview];
-            [leftView addSubview: splitView];
-            [splitView setFrame: [leftView bounds]];
+            if (interchange) {
+                [rightView addSubview: splitView];
+                [splitView setFrame: [rightView bounds]];
+                }
+            else {
+                [leftView addSubview: splitView];
+                [splitView setFrame: [leftView bounds]];
+                }
             [pdfKitWindow.pdfKitSplitView removeFromSuperview];
-            [rightView addSubview: pdfKitWindow.pdfKitSplitView];
-            [pdfKitWindow.pdfKitSplitView setFrame: [rightView bounds]];
+            if (interchange) {
+                [leftView addSubview: pdfKitWindow.pdfKitSplitView];
+                [pdfKitWindow.pdfKitSplitView setFrame: [leftView bounds]];
+                }
+            else {
+                [rightView addSubview: pdfKitWindow.pdfKitSplitView];
+                [pdfKitWindow.pdfKitSplitView setFrame: [rightView bounds]];
+                }
             [self.splitController setWindow: fullSplitWindow];
             [self addWindowController: self.splitController];
             NSString *splitPosition = [SUD stringForKey:DocumentSplitWindowPositionKey];
@@ -7986,10 +8012,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void) doSeparateWindows: (id)sender;
 {
+
     if (useFullSplitWindow)
         {
             if ([myDrawer state] == NSDrawerOpenState)
                 [myDrawer toggle: self];
+            useFullSplitWindow = NO;
             [splitView removeFromSuperview];
             [[textWindow contentView] addSubview: splitView];
             [splitView setFrame: [[textWindow contentView] bounds]];
@@ -7999,7 +8027,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             [pdfKitWindow orderFront:self];
             [textWindow makeKeyAndOrderFront:self];
             [fullSplitWindow orderOut:self];
-            useFullSplitWindow = NO;
             [myDrawer setParentWindow: pdfKitWindow];
             [self removeWindowController: self.splitController];
             // [self setWindow: textWindow];

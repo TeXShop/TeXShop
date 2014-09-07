@@ -96,10 +96,10 @@
 - (void)makeKeyAndOrderFront:(id)sender
 {
     
-	if (
-		(! [self.myDocument externalEditor]) &&
-		(([self.myDocument documentType] == isTeX) || ([self.myDocument documentType] == isOther))
-		)
+	if 
+		((! [self.myDocument externalEditor]) && (! [self.myDocument useFullSplitWindow]) &&
+		(([self.myDocument documentType] == isTeX) || ([self.myDocument documentType] == isOther)))
+		
 		[super makeKeyAndOrderFront: sender];
 	[self.myDocument tryBadEncodingDialog:self];
 }

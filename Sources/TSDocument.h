@@ -145,6 +145,7 @@ enum RootCommand
 
 	IBOutlet NSBox				*gotopageOutletKK;
     IBOutlet NSBox				*sgotopageOutletKK;
+    IBOutlet NSBox              *smagnificationOutletKK;
 	IBOutlet NSBox				*magnificationOutletKK;
 	IBOutlet NSMatrix			*mouseModeMatrixKK;
 	IBOutlet NSSegmentedControl	*backforthKK;
@@ -161,6 +162,9 @@ enum RootCommand
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
 	IBOutlet NSButton           *showFullPathButton; // added by Terada
+    IBOutlet NSButton			*autoCompleteSplitButton;
+    IBOutlet NSButton           *indexColorSplitBox;
+
     
     IBOutlet	id              gotopageOutlet;
     IBOutlet	id              magnificationOutlet;

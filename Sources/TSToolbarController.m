@@ -101,9 +101,10 @@ static NSString*	kSplitKKTID				= @"SplitKIT";
 static NSString*	skProgramTID		= @"ProgramSplit";
 static NSString*	skMacrosTID			= @"MacrosSplit";
 static NSString*	skTagsTID 			= @"TagsSplit";
-static NSString*	skGotoPageKKTID 		= @"GotoPageSplit";
-
-
+static NSString*	skGotoPageKKTID 	= @"GotoPageSplit";
+static NSString*    skMagnificationKKTID = @"MagnificationSplit";
+static NSString*	skAutoCompleteID	 = @"AutoCompleteSplit";
+static NSString*    skColorIndexTID		= @"ColorIndexSplit";
 
 @implementation TSDocument (ToolbarSupport)
 
@@ -516,6 +517,21 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skAutoCompleteID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+												   customView:autoCompleteSplitButton];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"AutoComplete", @"AutoComplete")
+                                                 action: @selector(changeAutoComplete:) keyEquivalent:@""];
+		[submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
 
 	// added by Terada (from this line) ////////////////
 	if ([itemIdent isEqual: kShowFullPathID]) {
@@ -819,6 +835,23 @@ else
 		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skMagnificationKKTID]) {
+		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+													customView:smagnificationOutletKK];
+		menuFormRep = [[NSMenuItem alloc] init];
+		/*
+		 submenu = [[[NSMenu alloc] init] autorelease];
+		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+		 [submenu addItem: submenuItem];
+		 [menuFormRep setSubmenu: submenu];*/
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		[menuFormRep setAction: @selector(doTextMagnify:)];
+		[menuFormRep setTarget: pdfKitWindow];
+		return toolbarItem;
+	}
+
 
 
 
@@ -964,6 +997,21 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skColorIndexTID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+												   customView:indexColorSplitBox];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Color Index", @"Color Index")
+                                                 action: @selector(flipIndexColorState:) keyEquivalent:@""];
+		[submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
 
 
 
@@ -1164,7 +1212,7 @@ else
 					kNextPageButtonKKTID,
 					kDrawerKKTID,
 	                skGotoPageKKTID,
-					kMouseModeKKTID,
+                    kMouseModeKKTID,
 					kSplitKKTID,
 					// NSToolbarCustomizeToolbarItemIdentifier,
 					// NSToolbarSpaceItemIdentifier,
@@ -1343,7 +1391,7 @@ else
 					kMouseModeKKTID,
 					kSyncMarksTID,
                     kSplitKKTID,
- 					NSToolbarPrintItemIdentifier,
+                    NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,
 					NSToolbarSpaceItemIdentifier,
@@ -1374,9 +1422,12 @@ else
 					kBackForthKKTID,
 					kDrawerKKTID,
 	                skGotoPageKKTID,
+                    skMagnificationKKTID,
 					kMouseModeKKTID,
 					kSharingKKTID,
 					kSplitKKTID,
+                    skColorIndexTID,
+                    skAutoCompleteID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,
@@ -1403,9 +1454,12 @@ else
 					kBackForthKKTID,
 					kDrawerKKTID,
 	                skGotoPageKKTID,
+                    skMagnificationKKTID,
 					kMouseModeKKTID,
 					kSharingKKTID,
 					kSplitKKTID,
+                    skColorIndexTID,
+ 					skAutoCompleteID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,

@@ -433,6 +433,7 @@ extern NSString *ResetSourceTextColorEachTimeKey;
 extern NSString *SourceAndPreviewInSameWindowKey;
 extern NSString *DocumentSplitWindowPositionKey;
 extern NSString *TabIndentKey;
+extern NSString *SwitchSidesKey;
 
 
 

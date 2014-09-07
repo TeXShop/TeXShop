@@ -763,9 +763,11 @@
 	scaleMag = magsize;
 	if (self == [self.myDocument topView]) {
 		[myScale setIntegerValue:magsize];
+        [smyScale setIntegerValue:magsize];
 		[myScale1 setIntegerValue:magsize];
 		[myScale display];
 		[myStepper setIntegerValue:magsize];
+        [smyStepper setIntegerValue:magsize];
 		[myStepper1 setIntegerValue:magsize];
 		}
 }
@@ -843,6 +845,7 @@
 		scale = 1000;
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[self changeScale: self];
 }
 
@@ -856,6 +859,7 @@
 		scale = 20;
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[self changeScale: self];
 }
 
@@ -871,11 +875,16 @@
 		[myScale setIntegerValue:[myScale1 integerValue]];
 		scaleMag = [myScale1 integerValue];
 		}
+    else if (sender == smyScale) {
+        [myScale setIntegerValue:[smyScale integerValue]];
+		scaleMag = [smyScale integerValue];
+        }
 	scale = [myScale integerValue];
 	if (scale < 20) {
 		scale = 20;
 		scaleMag = scale;
 		[myScale setIntegerValue:scale];
+        [smyScale setIntegerValue: scale];
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
@@ -883,12 +892,14 @@
 		scale = 1000;
 		scaleMag = scale;
 		[myScale setIntegerValue:scale];
+        [smyScale setIntegerValue:scale];
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
 	if ((sender == myScale) || (sender == myScale1))
 		[[self window] makeFirstResponder: myScale];
 	[myStepper setIntegerValue:scale];
+    [smyStepper setIntegerValue:scale];
 	[myStepper1 setIntegerValue:scale];
 	magSize = [self magnification];
 	[self setScaleFactor: magSize];
@@ -918,6 +929,8 @@
 {
     if (sender == myStepper)
         [myScale setStringValue:[myStepper stringValue]]; // Strangely, setIntegerValue doesn't work correctly
+    else if (sender == smyStepper)
+        [myScale setStringValue:[smyStepper stringValue]];
     else
 		[myScale setStringValue:[myStepper1 stringValue]];
 	scaleMag = [myScale integerValue];
@@ -5635,6 +5648,7 @@ oldVisibleRect.size.width = 0;
 
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[myScale1 setIntegerValue:scale];
 	[myScale display];
 	[myScale1 display];
@@ -5786,6 +5800,7 @@ oldVisibleRect.size.width = 0;
 	if (scaleMag == 0)
 		scaleMag = 100;
 	[myScale setIntegerValue:scaleMag];
+    [smyScale setIntegerValue:scaleMag];
 	[myScale1 setIntegerValue:scaleMag];
 	[myStepper setIntegerValue:scaleMag];
 	[myStepper1 setIntegerValue:scaleMag];

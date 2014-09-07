@@ -88,6 +88,8 @@
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow: sender;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+- (void)doMove: (id)sender;
+
 - (TSDocument *)document;
 #ifdef MITSU_PDF
 - (void)changePageStyle: (id)sender; // mitsu 1.29 (O)

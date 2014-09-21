@@ -127,6 +127,23 @@ static id _sharedInstance = nil;
 	self.activeTextWindow = nil;
 }
 
+- (void)textSplitWindowDidBecomeKey:(NSNotification *)note
+{
+    self.activeTextWindow = [note object];
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: YES];
+}
+
+- (void)documentSplitWindowWillClose:(NSNotification *)note
+{
+    self.activeTextWindow = nil;
+}
+
+- (void)documentSplitWindowDidResignKey:(NSNotification *)note
+{
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: NO];
+}
+
+
 /*" Returns the active document window or nil if no document window is active.
 "*/
 /*

@@ -1,7 +1,7 @@
 <HTML>
 
 <HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=ISO-8859-1">
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=UTF-8">
 		<TITLE>What's new?</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="new features; bug fixes">
@@ -13,6 +13,66 @@
 
 
 <div id="content_normal">
+
+<P><h5>TeXShop Changes 3.42</h5></P>
+
+Version 3.42 has the following changes
+<ul>
+<li> In Split Full Window mode, additional toolbar tools are provided: the "Scale" tool, the
+"Color Index" tool, and the "Key Bindings" tool.
+<p> <li>
+Toolbar items for this window now have reasonable localized names, rather than
+the very technical names in version 3.41.
+
+<p><li> Various bugs in the Split Full Window mode are fixed.
+
+<p><li> The Spanish localization temporarily changed to Chinese. This is
+fixed.
+
+<p><li> The Macro menu failed to work in Split Full Window mode if the user switched
+to another window and then back to the split window. This bug is  fixed.
+
+<p><li> In Full Window mode, if the text portion was split, both the
+Macro menu  and the Sync between Preview and Source always used the same piece of text rather than switching when the other piece of text was made active.  This is fixed. 
+
+<p><li> Yusuke Terada improved the new "Character Info" command
+from 3.41. He writes
+
+<ul>
+<p>
+	<li> National Flags:
+
+<p>	An emoji character of a national flag consists of 2 unicode characters.
+	For example, 🇺🇸 consists of U+1F1FA (REGIONAL INDICATOR SYMBOL LETTER U) 
+	and U+1F1F8 (REGIONAL INDICATOR SYMBOL LETTER S), 
+	and 🇯🇵 consists of U+1F1EF (REGIONAL INDICATOR SYMBOL LETTER J)  
+	and U+1F1F5 (REGIONAL INDICATOR SYMBOL LETTER P).
+	Thus, they should be displayed as "a letter consisting of 2 characters", 
+	but it is displayed as "a letter consisting of 4 characters" in the current version of TeXShop.
+	This is because the regional indicator symbol letters are positioned 
+	outside the BMP (Unicode Basic Multilingual Plane).
+	I fixed this issue so that these national flags are correctly displayed 
+	as "a letter consisting of 2 characters".
+
+<p><li> Support for Ideographic Variation Selector (IVS)
+
+<p>	In Japan and China, some kanji characters have multiple variants.
+	For example, both 神 and 神󠄀 have the same meanings (they mean "God") 
+	and the same readings. They are considered as variant forms of the same kanji.
+	IVS, Ideographic Variation Selector, is used in order to distinguish them.
+	For example, the single unicode character U+795E brings the output "神". 
+	On the other hand, the sequence "U+795E U+E0100" brings the output "神󠄀".
+	U+E0100 itself is not a letter. This is a variation selector.
+	In Unicode, there are variation selectors like this in U+FE00..U+FE0F (Variation Selectors), 
+	U+E0100..U+E01EF (Variation Selectors Supplement), 
+	U+180B..U+180D (Mongolian Free Variation Selectors).
+
+	In the current version of TeXShop, the character info of "神󠄀" is 
+	displayed as "a letter consisting of 3 characters".
+	I modified TSGlyphPopoverController.m for IVS support so that this is
+	 displayed as "CJK UNIFIED IDEOGRAPH-795E (Variant)", like "RED APPLE (Emoji Style)".
+</ul>
+</ul>
 
 <P><h5>TeXShop Changes 3.40 and 3.41</h5></P>
 
@@ -174,10 +234,10 @@ It is our hope that the existence of these easy techniques will lead to more LaT
 also redesigned the dialog which appears when you select the menu item "About TeXShop".
 
 <p>
-The story of TeXShop icons is complicated. The original icon was designed by J�r�me Laurens. 
-J�r�me also designed the TeX Live Utility icon, and I like both a lot.
+The story of TeXShop icons is complicated. The original icon was designed by Jérôme Laurens. 
+Jérôme also designed the TeX Live Utility icon, and I like both a lot.
 
-<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for J�r�me's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  J�r�me's icon and I like it a lot. Adams also provided a document icon.
+<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for Jérôme's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  Jérôme's icon and I like it a lot. Adams also provided a document icon.
 
 <p> But Apple revised the look of icons in Yosemite. I intended to ignore the new design.
 
@@ -209,7 +269,7 @@ These users can activate the bad line and live with the bug by typing the follow
 
 <p>
 <li> Herbert Shultz provided a new version of the Help document TeXShop Tips and Tricks,
-and Ren� Fritz provided a French translation.
+and René Fritz provided a French translation.
 
 <p>
 <li> The Brazilian localization in TeXShop 3.38 was mistakenly added by Koch to the
@@ -1025,7 +1085,7 @@ with one such encoding is opened with a different encoding, the computer will no
 symbols may appear with unexpected shapes.
 
 <p> TeXShop must deal with this design in two spots. When TeXShop is asked to open a file, it reads
-the first few bytes in MacOSRoman to check whether a "% !TEX encoding = ..." statement is at the top of the file. It now reads these bytes in ISOLatin9. And when TeXShop opens a file in UTF-8, but receives a report that the file does not contain legal UTF-8 code, is used to reopen the file in MacOSRoman encoding and now
+the first few bytes in MacOSRoman to check whether a "ng and now
 opens it in ISOLatin9.
 
 <p>Some users have requested that TeXShop's default encoding be UTF-8. Users can achieve this
@@ -3443,7 +3503,7 @@ fixed thanks to Juan Luis Varona.</li>
 					If the source file has include files,  this operation will open
 					the appropriate include file and take the user to a point in that file. Read the
 					help file "General Help: Pdfsync" for important details. This change depends
-					on pdfsync.sty, a file create by Piero D'Ancona with improvements by JÈrÙme 
+					on pdfsync.sty, a file create by Piero D'Ancona with improvements by JÃrÃme 
 					Laurens.
 
 <li> 					Also added pdfsync the other way. Clicking on a spot in the source file (including

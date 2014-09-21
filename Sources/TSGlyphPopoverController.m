@@ -37,9 +37,8 @@
 static const unichar  kTextSequenceChar = 0xFE0E;
 static const unichar kEmojiSequenceChar = 0xFE0F;
 
-
-// subclass for private use
 //////////////////////////////////////////////////////////////////////////////
+#pragma mark - subclass for private use
 @interface TSGlyphPopoverUnicodesTextStorage : NSTextStorage
 {
     NSMutableAttributedString *contents;
@@ -86,6 +85,8 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
     }
 }
 @end
+#pragma mark -
+
 //////////////////////////////////////////////////////////////////////////////
 
 @interface TSGlyphPopoverController (){
@@ -141,7 +142,6 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
                 UTF32Char pair = CFStringGetLongCharacterForSurrogatePair(theChar, nextChar);
                 unicode = [NSString stringWithFormat:@"U+%04tX (U+%04X U+%04X)", pair, theChar, nextChar];
                 i++;
-                
             } else {
                 unicode = [NSString stringWithFormat:@"U+%04X", theChar];
             }
@@ -153,29 +153,40 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
         
         BOOL multiCodePoints = ([unicodes count] > 1);
         
-        // emoji variation check
-        NSString *emojiStyle;
+        NSString *variationSelectorAdditional;
         if ([unicodes count] == 2) {
-            switch ([character characterAtIndex:(length - 1)]) {
-                case kEmojiSequenceChar:
-                    emojiStyle = @"Emoji Style";
-                    multiCodePoints = NO;
-                    break;
-                
-                case kTextSequenceChar:
-                    emojiStyle = @"Text Style";
-                    multiCodePoints = NO;
-                    break;
-                    
-                default:
-                    break;
+            unichar lastChar = [character characterAtIndex:(length - 1)];
+            if (lastChar == kEmojiSequenceChar) {
+                variationSelectorAdditional = @"Emoji Style";
+                multiCodePoints = NO;
+            } else if (lastChar == kTextSequenceChar) {
+                variationSelectorAdditional = @"Text Style";
+                multiCodePoints = NO;
+            } else if ((lastChar >= 0x180B && lastChar <= 0x180D) ||
+                       (lastChar >= 0xFE00 && lastChar <= 0xFE0D))
+            {
+                variationSelectorAdditional = @"Variant";
+                multiCodePoints = NO;
+            } else {
+                unichar highSurrogate = [character characterAtIndex:(length - 2)];
+                unichar lowSurrogate = [character characterAtIndex:(length - 1)];
+                if(CFStringIsSurrogateHighCharacter(highSurrogate) &&
+                   CFStringIsSurrogateLowCharacter(lowSurrogate))
+                {
+                    UTF32Char pair = CFStringGetLongCharacterForSurrogatePair(highSurrogate, lowSurrogate);
+                    if (pair >= 0xE0100 && pair <= 0xE01EF) {
+                        variationSelectorAdditional = @"Variant";
+                        multiCodePoints = NO;
+                    }
+                }
             }
         }
+
         
         if (multiCodePoints) {
-            if(singleLetter){
-                [self setUnicodeName:[NSString stringWithFormat:NSLocalizedString(@"<a letter consisting of %d characters>", @"<a letter consisting of %d characters>"), length]];
-            }else{
+            if (singleLetter) {
+                [self setUnicodeName:[NSString stringWithFormat:NSLocalizedString(@"<a letter consisting of %d characters>", nil), [unicodes count]]];
+            } else {
                 // display the number of letters, words, lines
                 NSInteger numberOfWords = [[NSSpellChecker sharedSpellChecker] countWordsInString:character language:nil];
                 if(numberOfWords == -1){
@@ -184,7 +195,7 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
                 NSUInteger numberOfLines = [[character componentsSeparatedByString:@"\n"] count];
                 
                 [self setUnicodeName:
-                 [NSString stringWithFormat:NSLocalizedString(@"%d letters, %d words, %d lines", @"%d letters, %d words, %d lines"), numberOfComposedCharacters, numberOfWords, numberOfLines]];
+                 [NSString stringWithFormat:NSLocalizedString(@"%d letters, %d words, %d lines", nil), numberOfComposedCharacters, numberOfWords, numberOfLines]];
 
                 // display Unicode points
                 NSRect originalFrame = [[super view] frame];
@@ -215,9 +226,9 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
                                                                    range:NSMakeRange(0, [mutableUnicodeName length])];
             [self setUnicodeName:[mutableUnicodeName substringWithRange:[firstMatch rangeAtIndex:1]]];
             
-            if (emojiStyle) {
+            if (variationSelectorAdditional) {
                 [self setUnicodeName:[NSString stringWithFormat:@"%@ (%@)", [self unicodeName],
-                                      NSLocalizedString(emojiStyle, nil)]];
+                                      NSLocalizedString(variationSelectorAdditional, nil)]];
             }
         }
     }
@@ -235,7 +246,6 @@ static const unichar kEmojiSequenceChar = 0xFE0F;
     [popover setBehavior:NSPopoverBehaviorSemitransient];
     [popover showRelativeToRect:positioningRect ofView:parentView preferredEdge:NSMinYEdge];
     [[parentView window] makeFirstResponder:parentView];
-    
 }
 
 @end

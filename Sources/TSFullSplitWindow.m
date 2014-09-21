@@ -320,12 +320,13 @@
 // If the window has % !TEX, then resign Main Window should
 // reset the language to the remebered current language, and unset
 // the global for "dont use UID to record language"
-
+*/
 
 
 - (void) becomeMainWindow
 {
- 	[self refreshTitle]; // added by Terada
+    
+// 	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
 	[self.myDocument fixMacroMenuForWindowChange];
@@ -341,6 +342,21 @@
     [super resignMainWindow];
     [self.myDocument resignSpelling];
 }
+
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder
+{
+    BOOL	result;
+    
+    result = [super makeFirstResponder:aResponder];
+    // FIXME: This is kind of ugly...
+    if (result && [[aResponder className] isEqualTo:@"TSTextView"]) {
+        [self.myDocument setTextView:aResponder];
+    }
+    return result;
+}
+
+
+/*
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window
 - (TSDocument *)document

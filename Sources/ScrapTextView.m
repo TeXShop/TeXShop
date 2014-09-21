@@ -315,6 +315,13 @@
 - (void)insertText:(id)aString
 {
     
+// The following is an Emoji Palette fix by Yusuke Terada
+    if (![aString isKindOfClass:[NSString class]]) {
+        [super insertText:aString];
+        return;
+    }
+// End of Fix
+    
 	// AutoCompletion
 	// Code added by Greg Landweber for auto-completions of '^', '_', etc.
 	// First, avoid completing \^, \_, \"

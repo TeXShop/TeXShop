@@ -468,7 +468,7 @@ enum RootCommand
 - (id) pdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
-- (IBAction) changeAutoComplete: sender;
+- (void) changeAutoComplete: sender;
 - (void) changeShowFullPath: sender; // added by Terada
 - (void) fixAutoMenu;
 - (void) fixShowFullPathButton; // added by Terada
@@ -514,7 +514,7 @@ enum RootCommand
 - (void)setPdfSyncLine:(NSInteger)line;
 - (void)showSyncMarks:sender;
 - (void) flipShowSync: sender;
-- (IBAction)showIndexColor:sender;
+- (void)showIndexColor:sender;
 - (BOOL)indexColorState;
 - (void) flipIndexColorState: sender;
 - (void)doPreviewSyncWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;

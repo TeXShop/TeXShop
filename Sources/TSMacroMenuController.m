@@ -31,6 +31,7 @@
 // mistu 1.29
 #import "TSWindowManager.h"
 #import "TSTextView.h"
+#import "TSFullSplitWindow.h"
 // end mistu 1.29
 
 
@@ -269,6 +270,8 @@ static id sharedMacroMenuController = nil;
 	NSString        *reason = 0;
 	NSMutableArray  *args;
 	NSString        *macroString;
+    NSString        *filePath, *displayName;
+    TSFullSplitWindow *mySplitWindow;
 	
 	if ([sender isKindOfClass: [NSMenuItem class]])
 		macroString = [(NSMenuItem *)sender representedObject];
@@ -289,8 +292,15 @@ static id sharedMacroMenuController = nil;
 		// mitsu 1.29 (T2)
 		NSWindow *activeDocWindow = [[TSWindowManager sharedInstance] activeTextWindow];
 		if (activeDocWindow != nil) {
-			[[(TSTextEditorWindow *)activeDocWindow document] insertSpecial: macroString
+            if ([activeDocWindow isKindOfClass:[TSTextEditorWindow class]])
+                [[(TSTextEditorWindow *)activeDocWindow document] insertSpecial: macroString
 																	undoKey: NSLocalizedString(@"Macro", @"Macro")];
+            else if ([activeDocWindow isKindOfClass:[TSFullSplitWindow class]])
+                {
+                    TSFullSplitWindow *activeWindow = (TSFullSplitWindow *)activeDocWindow;
+                    [activeWindow.myDocument insertSpecial: macroString
+                                                                        undoKey: NSLocalizedString(@"Macro", @"Macro")];
+                 }
 			//[(TSTextView *)[[(TSTextEditorWindow *)activeDocWindow document] textView]
 			//			insertSpecial: macroString
 			//			undoKey: NSLocalizedString(@"Macro", @"Macro")];
@@ -303,8 +313,19 @@ static id sharedMacroMenuController = nil;
 		
 		// do AppleScript
 		NSMutableString *newString = [NSMutableString stringWithString: macroString];
-		NSString *filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
-		NSString *displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        if ([[NSApp mainWindow] isKindOfClass: [TSTextEditorWindow class]]) {
+            filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
+            displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        }
+        else if ([[NSApp mainWindow] isKindOfClass: [TSFullSplitWindow class]]) {
+            mySplitWindow = (TSFullSplitWindow *)[NSApp mainWindow];
+            filePath = [[mySplitWindow.myDocument fileURL] path];
+            displayName = [mySplitWindow.myDocument displayName];
+            }
+        else {
+            filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
+           displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        }
 		if (!filePath)
 			filePath = @"";
 		[newString replaceOccurrencesOfString: @"#FILEPATH#" withString:

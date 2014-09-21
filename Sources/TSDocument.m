@@ -2221,6 +2221,10 @@ if ( ! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textSplitWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:fullSplitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentSplitWindowWillClose:) name:NSWindowWillCloseNotification object:fullSplitWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentSplitWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:fullSplitWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:textWindow];
 }
@@ -2959,7 +2963,7 @@ preference change is cancelled. "*/
 - (void)newMainWindow:(NSNotification *)notification
 {
 	id object = [notification object];
-	if ((object == pdfWindow) || (object == textWindow) || (object == outputWindow))
+	if ((object == pdfWindow) || (object == textWindow) || (object == outputWindow) || (object == fullSplitWindow))
 		[self fixTypesetMenu];
 }
 

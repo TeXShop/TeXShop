@@ -56,7 +56,7 @@
 - (void) dealloc
 {
 	
-	[self cleanupMarquee: YES];
+    [self cleanupMarquee: YES];
 	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -83,6 +83,16 @@
 		}
      return self;
 }
+
+/*
+- (BOOL)resignFirstResponder
+{
+    NSLog(@"resign");
+    BOOL result = [super resignFirstResponder];
+    [self cleanupMarquee: YES];
+    return result;
+}
+*/
 
 /*
 - (BOOL)wantsScrollEventsForSwipeTrackingOnAxis:(NSEventGestureAxis)axis

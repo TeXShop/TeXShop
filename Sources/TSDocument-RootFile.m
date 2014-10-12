@@ -26,6 +26,8 @@
 #import "globals.h"
 #import "TSEncodingSupport.h"
 #import "TSAppDelegate.h"
+#import "TSTextEditorWindow.h"
+#import "NSString-Extras.h"
 
 @implementation TSDocument (RootFile)
 
@@ -50,7 +52,24 @@
 	while ((obj = [en nextObject])) {
 		// TODO: Consider using [obj isMemberOfClass:[TSDocument class]] here
 		if ([[obj windowNibName] isEqualToString:@"TSDocument"]) {
-			if ([[obj fileName] isEqualToString:nameString]) {
+            BOOL isRootFileWindow = [SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] ?
+                                        [[[obj fileName] normalizedStringWithModifiedNFC] isEqualToString:[nameString normalizedStringWithModifiedNFC]] :
+                                        [[obj fileName] isEqualToString:nameString];
+
+            BOOL usingFullSplitWindow = NO;
+            if (isRootFileWindow){
+                id theTextWindow = [(TSDocument*)obj textWindow];
+                if ([theTextWindow isMemberOfClass:[TSTextEditorWindow class]]) {
+                    TSTextEditorWindow* theTextEditorWindow = (TSTextEditorWindow*)theTextWindow;
+                    if ([theTextEditorWindow wasClosed]) {
+                        isRootFileWindow = NO;
+                    } else if ([(TSDocument*)obj useFullSplitWindow]) {
+                        usingFullSplitWindow = YES;
+                    }
+                }
+            }
+            
+            if (isRootFileWindow) {
 				if (obj == self)
 					return NO;
 				self.rootDocument = obj;
@@ -66,7 +85,11 @@
 					[obj doPreviewSyncWithFilename:[[self fileURL] path] andLine:pdfSyncLine andCharacterIndex:pdfCharacterIndex andTextView: textView];
 				} else if (task == RootForSwitchWindow) {
 					[obj setCallingWindow: textWindow];
-					[obj bringPdfWindowFront];
+                    if (usingFullSplitWindow) {
+                        [[(TSDocument*)obj fullSplitWindow] makeKeyAndOrderFront:nil];
+                    } else {
+                        [obj bringPdfWindowFront];
+                    }
 				} else if (task == RootForTexing) {
 					// FIXME: The following code block exists twice in this function
   

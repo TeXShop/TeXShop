@@ -47,7 +47,7 @@
 @property               BOOL            firstClose;
 @property (weak)      PDFView         *activeView;
 @property (weak)      PDFView         *myPDFKitView;
-@property (weak)      PDFView         *myPDFKitView2;
+@property (weak)      PDFView        *myPDFKitView2;
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
 
@@ -89,6 +89,7 @@
 - (void) associatedWindow: sender;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (void)doMove: (id)sender;
+- (void)resignMainWindow;
 
 - (TSDocument *)document;
 #ifdef MITSU_PDF

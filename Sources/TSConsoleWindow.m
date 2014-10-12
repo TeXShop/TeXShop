@@ -66,6 +66,21 @@
 	[self.myDocument displayConsole: sender];
 }
 
+- (void)associatedWindow: (id)sender
+{
+    TSDocument *myDocument = (TSDocument*)self.myDocument;
+    [myDocument doError: sender];
+    if ([myDocument externalEditor])
+        return;
+    if ([myDocument documentType] == isTeX) {
+        if ([myDocument getCallingWindow] == nil)
+            [[myDocument textWindow] makeKeyAndOrderFront: self];
+        else
+            [[myDocument getCallingWindow] makeKeyAndOrderFront: self];
+        
+    }
+}
+
 - (void) abort: sender
 {
 	[self.myDocument abort: sender];

@@ -226,6 +226,7 @@
 - (NSDrawer *)drawer;
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
+// - (BOOL)resignFirstResponder;
 @end
 
 @interface MyPDFKitView (Gesture)

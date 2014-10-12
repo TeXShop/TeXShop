@@ -40,6 +40,7 @@
 - (void) doTypeset: sender;
 - (void) displayLog: sender;
 - (void) displayConsole: sender;
+- (void) associatedWindow: (id)sender;
 - (void) abort: sender;
 - (void) trashAUXFiles: sender;
 - (IBAction) convertTiff:(id)sender;

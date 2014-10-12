@@ -85,6 +85,13 @@ extern NSPanel *pageNumberWindow;
 	[super close];
 }
 
+- (void)resignMainWindow
+{
+    [(MyPDFKitView *)self.myPDFKitView cleanupMarquee: YES];
+    [(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];
+    [super resignMainWindow];
+}
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {

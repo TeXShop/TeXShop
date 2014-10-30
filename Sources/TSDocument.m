@@ -774,6 +774,15 @@ if (! skipTextWindow) {
 	textView = textView1;
 	[self setupTextView:textView1];
 	[self setupTextView:textView2];
+    
+    // Terada: Stop bouncing scrolling on Yosemite
+    if (! [SUD boolForKey: SourceScrollElasticityKey]) {
+        [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
+        [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+        [scrollView2 setHorizontalScrollElasticity:NSScrollElasticityNone];
+        [scrollView2 setVerticalScrollElasticity:NSScrollElasticityNone];
+        }
+    
 	
 	if (spellExists)
 		[textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
@@ -6424,33 +6433,42 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void)trashAUX
 {
-	NSString		*path, *path1, *path2;
-	NSString		*extension;
-	NSString        *fileName, *objectFileName, *objectName;
-	NSMutableArray  *pathsToBeMoved, *fileToBeMoved = 0;
-	id              anObject, stringObject;
-	NSInteger             myTag;
-	BOOL            doMove, isOneOfOther, trashPDF;
-	NSEnumerator    *enumerator;
-	NSArray         *otherExtensions;
-	NSEnumerator    *arrayEnumerator;
+	NSString                *path, *path1, *path2;
+	NSString                *extension;
+	NSString                *fileName, *objectFileName, *objectName;
+	NSMutableArray          *pathsToBeMoved, *fileToBeMoved = 0;
+	id                      anObject, stringObject;
+	NSInteger               myTag;
+	BOOL                    doMove, isOneOfOther, trashPDF;
+    NSDirectoryEnumerator   *dirEnumerator;
+	NSEnumerator            *enumerator;
+	NSArray                 *otherExtensions;
+	NSEnumerator            *arrayEnumerator;
+    NSURL                   *pathURL, *theURL;
+    NSString                *dirName;
+    NSNumber                *isDirectory;
 	
 	if (! fileIsTex)
 		return;
 	
 	if ([self fileURL] == nil)
 		return;
+    
+    fileToBeMoved = [NSMutableArray arrayWithCapacity: 1];
+    [fileToBeMoved addObject:@""];
 	
 	path = [[[self fileURL] path] stringByDeletingLastPathComponent];
+    pathURL = [NSURL URLWithString: path];
 	fileName = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
 	NSFileManager *myFileManager = [NSFileManager defaultManager];
 	
 	if (aggressiveTrash) {
-		enumerator = [myFileManager enumeratorAtPath: path];
-		fileToBeMoved = [NSMutableArray arrayWithCapacity: 1];
-		[fileToBeMoved addObject:@""];
+        dirEnumerator = [myFileManager enumeratorAtURL: pathURL includingPropertiesForKeys: [NSArray arrayWithObjects:NSURLNameKey, NSURLIsDirectoryKey,nil]
+            options:NSDirectoryEnumerationSkipsHiddenFiles
+            errorHandler: nil];
 	} else
-		enumerator = [[myFileManager contentsOfDirectoryAtPath: path error:NULL] objectEnumerator];
+        dirEnumerator = [myFileManager enumeratorAtURL: pathURL includingPropertiesForKeys: [NSArray arrayWithObjects:NSURLNameKey, NSURLIsDirectoryKey,nil]
+                    options: NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler: nil];
 	
 	pathsToBeMoved = [NSMutableArray arrayWithCapacity: 20];
 	
@@ -6459,15 +6477,24 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	else
 		trashPDF = NO;
 	
-	while ((anObject = [enumerator nextObject])) {
+	while ((theURL = [dirEnumerator nextObject])) {
+        [theURL getResourceValue:&dirName forKey:NSURLNameKey error:NULL];
+        [theURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
+        if (([dirName caseInsensitiveCompare:@".git"]==NSOrderedSame) &&
+            ([isDirectory boolValue]==YES))
+        {
+             [dirEnumerator skipDescendants];
+        }
+        
+        anObject = [theURL path];
 		doMove = YES;
 		extension = [anObject pathExtension];
 		if ((! aggressiveTrash) || [extension isEqualToString:@"pdf"]) {
-			objectFileName = [anObject stringByDeletingPathExtension];
-			if (! [objectFileName isEqualToString:fileName])
+			objectFileName = [[anObject lastPathComponent] stringByDeletingPathExtension];
+  			if (! [objectFileName isEqualToString:fileName])
 				doMove = NO;
 		}
-		
+        
 		isOneOfOther = NO;
 		otherExtensions = [SUD stringArrayForKey: OtherTrashExtensionsKey];
 		arrayEnumerator = [otherExtensions objectEnumerator];
@@ -6502,7 +6529,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 			}
 		}
 		
-		if (doMove && (isOneOfOther ||
+ 		if (doMove && (isOneOfOther ||
 					   ([extension isEqualToString:@"aux"] ||
 						[extension isEqualToString:@"blg"] ||
 						[extension isEqualToString:@"brf"] ||
@@ -6537,22 +6564,14 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 			[pathsToBeMoved addObject: anObject];
 		
 	}
-	
-	if (aggressiveTrash) {
-		
-		enumerator = [pathsToBeMoved objectEnumerator];
-		while ((anObject = [enumerator nextObject])) {
-			path1 = [path stringByAppendingPathComponent: anObject];
-			path2 = [path1 stringByDeletingLastPathComponent];
-			[fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
-			[[NSWorkspace sharedWorkspace]
-			 performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
-		}
-		
-	} else {
-		[[NSWorkspace sharedWorkspace]
-		 performFileOperation:NSWorkspaceRecycleOperation source:path destination:nil files:pathsToBeMoved tag:&myTag];
-	}
+    
+    enumerator = [pathsToBeMoved objectEnumerator];
+    while (anObject = [enumerator nextObject]) {
+        path2 = [anObject stringByDeletingLastPathComponent];
+        [fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
+        [[NSWorkspace sharedWorkspace]
+            performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
+    }
 	
 }
 

@@ -229,7 +229,9 @@ NSString *SourceAndPreviewInSameWindowKey = @"SourceAndPreviewInSameWindow";
 NSString *DocumentSplitWindowPositionKey = @"DocumentSplitWindowPosition";
 NSString *TabIndentKey = @"TabIndent";
 NSString *SwitchSidesKey = @"SwitchSides";
-
+NSString *SourceScrollElasticityKey = @"SourceScrollElasticity";
+NSString *FixPreviewBlurKey = @"FixPreviewBlur";
+NSString *InterpolationValueKey = @"InterpolationValue";
 
 
 // Paths

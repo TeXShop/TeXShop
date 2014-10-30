@@ -259,6 +259,8 @@
 
 - (void) setupOutline
 {
+//     NSLog(@"setup outline");
+    
 	if (![SUD boolForKey: UseOutlineKey])
 		return;
 
@@ -268,6 +270,7 @@
 	self.outline = [[self document] outlineRoot];
 	if (self.outline)
 	{
+//        NSLog(@"outline exists");
 		// Remove text that says, "No outline."
 //		[_noOutlineText removeFromSuperview];
 //		_noOutlineText = NULL;
@@ -278,6 +281,10 @@
 	}
 	else
 	{
+//        NSLog(@"no outline");
+        [_outlineView reloadData];
+        [_outlineView display];
+        
 		// Remove outline view (leaving instead text that says, "No outline.").
 //		[[_outlineView enclosingScrollView] removeFromSuperview];
 //		_outlineView = NULL;
@@ -334,6 +341,21 @@
     return YES;
 }
 
+- (void) removeBlurringByResettingMagnification
+{
+    // added by Terada for Yosemite's bug
+    //if ([SUD boolForKey:removeBlurringByResettingMagnificationKey]) {
+    //    [super setScaleFactor:self.magnification];
+    // Just to be safe, change the scale twice.
+    [super setScaleFactor:self.magnification+0.01];
+    [super setScaleFactor:self.magnification-0.01];
+    if (resizeOption == NEW_PDF_FIT_TO_WIDTH || resizeOption == NEW_PDF_FIT_TO_HEIGHT || resizeOption == NEW_PDF_FIT_TO_WINDOW)
+        [self setAutoScales: YES];
+    
+    //}
+}
+
+
 
 - (void) showWithPath: (NSString *)imagePath
 {
@@ -373,6 +395,8 @@
     NSEnableScreenUpdates();
 	
     [self.myPDFWindow makeKeyAndOrderFront: self];
+    if ([SUD boolForKey: FixPreviewBlurKey])
+        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
 }
@@ -520,6 +544,8 @@
 	//[[self window] enableFlushWindow];
     NSEnableScreenUpdates();
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
+    if ([SUD boolForKey: FixPreviewBlurKey])
+        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 }
 
 - (NSInteger)index
@@ -789,6 +815,7 @@
 	NSInteger				numRows, i, newlySelectedRow;
 	NSUInteger	newPageIndex;
 	NSIndexSet		*myIndexSet;
+    PDFOutline      *outlineItem;
 	
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
@@ -797,22 +824,46 @@
 	[currentPage1 setIntegerValue:pageNumber];
     
  	// Skip out if there is no outline.
-	if ([[self document] outlineRoot] == NULL)
-		return;
-
-	// What is the new page number (zero-based).
+//	if ([[self document] outlineRoot] == NULL)
+//		return;
+    if (! self.outline)
+        return;
+    
+    // In Yosemite, a strange bug causes crashes in the code below.
+    // The crashes are hard for me to produce; users report a crash, send
+    // a tex document causing it, but I cannot reproduce the crash. Eventually
+    // Leathart sent a document with a reproducible crash. His document is
+    // divided into chapters and has illustrations. To crash:
+    //    1) Introduce an error and typeset to the error
+    //    2) Don't continue typesetting; instead fix the error
+    //    3) Typeset to the end
+    //    4) Typeset again.
+    // At the second typeset, there is a crash on the indicated
+    // crash line below. Testing shows that
+    //    a) _outlineView is not nil
+    //    b) numRows = 13
+    //    c) crash occurs the first time through the loop
+    // Consequently, to fix I do not run this routine at all
+    
+    if (_outlineView == nil)
+        return;
+    
+ 	// What is the new page number (zero-based).
 	newPageIndex = [[self document] indexForPage: [self currentPage]];
 
 	// Walk outline view looking for best firstpage number match.
 	newlySelectedRow = -1;
 	numRows = [_outlineView numberOfRows];
+    if (numRows <= 0)
+        return;
+    
 	for (i = 0; i < numRows; i++)
 	{
-		PDFOutline	*outlineItem;
-
+		// PDFOutline	*outlineItem;
 		// Get the destination of the given row....
+        // THE FOLLOWING CRASHES TEXSHOP
 		outlineItem = (PDFOutline *)[_outlineView itemAtRow: i];
-
+ 
 		if ([[self document] indexForPage: [[outlineItem destination] page]] == newPageIndex)
 		{
 			newlySelectedRow = i;
@@ -834,6 +885,7 @@
 	// Auto-scroll.
 	if (newlySelectedRow != -1)
 		[_outlineView scrollRowToVisible: newlySelectedRow];
+    
 }
 
 - (double)magnification
@@ -1904,9 +1956,40 @@
     
     [NSGraphicsContext saveGraphicsState];
     BOOL shouldAntiAlias = [SUD boolForKey: AntiAliasKey];
+    NSInteger interpolationValue = [SUD integerForKey: InterpolationValueKey];
+    
+    if (interpolationValue < 0)
+        interpolationValue = 0;
+    if (interpolationValue > 4)
+        interpolationValue = 4;
+    
+    // possible values are
+    //      NSImageInterpolationDefault = 0
+    //      NSImageInterpolationNone = 1
+    //      NSImageInterpolationLow = 2
+    //      NSImageInterpolationMedium = 4 (correct, not reversed)
+    //      NSImageInterpolationHigh = 3 (correct, not reversed)
+    
     if (shouldAntiAlias) {
-        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
-        }
+        switch (interpolationValue) {
+                
+            case 0: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationDefault];
+                break;
+        
+            case 1: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+                break;
+        
+            case 2: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
+                break;
+        
+            case 4: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationMedium];
+                break;
+        
+            case 3: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+                break;
+         }
+    }
+    
 	[page drawWithBox:[self displayBox]];
     [NSGraphicsContext restoreGraphicsState];
 
@@ -5703,6 +5786,8 @@ oldVisibleRect.size.width = 0;
 
 
 // Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+// Replied by Yusuke Terada routine below to fix Yosemite reversal in single and double page mode
+/*
 - (void)keyDown:(NSEvent *)theEvent
 {
 	NSString	*theKey;
@@ -5730,6 +5815,43 @@ oldVisibleRect.size.width = 0;
 		[super keyDown:theEvent];
 	}
 }
+*/
+
+// Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+- (void)keyDown:(NSEvent *)theEvent
+{
+    NSString	*theKey;
+    unichar		key;
+    
+    theKey = theEvent.characters;
+    if (theKey.length >= 1)
+        key = [theKey characterAtIndex:0];
+    else
+        key = 0;
+    
+    if ((key == NSUpArrowFunctionKey) ||
+        (key == NSPageUpFunctionKey) ||
+        ((key == ' ') && (theEvent.modifierFlags & NSShiftKeyMask)) ||
+        ((key == NSLeftArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
+        [self previousPage:self];
+    } else if ((key == NSDownArrowFunctionKey) ||
+               (key == NSPageDownFunctionKey) ||
+               (key == ' ') ||
+               ((key == NSRightArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
+        [self nextPage:self];
+    } else if (((key == NSLeftArrowFunctionKey) || (key == NSRightArrowFunctionKey)) &&
+               ([SUD boolForKey: LeftRightArrowsAlwaysPageKey] ||
+                !self.documentView.enclosingScrollView.horizontalScroller.isEnabled)
+               ) {
+        if (key == NSLeftArrowFunctionKey)
+            [self previousPage:self];
+        else
+            [self nextPage:self];
+    } else {
+        [super keyDown:theEvent];
+    }
+}
+
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {

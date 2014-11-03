@@ -73,8 +73,8 @@ extern NSPanel *pageNumberWindow;
 {
     TSDocument *theDocument = self.myDocument;
     
-	[self.myPDFKitView setDocument: nil];
-	[self.myPDFKitView2 setDocument: nil];
+//	[self.myPDFKitView setDocument: nil];
+//	[self.myPDFKitView2 setDocument: nil];
 	self.willClose = YES;
  // self.myDocument = nil;
     if ([theDocument skipTextWindow]) {
@@ -83,6 +83,13 @@ extern NSPanel *pageNumberWindow;
         }
     
 	[super close];
+}
+
+- (void)resignMainWindow
+{
+    [(MyPDFKitView *)self.myPDFKitView cleanupMarquee: YES];
+    [(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];
+    [super resignMainWindow];
 }
 
 
@@ -345,6 +352,12 @@ extern NSPanel *pageNumberWindow;
 		[[self.myDocument pdfView] right: sender];
 	}
 }
+
+- (void)doMove: (id)sender
+{
+    [self.myDocument doMove:sender];
+}
+
 
 ////////// end key movement /////////////////////////
 

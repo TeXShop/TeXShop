@@ -1,0 +1,95 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1343\cocoasubrtf140
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 3.44 has the following changes\
+\
+1) In single and double page modes in Yosemite, the keyboard shortcuts to\
+page down and up, namely space and shift-space, are reversed. Similarly,\
+the page down and page up keys, and the page down and page up arrows\
+are reversed. Yusuke Terada fixed this behavior.\
+\
+Note that there are no changes in multpage and double-multipage modes,\
+since Yosemite did not introduce errors in these cases.\
+\
+2) A very serious bug caused TeXShop to crash immediately after typesetting\
+for a few people. This bug turns out to be related to the outline view in the\
+drawer for the preview window. It only affected people using hyperref,\
+and in circumstances that were difficult for me to trigger. Five people reported\
+this crash, all with the same crash log, before I finally got a source document\
+from one of them that I could reproduce on my machine.\
+\
+This bug should now be fixed.\
+\
+3) Yusuke Terada noticed that the scroll bars in the text window are configured\
+to bounce slightly at the ends, and this can lead to windows in which the first\
+and last lines of text are not reachable. He fixed this by turning off bouncing\
+in the source window.\
+\
+I\'92m happy with the fix, but didn\'92t run into the problem in my machine.  It is a little\
+disconcerting to see bounces using the preview scroll bar, but no bounces using\
+the source scroll bar. So temporarily I\'92ve introduced a hidden preference to\
+turn on Yusuke\'92s fix:\
+\
+	defaults write TeXShop SourceScrollElasticity NO\
+\
+The default is to allow this elasticity.\
+\
+Also mention\
+\
+	defaults write TeXShop FixLineNumberScroll NO \
+\
+and \'93Lion Problem\'94\
+\
+4) A lot of mailing list messages discuss poor antialiasing of the pdf window\
+under Yosemite. Some users say the pdf window is initially blurred, but\
+can be improved by slight resizing. Yusuke Terada also provided a fix\
+for this. I\'92m worried that this fix may degrade performance with large files,\
+so that fix too requires setting a hidden preference:\
+\
+	defaults write TeXShop FixPreviewBlur YES \
+\
+I wouldn\'92t call this the final word on the issue. We\'92ll continue investigating\
+and perhaps find a more permanent cause and repair.\
+\
+5) Another way to handle the interpolation problem is to adjust the antialiasing\
+interpolation value. This can be done system-wide or locally for TeXShop. In Apple\'92s\
+System Preferences with the General Pane, the last item is \'93Use LCD Font\
+Smoothing When Available\'94. It isn\'92t clear to me what this does, but some users\
+claim improvements in the blurring problem by turning it off.\
+\
+TeXShop also has a Preferences Item under the Preview Tab called\
+\'93Smooth text and line art.\'94 This item wasn\'92t originally designed to deal\
+with antialiasing. Instead, a user had an illustration with very thin lines. The\
+lines appeared in Adobe Acrobat, but not in TeXShop, except when using\
+a Retina Display. Turning on antialiasing made them visible.\
+\
+However, this antialiasing may be useful in adjusting the blurring problem. \
+If antialiasing is turned on in TeXShop, then five different interpolation values\
+can be set. Older versions of TeXShop used \'93NSImageInterpolationHigh\'94. Version\
+3.44 has a hidden preference setting which allows users the adjust the value:\
+\
+	defaults write TeXShop InterpolationValue 3\
+\
+The default value for this setting is 3. The possible values are\
+\
+	0 = NSImageInterpolationDefault\
+	1 = NSImageInterpolationNone\
+	2 = NSImageInterpolationLow\
+	4 = NSImageInterpolationMedium\
+	3 = NSImageInterpolationHigh\
+\
+These names are from Apple\'92s API documentation, and the last two values are\
+not switched but instead are listed correctly.\
+\
+6) Frankly, a much better way to solve the problem is to choose a different default\
+font set using Michael Sharp\'92s macros.\
+\
+7) Fixed the bug in which \'93aggressive trash AUX files\'94 removed files in .git hidden directories\
+for folders under source control. Now aggressive trash AUX does not look into any\
+hidden folders.\
+\
+8) Fixed autosave for preview window\
+}

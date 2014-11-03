@@ -101,6 +101,13 @@ enum RootCommand
     IBOutlet NSPanel            *scrapPDFWindow;
     IBOutlet ScrapTextView     *scrapTextView;
     IBOutlet ScrapPDFKitView    *scrapPDFKitView;
+    
+    IBOutlet    NSWindow        *fullSplitWindow;
+    IBOutlet    NSView          *leftView;
+    IBOutlet    NSView          *rightView;
+    IBOutlet    NSDrawer        *myDrawer;
+    BOOL                        useFullSplitWindow;
+    
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
@@ -134,8 +141,11 @@ enum RootCommand
 	IBOutlet NSButton			*shareButtonEE;
 	IBOutlet NSPopUpButton		*programButton;
 	IBOutlet NSPopUpButton		*programButtonEE;
+    IBOutlet NSPopUpButton      *sprogramButton;
 
 	IBOutlet NSBox				*gotopageOutletKK;
+    IBOutlet NSBox				*sgotopageOutletKK;
+    IBOutlet NSBox              *smagnificationOutletKK;
 	IBOutlet NSBox				*magnificationOutletKK;
 	IBOutlet NSMatrix			*mouseModeMatrixKK;
 	IBOutlet NSSegmentedControl	*backforthKK;
@@ -143,13 +153,18 @@ enum RootCommand
 
 
 	IBOutlet NSPopUpButton		*tags;
+    IBOutlet NSPopUpButton		*stags;
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
 	IBOutlet NSPopUpButton		*macroButton;		/*" pull-down list for macros "*/
+    IBOutlet NSPopUpButton		*smacroButton;		/*" pull-down list for macros "*/
 	IBOutlet NSPopUpButton		*macroButtonEE;          /*" same in pdf window "*/
 	IBOutlet NSButton			*autoCompleteButton;
 	IBOutlet NSButton           *showFullPathButton; // added by Terada
+    IBOutlet NSButton			*autoCompleteSplitButton;
+    IBOutlet NSButton           *indexColorSplitBox;
+
     
     IBOutlet	id              gotopageOutlet;
     IBOutlet	id              magnificationOutlet;
@@ -389,6 +404,10 @@ enum RootCommand
 @property (retain)   MySelection         *mSelection;
 @property (retain)   NSTextStorage       *textStorage;
 
+@property (retain)  NSWindowController  *standardController;
+@property (retain)  NSWindowController  *splitController;
+
+
 // forScrap
 @property (retain)  NSURL       *scrapDirectoryURL;
 @property (retain)  NSString    *scrapImagePath;
@@ -429,6 +448,7 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (void) doTemplate: sender;
 - (void) printSource: sender;
+- (BOOL) useFullSplitWindow;
 
 // - (void) tryScrap:(id)sender;
 // - (IBAction) typesetScrap:(id)sender;
@@ -441,8 +461,8 @@ enum RootCommand
 - (void) close;
 - (void) setProjectFile: sender;
 - (void) doLine: sender;
-- (void) doTag: sender;
-- (void) chooseProgram: sender;
+- (IBAction) doTag: sender;
+- (IBAction) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
 - (id) pdfView;
 - (id) pdfKitView;
@@ -455,6 +475,7 @@ enum RootCommand
 - (NSString*) fileTitleName; // added by Terada
 // - (void) openStyleFile: (id)sender; // added by Terada
 - (void) setAutoCompleting:(BOOL)flag; // added by Terada
+- (IBAction) showCharacterInfo:(id)sender; // added by Terada
 - (void) fixMacroMenu;
 - (void) fixMacroMenuForWindowChange;
 - (NSRange) lineRange: (NSInteger)line;
@@ -473,6 +494,7 @@ enum RootCommand
 - (TSDocumentType) documentType;
 - (id) pdfWindow;
 - (id) pdfKitWindow;
+- (id) fullSplitWindow;
 - (id) textWindow;
 - (id) textView;
 - (id) topView;
@@ -536,6 +558,10 @@ enum RootCommand
 - (void)setupTextView:(NSTextView *)aTextView;
 - (NSPopUpButton *)programButton;
 - (BOOL) useDVI;
+- (void) doMove: sender;
+- (void) doSeparateWindows: sender;
+- (void) makeWindowControllers;
+- (void) runPageLayout:sender;
 
 
 // BibDesk Completion
@@ -663,6 +689,7 @@ enum RootCommand
 - (BOOL) getWillClose;
 - (void) setWillClose: (BOOL)value;
 - (void) killRunningTasks;
+- (NSString *) separate: (NSString *)myEngine into:(NSMutableArray *)args;
 
 @end
 

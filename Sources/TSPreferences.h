@@ -36,6 +36,7 @@
 	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
 
+    IBOutlet NSButton       *_tabIndentButton;		/*" connected to "Use Tab" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
 	IBOutlet NSButtonCell   *_selectActivateButton;         /*" connected to "Select on Activate" "*/
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
@@ -52,7 +53,7 @@
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
 	IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
     IBOutlet NSButton       *_antialiasButton;      /* connect to antialias checkbox */
-
+    IBOutlet NSButton       *oneWindowButton;
 	IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/
 	IBOutlet NSButton	*_scrollButton;			/*" connected to scroll button "*/
 	IBOutlet NSTextField	*_texCommandTextField;		/*" connected to "TeX program" "*/
@@ -78,6 +79,8 @@
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
 	IBOutlet NSButton		*_convertUTFButton;
+    IBOutlet NSButton       *_openRootFileButton;
+    IBOutlet NSButton       *_miniaturizeRootFileButton;
 	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
     IBOutlet NSColorWell	*_sourceTextColorWell;
 	IBOutlet NSColorWell	*_previewBackgroundColorWell;
@@ -86,7 +89,7 @@
 	IBOutlet NSColorWell	*_highlightBracesColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
-
+ 
 	IBOutlet NSButton *_showInvisibleCharactersButton; // added by Terada
 	IBOutlet NSButton *_showTabCharacterButton; // added by Terada
 	IBOutlet NSButton *_showSpaceCharacterButton; // added by Terada
@@ -177,6 +180,7 @@
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
 - (IBAction)tabsChanged:sender;
+- (IBAction)useTabPressed:sender;
 - (IBAction)commandCompletionChanged:sender;
 - (IBAction)findPanelChanged:sender;
 - (IBAction)defaultEngineCall:sender;
@@ -211,6 +215,8 @@
 - (IBAction)antialiasChanged:sender;
 - (IBAction)ptexUtfOutputPressed:sender; // zenitani 1.35 (C)
 - (IBAction)convertUTFPressed:sender;
+- (IBAction)openRootFilePressed:sender;
+- (IBAction)miniaturizeRootFilePressed:sender;
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
 - (IBAction)setSourceTextColor:sender;
@@ -219,6 +225,7 @@
 - (IBAction)setConsoleBackgroundColor:sender;
 - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
+- (IBAction)oneWindowChanged:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

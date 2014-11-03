@@ -297,6 +297,20 @@
     
 }
 
+- (NSString*)absoluteEnginePath:(NSString*)enginePath
+{
+    NSString *absolutePath = [enginePath stringByExpandingTildeInPath];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:absolutePath isDirectory:nil]){
+        absolutePath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingPathComponent:enginePath];
+    }
+    
+    return absolutePath;
+}
+
+
+
+
 
 
 - (void)typesetFile: (NSURL *)fileURL withAdditionalPath: (NSString *)additionalPath
@@ -310,6 +324,7 @@
     NSString        *tetexBinPath;
     NSString        *argString;
     NSString        *tempPath;
+    NSString        *theProgramWithFlags;
     
      [self killRunningTasks];
     
@@ -347,15 +362,28 @@
             [outputWindow orderFront: self]; 
     }
     
+    // Note: the NSDocument variable whichScript is set to 100 for pdflatex, 101 for tex + dvi and 102 for personal script
+    // Note: scrapMenuEngine is the engine in the pulldown menu next to Typeset in the source toolbar
+    // Note; scrapProgram is the program set via "% !TeXShop program = "
+    // Note: Therefore if scrapMenuEngine is active and "latex", then whichScript should set the typeset job to
+    //       pdflatex, latex, or personallatex depending on whichScript
+    
     // get program and use it to typeset the file
     // first get program selected in pulldown menu
     if (self.scrapProgram == nil)
         {
         userEngine = [[self.scrapMenuEngine stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]] lowercaseString];
-        if (([userEngine isEqualToString: @"latex"])  && (! self.scrapDVI))
+        if ([userEngine isEqualToString: @"latex"])
+            {
+            if (whichScript == 102)
+                userEngine = @"personallatex";
+            else if (whichScript == 101)
+                userEngine = @"latex";
+            else
                 userEngine = @"pdflatex";
+            }
         }
-    else
+     else
         userEngine = self.scrapProgram;
             
          
@@ -369,8 +397,8 @@
                       return;
     else if ([userEngine isEqualToString: @"personaltex"])
                       return;
-    else if ([userEngine isEqualToString: @"personallatex"])
-                      userEngine = @"pdflatex";
+    // else if ([userEngine isEqualToString: @"personallatex"])
+    //                  userEngine = @"pdflatex";
     else if ([userEngine isEqualToString: @"bibtex"])
                       userEngine = @"pdflatex";
     else if ([userEngine isEqualToString: @"makeindex"])
@@ -378,23 +406,46 @@
     
     self.scrapTask = [[NSTask alloc] init];
     
-    if ([userEngine isEqualToString:@"pdflatex"]) {
-            [args addObject: [sourcePath lastPathComponent]];
-            tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
-            enginePath = [tetexBinPath stringByAppendingString: @"pdflatex"];
-            }
-                      
+//  Fixed to use settings in Preferences RMK
+    
+//  LatexScriptCommandKey
+    
+    if ([userEngine isEqualToString:@"personallatex"]) {
+        NSLog(@"got here");
+        theProgramWithFlags = [[SUD stringForKey: LatexScriptCommandKey] stringByExpandingTildeInPath];
+        enginePath = [self separate:theProgramWithFlags into:args];
+        // [args addObject: [sourcePath lastPathComponent]];
+        // tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+        // enginePath = [tetexBinPath stringByAppendingString: enginePath];
+        enginePath = [self absoluteEnginePath:enginePath];
+        [args addObject: [sourcePath lastPathComponent]];
+        }
+    
+// LatexCommandKey
+
+    else if ([userEngine isEqualToString:@"pdflatex"]) {
+        theProgramWithFlags = [[SUD stringForKey: LatexCommandKey] stringByExpandingTildeInPath];
+        enginePath = [self separate:theProgramWithFlags into:args];
+          //  [args addObject: [sourcePath lastPathComponent]];
+          //   tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+          //   enginePath = [tetexBinPath stringByAppendingString: enginePath];
+        enginePath = [self absoluteEnginePath:enginePath];
+        [args addObject: [sourcePath lastPathComponent]];
+        }
+
+// LatexGSCommandKey
+    
     else if ([userEngine isEqualToString:@"latex"]) {
-            NSLog(@"latex here");
-            enginePath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
-            enginePath = [enginePath stringByAppendingString: @"/simpdftex"];
-            argString = @"latex ";
-            [args addObject: argString];
-            // argString = @" --maxpfb";
-            // [args addObject: argString];
-            // [args addObject: [sourcePath lastPathComponent]];
-            [args addObject: sourcePath];;
+            theProgramWithFlags = [[SUD stringForKey: LatexGSCommandKey] stringByExpandingTildeInPath];
+            enginePath = [self separate:theProgramWithFlags into:args];
+            //tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+            //enginePath = [tetexBinPath stringByAppendingString: enginePath];
+            //[args addObject: sourcePath];;
+            enginePath = [self absoluteEnginePath:enginePath];
+            [args addObject: sourcePath];
             }
+    
+//  End of fix RMK
                       
     else {
             tempPath = [EnginePath stringByExpandingTildeInPath];

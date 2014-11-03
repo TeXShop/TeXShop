@@ -45,6 +45,7 @@
 #import "TSEncodingSupport.h"
 #import "MyDragView.h"
 #import "TSPreviewWindow.h"
+#import "TSFullSplitWindow.h"
 
 #define NUMBER_OF_SOURCE_FILES	60
 
@@ -55,7 +56,7 @@
 - (void) dealloc
 {
 	
-	[self cleanupMarquee: YES];
+    [self cleanupMarquee: YES];
 	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -82,6 +83,16 @@
 		}
      return self;
 }
+
+/*
+- (BOOL)resignFirstResponder
+{
+    NSLog(@"resign");
+    BOOL result = [super resignFirstResponder];
+    [self cleanupMarquee: YES];
+    return result;
+}
+*/
 
 /*
 - (BOOL)wantsScrollEventsForSwipeTrackingOnAxis:(NSEventGestureAxis)axis
@@ -242,10 +253,14 @@
 									break;
 
 		}
+    [myStepper setMaxValue:PDF_MAX_SCALE];
+    [myStepper1 setMaxValue:PDF_MAX_SCALE];
 }
 
 - (void) setupOutline
 {
+//     NSLog(@"setup outline");
+    
 	if (![SUD boolForKey: UseOutlineKey])
 		return;
 
@@ -255,6 +270,7 @@
 	self.outline = [[self document] outlineRoot];
 	if (self.outline)
 	{
+//        NSLog(@"outline exists");
 		// Remove text that says, "No outline."
 //		[_noOutlineText removeFromSuperview];
 //		_noOutlineText = NULL;
@@ -265,6 +281,10 @@
 	}
 	else
 	{
+//        NSLog(@"no outline");
+        [_outlineView reloadData];
+        [_outlineView display];
+        
 		// Remove outline view (leaving instead text that says, "No outline.").
 //		[[_outlineView enclosingScrollView] removeFromSuperview];
 //		_outlineView = NULL;
@@ -321,6 +341,17 @@
     return YES;
 }
 
+// added by Terada for Yosemite's bug
+- (void) removeBlurringByResettingMagnification
+{
+    BOOL autoScales = self.autoScales;
+    [super setScaleFactor:self.magnification+0.01];
+    [super setScaleFactor:self.magnification-0.01];
+    if (autoScales)
+        [self setAutoScales: YES];
+}
+
+
 
 - (void) showWithPath: (NSString *)imagePath
 {
@@ -350,14 +381,18 @@
 	[self setup];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
 	[totalPage1 setIntegerValue:totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
 	[[self document] setDelegate: self];
 	[self setupOutline];
     NSEnableScreenUpdates();
 	
-	[self.myPDFWindow makeKeyAndOrderFront: self];
+    [self.myPDFWindow makeKeyAndOrderFront: self];
+    if ([SUD boolForKey: FixPreviewBlurKey])
+        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
 }
@@ -445,8 +480,10 @@
 	[[self document] setDelegate: self];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
 	[totalPage1 setIntegerValue:totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
 	if (theindex > totalPages)
 		theindex = totalPages;
@@ -503,6 +540,8 @@
 	//[[self window] enableFlushWindow];
     NSEnableScreenUpdates();
 	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
+    if ([SUD boolForKey: FixPreviewBlurKey])
+        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 }
 
 - (NSInteger)index
@@ -623,8 +662,10 @@
 	totalPages = [[self document] pageCount];
 /*
 	[totalPage setIntValue:totalPages];
+    [atotalPage setIntValue:totalPages];
 	[totalPage1 setIntValue: totalPages];
 	[totalPage display];
+    [stotalPage display];
 	[totalPage1 display];
  */
 	if (secondTheIndex > totalPages)
@@ -754,9 +795,11 @@
 	scaleMag = magsize;
 	if (self == [self.myDocument topView]) {
 		[myScale setIntegerValue:magsize];
+        [smyScale setIntegerValue:magsize];
 		[myScale1 setIntegerValue:magsize];
 		[myScale display];
 		[myStepper setIntegerValue:magsize];
+        [smyStepper setIntegerValue:magsize];
 		[myStepper1 setIntegerValue:magsize];
 		}
 }
@@ -768,29 +811,55 @@
 	NSInteger				numRows, i, newlySelectedRow;
 	NSUInteger	newPageIndex;
 	NSIndexSet		*myIndexSet;
+    PDFOutline      *outlineItem;
 	
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
 	[currentPage setIntegerValue:pageNumber];
+    [scurrentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
     
  	// Skip out if there is no outline.
-	if ([[self document] outlineRoot] == NULL)
-		return;
-
-	// What is the new page number (zero-based).
+//	if ([[self document] outlineRoot] == NULL)
+//		return;
+    if (! self.outline)
+        return;
+    
+    // In Yosemite, a strange bug causes crashes in the code below.
+    // The crashes are hard for me to produce; users report a crash, send
+    // a tex document causing it, but I cannot reproduce the crash. Eventually
+    // Leathart sent a document with a reproducible crash. His document is
+    // divided into chapters and has illustrations. To crash:
+    //    1) Introduce an error and typeset to the error
+    //    2) Don't continue typesetting; instead fix the error
+    //    3) Typeset to the end
+    //    4) Typeset again.
+    // At the second typeset, there is a crash on the indicated
+    // crash line below. Testing shows that
+    //    a) _outlineView is not nil
+    //    b) numRows = 13
+    //    c) crash occurs the first time through the loop
+    // Consequently, to fix I do not run this routine at all
+    
+    if (_outlineView == nil)
+        return;
+    
+ 	// What is the new page number (zero-based).
 	newPageIndex = [[self document] indexForPage: [self currentPage]];
 
 	// Walk outline view looking for best firstpage number match.
 	newlySelectedRow = -1;
 	numRows = [_outlineView numberOfRows];
+    if (numRows <= 0)
+        return;
+    
 	for (i = 0; i < numRows; i++)
 	{
-		PDFOutline	*outlineItem;
-
+		// PDFOutline	*outlineItem;
 		// Get the destination of the given row....
+        // THE FOLLOWING CRASHES TEXSHOP
 		outlineItem = (PDFOutline *)[_outlineView itemAtRow: i];
-
+ 
 		if ([[self document] indexForPage: [[outlineItem destination] page]] == newPageIndex)
 		{
 			newlySelectedRow = i;
@@ -812,6 +881,7 @@
 	// Auto-scroll.
 	if (newlySelectedRow != -1)
 		[_outlineView scrollRowToVisible: newlySelectedRow];
+    
 }
 
 - (double)magnification
@@ -829,10 +899,11 @@
 	
 	scale = [myScale integerValue];
 	scale = scale + 10;
-	if (scale > 1000)
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE)
+		scale = PDF_MAX_SCALE;
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[self changeScale: self];
 }
 
@@ -846,6 +917,7 @@
 		scale = 20;
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[self changeScale: self];
 }
 
@@ -861,24 +933,31 @@
 		[myScale setIntegerValue:[myScale1 integerValue]];
 		scaleMag = [myScale1 integerValue];
 		}
+    else if (sender == smyScale) {
+        [myScale setIntegerValue:[smyScale integerValue]];
+		scaleMag = [smyScale integerValue];
+        }
 	scale = [myScale integerValue];
 	if (scale < 20) {
 		scale = 20;
 		scaleMag = scale;
 		[myScale setIntegerValue:scale];
+        [smyScale setIntegerValue: scale];
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
-	if (scale > 1000) {
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE) {
+		scale = PDF_MAX_SCALE;
 		scaleMag = scale;
 		[myScale setIntegerValue:scale];
+        [smyScale setIntegerValue:scale];
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
 	if ((sender == myScale) || (sender == myScale1))
 		[[self window] makeFirstResponder: myScale];
 	[myStepper setIntegerValue:scale];
+    [smyStepper setIntegerValue:scale];
 	[myStepper1 setIntegerValue:scale];
 	magSize = [self magnification];
 	[self setScaleFactor: magSize];
@@ -906,6 +985,17 @@
 
 - (void) doStepper: sender
 {
+    if (sender == myStepper)
+        [myScale setStringValue:[myStepper stringValue]]; // Strangely, setIntegerValue doesn't work correctly
+    else if (sender == smyStepper)
+        [myScale setStringValue:[smyStepper stringValue]];
+    else
+		[myScale setStringValue:[myStepper1 stringValue]];
+	scaleMag = [myScale integerValue];
+	[self changeScale: self];
+}
+/*
+{
 	if (sender == myStepper)
 		[myScale setIntegerValue:[myStepper integerValue]];
 	else
@@ -913,6 +1003,7 @@
 	scaleMag = [myScale integerValue];
 	[self changeScale: self];
 }
+*/
 
 
 - (void) previousPage: (id)sender
@@ -962,8 +1053,11 @@
 		myPage = totalPages;
 
 	[currentPage setIntegerValue:myPage];
+    [scurrentPage setIntegerValue:myPage];
 	[currentPage1 setIntegerValue:myPage];
 	[currentPage display];
+    [scurrentPage display];
+    
 	[[self window] makeFirstResponder: currentPage];
 
 	myPage = myPage - 1;
@@ -1858,9 +1952,40 @@
     
     [NSGraphicsContext saveGraphicsState];
     BOOL shouldAntiAlias = [SUD boolForKey: AntiAliasKey];
+    NSInteger interpolationValue = [SUD integerForKey: InterpolationValueKey];
+    
+    if (interpolationValue < 0)
+        interpolationValue = 0;
+    if (interpolationValue > 4)
+        interpolationValue = 4;
+    
+    // possible values are
+    //      NSImageInterpolationDefault = 0
+    //      NSImageInterpolationNone = 1
+    //      NSImageInterpolationLow = 2
+    //      NSImageInterpolationMedium = 4 (correct, not reversed)
+    //      NSImageInterpolationHigh = 3 (correct, not reversed)
+    
     if (shouldAntiAlias) {
-        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
-        }
+        switch (interpolationValue) {
+                
+            case 0: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationDefault];
+                break;
+        
+            case 1: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+                break;
+        
+            case 2: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
+                break;
+        
+            case 4: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationMedium];
+                break;
+        
+            case 3: [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+                break;
+         }
+    }
+    
 	[page drawWithBox:[self displayBox]];
     [NSGraphicsContext restoreGraphicsState];
 
@@ -3677,7 +3802,7 @@ else
 
 - (BOOL)doSyncTeX: (NSPoint) thePoint
 {
-
+    
 /* // this section moved to TSDocument-SyncTeX
 
 	myFileName = [self.myDocument fileName];
@@ -3762,8 +3887,6 @@ else
  NSInteger						linesTested, offset;
  NSString				*aString;
  NSInteger						correction;
- 
- 
  
  NSPoint windowPosition = thePoint;
  NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
@@ -3922,7 +4045,8 @@ else
  correctedFoundRange = foundRange;
  [myTextView setSelectedRange: correctedFoundRange];
  [myTextView scrollRangeToVisible: correctedFoundRange];
- [myTextWindow makeKeyAndOrderFront:self];
+ if (! [self.myDocument useFullSplitWindow])
+     [myTextWindow makeKeyAndOrderFront:self];
  return YES;
  }
  }
@@ -3995,7 +4119,8 @@ else
  }
  [myTextView setSelectedRange: correctedFoundRange];
  [myTextView scrollRangeToVisible: correctedFoundRange];
- [myTextWindow makeKeyAndOrderFront:self];
+ if (! [self.myDocument useFullSplitWindow])
+     [myTextWindow makeKeyAndOrderFront:self];
  return YES;
  }
  }
@@ -4209,7 +4334,8 @@ else
                     correctedFoundRange = foundRange;
                 [myTextView setSelectedRange: correctedFoundRange];
                 [myTextView scrollRangeToVisible: correctedFoundRange];
-                [myTextWindow makeKeyAndOrderFront:self];
+                if (! useFullSplitWindow)
+                    [myTextWindow makeKeyAndOrderFront:self];
                 return YES;
 			} else {
 				// newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
@@ -4233,7 +4359,8 @@ else
                              correctedFoundRange1 = foundRange;
                          [myTextView1 setSelectedRange: correctedFoundRange1];
                          [myTextView1 scrollRangeToVisible: correctedFoundRange1];
-                         [myTextWindow1 makeKeyAndOrderFront:self];
+                        if (! useFullSplitWindow)
+                            [myTextWindow1 makeKeyAndOrderFront:self];
                         }
                  }];
                 // WARNING: Next was commented out
@@ -4255,7 +4382,8 @@ else
                 // correctedFoundRange = foundRange;
                 // [myTextView setSelectedRange: correctedFoundRange];
                 // [myTextView scrollRangeToVisible: correctedFoundRange];
-                // [myTextWindow makeKeyAndOrderFront:self];
+                // if (! useFullSplitWindow)
+                //      [myTextWindow makeKeyAndOrderFront:self];
                 // END OF COMMENT
                 return YES;
             }
@@ -4324,7 +4452,8 @@ else
                     }
                     [myTextView setSelectedRange: correctedFoundRange];
                     [myTextView scrollRangeToVisible: correctedFoundRange];
-                    [myTextWindow makeKeyAndOrderFront:self];
+                    if (! useFullSplitWindow)
+                        [myTextWindow makeKeyAndOrderFront:self];
                     return YES;
                 } else {
                     // newDocument = [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:[sourceFiles objectAtIndex:(foundIndex - 1)] display:YES];
@@ -4354,7 +4483,8 @@ else
                              }
                              [myTextView1 setSelectedRange: correctedFoundRange1];
                              [myTextView1 scrollRangeToVisible: correctedFoundRange1];
-                             [myTextWindow1 makeKeyAndOrderFront:self];
+                            if (! useFullSplitWindow)
+                                [myTextWindow1 makeKeyAndOrderFront:self];
                             }
                      }];
                     return YES;
@@ -4381,7 +4511,8 @@ else
             //  }
             //  [myTextView setSelectedRange: correctedFoundRange];
             //  [myTextView scrollRangeToVisible: correctedFoundRange];
-            //  [myTextWindow makeKeyAndOrderFront:self];
+            //  if (! useFullSplitWindow)
+            //      [myTextWindow makeKeyAndOrderFront:self];
             //  return YES;
              // END OF WARNING
 		}
@@ -5601,11 +5732,12 @@ oldVisibleRect.size.width = 0;
 	scale = magnification * 100.0;
 	if (scale < 20)
 		scale = 20;
-	if (scale > 1000)
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE)
+		scale = PDF_MAX_SCALE;
 
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
+    [smyScale setIntegerValue:scale];
 	[myScale1 setIntegerValue:scale];
 	[myScale display];
 	[myScale1 display];
@@ -5650,6 +5782,8 @@ oldVisibleRect.size.width = 0;
 
 
 // Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+// Replied by Yusuke Terada routine below to fix Yosemite reversal in single and double page mode
+/*
 - (void)keyDown:(NSEvent *)theEvent
 {
 	NSString	*theKey;
@@ -5677,6 +5811,43 @@ oldVisibleRect.size.width = 0;
 		[super keyDown:theEvent];
 	}
 }
+*/
+
+// Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+- (void)keyDown:(NSEvent *)theEvent
+{
+    NSString	*theKey;
+    unichar		key;
+    
+    theKey = theEvent.characters;
+    if (theKey.length >= 1)
+        key = [theKey characterAtIndex:0];
+    else
+        key = 0;
+    
+    if ((key == NSUpArrowFunctionKey) ||
+        (key == NSPageUpFunctionKey) ||
+        ((key == ' ') && (theEvent.modifierFlags & NSShiftKeyMask)) ||
+        ((key == NSLeftArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
+        [self previousPage:self];
+    } else if ((key == NSDownArrowFunctionKey) ||
+               (key == NSPageDownFunctionKey) ||
+               (key == ' ') ||
+               ((key == NSRightArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
+        [self nextPage:self];
+    } else if (((key == NSLeftArrowFunctionKey) || (key == NSRightArrowFunctionKey)) &&
+               ([SUD boolForKey: LeftRightArrowsAlwaysPageKey] ||
+                !self.documentView.enclosingScrollView.horizontalScroller.isEnabled)
+               ) {
+        if (key == NSLeftArrowFunctionKey)
+            [self previousPage:self];
+        else
+            [self nextPage:self];
+    } else {
+        [super keyDown:theEvent];
+    }
+}
+
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
@@ -5757,6 +5928,7 @@ oldVisibleRect.size.width = 0;
 	if (scaleMag == 0)
 		scaleMag = 100;
 	[myScale setIntegerValue:scaleMag];
+    [smyScale setIntegerValue:scaleMag];
 	[myScale1 setIntegerValue:scaleMag];
 	[myStepper setIntegerValue:scaleMag];
 	[myStepper1 setIntegerValue:scaleMag];
@@ -5845,6 +6017,9 @@ oldVisibleRect.size.width = 0;
 }
 
 
-
+- (NSDrawer *)drawer
+{
+    return _drawer;
+}
 
 @end

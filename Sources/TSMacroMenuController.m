@@ -25,11 +25,13 @@
 #import "TSMacroMenuController.h"
 
 #import "TSTextEditorWindow.h"
+#import "TSFullSplitWindow.h"
 #import "globals.h"
 #import "TSEncodingSupport.h"
 // mistu 1.29
 #import "TSWindowManager.h"
 #import "TSTextView.h"
+#import "TSFullSplitWindow.h"
 // end mistu 1.29
 
 
@@ -133,6 +135,7 @@ static id sharedMacroMenuController = nil;
 // set up main macro menu on the menu bar
 - (void)setupMainMacroMenu
 {
+    
 	NSMenuItem *newItem;
 
 	if (!self.macroDict)
@@ -268,6 +271,8 @@ static id sharedMacroMenuController = nil;
 	NSString        *reason = 0;
 	NSMutableArray  *args;
 	NSString        *macroString;
+    NSString        *filePath, *displayName;
+    TSFullSplitWindow *mySplitWindow;
 	
 	if ([sender isKindOfClass: [NSMenuItem class]])
 		macroString = [(NSMenuItem *)sender representedObject];
@@ -288,8 +293,15 @@ static id sharedMacroMenuController = nil;
 		// mitsu 1.29 (T2)
 		NSWindow *activeDocWindow = [[TSWindowManager sharedInstance] activeTextWindow];
 		if (activeDocWindow != nil) {
-			[[(TSTextEditorWindow *)activeDocWindow document] insertSpecial: macroString
+            if ([activeDocWindow isKindOfClass:[TSTextEditorWindow class]])
+                [[(TSTextEditorWindow *)activeDocWindow document] insertSpecial: macroString
 																	undoKey: NSLocalizedString(@"Macro", @"Macro")];
+            else if ([activeDocWindow isKindOfClass:[TSFullSplitWindow class]])
+                {
+                    TSFullSplitWindow *activeWindow = (TSFullSplitWindow *)activeDocWindow;
+                    [activeWindow.myDocument insertSpecial: macroString
+                                                                        undoKey: NSLocalizedString(@"Macro", @"Macro")];
+                 }
 			//[(TSTextView *)[[(TSTextEditorWindow *)activeDocWindow document] textView]
 			//			insertSpecial: macroString
 			//			undoKey: NSLocalizedString(@"Macro", @"Macro")];
@@ -302,8 +314,19 @@ static id sharedMacroMenuController = nil;
 		
 		// do AppleScript
 		NSMutableString *newString = [NSMutableString stringWithString: macroString];
-		NSString *filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
-		NSString *displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        if ([[NSApp mainWindow] isKindOfClass: [TSTextEditorWindow class]]) {
+            filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
+            displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        }
+        else if ([[NSApp mainWindow] isKindOfClass: [TSFullSplitWindow class]]) {
+            mySplitWindow = (TSFullSplitWindow *)[NSApp mainWindow];
+            filePath = [[mySplitWindow.myDocument fileURL] path];
+            displayName = [mySplitWindow.myDocument displayName];
+            }
+        else {
+            filePath = [[[(TSTextEditorWindow *)[NSApp mainWindow] document] fileURL] path];
+           displayName = [[(TSTextEditorWindow *)[NSApp mainWindow] document] displayName];
+        }
 		if (!filePath)
 			filePath = @"";
 		[newString replaceOccurrencesOfString: @"#FILEPATH#" withString:
@@ -420,17 +443,19 @@ static id sharedMacroMenuController = nil;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
+    
 	if ([anItem action] == @selector(reloadMacros:))
 		return YES;
 	
 	NSString *macroString = [anItem representedObject];
 	if (macroString == nil)
 		return YES;
-	
+    
 	if ([macroString length] <14 ||
 		(![[[macroString substringToIndex: 13] lowercaseString] isEqualToString:@"--applescript"]
 		 && ![[[macroString substringToIndex: 14] lowercaseString] isEqualToString:@"-- applescript"]))
-		return [[NSApp mainWindow] isMemberOfClass: [TSTextEditorWindow class]];
+		return ([[NSApp mainWindow] isMemberOfClass: [TSTextEditorWindow class]] ||
+                [[NSApp mainWindow] isMemberOfClass: [TSFullSplitWindow class]]);
 	else
 		return YES;
 	
@@ -529,6 +554,7 @@ NSString *getStringFormKeyEquivalent(NSString *key, BOOL shift, BOOL option, BOO
 // make a string which is to be displayed in TSMacroEditor
 NSString *getMenuItemString(NSString *string)
 {
+    
 	unichar c;	// command 0x2318  shift 0x21E7  option 0x2325  control 0x005E '^'
 	NSRange range;
 	if ([string length] == 0)

@@ -108,6 +108,7 @@
 	BOOL			foundMatch, matchMultiple;
 	NSInteger		matchStart, matchLength, i, matchAdjust, newLocation;
 	NSRange			matchRange;
+    TSDocument      *myDocument, *newDocument;
 	// NSString		*lineString;
 	
     
@@ -165,7 +166,10 @@
         // END OF PARSING; NOW USE THE INFORMATION
 		
 		// foundFileName could be a full path, or just relative to the source directory
-		
+ /*
+        //     if (! useFullSplitWindow)
+  //     {
+      	
 		if ([foundFileName isAbsolutePath])
 			newFile = [foundFileName stringByStandardizingPath];
 		else
@@ -176,13 +180,42 @@
 		// NSLog(newFile);
 		
 		id newURL = [NSURL fileURLWithPath: newFile];
-		TSDocument *newDocument = [[TSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:newURL display:YES error: &myError];
+        newDocument = [[TSDocumentController sharedDocumentController] documentForURL: newURL];
+        if (newDocument == nil)
+            return NO;
+        
+        if (! [newDocument useFullSplitWindow])
+            newDocument = [[TSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:newURL display:YES error: &myError];
 		
 		if (newDocument == nil)
 			return NO;
+   //    }
+   //     else
+   //   newDocument = self;
+*/
+        
+        if ([foundFileName isAbsolutePath])
+			newFile = [foundFileName stringByStandardizingPath];
+		else
+        {
+            newFile = [[[[[self fileURL] path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: foundFileName] stringByStandardizingPath];
+        }
+        
+		// NSLog(newFile);
+		
+		id newURL = [NSURL fileURLWithPath: newFile];
+        
+       newDocument = [[TSDocumentController sharedDocumentController] documentForURL: newURL];
+        if (newDocument != self)
+            newDocument = [[TSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:newURL display:YES error: &myError];
+		
+		if (newDocument == nil)
+			return NO;
+
 		TSTextView *myTextView = [newDocument textView];
 		NSWindow *myTextWindow = [newDocument textWindow];
 		[newDocument setTextSelectionYellow: YES];
+              
 		
         // Now try to refine the selection
         // ------------------------------------------
@@ -308,7 +341,8 @@
         else
             [newDocument toLine: line];
 		
-		[myTextWindow makeKeyAndOrderFront:self];
+		if (! useFullSplitWindow)
+            [myTextWindow makeKeyAndOrderFront:self];
 		
 		return YES;
 		
@@ -603,7 +637,8 @@
 	else
 		[newDocument toLine: lineNumber];
 		
-	[myTextWindow makeKeyAndOrderFront:self];
+	if (! useFullSplitWindow)
+        [myTextWindow makeKeyAndOrderFront:self];
 
 	return YES;
 
@@ -671,7 +706,7 @@
 	NSInteger				mainPageNumber;
 	CGFloat			left, middle;
 	NSInteger				k;
-		
+    
     initialFirstPage = 0;
     initialSecondPage = 0;
     
@@ -679,8 +714,6 @@
 		
 // FIRST GET SYNCTEX DATA
 
-	
-	
 	myFileName = [[self fileURL] path];
 	if (! myFileName)
 		return NO;
@@ -850,7 +883,6 @@
 	// if (range1.location == NSNotFound)
 	// 	return NO;
 		
-		NSLog(@"yes, here");
 	[outputString getLineStart: &startIndex   end: &lineEndIndex  contentsEnd: &contentsEndIndex  forRange: range1];
 	range2.location = startIndex + 14;
 	range2.length = lineEndIndex - startIndex - 14;
@@ -1128,7 +1160,8 @@
 			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
-			[pdfKitWindow makeKeyAndOrderFront:self]; 
+            if (! useFullSplitWindow)
+                [pdfKitWindow makeKeyAndOrderFront:self];
 
 			return YES;
 			}
@@ -1196,7 +1229,8 @@
 				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 				[[pdfKitWindow activeView] setCurrentSelection: nil];
 				[[pdfKitWindow activeView] display];
-				[pdfKitWindow makeKeyAndOrderFront:self]; 
+                if (! useFullSplitWindow)
+                    [pdfKitWindow makeKeyAndOrderFront:self];
 				
 				return YES;
 				}
@@ -1259,7 +1293,8 @@
 				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 				[[pdfKitWindow activeView] setCurrentSelection: nil];
 				[[pdfKitWindow activeView] display];
-				[pdfKitWindow makeKeyAndOrderFront:self]; 
+				if (! useFullSplitWindow)
+                    [pdfKitWindow makeKeyAndOrderFront:self];
 				
 				return YES;
 				
@@ -1313,7 +1348,8 @@
 					[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 					[[pdfKitWindow activeView] setCurrentSelection: nil];
 					[[pdfKitWindow activeView] display];
-					[pdfKitWindow makeKeyAndOrderFront:self]; 
+                    if (! useFullSplitWindow)
+                        [pdfKitWindow makeKeyAndOrderFront:self];
 					
 					return YES;
 				}
@@ -1369,7 +1405,8 @@
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
 	
-	[pdfKitWindow makeKeyAndOrderFront:self];
+	if (! useFullSplitWindow)
+        [pdfKitWindow makeKeyAndOrderFront:self];
 
 	return YES;
 	
@@ -1788,7 +1825,8 @@
 			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
-			[pdfKitWindow makeKeyAndOrderFront:self]; 
+			if (! useFullSplitWindow)
+                [pdfKitWindow makeKeyAndOrderFront:self];
 			
 			return YES;
 		}
@@ -1832,7 +1870,8 @@
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
 	
-	[pdfKitWindow makeKeyAndOrderFront:self];
+	if (! useFullSplitWindow)
+        [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	
@@ -2227,7 +2266,8 @@
 			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
 			[[pdfKitWindow activeView] setCurrentSelection: nil];
 			[[pdfKitWindow activeView] display];
-			[pdfKitWindow makeKeyAndOrderFront:self]; 
+            if (! useFullSplitWindow)
+                [pdfKitWindow makeKeyAndOrderFront:self];
 			
 			return YES;
 		}
@@ -2271,7 +2311,8 @@
 	[[pdfKitWindow activeView] setCurrentSelection: nil];
 	[[pdfKitWindow activeView] display];
 	
-	[pdfKitWindow makeKeyAndOrderFront:self];
+	if (! useFullSplitWindow)
+        [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	
@@ -2330,7 +2371,6 @@
 	// NSString		*pathString;
 	NSString		*rootFile, *rootPath, *theFile;
 	float			x, y, h, v, width, height;
-	
 	
 	// THIS IS ACTIVE
 	
@@ -2753,7 +2793,8 @@
      [[pdfKitWindow activeView] scrollSelectionToVisible:self];
      [[pdfKitWindow activeView] setCurrentSelection: nil];
      [[pdfKitWindow activeView] display];
-     [pdfKitWindow makeKeyAndOrderFront:self]; 
+     if (! useFullSplitWindow)
+        [pdfKitWindow makeKeyAndOrderFront:self];
      
      return YES;
      }
@@ -2820,7 +2861,8 @@
     
 	[[pdfKitWindow activeView] display];
 	
-	[pdfKitWindow makeKeyAndOrderFront:self];
+	if (! useFullSplitWindow)
+            [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	

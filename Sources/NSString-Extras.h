@@ -27,5 +27,7 @@
 
 - (BOOL)contains:(NSString *)str;
 - (NSString*)normalizedStringWithModifiedNFC; // Terada
+- (NSUInteger)numberOfComposedCharacters; // Terada
+
 
 @end

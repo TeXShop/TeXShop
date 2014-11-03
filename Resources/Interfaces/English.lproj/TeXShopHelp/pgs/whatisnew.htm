@@ -1,7 +1,7 @@
 <HTML>
 
 <HEAD>
-		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=ISO-8859-1">
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=UTF-8">
 		<TITLE>What's new?</TITLE>
 		<META NAME="copyright" CONTENT="Copyright (c) 2003 Richard Koch under the GNU FDL">
 		<META NAME="description" CONTENT="new features; bug fixes">
@@ -13,6 +13,362 @@
 
 
 <div id="content_normal">
+
+<P><h5>TeXShop Changes 3.45</h5></P>
+<ul>
+<li> The left column of the Macro Editor window was essentially blank,
+showing separator images but no text. This error was caused because
+TeXShop 3.44 was compiled on Yosemite. The same source code compiled
+on Mavericks worked on both Mavericks and Yosemite. A work around 
+was found and the source now compiles and works on both Mavericks and Yosemite.
+
+<p>
+<li> The command to trash AUX files had a bug and did not fully work.
+The problem is now fixed.
+
+<p>
+<li> Karnes Kim produced a Korean localization of TeXShop, which is now
+part of the program.
+
+<p>
+<li> Yusuke Terada provided tweeks and fixes for the following:
+
+<ul>
+	<p>
+	<li> The hidden preference setting 
+
+	<dd>
+	<dl> defaults write TeXShop FixPreviewBlur YES
+	</dd>
+
+	has been improved so that it works if users zoom the PDF
+	by pinch gestures with the Magic Mouse or trackpad.
+
+	<p>
+	<li> In TeXShop 3.41, the maximum possible PDF window magnification
+	was increased from 1000% to 2000%. But a few constants in the code
+	still contained the 1000% limit. These have been changed to
+	2000%.
+
+	<p>
+	<li> A small error prevented the fix for remembering the PDF Window
+	location when quitting. This is fixed.
+
+	<p>
+	<li> In the Macro Editor, dashes and quotes were automatically changed to smart dashes and smart quotes, breaking some applescript macros.  This is fixed.
+</ul>	
+</ul>
+
+<P><h5>TeXShop Changes 3.44</h5></P>
+
+Version 3.44 has the following changes
+<ul>
+<li> Several users reported a  crash just after typesetting when TeXShop ran on Yosemite. The users told me that only certain documents caused crashes, and under unusual circumstances. For instance,
+some documents caused crashes if typeset twice in succession. By looking at crash logs, I could see that all these crashes occurred at the same spot in the code, but at first I was unable to reproduce these crashes.
+ 
+ <p> Finally a user named Tim Leathart reported a crash, sent the source for a document creating the crash, and gave very precise instructions about producing the crash. Using this information, I was able to crash my machine and thus find the bug. It turned out that only documents using
+ hyperref crashed, and the crash was caused by incorrect code in TeXShop used to process the outline that such documents often contained. It was not necessary to open the Preview drawer and view the outline to get the crash.
+ 
+ <p> The code is fixed.
+ 
+ <li> On Yosemite using a Preview window configured for "Single Page" or "Double Page" display,
+ the keyboard shortcuts to page up or page down were reversed. This bug was noticed by Yusuke Terada and fixed. There are no changes in "MultiPage" or "Double MultiPage" modes since Yosemite behaves correctly for these modes.
+ 
+ <p>
+ <li> Autosave for the Preview window was broken and is fixed.
+ 
+ <p>
+ <li> The next two items discuss hidden preferences to fix minor TeXShop annoyances. Before
+ adopting these hidden preferences, users should determine whether they find the current behavior annoying.
+ 
+ <p> In Yosemite, the source code window's scroll controls have some elasticity, so the
+ source bounces slightly at the top and bottom of the document. Yusuke Terada noticed
+ that these bounces sometimes obscure the first or last lines of the document, making it
+ difficult to edit these lines. Others of us do not have this problem. Yusuke Terada added a hidden preferences to turn off this elasticity.
+ To activate the hidden item, type the following in /Applications/Utilities/Terminal:
+ <dd>
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+ 
+ <li> Herbert Schulz noticed that during scrolling of the source window, the lines numbers
+ scroll at a slightly different rate and require a fraction of a second to catch up. Yusuke Terada pointed
+ out that this is due to a fix implemented in Lion for a Lion bug affecting line numbers. Apparently this line number bug has
+ been fixed by Apple in Yosemite. A hidden preference is available to turn the fix off. When
+ this is done, line numbers and  text scroll in unison except near the ends when source elasticity applies. By turning off source elasticity as well, the line numbers and text scroll together:
+ 
+ <dd>
+ <dl> defaults write TeXShop FixLineNumberScroll NO
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+ 
+ <p>
+ <li> One user discovered that "Aggressive Trash AUX", which is activated by a hidden
+ preference setting, could remove items in hidden ".git" directories and thus impact repository
+ management systems. In version 3.44, TeXShop does not search hidden directories in aggressive mode.
+
+<p> 
+ <li> Finally, a number of users switching to Yosemite reported fuzzy preview images
+ and inadequate antialiasing on certain monitors. I'm told the image looks fine on Retina
+ displays including the new 27 inch iMac. Perhaps Apple optimized pdf rasterization for these displays without worrying enough about other monitors.
+ 
+<p> Frankly, I am just barely able to notice a difference myself, using Apple's 27 inch Thunderbolt Display. A few users sent me email with pairs of png files, showing an image under Mavericks and under Yosemite and pointing out the fuzzy result on Yosemite, but in some of these cases I couldn't see the difference. So the problem seems to depend strongly on the computer screen used, and perhaps on user sensibilities. Some users may be completely happy while others are desperate for fixes.
+
+<p> Version 3.44 of TeXShop has several hidden preference items which may help with this problem. There is no universal solution, so experimentation with these preference settings will be needed
+if you find the display fuzzy. 
+
+<p> TeXShop and many other graphical front ends for TeX and PDF display use Apple's PDFKit and Cocoa frameworks. These frameworks rasterize pdf images are an extremely low level not accessible to programmers. Version 3.44 tries to expose all the routines in Cocoa which could modify this
+rasterization. Notice that TeXWorks and Adobe Acrobat do not use PDFKit and Cocoa and thus behave differently. It does little good to call these programs to our attention since switching to a different pdf display library would betray a key feature of TeXShop (and other programs using these frameworks, namely that they are fully native applications.
+
+<p> With these caveats, let us list possible solutions. Yusuke Terada noticed that in Japan,
+the display could appear fuzzy and then be made legible by tweeking the magnification. So he
+added code in TeXShop to  do this automatically each time a pdf file is opened or typeset. To turn this feature on, type the following in Terminal:
+<dd>
+<dl> defaults write TeXShop FixPreviewBlur YES
+</dd>
+If this tweek fixes the problem, leave it on and stop reading. Otherwise turn the feature
+off by using the same command with YES replaced by NO, since the tweek is likely to interfere
+with  remaining  experiments.
+
+<p>
+Apple's System Preferences in the General Pane has an item labeled "Use LCD font smoothing when available." A few users discovered that turning this item off cured fuzzy behavior. I think this
+fix won't help most users, but it might be worth a try.
+
+<p> TeXShop also has a preference item under the Preview tab labeled "Smooth text and line art."
+This item was originally added to fix a different problem. One user created an illustration with very thin lines. On a previous TeXShop, the lines vanished with regular monitors, although they appeared with the Retina display. The user discovered that the lines appeared in Acrobat, and
+by turning on antialiasing they also appeared in TeXShop.
+
+<p> The code provided by Cocoa to turn on antialiasing has additional features not exposed in
+previous versions of TeXShop. Cocoa provides the ability to set the level of antialiasing. The
+previous "Smooth text and line art" preference set this value as "high".
+In TeXShop 3.44, hidden preference settings can select the interpolation level. To test various levels of antialiasing, turn on "Smooth text and line art" in TeXShop Preferences and then
+set the hidden preference
+<dd>
+<dl> defaults write TeXShop InterpolationValue 3
+</dd> 
+where the final value can be any integer between 0 and 4. Apple's API documentation provides
+the following names for these values, which perhaps give a hint of their function. The list is as follows; the strange reversal of 3 and 4 occurs in the official list:
+<dd>
+<dl> 0 = NSImageInterpolationDefault
+<dl> 1 = NSImageInterpolationNone
+<dl> 2 = NSImageInterpolationLow
+<dl> 4 = NSImageInterpolationMedium
+<dl> 3 = NSImageInterpolationHigh
+</dd>
+
+
+<p> Frankly, I suspect
+an entirely different solution will be best for most people. That solution is to change the font used for your TeX document, via the wonderful macros written by Michael Sharpe and added to TeXShop
+late this summer. For detailed explanation, read the description below under "TeXShop Changes 3.39."
+
+<p> Notice that it is possible to add Michael's commands for one particular font to your
+default template, so that font will always be used for new documents.
+
+<p> All of these fonts are included in the full TeX Live distribution, so using them
+should cause no trouble when collaborating with Windows or Linux users.
+
+<p> The font commands take up four or five lines in the preamble, and are easily discarded
+once the document is complete if you want the final document to have a plain vanilla look.
+On the other hand, Michael's choices come from an expert and may satisfy more readers
+than the previous default font choices.
+  
+</ul>
+
+<P><h5>TeXShop Changes 3.43</h5></P>
+
+Version 3.43 has the following changes
+<ul>
+<li> Fixed a bug after drawing a selection rectangle in the Preview Window. If this
+window became inactive and then was activated again, drawing into the
+window would become erratic or worse. Now when the window is
+deactivated, the selection rectangle is removed.
+
+<p>
+<li> TeXShop has a hidden preference reversing the order of the
+source and preview windows in single-window mode
+<dd>
+<dl>	defaults write TeXShop SwitchSides YES
+</dd>
+After selecting this preference setting, use "Customize Toolbar" with
+the single window active to rearrange tools appropriately.
+
+<p>
+<li> Yusuke Terada fixed Automatic UTF-8-Mac to UTF-8 Conversion, which
+is used mainly in Japan, so it correctly opens root file documents.
+
+<p>
+<li> Yusuke Terada also fixed a couple of cases when TeXShop commands
+created a "ghost window" with no content, and made (command+1) switching
+source window also work on console windows.
+
+</ul>
+
+<P><h5>TeXShop Changes 3.42</h5></P>
+
+Version 3.42 has the following changes
+<ul>
+<li> In Split Full Window mode, additional toolbar tools are provided: the "Scale" tool, the
+"Color Index" tool, and the "Key Bindings" tool.
+<p> <li>
+Toolbar items for this window now have reasonable localized names, rather than
+the very technical names in version 3.41.
+
+<p><li> Various bugs in the Split Full Window mode are fixed.
+
+<p><li> The Spanish localization temporarily changed to Chinese. This is
+fixed.
+
+<p><li> The Macro menu failed to work in Split Full Window mode if the user switched
+to another window and then back to the split window. This bug is  fixed.
+
+<p><li> In Full Window mode, if the text portion was split, both the
+Macro menu  and the Sync between Preview and Source always used the same piece of text rather than switching when the other piece of text was made active.  This is fixed. 
+
+<p><li> Yusuke Terada improved the new "Character Info" command
+from 3.41. He writes
+
+<ul>
+<p>
+	<li> National Flags:
+
+<p>	An emoji character of a national flag consists of 2 unicode characters.
+	For example, 🇺🇸 consists of U+1F1FA (REGIONAL INDICATOR SYMBOL LETTER U) 
+	and U+1F1F8 (REGIONAL INDICATOR SYMBOL LETTER S), 
+	and 🇯🇵 consists of U+1F1EF (REGIONAL INDICATOR SYMBOL LETTER J)  
+	and U+1F1F5 (REGIONAL INDICATOR SYMBOL LETTER P).
+	Thus, they should be displayed as "a letter consisting of 2 characters", 
+	but it is displayed as "a letter consisting of 4 characters" in the current version of TeXShop.
+	This is because the regional indicator symbol letters are positioned 
+	outside the BMP (Unicode Basic Multilingual Plane).
+	I fixed this issue so that these national flags are correctly displayed 
+	as "a letter consisting of 2 characters".
+
+<p><li> Support for Ideographic Variation Selector (IVS)
+
+<p>	In Japan and China, some kanji characters have multiple variants.
+	For example, both 神 and 神󠄀 have the same meanings (they mean "God") 
+	and the same readings. They are considered as variant forms of the same kanji.
+	IVS, Ideographic Variation Selector, is used in order to distinguish them.
+	For example, the single unicode character U+795E brings the output "神". 
+	On the other hand, the sequence "U+795E U+E0100" brings the output "神󠄀".
+	U+E0100 itself is not a letter. This is a variation selector.
+	In Unicode, there are variation selectors like this in U+FE00..U+FE0F (Variation Selectors), 
+	U+E0100..U+E01EF (Variation Selectors Supplement), 
+	U+180B..U+180D (Mongolian Free Variation Selectors).
+
+	In the current version of TeXShop, the character info of "神󠄀" is 
+	displayed as "a letter consisting of 3 characters".
+	I modified TSGlyphPopoverController.m for IVS support so that this is
+	 displayed as "CJK UNIFIED IDEOGRAPH-795E (Variant)", like "RED APPLE (Emoji Style)".
+</ul>
+</ul>
+
+<P><h5>TeXShop Changes 3.40 and 3.41</h5></P>
+
+Version 3.40 was never released. Version 3.41 has the following changes
+<ul>
+
+<br>
+<center><img src="Graphics/onewindow.png" border=1>
+</center>
+</br>
+
+<li> When editing a document, it is possible to place the source view and preview view in a
+single window rather than dealing with two windows for these views. This is particularly useful when using the "full screen" option, since the screen will contain both source and preview views. 
+
+<p> To implement this feature, a number of minor changes were required throughout the TeXShop source code. The initial implementation is therefore rather conservative. At the moment, for instance, no Preference
+item is  provided to automatically open documents in this form.
+
+<p> If a document has both source and preview windows, activate the source window and then select the item "Use One
+Window" in the Windows menu. The two windows will be replaced by a single window containing both views. With this window active, select "Use Separate Windows" to replace the single window
+with a pair of windows.
+
+<p> The first time this happens, the single window will not have an appropriate size and position. Resize it appropriately. TeXShop will remember this size and position, but it is even better to
+carefully select an optimal size and position, and then with the window active choose "Save Source Position" in the Source menu. TeXShop will use that size and position in the future.
+
+<p> A source window cannot be converted to single window form unless the corresponding preview window also exists.
+
+<p> If a project has a root view and additional chapter views, only the root view can be converted to single window form. Thus the new feature is not likely to be useful for projects divided in this way. 
+
+<p>
+<li> In previous versions of TeXShop, duplicate copies of many documents in the Help menu were placed in the Localized directories of TeXShop, even though these documents had never been Localized. This duplication is cleaned up in version 3.41, reducing the size of the program by almost a third. The English versions of the documents will still appear when TeXShop is used in another language.
+
+<p>
+<li> Yusuke Terada provided a new menu item in the Edit menu called "Character Info." To use it,
+select one or more letters in the source file and then select the menu item. If only one letter
+is chosen, a  balloon will appear showing a magnified version of the glyph, its full unicode name, and its unicode character. When glyphs require two or three characters, all required characters will  be displayed.
+
+<p> If several letters are selected, the 
+ balloon will list the number of characters, words, and lines in the selection, and show the unicode character for each glyph.
+
+
+<p> 
+Below are sample balloons provided by this feature:
+
+<br>
+<center><img src="Graphics/charinfo1.png" border=1>
+<img src="Graphics/charinfo2.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo3.png" border=1>
+<img src="Graphics/charinfo4.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo5.png" border=1>
+<img src="Graphics/charinfo6.png" border=1></center>
+</br>
+
+<br>
+<center>
+<img src="Graphics/charinfo7.png" border=1></center>
+</br>
+
+<p>
+<li> Christian Icking discovered that TeXShop became inoperative or
+crashed when opening a file containing
+
+	% !TEX root = 
+
+but with no non-space characters after the equal sign. This bug
+is fixed.
+
+<p>
+<li> Typesetting for "Experiment" is more robust. It now uses the
+Preference settings for pdflatex and simpdftex latex and the
+personallatex setting. If the user's pulldown menu is set
+to latex, the three choices of  1) pdflatex, 2) tex + dvi, 3) personal
+script are obeyed. This should make the command work for
+TeX in Japan.
+
+<p>
+<li> The commands Next Source Window and Previous Source Window
+in the Window menu again work, and do not bring up "ghosts" of
+closed windows.
+
+<p>
+<li> In the previous version, the Indent and Unindent commands were
+modified to insert spaces rather than tabs in the source. A few users
+preferred tabs. There is now a  preference item for these users; they
+should check "Use Tabs" in TeXShop Preferences, under the Source tab.
+
+<p>
+<li> The Preference command to select the source font
+was broken when TeXShop was used in English, due to a missing connection
+in the English Localization File. This is fixed.
+
+<p>
+<li> Yusuke Terada doubled the maximum magnification level allowed for PDF files,
+so it is now possible to look at very small details of the preview output. 
+
+<p>
+<li> Yusuke Terada  provided new Preference settings under the Miscellaneous
+tab for projects with a root file. When opening a chapter file, TeXShop previously 
+also opened the root file and then immediately miniaturized the root source. Users can choose to
+avoid this miniaturization, or to avoid opening the root file at all. In the second case, the root
+will open when needed, for instance during typesetting.
+</ul>
+
 
 <P><h5>TeXShop Changes 3.39</h5></P>
 <ul>
@@ -66,10 +422,10 @@ It is our hope that the existence of these easy techniques will lead to more LaT
 also redesigned the dialog which appears when you select the menu item "About TeXShop".
 
 <p>
-The story of TeXShop icons is complicated. The original icon was designed by J�r�me Laurens. 
-J�r�me also designed the TeX Live Utility icon, and I like both a lot.
+The story of TeXShop icons is complicated. The original icon was designed by Jérôme Laurens. 
+Jérôme also designed the TeX Live Utility icon, and I like both a lot.
 
-<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for J�r�me's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  J�r�me's icon and I like it a lot. Adams also provided a document icon.
+<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for Jérôme's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  Jérôme's icon and I like it a lot. Adams also provided a document icon.
 
 <p> But Apple revised the look of icons in Yosemite. I intended to ignore the new design.
 
@@ -101,7 +457,7 @@ These users can activate the bad line and live with the bug by typing the follow
 
 <p>
 <li> Herbert Shultz provided a new version of the Help document TeXShop Tips and Tricks,
-and Ren� Fritz provided a French translation.
+and René Fritz provided a French translation.
 
 <p>
 <li> The Brazilian localization in TeXShop 3.38 was mistakenly added by Koch to the
@@ -917,7 +1273,7 @@ with one such encoding is opened with a different encoding, the computer will no
 symbols may appear with unexpected shapes.
 
 <p> TeXShop must deal with this design in two spots. When TeXShop is asked to open a file, it reads
-the first few bytes in MacOSRoman to check whether a "% !TEX encoding = ..." statement is at the top of the file. It now reads these bytes in ISOLatin9. And when TeXShop opens a file in UTF-8, but receives a report that the file does not contain legal UTF-8 code, is used to reopen the file in MacOSRoman encoding and now
+the first few bytes in MacOSRoman to check whether a "ng and now
 opens it in ISOLatin9.
 
 <p>Some users have requested that TeXShop's default encoding be UTF-8. Users can achieve this
@@ -3335,7 +3691,7 @@ fixed thanks to Juan Luis Varona.</li>
 					If the source file has include files,  this operation will open
 					the appropriate include file and take the user to a point in that file. Read the
 					help file "General Help: Pdfsync" for important details. This change depends
-					on pdfsync.sty, a file create by Piero D'Ancona with improvements by JÈrÙme 
+					on pdfsync.sty, a file create by Piero D'Ancona with improvements by JÃrÃme 
 					Laurens.
 
 <li> 					Also added pdfsync the other way. Clicking on a spot in the source file (including

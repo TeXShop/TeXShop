@@ -47,7 +47,7 @@
 @property               BOOL            firstClose;
 @property (weak)      PDFView         *activeView;
 @property (weak)      PDFView         *myPDFKitView;
-@property (weak)      PDFView         *myPDFKitView2;
+@property (weak)      PDFView        *myPDFKitView2;
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
 
@@ -88,6 +88,9 @@
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow: sender;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
+- (void)doMove: (id)sender;
+- (void)resignMainWindow;
+
 - (TSDocument *)document;
 #ifdef MITSU_PDF
 - (void)changePageStyle: (id)sender; // mitsu 1.29 (O)
@@ -105,7 +108,7 @@
 - (void) changeMouseMode: sender;
 - (void) doStepper: sender;
 - (void) changeScale: sender;
-- (void) goToKitPage: sender;
+- (IBAction) goToKitPage: sender;
 // - (void) doFind: sender;
 - (IBAction) takeDestinationFromOutline: (id) sender;
 - (IBAction) convertTiff:(id)sender;

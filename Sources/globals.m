@@ -199,6 +199,8 @@ NSString *AutomaticTextReplacementKey = @"AutomaticTextReplacement"; // Koch
 NSString *AutomaticDashSubstitutionKey = @"AutomaticDashSubstitution"; // Koch
 NSString *AutomaticQuoteSubstitutionKey = @"AutomaticQuoteSubstitution"; // Koch
 NSString *AutomaticUTF8MACtoUTF8ConversionKey = @"AutomaticUTF8MACtoUTF8Conversion"; //Koch
+NSString *AutoOpenRootFileKey = @"AutoOpenRootFile";
+NSString *MiniaturizeRootFileKey = @"MiniaturizeRootFile";
 NSString *highlightBracesRedKey = @"highlightBracesRed"; //Koch (flashing color when braces first typed)
 NSString *highlightBracesGreenKey = @"highlightBracesGreen"; //Koch
 NSString *highlightBracesBlueKey = @"highlightBracesBlue"; //Koch
@@ -223,7 +225,13 @@ NSString *SpellingLanguageKey = @"SpellingLanguage";
 NSString *SpellingAutomaticLanguageKey = @"SpellingAutomaticLanguage";
 NSString *TagMenuInMenuBarKey = @"TagMenuInMenuBar";
 NSString *ResetSourceTextColorEachTimeKey = @"ResetSourceTextColorEachTime";
-
+NSString *SourceAndPreviewInSameWindowKey = @"SourceAndPreviewInSameWindow";
+NSString *DocumentSplitWindowPositionKey = @"DocumentSplitWindowPosition";
+NSString *TabIndentKey = @"TabIndent";
+NSString *SwitchSidesKey = @"SwitchSides";
+NSString *SourceScrollElasticityKey = @"SourceScrollElasticity";
+NSString *FixPreviewBlurKey = @"FixPreviewBlur";
+NSString *InterpolationValueKey = @"InterpolationValue";
 
 
 // Paths

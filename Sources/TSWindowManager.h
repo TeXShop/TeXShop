@@ -53,4 +53,9 @@
 - (void)pdfWindowWillClose:(NSNotification *)note;
 - (void)documentWindowDidResignKey:(NSNotification *)note;
 - (void)pdfWindowDidResignKey:(NSNotification *)note;
+
+- (void)textSplitWindowDidBecomeKey:(NSNotification *)note;
+- (void)documentSplitWindowWillClose:(NSNotification *)note;
+- (void)documentSplitWindowDidResignKey:(NSNotification *)note;
+
 @end

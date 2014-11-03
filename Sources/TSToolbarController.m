@@ -41,6 +41,7 @@ static NSString* 	kSourceToolbarIdentifier 	= @"Source Toolbar Identifier";
 static NSString* 	kPDFToolbarIdentifier 		= @"PDF Toolbar Identifier";
 static NSString*	kPDFKitToolbarIdentifier	= @"PDFKit Toolbar Identifier";
 static NSString*	kSaveDocToolbarItemIdentifier 	= @"Save Document Item Identifier";
+static NSString*    kFullWindowToolbarIdentifier = @"Full Window Toolbar Identifier";
 
 // Source window toolbar items
 static NSString*	kTypesetTID			= @"Typeset";
@@ -52,7 +53,7 @@ static NSString*	kMakeIndexTID 		= @"MakeIndex";
 static NSString*	kMetaPostTID 		= @"MetaPost";
 static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
-static NSString*	kTagsTID 			= @"Tags";
+static NSString*    kTagsTID             = @"Tags";
 static NSString*	kTemplatesID 		= @"Templates";
 static NSString*	kAutoCompleteID		= @"AutoComplete";  //warning: used in TSDocument's fixAutoMenu
 static NSString*	kShowFullPathID		= @"ShowFullPath";  // added by Terada
@@ -96,6 +97,14 @@ static NSString*    kSharingKKTID          = @"SharingKIT";
 static NSString*	kSplitKKTID				= @"SplitKIT";
 #endif
 
+// FullSplitWindow special toolbar items
+static NSString*	skProgramTID		= @"ProgramSplit";
+static NSString*	skMacrosTID			= @"MacrosSplit";
+static NSString*	skTagsTID 			= @"TagsSplit";
+static NSString*	skGotoPageKKTID 	= @"GotoPageSplit";
+static NSString*    skMagnificationKKTID = @"MagnificationSplit";
+static NSString*	skAutoCompleteID	 = @"AutoCompleteSplit";
+static NSString*    skColorIndexTID		= @"ColorIndexSplit";
 
 @implementation TSDocument (ToolbarSupport)
 
@@ -262,6 +271,7 @@ else
 
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 	[[self pdfKitWindow] setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
+    [[self fullSplitWindow] setToolbar: [self makeToolbar: kFullWindowToolbarIdentifier]];
 }
 
 // -----------------------------------------------------------------------------
@@ -398,6 +408,18 @@ else
 
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skProgramTID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:sprogramButton];
+		menuFormRep = [[NSMenuItem alloc] init];
+        
+		[menuFormRep setSubmenu: [sprogramButton menu]];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+        
+		return toolbarItem;
+	}
+
 
 	if ([itemIdent isEqual: kTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -459,6 +481,17 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skTagsTID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:stags];
+		menuFormRep = [[NSMenuItem alloc] init];
+        
+		[menuFormRep setSubmenu: [stags menu]];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
 
 	if ([itemIdent isEqual: kTemplatesID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:popupButton];
@@ -484,6 +517,21 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skAutoCompleteID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+												   customView:autoCompleteSplitButton];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"AutoComplete", @"AutoComplete")
+                                                 action: @selector(changeAutoComplete:) keyEquivalent:@""];
+		[submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
 
 	// added by Terada (from this line) ////////////////
 	if ([itemIdent isEqual: kShowFullPathID]) {
@@ -513,6 +561,19 @@ else
 
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skMacrosTID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:smacroButton];
+		menuFormRep = [[NSMenuItem alloc] init];
+        
+		[menuFormRep setSubmenu: [smacroButton menu]];
+		[[TSMacroMenuController sharedInstance] addItemsToPopupButton: smacroButton];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+        
+		return toolbarItem;
+	}
+
 	// end addition
 
 
@@ -758,6 +819,40 @@ else
 		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skGotoPageKKTID]) {
+		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+													customView:sgotopageOutletKK];
+		menuFormRep = [[NSMenuItem alloc] init];
+		/*
+		 submenu = [[[NSMenu alloc] init] autorelease];
+		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+		 [submenu addItem: submenuItem];
+		 [menuFormRep setSubmenu: submenu];*/
+		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		[menuFormRep setAction: @selector(doTextPage:)];
+		[menuFormRep setTarget: pdfKitWindow];
+		return toolbarItem;
+	}
+    
+    if ([itemIdent isEqual: skMagnificationKKTID]) {
+		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+													customView:smagnificationOutletKK];
+		menuFormRep = [[NSMenuItem alloc] init];
+		/*
+		 submenu = [[[NSMenu alloc] init] autorelease];
+		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+		 [submenu addItem: submenuItem];
+		 [menuFormRep setSubmenu: submenu];*/
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		[menuFormRep setAction: @selector(doTextMagnify:)];
+		[menuFormRep setTarget: pdfKitWindow];
+		return toolbarItem;
+	}
+
+
 
 
 	if ([itemIdent isEqual: kMagnificationTID]) {
@@ -902,6 +997,21 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skColorIndexTID]) {
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+												   customView:indexColorSplitBox];
+		menuFormRep = [[NSMenuItem alloc] init];
+		submenu = [[NSMenu alloc] init];
+		submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Color Index", @"Color Index")
+                                                 action: @selector(flipIndexColorState:) keyEquivalent:@""];
+		[submenu addItem: submenuItem];
+		[menuFormRep setSubmenu: submenu];
+		[menuFormRep setTitle: [toolbarItem label]];
+		[toolbarItem setMenuFormRepresentation: menuFormRep];
+		return toolbarItem;
+	}
+
 
 
 
@@ -1019,8 +1129,6 @@ else
         if ([self sharingExists]) {
 
 		return [NSArray arrayWithObjects:
-					// kPreviousPageButtonTID,
-					// kNextPageButtonTID,
 					kPreviousPageKKTID,
 					kNextPageKKTID,
 					kBackForthKKTID,
@@ -1062,6 +1170,57 @@ else
 				nil];
 	}
 }
+    
+    if ([toolbarID isEqual:kFullWindowToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
+            
+            return  [NSArray arrayWithObjects:
+                     kTypesetTID,
+                     skProgramTID,
+                     NSToolbarPrintItemIdentifier,
+                     skMacrosTID,
+                     skTagsTID,
+                     kTemplatesID,
+                     kSharingTID,
+                     kSplitID,
+                     NSToolbarFlexibleSpaceItemIdentifier,
+                     kPreviousPageKKTID,
+                     kNextPageKKTID,
+                     kDrawerKKTID,
+                     skGotoPageKKTID,
+                     kMouseModeKKTID,
+                     kSharingKKTID,
+                     kSplitKKTID,
+                     // NSToolbarCustomizeToolbarItemIdentifier,
+                     // NSToolbarSpaceItemIdentifier,
+                     // NSToolbarSeparatorItemIdentifier,
+                     nil];
+        }
+        else {
+            
+            return [NSArray arrayWithObjects:
+					kTypesetTID,
+					skProgramTID,
+                    NSToolbarPrintItemIdentifier,
+                    skMacrosTID,
+					skTagsTID,
+					kTemplatesID,
+					kSplitID,
+                    NSToolbarFlexibleSpaceItemIdentifier,
+					kPreviousPageButtonKKTID,
+					kNextPageButtonKKTID,
+					kDrawerKKTID,
+	                skGotoPageKKTID,
+                    kMouseModeKKTID,
+					kSplitKKTID,
+					// NSToolbarCustomizeToolbarItemIdentifier,
+					// NSToolbarSpaceItemIdentifier,
+					// NSToolbarSeparatorItemIdentifier,
+                    nil];
+        }
+    }
+
 
 
 	return [NSArray array];
@@ -1232,7 +1391,7 @@ else
 					kMouseModeKKTID,
 					kSyncMarksTID,
                     kSplitKKTID,
-					NSToolbarPrintItemIdentifier,
+                    NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,
 					NSToolbarSpaceItemIdentifier,
@@ -1242,6 +1401,75 @@ else
         }
             
         }
+    
+    if ([toolbarID isEqual:kFullWindowToolbarIdentifier]) {
+        
+        if ([self sharingExists]) {
+            
+            return [NSArray arrayWithObjects:
+                    //					kSaveDocToolbarItemIdentifier,
+					kTypesetTID,
+					skProgramTID,
+                    skMacrosTID,
+					skTagsTID,
+					kTemplatesID,
+					kSharingTID,
+					kSplitID,
+					kPreviousPageButtonKKTID,
+					kNextPageButtonKKTID,
+					kPreviousPageKKTID,
+					kNextPageKKTID,
+					kBackForthKKTID,
+					kDrawerKKTID,
+	                skGotoPageKKTID,
+                    skMagnificationKKTID,
+					kMouseModeKKTID,
+					kSharingKKTID,
+					kSplitKKTID,
+                    skColorIndexTID,
+                    skAutoCompleteID,
+					NSToolbarPrintItemIdentifier,
+					NSToolbarCustomizeToolbarItemIdentifier,
+					NSToolbarFlexibleSpaceItemIdentifier,
+					NSToolbarSpaceItemIdentifier,
+					NSToolbarSeparatorItemIdentifier,
+                    nil];
+        }
+        
+        else {
+            
+            return [NSArray arrayWithObjects:
+                    //					kSaveDocToolbarItemIdentifier,
+					kTypesetTID,
+					skProgramTID,
+                    skMacrosTID,
+					skTagsTID,
+					kTemplatesID,
+					kSharingTID,
+					kSplitID,
+					kPreviousPageButtonKKTID,
+					kNextPageButtonKKTID,
+					kPreviousPageKKTID,
+					kNextPageKKTID,
+					kBackForthKKTID,
+					kDrawerKKTID,
+	                skGotoPageKKTID,
+                    skMagnificationKKTID,
+					kMouseModeKKTID,
+					kSharingKKTID,
+					kSplitKKTID,
+                    skColorIndexTID,
+ 					skAutoCompleteID,
+					NSToolbarPrintItemIdentifier,
+					NSToolbarCustomizeToolbarItemIdentifier,
+					NSToolbarFlexibleSpaceItemIdentifier,
+					NSToolbarSpaceItemIdentifier,
+					NSToolbarSeparatorItemIdentifier,
+                    nil];
+        }
+        
+    }
+
 
 
 	return [NSArray array];
@@ -1287,6 +1515,13 @@ else
 									@"ToolbarItems",  @"Print the document")];
 			[addedItem setTarget: self];
 		}
+        
+         else if ([toolbarID isEqual:kFullWindowToolbarIdentifier]) {
+             
+             [addedItem setToolTip: NSLocalizedStringFromTable(@"tiToolTipPrint",
+                                                               @"ToolbarItems",  @"Print the document")];
+             [addedItem setTarget: self];
+         }
 
 	}
 }

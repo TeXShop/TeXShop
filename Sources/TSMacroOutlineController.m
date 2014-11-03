@@ -288,11 +288,12 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 #endif
 
 	if([[tableColumn identifier] isEqualToString: COLUMNID_NAME]) {
-		if ([(TSMacroTreeNode*)item isSeparator])
+        if ([(TSMacroTreeNode*)item isSeparator]) {
 			objectValue = @"";
+        }
 		else {
 			objectValue = [(TSMacroTreeNode*)item name];
-		}
+ 		}
 	} else if([[tableColumn identifier] isEqualToString: COLUMNID_KEY]) {
 		objectValue = getMenuItemString([(TSMacroTreeNode*)item key]);
 	}
@@ -328,14 +329,18 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)outlineView: (NSOutlineView *)olv willDisplayCell: (NSCell *)cell forTableColumn: (NSTableColumn *)tableColumn item: (id)item
 {
+    // return;
+    
 	if ([[tableColumn identifier] isEqualToString: COLUMNID_NAME]) {
-		//if (item && [(TSMacroTreeNode*)item iconRep]) // when there is an icon
+		// if (item && [(TSMacroTreeNode*)item iconRep]) // when there is an icon
 		//	[(ImageAndTextCell*)cell setImage: [(TSMacroTreeNode*)item iconRep]];
-		//else
+		// else
 		if ([item isSeparator]) {
-			[(ImageAndTextCell*)cell setImage: [NSImage imageNamed: SEPARATOR_IMAGE]];
-		} else
-			[(ImageAndTextCell*)cell setImage: nil];
+			[(ImageAndTextCell*)cell setImage1: [NSImage imageNamed: SEPARATOR_IMAGE]];
+		}
+        else {
+			 [(ImageAndTextCell*)cell setImage1: nil];
+        }
 	} else if ([[tableColumn identifier] isEqualToString: COLUMNID_KEY]) {
 		// Don't do anything unusual for the kind column.
 	}
@@ -572,7 +577,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 - copyWithZone:(NSZone *)zone {
 	ImageAndTextCell *cell = (ImageAndTextCell *)[super copyWithZone:zone];
 //	cell->image = [image retain];
-    cell.image = self.image;
+    cell.image1 = self.image1;
 	return cell;
 }
 
@@ -590,9 +595,9 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 */
 
 - (NSRect)imageFrameForCellFrame:(NSRect)cellFrame {
-	if (self.image != nil) {
+	if (self.image1 != nil) {
 		NSRect imageFrame;
-		imageFrame.size = [self.image size];
+		imageFrame.size = [self.image1 size];
 		imageFrame.origin = cellFrame.origin;
 		imageFrame.origin.x += 3;
 		imageFrame.origin.y += ceil((cellFrame.size.height - imageFrame.size.height) / 2);
@@ -604,22 +609,22 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 
 - (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject event:(NSEvent *)theEvent {
 	NSRect textFrame, imageFrame;
-	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image1 size].width, NSMinXEdge);
 	[super editWithFrame: textFrame inView: controlView editor:textObj delegate:anObject event: theEvent];
 }
 
 - (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj delegate:(id)anObject start:(NSInteger)selStart length:(NSInteger)selLength {
 	NSRect textFrame, imageFrame;
-	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image size].width, NSMinXEdge);
+	NSDivideRect (aRect, &imageFrame, &textFrame, 3 + [self.image1 size].width, NSMinXEdge);
 	[super selectWithFrame: textFrame inView: controlView editor:textObj delegate:anObject start:selStart length:selLength];
 }
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-	if (self.image != nil) {
+   if (self.image1 != nil) {
 		NSSize	imageSize;
 		NSRect	imageFrame;
 
-		imageSize = [self.image size];
+		imageSize = [self.image1 size];
 		NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + imageSize.width, NSMinXEdge);
 		if ([self drawsBackground]) {
 			[[self backgroundColor] set];
@@ -639,7 +644,7 @@ static TSMacroOutlineController *_sharedOutlineViewController = nil;
 		NSRect imageSrcRect;
 		imageSrcRect.size = imageSize;
 		imageSrcRect.origin = NSMakePoint(0,0);
-		[self.image drawInRect: imageFrame fromRect: imageSrcRect
+		[self.image1 drawInRect: imageFrame fromRect: imageSrcRect
 						operation: NSCompositeSourceOver fraction: 1.0];
 // original was:
 		//imageFrame.size = imageSize;

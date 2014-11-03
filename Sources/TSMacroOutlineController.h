@@ -91,7 +91,7 @@
 //	NSImage	*image;
 }
 
-@property (retain) NSImage *image;
+@property (retain) NSImage *image1;
 
 // - (void)setImage:(NSImage *)anImage;
 // - (NSImage *)image;

@@ -6454,8 +6454,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	if ([self fileURL] == nil)
 		return;
     
-    fileToBeMoved = [NSMutableArray arrayWithCapacity: 1];
-    [fileToBeMoved addObject:@""];
 	
 	path = [[[self fileURL] path] stringByDeletingLastPathComponent];
     pathURL = [NSURL URLWithString: path];
@@ -6478,6 +6476,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		trashPDF = NO;
 	
 	while ((theURL = [dirEnumerator nextObject])) {
+        /*
         [theURL getResourceValue:&dirName forKey:NSURLNameKey error:NULL];
         [theURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
         if (([dirName caseInsensitiveCompare:@".git"]==NSOrderedSame) &&
@@ -6485,13 +6484,14 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         {
              [dirEnumerator skipDescendants];
         }
+        */
         
         anObject = [theURL path];
 		doMove = YES;
 		extension = [anObject pathExtension];
+        objectFileName = [[anObject lastPathComponent] stringByDeletingPathExtension];
 		if ((! aggressiveTrash) || [extension isEqualToString:@"pdf"]) {
-			objectFileName = [[anObject lastPathComponent] stringByDeletingPathExtension];
-  			if (! [objectFileName isEqualToString:fileName])
+			if (! [objectFileName isEqualToString:fileName])
 				doMove = NO;
 		}
         
@@ -6504,12 +6504,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		}
 		
 		if ([extension isEqualToString:@"gz"]) {
-			objectName = [anObject stringByDeletingPathExtension];
-			if ([[objectName pathExtension] isEqualToString:@"synctex"]) {
+ 			if ([[objectFileName pathExtension] isEqualToString:@"synctex"]) {
 				doMove = YES;
 				isOneOfOther = YES;
-				if (! aggressiveTrash) {
-					objectName = [objectName stringByDeletingPathExtension];
+ 				if (! aggressiveTrash) {
+  					objectName = [objectFileName stringByDeletingPathExtension];
 					if (! [objectName isEqualToString:fileName])
 						doMove = NO;
 				}
@@ -6517,12 +6516,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		}
 		
 		if ([extension isEqualToString:@"xml"]) {
-			objectName = [anObject stringByDeletingPathExtension];
-			if ([[objectName pathExtension] isEqualToString:@"run"]) {
+			if ([[objectFileName pathExtension] isEqualToString:@"run"]) {
 				doMove = YES;
 				isOneOfOther = YES;
 				if (! aggressiveTrash) {
-					objectName = [objectName stringByDeletingPathExtension];
+					objectName = [objectFileName stringByDeletingPathExtension];
 					if (! [objectName isEqualToString:fileName])
 						doMove = NO;
 				}
@@ -6565,6 +6563,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		
 	}
     
+    fileToBeMoved = [NSMutableArray arrayWithCapacity: 1];
+    [fileToBeMoved addObject:@""];
+
     enumerator = [pathsToBeMoved objectEnumerator];
     while (anObject = [enumerator nextObject]) {
         path2 = [anObject stringByDeletingLastPathComponent];

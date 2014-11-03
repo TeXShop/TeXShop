@@ -122,6 +122,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 
 - (void)loadUI
 {
+    
 	if (!outlineView) {
 		if (![NSBundle loadNibNamed:@"MacroEditor" owner:self]) {
 			// TODO: Show an error dialog to the user here
@@ -146,10 +147,19 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setRichText:NO];
 		[contentTextView setUsesFontPanel:YES];
 		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
-		[scrollView setDocumentView:contentTextView];
+        [contentTextView setContinuousSpellCheckingEnabled: NO];
+        [contentTextView setSmartInsertDeleteEnabled: NO];
+        [contentTextView setAutomaticDashSubstitutionEnabled: NO];
+        [contentTextView setAutomaticDataDetectionEnabled: NO];
+        [contentTextView setAutomaticLinkDetectionEnabled: NO];
+        [contentTextView setAutomaticQuoteSubstitutionEnabled: NO];
+        [contentTextView setAutomaticSpellingCorrectionEnabled: NO];
+        [contentTextView setAutomaticTextReplacementEnabled: NO];
+
+        [scrollView setDocumentView:contentTextView];
 		// [contentTextView release];
 		// text fields
-		[nameField setDelegate: [TSEncodingSupport sharedInstance]];
+        [nameField setDelegate: [TSEncodingSupport sharedInstance]];
 		[keyField setDelegate: [TSEncodingSupport sharedInstance]];
 		// set up properties for UI
 		[nameField setEditable: NO];
@@ -324,7 +334,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	[nameField setEditable: (newItem && ![newItem isSeparator])?YES:NO];
 	if (newItem && [newItem isStandardItem]) {
 		contentString = [newItem content]?[newItem content]:@"";
-		if (g_shouldFilter == kMacJapaneseFilterMode)
+ 		if (g_shouldFilter == kMacJapaneseFilterMode)
 			contentString = filterBackslashToYen(contentString);
 		savedFilter = g_shouldFilter;	// remember this filter option
 		[contentTextView setString: contentString];

@@ -341,18 +341,14 @@
     return YES;
 }
 
+// added by Terada for Yosemite's bug
 - (void) removeBlurringByResettingMagnification
 {
-    // added by Terada for Yosemite's bug
-    //if ([SUD boolForKey:removeBlurringByResettingMagnificationKey]) {
-    //    [super setScaleFactor:self.magnification];
-    // Just to be safe, change the scale twice.
+    BOOL autoScales = self.autoScales;
     [super setScaleFactor:self.magnification+0.01];
     [super setScaleFactor:self.magnification-0.01];
-    if (resizeOption == NEW_PDF_FIT_TO_WIDTH || resizeOption == NEW_PDF_FIT_TO_HEIGHT || resizeOption == NEW_PDF_FIT_TO_WINDOW)
+    if (autoScales)
         [self setAutoScales: YES];
-    
-    //}
 }
 
 
@@ -903,8 +899,8 @@
 	
 	scale = [myScale integerValue];
 	scale = scale + 10;
-	if (scale > 1000)
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE)
+		scale = PDF_MAX_SCALE;
 	scaleMag = scale;
 	[myScale setIntegerValue:scale];
     [smyScale setIntegerValue:scale];
@@ -950,8 +946,8 @@
 		[myScale1 setIntegerValue:scale];
 		[myScale display];
 		}
-	if (scale > 1000) {
-		scale = 1000;
+	if (scale > PDF_MAX_SCALE) {
+		scale = PDF_MAX_SCALE;
 		scaleMag = scale;
 		[myScale setIntegerValue:scale];
         [smyScale setIntegerValue:scale];

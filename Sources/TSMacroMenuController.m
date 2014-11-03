@@ -135,6 +135,7 @@ static id sharedMacroMenuController = nil;
 // set up main macro menu on the menu bar
 - (void)setupMainMacroMenu
 {
+    
 	NSMenuItem *newItem;
 
 	if (!self.macroDict)
@@ -553,6 +554,7 @@ NSString *getStringFormKeyEquivalent(NSString *key, BOOL shift, BOOL option, BOO
 // make a string which is to be displayed in TSMacroEditor
 NSString *getMenuItemString(NSString *string)
 {
+    
 	unichar c;	// command 0x2318  shift 0x21E7  option 0x2325  control 0x005E '^'
 	NSRange range;
 	if ([string length] == 0)

@@ -6456,7 +6456,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
 	
 	path = [[[self fileURL] path] stringByDeletingLastPathComponent];
-    pathURL = [NSURL URLWithString: path];
+ //    pathURL = [NSURL URLWithString: path];
+    pathURL = [NSURL fileURLWithPath: path isDirectory: YES];
 	fileName = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
 	NSFileManager *myFileManager = [NSFileManager defaultManager];
 	
@@ -6570,6 +6571,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     while (anObject = [enumerator nextObject]) {
         path2 = [anObject stringByDeletingLastPathComponent];
         [fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
+   //     NSLog(path2);
+   //     NSLog([anObject lastPathComponent]);
         [[NSWorkspace sharedWorkspace]
             performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
     }

@@ -232,6 +232,9 @@ NSString *SwitchSidesKey = @"SwitchSides";
 NSString *SourceScrollElasticityKey = @"SourceScrollElasticity";
 NSString *FixPreviewBlurKey = @"FixPreviewBlur";
 NSString *InterpolationValueKey = @"InterpolationValue";
+NSString *ConsoleWindowFixedPosKey = @"ConsoleWindowFixedPos";
+NSString *ConsoleWindowPosModeKey = @"ConsoleWindowPosMode";
+
 
 
 // Paths

@@ -492,6 +492,13 @@
         [outputText setUsesFindBar:YES];
     else
         [outputText setUsesFindPanel: YES];
+    
+    if ( ConsoleWindowPosFixed == [SUD integerForKey:ConsoleWindowPosModeKey])
+    {
+        [outputWindow setFrameFromString:[SUD stringForKey:ConsoleWindowFixedPosKey]];
+    }
+    
+
 	
 /*
 	minWindowSize = [outputWindow minSize];
@@ -2394,7 +2401,7 @@ if ( ! skipTextWindow) {
     BOOL     result;
     float    floatValue, x, y, temp, LargeArea, LargePDFArea, SmallArea, SmallPDFArea, MainDisplayArea;
     NSString *docWindowString, *pdfWindowString, *portableDocWindowString, *portablePDFWindowString;
-   
+    
    
     if ( DocumentWindowPosFixed == [SUD integerForKey:DocumentWindowPosModeKey] ) {
         docWindowString = [SUD stringForKey:DocumentWindowFixedPosKey];
@@ -8058,6 +8065,15 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             [self removeWindowController: self.splitController];
             // [self setWindow: textWindow];
         }
+}
+
+- (void) doAssociatedWindow
+{
+    if ([fullSplitWindow firstResponder] == textView)
+        [fullSplitWindow makeFirstResponder: myPDFKitView];
+    else
+        [fullSplitWindow makeFirstResponder: textView];
+        
 }
 
 - (BOOL) useFullSplitWindow

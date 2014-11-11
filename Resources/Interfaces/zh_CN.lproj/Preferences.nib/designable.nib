@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <deployment version="1050" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -32,6 +32,7 @@
                 <outlet property="_consoleForegroundColorWell" destination="836" id="838"/>
                 <outlet property="_consoleMatrix" destination="777" id="833"/>
                 <outlet property="_consoleResizeMatrix" destination="764" id="810"/>
+                <outlet property="_consoleWindowPosMatrix" destination="ng4-SC-enB" id="HQm-P4-vvC"/>
                 <outlet property="_convertUTFButton" destination="1078" id="1081"/>
                 <outlet property="_copyBackColorWell" destination="433" id="460"/>
                 <outlet property="_copyForeColorWell" destination="430" id="459"/>
@@ -97,7 +98,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="TeXShop 偏好设置" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="5" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -108,6 +109,92 @@
                 <rect key="frame" x="0.0" y="0.0" width="577" height="669"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <button verticalHuggingPriority="750" id="40">
+                        <rect key="frame" x="395" y="6" width="84" height="33"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="取消" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="908">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="13" name="STHeitiSC-Light"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="39">
+                        <rect key="frame" x="479" y="7" width="84" height="32"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="好" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="907">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="13" name="STHeitiSC-Light"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="okButtonPressed:" target="-2" id="89"/>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" id="1115">
+                        <rect key="frame" x="24" y="11" width="161" height="26"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <popUpButtonCell key="cell" type="push" title="恢复默认设置" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1126" id="1116">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" title="OtherViews" id="1117">
+                                <items>
+                                    <menuItem title="恢复默认设置" hidden="YES" id="1126"/>
+                                    <menuItem title="常规" tag="1" id="1127">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1128"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (ptex2pdf)" tag="2" id="1125">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1129"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (latexmk)" tag="3" id="1124">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1130"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (shell script)" tag="4" id="1123">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1131"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (ptex2pdf)" tag="5" id="1122">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1132"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (latexmk)" tag="6" id="1121">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1133"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (shell script)" tag="7" id="1120">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1134"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Legacy pTeX (Shift JIS) " tag="8" id="1119">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1135"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Legacy pTeX (EUC)" tag="9" id="1118">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1136"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
                     <tabView id="7">
                         <rect key="frame" x="20" y="42" width="544" height="616"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -546,7 +633,7 @@
                                                     <button id="955">
                                                         <rect key="frame" x="133" y="12" width="47" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="check" title="&lt; >" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="956">
+                                                        <buttonCell key="cell" type="check" title="&lt; &gt;" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="956">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1141,7 +1228,7 @@
                             <tabViewItem label="控制台" identifier="Console" id="705">
                                 <view key="view" id="706">
                                     <rect key="frame" x="10" y="33" width="524" height="570"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="控制台字体" id="752">
                                             <rect key="frame" x="56" y="488" width="407" height="56"/>
@@ -1197,8 +1284,79 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
+                                        <box title="前景色" id="834">
+                                            <rect key="frame" x="232" y="420" width="132" height="64"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <colorWell id="836">
+                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="setConsoleForegroundColor:" target="-2" id="837"/>
+                                                        </connections>
+                                                    </colorWell>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="STHeitiSC-Light"/>
+                                        </box>
+                                        <box title="源代码窗口位置" id="Shw-3G-ymP">
+                                            <rect key="frame" x="56" y="313" width="308" height="103"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="304" height="79"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="tEU-2f-VFT">
+                                                        <rect key="frame" x="27" y="2" width="195" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="设成当前位置" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="iY2-Pv-LNG">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" size="13" name="STHeitiSC-Light"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosDefault:" target="-2" id="L5U-kc-ChK"/>
+                                                        </connections>
+                                                    </button>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="ng4-SC-enB">
+                                                        <rect key="frame" x="5" y="36" width="238" height="37"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="1"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="qym-QC-xfb">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="关闭时记住上一次位置" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="EbO-R5-qgJ">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="所有窗口从固定位置打开" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="NsL-D3-4Je">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosChanged:" target="-2" id="UeB-iL-4Pn"/>
+                                                        </connections>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
+                                        </box>
                                         <box title="控制台窗口调整" id="772">
-                                            <rect key="frame" x="56" y="341" width="308" height="75"/>
+                                            <rect key="frame" x="56" y="228" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="55"/>
@@ -1209,7 +1367,7 @@
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
-                                            <rect key="frame" x="81" y="352" width="147" height="38"/>
+                                            <rect key="frame" x="81" y="239" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1235,7 +1393,7 @@
                                             </connections>
                                         </matrix>
                                         <box title="显示控制台" id="828">
-                                            <rect key="frame" x="56" y="260" width="308" height="77"/>
+                                            <rect key="frame" x="56" y="147" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="57"/>
@@ -1267,27 +1425,6 @@
                                                             <action selector="consoleBehaviorChanged:" target="-2" id="832"/>
                                                         </connections>
                                                     </matrix>
-                                                </subviews>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" size="13" name="STHeitiSC-Light"/>
-                                        </box>
-                                        <box title="前景色" id="834">
-                                            <rect key="frame" x="232" y="420" width="132" height="64"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <colorWell id="836">
-                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <connections>
-                                                            <action selector="setConsoleForegroundColor:" target="-2" id="837"/>
-                                                        </connections>
-                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -2150,92 +2287,6 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <button verticalHuggingPriority="750" id="40">
-                        <rect key="frame" x="395" y="6" width="84" height="33"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="取消" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="908">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" size="13" name="STHeitiSC-Light"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="39">
-                        <rect key="frame" x="479" y="7" width="84" height="32"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="好" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="907">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" size="13" name="STHeitiSC-Light"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="okButtonPressed:" target="-2" id="89"/>
-                        </connections>
-                    </button>
-                    <popUpButton verticalHuggingPriority="750" id="1115">
-                        <rect key="frame" x="24" y="11" width="161" height="26"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <popUpButtonCell key="cell" type="push" title="恢复默认设置" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1126" id="1116">
-                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
-                            <menu key="menu" title="OtherViews" id="1117">
-                                <items>
-                                    <menuItem title="恢复默认设置" hidden="YES" id="1126"/>
-                                    <menuItem title="常规" tag="1" id="1127">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1128"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (ptex2pdf)" tag="2" id="1125">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1129"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (latexmk)" tag="3" id="1124">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1130"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (shell script)" tag="4" id="1123">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1131"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (ptex2pdf)" tag="5" id="1122">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1132"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (latexmk)" tag="6" id="1121">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1133"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (shell script)" tag="7" id="1120">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1134"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Legacy pTeX (Shift JIS) " tag="8" id="1119">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1135"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Legacy pTeX (EUC)" tag="9" id="1118">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1136"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </popUpButtonCell>
-                    </popUpButton>
                 </subviews>
             </view>
             <connections>

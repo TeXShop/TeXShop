@@ -75,6 +75,7 @@
 - (void) becomeMainWindow;
 - (void) resignMainWindow;
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
+- (void)associatedWindow:(id)sender;
 
 
 

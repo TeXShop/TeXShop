@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <deployment version="1050" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -31,6 +31,7 @@
                 <outlet property="_consoleForegroundColorWell" destination="940" id="942"/>
                 <outlet property="_consoleMatrix" destination="777" id="833"/>
                 <outlet property="_consoleResizeMatrix" destination="764" id="810"/>
+                <outlet property="_consoleWindowPosMatrix" destination="KW4-jC-ZOb" id="ozW-t7-XPg"/>
                 <outlet property="_convertUTFButton" destination="1226" id="1229"/>
                 <outlet property="_copyBackColorWell" destination="433" id="460"/>
                 <outlet property="_copyForeColorWell" destination="430" id="459"/>
@@ -720,7 +721,7 @@
                                                     <button id="1131">
                                                         <rect key="frame" x="133" y="12" width="47" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="check" title="&lt; >" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1132">
+                                                        <buttonCell key="cell" type="check" title="&lt; &gt;" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1132">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1191,8 +1192,79 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="文字色" id="938">
+                                            <rect key="frame" x="218" y="420" width="132" height="64"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <colorWell id="940">
+                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="setConsoleForegroundColor:" target="-2" id="941"/>
+                                                        </connections>
+                                                    </colorWell>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="ソースウインドウの位置" id="yAE-Om-3MR">
+                                            <rect key="frame" x="42" y="299" width="308" height="103"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="304" height="79"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="beJ-DI-R9A">
+                                                        <rect key="frame" x="27" y="2" width="195" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="現在の位置に設定" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="NGL-2T-IYi">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" size="13" name="AppleSDGothicNeo-Regular"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosDefault:" target="-2" id="q4q-uI-ukp"/>
+                                                        </connections>
+                                                    </button>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="KW4-jC-ZOb">
+                                                        <rect key="frame" x="5" y="36" width="238" height="37"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="1"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="h6j-2F-bd4">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="閉じたときの位置を保存" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="zxh-y2-iE5">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="いつも同じ位置で開く" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pWW-fb-w7z">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosChanged:" target="-2" id="nMp-dN-HHz"/>
+                                                        </connections>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
+                                        </box>
                                         <box title="コンソールのリサイズ" id="772">
-                                            <rect key="frame" x="42" y="341" width="308" height="75"/>
+                                            <rect key="frame" x="42" y="209" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="55"/>
@@ -1203,7 +1275,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
-                                            <rect key="frame" x="67" y="352" width="147" height="38"/>
+                                            <rect key="frame" x="67" y="220" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1229,7 +1301,7 @@
                                             </connections>
                                         </matrix>
                                         <box title="コンソール" id="828">
-                                            <rect key="frame" x="42" y="260" width="308" height="77"/>
+                                            <rect key="frame" x="42" y="128" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="57"/>
@@ -1261,27 +1333,6 @@
                                                             <action selector="consoleBehaviorChanged:" target="-2" id="832"/>
                                                         </connections>
                                                     </matrix>
-                                                </subviews>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
-                                        <box title="文字色" id="938">
-                                            <rect key="frame" x="218" y="420" width="132" height="64"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <colorWell id="940">
-                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <connections>
-                                                            <action selector="setConsoleForegroundColor:" target="-2" id="941"/>
-                                                        </connections>
-                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>

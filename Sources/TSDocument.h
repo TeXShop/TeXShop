@@ -560,6 +560,7 @@ enum RootCommand
 - (BOOL) useDVI;
 - (void) doMove: sender;
 - (void) doSeparateWindows: sender;
+- (void) doAssociatedWindow;
 - (void) makeWindowControllers;
 - (void) runPageLayout:sender;
 

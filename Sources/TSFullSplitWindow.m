@@ -355,6 +355,17 @@
     return result;
 }
 
+- (void)associatedWindow:(id)sender
+{
+    [self.myDocument doAssociatedWindow];
+/*
+    if ([self.myDocument documentType] == isTeX) {
+        [self.myDocument bringPdfWindowFront];
+    }
+*/
+}
+
+
 
 /*
 
@@ -376,12 +387,6 @@
 	[self.myDocument tryBadEncodingDialog:self];
 }
 
-- (void)associatedWindow:(id)sender
-{
-	if ([self.myDocument documentType] == isTeX) {
-		[self.myDocument bringPdfWindowFront];
-	}
-}
 
 - (void) doChooseMethod: sender
 {

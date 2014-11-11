@@ -72,7 +72,12 @@
     [myDocument doError: sender];
     if ([myDocument externalEditor])
         return;
-    if ([myDocument documentType] == isTeX) {
+    if ([myDocument useFullSplitWindow])
+    {
+        [[myDocument fullSplitWindow] makeKeyAndOrderFront:self];
+        [myDocument doAssociatedWindow];
+    }
+    else if ([myDocument documentType] == isTeX) {
         if ([myDocument getCallingWindow] == nil)
             [[myDocument textWindow] makeKeyAndOrderFront: self];
         else

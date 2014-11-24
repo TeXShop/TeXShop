@@ -513,7 +513,14 @@
     NSRect newFullRect = [[self documentView] bounds];
     NSInteger difference = newFullRect.size.height - fullRect.size.height;
     
-	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
+    
+ //   The fix below was required because otherwise the pages scrolled slightly with each
+ //   typesetting. Yusuke Terada has discovered that the bug was apparently fixed in amountrecent Yosemite
+ //   release, so the "fix" has been removed. Only time will tell ...
+    
+    
+//	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
+    visibleRect.origin.y = visibleRect.origin.y + difference;
 	[[self documentView] scrollRectToVisible: visibleRect];
 
 /*
@@ -5813,7 +5820,9 @@ oldVisibleRect.size.width = 0;
 }
 */
 
+
 // Left and right arrows perform page up and page down if horizontal scroll bar is inactive
+
 - (void)keyDown:(NSEvent *)theEvent
 {
     NSString	*theKey;
@@ -5825,13 +5834,33 @@ oldVisibleRect.size.width = 0;
     else
         key = 0;
     
-    if ((key == NSUpArrowFunctionKey) ||
-        (key == NSPageUpFunctionKey) ||
+ //   if ((key == NSUpArrowFunctionKey) && ( self.documentView.enclosingScrollView.verticalScroller.isEnabled))
+ //       NSLog(@"The value is %f", self.documentView.enclosingScrollView.verticalScroller.floatValue);
+    
+ //   if ((key == NSPageUpFunctionKey) &&
+ //    (self.documentView.enclosingScrollView.verticalScroller.isEnabled) &&
+ //    (self.documentView.enclosingScrollView.verticalScroller.floatValue <= 0.008))
+ //           NSLog(@"Should page up");
+    
+    if (((key == NSUpArrowFunctionKey) &&  ( ! self.documentView.enclosingScrollView.verticalScroller.isEnabled)) ||
+        ((key == NSPageUpFunctionKey) && ( ! self.documentView.enclosingScrollView.verticalScroller.isEnabled)) ||
+        ((key == NSUpArrowFunctionKey) &&
+            (self.documentView.enclosingScrollView.verticalScroller.isEnabled) &&
+            (self.documentView.enclosingScrollView.verticalScroller.floatValue <= 0.008)) ||
+       ((key == NSPageUpFunctionKey) &&
+            (self.documentView.enclosingScrollView.verticalScroller.isEnabled) &&
+            (self.documentView.enclosingScrollView.verticalScroller.floatValue <= 0.008)) ||
         ((key == ' ') && (theEvent.modifierFlags & NSShiftKeyMask)) ||
         ((key == NSLeftArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
         [self previousPage:self];
-    } else if ((key == NSDownArrowFunctionKey) ||
-               (key == NSPageDownFunctionKey) ||
+    } else if (((key == NSDownArrowFunctionKey) &&  ( ! self.documentView.enclosingScrollView.verticalScroller.isEnabled)) ||
+               ((key == NSPageDownFunctionKey) && ( ! self.documentView.enclosingScrollView.verticalScroller.isEnabled)) ||
+               ((key == NSDownArrowFunctionKey) &&
+                    (self.documentView.enclosingScrollView.verticalScroller.isEnabled) &&
+                    (self.documentView.enclosingScrollView.verticalScroller.floatValue >= 0.992)) ||
+               ((key == NSPageDownFunctionKey) &&
+                    (self.documentView.enclosingScrollView.verticalScroller.isEnabled) &&
+                    (self.documentView.enclosingScrollView.verticalScroller.floatValue >= 0.992)) ||
                (key == ' ') ||
                ((key == NSRightArrowFunctionKey) && (theEvent.modifierFlags & NSCommandKeyMask))) {
         [self nextPage:self];
@@ -5847,6 +5876,7 @@ oldVisibleRect.size.width = 0;
         [super keyDown:theEvent];
     }
 }
+
 
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent

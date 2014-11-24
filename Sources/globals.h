@@ -501,6 +501,7 @@ extern NSString *ExternalEditorNotification;
 extern NSString *CommandCompletionCharNotification;
 
 
+
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
@@ -538,3 +539,4 @@ NSDictionary *highlightContentColorDict; // added by Terada
 extern NSString *placeholderString;
 extern NSString *startcommentString;
 extern NSString *endcommentString;
+extern NSString *ConsoleWindowNameKey;

@@ -497,6 +497,10 @@
     {
         [outputWindow setFrameFromString:[SUD stringForKey:ConsoleWindowFixedPosKey]];
     }
+    else
+    {
+        [outputWindow setFrameAutosaveName:ConsoleWindowNameKey];
+    }
     
 
 	

@@ -124,34 +124,37 @@
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="70"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
-                                        <box title="エンコーディング" id="262">
-                                            <rect key="frame" x="276" y="200" width="232" height="68"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="228" height="48"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <popUpButton verticalHuggingPriority="750" id="278">
-                                                        <rect key="frame" x="11" y="9" width="203" height="26"/>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
+                                                        <rect key="frame" x="17" y="7" width="174" height="58"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="1024">
-                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
-                                                            <menu key="menu" title="OtherViews" id="277">
-                                                                <items>
-                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
-                                                                </items>
-                                                            </menu>
-                                                        </popUpButtonCell>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="174" height="18"/>
+                                                        <size key="intercellSpacing" width="4" height="2"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1061">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="Apple 標準検索パネル" imagePosition="left" alignment="left" state="on" inset="2" id="582">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="Apple 標準検索バー" imagePosition="left" alignment="left" tag="1" inset="2" id="583">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="OgreKit 検索パネル" imagePosition="left" alignment="left" tag="2" inset="2" id="1253">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
                                                         <connections>
-                                                            <action selector="encodingChanged:" target="-2" id="282"/>
+                                                            <action selector="findPanelChanged:" target="-2" id="587"/>
                                                         </connections>
-                                                    </popUpButton>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -283,10 +286,10 @@
                                             <font key="titleFont" size="13" name="HiraKakuProN-W3"/>
                                         </box>
                                         <box title="フォント" id="14">
-                                            <rect key="frame" x="11" y="512" width="289" height="56"/>
+                                            <rect key="frame" x="11" y="512" width="295" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="285" height="36"/>
+                                                <rect key="frame" x="2" y="2" width="291" height="36"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" id="16">
@@ -322,11 +325,22 @@
                                                 <rect key="frame" x="2" y="2" width="252" height="87"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
+                                                    <button verticalHuggingPriority="750" id="33">
+                                                        <rect key="frame" x="28" y="3" width="195" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="現在の位置に設定" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1020">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="currentDocumentWindowPosDefault:" target="-2" id="86"/>
+                                                        </connections>
+                                                    </button>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="30">
-                                                        <rect key="frame" x="7" y="40" width="238" height="37"/>
+                                                        <rect key="frame" x="17" y="40" width="210" height="37"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="cellSize" width="210" height="18"/>
                                                         <size key="intercellSpacing" width="0.0" height="1"/>
                                                         <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1059">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -348,17 +362,6 @@
                                                             <action selector="sourceWindowPosChanged:" target="-2" id="105"/>
                                                         </connections>
                                                     </matrix>
-                                                    <button verticalHuggingPriority="750" id="33">
-                                                        <rect key="frame" x="28" y="3" width="195" height="32"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="現在の位置に設定" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1020">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="currentDocumentWindowPosDefault:" target="-2" id="86"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -372,17 +375,6 @@
                                                 <rect key="frame" x="2" y="2" width="252" height="66"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <button id="238">
-                                                        <rect key="frame" x="17" y="39" width="178" height="18"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="check" title="新しいファイルを作成する" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1022">
-                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="emptyButtonPressed:" target="-2" id="239"/>
-                                                        </connections>
-                                                    </button>
                                                     <button id="272">
                                                         <rect key="frame" x="17" y="14" width="204" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
@@ -394,42 +386,23 @@
                                                             <action selector="externalEditorButtonPressed:" target="-2" id="275"/>
                                                         </connections>
                                                     </button>
+                                                    <button id="238">
+                                                        <rect key="frame" x="17" y="34" width="178" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="新しいファイルを作成する" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1022">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="emptyButtonPressed:" target="-2" id="239"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
-                                        <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
-                                            <rect key="frame" x="24" y="150" width="174" height="58"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="174" height="18"/>
-                                            <size key="intercellSpacing" width="4" height="2"/>
-                                            <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1061">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <cells>
-                                                <column>
-                                                    <buttonCell type="radio" title="Apple 標準検索パネル" imagePosition="left" alignment="left" state="on" inset="2" id="582">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                    </buttonCell>
-                                                    <buttonCell type="radio" title="Apple 標準検索バー" imagePosition="left" alignment="left" tag="1" inset="2" id="583">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                    </buttonCell>
-                                                    <buttonCell type="radio" title="OgreKit 検索パネル" imagePosition="left" alignment="left" tag="2" inset="2" id="1253">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                    </buttonCell>
-                                                </column>
-                                            </cells>
-                                            <connections>
-                                                <action selector="findPanelChanged:" target="-2" id="587"/>
-                                            </connections>
-                                        </matrix>
                                         <box title="文字色と背景色" id="790">
                                             <rect key="frame" x="315" y="512" width="193" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -467,7 +440,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="1073">
-                                                        <rect key="frame" x="11" y="6" width="107" height="38"/>
+                                                        <rect key="frame" x="17" y="7" width="107" height="38"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="107" height="18"/>
@@ -506,7 +479,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="1082">
-                                                        <rect key="frame" x="16" y="91" width="100" height="18"/>
+                                                        <rect key="frame" x="17" y="91" width="100" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="半角スペース" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="1083">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -517,7 +490,7 @@
                                                         </connections>
                                                     </button>
                                                     <button id="1084">
-                                                        <rect key="frame" x="16" y="71" width="100" height="18"/>
+                                                        <rect key="frame" x="17" y="71" width="100" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="全角スペース" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="1085">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -528,7 +501,7 @@
                                                         </connections>
                                                     </button>
                                                     <button id="1086">
-                                                        <rect key="frame" x="16" y="51" width="63" height="18"/>
+                                                        <rect key="frame" x="17" y="51" width="63" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="改行" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="1087">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -539,7 +512,7 @@
                                                         </connections>
                                                     </button>
                                                     <button id="1088">
-                                                        <rect key="frame" x="16" y="31" width="63" height="18"/>
+                                                        <rect key="frame" x="17" y="31" width="63" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="タブ" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="1089">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -550,7 +523,7 @@
                                                         </connections>
                                                     </button>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="1090">
-                                                        <rect key="frame" x="135" y="91" width="102" height="18"/>
+                                                        <rect key="frame" x="136" y="91" width="102" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="49" height="18"/>
@@ -578,7 +551,7 @@
                                                         </connections>
                                                     </matrix>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="1100">
-                                                        <rect key="frame" x="135" y="71" width="102" height="18"/>
+                                                        <rect key="frame" x="136" y="71" width="102" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="49" height="18"/>
@@ -606,7 +579,7 @@
                                                         </connections>
                                                     </matrix>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="1106">
-                                                        <rect key="frame" x="135" y="50" width="102" height="18"/>
+                                                        <rect key="frame" x="136" y="50" width="102" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="49" height="18"/>
@@ -634,7 +607,7 @@
                                                         </connections>
                                                     </matrix>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="1118">
-                                                        <rect key="frame" x="135" y="29" width="102" height="18"/>
+                                                        <rect key="frame" x="136" y="29" width="102" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="49" height="18"/>
@@ -662,7 +635,7 @@
                                                         </connections>
                                                     </matrix>
                                                     <button id="1221">
-                                                        <rect key="frame" x="16" y="9" width="204" height="18"/>
+                                                        <rect key="frame" x="17" y="9" width="204" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="ファイルを開いた直後から表示" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="1222">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -811,6 +784,35 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="エンコーディング" id="262">
+                                            <rect key="frame" x="276" y="204" width="232" height="68"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="228" height="48"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" id="278">
+                                                        <rect key="frame" x="14" y="9" width="203" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="1024">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" title="OtherViews" id="277">
+                                                                <items>
+                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="encodingChanged:" target="-2" id="282"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -910,7 +912,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="230">
-                                                        <rect key="frame" x="33" y="12" width="126" height="18"/>
+                                                        <rect key="frame" x="15" y="13" width="126" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="スクロールしない" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1013">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -934,7 +936,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" id="345">
-                                                        <rect key="frame" x="23" y="8" width="163" height="26"/>
+                                                        <rect key="frame" x="14" y="8" width="163" height="26"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="範囲指定" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="5" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="337" id="1015">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -967,7 +969,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" tag="1" id="334">
-                                                        <rect key="frame" x="13" y="7" width="176" height="26"/>
+                                                        <rect key="frame" x="14" y="7" width="176" height="26"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="ウィンドウに合わせる" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="3" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="339" id="1016">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -1069,7 +1071,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="557">
-                                                        <rect key="frame" x="19" y="14" width="187" height="18"/>
+                                                        <rect key="frame" x="15" y="15" width="187" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="プレビューの自動更新" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1017">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1213,11 +1215,11 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
-                                        <box title="ソースウインドウの位置" id="yAE-Om-3MR">
+                                        <box title="コンソールウインドウの位置" id="yAE-Om-3MR">
                                             <rect key="frame" x="42" y="299" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="304" height="79"/>
+                                                <rect key="frame" x="2" y="2" width="304" height="83"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" id="beJ-DI-R9A">
@@ -1225,14 +1227,14 @@
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="push" title="現在の位置に設定" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="NGL-2T-IYi">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" size="13" name="AppleSDGothicNeo-Regular"/>
+                                                            <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="consoleWindowPosDefault:" target="-2" id="q4q-uI-ukp"/>
                                                         </connections>
                                                     </button>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="KW4-jC-ZOb">
-                                                        <rect key="frame" x="5" y="36" width="238" height="37"/>
+                                                        <rect key="frame" x="17" y="36" width="238" height="37"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="238" height="18"/>
@@ -1261,45 +1263,8 @@
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
-                                        </box>
-                                        <box title="コンソールのリサイズ" id="772">
-                                            <rect key="frame" x="42" y="209" width="308" height="75"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="304" height="55"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
-                                        <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
-                                            <rect key="frame" x="67" y="220" width="147" height="38"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="147" height="18"/>
-                                            <size key="intercellSpacing" width="4" height="2"/>
-                                            <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1070">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <cells>
-                                                <column>
-                                                    <buttonCell type="radio" title="任意の方向" imagePosition="left" alignment="left" state="on" inset="2" id="766">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                    </buttonCell>
-                                                    <buttonCell type="radio" title="垂直方向のみ" imagePosition="left" alignment="left" tag="1" inset="2" id="765">
-                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                        <font key="font" metaFont="system"/>
-                                                    </buttonCell>
-                                                </column>
-                                            </cells>
-                                            <connections>
-                                                <action selector="changeConsoleResize:" target="-2" id="811"/>
-                                            </connections>
-                                        </matrix>
                                         <box title="コンソール" id="828">
                                             <rect key="frame" x="42" y="128" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1308,7 +1273,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="777">
-                                                        <rect key="frame" x="22" y="10" width="188" height="37"/>
+                                                        <rect key="frame" x="17" y="10" width="188" height="37"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="188" height="18"/>
@@ -1339,6 +1304,45 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="コンソールのリサイズ" id="772">
+                                            <rect key="frame" x="42" y="214" width="308" height="75"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="304" height="55"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
+                                                        <rect key="frame" x="17" y="7" width="147" height="38"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="147" height="18"/>
+                                                        <size key="intercellSpacing" width="4" height="2"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1070">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="任意の方向" imagePosition="left" alignment="left" state="on" inset="2" id="766">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="垂直方向のみ" imagePosition="left" alignment="left" tag="1" inset="2" id="765">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="changeConsoleResize:" target="-2" id="811"/>
+                                                        </connections>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -1355,7 +1359,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="186">
-                                                        <rect key="frame" x="7" y="9" width="171" height="61"/>
+                                                        <rect key="frame" x="17" y="8" width="171" height="61"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="171" height="19"/>
@@ -1366,11 +1370,11 @@
                                                         </buttonCell>
                                                         <cells>
                                                             <column>
-                                                                <buttonCell type="radio" title="Pdftex" imagePosition="left" alignment="left" state="on" tag="100" inset="2" id="191">
+                                                                <buttonCell type="radio" title="pdfTeX" imagePosition="left" alignment="left" state="on" tag="100" inset="2" id="191">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
-                                                                <buttonCell type="radio" title="Tex + DVI" imagePosition="left" alignment="left" tag="101" inset="2" id="187">
+                                                                <buttonCell type="radio" title="TeX + DVI" imagePosition="left" alignment="left" tag="101" inset="2" id="187">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
@@ -1456,7 +1460,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="316">
-                                                        <rect key="frame" x="15" y="22" width="165" height="18"/>
+                                                        <rect key="frame" x="17" y="20" width="165" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="関連ファイルも保存する" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1045">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1480,7 +1484,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="678">
-                                                        <rect key="frame" x="14" y="9" width="177" height="38"/>
+                                                        <rect key="frame" x="17" y="9" width="177" height="38"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="177" height="18"/>
@@ -1614,7 +1618,7 @@
                                                     <textField verticalHuggingPriority="750" id="1233">
                                                         <rect key="frame" x="14" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="1236">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="TeX" id="1236">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1634,7 +1638,7 @@
                                                     <textField verticalHuggingPriority="750" id="1241">
                                                         <rect key="frame" x="14" y="53" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="1244">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="LaTeX" id="1244">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1657,7 +1661,7 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
-                                        <box title="TeX + dvips + distiller" id="200">
+                                        <box title="TeX+dvipdfmx / TeX+dvips+distiller" id="200">
                                             <rect key="frame" x="256" y="279" width="247" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
@@ -1702,7 +1706,7 @@
                                                     <textField verticalHuggingPriority="750" id="1237">
                                                         <rect key="frame" x="9" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="1240">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="TeX" id="1240">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1722,7 +1726,7 @@
                                                     <textField verticalHuggingPriority="750" id="1245">
                                                         <rect key="frame" x="9" y="53" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="1248">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="LaTeX" id="1248">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -2020,7 +2024,7 @@
                                                     <textField verticalHuggingPriority="750" id="153">
                                                         <rect key="frame" x="9" y="28" width="111" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="LaTeXプログラム" id="1041">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="LaTeX プログラム" id="1041">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -2041,7 +2045,7 @@
                                                     <textField verticalHuggingPriority="750" id="151">
                                                         <rect key="frame" x="8" y="73" width="100" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="TeXプログラム" id="1039">
+                                                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="TeX プログラム" id="1039">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -2073,10 +2077,10 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="546">
-                                                        <rect key="frame" x="10" y="6" width="130" height="38"/>
+                                                        <rect key="frame" x="17" y="6" width="115" height="38"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="130" height="18"/>
+                                                        <size key="cellSize" width="115" height="18"/>
                                                         <size key="intercellSpacing" width="4" height="2"/>
                                                         <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="1065">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2112,7 +2116,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="573">
-                                                        <rect key="frame" x="18" y="16" width="135" height="18"/>
+                                                        <rect key="frame" x="17" y="16" width="135" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="utf パッケージ対応" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1043">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2136,7 +2140,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button id="1226">
-                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <rect key="frame" x="17" y="16" width="299" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="UTF-8-MAC を UTF-8 に自動変換" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1227">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2159,19 +2163,8 @@
                                                 <rect key="frame" x="2" y="2" width="366" height="75"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <button id="8pX-l6-YF6">
-                                                        <rect key="frame" x="18" y="41" width="334" height="18"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="check" title="ファイルオープン時にルートファイルを自動的に開く" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="W9b-bq-1UH">
-                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" size="13" name="AquaKana"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="openRootFilePressed:" target="-2" id="NMo-FK-OrA"/>
-                                                        </connections>
-                                                    </button>
                                                     <button id="irw-yn-ghY">
-                                                        <rect key="frame" x="18" y="16" width="299" height="18"/>
+                                                        <rect key="frame" x="17" y="16" width="299" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="開いたルートファイルを最小化する" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="RB8-Yw-gtO">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2179,6 +2172,17 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="miniaturizeRootFilePressed:" target="-2" id="vgc-lU-HOA"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="8pX-l6-YF6">
+                                                        <rect key="frame" x="17" y="41" width="334" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="ファイルオープン時にルートファイルを自動的に開く" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="W9b-bq-1UH">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name="AquaKana"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="openRootFilePressed:" target="-2" id="NMo-FK-OrA"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

@@ -325,4 +325,5 @@ NSString *endcommentString = @"Ý";
 NSString *placeholderString;
 NSString *startcommentString;
 NSString *endcommentString;
+NSString *ConsoleWindowNameKey = @"ConsoleWindow";
 

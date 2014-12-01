@@ -14,6 +14,44 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.47</h5></P>
+<ul>
+<li> The height of the Templates toolbar item for the Source Window was increased by one
+pixel in most localizations to make it match other items in the same toolbar.
+
+<p>
+<li>  The code for keyboard shortcuts in the Preview window has been revised.
+
+<dd>
+
+
+<dl> TeXShop has always enhanced the left and right arrow keys to provide
+	paging if there is no horizontal scroll bar. This code is still present.
+
+<dl> Otherwise, recent versions of TeXShop tried to fix a Yosemite bug in
+	which scrolling paged in the wrong direction.
+	This bug occurs in Single Page and Double Page
+	modes, but not in Multiple Page or Double Multiple Page modes.
+
+<p> The new code only fixes the bug in Single Page and Double Page modes,
+	reverting to the App Kit code  in the non-broken modes. Moreover, the new
+	code only fixes the bug in Yosemite and above. If Apple fixes the bug,
+	the fix can be turned off completely, using the hidden default
+
+<p> defaults write TeXShop YosemiteScrollBug NO
+
+</dd> 
+
+<li> If TeXShop is quit without closing windows, the windows will reappear 
+when TeXShop is restarted. Initially, only the Source Window 
+was restored, but in recent TeXShop versions the Preview window is also restored. 
+
+<p> Previously the Preview window was always restored to the main monitor, even if the
+user had multiple monitors. This is fixed and now the Preview window 
+appears on the monitor it was originally on.
+</ul>
+
+
 <P><h5>TeXShop Changes 3.46</h5></P>
 <ul>
 

@@ -234,6 +234,7 @@ NSString *FixPreviewBlurKey = @"FixPreviewBlur";
 NSString *InterpolationValueKey = @"InterpolationValue";
 NSString *ConsoleWindowFixedPosKey = @"ConsoleWindowFixedPos";
 NSString *ConsoleWindowPosModeKey = @"ConsoleWindowPosMode";
+NSString *YosemiteScrollBugKey = @"YosemiteScrollBug";
 
 
 

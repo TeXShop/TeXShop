@@ -447,6 +447,7 @@ extern NSString *FixPreviewBlurKey;
 extern NSString *InterpolationValueKey;
 extern NSString *ConsoleWindowFixedPosKey;
 extern NSString *ConsoleWindowPosModeKey;
+extern NSString *YosemiteScrollBugKey;
 
 
 

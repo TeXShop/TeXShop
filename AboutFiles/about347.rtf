@@ -1,0 +1,38 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1343\cocoasubrtf160
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 3.47 has the following changes:\
+\
+\
+1) One pixel height increase for the Templates toolbar item in some localizations\
+\
+2) Yet more fixes for scrolling keyboard shortcuts in the Preview window:\
+\
+	a) TeXShop has always enhanced the left and right arrow keys to provide\
+	paging if there is no horizontal scroll bar. This code is still present.\
+\
+	b) Otherwise, recent versions of TeXShop tried to fix a Yosemite bug in\
+	which scrolling paged in the wrong direction when scrolling by a full page.\
+	This bug occurs in Single Page and Double Page\
+	modes, but not in Multiple Page or Double Multiple Page modes.\
+\
+	The new code only fixes the bug in Single Page and Double Page modes,\
+	reverting to the old behavior in the non-broken modes. Moreover, the new\
+	code only fixes the bug in Yosemite and above. If Apple fixes the bug,\
+	the fix can be turned off completely. The hidden default\
+\
+	defaults write TeXShop YosemiteScrollBug NO\
+\
+	turns the fix off\
+\
+3) If TeXShop is quit without closing windows then the windows will be restored \
+to their old positions when TeXShop is restarted. Initially, only the Source Window \
+was restored, but in recent TeXShop versions the Preview window is  restored as well. \
+\
+If the user has multiple monitors, the Source window is restored to the monitor\
+it was on when TeXShop was closed, but the Preview window was always\
+restored to the main monitor. This is fixed and now the Preview window also\
+appears on the monitor it was originally on.}

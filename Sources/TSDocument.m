@@ -283,6 +283,7 @@
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     NSString *windowState;
+    NSPoint  thePoint;
     BOOL     fromFullSplitWindow;
     
     [super restoreStateWithCoder:coder];
@@ -291,6 +292,10 @@
         {
         windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
         [pdfKitWindow setFrameFromString:windowState];
+        if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
+            thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
+            [pdfKitWindow setFrameOrigin: thePoint];
+            }
         }
     
     if (([coder containsValueForKey:@"ForFullSplitWindow"]) && ([coder containsValueForKey:@"TeXShopTextWindow"]))
@@ -309,16 +314,19 @@
     
     // record PDF window's size and position
     NSString *theCode;
+ 
     
-	theCode = [pdfKitWindow stringWithSavedFrame];
+    NSRect theRect = [pdfKitWindow frame];
+    NSPoint theOrigin = theRect.origin;
+    
+    theCode = [pdfKitWindow stringWithSavedFrame];
     [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
+    [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
+        
     
     theCode = [textWindow stringWithSavedFrame];
     [coder encodeObject: theCode forKey:@"TeXShopTextWindow"];
-    
-    
     [coder encodeBool:useFullSplitWindow forKey:@"ForFullSplitWindow"];
-    
     
 }
 
@@ -2573,8 +2581,7 @@ if ( ! skipTextWindow) {
 			break;
 
 
-		case PdfWindowPosFixed:
-            
+        case PdfWindowPosFixed:
             if (LargePDFArea < SmallPDFArea) {
                 temp = LargePDFArea;
                 LargePDFArea = SmallPDFArea;
@@ -2589,7 +2596,6 @@ if ( ! skipTextWindow) {
                 [pdfWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
                 [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
                 }
- 
 /*
         case PdfWindowPosFixed:
             [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];

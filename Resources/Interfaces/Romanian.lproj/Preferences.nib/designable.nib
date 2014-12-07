@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <deployment version="1050" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -31,6 +31,7 @@
                 <outlet property="_consoleForegroundColorWell" destination="836" id="838"/>
                 <outlet property="_consoleMatrix" destination="777" id="833"/>
                 <outlet property="_consoleResizeMatrix" destination="764" id="810"/>
+                <outlet property="_consoleWindowPosMatrix" destination="b0k-Df-3Gc" id="gDB-uv-zbx"/>
                 <outlet property="_convertUTFButton" destination="1112" id="1115"/>
                 <outlet property="_copyBackColorWell" destination="433" id="460"/>
                 <outlet property="_copyForeColorWell" destination="430" id="459"/>
@@ -82,6 +83,8 @@
                 <outlet property="_sourceBackgroundColorWell" destination="1143" id="1146"/>
                 <outlet property="_sourceTextColorWell" destination="1144" id="1145"/>
                 <outlet property="_sourceWindowPosMatrix" destination="30" id="83"/>
+                <outlet property="_sparkleAutomaticButton" destination="Zub-rC-9kU" id="vy1-ys-CJq"/>
+                <outlet property="_sparkleIntervalMatrix" destination="OEd-Pb-QRI" id="esu-39-d26"/>
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
@@ -96,7 +99,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="TeXShop Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="5" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -107,6 +110,92 @@
                 <rect key="frame" x="0.0" y="0.0" width="633" height="680"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <button verticalHuggingPriority="750" id="40">
+                        <rect key="frame" x="451" y="11" width="84" height="33"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="949">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="39">
+                        <rect key="frame" x="535" y="12" width="84" height="32"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="948">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="okButtonPressed:" target="-2" id="89"/>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" id="1149">
+                        <rect key="frame" x="17" y="16" width="161" height="26"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <popUpButtonCell key="cell" type="push" title="Set Default Values" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1161" id="1150">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" title="OtherViews" id="1151">
+                                <items>
+                                    <menuItem title="Set Default Values" hidden="YES" id="1161"/>
+                                    <menuItem title="Regular" tag="1" id="1160">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1162"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (ptex2pdf)" tag="2" id="1159">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1163"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (latexmk)" tag="3" id="1158">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1164"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="upTeX (shell script)" tag="4" id="1157">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1165"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (ptex2pdf)" tag="5" id="1156">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1166"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (latexmk)" tag="6" id="1155">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1167"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="pTeX (shell script)" tag="7" id="1154">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1168"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Legacy pTeX (Shift JIS) " tag="8" id="1153">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1169"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Legacy pTeX (EUC)" tag="9" id="1152">
+                                        <connections>
+                                            <action selector="setDefaults:" target="-2" id="1170"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
                     <tabView id="7">
                         <rect key="frame" x="13" y="50" width="607" height="624"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -545,7 +634,7 @@
                                                     <button id="989">
                                                         <rect key="frame" x="139" y="12" width="47" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="check" title="&lt; >" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="990">
+                                                        <buttonCell key="cell" type="check" title="&lt; &gt;" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="990">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1140,7 +1229,7 @@
                             <tabViewItem label="Console" identifier="Console" id="705">
                                 <view key="view" id="706">
                                     <rect key="frame" x="10" y="33" width="587" height="578"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Console Font" id="752">
                                             <rect key="frame" x="64" y="495" width="431" height="56"/>
@@ -1196,8 +1285,79 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="Foreground Color" id="834">
+                                            <rect key="frame" x="240" y="427" width="132" height="64"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <colorWell id="836">
+                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.058130499000000002" green="0.055541898999999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="setConsoleForegroundColor:" target="-2" id="837"/>
+                                                        </connections>
+                                                    </colorWell>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Poziția Ferestrei Console" id="xCN-dK-eDZ">
+                                            <rect key="frame" x="64" y="310" width="308" height="103"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="304" height="83"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="Zlm-K6-z3b">
+                                                        <rect key="frame" x="27" y="2" width="195" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Set with current position" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="sYM-Wz-31c">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosDefault:" target="-2" id="0q5-jV-Xq1"/>
+                                                        </connections>
+                                                    </button>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" id="b0k-Df-3Gc">
+                                                        <rect key="frame" x="5" y="36" width="268" height="37"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="268" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="1"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="Zwf-Ec-LRs">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="Înregistrează ultima poziție la închidere" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="XRq-gL-1ST">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="Toate ferestrele apar la poziția fixată" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="8Go-mj-obr">
+                                                                    <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="consoleWindowPosChanged:" target="-2" id="UcN-PI-76I"/>
+                                                        </connections>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                         <box title="Console Resize" id="772">
-                                            <rect key="frame" x="64" y="348" width="308" height="75"/>
+                                            <rect key="frame" x="64" y="217" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="55"/>
@@ -1208,7 +1368,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
-                                            <rect key="frame" x="89" y="359" width="147" height="38"/>
+                                            <rect key="frame" x="89" y="228" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1234,7 +1394,7 @@
                                             </connections>
                                         </matrix>
                                         <box title="Show Console" id="828">
-                                            <rect key="frame" x="64" y="267" width="308" height="77"/>
+                                            <rect key="frame" x="64" y="136" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="57"/>
@@ -1266,27 +1426,6 @@
                                                             <action selector="consoleBehaviorChanged:" target="-2" id="832"/>
                                                         </connections>
                                                     </matrix>
-                                                </subviews>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
-                                        <box title="Foreground Color" id="834">
-                                            <rect key="frame" x="240" y="427" width="132" height="64"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="128" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <colorWell id="836">
-                                                        <rect key="frame" x="25" y="11" width="67" height="24"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <color key="color" red="0.058130499000000002" green="0.055541898999999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <connections>
-                                                            <action selector="setConsoleForegroundColor:" target="-2" id="837"/>
-                                                        </connections>
-                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -2144,97 +2283,65 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="Sparkle Updater" id="BKo-Xd-8Aw">
+                                            <rect key="frame" x="105" y="13" width="357" height="127"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="353" height="107"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" id="OEd-Pb-QRI">
+                                                        <rect key="frame" x="40" y="13" width="79" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="72" height="18"/>
+                                                        <size key="intercellSpacing" width="4" height="2"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="eLZ-Ts-fmu">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="Daily" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="3th-nk-dUg">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="Weekly" imagePosition="left" alignment="left" tag="2" inset="2" id="K4H-9i-Wvv">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="Monthly" imagePosition="left" alignment="left" tag="3" inset="2" id="Ff1-gm-GaQ">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="sparkleInterval:" target="-2" id="lEn-B4-wgI"/>
+                                                        </connections>
+                                                    </matrix>
+                                                    <button id="Zub-rC-9kU">
+                                                        <rect key="frame" x="18" y="81" width="320" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Automatically check for updates" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="R8F-DI-IgJ">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sparkleAutomaticCheck:" target="-2" id="swb-3d-CJx"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <button verticalHuggingPriority="750" id="40">
-                        <rect key="frame" x="451" y="11" width="84" height="33"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="949">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="39">
-                        <rect key="frame" x="535" y="12" width="84" height="32"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="948">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="okButtonPressed:" target="-2" id="89"/>
-                        </connections>
-                    </button>
-                    <popUpButton verticalHuggingPriority="750" id="1149">
-                        <rect key="frame" x="17" y="16" width="161" height="26"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <popUpButtonCell key="cell" type="push" title="Set Default Values" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1161" id="1150">
-                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
-                            <menu key="menu" title="OtherViews" id="1151">
-                                <items>
-                                    <menuItem title="Set Default Values" hidden="YES" id="1161"/>
-                                    <menuItem title="Regular" tag="1" id="1160">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1162"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (ptex2pdf)" tag="2" id="1159">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1163"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (latexmk)" tag="3" id="1158">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1164"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="upTeX (shell script)" tag="4" id="1157">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1165"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (ptex2pdf)" tag="5" id="1156">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1166"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (latexmk)" tag="6" id="1155">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1167"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="pTeX (shell script)" tag="7" id="1154">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1168"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Legacy pTeX (Shift JIS) " tag="8" id="1153">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1169"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Legacy pTeX (EUC)" tag="9" id="1152">
-                                        <connections>
-                                            <action selector="setDefaults:" target="-2" id="1170"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </popUpButtonCell>
-                    </popUpButton>
                 </subviews>
             </view>
             <connections>

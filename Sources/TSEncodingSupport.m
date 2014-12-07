@@ -57,6 +57,7 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingEUC_JP}, //				@"EUC_JP" },
 	{ 0, kCFStringEncodingISO_2022_JP}, //			@"JISJapanese" },
 	{ 0, kCFStringEncodingMacKorean}, //			@"MacKorean" },
+    { 0, kCFStringEncodingDOSKorean}, //			@"DOSKorean" },
 	{ 0, kCFStringEncodingUTF8}, //					@"UTF-8 Unicode" },
 	{ 0, kCFStringEncodingUnicode}, //				@"Standard Unicode" },
 	{ 0, kCFStringEncodingMacCyrillic}, //			@"Mac Cyrillic" },
@@ -106,7 +107,7 @@ static TSEncoding _availableEncodings[] = {
 	} else {
 		sharedEncodingSupport = [super init];
         
-       myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", nil];
+       myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"DOSKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", nil];
         
         self.availableEncodingsNames = myArray;
 

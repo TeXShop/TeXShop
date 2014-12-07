@@ -33,6 +33,8 @@
 	IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
 	IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
+// IBOutlet NSButtonCell	*_consoleWindowPosButton;		/* connected to set current position button */
+    IBOutlet NSMatrix	*_consoleWindowPosMatrix;		/* connected to set current position button */
 	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
 
@@ -111,6 +113,9 @@
 	IBOutlet NSTextField *_kpsetoolField; // added by Terada
 	IBOutlet NSTextField *_bibTeXengineField; // added by Terada
 //	IBOutlet NSButton *_makeatletterButton; // added by Terada
+    
+    IBOutlet NSButton  *_sparkleAutomaticButton;
+    IBOutlet NSMatrix  *_sparkleIntervalMatrix;
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
 //	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -130,6 +135,8 @@
 	BOOL			bibDeskCompleteTouched;
 	BOOL			oldAutoComplete;
 	BOOL			oldBibDeskComplete;
+    BOOL            oldSparkleAutomaticUpdate;
+    NSInteger       oldSparkleInterval;
 	BOOL			magnificationTouched;
 	BOOL			externalEditorTouched;
 	BOOL			encodingTouched;
@@ -139,6 +146,7 @@
 	BOOL            kpsetoolTouched; // added by Terada
 	BOOL            bibTeXengineTouched; // added by Terada
 //	BOOL            makeatletterTouched; // added by Terada
+    BOOL            sparkleTouched;
 	
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
 	IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
@@ -149,7 +157,7 @@
 	IBOutlet NSColorWell	*_copyForeColorWell;// mitsu 1.29 (O)
 	IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O)
 	IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)
-	IBOutlet NSMatrix		*_afterTypesettingMatrix;
+	IBOutlet NSMatrix	*_afterTypesettingMatrix;
 }
 
 @property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -248,6 +256,9 @@
 - (IBAction)kpsetoolChanged:sender; // added by Terada
 - (IBAction)bibTeXengineChanged:sender; // added by Terada
 // - (IBAction)makeatletterChanged:sender; // added by Terada
+
+- (IBAction)sparkleAutomaticCheck:sender;
+- (IBAction)sparkleInterval:sender;
 
 
 //------------------------------------------------------------------------------

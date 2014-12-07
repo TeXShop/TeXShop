@@ -322,9 +322,68 @@
 // the global for "dont use UID to record language"
 */
 
+- (void)setAutoSaveRelatedMenuItemsEnabled:(BOOL)enabled
+{
+    NSString    *theTitle, *theAction;
+    SEL         anAction;
+    
+    NSMenu *fileMenu = [[[NSApp mainMenu] itemAtIndex:1] submenu];
+    NSInteger saveMenuItemIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(saveDocument:)];
+    
+    [fileMenu setAutoenablesItems:enabled];
+    for (NSInteger i=1; i<=7; i++) {
+        
+        anAction = [[fileMenu itemAtIndex:saveMenuItemIndex+i] action];
+        theAction = NSStringFromSelector(anAction);
+        
+        if ([theAction isEqualToString: @"submenuAction:"])
+             {
+               theTitle = [[fileMenu itemAtIndex:saveMenuItemIndex+i] title];
+            if ([theTitle isEqualToString: NSLocalizedString(@"Revert To", @"Revert To")])
+            /*
+            if (([theTitle isEqualToString: @"Revert To"]) ||           // English
+                ([theTitle isEqualToString: @"Volver a"]) ||            // Spanich
+                ([theTitle isEqualToString: @"Revenir à"]) ||           // French
+                ([theTitle isEqualToString: @"Zurücksetzen auf"]) ||    // German
+                ([theTitle isEqualToString: @"バージョンを戻す"]) ||        // Japanese
+                ([theTitle isEqualToString: @"다음으로 복귀"]) ||           // Korean
+                ([theTitle isEqualToString: @"复原到"]) ||                // Simplified Chinese
+                ([theTitle isEqualToString: @"Ripristina a"]) ||         // Italian
+                ([theTitle isEqualToString: @"Vorige versie"]) ||        // Netherlands
+                ([theTitle isEqualToString: @"Reverter Para"]) ||       // Portuguese Brazil
+                ([theTitle isEqualToString: @"Restabelecer"]) ||       // Portuguese
+                ([theTitle isEqualToString: @"Revino la"])          // Romanian
+                )
+             */
+                 [[fileMenu itemAtIndex:saveMenuItemIndex+i] setEnabled:enabled];
+             }
+        else if (([theAction isEqualToString:@"saveDocumentAs:"]) ||
+            ([theAction isEqualToString:@"duplicateDocument:"]) ||
+            ([theAction isEqualToString:@"renameDocument:"]) ||
+            ([theAction isEqualToString:@"moveDocument:"]) ||
+            ([theAction isEqualToString:@"saveDocumentTo:"]) ||
+            ([theAction isEqualToString:@"revertDocumentToSaved:"])
+            )
+                [[fileMenu itemAtIndex:saveMenuItemIndex+i] setEnabled:enabled];
+        
+        // 1: Save As; saveDocumentAs:
+        // 2: Duplicate; duplicateDocument:
+        // 3: Rename…; renameDocument:
+        // 4: Move To…; moveDocument:
+        // 5: Export…; saveDocumentTo:
+        // 6: Revert To Saved; revertDocumentToSaved:
+        // 7: Revert To: subMenu
+    }
+}
+
+
 
 - (void) becomeMainWindow
 {
+    NSMenu      *menuBar;
+    NSMenu      *fileMenu;
+
+    [self setAutoSaveRelatedMenuItemsEnabled: NO];
     
 // 	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
@@ -335,12 +394,27 @@
 // a) use Japanese input methods and b) customize the background and foreground source colors and c) have a dark background color
     if ([SUD boolForKey:ResetSourceTextColorEachTimeKey])
         [self.myDocument setSourceTextColorFromPreferences:nil]; // added by Terada
+    
+    menuBar = [[NSApplication sharedApplication ] mainMenu];
+    fileMenu = [[menuBar itemAtIndex:1] submenu];
+    [[fileMenu itemWithTitle:@"Duplicate"] setEnabled: NO];
+
 }
 
 - (void) resignMainWindow
 {
+    NSMenu  *menuBar;
+    NSMenu  *fileMenu;
+    
+    [self setAutoSaveRelatedMenuItemsEnabled: YES];
+
     [super resignMainWindow];
     [self.myDocument resignSpelling];
+    
+    menuBar = [[NSApplication sharedApplication ] mainMenu];
+    fileMenu = [[menuBar itemAtIndex:1] submenu];
+    [[fileMenu itemWithTitle:@"Duplicate"] setEnabled: YES];
+
 }
 
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
@@ -354,6 +428,17 @@
     }
     return result;
 }
+
+- (void)associatedWindow:(id)sender
+{
+    [self.myDocument doAssociatedWindow];
+/*
+    if ([self.myDocument documentType] == isTeX) {
+        [self.myDocument bringPdfWindowFront];
+    }
+*/
+}
+
 
 
 /*
@@ -376,12 +461,6 @@
 	[self.myDocument tryBadEncodingDialog:self];
 }
 
-- (void)associatedWindow:(id)sender
-{
-	if ([self.myDocument documentType] == isTeX) {
-		[self.myDocument bringPdfWindowFront];
-	}
-}
 
 - (void) doChooseMethod: sender
 {

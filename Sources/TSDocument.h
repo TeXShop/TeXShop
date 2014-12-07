@@ -446,7 +446,7 @@ enum RootCommand
 - (void) cancelForPanel: sender;  //needed?
 - (void) showStatistics: sender;
 - (void) updateStatistics: sender;
-- (void) doTemplate: sender;
+- (IBAction) doTemplate: sender;
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
 
@@ -560,6 +560,7 @@ enum RootCommand
 - (BOOL) useDVI;
 - (void) doMove: sender;
 - (void) doSeparateWindows: sender;
+- (void) doAssociatedWindow;
 - (void) makeWindowControllers;
 - (void) runPageLayout:sender;
 

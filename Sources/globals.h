@@ -94,6 +94,14 @@ enum PdfWindowPosition
 	PdfWindowPosSave = 1
 };
 
+/*" Symbolic constants for the matrix used in 'Console Position' of the TSPreferences. "*/
+enum ConsoleWindowPosition
+{
+    ConsoleWindowPosFixed = 0,
+    ConsoleWindowPosSave = 1
+};
+
+
 /*" Symbolic constants for the display mode to use "*/
 enum PdfDisplayMode
 {
@@ -437,6 +445,12 @@ extern NSString *SwitchSidesKey;
 extern NSString *SourceScrollElasticityKey;
 extern NSString *FixPreviewBlurKey;
 extern NSString *InterpolationValueKey;
+extern NSString *ConsoleWindowFixedPosKey;
+extern NSString *ConsoleWindowPosModeKey;
+extern NSString *YosemiteScrollBugKey;
+extern NSString *SparkleAutomaticUpdateKey;
+extern NSString *SparkleIntervalKey;
+
 
 
 
@@ -490,6 +504,7 @@ extern NSString *ExternalEditorNotification;
 extern NSString *CommandCompletionCharNotification;
 
 
+
 /*" Other variables "*/
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
@@ -527,3 +542,4 @@ NSDictionary *highlightContentColorDict; // added by Terada
 extern NSString *placeholderString;
 extern NSString *startcommentString;
 extern NSString *endcommentString;
+extern NSString *ConsoleWindowNameKey;

@@ -232,6 +232,11 @@ NSString *SwitchSidesKey = @"SwitchSides";
 NSString *SourceScrollElasticityKey = @"SourceScrollElasticity";
 NSString *FixPreviewBlurKey = @"FixPreviewBlur";
 NSString *InterpolationValueKey = @"InterpolationValue";
+NSString *ConsoleWindowFixedPosKey = @"ConsoleWindowFixedPos";
+NSString *ConsoleWindowPosModeKey = @"ConsoleWindowPosMode";
+NSString *YosemiteScrollBugKey = @"YosemiteScrollBug";
+NSString *SparkleAutomaticUpdateKey = @"SparkleAutomaticUpdate";
+NSString *SparkleIntervalKey = @"SparkleInterval";
 
 
 // Paths
@@ -322,4 +327,5 @@ NSString *endcommentString = @"Ý";
 NSString *placeholderString;
 NSString *startcommentString;
 NSString *endcommentString;
+NSString *ConsoleWindowNameKey = @"ConsoleWindow";
 

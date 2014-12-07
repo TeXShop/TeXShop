@@ -54,6 +54,7 @@
                     IBOutlet    NSProgressIndicator             *_searchProgress;
                     IBOutlet    NSMatrix                        *mouseModeMatrix;
                     IBOutlet    NSMenu                          *mouseModeMenu;
+                    IBOutlet    NSSearchField                   *_searchField;
 
 
 //	NSWindow						*myPDFWindow;

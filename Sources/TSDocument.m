@@ -283,6 +283,7 @@
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     NSString *windowState;
+    NSPoint  thePoint;
     BOOL     fromFullSplitWindow;
     
     [super restoreStateWithCoder:coder];
@@ -291,6 +292,10 @@
         {
         windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
         [pdfKitWindow setFrameFromString:windowState];
+        if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
+            thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
+            [pdfKitWindow setFrameOrigin: thePoint];
+            }
         }
     
     if (([coder containsValueForKey:@"ForFullSplitWindow"]) && ([coder containsValueForKey:@"TeXShopTextWindow"]))
@@ -309,16 +314,19 @@
     
     // record PDF window's size and position
     NSString *theCode;
+ 
     
-	theCode = [pdfKitWindow stringWithSavedFrame];
+    NSRect theRect = [pdfKitWindow frame];
+    NSPoint theOrigin = theRect.origin;
+    
+    theCode = [pdfKitWindow stringWithSavedFrame];
     [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
+    [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
+        
     
     theCode = [textWindow stringWithSavedFrame];
     [coder encodeObject: theCode forKey:@"TeXShopTextWindow"];
-    
-    
     [coder encodeBool:useFullSplitWindow forKey:@"ForFullSplitWindow"];
-    
     
 }
 
@@ -492,6 +500,17 @@
         [outputText setUsesFindBar:YES];
     else
         [outputText setUsesFindPanel: YES];
+    
+    if ( ConsoleWindowPosFixed == [SUD integerForKey:ConsoleWindowPosModeKey])
+    {
+        [outputWindow setFrameFromString:[SUD stringForKey:ConsoleWindowFixedPosKey]];
+    }
+    else
+    {
+        [outputWindow setFrameAutosaveName:ConsoleWindowNameKey];
+    }
+    
+
 	
 /*
 	minWindowSize = [outputWindow minSize];
@@ -2394,7 +2413,7 @@ if ( ! skipTextWindow) {
     BOOL     result;
     float    floatValue, x, y, temp, LargeArea, LargePDFArea, SmallArea, SmallPDFArea, MainDisplayArea;
     NSString *docWindowString, *pdfWindowString, *portableDocWindowString, *portablePDFWindowString;
-   
+    
    
     if ( DocumentWindowPosFixed == [SUD integerForKey:DocumentWindowPosModeKey] ) {
         docWindowString = [SUD stringForKey:DocumentWindowFixedPosKey];
@@ -2562,8 +2581,7 @@ if ( ! skipTextWindow) {
 			break;
 
 
-		case PdfWindowPosFixed:
-            
+        case PdfWindowPosFixed:
             if (LargePDFArea < SmallPDFArea) {
                 temp = LargePDFArea;
                 LargePDFArea = SmallPDFArea;
@@ -2578,7 +2596,6 @@ if ( ! skipTextWindow) {
                 [pdfWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
                 [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
                 }
- 
 /*
         case PdfWindowPosFixed:
             [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
@@ -6456,7 +6473,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
 	
 	path = [[[self fileURL] path] stringByDeletingLastPathComponent];
-    pathURL = [NSURL URLWithString: path];
+ //    pathURL = [NSURL URLWithString: path];
+    pathURL = [NSURL fileURLWithPath: path isDirectory: YES];
 	fileName = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
 	NSFileManager *myFileManager = [NSFileManager defaultManager];
 	
@@ -6570,6 +6588,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     while (anObject = [enumerator nextObject]) {
         path2 = [anObject stringByDeletingLastPathComponent];
         [fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
+   //     NSLog(path2);
+   //     NSLog([anObject lastPathComponent]);
         [[NSWorkspace sharedWorkspace]
             performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
     }
@@ -8055,6 +8075,15 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             [self removeWindowController: self.splitController];
             // [self setWindow: textWindow];
         }
+}
+
+- (void) doAssociatedWindow
+{
+    if ([fullSplitWindow firstResponder] == textView)
+        [fullSplitWindow makeFirstResponder: myPDFKitView];
+    else
+        [fullSplitWindow makeFirstResponder: textView];
+        
 }
 
 - (BOOL) useFullSplitWindow

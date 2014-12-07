@@ -31,6 +31,8 @@
 #import "TSPreviewWindow.h"
 #import "TSAppDelegate.h" // mitsu 1.29 (O)
 #import "TSDocument.h"
+#import "TSConsoleWindow.h"
+#import <Sparkle/SUUpdater.h>
 
 //#import "MyPDFView.h" // mitsu 1.29 (O)
 
@@ -143,6 +145,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	kpsetoolTouched = NO; // added by Terada
 	bibTeXengineTouched = NO; // added by Terada
 //	makeatletterTouched = NO; // added by Terada
+    sparkleTouched = NO;
 	// end addition
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
@@ -678,6 +681,77 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleForegroundColorChangedNotification object:self];
 }
 
+/*" This method is connected to the "Source Window Position" Matrix.
+ 
+ This method will be called when the matrix changes. Target 0 means 'all windows start at a fixed position', target 1 means 'remember window position'.
+ "*/
+- (IBAction)consoleWindowPosChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:ConsoleWindowPosModeKey] forKey:ConsoleWindowPosModeKey];
+    
+    [SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleWindowPosModeKey];
+    [_consoleWindowPosMatrix selectCellWithTag:[[sender selectedCell] tag]];
+    
+//    if ([[sender selectedCell] tag] == 0)
+//        [_consoleWindowPosButton setEnabled: YES];
+//    else
+//         [_consoleWindowPosButton setEnabled: NO];
+}
+
+/*" This method is connected to the 'use current pos as default' button on the 'Document' pane.
+ "*/
+- (IBAction)consoleWindowPosDefault:sender
+{
+    NSMutableArray  *visibleWindows;
+    NSEnumerator    *windowsEnumerator;
+    id              anObject;
+    NSWindow        *activeConsole;
+    
+    
+    visibleWindows = [NSMutableArray arrayWithCapacity: 37];
+    
+    
+    NSArray *myWindows = [[NSApplication sharedApplication] windows];
+    windowsEnumerator = [myWindows objectEnumerator];
+    while (anObject = [windowsEnumerator nextObject])
+        if ([(NSWindow *)anObject isVisible])
+            [visibleWindows addObject: anObject];
+    
+    // NSLog(@"There are %lu windows", (unsigned long)[visibleWindows count]);
+
+    windowsEnumerator = [visibleWindows objectEnumerator];
+    while ((activeConsole = [windowsEnumerator nextObject]) &&
+           ( ! [activeConsole isKindOfClass: [TSConsoleWindow class]]))
+    {
+        ;
+    }
+    
+    if (! activeConsole)
+    {
+//      NSLog(@"no console");
+        return;
+    }
+    
+//    if (  [activeConsole isKindOfClass: [TSConsoleWindow class]])
+//        NSLog(@"this is a console");
+    
+//    NSLog(@"found one");
+    
+    if (activeConsole != nil) {
+        [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:ConsoleWindowFixedPosKey] forKey:ConsoleWindowFixedPosKey];
+        [SUD setObject:[activeConsole stringWithSavedFrame] forKey:ConsoleWindowFixedPosKey];
+        
+        // just in case: the radio button must be checked as well.
+        /* koch: the code below is harmless but probably unnecessary since the button can only
+         be pressed if the radio button is in the fixed position mode */
+        [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:ConsoleWindowPosModeKey] forKey:ConsoleWindowPosModeKey];
+        [SUD setInteger:ConsoleWindowPosFixed forKey:ConsoleWindowPosModeKey];
+        [_consoleWindowPosMatrix selectCellWithTag:ConsoleWindowPosFixed];
+    }
+}
+
+
 
 
 
@@ -1144,6 +1218,49 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[SUD setBool:[(NSCell *)sender state] forKey:SavePSEnabledKey];
 }
 
+/*" Sparkle Actions 
+"*/
+- (IBAction)sparkleAutomaticCheck:sender
+{
+    sparkleTouched = YES;
+    oldSparkleAutomaticUpdate = [SUD boolForKey:SparkleAutomaticUpdateKey];
+    
+    BOOL theValue = [(NSCell *) sender state];
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SparkleAutomaticUpdateKey] forKey:SparkleAutomaticUpdateKey];
+    [_sparkleIntervalMatrix setEnabled: theValue];
+    [SUD setBool:theValue forKey:SparkleAutomaticUpdateKey];
+    
+    
+    [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: theValue ];
+    
+}
+
+- (IBAction)sparkleInterval:sender
+{
+    sparkleTouched = YES;
+    oldSparkleInterval = [SUD integerForKey: SparkleIntervalKey];
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:SparkleIntervalKey] forKey:SparkleIntervalKey];
+    
+    [SUD setInteger:[[sender selectedCell] tag] forKey:SparkleIntervalKey];
+    
+    
+    switch ([[sender selectedCell] tag])
+    {
+        case 1: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 86400];
+                break;
+            
+        case 2: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 604800];
+            break;
+            
+        case 3: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 2629800];
+            break;
+    }
+    
+}
 
 
 
@@ -1428,6 +1545,23 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[SUD setBool:oldBibDeskComplete forKey:BibDeskCompletionKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 	}
+    
+    if (sparkleTouched) {
+        [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: oldSparkleAutomaticUpdate];
+        
+        switch (oldSparkleInterval)
+        {
+            case 1: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 86400];
+                break;
+                
+            case 2: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 604800];
+                break;
+                
+            case 3: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 2629800];
+                break;
+        }
+    }
+    
 	// added by mitsu --(G) TSEncodingSupport
 	if (encodingTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object: self ];
@@ -1575,6 +1709,9 @@ This method retrieves the application preferences from the defaults object and s
 	[_convertUTFButton setState:[defaults boolForKey:AutomaticUTF8MACtoUTF8ConversionKey]];
     [_openRootFileButton  setState:[defaults boolForKey:AutoOpenRootFileKey]];
     [_miniaturizeRootFileButton setState:[defaults boolForKey:MiniaturizeRootFileKey]];
+    [_sparkleAutomaticButton setState: [defaults boolForKey: SparkleAutomaticUpdateKey]];
+    [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
+    [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada
@@ -1656,7 +1793,7 @@ This method retrieves the application preferences from the defaults object and s
         [_findMatrix selectCellWithTag:2];
 	[_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
 	[_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
-
+    [_consoleWindowPosMatrix selectCellWithTag:[defaults integerForKey:ConsoleWindowPosModeKey]];
 	[_pdfWindowPosMatrix selectCellWithTag:[defaults integerForKey:PdfWindowPosModeKey]];
 	/* koch: */
 	if ([defaults integerForKey:PdfWindowPosModeKey] == 0)
@@ -1778,7 +1915,6 @@ This method retrieves the application preferences from the defaults object and s
 		[_engineTextField setEditable: YES];
 	[_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
 	[_syncMatrix selectCellWithTag:[defaults integerForKey:SyncMethodKey]];
-	[_consoleMatrix selectCellWithTag:[defaults integerForKey:ConsoleBehaviorKey]];
 	[_saveRelatedButton setState:[defaults boolForKey:SaveRelatedKey]];
 }
 

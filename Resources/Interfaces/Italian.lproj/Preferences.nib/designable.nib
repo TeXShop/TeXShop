@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -83,6 +83,8 @@
                 <outlet property="_sourceBackgroundColorWell" destination="1184" id="1187"/>
                 <outlet property="_sourceTextColorWell" destination="1185" id="1186"/>
                 <outlet property="_sourceWindowPosMatrix" destination="30" id="83"/>
+                <outlet property="_sparkleAutomaticButton" destination="kY4-Uk-pvx" id="dp7-ci-WF3"/>
+                <outlet property="_sparkleIntervalMatrix" destination="24j-eQ-JFX" id="NaR-jS-Kju"/>
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
@@ -2270,6 +2272,60 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="miniaturizeRootFilePressed:" target="-2" id="ZIW-bG-vNZ"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Aggiornamento tramite Sparkle" id="wPZ-I7-40K">
+                                            <rect key="frame" x="85" y="5" width="357" height="127"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="353" height="107"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" id="24j-eQ-JFX">
+                                                        <rect key="frame" x="40" y="13" width="174" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="174" height="18"/>
+                                                        <size key="intercellSpacing" width="4" height="2"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="b62-3g-ehe">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="giorno" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="59H-TZ-pvS">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="una volta alla settimana" imagePosition="left" alignment="left" tag="2" inset="2" id="yPb-hv-2yS">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="una volta al mese" imagePosition="left" alignment="left" tag="3" inset="2" id="7Qz-H8-7Tp">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="sparkleInterval:" target="-2" id="dZ4-7i-ofe"/>
+                                                        </connections>
+                                                    </matrix>
+                                                    <button id="kY4-Uk-pvx">
+                                                        <rect key="frame" x="18" y="81" width="320" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="check" title="Controlla aggiornamenti automaticamente" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="XXr-5r-1oX">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sparkleAutomaticCheck:" target="-2" id="xbh-Xa-YmZ"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

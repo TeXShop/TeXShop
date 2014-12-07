@@ -448,6 +448,8 @@ extern NSString *InterpolationValueKey;
 extern NSString *ConsoleWindowFixedPosKey;
 extern NSString *ConsoleWindowPosModeKey;
 extern NSString *YosemiteScrollBugKey;
+extern NSString *SparkleAutomaticUpdateKey;
+extern NSString *SparkleIntervalKey;
 
 
 

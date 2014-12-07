@@ -5820,6 +5820,33 @@ oldVisibleRect.size.width = 0;
 }
 */
 
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    NSString	*theKey;
+    unichar		key;
+    
+    theKey = theEvent.characters;
+    if (theKey.length >= 1)
+        key = [theKey characterAtIndex:0];
+    else
+        key = 0;
+    
+    if (([self.myDocument useFullSplitWindow]) && (! ([[self window] firstResponder] == self)))
+        return NO;
+    
+    if ((key == 'f') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+        [self.drawer open];
+        [[self window] makeFirstResponder:_searchField ];
+        return YES;
+    }
+    
+    else
+        
+        return NO;
+}
+
+    
+
 - (void)keyDown:(NSEvent *)theEvent
 {
     NSString	*theKey;
@@ -5855,7 +5882,7 @@ oldVisibleRect.size.width = 0;
     
 // Otherwise there is nothing to fix if the Yosemite bug is fixed or we are running on an
 //    earlier system
-    if ((! [SUD boolForKey:YosemiteScrollBugKey]) || (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_9)) {
+    if ((! [SUD boolForKey:YosemiteScrollBugKey]) || (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9)) {
         [super keyDown: theEvent];
         return;
     }

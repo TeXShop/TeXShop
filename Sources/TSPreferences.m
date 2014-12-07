@@ -32,6 +32,7 @@
 #import "TSAppDelegate.h" // mitsu 1.29 (O)
 #import "TSDocument.h"
 #import "TSConsoleWindow.h"
+#import <Sparkle/SUUpdater.h>
 
 //#import "MyPDFView.h" // mitsu 1.29 (O)
 
@@ -144,6 +145,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	kpsetoolTouched = NO; // added by Terada
 	bibTeXengineTouched = NO; // added by Terada
 //	makeatletterTouched = NO; // added by Terada
+    sparkleTouched = NO;
 	// end addition
 	// prepare undo manager: forget all the old undo information and begin a new group.
 	[_undoManager removeAllActions];
@@ -1216,6 +1218,49 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[SUD setBool:[(NSCell *)sender state] forKey:SavePSEnabledKey];
 }
 
+/*" Sparkle Actions 
+"*/
+- (IBAction)sparkleAutomaticCheck:sender
+{
+    sparkleTouched = YES;
+    oldSparkleAutomaticUpdate = [SUD boolForKey:SparkleAutomaticUpdateKey];
+    
+    BOOL theValue = [(NSCell *) sender state];
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SparkleAutomaticUpdateKey] forKey:SparkleAutomaticUpdateKey];
+    [_sparkleIntervalMatrix setEnabled: theValue];
+    [SUD setBool:theValue forKey:SparkleAutomaticUpdateKey];
+    
+    
+    [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: theValue ];
+    
+}
+
+- (IBAction)sparkleInterval:sender
+{
+    sparkleTouched = YES;
+    oldSparkleInterval = [SUD integerForKey: SparkleIntervalKey];
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:SparkleIntervalKey] forKey:SparkleIntervalKey];
+    
+    [SUD setInteger:[[sender selectedCell] tag] forKey:SparkleIntervalKey];
+    
+    
+    switch ([[sender selectedCell] tag])
+    {
+        case 1: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 86400];
+                break;
+            
+        case 2: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 604800];
+            break;
+            
+        case 3: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 2629800];
+            break;
+    }
+    
+}
 
 
 
@@ -1500,6 +1545,23 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[SUD setBool:oldBibDeskComplete forKey:BibDeskCompletionKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 	}
+    
+    if (sparkleTouched) {
+        [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: oldSparkleAutomaticUpdate];
+        
+        switch (oldSparkleInterval)
+        {
+            case 1: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 86400];
+                break;
+                
+            case 2: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 604800];
+                break;
+                
+            case 3: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 2629800];
+                break;
+        }
+    }
+    
 	// added by mitsu --(G) TSEncodingSupport
 	if (encodingTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"EncodingChangedNotification" object: self ];
@@ -1647,6 +1709,9 @@ This method retrieves the application preferences from the defaults object and s
 	[_convertUTFButton setState:[defaults boolForKey:AutomaticUTF8MACtoUTF8ConversionKey]];
     [_openRootFileButton  setState:[defaults boolForKey:AutoOpenRootFileKey]];
     [_miniaturizeRootFileButton setState:[defaults boolForKey:MiniaturizeRootFileKey]];
+    [_sparkleAutomaticButton setState: [defaults boolForKey: SparkleAutomaticUpdateKey]];
+    [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
+    [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada

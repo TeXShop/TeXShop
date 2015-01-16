@@ -237,6 +237,10 @@ NSString *ConsoleWindowPosModeKey = @"ConsoleWindowPosMode";
 NSString *YosemiteScrollBugKey = @"YosemiteScrollBug";
 NSString *SparkleAutomaticUpdateKey = @"SparkleAutomaticUpdate";
 NSString *SparkleIntervalKey = @"SparkleInterval";
+NSString *reverseSyncRedKey = @"ReverseSyncRed";
+NSString *reverseSyncGreenKey = @"ReverseSyncGreen";
+NSString *reverseSyncBlueKey = @"ReverseSyncBlue";
+
 
 
 // Paths

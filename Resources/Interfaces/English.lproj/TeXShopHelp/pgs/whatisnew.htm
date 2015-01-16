@@ -14,6 +14,61 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.49</h5></P>
+
+<ul>
+<li> TeXShop installs two movies for beginners in ~/Library/TeXShop/Movies/TeXShop. These movies
+are quite large, 5.4 MB and 9.4 MB as gzipped files. Until version 3.49, every update of TeXShop
+ contained these movies, slowing download times. TeXShop 3.49 finally does the right thing; it no longer contains the movies. If the user asks to view one of them,  TeXShop downloads that movie from the web site, installs it in the above location, and runs it.
+Once downloaded, the movie remains on the user's machine.
+
+<p> This simple change reduces the size of the TeXShop download from 54 MB to 39 MB, and the
+size of the unzipped program from 83 MB to 53 MB.
+
+<p>
+<li> The Experiment feature of TeXShop, introduced in version 3.37, did not handle the
+"% !TEX encoding = ..." line in the header of the source file correctly, so users with
+UTF-8 files ran into trouble using the feature. This is fixed.
+
+<p>
+<li> The Source <—> Preview menu item and associated keyboard shortcut now work in Single Window mode. 
+
+<p>
+<li> In the French Localization, the item in TeXShop Preferences to set the font of the
+source file was broken. This is fixed.
+
+<p>
+<li> Three hidden preferences were added, allowing users to change the yellow highlight color
+to another color, when used by inverse sync from the pdf window to the source text. This is
+helpful if the user has changed the default colors of the source window. The new items are
+<dd>
+<dl> defaults write TeXShop ReverseSyncRed 1.00
+<dl> defaults write TeXShop ReverseSyncGreen 1.00 
+<dl> defaults write TeXShop ReverseSyncBlue 0.00
+</dd>
+
+<p>
+<li> Latexmk is updated to version 4.42
+
+<p>
+<li> MakeIndex failed on files with multiple dots in the name; now fixed.
+
+<p>
+<li> A new TeXShop Preference item under the Console tab allows users to set the default size and location of the Console Window. To set these values, open a document and use TeXShop’s “Show Console” menu to bring the console to the foreground. Adjust its size and location as desired. Then open TeXShop Preferences, select the Console tab, choose “All consoles start at fixed position” and press the “Set with current position” button. Then click “OK.”
+
+</ul>
+
+
+
+<P><h5>TeXShop Changes 3.48.1</h5></P>
+
+<ul>
+<li> Version 3.48 had a serious problem when used in French. Double clicking on a TeX
+file opened TeXShop, but not the source. This was caused by a missing connection in the
+French nib file. This was almost immediately corrected in 3.48.1. 
+</ul>
+
+
 <P><h5>TeXShop Changes 3.48</h5></P>
 
 <ul>
@@ -2971,7 +3026,7 @@ Support for SyncTeX was added to TeXShop 2.18 at the last moment. Synctex is now
 </dl>
 <li> In
 <dl>
-<dd>		%!TEX encoding =
+<dd>		encoding =
 <dd>		%!TEX root =
 <dd>		%!TEX TS-program =
 <dd>		%!TEX projectfile = 

@@ -1267,7 +1267,7 @@
              }  else if (whichEngineLocal == IndexEngine) {
 				 NSString* indexPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto, spaces in path
-				 [args addObject: [indexPath lastPathComponent]];
+                 [args addObject: [[indexPath lastPathComponent] stringByAppendingPathExtension: @"idx"]];
 				 
 				 if (self.indexTask != nil) {
 					 [self.indexTask terminate];

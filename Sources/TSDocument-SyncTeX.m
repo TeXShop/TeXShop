@@ -109,6 +109,8 @@
 	NSInteger		matchStart, matchLength, i, matchAdjust, newLocation;
 	NSRange			matchRange;
     TSDocument      *myDocument, *newDocument;
+    CGFloat         myRed, myGreen, myBlue;
+    NSColor         *thePossiblyYellowColor;
 	// NSString		*lineString;
 	
     
@@ -330,7 +332,14 @@
 		
 		NSDictionary *mySelectedAttributes = [myTextView selectedTextAttributes];
 		NSMutableDictionary *newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
-		[newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+        
+        myRed = [SUD floatForKey: reverseSyncRedKey];
+        myGreen = [SUD floatForKey: reverseSyncGreenKey];
+        myBlue = [SUD floatForKey: reverseSyncBlueKey];
+        thePossiblyYellowColor = [NSColor colorWithCalibratedRed:myRed green:myGreen blue:myBlue alpha:1.00];
+        [newSelectedAttributes setObject: thePossiblyYellowColor forKey:@"NSBackgroundColor"];
+        
+		// [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
 		// FIXME: use temporary attributes instead of abusing the text selection
 		[myTextView setSelectedTextAttributes: newSelectedAttributes];
 		

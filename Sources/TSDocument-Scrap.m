@@ -280,10 +280,11 @@
 			}
             
             if (encodingRange.location != NSNotFound) {
+                NSLog(@"also got here");
                 newEncodingRange.location = encodingRange.location + offset;
-                newEncodingRange.length = [testString length] - newProgramRange.location;
+                newEncodingRange.length = [testString length] - newEncodingRange.location;
                 if (newEncodingRange.length > 0) {
-                    self.scrapEncoding = [[testString substringWithRange: newProgramRange]
+                    self.scrapEncoding = [[testString substringWithRange: newEncodingRange]
                                      stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
                     // encodingString = [programString lowercaseString];
                     encodingDone = YES;

@@ -793,6 +793,9 @@
 	
 	if (!texshopDemosMenu)
 		return;
+    
+    [texshopDemosMenu addItemWithTitle:@"Getting Started" action: @selector(doMovie:) keyEquivalent:@"" ];
+    [texshopDemosMenu addItemWithTitle:@"Initial Preferences" action: @selector(doMovie:) keyEquivalent:@"" ];
 		
 	fm       = [ NSFileManager defaultManager ];
 	basePath = [[ MoviesPath stringByAppendingString:@"/TeXShop"] stringByStandardizingPath ];
@@ -814,7 +817,8 @@
 				} 
 			else if ([[[title pathExtension] lowercaseString] isEqualToString: @"mov"]) {
 				title = [title stringByDeletingPathExtension];
-				[texshopDemosMenu addItemWithTitle:title action: @selector(doMovie:) keyEquivalent:@"" ];
+                if (( ! [title isEqualToString:@"Getting Started"]) && ( ! [title isEqualToString:@"Initial Preferences"]))
+                    [texshopDemosMenu addItemWithTitle:title action: @selector(doMovie:) keyEquivalent:@"" ];
 			}
 		}
 	}

@@ -450,6 +450,9 @@ extern NSString *ConsoleWindowPosModeKey;
 extern NSString *YosemiteScrollBugKey;
 extern NSString *SparkleAutomaticUpdateKey;
 extern NSString *SparkleIntervalKey;
+extern NSString *reverseSyncRedKey;
+extern NSString *reverseSyncGreenKey;
+extern NSString *reverseSyncBlueKey;
 
 
 

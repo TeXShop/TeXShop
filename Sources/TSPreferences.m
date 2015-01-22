@@ -693,10 +693,10 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleWindowPosModeKey];
     [_consoleWindowPosMatrix selectCellWithTag:[[sender selectedCell] tag]];
     
-//    if ([[sender selectedCell] tag] == 0)
-//        [_consoleWindowPosButton setEnabled: YES];
-//    else
-//         [_consoleWindowPosButton setEnabled: NO];
+    if ([[sender selectedCell] tag] == 0)
+       [_consoleWindowPosButton setEnabled: YES];
+    else
+         [_consoleWindowPosButton setEnabled: NO];
 }
 
 /*" This method is connected to the 'use current pos as default' button on the 'Document' pane.
@@ -1794,6 +1794,10 @@ This method retrieves the application preferences from the defaults object and s
 	[_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
 	[_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     [_consoleWindowPosMatrix selectCellWithTag:[defaults integerForKey:ConsoleWindowPosModeKey]];
+    if ([defaults integerForKey:ConsoleWindowPosModeKey] == 0)
+        [_consoleWindowPosButton setEnabled: YES];
+    else
+        [_consoleWindowPosButton setEnabled: NO];
 	[_pdfWindowPosMatrix selectCellWithTag:[defaults integerForKey:PdfWindowPosModeKey]];
 	/* koch: */
 	if ([defaults integerForKey:PdfWindowPosModeKey] == 0)

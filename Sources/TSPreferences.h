@@ -33,7 +33,7 @@
 	IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
 	IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
-// IBOutlet NSButtonCell	*_consoleWindowPosButton;		/* connected to set current position button */
+    IBOutlet NSButton	*_consoleWindowPosButton;		/* connected to set current position button */
     IBOutlet NSMatrix	*_consoleWindowPosMatrix;		/* connected to set current position button */
 	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */

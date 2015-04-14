@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <deployment version="1050" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -11,7 +11,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
             <items>
                 <menuItem title="TeXshop" id="56">
@@ -280,9 +280,15 @@
                                     <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Sostituzionic" id="835">
+                            <menuItem title="Correggi ortografia mentre scrivo" id="rba-0H-7Ix">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Sostituzionic" id="845">
+                                <connections>
+                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="DoA-HM-oIa"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sostituzioni" id="835">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Sostituzioni" id="845">
                                     <items>
                                         <menuItem title="Mostra Sostituzioni" id="846">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -1026,6 +1032,12 @@
                                     <action selector="displayTipsandTricks:" target="672" id="896"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="TeXShop Feature Confusion" id="fzW-k2-w4Q">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayTeXShopConfusion:" target="672" id="2yB-qO-gWf"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Recent TeX Fonts" id="ZeJ-zj-3dt">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1059,7 +1071,7 @@
                                     <action selector="displayShortCourse:" target="672" id="740"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Short Course Supplements --> Desktop" id="681">
+                            <menuItem title="Short Course Supplements --&gt; Desktop" id="681">
                                 <connections>
                                     <action selector="supplementsToDesktop:" target="672" id="741"/>
                                 </connections>
@@ -1232,10 +1244,10 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="872" id="873">
-                                    <rect key="frame" x="0.0" y="0.0" width="511" height="364"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="511" height="26"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>

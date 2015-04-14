@@ -77,6 +77,15 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayTeXShopConfusion:sender
+{
+    NSString				*fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"TeXShop Feature Confusion" ofType:@"pdf"];
+    [self displayFile: fileName];
+}
+
+
 - (IBAction)displayRecentTeXFonts:sender;
 {
     NSString				*fileName;

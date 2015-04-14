@@ -43,6 +43,7 @@
 	IBOutlet NSButtonCell   *_selectActivateButton;         /*" connected to "Select on Activate" "*/
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
 	IBOutlet NSButtonCell	*_spellCheckButton;		/*" connected to "SpellChecking "*/
+    IBOutlet NSButtonCell   *_autoSpellCorrectButton;  /*" connect to "Auto Spell Correcting "*/
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
@@ -178,6 +179,7 @@
 - (IBAction)selectActivatePressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
+- (IBAction)spellCorrectPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
 - (IBAction)tagMenuButtonPressed:sender;

@@ -1,0 +1,146 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[letterpaper,body={6.0in,9.5in},vmarginratio=1:1]{geometry}
+\usepackage[small,compact]{titlesec}
+
+%SetFonts
+%Fourier+Berasans+Beramono
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{microtype}
+%SetFonts
+
+\usepackage{xcolor}
+\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+\usepackage{graphicx}
+
+\newcommand{\optkey}{\textsf{Opt}}
+\newcommand{\ctlkey}{\textsf{Ctl}}
+\newcommand{\cmdkey}{\textsf{Cmd}}
+\newcommand{\esckey}{\textsf{Esc}}
+\newcommand{\tabkey}{\textsf{Tab}}
+\newcommand{\shiftkey}{\textsf{Shift}}
+
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+\pagestyle{plain}
+
+\usepackage{booktabs}
+
+%\pagestyle{empty}
+
+% set | as a command character within verbatim so you can execute commands there (for CC Doc)
+\usepackage{verbatim}
+\makeatletter
+\addto@hook\every@verbatim{\catcode`|=0}
+\makeatother
+
+% define colored items to be inserted in verbatim environments (for Command Completion Doc)
+\usepackage{xcolor}
+\setlength{\fboxsep}{0pt}
+\newcommand{\selinsertion}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{|}}}
+\newcommand{\selmark}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+
+% define a few items for easy use
+%\newcommand{\fastex}{Fas\hspace{-.15em}\TeX} % for CC Doc
+\newcommand{\TS}{\textsf{\TeX Shop}}
+\newcommand{\TSVersion}{2.30}
+%\newcommand{\CCT}{\textsf{CommandCompletion.txt}} % for CC Doc
+\title{\TS's\\Key Bindings vs Macros\\vs Command Completion}
+\author{Herbert Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
+\date{2015/02/22}
+
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+There are three features of \TS\ which often get mixed up: \cmd{Key Bindings} (at one time  called \cmd{Auto-Completion}), \cmd{Macros} and \cmd{Command Completion}. Although they share similar features it is possible to tell the difference between them and when each is most useful.
+
+\section{The Basics}
+
+\textbf{\cmd{Key Bindings}} assign a set of keystrokes to the press of a single key; e.g., typing \verb"_" produces \verb"_{…|}" (where \verb"…|" is any selected text followed by the insertion point --- the place where text is inserted) or typing \(\leq\) (\cmd{Opt-,} with the English keyboard layout) produces \verb"\leq".
+
+\noindent\textbf{\cmd{Macros}} can also insert simple text and be given a keyboard shortcut (that always uses the \cmdkey\ plus other keys) but are most useful when attached to Applescript programs so they can do special processing of Source text, etc.
+
+\noindent\textbf{\cmd{Command Completion}} (\emph{NOT} to be confused with \cmd{Auto-Completion}) allows you to type a partial command or short abbreviation and, when a trigger key is pressed (\esckey\ by default but it can be set to \tabkey), have that expanded into a full command or even a full environment structure.
+
+Details follow.
+
+\section{\cmd{Key Bindings}}
+
+\cmd{Key Bindings} are turned on by checking \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Key Bindings}. Of course they can be turned off by un-checking that preference setting. They can be turned On/Off for a given editing session by using the \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Toggle On/Off} menu item (a Check Mark means it's on).
+
+You can see the list of \cmd{Key Bindings}, edit and add/delete them by starting up the \cmd{Key Bindings Editor} using the \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Edit Key Bindings File…} menu item.
+
+\subsection{Special Notes}
+
+\textbf{Note}: inserting a \verb"\" before typing the key negates the expansion; e.g., pressing \verb"\" and then \verb"_" produces \verb"\_", as it should.
+ 
+\noindent \textbf{Note}: \cmd{Key Bindings} cannot be created for characters produced by multi-key sequences; e.g., \cmd{Opt-e} \emph{followed by} e produces é on the English keyboard layout which \emph{cannot} be set to produce \verb"\'e" as a \cmd{Key Binding}. The initial \cmd{Opt-e} is usually called a \cmd{dead key} since it doesn't produce an on-screen character by itself and \emph{must} be followed by another character.
+
+\section{\cmd{Macros}}
+
+The \mnu{Macros} Menu contains a fairly large number of pre-defined macros. It is possible to create more macros by enabling the Macro Editor with \mnu{Macros}\To\mnu{Open Macro Editor…}. Macros can be added either by copying text into a newly created macro or by adding a macro file (which has the extension \cmd{plist}) using \mnu{Macros}\To\mnu{Add macros from file…} (only visible and available when the Macro Editor is active). The order of appearance of the macros in the \cmd{Macros} Menu can also be changed by simply moving them around on the left panel of the \cmd{Macro Editor}.
+
+\subsection{Special Notes}
+
+\textbf{Note}: text to which you wish to assign a \cmd{Cmd} based keyboard shortcut is best created using a \cmd{Macro} rather than a \cmd{Key Binding}; e.g., there is already a \cmd{Macro} that takes selected text and sets it  in boldface (using \verb"\textbf") and you can assign the \cmd{Cmd-B} keyboard shortcut to that \cmd{Macro} in the \cmd{Macro Editor}.
+
+\section{\cmd{Command Completion}}
+
+For \cmd{Command Completion} you enter a partial command name or a short abbreviation, press a trigger key (\esckey\ or, as mentioned above, \tabkey\ if set in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Command Completion Triggered By:}) and it gets expanded. E.g., enter
+\begin{verbatim}
+\sec
+\end{verbatim}
+on a new line and press the trigger (\esckey\ or …) and you get
+\begin{verbatim}
+\section{|selmark}
+\end{verbatim}
+(where \selmark\ is a selected bullet [called a \cmd{Mark} in \cmd{Command Completion} parlance] so simply typing will replace that \cmd{Mark} with your text. There can be more than one match for a given input; if you press the trigger again (without entering text) you get
+\begin{verbatim}
+\section*{|selmark}
+\end{verbatim}
+and another press of the trigger gives
+\begin{verbatim}
+\section[|selmark]{•}
+\end{verbatim}
+for separate section titles in the \cmd{toc} and the document. In the last case there is a second \cmd{Mark}~(•) for the second argument. After entering the \cmd{toc} section title you jump to and select the next \cmd{Mark} by using \mnu{Source}\To\mnu{Command Completion}\To\mnu{Marks}\To\mnu{Next Mark} (\cmd{Ctl-Cmd-F}) so you can immediately start typing the section title for that document.
+
+Better yet are abbreviations. E.g., type
+\begin{verbatim}
+\benu
+\end{verbatim}
+(abbreviations for environments always start with a `\texttt{b}') and press the trigger key to get
+\begin{verbatim}
+\begin{enumerate}
+\item
+|selmark
+\end{enumerate}•
+\end{verbatim}
+ready to enter the first item. To get a new \verb"\item" simply type
+\begin{verbatim}
+\it
+\end{verbatim}
+on a new line and the trigger to get
+\begin{verbatim}
+\item
+|selmark
+\end{verbatim}
+finally to get to the very end of the enumerate environment use (\cmd{Ctl-Cmd-F}) to select the \cmd{Mark} at the end of the environment where simply typing \cmd{Return} will remove that mark and move to the next line.
+
+\subsection{Special Notes}
+
+\textbf{Note}: \cmd{Command Completion} replaces any selected text by the expansion unlike \cmd{Key Bindings} and \cmd{Macros} which can be written to include the selected text in the final result of their actions.
+
+
+
+\end{document}

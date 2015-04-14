@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -16,6 +16,7 @@
                 <outlet property="_antialiasButton" destination="3zL-Fd-HOn" id="MSP-Fj-aEv"/>
                 <outlet property="_autoCompleteButton" destination="686" id="696"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
+                <outlet property="_autoSpellCorrectButton" destination="czU-vf-Oph" id="Tzy-uZ-TCU"/>
                 <outlet property="_beepButton" destination="978" id="1039"/>
                 <outlet property="_bibDeskCompleteButton" destination="687" id="698"/>
                 <outlet property="_bibTeXengineField" destination="1021" id="1029"/>
@@ -104,25 +105,25 @@
         <window title="Preferências do TeXShop" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="5" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="267" y="190" width="586" height="654"/>
+            <rect key="contentRect" x="267" y="190" width="586" height="674"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
             <view key="contentView" id="6">
-                <rect key="frame" x="0.0" y="0.0" width="586" height="654"/>
+                <rect key="frame" x="0.0" y="-1" width="586" height="674"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="7">
-                        <rect key="frame" x="20" y="34" width="553" height="614"/>
+                        <rect key="frame" x="20" y="42" width="553" height="626"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Documento" identifier="Document" id="9">
                                 <view key="view" id="11">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Find Panel (after restart)" id="585">
-                                            <rect key="frame" x="11" y="136" width="256" height="90"/>
+                                            <rect key="frame" x="11" y="148" width="256" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="70"/>
@@ -132,44 +133,15 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
-                                        <box title="Codificação" id="262">
-                                            <rect key="frame" x="276" y="194" width="236" height="68"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="232" height="48"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <popUpButton verticalHuggingPriority="750" id="278">
-                                                        <rect key="frame" x="14" y="9" width="203" height="26"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="918">
-                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
-                                                            <menu key="menu" title="OtherViews" id="277">
-                                                                <items>
-                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
-                                                                </items>
-                                                            </menu>
-                                                        </popUpButtonCell>
-                                                        <connections>
-                                                            <action selector="encodingChanged:" target="-2" id="282"/>
-                                                        </connections>
-                                                    </popUpButton>
-                                                </subviews>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
                                         <box title="Editor" id="63">
-                                            <rect key="frame" x="276" y="261" width="236" height="240"/>
+                                            <rect key="frame" x="276" y="259" width="236" height="254"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="232" height="220"/>
+                                                <rect key="frame" x="2" y="2" width="232" height="234"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="12" y="192" width="127" height="22"/>
+                                                        <rect key="frame" x="12" y="206" width="127" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="127" height="22"/>
@@ -191,7 +163,7 @@
                                                         </connections>
                                                     </form>
                                                     <button id="fjx-q1-Asx">
-                                                        <rect key="frame" x="152" y="194" width="75" height="18"/>
+                                                        <rect key="frame" x="152" y="208" width="75" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="Use Tab" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1mm-jc-Ex1">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -208,7 +180,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Tipo para o documento" id="14">
-                                            <rect key="frame" x="11" y="509" width="284" height="56"/>
+                                            <rect key="frame" x="11" y="521" width="284" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="280" height="36"/>
@@ -241,7 +213,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Source Window Position" id="19">
-                                            <rect key="frame" x="11" y="394" width="256" height="107"/>
+                                            <rect key="frame" x="11" y="406" width="256" height="107"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="87"/>
@@ -291,7 +263,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="No início" id="236">
-                                            <rect key="frame" x="11" y="303" width="256" height="86"/>
+                                            <rect key="frame" x="11" y="315" width="256" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="66"/>
@@ -326,7 +298,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
-                                            <rect key="frame" x="24" y="146" width="146" height="58"/>
+                                            <rect key="frame" x="24" y="158" width="146" height="58"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="146" height="18"/>
@@ -356,7 +328,7 @@
                                             </connections>
                                         </matrix>
                                         <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
-                                            <rect key="frame" x="306" y="273" width="178" height="178"/>
+                                            <rect key="frame" x="306" y="265" width="178" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="178" height="18"/>
@@ -430,6 +402,13 @@
                                                             <action selector="tagMenuButtonPressed:" target="-2" id="1q9-X1-uWw"/>
                                                         </connections>
                                                     </buttonCell>
+                                                    <buttonCell type="check" title="Correct Spelling" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="czU-vf-Oph">
+                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                        <font key="font" metaFont="system"/>
+                                                        <connections>
+                                                            <action selector="spellCorrectPressed:" target="-2" id="F71-Ov-0T2"/>
+                                                        </connections>
+                                                    </buttonCell>
                                                 </column>
                                             </cells>
                                             <connections>
@@ -437,7 +416,7 @@
                                             </connections>
                                         </matrix>
                                         <box title="Text and Background Colors" id="790">
-                                            <rect key="frame" x="310" y="509" width="202" height="56"/>
+                                            <rect key="frame" x="310" y="521" width="202" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="198" height="36"/>
@@ -466,7 +445,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Command Completion Triggered By:" id="966">
-                                            <rect key="frame" x="11" y="230" width="256" height="69"/>
+                                            <rect key="frame" x="11" y="242" width="256" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="49"/>
@@ -505,7 +484,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="Matching Target" borderType="line" id="974">
-                                            <rect key="frame" x="276" y="139" width="234" height="57"/>
+                                            <rect key="frame" x="276" y="131" width="234" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="232" height="38"/>
@@ -570,7 +549,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="Parens Matching Settings" borderType="line" id="975">
-                                            <rect key="frame" x="276" y="5" width="234" height="134"/>
+                                            <rect key="frame" x="276" y="0.0" width="234" height="134"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="232" height="115"/>
@@ -638,7 +617,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="Show Invisible Characters" borderType="line" id="1066">
-                                            <rect key="frame" x="11" y="5" width="256" height="133"/>
+                                            <rect key="frame" x="11" y="17" width="256" height="133"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="254" height="114"/>
@@ -817,16 +796,45 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="Codificação" id="262">
+                                            <rect key="frame" x="274" y="192" width="236" height="68"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="232" height="48"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" id="278">
+                                                        <rect key="frame" x="14" y="9" width="203" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="918">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" title="OtherViews" id="277">
+                                                                <items>
+                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="encodingChanged:" target="-2" id="282"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Ver em PDF" identifier="2" id="8">
                                 <view key="view" id="10">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Posição da janela" id="47">
-                                            <rect key="frame" x="23" y="446" width="253" height="103"/>
+                                            <rect key="frame" x="23" y="458" width="253" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="83"/>
@@ -876,7 +884,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Escala" id="111">
-                                            <rect key="frame" x="289" y="293" width="225" height="61"/>
+                                            <rect key="frame" x="289" y="305" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -909,7 +917,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Botões de mudança de página" id="228">
-                                            <rect key="frame" x="289" y="488" width="225" height="61"/>
+                                            <rect key="frame" x="289" y="500" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -933,7 +941,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Default Mouse Mode" id="330">
-                                            <rect key="frame" x="23" y="293" width="253" height="62"/>
+                                            <rect key="frame" x="23" y="305" width="253" height="62"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="42"/>
@@ -966,7 +974,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Magnification Method" id="342">
-                                            <rect key="frame" x="289" y="358" width="225" height="61"/>
+                                            <rect key="frame" x="289" y="370" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -997,7 +1005,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Default Page Style" id="329">
-                                            <rect key="frame" x="289" y="423" width="225" height="61"/>
+                                            <rect key="frame" x="289" y="435" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -1029,7 +1037,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Double Page Modes" id="501">
-                                            <rect key="frame" x="23" y="359" width="253" height="83"/>
+                                            <rect key="frame" x="23" y="371" width="253" height="83"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="63"/>
@@ -1068,7 +1076,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="External Editor" id="555">
-                                            <rect key="frame" x="23" y="223" width="253" height="66"/>
+                                            <rect key="frame" x="23" y="235" width="253" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="46"/>
@@ -1092,7 +1100,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Background Color" id="795">
-                                            <rect key="frame" x="289" y="223" width="222" height="66"/>
+                                            <rect key="frame" x="289" y="235" width="222" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="218" height="46"/>
@@ -1113,7 +1121,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Monitor" id="d7c-cE-bR7">
-                                            <rect key="frame" x="23" y="153" width="253" height="66"/>
+                                            <rect key="frame" x="23" y="165" width="253" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="46"/>
@@ -1141,11 +1149,11 @@
                             </tabViewItem>
                             <tabViewItem label="Console" identifier="Console" id="705">
                                 <view key="view" id="706">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Console Font" id="752">
-                                            <rect key="frame" x="48" y="482" width="431" height="56"/>
+                                            <rect key="frame" x="48" y="494" width="431" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="427" height="36"/>
@@ -1178,7 +1186,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Background Color" id="767">
-                                            <rect key="frame" x="48" y="414" width="132" height="64"/>
+                                            <rect key="frame" x="48" y="426" width="132" height="64"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="128" height="44"/>
@@ -1199,7 +1207,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Foreground Color" id="834">
-                                            <rect key="frame" x="224" y="414" width="132" height="64"/>
+                                            <rect key="frame" x="224" y="426" width="132" height="64"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="128" height="44"/>
@@ -1220,7 +1228,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Console Position" id="CDL-GC-ljn">
-                                            <rect key="frame" x="48" y="307" width="308" height="103"/>
+                                            <rect key="frame" x="48" y="319" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="83"/>
@@ -1270,7 +1278,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Console Resize" id="772">
-                                            <rect key="frame" x="48" y="222" width="308" height="75"/>
+                                            <rect key="frame" x="48" y="234" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="55"/>
@@ -1281,7 +1289,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="764">
-                                            <rect key="frame" x="73" y="233" width="147" height="38"/>
+                                            <rect key="frame" x="73" y="245" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1307,7 +1315,7 @@
                                             </connections>
                                         </matrix>
                                         <box title="Mostrar consola" id="828">
-                                            <rect key="frame" x="48" y="141" width="308" height="77"/>
+                                            <rect key="frame" x="48" y="153" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="57"/>
@@ -1350,11 +1358,11 @@
                             </tabViewItem>
                             <tabViewItem label="Composição" identifier="2" id="179">
                                 <view key="view" id="170">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <box title="Script por omissão" id="188">
-                                            <rect key="frame" x="22" y="263" width="225" height="99"/>
+                                            <rect key="frame" x="22" y="275" width="225" height="99"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="79"/>
@@ -1397,7 +1405,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Formato por omissão" id="183">
-                                            <rect key="frame" x="22" y="366" width="225" height="168"/>
+                                            <rect key="frame" x="22" y="378" width="225" height="168"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="148"/>
@@ -1455,7 +1463,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="During File Save" id="314">
-                                            <rect key="frame" x="276" y="366" width="225" height="76"/>
+                                            <rect key="frame" x="276" y="378" width="225" height="76"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="56"/>
@@ -1479,7 +1487,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="After Typesetting" id="675">
-                                            <rect key="frame" x="276" y="457" width="225" height="77"/>
+                                            <rect key="frame" x="276" y="469" width="225" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="57"/>
@@ -1518,7 +1526,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Sync Method" id="823">
-                                            <rect key="frame" x="276" y="241" width="225" height="121"/>
+                                            <rect key="frame" x="276" y="253" width="225" height="121"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="101"/>
@@ -1572,11 +1580,11 @@
                             </tabViewItem>
                             <tabViewItem label="Motor" identifier="2" id="12">
                                 <view key="view" id="13">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <box title="pdfTeX" id="54">
-                                            <rect key="frame" x="18" y="272" width="233" height="140"/>
+                                            <rect key="frame" x="18" y="284" width="233" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="229" height="120"/>
@@ -1664,7 +1672,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="TeX + dvips + distiller" id="200">
-                                            <rect key="frame" x="262" y="272" width="247" height="140"/>
+                                            <rect key="frame" x="262" y="284" width="247" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="243" height="120"/>
@@ -1752,7 +1760,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Caminho" id="215">
-                                            <rect key="frame" x="18" y="421" width="491" height="122"/>
+                                            <rect key="frame" x="18" y="433" width="491" height="122"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="102"/>
@@ -1811,7 +1819,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Search command" id="1018">
-                                            <rect key="frame" x="18" y="188" width="491" height="80"/>
+                                            <rect key="frame" x="18" y="200" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
@@ -1845,7 +1853,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="BibTeX Engine" id="1019">
-                                            <rect key="frame" x="18" y="104" width="491" height="80"/>
+                                            <rect key="frame" x="18" y="116" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
@@ -1883,11 +1891,11 @@
                             </tabViewItem>
                             <tabViewItem label="Copy" identifier="1" id="415">
                                 <view key="view" id="400">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Color Mapping" id="447">
-                                            <rect key="frame" x="103" y="322" width="323" height="142"/>
+                                            <rect key="frame" x="103" y="334" width="323" height="142"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="319" height="122"/>
@@ -1977,7 +1985,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Image Copy Type" id="386">
-                                            <rect key="frame" x="103" y="477" width="323" height="59"/>
+                                            <rect key="frame" x="103" y="489" width="323" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="319" height="39"/>
@@ -2017,11 +2025,11 @@
                             </tabViewItem>
                             <tabViewItem label="Misc" identifier="2" id="127">
                                 <view key="view" id="136">
-                                    <rect key="frame" x="10" y="33" width="533" height="568"/>
+                                    <rect key="frame" x="10" y="33" width="533" height="580"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Script pessoal" id="154">
-                                            <rect key="frame" x="81" y="419" width="357" height="119"/>
+                                            <rect key="frame" x="81" y="431" width="357" height="119"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="353" height="99"/>
@@ -2078,7 +2086,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Distiller" id="545">
-                                            <rect key="frame" x="86" y="339" width="153" height="71"/>
+                                            <rect key="frame" x="86" y="351" width="153" height="71"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="149" height="51"/>
@@ -2117,7 +2125,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="pTeX support" id="574">
-                                            <rect key="frame" x="285" y="339" width="153" height="71"/>
+                                            <rect key="frame" x="285" y="351" width="153" height="71"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="149" height="51"/>
@@ -2141,7 +2149,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="During File Save (for users in Japan)" id="1111">
-                                            <rect key="frame" x="86" y="255" width="352" height="70"/>
+                                            <rect key="frame" x="86" y="267" width="352" height="70"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="348" height="50"/>
@@ -2165,7 +2173,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Project Root File" id="thQ-Cc-bti">
-                                            <rect key="frame" x="86" y="143" width="352" height="95"/>
+                                            <rect key="frame" x="86" y="155" width="352" height="95"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="348" height="75"/>
@@ -2200,7 +2208,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Sparkle Updater" id="Eh7-Oa-hqd">
-                                            <rect key="frame" x="88" y="19" width="357" height="127"/>
+                                            <rect key="frame" x="88" y="31" width="357" height="127"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="353" height="107"/>
@@ -2258,36 +2266,8 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <button verticalHuggingPriority="750" id="40">
-                        <rect key="frame" x="393" y="5" width="95" height="33"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="Cancelar" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="949">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="39">
-                        <rect key="frame" x="488" y="6" width="84" height="32"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="948">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="okButtonPressed:" target="-2" id="89"/>
-                        </connections>
-                    </button>
                     <popUpButton verticalHuggingPriority="750" id="1149">
-                        <rect key="frame" x="24" y="10" width="161" height="26"/>
+                        <rect key="frame" x="24" y="17" width="161" height="26"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <popUpButtonCell key="cell" type="push" title="Set Default Values" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1161" id="1150">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -2344,11 +2324,40 @@ DQ
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
+                    <button verticalHuggingPriority="750" id="40">
+                        <rect key="frame" x="393" y="13" width="95" height="33"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="Cancelar" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="949">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelButtonPressed:" target="-2" id="90"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="39">
+                        <rect key="frame" x="488" y="14" width="84" height="32"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="948">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="okButtonPressed:" target="-2" id="89"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
+            <point key="canvasLocation" x="524" y="439"/>
         </window>
     </objects>
 </document>

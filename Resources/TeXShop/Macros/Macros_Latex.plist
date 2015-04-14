@@ -1754,6 +1754,255 @@ end clean</string>
 		</dict>
 		<dict>
 			<key>content</key>
+			<string>--Applescript direct
+--Michael Sharpe, 2015/02/05
+
+--select rows of a table, then run macro to align vertically along &amp; and \\
+--no spaces are added around &amp; and \\ --for that, use Tabularize +space
+
+property myrawlia : {}property myrawlib : {}property myrawlic : {}property myrawsi : {}property myrawstrt : {}set myrawlia to {}set myrawlib to {}set myrawlic to {}set myrawsi to {}set myrawstrt to {}set lia to a reference to myrawliaset lib to a reference to myrawlibset lic to a reference to myrawlicset si to a reference to myrawsiset strt to a reference to myrawstrtset tid to AppleScript's text item delimiterstell application "TeXShop" to set s to (content of selection of document 1)if (count of s) = 0 then	display dialog "No text selected!"	returnend ifglobal longs, longlset longs to "                                                                                                    " --100 space charactersset longl to {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""} --list of 100 empty strings--used in makestr and makelstset dblnull to (character id 0) &amp; (character id 0)set nullone to (character id 0) &amp; (character id 1)set AppleScript's text item delimiters to {"\\&amp;"}set ss to (text items of s)set AppleScript's text item delimiters to {dblnull}set s to (ss as text) -- each \&amp; now replaced by a pair of nullsset AppleScript's text item delimiters to {"\\\\%"}set ss to (text items of s)set AppleScript's text item delimiters to {"\\\\ %"}set s to (ss as text) -- each \\% now replaced by a \\ %set AppleScript's text item delimiters to {"\\%"}set ss to (text items of s)set AppleScript's text item delimiters to {nullone}set s to (ss as text) -- each \% now replaced by a nulloneset li to (paragraphs of s) --lines, separated by cr or lfset n to count of liset lia to makelst(n)copy lia to libcopy lia to liccopy lia to strt --starting offset for next row, usually 0copy lia to siset colwidth to 0 --max number of columns in selected rowsset offs to 0 --initial offset for first rowset cont to false --true indicates next line is continued from currentrepeat with i from 1 to n	set t to removeWS(item i of li)	set AppleScript's text item delimiters to {"%"}	set lst to (text items of t)	if (count of lst) &gt; 0 then set t to (item 1 of lst)	set tt to ""	if (count of lst) &gt; 1 then set tt to "%" &amp; ((rest of lst) as string)	set AppleScript's text item delimiters to {"\\\\"}	set lst to (text items of t)	set nnn to (count of lst)	if nnn &gt; 1 then --contains a \\		if (last item of lst) contains "}" then set nnn to 0 ---\\ is contained in cell	end if	if nnn &lt; 2 then --no \\ in line		set (item i of lia) to t		set (item i of lib) to tt		set cont to true	else		set (item i of lia) to ((items 1 thru -2 of lst) as string)		set (item i of lib) to "\\\\" &amp; (last item of lst) &amp; tt --version without spaces		set cont to false	end if	set AppleScript's text item delimiters to {"&amp;"}	set lst to (text items of (item i of lia))	set m to (count of lst)	if m = 0 then set m to 1	set m to (m + offs - 1)	if cont then		set offs to m		copy offs to (item i of strt)	else		set offs to 0		set (item i of strt) to 0	end if	if m + 1 &gt; colwidth then set colwidth to m + 1	copy lst to (item i of lic)end repeatset colmax to makelst(colwidth) --max number of characters in the columns--set si to makelst(n) --the output linesset offs to 0set lastlen to 0 --length of last entry in prior row, if not ended by \\repeat with i from 1 to n	copy (item i of lic) to lst --row i, parsed columns	if (count of lst) &gt; 0 then		repeat with j from 1 to (count of lst)			set m to (count of (item j of lst))			if (j = (count of lst)) and not ((item i of lib) begins with "\\\\") then				set m to 1			else				if j = 1 then					if m &lt; lastlen then set m to lastlen				end if			end if			if m &gt; (item (j + offs) of colmax) then set item (j + offs) of colmax to m		end repeat		set offs to (item i of strt)		lastlen = 0		if offs &gt; 0 then set lastlen to m		--else --blank line after removing commented material and \\		--if not ((item i of lib) begins with "\\\\") then		--set offs to (item i of strt)		--if offs = 0 then set lastlen to 0	end ifend repeatset s to ""set offs to 0repeat with i from 1 to n	copy (item i of lic) to lst --row i, parsed columns	set ti to makelst((count of lst))	set AppleScript's text item delimiters to {"&amp;"} --version without spaces	if (count of ti) &gt; 0 then		repeat with j from 1 to (count of ti)			set (item j of ti) to (item j of lst) &amp; makestr((item (j + offs) of colmax) - (count of (item j of lst)))		end repeat	end if	set (item i of si) to (ti as string) &amp; (item i of lib)	if (count of (item i of si)) &gt; 0 then		if offs &gt; 0 then			set ss to ""			repeat with j from 1 to offs				set ss to ss &amp; makestr((item j of colmax) + 1)			end repeat			--set ss to (text 1 thru -2 of ss) &amp; "&amp;"			set (item i of si) to ss &amp; (item i of si)		end if	end if	set offs to (item i of strt)end repeatset AppleScript's text item delimiters to {linefeed}set s to (si as string)set AppleScript's text item delimiters to {dblnull}set ti to (text items of s)set AppleScript's text item delimiters to {"\\&amp;"}set s to (ti as string)set AppleScript's text item delimiters to {nullone}set ti to (text items of s)set AppleScript's text item delimiters to {"\\%"}set s to (ti as string)tell application "TeXShop" to set content of selection of document 1 to sset AppleScript's text item delimiters to tidon removeWS(str)	local str, oldTID, removeStrRef, removeStr, lst	set oldTID to AppleScript's text item delimiters	if str contains tab then		set AppleScript's text item delimiters to {tab}		set lst to (text items of str)		set AppleScript's text item delimiters to {space}		set str to (lst as string)	end if	try		repeat with rmstr in {"        ", "  "}			repeat				set AppleScript's text item delimiters to rmstr				set lst to (text items of str)				if (count of lst) &lt; 2 then exit repeat				set AppleScript's text item delimiters to space				set str to (lst as string)			end repeat		end repeat		set AppleScript's text item delimiters to oldTID		if str = " " then			set str to ""		else			if ((count of str) &gt; 1) and (str begins with space) then set str to (text 2 thru -1 of str)			if ((count of str) &gt; 1) and (str ends with space) then set str to (text 1 thru -2 of str)		end if		return str			on error		set AppleScript's text item delimiters to oldTID	end tryend removeWSon makestr(nnn)	if nnn &lt; 1 then		return ""	else		return (text 1 thru nnn of longs)	end ifend makestron makelst(nnn)	local thest, ii, h, rem	if nnn &lt; 1 then		return {}	else		if nnn &lt; 101 then			return (items 1 thru nnn of longl)		else			set h to (nnn div 100)			set rem to (nnn mod 100)			set thest to {}			if rem &gt; 0 then set thest to (items 1 thru rem of longl)			repeat with ii from 1 to h				set thest to longl &amp; thest			end repeat			return thest		end if	end ifend makelst</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>Tabularize</string>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>--Applescript direct
+--Michael Sharpe, 2015/02/05
+
+--act on selected lines of a table, align vertically on &amp; and \\, adding spaces around them
+
+property myrawlia : {}
+property myrawlib : {}
+property myrawlic : {}
+property myrawsi : {}
+property myrawstrt : {}
+
+set myrawlia to {}
+set myrawlib to {}
+set myrawlic to {}
+set myrawsi to {}
+set myrawstrt to {}
+set lia to a reference to myrawlia
+set lib to a reference to myrawlib
+set lic to a reference to myrawlic
+set si to a reference to myrawsi
+set strt to a reference to myrawstrt
+
+set tid to AppleScript's text item delimiters
+tell application "TeXShop" to set s to (content of selection of document 1)
+if (count of s) = 0 then
+	display dialog "No text selected!"
+	return
+end if
+global longs, longl
+set longs to "                                                                                                    " --100 space characters
+set longl to {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""} --list of 100 empty strings
+--used in makestr and makelst
+set dblnull to (character id 0) &amp; (character id 0)
+set nullone to (character id 0) &amp; (character id 1)
+
+set AppleScript's text item delimiters to {"\\&amp;"}
+set ss to (text items of s)
+set AppleScript's text item delimiters to {dblnull}
+set s to (ss as text) -- each \&amp; now replaced by a pair of nulls
+set AppleScript's text item delimiters to {"\\\\%"}
+set ss to (text items of s)
+set AppleScript's text item delimiters to {"\\\\ %"}
+set s to (ss as text) -- each \\% now replaced by a \\ %
+set AppleScript's text item delimiters to {"\\%"}
+set ss to (text items of s)
+set AppleScript's text item delimiters to {nullone}
+set s to (ss as text) -- each \% now replaced by a nullone
+set li to (paragraphs of s) --lines, separated by cr or lf
+set n to count of li
+set lia to makelst(n)
+copy lia to lib
+copy lia to lic
+copy lia to strt --starting offset for next row, usually 0
+copy lia to si
+set colwidth to 0 --max number of columns in selected rows
+set offs to 0 --initial offset for first row
+set cont to false --true indicates next line is continued from current
+repeat with i from 1 to n
+	set t to removeWS(item i of li)
+	set AppleScript's text item delimiters to {"%"}
+	set lst to (text items of t)
+	if (count of lst) &gt; 0 then set t to (item 1 of lst)
+	set tt to ""
+	if (count of lst) &gt; 1 then set tt to "%" &amp; ((rest of lst) as string)
+	set AppleScript's text item delimiters to {"\\\\"}
+	set lst to (text items of t)
+	set nnn to (count of lst)
+	if nnn &gt; 1 then --contains a \\
+		if (last item of lst) contains "}" then set nnn to 0 ---\\ is contained in cell
+	end if
+	if nnn &lt; 2 then --no \\ in line
+		set (item i of lia) to t
+		set (item i of lib) to tt
+		set cont to true
+	else
+		set (item i of lia) to ((items 1 thru -2 of lst) as string)
+		set (item i of lib) to " \\\\" &amp; (last item of lst) &amp; tt --version with spaces
+		set cont to false
+	end if
+	set AppleScript's text item delimiters to {"&amp;"}
+	set lst to (text items of (item i of lia))
+	set m to (count of lst)
+	if m = 0 then set m to 1
+	set m to (m + offs - 1)
+	if cont then
+		set offs to m
+		copy offs to (item i of strt)
+	else
+		set offs to 0
+		set (item i of strt) to 0
+	end if
+	if m + 1 &gt; colwidth then set colwidth to m + 1
+	copy lst to (item i of lic)
+end repeat
+
+set colmax to makelst(colwidth) --max number of characters in the columns
+--set si to makelst(n) --the output lines
+set offs to 0
+set lastlen to 0 --length of last entry in prior row, if not ended by \\
+repeat with i from 1 to n
+	copy (item i of lic) to lst --row i, parsed columns
+	if (count of lst) &gt; 0 then
+		repeat with j from 1 to (count of lst)
+			set m to (count of (item j of lst))
+			if (j = (count of lst))  and not ((item i of lib) begins with " \\\\") then
+				set m to 1
+			else
+				if j = 1 then
+					if m &lt; lastlen then set m to lastlen
+				end if
+			end if
+			if m &gt; (item (j + offs) of colmax) then set item (j + offs) of colmax to m
+		end repeat
+		set offs to (item i of strt)
+		lastlen = 0
+		if offs &gt; 0 then set lastlen to m
+	end if
+end repeat
+set s to ""
+set offs to 0
+repeat with i from 1 to n
+	copy (item i of lic) to lst --row i, parsed columns
+	set ti to makelst((count of lst))
+	set AppleScript's text item delimiters to {" &amp; "} --version with spaces
+	if (count of ti) &gt; 0 then
+		repeat with j from 1 to (count of ti)
+			set (item j of ti) to (item j of lst) &amp; makestr((item (j + offs) of colmax) - (count of (item j of lst)))
+		end repeat
+	end if
+	set (item i of si) to (ti as string) &amp; (item i of lib)
+	if (count of (item i of si)) &gt; 0 then
+		if offs &gt; 0 then
+			set ss to ""
+			repeat with j from 1 to offs
+				set ss to ss &amp; makestr((item j of colmax) + 3)
+			end repeat
+			--set ss to (text 1 thru -2 of ss) &amp; "&amp;"
+			set (item i of si) to ss &amp; (item i of si)
+		end if
+	end if
+	set offs to (item i of strt)
+end repeat
+set AppleScript's text item delimiters to {linefeed}
+set s to (si as string)
+set AppleScript's text item delimiters to {dblnull}
+set ti to (text items of s)
+set AppleScript's text item delimiters to {"\\&amp;"}
+set s to (ti as string)
+set AppleScript's text item delimiters to {nullone}
+set ti to (text items of s)
+set AppleScript's text item delimiters to {"\\%"}
+set s to (ti as string)
+tell application "TeXShop" to set content of selection of document 1 to s
+set AppleScript's text item delimiters to tid
+
+on removeWS(str)
+	local str, oldTID, removeStrRef, removeStr, lst
+	set oldTID to AppleScript's text item delimiters
+	if str contains tab then
+		set AppleScript's text item delimiters to {tab}
+		set lst to (text items of str)
+		set AppleScript's text item delimiters to {space}
+		set str to (lst as string)
+	end if
+	--include this block only if spaces added
+	set AppleScript's text item delimiters to {" \\\\"}
+	set lst to (text items of str)
+	set AppleScript's text item delimiters to {"\\\\"}
+	set str to (lst as string)
+	set AppleScript's text item delimiters to {" &amp;"}
+	set lst to (text items of str)
+	set AppleScript's text item delimiters to {"&amp;"}
+	set str to (lst as string)
+	set AppleScript's text item delimiters to {"&amp; "}
+	set lst to (text items of str)
+	set AppleScript's text item delimiters to {"&amp;"}
+	set str to (lst as string)
+	try
+		repeat with rmstr in {"        ", "  "}
+			repeat
+				set AppleScript's text item delimiters to rmstr
+				set lst to (text items of str)
+				if (count of lst) &lt; 2 then exit repeat
+				set AppleScript's text item delimiters to space
+				set str to (lst as string)
+			end repeat
+		end repeat
+		set AppleScript's text item delimiters to oldTID
+		if str = " " then
+			set str to ""
+		else
+			if ((count of str) &gt; 1) and (str begins with space) then set str to (text 2 thru -1 of str)
+			if ((count of str) &gt; 1) and (str ends with space) then set str to (text 1 thru -2 of str)
+		end if
+		return str
+		
+	on error
+		set AppleScript's text item delimiters to oldTID
+	end try
+end removeWS
+
+on makestr(nnn)
+	if nnn &lt; 1 then
+		return ""
+	else
+		return (text 1 thru nnn of longs)
+	end if
+end makestr
+
+on makelst(nnn)
+	local thest, ii, h, rem
+	if nnn &lt; 1 then
+		return {}
+	else
+		if nnn &lt; 101 then
+			return (items 1 thru nnn of longl)
+		else
+			set h to (nnn div 100)
+			set rem to (nnn mod 100)
+			set thest to {}
+			if rem &gt; 0 then set thest to (items 1 thru rem of longl)
+			repeat with ii from 1 to h
+				set thest to longl &amp; thest
+			end repeat
+			return thest
+		end if
+	end if
+end makelst</string>
+			<key>key</key>
+			<string></string>
+			<key>name</key>
+			<string>Tabularize +space</string>
+		</dict>
+		<dict>
+			<key>content</key>
 			<string></string>
 			<key>key</key>
 			<string></string>

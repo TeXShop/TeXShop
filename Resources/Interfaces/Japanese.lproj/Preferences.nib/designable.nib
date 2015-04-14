@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -16,6 +16,7 @@
                 <outlet property="_antialiasButton" destination="fyB-vX-69R" id="twA-MY-t3O"/>
                 <outlet property="_autoCompleteButton" destination="686" id="696"/>
                 <outlet property="_autoPDFButton" destination="557" id="559"/>
+                <outlet property="_autoSpellCorrectButton" destination="vi7-iQ-XdC" id="ogO-Zl-GpH"/>
                 <outlet property="_beepButton" destination="1138" id="1160"/>
                 <outlet property="_bibDeskCompleteButton" destination="687" id="698"/>
                 <outlet property="_bibTeXengineField" destination="1207" id="1211"/>
@@ -104,25 +105,25 @@
         <window title="TeXShop 環境設定" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="5" userLabel="Preferences">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="267" y="188" width="576" height="659"/>
+            <rect key="contentRect" x="267" y="188" width="575" height="690"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
             <view key="contentView" id="6">
-                <rect key="frame" x="0.0" y="0.0" width="576" height="659"/>
+                <rect key="frame" x="0.0" y="0.0" width="575" height="690"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="7">
-                        <rect key="frame" x="13" y="34" width="544" height="617"/>
+                        <rect key="frame" x="13" y="41" width="544" height="641"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="書類" identifier="Document" id="9">
                                 <view key="view" id="11">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="検索パネル（TeXShop再起動後）" id="585">
-                                            <rect key="frame" x="11" y="140" width="256" height="90"/>
+                                            <rect key="frame" x="11" y="164" width="256" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="70"/>
@@ -165,14 +166,14 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="エディタ" id="63">
-                                            <rect key="frame" x="276" y="266" width="232" height="238"/>
+                                            <rect key="frame" x="276" y="272" width="232" height="256"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="2" y="2" width="228" height="218"/>
+                                                <rect key="frame" x="2" y="2" width="228" height="236"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <form verticalHuggingPriority="750" mode="track" allowsEmptySelection="NO" autosizesCells="NO" id="284">
-                                                        <rect key="frame" x="17" y="190" width="129" height="22"/>
+                                                        <rect key="frame" x="17" y="208" width="129" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="129" height="22"/>
@@ -194,7 +195,7 @@
                                                         </connections>
                                                     </form>
                                                     <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="621">
-                                                        <rect key="frame" x="18" y="7" width="204" height="178"/>
+                                                        <rect key="frame" x="18" y="5" width="204" height="198"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="204" height="18"/>
@@ -268,11 +269,18 @@
                                                                         <action selector="tagMenuButtonPressed:" target="-2" id="Zom-n9-z4Z"/>
                                                                     </connections>
                                                                 </buttonCell>
+                                                                <buttonCell type="check" title="スペルの自動修正" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="vi7-iQ-XdC">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCorrectPressed:" target="-2" id="o4W-y5-Spc"/>
+                                                                    </connections>
+                                                                </buttonCell>
                                                             </column>
                                                         </cells>
                                                     </matrix>
                                                     <button id="0Ad-oh-5Ny">
-                                                        <rect key="frame" x="159" y="191" width="54" height="18"/>
+                                                        <rect key="frame" x="159" y="209" width="54" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="タブ" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hlo-et-iCo">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -289,7 +297,7 @@
                                             <font key="titleFont" size="13" name="HiraKakuProN-W3"/>
                                         </box>
                                         <box title="フォント" id="14">
-                                            <rect key="frame" x="11" y="512" width="295" height="56"/>
+                                            <rect key="frame" x="11" y="536" width="295" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="291" height="36"/>
@@ -322,7 +330,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ソースウインドウの位置" id="19">
-                                            <rect key="frame" x="11" y="397" width="256" height="107"/>
+                                            <rect key="frame" x="11" y="421" width="256" height="107"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="87"/>
@@ -372,7 +380,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="起動時に" id="236">
-                                            <rect key="frame" x="11" y="306" width="256" height="86"/>
+                                            <rect key="frame" x="11" y="330" width="256" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="66"/>
@@ -407,7 +415,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="文字色と背景色" id="790">
-                                            <rect key="frame" x="315" y="512" width="193" height="56"/>
+                                            <rect key="frame" x="315" y="536" width="193" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="189" height="36"/>
@@ -436,7 +444,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="コマンド補完キー" id="1072">
-                                            <rect key="frame" x="11" y="234" width="256" height="69"/>
+                                            <rect key="frame" x="11" y="258" width="256" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="252" height="49"/>
@@ -475,7 +483,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="不可視文字の表示" borderType="line" id="1081">
-                                            <rect key="frame" x="11" y="5" width="256" height="136"/>
+                                            <rect key="frame" x="11" y="29" width="256" height="136"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="254" height="117"/>
@@ -655,7 +663,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="括弧の対応チェック対象と強調色" borderType="line" id="1124">
-                                            <rect key="frame" x="276" y="143" width="232" height="57"/>
+                                            <rect key="frame" x="276" y="140" width="232" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="230" height="38"/>
@@ -720,7 +728,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" title="括弧の対応チェックの詳細" borderType="line" id="1133">
-                                            <rect key="frame" x="276" y="5" width="232" height="136"/>
+                                            <rect key="frame" x="276" y="0.0" width="232" height="136"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="1" y="1" width="230" height="117"/>
@@ -788,7 +796,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="エンコーディング" id="262">
-                                            <rect key="frame" x="276" y="204" width="232" height="68"/>
+                                            <rect key="frame" x="276" y="201" width="232" height="68"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="228" height="48"/>
@@ -821,11 +829,11 @@
                             </tabViewItem>
                             <tabViewItem label="プレビュー" identifier="2" id="8">
                                 <view key="view" id="10">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="プレビューウインドウの位置" id="47">
-                                            <rect key="frame" x="17" y="459" width="253" height="103"/>
+                                            <rect key="frame" x="17" y="483" width="253" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="83"/>
@@ -875,7 +883,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="プレビューウィンドウの倍率" id="111">
-                                            <rect key="frame" x="283" y="306" width="225" height="61"/>
+                                            <rect key="frame" x="283" y="330" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -908,7 +916,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ページボタン" id="228">
-                                            <rect key="frame" x="283" y="501" width="225" height="61"/>
+                                            <rect key="frame" x="283" y="525" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -932,7 +940,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="マウスモード" id="330">
-                                            <rect key="frame" x="17" y="306" width="253" height="62"/>
+                                            <rect key="frame" x="17" y="330" width="253" height="62"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="42"/>
@@ -965,7 +973,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ウィンドウのリサイズ後" id="342">
-                                            <rect key="frame" x="283" y="371" width="225" height="61"/>
+                                            <rect key="frame" x="283" y="395" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -996,7 +1004,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ページレイアウト" id="329">
-                                            <rect key="frame" x="283" y="436" width="225" height="61"/>
+                                            <rect key="frame" x="283" y="460" width="225" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="41"/>
@@ -1028,7 +1036,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="見開きページ" id="501">
-                                            <rect key="frame" x="17" y="372" width="253" height="83"/>
+                                            <rect key="frame" x="17" y="396" width="253" height="83"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="63"/>
@@ -1067,7 +1075,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="外部エディタ" id="555">
-                                            <rect key="frame" x="17" y="236" width="253" height="66"/>
+                                            <rect key="frame" x="17" y="260" width="253" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="249" height="46"/>
@@ -1091,7 +1099,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="背景色" id="795">
-                                            <rect key="frame" x="283" y="236" width="222" height="66"/>
+                                            <rect key="frame" x="283" y="260" width="222" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="218" height="46"/>
@@ -1112,7 +1120,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ディスプレイ" id="cS3-3U-4so">
-                                            <rect key="frame" x="17" y="166" width="294" height="66"/>
+                                            <rect key="frame" x="17" y="190" width="294" height="66"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="290" height="46"/>
@@ -1140,11 +1148,11 @@
                             </tabViewItem>
                             <tabViewItem label="コンソール" identifier="Console" id="705">
                                 <view key="view" id="706">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="コンソールのフォント" id="752">
-                                            <rect key="frame" x="42" y="488" width="423" height="56"/>
+                                            <rect key="frame" x="42" y="512" width="423" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="419" height="36"/>
@@ -1177,7 +1185,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="背景色" id="767">
-                                            <rect key="frame" x="42" y="420" width="132" height="64"/>
+                                            <rect key="frame" x="42" y="444" width="132" height="64"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="128" height="44"/>
@@ -1198,7 +1206,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="文字色" id="938">
-                                            <rect key="frame" x="218" y="420" width="132" height="64"/>
+                                            <rect key="frame" x="218" y="444" width="132" height="64"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="128" height="44"/>
@@ -1219,7 +1227,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="コンソールウインドウの位置" id="yAE-Om-3MR">
-                                            <rect key="frame" x="42" y="299" width="308" height="103"/>
+                                            <rect key="frame" x="42" y="323" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="83"/>
@@ -1269,7 +1277,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="コンソール" id="828">
-                                            <rect key="frame" x="42" y="128" width="308" height="77"/>
+                                            <rect key="frame" x="42" y="152" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="57"/>
@@ -1308,7 +1316,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="コンソールのリサイズ" id="772">
-                                            <rect key="frame" x="42" y="214" width="308" height="75"/>
+                                            <rect key="frame" x="42" y="238" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="304" height="55"/>
@@ -1351,11 +1359,11 @@
                             </tabViewItem>
                             <tabViewItem label="タイプセット" identifier="2" id="179">
                                 <view key="view" id="170">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="デフォルトのスクリプト" id="188">
-                                            <rect key="frame" x="22" y="266" width="225" height="99"/>
+                                            <rect key="frame" x="22" y="290" width="225" height="99"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="79"/>
@@ -1398,7 +1406,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="デフォルトのコマンド" id="183">
-                                            <rect key="frame" x="22" y="369" width="225" height="168"/>
+                                            <rect key="frame" x="22" y="393" width="225" height="168"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="148"/>
@@ -1456,7 +1464,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="ファイル保存時に" id="314">
-                                            <rect key="frame" x="276" y="369" width="225" height="76"/>
+                                            <rect key="frame" x="276" y="393" width="225" height="76"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="56"/>
@@ -1480,7 +1488,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="タイプセット後の動作" id="675">
-                                            <rect key="frame" x="276" y="460" width="225" height="77"/>
+                                            <rect key="frame" x="276" y="484" width="225" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="57"/>
@@ -1519,7 +1527,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Sync 方式" id="823">
-                                            <rect key="frame" x="276" y="244" width="225" height="121"/>
+                                            <rect key="frame" x="276" y="268" width="225" height="121"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="221" height="101"/>
@@ -1573,11 +1581,11 @@
                             </tabViewItem>
                             <tabViewItem label="内部設定" identifier="2" id="12">
                                 <view key="view" id="13">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="pdfTeX" id="54">
-                                            <rect key="frame" x="12" y="279" width="224" height="140"/>
+                                            <rect key="frame" x="12" y="303" width="224" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="220" height="120"/>
@@ -1665,7 +1673,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="TeX+dvipdfmx / TeX+dvips+distiller" id="200">
-                                            <rect key="frame" x="256" y="279" width="247" height="140"/>
+                                            <rect key="frame" x="256" y="303" width="247" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="243" height="120"/>
@@ -1753,7 +1761,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="パス設定" id="215">
-                                            <rect key="frame" x="12" y="428" width="491" height="122"/>
+                                            <rect key="frame" x="12" y="452" width="491" height="122"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="102"/>
@@ -1808,7 +1816,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="検索用コマンド" id="1192">
-                                            <rect key="frame" x="12" y="195" width="491" height="80"/>
+                                            <rect key="frame" x="12" y="219" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
@@ -1842,7 +1850,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="BibTeX エンジン" id="1205">
-                                            <rect key="frame" x="12" y="111" width="491" height="80"/>
+                                            <rect key="frame" x="12" y="135" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
@@ -1880,11 +1888,11 @@
                             </tabViewItem>
                             <tabViewItem label="コピー" identifier="1" id="415">
                                 <view key="view" id="400">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="カラーマップ" id="447">
-                                            <rect key="frame" x="103" y="325" width="323" height="142"/>
+                                            <rect key="frame" x="103" y="349" width="323" height="142"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="319" height="122"/>
@@ -1974,7 +1982,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="フォーマット" id="386">
-                                            <rect key="frame" x="103" y="480" width="323" height="59"/>
+                                            <rect key="frame" x="103" y="504" width="323" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="319" height="39"/>
@@ -2014,11 +2022,11 @@
                             </tabViewItem>
                             <tabViewItem label="詳細" identifier="2" id="127">
                                 <view key="view" id="136">
-                                    <rect key="frame" x="10" y="33" width="524" height="571"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="パーソナルスクリプト" id="154">
-                                            <rect key="frame" x="66" y="422" width="370" height="119"/>
+                                            <rect key="frame" x="66" y="446" width="370" height="119"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="366" height="99"/>
@@ -2073,7 +2081,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Distiller" id="545">
-                                            <rect key="frame" x="66" y="337" width="153" height="71"/>
+                                            <rect key="frame" x="66" y="361" width="153" height="71"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="149" height="51"/>
@@ -2112,7 +2120,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="pTeX 拡張機能" id="574">
-                                            <rect key="frame" x="270" y="337" width="166" height="71"/>
+                                            <rect key="frame" x="270" y="361" width="166" height="71"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="162" height="51"/>
@@ -2136,7 +2144,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="プロジェクトルートファイル" id="Ckj-Uf-YoO">
-                                            <rect key="frame" x="66" y="136" width="370" height="95"/>
+                                            <rect key="frame" x="66" y="160" width="370" height="95"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="366" height="75"/>
@@ -2171,7 +2179,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="アップデート" id="Bpy-yL-nu1">
-                                            <rect key="frame" x="70" y="2" width="366" height="127"/>
+                                            <rect key="frame" x="70" y="26" width="366" height="127"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="362" height="107"/>
@@ -2225,7 +2233,7 @@
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="保存時の処理（日本語濁点問題の対処）" id="1225">
-                                            <rect key="frame" x="66" y="246" width="370" height="70"/>
+                                            <rect key="frame" x="66" y="270" width="370" height="70"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView">
                                                 <rect key="frame" x="2" y="2" width="366" height="50"/>
@@ -2254,7 +2262,7 @@
                         </tabViewItems>
                     </tabView>
                     <button verticalHuggingPriority="750" id="40">
-                        <rect key="frame" x="367" y="7" width="105" height="33"/>
+                        <rect key="frame" x="367" y="13" width="105" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="キャンセル" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="1055">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2268,7 +2276,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="39">
-                        <rect key="frame" x="472" y="7" width="84" height="32"/>
+                        <rect key="frame" x="472" y="13" width="84" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1054">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2282,7 +2290,7 @@ DQ
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" id="1263">
-                        <rect key="frame" x="17" y="11" width="161" height="26"/>
+                        <rect key="frame" x="17" y="17" width="161" height="26"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <popUpButtonCell key="cell" type="push" title="設定プロファイル" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1273" id="1264">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -2344,6 +2352,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
+            <point key="canvasLocation" x="523.5" y="445"/>
         </window>
     </objects>
 </document>

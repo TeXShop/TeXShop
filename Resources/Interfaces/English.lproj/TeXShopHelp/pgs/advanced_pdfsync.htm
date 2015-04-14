@@ -15,7 +15,7 @@ the Macintosh by Blue Sky TeX Systems. Using this feature,  an author can click 
 
 <P>Since this implementation, a number of TeX systems have provided a roughly similar feature using a mechanism which causes TeX to write extra synchronization information during typesetting. None of these approximations is as accurate as Textures.</P>
 
-<p>TeXShop provides synchronization using new SyncTeX technology introduced by Jérôme Laurens; when this technology is not available, TeXShop falls back on older Search synchronization introduced in TeXShop 2.0. To use synchronization in TeXShop, click on a word or phrase in the source window while holding down the Apple control key; the preview window will scroll to the appropriate spot and the corresponding typeset phrase will be circled in red. Similarly, click on a word or phrase in the preview window. The appropriate source file will open (if necessary) and scroll to the corresponding source phrase, which will be highlighted in yellow.</p>
+<p>TeXShop provides synchronization using new SyncTeX technology introduced by JÃ©rÃ´me Laurens; when this technology is not available, TeXShop falls back on older Search synchronization introduced in TeXShop 2.0. To use synchronization in TeXShop, click on a word or phrase in the source window while holding down the Apple control key; the preview window will scroll to the appropriate spot and the corresponding typeset phrase will be circled in red. Similarly, click on a word or phrase in the preview window. The appropriate source file will open (if necessary) and scroll to the corresponding source phrase, which will be highlighted in yellow.</p>
 
 <p>If you are a new TeXShop user, the SyncTeX method is active by default. Users who installed an older version of TeXShop and upgraded to this version need to change three preference items to make SyncTeX work. In TeXShop Preferences under the Misc tab, change the Sync Method to SyncTeX. In TeXShop Preferences under the Engine tab, change the two pdfTeX items to</p>
 <dl>
@@ -23,7 +23,7 @@ the Macintosh by Blue Sky TeX Systems. Using this feature,  an author can click 
 	<dd> pdflatex  --synctex=1
 </dl>
 
-<p>SyncTeX was introduced by Jérôme Laurens in 2008. It causes TeX to output an additional file with extension ".synctex" containing information needed to correlate the output pdf and input source files. The additional file is written directly by the TeX engine. Typesetting is not modified in any way by SyncTeX; in particular, line and page breaks are not changed, as happened with the older pdfsync technology. SyncTeX should allow very accurate synchronization as developers master its features.</p>
+<p>SyncTeX was introduced by JÃ©rÃ´me Laurens in 2008. It causes TeX to output an additional file with extension ".synctex" containing information needed to correlate the output pdf and input source files. The additional file is written directly by the TeX engine. Typesetting is not modified in any way by SyncTeX; in particular, line and page breaks are not changed, as happened with the older pdfsync technology. SyncTeX should allow very accurate synchronization as developers master its features.</p>
 
 <p>SyncTeX requires the versions of pdftex, pdfetex, and xetex introduced in TeX Live 2008 and made available in MacTeX-2008. For users with older TeX distributions, a second synchronization method named Search is also provided in TeXShop. This method works with all TeX engines; no special changes to the source file are needed to use it.  The Search method uses features of OS X introduced by Apple in System 10.4. These features allow developers toeasily search pdf files for text strings;  the search method finds strings in the source file and corresponding strings in the output pdf file. This method does not require an additional style file, so theoretically it works for all typesetting methods. But it fails when the pdf strings is different than the input strings and thus fails for mathematical expressions.</p>
 
@@ -46,7 +46,7 @@ the Macintosh by Blue Sky TeX Systems. Using this feature,  an author can click 
 
 <p> Similar changes must be made in the call to simpdftex, and in engines files, including any engine files you have created. None of these changes have yet been made, so you will need to make the changes yourself if you use one of these engines and want to use SyncTeX. In modern TeX distributions, most typesetting is done by pdfetex or xetex, both of which support this flag. The original TeX program by Knuth does not support the flag.</p>
 
-<p>SyncTeX is very new, and supported for it was first added to TeXShop in August of 2008. As the developers understand more clearly the information provided by  Jérôme Laurens' synctex utility, the accuracy of TeXShop synchronization with SyncTeX will improve.</p> 
+<p>SyncTeX is very new, and supported for it was first added to TeXShop in August of 2008. As the developers understand more clearly the information provided by  JÃ©rÃ´me Laurens' synctex utility, the accuracy of TeXShop synchronization with SyncTeX will improve.</p> 
 
 <p> From now on, we discuss the older Search method; most of these comments do not apply to SyncTeX.</p>
 
@@ -103,6 +103,7 @@ Here are examples:
 			<li><a href="advanced_otherfiles.htm">Opening Other Files with TeXShop</a>
 			<li><a href="advanced_mathematica.htm">Mathematica</a>
 			<li><a href="advanced_localization.htm">Localizations</a>
+			<li><a href="advanced_Japan.htm">Preference Settings for Japan</a>
 			<li><a href="advanced_syntaxcolor.htm">Syntax Colors </a>
 			<li><a href="advanced_shellescape.htm">Shell Escape Protection </a>			
 			<li><a href="advanced_coloredtext.htm">Colored Text in TeX </a>			

@@ -148,6 +148,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setUsesFontPanel:YES];
 		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
         [contentTextView setContinuousSpellCheckingEnabled: NO];
+        [contentTextView setAutomaticSpellingCorrectionEnabled: NO];
         [contentTextView setSmartInsertDeleteEnabled: NO];
         [contentTextView setAutomaticDashSubstitutionEnabled: NO];
         [contentTextView setAutomaticDataDetectionEnabled: NO];

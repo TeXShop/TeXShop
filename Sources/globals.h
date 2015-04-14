@@ -453,6 +453,7 @@ extern NSString *SparkleIntervalKey;
 extern NSString *reverseSyncRedKey;
 extern NSString *reverseSyncGreenKey;
 extern NSString *reverseSyncBlueKey;
+extern NSString *AutomaticSpellingCorrectionEnabledKey;
 
 
 

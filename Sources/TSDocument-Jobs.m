@@ -1670,6 +1670,9 @@
                     else {
                         [self fillLogWindowIfVisible];
                         [fullSplitWindow makeKeyAndOrderFront: self];
+                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                        if (front)
+                            [fullSplitWindow makeFirstResponder:myPDFKitView];
                         [self allocateSyncScanner];
                     }
 				}

@@ -786,6 +786,15 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SpellCheckEnabledKey];
 }
 
+- (IBAction)spellCorrectPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey] forKey:AutomaticSpellingCorrectionEnabledKey];
+    
+    [SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:AutomaticSpellingCorrectionEnabledKey];
+}
+
+
 /*" This method is connected to the 'line number' checkbox.
 "*/
 - (IBAction)lineNumberButtonPressed:sender
@@ -1693,6 +1702,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
+    [_autoSpellCorrectButton setState:[defaults boolForKey:AutomaticSpellingCorrectionEnabledKey]];
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
     [_tagMenuButton setState:[defaults boolForKey:TagMenuInMenuBarKey]];
 	[_showInvisibleCharactersButton setState:[defaults boolForKey:ShowInvisibleCharactersEnabledKey]];

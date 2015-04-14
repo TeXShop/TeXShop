@@ -76,8 +76,10 @@
 	NS_HANDLER
     spellExists = NO;
 	NS_ENDHANDLER
-    if (spellExists)
+    if (spellExists) {
 		[scrapTextView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+        [scrapTextView setAutomaticSpellingCorrectionEnabled:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey]];
+        }
     
     if ([SUD boolForKey:SaveDocumentFontKey] == YES)
         {

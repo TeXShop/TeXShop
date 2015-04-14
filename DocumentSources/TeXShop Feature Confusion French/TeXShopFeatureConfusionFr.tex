@@ -1,0 +1,237 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+\documentclass[11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+%\usepackage[letterpaper,body={6.0in,9.5in},vmarginratio=1:1]{geometry}
+\usepackage[a4paper,twoside,textwidth=15.75cm,textheight=24.1cm,heightrounded]{geometry}
+\usepackage[small,compact]{titlesec}
+
+%SetFonts
+%Fourier+Berasans+Beramono
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+\usepackage[final,babel]{microtype}
+%SetFonts
+
+\usepackage{xcolor}
+%\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+
+%\usepackage{applekeys}
+
+%\newcommand{\optkey}{\textsf{Opt}}
+\newcommand{\optkey}{\textsf{alt}}
+%\newcommand{\ctlkey}{\textsf{Ctl}}
+%\newcommand{\ctlkey}{\textsf{ctrl}}
+%\newcommand{\cmdkey}{\textsf{Cmd}}
+\newcommand{\cmdkey}{\textsf{cmd}}
+%\newcommand{\esckey}{\textsf{Esc}}
+\newcommand{\esckey}{\textsf{esc}}
+%\newcommand{\tabkey}{\textsf{Tab}}
+%\newcommand{\tabkey}{\textsf{>|}}
+\newcommand{\tabkey}{---\kern-5pt>|}
+%\newcommand{\shiftkey}{\textsf{Shift}}
+%\newcommand{\shiftkey}{\textsf{Shift}}
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+\pagestyle{plain}
+
+\usepackage{booktabs}
+
+%\pagestyle{empty}
+
+% set | as a command character within verbatim so you can execute commands there (for CC Doc)
+\usepackage{verbatim}
+\makeatletter
+\addto@hook\every@verbatim{\catcode`|=0}
+\makeatother
+
+% define colored items to be inserted in verbatim environments (for Command Completion Doc)
+\usepackage{xcolor}
+\setlength{\fboxsep}{0pt}
+\newcommand{\selinsertion}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{|}}}
+\newcommand{\selmark}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+
+% define a few items for easy use
+%\newcommand{\fastex}{Fas\hspace{-.15em}\TeX} % for CC Doc
+\newcommand{\TS}{\textsf{\TeX Shop}}
+\newcommand{\TSVersion}{2.30}
+%\newcommand{\CCT}{\textsf{CommandCompletion.txt}} % for CC Doc
+
+%Babel
+\usepackage{babel,varioref}
+\addto\captionsfrench{\def\tablename{\scshape Tableau}}
+%\renewcommand*{\CaptionSeparator}{\space\textemdash\space}
+\frenchbsetup{ShowOptions,og=«,fg=»}
+\usepackage{xfrac}
+\usepackage[decimalsymbol=comma,unitsep=cdot,digitsep=thick,mode=text,sepfour=true,valuesep=thick]{siunitx}
+\usepackage[np,autolanguage]{numprint}
+
+%Caption, float, microtype
+%\usepackage{caption,float}
+\usepackage[textfont=it]{caption}
+\usepackage{floatrow}
+\floatsetup[table]{style=plaintop}
+\usepackage{subfig}
+%\captionsetup[subfloat]{labelformat=parens,labelsep=period}
+%\captionsetup[subfloat]{labelformat=parens}
+\captionsetup[subfloat]{labelformat=simple}
+\usepackage[final,babel]{microtype}
+%\usepackage[stretch=16,shrink=16,step=4,final]{microtype} plus tolérant des débordements
+%\usepackage[babel=true,kerning=true]{microtype} % supprime l'activation des ponctuations hautes !
+
+
+%HYPERREF
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue]{hyperref}
+
+\usepackage{cleveref}
+
+
+%\title{\TS's\\Key Bindings vs Macros\\vs Command Completion}
+%\title{\TS{},\\ raccourcis clavier contre macros\\ contre complètement de commande}
+\title{Comparaison entre raccourcis clavier,\\ macros et complètement de commande, dans \TS\thanks{Traduit par René Fritz le 14 avril 2015.}}
+
+\author{Herbert Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
+\date{2015/02/22}
+
+
+\begin{document}
+\maketitle
+
+%\section{Introduction}
+\section{Introduction}
+
+
+%There are three features of \TS\ which often get mixed up: \cmd{Key Bindings} (at one time  called \cmd{Auto-Completion}), \cmd{Macros} and \cmd{Command Completion}. Although they share similar features it is possible to tell the difference between them and when each is most useful.
+
+Trois fonctionnalités de \TS\ sont souvent confondues : les \cmd{Raccourcis clavier} (parfois appelés autocomplétions\footnote{Ce terme est un anglicisme.}), les \cmd{Macros} et la \cmd{Commande de complètement}. Bien qu'elles partagent des fonctions proches, il est possible de les distinguer et de dire en quoi elles sont le plus utiles.
+
+%\section{The Basics}
+\section{Notions de base}
+
+%\textbf{\cmd{Key Bindings}} assign a set of keystrokes to the press of a single key; e.g., typing \verb"_" produces \verb"_{…|}" (where \verb"…|" is any selected text followed by the insertion point --- the place where text is inserted) or typing \(\leq\) (\cmd{Opt-,} with the English keyboard layout) produces \verb"\leq".
+%
+%\noindent\textbf{\cmd{Macros}} can also insert simple text and be given a keyboard shortcut (that always uses the \cmdkey\ plus other keys) but are most useful when attached to Applescript programs so they can do special processing of Source text, etc.
+%
+%\noindent\textbf{\cmd{Command Completion}} (\emph{NOT} to be confused with \cmd{Auto-Completion}) allows you to type a partial command or short abbreviation and, when a trigger key is pressed (\esckey\ by default but it can be set to \tabkey), have that expanded into a full command or even a full environment structure.
+
+Les \textbf{\cmd{Raccourcis clavier}} attribuent à l'entrée d'un seul caractère un ensemble de frappes ; par exemple, taper \verb+_+ produit \verb+_{...|}+ (où « \verb+...|+ » est n'importe quel texte sélectionné, suivi du curseur~--- le lieu où le texte est inséré) ou taper \(\leq\) (\cmd{Opt-,} sur un clavier anglais) produit \verb+\leq+\footnote{Il faut entrer \optkey< sur un clavier français.}.
+
+Les \textbf{\cmd{Macros}} peuvent également insérer simplement du texte et se voir octroyer un raccourci clavier (qui utilise toujours la touche \cmdkey\ avec d'autres touches) mais sont plus utiles lorsqu'elles sont associées aux programmes Applescript afin qu'elles puissent traiter d'une façon particulière le texte du source, etc.
+
+La \textbf{\cmd{Commande de complètement}} (à ne pas confondre avec l'\cmd{autocomplétion}\setcounter{footnote}{0}\footnotemark) vous permet, en n'entrant qu'une partie de commande ou une courte abréviation, d'obtenir une commande entière ou même tout un environnement, lorsqu'une touche de déclenchement est pressée (la touche \esckey\ par défaut, mais elle peut être remplacée par la touche de tabulation « \tabkey »).
+
+%Details follow.
+Voir les détails ci-dessous.
+
+%\section{\cmd{Key Bindings}}
+\section{\cmd{Raccourcis clavier}}
+
+%\cmd{Key Bindings} are turned on by checking \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Key Bindings}. Of course they can be turned off by un-checking that preference setting. They can be turned On/Off for a given editing session by using the \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Toggle On/Off} menu item (a Check Mark means it's on).
+%
+%You can see the list of \cmd{Key Bindings}, edit and add/delete them by starting up the \cmd{Key Bindings Editor} using the \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Edit Key Bindings File…} menu item.
+
+Pour les activer allez dans \mnu{TeXShop}\To\mnu{Préférences…}\To\mnu{Document}\To\mnu{Éditeur}\To \mnu{Raccourcis clavier} et cochez la case correspondante. Bien sûr, ils peuvent être désactivés en décochant cette case. Ils peuvent être activés ou désactivés au cours d'une session d'édition en utilisant l'option du menu \mnu{Source}\To\mnu{Raccourcis clavier}\To\mnu{Activer/Désactiver} (une coche « \checkmark » confirme l'activation).
+
+Vous pouvez consulter la liste des \cmd{Raccourcis clavier}, les modifier, en ajouter ou en supprimer. Pour cela, affichez l'\cmd{Éditeur de raccourcis clavier} en allant dans le menu \mnu{Source}\To\mnu{Raccourcis clavier}\To\mnu{Éditer le fichier des raccourcis…}
+
+
+%\subsection{Special Notes}
+\subsection{Remarques particulières}
+
+%\textbf{Note}: inserting a \verb"\" before typing the key negates the expansion; e.g., pressing \verb"\" and then \verb"_" produces \verb"\_", as it should.
+
+ 
+%\noindent \textbf{Note}: \cmd{Key Bindings} cannot be created for characters produced by multi-key sequences; e.g., \cmd{Opt-e} \emph{followed by} e produces é on the English keyboard layout which \emph{cannot} be set to produce \verb"\'e" as a \cmd{Key Binding}. The initial \cmd{Opt-e} is usually called a \cmd{dead key} since it doesn't produce an on-screen character by itself and \emph{must} be followed by another character.
+
+L'insertion d'un \verb+\+ avant de taper une touche annule l'expansion ; par exemple, appuyer sur \verb+\+ puis sur \verb+_+ produit \verb+\_+, comme il se doit.
+
+Les \cmd{Raccourcis clavier} ne peuvent pas être créés pour des caractères produits par une combinaison de plusieurs touches ; par exemple, \cmd{alt-e} \emph{suivi par} e produit é sur le clavier anglais qui \emph{ne peut pas} être configuré pour produire \verb+\'e+ en tant que \cmd{Raccourci clavier}. L'entrée initiale \cmd{alt-e} est généralement appelée \cmd{touche morte} car elle ne produit pas, à elle seule, un caractère à l'écran et doit être suivie par un autre caractère.
+
+\section{\cmd{Macros}}
+
+%The \mnu{Macros} Menu contains a fairly large number of pre-defined macros. It is possible to create more macros by enabling the Macro Editor with \mnu{Macros}\To\mnu{Open Macro Editor…}. Macros can be added either by copying text into a newly created macro or by adding a macro file (which has the extension \cmd{plist}) using \mnu{Macros}\To\mnu{Add macros from file…} (only visible and available when the Macro Editor is active). The order of appearance of the macros in the \cmd{Macros} Menu can also be changed by simply moving them around on the left panel of the \cmd{Macro Editor}.
+
+Le menu \mnu{Macros} contient un assez grand nombre de macros prédéfinies. Il est possible de créer d'autres macros en ouvrant le \cmd{Macro Editor}. Pour cela, aller dans le menu \mnu{Macros}\To\mnu{Ouvrir l'éditeur des macros…} Les macros peuvent être ajoutées en copiant le texte dans une macro nouvellement créée ou en ajoutant un fichier macro (de suffixe \cmd{.plist}) à l'aide du menu \mnu{Macros}\To\mnu{Ajouter une macro à partir du fichier…} (visible et disponible seulement si le \cmd{Macro Editor} est ouvert). L'ordre d'apparition des macros dans le menu \mnu{Macros} peut également être modifié simplement en les déplaçant dans le panneau gauche du \cmd{Macro Editor}.
+
+%\subsection{Special Notes}
+\subsection{Remarque particulière}
+
+%\textbf{Note}: text to which you wish to assign a \cmd{Cmd} based keyboard shortcut is best created using a \cmd{Macro} rather than a \cmd{Key Binding}; e.g., there is already a \cmd{Macro} that takes selected text and sets it  in boldface (using \verb"\textbf") and you can assign the \cmd{Cmd-B} keyboard shortcut to that \cmd{Macro} in the \cmd{Macro Editor}.
+
+Si vous voulez appliquer à un texte un raccourci clavier au moyen de la touche \cmd{cmd} il vaut mieux utiliser une \cmd{Macro} plutôt qu'un \cmd{Raccourcis clavier} ; par exemple, il existe déjà une \cmd{Macro} qui permet de mettre en gras un texte sélectionné (avec \verb+\textbf+) et vous pouvez assigner le raccourci clavier \cmd{Cmd-B} à cette \cmd{macro} dans le \cmd{Macro Editor}.
+
+%\section{\cmd{Command Completion}}
+\section{\cmd{Complètement de commande}}
+
+%For \cmd{Command Completion} you enter a partial command name or a short abbreviation, press a trigger key (\esckey\ or, as mentioned above, \tabkey\ if set in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Source}\To\mnu{Command Completion Triggered By:}) and it gets expanded. E.g., enter
+
+Avec la \cmd{Commande de complètement} vous entrez une partie du nom de la commande ou une courte abréviation, appuyez sur la touche de déclenchement (\esckey\ ou \tabkey\, selon l'indication portée dans \mnu{TeXShop}\To\mnu{Préférences…}\To\mnu{Document}\To\mnu{Commande de complétion déclenchée par}, comme mentionné plus haut) et votre entrée sera complétée. Par exemple, entrez
+\begin{verbatim}
+\sec
+\end{verbatim}
+%on a new line and press the trigger (\esckey\ or …) and you get
+sur une nouvelle ligne, pressez la touche de déclenchement (\esckey\ ou…) et vous obtenez
+\begin{verbatim}
+\section{|selmark}
+\end{verbatim}
+%(where \selmark\ is a selected bullet [called a \cmd{Mark} in \cmd{Command Completion} parlance] so simply typing will replace that \cmd{Mark} with your text. There can be more than one match for a given input; if you press the trigger again (without entering text) you get
+où \selmark\ est un gros point rond sélectionné [appelé \cmd{Repère} dans le menu \cmd{Commande de complètement}] si bien qu'il pourra être  remplacé par votre texte. Une entrée peut donner plusieurs correspondances : si vous pressez à nouveau la touche de déclenchement (sans entrer de texte), vous obtenez
+\begin{verbatim}
+\section*{|selmark}
+\end{verbatim}
+%and another press of the trigger gives
+et une autre sollicitation de la touche de déclenchement donne
+\begin{verbatim}
+\section[|selmark]{•}
+\end{verbatim}
+%for separate section titles in the \cmd{toc} and the document. In the last case there is a second \cmd{Mark}~(•) for the second argument. After entering the \cmd{toc} section title you jump to and select the next \cmd{Mark} by using \mnu{Source}\To\mnu{Command Completion}\To\mnu{Marks}\To\mnu{Next Mark} (\cmd{Ctl-Cmd-F}) so you can immediately start typing the section title for that document.
+pour obtenir dans la table des matières (\cmd{toc}) un titre de section différent de celui du document. À cet effet, il y a un second \cmd{Repère}~(•) pour le second argument. Après avoir entré le titre de section pour la table des matières (\cmd{toc}), vous sauterez au second \cmd{Repère} et le sélectionnerez en utilisant le menu \mnu{Source}\To\mnu{Command de complètement}\To\mnu{Repères}\To\mnu{Repère suivant} (\cmd{ctrl-cmd-F}) et vous pourrez alors entrer le titre de section pour le document.\medskip
+
+%Better yet are abbreviations. E.g., type
+Les abréviations sont encore mieux. Par exemple, tapez
+\begin{verbatim}
+\benu
+\end{verbatim}
+%(abbreviations for environments always start with a `\texttt{b}') and press the trigger key to get
+(les abréviations pour les environnements commencent toujours par un « \texttt{b} ») et pressez la touche de déclenchement, vous obtenez
+\begin{verbatim}
+\begin{enumerate}
+\item
+|selmark
+\end{enumerate}•
+\end{verbatim}
+%ready to enter the first item. To get a new \verb"\item" simply type
+prêt pour entrer le premier élément. 
+\newpage
+
+Pour obtenir un nouvel \verb+\item+ tapez simplement
+\begin{verbatim}
+\it
+\end{verbatim}
+%on a new line and the trigger to get
+sur une nouvelle ligne, puis sur la touche de déclenchement pour obtenir
+\begin{verbatim}
+\item
+|selmark
+\end{verbatim}
+%finally to get to the very end of the enumerate environment use (\cmd{Ctl-Cmd-F}) to select the \cmd{Mark} at the end of the environment where simply typing \cmd{Return} will remove that mark and move to the next line.
+
+Pour aller à la fin de l'environnement enumerate utilisez (\cmd{ctrl-cmd-F}) pour sélectionner le \cmd{Repère} final, et le simple fait de presser la touche \cmd{Entrée} supprimera ce repère et placera le curseur sur une nouvelle ligne.
+
+%\subsection{Special Notes}
+\subsection{Remarque particulière}
+
+%\textbf{Note}: \cmd{Command Completion} replaces any selected text by the expansion unlike \cmd{Key Bindings} and \cmd{Macros} which can be written to include the selected text in the final result of their actions.
+
+Le \cmd{Complètement de commande} remplace n'importe quel texte sélectionné par son développement à la différence des \cmd{Raccourcis clavier} and des \cmd{Macros} qui peuvent être écrits de façon à inclure le texte sélectionné dans le résultat final de leurs actions.
+
+
+
+\end{document}

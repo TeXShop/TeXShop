@@ -803,8 +803,10 @@ if (! skipTextWindow) {
         }
     
 	
-	if (spellExists)
+    if (spellExists) {
 		[textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+        [textView2 setAutomaticSpellingCorrectionEnabled:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey]];
+    }
 
 	//mfwitten@mit.edu: Ruler stuff; ruler should not have formatting tools
 	[scrollView2 setHasHorizontalRuler: NO];
@@ -1036,8 +1038,10 @@ if (! skipTextWindow) {
 		myRange.location = 0;
 		myRange.length = 0;
 		[textView setSelectedRange: myRange];
-		if (spellExists)
+        if (spellExists) {
 			[textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
+            [textView setAutomaticSpellingCorrectionEnabled:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey]];
+            }
 		[textWindow setInitialFirstResponder: textView];
 		[textWindow makeFirstResponder: textView];
 	}

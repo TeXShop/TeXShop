@@ -147,6 +147,10 @@
 			synctex_node_t node;
 			while ((node = synctex_next_result(scanner)) != NULL) {
 				theFoundFileName = synctex_scanner_get_name(scanner, synctex_node_tag(node));
+                
+                // This line is a patch by Klaus Tichmann
+                if (theFoundFileName == NULL)
+                    return NO;
 				foundFileName = [NSString stringWithCString: theFoundFileName encoding:NSUTF8StringEncoding];
 				line = synctex_node_line(node);
 				
@@ -2825,6 +2829,13 @@
 	myOval.origin.x = hNumber[0]; 
 	myOval.origin.y = vNumber[0];
     
+    if (atLeastElCapitan) {
+        myOval.size.height = myOval.size.height + 40.0;
+        myOval.origin.y = myOval.origin.y - 20.0;
+    }
+    
+    // NSLog(@"The dimensions are %f and %f and %f and %f.", myOval.size.height, myOval.size.width, myOval.origin.x, myOval.origin.y);
+    
     if ((HNumber[0] < 0.1) || (WNumber[0] <= 0.1))
 		theSelection = NULL;
 	else 
@@ -2854,7 +2865,6 @@
 	//		i++;
 	//	}
 	
-	
 	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
 	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
 	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
@@ -2863,6 +2873,8 @@
 	[[pdfKitWindow activeView] goToPage: thePage];
     
     if (theSelection != NULL) {
+        [[pdfKitWindow activeView] setCurrentSelection: nil];
+        [theSelection setColor: [NSColor yellowColor]];
         [[pdfKitWindow activeView] setCurrentSelection: theSelection];
         [[pdfKitWindow activeView] scrollSelectionToVisible:self];
         [[pdfKitWindow activeView] setCurrentSelection: nil];

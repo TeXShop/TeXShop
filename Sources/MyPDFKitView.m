@@ -5467,10 +5467,11 @@ oldVisibleRect.size.width = 0;
     [[self documentView] addSubview: [self overView]];
     
     tempRect = [[self documentView] visibleRect];
-    thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
-    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
-    theImage = [[NSImage alloc] init] ;
-    [theImage addRepresentation:thePDFImageRep];
+    thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]]; 
+    //thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+    //theImage = [[NSImage alloc] init] ;
+    //[theImage addRepresentation:thePDFImageRep];
+    theImage = [[NSImage alloc] initWithData: thePDFData];
     
     [[self overView] setDrawRubberBand: NO];
     [[self overView] setDrawMagnifiedRect: NO];

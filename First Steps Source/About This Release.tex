@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 3.51}
+\title{About TeXShop 3.52}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -37,6 +37,36 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
+
+\section{Changes in 3.52}
+
+This release is primarily about preparing for the release of OS X 10.11, El Capitan. In El Capitan, the TeX binaries are found at the symbolic link /Library/TeX/texbin rather than at /usr/texbin.
+
+This requires changes in engine files, which often reset the \$PATH variable. We add {\em both}
+/usr/texbin and /Library/TeX/texbin to \$PATH to make engines comparible with old and new systems. You will automatically receive updates to the Inactive Engines in $\sim$/Library/TeXShop/Engines/Inactive. But active engines in $\sim$/Library/TeXShop/Engines must be modified
+by you.
+
+If you never touch these Engine files, the easy way to modify them is to quit TeXShop, drag the entire Engine folder to the trash, and restart the program. A new Engine folder will be created. Otherwise,  edit the active engine files using TeXShop. Modify the path statement near the top of the file, if one exists. The syntax of this line depends on the shell being used, but will be obvious by looking at the current line being modified. Add /Library/TeX/texbin to the list.
+
+Release 3.52 also modifies a few macros which explicitely mention /usr/texbin. In these cases, the reference must be changed to /Library/TeX/texbin. The modified macros are not automatically
+installed in $\sim$/Library/TeXShop/Macros.  I'll explain  how to obtain them in the
+following paragraphs.
+
+It is safe to make the changes on current systems {\em provided MacTeX-2015 or BasicTeX-2015}
+has been installed on these systems, because then the link /Library/TeX/texbin was created by
+the 2015 packages. This holds even if you  switched back to TeX Live 2014 with the
+TeX Dist Preference Pane. But if you didn't install MacTeX-2015 or BasicTeX-2015, wait until you do so to modify your macros.
+
+If you never edit macros, the easy way to obtain new ones is to quit TeXShop, throw the folder
+$\sim$/Library/TeXShop/Macros in the trash, and then restart TeXShop. The Macros folder will be recreated with the new Macros.
+
+Otherwise, edit the file Macros\_Latex.plist directly by opening it in TeXShop. (Do not double
+click the file to open it; instead drag it to the TeXShop icon in the dock or use TeXShop's Open menu.)  Find all occurrences of /usr/texbin; there should be three of them.
+Change each of them to /Library/TeX/texbin.
+
+
+
+
 
 \section{Changes in 3.51}
 
@@ -74,7 +104,7 @@ macros called ``GetFontSet,'' ``SaveFontSet,'' and ``TestFontSet.'' The first of
 a small dialog listing known font sets. When one is selected, its implementation code is written to the source document between the {\em \%SetFonts} comments, replacing other implementation code there. So with one click and one typeset, the document can be seen written with a new set of fonts.
 
 Users can also put their own implementation code between the  {\em \%SetFonts} comments.
-The SaveFontSet macro reaches between the comments and saves the implementation code to a file in \path{~/Library/TeXShop/bin} named {\em SetFonts}, which is used by the GetFontSet macro to list known font combinations. Thus {\em SetFonts}  gradually builds into a library of known font combinations. 
+The SaveFontSet macro reaches between the comments and saves the implementation code to a file in \path{~/Library/TeXShop/bin} named {\em SetFonts}, which is used by the GetFontSet macro to list known font combinations. Thus {\em SetFonts}  gradually builds into a library of known font combinations.
 
 I'll let the TestFontSet macro speak for itself.
 

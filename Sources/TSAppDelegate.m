@@ -80,6 +80,52 @@
 	// 
 	// if the processor is intel and the path variable preference is /usr/local/tetex/bin/powerpc-apple-darwin-current,
 	// then change that preference permanently to /usr/local/tetex/bin/i386-apple-darwin-current
+    
+    // The default value has changed to /Library/TeX/texbin as of July, 2015. This is
+    // done because OS X El Capitan does not allow user entries in /usr.
+    
+    // Most of the remaining code is irrelevant; we leave it for historical reasons,
+    // but bypass it.
+    
+    BOOL usrLocationBad = NO;
+    BOOL LibraryLocationBad = NO;
+    NSDictionary *myAttributes;
+    
+    NSFileManager *myManager = [NSFileManager defaultManager];
+    if ( ! [myManager fileExistsAtPath:@"/usr/texbin" ])
+        usrLocationBad = YES;
+    else
+    {
+        myAttributes = [myManager attributesOfItemAtPath: @"/usr/texbin" error: nil];
+        if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
+            usrLocationBad = YES;
+    }
+            
+    if ( ! [myManager fileExistsAtPath:@"/Library/TeX/texbin" ])
+            LibraryLocationBad = YES;
+        else
+            {
+                myAttributes = [myManager attributesOfItemAtPath: @"/Library/TeX/texbin" error: nil];
+                if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
+                    LibraryLocationBad = YES;
+            }
+    
+    NSString *currentBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+    
+    if (([currentBinPath isEqualToString: @"/usr/texbin"]) &&  usrLocationBad && (! LibraryLocationBad))
+        {
+        [SUD setObject:@"/Library/TeX/texbin" forKey:TetexBinPath];
+        [SUD synchronize];
+        }
+    
+    else  if (([currentBinPath isEqualToString: @"/Library/TeX/texbin"]) && LibraryLocationBad && (! usrLocationBad))
+        {
+        [SUD setObject:@"/usr/texbin" forKey:TetexBinPath];
+        [SUD synchronize];
+        }
+    
+    return;
+
 	
 	BOOL canRevisePath = [SUD boolForKey:RevisePathKey];
     NSString *binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
@@ -109,8 +155,9 @@
 			[SUD setObject:@"/usr/local/teTeX/bin/i386-apple-darwin-current" forKey:TetexBinPath];
 			[SUD synchronize];
 		}
-	}
+    }
 }
+
 
 /*
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
@@ -162,6 +209,11 @@
         atLeastMavericks = YES;
     else
         atLeastMavericks = NO;
+    
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_10)
+        atLeastElCapitan = YES;
+    else
+        atLeastElCapitan = NO;
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;

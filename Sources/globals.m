@@ -307,6 +307,7 @@ BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", et
 BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
 BOOL                activateBauerPatch; // this is set in
 BOOL                atLeastMavericks;
+BOOL                atLeastElCapitan;
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;

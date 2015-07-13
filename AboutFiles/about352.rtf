@@ -1,0 +1,46 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 TeXShop Changes 3.52\
+\
+1) In an email message, Klaus Tichmann noticed the synctex_scanner_get_name sometime returns\
+NULL rather than a valid file name. This can lead to thread crashes in TeXShop, disabling the\
+mouse.\
+\
+He provided a fix, which is in 3.52:\
+\
+	--- ../../texshopsource351 2/Sources/TSDocument-SyncTeX.m	2015-01-15 19:56:09.000000000 +0100\
++++ TSDocument-SyncTeX.m	2015-05-24 22:23:57.000000000 +0200\
+@@ -147,6 +147,9 @@\
+ 			synctex_node_t node;\
+ 			while ((node = synctex_next_result(scanner)) != NULL) \{\
+ 				theFoundFileName = synctex_scanner_get_name(scanner, synctex_node_tag(node));\
++				if (theFoundFileName == NULL)\{\
++					return NO; // NSString::stringWithCString does not like NULL passed in\
++				\}\
+ 				foundFileName = [NSString stringWithCString: theFoundFileName encoding:NSUTF8StringEncoding];\
+ 				line = synctex_node_line(node);\
+ 				\
+2) Lukas Christensen, lukas.christensen@icloud.com, made several minor improvements\
+to the German localization.\
+\
+3) Most engines which define PATH have been modified to point to both /Library/TeX/texbin and /usr/texbin\
+\
+4) New startup code automatically configures TeXShop as follows. If the location of the binaries in\
+TeXShop Preferences is anything except /usr/texbin or /Library/TeX/texbin, then it is left alone.\
+If the item is /usr/texbin AND /usr/texbin either doesn't exist or is not a link AND /Library/TeX/texbin does\
+exist and is a link, then the item is changed to /Library/TeX/texbin. Conversely, if the item is\
+/Library/TeX/texbin AND /Library/TeX/texbin either does not exist or is not a symbolic link, AND\
+/usr/texbin exists and is a symbolic link, then the preference is changed to /usr/texbin.\
+\
+5) Fixed Source --> Preview sync on El Capitan\
+\
+6) References to /usr/texbin in the Help Panel have been changed to refer to /Library/TeX/texbin.\
+\
+7) Macros have been revised to use /Library/TeX/texbin instead of /usr/texbin. This will work on\
+older systems with older TeX Distributions, PROVIDED you install BasicTeX-2015, even if you don't\
+use it, since this will write the /Library/TeX/texbin link. Some manipulation is needed to get\
+the revised macros.}

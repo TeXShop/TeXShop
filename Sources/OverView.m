@@ -91,7 +91,7 @@ else if (drawMagnifiedImage) {
     [[NSGraphicsContext currentContext] setShouldAntialias: NO];
     [[NSColor whiteColor] set];
      NSRectFill(theSelectionRect);
-    [self.magnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeSourceOver fraction: 1.0 ]; //NSCompositeCopy
+     [self.magnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeSourceOver fraction: 1.0 ]; //NSCompositeCopy NSCompositeSourceOver
     [[NSColor blackColor] set];
     NSFrameRect(theSelectionRect);
     [self unlockFocus];

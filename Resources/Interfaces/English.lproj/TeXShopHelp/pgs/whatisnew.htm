@@ -14,6 +14,51 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.52</h5></P>
+
+Many of the changes in version 3.52 prepare for OS X 10.11, El Capitan.
+In that system, the /usr/texbin link to the TeX binaries is replaced with a new link,
+/Library/TeX/texbin. Users who have installed MacTeX-2015 or BasicTeX-2015 already have
+this new link.
+
+<ul>
+<li> TeXShop 3.52  uses the new link automatically when appropriate, and thus needs no
+configuration for El Capitan. To be specific, on startup, if the path setting in TeXShop Preferences under the Engines tab is /usr/texbin AND /usr/texbin either does not exist or is not a symbolic link AND /Library/TeX/texbin exists and is a symbolic link, then the preference setting is changed to /Library/TeX/texbin. Similarly if the preference setting is /Library/TeX/texbin AND /Library/TeX/texbin either do not exist or is not a symbolic link AND
+/usr/texbin exists and is a symbolic link, then the preference setting is changed to /usr/texbin.
+In all other cases, the setting is not touched.
+
+<p>
+<li> Engine files in ~/Library/TeXShop/Engines which define $PATH have been modified by adding /Library/TeX/texbin to the path; /usr/texbin remains so these files will work on both old and new systems.
+
+<p>
+<li> Macros in ~/Library/TeXShop/Macros has been modified to refer to /Library/TeX/texbin
+rather than /usr/texbin. (Only three occurrences of /usr/texbin were found in the old Macros
+file.) Users do not automatically get the new macros, so users with an older system will not be affected. Users who installed MacTeX-2015 or BasicTeX-2015 can safely use the new Macros
+because they have the new link.
+
+<p>
+<li> The English Help Panel has been modified to mention /Library/TeX/texbin rather than
+/usr/texbin.
+
+<p>
+<li> In the current El Capitan beta, sync from source to preview  switches to the correct pdf page, but does not hilight the new selection in yellow. This is fixed.
+
+<p>
+<li> In the current El Capitan beta, the magnifying glass works but displays a bitmap rather than a sharp pdf image. I suspect this is an Apple bug which will be fixed. 
+
+<p>
+<li> The German localization has been improved by Lukas Christensen. Thanks!
+
+<p>
+<li> Klaus Tichmann reported a synctex bug and a fix. The "synctex_scanner_get_name"
+sometimes returns NULL rather than a valid string. This can lead to loss of mouse control.
+The fix is in version 3.52.
+
+
+  
+</ul>
+
+
 <P><h5>TeXShop Changes 3.51</h5></P>
 
 <ul>
@@ -57,7 +102,7 @@ is fixed, and now the behavior is determined by the "After Typesetting" item in 
 window mode makes the preview side of the window active.
 
 <p>
-<li> Yosemite 10.3.3, released on April 8, 2015, fixes the "preview blur" problem which cropped up when Yosemite was introduced. The original system was optimized for the Retina display and produced blurry text in the Preview window on regular monitors. In 10.3.3, the display is again
+<li> Yosemite 10.10.3, released on April 8, 2015, fixes the "preview blur" problem which cropped up when Yosemite was introduced. The original system was optimized for the Retina display and produced blurry text in the Preview window on regular monitors. In 10.10.3, the display is again
 crisp on these monitors.
 
 <p>

@@ -1,0 +1,12 @@
+--- ../../texshopsource351 2/Sources/TSDocument-SyncTeX.m	2015-01-15 19:56:09.000000000 +0100
++++ TSDocument-SyncTeX.m	2015-05-24 22:23:57.000000000 +0200
+@@ -147,6 +147,9 @@
+ 			synctex_node_t node;
+ 			while ((node = synctex_next_result(scanner)) != NULL) {
+ 				theFoundFileName = synctex_scanner_get_name(scanner, synctex_node_tag(node));
++				if (theFoundFileName == NULL){
++					return NO; // NSString::stringWithCString does not like NULL passed in
++				}
+ 				foundFileName = [NSString stringWithCString: theFoundFileName encoding:NSUTF8StringEncoding];
+ 				line = synctex_node_line(node);
+ 				

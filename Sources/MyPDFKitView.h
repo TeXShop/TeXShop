@@ -230,9 +230,5 @@
 // - (BOOL)resignFirstResponder;
 @end
 
-@interface MyPDFKitView (Gesture)
-// - (void)beginGestureWithEvent:(NSEvent *)event;
-// - (void)endGestureWithEvent:(NSEvent *)event;
-@end
 
 

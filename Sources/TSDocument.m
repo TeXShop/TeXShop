@@ -4369,7 +4369,8 @@ if (! useFullSplitWindow) {
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
 		else
-			syncMethod = SEARCHONLY;
+            return; // 3.53 change
+			// syncMethod = SEARCHONLY;
 		}
     
     if (useFullSplitWindow)

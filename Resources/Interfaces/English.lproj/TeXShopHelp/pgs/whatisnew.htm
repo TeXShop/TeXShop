@@ -14,6 +14,65 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.53</h5></P>
+
+<p> El Capitan introduces a significant change for TeX users. The location /usr is no
+longer writeable, even by users with root privileges. Consequently, the symbolic link /usr/texbin has been relocated to /Library/TeX/texbin. This new link is automatically written by
+both MacTeX-2015 and BasicTeX-2015. If you updated to one of these, you have the link.
+Once the link exists, older versions of TeX like TeXLive-2013 also work fine.
+
+<p> GUI programs must  be reconfigured to look for the new link. TeXShop 3.52 and
+later does this automatically.
+
+<p> For more information on TeX and El Capitan, see <a href="http://tug.org/mactex/elcapitan.html"><b>tug.org/mactex/elcapitan.html</b></a>
+
+<p> TeXShop 3.53 includes the following changes:
+
+<ul>
+<li> On Mavericks, the Preview display of text was slightly blurry on many
+			screens. This was probably caused by changes Apple added to support the
+			Retina display. Many work arounds for the problem has been suggested. Terada Yusuke 			added code which improved the display for many. His
+			code is activated by a hidden preference 
+			<dl>
+			<dd> defaults write TeXShop FixPreviewBlur YES 
+			</dl>
+			
+			<p> Apple improved the pdf display in Yosemite, and again in El Capitan.
+			But some users still see traces of the old blur. Terada Yusuke has modified
+			his code for El Capitan, and users unsatisfied with the Preview output should
+			activate the above hidden preference.
+<p>
+<li> Near the end of the Macro menu, there is an item ``Tables --> Table'' which inserts the
+outline for a table into the source. The first line of this source is 
+<dl>
+<dd>     \begin{table}[htdp]
+</dl>
+
+<p> However, ``d'' is not a legal parameter for tables. Previous versions of LaTeX ignored this error, but it is flagged as an error in the 2015 version. 
+
+<p> The easiest way to fix this is to open the TeXShop Macro editor and remove the ``d''. If you have never edited the default macros,
+you can also get the fix by quitting TeXShop, going to ~/Library/TeXShop and
+throwing the entire Macros folder in the trash. Then restart TeXShop and the current
+Macros folder will be created.
+
+<p>
+<li> Some changes made in TeX Live 2015 caused a few programs to output unexpected
+SyncTeX code, which then caused TeXShop to lose control of the mouse. This was a TeXShop
+bug, not a SyncTeX bug. It was fixed in 3.52. 
+
+<p> When using SyncTeX, occasionally the system cannot find a match.
+In those cases, the older Sync method is called. But this older method turned
+out to crash for the same reason. So in 3.53, the old Sync is not called and in
+these unusual situations, no Sync is found.
+
+<p>
+<li> One or two coding changes were made so TeXShop will compile with the latest
+XCode.
+
+</ul>   
+
+
+
 <P><h5>TeXShop Changes 3.52</h5></P>
 
 Many of the changes in version 3.52 prepare for OS X 10.11, El Capitan.

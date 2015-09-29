@@ -540,8 +540,8 @@ extern NSMutableString *g_commandCompletionList;/*" The list of completions, rea
 extern BOOL g_canRegisterCommandCompletion;	/*" This is set to NO while e.g. CommandCompletion.txt is open "*/
 extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview window PDFKitView pages "*/
 
-NSDictionary *highlightBracesColorDict; // added by Terada
-NSDictionary *highlightContentColorDict; // added by Terada
+extern NSDictionary *highlightBracesColorDict; // added by Terada
+extern NSDictionary *highlightContentColorDict; // added by Terada
 #define LEOPARD 568 // added by Terada
 
 extern NSString *placeholderString;

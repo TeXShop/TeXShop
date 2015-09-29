@@ -341,16 +341,35 @@
     return YES;
 }
 
-// added by Terada for Yosemite's bug
-- (void) removeBlurringByResettingMagnification
+// added by Terada for the blurring bug of Yosemite and El Capitan
+- (void) changeScaleFactorForRemovingBlurringWithParameters:(NSArray*)parameters
 {
-    BOOL autoScales = self.autoScales;
-    [super setScaleFactor:self.magnification+0.01];
-    [super setScaleFactor:self.magnification-0.01];
-    if (autoScales)
-        [self setAutoScales: YES];
+    float originalScale = [(NSNumber*)(parameters[0]) floatValue];
+    BOOL autoScales = [(NSNumber*)(parameters[1]) boolValue];
+    BOOL first = [(NSNumber*)(parameters[2]) boolValue];
+    
+    if (first) {
+        [self setScaleFactor:originalScale + 0.01];
+        [self performSelector:@selector(changeScaleFactorForRemovingBlurringWithParameters:)
+                   withObject:@[@(originalScale), @(autoScales), @(NO)]
+                   afterDelay:0];
+    } else {
+        [self setScaleFactor:originalScale];
+        if (autoScales) {
+            [self setAutoScales: YES];
+        }
+    }
 }
 
+// added by Terada for the blurring bug of Yosemite and El Capitan
+- (void) removeBlurringByResettingMagnification
+{
+    float originalScale = self.magnification;
+    BOOL autoScales = self.autoScales;
+    [self performSelector:@selector(changeScaleFactorForRemovingBlurringWithParameters:)
+               withObject:@[@(originalScale), @(autoScales), @(YES)]
+               afterDelay:0];
+}
 
 
 - (void) showWithPath: (NSString *)imagePath
@@ -4567,7 +4586,8 @@ else
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
 		else
-			syncMethod = SEARCHONLY;
+            return; // 3.53 change!
+			// syncMethod = SEARCHONLY;
 		}
 	
 	

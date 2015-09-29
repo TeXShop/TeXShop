@@ -318,6 +318,9 @@ NSMutableString *g_commandCompletionList = nil;
 BOOL g_canRegisterCommandCompletion = NO;
 NSColor *PreviewBackgroundColor = nil;
 
+NSDictionary *highlightBracesColorDict; // added by Terada
+NSDictionary *highlightContentColorDict; // added by Terada
+
 // Spelling (defaults if not changed by document tag)
 BOOL        specialWindowOpened; // YES if a window containing a % !TEX language directive is the main window
 BOOL		automaticLanguage;

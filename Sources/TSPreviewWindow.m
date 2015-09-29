@@ -714,7 +714,13 @@ extern NSPanel *pageNumberWindow;
         [(MyPDFKitView *)self.myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)self.myPDFKitView index]];
 	}
 	else
+    {
 		[self.myPDFKitView2 removeFromSuperview];
+        theFrame = [self.myPDFKitView frame];
+        newSize.width = theFrame.size.width;
+        newSize.height = self.frame.size.height;
+        [self.myPDFKitView setFrameSize:newSize];
+    }
 }
 
 // Procedure called by menu item which splits both source and preview windows

@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 3.52}
+\title{About TeXShop 3.54}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -38,7 +38,28 @@ New versions of TeXShop generally do not change these user modifications because
 
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
 
+\section{Changes in 3.54}
+
+Sparkle was broken in 3.53. It is fixed in 3.54. This is the only change.
+
+\section{Changes in 3.53}
+
+Near the end of the Macro menu, there is an item ``Tables $\rightarrow$ Table'' which inserts the
+outline for a table into the source. The first line of this source is 
+\begin{verbatim}
+     \begin{table}[htdp]
+\end{verbatim}
+
+However, ``d'' is not a legal parameter for tables. Previous versions of LaTeX ignored this error, but it is flagged as an error in the 2015 version. 
+
+The easiest way to fix this is to open the TeXShop Macro editor and remove the ``d''. If you have never edited the default macros,
+you can also get the fix by quitting TeXShop, going to $\sim$/Library/TeXShop and
+throwing the entire Macros folder in the trash. Then restart TeXShop and the current
+Macros folder will be created.
+
+
 \section{Changes in 3.52}
+
 
 This release is primarily about preparing for the release of OS X 10.11, El Capitan. In El Capitan, the TeX binaries are found at the symbolic link /Library/TeX/texbin rather than at /usr/texbin.
 

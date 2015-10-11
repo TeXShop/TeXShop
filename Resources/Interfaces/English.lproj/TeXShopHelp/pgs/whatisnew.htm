@@ -14,11 +14,134 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.55</h5></P>
+
+This version fixes two significant bugs when running in El Capitan:
+
+<ul>
+<li> The text boxes in the Preview toolbar were incorrectly sized, so numbers in them were not
+properly centered vertically. This includes the page number box, total page box, and magnification box. All are now fixed in all localizations. Localizations other than English are only lightly tested, so problems in the box display in these localizations should be brought to our attention.
+
+<p>
+<li> The magnifying glass displayed bitmapped images rather than clear pdf text when run in El Capitan. This was discovered early on, and a bug report was filed with Apple
+on July 11.
+
+<p>
+<li> Over the years, at least four different designs were written to create a TeXShop
+magnifying glass. All
+were eventually broken by Apple changes. The Yosemite magnifying glass contained three
+major calls:
+
+<dd>
+<dl>  thePDFData = [[self documentView] dataWithPDFInsideRect: [[self documentView] visibleRect]];
+<dl> NSImage *theImage = [[NSImage alloc] initWithData: thePDFData];
+<dl> [theImage drawinRect: magnifiedRect fromRect: sourceRect operation: NSCompositeSourceOver fraction 1.0];   
+</dd>
+
+<p> The first call asked the Preview Window to provide the raw pdf data creating the region visible on the screen. The second converted this to an NSImage, a common object for handling
+illustrations in Cocoa. The final call read from a section of this image, and wrote the result to a (usually larger) section, essentially enlarging the image. Our bug report claimed that the third call was broken in El Capitan.
+
+<p> After furious work this week, it  turned out that the third command works well and the bug is in the first call, which asks for the raw PDF data of a typeset document. Apple claims that drawing of pdf documents is faster in El Capitan; apparently that's because PDFKit converts several pages to bitmaps and saves them  for later drawing. The first call occasionally returns raw PDF code, but more often it just returns a bitmap. Magnifying that bitmap gives unpleasant results.
+
+<p> The bug is fixed by getting the raw PDF data a different way, on a page by page basis. 
+Because I wanted to fix this bug rapidly, the current code only gets data from one page of a document. Imagine that several pages are shown on the screen, perhaps because scrolling left part of one page and part of another page on the screen.  Or perhaps the user is displaying two pages side by side. When magnification begins by clicking on a point, only the material on that page will appear in the magnifying glass. If the glass moves off of the initial page, it will show white contents with no magnified material. Release the mouse, and push it again to magnify a different page. 
+
+<p> This code may be improved in the future.
+On Yosemite and earlier, the old code is used. We could use the old code
+everywhere if Apple fixed the bug.
+
+<p>
+<li> One user was bothered by bouncing behavior when scrolling. Here is advice from a past
+TeXShop release:
+
+<p> In Yosemite, the source code window's scroll controls have some elasticity, so the
+ source bounces slightly at the top and bottom of the document. Yusuke Terada noticed
+ that these bounces sometimes obscure the first or last lines of the document, making it
+ difficult to edit these lines. Yusuke Terada added a hidden preferences to turn off this elasticity.
+ To activate the hidden item, type the following in /Applications/Utilities/Terminal:
+ <dd>
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+
+
+<p>
+<li> Finally, complaints have surfaced that the display of pdf files in El Capitan is
+unsatisfactory for some combinations of monitor and computer. Everyone seems to agree that
+the display is sharp and clear on large Retina display machines, and the problem may be
+caused by Apple optimizing for these machines. If you are bothered by poor display quality, the best we can do is to repeat the advice given two years ago when this problem first surfaced:
+
+<p> 
+ I am just barely able to notice a difference myself, using Apple's 27 inch Thunderbolt Display. A few users sent me email with pairs of png files, showing an image under Mavericks and under Yosemite and pointing out the fuzzy result on Yosemite, but in some of these cases I couldn't see the difference. So the problem seems to depend strongly on the computer screen used, and perhaps on user sensibilities. Some users may be completely happy while others are desperate for fixes.
+
+<p> Version 3.44 of TeXShop has several hidden preference items which may help with this problem. There is no universal solution, so experimentation with these preference settings will be needed
+if you find the display fuzzy. 
+
+<p> TeXShop and many other graphical front ends for TeX and PDF display use Apple's PDFKit and Cocoa frameworks. These frameworks rasterize pdf images are an extremely low level not accessible to programmers. Version 3.44 tries to expose all the routines in Cocoa which could modify this
+rasterization. Notice that TeXWorks and Adobe Acrobat do not use PDFKit and Cocoa and thus behave differently. It does little good to call these programs to our attention since switching to a different pdf display library would betray a key feature of TeXShop (and other programs using these frameworks, namely that they are fully native applications.
+
+<p> With these caveats, let us list possible solutions. Yusuke Terada noticed that in Japan,
+the display could appear fuzzy and then be made legible by tweeking the magnification. So he
+added code in TeXShop to  do this automatically each time a pdf file is opened or typeset. To turn this feature on, type the following in Terminal:
+<dd>
+<dl> defaults write TeXShop FixPreviewBlur YES
+</dd>
+If this tweek fixes the problem, leave it on and stop reading. Otherwise turn the feature
+off by using the same command with YES replaced by NO, since the tweek is likely to interfere
+with  remaining  experiments.
+
+<p>
+Apple's System Preferences in the General Pane has an item labeled "Use LCD font smoothing when available." A few users discovered that turning this item off cured fuzzy behavior. I think this
+fix won't help most users, but it might be worth a try.
+
+<p> TeXShop also has a preference item under the Preview tab labeled "Smooth text and line art."
+This item was originally added to fix a different problem. One user created an illustration with very thin lines. On a previous TeXShop, the lines vanished with regular monitors, although they appeared with the Retina display. The user discovered that the lines appeared in Acrobat, and
+by turning on antialiasing they also appeared in TeXShop.
+
+<p> The code provided by Cocoa to turn on antialiasing has additional features not exposed in
+previous versions of TeXShop. Cocoa provides the ability to set the level of antialiasing. The
+previous "Smooth text and line art" preference set this value as "high".
+In TeXShop 3.44, hidden preference settings can select the interpolation level. To test various levels of antialiasing, turn on "Smooth text and line art" in TeXShop Preferences and then
+set the hidden preference
+<dd>
+<dl> defaults write TeXShop InterpolationValue 3
+</dd> 
+where the final value can be any integer between 0 and 4. Apple's API documentation provides
+the following names for these values, which perhaps give a hint of their function. The list is as follows; the strange reversal of 3 and 4 occurs in the official list:
+<dd>
+<dl> 0 = NSImageInterpolationDefault
+<dl> 1 = NSImageInterpolationNone
+<dl> 2 = NSImageInterpolationLow
+<dl> 4 = NSImageInterpolationMedium
+<dl> 3 = NSImageInterpolationHigh
+</dd>
+
+
+<p> Frankly, I suspect
+an entirely different solution will be best for most people. That solution is to change the font used for your TeX document, via the wonderful macros written by Michael Sharpe and added to TeXShop
+late this summer. For detailed explanation, read the description below under "TeXShop Changes 3.39."
+
+<p> Notice that it is possible to add Michael's commands for one particular font to your
+default template, so that font will always be used for new documents.
+
+<p> All of these fonts are included in the full TeX Live distribution, so using them
+should cause no trouble when collaborating with Windows or Linux users.
+
+<p> The font commands take up four or five lines in the preamble, and are easily discarded
+once the document is complete if you want the final document to have a plain vanilla look.
+On the other hand, Michael's choices come from an expert and may satisfy more readers
+than the previous default font choices.
+  
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.54</h5></P>
 
 Sparkle was broken in version 3.53. It is fixed in version 3.54. For some time, TeXShop
 loaded the two movies in the Help Menu from the internet. This also broke, and is again
 fixed.
+
+
 
 <P><h5>TeXShop Changes 3.53</h5></P>
 

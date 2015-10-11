@@ -42,14 +42,6 @@
     drawMagnifiedRect = value;
 }
 
-/*
-- (void) setMagnifiedImage: (NSImage *)theImage
-{
-    [theImage retain];
-    MagnifiedImage = theImage;
-}
-*/
-
 - (void) setDrawMagnifiedImage: (BOOL)value
 {
     drawMagnifiedImage = value;
@@ -86,17 +78,15 @@
         NSRectFill(theSelectionRect);
         [self unlockFocus];
     }
-else if (drawMagnifiedImage) {
-    [self lockFocus];
-    [[NSGraphicsContext currentContext] setShouldAntialias: NO];
-    [[NSColor whiteColor] set];
-     NSRectFill(theSelectionRect);
-     [self.magnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeSourceOver fraction: 1.0 ]; //NSCompositeCopy NSCompositeSourceOver
-    [[NSColor blackColor] set];
-    NSFrameRect(theSelectionRect);
-    [self unlockFocus];
-
-    
+    else if (drawMagnifiedImage) {
+        [self lockFocus];
+        [[NSGraphicsContext currentContext] setShouldAntialias: NO];
+        [[NSColor whiteColor] set];
+        NSRectFill(theSelectionRect);
+        [self.magnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeSourceOver fraction: 1.0 ]; //NSCompositeCopy NSCompositeSourceOver
+        [[NSColor blackColor] set];
+        NSFrameRect(theSelectionRect);
+        [self unlockFocus];
     }
 }
 

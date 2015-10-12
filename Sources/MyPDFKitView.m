@@ -565,7 +565,6 @@
 */
 	//[[self window] enableFlushWindow];
     [self display];
-    usleep(1000000);
     NSEnableScreenUpdates();
 //	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 //    if ([SUD boolForKey: FixPreviewBlurKey])

@@ -1,0 +1,86 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf130
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 TeXShop Changes 3.55\
+\
+1) Version 3.53 broke Sparkle, but only on El Capitan. This was fixed\
+in version 3.54. Users running El Capitan who obtained 3.53 in the\
+eight hours it was available must obtain a more recent version at\
+\
+	http://pages.uoregon.edu/koch/texshop/texshop.edu\
+\
+From that point on, Sparkle will work again.\
+\
+Sparkle was upgraded to the latest version. But the real problem was that\
+El Capitan requires that all web connections be secure connections, unless\
+explicit entries in the application plist allow nonsecure connections. TeXShop has only\
+two pieces of code requiring web access: Sparkle and the code to load\
+Movies if the user requests them in the Help Menu. Both broke, but are\
+fixed in 3.54 and beyond.\
+\
+2) In El Capitan, the text boxes that occur in the toolbar were incorrectly\
+formatted. These boxes show the current page, the total number of pages,\
+and the current magnification. TeXShop 3.55 fixes this in all localizations. Localizations\
+other than English receive little testing, so if the formatting of some boxes\
+is off, please let me know.\
+\
+3) In El Capitan, extensive work was done on PDFKit by Apple Engineers,\
+probably in anticipation of future Retina displays and of larger iPads.\
+One of these changes is claimed to provide much faster display of PDF\
+files, but it turns out that this change was accomplished by creating caches\
+of bitmap renderings of pdf code. When a programmer asks for the raw\
+pdf code, El Capitan sometimes hands back bitmaps, which then\
+pixelate if resized.\
+\
+In TeXShop, this primarily affected the magnifying glass. Over the years,\
+we have created at least four different methods to magnify pdf content,\
+and Apple eventually broke them all. The primary reason for the 3.55\
+release is to fix the magnifying glass yet again with another completely\
+different coding method. \
+\
+At the moment this method has a small flaw: it only magnifies sections of\
+the page which the user first clicked. Hence if TeXShop is displaying\
+portions of two pages and you click in one of these, the mouse can be\
+moved anywhere, but will only magnify when over the page first clicked.\
+Otherwise the glass will be blank. It is easy to live with this restriction: \
+to magnify the contents of the other page, release the mouse button,\
+and click again in the other page.\
+\
+(Eventually this may be fixed, but the work is tedious and I thought it\
+best to rapidly fix the important use case.)\
+\
+4) Another more nebulous El Capitan change is the quality of the\
+pdf display. This seems to vary widely with users. A few users with\
+large Retina displays report brilliant and precise rendering -- lucky folks.\
+Others are satisfied with the El Capitan display, and I admit to being among\
+them. But many users say the display quality has gone down, or in some\
+cases has gone down on some monitors but not others.\
+\
+The problem cropped up a few years ago, and then Apple gradually\
+improved the display. Rendering of PDF files is done in TeXShop deep\
+in the guts of the Apple Graphics system by PDFKit code, and very\
+few hooks are provided to alter it. So the best advice to be given is the\
+advice we gave several years ago, and repeated below:\
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\qj\partightenfactor0
+\ls1\ilvl0
+\f1\fs22 \cf0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+he next two items discuss hidden preferences to fix minor TeXShop annoyances. Before adopting these hidden preferences, users should determine whether they find the current behavior annoying. In Yosemite, the source code window's scroll controls have some elasticity, so the source bounces slightly at the top and bottom of the document. Yusuke Terada noticed that these bounces sometimes obscure the first or last lines of the document, making it difficult to edit these lines. Others of us do not have this problem. Yusuke Terada added a hidden preferences to turn off this elasticity. To activate the hidden item, type the following in /Applications/Utilities/Terminal: \uc0\u8232 defaults write TeXShop SourceScrollElasticity NO \u8232 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\qj\partightenfactor0
+\ls2\ilvl0\cf0 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+Finally, a number of users switching to Yosemite reported fuzzy preview images and inadequate antialiasing on certain monitors. I'm told the image looks fine on Retina displays including the new 27 inch iMac. Perhaps Apple optimized pdf rasterization for these displays without worrying enough about other monitors. Frankly, I am just barely able to notice a difference myself, using Apple's 27 inch Thunderbolt Display. A few users sent me email with pairs of png files, showing an image under Mavericks and under Yosemite and pointing out the fuzzy result on Yosemite, but in some of these cases I couldn't see the difference. So the problem seems to depend strongly on the computer screen used, and perhaps on user sensibilities. Some users may be completely happy while others are desperate for fixes. \uc0\u8232 Version 3.44 of TeXShop has several hidden preference items which may help with this problem. There is no universal solution, so experimentation with these preference settings will be needed if you find the display fuzzy. \u8232 TeXShop and many other graphical front ends for TeX and PDF display use Apple's PDFKit and Cocoa frameworks. These frameworks rasterize pdf images are an extremely low level not accessible to programmers. Version 3.44 tries to expose all the routines in Cocoa which could modify this rasterization. Notice that TeXWorks and Adobe Acrobat do not use PDFKit and Cocoa and thus behave differently. It does little good to call these programs to our attention since switching to a different pdf display library would betray a key feature of TeXShop (and other programs using these frameworks, namely that they are fully native applications. \u8232 With these caveats, let us list possible solutions. Yusuke Terada noticed that in Japan, the display could appear fuzzy and then be made legible by tweeking the magnification. So he added code in TeXShop to do this automatically each time a pdf file is opened or typeset. To turn this feature on, type the following in Terminal: \u8232 defaults write TeXShop FixPreviewBlur YES \u8232 \u8232 If this tweek fixes the problem, leave it on and stop reading. Otherwise turn the feature off by using the same command with YES replaced by NO, since the tweek is likely to interfere with remaining experiments. Apple's System Preferences in the General Pane has an item labeled "Use LCD font smoothing when available." A few users discovered that turning this item off cured fuzzy behavior. I think this fix won't help most users, but it might be worth a try. \u8232 TeXShop also has a preference item under the Preview tab labeled "Smooth text and line art." This item was originally added to fix a different problem. One user created an illustration with very thin lines. On a previous TeXShop, the lines vanished with regular monitors, although they appeared with the Retina display. The user discovered that the lines appeared in Acrobat, and by turning on antialiasing they also appeared in TeXShop. \u8232 The code provided by Cocoa to turn on antialiasing has additional features not exposed in previous versions of TeXShop. Cocoa provides the ability to set the level of antialiasing. The previous "Smooth text and line art" preference set this value as "high". In TeXShop 3.44, hidden preference settings can select the interpolation level. To test various levels of antialiasing, turn on "Smooth text and line art" in TeXShop Preferences and then set the hidden preference \u8232 defaults write TeXShop InterpolationValue 3 \u8232 \u8232 where the final value can be any integer between 0 and 4. Apple's API documentation provides the following names for these values, which perhaps give a hint of their function. The list is as follows; the strange reversal of 3 and 4 occurs in the official list: 0 = NSImageInterpolationDefault 1 = NSImageInterpolationNone 2 = NSImageInterpolationLow 4 = NSImageInterpolationMedium 3 = NSImageInterpolationHigh \u8232 \u8232 \u8232 \u8232 \u8232 \u8232 Frankly, I suspect an entirely different solution will be best for most people. That solution is to change the font used for your TeX document, via the wonderful macros written by Michael Sharpe and added to TeXShop late this summer. For detailed explanation, read the description below under "TeXShop Changes 3.39." \u8232 Notice that it is possible to add Michael's commands for one particular font to your default template, so that font will always be used for new documents. \u8232 All of these fonts are included in the full TeX Live distribution, so using them should cause no trouble when collaborating with Windows or Linux users. \u8232 The font commands take up four or five lines in the preamble, and are easily discarded once the document is complete if you want the final document to have a plain vanilla look. On the other hand, Michael's choices come from an expert and may satisfy more readers than the previous default font choices. \
+\pard\pardeftab720\qj\partightenfactor0
+\cf0 \
+\pard\pardeftab720\qj\partightenfactor0
+
+\b \cf0 TeX
+\f0\b0\fs24 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0  \
+}

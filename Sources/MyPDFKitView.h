@@ -192,9 +192,6 @@
 - (void) chooseExportImageType: sender;
 // drag & drop
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
-- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
-- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
-- (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)flagsChanged:(NSEvent *)theEvent;
 - (void)doSync: (NSPoint)thePoint;
 - (BOOL)doNewSync: (NSPoint)thePoint;
@@ -230,5 +227,10 @@
 // - (BOOL)resignFirstResponder;
 @end
 
+@interface MyPDFKitView (Magnification)
+- (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
+- (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
+- (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
+@end
 
 

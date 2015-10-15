@@ -1318,6 +1318,7 @@ in other code when an external editor is being used. */
         || ([extension isEqualToString: @"md"])
         || ([extension isEqualToString: @"fdd"])
         || ([extension isEqualToString: @"lhs"])
+        || ([extension isEqualToString: @"lua"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		

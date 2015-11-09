@@ -49,6 +49,9 @@
 
 #define NUMBER_OF_SOURCE_FILES	60
 
+#define NSAppKitVersionNumber10_9 1265
+#define NSAppKitVersionNumber10_10_Max 1349
+
 
 
 @implementation MyPDFKitView : PDFView
@@ -341,6 +344,32 @@
     return YES;
 }
 
+- (void)fixWhiteDisplay
+{
+    BOOL fixWhitePage = [SUD boolForKey: FixSplitBlankPagesKey];
+    if (! fixWhitePage)
+        return;
+                         
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
+        return;
+    
+    
+    /*
+    BOOL autoScales = self.autoScales;
+    if (! autoScales)
+       return;
+    if ( [self displayMode] != kPDFDisplaySinglePageContinuous)
+        return;
+    */
+    TSDocument *myDocument = self.myDocument;
+    TSPreviewWindow *myWindow = [myDocument pdfKitWindow];
+        if (! myWindow.windowIsSplit)
+        return;
+    
+   
+    [self removeBlurringByResettingMagnification];
+}
+
 // added by Terada for the blurring bug of Yosemite and El Capitan
 - (void) changeScaleFactorForRemovingBlurringWithParameters:(NSArray*)parameters
 {
@@ -377,7 +406,8 @@
 	PDFDocument	*pdfDoc;
 	NSData	*theData;
     
-     NSDisableScreenUpdates();
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
+        NSDisableScreenUpdates();
 	
 	self.sourceFiles = nil;
 	
@@ -407,7 +437,8 @@
 	[totalPage1 display];
 	[[self document] setDelegate: self];
 	[self setupOutline];
-    NSEnableScreenUpdates();
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
+        NSEnableScreenUpdates();
 	
     [self.myPDFWindow makeKeyAndOrderFront: self];
     if ([SUD boolForKey: FixPreviewBlurKey])
@@ -426,6 +457,7 @@
 	totalPages = [[self document] pageCount];
 	[self notificationSetup];
 	[self initializeDisplay];
+    
 }
 
 
@@ -440,15 +472,16 @@
 	PDFPage		*myPage;
 	NSData		*theData;
 
-	// A note below explains dangers of NSDisableScreenUpdates
+ 	// A note below explains dangers of NSDisableScreenUpdates
     // but these dangers don't apply to Intel on recent systems.
     // Experiments show that in single page mode, "disableFlushWindow"
     // adds a flash showing the initial page before switching to the
     // current page. NSDisableScreenUpdates fixes that.
     
     
-	// [[self window] disableFlushWindow];
-    NSDisableScreenUpdates();
+//	 [[self window] disableFlushWindow];
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
+       NSDisableScreenUpdates();
 
 	[self cleanupMarquee: YES];
 	
@@ -564,8 +597,13 @@
 //    [self scrollRectToVisible: modifiedVisibleRect];
 */
 	//[[self window] enableFlushWindow];
-    [self display];
-    NSEnableScreenUpdates();
+//    [self display];
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
+        NSEnableScreenUpdates();
+    
+   // [self removeBlurringByResettingMagnification];
+   [self fixWhiteDisplay];
+    
 //	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 //    if ([SUD boolForKey: FixPreviewBlurKey])
 //        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
@@ -626,10 +664,12 @@
 
 - (void) reShowForSecond
 {
-	
+ 	
 	PDFPage		*aPage;
-	
-	[[self window] disableFlushWindow];
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
+    {
+        [[self window] disableFlushWindow];
+    }
 	totalPages = [[self document] pageCount];
 	/*
 	[self cleanupMarquee: YES];
@@ -736,8 +776,13 @@
 	
 	// [self display];
 	[[self documentView] scrollRectToVisible: secondVisibleRect];
-	[[self window] enableFlushWindow];
-	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
+        [[self window] enableFlushWindow];
+    //[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow:1]];
+    [self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
+   // [self removeBlurringByResettingMagnification];
+   [self fixWhiteDisplay];
+ 
 }
 
 - (void) rotateClockwisePrimary

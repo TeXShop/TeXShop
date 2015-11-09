@@ -14,6 +14,96 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.58</h5></P>
+
+Recent TeXShop versions have  been released to fix or work around a series of El Capitan bugs, particularly
+in PDFKit. There are three major bugs:
+<ul>
+<p>
+<li> Magnification broke because a Cocoa command to get the PDF data underneath a portion of a window
+returned a bitmap in El Capitan. A workaround for this bug was included in
+an earlier TeXShop release.
+
+
+<p>
+<li> When a new version of a pdf document is loaded, there is a momentary flash
+before the document is displayed. This bug has not yet been addressed.
+
+<p>
+<li> In several  situations caused by loading a new file, PDFKit displays a blank page rather than the correct content on the page.
+ This seems to be caused by a new Apple design to speed up pdf display
+by creating and caching bitmaps of recent pages. When the bug occurs, the bitmap is displayed
+too soon.
+ 
+</ul>
+
+<p> When this bug occurs, it is fairly easy to obtain the missing image. With the blank page
+active, type command-shift-+ to zoom in and then
+acommand-shift-- to zoom back out. This causes the page to be displayed correctly.
+
+<p> However, it is better to insure that the blank page does not occur.
+Several instances of this bug were fixed in earlier releases. This release fixes three
+other cases:
+
+<ul>
+<li> In external editor mode, typesetting caused blank pages to be displayed. This is fixed, or
+at least mostly fixed. It is important to configure TeXShop correctly so the fix works. There are
+two ways to use TeXShop in external editor mode. You can  typeset with TeXShop, by making
+the pdf page active and typing command-T. Or you can typeset from the editor or from a shell,
+and configure TeXShop to update the display when the pdf file changes. In the first case,
+the 
+TeXShop preference "Automatic Preview Update", under the Preview tab, should be off. In the
+second case, it should be on.
+
+<p>
+<li> When the pdf window is split, the bottom half sometimes became blank. This bug is fixed.
+
+<p>
+<li> When the pdf window is split and then the user typesets,
+half of the display is often blank. This version of TeXShop fixes the problem. The fix works
+well in "multipage format", which I recommend. It can have problems in "single page format"
+and "double page format", although it usually works in these cases. Because of these small
+problems, the fix can be turned off. To do so, type the following command in Terminal:
+<dl>
+<dd> defaults write TeXShop FixSplitBlankPages NO 
+</ul>
+
+<p>
+Incidentally, all three bugs have been reported to Apple.
+
+<p>
+In addition, the following changes were made:
+<ul>
+<li> Max Horn fixed the "unindent" command. The previous version of this command would
+sometimes lose a character.
+
+<p>
+<li> Max Horn also added #defines for NSAppKitVersion10_9 and the link in the TeXShop
+code base,
+so the source code should compile on Yosemite and Mavericks as well as on El Capitan.
+
+<p>
+<li> James Crippen asked that "paragraph" and "subparagraph" be added as 
+default tags because these items are used in the Memoir class. So currently
+in LaTeX, the following receive automatic tags:
+<dl>
+<dd> chapter
+<dd> section
+<dd> subsection
+<dd> subsubsection
+<dd> paragraph
+<dd> subparagraph
+<dd> macro
+<dd> environment
+</dl>
+
+<p>
+<li> Fixed the French localization so both documents in Help
+that have been translated into French occur in the Help menu.
+The translations of documents by Herbert Schulz are by Rene Fritz.
+
+</ul>
+
 <P><h5>TeXShop Changes 3.57</h5></P>
 
 <ul>

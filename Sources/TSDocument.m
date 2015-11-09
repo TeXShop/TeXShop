@@ -2206,6 +2206,10 @@ in other code when an external editor is being used. */
 		textView = textView1;
 		[textView scrollRangeToVisible: selectedRange];
 		[textView setSelectedRange: selectedRange];
+        if (useFullSplitWindow)
+            [fullSplitWindow display];
+        else
+            [textWindow display];
 	} else {
 		theFrame = [scrollView frame];
 		newSize.width = theFrame.size.width;
@@ -6225,10 +6229,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 theCommand = NSLocalizedString(@"Indent", @"Indent");
                 break;
                 
-                // When reading the code, notice that "text" is OUR COPY of the original text
-                // while "[textView ...]" affects the actual source text; these objects are not
-                // in sync as the routine continues to make changes
-            case Munindent:
+             case Munindent:
                 if (lineStart < lineContentsEnd)
                     theChar = [text characterAtIndex:lineStart];
                 else if(firstLine){
@@ -6238,23 +6239,15 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 else break;
                 
                 if (![SUD boolForKey:TabIndentKey] && theChar == ' ') {
+                    // remove leading spaces -- at most "tabWidth" of them
                     modifyRange.location = lineStart;
                     modifyRange.length = 1;
-                    [textView replaceCharactersInRange:modifyRange withString:@""];
-                    blockEnd--;
-                    lineEnd--;
-                    increment--;
-                    i = 1;
-                    theChar = [text characterAtIndex:(lineStart + 1)];
-                    while (((lineStart + i) < lineContentsEnd) && (i < tabWidth) && (theChar == ' '))
+                    for (i = 0; ((lineStart + i) < lineContentsEnd) && (i < tabWidth) && ([text characterAtIndex:lineStart] == ' '); i++)
                     {
-                        modifyRange.location = lineStart;
-                        modifyRange.length = 1;
                         [textView replaceCharactersInRange:modifyRange withString:@""];
                         blockEnd--;
                         lineEnd--;
                         increment--;
-                        i++;
                     }
                     if(oldRange.location == blockStart && firstLine) fixRangeStart = YES;
                     theCommand = NSLocalizedString(@"Unindent", @"Unindent");

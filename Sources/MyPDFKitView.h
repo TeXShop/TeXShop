@@ -225,6 +225,7 @@
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
 // - (BOOL)resignFirstResponder;
+- (void)fixWhiteDisplay;
 @end
 
 @interface MyPDFKitView (Magnification)

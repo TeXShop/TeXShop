@@ -454,6 +454,7 @@ extern NSString *reverseSyncRedKey;
 extern NSString *reverseSyncGreenKey;
 extern NSString *reverseSyncBlueKey;
 extern NSString *AutomaticSpellingCorrectionEnabledKey;
+extern NSString *FixSplitBlankPagesKey;
 
 
 

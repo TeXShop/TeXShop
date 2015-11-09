@@ -8,6 +8,8 @@
 
 #import "MyPDFKitView.h"
 
+#define NSAppKitVersionNumber10_10_Max 1349
+
 @implementation MyPDFKitView (Magnification)
 
 

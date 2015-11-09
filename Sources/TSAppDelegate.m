@@ -48,6 +48,8 @@
 
 
 #define NSAppKitVersionNumber10_8 1187
+#define NSAppKitVersionNumber10_9 1265
+#define NSAppKitVersionNumber10_10 1343
 
 @class TSTextEditorWindow;
 
@@ -434,10 +436,14 @@
                                @"\\section",
                                @"\\subsection",
                                @"\\subsubsection",
+                               @"\\paragraph",
+                               @"\\subparagraph",
                                @"% \\chapter",
                                @"% \\section",
                                @"% \\subsection",
                                @"% \\subsubsection",
+                               @"% \\paragraph",
+                               @"% \\subparagraph",
                                @"% \\begin{macro}",
                                @"% \\begin{environment}",
                                nil];
@@ -446,10 +452,14 @@
                                @"section: ",
                                @"subsection: ",
                                @"subsubsection: ",
+                               @"paragraph: ",
+                               @"subparagraph: ",
                                @"chapter: ",
                                @"section: ",
                                @"subsection: ",
                                @"subsubsection: ",
+                               @"paragraph: ",
+                               @"subparagraph: ",
                                @"macro: ",
                                @"environment: ",
                                nil];

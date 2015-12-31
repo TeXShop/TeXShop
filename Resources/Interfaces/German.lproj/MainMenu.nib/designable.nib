@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15A282b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D9c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -33,6 +33,18 @@
                             <menuItem title="Einstellungen..." keyEquivalent="," id="225">
                                 <connections>
                                     <action selector="showPreferences:" target="380" id="381"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Den Ordner „~/Library/TeXShop“ im Finder öffnen" id="FB9-bd-Abg">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="GotoLibraryTeXShop:" target="-1" id="Yfu-hk-k67"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="TeXShop als Standard-TeX-Editor verwenden" id="dNl-13-pBL">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="makeDefaultEditor:" target="-1" id="bvc-lx-9kl"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="223">
@@ -1026,6 +1038,13 @@
                                     <action selector="showHelp:" target="-1" id="144"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="9yw-gq-RAb"/>
+                            <menuItem title="File Encoding and TeXShop" id="RAo-yM-Sgh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayFileEncoding:" target="673" id="HQU-fj-5Ca"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="TeXShop Tipps und Tricks" id="899">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1128,7 +1147,6 @@
                 <popUpButton verticalHuggingPriority="750" id="530">
                     <rect key="frame" x="95" y="7" width="212" height="26"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <animations/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="617" id="813">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -1142,7 +1160,6 @@
                 <textField verticalHuggingPriority="750" id="518">
                     <rect key="frame" x="23" y="13" width="64" height="14"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Kodierung:" id="812">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1150,7 +1167,6 @@
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
         </customView>
         <customObject id="619" userLabel="OgreTextFinder" customClass="OgreTextFinder"/>
         <customObject id="672" userLabel="TSMovie" customClass="TSMovie"/>
@@ -1176,7 +1192,6 @@
                     <button verticalHuggingPriority="750" id="802">
                         <rect key="frame" x="225" y="11" width="84" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="815">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1191,7 +1206,6 @@ DQ
                     <textField verticalHuggingPriority="750" id="803">
                         <rect key="frame" x="20" y="60" width="283" height="21"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="816">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -1201,7 +1215,6 @@ DQ
                     <button verticalHuggingPriority="750" id="804">
                         <rect key="frame" x="117" y="11" width="108" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Abbrechen" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="817">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1216,7 +1229,6 @@ Gw
                     <textField verticalHuggingPriority="750" id="801">
                         <rect key="frame" x="17" y="82" width="289" height="51"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="814">
                             <font key="font" metaFont="system"/>
                             <string key="title">Name des Pakets, dessen Dokumentation geöffnet werden soll:
@@ -1226,7 +1238,6 @@ Gw
                         </textFieldCell>
                     </textField>
                 </subviews>
-                <animations/>
             </view>
         </window>
         <customObject id="870" userLabel="TSStationery" customClass="TSStationery">
@@ -1254,7 +1265,6 @@ Gw
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="876" id="877">
                                     <rect key="frame" x="0.0" y="0.0" width="511" height="364"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <animations/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
@@ -1293,30 +1303,24 @@ Gw
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <animations/>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
-                        <animations/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="878">
                             <rect key="frame" x="1" y="482" width="387" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="879">
                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <tableHeaderView key="headerView" id="876">
                             <rect key="frame" x="0.0" y="0.0" width="511" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </tableHeaderView>
                     </scrollView>
                     <button verticalHuggingPriority="750" id="874">
                         <rect key="frame" x="401" y="12" width="96" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="884">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1331,7 +1335,6 @@ DQ
                     <button verticalHuggingPriority="750" id="873">
                         <rect key="frame" x="293" y="12" width="96" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="885">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1344,7 +1347,6 @@ Gw
                         </connections>
                     </button>
                 </subviews>
-                <animations/>
             </view>
         </window>
         <window title="Kpsetool" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="905" userLabel="StyleHelp" customClass="NSPanel">
@@ -1360,7 +1362,6 @@ Gw
                     <button verticalHuggingPriority="750" id="908">
                         <rect key="frame" x="225" y="12" width="84" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="913">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1375,7 +1376,6 @@ DQ
                     <textField verticalHuggingPriority="750" id="907">
                         <rect key="frame" x="20" y="61" width="323" height="21"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="914">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -1385,7 +1385,6 @@ DQ
                     <button verticalHuggingPriority="750" id="909">
                         <rect key="frame" x="117" y="12" width="108" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Abbrechen" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="912">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1400,7 +1399,6 @@ Gw
                     <textField verticalHuggingPriority="750" id="910">
                         <rect key="frame" x="17" y="83" width="336" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Name der Stil-Datei (am besten in Kleinbuchstaben)" id="911">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1408,7 +1406,6 @@ Gw
                         </textFieldCell>
                     </textField>
                 </subviews>
-                <animations/>
             </view>
         </window>
         <customObject id="920" customClass="TSAutoCompletionListEditor"/>

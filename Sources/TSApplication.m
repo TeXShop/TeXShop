@@ -61,4 +61,11 @@
     [super sendEvent:anEvent];
 }
 
+- (IBAction)GotoLibraryTeXShop: (id)sender;
+{
+    NSString *myString = @"~/Library/TeXShop";
+    myString = [myString stringByExpandingTildeInPath];
+    [[NSWorkspace sharedWorkspace] openFile:myString withApplication: @"Finder"];
+}
+
 @end

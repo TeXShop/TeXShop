@@ -44,7 +44,7 @@ typedef struct {
 
 // List of the supported encodings.
 static TSEncoding _availableEncodings[] = {
-	{ 0, kCFStringEncodingMacRoman }, //				@"MacOSRoman" },
+	{ 0, kCFStringEncodingMacRoman }, //			@"MacOSRoman" },
 	{ 0, kCFStringEncodingISOLatin1}, //			@"IsoLatin" },
 	{ 0, kCFStringEncodingISOLatin2}, //			@"IsoLatin2" },
 	{ 0, kCFStringEncodingISOLatin5}, //			@"IsoLatin5" },
@@ -76,6 +76,27 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
 };
 
+// List of the supported encodings.
+static TSEncoding _availableTexworksEncodings[] = {
+    { 0, kCFStringEncodingMacRoman }, //			@"MacOSRoman" },
+    { 0, kCFStringEncodingISOLatin1}, //			@"IsoLatin" },
+    { 0, kCFStringEncodingISOLatin2}, //			@"IsoLatin2" },
+    { 0, kCFStringEncodingISOLatin5}, //			@"IsoLatin5" },
+    { 0, kCFStringEncodingISOLatin9}, //			@"IsoLatin9" },
+    { 0, kCFStringEncodingISOLatinGreek}, //		@"IsoLatinGreek" }, //Greek ISO 8859-7
+    { 0, kCFStringEncodingMacCentralEurRoman}, //	@"Mac Central European Roman" }, // added at request of Czech Republic respondent
+    { 0, kCFStringEncodingShiftJIS_X0213_00}, //	@"SJIS_X0213" },
+    { 0, kCFStringEncodingEUC_JP}, //				@"EUC_JP" },
+    { 0, kCFStringEncodingUTF8}, //					@"UTF-8 Unicode" },
+    { 0, kCFStringEncodingUnicode}, //				@"Standard Unicode" },
+    { 0, kCFStringEncodingWindowsLatin1}, //		@"Windows Latin 1" }, // code page 1252
+    { 0, kCFStringEncodingWindowsLatin2}, //		@"WindowsCentralEurRoman" }, // code page 1250
+    { 0, kCFStringEncodingWindowsCyrillic}, //		@"Windows Cyrillic" },
+    { 0, kCFStringEncodingKOI8_R}, //				@"KOI8_R" },
+    { 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
+};
+
+
 
 
 + (void)initialize
@@ -84,6 +105,9 @@ static TSEncoding _availableEncodings[] = {
 	NSInteger i;
 	for (i = 0; i < ARRAYSIZE(_availableEncodings); ++i)
 		_availableEncodings[i].nsEnc = CFStringConvertEncodingToNSStringEncoding(_availableEncodings[i].cfEnc);
+    
+    for (i = 0; i < ARRAYSIZE(_availableTexworksEncodings); ++i)
+        _availableTexworksEncodings[i].nsEnc = CFStringConvertEncodingToNSStringEncoding(_availableTexworksEncodings[i].cfEnc);
 
 	// initialize yen string
 	unichar yenChar = YEN;
@@ -101,6 +125,7 @@ static TSEncoding _availableEncodings[] = {
 - (id)init
 {
     NSMutableArray  *myArray;
+    NSMutableArray  *texWorksArray;
     
 	if (sharedEncodingSupport) {
 		// [super dealloc];
@@ -109,7 +134,12 @@ static TSEncoding _availableEncodings[] = {
         
        myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"DOSKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", nil];
         
+        
+        texWorksArray = [NSMutableArray arrayWithObjects:  @"Apple Roman", @"ISO 8859-1", @"ISO 8859-2", @"ISO 8859-9", @"ISO 8859-15", @"ISO 8859-7", @"macce", @"Shift-JIS", @"EUC_JP", @"UTF-8", @"UTF-16", @"ansinew", @"Windows-1250", @"Windows-1251", @"KOI8-R", @"GB18030-0", nil];
+        
         self.availableEncodingsNames = myArray;
+        self.availableTexworksEncodingNames = texWorksArray;
+        self.defaultEncodingNumber = 4; // ISOLatin9
 
 
 		g_shouldFilter = kNoFilterMode;
@@ -339,7 +369,15 @@ static TSEncoding _availableEncodings[] = {
         if ([key isEqualToString:self.availableEncodingsNames[i]])
 			return _availableEncodings[i].nsEnc;
 	}
-	
+    
+
+    for (i = 0; i < ARRAYSIZE(_availableTexworksEncodings); ++i) {
+        //		if ([key isEqualToString:_availableEncodings[i].name])
+        if ([key isEqualToString:self.availableTexworksEncodingNames[i]])
+            return _availableTexworksEncodings[i].nsEnc;
+    }
+
+    
 	// In 2.18, the old name CentralEurRoman was changed to the new name Mac Central European Roman
 	// Unfortunately, members of Mathematical Institute of Silesian University in Opava, Czech Republic, Europe had
 	// hundreds of documents with encoding set by %!TEX encoding = CentralEurRoman
@@ -348,8 +386,13 @@ static TSEncoding _availableEncodings[] = {
 			return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacCentralEurRoman);
 
 
-	// If the encoding is unknown, use the first encoding in our list (MacOS Roman).
-	return _availableEncodings[0].nsEnc;
+	// If the encoding is unknown, use the default encoding in our list (Latin 9).
+    NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                    NSLocalizedString(@"Unknown encoding; using Latin 9.", @"Unknown encoding; using Latin 9."),
+                    nil, nil, nil);
+
+    return _availableEncodings[self.defaultEncodingNumber].nsEnc;
+	// return _availableEncodings[0].nsEnc;
 }
 
 - (NSString *)keyForStringEncoding: (NSStringEncoding)encoding
@@ -359,8 +402,12 @@ static TSEncoding _availableEncodings[] = {
 		if (_availableEncodings[i].nsEnc == encoding)
 			return self.availableEncodingsNames[i];
 	}
-	// If the encoding is unknown, use the first encoding in our list (MacOS Roman).
-	return self.availableEncodingsNames[0];
+	// If the encoding is unknown, use the default encoding in our list (Latin 9).
+    NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"),
+                    NSLocalizedString(@"Unknown encoding; using Latin 9.", @"Unknown encoding; using Latin 9."),
+                    nil, nil, nil);
+    return self.availableEncodingsNames[self.defaultEncodingNumber];
+	// return self.availableEncodingsNames[0];
 }
 
 - (NSString *)localizedNameForKey: (NSString *)key

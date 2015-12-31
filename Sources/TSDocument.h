@@ -743,6 +743,12 @@ enum RootCommand
 
 @end
 
+@interface TSDocument (FileAssociations)
+
+- (void)makeDefaultEditor:(id)sender;
+
+@end
+
 @interface TSDocument (Scrap)
 - (void) tryScrap:(id)sender;
 - (IBAction) typesetScrap:(id)sender;

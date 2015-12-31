@@ -69,6 +69,14 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayFileEncoding:sender
+{
+    NSString				*fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"File Encoding" ofType:@"pdf"];
+    [self displayFile: fileName];
+}
+
 - (IBAction)displayTipsandTricks:sender
 {
 	NSString				*fileName;

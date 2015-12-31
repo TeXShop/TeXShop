@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D9c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -34,6 +34,18 @@
                             <menuItem title="環境設定..." keyEquivalent="," id="612">
                                 <connections>
                                     <action selector="showPreferences:" target="380" id="626"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="~/Library/TeXShop を開く" id="rb4-xv-QFv">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="GotoLibraryTeXShop:" target="-1" id="tpC-9k-Dcw"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="TeXShop を既定の TeX エディタにする" id="YiR-xW-KIH">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="makeDefaultEditor:" target="-1" id="JNL-uS-WgK"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="618">
@@ -1029,6 +1041,13 @@
                                     <action selector="showHelp:" target="-1" id="144"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="DiS-jx-0ug"/>
+                            <menuItem title="ファイルエンコーディングの解説（英語）" id="GuV-oL-UCe">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayFileEncoding:" target="690" id="OaD-xa-cXF"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="TeXShop のヒントと技巧（英語）" id="920">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1245,7 +1264,7 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="891" id="892">
-                                    <rect key="frame" x="0.0" y="0.0" width="511" height="26"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="511" height="364"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1291,7 +1310,7 @@ Gw
                             <rect key="frame" x="1" y="482" width="387" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="894">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="894">
                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>

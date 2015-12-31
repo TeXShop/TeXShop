@@ -7699,6 +7699,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 }
 */
 
+
+/*
+ 
+// Second version; this version has a subtle error discovered by Alan Munn.
+
 - (void)closeCurrentEnvironment:(id)sender
 {
 	NSRange  oldRange;
@@ -7771,6 +7776,127 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	
 	autoCompleting = NO;
 }
+*/
+
+// The routine below is created by glueing the two earlier procedures together. We run the ConTeXt
+// case only when the original routine cannot find a match
+
+// Here is Munn's bug
+
+/*
+ 
+  
+*/
+
+- (void)closeCurrentEnvironment:(id)sender
+{
+    NSRange  oldRange;
+    NSString *newString = nil;
+    
+    autoCompleting = YES;
+    
+    oldRange = [textView selectedRange];
+    
+    NSString *regex = @"(begin|end)\\{(.*?)\\}";
+    NSString *regexcontext =  @"(begin|end)\\{(.*?)\\}|(start|stop)([a-zA-Z]+)";
+    if(g_texChar == YEN){
+        regex = [NSString stringWithFormat:@"%c%@", YEN, regex];
+        regexcontext = [NSString stringWithFormat:@"%c%@", YEN, regexcontext];
+    }else{
+        regex = [@"\\\\" stringByAppendingString:regex];
+        regexcontext = [@"\\\\" stringByAppendingString:regexcontext];
+    }
+    
+    NSEnumerator* enumerator = [[[OGRegularExpression regularExpressionWithString:regex]
+                                 allMatchesInString:[[[textView textStorage] string] substringToIndex:oldRange.location]]
+                                reverseObjectEnumerator];
+    
+    OGRegularExpressionMatch *match;
+    NSString *environment, *prefix, *stackKey;
+    NSInteger increment, count_value;
+    NSNumber *count;
+    prefix = @"begin";
+    NSMutableDictionary *environmentStack = [NSMutableDictionary dictionaryWithCapacity:0];
+    
+    while((match = [enumerator nextObject])) {
+        increment = [[match substringAtIndex:1] isEqualToString:@"end"] ? 1 : -1;
+        environment = [match substringAtIndex:2];
+        count = [environmentStack objectForKey:environment];
+        if (count) {
+            count_value = [count integerValue];
+            if(increment == 1){
+                [environmentStack setObject:[NSNumber numberWithInteger:count_value+1] forKey:environment];
+            }else if(count_value > 0){
+                [environmentStack setObject:[NSNumber numberWithInteger:count_value-1] forKey:environment];
+            }else {
+                newString = environment;
+                break;
+            }
+        }else {
+            if(increment == 1){
+                [environmentStack setObject:[NSNumber numberWithInteger:1] forKey:environment];
+            }else {
+                newString = environment;
+                break;
+            }
+        }
+    }
+    
+    if (!newString)
+    {
+        
+        NSEnumerator* enumerator = [[[OGRegularExpression regularExpressionWithString:regexcontext]
+                                     allMatchesInString:[[[textView textStorage] string] substringToIndex:oldRange.location]]
+                                    reverseObjectEnumerator];
+        
+        while((match = [enumerator nextObject])) {
+        if(!(prefix = [match substringAtIndex:1])) prefix =  [match substringAtIndex:3];
+        if(!(environment = [match substringAtIndex:2])) environment = [match substringAtIndex:4];
+        increment = ([[match substringAtIndex:1] isEqualToString:@"end"] || [[match substringAtIndex:3] isEqualToString:@"stop"]) ? 1 : -1;
+        stackKey = [(([prefix isEqualToString:@"begin"] || [prefix isEqualToString:@"end"] ) ? @"A" : @"B") stringByAppendingString:environment];
+        
+        count = [environmentStack objectForKey:stackKey];
+        if (count) {
+            count_value = [count intValue];
+            if(increment == 1){
+                [environmentStack setObject:[NSNumber numberWithInt:count_value+1] forKey:stackKey];
+            }else if(count_value > 0){
+                [environmentStack setObject:[NSNumber numberWithInt:count_value-1] forKey:stackKey];
+            }else {
+                newString = environment;
+                break;
+            }
+        }else {
+            if(increment == 1){
+                [environmentStack setObject:[NSNumber numberWithInt:1] forKey:stackKey];
+            }else {
+                newString = environment;
+                break;
+            }
+        }
+    }
+    }
+        
+    
+    if(newString){
+        if ([prefix isEqualToString:@"begin"]) {
+            newString = [NSString stringWithFormat:@"%cend{%@}", g_texChar, newString];
+        }else{
+            newString = [NSString stringWithFormat:@"%cstop%@", g_texChar, newString];
+        }
+        if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) {
+            [textView replaceCharactersInRange:oldRange withString:newString];
+            [textView didChangeText];
+            
+            [[textView undoManager] setActionName:NSLocalizedString(@"Close Current Environment", @"Close Current Environment")];
+        }
+    }else {
+        NSBeep();
+    }
+    
+    autoCompleting = NO;
+}
+
 
 
 - (MyPDFKitView *)myPdfKitView

@@ -1,3 +1,4 @@
+
 <HTML>
 
 <HEAD>
@@ -13,6 +14,71 @@
 
 
 <div id="content_normal">
+
+<P><h5>TeXShop Changes 3.59</h5></P>
+
+There are several small changes in TeXShop 3.59:
+
+<ul>
+<li> A new item is provided in the TeXShop menu, "Select TeXShop as Default TeX Editor."
+Many programs are able to edit .tex files, so when the user double clicks such a file, it
+is not clear which program will open it. Selecting the new menu item informs Apple's Launch Services that TeXShop should open such files.
+
+<p> The appropriate Launch Services API does not distinguish between different versions of a program. A few users are in the bad habit of keeping several copies of TeXShop on their
+computer, and then the new menu will select a random version to run.
+It is best to keep TeXShop in /Applications/TeX and update it via the Sparkle update mechanism. Then only one copy of TeXShop will be on the disk.
+
+<p> The author of TeXShop sympathizes with sloppier users, since he has dozens of versions
+of TeXShop on his disk. He opens new files by dragging their icons to the TeXShop icon in the Dock
+to insure that the correct copy runs.
+
+<p>
+<li> Alan Munn reported the following strange bug:
+<dl>
+<dd> \documentclass{article} 
+<dd> \begin{document}
+ <dd> \begin{enumerate}
+<dd>  \item John started the car.
+<dd>  \item John stopped the car.
+<dd>  % environment  completion here produces \stoped
+<dd>  % even if the line is commented out
+<dd>  % completing again produces the correct completion
+<dd>  % but environment completion after these comments seems to work
+</dl>
+
+<p>
+This bug is fixed.
+
+<p>
+<li> The TeXShop menu has a new item just below Preferences called "Open ~/Library/TeXShop".
+When this item is selected, the Finder will open the ~/Library/TeXShop folder.
+
+<p> In recent versions of OS X, ~/Library is a hidden folder. The new command makes it easy to access this folder without using special tricks.
+
+<p>
+Files in this location customize TeXShop for the individual user. For example, the Templates subfolder has all templates which appear in the  Templates pulldown menu. These templates can be opened and edited in TeXShop; other templates can be added to the  folder.
+
+<p>
+<li> For many years, users could type a line like
+<dl>
+<dd>     % !TEX encoding = IsoLatinGreek     
+</dl>
+at the top of a source file to indicate that the file should be opened or saved using  the LatinGreek  encoding. But if the encoding name, here "IsoLatinGreek", was not recognized by TeXShop, the program would open the file using the "Mac OS Roman" encoding without reporting an error.
+This bug is now fixed. An unrecognized encoding name will cause an error dialog to appear reporting the error, and then the file will be opened in "ISOLatin9", the current default encoding.
+
+<p> The best way to avoid this sort of error is to use the Encodings Macro to write
+the displayed line, since this Macro lists all legal encodings and allows users to select the one they want.
+
+<p>
+<li> The alternate front end TeXWorks uses the same encoding magic line, but has different
+names for many standard encodings. TeXShop now recognizes the TeXWorks names, making it easier for collaborators to share files. 
+
+<p>
+<li> The TeXShop Help menu now has a new document by Herbert Schulz titled
+"File Encoding in TeXShop". This document explains the significance of
+various encodings of the source file, a topic of importance to users who do
+not write in English.
+</ul>
 
 <P><h5>TeXShop Changes 3.58</h5></P>
 

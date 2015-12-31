@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D9c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -33,6 +33,18 @@
                             <menuItem title="Voorkeuren..." keyEquivalent="," id="225">
                                 <connections>
                                     <action selector="showPreferences:" target="380" id="381"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Open ~/Library/TeXShop" id="Uq4-od-osn">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="GotoLibraryTeXShop:" target="-1" id="Yl5-sM-01f"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Select TeXShop as Default TeX Editor" id="Leh-8E-Jij">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="makeDefaultEditor:" target="-1" id="1hf-RX-Lmf"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="223">
@@ -1026,6 +1038,13 @@
                                     <action selector="showHelp:" target="-1" id="144"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="v01-to-wbf"/>
+                            <menuItem title="File Encoding and TeXShop" id="Xz3-2A-dmE">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayFileEncoding:" target="692" id="0Nl-JU-JD1"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="TeXShop Tips and Tricks " id="954">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1242,10 +1261,10 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="930" id="931">
-                                    <rect key="frame" x="0.0" y="0.0" width="511" height="26"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="511" height="364"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
@@ -1288,7 +1307,7 @@ Gw
                             <rect key="frame" x="1" y="482" width="387" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="933">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="933">
                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>

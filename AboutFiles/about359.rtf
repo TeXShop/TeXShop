@@ -1,0 +1,67 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf340
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green116\blue0;}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 3.59::\
+\
+1) There is a new item in the TeXShop menu:\
+\
+	Select TeXShop as Default TeX Editor\
+\
+This sets TeXShop as the application which will open .tex files\
+which are double clicked in the Finder. \
+\
+There is one caveat. This command requires that the user have\
+a unique copy of TeXShop on their computer. Our recommendation\
+is that TeXShop be placed in /Applications/TeX and be updated\
+by using the "Sparkle" update mechanism. If this is consistently done,\
+only one copy will be on the computer. But users who download\
+TeXShop from third party sites (or Koch's TeXShop site) have\
+the freedom to place it anywhere they like, and this can easily lead\
+to multiple copies.\
+\
+The menu calls a routine in Apple's Launch Services API, which\
+picks a random copy of TeXShop. Users who have multiple copies may\
+not open their most recent copies if they set the default method with the\
+new menu item.\
+\
+Note that the alternate way to select a default application is to\
+select a .tex file, and then select Get Info in the Finder. This leads to\
+a dialog with a dropdown menu containing all known copies of TeXShop,\
+as well as other applications that can edit TeX files. Thus the user\
+has a little more control using Get Info.\
+\
+2) Fixed the command "Complete Environment". The original command\
+worked for Latex. It was extended to also support ConTeXt." Alan Munn\
+then reported the following strange bug:\
+\
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0 \\documentclass\{article\}\
+ \\begin\{document\}\
+ \\begin\{enumerate\}\
+ \\item John started the car.\
+ \\item John stopped the car.\
+ % environment  completion here produces \\stoped\
+ % even if the line is commented out\
+ % completing again produces the correct completion\
+ % but environment completion after these comments seems to work\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \CocoaLigature1 \
+This is fixed.\
+\
+3) If the user inputs an unknown encoding using the "% !TEX encoding = "\
+ trick, TeXShop silently switch to Mac OS Roman. Now it switches to\
+the default encoding, ISOLatin 9. Moreover, before the switch it puts\
+up an error dialog: "Unknown encoding; using ISO Latin 9."\
+\
+4) The Help menu now has a command to open ~/Local.\
+\
+5) The "% !TEX encoding = " line now accepts TeXWorks encoding names\
+for equivalent TeXShop encodings with different names\
+\
+\
+}

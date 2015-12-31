@@ -25,6 +25,7 @@
 - (IBAction)displayGettingStartedXeTeX:sender;
 - (IBAction)displayHelpForPackage:sender;
 - (IBAction)displayStyleFile:sender;
+- (IBAction)displayFileEncoding:sender;
 - (IBAction)displayTipsandTricks:sender;
 - (IBAction)displayTeXShopConfusion:sender;
 - (IBAction)displayNotesonApplescript:sender;

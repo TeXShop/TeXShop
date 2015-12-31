@@ -29,6 +29,8 @@
 }
 
 @property (retain)  NSArray *availableEncodingsNames;
+@property (retain)  NSArray *availableTexworksEncodingNames;
+@property NSInteger defaultEncodingNumber;
 
 
 + (id)sharedInstance;

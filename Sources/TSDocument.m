@@ -1989,12 +1989,15 @@ in other code when an external editor is being used. */
 
 	myDictionary = [super fileAttributesToWriteToURL: absoluteURL ofType: typeName
                                     forSaveOperation: saveOperation originalContentsURL:absoluteOriginalContentsURL error:outError];
+    return myDictionary;
+/*
 	aDictionary = [NSMutableDictionary dictionaryWithDictionary: myDictionary];
 	myNumber = [NSNumber numberWithLong:'TEXT'];
 	[aDictionary setObject: myNumber forKey: NSFileHFSTypeCode];
 	myNumber = [NSNumber numberWithLong:'TeXs'];
 	[aDictionary setObject: myNumber forKey: NSFileHFSCreatorCode];
 	return aDictionary;
+ */
 }
 
 - (void)saveDocument: (id)sender

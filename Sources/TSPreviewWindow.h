@@ -90,6 +90,8 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (void)doMove: (id)sender;
 - (void)resignMainWindow;
+- (void) makeDefaultEditor:(id)sender;
+
 
 - (TSDocument *)document;
 #ifdef MITSU_PDF

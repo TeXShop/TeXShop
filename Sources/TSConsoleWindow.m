@@ -96,6 +96,12 @@
 	[self.myDocument trashAUXFiles: sender];
 }
 
+- (void) makeDefaultEditor:(id)sender
+{
+    [self.myDocument makeDefaultEditor:sender];
+}
+
+
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
 	NSRect	oldFrame;

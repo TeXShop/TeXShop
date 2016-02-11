@@ -92,6 +92,12 @@ extern NSPanel *pageNumberWindow;
     [super resignMainWindow];
 }
 
+- (void) makeDefaultEditor:(id)sender
+{
+    [self.myDocument makeDefaultEditor:sender];
+}
+
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {

@@ -9,6 +9,6 @@ ENCODE=${COMMAND#*-}
 JOBNAME=${1##*/}
 JOBNAME=${JOBNAME%.*}
 
-ptex -kanji=$ENCODE -fmt=$PTEX-$ENCODE -progname=$PTEX $1 && \
-dvipdfmx $JOBNAME 
+ptex -kanji=$ENCODE -fmt=$PTEX-$ENCODE -progname=$PTEX "$1" && \
+dvipdfmx "$JOBNAME.dvi"
 

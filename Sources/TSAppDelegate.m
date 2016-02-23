@@ -94,23 +94,18 @@
     NSDictionary *myAttributes;
     
     NSFileManager *myManager = [NSFileManager defaultManager];
-    if ( ! [myManager fileExistsAtPath:@"/usr/texbin" ])
+    
+    myAttributes = [myManager attributesOfItemAtPath: @"/usr/texbin" error: nil];
+    if (myAttributes == nil)
         usrLocationBad = YES;
-    else
-    {
-        myAttributes = [myManager attributesOfItemAtPath: @"/usr/texbin" error: nil];
-        if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
-            usrLocationBad = YES;
-    }
-            
-    if ( ! [myManager fileExistsAtPath:@"/Library/TeX/texbin" ])
-            LibraryLocationBad = YES;
-        else
-            {
-                myAttributes = [myManager attributesOfItemAtPath: @"/Library/TeX/texbin" error: nil];
-                if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
-                    LibraryLocationBad = YES;
-            }
+    else if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
+        usrLocationBad = YES;
+    
+    myAttributes = [myManager attributesOfItemAtPath: @"/Library/TeX/texbin" error: nil];
+    if (myAttributes == nil)
+        LibraryLocationBad = YES;
+    else if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
+        LibraryLocationBad = YES;
     
     NSString *currentBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
     

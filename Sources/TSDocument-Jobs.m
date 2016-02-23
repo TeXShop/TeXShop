@@ -843,8 +843,9 @@
 
 - (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine
 {
-	BOOL    isFile;
-	BOOL    isExecutable;
+	BOOL            isFile;
+	BOOL            isExecutable;
+    NSDictionary    *myAttributes;
 	
 	// Ensure we have an absolute filename for the executable, prepending  the teTeX bin path if need be.
 	NSString* filename = leafname;
@@ -878,13 +879,41 @@
 		isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 	if (filename == nil || [filename length] == 0 || isExecutable == FALSE) {
 #warning 64BIT: Check formatting arguments
-		NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
+        
+        BOOL standardPath = NO;
+        BOOL linkBad = NO;
+        BOOL recentSystem = NO; //El Capitan or higher
+        
+        NSString* binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+        if (([binPath isEqualToString: @"/usr/texbin"]) || ([binPath isEqualToString: @"/Library/TeX/texbin"]))
+            standardPath = YES;
+        
+        NSFileManager *myManager = [NSFileManager defaultManager];
+        myAttributes = [myManager attributesOfItemAtPath: @"/Library/TeX/texbin" error: nil];
+        if (myAttributes == nil)
+            linkBad = YES;
+        else if ([myAttributes objectForKey: NSFileType ] != NSFileTypeSymbolicLink)
+            linkBad = YES;
+        
+        if (standardPath && linkBad && atLeastElCapitan)
+            {
+            NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
+                          nil, nil, nil, [textView window], nil, nil, nil, nil,
+                          NSLocalizedString(@"The link /Library/TeX/texbin does not exist. To fix this, go to http://tug.org/mactex and install MacTeX or Basic TeX (2015 or later). Or for a much smaller download, go to http://pages.uoregon.edu/koch and install FixLink.",
+                            @"The link /Library/TeX/texbin does not exist. To fix this, go to http://tug.org/mactex and install MacTeX or Basic TeX (2015 or later). Or for a much smaller download, go to http://pages.uoregon.edu/koch and install FixLink."),
+                          filename);
+                return FALSE;
+            }
+        else
+            {
+            NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
-						  NSLocalizedString(@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions.",
-											@"%@ does not exist. TeXShop is  a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/MacTeX and follow the instructions to (re)install MacTeX. A less likely possibility is that a tool path is incorrectly configured in TeXShop preferences. This can happen if you are using the macports or fink distributions."),
+						  NSLocalizedString(@"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX.",
+                            @"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX."),
 						  filename);
-		return FALSE;
-	}
+                return FALSE;
+            }
+    }
 	
 	// We know the executable is okay, so give it a go...
  	[task setLaunchPath: filename];

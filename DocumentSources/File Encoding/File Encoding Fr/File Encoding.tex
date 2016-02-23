@@ -1,0 +1,407 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+
+
+\documentclass[11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+%Empagement courant A5 (selon Hurtig : blancs tournants 1,5 1,9 2,2 2,6 en cm) : 
+%\usepackage[a5paper,twoside,textwidth=11.1cm,textheight=16.5cm,heightrounded]{geometry} 
+
+%\usepackage[letterpaper,body={6.0in,9.5in},vmarginratio=1:1]{geometry}
+%\usepackage[a4paper,twoside,textheight=25.8cm,heightrounded]{geometry}
+%Empagement courant (selon Hurtig : blancs tournants 2,1 2,625 3,15 3,675 en cm) 
+\usepackage[a4paper,twoside,textwidth=15.75cm,textheight=23.4cm,heightrounded]{geometry} 
+
+%Empagement luxe (selon Hurtig : blancs tournants 2,8 3,5 4,2 4,9 en cm)
+%\usepackage[a4paper,twoside,textwidth=14cm,textheight=21.3cm,heightrounded]{geometry} 
+
+%Empagement au 9e
+%\usepackage[a4paper,twoside,left=2.3333333cm,textwidth=14cm,top=3.3cm,textheight=19.8cm,heightrounded]{geometry} 
+
+%Empagement au 12e
+%\usepackage[a4paper,twoside,left=1.75cm,textwidth=15.75cm,top=2.475cm,textheight=22.275cm,heightrounded]{geometry} 
+
+%\usepackage{lipsum}
+
+%Autre empagements
+%\usepackage[a4paper,twoside,textheight=23.5cm,heightrounded]{geometry} % allonge le texte, hors proportions
+%\usepackage[a4paper,twoside,scale=0.8,heightrounded]{geometry} % allonge le texte en gardant les proportions
+%\usepackage[a4paper,twoside,heightrounded]{geometry} % scale=0.7 par défaut
+
+%Listes
+%\usepackage{enumerate} % Ou enumitem !
+%\usepackage{enumitem} % Ou enumitem !
+%\setlist[itemize]{nosep}
+%\setlist{wide=0pt} % Pour enumitem
+%\usepackage{expdlist} % Ou enumitem
+
+\usepackage[small,compact]{titlesec}
+
+\usepackage{xcolor}
+%\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+% TIKZ
+%\usepackage{tikz}
+%\usetikzlibrary{babel}
+
+\usepackage{graphicx}
+
+%\newcommand{\optkey}{\textsf{Opt}}
+%\newcommand{\ctlkey}{\textsf{Ctl}}
+%\newcommand{\cmdkey}{\textsf{Cmd}}
+%\newcommand{\esckey}{\textsf{Esc}}
+%\newcommand{\tabkey}{\textsf{Tab}}
+%\newcommand{\shiftkey}{\textsf{Shift}}
+%
+%\newcommand{\mnu}[1]{\textsf{#1}}
+%\newcommand{\cmd}[1]{\textsf{#1}}
+%\newcommand{\To}{\,\(\to\)\,}
+
+\pagestyle{plain}
+
+\usepackage{booktabs}
+
+%\pagestyle{empty}
+
+% set | as a command character within verbatim so you can execute commands there
+\usepackage{verbatim}
+\makeatletter
+\addto@hook\every@verbatim{\catcode`|=0}
+\makeatother
+
+% define colored items to be inserted in verbatim environments
+\usepackage{xcolor}
+\setlength{\fboxsep}{0pt}
+\newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+\newcommand{\selcom}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹comment›}}}
+\newcommand{\selcombwra}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹placement: r,R,l,L,i,I,o,O›}}}
+\newcommand{\selcomrule}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹lift›}}}
+
+% define a few items for easy use
+\usepackage{metalogo}
+%\newcommand{\MacTeX}{Mac\TeX}
+\newcommand{\MacTeX}{Mac\kern-.12em\TeX}
+\newcommand{\BibTeX}{B\textsc{i\kern-.025em  b}\kern-.13em\TeX}
+\newcommand{\conTeXt}{Con\kern-.12em\TeX t}
+\newcommand{\TS}{\textsf{\TeX Shop}}
+% default small caps used for utopia are ugly; don't want to use [expert] here.
+%\newcommand{\acr}[1]{\textsc{#1}}
+\usepackage{relsize}
+%\newcommand{\acr}[1]{\textsf{\smaller\uppercase{#1}}}
+\newcommand{\acr}[1]{\textsf{#1}}
+%\newcommand{\acr}[1]{\textrm{\smaller\uppercase{#1}}}
+%\newcommand{\cmd}[1]{\texttt{#1}}
+%\newcommand{\mnu}[1]{\texttt{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+
+%Polices : Fourier for math | Utopia (scaled) for rm | Helvetica for ss | Latin Modern for tt
+\usepackage[upright]{fourier} % math & rm
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+%\usepackage[scaled=0.875]{helvet} % ss
+%\renewcommand{\ttdefault}{lmtt} %tt\usepackage{scrtime}
+
+%Babel
+\usepackage{babel,varioref}
+\addto\captionsfrench{\def\tablename{\scshape Tableau}}
+\frenchbsetup{ShowOptions,og=«,fg=»}
+\usepackage{xfrac}
+%\usepackage[output-decimal-marker={,},group-four-digits=true,detect-all,load-configurations=abbreviations,per-mode=symbol,input-product=*,output-product=\cdot]{siunitx}
+\usepackage[output-decimal-marker={,},group-four-digits=true,detect-all,load-configurations=abbreviations,per-mode=symbol]{siunitx}
+\newcommand*\heure[4][min]{\SI{#2}{#3}\,\SI{#4}{#1}}
+\usepackage[np,autolanguage]{numprint}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CAPTION -- FLOAT -- MICROTYPE %%%%%%%%
+\usepackage[textfont=it]{caption}
+\usepackage{floatrow}
+\floatsetup[table]{style=plaintop}
+\usepackage{subfig}
+\captionsetup[subfloat]{labelformat=simple,labelsep=period}
+\usepackage[final,babel]{microtype}
+
+
+%Caption, float, microtype
+%\usepackage{caption}
+%\usepackage{float}
+%\usepackage[final,babel]{microtype}
+
+%HYPERREF
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue]{hyperref}
+\usepackage{cleveref}
+
+%\title{A Beginner's Guide\\to\\File Encoding \& \TS\\\small v0.3.0--2015/12/27}
+\title{Initiation\\ au\\ codage des fichiers \& \TS\thanks{Traduit par René Fritz le 9 janvier 2016.}\\\small v0.3.0--2015/12/27}
+\author{H. Schulz \& R. Koch}
+\date{}
+
+
+
+%\title{Using Command Completion with \\ \TS}
+%\author{}
+%\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section{Introduction}
+%A common problem \TS\ users face when opening and typesetting files is that the text displayed in the Source or in the Typeset Document does not agree with what should be there; characters are scrambled and  improper characters appear. This is usually an \emph{encoding} problem ---  the Editor or \TeX\ or both do not interprete the input correctly. This document is meant as a first introduction to encoding. It is definitely \emph{not} meant as an exhaustive document, and deals only with the most common encodings in use today.
+Les utilisateurs de \TS\ sont souvent confrontés, lors de l'ouverture ou de la composition de fichiers, au fait que le texte affiché dans le source ou le document composé ne corresponde pas à ce qui devrait figurer : les caractères sont en désordre ou incorrectes. C'est généralement un problème de \emph{codage} --- l'éditeur ou \TeX, ou les deux à la fois, n'interprètent pas correctement les données saisies. Ce document n'est qu'une initiation au codage. Il n'est certainement \emph{pas} exhaustif ; il ne traite que des codages les plus fréquents à ce jour.
+
+%\section{What is File Encoding?}
+\section{Définition du codage de fichier}
+
+%While we usually think of the \cmd{.tex} source file as containing characters, in reality this source, like all computer files, is just a long stream of whole numbers, each between 0 and 255. Computer scientists call these whole numbers {\em bytes}. 
+Alors que nous pourrions généralement croire qu'un fichier source \cmd{.tex} soit composé de caractères, en réalité, comme tous les fichiers informatiques, il n'est juste qu'une longue série de nombres entiers, compris entre 0 et 255. Les informaticiens appellent ces nombres entiers {\em octets}.
+
+%All other computer data must be encoded in one way or another into bytes. The most common encoding of ordinary text into bytes is called \acr{ASCII}; it encodes all the characters found on an ordinary American typewriter. For instance, the characters 'A' through 'Z' are encoded as 65 through 90,  the characters 'a' through 'z' become 98 through 123. The space character is encoded as byte 32, and numerals, parentheses, and punctuation characters encode as other bytes.
+Toutes les autres données informatiques doivent, d'une façon ou d'une autre, être codées en octets. Le codage en octets le plus courant pour un texte ordinaire est appelé \acr{ASCII} ; il code tous les caractères présents sur une machine à écrire américaine ordinaire. Ainsi, les caractères de A à Z sont codés de 65 à 90, les caractères a à z vont de 98 à 123. Le caractère espace est codé par l'octet 32, et les chiffres, les parenthèses et les caractères de ponctuation sont codés par d'autres octets.
+
+%Originally, \TeX\ required \acr{ASCII} input. While this was sufficient in the United States, it proved cumbersome in Western Europe, where accents, umlauts, upside down question marks, and the like are used; macros were needed to construct those characters and that broke hyphenation. More difficult problems arose when \TeX\ was used in the Near and Far East.
+À l'origine, \TeX\ devait être saisi en \acr{ASCII}. Ce qui était suffisant aux États-Unis, c'est révélé fastidieux en Europe occidentale, où les accents, trémas, points d'interrogation culbutés, et autres caractères diacritiques sont utilisés ; des macros ont été nécessaires pour produire ces caractères, ce qui empêcha les coupures de mots. Des problèmes encore plus compliqués ont surgi quand \TeX\ a été utilisé dans le Proche et l'Extrême-Orient.
+
+%The \acr{ASCII} encoding only uses bytes between 0 and 127. Thus the door was open to encode other characters using bytes 128 through 255. Many different encodings now exist to display additional characters using these bytes.
+Le codage \acr{ASCII} utilise seulement les octets 0 à 127. Il est donc possible d'utiliser les octets 128 à 255 pour coder d'autres caractères. Actuellement, de nombreux codages différents utilisent ces octets pour afficher des caractères supplémentaires.
+
+%%\subsection{\acr{ASCII}: the most basic encoding}
+%%
+%%The simplest and oldest encoding, called \acr{ASCII}, consists of 128 characters that include the Upper- and lower-case letters, numerals, basic punctuation (e.g., period, comma, straight double quotes, etc.), basic ``white space'' characters (e.g., space, tab, carriage return, etc.) and some other ``control''  characters to round it out.
+%%
+%%Note that it \emph{doesn't} include accented characters no less more ``exotic'' Cyrillic, Indic, Far Eastern, etc. characters.
+%%
+%%Note: if you only use \acr{ASCII} characters in your document (and only use macros to create accented characters) the rest of this article can still be read for information since most other encodings only add on to that encoding.
+
+%\section{Extending the Character Table}
+\section{Extension de la table de caractères}
+
+%%Since a byte can take on values from 0--255 and the \acr{ASCII} set only takes up the values 0--127 there are still 128 more possible character values that can be added and still retain a one byte for one character relationship. Unfortunately 256 characters are still not enough to contain all the possible characters one would want to include for all European languages, no less languages from other areas of the world. Which characters should be included and what numeric value they have was not standardized when the extensions were introduced so there are several ``standard'' encodings representing different choices. 
+
+%The three most used extended encodings on the Mac are \acr{MacOSRoman}, \acr{IsoLatin1} and \acr{IsoLatin9}.\footnote{We will use the notation used for the \TS\ encoding directive in this document. See the table in section (\ref{thetable}) on page \pageref{thetable}.}
+Les trois codages étendus les plus utilisés sur Mac sont \acr{MacOSRoman}, \acr{ISOLatin1} et \acr{IsoLatin9}\footnote{Dans ce document, nous emploierons la notation utilisée dans la directive de codage de \TS. Voir le tableau dans la section (\ref{thetable}) à la page \pageref{thetable}.}.
+
+%The \acr{MacOSRoman} encoding is left over from the days before \acr{OS X} and, as expected, exclusive to the Mac Computer. Its use is no longer encouraged.
+Le codage \acr{MacOSRoman} est un vestige d'une époque antérieure à \acr{OS X} et, sans surprise, propre au Mac. Son utilisation n'est plus encouragée.
+
+%\acr{IsoLatin1} encoding extends the \acr{ASCII} encoding with the accented characters used in Western European languages.
+Le codage \acr{IsoLatin1} enrichi le codage \acr{ASCII} avec les caractères accentués utilisés dans les langues d'Europe occidentale.
+
+%\acr{IsoLatin9} adds a Euro symbol, €, to the \acr{IsoLatin1} encoding along with a few other changes.
+\acr{IsoLatin9} ajoute le symbole de l'euro, \eurologo, au codage \acr{IsoLatin1} ainsi que quelques autres changements.
+
+%\subsection{Other Encodings Used with \TeX}
+\subsection{Autres codages utilisés avec \TeX}
+
+%Additional encodings include \acr{IsoLatin2} for Central European Languages, \acr{IsoLatin5} for 
+%\acr{Turkish} and \acr{Iso8859-7} for Greek. Several different encodings are available for Russians and others using Cyrillic. Additional encodings are available for Korean and Chinese, but Far Eastern languages use far more than 256 symbols, so these encodings are not very satisfactory.
+Les autres codages sont, \acr{IsoLatin2} pour les langues d'Europe centrale, \acr{IsoLatin5} pour le turque et \acr{Iso8859-7} pour le grec. Plusieurs codages sont disponibles pour le russe et les langues cyrilliques. D'autres codages sont disponibles pour le coréen et le chinois ; mais les langues d'Extrême-Orient utilisent bien plus que 256 symboles, de sorte que ces codages ne sont pas très satisfaisants.
+
+%\subsection{Windows Stuff}
+\subsection{Et Windows}
+
+%\acr{Windows Latin 1} is a version of \acr{IsoLatin1} with some characters in different code locations as defined by Microsoft Corp. You can run into this encoding when you get files from folks running Windows.
+\acr{Windows Latin 1} est une version d'\acr{IsoLatin1} dont certains caractères sont codés en différents endroits, tels que définis par Microsoft Corp. Vous pouvez utiliser ce codage lorsque vous recevez des fichiers de gens qui emploient Windows.
+
+%\subsection{A Crucial Flaw}
+\subsection{Défaut majeur}
+
+%The various encodings were developed independently by  computer companies as their products were sold in more and more countries.
+Les différents codages ont été développés indépendamment par des sociétés informatiques étant donné que leurs produits sont vendus dans un nombre croissant de pays. 
+
+%Unfortunately, text files do not have a header listing the encoding used to generate the file. Thus there is no way for \TS\ to automatically adjust the encoding as various files are input. Some text editors have built-in heuristics to try to guess the correct encoding, but \TS\ does not use these heuristics because they work only 90\% of the time and an incorrect guess can lead to havoc.
+Malheureusement, les fichiers texte ne disposent pas d'un préambule indiquant le codage utilisé pour les générer. Ainsi, \TS\ ne dispose d'aucun moyen pour ajuster automatiquement le codage au divers fichiers lors de leur l'arrivée. Certains éditeurs de texte ont intégré des heuristiques pour essayer de deviner le bon codage, mais \TS\ ne peut pas les utiliser, car ceux-ci ne travaillent qu'à \SI{90}{\%} du temps, et une conjecture erronée peut tout chambouler.
+
+%\section{Unicode}
+\section{Unicode}
+
+%As the computer market expanded across the world, computer companies came to their senses and created a consortium to develop an all-encompassing standard, called {\em Unicode}. The goal of Unicode is to encode all symbols commonly used across the world, including Roman, Greek, Cyrillic, Arabic, Hebrew, Chinese, Japanese, Korean, and many others. Unicode even has support for
+%Egyptian Hieroglyphics and recently added support for Mathematical Symbols.
+Comme le marché de l'informatique se développe partout dans le monde, les entreprises informatiques ont fini par se rendre à la raison et ont créé un consortium pour développer une norme, appelé {\em Unicode}, qui englobe tout. Le but d'Unicode est de coder tous les symboles couramment utilisés à travers le monde, y compris romain, grec, cyrillique, arabe, hébreu, chinois, japonais, coréen… Unicode peut même coder les hiéroglyphes égyptiens et récemment a pris en charge les symboles mathématiques.
+
+%All modern computer systems, including the Macintosh, Windows, Linux and Unix, now support Unicode. Internally, \TS\ and other Macintosh editors describe characters using Unicode and can accept text that is a combination of Roman, Greek, Cyrillic, Arabic, Chinese, and other languages. \TS\ even understands that Arabic, Hebrew, and Persian are written from right to left. To input these extra languages, activate additional keyboards using the \cmd{System Preferences} \cmd{Keyboard} Pane. This Pane changed in recent versions of OS X; in El Capitan, select a keyboard on the left, or click `+' below the list to see a list of additional languages and add their keyboards.
+Tous les systèmes informatiques modernes, y compris Macintosh, Windows, Linux et Unix, prennent désormais en charge Unicode. En interne, \TS\ et d'autres éditeurs Macintosh décrivent les caractères en utilisant Unicode et peuvent accepter un texte qui combine plusieurs langues : latin, grec, cyrillique, arabe, chinois… \TS\ peut même comprendre si l'arabe, l'hébreu et le persan sont écrits de droite à gauche. Pour saisir ces diverses langues, il faut activer les claviers dédiés en allant dans \cmd{Préférences système…}\To\cmd{Langue et région}\To\cmd{Préférences Clavier…}\To{Méthodes de saisie}. Ces panneaux ont changé dans les versions récentes d'OS X ; dans El Capitan, sélectionnez un clavier sur la gauche, ou cliquez sur « + » en-dessous de la liste pour afficher les langues supplémentaires et ajouter leur clavier respectif.
+
+%Because there are far more than 256 symbols, Unicode describes symbols using much longer integers. Unicode proscribes the ``internal'' structure of these numbers, but defines several different ways to write the text to disk. The most popular Unicode encoding is UTF-8, but UTF-16 and others are also available.
+Parce qu'il y a bien plus que 256 symboles, Unicode décrit des symboles en utilisant des entiers beaucoup plus longs. Unicode proscrit la structure interne de ces nombres, mais définit plusieurs façons différentes d'écrire le texte sur le disque. Le codage Unicode le plus populaire est UTF-8, mais UTF-16 et d'autres encore sont disponibles.
+
+%The great advantage of UTF-8 is that ordinary ASCII characters retain their single byte form in the encoded file. Consequently, ordinary ASCII files remain valid as UTF-8 files. 
+Le grand avantage d'UTF-8 est que les caractères ASCII ordinaires conservent leur forme d'un seul octet dans le fichier codé. Ainsi, les fichiers ASCII ordinaires restent valables en UTF-8.
+
+%With most byte encodings like \acr{IsoLatin1}, \acr{IsoLatin9}, etc., any sequence of bytes forms a legal file. If you open such a file with the wrong encoding, the file will appear as usual, but some of the symbols will be wrong. If someone in Germany using \acr{IsoLatin9} collaborates with someone in the U.S. using \acr{MacOSRoman}, and their paper is written in English, they may not notice the mismatch until they proofread the references and discover that accents and umlauts have gone missing.
+Avec la plupart des codages en octets comme \acr{IsoLatin1}, \acr{IsoLatin9}, etc., chaque séquence d'octets constitue un fichier légal. Si vous ouvrez un tel fichier avec un mauvais codage, le fichier apparaît comme d'habitude, mais certains symboles seront incorrectes. Si quelqu'un en Allemagne, qui utilise \acr{IsoLatin9}, collabore avec quelqu'un aux États-Unis qui emploie \acr{MacOSRoman}, et que leur document est rédigé en anglais, ils peuvent ne pas remarquer cette disparité jusqu'à ce qu'ils relisent les références et découvrent que les accents et trémas ont disparus.
+
+%However, not all sequences of bytes form legal \acr{UTF-8} files, because non-\acr{ASCII} symbols are converted into bytes using a somewhat complicated code. In the previous example, if German collaborator uses \acr{IsoLatin9} and the American collaborator uses \acr{UTF-8} and the German collaborator includes non-\acr{ASCII} like umlauts in the references, then \TS\ will report an error when it tries to open the \acr{IsoLatin9} file in \acr{UTF-8}.  \TS\ will then display an error message and offer to open the file in a default encoding, currently \acr{IsoLatin9}. New users find those error messages much more confusing than occasional incorrect symbols, and that is one reason that the default \TS\ encoding is not currently \acr{UTF-8}.
+Cependant, toutes les séquences d'octets ne constituent pas des fichiers légaux en \acr{UTF-8}, car les symboles non-\acr{ASCII} sont convertis en octets en utilisant un code un peu compliqué. Dans l'exemple précédent, si le collaborateur allemand utilise \acr{IsoLatin9} et le collaborateur américain utilise \mbox{\acr{UTF-8}} et que le collaborateur allemand emploie dans les références des symboles non-\acr{ASCII} comme les trémas, alors \TS\ rendra compte d'une erreur quand il essaiera d'ouvrir le fichier \acr{IsoLatin9} en \acr{UTF-8}. \TS\ affichera alors un message d'erreur et offrira d'ouvrir le fichier dans le codage par défaut, dans ce cas \acr{IsoLatin9}. Les nouveaux utilisateurs trouvent ces messages d'erreur bien plus déroutant que ceux obtenus pour des symboles parfois incorrects, et c'est une des raisons pour laquelle le codage par défaut de \TS\ n'est habituellement pas \acr{UTF-8}.%<<<<<<<<<<<<<<<<<<
+
+%On the other hand both of the authors have set \acr{UTF-8 Unicode} as our default encoding. This encoding preserves everything typed in \TS, so there are no puzzling character losses. HTML and other code is usually saved in UTF-8, so \TS\ can be used as a more general text editor. Moreover, if a \TeX\ file from an external source is not in UTF-8, we get a warning. The trick is then to let \TS\ open the file in \acr{IsoLatin9} and examine the file for an \cmd{inputenc} line which tells you what encoding was actually used. Then close the file \emph{without making any changes} and open it using the \cmd{Open} dialog and manually choosing the correct encoding. Once the file is open with the correct encoding you may add the \TS\ encoding directive line for that encoding and save it for future use.
+Si d'autre part, les deux auteurs ont mis \acr{UTF-8 Unicode} comme codage par défaut. Ce codage conserve tout ce qui est tapé dans \TS, donc aucun caractères curieux n'est perdu. L'HTML et d'autres codes sont généralement enregistrés en \acr{UTF-8}, si bien que \TS\ peut être utilisé comme un éditeur de texte plus général. Par ailleurs, si un fichier \TeX\ d'une source extérieure n'est pas en \acr{UTF-8}, nous obtenons un \emph{warning}. L'astuce est alors de laisser \TS\ ouvrir le fichier en \acr{IsoLatin9} et d'examiner la ligne \cmd{inputenc} du fichier qui vous indiquera le codage qui a été effectivement utilisé. Puis de fermer le fichier \emph{sans apporter de modifications} et de l'ouvrir à l'aide du dialogue \cmd{Ouvrir…} en choisisant manuellement le bon codage. Une fois que le fichier est ouvert avec le bon codage vous pouvez ajouter la ligne directive de codage de \TS, pour ce codage, et l'enregistrer pour une utilisation future.
+
+%All of the encoding methods discussed here, including \cmd{Unicode}, ignore italics, underlining, font size, font, color, etc. They just encode characters. It is up to users to specify additional attributes in some other way. For example, when Apple's \cmd{TextEdit} program is used in \emph{Plain Text} mode, a user can change the font or font size for an entire document, but not for individual sections of the document. If the document is saved to disk and then reloaded, the font changes are lost. On the other hand, a word processor like Microsoft Word or Apple's Pages, has much more control over fonts, font size and the like. These progams output text with a proprietary coding only readable by that program. But the file preserves the extra attribute information. 
+Toutes les méthodes de codage discutés ici, y compris \cmd{Unicode}, ignorent l'italique, le soulignement, le corps, la police, la couleur, etc. Elles codent juste les caractères. Il appartient aux utilisateurs de spécifier des attributs supplémentaires d'une autre manière. Par exemple, lorsque le programme d'Apple \cmd{TextEdit} est utilisé en mode \emph{texte}, un utilisateur peut changer la police ou sa taille dans le document entier, mais pas pour chacune de ces sections séparément. Si le document est enregistré sur le disque et puis rechargé, les changements de police seront perdus. D'autre part, un traitement de texte comme Microsoft Word ou Pages d'Apple, contrôle d'avantage les polices, leur taille et autres… Ces programmes produisent du texte avec un codage propriétaire qui n'est lisible que par eux-mêmes. Mais le fichier garde toutes les informations attribuées. 
+
+%While all modern computers support \cmd{Unicode}, their font sets have symbols for only a small portion of the Unicode world. Many fonts have a special character, often a box, to indicate that a character is missing. Thus if you want to write in Arabic or Hebrew, you must choose a font which contains these symbols. Modern computers support a great range of symbols because the computer business covers the world, but obscure Unicode symbols may not be covered by any single provided font.
+Alors que tous les ordinateurs modernes prennent en charge \cmd{Unicode}, leurs jeux de polices renferment des symboles pour seulement une petite partie du monde Unicode. Beaucoup de polices possèdent un caractère spécial, souvent une boîte, pour signaler l'absence d'un caractère. Ainsi, si vous voulez écrire en arabe ou en hébreu, vous devez choisir une police qui contient leurs symboles. Les ordinateurs modernes prennent en charge une grande variété de symboles parce que l'industrie informatique couvre le monde, mais les symboles Unicode peu courants ne peuvent pas être couverts par une unique police prévue à cet effet.
+
+%Like ASCII and other 8-bit encodings, Unicode only encodes symbols, Thus 'A' has a single 
+%
+%With so many ``standard'' 8-bit encodings and so many more languages from around the world with their own encodings it was inevitable that a much more expansive type of encoding would emerge. \acr{Unicode} is a multi-byte encoding that hopes to capture all characters from all languages in the world. There are several ways that \acr{Unicode} characters can actually be stored in a file. The most popular version are called \acr{UTF-8} (the most popular and the default used by \cmd{\XeTeX} and \cmd{\LuaTeX}), \acr{UTF-16}, \acr{UTF-16 BOM} and \acr{UTF-32}. The \acr{UTF-8 Unicode} encoding tries to save space by encoding characters in the minimum number of bytes necessary with information also stored if there more than one byte is necessary for the character value.
+
+%\section{Why can't \TS\ figure it out automatically?}
+%
+%There are several Editors available for \cmd{Mac OS X} that supposedly ``automatically'' detect the encoding of an input file but \TS\ requires that you inform it what encoding to use. The problem with ``automatically'' determining the encoding used in the file is that it's all too easy to do it incorrectly and end up with the wrong encoding.
+
+%\section{Two Sides of the Story: \TS\ and \TeX}
+\section{Dualité de vue : \TS\ et \TeX} 
+
+%Once a user selects an appropriate encoding, the user must configure both \TS\ and the appropriate \TeX\ engine to use that encoding. Different sets of problems arise with these two tasks. 
+Lorsque l'utilisateur sélectionne un codage approprié, il doit configurer à la fois \TS\ et le bon moteur \TeX\ pour utiliser ce codage. Ces deux tâches posent différents ensembles de problèmes.
+
+%Users in the United States and other English speaking countries can often ignore encodings altogether. The default \TS\ encoding supports \acr{ASCII}, and \TeX\ and \LaTeX\ have supported \acr{ASCII} from the beginning. So there is nothing to do.
+Aux États-Unis et dans d'autres pays anglophones, les utilisateurs peuvent souvent ignorer totalement les codages. Le codage par défaut de \TS\ supporte l'\acr{ASCII} ; et \TeX\ et \LaTeX\ prennent en charge l'\acr{ASCII} depuis toujours. Donc, il n'y a rien à faire.
+
+%Users in Western Europe must take slightly more care. The current default \TS\ encoding, \acr{IsoLatin9}, will be sufficient for their needs. But they must configure \TeX\ and \LaTeX\ as described below, and carefully choose fonts which support accents, umlauts, and the like. The required steps are easy.
+En Europe occidentale, les utilisateurs doivent prendre un peu plus de soins. Couramment, le codage par défaut de \TS\ en \acr{IsoLatin9}, sera suffisant pour leurs besoins. Mais ils doivent configurer \TeX\ et \LaTeX\ comme décrit ci-dessous, et choisir avec précaution des polices qui renferment les accents, trémas et autres… Les étapes nécessaires sont faciles à réaliser.
+
+%Users in Russia and Eastern Europe must take similar steps, but the authors of this paper are not knowledgable about correct configurations, so we suggest getting help from friends already using \TeX.
+En Russie et en Europe de l'Est, les utilisateurs doivent prendre des mesures semblables, mais les auteurs de ce document ne sont pas bien informé sur les bonnes configurations, ils vous suggèrent d'obtenir de l'aide auprès d'amis qui utilisent déjà \TeX.
+
+%Users in the Far East and Middle East, and scholars working with multi-language projects, will need to consult other sources for detailed configurations. These users should certainly examine \XeTeX\ and \LuaTeX, because these extensions of \TeX\ use \cmd{Unicode} directly and are
+%much more capable of handling languages where \cmd{Unicode} becomes essential. Both \XeTeX\ and \LuaTeX\ can typeset almost all standard \TeX\ and \LaTeX\ source files, but have additional code for \cmd{Unicode} support. One big problem with these languages is that appropriate fonts must be chosen which support the languages. To simplify that problem, both \XeTeX\ and \LuaTeX\ allow users to use the ordinary system fonts supplied with their computer.
+Les utilisateurs de l'Extrême-Orient et du Moyen-Orient, et les chercheurs travaillant sur des projets multi-langues, auront besoin de consulter d'autres sources pour les configurations détaillées. Ces utilisateurs devraient certainement se tourner vers \XeTeX\ et \LuaTeX, parce que ces extensions de \TeX\ utilisent directement \cmd{Unicode} et sont bien plus capables de gérer les langues pour lesquelles \cmd{Unicode} devient essentiel. \XeTeX\ et \LuaTeX\ peuvent, tous les deux, composer presque tous les fichiers sources \TeX\ et \LaTeX\ standard, mais ont des codes supplémentaires pour prendre en charge \cmd{Unicode}. Le gros problème avec ces langues est que seules les polices qui les supportent doivent être choisies. Pour simplifier ce problème, à la fois, \XeTeX\ et \LuaTeX\ permettent aux utilisateurs d'employer toutes les polices du système installées sur l'ordinateur.
+
+%\section{Telling \TS\ what encoding is used to Load and Save files.}
+\section{Indication du codage utilisé pour charger et sauvegarder les fichiers à \TS}
+
+%To set the default \TS\ encoding, open \TS\ Preferences. Select the Source tab. In the second column, find the Encoding section. This section contains a pull down menu; select the desired encoding from this menu. Select \acr{ISO Latin 9} to get the current default encoding, useful in English speaking countries and Western Europe. You must select \acr{UTF-8 Uncode} or \acr{UTF-16 Unicode} if you want to preserve anything typed into the \TS\ editor. If you pick any other encoding, you there will be characters you can type in \TS\ which will be lost if you Save and then reLoad. On the other hand, \acr{UTF-8} does not work well with certain \LaTeX\ packages, as explained later.
+Pour définir le codage par défaut de \TS, il faut ouvrir les \cmd{Préférences…} de \TS. Sélectionner l'onglet \cmd{Document}. Dans la deuxième colonne, trouver la section \cmd{Encodage}. Sélectionner le codage souhaité dans le menu déroulant. Sélectionner \acr{ISO Latin 9} pour obtenir le codage courant par défaut, utile dans les pays anglophones et d'Europe occidentale. Vous devez sélectionner \acr{UTF-8 Unicode} ou \acr{UTF-16 Unicode} si vous voulez préserver tout ce qui est tapé dans l'éditeur \TS. Si vous prenez n'importe quel autre codage, certains caractères que vous aurez tapés dans \TS\ seront perdus si vous enregistrez et rechargez ensuite. D'autre part, \acr{UTF-8} ne fonctionne pas bien avec certaines extensions \LaTeX, comme cela est expliqué plus loin.
+
+%\TS\ has a mechanism to set the encoding of a particular file independent of the user's default choice, or of choices in the Load and Save panels. To set the encoding used to read or write a particular file to \acr{UTF-8}, add the following line to the first twenty lines of the top of the file:
+Pour définir le codage d'un fichier, \TS\ dispose d'un mécanisme propre, indépendant du choix par défaut de l'utilisateur ou des choix des fenêtres de chargement et d'enregistrement. Pour faire en sorte que le codage utilisé pour lire ou écrire un fichier particulier soit \acr{UTF-8}, vous devez ajouter la ligne suivante dans les vingt premières lignes du début du fichier :
+\begin{verbatim}
+     % !TEX encoding = UTF-8 Unicode
+\end{verbatim}
+%The easy way to do this is to select the Macro command \cmd{Encoding}. A dialog will appear from which an appropriate encoding can be selected, and after the dialog is closed, the line will be placed at the top of the file, replacing any existing encoding line.
+
+Ceci se réalise aisément en sélectionnant dans les \cmd{Macros} la commande \cmd{Encoding}. Une boîte de dialogue apparaîtra où vous pourrez sélectionner le codage approprié. À le fermeture du dialogue, la ligne sera placée en haut du fichier et remplacera toute ligne de codage existante.
+
+%If such a line exists, the indicated encoding will be used, overriding all other methods of setting the encoding, \emph{unless} the option key is held down during the entire load or save operation. 
+Si une telle ligne existe, le codage indiqué sera utilisé, remplaçant tous les autres paramétrages du codage, \emph{sauf} si la touche option \emph{(alt)} est enfoncée pendant toute l'opération de chargement ou de sauvegarde.
+
+%Many users in Western Europe prefer to set \acr{IsoLatin9} as their default encoding so they can easily read files from collaborators, but include the line setting encoding to \acr{UTF-8} in file templates used to create files, so that their own files are encoded in \acr{UTF-8}.
+Beaucoup d'utilisateurs en Europe occidentale préfèrent utiliser \acr{IsoLatin9} comme codage par défaut afin de pouvoir lire facilement les fichiers des collaborateurs, mais placent en tête de leurs fichiers modèles la ligne qui fixe le codage en \acr{UTF-8}, pour que leurs propres fichiers soient codés en \acr{UTF-8}.
+
+%It is also possible to set the encoding used to read a file by Opening the file explicitly from within \TS. The resulting open dialog has a pulldown menu at the bottom selecting the encoding to be used for that particular file.\footnote{Under \cmd{El Capitan} you must first press the \cmd{Options} button to get to the pulldown menu.} (Note that the ``\% !TEX encoding ='' line overrides this command.)
+Il est également possible de définir le codage utilisé pour lire un fichier en ouvrant le fichier explicitement depuis \TS. La boîte de dialogue résultante possède dans sa partie inférieure un menu déroulant qui permet de choisir le codage à utiliser pour ce fichier en particulier\footnote{Sous \cmd{El Capitan} vous devez d'abord appuyer sur le bouton \cmd{Options} pour obtenir ce menu déroulant.} (notez que la ligne « \% !TEX encoding = » écrase cette commande).
+
+%Explicitly Saving a file from within \TS\ produces a Save Dialog with a similar pulldown menu to set the encoding.
+L'enregistrement explicite d'un fichier depuis \TS\ produit un dialogue d'enregistrement qui possède un menu déroulant semblable permettant de définir le codage.
+
+%NOTE: you can't easily change the encoding of a file. The best thing to do is copy the whole document into a new one and save that with the correct encoding. Using the \TS\ directive before saving the new file the first time is definitely recommended.
+\textsc{Remarque}. --- vous ne pouvez pas facilement changer le codage d'un fichier. La meilleure chose à faire est de copier l'ensemble du document en un nouveau et de sauver ce dernier avec le bon codage. L'utilisation de la directive de codage de \TS\ avant d'enregistrer le nouveau fichier pour la première fois est sans aucun doute recommandée.
+
+%\section{Telling \LaTeX\ about File Encodings}
+\section{Indication du codage du fichier à \LaTeX}
+
+%Your typsetting engine needs to `know' the encoding used to save each source file so the input source and the output glyphs are synchronized. For ordinary LaTeX, this is usually done by including a command like the following one in the header of the source:
+Votre moteur de composition doit \emph{connaître} le codage utilisé pour enregistrer chaque fichier source afin que le source d'entrée et les glyphes produits soient synchronisés. Pour \LaTeX, cela se fait généralement en incluant la commande suivante dans le préambule du source :
+\begin{verbatim}
+     \usepackage[latin9]{inputenc}	
+\end{verbatim}
+%Typical values for other encodings are given in the short table at the end of this document.
+Les valeurs habituelles pour les autres codages sont données dans le petit tableau, à la fin de ce document.
+
+%This line is not needed when the source encoding is ordinary \acr{ASCII}. 
+Cette ligne n'est pas nécessaire lorsque le source est communément codé en \acr{ASCII}.
+
+%One of the legal values for encoding with inputenc is \cmd{utf8}. This line works in Western Europe, but not in situations requiring deep use of \cmd{Unicode}. When in doubt, it is useful to read the \cmd{inputenc} documentation. To do that, go to the \TS\ \mnu{Help} menu, select \cmd{Show Help for Package}, and fill in the requested Package with \cmd{inputenc}.
+\cmd{utf8} constitue une des valeurs légales de codage avec \cmd{inputenc}. Cette ligne fonctionne en Europe occidentale, mais pas dans les situations nécessitant une utilisation avancée d'\cmd{Unicode}. En cas de doute, il est utile de lire la documentation sur \cmd{inputenc}. Pour cela, aller dans le menu \mnu{Aide} de \TS\ et sélectionner \cmd{Afficher l'aide pour le package…}, et remplir le nom de l'extension demandée avec \cmd{inputenc}.
+
+%Users in Western Europe usually use \emph{four} ``related'' commands in the header. Here are these four lines for users in Germany.
+En Europe occidentale, les utilisateurs entrent habituellement \emph{quatre} commandes dans le préambule. Voici ces quatre lignes pour les Allemands.
+\begin{verbatim}
+     \usepackage[german]{babel}
+     \usepackage[lmodern]
+     \usepackage[T1]{fontenc}
+     \usepackage[latin9]{inputenc}
+\end{verbatim}
+
+%The first of these lines asks \LaTeX\ to use German conventions for dates, hyphenation, and the link. 
+La première de ces lignes demande à \LaTeX\ d'utiliser les conventions allemandes pour les dates, coupures de mots, et liens.
+
+%The second line tells \LaTeX\ to use the Latin Modern fonts. These fonts agree with Donald Knuth's Computer Modern fonts in the first 128 spots, but include additional accents, umlauts, upside down question marks, and so forth used in Western Europe.
+La deuxième ligne demande à \LaTeX\ d'utiliser les fontes Latin Modern. Ces polices sont en accord avec les polices Computer Modern de Donald Knuth pour les 128 premières positions, mais renferment des accents supplémentaires, trémas, points d'interrogation culbutés…, utilisés en Europe occidentale.
+
+%The third line tells \LaTeX\ the connection between the characters in the file and actual glyphs (i.e., the physical representation of the characters in the final document).
+La troisième ligne permet à \LaTeX\ d'établir la connexion entre les caractères du fichier et les glyphes eux-mêmes (c'est-à-dire, la représentation physique des caractères dans le document final).
+
+%As explained above, the final line tells \LaTeX\ which encoding was use for the source file.
+Comme expliqué ci-dessus, la dernière ligne indique à \LaTeX\ le codage qui a été utilisé dans le fichier source.
+
+%Uses interested in more details should consult the documentation for \cmd{babel}, \cmd{lmodern}, and \cmd{fontenc} using \TS's \cmd{Show Help for Package} item in the \cmd{Help} Menu. The documentation is interesting, going into considerable historical detail about the evolution of font design in \TeX.
+Les utilisateurs qui veulent plus de détails devraient consulter les documentations de \cmd{babel}, \cmd{lmodern}, et \cmd{fontenc} en utilisant l'élément \cmd{Afficher l'aide pour le package…} du menu \cmd{Aide} de \TS. La documentation est intéressante car elle retrace, dans une large mesure, l'historique de l'évolution de la conception d'une police dans \TeX.
+
+
+% the input file and the output glyphs. With \LaTeX\ on eusually uses the \cmd{inputenc} package with an optional argument that designates the encoding. The values of the argument for that package are given in the table given in section (\ref{thetable}) on page \pageref{thetable}.
+
+%\section{Encodings understood by \TS.}\label{thetable}
+\section{Perception du codage par \TS.}\label{thetable}
+
+%The table given below shows the corresponding entries for some popular file/input encodings used with \LaTeX\ in \TS.
+Le tableau ci-dessous montre, pour les codages les plus connus utilisés avec \LaTeX\ dans \TS, les correspondances entre les types d'entrées.
+
+%The `Open/Save Dialogs' column shows the designation for the encodings in \TS's Open/Save Dialogs; you may have to click on the \cmd{Options} button to display the popup menu for encodings.
+La colonne « dialogues Ouvrir…/Enregistrer… » montre la dénomination du codage dans les dialogues de \TS\ Ouvrir…/Enregistrer… ; vous pourriez avoir besoin de cliquer sur le bouton \cmd{Options} pour afficher le menu déroulant des codages. 
+
+%The `Directive' column gives the designation used in \TS's encoding directive,
+La colonne « directive de codage » montre la dénomination utilisée dans la directive de \TS,
+\begin{verbatim}
+% !TEX encoding = xxxxx
+\end{verbatim}
+%where \texttt{xxxxx} is the designator you wish to use. If this line is in place before you first \cmd{Save} your source file \TS\ will automatically save the file with the designated encoding. \TS\ will also automatically \cmd{Open} the file with that encoding when \cmd{Double-Clicked}. We suggest you create a Template which contains the directive and use that to create new documents.
+où \texttt{xxxxx} est l'indication du codage que vous souhaitez utiliser. Si cette ligne est déjà présente dans votre fichier source avant d'\cmd{Enregistrer…}, \TS\ sauvegardera automatiquement ce fichier dans le codage désigné. Sur un \cmd{double-clic}, \TS\ ouvrira également automatiquement le fichier avec ce codage. Nous vous conseillons d'inclure cette directive dans vos modèles et de les utiliser pour créer vos nouveaux documents.
+
+%The `inputenc' column gives the optional argument for the inputenc package. As with the Directive, I suggest you create a Template which has the proper inputenc line for the corresponding encoding in the directive.
+La colonne « inputenc » donne l'argument optionnel de l'extension inputenc. Comme avec la directive, je vous suggère de créer un modèle qui renferme la ligne inputenc avec le codage correspondant à celui indiqué dans la directive.
+
+%\begin{table}[H]
+%\centering
+%\begin{tabular}{lll}
+%\multicolumn{1}{c}{\TS} & \multicolumn{1}{c}{\TS} & \multicolumn{1}{c}{\LaTeX} \\
+%\multicolumn{1}{c}{Open/Save Dialogs} & \multicolumn{1}{c}{Encoding Directive} & \multicolumn{1}{c}{inputenc} \\
+%\cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3}
+%Unicode (UTF-8) & UTF-8 Unicode & utf8 \\
+%Western (Mac OS Roman) & MacOSRoman & applemac \\
+%Western (ISO Latin 1) & IsoLatin & latin1 \\
+%Central European (ISO Latin 2) & IsoLatin2 & latin2 \\
+%Turkish (ISO Latin 5) & IsoLatin5 & latin5 \\
+%Western (ISO Latin 9) & IsoLatin9 & latin9 \\
+%Mac Central European Roman & Mac Central European Roman & macee \\
+%Western (Windows Latin 1) & Windows Latin 1 & ansinew or cp1252\\
+%\end{tabular}
+%\caption{Partial Encoding List}\label{tbl:enclist}
+%\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{1}{c}{\TS} & \multicolumn{1}{c}{\TS} & \multicolumn{1}{c}{\LaTeX} \\
+\multicolumn{1}{c}{Dialogues Ouvrir…/Enregistrer…} & \multicolumn{1}{c}{Directive de codage} & \multicolumn{1}{c}{inputenc} \\
+\cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3}
+Unicode (UTF-8) & UTF-8 Unicode & utf8 \\
+Europe occidentale (Mac OS Roman) & MacOSRoman & applemac \\
+Europe occidentale (ISO Latin 1) & IsoLatin & latin1 \\
+Europe centrale (ISO Latin 2) & IsoLatin2 & latin2 \\
+Turquie (ISO Latin 5) & IsoLatin5 & latin5 \\
+Europe occidentale (ISO Latin 9) & IsoLatin9 & latin9 \\
+Mac Central European Roman & Mac Central European Roman & macee \\
+Europe occidentale (Windows Latin 1) & Windows Latin 1 & ansinew or cp1252\\
+\end{tabular}
+\caption{Liste partielle des codages.}\label{tbl:enclist}
+\end{table}
+
+
+\end{document}

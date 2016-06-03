@@ -26,15 +26,14 @@
 
 @implementation TSDocument (FileAssociations)
 
-
+/*
 - (void)makeDefaultEditor:(id)sender;
 {
     
-/*
-    CFStringRef myStringRef = LSCopyDefaultRoleHandlerForContentType (CFSTR("edu.uo.texshop.tex"), kLSRolesAll) ;
-    NSString *aString = (__bridge NSString *)myStringRef;
-    NSLog(aString);
-*/
+
+//    CFStringRef myStringRef = LSCopyDefaultRoleHandlerForContentType (CFSTR("edu.uo.texshop.tex"), kLSRolesAll) ;
+//    NSString *aString = (__bridge NSString *)myStringRef;
+//    NSLog(aString);
 
     OSStatus myStatus = LSSetDefaultRoleHandlerForContentType ( CFSTR("edu.uo.texshop.tex"), kLSRolesAll, CFSTR("TeXShop") );
 
@@ -44,5 +43,6 @@
 
 
 }
+*/
 
 @end

@@ -90,7 +90,7 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (void)doMove: (id)sender;
 - (void)resignMainWindow;
-- (void) makeDefaultEditor:(id)sender;
+// - (void) makeDefaultEditor:(id)sender;
 
 
 - (TSDocument *)document;

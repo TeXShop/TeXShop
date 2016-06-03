@@ -745,7 +745,7 @@ enum RootCommand
 
 @interface TSDocument (FileAssociations)
 
-- (void)makeDefaultEditor:(id)sender;
+// - (void)makeDefaultEditor:(id)sender;
 
 @end
 

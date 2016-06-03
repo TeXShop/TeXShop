@@ -1722,6 +1722,7 @@ This method retrieves the application preferences from the defaults object and s
     [_sparkleAutomaticButton setState: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
+    [_consoleMatrix selectCellWithTag: [defaults integerForKey: ConsoleBehaviorKey]];
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada

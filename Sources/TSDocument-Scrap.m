@@ -68,6 +68,7 @@
     [scrapTextView setRichText: NO];
     [scrapTextView setAutomaticQuoteSubstitutionEnabled:NO];
     [scrapTextView setAutomaticLinkDetectionEnabled:NO];
+    [scrapTextView setAutomaticDashSubstitutionEnabled:NO];
     [scrapTextView setUsesRuler:NO];
  
     NS_DURING

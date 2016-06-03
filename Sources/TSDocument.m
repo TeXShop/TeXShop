@@ -1547,6 +1547,24 @@ in other code when an external editor is being used. */
 }
 
 //ULRICH BAUER PATCH
+
+/* The sleep command was added by Martin Hairer, who wrote
+ "Here is a small improvement which is very useful to me.
+ I use a version control system (git) for some of my papers.
+	When git updates a file, it deletes it and then replaces it more or less
+	immediately by an updated copy with the same name. The
+	current version of TeXShop detects this, but it often just notices
+	that the file was pulled away under it's feet and then either
+	closes the document or replaces it by a blank.
+ 
+	''I propose to introduce a small latency between the moment TeXShop
+	gets notified of the file's deletion and the moment it checks for its status
+	so that it correctly handles changes to the file made in that manner.
+	More precisely, in TSDocument.h, I propose to add a sleep command
+	at line 1580, "
+*/
+
+
 - (void)watchFile:(NSString*)fileName {
     
       if (! activateBauerPatch)
@@ -1577,6 +1595,7 @@ in other code when an external editor is being used. */
                                    NSError *outError = NULL;
                                     [blockSelf revertToContentsOfURL:[blockSelf fileURL] ofType:[blockSelf fileType] error:&outError];
                                 } else if (flags & (DISPATCH_VNODE_DELETE)) {
+                                        sleep(1); // added by Martin Hairer;
                                         if ([[NSFileManager defaultManager] isReadableFileAtPath: [[blockSelf fileURL] path]]) {
                                                 NSError *outError = NULL;
                                                 if (![blockSelf revertToContentsOfURL:[blockSelf fileURL] ofType:[blockSelf fileType] error:&outError])

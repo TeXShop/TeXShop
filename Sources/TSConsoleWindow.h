@@ -47,7 +47,7 @@
 - (TSDocument *)document;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
-- (void) makeDefaultEditor:(id)sender;
+// - (void) makeDefaultEditor:(id)sender;
 
 
 @end

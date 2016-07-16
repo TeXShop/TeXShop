@@ -93,6 +93,7 @@ static NSString*	kMagnificationKKTID 	= @"MagnificationKIT";
 static NSString*	kMouseModeKKTID 		= @"MouseModeKIT";
 static NSString*	kBackForthKKTID			= @"BackForthKIT";
 static NSString*	kDrawerKKTID			= @"DrawerKIT";
+static NSString*    kSearchKKTID             = @"SearchKIT";
 static NSString*    kSharingKKTID          = @"SharingKIT";
 static NSString*	kSplitKKTID				= @"SplitKIT";
 #endif
@@ -819,6 +820,37 @@ else
 		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
+
+/*
+    if ([itemIdent isEqual: kGotoPageKKTID]) {
+        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:gotopageOutletKK];
+        menuFormRep = [[NSMenuItem alloc] init];
+ 
+        //  submenu = [[[NSMenu alloc] init] autorelease];
+        //  submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: //				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
+        // [submenu addItem: submenuItem];
+        // [menuFormRep setSubmenu: submenu];
+        [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        [menuFormRep setAction: @selector(doTextPage:)];
+        [menuFormRep setTarget: pdfKitWindow];
+        return toolbarItem;
+    }
+*/
+    
+    if ([itemIdent isEqual: kSearchKKTID]) {
+        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView: mySearchField];
+        /*
+        menuFormRep = [[NSMenuItem alloc] init];
+         [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        [menuFormRep setAction: @selector(doTextPage:)];
+        [menuFormRep setTarget: pdfKitWindow];
+        */
+        return toolbarItem;
+    }
     
     if ([itemIdent isEqual: skGotoPageKKTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -1141,6 +1173,7 @@ else
 					kGotoPageKKTID,
 					kMouseModeKKTID, // mitsu 1.29 (O)
 					NSToolbarFlexibleSpaceItemIdentifier,
+                    kSearchKKTID,
                      kSharingKKTID,
 					kSplitKKTID,
 					// NSToolbarSpaceItemIdentifier,
@@ -1165,6 +1198,7 @@ else
                 kGotoPageKKTID,
                 kMouseModeKKTID, // mitsu 1.29 (O)
                 NSToolbarFlexibleSpaceItemIdentifier,
+                kSearchKKTID,
                 kSplitKKTID,
                 // NSToolbarSpaceItemIdentifier,
 				nil];
@@ -1190,6 +1224,7 @@ else
                      kDrawerKKTID,
                      skGotoPageKKTID,
                      kMouseModeKKTID,
+                     kSearchKKTID,
                      kSharingKKTID,
                      kSplitKKTID,
                      // NSToolbarCustomizeToolbarItemIdentifier,
@@ -1213,6 +1248,7 @@ else
 					kDrawerKKTID,
 	                skGotoPageKKTID,
                     kMouseModeKKTID,
+                    kSearchKKTID,
 					kSplitKKTID,
 					// NSToolbarCustomizeToolbarItemIdentifier,
 					// NSToolbarSpaceItemIdentifier,
@@ -1355,6 +1391,7 @@ else
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
+                    kSearchKKTID,
                     kSharingKKTID,
 					kSplitKKTID,
 					NSToolbarPrintItemIdentifier,
@@ -1390,6 +1427,7 @@ else
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
+                    kSharingKKTID,
                     kSplitKKTID,
                     NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
@@ -1424,6 +1462,7 @@ else
 	                skGotoPageKKTID,
                     skMagnificationKKTID,
 					kMouseModeKKTID,
+                    kSearchKKTID,
 					kSharingKKTID,
 					kSplitKKTID,
                     skColorIndexTID,
@@ -1456,7 +1495,8 @@ else
 	                skGotoPageKKTID,
                     skMagnificationKKTID,
 					kMouseModeKKTID,
-					kSharingKKTID,
+                    kSearchKKTID,
+					// kSharingKKTID,
 					kSplitKKTID,
                     skColorIndexTID,
  					skAutoCompleteID,

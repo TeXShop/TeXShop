@@ -13,7 +13,9 @@
 
 - (void)close
 {
-	[[self.myMovieView movie] stop];
+//	[[self.myMovieView movie] stop];
+    
+    [self.myPlayerView.player pause];
 	[super close];
 }
 

@@ -827,7 +827,7 @@
 
 - (IBAction)doMovie:(id)sender
 {
-	NSString *title = [[sender title] stringByAppendingString:@".mov"];
+	NSString *title = [[sender title] stringByAppendingString:@".mp4"];
 	[self.myMovie doMovie:title];
 }
 
@@ -872,7 +872,7 @@
 				//					 action: @selector(doTemplate:) level: lv];
 				// [newItem setSubmenu: submenu];
 				} 
-			else if ([[[title pathExtension] lowercaseString] isEqualToString: @"mov"]) {
+			else if ([[[title pathExtension] lowercaseString] isEqualToString: @"mp4"]) {
 				title = [title stringByDeletingPathExtension];
                 if (( ! [title isEqualToString:@"Getting Started"]) && ( ! [title isEqualToString:@"Initial Preferences"]))
                     [texshopDemosMenu addItemWithTitle:title action: @selector(doMovie:) keyEquivalent:@"" ];

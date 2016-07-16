@@ -83,6 +83,7 @@
 	// WARNING: This may never be called. (??)	
 	if ((self = [super init])) {
 		protectFind = NO;
+        searchSelection = NULL;
 		}
      return self;
 }
@@ -159,12 +160,14 @@
 
 - (void) initializeDisplay
 {
+    [self setDisplayMode: kPDFDisplaySinglePage];
     
-
     [self.myPDFWindow setDelegate: self];
     
 	downOverLink = NO;
 	
+    // pageStyle = kPDFDisplaySinglePage;
+    // [self setupPageStyle];
 	drawMark = NO;
 	showSync = NO;
 	if ([SUD boolForKey:ShowSyncMarksKey])
@@ -393,6 +396,9 @@
 // added by Terada for the blurring bug of Yosemite and El Capitan
 - (void) removeBlurringByResettingMagnification
 {
+    
+    
+    
     float originalScale = self.magnification;
     BOOL autoScales = self.autoScales;
     [self performSelector:@selector(changeScaleFactorForRemovingBlurringWithParameters:)
@@ -449,6 +455,8 @@
 
 - (void) showForSecond;
 {
+    
+    
 	// totalRotation = 0;
 	self.sourceFiles = nil;
 	
@@ -664,7 +672,6 @@
 
 - (void) reShowForSecond
 {
- 	
 	PDFPage		*aPage;
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
     {
@@ -1442,6 +1449,25 @@
 		byItem: (id) item
 {
 	return [(PDFOutline *)item label];
+}
+
+- (void) doFindOne: (id) sender
+{
+    
+    searchSelection = [self currentSelection];
+    
+    
+    searchSelection = [[self document] findString: [sender stringValue]
+                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    if (searchSelection != NULL)
+    {
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [[[self.myDocument pdfKitWindow] activeView] goToPage: thePage];
+        [self setCurrentSelection: searchSelection];
+        [[[self.myDocument pdfKitWindow] activeView] scrollSelectionToVisible:self];
+    }
+
 }
 
 

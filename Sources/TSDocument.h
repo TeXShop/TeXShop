@@ -108,6 +108,8 @@ enum RootCommand
     IBOutlet    NSDrawer        *myDrawer;
     BOOL                        useFullSplitWindow;
     
+    IBOutlet    NSSearchField   *mySearchField;
+    
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;

@@ -42,7 +42,8 @@
                     IBOutlet	id								currentPage1;
                     IBOutlet	id								totalPage1;
                     IBOutlet	id								myScale1;
-                    IBOutlet	id								myStepper1;
+                    IBOutlet	id 								myStepper1;
+                       
 // @property (weak) IBOutlet	TSDocument						*myDocument;
                     IBOutlet	NSDrawer						*_drawer;
 //           PDFOutline						*_outline;
@@ -105,7 +106,7 @@
     NSRect							syncRect[200];
 	int								numberSyncRect;
 //    OverView                        *overView;
-
+    PDFSelection                    *searchSelection;
 	
 	
 }
@@ -158,6 +159,8 @@
 - (void) lastPage: (id)sender;
 - (IBAction) changeScale: sender;
 - (IBAction) doStepper: sender;
+- (IBAction) doFind: sender;
+- (IBAction) doFindOne: sender;
 - (double)magnification;
 - (void) setMagnification: (double)magnification;
 - (void) changePageStyle: (id)sender;

@@ -308,6 +308,7 @@ BOOL                doAutoSave; // this is present so changes in AutoSave only t
 BOOL                activateBauerPatch; // this is set in
 BOOL                atLeastMavericks;
 BOOL                atLeastElCapitan;
+BOOL                atLeastSierra;
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;

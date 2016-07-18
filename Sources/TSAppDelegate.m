@@ -50,6 +50,8 @@
 #define NSAppKitVersionNumber10_8 1187
 #define NSAppKitVersionNumber10_9 1265
 #define NSAppKitVersionNumber10_10 1343
+#define NSAppKitVersionNumber10_12 1405
+
 
 @class TSTextEditorWindow;
 
@@ -211,6 +213,11 @@
         atLeastElCapitan = YES;
     else
         atLeastElCapitan = NO;
+    
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12)
+        atLeastSierra = YES;
+    else
+        atLeastSierra = NO;
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
@@ -827,8 +834,16 @@
 
 - (IBAction)doMovie:(id)sender
 {
-	NSString *title = [[sender title] stringByAppendingString:@".mp4"];
-	[self.myMovie doMovie:title];
+	if (atLeastMavericks)
+        {
+            NSString *title = [[sender title] stringByAppendingString:@".mp4"];
+            [self.myMovie doMovie:title];
+        }
+    else
+        {
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Alert" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:NSLocalizedString(@"Demo Movies require Mac OS 10.9, Mavericks, or higher.", @"Demo Movies require Mac OS 10.9, Mavericks, or higher.")];
+            [alert runModal];
+        }
 }
 
 - (void)configureMovieMenu

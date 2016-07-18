@@ -2877,7 +2877,10 @@
         [theSelection setColor: [NSColor yellowColor]];
         [[pdfKitWindow activeView] setCurrentSelection: theSelection];
         [[pdfKitWindow activeView] scrollSelectionToVisible:self];
-       //  [[pdfKitWindow activeView] setCurrentSelection: nil];
+        if (atLeastSierra)
+            ;
+        else
+            [[pdfKitWindow activeView] setCurrentSelection: nil];
         }
     
 	[[pdfKitWindow activeView] display];

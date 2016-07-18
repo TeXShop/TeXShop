@@ -765,7 +765,42 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // Adam Maxwell addition
 
 
+// added by Yusuke Terada
+- (void)changeFont:(id)sender
+{
+    [super changeFont:sender];
+    [self fixupTabs];
+}
+
+- (void)fixupTabs
+{
+    NSMutableParagraphStyle *paragraphStyle = [[self defaultParagraphStyle] mutableCopy];
+    
+    if (!paragraphStyle) {
+        paragraphStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
+    }
+    
+    CGFloat charWidth = [[self font] advancementForGlyph:(NSGlyph)' '].width;
+    paragraphStyle.defaultTabInterval = charWidth * [SUD integerForKey: tabsKey];
+    paragraphStyle.tabStops = @[];
+    
+    self.defaultParagraphStyle = paragraphStyle;
+    
+    NSMutableDictionary *typingAttributes = [[self typingAttributes] mutableCopy];
+    typingAttributes[NSParagraphStyleAttributeName] = paragraphStyle;
+    typingAttributes[NSFontAttributeName] = [self font];
+    self.typingAttributes = typingAttributes;
+    
+    NSRange rangeOfChange = NSMakeRange(0, [[self string] length]);
+    [self shouldChangeTextInRange:rangeOfChange replacementString:nil];
+    [[self textStorage] setAttributes:typingAttributes range:rangeOfChange];
+    [self didChangeText];
+}
+// end addition
+
+
 #pragma mark -
+
 
 
 

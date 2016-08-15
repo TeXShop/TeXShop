@@ -28,7 +28,6 @@
 #import "OverView.h"
 #import "TSDocument.h"
 
-
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
@@ -113,7 +112,7 @@
 
 @property (retain) PDFOutline						*outline;
 @property (retain) NSMutableArray					*searchResults;
-@property (retain) NSWindow                         *myPDFWindow;
+@property (weak) NSWindow                         *myPDFWindow;
 @property (retain) NSTimer							*selRectTimer;
 @property (retain) id								imageTypeView;
 @property (retain) id								imageTypePopup;
@@ -225,6 +224,7 @@
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
 - (NSDrawer *)drawer;
+- (void) breakConnections;
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
 // - (BOOL)resignFirstResponder;
@@ -236,5 +236,6 @@
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 @end
+
 
 

@@ -3508,6 +3508,7 @@ failed. If you change the code below, be sure to test carefully!
 {
 	if (centerPage || !(resizeOption == PDF_ACTUAL_SIZE || resizeOption == PDF_FIT_TO_NONE))
 		[self fitToSize];
+    [super viewDidEndLiveResize];
 }
 
 

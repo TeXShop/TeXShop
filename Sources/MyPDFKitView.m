@@ -56,26 +56,16 @@
 
 @implementation MyPDFKitView : PDFView
 
-- (void) dealloc
+- (void) breakConnections
 {
-	
+    // Breaks retain cycles to prevent memory leaks.
     [self cleanupMarquee: YES];
+    [self.myPDFWindow setDelegate:nil];
+    [[self document] setDelegate:nil];
+    [self setDocument:nil];
 	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-
-	// Clean up.
-/*
-	if (self.searchResults != NULL) {
-		[self.searchResults removeAllObjects];
-		[self.searchResults release];
-		self.searchResults = NULL;
-	}
-	[self.sourceFiles release];
-
-
-	[super dealloc];
- */
 }
 
 - (id)init
@@ -365,7 +355,7 @@
         return;
     */
     TSDocument *myDocument = self.myDocument;
-    TSPreviewWindow *myWindow = [myDocument pdfKitWindow];
+    TSPreviewWindow *myWindow = myDocument.pdfKitWindow;
         if (! myWindow.windowIsSplit)
         return;
     
@@ -1463,9 +1453,9 @@
     {
         NSArray *thePages = [searchSelection pages];
         PDFPage *thePage =  [thePages firstObject];
-        [[[self.myDocument pdfKitWindow] activeView] goToPage: thePage];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
         [self setCurrentSelection: searchSelection];
-        [[[self.myDocument pdfKitWindow] activeView] scrollSelectionToVisible:self];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
     }
 
 }
@@ -1473,7 +1463,9 @@
 
 - (void) doFind: (id) sender
 {
-	if (protectFind) {
+    return; // Temporary here and below, until Find again works in Sierra
+    
+    if (protectFind) {
 		// NSLog(@"protectFind");
 		return;
 		}
@@ -1492,6 +1484,8 @@
 
 - (void) startFind: (NSNotification *) notification
 {
+    return;
+    
 	if (protectFind) {
 		// NSLog(@"protectFind: start");
 		return;
@@ -1516,7 +1510,9 @@
 {
 	double		pageIndex;
 	
-	if (protectFind) {
+    return;
+    
+    if (protectFind) {
 		// NSLog(@"protectFind: progress");
 		return;
 	}
@@ -1538,7 +1534,9 @@
 
 - (void) didMatchString: (PDFSelection *) instance
 {
-	if (protectFind) {
+    return;
+    
+    if (protectFind) {
 		// NSLog(@"protectFind: match");
 		return;
 	}
@@ -1560,7 +1558,9 @@
 - (void) endFind: (NSNotification *) notification
 {
 	
-	if (protectFind) {
+    return;
+    
+    if (protectFind) {
 		// NSLog(@"protectFind: end");
 		return;
 	}
@@ -5625,7 +5625,7 @@ else
 {
 	BOOL	result;
     
-	[(TSPreviewWindow *)self.myPDFWindow setActiveView: self];
+	((TSPreviewWindow *)self.myPDFWindow).activeView = self;
 	result =  [super becomeFirstResponder];
 	[self fixStuff];
 	[self resetSearchDelegate];

@@ -82,6 +82,10 @@ extern NSPanel *pageNumberWindow;
         [theDocument close];
         }
     
+    self.myPDFKitView = nil;
+    self.myPDFKitView2 = nil;
+    self.activeView = nil;
+    
 	[super close];
 }
 

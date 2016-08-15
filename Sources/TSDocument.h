@@ -113,7 +113,6 @@ enum RootCommand
 
 	IBOutlet MyPDFKitView		*myPDFKitView;
 	IBOutlet TSPreviewWindow	*pdfKitWindow;
-    IBOutlet TSPreviewWindow    *pdfKitWindow1;
 	IBOutlet MyPDFKitView		*myPDFKitView2;
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
@@ -402,6 +401,9 @@ enum RootCommand
 @property (retain) 	TSFullscreenWindow	*fullscreenWindow;
 @property (retain)  PDFView				*fullscreenPDFView;
 @property (retain)  TSDocument          *rootDocument;
+@property (retain)  MyPDFKitView				*myPDFKitView;
+@property (retain)  MyPDFKitView				*myPDFKitView2;
+@property (retain)  TSPreviewWindow				*pdfKitWindow;
 
 @property (retain)   MySelection         *mSelection;
 @property (retain)   NSTextStorage       *textStorage;
@@ -495,7 +497,6 @@ enum RootCommand
 - (void) setupTags;
 - (TSDocumentType) documentType;
 - (id) pdfWindow;
-- (id) pdfKitWindow;
 - (id) fullSplitWindow;
 - (id) textWindow;
 - (id) textView;
@@ -550,8 +551,6 @@ enum RootCommand
 // Forward Routines Not Found by Source
 - (BOOL)fillLogWindow;
 - (void)fillLogWindowIfVisible;
-- (MyPDFKitView *)myPdfKitView;
-- (MyPDFKitView *)myPdfKitView2;
 - (void)enterFullScreen: (NSNotification *)notification;
 - (void)exitFullScreen: (NSNotification *)notification;
 - (BOOL)skipTextWindow;

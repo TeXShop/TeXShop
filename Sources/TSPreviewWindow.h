@@ -45,9 +45,9 @@
 @property               BOOL            willClose;
 @property               BOOL            windowIsSplit;
 @property               BOOL            firstClose;
-@property (weak)      PDFView         *activeView;
-@property (weak)      PDFView         *myPDFKitView;
-@property (weak)      PDFView        *myPDFKitView2;
+@property (retain)      PDFView         *activeView;
+@property (retain)      PDFView         *myPDFKitView;
+@property (retain)      PDFView        *myPDFKitView2;
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
 
@@ -106,7 +106,6 @@
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;
 // - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
-- (void) setActiveView:(PDFView *)theView;
 - (void) changeMouseMode: sender;
 - (void) doStepper: sender;
 - (void) changeScale: sender;
@@ -115,7 +114,6 @@
 - (IBAction) takeDestinationFromOutline: (id) sender;
 - (IBAction) convertTiff:(id)sender;
 
-- (PDFView *)activeView;
 - (BOOL)windowIsSplit;
 
 @end

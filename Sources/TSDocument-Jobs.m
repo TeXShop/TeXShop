@@ -1681,19 +1681,19 @@
 				if ((self.startDate == nil) || ! [self.startDate isEqualToDate: endDate]) {
 					alreadyFound = YES;
 					PDFfromKit = YES;
-					[myPDFKitView reShowWithPath: imagePath];
-					[myPDFKitView2 prepareSecond];
-					// [[myPDFKitView document] retain];
-					[myPDFKitView2 setDocument: [myPDFKitView document]];
-					[myPDFKitView2 reShowForSecond];
+					[self.myPDFKitView reShowWithPath: imagePath];
+					[self.myPDFKitView2 prepareSecond];
+					// [[self.myPDFKitView document] retain];
+					[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
+					[self.myPDFKitView2 reShowForSecond];
                     if (! useFullSplitWindow) {
-                        [pdfKitWindow setRepresentedFilename: imagePath];
+                        [self.pdfKitWindow setRepresentedFilename: imagePath];
                         //[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
-                        [pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
+                        [self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
                         [self fillLogWindowIfVisible];
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
-                        if ((front) || (! [pdfKitWindow isVisible]))
-                            [pdfKitWindow makeKeyAndOrderFront: self];
+                        if ((front) || (! [self.pdfKitWindow isVisible]))
+                            [self.pdfKitWindow makeKeyAndOrderFront: self];
                         [self allocateSyncScanner];
                         }
                     else {
@@ -1701,7 +1701,7 @@
                         [fullSplitWindow makeKeyAndOrderFront: self];
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
                         if (front)
-                            [fullSplitWindow makeFirstResponder:myPDFKitView];
+                            [fullSplitWindow makeFirstResponder:self.myPDFKitView];
                         [self allocateSyncScanner];
                     }
 				}

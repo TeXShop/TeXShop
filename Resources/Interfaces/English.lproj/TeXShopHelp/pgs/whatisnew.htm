@@ -15,6 +15,49 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.66</h5></P>
+
+<ul>
+<li> Version 3.66 has important code changes by Martin Hairer
+of the Department of Mathematics, University of Warwick. These
+code changes fix
+memory leaks in previous versions of the program. 
+
+<p> The changes include replacing several instance variables with 
+class properties, whose retain/release behavior under ARC is more
+predictable. But the primary change is to remove some strong
+reference cycles in which object A referenced object B and object B
+referenced object A, and neither could be released without first releasing
+the other. 
+
+<p> Recent versions of Apple’s PDFKit use large amounts of memory
+because they create and cache bitmaps for faster display. If Activity Monitor
+is used while opening a document in TeXShop and scrolling through the preview pages,
+this memory usage can seem alarming, but in practice it does not cause
+problems. 
+
+<p> The problems solved by Hairer are different and can be seen by closing documents
+without quitting TeXShop. In this case, the program did not recover the
+memory used by the document being closed. Hairer’s fix  dramatically improves this sort of
+problem, although it is likely that smaller memory problems remain.
+
+<p>
+<li> A few users reported a related bug. They would
+close a document, reach into the document’s folder, and throw the pdf into the trash.
+But the Macintosh would claim that the pdf was still in use and refuse to empty the trash
+until TeXShop itself closed. This problem is a symptom of a memory problem and is
+fixed by Hairer's code.
+
+<p>
+<li> In Sierra, the old pdf search routine in the preview window Drawer stopped working.
+In TeXShop 3.65, this search field was replaced with a more useful search
+field in the Preview Window toolbar; the new search works in all versions of OS X. In 
+recent Sierra releases, the old pdf search came partly to life, and interfered with the new search.
+Temporarily, the old search if turned off in all versions of OS X. If the old search works again
+in later versions of Sierra, it may be turned on again, but we suspect most users will use the
+new toolbar search field.
+</ul>
+
 <P><h5>TeXShop Changes 3.65</h5></P>
 
 This fixes a few problems introduced in 3.64:

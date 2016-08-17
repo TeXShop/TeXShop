@@ -271,7 +271,7 @@ else
 */
 
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
-	[self.pdfKitWindow setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
+	[[self pdfKitWindow] setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
     [[self fullSplitWindow] setToolbar: [self makeToolbar: kFullWindowToolbarIdentifier]];
 }
 
@@ -817,7 +817,7 @@ else
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextPage:)];
-		[menuFormRep setTarget:self.pdfKitWindow];
+		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
 
@@ -864,7 +864,7 @@ else
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextPage:)];
-		[menuFormRep setTarget: self.pdfKitWindow];
+		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
     
@@ -880,7 +880,7 @@ else
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
-		[menuFormRep setTarget: self.pdfKitWindow];
+		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
 
@@ -914,7 +914,7 @@ else
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
-		[menuFormRep setTarget: self.pdfKitWindow];
+		[menuFormRep setTarget: pdfKitWindow];
 		return toolbarItem;
 	}
 

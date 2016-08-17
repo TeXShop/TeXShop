@@ -42,7 +42,7 @@
 	myDocument = [myController documentForURL: myURL];
 	if (myDocument != nil) {
         // NSLog(@"here");
-		[myDocument.pdfKitWindow makeKeyAndOrderFront:self];
+		[[myDocument pdfKitWindow] makeKeyAndOrderFront:self];
     }
 	else {
         // NSLog(@"there");

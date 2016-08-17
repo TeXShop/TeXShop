@@ -1055,16 +1055,16 @@
 	
 	i = 0;
 	
-		thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+		thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 		myOval.size.height = HNumber[i] + 10; myOval.size.width = WNumber[i] + 10;
 		myOval.origin.x = hNumber[i] - 5; myOval.origin.y = pageSize.size.height - vNumber[i] - 5;
 	
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-		[self.pdfKitWindow.activeView goToPage: thePage];
-		[self.pdfKitWindow.activeView display];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+		[[pdfKitWindow activeView] goToPage: thePage];
+		[[pdfKitWindow activeView] display];
 	
 			
 		return YES;
@@ -1083,7 +1083,7 @@
 	// for each box, get the text inside the box
 	
 	while (i < boxNumber) {
-		thePage = [[self.pdfKitWindow.activeView document] pageAtIndex: (pageNumber[i] - 1)];
+		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 		
 		
@@ -1160,21 +1160,21 @@
 				// theRange = [sourceLineString rangeOfString: pieceText];
 				// if (theRange.location != NSNotFound) {
 			
-			thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+			thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 			theSelection = [thePage selectionForRange: theRanges[i]];
 			myOval = [theSelection boundsForPage:thePage];
 			pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 			Param = 65536;
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-			[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-			[self.pdfKitWindow.activeView setCurrentSelection: nil];
-			[self.pdfKitWindow.activeView display];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
             if (! useFullSplitWindow)
-                [self.pdfKitWindow makeKeyAndOrderFront:self];
+                [pdfKitWindow makeKeyAndOrderFront:self];
 
 			return YES;
 			}
@@ -1218,7 +1218,7 @@
 				middle = theRange.length;
 				middle = middle / [boxText[i] length];
 				
-				thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+				thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 				theSelection = [thePage selectionForRange: theRanges[i]];
 				
 				/*
@@ -1234,16 +1234,16 @@
 				myOval.size.width = myOval.size.width * middle;
 
 				pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-				[self.pdfKitWindow.activeView goToPage: thePage];
-				[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-				[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-				[self.pdfKitWindow.activeView setCurrentSelection: nil];
-				[self.pdfKitWindow.activeView display];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+				[[pdfKitWindow activeView] goToPage: thePage];
+				[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+				[[pdfKitWindow activeView] setCurrentSelection: nil];
+				[[pdfKitWindow activeView] display];
                 if (! useFullSplitWindow)
-                    [self.pdfKitWindow makeKeyAndOrderFront:self];
+                    [pdfKitWindow makeKeyAndOrderFront:self];
 				
 				return YES;
 				}
@@ -1282,7 +1282,7 @@
 				middle = middle / [boxText[i] length];
 				
 				
-				thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+				thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 				theSelection = [thePage selectionForRange: theRanges[i]];
 				
 				/*
@@ -1298,16 +1298,16 @@
 				myOval.size.width = myOval.size.width * middle;
 				
 				pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-				[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-				[self.pdfKitWindow.activeView goToPage: thePage];
-				[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-				[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-				[self.pdfKitWindow.activeView setCurrentSelection: nil];
-				[self.pdfKitWindow.activeView display];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+				[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+				[[pdfKitWindow activeView] goToPage: thePage];
+				[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+				[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+				[[pdfKitWindow activeView] setCurrentSelection: nil];
+				[[pdfKitWindow activeView] display];
 				if (! useFullSplitWindow)
-                    [self.pdfKitWindow makeKeyAndOrderFront:self];
+                    [pdfKitWindow makeKeyAndOrderFront:self];
 				
 				return YES;
 				
@@ -1348,21 +1348,21 @@
 				theRange = [sourceLineString rangeOfString: pieceText];
 				if (theRange.location != NSNotFound) {
 					
-					thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+					thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 					theSelection = [thePage selectionForRange: theRanges[i]];
 					myOval = [theSelection boundsForPage:thePage];
 					pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 					Param = 65536;
-					[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-					[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-					[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-					[self.pdfKitWindow.activeView goToPage: thePage];
-					[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-					[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-					[self.pdfKitWindow.activeView setCurrentSelection: nil];
-					[self.pdfKitWindow.activeView display];
+					[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+					[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+					[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+					[[pdfKitWindow activeView] goToPage: thePage];
+					[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+					[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+					[[pdfKitWindow activeView] setCurrentSelection: nil];
+					[[pdfKitWindow activeView] display];
                     if (! useFullSplitWindow)
-                        [self.pdfKitWindow makeKeyAndOrderFront:self];
+                        [pdfKitWindow makeKeyAndOrderFront:self];
 					
 					return YES;
 				}
@@ -1385,7 +1385,7 @@
 	mainPageNumber = 0;
 	if ((boxNumber > 1) && ( ! firstPage[1]))
 		mainPageNumber = 1;
-	thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[mainPageNumber] - 1)];
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[mainPageNumber] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 
 	myOval.size.height = HNumber[mainPageNumber] / Param + 10; myOval.size.width = WNumber[mainPageNumber]/ Param + 10;
@@ -1404,22 +1404,22 @@
 		}
 	
 	if (mainPageNumber == 0)
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialFirstPage - 1)];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
 	else
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialSecondPage - 1)];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-	[self.pdfKitWindow.activeView goToPage: thePage];
+		[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialSecondPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
 	
-	[self.pdfKitWindow.activeView goToPage: thePage];
-	[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+	[[pdfKitWindow activeView] goToPage: thePage];
+	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
 
-	[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-	[self.pdfKitWindow.activeView setCurrentSelection: nil];
-	[self.pdfKitWindow.activeView display];
+	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+	[[pdfKitWindow activeView] setCurrentSelection: nil];
+	[[pdfKitWindow activeView] display];
 	
 	if (! useFullSplitWindow)
-        [self.pdfKitWindow makeKeyAndOrderFront:self];
+        [pdfKitWindow makeKeyAndOrderFront:self];
 
 	return YES;
 	
@@ -1433,17 +1433,17 @@
 	i = 0;
 	while (i < boxNumber) {
 		
-	thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 	
 		Param = 65536; 
 	myOval.size.height = HNumber[i] / Param + 10; myOval.size.width = WNumber[i]/ Param + 10;
 	myOval.origin.x = hNumber[i] / Param - 5; myOval.origin.y = pageSize.size.height - vNumber[i]/ Param - 5;
 	
-	[self.myPDFKitView setIndexForMark: (pageNumber[i] - 1)];
-	[self.myPDFKitView setBoundsForMark: myOval];
-	[self.myPDFKitView setDrawMark: YES];
-	[self.myPDFKitView goToPage: thePage];
+	[myPDFKitView setIndexForMark: (pageNumber[i] - 1)];
+	[myPDFKitView setBoundsForMark: myOval];
+	[myPDFKitView setDrawMark: YES];
+	[myPDFKitView goToPage: thePage];
 	[pdfWindow display];
 	
 	i++;
@@ -1777,7 +1777,7 @@
 	
 	i = 0;
 	while (i < boxNumber) {
-		thePage = [[self.pdfKitWindow.activeView document] pageAtIndex: (pageNumber[i] - 1)];
+		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 		
 		 // Param = 65536;
@@ -1825,21 +1825,21 @@
 		theRange = [sourceLineString rangeOfString: theText[i]];
 		if ((theRange.location != NSNotFound) && (theRange.location <= (searchIndex + 5)) && (searchIndex < (theRange.location + theRange.length + 5))) {
 			
-			thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+			thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 			theSelection = [thePage selectionForRange: theRanges[i]];
 			myOval = [theSelection boundsForPage:thePage];
 			pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 			//Param = 65536;
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-			[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-			[self.pdfKitWindow.activeView setCurrentSelection: nil];
-			[self.pdfKitWindow.activeView display];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
 			if (! useFullSplitWindow)
-                [self.pdfKitWindow makeKeyAndOrderFront:self];
+                [pdfKitWindow makeKeyAndOrderFront:self];
 			
 			return YES;
 		}
@@ -1851,7 +1851,7 @@
 	/* In case of failure, guess the full box where the text occurs. */
 	
 	
-	thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
 	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 	
 	
@@ -1871,20 +1871,20 @@
 		i++;
 	}
 	
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialFirstPage - 1)];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-	[self.pdfKitWindow.activeView goToPage: thePage];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
 	
-	[self.pdfKitWindow.activeView goToPage: thePage];
-	[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+	[[pdfKitWindow activeView] goToPage: thePage];
+	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
 	
-	[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-	[self.pdfKitWindow.activeView setCurrentSelection: nil];
-	[self.pdfKitWindow.activeView display];
+	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+	[[pdfKitWindow activeView] setCurrentSelection: nil];
+	[[pdfKitWindow activeView] display];
 	
 	if (! useFullSplitWindow)
-        [self.pdfKitWindow makeKeyAndOrderFront:self];
+        [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	
@@ -2218,7 +2218,7 @@
 	
 	i = 0;
 	while (i < boxNumber) {
-		thePage = [[self.pdfKitWindow.activeView document] pageAtIndex: (pageNumber[i] - 1)];
+		thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
 		pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 		
 		Param = 65536;
@@ -2266,21 +2266,21 @@
 		theRange = [sourceLineString rangeOfString: theText[i]];
 		if ((theRange.location != NSNotFound) && (theRange.location <= (searchIndex + 5)) && (searchIndex < (theRange.location + theRange.length + 5))) {
 			
-			thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+			thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
 			theSelection = [thePage selectionForRange: theRanges[i]];
 			myOval = [theSelection boundsForPage:thePage];
 			pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 			Param = 65536;
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-			[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-			[self.pdfKitWindow.activeView setCurrentSelection: nil];
-			[self.pdfKitWindow.activeView display];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: theSelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
             if (! useFullSplitWindow)
-                [self.pdfKitWindow makeKeyAndOrderFront:self];
+                [pdfKitWindow makeKeyAndOrderFront:self];
 			
 			return YES;
 		}
@@ -2292,7 +2292,7 @@
 	// In case of failure, guess the full box where the text occurs. 
 	
 	
-	thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
 	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 	
 	
@@ -2312,20 +2312,20 @@
 		i++;
 	}
 	
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialFirstPage - 1)];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-	[self.pdfKitWindow.activeView goToPage: thePage];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
 	
-	[self.pdfKitWindow.activeView goToPage: thePage];
-	[self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+	[[pdfKitWindow activeView] goToPage: thePage];
+	[[pdfKitWindow activeView] setCurrentSelection: theSelection];
 	
-	[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-	[self.pdfKitWindow.activeView setCurrentSelection: nil];
-	[self.pdfKitWindow.activeView display];
+	[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+	[[pdfKitWindow activeView] setCurrentSelection: nil];
+	[[pdfKitWindow activeView] display];
 	
 	if (! useFullSplitWindow)
-        [self.pdfKitWindow makeKeyAndOrderFront:self];
+        [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	
@@ -2446,7 +2446,7 @@
 		while (((node = synctex_next_result(scanner)) != NULL) && (boxNumber < 200)) {
 			if (page == -1) {
 				page = synctex_node_page(node);
-				thePage = [[self.myPDFKitView document] pageAtIndex: (page - 1)];
+				thePage = [[myPDFKitView document] pageAtIndex: (page - 1)];
 				pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
             }
 			if (synctex_node_page(node) != page)
@@ -2483,11 +2483,11 @@
 		return NO;
 	
 	
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setNumberSyncRect:boxNumber];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setNumberSyncRect:boxNumber];
 	
 	i = 0;
 	while (i < boxNumber) {
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setSyncRect: i originX: hNumber[i] originY: vNumber[i] width: WNumber[i] height: HNumber[i]];  
+		[(MyPDFKitView *)[pdfKitWindow activeView] setSyncRect: i originX: hNumber[i] originY: vNumber[i] width: WNumber[i] height: HNumber[i]];  
 		i++;
 	}
     
@@ -2745,7 +2745,7 @@
     /*	
      i = 0;
      while (i < boxNumber) {
-     thePage = [[self.pdfKitWindow.activeView document] pageAtIndex: (pageNumber[i] - 1)];
+     thePage = [[[pdfKitWindow activeView] document] pageAtIndex: (pageNumber[i] - 1)];
      pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
      
      Param = 65536;
@@ -2793,21 +2793,21 @@
      theRange = [sourceLineString rangeOfString: theText[i]];
      if ((theRange.location != NSNotFound) && (theRange.location <= (searchIndex + 5)) && (searchIndex < (theRange.location + theRange.length + 5))) {
      
-     thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
+     thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[i] - 1)];
      theSelection = [thePage selectionForRange: theRanges[i]];
      myOval = [theSelection boundsForPage:thePage];
      pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
      Param = 65536;
-     [(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (pageNumber[i] - 1)];
-     [(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-     [(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-     [self.pdfKitWindow.activeView goToPage: thePage];
-     [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-     [self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-     [self.pdfKitWindow.activeView setCurrentSelection: nil];
-     [self.pdfKitWindow.activeView display];
+     [(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (pageNumber[i] - 1)];
+     [(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+     [(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+     [[pdfKitWindow activeView] goToPage: thePage];
+     [[pdfKitWindow activeView] setCurrentSelection: theSelection];
+     [[pdfKitWindow activeView] scrollSelectionToVisible:self];
+     [[pdfKitWindow activeView] setCurrentSelection: nil];
+     [[pdfKitWindow activeView] display];
      if (! useFullSplitWindow)
-        [self.pdfKitWindow makeKeyAndOrderFront:self];
+        [pdfKitWindow makeKeyAndOrderFront:self];
      
      return YES;
      }
@@ -2820,7 +2820,7 @@
      
      */	
 	initialFirstPage = pageNumber[0];
-	thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
+	thePage = [[myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
 	pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
 	
 	
@@ -2865,28 +2865,28 @@
 	//		i++;
 	//	}
 	
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialFirstPage - 1)];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
-	[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-	[self.pdfKitWindow.activeView goToPage: thePage];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: (initialFirstPage - 1)];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark: myOval];
+	[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+	[[pdfKitWindow activeView] goToPage: thePage];
 	
-	[self.pdfKitWindow.activeView goToPage: thePage];
+	[[pdfKitWindow activeView] goToPage: thePage];
     
     if (theSelection != NULL) {
-        [self.pdfKitWindow.activeView setCurrentSelection: nil];
+        [[pdfKitWindow activeView] setCurrentSelection: nil];
         [theSelection setColor: [NSColor yellowColor]];
-        [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-        [self.pdfKitWindow.activeView scrollSelectionToVisible:self];
+        [[pdfKitWindow activeView] setCurrentSelection: theSelection];
+        [[pdfKitWindow activeView] scrollSelectionToVisible:self];
         if (atLeastSierra)
             ;
         else
-            [self.pdfKitWindow.activeView setCurrentSelection: nil];
+            [[pdfKitWindow activeView] setCurrentSelection: nil];
         }
     
-	[self.pdfKitWindow.activeView display];
+	[[pdfKitWindow activeView] display];
 	
 	if (! useFullSplitWindow)
-            [self.pdfKitWindow makeKeyAndOrderFront:self];
+            [pdfKitWindow makeKeyAndOrderFront:self];
 	
 	return YES;
 	

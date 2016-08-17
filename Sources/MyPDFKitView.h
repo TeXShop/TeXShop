@@ -28,6 +28,7 @@
 #import "OverView.h"
 #import "TSDocument.h"
 
+
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
@@ -105,7 +106,6 @@
     NSRect							syncRect[200];
 	int								numberSyncRect;
 //    OverView                        *overView;
-    PDFSelection                    *searchSelection;
 	
 	
 }
@@ -236,6 +236,5 @@
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 @end
-
 
 

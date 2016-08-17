@@ -242,10 +242,6 @@
 	if (self.logExtension != nil)
 		[self.logExtension release];
 */
-    [self.pdfKitWindow close];
-    self.pdfKitWindow = nil;
-    self.myPDFKitView = nil;
-    self.myPDFKitView2 = nil;
 	
 	[self invalidateCompletionConnection];
 	
@@ -295,10 +291,10 @@
     if ([coder containsValueForKey:@"TeXShopPDFWindow"])
         {
         windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
-        [self.pdfKitWindow setFrameFromString:windowState];
+        [pdfKitWindow setFrameFromString:windowState];
         if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
             thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
-            [self.pdfKitWindow setFrameOrigin: thePoint];
+            [pdfKitWindow setFrameOrigin: thePoint];
             }
         }
     
@@ -320,10 +316,10 @@
     NSString *theCode;
  
     
-    NSRect theRect = [self.pdfKitWindow frame];
+    NSRect theRect = [pdfKitWindow frame];
     NSPoint theOrigin = theRect.origin;
     
-    theCode = [self.pdfKitWindow stringWithSavedFrame];
+    theCode = [pdfKitWindow stringWithSavedFrame];
     [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
     [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
         
@@ -403,7 +399,7 @@
 
 - (id)topView
 {
-	return self.myPDFKitView;
+	return myPDFKitView;
 }
 
 - (void) showHideLineNumbers: sender
@@ -751,7 +747,7 @@
 		spellExists = NO;
 	NS_ENDHANDLER
 	
-	self.pdfKitWindow.activeView = self.myPDFKitView;
+	[pdfKitWindow setActiveView: myPDFKitView];
 
 	switch ([SUD integerForKey: LineBreakModeKey]) {
 		case 0: lineBreakMode = NSLineBreakByClipping;          break;
@@ -783,7 +779,7 @@
 	[scrollView2 removeFromSuperview];
 	
 //	[myPDFKitView2 retain];
-	[self.myPDFKitView2 removeFromSuperview];
+	[myPDFKitView2 removeFromSuperview];
 	
 	// The following line is needed because otherwise there is a crash if a document is closed but the log file was never opened. Mysterious!
 //	[self.logScrollView retain];
@@ -948,7 +944,7 @@ if (! skipTextWindow) {
 				self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate] ;
 			}
 
-			[self.pdfKitWindow setTitle: [[[self fileURL] path] lastPathComponent]];
+			[pdfKitWindow setTitle: [[[self fileURL] path] lastPathComponent]];
 			// [pdfWindow setRepresentedFilename: [self fileName]]; //mitsu July4;
 			// supposed to allow command click of window title to lead to file, but doesn't
 			self.documentType = isPDF;
@@ -987,14 +983,14 @@ if (! skipTextWindow) {
 			if (self.documentType == isPDF) {
 
 				PDFfromKit = YES;
-				[self.myPDFKitView showWithPath: imagePath];
+				[myPDFKitView showWithPath: imagePath];
 				// [myPDFKitView2 prepareSecond];
 				// [[myPDFKitView document] retain];
-				[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
-				[self.myPDFKitView2 showForSecond];
-				[self.pdfKitWindow setRepresentedFilename: imagePath];
-				[self.pdfKitWindow setTitle: [imagePath lastPathComponent]];
-				[self.pdfKitWindow makeKeyAndOrderFront: self];
+				[myPDFKitView2 setDocument: [myPDFKitView document]];
+				[myPDFKitView2 showForSecond];
+				[pdfKitWindow setRepresentedFilename: imagePath];
+				[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+				[pdfKitWindow makeKeyAndOrderFront: self];
 				[self fillLogWindowIfVisible];
 				if ((self.documentType == isPDF) && ([SUD boolForKey: PdfFileRefreshKey] == YES) && ([SUD boolForKey:PdfRefreshKey] == YES)) {
 					self.pdfRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: [SUD floatForKey: RefreshTimeKey]
@@ -1112,21 +1108,21 @@ if (! skipTextWindow) {
 		myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 		self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate];
 
-		[self.myPDFKitView showWithPath: imagePath];
+		[myPDFKitView showWithPath: imagePath];
 		// [myPDFKitView2 prepareSecond];
 		// [[myPDFKitView document] retain];
-		[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
-		[self.myPDFKitView2 showForSecond];
+		[myPDFKitView2 setDocument: [myPDFKitView document]];
+		[myPDFKitView2 showForSecond];
 		
-		[self.pdfKitWindow setRepresentedFilename: imagePath];
-		//[self.pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
-		[self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // added by Terada
+		[pdfKitWindow setRepresentedFilename: imagePath];
+		//[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+		[pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // added by Terada
 		[self fillLogWindowIfVisible];
  	} else if (_externalEditor) {
 
 		PDFfromKit = YES;
-		[self.pdfKitWindow setTitle: [imagePath lastPathComponent]];
-		[self.pdfKitWindow makeKeyAndOrderFront: self];
+		[pdfKitWindow setTitle: [imagePath lastPathComponent]];
+		[pdfKitWindow makeKeyAndOrderFront: self];
 
 
 		// [pdfWindow setTitle: [imagePath lastPathComponent]];
@@ -1963,8 +1959,8 @@ in other code when an external editor is being used. */
 
 - (void)close
 {
-    [self.myPDFKitView breakConnections];
-    [self.myPDFKitView2 breakConnections];
+    [myPDFKitView breakConnections];
+    [myPDFKitView2 breakConnections];
 	
 	[self.tagTimer invalidate];
 //	[self.tagTimer release];
@@ -1978,11 +1974,11 @@ in other code when an external editor is being used. */
 	self.pdfRefreshTimer = nil;
 
 	// [[pdfWindow toolbar] setVisible: NO];
-	// [[self.pdfKitWindow toolbar] setVisible: NO];
+	// [[pdfKitWindow toolbar] setVisible: NO];
 	[(TSToolbar *)[pdfWindow toolbar] turnVisibleOff:YES];
-	[(TSToolbar *)[self.pdfKitWindow toolbar] turnVisibleOff:YES];
+	[(TSToolbar *)[pdfKitWindow toolbar] turnVisibleOff:YES];
 	[pdfWindow close];
-	[self.pdfKitWindow close];
+	[pdfKitWindow close];
     [outputWindow close];
     [self.logWindow close];
     [scrapPDFWindow close];
@@ -2215,7 +2211,7 @@ in other code when an external editor is being used. */
 
 - (void) splitPreviewWindow: sender
 {
-	[self.pdfKitWindow splitPdfKitWindow: sender];
+	[pdfKitWindow splitPdfKitWindow: sender];
 }
 
 - (void) splitWindow: sender
@@ -2297,12 +2293,12 @@ if ( ! skipTextWindow) {
 
 
 	// register for notifications when the pdf window becomes key so we can remember which window was the frontmost.
-	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:self.pdfKitWindow];
-	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:self.pdfKitWindow];
-	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:self.pdfKitWindow];
-	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:self.pdfKitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(pdfWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:pdfKitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowWillClose:) name:NSWindowWillCloseNotification object:pdfKitWindow];
 // added by mitsu --(J+) check mark in "Typeset" menu
-	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:self.pdfKitWindow];
+	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(pdfWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:pdfKitWindow];
 // end addition
 
 
@@ -2591,7 +2587,7 @@ if ( ! skipTextWindow) {
 	{
 		case PdfWindowPosSave:
 			[pdfWindow setFrameAutosaveName:PdfWindowNameKey];
-			[self.pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
+			[pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
 			// added by Terada (from this line)
 			NSInteger numberOfWindows = 0;
 			NSInteger i;
@@ -2608,7 +2604,7 @@ if ( ! skipTextWindow) {
 				for(i=0; i<numberOfWindows; i++){
 					NSWindow *aWindow = [NSApp windowWithWindowNumber:listOfWindows[i]];
 					if ([aWindow isKindOfClass:[TSPreviewWindow class]]) {
-						[self repositionWindow:self.pdfKitWindow activeWindow:aWindow];
+						[self repositionWindow:pdfKitWindow activeWindow:aWindow];
 						break;
 					}
 				}
@@ -2627,16 +2623,16 @@ if ( ! skipTextWindow) {
            
             if ((SmallPDFArea < 10) || (MainDisplayArea > (LargePDFArea + SmallPDFArea) / 2)) {
                 [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
-                [self.pdfKitWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
+                [pdfKitWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
                 }
             else {
                 [pdfWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
-                [self.pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
+                [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
                 }
 /*
         case PdfWindowPosFixed:
             [pdfWindow setFrameFromString:[SUD stringForKey:PdfWindowFixedPosKey]];
-            [self.pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
+            [pdfKitWindow setFrameFromString:[SUD stringForKey:PortablePdfWindowFixedPosKey]];
 */
             
         }
@@ -2877,8 +2873,8 @@ if ( ! skipTextWindow) {
 
 - (void)setPreviewBackgroundColorFromPreferences:(NSNotification *)notification
 {
-	[self.myPDFKitView setNeedsDisplay: YES];
-	[self.myPDFKitView2 setNeedsDisplay: YES];
+	[myPDFKitView setNeedsDisplay: YES];
+	[myPDFKitView2 setNeedsDisplay: YES];
 }
 
 
@@ -3043,8 +3039,8 @@ preference change is cancelled. "*/
         NSLog(@"got to terminate");
         if ([pdfWindow isVisible]) 
             [pdfWindow performClose:self];
-        else if ([self.pdfKitWindow isVisible]) 
-            [self.pdfKitWindow performClose: self];
+        else if ([pdfKitWindow isVisible]) 
+            [pdfKitWindow performClose: self];
         [self close];
     }
         
@@ -3052,8 +3048,8 @@ preference change is cancelled. "*/
     if (skipTextWindow) {
         if ([pdfWindow isVisible]) 
             [pdfWindow performClose:self];
-        else if ([self.pdfKitWindow isVisible]) 
-            [self.pdfKitWindow performClose: self];
+        else if ([pdfKitWindow isVisible]) 
+            [pdfKitWindow performClose: self];
         }
     
         
@@ -4200,12 +4196,17 @@ if (! useFullSplitWindow) {
 - (id) pdfKitView
 {
 	// return myPDFKitView;
-	return  self.pdfKitWindow.activeView;
+	return  [pdfKitWindow activeView];
 }
 
 - (id) pdfWindow
 {
 	return pdfWindow;
+}
+
+- (id) pdfKitWindow
+{
+	return pdfKitWindow;
 }
 
 - (id) fullSplitWindow
@@ -4336,8 +4337,8 @@ if (! useFullSplitWindow) {
 			return;
 		//if ([self myTeXRep] != nil)
 		if ([self fromKit]){
-			if ([self.pdfKitWindow isVisible])
-				[self.pdfKitWindow makeKeyAndOrderFront: self];
+			if ([[self pdfKitWindow] isVisible])
+				[[self pdfKitWindow] makeKeyAndOrderFront: self];
 			else
 				[self refreshPDFAndBringFront: YES];
 			}
@@ -4392,7 +4393,7 @@ if (! useFullSplitWindow) {
 	NSInteger syncMethod = [SUD integerForKey:SyncMethodKey];
     
 	if (syncMethod == SYNCTEXFIRST) {
-        [(MyPDFKitView *)self.pdfKitWindow.activeView setOldSync: NO];
+        [(MyPDFKitView *)[pdfKitWindow activeView] setOldSync: NO];
 		result = [self doPreviewSyncTeXWithFilename: fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
 		if ((result) || ([SUD boolForKey: SyncTeXOnlyKey]))
 			return;
@@ -4404,7 +4405,7 @@ if (! useFullSplitWindow) {
     if (useFullSplitWindow)
         return;
 	
-    [(MyPDFKitView *)self.pdfKitWindow.activeView setOldSync: YES];
+    [(MyPDFKitView *)[pdfKitWindow activeView] setOldSync: YES];
     
 	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
 		result = [self doNewPreviewSyncWithFilename:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
@@ -4687,9 +4688,9 @@ if (! useFullSplitWindow) {
    // [pdfView displayPage:pdfPage];
    // [pdfWindow makeKeyAndOrderFront: self];
    pdfPage++;
-  [(MyPDFKitView *)self.pdfKitWindow.activeView goToKitPageNumber: pdfPage];
+  [(MyPDFKitView *)[pdfKitWindow activeView] goToKitPageNumber: pdfPage];
     if (! useFullSplitWindow)
-        [self.pdfKitWindow makeKeyAndOrderFront: self];
+        [pdfKitWindow makeKeyAndOrderFront: self];
 
 }
 
@@ -4707,7 +4708,7 @@ if (! useFullSplitWindow) {
 	PDFPage				*thePage;
 	NSRect				selectionBounds;
 	
-	 [self.myPDFKitView cancelSearch];
+	 [myPDFKitView cancelSearch];
 
 // I now try a new method. We will pick a string of length 10, first surrounding the text where
 // the click occurred. If it isn't found, we'll back up 5 characters at a time for 20 times, repeating
@@ -4742,9 +4743,9 @@ if (! useFullSplitWindow) {
 		numberOfTests++;
 
 	// search for this in the pdf
-		[self.myPDFKitView setProtectFind: YES];
-		searchResults = [[self.myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
-		[self.myPDFKitView setProtectFind: NO];
+		[myPDFKitView setProtectFind: YES];
+		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		[myPDFKitView setProtectFind: NO];
 		if ([searchResults count] == 1) {
 			mySelection = [searchResults objectAtIndex:0];
 			myPages = [mySelection pages];
@@ -4753,23 +4754,23 @@ if (! useFullSplitWindow) {
 			thePage = [myPages objectAtIndex:0];
 			selectionBounds = [mySelection boundsForPage: thePage];
 			
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: [[self.myPDFKitView document] indexForPage: thePage]];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark:selectionBounds];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView setCurrentSelection: mySelection];
-			[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-			[self.pdfKitWindow.activeView setCurrentSelection: nil];
-			[self.pdfKitWindow.activeView display];
-			[self.pdfKitWindow makeKeyAndOrderFront:self];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark:selectionBounds];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: mySelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self];
 			
 			/*
-			[self.pdfKitWindow.activeView setIndexForMark: [[self.myPDFKitView document] indexForPage: thePage]];
-			[self.pdfKitWindow.activeView setBoundsForMark: selectionBounds];
-			[self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView display];
-			[self.pdfKitWindow makeKeyAndOrderFront:self];
+			[[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[[pdfKitWindow activeView] setBoundsForMark: selectionBounds];
+			[[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] display];
+			[pdfKitWindow makeKeyAndOrderFront:self];
 			*/
 			return YES;
 		}
@@ -4796,9 +4797,9 @@ if (! useFullSplitWindow) {
 		numberOfTests++;
 
 	// search for this in the pdf
-		[self.myPDFKitView setProtectFind: YES];
-		searchResults = [[self.myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
-		[self.myPDFKitView setProtectFind: NO];
+		[myPDFKitView setProtectFind: YES];
+		searchResults = [[myPDFKitView document] findString: searchText withOptions: NSCaseInsensitiveSearch];
+		[myPDFKitView setProtectFind: NO];
 		if ([searchResults count] == 1) {
 			mySelection = [searchResults objectAtIndex:0];
 			myPages = [mySelection pages];
@@ -4808,23 +4809,23 @@ if (! useFullSplitWindow) {
 			selectionBounds = [mySelection boundsForPage: thePage];
 			// replace "myPDFKitView" below by "[myPDFKitWindow activeView]"
 			
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: [[self.myPDFKitView document] indexForPage: thePage]];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark:selectionBounds];
-			[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView setCurrentSelection: mySelection];
-			[self.pdfKitWindow.activeView scrollSelectionToVisible:self];
-			[self.pdfKitWindow.activeView setCurrentSelection: nil];
-			[self.pdfKitWindow.activeView display];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setBoundsForMark:selectionBounds];
+			[(MyPDFKitView *)[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] setCurrentSelection: mySelection];
+			[[pdfKitWindow activeView] scrollSelectionToVisible:self];
+			[[pdfKitWindow activeView] setCurrentSelection: nil];
+			[[pdfKitWindow activeView] display];
             if (! useFullSplitWindow)
-                [self.pdfKitWindow makeKeyAndOrderFront:self];
+                [pdfKitWindow makeKeyAndOrderFront:self];
 			
 			/*
-			[self.pdfKitWindow.activeView setIndexForMark: [[self.myPDFKitView document] indexForPage: thePage]];
-			[self.pdfKitWindow.activeView setBoundsForMark: selectionBounds];
-			[self.pdfKitWindow.activeView setDrawMark: YES];
-			[self.pdfKitWindow.activeView goToPage: thePage];
-			[self.pdfKitWindow.activeView display];
+			[[pdfKitWindow activeView] setIndexForMark: [[myPDFKitView document] indexForPage: thePage]];
+			[[pdfKitWindow activeView] setBoundsForMark: selectionBounds];
+			[[pdfKitWindow activeView] setDrawMark: YES];
+			[[pdfKitWindow activeView] goToPage: thePage];
+			[[pdfKitWindow activeView] display];
 			*/
 			
 			return YES;
@@ -4886,17 +4887,17 @@ if (! useFullSplitWindow) {
 			_pdfRefreshTryAgain = YES;
 		} else {
 			PDFfromKit = YES;
-			[self.myPDFKitView reShowWithPath: pdfPath];
-			[self.myPDFKitView2 prepareSecond];
-			// [[self.myPDFKitView document] retain];
-			[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
-			[self.myPDFKitView2 reShowForSecond];
-			[self.pdfKitWindow setRepresentedFilename: pdfPath];
-			[self.pdfKitWindow setTitle: [pdfPath lastPathComponent]];
+			[myPDFKitView reShowWithPath: pdfPath];
+			[myPDFKitView2 prepareSecond];
+			// [[myPDFKitView document] retain];
+			[myPDFKitView2 setDocument: [myPDFKitView document]];
+			[myPDFKitView2 reShowForSecond];
+			[pdfKitWindow setRepresentedFilename: pdfPath];
+			[pdfKitWindow setTitle: [pdfPath lastPathComponent]];
 				[self fillLogWindowIfVisible];
-			if ((front) || (![self.pdfKitWindow isVisible])) {
+			if ((front) || (![pdfKitWindow isVisible])) {
 				[[NSApplication sharedApplication] activateIgnoringOtherApps: YES];
-				[self.pdfKitWindow makeKeyAndOrderFront: self];
+				[pdfKitWindow makeKeyAndOrderFront: self];
 			}
 			
 		}
@@ -5186,8 +5187,8 @@ if (! useFullSplitWindow) {
     showFullPath = ! showFullPath;
 	[self fixShowFullPathButton];
 	[SUD setBool:showFullPath forKey:ShowFullPathEnabledKey];
-	[self.pdfKitWindow becomeMainWindow];
-	[self.pdfKitWindow makeKeyWindow];
+	[pdfKitWindow becomeMainWindow];
+	[pdfKitWindow makeKeyWindow];
 	[textWindow becomeMainWindow];
 	[textWindow makeKeyWindow];
 }
@@ -5329,10 +5330,10 @@ if (! useFullSplitWindow) {
 		showSync = YES;
 	else
 		showSync = NO;
-	[self.myPDFKitView setShowSync: showSync];
-	[self.myPDFKitView2 setShowSync: showSync];
-	[self.myPDFKitView display];
-	[self.myPDFKitView2 display];
+	[myPDFKitView setShowSync: showSync];
+	[myPDFKitView2 setShowSync: showSync];
+	[myPDFKitView display];
+	[myPDFKitView2 display];
 }
 
 - (void) flipIndexColorState: sender
@@ -6624,10 +6625,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		showSync = YES;
 	else
 		showSync = NO;
-	[self.myPDFKitView setShowSync: showSync];
-	[self.myPDFKitView2 setShowSync: showSync];
-	[self.myPDFKitView display];
-	[self.myPDFKitView2 display];
+	[myPDFKitView setShowSync: showSync];
+	[myPDFKitView2 setShowSync: showSync];
+	[myPDFKitView display];
+	[myPDFKitView2 display];
 }
 
 - (void) showIndexColor: sender
@@ -6657,11 +6658,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 {	
 	switch ([sender selectedSegment]) {
 		// case 0:	[[self pdfKitView] goBack:sender];
-		case 0: [self.pdfKitWindow.activeView goBack:sender];
+		case 0: [[pdfKitWindow activeView] goBack:sender];
 			break;
 
 		// case 1: [[self pdfKitView] goForward:sender];
-			case 1: [self.pdfKitWindow.activeView goForward:sender];
+			case 1: [[pdfKitWindow activeView] goForward:sender];
 			break;
 	}
 }
@@ -6670,13 +6671,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 {
 
 	// [[self pdfKitView] goForward:sender];
-	 [self.pdfKitWindow.activeView goForward:sender];
+	 [[pdfKitWindow activeView] goForward:sender];
 }
 
 - (void)doBack:(id)sender
 {
 	// [[self pdfKitView] goBack:sender];
-	[self.pdfKitWindow.activeView goBack:sender];
+	[[pdfKitWindow activeView] goBack:sender];
 }
 
 - (id) mousemodeMenu
@@ -7234,8 +7235,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] ;
 		[self.fullscreenPDFView setDocument: pdfDoc];
 		
-		myCurrentPage = [self.myPDFKitView currentPage];
-		currentPageIndex = [[self.myPDFKitView document] indexForPage: myCurrentPage];
+		myCurrentPage = [myPDFKitView currentPage];
+		currentPageIndex = [[myPDFKitView document] indexForPage: myCurrentPage];
 		newPage = [[self.fullscreenPDFView document] pageAtIndex: currentPageIndex];
 		[self.fullscreenPDFView goToPage: newPage];
 		
@@ -7256,7 +7257,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		myCurrentPage = [self.fullscreenPDFView currentPage];
 		currentPageNumber = [[self.fullscreenPDFView document] indexForPage: myCurrentPage];
 		currentPageNumber++;
-		[self.myPDFKitView goToKitPageNumber: currentPageNumber];
+		[myPDFKitView goToKitPageNumber: currentPageNumber];
 		
         // Release the display(s)
         if (CGDisplayRelease( kCGDirectMainDisplay ) != kCGErrorSuccess) {
@@ -7920,46 +7921,58 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     autoCompleting = NO;
 }
 
+
+
+- (MyPDFKitView *)myPdfKitView
+{
+    return myPDFKitView;
+}
+
+- (MyPDFKitView *)myPdfKitView2
+{
+    return myPDFKitView2;
+}
+
 - (void)enterFullScreen: (NSNotification *)notification
 {
     
     
-    oldPageStyle = [self.myPDFKitView pageStyle];
-    oldResizeOption = [self.myPDFKitView resizeOption];
+    oldPageStyle = [myPDFKitView pageStyle];
+    oldResizeOption = [myPDFKitView resizeOption];
     fullscreenPageStyle = [SUD integerForKey: fullscreenPageStyleKey];
     fullscreenResizeOption = [SUD integerForKey: fullscreenResizeOptionKey];
     // if (fullscreenPageStyle == 0)
     //     fullscreenPageStyle = 2;
     // if (fullscreenResizeOption == 0)
     //     fullscreenResizeOption = 3;
-    if ([self.pdfKitWindow windowIsSplit])
+    if ([pdfKitWindow windowIsSplit])
         {
-        [self.pdfKitWindow splitPdfKitWindow:self]; 
+        [pdfKitWindow splitPdfKitWindow:self]; 
         }
-    [self.myPDFKitView changePDFViewSizeTo:fullscreenResizeOption];
-    [self.myPDFKitView changePageStyleTo: fullscreenPageStyle];
-    [self.myPDFKitView2 changePDFViewSizeTo:fullscreenResizeOption];
-    [self.myPDFKitView2 changePageStyleTo: fullscreenPageStyle];
+    [myPDFKitView changePDFViewSizeTo:fullscreenResizeOption];
+    [myPDFKitView changePageStyleTo: fullscreenPageStyle];
+    [myPDFKitView2 changePDFViewSizeTo:fullscreenResizeOption];
+    [myPDFKitView2 changePageStyleTo: fullscreenPageStyle];
    
 }
 - (void)exitFullScreen: (NSNotification *)notification
 {
     NSInteger fullscreenPageStyleNew, fullscreenResizeOptionNew;
     
-    fullscreenPageStyleNew = [self.myPDFKitView pageStyle];
-    fullscreenResizeOptionNew = [self.myPDFKitView resizeOption];
+    fullscreenPageStyleNew = [myPDFKitView pageStyle];
+    fullscreenResizeOptionNew = [myPDFKitView resizeOption];
     if (fullscreenPageStyleNew != fullscreenPageStyle)
         [SUD setInteger: fullscreenPageStyleNew forKey: fullscreenPageStyleKey];
     if (fullscreenResizeOptionNew != fullscreenResizeOption)
         [SUD setInteger: fullscreenResizeOptionNew forKey: fullscreenResizeOptionKey];
-    if ([self.pdfKitWindow windowIsSplit])
+    if ([pdfKitWindow windowIsSplit])
         {
-        [self.pdfKitWindow splitPdfKitWindow:self]; 
+        [pdfKitWindow splitPdfKitWindow:self]; 
         }
-    [self.myPDFKitView changePDFViewSizeTo: oldResizeOption];
-    [self.myPDFKitView changePageStyleTo:oldPageStyle];
-    [self.myPDFKitView2 changePDFViewSizeTo: oldResizeOption];
-    [self.myPDFKitView2 changePageStyleTo:oldPageStyle];
+    [myPDFKitView changePDFViewSizeTo: oldResizeOption];
+    [myPDFKitView changePageStyleTo:oldPageStyle];
+    [myPDFKitView2 changePDFViewSizeTo: oldResizeOption];
+    [myPDFKitView2 changePageStyleTo:oldPageStyle];
 }
 
 // added by Terada
@@ -8069,7 +8082,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         if (data != nil)
         theImage = [[NSImage alloc]initWithData:data];
         
-        // NSImage *theImage = [self.myPDFKitView imageFromSelection];
+        // NSImage *theImage = [myPDFKitView imageFromSelection];
         if (theImage) {
             count++;
             [items addObject: theImage];
@@ -8166,14 +8179,14 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 [leftView addSubview: splitView];
                 [splitView setFrame: [leftView bounds]];
                 }
-            [self.pdfKitWindow.pdfKitSplitView removeFromSuperview];
+            [pdfKitWindow.pdfKitSplitView removeFromSuperview];
             if (interchange) {
-                [leftView addSubview: self.pdfKitWindow.pdfKitSplitView];
-                [self.pdfKitWindow.pdfKitSplitView setFrame: [leftView bounds]];
+                [leftView addSubview: pdfKitWindow.pdfKitSplitView];
+                [pdfKitWindow.pdfKitSplitView setFrame: [leftView bounds]];
                 }
             else {
-                [rightView addSubview: self.pdfKitWindow.pdfKitSplitView];
-                [self.pdfKitWindow.pdfKitSplitView setFrame: [rightView bounds]];
+                [rightView addSubview: pdfKitWindow.pdfKitSplitView];
+                [pdfKitWindow.pdfKitSplitView setFrame: [rightView bounds]];
                 }
             [self.splitController setWindow: fullSplitWindow];
             [self addWindowController: self.splitController];
@@ -8183,7 +8196,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             [self.splitController showWindow: nil];
             // [fullSplitWindow makeKeyAndOrderFront:self];
             [textWindow orderOut:self];
-            [self.pdfKitWindow orderOut:self];
+            [pdfKitWindow orderOut:self];
             useFullSplitWindow = YES;
             [myDrawer setParentWindow: fullSplitWindow];
             // [self setWindow: fullSplitWindow];
@@ -8201,13 +8214,13 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             [splitView removeFromSuperview];
             [[textWindow contentView] addSubview: splitView];
             [splitView setFrame: [[textWindow contentView] bounds]];
-            [self.pdfKitWindow.pdfKitSplitView removeFromSuperview];
-            [[self.pdfKitWindow contentView] addSubview: self.pdfKitWindow.pdfKitSplitView];
-            [self.pdfKitWindow.pdfKitSplitView setFrame: [[self.pdfKitWindow contentView] bounds]];
-            [self.pdfKitWindow orderFront:self];
+            [pdfKitWindow.pdfKitSplitView removeFromSuperview];
+            [[pdfKitWindow contentView] addSubview: pdfKitWindow.pdfKitSplitView];
+            [pdfKitWindow.pdfKitSplitView setFrame: [[pdfKitWindow contentView] bounds]];
+            [pdfKitWindow orderFront:self];
             [textWindow makeKeyAndOrderFront:self];
             [fullSplitWindow orderOut:self];
-            [myDrawer setParentWindow: self.pdfKitWindow];
+            [myDrawer setParentWindow: pdfKitWindow];
             [self removeWindowController: self.splitController];
             // [self setWindow: textWindow];
         }
@@ -8216,7 +8229,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void) doAssociatedWindow
 {
     if ([fullSplitWindow firstResponder] == textView)
-        [fullSplitWindow makeFirstResponder: self.myPDFKitView];
+        [fullSplitWindow makeFirstResponder: myPDFKitView];
     else
         [fullSplitWindow makeFirstResponder: textView];
         
@@ -8234,6 +8247,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     else
         [super runPageLayout: sender];
 }
+
+- (NSSearchField *) pdfKitSearchField
+{
+    return mySearchField;
+}
+
 
 
 @end

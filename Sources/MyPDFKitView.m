@@ -73,7 +73,6 @@
 	// WARNING: This may never be called. (??)	
 	if ((self = [super init])) {
 		protectFind = NO;
-        searchSelection = NULL;
 		}
      return self;
 }
@@ -355,7 +354,7 @@
         return;
     */
     TSDocument *myDocument = self.myDocument;
-    TSPreviewWindow *myWindow = myDocument.pdfKitWindow;
+    TSPreviewWindow *myWindow = [myDocument pdfKitWindow];
         if (! myWindow.windowIsSplit)
         return;
     
@@ -1444,28 +1443,50 @@
 - (void) doFindOne: (id) sender
 {
     
-    searchSelection = [self currentSelection];
+    PDFSelection      *searchSelection, *oldSearchSelection;
+    NSArray           *thePages;
+    PDFPage           *thePage;
     
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
     
-    searchSelection = [[self document] findString: [sender stringValue]
-                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    oldSearchSelection = [self currentSelection];
+    searchSelection = oldSearchSelection;
+    
+    if (flags & NSShiftKeyMask)
+        
+        searchSelection = [[self document] findString: [sender stringValue]
+                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+    
+    else
+        
+        searchSelection = [[self document] findString: [sender stringValue]
+                                        fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
     if (searchSelection != NULL)
     {
-        NSArray *thePages = [searchSelection pages];
-        PDFPage *thePage =  [thePages firstObject];
-        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
+        thePages = [searchSelection pages];
+        thePage =  [thePages firstObject];
+        [[[self.myDocument pdfKitWindow] activeView] goToPage: thePage];
         [self setCurrentSelection: searchSelection];
-        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+        [[[self.myDocument pdfKitWindow] activeView] scrollSelectionToVisible:self];
     }
 
+    /*
+    theOldPages = [oldSearchSelection pages];
+    theOldPage = [theOldPages firstObject];
+    if (thePage == theOldPage)
+    {
+        if (CGRectEqualToRect([searchSelection boundsForPage: thePage], [oldSearchSelection boundsForPage: theOldPage]))
+            NSLog(@"same");
+    }
+    */
 }
 
 
 - (void) doFind: (id) sender
 {
-    return; // Temporary here and below, until Find again works in Sierra
     
-    if (protectFind) {
+    
+	if (protectFind) {
 		// NSLog(@"protectFind");
 		return;
 		}
@@ -1484,8 +1505,6 @@
 
 - (void) startFind: (NSNotification *) notification
 {
-    return;
-    
 	if (protectFind) {
 		// NSLog(@"protectFind: start");
 		return;
@@ -1510,9 +1529,7 @@
 {
 	double		pageIndex;
 	
-    return;
-    
-    if (protectFind) {
+	if (protectFind) {
 		// NSLog(@"protectFind: progress");
 		return;
 	}
@@ -1534,9 +1551,7 @@
 
 - (void) didMatchString: (PDFSelection *) instance
 {
-    return;
-    
-    if (protectFind) {
+	if (protectFind) {
 		// NSLog(@"protectFind: match");
 		return;
 	}
@@ -1558,9 +1573,7 @@
 - (void) endFind: (NSNotification *) notification
 {
 	
-    return;
-    
-    if (protectFind) {
+	if (protectFind) {
 		// NSLog(@"protectFind: end");
 		return;
 	}
@@ -5411,10 +5424,22 @@ else
         return NO;
     
     if ((key == 'f') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
-        [self.drawer open];
-        [[self window] makeFirstResponder:_searchField ];
+        // [self.drawer open];
+        // [[self window] makeFirstResponder:_searchField ];
+        [[self window] makeFirstResponder: [self.myDocument pdfKitSearchField ]];
         return YES;
-    }
+        }
+
+/*
+    if ((key == 'g') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+        NSLog(@"hi there");
+        // [self.drawer open];
+        // [[self window] makeFirstResponder:_searchField ];
+        [self doFindOne: @"Galois"];
+        NSLog(@"hello");
+        return YES;
+        }
+ */
     
     else
         
@@ -5625,7 +5650,7 @@ else
 {
 	BOOL	result;
     
-	((TSPreviewWindow *)self.myPDFWindow).activeView = self;
+	[(TSPreviewWindow *)self.myPDFWindow setActiveView: self];
 	result =  [super becomeFirstResponder];
 	[self fixStuff];
 	[self resetSearchDelegate];

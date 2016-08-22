@@ -73,7 +73,8 @@
 	// WARNING: This may never be called. (??)	
 	if ((self = [super init])) {
 		protectFind = NO;
-		}
+        self.oneOffSearchString = NULL;
+  		}
      return self;
 }
 
@@ -293,12 +294,18 @@
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scaleChanged:)
 												 name: PDFViewScaleChangedNotification object: self];
 	// Find notifications.
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(startFind:)
+    /*
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidBeginDocumentFind:)
 												 name: PDFDocumentDidBeginFindNotification object: NULL];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(findProgress:)
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidEndPageFind:)
 												 name: PDFDocumentDidEndPageFindNotification object: NULL];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(endFind:)
+   	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidEndDocumentFind:)
 												 name: PDFDocumentDidEndFindNotification object: NULL];
+  //  [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidFindMatch:)
+  //                                               name: PDFDocumentDidFindMatchNotification object: NULL];
+  //  [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(didMatchString:)
+  //                                               name: PDFDocumentDidFindMatchNotification object: NULL];
+     */
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(changeMagnification:)
 												 name:MagnificationChangedNotification object:nil];
@@ -354,7 +361,7 @@
         return;
     */
     TSDocument *myDocument = self.myDocument;
-    TSPreviewWindow *myWindow = [myDocument pdfKitWindow];
+    TSPreviewWindow *myWindow = myDocument.pdfKitWindow;
         if (! myWindow.windowIsSplit)
         return;
     
@@ -1442,51 +1449,92 @@
 
 - (void) doFindOne: (id) sender
 {
+   
+    PDFSelection                    *searchSelection;
+    self.oneOffSearchString = [sender stringValue];
     
-    PDFSelection      *searchSelection, *oldSearchSelection;
-    NSArray           *thePages;
-    PDFPage           *thePage;
+    self.toolbarFind = YES;
+
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+    
+    searchSelection = [self currentSelection];
+    
+    if (flags & NSShiftKeyMask)
+    
+        searchSelection = [[self document] findString: [sender stringValue]
+                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+        
+   else
+        
+        searchSelection = [[self document] findString: [sender stringValue]
+                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    
+    
+    if (searchSelection != NULL)
+    {
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
+        [self setCurrentSelection: searchSelection];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+    }
+    
+    [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+    
+/*
+    if (searchSelection == NULL)
+    {
+        [self clearSelection];
+    }
+ */
+        
+
+}
+
+- (void) doFindAgain
+{
+    PDFSelection                    *searchSelection;
+    
+    self.toolbarFind = YES;
     
     NSUInteger flags = [[NSApp currentEvent] modifierFlags];
     
-    oldSearchSelection = [self currentSelection];
-    searchSelection = oldSearchSelection;
+    searchSelection = [self currentSelection];
     
     if (flags & NSShiftKeyMask)
         
-        searchSelection = [[self document] findString: [sender stringValue]
+        searchSelection = [[self document] findString: self.oneOffSearchString
                                         fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
     
     else
         
-        searchSelection = [[self document] findString: [sender stringValue]
+        searchSelection = [[self document] findString: self.oneOffSearchString
                                         fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    
+    
     if (searchSelection != NULL)
     {
-        thePages = [searchSelection pages];
-        thePage =  [thePages firstObject];
-        [[[self.myDocument pdfKitWindow] activeView] goToPage: thePage];
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
         [self setCurrentSelection: searchSelection];
-        [[[self.myDocument pdfKitWindow] activeView] scrollSelectionToVisible:self];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+    }
+    
+    if (searchSelection == NULL)
+    {
+        [self clearSelection];
     }
 
-    /*
-    theOldPages = [oldSearchSelection pages];
-    theOldPage = [theOldPages firstObject];
-    if (thePage == theOldPage)
-    {
-        if (CGRectEqualToRect([searchSelection boundsForPage: thePage], [oldSearchSelection boundsForPage: theOldPage]))
-            NSLog(@"same");
-    }
-    */
 }
 
 
 - (void) doFind: (id) sender
 {
     
+    self.toolbarFind = NO;
     
-	if (protectFind) {
+    if (protectFind) {
 		// NSLog(@"protectFind");
 		return;
 		}
@@ -1498,13 +1546,21 @@
 	if (_searchResults == NULL)
 		_searchResults = [NSMutableArray arrayWithCapacity: 10];
 
-	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+//	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+    if (atLeastSierra)
+        [[self document] findString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+    else
+        [[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
 }
 
 // ------------------------------------------------------------------------------------------------------------ startFind
 
-- (void) startFind: (NSNotification *) notification
+- (void) documentDidBeginDocumentFind: (NSNotification *) notification
 {
+    
+    if (self.toolbarFind)
+        return;
+    
 	if (protectFind) {
 		// NSLog(@"protectFind: start");
 		return;
@@ -1525,11 +1581,14 @@
 
 // --------------------------------------------------------------------------------------------------------- findProgress
 
-- (void) findProgress: (NSNotification *) notification
+- (void) documentDidEndPageFind: (NSNotification *) notification
 {
 	double		pageIndex;
 	
-	if (protectFind) {
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
 		// NSLog(@"protectFind: progress");
 		return;
 	}
@@ -1549,9 +1608,46 @@
 // ------------------------------------------------------------------------------------------------------- didMatchString
 // Called when an instance was located. Delegates can instantiate.
 
+
+- (void) documentDidFindMatch: (NSNotification *) notification
+{
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
+        // NSLog(@"protectFind: match");
+        return;
+    }
+    
+    if (self != [self.myDocument topView])
+        ;
+    else {
+        
+     //   The notification object is the PDFDocument object itself. To determine the string selection found, use the @”PDFDocumentFoundSelection” key to obtain userinfo of type PDFSelection *
+        
+        
+        
+        PDFSelection    *instance;
+        NSDictionary    *infoDictionary = notification.userInfo;
+        instance = (PDFSelection *)[infoDictionary objectForKey: @"PDFDocumentFoundSelection"];
+        // Add page label to our array.
+        if (_searchResults != NULL){
+            [_searchResults addObject: [instance copy]];
+            // Force a reload.
+            [_searchTable reloadData];
+        }
+    }
+}
+
+
+/*
 - (void) didMatchString: (PDFSelection *) instance
 {
-	if (protectFind) {
+ 
+    if (self.toolbarFind)
+        return;
+ 
+    if (protectFind) {
 		// NSLog(@"protectFind: match");
 		return;
 	}
@@ -1567,13 +1663,18 @@
 		}
 	}
 }
+ */
+
 
 // -------------------------------------------------------------------------------------------------------------- endFind
 
-- (void) endFind: (NSNotification *) notification
+- (void) documentDidEndDocumentFind: (NSNotification *) notification
 {
-	
-	if (protectFind) {
+    
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
 		// NSLog(@"protectFind: end");
 		return;
 	}
@@ -1628,6 +1729,7 @@
 {
 	NSInteger				rowIndex;
 	NSMutableArray	*_firstSearchResults;
+    PDFSelection    *theSelection;
 	
 	if ([notification object] != _searchTable)
 		return;
@@ -1639,10 +1741,23 @@
 		if (self != [self.myDocument topView]) {
 			_firstSearchResults = [[self.myDocument topView] getSearchResults];
 			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
+            theSelection = [_firstSearchResults objectAtIndex: rowIndex];
 			}
-		else
+        else {
 			[self setCurrentSelection: [_searchResults objectAtIndex: rowIndex]];
-		[self centerSelectionInVisibleArea: self];
+            theSelection = [_searchResults objectAtIndex: rowIndex];
+            }
+        
+        [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+        
+        if (atLeastSierra) {
+            NSArray *thePages = [theSelection pages];
+            PDFPage *aPage = [thePages objectAtIndex: 0];
+            [self goToPage: aPage];
+            }
+        else 
+            [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible: self.myDocument.pdfKitWindow.activeView];
+            
 	}
 }
 
@@ -5428,18 +5543,12 @@ else
         // [[self window] makeFirstResponder:_searchField ];
         [[self window] makeFirstResponder: [self.myDocument pdfKitSearchField ]];
         return YES;
-        }
-
-/*
+    }
+    
     if ((key == 'g') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
-        NSLog(@"hi there");
-        // [self.drawer open];
-        // [[self window] makeFirstResponder:_searchField ];
-        [self doFindOne: @"Galois"];
-        NSLog(@"hello");
+        [self doFindAgain];
         return YES;
-        }
- */
+    }
     
     else
         
@@ -5650,7 +5759,7 @@ else
 {
 	BOOL	result;
     
-	[(TSPreviewWindow *)self.myPDFWindow setActiveView: self];
+	((TSPreviewWindow *)self.myPDFWindow).activeView = self;
 	result =  [super becomeFirstResponder];
 	[self fixStuff];
 	[self resetSearchDelegate];

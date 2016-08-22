@@ -28,7 +28,6 @@
 #import "OverView.h"
 #import "TSDocument.h"
 
-
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
@@ -83,7 +82,7 @@
 //	id								imageTypeView;
 //	id								imageTypePopup;
 
-	NSInteger								pageIndexForMark;
+	NSInteger						pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
 	BOOL							showSync;
@@ -120,6 +119,8 @@
 @property (retain) OverView                        *overView;
 @property           BOOL                            waiting;
 @property (weak)    IBOutlet	TSDocument          *myDocument;
+@property (retain) NSString                         *oneOffSearchString;
+@property           BOOL                            toolbarFind;
 
 
 // - (void) scheduleAddintToolips;
@@ -160,6 +161,7 @@
 - (IBAction) doStepper: sender;
 - (IBAction) doFind: sender;
 - (IBAction) doFindOne: sender;
+- (void) doFindAgain;
 - (double)magnification;
 - (void) setMagnification: (double)magnification;
 - (void) changePageStyle: (id)sender;
@@ -231,10 +233,19 @@
 - (void)fixWhiteDisplay;
 @end
 
+@interface MyPDFKitView (PDFDocumentDelegate)
+- (void) documentDidBeginDocumentFind: (NSNotification *) notification;
+- (void) documentDidEndDocumentFind: (NSNotification *) notification;
+- (void) documentDidEndPageFind: (NSNotification *)notification;
+- (void) documentDidFindMatch: (NSNotification *)notification;
+
+@end
+
 @interface MyPDFKitView (Magnification)
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 @end
+
 
 

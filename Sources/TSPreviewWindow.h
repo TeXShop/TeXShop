@@ -45,9 +45,9 @@
 @property               BOOL            willClose;
 @property               BOOL            windowIsSplit;
 @property               BOOL            firstClose;
-@property (weak)      PDFView         *activeView;
-@property (weak)      PDFView         *myPDFKitView;
-@property (weak)      PDFView        *myPDFKitView2;
+@property (retain)      PDFView         *activeView;
+@property (retain)      PDFView         *myPDFKitView;
+@property (retain)      PDFView        *myPDFKitView2;
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
 

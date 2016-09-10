@@ -2483,7 +2483,7 @@ The system then remembers the new number and sends is to the Timer which will di
             NSPoint mouseLocation = [NSEvent mouseLocation];
             NSValue *mouseLocationValue = [NSValue valueWithPoint: mouseLocation];
             NSArray *info = [NSArray arrayWithObjects: timerNumberObject, mouseLocationValue, theEvent, nil];
-            [NSTimer scheduledTimerWithTimeInterval:0.5
+            [NSTimer scheduledTimerWithTimeInterval:0.2
                                          target:self
                                        selector:@selector(handleLink:)
                                        userInfo:info
@@ -2553,7 +2553,7 @@ The system then remembers the new number and sends is to the Timer which will di
     NSEvent *theEvent = (NSEvent *)theTimer.userInfo[2];
     NSPoint currentPoint = [NSEvent mouseLocation];
     
-    if ((fabs(originalPoint.x - currentPoint.x) > 10) || (fabs(originalPoint.y - currentPoint.y) > 10))
+    if ((fabs(originalPoint.x - currentPoint.x) > 30) || (fabs(originalPoint.y - currentPoint.y) > 30))
         {
         self.handlingLink = 0;
         return;

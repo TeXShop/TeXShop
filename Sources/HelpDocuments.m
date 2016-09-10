@@ -48,6 +48,7 @@
         // NSLog(@"there");
 		[myController listDocument:NO];
 		[myController openDocumentWithContentsOfURL: myURL display: YES error:&outError];
+        // [[myController openDocumentWithContentsOfURL: myURL display: YES completionHandler: nil];
 		[myController listDocument:YES];
 		}
 }
@@ -67,6 +68,14 @@
  	
 	fileName = [[NSBundle mainBundle] pathForResource:@"First Steps with TeXShop" ofType:@"pdf"];
 	[self displayFile: fileName];
+}
+
+- (IBAction)displayGPLLicense:sender
+{
+    NSString				*fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"GPLv2 License" ofType:@"pdf"];
+    [self displayFile: fileName];
 }
 
 - (IBAction)displayFileEncoding:sender
@@ -163,6 +172,10 @@
     
 	if ([packageString isEqualToString:@""])
 		return;
+    
+    packageString = [packageString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([packageString isEqualToString:@""])
+        return;
 	
 	if (displayPackageHelpTask != nil) {
 		[displayPackageHelpTask terminate];
@@ -257,6 +270,11 @@
 		
 		if ([target isEqualToString:@""])
 			return;
+    
+        target = [target stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+        if ([target isEqualToString:@""])
+            return;
 		
 		{
 			NSWindow *theWindow = [NSApp mainWindow];

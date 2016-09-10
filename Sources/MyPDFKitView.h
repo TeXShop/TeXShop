@@ -121,6 +121,8 @@
 @property (weak)    IBOutlet	TSDocument          *myDocument;
 @property (retain) NSString                         *oneOffSearchString;
 @property           BOOL                            toolbarFind;
+@property           NSInteger                       handlingLink; // 0 = NO, 1 = Possible, 2 = ShowingLink
+@property           NSInteger                       timerNumber; // 0 <= timerNumber <= 100
 
 
 // - (void) scheduleAddintToolips;

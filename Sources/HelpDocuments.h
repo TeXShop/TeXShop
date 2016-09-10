@@ -30,6 +30,7 @@
 - (IBAction)displayTeXShopConfusion:sender;
 - (IBAction)displayNotesonApplescript:sender;
 - (IBAction)displayRecentTeXFonts:sender;
+- (IBAction)displayGPLLicense:sender;
 
 - (IBAction)displayShortCourse:sender;
 - (IBAction)displayHG:sender;

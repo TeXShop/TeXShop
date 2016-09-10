@@ -181,7 +181,7 @@
             
             // set up the size and magScale
             if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
-                currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
+                currentLevel = originalLevel; // +(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
                 if (currentLevel <= 1) {
                     magWidth = 150; magHeight = 100;
                     magOffsetX = magWidth/2; magOffsetY = magHeight/2;
@@ -193,6 +193,27 @@
                     magOffsetX = magWidth / 2; magOffsetY = magHeight / 2;
                 }
             }
+            
+            if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
+                if ([theEvent modifierFlags] & NSCommandKeyMask)
+                    magScale = 2.0; 	// x4
+                else if ([theEvent modifierFlags] & NSAlternateKeyMask)
+                    magScale = 2.5; // x1.5
+                else if ([theEvent modifierFlags] & NSControlKeyMask)
+                    magScale = 3.0; // x1.5
+                else
+                    magScale = 1.5; 	// x2.5
+            } else { // shrink the image with shift key -- can be very slow
+                if ([theEvent modifierFlags] & NSCommandKeyMask)
+                    magScale = 1.0; 	// x4
+                else if ([theEvent modifierFlags] & NSAlternateKeyMask)
+                    magScale = .66666; // x1.5
+                else if ([theEvent modifierFlags] & NSControlKeyMask)
+                    magScale = .50000; // x1.5
+                else
+                    magScale = 1.5; 	// x2.5
+            }
+
             
             // get Mouse location and check if it is with the view's rect
             

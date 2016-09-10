@@ -38,6 +38,7 @@
 
 // // QUESTIONABLE_BUG_FIX  (Search for this)
 
+
 #import "MyPDFKitView.h"
 #import "MyPDFView.h"
 #import "globals.h"
@@ -73,6 +74,8 @@
 	// WARNING: This may never be called. (??)	
 	if ((self = [super init])) {
 		protectFind = NO;
+        self.handlingLink = 0;
+        self.timerNumber = 0;
         self.oneOffSearchString = NULL;
   		}
      return self;
@@ -150,6 +153,12 @@
 
 - (void) initializeDisplay
 {
+    
+    protectFind = NO;
+    self.handlingLink = 0;
+    self.timerNumber = 0;
+    self.oneOffSearchString = NULL;
+    
     [self setDisplayMode: kPDFDisplaySinglePage];
     
     [self.myPDFWindow setDelegate: self];
@@ -2394,18 +2403,112 @@
 
 // ----------------------------------------------------------------------------------------------------------- mouseMoved
 
+/*
+ 
+ The following code contains the start of a series of calls which implement "hovering over links".
+ If the user's mouse hovers over a link in the pdf, a window will open showing the corresponding pdf
+ near the linked spot. Thus if hyperref is used and the user hovers over a reference in the text, a window
+ appears showing the corresponding spot in the bibliography.
+ 
+ The hover code is inactive when the mouse is drawing selection rectangles. Otherwise it is active.
+ 
+ Roughly speaking, this process requires three steps. First the mouse enters a link. Second, after a pause,
+ the link window appears. Third, after a further pause, the link window disappears. A PDFView property keeps
+ track of these steps: self.handlingLink. If the value of this variable is zero, nothing is happening.
+ If this variable is one, we are waiting to show the window. If the variable is 2, the window has been
+ shown and we are waiting to close it. Finally, when the window is closed, the variable is reset to zero.
+ 
+ The technology to accomplish this is essentially the same as our magnification technology. An overlay is
+ placed over the pdf window. A pdf image is created from the entire linked page. The overlay then draws by
+ copying from a rectangle in this image and pasting into a rectangle in the pdf view.
+ 
+ These steps require two timer calls. One is a wait of a second to begin showing the popUp. The other is
+ a wait of four seconds before removing the popUp. 
+ 
+ The "hovering over links" code has a few features making life easier for the user. 
+ If the mouse is moved to a different link, the original popUp
+  immediately disappears and is replaced by a new popUp. If the mouse is moved away from links,
+ the popUp  immediately disappears. If the option key is down when the popUp window appears, the popUp
+ will remain until the mouse moves.
+ 
+ It is therefore necessary to avoid the following problem. Suppose the mouse is in one link and is then
+ moved to a second link. The original popUp will then be removed by just removing the overlay, and an image
+ of the second link appears. But then the timer is called which removes the FIRST popup. If we are not careful,
+ this timer will remove the second popup, because popups are removed by removing the overlay. So that second
+ popUp will show briefly on the screen and then be removed.
+ 
+ To fix this problem, our PDFView object has a property called timerNumber. This timer number is an integer
+ between 0 and 5000. Then the system detects a mouse over a link, it increments the timerNumber (where 5000 + 1 = 0).
+The system then remembers the new number and sends is to the Timer which will display the popUp, and also 
+ to the Timer which will close it. Each of the Timers will only do something if the current timerNumber equals
+ the its value when they were created. Therefore, if the popUp for a later link is being created, neither 
+ Timer for an older link will run.
+
+ This code begins its work in the "mouseMoved" routine. This routine does other things unrelated to links.
+ But first, if the mouse moves outside a link area, but handlingLink > 0, all popups are cancelled and
+ handlingLink is set to zero.
+ 
+ Then the routine checks to see if the mouse moved to a spot over a link. If so and self.handlingLink = 0,
+ then this routine fires off a timer to put up a window. If so and self.handlingLink > 0, then we are already
+ handling a link and nothing needs to be done.
+ 
+*/
+
+- (void) increaseTimerNumber
+{
+    if (self.timerNumber < 5000)
+        self.timerNumber = self.timerNumber + 1;
+    else
+        self.timerNumber = 0;
+}
+
+
 - (void) mouseMoved: (NSEvent *) theEvent
 {
+    
+    
+    BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
+    
+   if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
+        // [self increaseTimerNumber];
+        [self doKillPopup]; // sets handlingLink to 0
+    }
+
+    
+    else if (inLink && (self.handlingLink == 0) && (mouseMode != 5)) {
+    
+            [self increaseTimerNumber];
+            NSNumber *timerNumberObject = [NSNumber numberWithInteger: self.timerNumber];
+            self.handlingLink = 1;
+            NSPoint mouseLocation = [NSEvent mouseLocation];
+            NSValue *mouseLocationValue = [NSValue valueWithPoint: mouseLocation];
+            NSArray *info = [NSArray arrayWithObjects: timerNumberObject, mouseLocationValue, theEvent, nil];
+            [NSTimer scheduledTimerWithTimeInterval:0.5
+                                         target:self
+                                       selector:@selector(handleLink:)
+                                       userInfo:info
+                                        repeats:NO];
+            }
+    
+    
+    
+    
+    
+    /*
 	if (mouseMode == NEW_MOUSE_MODE_SELECT_TEXT) {
 		[super mouseMoved: theEvent];
 	}
+    
+   
 	else if (downOverLink) {
-		[super mouseMoved: theEvent];
+        ; //[super mouseMoved: theEvent];
 	}
 	else if (([self areaOfInterestForMouse: theEvent] & kPDFLinkArea) != 0) {
-		[[NSCursor pointingHandCursor] set];
-	}
-	else if (([self areaOfInterestForMouse: theEvent] & kPDFPageArea) != 0) {
+        ; // [[NSCursor pointingHandCursor] set];
+        }
+   
+        else */
+    if (([self areaOfInterestForMouse: theEvent] & kPDFPageArea) != 0) {
 		switch (mouseMode) {
 			case NEW_MOUSE_MODE_SCROLL:
 				[[NSCursor openHandCursor] set];
@@ -2423,6 +2526,131 @@
 	else {
 		[super mouseMoved: theEvent];
 	}
+}
+
+- (void)handleLink: (NSTimer *) theTimer
+{
+    
+    NSPoint         mouseDownLoc, mouseLocDocumentView;
+    PDFPage         *activePage;
+    NSPoint         pagePoint;
+    PDFAnnotation   *theAnnotation;
+    NSURL           *theURL;
+    PDFDestination  *theDestination;
+    PDFPage         *linkedPage;
+    NSPoint         linkedPoint;
+    NSRect          aRect, bRect;
+    PDFSelection    *theSelection;
+    NSString        *outputString;
+    NSInteger       H = 120, W = 400;
+    
+    
+    NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
+    NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
+    if (aTimerNumber != self.timerNumber)
+        return;
+    NSPoint originalPoint = [(NSValue *)theTimer.userInfo[1] pointValue];
+    NSEvent *theEvent = (NSEvent *)theTimer.userInfo[2];
+    NSPoint currentPoint = [NSEvent mouseLocation];
+    
+    if ((fabs(originalPoint.x - currentPoint.x) > 10) || (fabs(originalPoint.y - currentPoint.y) > 10))
+        {
+        self.handlingLink = 0;
+        return;
+        }
+    
+     mouseDownLoc = [self convertPoint: [theEvent locationInWindow] fromView: NULL]; // in PDFView
+    mouseLocDocumentView = [[self documentView] convertPoint: [theEvent locationInWindow] fromView:nil]; // DocumentView
+    
+    activePage = [self pageForPoint: mouseDownLoc nearest: YES];
+    pagePoint = [self convertPoint: mouseDownLoc toPage: activePage];
+    theAnnotation = [activePage annotationAtPoint: pagePoint];
+    NSString *theType = [theAnnotation type];
+    if ([theType isEqualToString: @"Link"]) {
+        theURL = [(PDFAnnotationLink *)theAnnotation URL]; // we will do nothing if it is a link to an external page
+        theDestination = [(PDFAnnotationLink *)theAnnotation destination];
+        if (theDestination) {
+            linkedPage = [theDestination page];
+            linkedPoint = [theDestination point];
+            
+            // aRect = where text comes from
+            aRect.origin.x =  linkedPoint.x - 5 ;
+            aRect.origin.y = linkedPoint.y - H  ;
+            aRect.size.height = H;
+            aRect.size.width = W;
+            
+            // bRect = position on viewing screen
+            bRect.origin.x = mouseLocDocumentView.x + 10;
+            bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3 - 10;
+            bRect.size.height = 2 * H / 3;
+            bRect.size.width = 2 * W / 3;
+            
+            NSData	*myData = [linkedPage dataRepresentation];
+            NSImage *myImageNew = [[NSImage alloc] initWithData: myData];
+            OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
+            if (self.overView) {
+                [self.overView removeFromSuperview];
+                self.overView = nil;
+                }
+            self.overView =  theOverView;
+            [[self documentView] addSubview: [self overView]];
+            
+            [[self overView] setDrawRubberBand: NO];
+            [[self overView] setDrawMagnifiedRect: NO];
+            [[self overView] setDrawMagnifiedImage: YES];
+            [[self overView] setSelectionRect: bRect];
+            [[self overView] setMagnifiedRect: aRect];
+            [[self overView] setMagnifiedImage: myImageNew];
+            [[self overView] setNeedsDisplayInRect: [[self documentView] visibleRect]];
+           
+            // theSelection = [linkedPage selectionForRect: aRect];
+            // outputString = [theSelection string];
+            // if (outputString)
+            // NSLog(outputString);
+            self.handlingLink = 2;
+            NSArray *info = [NSArray arrayWithObjects: timerNumberObject, nil];
+            [NSTimer scheduledTimerWithTimeInterval:4.0
+                                             target:self
+                                           selector:@selector(killPopup:)
+                                           userInfo:info
+                                            repeats:NO];
+            
+            return;
+            
+        }
+        else    self.handlingLink = 0;
+    }
+    
+    // [self doKillPopup];
+}
+
+ - (void)doKillPopup
+{
+
+    if (self.overView) {
+        [self.overView removeFromSuperview];
+        self.overView = nil;
+    }
+    self.handlingLink = 0;
+}
+
+- (void)killPopup: (NSTimer *)theTimer
+{
+    
+ //   return; // activate this to leave "link destination" until cursor moves
+    
+    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        return;
+    
+    NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
+    if (aTimerNumber != self.timerNumber)
+        return;
+    
+    if (self.overView) {
+        [self.overView removeFromSuperview];
+        self.overView = nil;
+    }
+    self.handlingLink = 0;
 }
 
 

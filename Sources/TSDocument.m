@@ -160,6 +160,7 @@
 //ULRICH BAUER PATCH
     dispatch_source = NULL;
 //END PATCH
+    
 
 	return result;
 }
@@ -713,6 +714,9 @@
 		}
 	else
 		skipTextWindow = NO;
+    
+    [self flipIndexColor:  ![SUD boolForKey:IndexColorStartKey]];
+
 
 // WARNING: May be dangerous!!
 // MOUNTAINLIONFIX
@@ -5344,6 +5348,8 @@ if (! useFullSplitWindow) {
         theState = [(NSCell *)indexColorSplitBox state];
     else
         theState = [(NSCell *)self.indexColorBox state];
+    [self flipIndexColor: theState];
+    /*
 	NSInteger newState = 1 - theState;
 	[self.indexColorBox setState: newState];
     [indexColorSplitBox setState: newState];
@@ -5353,7 +5359,23 @@ if (! useFullSplitWindow) {
 		showIndexColor = NO;
 	[self colorizeVisibleAreaInTextView:textView1];
 	[self colorizeVisibleAreaInTextView:textView2];
+    */
 }
+
+- (void) flipIndexColor: (NSInteger)state
+{
+    
+    NSInteger newState = 1 - state;
+    [self.indexColorBox setState: newState];
+    [indexColorSplitBox setState: newState];
+    if (newState == 1)
+        showIndexColor = YES;
+    else
+        showIndexColor = NO;
+    [self colorizeVisibleAreaInTextView:textView1];
+    [self colorizeVisibleAreaInTextView:textView2];
+}
+
 
 
 - (void) fixMacroMenu

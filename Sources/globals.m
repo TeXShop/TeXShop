@@ -242,6 +242,7 @@ NSString *reverseSyncGreenKey = @"ReverseSyncGreen";
 NSString *reverseSyncBlueKey = @"ReverseSyncBlue";
 NSString *AutomaticSpellingCorrectionEnabledKey = @"AutomaticSpellingCorrectionEnabled";
 NSString *FixSplitBlankPagesKey = @"FixSplitBlankPages";
+NSString *IndexColorStartKey = @"IndexColorStart";
 
 
 // Paths

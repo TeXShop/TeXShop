@@ -159,7 +159,9 @@
     self.timerNumber = 0;
     self.oneOffSearchString = NULL;
     
-    [self setDisplayMode: kPDFDisplaySinglePage];
+    // The next line was added to fix a bug in Sierra, later fixed by Apple.
+    // I left it here since it can do no harm, but it seems to have broken scrolling by trackpad for one user. So I comment it out.
+    // [self setDisplayMode: kPDFDisplaySinglePage];
     
     [self.myPDFWindow setDelegate: self];
     
@@ -1911,12 +1913,6 @@
 	drawMark = value;
 }
 
-/*
-- (void)drawPage:(PDFPage *)page
-{
-	[page drawWithBox: kPDFDisplayBoxMediaBox];
-}
-*/
 
 - (void)setOldSync: (BOOL)value
 {
@@ -1924,124 +1920,7 @@
 }
 
 
-/*
 
-- (void)drawPage:(PDFPage *)page
-{
-	
-	NSInteger					pagenumber;
-	NSPoint				p;
-	NSInteger					rotation;
-	NSRect				boxRect;
-	NSAffineTransform   *transform;
-	
-	// boxRect = [page boundsForBox: [self displayBox]];
-	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
-	rotation = [page rotation];
-
-	// [super drawPage: page];
-
-	[NSGraphicsContext saveGraphicsState];
-	switch (rotation)
-	{
-		case 90:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: 0 yBy: boxRect.size.width];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-			break;
-
-		case 180:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-
-			break;
-
-		case 270:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: boxRect.size.height yBy: 0];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-			break;
-	}
-
-	// the following draws the background for dataWithPDFInsideRect etc.
-	if (![NSGraphicsContext currentContextDrawingToScreen])
-	{
-		// set a break point here to check the consistency of dataWithPDFInsideRect
-		//NSLog(@"In drawRect aRect: %@", NSStringFromRect(aRect));
-		NSColor *backColor;
-		if ([SUD boolForKey:PdfColorMapKey] && [SUD stringForKey:PdfBack_RKey])
-		{
-			backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfBack_RKey]
-												  green: [SUD floatForKey:PdfBack_GKey] blue: [SUD floatForKey:PdfBack_BKey]
-												  alpha: [SUD floatForKey:PdfBack_AKey]];
-			[backColor set];
-			NSRectFill(boxRect);
-		}
-
-		else {
-			backColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
-			[backColor set];
-			 NSRectFill(boxRect);
-			// NSDrawWindowBackground(boxRect); NO
-		}
-	}
-
-	else {
-		[PreviewBackgroundColor set];
-		NSRectFill(boxRect);
-	}
-
-		 // NSDrawWindowBackground(boxRect);
-
-	[NSGraphicsContext restoreGraphicsState];
-	[page drawWithBox:[self displayBox]];
-
-	// Set up transform to handle rotated page.
-
-	switch (rotation)
-	{
-		case 90:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: 0 yBy: boxRect.size.width];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-			break;
-
-		case 180:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-
-			break;
-
-		case 270:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy: boxRect.size.height yBy: 0];
-			[transform rotateByDegrees: 360 - rotation];
-			[transform concat];
-			break;
-	}
-
-	p.x = 0; p.y = 0;
-	pagenumber = [[self document] indexForPage:page];
-	[self drawDotsForPage:pagenumber atPoint: p];
-
-	NSInteger theIndex = [[self document] indexForPage: page];
-	if (drawMark && (theIndex == pageIndexForMark)) {
-		NSBezierPath *myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
-		NSColor *myColor = [NSColor redColor];
-		[myColor set];
-		[myPath stroke];
-	}
-
-}
- 
-*/
 
 - (void)drawPage:(PDFPage *)page
 {
@@ -2226,6 +2105,8 @@
 
     
 	// Set up transform to handle rotated page.
+ 
+ 
     /*
      switch (rotation)
      {
@@ -2543,6 +2424,7 @@ The system then remembers the new number and sends is to the Timer which will di
     PDFSelection    *theSelection;
     NSString        *outputString;
     NSInteger       H = 120, W = 400;
+    NSRect          pageBounds;
     
     
     NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
@@ -2571,19 +2453,32 @@ The system then remembers the new number and sends is to the Timer which will di
         theDestination = [(PDFAnnotationLink *)theAnnotation destination];
         if (theDestination) {
             linkedPage = [theDestination page];
+            pageBounds = [linkedPage boundsForBox: kPDFDisplayBoxMediaBox];
             linkedPoint = [theDestination point];
+            NSLog(@"The value is %f", linkedPoint.x);
             
             // aRect = where text comes from
-            aRect.origin.x =  linkedPoint.x - 5 ;
-            aRect.origin.y = linkedPoint.y - H  ;
-            aRect.size.height = H;
-            aRect.size.width = W;
+            if (linkedPoint.x < (pageBounds.size.width / 2))
+            {
+                aRect.origin.x =  linkedPoint.x - 5 ;
+                aRect.origin.y = linkedPoint.y - H + 10   ;
+                aRect.size.height = H;
+                aRect.size.width = W;
+            }
+            else
+            {
+                aRect.origin.x =  linkedPoint.x - W - 5;
+                aRect.origin.y = linkedPoint.y - H * 0.6; //0.6;
+                aRect.size.height = H;
+                aRect.size.width = W;
+            }
+
             
             // bRect = position on viewing screen
             bRect.origin.x = mouseLocDocumentView.x + 10;
-            bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3 - 10;
-            bRect.size.height = 2 * H / 3;
-            bRect.size.width = 2 * W / 3;
+            bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3.0 - 10;
+            bRect.size.height = 2 * H / 3.0;
+            bRect.size.width = 2 * W / 3.0;
             
             NSData	*myData = [linkedPage dataRepresentation];
             NSImage *myImageNew = [[NSImage alloc] initWithData: myData];

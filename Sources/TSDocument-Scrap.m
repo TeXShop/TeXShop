@@ -66,11 +66,12 @@
     NSString *selectedStuff;
     NSArray *ranges = [textView selectedRanges];
     if ([ranges count] > 0)
-        {
-            selectedStuff = [[textView string] substringWithRange: [ranges[0] rangeValue]];
-            if ([selectedStuff length] > 0)
-              scrapTextView.string = selectedStuff;
-        }
+    {
+        selectedStuff = [[textView string] substringWithRange: [ranges[0] rangeValue]];
+        if ([selectedStuff length] > 0)
+            scrapTextView.string = selectedStuff;
+    }
+    
     
     scrapTextView.document = self;
     [scrapTextView setAllowsUndo: YES];

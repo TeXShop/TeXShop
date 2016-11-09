@@ -159,9 +159,12 @@
     self.timerNumber = 0;
     self.oneOffSearchString = NULL;
     
-    // The next line was added to fix a bug in Sierra, later fixed by Apple.
-    // I left it here since it can do no harm, but it seems to have broken scrolling by trackpad for one user. So I comment it out.
-    // [self setDisplayMode: kPDFDisplaySinglePage];
+    
+    // The initial Sierra beta had horrible scrolling, which the line below fixed
+    // Apple fixed the bug in the second beta, but I kept the line through 3.73
+    // I removed it in 3.74, but Sierra scrolling then became somewhat jerky. I think this is
+    // a bug, and it may have crept back in 10.12.1. At any rate, DON"T REMOVE THE LINE
+    [self setDisplayMode: kPDFDisplaySinglePage];
     
     [self.myPDFWindow setDelegate: self];
     
@@ -1913,6 +1916,12 @@
 	drawMark = value;
 }
 
+/*
+- (void)drawPage:(PDFPage *)page
+{
+	[page drawWithBox: kPDFDisplayBoxMediaBox];
+}
+*/
 
 - (void)setOldSync: (BOOL)value
 {
@@ -1920,7 +1929,124 @@
 }
 
 
+/*
 
+- (void)drawPage:(PDFPage *)page
+{
+	
+	NSInteger					pagenumber;
+	NSPoint				p;
+	NSInteger					rotation;
+	NSRect				boxRect;
+	NSAffineTransform   *transform;
+	
+	// boxRect = [page boundsForBox: [self displayBox]];
+	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
+	rotation = [page rotation];
+
+	// [super drawPage: page];
+
+	[NSGraphicsContext saveGraphicsState];
+	switch (rotation)
+	{
+		case 90:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: 0 yBy: boxRect.size.width];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+
+		case 180:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+
+			break;
+
+		case 270:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.height yBy: 0];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+	}
+
+	// the following draws the background for dataWithPDFInsideRect etc.
+	if (![NSGraphicsContext currentContextDrawingToScreen])
+	{
+		// set a break point here to check the consistency of dataWithPDFInsideRect
+		//NSLog(@"In drawRect aRect: %@", NSStringFromRect(aRect));
+		NSColor *backColor;
+		if ([SUD boolForKey:PdfColorMapKey] && [SUD stringForKey:PdfBack_RKey])
+		{
+			backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfBack_RKey]
+												  green: [SUD floatForKey:PdfBack_GKey] blue: [SUD floatForKey:PdfBack_BKey]
+												  alpha: [SUD floatForKey:PdfBack_AKey]];
+			[backColor set];
+			NSRectFill(boxRect);
+		}
+
+		else {
+			backColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
+			[backColor set];
+			 NSRectFill(boxRect);
+			// NSDrawWindowBackground(boxRect); NO
+		}
+	}
+
+	else {
+		[PreviewBackgroundColor set];
+		NSRectFill(boxRect);
+	}
+
+		 // NSDrawWindowBackground(boxRect);
+
+	[NSGraphicsContext restoreGraphicsState];
+	[page drawWithBox:[self displayBox]];
+
+	// Set up transform to handle rotated page.
+
+	switch (rotation)
+	{
+		case 90:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: 0 yBy: boxRect.size.width];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+
+		case 180:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+
+			break;
+
+		case 270:
+			transform = [NSAffineTransform transform];
+			[transform translateXBy: boxRect.size.height yBy: 0];
+			[transform rotateByDegrees: 360 - rotation];
+			[transform concat];
+			break;
+	}
+
+	p.x = 0; p.y = 0;
+	pagenumber = [[self document] indexForPage:page];
+	[self drawDotsForPage:pagenumber atPoint: p];
+
+	NSInteger theIndex = [[self document] indexForPage: page];
+	if (drawMark && (theIndex == pageIndexForMark)) {
+		NSBezierPath *myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
+		NSColor *myColor = [NSColor redColor];
+		[myColor set];
+		[myPath stroke];
+	}
+
+}
+ 
+*/
 
 - (void)drawPage:(PDFPage *)page
 {
@@ -2105,8 +2231,6 @@
 
     
 	// Set up transform to handle rotated page.
- 
- 
     /*
      switch (rotation)
      {
@@ -2427,6 +2551,7 @@ The system then remembers the new number and sends is to the Timer which will di
     NSRect          pageBounds;
     
     
+    
     NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
     if (aTimerNumber != self.timerNumber)
@@ -2436,12 +2561,12 @@ The system then remembers the new number and sends is to the Timer which will di
     NSPoint currentPoint = [NSEvent mouseLocation];
     
     if ((fabs(originalPoint.x - currentPoint.x) > 30) || (fabs(originalPoint.y - currentPoint.y) > 30))
-        {
+    {
         self.handlingLink = 0;
         return;
-        }
+    }
     
-     mouseDownLoc = [self convertPoint: [theEvent locationInWindow] fromView: NULL]; // in PDFView
+    mouseDownLoc = [self convertPoint: [theEvent locationInWindow] fromView: NULL]; // in PDFView
     mouseLocDocumentView = [[self documentView] convertPoint: [theEvent locationInWindow] fromView:nil]; // DocumentView
     
     activePage = [self pageForPoint: mouseDownLoc nearest: YES];
@@ -2472,7 +2597,7 @@ The system then remembers the new number and sends is to the Timer which will di
                 aRect.size.height = H;
                 aRect.size.width = W;
             }
-
+            
             
             // bRect = position on viewing screen
             bRect.origin.x = mouseLocDocumentView.x + 10;
@@ -2486,7 +2611,7 @@ The system then remembers the new number and sends is to the Timer which will di
             if (self.overView) {
                 [self.overView removeFromSuperview];
                 self.overView = nil;
-                }
+            }
             self.overView =  theOverView;
             [[self documentView] addSubview: [self overView]];
             
@@ -2497,7 +2622,7 @@ The system then remembers the new number and sends is to the Timer which will di
             [[self overView] setMagnifiedRect: aRect];
             [[self overView] setMagnifiedImage: myImageNew];
             [[self overView] setNeedsDisplayInRect: [[self documentView] visibleRect]];
-           
+            
             // theSelection = [linkedPage selectionForRect: aRect];
             // outputString = [theSelection string];
             // if (outputString)
@@ -2518,6 +2643,9 @@ The system then remembers the new number and sends is to the Timer which will di
     
     // [self doKillPopup];
 }
+
+
+
 
  - (void)doKillPopup
 {

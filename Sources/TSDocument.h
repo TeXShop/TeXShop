@@ -284,6 +284,11 @@ enum RootCommand
 	BOOL		omitShellEscape;
 	BOOL		withLatex;
 
+    // for Jobs
+    NSString    *parameterString;
+    BOOL        parameterExists;
+    
+    
 //	NSDate              *_pdfLastModDate;
 //	NSTimer             *_pdfRefreshTimer;
 //  id                  _pdfActivity;

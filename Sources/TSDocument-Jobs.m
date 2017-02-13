@@ -593,15 +593,68 @@
 */
 
 	// New Stuff
+    
+    
 	length = [theSource length];
 	done = NO;
 	linesTested = 0;
 	myRange.location = 0;
 	myRange.length = 1;
+    
+    
+if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don't use TS-program for BibTeX and MakeIndex or Menu Command
+    
+    
+    length = [theSource length];
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
+    parameterExists = NO;
+
+
+    while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+        [theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
+        myRange.location = end;
+        myRange.length = 1;
+        linesTested++;
+        
+        theRange.location = start; theRange.length = (end - start);
+        testString = [theSource substringWithRange: theRange];
+        
+        programRange = [testString rangeOfString:@"%!TEX TS-parameter ="];
+        offset = 20;
+        if (programRange.location == NSNotFound) {
+            programRange = [testString rangeOfString:@"% !TEX TS-parameter ="];
+            offset = 21;
+        }
+        if (programRange.location == NSNotFound) {
+            programRange = [testString rangeOfString:@"% !TEX parameter ="];
+            offset = 18;
+        }
+        if (programRange.location == NSNotFound) {
+            programRange = [testString rangeOfString:@"%!TEX parameter ="];
+            offset = 17;
+        }
+        if (programRange.location != NSNotFound) {
+            newProgramRange.location = programRange.location + offset;
+            newProgramRange.length = [testString length] - newProgramRange.location;
+            if (newProgramRange.length > 0) {
+                parameterExists = YES;
+                parameterString = [[testString substringWithRange: newProgramRange]
+                                   stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            }
+        }
+    }
+
+    
+    length = [theSource length];
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
 	
-	
- if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don't use TS-program for BibTeX and MakeIndex or Menu Command
-	
+		
 	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
 		[theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
 		myRange.location = end;
@@ -1312,6 +1365,10 @@
 				 // Koch: ditto, spaces in path
 				 // [args addObject: [userPath lastPathComponent]];
 				 [args addObject: [sourcePath lastPathComponent]];
+                  
+                  if (parameterExists)
+                      [args addObject: parameterString];
+
 				 
 				 if (self.texTask != nil) {
 					 [self.texTask terminate];

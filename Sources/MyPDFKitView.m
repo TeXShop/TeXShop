@@ -419,7 +419,10 @@
 
 - (void) showWithPath: (NSString *)imagePath
 {
-	PDFDocument	*pdfDoc;
+
+    
+    
+    PDFDocument	*pdfDoc;
 	NSData	*theData;
     
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
@@ -461,6 +464,10 @@
         [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
+    
+     
+    
+
 }
 
 - (void) showForSecond;
@@ -592,7 +599,10 @@
 //	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
     visibleRect.origin.y = visibleRect.origin.y + difference;
 	[[self documentView] scrollRectToVisible: visibleRect];
-
+    
+    
+    
+ 
 /*
 //   The test just below seems to show that we need to adjust by -1, and then
 //   the visible rect ends up in the correct spot. Perhaps this is the width of the
@@ -1561,10 +1571,8 @@
 		_searchResults = [NSMutableArray arrayWithCapacity: 10];
 
 //	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
-    if (atLeastSierra)
-        [[self document] findString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
-    else
-        [[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+
+    [[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
 }
 
 // ------------------------------------------------------------------------------------------------------------ startFind
@@ -1762,7 +1770,7 @@
             theSelection = [_searchResults objectAtIndex: rowIndex];
             }
         
-        [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+       //  [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
         
         if (atLeastSierra) {
             NSArray *thePages = [theSelection pages];

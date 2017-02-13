@@ -15,6 +15,82 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.76 - 3.77</h5></P>
+
+Version 3.76 was never released. Version 3.77 has the following changes:
+
+<ul>
+<li> Items in the Tags menu are indented to make entries easier to find.
+
+<p>
+<li> A bug in Apple's search routines broke the search tool in the Preview Window's Drawer. This bug was fixed by Apple and search now works as before. It is conceivable that it is broken on Sierra 10.12.0 and 10.12.1; I no longer have such systems to test. Users who run into a problem on these systems should update the operating system to 10.12.2 or higher.
+
+<p> If a user clicks in a search result at the bottom of the Drawer, the corresponding item in the pdf Preview is highlighted. The up and down arrows can be used to rapidly scan various search results. This ability temporarily  broke in 3.76, but works again in 3.77. 
+
+<p>
+<li> At the suggestion of a user, the TeXShop Edit menu has an entry "Paste As Comment." This works essentially like "Paste" except that the newly pasted lines are  marked as comments. This makes it possible to copy and paste a large selection from another document, and then  carefully activate portions of the material.
+
+<p>
+<li> The Sage engine in the "Inactive" portion of ~/Library/TeXShop/Engines was improved by Markus Baldauf. Thanks!
+
+<p>
+<li> The latexmk file was updated to version 4.52c.
+
+<p>
+<li> Updated the TeXShop Help Menu document "First Steps with TeXShop" and the document "Quickstart Guide for Command Completion" in /LibraryTeXShop/Documents.
+
+<p>
+<li> At the request of Br. Samuel, OSB, the types gabc, gtex, glog, and gaux are now recognized by TeXShop; these types are used by the Gregario software. The files gabc and gtex are added to the types which receive syntax coloring and other "tex file" privileges, and gaux, glog, and gtex are added to file types deleted by Trash Aux Files.
+
+<p>
+<li> TeX users on Unix platforms often define an environment variable named TEXINPUTS, which lists folder which TeX should search for input files, style files, and the like. Using this variable is actively discouraged in TeX Live and MacTeX, and these systems are configured to make the variable unnecessary. For instance, files used by an individual user can be placed in ~/Library/texmf.
+
+<p>
+ People who answer user questions about  MacTeX sometimes run into problems associated with TEXINPUTS, since mistakes defining the variable can bring TeX crashing to a halt. And often users don't mention that they have set TEXINPUTS, leading to hours of useless debugging.
+
+<p>
+ With these warnings, we now confess that TeXShop has a new facility for those few users with a legitimate need to set TEXINPUTS.
+A user recently described such a case. This user belonged to a group whose members used common input files stored on a server. The members of this group worked on a variety of tasks which all used the same basic template, but then input different files depending on the task. These input files were given the same name, but stored in different folders on the server. To pick a task, a member of the group selected a particular server folder using TEXINPUTS, and proceeded. 
+
+<p> The user in charge of this group wanted a simple way to switch TEXINPUTS so the remaining members of the group could use the system without really understanding how it worked.
+
+<p> To help this user, TeXShop 3.77 recognizes a new command to be added to the first twenty lines at the header of a source file. If a project has a root file and several input chapter files, the command should be in the root file. There are
+four entirely equivalent forms of this command:
+<dd>
+<dl>  % !TEX TS-parameter = 
+<dl>  %!TEX TS-parameter = 
+<dl>  % !TEX parameter = 
+<dl>  %!TEX parameter = 
+</dd>
+Each space is mandatory, and the final equal sign must be followed by one space and then a word or sequence of symbols without spaces.
+For example, the following command might be issued by someone adding ~/MyTeXFiles to the standard TeX search locations:
+<dd>
+<dl> % !TEX TS-parameter = ~/MyTeXFiles//:
+</dd>
+
+<p> The parameter defined by this command need not be connected to TEXINPUTS. It can be used for other purposes. So --- what does TeXShop do with this parameter?
+
+<p> The parameter is ignored unless typesetting is done by a user-defined Engine file. For example, it is ignored if the user types with TeX, LaTeX, pdfTeX, or pdfLaTeX. But it is used with the XeLaTeX Engine, and all other Engines. 
+
+<p> An Engine file is just a shell script, which TeXShop runs to typeset. This shell script is called with two parameters, "$0" and "$1". The parameter "$0" contains a full path to the engine file run by the typesetting command, The parameter "$1" contains the name of the file to be typeset. The parameter command adds a third parameter, "$2", containing the word on the right side of the command. The engine script can do anything it wants with this parameter, including just ignoring it.
+
+<p> It is instructive to look at the XeLaTeX Engine file, which is very simple. The file begins with "#!/bin/tcsh", which says that it is a shell script for the tcsh shell. (There are many different shells, and each of their shell files has a different syntax.) Next comes a command setting the path, and
+then a final command runs xelatex:
+<dd>
+<dl> xelatex -file-line-error -synctrex=1 "$1"
+</dd>
+We can add MyTeXFiles, defined above, to TEXINPUTS by adding the following line  before the call to xelatex:
+<dd>
+<dl> setenv TEXINPUTS "$2"
+</dd>
+
+<p> At this point, several warnings are important. The command to define TEXINPUTS is different in different shells, so copying the above line with another shell will fail. Turn back to the TEXINPUTS setting "~/MyTeXFiles//:" given earlier. The symbol // tells TeX to recursively search subfolders of MyTeXFiles, and the all-important semicolon at the end says to add this to the existing TEXINPUTS from TeX Live. Omit the senicolor and TeX will completely fail.
+
+<p> It is easy to define engines which duplicate the built-in typesetting engines. For example, to obtain an object which typesets using pdflatex, just duplicate and rename for xelatex engine, and replace xelatex by pdflatex in the engine script. Therefore, this mechanism can be used to determine TEXINPUTS with any typesetting method.
+
+
+</ul>
+
 <P><h5>TeXShop Changes 3.75</h5></P>
 
 In 3.74, Preview scrolling was smooth on El Capitan, but jerky on Sierra. This is fixed.

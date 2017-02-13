@@ -1323,6 +1323,8 @@ in other code when an external editor is being used. */
 		|| ([extension isEqualToString: @"ctx"])
 		|| ([extension isEqualToString: @"bbx"])
 		|| ([extension isEqualToString: @"cbx"])
+        || ([extension isEqualToString: @"gabc"])
+        || ([extension isEqualToString: @"gtex"])
         || ([extension isEqualToString: @"md"])
         || ([extension isEqualToString: @"fdd"])
         || ([extension isEqualToString: @"lhs"])
@@ -3392,6 +3394,7 @@ preference change is cancelled. "*/
     NSMenuItem  *anItem;
 	id newItem;
 	BOOL enableAutoTagSections;
+    NSString    *commentTab = @"                ";
 
 	if (!fileIsTex) return;
 
@@ -3420,7 +3423,7 @@ preference change is cancelled. "*/
 
 			// Lines starting with '%:' are added to the tags menu.
 			if ([line hasPrefix:@"%:"]) {
-				titleString = [line substringFromIndex:2];
+                titleString = [commentTab stringByAppendingString: [line substringFromIndex:2]];
 			}
 			// Scan for lines containing a chapter/section/... command (any listed in g_taggedTeXSections).
 			// To short-circuit the search, we only consider lines that start with a backslash (or yen) symbol.
@@ -6615,6 +6618,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 						[extension isEqualToString:@"lg"] ||
 						[extension isEqualToString:@"xref"] ||
 						[extension isEqualToString:@"bcf"] ||
+                        [extension isEqualToString:@"gtex"] ||
+                        [extension isEqualToString:@"gaux"] ||
+                        [extension isEqualToString:@"glog"] ||
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
 						[extension isEqualToString:@"fdb_latexmk"] ||

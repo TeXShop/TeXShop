@@ -79,6 +79,30 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	
 }
 
+- (void)pasteAsComment: (id)sender;
+{
+    NSRange     insertRange, newRange, pasteRange;
+    NSString    *text;
+    NSUInteger  start, end, irrelevant;
+    
+    NSRange oldRange = [self selectedRange];
+    text = [self string];
+    [text getLineStart: &start end: &end contentsEnd: &irrelevant forRange: oldRange];
+    insertRange.location = start;
+    insertRange.length = 0;
+    [self setSelectedRange: insertRange];
+    [self insertNewline: self];
+     [self setSelectedRange: insertRange];
+   [super paste:sender];
+    newRange = [self selectedRange];
+    pasteRange.location = start;
+    pasteRange.length = newRange.location - start;
+    [self setSelectedRange: pasteRange];
+   [self.document doCommentOrIndentForTag: 1];  // replace 1 by better code
+    
+    
+}
+
 - (void)toggleSmartInsertDelete:(id)sender
 {
 	BOOL value;

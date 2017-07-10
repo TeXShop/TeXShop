@@ -2015,9 +2015,7 @@ in other code when an external editor is being used. */
                          originalContentsURL:(NSURL *)absoluteOriginalContentsURL error:(NSError **)outError
 {
 	NSDictionary	*myDictionary;
-	NSMutableDictionary	*aDictionary;
-	NSNumber		*myNumber;
-
+    
 	myDictionary = [super fileAttributesToWriteToURL: absoluteURL ofType: typeName
                                     forSaveOperation: saveOperation originalContentsURL:absoluteOriginalContentsURL error:outError];
     return myDictionary;
@@ -5028,7 +5026,7 @@ if (! useFullSplitWindow) {
 							
 							theNumber = [NSNumber numberWithInteger:error];
 							theNumberString = [theNumber stringValue];
-							theLine = [[[NSString stringWithString:@":"] stringByAppendingString: theNumberString] stringByAppendingString: @":"];
+							theLine = [[@":" stringByAppendingString: theNumberString] stringByAppendingString: @":"];
 							errorRange = [newOutput rangeOfString: theLine];
 							if (errorRange.location != NSNotFound) {
 								[newOutput getLineStart: &start1 end: &end1 contentsEnd: nil forRange: errorRange];
@@ -6497,7 +6495,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (void)trashAUX
 {
-	NSString                *path, *path1, *path2;
+	NSString                *path, *path2;
 	NSString                *extension;
 	NSString                *fileName, *objectFileName, *objectName;
 	NSMutableArray          *pathsToBeMoved, *fileToBeMoved = 0;
@@ -6509,9 +6507,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	NSArray                 *otherExtensions;
 	NSEnumerator            *arrayEnumerator;
     NSURL                   *pathURL, *theURL;
-    NSString                *dirName;
-    NSNumber                *isDirectory;
-	
+    
 	if (! fileIsTex)
 		return;
 	

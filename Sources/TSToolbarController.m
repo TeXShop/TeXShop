@@ -24,7 +24,7 @@
  */
 
 #import "UseMitsu.h"
-#import "Globals.h"
+#import "globals.h"
 
 #import "TSToolbarController.h"
 
@@ -640,10 +640,12 @@ else
 			tempString = [tempsubmenuItem title];
 			tempTarget = [tempsubmenuItem target];
 			tempAction = [tempsubmenuItem action];
+            /*
 			submenuItem = [[NSMenuItem alloc] initWithTitle: tempString action:@selector(chooseProgramFF:)  keyEquivalent:@""];
 			[submenuItem setTarget: self];
 			[submenuItem setTag: i];
 			[submenu addItem: submenuItem];
+            */
 		}
 
 

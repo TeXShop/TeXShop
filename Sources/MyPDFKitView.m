@@ -424,6 +424,9 @@
     
     PDFDocument	*pdfDoc;
 	NSData	*theData;
+    PDFPage        *aPage;
+    NSRect          visibleRect;
+    
     
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
         NSDisableScreenUpdates();
@@ -445,7 +448,9 @@
 		pdfDoc = [[PDFDocument alloc] initWithData: theData];
 		[self setDocument: pdfDoc];
 	}
-		
+    
+    
+    
 	[self setup];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
@@ -455,7 +460,10 @@
     [stotalPage display];
 	[totalPage1 display];
 	[[self document] setDelegate: self];
-	[self setupOutline];
+    
+    
+    
+    [self setupOutline];
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
         NSEnableScreenUpdates();
 	
@@ -465,7 +473,18 @@
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
     
-     
+     aPage = [[self document] pageAtIndex: 0];
+    [self goToPage: aPage];
+    visibleRect = [[self documentView] bounds];
+     visibleRect.origin.x = visibleRect.size.width / 2.0;
+    visibleRect.origin.y = visibleRect.size.height;
+     visibleRect.size.width = 10;
+     visibleRect.size.height = 10;
+    [[self documentView] scrollRectToVisible: visibleRect];
+    
+    
+    
+    
     
 
 }
@@ -597,7 +616,7 @@
     
     
 //	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
-    visibleRect.origin.y = visibleRect.origin.y + difference;
+    visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
     
     
@@ -2553,9 +2572,7 @@ The system then remembers the new number and sends is to the Timer which will di
     PDFPage         *linkedPage;
     NSPoint         linkedPoint;
     NSRect          aRect, bRect;
-    PDFSelection    *theSelection;
-    NSString        *outputString;
-    NSInteger       H = 120, W = 400;
+ NSInteger       H = 120, W = 400;
     NSRect          pageBounds;
     
     
@@ -3059,8 +3076,8 @@ The system then remembers the new number and sends is to the Timer which will di
             // calculate the rect to select
             currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
             
-            selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-            selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            selectedRect.size.width = fabs(currentPoint.x-startPoint.x);
+            selectedRect.size.height = fabs(currentPoint.y-startPoint.y);
             
             if ([theEvent modifierFlags] & NSShiftKeyMask)
             {
@@ -3286,8 +3303,8 @@ The system then remembers the new number and sends is to the Timer which will di
 			}
 			// calculate the rect to select
 			currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
-			selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-			selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            selectedRect.size.width =  fabs(currentPoint.x-startPoint.x);
+			selectedRect.size.height = fabs(currentPoint.y-startPoint.y);
 			if ([theEvent modifierFlags] & NSShiftKeyMask)
 			{
 				if (selectedRect.size.width > selectedRect.size.height)
@@ -3600,8 +3617,8 @@ else
 
 	//test
 	NSSize aSize = [self convertSize: mySelectedRect.size toView: nil];
-	if (abs(selRectWindow.size.width - aSize.width)>1 ||
-		abs(selRectWindow.size.height - aSize.height)>1)
+	if (fabs(selRectWindow.size.width - aSize.width)>1 ||
+		fabs(selRectWindow.size.height - aSize.height)>1)
 	{
 		// I don't know why this can happen, but it does happen from
 		// time to time, when the view is rotated and selection is not visible.

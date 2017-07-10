@@ -28,7 +28,7 @@
 #import "TSMacroMenuController.h"
 #import "TSMacroTreeNode.h"
 #import "TSEncodingSupport.h"
-#import "Globals.h"
+#import "globals.h"
 
 // ================================================================
 // Constants

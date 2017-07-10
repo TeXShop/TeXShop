@@ -108,7 +108,7 @@
 	BOOL			foundMatch, matchMultiple;
 	NSInteger		matchStart, matchLength, i, matchAdjust, newLocation;
 	NSRange			matchRange;
-    TSDocument      *myDocument, *newDocument;
+    TSDocument      *newDocument;
     CGFloat         myRed, myGreen, myBlue;
     NSColor         *thePossiblyYellowColor;
 	// NSString		*lineString;
@@ -144,8 +144,8 @@
 		gotSomething = NO;
 		if (synctex_edit_query(scanner, pageNumber, xPosition, yPosition) > 0) {
 			gotSomething = YES;
-			synctex_node_t node;
-			while ((node = synctex_next_result(scanner)) != NULL) {
+			synctex_node_p node;
+			while ((node = synctex_scanner_next_result(scanner)) != NULL) {
 				theFoundFileName = synctex_scanner_get_name(scanner, synctex_node_tag(node));
                 
                 // This line is a patch by Klaus Tichmann
@@ -2384,6 +2384,8 @@
 	// NSString		*pathString;
 	NSString		*rootFile, *rootPath, *theFile;
 	float			x, y, h, v, width, height;
+    PDFPage         *aPage;
+    NSInteger       theindex;
 	
 	// THIS IS ACTIVE
 	
@@ -2411,7 +2413,7 @@
 	if (scanner == NULL)
 		return NO;
 	
-	synctex_node_t node = synctex_scanner_input(scanner);
+	synctex_node_p node = synctex_scanner_input(scanner);
 	BOOL found = NO;
 	while (node != NULL) {
 		name = synctex_scanner_get_name(scanner, synctex_node_tag(node));
@@ -2437,13 +2439,20 @@
 	}
 	
 	boxNumber = 0;
+    
+ //   NSLog(@"got here");
+    aPage = self.myPDFKitView.currentPage;
+    theindex = [[self.myPDFKitView document] indexForPage: aPage];
+//  NSLog(@"thePageNumberIs %d", (long)theindex);
+    
+    
 	
-	if (synctex_display_query(scanner, name, line, 0) > 0) {
+	if (synctex_display_query(scanner, name, line, 0, theindex) > 0) {  //last argument = page_hint
 		int page = -1;
 		BOOL gotSomething = NO;
 		
 		
-		while (((node = synctex_next_result(scanner)) != NULL) && (boxNumber < 200)) {
+		while (((node = synctex_scanner_next_result(scanner)) != NULL) && (boxNumber < 200)) {
 			if (page == -1) {
 				page = synctex_node_page(node);
 				thePage = [[self.myPDFKitView document] pageAtIndex: (page - 1)];

@@ -494,8 +494,8 @@ scroller position.
 	// if the view is a new one or if the page size has been changed,
 	// set frame and bounds, then try to scroll so that top left corner
 	// corresponds to the same point when there was a previous imageRep
-	if (!modifiedRep || (abs(totalWidth - oldSize.width) > 1) ||
-						(abs(totalHeight - oldSize.height) > 1))
+	if (!modifiedRep || (fabs(totalWidth - oldSize.width) > 1) ||
+						(fabs(totalHeight - oldSize.height) > 1))
 	{
 		// set frame and bounds respecting the resizeOption
 		[self fitToSize];
@@ -1705,7 +1705,6 @@ failed. If you change the code below, be sure to test carefully!
 	BOOL            found, done;
 	NSUInteger        theStart, theEnd, theContentsEnd;
 	NSString        *newFileName, *theExtension;
-	TSDocument      *newDocument;
 	NSUInteger        start, end, irrelevant;
     NSStringEncoding    theEncoding;
 
@@ -2699,8 +2698,8 @@ failed. If you change the code below, be sure to test carefully!
 			}
 			// calculate the rect to select
 			currentPoint = [self convertPoint: mouseLocWindow fromView:nil];
-			selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-			selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            selectedRect.size.width = fabs(currentPoint.x-startPoint.x);
+			selectedRect.size.height = fabs(currentPoint.y-startPoint.y);
 			if ([theEvent modifierFlags] & NSShiftKeyMask)
 			{
 				if (selectedRect.size.width > selectedRect.size.height)
@@ -3103,8 +3102,8 @@ failed. If you change the code below, be sure to test carefully!
 
 	//test
 	NSSize aSize = [self convertSize: selectedRect.size toView: nil];
-	if (abs(selRectWindow.size.width - aSize.width)>1 ||
-		abs(selRectWindow.size.height - aSize.height)>1)
+	if (fabs(selRectWindow.size.width - aSize.width)>1 ||
+		fabs(selRectWindow.size.height - aSize.height)>1)
 	{
 		// I don't know why this can happen, but it does happen from
 		// time to time, when the view is rotated and selection is not visible.

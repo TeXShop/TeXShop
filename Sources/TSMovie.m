@@ -6,7 +6,7 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "Globals.h"
+#import "globals.h"
 #import "TSMovie.h"
 
 

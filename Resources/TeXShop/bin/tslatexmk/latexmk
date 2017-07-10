@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+# SEE "POSSIBLE BUG" aournd line 2221
+
 # ?? Still need to fix bcf error issue.
 # Don't keep looping after error
 # pvc: Only re-run on USER FILE CHANGE.
@@ -121,8 +123,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.52c';
-$version_details = "$My_name, John Collins, 19 Jan. 2017";
+$version_num = '4.53a';
+$version_details = "$My_name, John Collins, 16 May 2017";
 
 use Config;
 use File::Basename;
@@ -195,9 +197,19 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    16 May 2017   John Collins  Optimize away current directory string in
+##                                  $out_dir and $aux_dir.
+##    15 May 2017   John Collins  Fix incorrect deletion of non-generated
+##                                   aux files.
+##    13 May 2017   John Collins  Correct ordering of list of options given
+##                                  by -help
+##     6 Apr 2017   John Collins  In deps_list, correct bug in identifying
+##                                generated files.  Otherwise, generated files
+##                                may be identified as true source files.
 ##    19 Jan 2017   John Collins  Make -jobname work with -pdfxe and -pdflua
-##                                (v. 4.53c)
-##    17 Jan 2017   John Collins  Fix bbl file detection bug.
+##    18 Jan 2017   John Collins  Update to v. 4.53.
+##    17 Jan 2017   John Collins  Update to v. 4.52b (official release).
+##                                Fix bbl file detection bug.
 ##                                Bbl files were previously only identified
 ##                                  from occurrence as input files in log
 ##                                  file rather than from fls as well.
@@ -1753,17 +1765,20 @@ if ( $bad_options > 0 ) {
 warn "$My_name: This is $version_details, version: $version_num.\n",
    unless $silent;
 
+
 if ( ($out_dir ne '') && ($aux_dir eq '') ){
     $aux_dir = $out_dir;
 }
 
-# Versions terminating in directory/path separator
+# Normalize versions terminating in directory/path separator
+# and versions referring to current directory
 $out_dir1 = $out_dir;
 $aux_dir1 = $aux_dir;
 foreach ( $aux_dir1, $out_dir1 ) {
     if ( ($_ ne '')  && ! m([\\/\:]$) ) {
        $_ .= '/';
     }
+    while ( s[^\.\/][] ) {}
 }
 
 # At least one widely package (revtex4-1) generates a bib file
@@ -2209,8 +2224,14 @@ foreach $filename ( @file_list )
                         push @aux_files, $$Psource;
                     }
                     elsif ( exists $other_generated{$$Psource} ) {
-                        $other_generated{$$Pdest};
+#			print "=========== CHECKING: source file of rule '$rule', '$$Psource'\n",
+#                              "  is a generated file.\n";
+			## OLD with apparent bug:
+                        #$other_generated{$$Pdest};
                     }
+		    foreach my $key (keys %$PHdest) {
+			$other_generated{$key} = 1;
+		    }
                 },
                 sub {  # Find generated files at source file level
                     if ( $file =~ /\.aux$/ ) { push @aux_files, $file; }
@@ -2248,15 +2269,21 @@ foreach $filename ( @file_list )
         # Convert two arrays to hashes:
         my %index_bibtex_generated = ();
         my %aux_files = ();
+        my %aux_files_to_save = ();
         foreach (@index_bibtex_generated) {
             $index_bibtex_generated{$_} = 1
                unless ( /\.bbl$/ && ($bibtex_use < 2) );
             delete( $other_generated{$_} );
         }
         foreach (@aux_files) {
-            $aux_files{$_} = 1;
-            delete( $other_generated{$_} );
+	    if (exists $other_generated{$_} ) {
+		$aux_files{$_} = 1;
+	    }
+	    else {
+		$aux_files_to_save{$_} = 1;
+	    }
         }
+
         if ($diagnostics) {
             show_array( "For deletion, the following were determined from fdb file or log file:\n"
                        ." Generated (from makeindex and bibtex):", 
@@ -2265,9 +2292,12 @@ foreach $filename ( @file_list )
             show_array( " Other generated files:\n"
                        ." (only deleted if \$cleanup_includes_generated is set): ",
                         keys %other_generated );
-            show_array( " Yet other generated files:\n",
+            show_array( " Yet other generated files are specified by patterns:\n".
+                        " Explicit pattern with %R or root-filename.extension:",
                         keys %generated_exts_all );
+            show_array( " Aux files to SAVE and not delete:", keys %aux_files_to_save );
         }
+
         &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak',
                    split('\s+',$clean_ext),
                    keys %generated_exts_all 
@@ -3249,7 +3279,7 @@ sub cleanup1 {
     my $dir = fix_pattern( shift );
     my $root_fixed = fix_pattern( $root_filename );
     foreach (@_) { 
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_fixed/;
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${dir}${root_fixed}/;
         unlink_or_move( glob( "$name" ) );
     }
 } #END cleanup1
@@ -3416,6 +3446,8 @@ sub print_help
   "               give list of warnings after run of (pdf)latex\n",
   "   -logfilewarninglist- or -logfilewarnings- \n",
   "               do not give list of warnings after run of (pdf)latex\n",
+  "   -lualatex     - use lualatex for processing files to pdf\n",
+  "                   and turn dvi/ps modes off\n",
   "   -M     - Show list of dependent files after processing\n",
   "   -MF file - Specifies name of file to receives list dependent files\n",
   "   -MP    - List of dependent files includes phony target for each source file.\n",
@@ -3472,8 +3504,6 @@ sub print_help
   "   -view=none    - no viewer is used\n",
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
-  "   -lualatex     - use lualatex for processing files to pdf\n",
-  "                   and turn dvi/ps modes off\n",
   "   -xelatex      - use xelatex for processing files to pdf\n",
   "                   and turn dvi/ps modes off\n",
   "\n",
@@ -5919,7 +5949,7 @@ sub deps_list {
     # Call: deps_list(fh)
     # List dependent files to file open on fh
     my $fh = $_[0];
-    print $fh "#===Dependents for $filename:\n";
+    print $fh "#===Dependents, and related info, for $filename:\n";
     my @dest_exts = ();
     if ($pdf_mode) {push @dest_exts, '.pdf';}
     if ($dvi_mode) {push @dest_exts, '.dvi';}
@@ -5936,12 +5966,14 @@ sub deps_list {
         sub{ $source{$file} = 1; }
     );
     foreach (keys %generated_exts_all) {
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$root_filename/;
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${aux_dir1}${root_filename}/;
         push @generated, $name;
     }
+    show_array( "Generated:", @generated );
     foreach (@generated) {
         delete $source{$_};
     }
+    show_array( "Sources:", keys %source );
     foreach my $ext (@dest_exts) {
        if ($deps_file eq '-' ) {
           print $fh "${out_dir1}${root_filename}${ext} :";

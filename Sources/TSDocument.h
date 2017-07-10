@@ -231,7 +231,7 @@ enum RootCommand
 //	NSTask              *synctexTask;
 //	NSPipe              *synctexPipe;
 //	NSFileHandle        *synctexHandle;
-    synctex_scanner_t	scanner;
+    struct synctex_scanner_t *scanner;
 
 
 //	NSDate		*startDate;
@@ -752,7 +752,6 @@ enum RootCommand
 
 @interface TSDocument (FileAssociations)
 
-// - (void)makeDefaultEditor:(id)sender;
 
 @end
 

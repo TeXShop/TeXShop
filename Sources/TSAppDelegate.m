@@ -795,7 +795,7 @@
     //  [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath:myName] display: YES error:NULL];
             
             myURL = [fileArray objectAtIndex:i];
-    		[myController openDocumentWithContentsOfURL: myURL display: YES error:NULL];
+    		[myController openDocumentWithContentsOfURL: myURL display: YES completionHandler:NULL];
 		}
 	}
 	
@@ -1095,6 +1095,25 @@
 }
 
 
+
+- (void)makeDefaultEditor:(id)sender;
+{
+    
+    /*
+     CFStringRef myStringRef = LSCopyDefaultRoleHandlerForContentType (CFSTR("edu.uo.texshop.tex"), kLSRolesAll) ;
+     NSString *aString = (__bridge NSString *)myStringRef;
+     NSLog(aString);
+     */
+    
+    OSStatus myStatus = LSSetDefaultRoleHandlerForContentType ( CFSTR("edu.uo.texshop.tex"), kLSRolesAll, CFSTR("TeXShop") );
+    
+    
+}
+
+
+
+
+
 @end
 
 
@@ -1202,21 +1221,6 @@
 {
     return YES;
 }
-
-- (void)makeDefaultEditor:(id)sender;
-{
-    
-    /*
-     CFStringRef myStringRef = LSCopyDefaultRoleHandlerForContentType (CFSTR("edu.uo.texshop.tex"), kLSRolesAll) ;
-     NSString *aString = (__bridge NSString *)myStringRef;
-     NSLog(aString);
-     */
-    
-    OSStatus myStatus = LSSetDefaultRoleHandlerForContentType ( CFSTR("edu.uo.texshop.tex"), kLSRolesAll, CFSTR("TeXShop") );
-    
-    
-}
-
 
 
 

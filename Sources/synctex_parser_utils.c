@@ -1,11 +1,11 @@
 /* 
-Copyright (c) 2008, 2009, 2010 , 2011 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2017 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Tue Jun 14 08:23:30 UTC 2011
+Latest Revision: Fri Jun 23 15:31:41 UTC 2017
 
-Version: 1.18
+Version: 1.19
 
 See synctex_parser_readme.txt for more details
 
@@ -71,18 +71,23 @@ authorization from the copyright holder.
 #endif
 
 void *_synctex_malloc(size_t size) {
-	void * ptr = malloc(size);
-	if(ptr) {
-/*  There used to be a switch to use bzero because it is more secure. JL */
-		memset(ptr,0, size);
-	}
-	return (void *)ptr;
+    void * ptr = malloc(size);
+    if(ptr) {
+        memset(ptr,0, size);/* ensures null termination of strings */
+    }
+    return (void *)ptr;
 }
 
-int _synctex_error(const char * reason,...) {
-	va_list arg;
+void _synctex_free(void * ptr) {
+    if (ptr) {
+        free(ptr);
+    }
+}
+
+#   include <syslog.h>
+
+int _synctex_log(int level, const char * prompt, const char * reason,va_list arg) {
 	int result;
-	va_start (arg, reason);
 #	ifdef SYNCTEX_RECENT_WINDOWS
 	{/*	This code is contributed by William Blum.
         As it does not work on some older computers,
@@ -94,21 +99,55 @@ int _synctex_error(const char * reason,...) {
         JL.*/
 		char *buff;
 		size_t len;
-		OutputDebugStringA("SyncTeX ERROR: ");
+		OutputDebugStringA(prompt);
 		len = _vscprintf(reason, arg) + 1;
 		buff = (char*)malloc( len * sizeof(char) );
-		result = vsprintf(buff, reason, arg) +strlen("SyncTeX ERROR: ");
+		result = vsprintf(buff, reason, arg) +strlen(prompt);
 		OutputDebugStringA(buff);
 		OutputDebugStringA("\n");
 		free(buff);
 	}
+#   elif SYNCTEX_USE_SYSLOG
+    char * buffer1 = NULL;
+    char * buffer2 = NULL;
+    openlog ("SyncTeX", LOG_CONS | LOG_PID | LOG_PERROR | LOG_NDELAY, LOG_LOCAL0);
+    if (vasprintf(&buffer1,reason,arg)>=0
+        && asprintf(&buffer2,"%s%s",prompt, buffer1)>=0) {
+        syslog (level, "%s", buffer2);
+        result = (int)strlen(buffer2);
+    } else {
+        syslog (level, "%s",prompt);
+        vsyslog(level,reason,arg);
+        result = (int)strlen(prompt);
+    }
+    free(buffer1);
+    free(buffer2);
+    closelog();
 #   else
-	result = fprintf(stderr,"SyncTeX ERROR: ");
-	result += vfprintf(stderr, reason, arg);
-	result += fprintf(stderr,"\n");
+    FILE * where = level == LOG_ERR? stderr: stdout;
+    result = fputs(prompt,where);
+    result += vfprintf(where, reason, arg);
+    result += fprintf(where,"\n");
 #   endif
-	va_end (arg);
 	return result;
+}
+
+int _synctex_error(const char * reason,...) {
+    va_list arg;
+    int result;
+    va_start (arg, reason);
+    result = _synctex_log(LOG_ERR, "! SyncTeX Error : ", reason, arg);
+    va_end (arg);
+    return result;
+}
+
+int _synctex_debug(const char * reason,...) {
+    va_list arg;
+    int result;
+    va_start (arg, reason);
+    result = _synctex_log(LOG_DEBUG, "! SyncTeX Error : ", reason, arg);
+    va_end (arg);
+    return result;
 }
 
 /*  strip the last extension of the given string, this string is modified! */
@@ -250,8 +289,8 @@ const char * _synctex_last_path_component(const char * name) {
 }
 
 int _synctex_copy_with_quoting_last_path_component(const char * src, char ** dest_ref, size_t size) {
-  const char * lpc;
   if(src && dest_ref) {
+      const char * lpc;
 #		define dest (*dest_ref)
 		dest = NULL;	/*	Default behavior: no change and sucess. */
 		lpc = _synctex_last_path_component(src);
@@ -396,7 +435,6 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 				if(NULL == (dir_name = (char *)malloc(size+1))) {
 					_synctex_error("!  _synctex_get_name: Memory problem");
 					free(core_name);
-					dir_name = NULL;
 					return -1;
 				}
 				if(dir_name != strncpy(dir_name,output,size)) {
@@ -497,6 +535,17 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 #			undef CLEAN_AND_REMOVE
             /* set up the returned values */
             * synctex_name_ref = synctex_name;
+            /* synctex_name won't always end in .gz, even when compressed. */
+            FILE * F = fopen(synctex_name, "r");
+            if (F != NULL) {
+                if (!feof(F)
+                && 31 == fgetc(F)
+                && !feof(F)
+                && 139 == fgetc(F)) {
+                    io_mode = synctex_compress_mode_gz;
+                }
+                fclose(F);
+            }
             * io_mode_ref = io_mode;
 			return 0;
 		}

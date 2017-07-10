@@ -8,7 +8,7 @@
 
 #import "HelpDocuments.h"
 #import "TSDocumentController.h"
-#import "Globals.h"
+#import "globals.h"
 #import "TSDocument.h"
 #import "TSTextEditorWindow.h"
 #import "TSPreviewWindow.h"

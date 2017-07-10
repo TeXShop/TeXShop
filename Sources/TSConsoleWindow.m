@@ -30,7 +30,7 @@
 
 @implementation TSConsoleWindow : NSWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id  result;
 	self.firstResize = NO;
@@ -95,13 +95,6 @@
 {
 	[self.myDocument trashAUXFiles: sender];
 }
-
-/*
-- (void) makeDefaultEditor:(id)sender
-{
-    [self.myDocument makeDefaultEditor:sender];
-}
-*/
 
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame

@@ -335,8 +335,6 @@
     NSString        *enginePath;
     NSDictionary    *env;
     NSString        *userEngine;
-    NSString        *tetexBinPath;
-    NSString        *argString;
     NSString        *tempPath;
     NSString        *theProgramWithFlags;
     

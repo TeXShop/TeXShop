@@ -285,11 +285,11 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	return NSDragOperationNone;
 }
 
-- (NSUInteger) draggingEntered : (id <NSDraggingInfo>) sender
+- (NSDragOperation) draggingEntered : (id <NSDraggingInfo>) sender
 {
 	return [self dragOperationForDraggingInfo:sender];
 }
-- (NSUInteger) draggingUpdated : (id <NSDraggingInfo>) sender
+- (NSDragOperation) draggingUpdated : (id <NSDraggingInfo>) sender
 {
 	return [self dragOperationForDraggingInfo:sender];
 }
@@ -324,9 +324,10 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			return;
 		NSString *thisFile = [[self.document fileURL] path];
 		NSUInteger i;
-		for (i = 0; i < cnt; i++) {
+		// for (i = 0; i < cnt; i++)
+        {
 			// NSString *filePath = [ar objectAtIndex:i];
-			NSString *tempPath = [ar objectAtIndex:i];
+			NSString *tempPath = [ar objectAtIndex:0];
 			NSString *filePath = [self resolveAlias:tempPath];
 			NSString *fileName = [filePath lastPathComponent];
 			NSString *baseName = [fileName stringByDeletingPathExtension];
@@ -1251,31 +1252,30 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	NSNumber *selectedLocationObj = [dictionary valueForKey:@"sloc"];
 	NSNumber *replaceLocationObj = [dictionary valueForKey:@"rloc"];
 	NSInteger selectedLocation = [selectedLocationObj integerValue];
-	NSInteger replaceLocation = [replaceLocationObj integerValue];
+	NSInteger replaceLocationLocal = [replaceLocationObj integerValue];
 	NSString *originalStringNew = [dictionary valueForKey:@"originalString"];
 	NSString *newString = [theMenu title];
 	NSRange replaceRange;
-	replaceRange.location = replaceLocation;
-	replaceRange.length = selectedLocation-replaceLocation;
+	replaceRange.location = replaceLocationLocal;
+	replaceRange.length = selectedLocation-replaceLocationLocal;
 	
 	
 	[self replaceCharactersInRange:replaceRange withString:	newString];
 	// register undo
 	if (self.document)
-		[self.document registerUndoWithString:originalStringNew location:replaceLocation
+		[self.document registerUndoWithString:originalStringNew location:replaceLocationLocal
 								   length:[newString length]
 									  key:NSLocalizedString(@"Completion", @"Completion")];
-	//[self registerUndoWithString:originalStringNew location:replaceLocation
+	//[self registerUndoWithString:originalStringNew location:replaceLocationLocal
 	//		length:[newString length]
 	//		key:NSLocalizedString(@"Completion", @"Completion")];
 	// clean up
 	NSInteger from, to;
-	NSString* currentStringNew;
 	NSRange insRange;
 	bool wasCompleted;
 	static NSUInteger textLocation = NSNotFound; // location of insertion point
 	if (self.document) {
-		from =replaceLocation;
+		from =replaceLocationLocal;
 		to = from + [newString length];
 		[self.document fixColor:from :to];
 		[self.document setupTags];
@@ -1283,16 +1283,16 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	// currentStringNew = [newString retain];
 	wasCompleted = YES;
 	// flash the new string
-	[self setSelectedRange: NSMakeRange(replaceLocation, [newString length])];
+	[self setSelectedRange: NSMakeRange(replaceLocationLocal, [newString length])];
 	[self display];
 	NSDate *myDate = [NSDate date];
 	while ([myDate timeIntervalSinceNow] > - 0.050) ;
 	insRange = [newString rangeOfString:@"#INS#" options:0];
 	// set the insertion point
 	if (insRange.location != NSNotFound) // position of #INS#
-		textLocation = replaceLocation+insRange.location;
+		textLocation = replaceLocationLocal+insRange.location;
 	else{
-		textLocation = replaceLocation+[newString length];
+		textLocation = replaceLocationLocal+[newString length];
 		[self setSelectedRange: NSMakeRange(textLocation,5)];
 	}
 }
@@ -1586,7 +1586,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		} else { // LaTeX Special -- just add \end and copy of {...}
 			foundCandidate = YES;
 			if (!wasCompleted) {
-				self.originalString = [NSString stringWithString: @""] ;
+				self.originalString = @"" ;
 				replaceLocation = selectedLocation;
 				// newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
 				//					g_texChar, latexString];
@@ -2006,3 +2006,5 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 }
 
 @end
+
+

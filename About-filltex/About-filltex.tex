@@ -1,0 +1,45 @@
+\documentclass[11pt, oneside]{amsart}
+\usepackage{geometry}     
+\geometry{letterpaper}         
+\usepackage[parfill]{parskip} 
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{url}
+
+\title{David Gerosa's filltex}
+\author{Richard Koch}
+
+\begin{document}
+\maketitle
+\vspace{-.3in}
+\section{What It Does}
+
+Filltex is amazing software by David Gerosa, a NASA Einstein Fellow at CalTech. It is hosted at
+\url{https://github.com/dgerosa/filltex}. The current contents of this site are in the filltex-master folder next to this document, but it is better to go to the git site in case it has been updated.
+
+To understand the software, it is useful to know that ADS and INSPIRE are the two most common databases used by the astronomy and theoretical physics scientific communities. These databases list preprints and published articles in the two fields, referring to each with a citation index similar to {\em 2016PhRvL.116f1102A}. 
+
+Suppose you have written a paper, citing numerous references using these indices. Perhaps a line of this paper reads
+\begin{verbatim}
+     This is a citation from ADS: \cite{2016PhRvL.116f1102A}
+\end{verbatim}
+When the paper is finished, switch to the {\em filltex} engine in TeXShop and typeset a final time. The engine will scrape bibliographic data from the databases on the web, construct a bibliography, add the bibliography to the article, and rewrite the citations appropriately. All of this will happen automatically in one typesetting run.
+
+The filltex-master folder next to this document contains a  sample document. After installing filltex,  typeset the sample to confirm that operation is as easy as it appears here.
+
+\section{Installing filltex}
+
+Gerosa has made installation a breeze. Open Terminal in /Applications/Utilities, type the following lines and push RETURN after each line.
+\begin{verbatim}
+        pip install filltex
+        filltex install-texshop
+\end{verbatim} 
+
+\section{Other Fields; Other Databases}
+
+I asked Davide about other fields. He told me he used ADS and INSPIRE because they are appropriate for his field, but many additional databases exist and could be used once his python code is modified appropriately. He suggested that those interested visit the git hub listed above to get started. Please notify me of any modifications so I can include the information here. If support is extended to more databases, filltex may become a standard tool of the trade.
+
+And thanks to David Gerosa for creating something that ``just works.''
+
+\end{document}

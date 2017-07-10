@@ -935,8 +935,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         
         BOOL standardPath = NO;
         BOOL linkBad = NO;
-        BOOL recentSystem = NO; //El Capitan or higher
-        
+         
         NSString* binPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
         if (([binPath isEqualToString: @"/usr/texbin"]) || ([binPath isEqualToString: @"/Library/TeX/texbin"]))
             standardPath = YES;
@@ -1691,6 +1690,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	NSInteger				status;
 	BOOL			alreadyFound;
 	BOOL			front;
+    
+    status = [[aNotification object] terminationStatus];
+    NSLog(@"The termination status is %d", (int) status);
 
 	[outputText setSelectable: YES];
     // [texCommand setSelectable: NO];

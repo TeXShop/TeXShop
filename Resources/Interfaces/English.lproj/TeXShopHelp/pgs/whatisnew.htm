@@ -15,6 +15,84 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.78 - 3.80</h5></P>
+
+Versions 3.78 and 3.79 were never released. Version 3.80 has the following changes:
+
+<ul>
+<li> SyncTeX, which makes it possible to easily move back and forth between a spot in the source and the corresponding spot in the output, was written by Jérôme Laurens. This software consists of two pieces. One piece adds code to the various TeX engines, causing the creation of appropriate sync information and output of this information to the file myfile.synctex.gz during typesetting. The second piece can be used by authors of front ends; it opens  the myfile.synctex.gz file, parses its contents, and deduces sync positions from the parsed data. TeXShop uses Jérôme's front end parsing code.
+
+<p> By the way, I use SyncTeX every day and offer Jérôme a mighty thanks for creating it.
+
+<p>
+In 2017, Synctex was revised by Jérôme; among other changes, syncing now works between code to input graphics in the source and the resulting image in the output. But when TeXLive 2017 was released, the revised code for front end authors was not yet ready. Luckily the old code continued to work with ordinary tex,  latex, pdftex, and pdflatex.
+
+<p>
+Unfortunately, this code did not work with LuaTeX and LuaLaTeX, so users working with these engines usually could not sync. Even worse, TeXShop often crashed when using these engines because the initial parsing of the file myfile.synctex.gz itself crashed.
+
+<p> The new front end code is now available, and is used by TeXShop 3.80. The crashes of LuaTeX and LuaLaTeX have ceased, and synchronization works again, more accurately than in earlier years. Some new features require setting the flag which turns synctex on to 2 or higher. Thus users may want to write "--synctex=2" rather than "--synctex=1". This change can be made in TeXShop Preferences under the Engine tab, and in individual engines the user may have activated.
+
+<p>
+<li> A new engine called "filltex" was written by David Gerosa, and is available in ~/Library/TeXShop/Engines/Inactive/filltex. This spectacular engine is very easy to install; here's what it does. Two  databases are commonly used in the astronomy and theoretical physics scientific communities: ADS and INSPIRE. These databases list preprints and published papers, referencing each with a citation index like 2016PhRvL.116f1102A. Suppose you have written a scientific paper in one of these fields, and suppose you citations use the standard forms for ADS and INSPIRE. For instance, your paper might have many citations, like "for more details consult \cite{2016PhRvL.116f1102A}." When the paper is done, typeset it using filltex. The engine will scrape bibliographic data from ADS and INSPIRE using the web, construct a bibliography, add the bibliography to the article, and rewrite the citations appropriately. All of this happens in one run of the engine. To see an example, typeset the example in the  Inactive/filltex folder.
+
+<p>
+Many additional databases exist for other fields, and Gerosa tells me that using  these databases with filltex is just a matter of revising the python code appropriately for these databases. He recommends that users interesting in doing this consult his git hub, as listed in the documents in TeXShop/Engines/Inactive/filltex.
+
+<p>
+<li> A modified SageTeX engine is now in Engines/Inactive/sage, together with new instructions for setting it up. These changes are required because the latest release, SageMath-7.6, has new requirements and a new internal structure.
+
+<p>
+<li> In some versions of macOS, opening a TeXShop Preview document  in multipage mode scrolled down to the middle of the first page, rather than starting at the top. This is fixed.
+<p>
+<li> Some users noticed a slight creep of the Preview Window with each typesetting job. This is fixed or at least improved.
+
+<p>
+<li> TeXShop now contains latexmk 4.53a.
+
+<p>
+<li>
+Herbert Schulz  made changes in "TeXShop Tips & Tricks", available in the TeXShop Help menu.
+</ul>
+
+<p>
+In addition to these changes, a small number of users ran into other issues running on macOS Sierra. 
+Most users have had no trouble with Sierra, and find that it fixes a number of problems in the previous two or three systems, so these problems are rare:
+
+<p> First, a few users included the pstricks package in the header of their document, but used no features of this package and typeset with pdflatex. Usually pstricks requires TeX + DVI mode, so including it in the header of a pdflatex document is an error. But in Sierra, typesetting such a document with pdflatex created a pdf file that crashed PDFKit, Apple's pdf rendering code, and thus crashed TeXShop. This bug is fixed in High Sierra.
+
+<p> Second, some users writing beamer documents would typeset and scroll their document in TeXShop.
+A particular image in the middle of the document would create a glitch, and some following pages would be blank. Scrolling back up would give additional blank pages, even though they were correctly rendered earlier in the game. Eventually the document could crash TeXShop. This problem is caused by a PDFKit bug, and is fixed by Apple in High Sierra. 
+
+<p> But in the meantime, we discovered that typesetting the same source with LuaLaTeX or XeLaTeX
+produces pdf files without problems. In addition, opening a defective pdf file with Adobe Acrobat Reader, and then saving that pdf file in Reader, produces a pdf file without problems.
+
+<p> One final problem occasionally occurs in Sierra. Many people use DropBox with TeXShop with no problems. A few of these users store their source files in the DropBox folder. A few of these folks report regular TeXShop crashes. In every case known to me, these crashes end when the TeX source files are removed from DropBox. 
+
+<p> What is the explanation? I don't know, but I have suspicions. Recall that TeXShop uses Apple's Automatic
+Saving code, introduced in Lion. Thus the system can save the source at random times. A source file in DropBox can also be moved to the cloud at random times. What if both the Mac and DropBox want to make changes at the same time?
+
+<p> The Automatic Saving code is buried deep in Cocoa and isn't by me. The only piece of TeXShop code by me related to automatic saving says "turn automatic saving on."
+
+<p>
+Here's all I know about this problem. 
+
+<ul>
+<li> I have never heard of problems from users of iCloud with TeXShop. This is not surprising since Apple wrote both iCloud and Automatic Saving.
+
+<p>
+<li> Users with this crashing problem report that crashes are fixed by creating symbolic links in DropBox to sources, rather than putting the sources there directly. I don't know why.
+
+<p>
+<li> Other users with this crashing problem report that crashes are fixed by turning off DropBox syncing during typesetting sessions.
+
+<p>
+<li> And all users report success moving their sources out of DropBox, and then dragging copies to DropBox at the end of typesetting sessions.
+</ul>
+
+<p> But to repeat, many report no problems. 
+
+
+
 <P><h5>TeXShop Changes 3.76 - 3.77</h5></P>
 
 Version 3.76 was never released. Version 3.77 has the following changes:

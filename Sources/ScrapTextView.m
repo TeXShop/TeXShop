@@ -626,7 +626,7 @@
 		} else { // LaTeX Special -- just add \end and copy of {...}
 			foundCandidate = YES;
 			if (!wasCompleted) {
-				self.originalString = [NSString stringWithString: @""] ;
+				self.originalString = @"" ;
 				replaceLocation = selectedLocation;
 				// newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
 				//					g_texChar, latexString];

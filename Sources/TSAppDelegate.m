@@ -169,7 +169,8 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-    
+  
+/*
     // Remember spell checker setting, but don't want to do this if a "% !TEX" language is in place
     if (! specialWindowOpened)
     {
@@ -179,6 +180,7 @@
         [SUD setObject: spellingLanguage forKey: SpellingLanguageKey];
         [SUD synchronize];
     }
+ */
     
     NSString *folderPath, *filename;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -258,6 +260,8 @@
 	// First see if we already updated.;
     
     // Set spell checker's dictionary = remember setting by user
+    
+    /*
     BOOL spellingAutomatic = [[NSUserDefaults standardUserDefaults] boolForKey:SpellingAutomaticLanguageKey];
     NSString *spellingLanguage = [[NSUserDefaults standardUserDefaults] objectForKey:SpellingLanguageKey];
     [[NSSpellChecker sharedSpellChecker] setAutomaticallyIdentifiesLanguages: spellingAutomatic];
@@ -266,6 +270,7 @@
     [GlobalData sharedGlobalData].g_defaultLanguage = spellingLanguage;
     automaticLanguage = spellingAutomatic;
     specialWindowOpened = NO;
+    */
     
  	NSFileManager *fileManager = [NSFileManager defaultManager];
 	
@@ -795,7 +800,7 @@
     //  [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath:myName] display: YES error:NULL];
             
             myURL = [fileArray objectAtIndex:i];
-    		[myController openDocumentWithContentsOfURL: myURL display: YES completionHandler:NULL];
+    		[myController openDocumentWithContentsOfURL: myURL display: YES error:NULL];
 		}
 	}
 	

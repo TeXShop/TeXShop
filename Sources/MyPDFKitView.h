@@ -31,6 +31,11 @@
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
+    // "currentPage" is a very dangerous choice, because the PDFView class has a method called 'currentPage"
+    // used by our code. But the instance variable holds the 'current page textbox' Luckily, the class has no
+    // [self currentPage] method returning this variable. Therefore, all uses like [currentPage setValue:19]
+    // refer to the textbox, but [self currentPage] gives the PDFPage in the document which is current. Gulp.
+    
                     IBOutlet	id								scurrentPage;
                     IBOutlet    id								totalPage;
                     IBOutlet    NSTextField                     *stotalPage;
@@ -111,7 +116,7 @@
 
 @property (retain) PDFOutline						*outline;
 @property (retain) NSMutableArray					*searchResults;
-@property (weak) NSWindow                         *myPDFWindow;
+@property (weak) TSPreviewWindow                    *myPDFWindow;
 @property (retain) NSTimer							*selRectTimer;
 @property (retain) id								imageTypeView;
 @property (retain) id								imageTypePopup;

@@ -1,0 +1,64 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf830
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww17900\viewh15440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Version 3.81\
+\
+1) After the release of 3.80, added locally a fix to a bug reported by E. Lazard; in the search field in the drawer, searching for\
+a single space causes a crash. \
+\
+2) "Open for Preview" broke due to an attempt to replace a deprecated call with a newer one. This is fixed.\
+\
+3) Sorted the user engine files listed beside the typeset menu. This at the request of Bruno Voisin.\
+\
+4) French Translation of TeXShop Tips & Tricks document in French localization (Rene FRITZ)\
+\
+5) When typesetting, the page number on the pdf window was originally set to 1. Eventually, it was set \
+to the location displayed by the bottom half of the split view, even if this view was hidden. Now fixed.\
+\
+6) Choice of a spelling dictionary was strangely designed, and flaky. Now it has been revised to work like everything else.\
+\
+Recall the basic design of TeXShop Preferences. Several documents can be open at once, and they\
+can be configured by TeXShop menu items to behave differently. One document might typeset using pdflatex\
+and a second using LuaTeX. One document's preview may display isolated pages, and the other may show\
+continuously scrollable pages. Etc.\
+\
+The Preference Pane is mainly to set the default properties of documents when first opened. For example, in\
+Preferences a user can set the default engine to be pdflatex. But after a document is open, the engine it uses\
+can change.\
+\
+A new item has been added to Preferences under the Source tab called "Dictionary." This item sets the default\
+dictionary used for spell checking when a document is first opened. Many users will select a cocoAspell dictionary\
+which understands TeX commands and does not mark them as misspelled. Selecting a dictionary in Preferences\
+does not change the dictionary of any currently open file.\
+\
+There is one unusual feature. Apple's Spelling and Grammar panel selects localized names for dictionaries.\
+But internally, dictionaries are determined by the ISO  639-1 and ISO 639-2 standards, and these are the names\
+which TeXShop shows in Preferences, for a reason to be explained later. It is fairly easy to compare the results\
+with the list in Spelling and Grammar and determine the actual language for each symbol.\
+\
+Now we consider being used with three or four source files open. The dictionary for each of these files was\
+determined when they were opened. But the Spelling & Grammar pane can be used to change this default dictionary,\
+on a file by file basis. Simply click on a source to make it the main window, and then select a new dictionary in Spelling\
+& Grammar. \
+\
+Give this a try. Select English, Spanish, Italian, and Automatic Language for four source files. Open Spelling & Grammar\
+and notice that the dictionary changes are various sources are activated.\
+\
+There is one final featrure. Suppose most documents written by a user are in English, but one large project is in German.\
+Near the top of the German document, type\
+\
+	% !TEX spellcheck = de-DE\
+\
+Then that document will open using the German dictionary, even though the default might be a cocoAspell English\
+dictionary. The right side of this expression must be the ISO 691-1 or ISO 691-2 description, which is why Preferenes\
+shows dictionaries in this form.\
+\
+Even if the document begins with % !TEX spellcheck = de-DE, its dictionary can later be changed with Spelling & Grammar.\
+For example, a German document might include an English quote, and the author might like to check the spelling in that\
+quote.\
+\
+}

@@ -15,6 +15,58 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.81</h5></P>
+
+Version 3.81 fixes a small number of bugs in version 3.80:
+
+<ul>
+<li> E. Lazard reported that inserting a single space in the search field in the preview window drawer causes a crash. This bug has existed for a long time, and is fixed.
+
+<p>
+<li> The "Open for Preview" menu item broke in 3.80. This is fixed. Many users reporting this problem were not aware of the Preference item "Configure for External Editor," which is the more natural way to use an external editor.
+
+<p>
+<li> In High Sierra, the list of user-defined engines in the popup engine menu was not sorted; although it was sorted in Sierra. This is fixed.
+
+<p>
+<li> The French localization contains a translation by Rene Fritz of the latest version of Herbert Schulz's TeXShop Tips and Tricks, available in the Help menu.
+
+<p>
+<li> After typesetting, the page number of the current page in the Preview window was set to 1, even when a later page was  displayed. This is fixed. (The actual bug was that the page number was set to the current page of the lower half of the split window, even when that half was invisible.)
+
+<p>
+<li>  TeXShop's selection of the dictionary to be used when checking spelling is improved. This is a very minor matter for most users, but it requires an extensive discussion.
+
+<p> The basic TeXShop design is that users may have several projects open on the screen at once. Using toolbar and menu items, each can be independently configured. One project may typeset using pdflatex, while a second may use LuaTeX. One source window may have magnified text while a second has regular text in a different font.
+
+<p> The purpose of the TeXShop Preference Pane is to set default values for projects  when they are first opened. Changing a default value usually does not affect files already open.
+
+<p> On the Macintosh, the "Spelling & Grammar" pane is used to pick the spelling dictionary. Originally, TeXShop did not interact with this pane, so the pane worked via the default Apple method. This changed when cocoAspell appeared, because  many TeXShop users wanted a dictionary that didn't mark TeX keywords as misspelled. These users didn't necessarily want to use that dictionary in other applications. So interaction with the spelling dictionary was implemented, but the implementation had a baroque, difficult to understand, structure. Version 3.81 of TeXShop finally treats selecting a dictionary on a par with other similar choices.
+
+<p> A new Dictionary field in TeXShop Preferences under the Source tab has a pop-up menu which can be used to select the default dictionary. Many users will use this menu to select a cocoAspell dictionary, and then ignore everything else about spelling dictionaries. The one unexpected feature is that dictionaries are listed using the ISO 639-1 and ISO 639-2 standards rather than the localized names shown in the Spelling & Grammar pane. These are easy to decipher.
+
+<p> When a new file is opened in TeXShop, it will be set to use the default dictionary. But this dictionary can be changed for that file by opening Spelling & Grammar and selecting a new dictionary. A user who writes in English but corresponds with a French relative can easily do that when writing a note to that relative.
+
+<p> A more unusual situation occurs if a user has several files open at once, some written in one language and some in another. Activate each source file by clicking on the text, and then select the dictionary for that file using Spelling & Grammer. Then with Spelling & Grammar still open, click randomly on these source files and notice that the dictionary field changes to the correct dictionary for each file.
+
+<p> Finally, if you intend to work on a file for an extended period of time and it does not use your default dictionary, the default dictionary for that file can be set with an instruction at the top similar to
+
+<dl>
+<dd> % !TEX spellcheck = de-DE
+</dl>
+
+<p> This particular document will then open with spelling set to German. But the Spelling & Grammar panel can later be used to switch dictionaries temporarily, in case a German letter contains an English quotation which needs to be spell checked.
+
+<p> After working on these changes, I mentioned them to a user who told me in a disappointed tone that he really just wanted to return to the days when TeXShop entirely ignored the Spelling & Grammar panel and let it "do its thing." There is a special hidden preference for that user:
+
+<dl>
+<dd> defaults write TeXShop OriginalSpelling YES
+</dl>
+
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.78 - 3.80</h5></P>
 
 Versions 3.78 and 3.79 were never released. Version 3.80 has the following changes:

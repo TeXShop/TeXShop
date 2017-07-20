@@ -524,8 +524,9 @@
     
     
 //	 [[self window] disableFlushWindow];
+    
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
-       NSDisableScreenUpdates();
+        NSDisableScreenUpdates();
 
 	[self cleanupMarquee: YES];
 	
@@ -603,9 +604,11 @@
 	// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
 	// but it doesn't seem to work there. If changes are made, be sure to test on
 	// Intel and on PowerPC.
-	aPage = [[self document] pageAtIndex: theindex];
-	[self goToPage: aPage];
-	
+	 
+    aPage = [[self document] pageAtIndex: theindex];
+    [self goToPage: aPage];
+    
+   
     NSRect newFullRect = [[self documentView] bounds];
     NSInteger difference = newFullRect.size.height - fullRect.size.height;
     
@@ -618,7 +621,12 @@
 //	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
     visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
+
     
+//    NSLog(@"The index is %d", theindex);
+//    [currentPage setIntegerValue:theindex];
+//    [currentPage display];
+//   [self pageChanged: nil];
     
     
  
@@ -930,12 +938,18 @@
 	NSUInteger	newPageIndex;
 	NSIndexSet		*myIndexSet;
     PDFOutline      *outlineItem;
+    
+    if (notification.object != self.myPDFWindow.activeView)
+        return;
 	
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
-	[currentPage setIntegerValue:pageNumber];
+ 	[currentPage setIntegerValue:pageNumber];
     [scurrentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
+    [currentPage display];
+    [scurrentPage display];
+    [currentPage1 display];
     
  	// Skip out if there is no outline.
 //	if ([[self document] outlineRoot] == NULL)
@@ -1574,6 +1588,10 @@
 
 - (void) doFind: (id) sender
 {
+   
+    // E. Lazarr discovered that one single space crashes TeXShop; two or more are fine
+    if ([[sender stringValue] isEqualToString:@" "])
+      return;
     
     self.toolbarFind = NO;
     

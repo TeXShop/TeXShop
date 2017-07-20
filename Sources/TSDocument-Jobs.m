@@ -1692,7 +1692,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	BOOL			front;
     
     status = [[aNotification object] terminationStatus];
-    NSLog(@"The termination status is %d", (int) status);
+    // NSLog(@"The termination status is %d", (int) status);
 
 	[outputText setSelectable: YES];
     // [texCommand setSelectable: NO];

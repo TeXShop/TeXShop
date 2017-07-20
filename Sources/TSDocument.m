@@ -123,7 +123,8 @@
 	firstTime = NO;
 	fromMenu = NO;
 	willClose = NO;
-	self.spellLanguage = nil;
+    self.spellLanguage = [SUD stringForKey: spellingLanguageDefaultKey];
+    self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
 	
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
@@ -1479,6 +1480,24 @@ in other code when an external editor is being used. */
 				spellcheckString = [[testString substringWithRange: spellcheckRange]
 									stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				// NSLog(spellcheckString);
+                
+                self.automaticSpelling = NO;
+                self.spellLanguage = spellcheckString;
+                [self resetSpelling];
+                
+              /*
+                NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+                if ([theChecker setLanguage:spellcheckString])
+                    {
+                    self.spellLanguage = spellcheckString;
+                    self.automaticSpelling = NO;
+                                                  
+                    [theChecker setAutomaticallyIdentifiesLanguages:NO];
+                    }
+               */
+                 
+                
+                /*
 				NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
                 if (! specialWindowOpened) {
                     // get language and spellingAutomatic and set SUD to those
@@ -1497,6 +1516,7 @@ in other code when an external editor is being used. */
                     specialWindowOpened = YES;
                     self.spellLanguage = spellcheckString;
                 }
+                */
             }
 		}
 	}
@@ -1813,31 +1833,23 @@ in other code when an external editor is being used. */
 //END PATCH
 
 - (void)resetSpelling {
+    
+    if ([SUD boolForKey: originalSpellingKey])
+        return;
 	NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
-	if (self.spellLanguage != nil) {
- 		[theChecker setLanguage:self.spellLanguage];
-		[theChecker setAutomaticallyIdentifiesLanguages:NO];
-	}
-	else {
- 		[theChecker setLanguage:[GlobalData sharedGlobalData].g_defaultLanguage];
-        [theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
-	}
+    theChecker.automaticallyIdentifiesLanguages = self.automaticSpelling;
+	[theChecker setLanguage:self.spellLanguage];
 }
 
 - (void)resignSpelling {
     
-    return;
-
-/*
-    if (self.spellLanguage == nil)
+    if ([SUD boolForKey: originalSpellingKey])
         return;
     NSSpellChecker *theChecker = [NSSpellChecker sharedSpellChecker];
+    BOOL identifiesLanguages = theChecker.automaticallyIdentifiesLanguages;
     NSString *theLanguage = [theChecker language];
+    self.automaticSpelling = identifiesLanguages;
     self.spellLanguage = theLanguage;
-    [theChecker setLanguage:[GlobalData sharedGlobalData].g_defaultLanguage];
-    [theChecker setAutomaticallyIdentifiesLanguages:automaticLanguage];
- */
-
 }
 
 
@@ -2178,15 +2190,26 @@ in other code when an external editor is being used. */
 {
 	NSFileManager   *fm;
 	NSString        *basePath, *path, *title;
-	NSArray         *fileList;
+    NSArray         *fileList, *sortedList;
 	BOOL            isDirectory;
 	NSUInteger        i;
 
 	fm       = [NSFileManager defaultManager];
 	basePath = [EnginePath stringByStandardizingPath];
 	fileList = [fm contentsOfDirectoryAtPath: basePath error:NULL];
-	for (i=0; i < [fileList count]; i++) {
-		title = [fileList objectAtIndex: i];
+    
+    
+    sortedList = [fileList sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    
+ //   [programButton addItemWithTitle: @"---"];
+ //   [sprogramButton addItemWithTitle: @"---"];
+ //   [programButtonEE addItemWithTitle: @"---"];
+    
+    
+    
+    
+	for (i=0; i < [sortedList count]; i++) {
+		title = [sortedList objectAtIndex: i];
 		path  = [basePath stringByAppendingPathComponent: title];
 		if ([fm fileExistsAtPath:path isDirectory: &isDirectory]) {
 			if (!isDirectory && ( [ [[title pathExtension] lowercaseString] isEqualToString: @"engine"] )) {

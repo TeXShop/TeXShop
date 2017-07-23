@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15E39d" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="0.0" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSPreferences">
@@ -99,6 +100,7 @@
                 <outlet property="_texCommandTextField" destination="228" id="438"/>
                 <outlet property="_texGSCommandTextField" destination="241" id="439"/>
                 <outlet property="_texScriptCommandTextField" destination="315" id="440"/>
+                <outlet property="dictionaryPopup" destination="h4B-dx-Vp0" id="h7E-9V-Upx"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -107,25 +109,25 @@
         <window title="TeXShop 환경설정" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PrefPane" animationBehavior="default" id="3">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="267" y="182" width="570" height="699"/>
+            <rect key="contentRect" x="267" y="182" width="570" height="715"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
-            <view key="contentView" id="4">
-                <rect key="frame" x="0.0" y="0.0" width="570" height="699"/>
+            <view key="contentView" misplaced="YES" id="4">
+                <rect key="frame" x="0.0" y="0.0" width="570" height="715"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView id="5">
-                        <rect key="frame" x="7" y="42" width="544" height="651"/>
+                        <rect key="frame" x="7" y="42" width="544" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="문서" identifier="Document" id="6">
                                 <view key="view" id="7">
-                                    <rect key="frame" x="10" y="33" width="524" height="605"/>
+                                    <rect key="frame" x="10" y="33" width="524" height="621"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <box title="찾기 바꾸기 패널 (재실행 후 적용)" id="8">
-                                            <rect key="frame" x="11" y="178" width="256" height="86"/>
+                                        <box misplaced="YES" title="찾기 바꾸기 패널 (재실행 후 적용)" id="8">
+                                            <rect key="frame" x="12" y="192" width="256" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="wbA-0k-K2T">
                                                 <rect key="frame" x="2" y="2" width="252" height="62"/>
@@ -163,12 +165,10 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="자동 완성 키" id="14">
-                                            <rect key="frame" x="11" y="272" width="256" height="69"/>
+                                        <box misplaced="YES" title="자동 완성 키" id="14">
+                                            <rect key="frame" x="12" y="286" width="256" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="DG1-CP-Kwi">
                                                 <rect key="frame" x="2" y="2" width="252" height="45"/>
@@ -202,41 +202,10 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="인코딩" id="19">
-                                            <rect key="frame" x="276" y="204" width="235" height="68"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView" id="bPo-5T-xgx">
-                                                <rect key="frame" x="2" y="2" width="231" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <popUpButton verticalHuggingPriority="750" id="20">
-                                                        <rect key="frame" x="8" y="11" width="203" height="26"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="23" id="21">
-                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
-                                                            <menu key="menu" title="OtherViews" id="22">
-                                                                <items>
-                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="23"/>
-                                                                </items>
-                                                            </menu>
-                                                        </popUpButtonCell>
-                                                        <connections>
-                                                            <action selector="encodingChanged:" target="-2" id="464"/>
-                                                        </connections>
-                                                    </popUpButton>
-                                                </subviews>
-                                            </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
-                                        </box>
-                                        <box title="에디터" id="24">
-                                            <rect key="frame" x="276" y="276" width="235" height="262"/>
+                                        <box misplaced="YES" title="에디터" id="24">
+                                            <rect key="frame" x="277" y="290" width="235" height="262"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Jqp-gg-4td">
                                                 <rect key="frame" x="2" y="2" width="231" height="238"/>
@@ -362,12 +331,10 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="폰트" id="41">
-                                            <rect key="frame" x="11" y="546" width="256" height="56"/>
+                                        <box misplaced="YES" title="폰트" id="41">
+                                            <rect key="frame" x="12" y="560" width="256" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="HoH-MF-qpu">
                                                 <rect key="frame" x="2" y="2" width="252" height="32"/>
@@ -384,7 +351,7 @@
                                                             <action selector="changeDocumentFont:" target="-2" id="442"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="44">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="44">
                                                         <rect key="frame" x="89" y="11" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="45">
@@ -395,12 +362,10 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="편집창 위치" id="46">
-                                            <rect key="frame" x="11" y="431" width="256" height="107"/>
+                                        <box misplaced="YES" title="편집창 위치" id="46">
+                                            <rect key="frame" x="12" y="445" width="256" height="107"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="MXE-Fb-t5T">
                                                 <rect key="frame" x="2" y="2" width="252" height="83"/>
@@ -445,12 +410,10 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="실행할 때" id="53">
-                                            <rect key="frame" x="11" y="345" width="256" height="81"/>
+                                        <box misplaced="YES" title="실행할 때" id="53">
+                                            <rect key="frame" x="12" y="359" width="256" height="81"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="BIQ-xS-dF6">
                                                 <rect key="frame" x="2" y="2" width="252" height="57"/>
@@ -480,12 +443,10 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="문자와 배경색" id="58">
-                                            <rect key="frame" x="276" y="546" width="235" height="56"/>
+                                        <box misplaced="YES" title="문자와 배경색" id="58">
+                                            <rect key="frame" x="277" y="560" width="235" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="vts-2s-q8s">
                                                 <rect key="frame" x="2" y="2" width="231" height="32"/>
@@ -509,12 +470,10 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box autoresizesSubviews="NO" title="숨김 문자 표시" borderType="line" id="61">
-                                            <rect key="frame" x="11" y="33" width="256" height="133"/>
+                                        <box autoresizesSubviews="NO" misplaced="YES" borderType="line" title="숨김 문자 표시" id="61">
+                                            <rect key="frame" x="12" y="63" width="256" height="133"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="QC2-nK-Rzw">
                                                 <rect key="frame" x="1" y="1" width="254" height="110"/>
@@ -689,12 +648,10 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box autoresizesSubviews="NO" title="괄호 여닫기 체크와 색상" borderType="line" id="88">
-                                            <rect key="frame" x="276" y="143" width="235" height="57"/>
+                                        <box autoresizesSubviews="NO" misplaced="YES" borderType="line" title="괄호 여닫기 체크와 색상" id="88">
+                                            <rect key="frame" x="277" y="157" width="235" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="nNb-og-QEZ">
                                                 <rect key="frame" x="1" y="1" width="233" height="34"/>
@@ -754,12 +711,10 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box autoresizesSubviews="NO" title="괄호 여닫기 세부 설정" borderType="line" id="98">
-                                            <rect key="frame" x="276" y="5" width="235" height="134"/>
+                                        <box autoresizesSubviews="NO" misplaced="YES" borderType="line" title="괄호 여닫기 세부 설정" id="98">
+                                            <rect key="frame" x="277" y="23" width="235" height="134"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="rVR-58-adc">
                                                 <rect key="frame" x="1" y="1" width="233" height="111"/>
@@ -822,8 +777,56 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
+                                        </box>
+                                        <box misplaced="YES" title="Dictionary" id="umo-h5-U9Z">
+                                            <rect key="frame" x="12" y="3" width="257" height="56"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="fVY-8R-bWf">
+                                                <rect key="frame" x="2" y="2" width="253" height="36"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" id="h4B-dx-Vp0">
+                                                        <rect key="frame" x="18" y="4" width="219" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fv3-CY-80w">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="1bZ-zx-RwB"/>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="dctionaryPressed:" target="-2" id="PLw-WY-eRq"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box misplaced="YES" title="인코딩" id="19">
+                                            <rect key="frame" x="277" y="218" width="235" height="68"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="bPo-5T-xgx">
+                                                <rect key="frame" x="2" y="2" width="231" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" id="20">
+                                                        <rect key="frame" x="8" y="11" width="203" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="23" id="21">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" title="OtherViews" id="22">
+                                                                <items>
+                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="23"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="encodingChanged:" target="-2" id="464"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                     </subviews>
@@ -880,8 +883,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="보기 창 확대 배율" id="118">
@@ -902,7 +903,7 @@
                                                             <action selector="magChanged:" target="-2" id="451"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="121">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="121">
                                                         <rect key="frame" x="66" y="10" width="40" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" title="100" drawsBackground="YES" id="122">
@@ -913,8 +914,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="페이지 버튼" id="123">
@@ -937,8 +936,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="마우스 모드" id="126">
@@ -970,8 +967,6 @@
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="창 리사이즈" id="135">
@@ -1001,8 +996,6 @@
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="페이지 형식" id="142">
@@ -1033,8 +1026,6 @@
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="맞쪽보기" id="150">
@@ -1072,8 +1063,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="외부 에디터" id="155">
@@ -1096,8 +1085,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="디스플레이" id="158">
@@ -1120,8 +1107,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="배경색" id="161">
@@ -1141,8 +1126,6 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                     </subviews>
@@ -1171,7 +1154,7 @@
                                                             <action selector="changeConsoleFont:" target="-2" id="484"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="168">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="168">
                                                         <rect key="frame" x="89" y="11" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="169">
@@ -1182,8 +1165,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="배경색" id="170">
@@ -1203,8 +1184,6 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="문자색" id="172">
@@ -1224,8 +1203,6 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="콘솔창 위치" id="174">
@@ -1274,8 +1251,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="콘솔창 리사이즈" id="181">
@@ -1285,8 +1260,6 @@
                                                 <rect key="frame" x="2" y="2" width="304" height="51"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="182">
@@ -1350,8 +1323,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                     </subviews>
@@ -1401,8 +1372,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="기본 조판 명령" id="199">
@@ -1445,7 +1414,7 @@
                                                             <action selector="defaultProgramChanged:" target="-2" id="454"/>
                                                         </connections>
                                                     </matrix>
-                                                    <textField verticalHuggingPriority="750" id="206">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="206">
                                                         <rect key="frame" x="16" y="26" width="181" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="207">
@@ -1459,8 +1428,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="파일 저장시" id="208">
@@ -1483,8 +1450,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="조판 후 동작" id="211">
@@ -1522,8 +1487,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="Sync 방식" id="216">
@@ -1572,8 +1535,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                     </subviews>
@@ -1591,7 +1552,7 @@
                                                 <rect key="frame" x="2" y="2" width="220" height="120"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="226">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="226">
                                                         <rect key="frame" x="14" y="54" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="227">
@@ -1600,7 +1561,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="228">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="228">
                                                         <rect key="frame" x="17" y="76" width="186" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="229">
@@ -1612,7 +1573,7 @@
                                                             <action selector="texProgramChanged:" target="-2" id="449"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="230">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="230">
                                                         <rect key="frame" x="14" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="231">
@@ -1621,7 +1582,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="232">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="232">
                                                         <rect key="frame" x="17" y="32" width="186" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="233">
@@ -1668,8 +1629,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="TeX + dvips + distiller" id="240">
@@ -1679,7 +1638,7 @@
                                                 <rect key="frame" x="2" y="2" width="243" height="120"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="241">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="241">
                                                         <rect key="frame" x="12" y="76" width="211" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="242">
@@ -1691,7 +1650,7 @@
                                                             <action selector="texGSProgramChanged:" target="-2" id="457"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="243">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="243">
                                                         <rect key="frame" x="12" y="30" width="211" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="244">
@@ -1714,7 +1673,7 @@
                                                             <action selector="savePSPressed:" target="-2" id="459"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="247">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="247">
                                                         <rect key="frame" x="14" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="248">
@@ -1734,7 +1693,7 @@
                                                             <action selector="defaultEngineCall:" target="-2" id="525"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="251">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="251">
                                                         <rect key="frame" x="14" y="53" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="252">
@@ -1756,8 +1715,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="경로 설정" id="255">
@@ -1767,7 +1724,7 @@
                                                 <rect key="frame" x="2" y="2" width="487" height="98"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="256">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="256">
                                                         <rect key="frame" x="8" y="33" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Distiller (ghostscript) (default: /usr/local/bin)" id="257">
@@ -1776,7 +1733,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="258">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="258">
                                                         <rect key="frame" x="11" y="55" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="259">
@@ -1788,7 +1745,7 @@
                                                             <action selector="tetexBinPathChanged:" target="-2" id="458"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="260">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="260">
                                                         <rect key="frame" x="8" y="80" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="(pdf)TeX (default: /Library/TeX/texbin OR /usr/texbin)" id="261">
@@ -1797,7 +1754,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="262">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="262">
                                                         <rect key="frame" x="11" y="8" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="263">
@@ -1811,8 +1768,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="명령 찾기" id="264">
@@ -1822,7 +1777,7 @@
                                                 <rect key="frame" x="2" y="2" width="487" height="56"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="265">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="265">
                                                         <rect key="frame" x="8" y="24" width="478" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="kpsetool (default: kpsetool -w -n latex tex)" id="266">
@@ -1831,7 +1786,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="267">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="267">
                                                         <rect key="frame" x="11" y="13" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="268">
@@ -1845,8 +1800,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="BibTeX 엔진" id="269">
@@ -1856,7 +1809,7 @@
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="270">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="270">
                                                         <rect key="frame" x="8" y="24" width="478" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="default: bibtex" id="271">
@@ -1865,7 +1818,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="272">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="272">
                                                         <rect key="frame" x="11" y="13" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="273">
@@ -1879,8 +1832,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                     </subviews>
@@ -1909,7 +1860,7 @@
                                                             <action selector="colorMapChanged:" target="-2" id="475"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" id="279">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="279">
                                                         <rect key="frame" x="11" y="60" width="82" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="전경색" id="280">
@@ -1926,7 +1877,7 @@
                                                             <action selector="copyForeColorChanged:" target="-2" id="472"/>
                                                         </connections>
                                                     </colorWell>
-                                                    <textField verticalHuggingPriority="750" id="282">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="282">
                                                         <rect key="frame" x="11" y="16" width="162" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="전경색 농도" id="283">
@@ -1958,7 +1909,7 @@
                                                             <action selector="colorParam1Changed:" target="-2" id="474"/>
                                                         </connections>
                                                     </popUpButton>
-                                                    <textField verticalHuggingPriority="750" id="295">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="295">
                                                         <rect key="frame" x="139" y="60" width="85" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="배경색" id="296">
@@ -1977,8 +1928,6 @@
                                                     </colorWell>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="복사할 이미지 형식" id="298">
@@ -2013,8 +1962,6 @@
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                     </subviews>
@@ -2032,7 +1979,7 @@
                                                 <rect key="frame" x="2" y="2" width="353" height="95"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" id="313">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="313">
                                                         <rect key="frame" x="9" y="28" width="153" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="LaTeX 프로그램 (기본값없음)" id="314">
@@ -2041,7 +1988,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="315">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="315">
                                                         <rect key="frame" x="12" y="55" width="329" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="316">
@@ -2053,7 +2000,7 @@
                                                             <action selector="texScriptProgramChanged:" target="-2" id="453"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="317">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="317">
                                                         <rect key="frame" x="8" y="73" width="142" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="TeX 프로그램 (기본값없음)" id="318">
@@ -2062,7 +2009,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" id="319">
+                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="319">
                                                         <rect key="frame" x="13" y="10" width="328" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="320">
@@ -2076,8 +2023,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="Distiller" id="321">
@@ -2115,8 +2060,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="일본어 pTeX 지원" id="326">
@@ -2139,8 +2082,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="일본어 파일 저장" id="329">
@@ -2163,8 +2104,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="프로젝트 루트 파일" id="332">
@@ -2198,8 +2137,6 @@
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="Sparkle 업데이트 관리자" id="549">
@@ -2254,8 +2191,6 @@
                                                     </matrix>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                     </subviews>
@@ -2263,8 +2198,8 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
-                    <button verticalHuggingPriority="750" id="337">
-                        <rect key="frame" x="388" y="13" width="84" height="33"/>
+                    <button verticalHuggingPriority="750" misplaced="YES" id="337">
+                        <rect key="frame" x="388" y="6" width="84" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="취소" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="338">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2277,8 +2212,8 @@ Gw
                             <action selector="cancelButtonPressed:" target="-2" id="446"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="339">
-                        <rect key="frame" x="472" y="14" width="84" height="32"/>
+                    <button verticalHuggingPriority="750" misplaced="YES" id="339">
+                        <rect key="frame" x="472" y="7" width="84" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="push" title="승인" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="340">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2291,8 +2226,8 @@ DQ
                             <action selector="okButtonPressed:" target="-2" id="445"/>
                         </connections>
                     </button>
-                    <popUpButton verticalHuggingPriority="750" id="341">
-                        <rect key="frame" x="17" y="18" width="161" height="26"/>
+                    <popUpButton verticalHuggingPriority="750" misplaced="YES" id="341">
+                        <rect key="frame" x="17" y="11" width="161" height="26"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <popUpButtonCell key="cell" type="push" title="설정 프로파일" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="344" id="342">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -2354,7 +2289,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="441"/>
             </connections>
-            <point key="canvasLocation" x="524" y="432.5"/>
+            <point key="canvasLocation" x="120" y="239.5"/>
         </window>
     </objects>
 </document>

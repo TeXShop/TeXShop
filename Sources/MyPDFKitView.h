@@ -28,10 +28,14 @@
 #import "OverView.h"
 #import "TSDocument.h"
 
-
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
                     IBOutlet	id								currentPage;
+    // "currentPage" is a very dangerous choice, because the PDFView class has a method called 'currentPage"
+    // used by our code. But the instance variable holds the 'current page textbox' Luckily, the class has no
+    // [self currentPage] method returning this variable. Therefore, all uses like [currentPage setValue:19]
+    // refer to the textbox, but [self currentPage] gives the PDFPage in the document which is current. Gulp.
+    
                     IBOutlet	id								scurrentPage;
                     IBOutlet    id								totalPage;
                     IBOutlet    NSTextField                     *stotalPage;
@@ -42,7 +46,8 @@
                     IBOutlet	id								currentPage1;
                     IBOutlet	id								totalPage1;
                     IBOutlet	id								myScale1;
-                    IBOutlet	id								myStepper1;
+                    IBOutlet	id 								myStepper1;
+                       
 // @property (weak) IBOutlet	TSDocument						*myDocument;
                     IBOutlet	NSDrawer						*_drawer;
 //           PDFOutline						*_outline;
@@ -82,7 +87,7 @@
 //	id								imageTypeView;
 //	id								imageTypePopup;
 
-	NSInteger								pageIndexForMark;
+	NSInteger						pageIndexForMark;
 	NSRect							pageBoundsForMark;
 	BOOL							drawMark;
 	BOOL							showSync;
@@ -105,14 +110,13 @@
     NSRect							syncRect[200];
 	int								numberSyncRect;
 //    OverView                        *overView;
-
 	
 	
 }
 
 @property (retain) PDFOutline						*outline;
 @property (retain) NSMutableArray					*searchResults;
-@property (retain) NSWindow                         *myPDFWindow;
+@property (weak) TSPreviewWindow                    *myPDFWindow;
 @property (retain) NSTimer							*selRectTimer;
 @property (retain) id								imageTypeView;
 @property (retain) id								imageTypePopup;
@@ -120,6 +124,10 @@
 @property (retain) OverView                        *overView;
 @property           BOOL                            waiting;
 @property (weak)    IBOutlet	TSDocument          *myDocument;
+@property (retain) NSString                         *oneOffSearchString;
+@property           BOOL                            toolbarFind;
+@property           NSInteger                       handlingLink; // 0 = NO, 1 = Possible, 2 = ShowingLink
+@property           NSInteger                       timerNumber; // 0 <= timerNumber <= 100
 
 
 // - (void) scheduleAddintToolips;
@@ -158,6 +166,9 @@
 - (void) lastPage: (id)sender;
 - (IBAction) changeScale: sender;
 - (IBAction) doStepper: sender;
+- (IBAction) doFind: sender;
+- (IBAction) doFindOne: sender;
+- (void) doFindAgain;
 - (double)magnification;
 - (void) setMagnification: (double)magnification;
 - (void) changePageStyle: (id)sender;
@@ -222,10 +233,19 @@
 - (NSInteger)index;
 - (NSImage *)imageFromSelection;
 - (NSDrawer *)drawer;
+- (void) breakConnections;
 // - (void) setOverView:(OverView *)theOveView;
 // - (OverView *)overView;
 // - (BOOL)resignFirstResponder;
 - (void)fixWhiteDisplay;
+@end
+
+@interface MyPDFKitView (PDFDocumentDelegate)
+- (void) documentDidBeginDocumentFind: (NSNotification *) notification;
+- (void) documentDidEndDocumentFind: (NSNotification *) notification;
+- (void) documentDidEndPageFind: (NSNotification *)notification;
+- (void) documentDidFindMatch: (NSNotification *)notification;
+
 @end
 
 @interface MyPDFKitView (Magnification)
@@ -233,5 +253,6 @@
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
 - (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 @end
+
 
 

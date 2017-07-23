@@ -31,7 +31,7 @@
 //	TSDocument	*myDocument;
 }
 
-@property (retain) TSDocument	*myDocument;
+@property (weak) TSDocument	*myDocument;
 
 - (void) displayLog: sender;
 - (void) displayConsole: sender;

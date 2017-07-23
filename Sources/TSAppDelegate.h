@@ -60,4 +60,5 @@
 - (void)configureMovieMenu;
 - (IBAction)doMovie:(id)sender;
 // - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
+- (void)makeDefaultEditor:(id)sender;
 @end

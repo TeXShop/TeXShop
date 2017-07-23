@@ -108,11 +108,12 @@ enum RootCommand
     IBOutlet    NSDrawer        *myDrawer;
     BOOL                        useFullSplitWindow;
     
+    IBOutlet    NSSearchField   *mySearchField;
+    
 
-	IBOutlet MyPDFKitView		*myPDFKitView;
-	IBOutlet TSPreviewWindow	*pdfKitWindow;
-    IBOutlet TSPreviewWindow    *pdfKitWindow1;
-	IBOutlet MyPDFKitView		*myPDFKitView2;
+	// IBOutlet MyPDFKitView		*myPDFKitView;
+	// IBOutlet TSPreviewWindow	*pdfKitWindow;
+	// IBOutlet MyPDFKitView		*myPDFKitView2;
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
 	IBOutlet NSTextView			*outputText;		/*" text displaying the output of the running TeX process "*/
@@ -230,7 +231,7 @@ enum RootCommand
 //	NSTask              *synctexTask;
 //	NSPipe              *synctexPipe;
 //	NSFileHandle        *synctexHandle;
-    synctex_scanner_t	scanner;
+    struct synctex_scanner_t *scanner;
 
 
 //	NSDate		*startDate;
@@ -283,6 +284,11 @@ enum RootCommand
 	BOOL		omitShellEscape;
 	BOOL		withLatex;
 
+    // for Jobs
+    NSString    *parameterString;
+    BOOL        parameterExists;
+    
+    
 //	NSDate              *_pdfLastModDate;
 //	NSTimer             *_pdfRefreshTimer;
 //  id                  _pdfActivity;
@@ -372,6 +378,8 @@ enum RootCommand
 @property (retain) NSPDFImageRep       *texRep;
 
 @property (retain)  NSString            *spellLanguage;
+@property           BOOL                automaticSpelling;
+
 @property (retain)  NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 @property (retain)  NSWindow            *ourCallingWindow;
 @property (retain)  NSDate              *pdfLastModDate;
@@ -400,6 +408,9 @@ enum RootCommand
 @property (retain) 	TSFullscreenWindow	*fullscreenWindow;
 @property (retain)  PDFView				*fullscreenPDFView;
 @property (retain)  TSDocument          *rootDocument;
+@property (retain)  IBOutlet    MyPDFKitView				*myPDFKitView;
+@property (retain)  IBOutlet    MyPDFKitView				*myPDFKitView2;
+@property (retain)  IBOutlet    TSPreviewWindow				*pdfKitWindow;
 
 @property (retain)   MySelection         *mSelection;
 @property (retain)   NSTextStorage       *textStorage;
@@ -493,7 +504,6 @@ enum RootCommand
 - (void) setupTags;
 - (TSDocumentType) documentType;
 - (id) pdfWindow;
-- (id) pdfKitWindow;
 - (id) fullSplitWindow;
 - (id) textWindow;
 - (id) textView;
@@ -548,8 +558,6 @@ enum RootCommand
 // Forward Routines Not Found by Source
 - (BOOL)fillLogWindow;
 - (void)fillLogWindowIfVisible;
-- (MyPDFKitView *)myPdfKitView;
-- (MyPDFKitView *)myPdfKitView2;
 - (void)enterFullScreen: (NSNotification *)notification;
 - (void)exitFullScreen: (NSNotification *)notification;
 - (BOOL)skipTextWindow;
@@ -563,6 +571,7 @@ enum RootCommand
 - (void) doAssociatedWindow;
 - (void) makeWindowControllers;
 - (void) runPageLayout:sender;
+- (NSSearchField *) pdfKitSearchField;
 
 
 // BibDesk Completion
@@ -745,7 +754,6 @@ enum RootCommand
 
 @interface TSDocument (FileAssociations)
 
-- (void)makeDefaultEditor:(id)sender;
 
 @end
 

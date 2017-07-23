@@ -30,7 +30,7 @@
 {
 	IBOutlet NSWindow	*_prefsWindow;			/*" connected to the window "*/
 	IBOutlet NSTextField	*_documentFontTextField;	/*" connected to "Document Font" "*/
-	IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
+    IBOutlet NSTextField	*_consoleFontTextField;     /*" connected to "Console Font" */
 	IBOutlet NSMatrix	*_sourceWindowPosMatrix;	/*" connected to "Source Window Position" "*/
 	IBOutlet NSButton	*_docWindowPosButton;		/* connected to set current position button */
     IBOutlet NSButton	*_consoleWindowPosButton;		/* connected to set current position button */
@@ -149,6 +149,7 @@
 //	BOOL            makeatletterTouched; // added by Terada
     BOOL            sparkleTouched;
 	
+    IBOutlet NSPopUpButton  *dictionaryPopup;
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
 	IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
 	IBOutlet NSPopUpButton	*_resizeOptionPopup;// mitsu 1.29 (O) /*" connected to resize option popup button "*/
@@ -173,6 +174,7 @@
 
 - (IBAction)changeDocumentFont:sender;
 - (IBAction)changeConsoleFont:sender;
+- (IBAction)setDictionaryFrom:sender;
 - (IBAction)sourceWindowPosChanged:sender;
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
@@ -201,6 +203,7 @@
 - (IBAction)magChanged:sender;
 - (IBAction)scrollPressed:sender;
 - (IBAction)firstDoublePageChanged:sender;
+- (IBAction)dctionaryPressed: sender;
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;

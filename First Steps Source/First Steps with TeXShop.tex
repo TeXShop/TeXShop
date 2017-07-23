@@ -39,9 +39,14 @@ TeXShop is a graphical interface to \TeX, allowing users to prepare manuscripts 
 
 \section{Getting Both Parts}
 
-To use TeXShop, it is necessary to install both  \TeX\ and TeXShop. Clearly you have TeXShop. The \TeX\ installation is usually hidden away on Unix systems like the Mac;  to see if it is present, open Apple's System Preferences and find the preference pane named ``TeX Distribution'' at the bottom of the panel. If it is absent, you either have an old \TeX\ distribution or none at all. Otherwise the TeX Distribution pane will list available \TeX\ distributions and indicate which one is currently active.
+To use TeXShop, it is necessary to install both  \TeX\ and TeXShop. Clearly you have TeXShop. The \TeX\ installation is usually hidden away on Unix systems like the Mac;  to see if it is present, open Terminal in /Applications/Utiliies and type the following commands. Since Unix is very picky about Terminal syntax, it is better to copy these commands and paste them into Terminal. 
+\begin{verbatim}
+	cd /Library/TeX/texbin
+	ls
+\end{verbatim}
+Terminal should output a large list of programs, including tex, latex, pdflatex, xelatex, etc. 
 
-If you don't have the preference pane, go to  \url{www.tug.org/mactex}. You will find the main \TeX\ distribution there : MacTeX (about 1.3 GB). A smaller TeX distribution is available at \url{www.tug.org/mactex/2009/morepackages}, BasicTeX (about 85 MB). Download and install the second if you have a slow connection; otherwise download and install the first. Installation is completely straightforward.
+If instead Terminal lists an error message, go to  \url{www.tug.org/mactex}. You will find the main \TeX\ distribution there : MacTeX (about 1.3 GB). A smaller TeX distribution is available at \url{www.tug.org/mactex} by clicking on the {\bf Smaller Download} link and selecting  BasicTeX (about 85 MB). Download and install the second if you have a slow connection; otherwise download and install the first. Installation is completely straightforward.
 
 \section{Starting TeXShop}
 
@@ -149,6 +154,8 @@ The tool at the extreme right allows you to select a portion of the typeset outp
 This is unfortunate, but TeXShop cannot control what other programs do with the information it provides.
 
 Several \TeX\ packages produce slides; among the most commonly used is a package named Beamer. In the TeXShop Window menu, the Fullscreen item converts the Preview window into a fullscreen display, which if useful if you are projecting the slides on a screen. Keys and the Mouse are still active, so you can page through the slides using Spacebar and Shift-Spacebar or the arrow keys,  and click on links to activate them. Hit the escape key to return to regular mode.
+
+In modern Apple systems, Apple provides a separate fullscreen mode activated by clicking the green button at top-left of a window. TeXShop also supports this behavior. For slides, try both modes to determine the one which works best.
 
 \section{Preview Window Configuration}
 There are several ways to configure the Preview window. By default, it has a scrollbar; you can use the bar to scroll  through the document's pages. Also by default, the preview image expands to fill the Preview window.

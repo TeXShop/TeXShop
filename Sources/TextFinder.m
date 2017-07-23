@@ -35,7 +35,7 @@ static id sharedFindObject = nil;
 
 + (id)sharedInstance {
 	if (!sharedFindObject) {
-		[[self alloc] init];
+        sharedFindObject = [[self alloc] init];
 	}
 	return sharedFindObject;
 }

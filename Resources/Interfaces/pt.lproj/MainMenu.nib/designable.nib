@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D9c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -27,12 +28,18 @@
                                     <action selector="checkForUpdates:" target="784" id="785"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="625">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
                             <menuItem title="Preferências..." keyEquivalent="," id="225">
                                 <connections>
                                     <action selector="showPreferences:" target="380" id="381"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="625">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="GNU Public License" id="BXF-hi-Woi">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayGPLLicense:" target="671" id="ymQ-R5-dij"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Abrir pasta ~/Library/TeXShop" id="kyA-1c-oKX">
@@ -231,6 +238,12 @@
                             <menuItem title="Colar" keyEquivalent="v" id="8">
                                 <connections>
                                     <action selector="paste:" target="-1" id="32"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Colar comentado" id="yMw-HS-cuT">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="pasteAsComment:" target="-1" id="Ees-Dy-8DC"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Apagar" id="128">
@@ -1262,7 +1275,7 @@ Gw
                         <rect key="frame" x="-1" y="60" width="513" height="382"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="gZg-tI-FLB">
-                            <rect key="frame" x="1" y="17" width="511" height="364"/>
+                            <rect key="frame" x="1" y="0.0" width="511" height="381"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="870" id="871">
@@ -1306,7 +1319,6 @@ Gw
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="872">
                             <rect key="frame" x="1" y="482" width="387" height="15"/>

@@ -455,8 +455,10 @@ extern NSString *reverseSyncGreenKey;
 extern NSString *reverseSyncBlueKey;
 extern NSString *AutomaticSpellingCorrectionEnabledKey;
 extern NSString *FixSplitBlankPagesKey;
-
-
+extern NSString *IndexColorStartKey;
+extern NSString *spellingLanguageDefaultKey;
+extern NSString *spellingAutomaticDefaultKey;
+extern NSString *originalSpellingKey;
 
 
 // end defaults
@@ -515,13 +517,6 @@ extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
 extern NSInteger            g_commentChar;
 
-// Now in Global Data
-// extern NSDictionary			*g_autocompletionDictionary;  // added by Greg Landweber
-// extern NSArray				*g_autocompletionKeys; // added by Terada
-
-// extern BOOL					spellLanguageChanged; // Spelling (defaults if not changed by document tag)
-extern BOOL                 specialWindowOpened; // YES if a window containing a % !TEX language directive was opened
-extern BOOL					automaticLanguage;
 
 extern NSStringEncoding    NSISOLatin9StringEncoding;
 
@@ -534,6 +529,7 @@ extern BOOL             doAutoSave;
 extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes
 extern BOOL             atLeastMavericks;
 extern BOOL             atLeastElCapitan;
+extern BOOL             atLeastSierra;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

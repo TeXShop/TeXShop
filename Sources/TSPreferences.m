@@ -229,12 +229,14 @@ Clicking this button will bring up the font panel.
 "*/
 - (IBAction)changeDocumentFont:sender
 {
-	// become first responder so we will see the envents that NSFontManager sends
+	// become first responder so we will see the events that NSFontManager sends
 	// up the responder chain
 	[_prefsWindow makeFirstResponder:_prefsWindow];
 	[[NSFontManager sharedFontManager] setSelectedFont:self.documentFont isMultiple:NO];
 	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
 }
+
+
 
 - (IBAction)changeConsoleResize:sender
 {
@@ -1145,6 +1147,31 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 #endif
 
 
+
+- (IBAction)setDictionaryFrom: sender
+
+{
+    
+    NSString *language = [[sender selectedItem] title];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger: [SUD integerForKey: spellingAutomaticDefaultKey] forKey: spellingAutomaticDefaultKey];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject: [SUD objectForKey: spellingLanguageDefaultKey] forKey: spellingLanguageDefaultKey];
+    
+    if ([language isEqualToString: @"Automatic Language"])
+    {
+        [SUD setBool:YES forKey:spellingAutomaticDefaultKey];
+        [SUD setObject:@" " forKey:spellingLanguageDefaultKey];
+    }
+    else
+    {
+        [SUD setBool:NO forKey:spellingAutomaticDefaultKey];
+        [SUD setObject:language forKey:spellingLanguageDefaultKey];
+    }
+    
+}
+
+
 //==============================================================================
 /*" This method is connected to the textField that holds the tetex bin path.
 "*/
@@ -1722,6 +1749,32 @@ This method retrieves the application preferences from the defaults object and s
     [_sparkleAutomaticButton setState: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
+    [_consoleMatrix selectCellWithTag: [defaults integerForKey: ConsoleBehaviorKey]];
+
+    [dictionaryPopup addItemWithTitle: @"Automatic Language"];
+    NSArray *theLanguages = [[NSSpellChecker sharedSpellChecker] availableLanguages];
+    NSInteger numberOfItems = [theLanguages count];
+    NSInteger i = 0;
+    while (i < numberOfItems)
+    {
+        [dictionaryPopup addItemWithTitle: [theLanguages objectAtIndex: i]];
+        i = i + 1;
+    }
+    BOOL useAutomatic = [defaults boolForKey: spellingAutomaticDefaultKey];
+    NSString *myLanguage = [defaults objectForKey: spellingLanguageDefaultKey];
+    if (useAutomatic)
+        [dictionaryPopup selectItemAtIndex: 0];
+    else
+    {
+        i = 0;
+        while (i < numberOfItems)
+            {
+            if ( [myLanguage isEqualToString: [dictionaryPopup itemTitleAtIndex: (i + 1)]])
+                  [dictionaryPopup selectItemAtIndex: (i + 1)];
+                  i = i + 1;
+            }
+    }
+    
 	
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada

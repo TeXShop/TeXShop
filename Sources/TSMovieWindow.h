@@ -7,15 +7,19 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <QTKit/QTKit.h> 
+#import <AVKit/AVKit.h>
+#import <AVKit/AVPlayerView.h>
+#import <AVFoundation/AVPlayer.h>
 
 
 
 @interface TSMovieWindow : NSWindow {
 
+    
+    
 }
 
-@property (retain) QTMovieView	*myMovieView;
+@property (nonatomic, strong) IBOutlet AVPlayerView   *myPlayerView;
 
 - (void)close;
 

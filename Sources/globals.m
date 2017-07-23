@@ -242,6 +242,10 @@ NSString *reverseSyncGreenKey = @"ReverseSyncGreen";
 NSString *reverseSyncBlueKey = @"ReverseSyncBlue";
 NSString *AutomaticSpellingCorrectionEnabledKey = @"AutomaticSpellingCorrectionEnabled";
 NSString *FixSplitBlankPagesKey = @"FixSplitBlankPages";
+NSString *IndexColorStartKey = @"IndexColorStart";
+NSString *spellingLanguageDefaultKey = @"SpellingLanguageDefault";
+NSString *spellingAutomaticDefaultKey = @"SpellingAutomaticDefault";
+NSString *originalSpellingKey = @"OriginalSpelling";
 
 
 // Paths
@@ -297,9 +301,6 @@ TSFilterMode		g_shouldFilter;
 NSInteger			g_texChar;
 NSInteger           g_commentChar;
 
-// Now in GlobalData
-// NSDictionary		*g_autocompletionDictionary;
-// NSArray			*g_autocompletionKeys;  // added by Terada
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
@@ -308,6 +309,7 @@ BOOL                doAutoSave; // this is present so changes in AutoSave only t
 BOOL                activateBauerPatch; // this is set in
 BOOL                atLeastMavericks;
 BOOL                atLeastElCapitan;
+BOOL                atLeastSierra;
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;
@@ -321,9 +323,6 @@ NSColor *PreviewBackgroundColor = nil;
 NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
 
-// Spelling (defaults if not changed by document tag)
-BOOL        specialWindowOpened; // YES if a window containing a % !TEX language directive is the main window
-BOOL		automaticLanguage;
 
 // Koch 8/24/03
 NSInteger	g_macroType;	// FIXME: get rid of this

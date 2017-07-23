@@ -38,6 +38,7 @@
 
 // // QUESTIONABLE_BUG_FIX  (Search for this)
 
+
 #import "MyPDFKitView.h"
 #import "MyPDFView.h"
 #import "globals.h"
@@ -56,26 +57,16 @@
 
 @implementation MyPDFKitView : PDFView
 
-- (void) dealloc
+- (void) breakConnections
 {
-	
+    // Breaks retain cycles to prevent memory leaks.
     [self cleanupMarquee: YES];
+    [self.myPDFWindow setDelegate:nil];
+    [[self document] setDelegate:nil];
+    [self setDocument:nil];
 	
 	// No more notifications.
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-
-	// Clean up.
-/*
-	if (self.searchResults != NULL) {
-		[self.searchResults removeAllObjects];
-		[self.searchResults release];
-		self.searchResults = NULL;
-	}
-	[self.sourceFiles release];
-
-
-	[super dealloc];
- */
 }
 
 - (id)init
@@ -83,7 +74,10 @@
 	// WARNING: This may never be called. (??)	
 	if ((self = [super init])) {
 		protectFind = NO;
-		}
+        self.handlingLink = 0;
+        self.timerNumber = 0;
+        self.oneOffSearchString = NULL;
+  		}
      return self;
 }
 
@@ -160,11 +154,24 @@
 - (void) initializeDisplay
 {
     
-
+    protectFind = NO;
+    self.handlingLink = 0;
+    self.timerNumber = 0;
+    self.oneOffSearchString = NULL;
+    
+    
+    // The initial Sierra beta had horrible scrolling, which the line below fixed
+    // Apple fixed the bug in the second beta, but I kept the line through 3.73
+    // I removed it in 3.74, but Sierra scrolling then became somewhat jerky. I think this is
+    // a bug, and it may have crept back in 10.12.1. At any rate, DON"T REMOVE THE LINE
+    [self setDisplayMode: kPDFDisplaySinglePage];
+    
     [self.myPDFWindow setDelegate: self];
     
 	downOverLink = NO;
 	
+    // pageStyle = kPDFDisplaySinglePage;
+    // [self setupPageStyle];
 	drawMark = NO;
 	showSync = NO;
 	if ([SUD boolForKey:ShowSyncMarksKey])
@@ -301,12 +308,18 @@
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scaleChanged:)
 												 name: PDFViewScaleChangedNotification object: self];
 	// Find notifications.
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(startFind:)
+    /*
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidBeginDocumentFind:)
 												 name: PDFDocumentDidBeginFindNotification object: NULL];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(findProgress:)
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidEndPageFind:)
 												 name: PDFDocumentDidEndPageFindNotification object: NULL];
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(endFind:)
+   	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidEndDocumentFind:)
 												 name: PDFDocumentDidEndFindNotification object: NULL];
+  //  [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidFindMatch:)
+  //                                               name: PDFDocumentDidFindMatchNotification object: NULL];
+  //  [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(didMatchString:)
+  //                                               name: PDFDocumentDidFindMatchNotification object: NULL];
+     */
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(changeMagnification:)
 												 name:MagnificationChangedNotification object:nil];
@@ -362,7 +375,7 @@
         return;
     */
     TSDocument *myDocument = self.myDocument;
-    TSPreviewWindow *myWindow = [myDocument pdfKitWindow];
+    TSPreviewWindow *myWindow = myDocument.pdfKitWindow;
         if (! myWindow.windowIsSplit)
         return;
     
@@ -393,6 +406,9 @@
 // added by Terada for the blurring bug of Yosemite and El Capitan
 - (void) removeBlurringByResettingMagnification
 {
+    
+    
+    
     float originalScale = self.magnification;
     BOOL autoScales = self.autoScales;
     [self performSelector:@selector(changeScaleFactorForRemovingBlurringWithParameters:)
@@ -403,8 +419,14 @@
 
 - (void) showWithPath: (NSString *)imagePath
 {
-	PDFDocument	*pdfDoc;
+
+    
+    
+    PDFDocument	*pdfDoc;
 	NSData	*theData;
+    PDFPage        *aPage;
+    NSRect          visibleRect;
+    
     
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
         NSDisableScreenUpdates();
@@ -426,7 +448,9 @@
 		pdfDoc = [[PDFDocument alloc] initWithData: theData];
 		[self setDocument: pdfDoc];
 	}
-		
+    
+    
+    
 	[self setup];
 	totalPages = [[self document] pageCount];
 	[totalPage setIntegerValue:totalPages];
@@ -436,7 +460,10 @@
     [stotalPage display];
 	[totalPage1 display];
 	[[self document] setDelegate: self];
-	[self setupOutline];
+    
+    
+    
+    [self setupOutline];
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
         NSEnableScreenUpdates();
 	
@@ -445,10 +472,27 @@
         [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
+    
+     aPage = [[self document] pageAtIndex: 0];
+    [self goToPage: aPage];
+    visibleRect = [[self documentView] bounds];
+     visibleRect.origin.x = visibleRect.size.width / 2.0;
+    visibleRect.origin.y = visibleRect.size.height;
+     visibleRect.size.width = 10;
+     visibleRect.size.height = 10;
+    [[self documentView] scrollRectToVisible: visibleRect];
+    
+    
+    
+    
+    
+
 }
 
 - (void) showForSecond;
 {
+    
+    
 	// totalRotation = 0;
 	self.sourceFiles = nil;
 	
@@ -480,8 +524,9 @@
     
     
 //	 [[self window] disableFlushWindow];
+    
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
-       NSDisableScreenUpdates();
+        NSDisableScreenUpdates();
 
 	[self cleanupMarquee: YES];
 	
@@ -559,9 +604,11 @@
 	// In the code below, you'd think that goToPage should be inside the disableFlushWindow,
 	// but it doesn't seem to work there. If changes are made, be sure to test on
 	// Intel and on PowerPC.
-	aPage = [[self document] pageAtIndex: theindex];
-	[self goToPage: aPage];
-	
+	 
+    aPage = [[self document] pageAtIndex: theindex];
+    [self goToPage: aPage];
+    
+   
     NSRect newFullRect = [[self documentView] bounds];
     NSInteger difference = newFullRect.size.height - fullRect.size.height;
     
@@ -572,9 +619,17 @@
     
     
 //	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
-    visibleRect.origin.y = visibleRect.origin.y + difference;
+    visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
 
+    
+//    NSLog(@"The index is %d", theindex);
+//    [currentPage setIntegerValue:theindex];
+//    [currentPage display];
+//   [self pageChanged: nil];
+    
+    
+ 
 /*
 //   The test just below seems to show that we need to adjust by -1, and then
 //   the visible rect ends up in the correct spot. Perhaps this is the width of the
@@ -664,7 +719,6 @@
 
 - (void) reShowForSecond
 {
- 	
 	PDFPage		*aPage;
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
     {
@@ -884,12 +938,18 @@
 	NSUInteger	newPageIndex;
 	NSIndexSet		*myIndexSet;
     PDFOutline      *outlineItem;
+    
+    if (notification.object != self.myPDFWindow.activeView)
+        return;
 	
 	aPage = [self currentPage];
 	pageNumber = [[self document] indexForPage: aPage] + 1;
-	[currentPage setIntegerValue:pageNumber];
+ 	[currentPage setIntegerValue:pageNumber];
     [scurrentPage setIntegerValue:pageNumber];
 	[currentPage1 setIntegerValue:pageNumber];
+    [currentPage display];
+    [scurrentPage display];
+    [currentPage1 display];
     
  	// Skip out if there is no outline.
 //	if ([[self document] outlineRoot] == NULL)
@@ -1444,10 +1504,98 @@
 	return [(PDFOutline *)item label];
 }
 
+- (void) doFindOne: (id) sender
+{
+   
+    PDFSelection                    *searchSelection;
+    self.oneOffSearchString = [sender stringValue];
+    
+    self.toolbarFind = YES;
+
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+    
+    searchSelection = [self currentSelection];
+    
+    if (flags & NSShiftKeyMask)
+    
+        searchSelection = [[self document] findString: [sender stringValue]
+                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+        
+   else
+        
+        searchSelection = [[self document] findString: [sender stringValue]
+                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    
+    
+    if (searchSelection != NULL)
+    {
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
+        [self setCurrentSelection: searchSelection];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+    }
+    
+    [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+    
+/*
+    if (searchSelection == NULL)
+    {
+        [self clearSelection];
+    }
+ */
+        
+
+}
+
+- (void) doFindAgain
+{
+    PDFSelection                    *searchSelection;
+    
+    self.toolbarFind = YES;
+    
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+    
+    searchSelection = [self currentSelection];
+    
+    if (flags & NSShiftKeyMask)
+        
+        searchSelection = [[self document] findString: self.oneOffSearchString
+                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+    
+    else
+        
+        searchSelection = [[self document] findString: self.oneOffSearchString
+                                        fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    
+    
+    if (searchSelection != NULL)
+    {
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
+        [self setCurrentSelection: searchSelection];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+    }
+    
+    if (searchSelection == NULL)
+    {
+        [self clearSelection];
+    }
+
+}
+
 
 - (void) doFind: (id) sender
 {
-	if (protectFind) {
+   
+    // E. Lazarr discovered that one single space crashes TeXShop; two or more are fine
+    if ([[sender stringValue] isEqualToString:@" "])
+      return;
+    
+    self.toolbarFind = NO;
+    
+    if (protectFind) {
 		// NSLog(@"protectFind");
 		return;
 		}
@@ -1459,13 +1607,19 @@
 	if (_searchResults == NULL)
 		_searchResults = [NSMutableArray arrayWithCapacity: 10];
 
-	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+//	[[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
+
+    [[self document] beginFindString: [sender stringValue] withOptions: NSCaseInsensitiveSearch];
 }
 
 // ------------------------------------------------------------------------------------------------------------ startFind
 
-- (void) startFind: (NSNotification *) notification
+- (void) documentDidBeginDocumentFind: (NSNotification *) notification
 {
+    
+    if (self.toolbarFind)
+        return;
+    
 	if (protectFind) {
 		// NSLog(@"protectFind: start");
 		return;
@@ -1486,11 +1640,14 @@
 
 // --------------------------------------------------------------------------------------------------------- findProgress
 
-- (void) findProgress: (NSNotification *) notification
+- (void) documentDidEndPageFind: (NSNotification *) notification
 {
 	double		pageIndex;
 	
-	if (protectFind) {
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
 		// NSLog(@"protectFind: progress");
 		return;
 	}
@@ -1510,9 +1667,46 @@
 // ------------------------------------------------------------------------------------------------------- didMatchString
 // Called when an instance was located. Delegates can instantiate.
 
+
+- (void) documentDidFindMatch: (NSNotification *) notification
+{
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
+        // NSLog(@"protectFind: match");
+        return;
+    }
+    
+    if (self != [self.myDocument topView])
+        ;
+    else {
+        
+     //   The notification object is the PDFDocument object itself. To determine the string selection found, use the @ÓPDFDocumentFoundSelectionÓ key to obtain userinfo of type PDFSelection *
+        
+        
+        
+        PDFSelection    *instance;
+        NSDictionary    *infoDictionary = notification.userInfo;
+        instance = (PDFSelection *)[infoDictionary objectForKey: @"PDFDocumentFoundSelection"];
+        // Add page label to our array.
+        if (_searchResults != NULL){
+            [_searchResults addObject: [instance copy]];
+            // Force a reload.
+            [_searchTable reloadData];
+        }
+    }
+}
+
+
+/*
 - (void) didMatchString: (PDFSelection *) instance
 {
-	if (protectFind) {
+ 
+    if (self.toolbarFind)
+        return;
+ 
+    if (protectFind) {
 		// NSLog(@"protectFind: match");
 		return;
 	}
@@ -1528,13 +1722,18 @@
 		}
 	}
 }
+ */
+
 
 // -------------------------------------------------------------------------------------------------------------- endFind
 
-- (void) endFind: (NSNotification *) notification
+- (void) documentDidEndDocumentFind: (NSNotification *) notification
 {
-	
-	if (protectFind) {
+    
+    if (self.toolbarFind)
+        return;
+
+    if (protectFind) {
 		// NSLog(@"protectFind: end");
 		return;
 	}
@@ -1589,6 +1788,7 @@
 {
 	NSInteger				rowIndex;
 	NSMutableArray	*_firstSearchResults;
+    PDFSelection    *theSelection;
 	
 	if ([notification object] != _searchTable)
 		return;
@@ -1600,10 +1800,23 @@
 		if (self != [self.myDocument topView]) {
 			_firstSearchResults = [[self.myDocument topView] getSearchResults];
 			[self setCurrentSelection:[_firstSearchResults objectAtIndex: rowIndex]];
+            theSelection = [_firstSearchResults objectAtIndex: rowIndex];
 			}
-		else
+        else {
 			[self setCurrentSelection: [_searchResults objectAtIndex: rowIndex]];
-		[self centerSelectionInVisibleArea: self];
+            theSelection = [_searchResults objectAtIndex: rowIndex];
+            }
+        
+       //  [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+        
+        if (atLeastSierra) {
+            NSArray *thePages = [theSelection pages];
+            PDFPage *aPage = [thePages objectAtIndex: 0];
+            [self goToPage: aPage];
+            }
+        else 
+            [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible: self.myDocument.pdfKitWindow.activeView];
+            
 	}
 }
 
@@ -2240,18 +2453,112 @@
 
 // ----------------------------------------------------------------------------------------------------------- mouseMoved
 
+/*
+ 
+ The following code contains the start of a series of calls which implement "hovering over links".
+ If the user's mouse hovers over a link in the pdf, a window will open showing the corresponding pdf
+ near the linked spot. Thus if hyperref is used and the user hovers over a reference in the text, a window
+ appears showing the corresponding spot in the bibliography.
+ 
+ The hover code is inactive when the mouse is drawing selection rectangles. Otherwise it is active.
+ 
+ Roughly speaking, this process requires three steps. First the mouse enters a link. Second, after a pause,
+ the link window appears. Third, after a further pause, the link window disappears. A PDFView property keeps
+ track of these steps: self.handlingLink. If the value of this variable is zero, nothing is happening.
+ If this variable is one, we are waiting to show the window. If the variable is 2, the window has been
+ shown and we are waiting to close it. Finally, when the window is closed, the variable is reset to zero.
+ 
+ The technology to accomplish this is essentially the same as our magnification technology. An overlay is
+ placed over the pdf window. A pdf image is created from the entire linked page. The overlay then draws by
+ copying from a rectangle in this image and pasting into a rectangle in the pdf view.
+ 
+ These steps require two timer calls. One is a wait of a second to begin showing the popUp. The other is
+ a wait of four seconds before removing the popUp. 
+ 
+ The "hovering over links" code has a few features making life easier for the user. 
+ If the mouse is moved to a different link, the original popUp
+  immediately disappears and is replaced by a new popUp. If the mouse is moved away from links,
+ the popUp  immediately disappears. If the option key is down when the popUp window appears, the popUp
+ will remain until the mouse moves.
+ 
+ It is therefore necessary to avoid the following problem. Suppose the mouse is in one link and is then
+ moved to a second link. The original popUp will then be removed by just removing the overlay, and an image
+ of the second link appears. But then the timer is called which removes the FIRST popup. If we are not careful,
+ this timer will remove the second popup, because popups are removed by removing the overlay. So that second
+ popUp will show briefly on the screen and then be removed.
+ 
+ To fix this problem, our PDFView object has a property called timerNumber. This timer number is an integer
+ between 0 and 5000. Then the system detects a mouse over a link, it increments the timerNumber (where 5000 + 1 = 0).
+The system then remembers the new number and sends is to the Timer which will display the popUp, and also 
+ to the Timer which will close it. Each of the Timers will only do something if the current timerNumber equals
+ the its value when they were created. Therefore, if the popUp for a later link is being created, neither 
+ Timer for an older link will run.
+
+ This code begins its work in the "mouseMoved" routine. This routine does other things unrelated to links.
+ But first, if the mouse moves outside a link area, but handlingLink > 0, all popups are cancelled and
+ handlingLink is set to zero.
+ 
+ Then the routine checks to see if the mouse moved to a spot over a link. If so and self.handlingLink = 0,
+ then this routine fires off a timer to put up a window. If so and self.handlingLink > 0, then we are already
+ handling a link and nothing needs to be done.
+ 
+*/
+
+- (void) increaseTimerNumber
+{
+    if (self.timerNumber < 5000)
+        self.timerNumber = self.timerNumber + 1;
+    else
+        self.timerNumber = 0;
+}
+
+
 - (void) mouseMoved: (NSEvent *) theEvent
 {
+    
+    
+    BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
+    
+   if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
+        // [self increaseTimerNumber];
+        [self doKillPopup]; // sets handlingLink to 0
+    }
+
+    
+    else if (inLink && (self.handlingLink == 0) && (mouseMode != 5)) {
+    
+            [self increaseTimerNumber];
+            NSNumber *timerNumberObject = [NSNumber numberWithInteger: self.timerNumber];
+            self.handlingLink = 1;
+            NSPoint mouseLocation = [NSEvent mouseLocation];
+            NSValue *mouseLocationValue = [NSValue valueWithPoint: mouseLocation];
+            NSArray *info = [NSArray arrayWithObjects: timerNumberObject, mouseLocationValue, theEvent, nil];
+            [NSTimer scheduledTimerWithTimeInterval:0.2
+                                         target:self
+                                       selector:@selector(handleLink:)
+                                       userInfo:info
+                                        repeats:NO];
+            }
+    
+    
+    
+    
+    
+    /*
 	if (mouseMode == NEW_MOUSE_MODE_SELECT_TEXT) {
 		[super mouseMoved: theEvent];
 	}
+    
+   
 	else if (downOverLink) {
-		[super mouseMoved: theEvent];
+        ; //[super mouseMoved: theEvent];
 	}
 	else if (([self areaOfInterestForMouse: theEvent] & kPDFLinkArea) != 0) {
-		[[NSCursor pointingHandCursor] set];
-	}
-	else if (([self areaOfInterestForMouse: theEvent] & kPDFPageArea) != 0) {
+        ; // [[NSCursor pointingHandCursor] set];
+        }
+   
+        else */
+    if (([self areaOfInterestForMouse: theEvent] & kPDFPageArea) != 0) {
 		switch (mouseMode) {
 			case NEW_MOUSE_MODE_SCROLL:
 				[[NSCursor openHandCursor] set];
@@ -2269,6 +2576,147 @@
 	else {
 		[super mouseMoved: theEvent];
 	}
+}
+
+- (void)handleLink: (NSTimer *) theTimer
+{
+    
+    NSPoint         mouseDownLoc, mouseLocDocumentView;
+    PDFPage         *activePage;
+    NSPoint         pagePoint;
+    PDFAnnotation   *theAnnotation;
+    NSURL           *theURL;
+    PDFDestination  *theDestination;
+    PDFPage         *linkedPage;
+    NSPoint         linkedPoint;
+    NSRect          aRect, bRect;
+ NSInteger       H = 120, W = 400;
+    NSRect          pageBounds;
+    
+    
+    
+    NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
+    NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
+    if (aTimerNumber != self.timerNumber)
+        return;
+    NSPoint originalPoint = [(NSValue *)theTimer.userInfo[1] pointValue];
+    NSEvent *theEvent = (NSEvent *)theTimer.userInfo[2];
+    NSPoint currentPoint = [NSEvent mouseLocation];
+    
+    if ((fabs(originalPoint.x - currentPoint.x) > 30) || (fabs(originalPoint.y - currentPoint.y) > 30))
+    {
+        self.handlingLink = 0;
+        return;
+    }
+    
+    mouseDownLoc = [self convertPoint: [theEvent locationInWindow] fromView: NULL]; // in PDFView
+    mouseLocDocumentView = [[self documentView] convertPoint: [theEvent locationInWindow] fromView:nil]; // DocumentView
+    
+    activePage = [self pageForPoint: mouseDownLoc nearest: YES];
+    pagePoint = [self convertPoint: mouseDownLoc toPage: activePage];
+    theAnnotation = [activePage annotationAtPoint: pagePoint];
+    NSString *theType = [theAnnotation type];
+    if ([theType isEqualToString: @"Link"]) {
+        theURL = [(PDFAnnotationLink *)theAnnotation URL]; // we will do nothing if it is a link to an external page
+        theDestination = [(PDFAnnotationLink *)theAnnotation destination];
+        if (theDestination) {
+            linkedPage = [theDestination page];
+            pageBounds = [linkedPage boundsForBox: kPDFDisplayBoxMediaBox];
+            linkedPoint = [theDestination point];
+            NSLog(@"The value is %f", linkedPoint.x);
+            
+            // aRect = where text comes from
+            if (linkedPoint.x < (pageBounds.size.width / 2))
+            {
+                aRect.origin.x =  linkedPoint.x - 5 ;
+                aRect.origin.y = linkedPoint.y - H + 10   ;
+                aRect.size.height = H;
+                aRect.size.width = W;
+            }
+            else
+            {
+                aRect.origin.x =  linkedPoint.x - W - 5;
+                aRect.origin.y = linkedPoint.y - H * 0.6; //0.6;
+                aRect.size.height = H;
+                aRect.size.width = W;
+            }
+            
+            
+            // bRect = position on viewing screen
+            bRect.origin.x = mouseLocDocumentView.x + 10;
+            bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3.0 - 10;
+            bRect.size.height = 2 * H / 3.0;
+            bRect.size.width = 2 * W / 3.0;
+            
+            NSData	*myData = [linkedPage dataRepresentation];
+            NSImage *myImageNew = [[NSImage alloc] initWithData: myData];
+            OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
+            if (self.overView) {
+                [self.overView removeFromSuperview];
+                self.overView = nil;
+            }
+            self.overView =  theOverView;
+            [[self documentView] addSubview: [self overView]];
+            
+            [[self overView] setDrawRubberBand: NO];
+            [[self overView] setDrawMagnifiedRect: NO];
+            [[self overView] setDrawMagnifiedImage: YES];
+            [[self overView] setSelectionRect: bRect];
+            [[self overView] setMagnifiedRect: aRect];
+            [[self overView] setMagnifiedImage: myImageNew];
+            [[self overView] setNeedsDisplayInRect: [[self documentView] visibleRect]];
+            
+            // theSelection = [linkedPage selectionForRect: aRect];
+            // outputString = [theSelection string];
+            // if (outputString)
+            // NSLog(outputString);
+            self.handlingLink = 2;
+            NSArray *info = [NSArray arrayWithObjects: timerNumberObject, nil];
+            [NSTimer scheduledTimerWithTimeInterval:4.0
+                                             target:self
+                                           selector:@selector(killPopup:)
+                                           userInfo:info
+                                            repeats:NO];
+            
+            return;
+            
+        }
+        else    self.handlingLink = 0;
+    }
+    
+    // [self doKillPopup];
+}
+
+
+
+
+ - (void)doKillPopup
+{
+
+    if (self.overView) {
+        [self.overView removeFromSuperview];
+        self.overView = nil;
+    }
+    self.handlingLink = 0;
+}
+
+- (void)killPopup: (NSTimer *)theTimer
+{
+    
+ //   return; // activate this to leave "link destination" until cursor moves
+    
+    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        return;
+    
+    NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
+    if (aTimerNumber != self.timerNumber)
+        return;
+    
+    if (self.overView) {
+        [self.overView removeFromSuperview];
+        self.overView = nil;
+    }
+    self.handlingLink = 0;
 }
 
 
@@ -2646,8 +3094,8 @@
             // calculate the rect to select
             currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
             
-            selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-            selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            selectedRect.size.width = fabs(currentPoint.x-startPoint.x);
+            selectedRect.size.height = fabs(currentPoint.y-startPoint.y);
             
             if ([theEvent modifierFlags] & NSShiftKeyMask)
             {
@@ -2873,8 +3321,8 @@
 			}
 			// calculate the rect to select
 			currentPoint = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
-			selectedRect.size.width = abs(currentPoint.x-startPoint.x);
-			selectedRect.size.height = abs(currentPoint.y-startPoint.y);
+            selectedRect.size.width =  fabs(currentPoint.x-startPoint.x);
+			selectedRect.size.height = fabs(currentPoint.y-startPoint.y);
 			if ([theEvent modifierFlags] & NSShiftKeyMask)
 			{
 				if (selectedRect.size.width > selectedRect.size.height)
@@ -3187,8 +3635,8 @@ else
 
 	//test
 	NSSize aSize = [self convertSize: mySelectedRect.size toView: nil];
-	if (abs(selRectWindow.size.width - aSize.width)>1 ||
-		abs(selRectWindow.size.height - aSize.height)>1)
+	if (fabs(selRectWindow.size.width - aSize.width)>1 ||
+		fabs(selRectWindow.size.height - aSize.height)>1)
 	{
 		// I don't know why this can happen, but it does happen from
 		// time to time, when the view is rotated and selection is not visible.
@@ -5385,8 +5833,14 @@ else
         return NO;
     
     if ((key == 'f') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
-        [self.drawer open];
-        [[self window] makeFirstResponder:_searchField ];
+        // [self.drawer open];
+        // [[self window] makeFirstResponder:_searchField ];
+        [[self window] makeFirstResponder: [self.myDocument pdfKitSearchField ]];
+        return YES;
+    }
+    
+    if ((key == 'g') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+        [self doFindAgain];
         return YES;
     }
     
@@ -5599,7 +6053,7 @@ else
 {
 	BOOL	result;
     
-	[(TSPreviewWindow *)self.myPDFWindow setActiveView: self];
+	((TSPreviewWindow *)self.myPDFWindow).activeView = self;
 	result =  [super becomeFirstResponder];
 	[self fixStuff];
 	[self resetSearchDelegate];

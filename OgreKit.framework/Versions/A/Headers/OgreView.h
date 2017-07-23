@@ -21,3 +21,4 @@
 - (NSObject <OgreTextFindComponent>*)ogreAdapter;
 
 @end
+

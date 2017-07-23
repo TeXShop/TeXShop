@@ -47,7 +47,7 @@ extern NSPanel *pageNumberWindow;
 
 @implementation TSPreviewWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
 	NSColor	*backColor;
@@ -82,6 +82,10 @@ extern NSPanel *pageNumberWindow;
         [theDocument close];
         }
     
+ //   self.myPDFKitView = nil;
+ //   self.myPDFKitView2 = nil;
+ //   self.activeView = nil;
+    
 	[super close];
 }
 
@@ -91,12 +95,6 @@ extern NSPanel *pageNumberWindow;
     [(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];
     [super resignMainWindow];
 }
-
-- (void) makeDefaultEditor:(id)sender
-{
-    [self.myDocument makeDefaultEditor:sender];
-}
-
 
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
@@ -499,7 +497,7 @@ extern NSPanel *pageNumberWindow;
 				// create a small window displaying page number
 				NSRect aRect = [scroller rectForPart: NSScrollerKnob];
 				aRect = [scroller convertRect: aRect toView: nil]; // use rect not point
-				aRect.origin = [self convertBaseToScreen: aRect.origin];
+				aRect = [self convertRectToScreen: aRect];
 				aRect.origin.x -= PAGE_WINDOW_H_OFFSET;
 				aRect.origin.y += aRect.size.height/2 + PAGE_WINDOW_V_OFFSET;
 				aRect.size.width = PAGE_WINDOW_WIDTH;

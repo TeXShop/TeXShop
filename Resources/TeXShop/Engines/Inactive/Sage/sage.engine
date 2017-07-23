@@ -1,17 +1,21 @@
 #!/bin/bash
 
+# Engine by Dan Drake
 
 PATH=$PATH:/Library/TeX/texbin:/usr/texbin:/usr/local/bin
 filename=$1
 sagename=${filename/%tex/sagetex.sage}
-soutname=${filename/%tex/sout}
+soutname=${filename/%tex/sagetex.sout}
+# above line replaces original; thanks to Carl Crisman
 
 pdflatex --file-line-error --synctex=1 "$filename"
 
 # do we need to run Sage?
 if [ -f "$soutname" ]
 then
-    new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | md5)
+	new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | egrep -v '(_st_.current_tex_line)' | md5)
+#   above line replaces original line below; thanks to Markus Baldauf
+#   new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | md5)
     old_sum=$(egrep -o ^%[0-9a-f]{32}% "$soutname" | cut -b 2-33)
     if [ "$new_sum" != "$old_sum" ]
     then
@@ -25,7 +29,10 @@ fi
 if [ "$run_sage" = "yes" ]
 then
     echo Running Sage, please wait a moment...
-    /Applications/Sage.app/Contents/Resources/sage/sage "$sagename"
+   # New versions of Sage cannot be renamed; thus users need to read the
+   # documentation in ~/TeXShop/Engines/Inactive/Sage whenever they update Sage;
+   # for instance, the line below must contain the current name of Sage
+    /Applications/SageMath-7.6.app/Contents/Resources/sage/sage "$sagename"
     pdflatex --file-line-error --synctex=1 "$filename"
 else
     echo No Sage commands have changed, so running Sage is unnecessary.

@@ -7,7 +7,7 @@
 //
 
 #import "TSStationery.h"
-#import "Globals.h"
+#import "globals.h"
 
 
 @implementation TSStationery

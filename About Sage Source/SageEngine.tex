@@ -18,12 +18,16 @@ Sage is a mathematical software system providing an open source alternative to M
 \url{http://www.sagemath.org/} as a free download. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
 Download sage from this web site. Move the resulting ``Sage'' program to /Applications. The
-application will have a strange name, something like Sage-5.10..64bit-10.8.
+application will have a longer name, something like SageMath.7.6. Unfortunately, this name cannot be changed, so every time you upgrade Sage, you need to remember that this document exists and follow its instructions again.
 
-The Sage command line program is inside this wrapper, and our engine folder is going to have
-to use that binary. If we keep the current name, the engine file will be tied to one particular
-version of Sage. To fix this, change the name to just ``Sage''. This clever step, which
-simplifies several steps below, is due to Daniel Grambihler.
+(Renaming was originally possible, so we once wrote
+\begin{verbatim}
+If we keep the current name, the engine file will be tied to one particular
+version of Sage. To fix this, change the name to just ``Sage''. This 
+clever step, which simplifies several steps below, is due to 
+Daniel Grambihler.)
+\end{verbatim}
+
 
 SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page three is followed by LaTeX output on pages four and five.
 
@@ -50,13 +54,13 @@ Notice in particular that sage can plot standard functions. Sage can also comput
 \section{Setting Up the Engine}
 
 This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines.
-% The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. This changes whenever Sage is updated, so edit the line appropriately. In the initial engine, the line reads
-%\begin{verbatim}
-%/Applications/Sage-5.9-OSX-64bit-10.8.app/Contents/Resources/sage/sage "$sagename"
-%\end{verbatim}
-%Here ``/Applications/Sage-5.9-OSX-64bit-10.8.app'' is the name of the current Sagetex being
-%used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
-%sage binary it contains.
+ The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. This changes whenever Sage is updated, so edit the line appropriately. In the initial engine, the line reads
+\begin{verbatim}
+/Applications/SageMath-7.6.app/Contents/Resources/sage/sage "$sagename"
+\end{verbatim}
+Here ``/Applications/SageMath-7.6.app'' is the name of the current Sagetex being
+used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
+sage binary it contains.
 Dan Drake, who is responsible for SageTeX, wrote this engine.
 
 The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this. So rather than copying the style file, we just
@@ -68,10 +72,10 @@ Run Terminal in /Applications/Utilities. Type the following
 \end{verbatim}
 Then type the following on a single line. Terminal may make a linefeed when
 the line  grows too long and that is fine, but do not for instance make a linefeed
-after the top "sage" and before the bottom "/data".
+after the top "local" and before the bottom "/share".
 \begin{verbatim}
-     sudo ln -s /Applications/Sage.app/Contents/Resources/sage
-        /data/texmf/tex/generic/sagetex/sagetex.sty sagetex.sty
+     sudo ln -s /Applications/SageMath-7.6.app/Contents/Resources/sage/local
+        /share/texmf/tex/latex/sagetex/sagetex.sty sagetex.sty
 \end{verbatim}
 
 Finally issue the command
@@ -83,8 +87,7 @@ Finally issue the command
 
 
 \section{Final Remarks}
-Although spaces are permitted in LaTeX source file names, Sage does not like spaces in file names. So LaTeX source file names which call SageTeX should not contain spaces. This problem is fixed in beta releases of SageTeX not yet in the sage distribution.
-
+ 
 A Sage tutorial is available at the Sage page \url{http://www.sagemath.org/help.html}. It is definitely recommended. Extensive additional documentation is available at the same web page.
 \end{document}
 

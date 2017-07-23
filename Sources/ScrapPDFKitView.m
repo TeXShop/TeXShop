@@ -81,14 +81,8 @@
 {
 	PDFDocument     *pdfDoc;
 	BOOL            needsInitialization;
-    PDFSelection    *mySelection;
-    PDFPage         *myPage;
-    NSScrollView    *myScrollView;
-    NSRect          visibleRect, tempRect, newVisibleRect;
+    NSRect          tempRect;
     NSRect          visibleRectA, fullRectA;
-    int             i;
-    int            newy;
-    double          original, new, discrepency;
     
 	// A note below explains dangers of NSDisableScreenUpdates
     // but these dangers don't apply to Intel on recent systems.

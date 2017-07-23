@@ -47,7 +47,6 @@
 - (void) resignMainWindow;
 - (void) sendEvent:(NSEvent *)theEvent;
 - (void) associatedWindow:(id)sender;
-- (void) makeDefaultEditor:(id)sender;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 // forsplit
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;

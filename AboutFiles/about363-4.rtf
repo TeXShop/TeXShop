@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17900\viewh15500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 3.63:\
+\
+The goal of this release is to prepare TeXShop for Mac OS 10.12, Sierra.\
+The release fixes four minor problems with the current beta.\
+\
+Note: The original beta of Sierra had numerous PDFKit bugs. These were\
+mostly fixed in the second beta. Users should make certain they have\
+that second beta, or a more recent release.\
+\
+1) Sync from source to preview worked in beta 2, but at the very end\
+did not show the selected match in yellow. This is fixed. Probably\
+my fault, rather than a Sierra bug.\
+\
+2) TeXShop has a Demo item in the Help menu, which displays two\
+movies for new users. The movies used to be included in the program,\
+but now they are on a server and downloaded as needed. The movies\
+were in .mov format, and gzipped for extra efficiency.\
+\
+TeXShop used Apple's QuickTime Kit to display movies, but this\
+was deprecated several years ago in favor of the AVKit (audio-visual\
+kit). In Sierra, QTKit is removed, so it finally became necessary to move\
+to AVKit. In the process, the movies were converted from .mov form\
+to .mp4 form.\
+\
+After download, movies are storied in ~/Library/TeXShop/Movies/TeXShop.\
+A user might have both .mov files there (for older versions of TeXShop)\
+and .mp4 files there (for TeXShop 3.63 and future versions.)\
+\
+3) In the initial Sierra beta, scrolling of the PDF window was very jerky.\
+I managed to make a small change which fixed this problem. The change does\
+no harm and thus is still in the program, although Apple fixed the problem\
+for beta 2.\
+\
+4) The Preview Window has a drawer which can open and display\
+an outline of the pdf in the top portion (if the hyperref package is used)\
+and a search of the pdf in the bottom portion. The bottom search feature\
+currently does not work. But it was essentially copied from Apple's\
+PDFKit documentation, so I suspect this is a bug which will eventually\
+be fixed.\
+\
+However, this version of TeXShop contains a new way to search pdf files\
+which does not require the drawer and may be preferred by most users.\
+A new "search field" tool is available for the PDF window. Type a word\
+like "Galois" in this field and push RETURN to find the first occurrence\
+of the word in the PDF text. Push RETURN again to find successive\
+occurrences of the word. \
+\
+Click in a spot but do not select anything, to restart searching from the\
+top of the document. Turn to a page and actually select some text to\
+make the next search start at this selection. Thus searches are possible\
+in the middle of the document without starting from the beginning.\
+\
+5) Finally, TeXShop inherits tabs in both source and pdf windows in\
+Sierra. This is provided automatically by Mac OS 10.12 without any\
+code changes in the program. Tabs are the most requested new\
+feature for TeXShop, so it is pleasant that Apple provides them for free!}

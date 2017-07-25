@@ -96,6 +96,10 @@
     oldPageStyle = 2;
     oldResizeOption = 2;
     useFullSplitWindow = NO;
+    
+    self.useTabs = NO;
+    self.numberOfTabs = 0;
+    self.includeFiles = [NSMutableArray arrayWithCapacity:20];
 
 
 	tagLine = NO;
@@ -1102,13 +1106,15 @@ if (! skipTextWindow) {
 
 	// end change
 
-
 	theSource = [_textStorage string];
 	if ([self checkMasterFile: theSource forTask:RootForOpening])
 		return;
 	if ([self checkRootFile_forTask: RootForOpening])
 		return;
 
+ 
+    
+    
 	imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
     
 	if (([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) && (!optionKeyPressed)) {
@@ -1163,6 +1169,12 @@ if (! skipTextWindow) {
 		}
 	}
     
+  
+//    [self addTabbedWindows];
+    
+//    [[self textWindow] toggleTabBar:self];
+    SEL aSelector = @selector(addTabbedWindows);
+    [self performSelector: aSelector withObject: self afterDelay: 1];
 }
 
 
@@ -1358,7 +1370,8 @@ in other code when an external editor is being used. */
 }
 
 
-
+// NOTE "data of Type" is actually never called!
+    
 // - (NSData *)dataRepresentationOfType:(NSString *)aType {
 - (NSData *)dataOfType: (NSString *)typeName error: (NSError **)outError {
 	NSRange             encodingRange, newEncodingRange, myRange, theRange;
@@ -1367,11 +1380,12 @@ in other code when an external editor is being used. */
 	BOOL                done;
 	NSInteger                 linesTested, offset;
 	NSUInteger            start, end;
-
+    
 	// FIXME: Unify this with the code in readFromFile:
 	if ((GetCurrentKeyModifiers() & optionKey) == 0) {
 		text = [_textStorage string];
 		length = [text length];
+        
 		done = NO;
 		linesTested = 0;
 		myRange.location = 0;
@@ -1386,7 +1400,7 @@ in other code when an external editor is being used. */
 			// FIXME: Simplify the following code
 			theRange.location = start; theRange.length = (end - start);
 			testString = [text substringWithRange: theRange];
-			encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
+      		encodingRange = [testString rangeOfString:@"%!TEX encoding ="];
 			offset = 16;
 			if (encodingRange.location == NSNotFound) {
 				encodingRange = [testString rangeOfString:@"% !TEX encoding ="];
@@ -1399,7 +1413,7 @@ in other code when an external editor is being used. */
 				if (newEncodingRange.length > 0) {
 					encodingString = [[testString substringWithRange: newEncodingRange]
 						stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-					_encoding = _tempencoding = [[TSEncodingSupport sharedInstance] stringEncodingForKey: encodingString];
+ 					_encoding = _tempencoding = [[TSEncodingSupport sharedInstance] stringEncodingForKey: encodingString];
 				}
 			} else if ([SUD boolForKey:UseOldHeadingCommandsKey]) {
 				encodingRange = [testString rangeOfString:@"%&encoding="];
@@ -1438,13 +1452,13 @@ in other code when an external editor is being used. */
 
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
 	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
-	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange;
+	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange;
 	NSUInteger          length, start, end;
 	BOOL                done;
 	NSInteger                 linesTested, offset;
 	NSStringEncoding	theEncoding;
-	
-	// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
+    
+    // theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
 	theEncoding = _encoding;
 	firstBytes = [[NSString alloc] initWithData:theData encoding:NSISOLatin9StringEncoding];
 	
@@ -1520,6 +1534,33 @@ in other code when an external editor is being used. */
             }
 		}
 	}
+    
+    if (atLeastSierra)
+    {
+        done = NO;
+        linesTested = 0;
+        myRange.location = 0;
+        myRange.length = 1;
+
+    
+        while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+            [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+            myRange.location = end;
+            myRange.length = 1;
+            linesTested++;
+     
+   
+            theRange.location = start; theRange.length = (end - start);
+            testString = [firstBytes substringWithRange: theRange];
+            tabRange = [testString rangeOfString:@"% !TEX useTabs"];
+            if (tabRange.location != NSNotFound)
+            {
+                self.useTabs = YES;
+                done = YES;
+            }
+        }
+    }
+    
 	
 	
 	// FIXME: Unify this with the code in dataRepresentationOfType:
@@ -1668,16 +1709,17 @@ in other code when an external editor is being used. */
 	NSUInteger		theLength;
 	// NSString            *firstBytes, *encodingString, *testString;
 	// NSRange             encodingRange, newEncodingRange, myRange, theRange;
-	// unsigned            length, start, end;
-	// BOOL                done;
-	// int                 linesTested;
+	NSUInteger            start, end;
+	BOOL                done;
+    NSRange             theRange, myRange, includeRange, fileNameRange;
+    NSString            *includeString, *fileNameString, *newIncludeString;
 	
 	if ([self doNotReadSource])
 		return YES;
 
 	myData = [NSData dataWithContentsOfURL:absoluteURL];
 	_encoding = _tempencoding = [self dataEncoding: myData];
-	
+    
 /*
 
 	// FIXME: Unify this with the code in dataRepresentationOfType:
@@ -1741,6 +1783,43 @@ in other code when an external editor is being used. */
 	}
 
 	if (content) {
+    theLength = [content length];
+    if ((theLength < 20000) && (self.useTabs))
+       {
+           myRange.location = 0;
+           myRange.length = 1;
+           done = NO;
+           
+           
+           while ((myRange.location < theLength) && (!done)) {
+               [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+               myRange.location = end;
+               myRange.length = 1;
+               
+               theRange.location = start; theRange.length = (end - start);
+               includeString = [content substringWithRange: theRange];
+               includeRange = [includeString rangeOfString:@"\\include{"];
+               if (includeRange.location != NSNotFound)
+               {
+                   includeRange.location = includeRange.location + 9;
+                   includeRange.length = theRange.length - 11;
+                   if (includeRange.length > 0)
+                        {
+                        newIncludeString = [includeString substringWithRange: includeRange];
+                            newIncludeString = [newIncludeString stringByAppendingPathExtension: @"tex"];
+                            newIncludeString = [newIncludeString stringByExpandingTildeInPath];
+                            //  NSLog(newIncludeString);
+                        self.numberOfTabs = self.numberOfTabs + 1;
+                        [self.includeFiles addObject: newIncludeString];
+                        if (self.numberOfTabs >= 19)
+                            done = YES;
+                        }
+                }
+            }
+       }
+  
+           
+        
 		// zenitani 1.35 (A) -- normalizing newline character for regular expression
 		if ([SUD boolForKey:ConvertLFKey]) {
 			content = [OGRegularExpression replaceNewlineCharactersInString:content
@@ -4111,6 +4190,42 @@ if (! useFullSplitWindow) {
         
         
     }
+}
+
+- (void)addTabbedWindows
+{
+    NSInteger   numberOfIncludeFiles;
+    NSString    *thePath, *newPath, *theCorrectedPath;
+    TSDocument  *theDocument;
+    NSInteger   i, j;
+    NSWindow    *theWindow;
+    
+    if (! self.useTabs)
+        return;
+    
+    theWindow = (NSWindow *)[self textWindow];
+    j = [theWindow.tabbedWindows count];
+    if (j > 1)
+        return;
+    
+      numberOfIncludeFiles = self.numberOfTabs;
+      NSDocumentController *myController = [NSDocumentController sharedDocumentController];
+      
+  //    NSLog(@"also got here");
+     
+      for (i = (numberOfIncludeFiles - 1); i >= 0; i--)
+          
+      {
+          thePath = self.includeFiles[i];
+          newPath =[[[self.fileURL path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: thePath];
+          theCorrectedPath = [newPath stringByStandardizingPath];
+          // NSLog(theCorrectedPath);
+          theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: theCorrectedPath] display: YES error:NULL];
+          if (theDocument)
+          {
+                [[self textWindow] addTabbedWindow: [theDocument textWindow] ordered: 1];
+          }
+      }
 }
 
 - (NSRange) lineRange: (NSInteger)line

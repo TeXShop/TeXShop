@@ -417,6 +417,10 @@ enum RootCommand
 
 @property (retain)  NSWindowController  *standardController;
 @property (retain)  NSWindowController  *splitController;
+    
+@property           BOOL            useTabs;
+@property           NSInteger       numberOfTabs;
+@property (retain)  NSMutableArray  *includeFiles;
 
 
 // forScrap
@@ -572,6 +576,7 @@ enum RootCommand
 - (void) makeWindowControllers;
 - (void) runPageLayout:sender;
 - (NSSearchField *) pdfKitSearchField;
+- (void) addTabbedWindows;
 
 
 // BibDesk Completion

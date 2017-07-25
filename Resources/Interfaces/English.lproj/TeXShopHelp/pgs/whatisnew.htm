@@ -15,6 +15,49 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.82</h5></P>
+
+After the release of MacTeX-2017 in May, I have been spending time on TeXShop dealing with bugs by other programmers which crashed  TeXShop --- and  TeXShop bugs which were my fault. Now I want to turn to new summer projects, so this should be the last TeXShop update until late fall. I'll return earlier only if significant new bugs are discovered.
+
+<p> This final summer release contains two features, one available only on Sierra and High Sierra, and the other only on High Sierra. We start with the High Sierra feature, which comes automatically to Cocoa applications without any new code by me.
+
+<ul>
+<li> Some time ago, TeXShop was revised to support Apple's Sharing toolbar item. For instance, if the source window is active and you select "Mail" in the item, a mail window opens containing the TeX source as an enclosure. If the preview window is active, this mail window contains the pdf output as an enclosure. 
+
+<p> Another sharing option is "Airdrop". I think of this as an option for  graduate students relaxing in Starbucks. If such a student notices someone interesting drinking coffee, they can use Airdrop to share a selected portion of TeX source code, or a selected region of  Preview output. I keep hoping to be invited to a Wedding due to this feature, but not yet.
+
+<p> I have never actually used any of the features in the sharing tool. 
+
+<p> In High Sierra, the sharing tool is also available from a new "Share" menu in the File menu. This menu has an extra item called "Add People." To use it, save a TeX document in iCloud. Then in Add People, send an email message or other sharing notification to a friend offering to share this document. After that, you and your sharing partner can simultaneously edit the document. You can write the first line of a proof and your colleague can immediately add the next sentence. When the document is being shared with someone else, a gray "Share" message is displayed just right of the file title on the edit window header.
+
+<li> The other new feature is available in both Sierra and High Sierra. Recall that TeXShop allows large projects to be organized as a root document and various chapter files. The root contains header items and \include statements just after \begin{document}. These include statements  input the source files for various chapters into the document. Chapter files include a header pointing back at the root document
+<dl>
+<dd> % !TEX root = ../MyRoot.tex
+</dl>
+but the root file has no such header. When a chapter file is typeset, this magic line tells TeX to typeset the root and thus the entire document.  The magic line also helps  sync and "goto error" locate the correct chapter source, including opening it if it is not yet open.
+
+<p> In Sierra, users can use the new "tabs" feature to manually move the chapter windows into the root source window
+as tab entries. But this is messy work which has to be done every time the project is reopened. The new feature automates this procedure.
+
+<p> To activate this feature, first turn off two TeXShop preferences under the Misc tab: "Open root file automatically on opening. a child" and "Miniaturize the opened root window." Both of these items probably represent bad ideas in the design of TeXShop, so the features might be removed in a later version of TeXShop.
+
+<p> Then add a magic line to the top of the root file source:
+<dl>
+<dd> % !TEX useTabs
+</dl>
+When a project with this line is opened, the various chapter files are opened as tabs in the main window.
+Thus just two windows appear, the source under various chapter tabs, and the single output pdf file.
+
+<p> Sierra already has the ability to recreate tabs in a window if the window is left open when TeXShop quits. But once such a window is closed, the tabs have to be recreated from scratch. The new header creates them automatically.
+
+<p> If the source code has the magic line and its window is left open when TeXShop quits, then Sierra is allowed to recreate the tabs itself when the program reopens. The new code will only run if the user quits a document, and then later opens it again.
+
+<p> This tab feature is somewhat experimental. It works fine for me now, but a number of tricky edge cases make me a little nervous. If you are going to try it, I suggest that you duplicate your project and work using the duplicate. In case of  problems, carefully analyze exactly what you did that caused an error, and then send me a note. If possible, send me full source when a problem occurs.
+Once the tabs are active, I would expect everything to work without problems. It is only the step that creates the tabs that is slightly worrisome. But not enough to hold back this release.
+</ul>
+
+
+
 <P><h5>TeXShop Changes 3.81</h5></P>
 
 Version 3.81 fixes a small number of bugs in version 3.80:

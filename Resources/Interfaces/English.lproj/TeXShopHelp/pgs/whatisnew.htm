@@ -15,6 +15,18 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.83</h5></P>
+
+Murray Eisenberg discovered problems with the new "useTabs" feature and sent me his full source code to debug. This proved extremely useful! The problems I foresaw with this feature have not materialized, but Eisenberg's source revealed more elementary and embarrassing bugs, now fixed.
+
+<p>
+The only files which receive tabs are those loaded by \include{myfile} statements after \begin{document} in the root file. Here "myfile" can be a file name, partial path, or full path. Murray's document loaded chapters in a more complicated way, but was easily modified to meet this condition. It would be easy to extend TeXShop so an alternate method could also be used, in which the user lists  files to be tabbed using "% !TEX fileForTab = " statements. This technique could assign files to tabs even if they aren't part of the source (for instances, tables of symbols), and could specifiy which chapters are tabbed for books with enormously many chapters. Write if you want this feature, which however will not appear until fall.
+
+<p>
+It is slightly possible that version 3.82 broke UTF-8 encoding in Japan and other far Eastern countries; the evidence is iffy at the moment. But if that happened, it is fixed in 3.83.
+
+
+
 <P><h5>TeXShop Changes 3.82</h5></P>
 
 After the release of MacTeX-2017 in May, I have been spending time on TeXShop dealing with bugs by other programmers which crashed  TeXShop --- and  TeXShop bugs which were my fault. Now I want to turn to new summer projects, so this should be the last TeXShop update until late fall. I'll return earlier only if significant new bugs are discovered.

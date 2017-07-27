@@ -1172,9 +1172,11 @@ if (! skipTextWindow) {
   
 //    [self addTabbedWindows];
     
-//    [[self textWindow] toggleTabBar:self];
-    SEL aSelector = @selector(addTabbedWindows);
-    [self performSelector: aSelector withObject: self afterDelay: 1];
+    if (self.useTabs)
+    {
+        SEL aSelector = @selector(addTabbedWindows);
+        [self performSelector: aSelector withObject: self afterDelay: 1];
+    }
 }
 
 
@@ -1541,8 +1543,8 @@ in other code when an external editor is being used. */
         linesTested = 0;
         myRange.location = 0;
         myRange.length = 1;
-
-    
+        
+     
         while ((myRange.location < length) && (!done) && (linesTested < 20)) {
             [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
             myRange.location = end;
@@ -1561,7 +1563,6 @@ in other code when an external editor is being used. */
         }
     }
     
-	
 	
 	// FIXME: Unify this with the code in dataRepresentationOfType:
 	if ((GetCurrentKeyModifiers() & optionKey) == 0) {
@@ -1614,6 +1615,7 @@ in other code when an external editor is being used. */
 	
 //	[firstBytes release];
 	
+    
 	return theEncoding;
 }
 
@@ -1711,7 +1713,7 @@ in other code when an external editor is being used. */
 	// NSRange             encodingRange, newEncodingRange, myRange, theRange;
 	NSUInteger            start, end;
 	BOOL                done;
-    NSRange             theRange, myRange, includeRange, fileNameRange;
+    NSRange             theRange, myRange, includeRange, fileNameRange, newIncludeRange, finalRange;
     NSString            *includeString, *fileNameString, *newIncludeString;
 	
 	if ([self doNotReadSource])
@@ -1780,46 +1782,12 @@ in other code when an external editor is being used. */
 		_badEncoding = _encoding;
 		showBadEncodingDialog = YES;
 		content = [[NSString alloc] initWithData:myData encoding:NSISOLatin9StringEncoding] ;
-	}
+    }
+    
+        if (content)
+        {
 
-	if (content) {
-    theLength = [content length];
-    if ((theLength < 20000) && (self.useTabs))
-       {
-           myRange.location = 0;
-           myRange.length = 1;
-           done = NO;
-           
-           
-           while ((myRange.location < theLength) && (!done)) {
-               [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
-               myRange.location = end;
-               myRange.length = 1;
-               
-               theRange.location = start; theRange.length = (end - start);
-               includeString = [content substringWithRange: theRange];
-               includeRange = [includeString rangeOfString:@"\\include{"];
-               if (includeRange.location != NSNotFound)
-               {
-                   includeRange.location = includeRange.location + 9;
-                   includeRange.length = theRange.length - 11;
-                   if (includeRange.length > 0)
-                        {
-                        newIncludeString = [includeString substringWithRange: includeRange];
-                            newIncludeString = [newIncludeString stringByAppendingPathExtension: @"tex"];
-                            newIncludeString = [newIncludeString stringByExpandingTildeInPath];
-                            //  NSLog(newIncludeString);
-                        self.numberOfTabs = self.numberOfTabs + 1;
-                        [self.includeFiles addObject: newIncludeString];
-                        if (self.numberOfTabs >= 19)
-                            done = YES;
-                        }
-                }
-            }
-       }
-  
-           
-        
+    
 		// zenitani 1.35 (A) -- normalizing newline character for regular expression
 		if ([SUD boolForKey:ConvertLFKey]) {
 			content = [OGRegularExpression replaceNewlineCharactersInString:content
@@ -1844,7 +1812,8 @@ in other code when an external editor is being used. */
 		[[_textStorage mutableString] setString:content];
 	
 		return YES;
-	} else {
+	}
+else {
 		return NO;
 	}
 }
@@ -4192,6 +4161,8 @@ if (! useFullSplitWindow) {
     }
 }
 
+
+
 - (void)addTabbedWindows
 {
     NSInteger   numberOfIncludeFiles;
@@ -4199,6 +4170,11 @@ if (! useFullSplitWindow) {
     TSDocument  *theDocument;
     NSInteger   i, j;
     NSWindow    *theWindow;
+    NSString    *content;
+    NSUInteger  theLength, start, end;
+    NSRange     myRange, theRange, includeRange, newIncludeRange, finalRange;
+    BOOL        done;
+    NSString    *includeString, *newIncludeString;
     
     if (! self.useTabs)
         return;
@@ -4207,26 +4183,78 @@ if (! useFullSplitWindow) {
     j = [theWindow.tabbedWindows count];
     if (j > 1)
         return;
+
+    
+    content = [_textStorage string];
+    
+    if (content) {
+        theLength = [content length];
+        if ((theLength < 20000) && (self.useTabs))
+        {
+            
+            myRange.location = 0;
+            myRange.length = 1;
+            done = NO;
+           
+            while ((myRange.location < theLength) && (!done)) {
+                [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+                myRange.location = end;
+                myRange.length = 1;
+                
+                theRange.location = start; theRange.length = (end - start);
+                includeString = [content substringWithRange: theRange];
+                includeString = [includeString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+            
+                includeRange = [includeString rangeOfString:@"\\include{"];
+                if ((includeRange.location != NSNotFound) && (includeRange.location == 0))
+                    {
+                        includeRange.location = includeRange.location + 9;
+                        includeRange.length = theRange.length - 9;
+                        if (includeRange.length > 0)
+                        {
+                            newIncludeString = [includeString substringWithRange: includeRange];
+                            newIncludeRange = [includeString rangeOfString:@"}"];
+                            if (newIncludeRange.location != NSNotFound)
+                                {
+                                    finalRange.location = 0;
+                                    finalRange.length = newIncludeRange.location - includeRange.location;
+                                    includeString = [newIncludeString substringWithRange: finalRange];
+                                                                        newIncludeString = [includeString stringByAppendingPathExtension: @"tex"];
+                                    newIncludeString = [newIncludeString stringByExpandingTildeInPath];
+                                    
+                                    self.numberOfTabs = self.numberOfTabs + 1;
+                                    [self.includeFiles addObject: newIncludeString];
+                                    if (self.numberOfTabs >= 19)
+                                        done = YES;
+             
+                                }
+                        }
+                    }
+            }
+            
+        
+
+        }
+    }
     
       numberOfIncludeFiles = self.numberOfTabs;
       NSDocumentController *myController = [NSDocumentController sharedDocumentController];
       
-  //    NSLog(@"also got here");
-     
       for (i = (numberOfIncludeFiles - 1); i >= 0; i--)
           
       {
           thePath = self.includeFiles[i];
           newPath =[[[self.fileURL path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: thePath];
           theCorrectedPath = [newPath stringByStandardizingPath];
-          // NSLog(theCorrectedPath);
-          theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: theCorrectedPath] display: YES error:NULL];
+           theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: theCorrectedPath] display: YES error:NULL];
           if (theDocument)
           {
                 [[self textWindow] addTabbedWindow: [theDocument textWindow] ordered: 1];
           }
       }
 }
+ 
+
 
 - (NSRange) lineRange: (NSInteger)line
 {

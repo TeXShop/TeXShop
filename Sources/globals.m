@@ -310,6 +310,7 @@ BOOL                activateBauerPatch; // this is set in
 BOOL                atLeastMavericks;
 BOOL                atLeastElCapitan;
 BOOL                atLeastSierra;
+BOOL                atLeastHighSierra;
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;

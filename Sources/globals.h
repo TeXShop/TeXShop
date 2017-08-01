@@ -530,6 +530,7 @@ extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and 
 extern BOOL             atLeastMavericks;
 extern BOOL             atLeastElCapitan;
 extern BOOL             atLeastSierra;
+extern BOOL             atLeastHighSierra;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

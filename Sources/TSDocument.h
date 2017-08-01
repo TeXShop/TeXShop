@@ -419,8 +419,10 @@ enum RootCommand
 @property (retain)  NSWindowController  *splitController;
     
 @property           BOOL            useTabs;
+@property           BOOL            useTabsWithFiles;
 @property           NSInteger       numberOfTabs;
 @property (retain)  NSMutableArray  *includeFiles;
+@property (retain)  NSMutableArray  *includeFileShortNames;
 
 
 // forScrap

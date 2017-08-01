@@ -98,8 +98,10 @@
     useFullSplitWindow = NO;
     
     self.useTabs = NO;
+    self.useTabsWithFiles = NO;
     self.numberOfTabs = 0;
     self.includeFiles = [NSMutableArray arrayWithCapacity:20];
+    self.includeFileShortNames = [NSMutableArray arrayWithCapacity:20];
 
 
 	tagLine = NO;
@@ -1172,7 +1174,7 @@ if (! skipTextWindow) {
   
 //    [self addTabbedWindows];
     
-    if (self.useTabs)
+    if ((self.useTabs) || (self.useTabsWithFiles))
     {
         SEL aSelector = @selector(addTabbedWindows);
         [self performSelector: aSelector withObject: self afterDelay: 1];
@@ -1554,12 +1556,21 @@ in other code when an external editor is being used. */
    
             theRange.location = start; theRange.length = (end - start);
             testString = [firstBytes substringWithRange: theRange];
-            tabRange = [testString rangeOfString:@"% !TEX useTabs"];
+            tabRange = [testString rangeOfString:@"% !TEX useTabsWithFiles"];
             if (tabRange.location != NSNotFound)
-            {
-                self.useTabs = YES;
+                {
+                self.useTabsWithFiles = YES;
                 done = YES;
-            }
+                }
+            else
+                {
+                tabRange = [testString rangeOfString:@"% !TEX useTabs"];
+                if (tabRange.location != NSNotFound)
+                    {
+                    self.useTabs = YES;
+                    done = YES;
+                    }
+                }
         }
     }
     
@@ -4166,32 +4177,41 @@ if (! useFullSplitWindow) {
 - (void)addTabbedWindows
 {
     NSInteger   numberOfIncludeFiles;
-    NSString    *thePath, *newPath, *theCorrectedPath;
+    NSInteger   numberOfLinesChecked;
+    NSString    *thePath, *newPath, *theCorrectedPath, *pdfPath;
     TSDocument  *theDocument;
     NSInteger   i, j;
     NSWindow    *theWindow;
     NSString    *content;
     NSUInteger  theLength, start, end;
-    NSRange     myRange, theRange, includeRange, newIncludeRange, finalRange;
+    NSRange     myRange, theRange, includeRange, newIncludeRange, finalRange, shortStringRange, newShortRange;
+    NSRange     finalShortRange;
     BOOL        done;
-    NSString    *includeString, *newIncludeString;
+    NSString    *includeString, *newIncludeString, *newerIncludeString, *shortString, *finalShortString;
+    BOOL        noShortString;
+    NSInteger   aLength;
+    NSWindow    *windowToTab;
+    NSString    *theExtension;
+    BOOL        directory, pdfExists;
     
-    if (! self.useTabs)
+    if ((! self.useTabs) && (! self.useTabsWithFiles))
         return;
     
     theWindow = (NSWindow *)[self textWindow];
     j = [theWindow.tabbedWindows count];
     if (j > 1)
         return;
-
+    
     
     content = [_textStorage string];
     
-    if (content) {
-        theLength = [content length];
-        if ((theLength < 20000) && (self.useTabs))
+    if (! content)
+        return;
+    
+    theLength = [content length];
+    
+    if ((theLength < 20000) && (self.useTabs))
         {
-            
             myRange.location = 0;
             myRange.length = 1;
             done = NO;
@@ -4218,8 +4238,9 @@ if (! useFullSplitWindow) {
                                 {
                                     finalRange.location = 0;
                                     finalRange.length = newIncludeRange.location - includeRange.location;
-                                    includeString = [newIncludeString substringWithRange: finalRange];
-                                                                        newIncludeString = [includeString stringByAppendingPathExtension: @"tex"];
+                                    newIncludeString = [newIncludeString substringWithRange: finalRange];
+                                    if ([[newIncludeString pathExtension] isEqualToString:@""])
+                                       newIncludeString = [newIncludeString stringByAppendingPathExtension: @"tex"];
                                     newIncludeString = [newIncludeString stringByExpandingTildeInPath];
                                     
                                     self.numberOfTabs = self.numberOfTabs + 1;
@@ -4231,26 +4252,133 @@ if (! useFullSplitWindow) {
                         }
                     }
             }
-            
+         }
         
+       if (self.useTabsWithFiles)
+        {
+            
+            myRange.location = 0;
+            myRange.length = 1;
+            done = NO;
+            numberOfLinesChecked = 0;
+            
+            
+            while ((numberOfLinesChecked < 50) && (!done)) {
+                [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+                myRange.location = end;
+                myRange.length = 1;
+                numberOfLinesChecked = numberOfLinesChecked + 1;
+                
+                theRange.location = start; theRange.length = (end - start);
+                includeString = [content substringWithRange: theRange];
+                includeString = [includeString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+                
+                includeRange = [includeString rangeOfString:@"% !TEX tabbedFile{"];
+                if ((includeRange.location != NSNotFound) && (includeRange.location == 0))
+                {
+                    
+                    includeRange.location = includeRange.location + 18;
+                    includeRange.length = theRange.length - 18;
+                    if (includeRange.length > 0)
+                    {
+                        newIncludeString = [includeString substringWithRange: includeRange];
+                        newIncludeRange = [includeString rangeOfString:@"}"];
+                        if (newIncludeRange.location != NSNotFound)
+                        {
+                            finalRange.location = 0;
+                            finalRange.length = newIncludeRange.location - includeRange.location;
+                            newerIncludeString = [newIncludeString substringWithRange: finalRange];
+                            newIncludeString = [newerIncludeString stringByExpandingTildeInPath];
+                            
+                            noShortString = YES;
+                            shortStringRange = [includeString rangeOfString:@"("];
+                            if (shortStringRange.location != NSNotFound)
+                            {
+                                newShortRange.location = shortStringRange.location + 1;
+                                aLength = [includeString length] - newShortRange.location;
+                                if (aLength > 0)
+                                {
+                                    newShortRange.length = aLength;
+                                    shortString = [includeString substringWithRange:newShortRange];
+                                     newShortRange = [shortString rangeOfString:@")"];
+                                    if (newShortRange.location != NSNotFound)
+                                    {
+                                        finalShortRange.location = 0;
+                                        aLength = newShortRange.location;
+                                        if (aLength > 0)
+                                        {
+                                            finalShortRange.length = aLength;
+                                            finalShortString = [shortString substringWithRange: finalShortRange];
+                                            finalShortString = [finalShortString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+                                            if (! [finalShortString isEqualTo: @""])
+                                                noShortString = NO;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            self.numberOfTabs = self.numberOfTabs + 1;
+                            [self.includeFiles addObject: newIncludeString];
+                            if (noShortString)
+                                [self.includeFileShortNames addObject:@""];
+                            else
+                                [self.includeFileShortNames addObject: finalShortString];
+                            if (self.numberOfTabs >= 19)
+                                done = YES;
+                            
+                        }
+                    }
+                }
+            }
+         }
 
-        }
-    }
+    
     
       numberOfIncludeFiles = self.numberOfTabs;
+      if (numberOfIncludeFiles == 0)
+          return;
+    
+     NSFileManager *fileManager = [NSFileManager defaultManager];
       NSDocumentController *myController = [NSDocumentController sharedDocumentController];
       
       for (i = (numberOfIncludeFiles - 1); i >= 0; i--)
           
       {
           thePath = self.includeFiles[i];
-          newPath =[[[self.fileURL path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: thePath];
-          theCorrectedPath = [newPath stringByStandardizingPath];
-           theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: theCorrectedPath] display: YES error:NULL];
-          if (theDocument)
+          theExtension = [thePath pathExtension];
+          if (! [thePath isAbsolutePath])
           {
-                [[self textWindow] addTabbedWindow: [theDocument textWindow] ordered: 1];
+              newPath =[[[self.fileURL path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: thePath];
+              thePath = [newPath stringByStandardizingPath];
           }
+          
+          
+          if (([fileManager fileExistsAtPath: thePath isDirectory:&directory]) && (! directory))
+              
+          {
+            theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: thePath] display: YES error:NULL];
+             if (theDocument)
+              {
+                  if ((! [self.includeFileShortNames[i] isEqualToString: @""]) && (atLeastHighSierra))
+                      {
+                          if  (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
+                              
+                              windowToTab = (NSWindow *)[theDocument pdfKitWindow];
+                          else if ((theDocument.documentType == isJPG) || (theDocument.documentType == isTIFF) || (theDocument.documentType == isJPG) || (theDocument.documentType == isEPS))
+                              windowToTab = (NSWindow *)[theDocument pdfWindow];
+                          else
+                              windowToTab = (NSWindow *)[theDocument textWindow];
+                          // the next line requires XCode on High Sierra; comment it out for XCode on Sierra
+                          //    windowToTab.tab.title = self.includeFileShortNames[i];
+                      }
+                  if (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
+                      [[self textWindow] addTabbedWindow: [theDocument pdfKitWindow]  ordered: 1];
+                  else if ((theDocument.documentType == isJPG) || (theDocument.documentType == isTIFF) || (theDocument.documentType == isJPG) || (theDocument.documentType == isEPS))
+                      [[self textWindow] addTabbedWindow: [theDocument pdfWindow]  ordered: 1];
+                  else
+                      [[self textWindow] addTabbedWindow: [theDocument textWindow] ordered: 1];
+           }
+      }
       }
 }
  

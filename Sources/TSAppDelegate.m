@@ -221,6 +221,12 @@
     else
         atLeastSierra = NO;
     
+    
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12)
+        atLeastHighSierra = YES;
+    else
+        atLeastHighSierra = NO;
+    
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;
 //	OgreTextFinder *theFinder;

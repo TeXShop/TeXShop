@@ -74,6 +74,13 @@
 </dd>
 When this command is given, TeXShop itself searches for \include files to associate with tabs; the mechanism should cover perhaps 70 percent of cases.
 
+<p> This first method allows an optional extension listing short names for the added tabs:
+<dd>
+<dl> % !TEX useTabs (one, two, , a short name, five)
+</dd>
+This additional parameter must be  on the same line as "useTabs", but notice that single lines can wrap in the editor without adding a line feed. The short names are listed inside a pair of round brackets, and are separated by commas. White space at the beginning and end of a short name will be ignored, but a short name can contain more than one word, as in the above example. If the space between two commas is blank, the original name will be used for that file. If the list has fewer names than the number of tabs, original names will be used for the remaining tabs. If the list is longer than the number of tabs, names at the end will be ignored.
+
+
 <p> The second mechanism gives the user considerably more control over the tabs. Within the top 20 lines of the root file, add the line
 <dd>
 <dl> % !TEX useTabsWithFiles
@@ -84,7 +91,7 @@ Below that, within the top 50 lines of the root file, add a line for each tab
 </dd> 
 In this command, a path to the file shown in the tab is given in curly brackets. In the example, the path starts from the folder containing the project root file, but see more details below. Notice that the file extension must be included. That is because the second mechanism allows pdf, tiff, jpg, log, aux, and other files as tabs. Authors sometimes give source files long descriptive names, which makes the tab titles very long. The final piece of the above line in round brackets is optional, and gives a shorter tab name. 
 
-<p> The optional short name will only be recognized in High Sierra, because it requires additional Apple API first made available there. Feel free to use the term in Sierra; it will cause no harm there, but will be ignored.
+<p> Optional short names will only be recognized in High Sierra, because it requires additional Apple API first made available there. Feel free to use the options in Sierra; they will cause no harm there, but will be ignored.
 
 <p> Finally, we list some technical details. The first mechanism searches for \include lines after \begin{document} in the body of the root file. It is common to list files without extensions, and in that case TeXShop adds the extension ".tex" when creating the tab.   In the second mechanism, however, TeXShop will not change the extension given by the user, or add a missing extension, because tab files can have unusual types so the extensions provide crucial information. Both methods create at most 20 tabs and ignore lines which might create more of them. The "useTabs" mechanism only works if the root file has at most 20,000 characters, to avoid very long searches for \include lines in gigantic root files.
 
@@ -106,13 +113,6 @@ When it sees this sort of string, TeXShop prepends the full path to the folder c
 
 <p> Here is another surprising case. Suppose that you are working on a project named "Galois.tex" and you earlier created a project named "Abel.tex". When you open Galois.tex,  you want Abel.tex as a tab so you can refer to that source file as you write Galois. But if you drop the icon for Galois.tex on TeXShop, both Galois.tex and Galois.pdf will open in separate windows. Similarly dropping the icon for Abel.tex on TeXShop will open Abel.tex and Abel.pdf. After tabbing occurs, you'll have a tabbed window containing Galois.tex and Abel.tex, and you'll have Galois.pdf in a separate window. But you'll also have Abel.pdf in  another window. The existence of this extra pdf file looks like a bug, but isn't.
 
-<p> This release of TeXShop was compiled by XCode 8.3.3 running on Sierra. It runs fine on High Sierra, but the "short tab names" feature doesn't work there because XCode doesn't have API's for High Sierra. I  tried compiling TeXShop on High Sierra using the beta copy of XCode provided for that system. The code worked fine in High Sierra and short tab names worked. But unfortunately, the resulting code had minor problems running on Sierra. No doubt these will be fixed before the release of High Sierra.
-
-<p> Consequently, if you are beta testing High Sierra and want to use short tab names, you'll need to search the source file TSDocument.m for "High Sierra" and uncomment the following line of code
-<dd>
-<dl> windowToTab.tab.title = self.includeFileShortNames[i];
-</dd>
-Then compile on High Sierra.
 
 	</ul>
 	

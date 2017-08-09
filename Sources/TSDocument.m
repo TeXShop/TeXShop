@@ -61,6 +61,7 @@
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
+#define MAXNUMOFTABS 20
 
 @interface TSDocument ()
 - (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification;
@@ -721,6 +722,8 @@
 		}
 	else
 		skipTextWindow = NO;
+    
+    
     
     [self flipIndexColor:  ![SUD boolForKey:IndexColorStartKey]];
 
@@ -1454,12 +1457,63 @@ in other code when an external editor is being used. */
 	}
 }
 
+// the next routine looks at a line of text after tabRange, checking for (name1, name2, name3, ...), storing these
+// in self.shortNamesForTabs; at most MAXNUMOFTABS entries are used; all must occur on one line
+
+- (void)checkOptionalEntries: (NSString *)line fromRange: (NSRange) tabRange;
+{
+    NSRange checkRange, startRange;
+    NSString *theRest, *aName;
+    NSInteger aLength;
+    NSArray   *names;
+    NSInteger i, size;
+    
+    checkRange.location = tabRange.location + tabRange.length;
+    checkRange.length = [line length] - checkRange.location;
+    theRest = [line substringWithRange:checkRange];
+    startRange = [theRest rangeOfString: @"("];
+    if (startRange.location == NSNotFound)
+        return;
+    
+    checkRange.location = startRange.location + 1;
+    aLength = [theRest length] - startRange.location - 1;
+    if (aLength <= 0)
+        return;
+    checkRange.length = aLength;
+    theRest = [theRest substringWithRange: checkRange];
+    
+    startRange = [theRest rangeOfString: @")"];
+    if (startRange.location == NSNotFound)
+        return;
+    checkRange.location = 0;
+    aLength = startRange.location;
+    if (aLength <= 0)
+        return;
+    checkRange.length = aLength;
+    theRest = [theRest substringWithRange: checkRange];
+    
+    names = [theRest componentsSeparatedByString:@","];
+    size = [names count];
+    if (size > MAXNUMOFTABS)
+        size = MAXNUMOFTABS;
+    for (i = 0; i < size; i++)
+    {
+        aName = names[i];
+        aName = [aName stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+        self.includeFileShortNames[i] = aName;
+    }
+    
+    
+}
+
+
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
 	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
 	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange;
 	NSUInteger          length, start, end;
 	BOOL                done;
-	NSInteger                 linesTested, offset;
+	NSInteger           linesTested, offset;
+    NSInteger           i;
 	NSStringEncoding	theEncoding;
     
     // theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding]; this error broke the encoding menu in the save panel
@@ -1568,6 +1622,9 @@ in other code when an external editor is being used. */
                 if (tabRange.location != NSNotFound)
                     {
                     self.useTabs = YES;
+                    for (i = 0; i < MAXNUMOFTABS; i++)
+                        self.includeFileShortNames[i] = @"";
+                    [self checkOptionalEntries: testString fromRange: tabRange];
                     done = YES;
                     }
                 }
@@ -4192,7 +4249,7 @@ if (! useFullSplitWindow) {
     NSInteger   aLength;
     NSWindow    *windowToTab;
     NSString    *theExtension;
-    BOOL        directory, pdfExists;
+    BOOL        directory;
     
     if ((! self.useTabs) && (! self.useTabsWithFiles))
         return;
@@ -4216,7 +4273,7 @@ if (! useFullSplitWindow) {
             myRange.length = 1;
             done = NO;
            
-            while ((myRange.location < theLength) && (!done)) {
+            while ((myRange.location < theLength) && (! done)) {
                 [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
                 myRange.location = end;
                 myRange.length = 1;
@@ -4224,7 +4281,7 @@ if (! useFullSplitWindow) {
                 theRange.location = start; theRange.length = (end - start);
                 includeString = [content substringWithRange: theRange];
                 includeString = [includeString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
-            
+                
                 includeRange = [includeString rangeOfString:@"\\include{"];
                 if ((includeRange.location != NSNotFound) && (includeRange.location == 0))
                     {
@@ -4233,7 +4290,7 @@ if (! useFullSplitWindow) {
                         if (includeRange.length > 0)
                         {
                             newIncludeString = [includeString substringWithRange: includeRange];
-                            newIncludeRange = [includeString rangeOfString:@"}"];
+                             newIncludeRange = [includeString rangeOfString:@"}"];
                             if (newIncludeRange.location != NSNotFound)
                                 {
                                     finalRange.location = 0;
@@ -4245,7 +4302,7 @@ if (! useFullSplitWindow) {
                                     
                                     self.numberOfTabs = self.numberOfTabs + 1;
                                     [self.includeFiles addObject: newIncludeString];
-                                    if (self.numberOfTabs >= 19)
+                                    if (self.numberOfTabs > MAXNUMOFTABS)
                                         done = YES;
              
                                 }
@@ -4323,7 +4380,7 @@ if (! useFullSplitWindow) {
                                 [self.includeFileShortNames addObject:@""];
                             else
                                 [self.includeFileShortNames addObject: finalShortString];
-                            if (self.numberOfTabs >= 19)
+                            if (self.numberOfTabs >= MAXNUMOFTABS)
                                 done = YES;
                             
                         }
@@ -4332,8 +4389,6 @@ if (! useFullSplitWindow) {
             }
          }
 
-    
-    
       numberOfIncludeFiles = self.numberOfTabs;
       if (numberOfIncludeFiles == 0)
           return;
@@ -4341,9 +4396,10 @@ if (! useFullSplitWindow) {
      NSFileManager *fileManager = [NSFileManager defaultManager];
       NSDocumentController *myController = [NSDocumentController sharedDocumentController];
       
-      for (i = (numberOfIncludeFiles - 1); i >= 0; i--)
+      for (i = (numberOfIncludeFiles - 1); i >= 0; i = i - 1)
           
       {
+          
           thePath = self.includeFiles[i];
           theExtension = [thePath pathExtension];
           if (! [thePath isAbsolutePath])
@@ -4352,13 +4408,13 @@ if (! useFullSplitWindow) {
               thePath = [newPath stringByStandardizingPath];
           }
           
-          
           if (([fileManager fileExistsAtPath: thePath isDirectory:&directory]) && (! directory))
               
           {
             theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: thePath] display: YES error:NULL];
              if (theDocument)
               {
+                  
                   if ((! [self.includeFileShortNames[i] isEqualToString: @""]) && (atLeastHighSierra))
                       {
                           if  (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
@@ -4371,6 +4427,7 @@ if (! useFullSplitWindow) {
                           // the next line requires XCode on High Sierra; comment it out for XCode on Sierra
                           //    windowToTab.tab.title = self.includeFileShortNames[i];
                       }
+                 
                   if (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
                       [[self textWindow] addTabbedWindow: [theDocument pdfKitWindow]  ordered: 1];
                   else if ((theDocument.documentType == isJPG) || (theDocument.documentType == isTIFF) || (theDocument.documentType == isJPG) || (theDocument.documentType == isEPS))
@@ -4379,7 +4436,7 @@ if (! useFullSplitWindow) {
                       [[self textWindow] addTabbedWindow: [theDocument textWindow] ordered: 1];
            }
       }
-      }
+    }
 }
  
 

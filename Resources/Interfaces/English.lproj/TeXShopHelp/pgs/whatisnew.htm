@@ -15,6 +15,31 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.85</h5></P>
+
+TeXShop 3.82 introduced "useTabs", an easy way to add tabs to projects with a root file and chapter files. TeXShop 3.84 added "useTabsWithFiles", a second method of adding tabs requiring a little more work for a lot more flexibility. Unhappily, the code for this second method broke the first method.
+
+<p> Grrr.
+
+<p> TeXShop 3.85 again activates both methods. 
+
+<p> In High Sierra, tabs can be given special short names in place of the names of the files they represent. As the number of tabs increases, this becomes more and more useful. The second method of adding tabs has always supported these shorter names. A similar technique is provided in TeXShop 3.85 for the first method.
+
+<p> The magic line containing "useTabs" can be followed by an optional list of short names as in the example below:
+<dd>
+<dl> % !TEX useTabs (one, two, , short name, five)
+</dd>
+This additional parameter must be  on the same line as "useTabs", but notice that single lines can wrap in the editor without adding a line feed. The short names are listed inside a pair of round brackets, and are separated by commas. White space at the beginning and end of a short name will be ignored, but a short name can contain more than one word, as in the above example. If the space between two commas is blank, the original name will be used for that file. If the list has fewer names than the number of tabs, original names will be used for the remaining tabs. If the list is longer than the number of tabs, names at the end will be ignored.
+
+<p> Version 3.85 runs on the original list of supported systems, including High Sierra. Tabs require Sierra and higher, and short names require High Sierra and higher. Short names can be input on Sierra, but they will be ignored on that system.
+
+<p> TeXShop 3.85 was compiled by XCode 8.3.3 running on Sierra. It runs fine on High Sierra, but the "short tab names" feature doesn't work there because XCode doesn't have API's for High Sierra. I  tried compiling TeXShop on High Sierra using the beta copy of XCode provided for that system. The code worked fine in High Sierra and short tab names worked. But unfortunately, the resulting code had minor problems running on Sierra. The High Sierra version is available at the TeXShop web site at http://pages.uoregon.edu/koch/texshop/texshop.html.
+
+<p> The TeXShop 3.85 source code has one line commented out which must be activated to get short tab names on High Sierra. If you want to compile yourself on High Sierra, search the source file TSDocument.m for "High Sierra" and uncomment the following line of code
+<dd>
+<dl> windowToTab.tab.title = self.includeFileShortNames[i];
+</dd>
+
 <P><h5>TeXShop Changes 3.84</h5></P>
 
 When version 3.82 of TeXShop was released, I said that it would be the final version of TeXShop until late fall. But bugs were discovered, so version 3.83 was released. 

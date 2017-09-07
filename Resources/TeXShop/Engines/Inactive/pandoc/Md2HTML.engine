@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# pandoc takes an input file (including markdown) and writes an output file (html, pdf, latex, ...)
+
+PATH=$PATH:/Library/TeX/texbin:/usr/texbin:/usr/local/bin
+
+OUTFILE="`basename $1`"
+
+OUTFILE="${OUTFILE%.*}.html"
+
+# echo $OUTFILE
+
+pandoc  -s "$1"  -o $OUTFILE
+
+/Applications/Safari.app/Contents/MacOS/Safari "$OUTFILE"  &

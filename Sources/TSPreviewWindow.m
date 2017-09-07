@@ -186,6 +186,12 @@ extern NSPanel *pageNumberWindow;
 	[self.myDocument trashAUXFiles: sender];
 }
 
+- (void) toggleSyntaxColor: (id)sender
+{
+    [self.myDocument toggleSyntaxColor: sender];
+}
+
+
 - (void) runPageLayout: sender
 {
 	[self.myDocument runPageLayout: sender];

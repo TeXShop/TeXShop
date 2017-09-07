@@ -15,6 +15,57 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.86</h5></P>
+
+TeXShop 3.86 fixes several minor issues reported by users since the release of 3.85. Most of these issues have been present for a long time.
+
+<ul>
+<li> The Chinese localization had overlapping text in Preferences; this is fixed.
+
+<p>
+<li> Antti Knowles found two bugs and sent the code to fix them. When synctex is used to sync from the Preview window to the Source window, it colors the matching text yellow. After that in earlier versions of TeXShop, if a selection was made  using only the keyboard, the selection would still be in yellow. The selection color would change to standard selection color only after a click of the mouse. This is fixed.
+
+<p>
+<li> Knowles second fix concerns the autocomplete feature of BibTeX. If a latex label contains a space, the autocomplete feature would show the full label in the list, but selecting this label would only include the label up to the first space. The fix for this is a little iffy. If users of TeXShop and BibTeX run into problems, please write me immediately.
+
+<p>
+<li> Tristan Hubsch pointed out that "hyperref tooltips" used with tables of contents and elsewhere could run off the page to the left or right. In that case, they were cut off. This annoying glitch is  fixed (unless the page is so narrow that the tooltip could never fit on it).
+
+<p>
+<li> Added ".engine" and ".sh" (shell script) as file types that TeXShop can write.
+
+<p>
+<li> At the request of Simon Robinson, addd ".bbl" and ".synctex(busy)" as file types which are automatically removed by the Remove AUX File commands.
+
+<p>
+<li> The remaining items are all motivated by email sent by Bob Kerstetter. He reported that
+<a href="http://tidbits.com/article/17351">http://tidbits.com/article/17351</a> had an article about the  language Markdown, listing editors used on the Macintosh to create these sources, and TeXShop was in that list. Markdown is a very simple markup language invented by John Gruber whose files can be easily converted to html, pdf, latex, and other languages. Many conversion programs are available free on the internet, including a program called "pandoc". In the ~/Library/TeXShop/Engines/Inactive program, there is a folder containing pandoc engines. 
+
+<p> But I discovered that the information about pandoc was out of date. The pandoc site now contains an open source install package for OS X, making it very easy to install pandoc. So I removed the existing engines, and placed a document called Pandoc.pdf in the pandoc folder, with links to the Gruber article and the pandoc site. Note that the pandoc site contains a large number of possible conversions, and details about how they work.
+
+<p>
+<li> I also received email from  Alan Munn, who tried to create stationery for Markdown files (.md files) and failed. This caused me to revise the Stationery feature of TeXShop slightly. Originally, users could create two kinds of files and place them in ~/Library/TeXShop/Stationery. First, they could create a piece of stationery, with extension ".tex". Then they could create a comment file with the same name and extension ".comment" describing the stationery. After that, the TeXShop Stationery menu showed available stationery, with descriptions of each possibility.
+
+<p> It turns out that the extension assigned to stationery was irrelevant. So in TeXShop 3.86, stationery files can have any extension except ".comment", or no extension at all. The extension is actually never used.
+
+<p> Stationery is treated just like blank windows in TeXShop, except that stationery pages are marked as "dirty."
+If you try to close one, or typeset one, or whatever, a dialog will appear asking you to name the file and save it to a location of your choosing. This dialog contains a pull-down menu of file types which TeXShop can write, and that menu is how users actually choose filetype.  Markdown stationery can be saved with type ".md" in this way, and stationery for any other file type can be handled the same way.
+
+<p>
+<li> The folder ~/Library/TeXShop/Engines/Inactive/pandoc contains two new engines. The first, Md2pdf.engine, converts a Markdown source file to a pdf file and opens the pdf file in TeXShop. The second, Md2HTML.engine, converts a Markdown source file to an HTML file and opens the HTML file in Safari.
+
+<p> Users should note that many other conversion engines for Markdown are available on the internet, and in most cases it is very easy to write engine files which call these conversion engines.
+
+<p>
+<li> A few people use TeXShop as a general editor. I'm one of them, but I sort of thought I was alone. If you use TeXShop to edit other things than .tex files, the syntax coloring feature of TeXShop can be annoying.  TeXShop 3.86 has a new menu item which turns syntax coloring on or off. This applies to the source window at the top of the stack. Users can have several source windows, some using syntax coloring and some not. The old "Syntax Color" item in TeXShop Preferences is still there, but it now selects the default choice for syntax coloring when a new document is opened. Changing this Preference does not affect syntax coloring in documents already open.
+
+<p>
+It would, of course, be wonderful if someone would write general syntax coloring code for TeXShop, so users could choose one scheme for Markdown, one for HTML, one for C code, etc. I don't intend to do that, but I'd gratefully accept the code from someone else.
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 3.85</h5></P>
 
 TeXShop 3.82 introduced "useTabs", an easy way to add tabs to projects with a root file and chapter files. TeXShop 3.84 added "useTabsWithFiles", a second method of adding tabs requiring a little more work for a lot more flexibility. Unhappily, the code for this second method broke the first method.

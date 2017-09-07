@@ -432,6 +432,7 @@ enum RootCommand
 @property (retain)  NSString    *scrapProgram;
 @property (retain)  NSString    *scrapMenuEngine;
 @property           BOOL        scrapDVI;
+@property           BOOL        syntaxColor;
 
 
 + (BOOL)autosavesInPlace;
@@ -466,6 +467,7 @@ enum RootCommand
 - (IBAction) doTemplate: sender;
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
+- (IBAction)toggleSyntaxColor:sender;
 
 // - (void) tryScrap:(id)sender;
 // - (IBAction) typesetScrap:(id)sender;
@@ -500,6 +502,7 @@ enum RootCommand
 - (void) toLine: (NSInteger) line andSubstring: theString;
 - (void) doChooseMethod: sender;
 - (void) fixTypesetMenu;
+- (void) fixSyntaxColorMenu;
 - (void) doError: sender;
 - (NSInteger) errorLineFor: (NSInteger)theError;
 - (NSString *) errorLinePathFor: (NSInteger)theError;

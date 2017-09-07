@@ -672,7 +672,8 @@
     
 
 	[super windowControllerDidLoadNib:aController];
-	[self applyInvisibleCharactersShowing]; // added by Terada
+    self.syntaxColor = [SUD boolForKey: SyntaxColoringEnabledKey];
+    [self applyInvisibleCharactersShowing]; // added by Terada
     
  //   [self.splitController setWindow: fullSplitWindow];
     
@@ -3155,22 +3156,39 @@ preference change is cancelled. "*/
 
 - (void) fixTypesetMenu
 {
-	NSMenu				*menu;
+    NSMenu				*menu;
+    
+    menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu];
+    
+    [[menu itemWithTag:kTypesetViaPDFTeX] setState:NSOffState];
+    [[menu itemWithTag:kTypesetViaGhostScript] setState:NSOffState];
+    [[menu itemWithTag:kTypesetViaPersonalScript] setState:NSOffState];
+    
+    [[menu itemWithTag:whichScript] setState:NSOnState];
 
-	menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Typeset", @"Typeset")] submenu];
+  }
 
-	[[menu itemWithTag:kTypesetViaPDFTeX] setState:NSOffState];
-	[[menu itemWithTag:kTypesetViaGhostScript] setState:NSOffState];
-	[[menu itemWithTag:kTypesetViaPersonalScript] setState:NSOffState];
+- (void) fixSyntaxColorMenu
+{
+    NSMenu				*menu;
+    BOOL                value;
+    
+    value = self.syntaxColor;
+    
+    menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Source", @"Source")] submenu];
+    [[menu itemWithTag:14] setState:self.syntaxColor];
 
-	[[menu itemWithTag:whichScript] setState:NSOnState];
 }
+
 
 - (void)newMainWindow:(NSNotification *)notification
 {
 	id object = [notification object];
 	if ((object == pdfWindow) || (object == textWindow) || (object == outputWindow) || (object == fullSplitWindow))
-		[self fixTypesetMenu];
+    {
+      [self fixTypesetMenu];
+      [self fixSyntaxColorMenu];
+    }
 }
 
 - (BOOL)skipTextWindow
@@ -3768,7 +3786,8 @@ preference change is cancelled. "*/
 	BOOL checkSquareBracket = [SUD boolForKey:CheckSquareBracketEnabledKey];
 	BOOL checkParen = [SUD boolForKey:CheckParenEnabledKey];
 	
-	if (![SUD boolForKey:SyntaxColoringEnabledKey] 
+	// if (![SUD boolForKey:SyntaxColoringEnabledKey]
+    if ((! self.syntaxColor)
 		|| (!checkBrace && !checkBracket && !checkSquareBracket && !checkParen)) {
 		return;
 	}
@@ -5714,6 +5733,16 @@ if (! useFullSplitWindow) {
     */
 }
 
+- (IBAction)toggleSyntaxColor:sender {
+    
+    self.syntaxColor = ! self.syntaxColor;
+    [sender setState: self.syntaxColor];
+    
+    [self reColor:nil];
+    
+}
+
+
 - (void) flipIndexColor: (NSInteger)state
 {
     
@@ -6943,6 +6972,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 					   ([extension isEqualToString:@"aux"] ||
 						[extension isEqualToString:@"blg"] ||
 						[extension isEqualToString:@"brf"] ||
+                        [extension isEqualToString:@"bbl"] ||
 						[extension isEqualToString:@"glo"] ||
 						[extension isEqualToString:@"idx"] ||
 						[extension isEqualToString:@"ilg"] ||
@@ -6970,6 +7000,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                         [extension isEqualToString:@"glog"] ||
 						[extension isEqualToString:@"pdfsync"] ||
 						[extension isEqualToString:@"synctex"] ||
+                        [extension isEqualToString:@"synctex(busy)"] ||
 						[extension isEqualToString:@"fdb_latexmk"] ||
                         [extension isEqualToString:@"fls"] ||
 						([extension isEqualToString:@"pdf"] && trashPDF) ||

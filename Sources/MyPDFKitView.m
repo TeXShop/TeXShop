@@ -2589,8 +2589,9 @@ The system then remembers the new number and sends is to the Timer which will di
     PDFDestination  *theDestination;
     PDFPage         *linkedPage;
     NSPoint         linkedPoint;
-    NSRect          aRect, bRect;
- NSInteger       H = 120, W = 400;
+    NSRect          aRect, bRect, vRect;
+    NSInteger       H = 120, W = 400;
+    NSInteger       leftSide, rightSide;
     NSRect          pageBounds;
     
     
@@ -2623,7 +2624,7 @@ The system then remembers the new number and sends is to the Timer which will di
             linkedPage = [theDestination page];
             pageBounds = [linkedPage boundsForBox: kPDFDisplayBoxMediaBox];
             linkedPoint = [theDestination point];
-            NSLog(@"The value is %f", linkedPoint.x);
+            // NSLog(@"The value is %f", linkedPoint.x);
             
             // aRect = where text comes from
             if (linkedPoint.x < (pageBounds.size.width / 2))
@@ -2647,6 +2648,17 @@ The system then remembers the new number and sends is to the Timer which will di
             bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3.0 - 10;
             bRect.size.height = 2 * H / 3.0;
             bRect.size.width = 2 * W / 3.0;
+            
+            // Now make Tristan Hubsch modification
+            
+            vRect = [self documentView].visibleRect;
+            leftSide = vRect.origin.x;
+            rightSide = vRect.origin.x + vRect.size.width;
+            if (bRect.origin.x < (leftSide + 5))
+                bRect.origin.x = leftSide + 5;
+            else if (bRect.origin.x + bRect.size.width > (rightSide - 5))
+                bRect.origin.x = rightSide - 5 - bRect.size.width;
+             
             
             NSData	*myData = [linkedPage dataRepresentation];
             NSImage *myImageNew = [[NSImage alloc] initWithData: myData];

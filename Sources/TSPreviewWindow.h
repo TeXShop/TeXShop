@@ -79,6 +79,7 @@
 
 
 - (void) doError: sender;
+- (void) toggleSyntaxColor: sender;
 - (void) doChooseMethod: sender;
 - (void) rotateClockwise: sender;
 - (void) rotateCounterclockwise: sender;

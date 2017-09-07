@@ -349,7 +349,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // It either colorizes the whole text or removes all the coloring.
 - (void)reColor:(NSNotification *)notification
 {
-	if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
+	// if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
+    if (self.syntaxColor) {
 		[self colorizeAll];
 	} else {
 		NSRange theRange;
@@ -397,7 +398,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 - (void)colorizeAll
 {
 	// No syntax coloring if the file is not TeX, or if it is disabled
-	if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+    if (!fileIsTex || !self.syntaxColor)
 		return;
 
 	// Recolor the visible area only.
@@ -408,7 +410,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 - (void) colorizeVisibleAreaInTextView:(NSTextView *)aTextView
 {
 	// No syntax coloring if the file is not TeX, or if it is disabled
-	if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+     if (!fileIsTex || !self.syntaxColor)
 		return;
 
 	[self colorizeText:aTextView range:[aTextView visibleCharacterRange]];
@@ -422,7 +425,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	NSUInteger		length;
 
 	// No syntax coloring if the file is not TeX, or if it is disabled
-	if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
+     if (!fileIsTex || !self.syntaxColor)
 		return;
 
 	length = [self.textStorage length];

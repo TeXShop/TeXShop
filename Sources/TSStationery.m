@@ -8,6 +8,7 @@
 
 #import "TSStationery.h"
 #import "globals.h"
+#import "TSDocument.h"
 
 
 @implementation TSStationery
@@ -36,7 +37,7 @@
 
 - (IBAction)newFromStationery: (id)sender
 {
-	NSString			*title, *title1, *path, *comment;
+	NSString			*title, *title1, *path, *comment, *extension;
 	BOOL				isDirectory;
 	NSInteger					i;
 	NSStringEncoding	enc;
@@ -58,7 +59,13 @@
 			title = [ files objectAtIndex: i ];
 			path  = [ basePath stringByAppendingPathComponent: title ];
 			if (([fileManager fileExistsAtPath:path isDirectory: &isDirectory]) && (! isDirectory)) {
-				if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
+                extension = [[title pathExtension] lowercaseString];
+                if (! [extension isEqualToString: @"comment"])
+ //               if (
+ //                   ( [extension isEqualToString: @"tex"]) ||
+ //                   ( [extension isEqualToString: @"md"])
+ //                  )
+				 {
 					title1 = [title stringByDeletingPathExtension];
 					[self.sourceData addObject: title1];
 					[self.fullSourceData addObject: title];
@@ -104,19 +111,21 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	NSDocumentController	*myController;
 	NSURL					*myURL;
 	NSInteger						index1;
-	
+    NSString                *extension;
+ 	
 	index1 = [tableView selectedRow];
 	[stationeryWindow close];
 	if (index1 >= 0) {
 		NSString *basePath = [ StationeryPath stringByStandardizingPath ];
 		NSString *fullPath = [basePath stringByAppendingPathComponent: [self.fullSourceData objectAtIndex: index1]];
+        extension = [fullPath pathExtension];
 		// NSLog([sourceData objectAtIndex:index]);
 		// NSLog(fullPath);
 		myURL = [NSURL fileURLWithPath: fullPath];
 		myController = [NSDocumentController sharedDocumentController];
-		id theDocument = [myController openDocumentWithContentsOfURL: myURL display:YES error:nil];
+		TSDocument *theDocument = [myController openDocumentWithContentsOfURL: myURL display:YES error:nil];
 		[theDocument setFileURL: nil];
-		[[theDocument window] setDocumentEdited: YES];
+        [theDocument updateChangeCount: NSChangeDone];
 		
 	}
 	

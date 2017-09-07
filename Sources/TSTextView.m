@@ -1228,7 +1228,10 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	if (flag == YES && ([word rangeOfString:COMPLETIONSTRING].location != NSNotFound)) {
         // this is one of our suggestions, so we need to trim it
         // strip the comment for this, this assumes cite keys can't have spaces in them
-		NSRange firstSpace = [word rangeOfString:@" "];
+        
+        // Antti Knowles, antti.knowles@unige.ch, noticed the restriction that no spaces be in cite keys; to fix it, he added the option parameter
+        // to the existing code in the line below
+        NSRange firstSpace = [word rangeOfString:@" " options:NSBackwardsSearch];
 		word = [word substringToIndex:firstSpace.location];
 	}
     [super insertCompletion:word forPartialWordRange:charRange movement:movement isFinal:flag];
@@ -1331,6 +1334,18 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    
+    // The following is from Antti Knowles, antti.knowles@unige.ch
+    // If the user uses synctex from pdf to text, the selection is yellow. If additional selectios are made from the keyboard,
+    // they are also in yellow until the cursor converts them back to selection color. This code fixes the problem
+    
+    if ([_document textSelectionYellow]) {
+        [_document setTextSelectionYellow: NO];
+        NSMutableDictionary* mySelectedTextAttributes = [NSMutableDictionary dictionaryWithDictionary: [[_document textView] selectedTextAttributes]];
+        [mySelectedTextAttributes setObject: [NSColor colorWithCatalogName: @"System" colorName: @"selectedTextBackgroundColor"] forKey: @"NSBackgroundColor" ];
+         [[_document textView] setSelectedTextAttributes: mySelectedTextAttributes];
+    }
+
 	
 	// FIXME: Using static variables like this is *EVIL*
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!

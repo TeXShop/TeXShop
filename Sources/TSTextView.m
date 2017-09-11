@@ -1230,8 +1230,10 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         // strip the comment for this, this assumes cite keys can't have spaces in them
         
         // Antti Knowles, antti.knowles@unige.ch, noticed the restriction that no spaces be in cite keys; to fix it, he added the option parameter
-        // to the existing code in the line below
-        NSRange firstSpace = [word rangeOfString:@" " options:NSBackwardsSearch];
+        // to the existing code in the line below. This turned out to be a bad idea, and the fix was removed in 3.87. The Bibtex documentation
+        // says that spaces are not allowed in citation keys.
+        // NSRange firstSpace = [word rangeOfString:@" " options:NSBackwardsSearch];
+        NSRange firstSpace = [word rangeOfString:@" "];
 		word = [word substringToIndex:firstSpace.location];
 	}
     [super insertCompletion:word forPartialWordRange:charRange movement:movement isFinal:flag];

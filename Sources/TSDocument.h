@@ -380,6 +380,8 @@ enum RootCommand
 @property (retain)  NSString            *spellLanguage;
 @property           BOOL                automaticSpelling;
 
+@property           BOOL                pdfSinglePage;
+
 @property (retain)  NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
 @property (retain)  NSWindow            *ourCallingWindow;
 @property (retain)  NSDate              *pdfLastModDate;

@@ -6598,7 +6598,21 @@ SYNCTEX_INLINE static synctex_box_s _synctex_data_box_V(synctex_node_p node) {
 static synctex_node_p _synctex_node_box_visible(synctex_node_p node) {
     if ((node = _synctex_node_or_handle_target(node))) {
         int mean = 0;
-        int bound = 1500000/(node->class->scanner->pre_magnification/1000);
+/* Yusuke Terada wrote
+ I have often experienced TeXShop's crash when using SyncTeX.
+ I investigated the sources and found the cause.
+ 
+ The 6601st line of synctec_parser.c is
+	int bound = 1500000/(node->class->scanner->pre_magnification/1000);
+ 
+ Since both pre_magnification and 1000 are integers, when pre_magnification is less than 1000, the division (node->class->scanner->pre_magnification/1000) produces 0.
+ This causes DIVIDE BY ZERO error.
+ 
+ To avoid this, using 1000.0 instead of 1000 is effective.
+	int bound = 1500000/(node->class->scanner->pre_magnification/1000.0);
+ 
+*/
+        int bound = 1500000/(node->class->scanner->pre_magnification/1000.0);
         synctex_node_p parent = NULL;
         /*  get the first enclosing parent
          *  then get the highest enclosing parent with the same mean line ±1 */

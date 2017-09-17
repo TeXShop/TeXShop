@@ -116,6 +116,7 @@
 	self.pdfLastModDate = nil;
 	self.pdfRefreshTimer = nil;
     self.pdfActivity = nil;
+    self.pdfSinglePage = NO;
 	typesetContinuously = NO;
 	_pdfRefreshTryAgain = NO;
 	useTempEngine = NO;
@@ -1510,7 +1511,7 @@ in other code when an external editor is being used. */
 
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
 	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
-	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange;
+	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange, pdfRange;
 	NSUInteger          length, start, end;
 	BOOL                done;
 	NSInteger           linesTested, offset;
@@ -1593,6 +1594,29 @@ in other code when an external editor is being used. */
             }
 		}
 	}
+    
+    
+    length = [firstBytes length];
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
+    
+    while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+        [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+        myRange.location = end;
+        myRange.length = 1;
+        linesTested++;
+        
+        // FIXME: Simplify the following code
+        theRange.location = start; theRange.length = (end - start);
+        testString = [firstBytes substringWithRange: theRange];
+        pdfRange = [testString rangeOfString:@"% !TEX pdfSinglePage"];
+        if (pdfRange.location != NSNotFound) {
+            self.pdfSinglePage = YES;
+         }
+    }
+
     
     if (atLeastSierra)
     {
@@ -6972,8 +6996,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 					   ([extension isEqualToString:@"aux"] ||
 						[extension isEqualToString:@"blg"] ||
 						[extension isEqualToString:@"brf"] ||
-                        [extension isEqualToString:@"bbl"] ||
-						[extension isEqualToString:@"glo"] ||
+                        [extension isEqualToString:@"glo"] ||
 						[extension isEqualToString:@"idx"] ||
 						[extension isEqualToString:@"ilg"] ||
 						[extension isEqualToString:@"ind"] ||

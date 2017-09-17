@@ -176,7 +176,10 @@
 	showSync = NO;
 	if ([SUD boolForKey:ShowSyncMarksKey])
 		showSync = YES;
-	pageStyle = [SUD integerForKey: PdfPageStyleKey];
+    if (self.myDocument.pdfSinglePage)
+        pageStyle = kPDFDisplaySinglePage;
+	else
+        pageStyle = [SUD integerForKey: PdfPageStyleKey];
 	firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
 	resizeOption = [SUD integerForKey: PdfKitFitSizeKey];
 	if ((resizeOption == NEW_PDF_FIT_TO_WIDTH) || (resizeOption == NEW_PDF_FIT_TO_HEIGHT))

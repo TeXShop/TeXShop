@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 3.88}
+\title{About TeXShop 3.89}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -38,6 +38,22 @@ New versions of TeXShop generally do not change these user modifications because
 ccc.
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
 
+\section{Changes in 3.89}
+
+Version 3.89 introduces one more ``magic line'' for source files, and consequently one new macro to insert this magic line. The magic line is mainly for ConTeXt users, allowing them to revert to the 2016 version of the synctex parser (the authors of ConTeXt wrote their own synctex support without taking note of changes made in 2017 by the synctex author Jerome Laurens). 
+
+If you have never edited TeXShop macros to add your own macros, then it is easy to obtain the new macros.
+Go to the  folder \path{~/Library/TeXShop} in your home directory. This folder is hidden, but there is a command in TeXShop to take you there. Move the Macros folder in this location to the desktop,
+and then quit TeXShop. When TeXShop is next started, it will create a new Macros folder containing all of the latest macros.
+
+If you have edited the default Macros, it is easy to add the new macro. Open the Macro editor. Create a new macro titled ``Use Old Sync Parser (ConTeXt)'' with content
+\begin{verbatim}
+     % !TEX useOldSyncParser
+\end{verbatim}
+
+Herbert Schulz has revised the latexmk engines in TeXShop to use the magic line ``Extra Parameter for Engine Call.'' This allows users to add  flags to calls to TeX binary programs when latexmk calls these binaries, without rewriting the engine. The revised engines are in \path{~/Library/TeXShop/Engines/Inactive/Latexmk}. Replace any active latexmk engines in
+\path{~/Library/TeXShop/Engines} with new versions from the Inactive folder.
+
 \section{Changes in 3.88}
 
 Version 3.88 contains new macros to insert ``magic lines'' in source files. So users no longer need to remember the syntax of these lines.
@@ -46,7 +62,7 @@ If you have never edited TeXShop macros or added your own macros, then it is eas
 Go to the Library folder in your home directory and find $\sim$/Library/TeXShop. This folder is hidden, but there is a command in TeXShop to take you there. Move the Macros folder in this location to the desktop,
 and then quit TeXShop. When TeXShop is next started, it will create a new Macros folder containing all of the latest macros.
 
-If you have edited Macros, you can follow the previous paragraph making sure to save the old Macros folder on the desktop. Then use the TeXShop Macros editor to add these old macros to the new ones, and rearrange your macros, throwing away duplicates. But there is an easier way. In $\sim$/Library/New/Macros there is a file named ``Magic-Line-Macros.plist." Open this file in the Macro editor and add these macros to your existing macros.
+If you have edited Macros, you can follow the previous paragraph making sure to save the old Macros folder on the desktop. Then use the TeXShop Macros editor to add these old macros to the new ones, and rearrange your macros, throwing away duplicates. But there is an easier way. In $\sim$/Library/TeXShop/New/Macros there is a file named ``Magic-Line-Macros.plist." Open this file in the Macro editor and add these macros to your existing macros.
 
 
 \section{Changes in 3.87}

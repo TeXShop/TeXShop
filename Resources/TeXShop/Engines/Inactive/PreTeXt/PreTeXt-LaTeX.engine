@@ -1,0 +1,9 @@
+#!/bin/bash
+
+OUTFILE="`basename $1`"
+
+OUTFILE="${OUTFILE%.*}.tex"
+
+xsltproc 2>&1 --xinclude $HOME/Library/TeXShop/bin/xsl/mathbook-latex.xsl "$1" 
+
+pdflatex "$OUTFILE"

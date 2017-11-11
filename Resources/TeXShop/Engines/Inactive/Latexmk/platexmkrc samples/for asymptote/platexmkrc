@@ -1,0 +1,6 @@
+# special custom dependency for asymptote
+add_cus_dep("asy","eps",0,"asy2x");
+add_cus_dep("asy","pdf",0,"asy2x");
+add_cus_dep("asy","tex",0,"asy2x");
+sub asy2x {return system("asy '$_[0]'"); }
+#sub asy2x {return system("asy '$_[0]'; pdfcrop '$_[0].pdf'; mv '$_[0]-crop.pdf' '$_[0].pdf'"); }

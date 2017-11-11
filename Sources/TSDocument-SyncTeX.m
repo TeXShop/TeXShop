@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $Id: TSDocument-SyncTeX.m 262 2008-08-15 01:33:24Z richard_koch $
+ * $Id: TSDocument-SyncOld.m 262 2017-08-15 01:33:24Z richard_koch $
  *
  */
 
@@ -27,6 +27,7 @@
 #import "TSEncodingSupport.h"
 #import "MyDragView.h"
 #import "MyPDFKitView.h"
+#import "synctex_parser.h"
 
 
 
@@ -61,7 +62,15 @@
 }
 
 - (void)allocateSyncScanner
-{	
+{
+   
+/*
+    if (self.useOldSyncParser) {
+        [self allocateSyncScannerOld];
+        return;
+    }
+ */
+    
 	NSString		*myFileName, *mySyncTeXFileName;
 	const char		*fileString;
 	
@@ -113,6 +122,10 @@
     NSColor         *thePossiblyYellowColor;
 	// NSString		*lineString;
 	
+    
+    if (self.useOldSyncParser)
+        return [self doSyncTeXForPageOld: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
+  
     
 	line = 0;
     foundFileName = NULL;
@@ -2386,6 +2399,11 @@
 	float			x, y, h, v, width, height;
     PDFPage         *aPage;
     NSInteger       theindex;
+    
+    if (self.useOldSyncParser)
+        return [self doPreviewSyncTeXWithFilenameOld:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
+    
+    
 	
 	// THIS IS ACTIVE
 	

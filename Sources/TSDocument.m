@@ -104,7 +104,8 @@
     self.includeFiles = [NSMutableArray arrayWithCapacity:20];
     self.includeFileShortNames = [NSMutableArray arrayWithCapacity:20];
 
-
+    self.useOldSyncParser = NO;
+   
 	tagLine = NO;
 	self.texRep = nil;
 	fileIsTex = YES;
@@ -179,7 +180,12 @@
 	NSInteger	i;
     
     if (scanner != NULL)
-		synctex_scanner_free(scanner);
+    {
+        if (self.useOldSyncParser)
+            old_synctex_scanner_free(scanner);
+        else
+            synctex_scanner_free(scanner);
+    }
 	scanner = NULL;
 	
 	for (i = 0; i < NUMBEROFERRORS; i++) {
@@ -1154,8 +1160,13 @@ if (! skipTextWindow) {
 	[texCommand setDelegate: [TSEncodingSupport sharedInstance]];
 	// end addition
 
-    if (!_externalEditor) 
-		[self allocateSyncScanner];
+    if (!_externalEditor)
+    {
+        if (self.useOldSyncParser)
+            [self allocateSyncScannerOld];
+        else
+            [self allocateSyncScanner];
+    }
     
 
 	if (_externalEditor && ([SUD boolForKey: PdfRefreshKey] == YES)) {
@@ -1351,6 +1362,7 @@ in other code when an external editor is being used. */
         || ([extension isEqualToString: @"fdd"])
         || ([extension isEqualToString: @"lhs"])
         || ([extension isEqualToString: @"lua"])
+        || ([extension isEqualToString: @"xml"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -1511,7 +1523,7 @@ in other code when an external editor is being used. */
 
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
 	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
-	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange, pdfRange;
+	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange, pdfRange, parserRange;
 	NSUInteger          length, start, end;
 	BOOL                done;
 	NSInteger           linesTested, offset;
@@ -1597,6 +1609,7 @@ in other code when an external editor is being used. */
     
     
     length = [firstBytes length];
+ 
     done = NO;
     linesTested = 0;
     myRange.location = 0;
@@ -1616,6 +1629,27 @@ in other code when an external editor is being used. */
             self.pdfSinglePage = YES;
          }
     }
+    
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
+    
+    while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+        [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+        myRange.location = end;
+        myRange.length = 1;
+        linesTested++;
+        
+        // FIXME: Simplify the following code
+        theRange.location = start; theRange.length = (end - start);
+        testString = [firstBytes substringWithRange: theRange];
+        parserRange = [testString rangeOfString:@"% !TEX useOldSyncParser"];
+        if (parserRange.location != NSNotFound) {
+            self.useOldSyncParser = YES;
+        }
+    }
+
 
     
     if (atLeastSierra)
@@ -1790,7 +1824,7 @@ in other code when an external editor is being used. */
     
         if (dispatch_source != NULL) {
                 dispatch_source_cancel(dispatch_source);
-                dispatch_release(dispatch_source);
+              //  dispatch_release(dispatch_source);
                 dispatch_source = NULL;
             }
     }
@@ -4457,18 +4491,16 @@ if (! useFullSplitWindow) {
             theDocument = [myController openDocumentWithContentsOfURL: [NSURL fileURLWithPath: thePath] display: YES error:NULL];
              if (theDocument)
               {
-                  
                   if ((! [self.includeFileShortNames[i] isEqualToString: @""]) && (atLeastHighSierra))
                       {
                           if  (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
-                              
                               windowToTab = (NSWindow *)[theDocument pdfKitWindow];
                           else if ((theDocument.documentType == isJPG) || (theDocument.documentType == isTIFF) || (theDocument.documentType == isJPG) || (theDocument.documentType == isEPS))
                               windowToTab = (NSWindow *)[theDocument pdfWindow];
                           else
                               windowToTab = (NSWindow *)[theDocument textWindow];
                           // the next line requires XCode on High Sierra; comment it out for XCode on Sierra
-                          //    windowToTab.tab.title = self.includeFileShortNames[i];
+                              windowToTab.tab.title = self.includeFileShortNames[i];
                       }
                  
                   if (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))

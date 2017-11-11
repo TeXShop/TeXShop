@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>TeXShop</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css" media="screen">@import "v1.css";</style>
+</head>
+
+<body style="padding:25px">
+
+
+<!-- main content -->
+<div id="main">
+
+<P><h3>TeXShop Changes 3.89</h3></P>
+
+Version 3.89 has the following changes:
+
+<ul>
+
+<li> When new versions of TeXShop are released, two documents are created explaining features of the release.
+The first, titled "About This Release", is available as the first item in the TeXShop Help Menu, and describes those features that cannot be delivered automatically. For example, if new macros are available, they cannot be provided to users because users may have edited their macros. "About This Release" explains these features and how to obtain them. For most releases, there are no such items.
+
+<p>
+The second document, titled "Changes", describes all new features in the release. In version 3.89 and future versions, it will be the second item in the TeXShop Help Menu. This document is essential reading because new features are often not visible in the interface, so the changes document is the only way to discover that they are available.
+
+<p>
+The "Changes" document has always been available, but not in handy places. It is the information shown when a Sparkle "Check for Updates" command announces an update, it is available on the TeXShop web page just below the download link, and it is available in the TeXShop Help Panel under the heading "What's new". All these versions will still exist. We hope many more users will find the document in the Help menu.
+
+
+<p>
+<li> If the user double clicks on {, }, [, ], or (, ), the corresponding brace will be found and the text between these delimiters will be highlighted. This feature has existed for years and is an essential debugging tool. Occasionally, users just want to  select a brace, say {,  rather than selecting all this text. Many users may not know that they can do this by holding down the option key while double clicking. Now they know.
+
+<p> In version 3.89, this feature is extended to begin-end pairs, like
+<pre>
+     \begin{theorem}
+          There are infinitely many primes.
+     \end{theorem}
+</pre>
+ To select all text in the begin-end pair, hold down the option key and double click anywhere in the word "begin" or the word "end". In the above example, the computer will automatically find "{theorem}" and match with the corresponding begin-end pair for "{theorem}".
+ 
+ <p>
+ Notice that there are differences in the selection of {, } pairs and the selection of begin-end pairs. For brace pairs, you must double click on a brace, while for begin-end pairs you must double click on an easier-to-hit word.
+ 
+ <p>
+ Moreover, the option key is not needed for brace pairs, but is needed for begin-end pairs. Why? Most users are familiar with the following Mac convention: clicking on a spot pulls the cursor to that spot, double clicking on a spot selects a word there, triple clicking on a spot selects an entire sentence or paragraph there. It would be  confusing if this behavior failed for the words "begin" and "end", but worked for all other words. To avoid this confusion, users must press the option key if they want to match pairs.
+ 
+ <p>
+ I'd like to thank Claudio Beccari, who called my attention to the importance of begin-end pairs and asked for this feature in TeXShop. His request was so reasonable that I dropped everything else and implemented it. In turn, Beccari called my attention to an article in the latest Tugboat (Journal of the TeX User Group, volume 38, number 2), on debugging TeX files by Barbara Beeton. Beeton is the resident TeX expert at the American Mathematical Society. Her suggestions are given modestly, but ignoring them is the mark of a fool.
+
+<p>
+There remains the $ and $$ problem; the trouble with these delimiters is that there is no difference between the opening and closing symbol, making similar code difficult to program. Recall that $-$ is equivalent to
+\begin{math}-\end{math} or to \( - \) and $$-$$ is equivalent to \begin{displaymath}-\end{displaymath} or
+to \[ - \].  Perhaps \( - \) and \[ - \] will be handled in the future, but begin-end selection already handles one equivalent of $-$ and one of $$-$$. One possible useful habit to develop might be to use $ for very short expressions like $\alpha$, but use \begin{math}-\end{math} for all longer expressions. In that case, I recommend inventing a keyboard shortcut to enter this pair and the equivalent display pair. 
+
+
+<p>
+<li> One of the most important features of modern TeX distributions is SyncTeX, a creation of Jérôme Laurens.
+This software modifies TeX engines to output "synctex" files containing the information needed to sync between spots in the source and corresponding spots in the pdf output. Laurens also includes "synctex_parser", a C source file for front end developers allowing them to easily obtain information from the "synctex file."
+
+<p>
+In 2017, Laurens substantially rewrote both engine synctex support and the synctex_parser. His new parser has been in the last several iterations of TeXShop. I strongly recommend that users updating TeXShop also update TeX Live, probably via MacTeX, so these two pieces of software will match.
+
+<p>
+About two months ago, a couple of ConTeXt users complained to me that synctex doesn't work in the latest beta versions of ConTeXt. They also told me that it continues to work in other front ends. Further investigation showed that those front ends had not updated their copy of the synctex_parser, and then showed that the author of ConTeXt, Hans Hagen, wrote his own synctex code for ConTeXt, based unfortunately on the 2016 version of synctex. 
+
+<p>
+TeXShop 3.89 now contains both the new 2017 version of the synctex_parser, and the old 2016 version of this parser. This was not easy because Laurens used many of the same function names in both versions and the linker complained; eventually I had to change 2016 names by hand. A new magic line has been introduced for ConTeXt users:
+<pre>
+    % !TEX useOldSyncParser
+</pre>
+This will work for all TeX users, but is only recommended for ConTeXt users. The magic line is read when a file is first opened, so the first time this line is added, the file should immediately be closed and then reopened to make it active.
+
+<p>
+<li> For the last several releases, a special version of TeXShop was provided for users running High Sierra. The Sierra version of the code ran on High Sierra, but one feature was missing. When High Sierra was released, Apple also released XCode 9, making it possible to compile one copy of TeXShop which runs completely on all recent systems, and in particular on both Sierra and High Sierra.
+
+<p>
+<li> An earlier version of TeXShop introduced the magic line
+<pre>
+    % !TEX parameter =
+</pre>
+which sends a second piece of information to engines. Most engines just ignore this information, so it does no harm. But using the magic line, one or more flags can be passed to engines without rewriting the engines.
+
+<p> Herbert Schulz rewrote many of the latexmk engines to use this magic line. For instance, it can be used to add a --shell-escape flag when pdflatex needs to call an external program during typesetting. The old engine files still work, but Schulz recommends that users visit ~/Library/TeXShop/Engines/Inactive/latexmk and replace any active latexmk engines with their new versions. New documentation in this folder gives more details.
+
+<p>
+<li> An ".xml" file is an Extensible Markup Language file. For reasons that will be explained in a moment, TeXShop can now create xml files, and such files are marked as typesettable files, so typesetting engines can be called
+when one is active. 
+
+<p>
+XML files look a lot like HTMN files. They consist of tag pairs like
+<pre>
+     &lttitlepage&gt
+     .....
+     &lt/titlepage&gt 
+ </pre>    
+ One difference is that each opening tag <strong> must </strong> have a corresponding closing tag; in html this requirement is often not enforced and &ltp&gt may not be followed by &lt/p&gt.
+
+Comment tags are written as follows
+<pre>
+     &lt!-- this is a comment, which contains many characters --&gt
+</pre>
+      
+
+
+<p>
+<li> TeXShop's new \begin-end selection code also works for xml tags. As with begin-end, the option key must be pressed and then the word defining the tag must be double clicked. For instance with the tag &lttitlepage&gt the double click should be on the word "titlepage" and not on the inequality signs at the beginning or end. For comments, the double click should be on the "--" symbol.
+
+<p>
+In xml, the beginning tag may contain other elements, but the pairwise selection is a double click on the first word, not other symbols in the tag. Thus when facing the following tag, double click on "frontmatter."
+<pre>
+     &ltfrontmatter xml:id="index"&gt
+</pre>
+
+<p>
+In rare cases, the comment tag's start contains only one dash. See the second line of the  following example. TeXShop cannot select such a comment.
+<pre>
+     &lt!-- Various third-party add-ons need some sort of token     --&gt
+     &lt!-ƒ Using an element here serves two purposes               --&gt
+</pre>
+
+<p>
+<li>
+And now the point of all this. From time to time, I like to introduce TeXShop users to TeX-related developments that are not strictly about TeX. The development du jour is  PreTeXt, with the motto "Write Once, Read Anywhere." It is the work of Bob Beezer from the University of Puget Sound, and it is supported by a crystal-clear series of web pages,  <A HREF="http://mathbook.pugetsound.edu/index.html">
+http://mathbook.pugetsound.edu/index.html</A>. (MathBook is the original name of this project, which was renamed in June, 2017.)
+
+<p>
+The goal of the project is to write a document just once, but then output the document in pdf for a book, or in HTML for the web,  or in EPUB for pad-based work. Documents for the web or EPUB can be interactive. 
+
+<p> To make this possible, the document text is written in a special xml-based markup language, but the mathematical content is still in TeX. 
+
+<p> I first heard of this project in a TUG conference in Portland, Oregon, and what caught my eye was  an abstract algebra textbook written in TeX by my PhD student Tom Judson that had been converted into an interactive book by rewriting  in PreTeXt. (But to be honest, the thing that really caught my attention was learning that Judson and Beezer bicycled the main part of the Tour de France route in France after the official race.) Then, as happens, I gradually lost contact with the project.
+
+<p> A month ago, I was talking to a University of Oregon faculty member, Dev Sinha, and he asked me what I knew of xml. I told him not much, and he then enthusiastically described course notes he was writing using PreTeXt. It took me a couple of days to realize that this was the Beezer project I knew from Portland.
+
+<p> TeXShop 3.89 comes with an engine file to typeset PreTeXt documents and open the pdf output in the preview window; a second engine file typesets the same document to HTML and opens the output in Safari. These engine files are in
+~Library/TeXShop/Engines/Inactive/PreTeXt. This folder contains additional documentation explaining what to download from the PreTeXt web page and where to put that material to make typesetting work. Finally, the document recommends downloading the PreTeXt source for a large sample article by Beezer, and typesetting that document as an example of the possibilities of PreTeXt.
+
+<p> After that, you should open a new empty page in TeXShop, and use the Beezer sample to write your own PreTeXt document. When you first typeset this document, you'll be asked to save it as usual in TeXShop.
+In the resulting save dialog there is a pulldown menu to select the file type of the saved file. Select ".xml"
+rather than ".tex".
+
+<p> I hope you'll want to learn more. Go to the PreTeXt site at <A HREF="http://mathbook.pugetsound.edu/index.html">
+http://mathbook.pugetsound.edu/index.html</A>. This site has exciting material. Proceed.
+
+</ul>
+
+
+
+
+
+
+
+<br />
+<hr />
+<p> 
+Richard Koch   <br />
+Department of Mathematics <br />
+University of Oregon   <br />
+Eugene, Oregon 97403 <br />
+</p>
+
+</div>
+
+</body>
+</html>

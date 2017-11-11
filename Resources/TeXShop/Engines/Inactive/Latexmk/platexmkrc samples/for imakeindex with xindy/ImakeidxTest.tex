@@ -1,0 +1,28 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[xindy]{imakeidx} % makes separate index files (no shell-escape needed)
+%\usepackage[xindy,splitindex]{imakeidx} % makes one index file and splits it (shell-escape needed)
+\makeindex[title=General Index]
+\makeindex[name=concepts,title=Index of Concepts]
+\makeindex[name=persons,title=Index of names,columns=3]
+\newcommand{\Cindex}[1]{\index{#1}\index[concepts]{#1}}
+\newcommand{\Nindex}[1]{\index{#1}\index[persons]{#1}}
+
+\begin{document}
+Relativity\Cindex{relativity}
+
+Einstein\Nindex{Einstein, Albert}
+
+Another Word\index{word}
+
+And this is the end of the story.
+\indexprologue{In this index you only find famous people’s names.}
+\printindex[persons]
+\indexprologue{In this index you only find concepts.}
+\printindex[concepts]
+\indexprologue{}
+\printindex
+\end{document}

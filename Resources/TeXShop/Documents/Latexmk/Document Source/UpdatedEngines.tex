@@ -1,0 +1,122 @@
+% !TEX program = pdflatexmk
+% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[letterpaper,body={6.0in,9.5in},vmarginratio=1:1]{geometry}
+\usepackage[small,compact]{titlesec}
+
+%SetFonts
+%Fourier+Berasans+Beramono
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{microtype}
+%SetFonts
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+\newcommand{\optkey}{\textsf{Opt}}
+\newcommand{\ctlkey}{\textsf{Ctl}}
+\newcommand{\cmdkey}{\textsf{Cmd}}
+\newcommand{\esckey}{\textsf{Esc}}
+\newcommand{\tabkey}{\textsf{Tab}}
+\newcommand{\shiftkey}{\textsf{Shift}}
+
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+\pagestyle{plain}
+
+\usepackage{booktabs}
+
+%\pagestyle{empty}
+
+% set | as a command character within verbatim so you can execute commands there (for CC Doc)
+%\usepackage{verbatim}
+%\makeatletter
+%\addto@hook\every@verbatim{\catcode`|=0}
+%\makeatother
+
+% define colored items to be inserted in verbatim environments (for Command Completion Doc)
+%\usepackage{xcolor}
+%\setlength{\fboxsep}{0pt}
+%\newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+%\newcommand{\selcom}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹comment›}}}
+%\newcommand{\selcombwra}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹placement: r,R,l,L,i,I,o,O›}}}
+%\newcommand{\selcomrule}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•‹lift›}}}
+
+% define a few items for easy use
+%\newcommand{\fastex}{Fas\hspace{-.15em}\TeX} % for CC Doc
+\newcommand{\TS}{\textsf{\TeX Shop}}
+\newcommand{\TSVersion}{2.30}
+%\newcommand{\CCT}{\textsf{CommandCompletion.txt}} % for CC Doc
+
+\title{Updated \cmd{latexmk} engines,\\\TS's \cmd{parameter} directive\\and sample project files}
+\author{Herbert Schulz\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
+\date{2017/10/04}
+
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section{Introduction}
+\TS, version 3.77 and later, has a new directive\footnote{A \LaTeX\ comment that is read and interpreted by \TS\ itself rather than a typesetting engine.} that can pass information to any \TS\ engine that is designed to use it; `\verb|% !TEX parameter = …|'. 
+The enclosed replacement `\cmd{latexmk}' engines now support that directive and pass the information to the underlying typesetting engine (\cmd{latex}, \cmd{pdflatex}, \cmd{xelatex} or \cmd{lualatex}) as command line options (e.g., \cmd{-{}-shell-escape}). See Section~(\ref{sec:latexmk}) for information about the updated engines and Sub-Section~(\ref{sec:installation}) for installation instructions.
+
+In addition, the \cmd{latexmk} engines have allowed the use a configuration file on a project wide basis, \cmd{platexmkrc}, for a while now. This can be very useful if you need special  processing for a project; e.g., having the \cmd{latexmk} engines use \cmd{xindy} rather than \cmd{makeindex} or using a special \cmd{bibtex} style file. There are several sample \cmd{platexmkrc} files supplied that show it's use. Some even show how a \cmd{platexmkrc} file can replace specialized \cmd{latexmk} engines. Section (\ref{sec:platexmkrc}) has information about them.
+
+\section{Updated \cmd{latexmk} Engines}\label{sec:latexmk}
+
+While \TS\ recently introduced the 
+\begin{verbatim}
+% !TEX parameter = ...
+\end{verbatim}
+directive there aren't many engines that actually use that possible information. 
+
+The updated `\cmd{latexmk}' engines supplied with this document now use that passed parameter as command line options to the underlying typesetting engine. So the line
+\begin{verbatim}
+% !TEX parameter = --shell-escape
+\end{verbatim}
+will turn on shell-escape for processing that document. More than one option can be specified so
+\begin{verbatim}
+% !TEX parameter = --shell-escape --nonstopmode
+\end{verbatim}
+will send both of those options to the underlying typesetting engine. Parameters that change the location of generated files, e.g., \cmd{-{}-output=directory}, are not allowed here for two reasons: the \cmd{latexmk} script also needs to `know' where to find the files and \TS\ won't be able to find those files. The former can be overcome by using a \cmd{platexmkrc file} that contains the line
+\begin{verbatim}
+$out_dir = "path/to/directory" ;
+\end{verbatim}
+where \path{path/to/directory} is the full or relative path to the folder where the files are stored. I'm not sure if there is a solution for letting \TS\ find the files.
+
+The updated \cmd{latexmk}, \cmd{pdflatexmk}, \cmd{xelatexmk} and \cmd{lualatexmk} engines are the basic ones to be used for typesetting with \cmd{latex} (with with \cmd{dvips}\To\cmd{ps2pdf} post processing), \cmd{pdflatex}, \cmd{xelatex} or \cmd{lualatex} respectively. There is also an update to the \cmd{dvipdfmxmk} engine which uses \cmd{latex} (with \cmd{dvipdfmx} post processing).
+
+For backward compatibility there is an update to the \cmd{asymptotemk} engine although it can be easily set up to use a \cmd{platexmkrc} file along with one of the basic \cmd{latexmk} engines; see Section~(\ref{sec:platexmkrc}) below. The advantage is that you can use any of the basic engines to typeset \cmd{asymptote} figures.
+
+The \cmd{dtxmk} engine has \emph{not} been updated since it also can be easily set up to use a \cmd{platexmkrc} file with one of the basic `latexmk' engines.
+
+Finally, for backward compatibility there is an update to the \cmd{sepdflatexmk} (se = shell-escape) engine even though it can easily be replaced by the two declarations
+\begin{verbatim}
+% !TEX program = pdflatexmk
+% !TEX parameter = --shell-escape
+\end{verbatim}
+in the root source file.
+
+\subsection{Installation Instructions}\label{sec:installation}
+
+If you are reading this document in the \path{~/Library/TeXShop/Engines/Inactive/Latexmk} folder you have a version of \TS\ that already has the new engines installed. If you previously installed \TS\ you'll have to activate the new \cmd{pdflatexmk}, \cmd{sepdflatexmk} and any other of the engines you previously used by copying the new versions of the engines two folders up, to \path{~/Library/TeXShop/Engines}, which will replace the older versions.
+
+To install the new engines in an older version of \TS\ (3.77 to 3.88) copy all the enclosed files to \path{~/Library/TeXShop/Engines/Inactive/Latexmk}, replacing any versions already there, and then copy the \cmd{pdflatexmk}, \cmd{sepdflatexmk} and any other of the engines you previously activated two folders up, to \path{~/Library/TeXShop/Engines}. That's it! (Note: you can open the \path{~/Library/TeXShop} folder using the \mnu{TeXShop}\To\mnu{Open \path{~/Library/TeXShop}} menu item.)
+
+\section{Sample \cmd{platexmkrc} Project Files}\label{sec:platexmkrc}
+
+For quite some time now the \TS\ `\cmd{latexmk}' based engines have allowed a special \cmd{platexmkrc} (p = project) \cmd{latexmk} configuration file located in the same directory as a root file for the special needs of a project. When any of the \cmd{latexmk} engines runs, the contents of that file are read into \cmd{latexmk} for any custom configurations. These can be anything from using a special \cmd{.bst} file when running \cmd{bibtex}, using \cmd{xindy} instead of \cmd{makeindex} for generating indexes or adding dependencies and rules for automatic processing of files with special extensions. That file will be read when any \cmd{.tex} file in the folder containing the \cmd{platexmkrc} file is processed by a \cmd{latexmk} engine; it's advisable to place a special project into it's own folder to prevent errors for other files.
+
+While the use of the \cmd{platexmkrc} file has been around for a while there has been a lack of examples of its use. The \cmd{platexmkrc samples} folder that comes with the engine updates contains six examples, most with a sample file to typeset, for using the \cmd{platexmkrc} file in different ways. Hopefully they will act as templates for any special processing you may need to do with your next project.
+
+The \cmd{asymptote} and \cmd{dtx} versions let you use one of the basic `\cmd{latexmk}' engines instead of the specialized engines use before. The \cmd{axodraw} and \cmd{glossaries} versions define dependencies and rules to allow \cmd{latexmk} do specialized processing of files produced by those packages. Finally, the \cmd{bibtex8} and \cmd{imakeindex} versions re-define internal \cmd{latexmk} commands to execute specialized versions for a particular need.
+
+\end{document}

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+OUTFILE="`basename $1`"
+
+OUTFILE="${OUTFILE%.*}.html"
+
+xsltproc $HOME/Library/TeXShop/bin/xsl/mathbook-html.xsl "$1" 1>&2
+
+/Applications/Safari.app/Contents/MacOS/Safari "$OUTFILE"  &

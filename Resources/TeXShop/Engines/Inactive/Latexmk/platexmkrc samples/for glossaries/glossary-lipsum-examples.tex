@@ -1,0 +1,220 @@
+%%!TEX TS-program = pdflatexmk
+%%!TEX encoding = UTF-8 Unicode
+ % arara: pdflatex
+ % arara: makeglossaries
+ % arara: pdflatex
+ % arara: bibtex
+ % arara: pdflatex
+ % arara: pdflatex
+\documentclass{report}
+
+\usepackage{graphicx}
+
+\usepackage[colorlinks]{hyperref}
+\usepackage[savewrites,nopostdot,toc,acronym,symbols]{glossaries}
+\usepackage{glossary-mcols}
+\usepackage{glossary-longragged}
+
+\newglossary[glg2]{long}{gls2}{glo2}{Long Descriptions}
+\newglossary[glg3]{multipar}{gls3}{glo3}{Multi-Paragraph Descriptions}
+\newglossary[glg4]{acronymdesc}{gls4}{glo4}{Acronyms with Descriptions}
+\newglossary[glg5]{images}{gls5}{glo5}{Descriptions with Images}
+\newglossary[glg6]{acronymslang}{gls6}{glo6}{Acronyms with
+Translations}
+
+\newglossary[glg7]{parent}{gls7}{glo7}{Hierarchical Entries}
+\newglossary[glg8]{homographs}{gls8}{glo8}{Homographs}
+\newglossary[glg9]{cites}{gls9}{glo9}{Entries with Citations}
+\newglossary[glg10]{urls}{gls10}{glo10}{Entries with URLs}
+
+\DeclareAcronymList{acronymdesc,acronymslang}
+
+\makeglossaries
+
+\loadglsentries{example-glossaries-brief}
+\loadglsentries[long]{example-glossaries-long}
+\loadglsentries[multipar]{example-glossaries-multipar}
+\loadglsentries[symbols]{example-glossaries-symbols}
+\loadglsentries[images]{example-glossaries-images}
+\loadglsentries[parent]{example-glossaries-parent}
+\loadglsentries[homographs]{example-glossaries-childnoname}
+\loadglsentries[cites]{example-glossaries-cite}
+\loadglsentries[urls]{example-glossaries-url}
+
+\setacronymstyle{long-short}
+
+\loadglsentries[acronym]{example-glossaries-acronym}
+
+\setacronymstyle{long-short-desc}
+
+\loadglsentries[acronymdesc]{example-glossaries-acronym-desc}
+
+ % define an acronym style for the acronyms with a translation:
+
+\newacronymstyle{acronymslang}%
+{%
+  \GlsUseAcrEntryDispStyle{long-short}%
+}
+{%
+  \GlsUseAcrStyleDefs{short-long}%
+  \renewcommand*{\genacrfullformat}[2]{%
+   \glsentrylong{##1}##2\space
+   (\protect\firstacronymfont{\glsentryshort{##1}}%
+    \ifglshasfield{useri}{##1}%
+    {, English: \glsentryuseri{##1}}{})%
+  }%
+  \renewcommand*{\Genacrfullformat}[2]{%
+   \Glsentrylong{##1}##2\space
+   (\protect\firstacronymfont{\glsentryshort{##1}}%
+    \ifglshasfield{useri}{##1}%
+    {, English: \glsentryuseri{##1}}{})%
+  }%
+  \renewcommand*{\genplacrfullformat}[2]{%
+   \glsentrylongpl{##1}##2\space
+   (\protect\firstacronymfont{\glsentryshortpl{##1}}%
+    \ifglshasfield{useri}{##1}%
+    {, English: \glsentryuseri{##1}}{})%
+  }%
+  \renewcommand*{\Genplacrfullformat}[2]{%
+   \Glsentrylongpl{##1}##2\space
+   (\protect\firstacronymfont{\glsentryshortpl{##1}}%
+    \ifglshasfield{useri}{##1}%
+    {, English: \glsentryuseri{##1}}{})%
+  }%
+}
+
+\setacronymstyle{acronymslang}
+
+\loadglsentries[acronymslang]{example-glossaries-acronyms-lang}
+
+ % Define a style for the "images" glossary. The image names are
+ % stored in the user1 key.
+ % (The image insertion can probably be done more neatly using an
+ % appropriate package, but this is just a sample file.)
+
+\newsavebox\glsimagebox
+\newlength\glswidth
+
+\newglossarystyle{images}%
+{%
+  \setglossarystyle{tree}%
+  \renewenvironment{theglossary}{}{}%
+  \renewcommand{\glossentry}[2]{%
+    \ifglshasfield{useri}{##1}%
+    {\savebox
+      {\glsimagebox}%
+      {\includegraphics[height=4\baselineskip]{\glsentryuseri{##1}}}%
+      \settowidth{\glswidth}{\usebox\glsimagebox}%
+      \glswidth=\dimexpr\linewidth-\glswidth-1em\relax
+      \parshape=5
+        0pt \glswidth
+        0pt \glswidth
+        0pt \glswidth
+        0pt \glswidth
+        0pt \linewidth\relax
+    }%
+    {%
+      \savebox{\glsimagebox}{}%
+    }%
+    \noindent
+    \makebox[0pt][l]{%
+     \smash{\makebox[\linewidth][r]{\raisebox{-3\baselineskip}{\usebox\glsimagebox}}}}%
+    \glsentryitem{##1}\textbf{\glstarget{##1}{\glossentryname{##1}}}%
+    \space\glossentrydesc{##1}\par
+    \indexspace
+  }%
+  \renewcommand*{\glsgroupskip}{}%
+}
+
+ % glossary style for acronyms with a translation
+
+\newglossarystyle{acronymslang}
+{%
+  \setglossarystyle{long}%
+  \renewcommand*{\glsgroupskip}{}%
+  \renewcommand{\glossentry}[2]{%
+    \glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}} &
+    \glossentrydesc{##1}\glspostdescription
+    \ifglshasfield{useri}{##1}{ (English: \glsentryuseri{##1})}{}%
+    \space ##2\tabularnewline
+  }%
+}
+
+ % glossary style for the cites glossary
+
+\newglossarystyle{cites}
+{% based on list style
+  \setglossarystyle{list}%
+    \renewcommand*{\glossentry}[2]{%
+    \item[\glsentryitem{##1}%
+          \glstarget{##1}{\glossentryname{##1}}]
+       \glossentrydesc{##1}\glspostdescription
+    \ifglshasfield{useri}{##1}{\space
+     % in the event of multiple cites (as in the vestibulum2
+     % sample entry), \glsentryuseri{##1} needs to be expanded
+     % before being passed to \cite.
+     \glsletentryfield{\thiscite}{##1}{useri}%
+     (See \expandafter\cite\expandafter{\thiscite})}{}%
+    \space ##2}%
+}
+
+ % glossary style for the urls glossary
+
+\newglossarystyle{urls}
+{% based on list style
+  \setglossarystyle{list}%
+    \renewcommand{\glossentry}[2]{%
+    \item[\glsentryitem{##1}%
+          \glstarget{##1}{\glossentryname{##1}}]
+       \glossentrydesc{##1}\glspostdescription\space##2%
+    \ifglshasfield{useri}{##1}{\glspar
+     \glsletentryfield{\thisurl}{##1}{useri}%
+     \expandafter\url\expandafter{\thisurl}}{}}%
+}
+
+\begin{document}
+\tableofcontents
+
+\chapter{Sample}
+
+This is a sample document that uses the dummy glossary entries
+supplied with the glossaries bundle for testing.
+
+Here are all the entries (including acronyms):
+
+\forallglossaries{\thistype}{\section{Glossary `\thistype'}
+\forglsentries[\thistype]{\thislabel}{\gls{\thislabel}. }}
+
+\section{Acronyms Revisited}
+
+Here are just the acronyms again:
+\forallacronyms{\thistype}{\forglsentries[\thistype]{\thislabel}{\gls{\thislabel}. }}
+
+\printglossary[style=mcolindex,title={Brief Descriptions}]
+
+\printglossary[type=long,style=list]
+
+\printglossary[type=multipar,style=altlist]
+
+\printglossary[type=symbols,style=altlongragged4col,nogroupskip]
+
+\printglossary[type=acronym,style=long]
+
+\printglossary[type=acronymdesc,style=altlist]
+
+\printglossary[type=images,style=images]
+
+\printglossary[type=acronymslang,style=acronymslang]
+
+\printglossary[type=homographs,style=mcoltreenoname,subentrycounter]
+
+\printglossary[type=parent,style=tree]
+
+\printglossary[type=cites,style=cites,nopostdot=false,nogroupskip]
+
+\printglossary[type=urls,style=urls,nopostdot=false,nogroupskip]
+
+\bibliographystyle{plain}
+\bibliography{xampl}
+
+\end{document}

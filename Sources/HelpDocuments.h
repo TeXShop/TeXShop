@@ -53,6 +53,7 @@
 - (IBAction)supplementsToDesktop:sender;
 - (IBAction)displayTables:sender;
 - (IBAction)displayThisRelease:sender;
+- (IBAction)displayChanges:sender;
 
 - (void)okForPanel:sender;
 - (void)cancelForPanel:sender;

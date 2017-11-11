@@ -1,0 +1,26 @@
+%%!TEX TS-program = pdflatexmk 
+%%!TEX encoding = UTF-8 Unicode
+\documentclass{article}
+
+\usepackage{booktabs}
+
+% to do margin kerning in pdflatex include the following line
+%\usepackage{tmmmarkrn}
+
+\usepackage[numbers]{natbib}
+%\usepackage{natbib}
+\bibliographystyle{plainnat}
+%\bibliographystyle{abbrvnat}
+
+\usepackage{hyperref}
+
+\begin{document}
+
+\section{First Section}
+\label{sec:first}\label{firstsec}
+
+Well, here goes! This will be my first ever citation and I hope it actually works: \cite{Nichols:TB4-2-75} is a reference to Installing \TeX Shop! Let's try another one: \cite{Skoupy:TB23-1-106}; and one with a defined macro: \cite{Nichols:TB2-3-32}\cite{Nichols:TB4-2-75}\cite{Nichols:TB5-1-29}.\cite{Koch:TB22-3-240}\cite{Skoupy:TB23-1-106}
+This is all in section (\ref{sec:first}) on page \pageref{sec:first}. Some added text that shouldn't change anything as far as \texttt{latexmk} is concerned.\cite{Beebe:TB4-1-11}\cite{Beebe:TB12-3-351}\cite{Koch:TB22-3-240}\cite{Beebe:TB12-3-351}\cite{Abbott:TB13-3-357}\cite{Nichols:TB3-2-23}\cite{Nichols:TB4-1-22}\cite{Beebe:TB19-1-12}\cite{Koch:TB22-3-240}\cite{Beebe:TB11-4-490}\cite{Beeton:TB3-2-25}
+
+\bibliography{tugboat}
+\end{document}

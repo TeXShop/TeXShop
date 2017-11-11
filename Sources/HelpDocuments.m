@@ -61,6 +61,15 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayChanges:sender
+{
+    NSString                *fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"Changes" ofType:@"pdf"];
+    NSLog(fileName);
+    [self displayFile: fileName];
+}
+
 
 - (IBAction)displayGettingStartedTeXShop:sender
 {

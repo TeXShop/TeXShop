@@ -1753,7 +1753,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
                         if ((front) || (! [self.pdfKitWindow isVisible]))
                             [self.pdfKitWindow makeKeyAndOrderFront: self];
-                        [self allocateSyncScanner];
+                        {
+                            if (self.useOldSyncParser)
+                                [self allocateSyncScannerOld];
+                            else
+                                [self allocateSyncScanner];
+                        }
                         }
                     else {
                         [self fillLogWindowIfVisible];
@@ -1761,7 +1766,13 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
                         if (front)
                             [fullSplitWindow makeFirstResponder:self.myPDFKitView];
-                        [self allocateSyncScanner];
+                        {
+                            if (self.useOldSyncParser)
+                                [self allocateSyncScannerOld];
+                            else
+                                [self allocateSyncScanner];
+                        }
+                        
                     }
 				}
 			}

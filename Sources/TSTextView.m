@@ -225,6 +225,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 		_alternateDown = YES;
 	else
 		_alternateDown = NO;
+    
 	
 	// koch; Dec 13, 2003
 	
@@ -247,7 +248,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 - (void)mouseUp:(NSEvent *)theEvent
 {
 	_alternateDown = NO;
-	[super mouseUp:theEvent];
+ 	[super mouseUp:theEvent];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
@@ -524,16 +525,215 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 - (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange granularity:(NSSelectionGranularity)granularity
 {
 	NSRange	replacementRange = { 0, 0 };
-	NSString	*textString;
+	NSString	*textString, *searchString;
+    NSString    *firstString, *secondString, *newString, *typeString, *startString, *aString, *bString;
 	NSInteger		length, i, j;
 	BOOL	done;
 	NSInteger		leftpar, rightpar, nestingLevel, uchar;
+    NSRange mySelectedRange, myLineRange, closeRange, typeRange, searchRange, finalRange, selectRange, myNewSelectedRange;
 
 	textString = [self string];
 	if (textString == nil)
 		return replacementRange;
 
 	replacementRange = [super selectionRangeForProposedRange: proposedSelRange granularity: granularity];
+    
+    if (_alternateDown)
+        {
+        mySelectedRange = [self selectedRange];
+        myNewSelectedRange = mySelectedRange;
+        if (mySelectedRange.location != NSNotFound)
+        {
+            newString = [textString substringWithRange:mySelectedRange];
+            
+            if ([newString isEqualToString: @"\\begin"])
+            
+            {
+                myLineRange = [textString lineRangeForRange: mySelectedRange];
+                myLineRange.length = myLineRange.length - (mySelectedRange.location + 6 - myLineRange.location);
+                myLineRange.location = mySelectedRange.location + 6;
+                bString = [textString substringWithRange: myLineRange];
+                uchar = [textString characterAtIndex: myLineRange.location];
+                if (uchar == '{') {
+                    closeRange = [bString rangeOfString:@"}"];
+                    if (closeRange.location != NSNotFound)
+                    {
+                        typeRange.location = 1;
+                        typeRange.length = closeRange.location - 1;
+                        typeString = [bString substringWithRange:typeRange];
+                        firstString = [[@"\\begin{" stringByAppendingString: typeString] stringByAppendingString: @"}"];
+                        secondString = [[@"\\end{" stringByAppendingString: typeString] stringByAppendingString: @"}"];
+                        searchRange.location = myNewSelectedRange.location + [firstString length];
+                        searchRange.length = [textString length] - searchRange.location;
+                        searchString = [textString substringWithRange: searchRange];
+                        finalRange = [searchString rangeOfString: secondString];
+                        if (finalRange.location != NSNotFound)
+                        {
+                            selectRange.location = myNewSelectedRange.location;
+                            selectRange.length = finalRange.location + [firstString length] + [secondString length];
+                            return selectRange;
+                        }
+                    }
+                 }
+            }
+   
+   
+            else if ([newString isEqualToString: @"\\end"]) {
+                myLineRange = [textString lineRangeForRange: mySelectedRange];
+                myLineRange.length = myLineRange.length - (mySelectedRange.location + 4 - myLineRange.location);
+                myLineRange.location = mySelectedRange.location + 4;
+                bString = [textString substringWithRange: myLineRange];
+                uchar = [textString characterAtIndex: myLineRange.location];
+                if (uchar == '{') {
+                    closeRange = [bString rangeOfString:@"}"];
+                    if (closeRange.location != NSNotFound)
+                    {
+                        typeRange.location = 1;
+                        typeRange.length = closeRange.location - 1;
+                        typeString = [bString substringWithRange:typeRange];
+                        startString = [[@"\\begin{" stringByAppendingString: typeString] stringByAppendingString: @"}"];
+                        searchRange.location = 0; //mySelectedRange.location + 6;
+                        searchRange.length = mySelectedRange.location; //[textString length] - searchRange.location;
+                        searchString = [textString substringWithRange: searchRange];
+                        finalRange = [searchString rangeOfString: startString options: NSBackwardsSearch];
+                        if (finalRange.location != NSNotFound)
+                        {
+                            selectRange.location = finalRange.location;
+                            selectRange.length = searchRange.length - finalRange.location + 6 + [typeString length];
+                            return selectRange;
+                        }
+                    }
+                }
+            }
+     
+ 
+        else if ([newString isEqualToString: @"-"]) { // search for "<!--" and associate with $"-->"
+            firstString = @"<!--";
+            secondString = @"-->";
+            if ((mySelectedRange.location >= 2) && ((mySelectedRange.location + mySelectedRange.length) < ([textString length] - 2)))
+            {   myNewSelectedRange.location = mySelectedRange.location - 2;
+                myNewSelectedRange.length = mySelectedRange.length + 3;
+                aString = [textString substringWithRange:myNewSelectedRange];
+                if ([aString isEqualToString: firstString]) {
+                    
+                    searchRange.location = myNewSelectedRange.location + [firstString length];
+                    searchRange.length = [textString length] - searchRange.location;
+                    searchString = [textString substringWithRange: searchRange];
+                    finalRange = [searchString rangeOfString: secondString];
+                    if (finalRange.location != NSNotFound)
+                        {
+                        selectRange.location = myNewSelectedRange.location - 1;
+                        selectRange.length = finalRange.location + [firstString length] + [secondString length] + 1;
+                        return selectRange;
+                        }
+                    }
+                
+                myNewSelectedRange.location = myNewSelectedRange.location - 1;
+                myNewSelectedRange.length = myNewSelectedRange.length;
+                aString = [textString substringWithRange:myNewSelectedRange];
+                if ([aString isEqualToString: firstString])
+                    {
+                        searchRange.location = myNewSelectedRange.location + [firstString length];
+                        searchRange.length = [textString length] - searchRange.location;
+                        searchString = [textString substringWithRange: searchRange];
+                        finalRange = [searchString rangeOfString: secondString];
+                        if (finalRange.location != NSNotFound)
+                        {
+                            selectRange.location = myNewSelectedRange.location - 2;
+                            selectRange.length = finalRange.location + [firstString length] + [secondString length] + 2;
+                            return selectRange;
+                        }
+                    }
+                        
+                myNewSelectedRange.location = mySelectedRange.location;
+                myNewSelectedRange.length = mySelectedRange.length + 2;
+                aString = [textString substringWithRange: myNewSelectedRange];
+                if ([aString isEqualToString: secondString])
+                {
+                    searchRange.location = 0; //mySelectedRange.location + 6;
+                    searchRange.length = myNewSelectedRange.location; //[textString length] - searchRange.location;
+                    searchString = [textString substringWithRange: searchRange];
+                    finalRange = [searchString rangeOfString: firstString options: NSBackwardsSearch];
+                    if (finalRange.location != NSNotFound)
+                    {
+                        selectRange.location = finalRange.location;
+                        selectRange.length = searchRange.length - finalRange.location  + [secondString length] + 1;
+                        return selectRange;
+                    }
+                }
+                
+                myNewSelectedRange.location = mySelectedRange.location - 1;
+                myNewSelectedRange.length = 3;
+                aString = [textString substringWithRange: myNewSelectedRange];
+                if ([aString isEqualToString: secondString])
+                {
+                    searchRange.location = 0; //mySelectedRange.location + 6;
+                    searchRange.length = myNewSelectedRange.location; //[textString length] - searchRange.location;
+                    searchString = [textString substringWithRange: searchRange];
+                    finalRange = [searchString rangeOfString: firstString options: NSBackwardsSearch];
+                    if (finalRange.location != NSNotFound)
+                    {
+                        selectRange.location = finalRange.location;
+                        selectRange.length = searchRange.length - finalRange.location  + [secondString length];
+                        return selectRange;
+                    }
+                  }
+            }
+        }
+            
+         
+    
+        else { // search for "<word" and associate with "</word>"
+            mySelectedRange = [self selectedRange];
+            firstString = [@"<" stringByAppendingString: newString];
+            secondString = [[@"</" stringByAppendingString: newString] stringByAppendingString:@">"];
+            if ((mySelectedRange.location >= 1) && ((mySelectedRange.location + mySelectedRange.length) < [textString length]))
+            {
+                myNewSelectedRange.location = mySelectedRange.location - 1;
+                myNewSelectedRange.length = mySelectedRange.length + 1;
+                aString = [textString substringWithRange:myNewSelectedRange];
+                if ([aString isEqualToString: firstString])
+                {
+                    searchRange.location = myNewSelectedRange.location + [firstString length];
+                    searchRange.length = [textString length] - searchRange.location;
+                    searchString = [textString substringWithRange: searchRange];
+                    finalRange = [searchString rangeOfString: secondString];
+                    if (finalRange.location != NSNotFound)
+                    {
+                        selectRange.location = myNewSelectedRange.location ;
+                        selectRange.length = finalRange.location + [firstString length] + [secondString length] ;
+                        return selectRange;
+                    }
+                }
+                else  {
+                    mySelectedRange = [self selectedRange];
+                    if ((mySelectedRange.location > 1) && (mySelectedRange.length < [textString length]))
+                    {
+                        myNewSelectedRange.location = mySelectedRange.location - 2;
+                        myNewSelectedRange.length = mySelectedRange.length + 3;
+                        aString = [textString substringWithRange: myNewSelectedRange];
+                        if ([aString isEqualToString: secondString])
+                        {
+                            searchRange.location = 0; //mySelectedRange.location + 6;
+                            searchRange.length = mySelectedRange.location; //[textString length] - searchRange.location;
+                            searchString = [textString substringWithRange: searchRange];
+                            finalRange = [searchString rangeOfString: firstString options: NSBackwardsSearch];
+                            if (finalRange.location != NSNotFound)
+                            {
+                                selectRange.location = finalRange.location;
+                                selectRange.length = searchRange.length - finalRange.location  + [secondString length] - 2;
+                                return selectRange;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+    
+         
+    
 
 	// Extend word selection to cover an initial backslash (TeX command)
 	if (granularity == NSSelectByWord)
@@ -541,7 +741,6 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
         // added by Terada (from this line)
         BOOL flag;
         unichar c;
-        
         
         if(replacementRange.location < [textString length]){
             c = [textString characterAtIndex:replacementRange.location];
@@ -659,6 +858,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			}
 		}
 	}
+    
 
 	return replacementRange;
 }

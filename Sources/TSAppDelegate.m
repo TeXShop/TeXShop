@@ -50,7 +50,7 @@
 #define NSAppKitVersionNumber10_8 1187
 #define NSAppKitVersionNumber10_9 1265
 #define NSAppKitVersionNumber10_10 1343
-#define NSAppKitVersionNumber10_12 1405
+#define NSAppKitVersionNumber10_12 1504
 
 
 @class TSTextEditorWindow;
@@ -205,7 +205,6 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     
-     
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
         atLeastMavericks = YES;
     else
@@ -216,7 +215,7 @@
     else
         atLeastElCapitan = NO;
     
-    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_11)
         atLeastSierra = YES;
     else
         atLeastSierra = NO;
@@ -226,6 +225,7 @@
         atLeastHighSierra = YES;
     else
         atLeastHighSierra = NO;
+    
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;
 	NSDictionary *factoryDefaults;

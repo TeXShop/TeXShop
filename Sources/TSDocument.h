@@ -28,7 +28,6 @@
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
 #import "TSPreviewWindow.h"
-#import "synctex_parser.h"
 #import "ScrapTextView.h"
 #import "ScrapPDFKitView.h"
 
@@ -426,6 +425,8 @@ enum RootCommand
 @property (retain)  NSMutableArray  *includeFiles;
 @property (retain)  NSMutableArray  *includeFileShortNames;
 
+@property           BOOL            useOldSyncParser;
+
 
 // forScrap
 @property (retain)  NSURL       *scrapDirectoryURL;
@@ -751,6 +752,15 @@ enum RootCommand
  - (BOOL)doSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
  - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
 - (void)allocateSyncScanner;
+
+
+@end
+
+@interface TSDocument (SyncOld)
+
+- (BOOL)doSyncTeXForPageOld: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+- (BOOL)doPreviewSyncTeXWithFilenameOld:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
+- (void)allocateSyncScannerOld;
 
 
 @end

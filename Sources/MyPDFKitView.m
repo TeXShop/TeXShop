@@ -197,7 +197,9 @@
 		green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 		alpha: 1];
 	*/
-
+    if ((atLeastHighSierra) && ([SUD boolForKey:continuousHighSierraFixKey]))
+       self.updatePageNumberTimer = [NSTimer scheduledTimerWithTimeInterval: 1
+                       target:self selector:@selector(pageChangedNew:) userInfo:nil repeats:YES];
 
 }
 
@@ -306,10 +308,11 @@
 
 - (void) notificationSetup;
 {
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(pageChanged:)
+	 [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(pageChanged:)
 												 name: PDFViewPageChangedNotification object: self];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scaleChanged:)
 												 name: PDFViewScaleChangedNotification object: self];
+    
 	// Find notifications.
     /*
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentDidBeginDocumentFind:)
@@ -933,23 +936,92 @@
 		}
 }
 
+
+
+
+
+- (void) pageChangedNewer
+{
+    PDFPage     *aPage;
+    NSInteger   pageNumber;
+    
+    NSRect      visRect;
+    NSPoint     thePoint;
+    
+    if (! [[self window] isKeyWindow])
+        return;
+    
+    if ((pageStyle != PDF_MULTI_PAGE_STYLE) && (pageStyle != PDF_DOUBLE_MULTI_PAGE_STYLE))
+        return;
+    
+     visRect = [self visibleRect];
+     thePoint = visRect.origin;
+     // use the center of page, but left for double page situations
+     thePoint.x += (visRect.size.width)/4.0;
+     thePoint.y += (visRect.size.height)/2.0;
+     aPage = [self pageForPoint: thePoint nearest: YES];
+     pageNumber = [[self document] indexForPage: aPage];
+     [self makePageChanges: pageNumber];
+}
+
+
+
+- (void) pageChangedNew: (NSNotification *) notification
+{
+    PDFPage     *aPage;
+    NSInteger   pageNumber;
+    
+    NSArray     *myVisiblePages;
+    NSInteger   numberOfPages;
+
+    if (! [[self window] isKeyWindow])
+          return;
+          
+    if ((pageStyle != PDF_MULTI_PAGE_STYLE) && (pageStyle != PDF_DOUBLE_MULTI_PAGE_STYLE))
+        return;
+
+    
+    myVisiblePages = [self visiblePages];
+    numberOfPages = [myVisiblePages count];
+    if (numberOfPages > 0)
+    {
+        aPage = (PDFPage *)[self visiblePages][0];
+        pageNumber = [[self document] indexForPage: aPage];
+        [self makePageChanges: pageNumber];
+        return;
+    }
+    else
+        return;
+    
+   
+}
+
+
 - (void) pageChanged: (NSNotification *) notification
 {
-	PDFPage			*aPage;
-	NSInteger				pageNumber;
-	NSInteger				numRows, i, newlySelectedRow;
-	NSUInteger	newPageIndex;
-	NSIndexSet		*myIndexSet;
-    PDFOutline      *outlineItem;
+    PDFPage            *aPage;
+    NSInteger          pageNumber;
     
     if (notification.object != self.myPDFWindow.activeView)
         return;
-	
-	aPage = [self currentPage];
-	pageNumber = [[self document] indexForPage: aPage] + 1;
- 	[currentPage setIntegerValue:pageNumber];
-    [scurrentPage setIntegerValue:pageNumber];
-	[currentPage1 setIntegerValue:pageNumber];
+    
+    aPage = [self currentPage];
+    pageNumber = [[self document] indexForPage: aPage];
+    [self makePageChanges: pageNumber];
+}
+
+
+- (void) makePageChanges: (NSInteger) pageNumber
+{
+	NSInteger		numRows, i, newlySelectedRow;
+	NSUInteger	    newPageIndex;
+	NSIndexSet		*myIndexSet;
+    PDFOutline      *outlineItem;
+    
+    newPageIndex = pageNumber + 1;
+ 	[currentPage setIntegerValue:newPageIndex];
+    [scurrentPage setIntegerValue:newPageIndex];
+	[currentPage1 setIntegerValue:newPageIndex];
     [currentPage display];
     [scurrentPage display];
     [currentPage1 display];
@@ -980,7 +1052,7 @@
         return;
     
  	// What is the new page number (zero-based).
-	newPageIndex = [[self document] indexForPage: [self currentPage]];
+    newPageIndex = pageNumber;
 
 	// Walk outline view looking for best firstpage number match.
 	newlySelectedRow = -1;
@@ -2344,6 +2416,12 @@
 
 - (void) mouseDown: (NSEvent *) theEvent
 {
+ 
+    if ((atLeastHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
+        {
+        if ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE))
+            [self pageChangedNewer];
+        }
     
     if (drawMark) {
 		[self setDrawMark: NO];
@@ -2518,8 +2596,7 @@ The system then remembers the new number and sends is to the Timer which will di
 
 - (void) mouseMoved: (NSEvent *) theEvent
 {
-    
-    
+        
     BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
     
    if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
@@ -2577,7 +2654,7 @@ The system then remembers the new number and sends is to the Timer which will di
 		}
 	}
 	else {
-		[super mouseMoved: theEvent];
+        [super mouseMoved: theEvent];
 	}
 }
 

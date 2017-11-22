@@ -459,6 +459,7 @@ extern NSString *IndexColorStartKey;
 extern NSString *spellingLanguageDefaultKey;
 extern NSString *spellingAutomaticDefaultKey;
 extern NSString *originalSpellingKey;
+extern NSString *continuousHighSierraFixKey;
 
 
 // end defaults

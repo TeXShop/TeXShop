@@ -15,6 +15,132 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.90 and 3.91</h5></P>
+
+Version 3.90 was never released. Version 3.91 has the following changes:
+
+<ul>
+
+<li> In version 3.89, the Changes document was added to the TeXShop Help Menu, but it only listed changes in the latest version. From now on, the full document listing all changes in series 3 will be in the Help Menu. The latest changes are at the top.
+
+<p>
+<li> In Version 3.89, the user can double click on the words "begin" or "end" in a begin-end pair (while holding down the option key) to select the matching termination word and all words in between. I'm not a fan of intricate string programming, and it took me many days to get this feature working, so I expected applause. Instead I got bug reports about edge cases I knowingly ignored. The first such message, from Jean-Pierre Olivier,
+contained the following example. Guess what TeXShop did with a double click on the initial "begin."
+<pre>
+     \begin{enumerate}
+          \item la liste
+          \begin{enumerate}
+               \item a
+               \item b
+          \end{enumerate}
+          \item another
+     \end{enumerate}
+</pre>
+I told Jean-Pierre that I was aware of the special case and didn't intend to fix it. Then I went to bed, but my conscience kept me awake.
+
+<p>
+TeXShop 3.91 fixes this problem. Thus "\begin{key}" will match the appropriate "\end{key}"  even when the selection between them contains one or several "\begin-\end" pairs with the same "key". 
+
+<p> TeXShop 3.91 also fixes a second special case: it now ignores comments, so "begin" will never match an "end" that has been commented out.
+
+<p>
+<li> Updated latexmk to version 4.54. Thanks to John Collins and Herbert Schulz.
+
+<p>   
+<li> TeXShop depends on PDFKit for the preview display, and Apple has been rewriting PDFKit for the last three years and introducing  bugs in the process. High Sierra was described by Apple as a release concentrating on polish and speed rather than on  new features. So there were high hopes that High Sierra would fix the bugs. And indeed, it did, but  it compensated by adding new  bugs.
+
+<p>
+The bug most often reported to me is that the page number box on the preview toolbar does not update when scrolling the pdf display with a gesture or mouse.  This bug only affects multi-page and double-multi-page modes, and does not occur when the keyboard arrows or the spacebar are used to scroll.
+
+<p> TeXShop 3.91 has a workaround for this bug. The workaround code is only activated when running High Sierra; otherwise the original code runs. When Apple fixes the bug, the workaround will be removed. The workaround is applied automatically, so you may wish to skip the remaining text in this item. Indeed, there are no other version 3.91 changes, so the rest of the text about 3.91 can be skipped.
+
+<p> What caused this bug? TeXShop is written with Apple's Cocoa application
+framework. In this style of programming, duties are shared between the programmer and
+the API. In particular, one object, named "PDFView" in the API, displays and scrolls pdf
+documents automatically without programmer intervention. Handling scrolling this way
+is important since there are mice, and smart mice, and portable track pads, and stand
+alone track pads, and gestures, and so forth, so if the duty of responding to them
+fell to the programmer, who doesn't
+even own most of these devices, nothing would work.
+
+<p>
+TeXShop interacts with the PDFView object by sending it "messages." For instance, one message
+says to switch from single page mode to continuous page mode.
+
+<p> 
+But what if the PDFView has to interact with TeXShop?  Apple programmers don't know the messages understood by TeXShop, so they cannot messages to TeXShop.
+
+The answer is that Cocoa objects can post "notifications". These notifications are fixed by the API; a programmer
+cannot extend them. One crucial notification posted by PDFView is called 
+	"PDFViewPageChanged".
+
+<p>
+These notifications go to a "notification center" in Cocoa. Programs can ask this center to be called
+whenever a particular kind of notification arrives. TeXShop asks the notification center to be notified
+when PDFViewPageChanged is sent, and it then updates the Page TextField.
+
+<p> The primary cause of the bug is that High Sierra does not send the notification when scrolled by a trackpad or mouse.
+
+<p> However, there is a further problem. Listed below is the code which TeXShop runs when it gets a PDFViewPageChanged notification.
+<pre>
+     aPage = [self currentPage];
+     theNumber = [[self document] indexForPage: aPage];
+     [self.pageNumber setIntegerValue:theNumber];
+     [self.pageNumber display];
+ </pre>
+
+<p> This is objective C code, but almost self explanatory. TeXShop asks PDFView for the current Page, a data structure that has lots of information about the visible page. It asks this data structure for the page number of the page. It sets this page number as the number to be displayed by the page box. Then it redisplays this box.
+
+<p>
+Unfortunately, the first line also fails. When you scroll in High Sierra, either by trackpad or by mouse and scrollbar, Cocoa does not update the “currentPage” variable. So after scrolling, this variable still has the old value. Hence the page number would not change even if the notification were sent.
+
+<p> To work around the bug, I first had to find a replacement for [self currentPage]. Ultimately I found two replacements; one worked a little better than the other, but both worked in High Sierra. The "method that works a little better" is used by the "click once" action described below, but it does not work for the "timer"
+action below, which must use the second method.
+
+<p> After working around [self currentPage],  I had to find a replacement  for the notification PDFViewPageChanged. Sadly, I never found a notification which worked. Several replacements are described in the documentation, but PDFView "behaves like an NSView in many cases" but "is not a formal subclass of NSView" and none of these notifications were actually posted by PDFView.
+
+<p> Since the notification route fails, the workaround has to use a different approach. TeXShop 3.91 contains two approaches. The first requires user action to update the pageNumber box: click anywhere in the active pdf area.  Thus users should scroll with a tracking action or mouse, and then click once to update the box.
+ However, this procedure is turned off when you start TeXShop 3.91 because a second procedure is used instead. Cocoa allows programs to contain NSTimer objects which fire periodically. When running on High
+Sierra, the PDF display object sets up a timer to update the pageNumber box once a second. This allows automatic updating during scrolling.
+
+<p> Since the timer has to do extra work to discover the current page, care has been taken to only do the work when necessary. The timer only updates if the corresponding PDF window is the front window. So it does no work when users are editing source. If several projects are open, at most one pdf timer is actually updating.
+
+<p> I still have some fear that the timer will make TeXShop less responsive. This could only happen on High Sierra, and then only until Apple fixes the bug. So I've provided a way for users to turn the timer off. Quit TeXShop and then issue the following command in Terminal:
+<pre>
+     defaults write TeXShop ContinuousHighSierraFix NO
+ </pre>
+ Then restart TeXShop. No timers will be created, so the pageNumber box will not update during scrolling. Click the mouse once in the pdf content area after scrolling to update the pageNumber.
+ 
+ <li>
+ <p> There are no other new features in TeXShop 3.91. But perhaps a list of remaining High Sierra bugs will be useful. They are cosmetic bugs rather than bugs changing the operation of TeXShop. 
+ 
+ <ul>
+ <li> When TeXShop typesets and then displays the revised pdf, there is a momentary gray flash before the new page appears. This only occurs on High Sierra and has been reported to Apple.
+ 
+ <p>
+ <li> If a window which has been converted to a tab is split, the bar separating the split portions cannot be moved, and other things go haywire. This problem is fixed in the latest developer betas, so it should be fixed in the next High Sierra minor release.
+ 
+ <p>
+ <li> I continue to get reports of fuzzy displays on some monitors. This problem has been with us through several iterations of OS X. It was extensively discussed in the changes document for version 3.55, where several TeXShop additions to deal with the problem are summarized in one spot. 
+ 
+ <p> Fuzzy displays have never been a problem on machines with Retina displays. This includes almost all of Apple's current machines.  It includes the 5K LG Display, made possible by Thunderbolt 3.
+ Older displays also work fine; I have the original Thunderbolt display which was not a Retina display and yet shows very clear text. I am no longer able to obtain fuzzy output on any of my equipment.
+ 
+ <p> I suspect that Apple has stopped work on this problem because it will disappear as people upgrade their equipment. Let's recall an analogous situation. When color was first introduced on the Mac, it was 8-bit color which could only display  256 colors. This was not enough for high quality photographs, but the engineers had a work-around. Graphic display hardware contained a color table chip which could be programmed in real time. Thus the particular 256 colors available could be adjusted, depending on the requirements in the front-most window.
+
+<p> 
+ So Apple introduced very elaborate color management software. A program could request, say,  40 colors that it "absolutely, positively had to have", and then 25 colors that it needed only approximately, listing how much variation was permissible for these colors. Apple also reserved a small number of colors for the system. The rules for this color management software seemed to change from system to system. One critic said "I dislike the Macintosh because when I request a color, I can never be sure of the color I'll get back.''
+
+<p> 
+ And then memory prices went down, and 8-bit color became 32-bit color and the color management software vanished. If you lived through those days, as I did, you probably feel that all the time spent on color management was time wasted. I recently discovered that new hires in the mathematics department who know much more than I do about computers have never heard of programmable color tables.
+ 
+ <p> With apologies to those dealing with the problem, I think the fuzzy display problem is a repeat of the 8-bit color situation. The problem has gone away for the majority of users, it will slowly go away for the rest of users, and it now longer makes sense to expect Apple engineers to deal with it. Sorry. 
+ 
+ </ul>
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.89</h5></P>
 
 Version 3.89 has the following changes:

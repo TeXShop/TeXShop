@@ -13,6 +13,132 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 3.90 and 3.91</h3></P>
+
+Version 3.90 was never released. Version 3.91 has the following changes:
+
+<ul>
+
+<li> In version 3.89, the Changes document was added to the TeXShop Help Menu, but it only listed changes in the latest version. From now on, the full document listing all changes in series 3 will be in the Help Menu. The latest changes are at the top.
+
+<p>
+<li> In Version 3.89, the user can double click on the words "begin" or "end" in a begin-end pair (while holding down the option key) to select the matching termination word and all words in between. I'm not a fan of intricate string programming, and it took me many days to get this feature working, so I expected applause. Instead I got bug reports about edge cases I knowingly ignored. The first such message, from Jean-Pierre Olivier,
+contained the following example. Guess what TeXShop did with a double click on the initial "begin."
+<pre>
+     \begin{enumerate}
+          \item la liste
+          \begin{enumerate}
+               \item a
+               \item b
+          \end{enumerate}
+          \item another
+     \end{enumerate}
+</pre>
+I told Jean-Pierre that I was aware of the special case and didn't intend to fix it. Then I went to bed, but my conscience kept me awake.
+
+<p>
+TeXShop 3.91 fixes this problem. Thus "\begin{key}" will match the appropriate "\end{key}"  even when the selection between them contains one or several "\begin-\end" pairs with the same "key". 
+
+<p> TeXShop 3.91 also fixes a second special case: it now ignores comments, so "begin" will never match an "end" that has been commented out.
+
+<p>
+<li> Updated latexmk to version 4.54. Thanks to John Collins and Herbert Schulz.
+
+<p>   
+<li> TeXShop depends on PDFKit for the preview display, and Apple has been rewriting PDFKit for the last three years and introducing  bugs in the process. High Sierra was described by Apple as a release concentrating on polish and speed rather than on  new features. So there were high hopes that High Sierra would fix the bugs. And indeed, it did, but  it compensated by adding new  bugs.
+
+<p>
+The bug most often reported to me is that the page number box on the preview toolbar does not update when scrolling the pdf display with a gesture or mouse.  This bug only affects multi-page and double-multi-page modes, and does not occur when the keyboard arrows or the spacebar are used to scroll.
+
+<p> TeXShop 3.91 has a workaround for this bug. The workaround code is only activated when running High Sierra; otherwise the original code runs. When Apple fixes the bug, the workaround will be removed. The workaround is applied automatically, so you may wish to skip the remaining text in this item. Indeed, there are no other version 3.91 changes, so the rest of the text about 3.91 can be skipped.
+
+<p> What caused this bug? TeXShop is written with Apple's Cocoa application
+framework. In this style of programming, duties are shared between the programmer and
+the API. In particular, one object, named "PDFView" in the API, displays and scrolls pdf
+documents automatically without programmer intervention. Handling scrolling this way
+is important since there are mice, and smart mice, and portable track pads, and stand
+alone track pads, and gestures, and so forth, so if the duty of responding to them
+fell to the programmer, who doesn't
+even own most of these devices, nothing would work.
+
+<p>
+TeXShop interacts with the PDFView object by sending it "messages." For instance, one message
+says to switch from single page mode to continuous page mode.
+
+<p> 
+But what if the PDFView has to interact with TeXShop?  Apple programmers don't know the messages understood by TeXShop, so they cannot messages to TeXShop.
+
+The answer is that Cocoa objects can post "notifications". These notifications are fixed by the API; a programmer
+cannot extend them. One crucial notification posted by PDFView is called 
+	"PDFViewPageChanged".
+
+<p>
+These notifications go to a "notification center" in Cocoa. Programs can ask this center to be called
+whenever a particular kind of notification arrives. TeXShop asks the notification center to be notified
+when PDFViewPageChanged is sent, and it then updates the Page TextField.
+
+<p> The primary cause of the bug is that High Sierra does not send the notification when scrolled by a trackpad or mouse.
+
+<p> However, there is a further problem. Listed below is the code which TeXShop runs when it gets a PDFViewPageChanged notification.
+<pre>
+     aPage = [self currentPage];
+     theNumber = [[self document] indexForPage: aPage];
+     [self.pageNumber setIntegerValue:theNumber];
+     [self.pageNumber display];
+ </pre>
+
+<p> This is objective C code, but almost self explanatory. TeXShop asks PDFView for the current Page, a data structure that has lots of information about the visible page. It asks this data structure for the page number of the page. It sets this page number as the number to be displayed by the page box. Then it redisplays this box.
+
+<p>
+Unfortunately, the first line also fails. When you scroll in High Sierra, either by trackpad or by mouse and scrollbar, Cocoa does not update the “currentPage” variable. So after scrolling, this variable still has the old value. Hence the page number would not change even if the notification were sent.
+
+<p> To work around the bug, I first had to find a replacement for [self currentPage]. Ultimately I found two replacements; one worked a little better than the other, but both worked in High Sierra. The "method that works a little better" is used by the "click once" action described below, but it does not work for the "timer"
+action below, which must use the second method.
+
+<p> After working around [self currentPage],  I had to find a replacement  for the notification PDFViewPageChanged. Sadly, I never found a notification which worked. Several replacements are described in the documentation, but PDFView "behaves like an NSView in many cases" but "is not a formal subclass of NSView" and none of these notifications were actually posted by PDFView.
+
+<p> Since the notification route fails, the workaround has to use a different approach. TeXShop 3.91 contains two approaches. The first requires user action to update the pageNumber box: click anywhere in the active pdf area.  Thus users should scroll with a tracking action or mouse, and then click once to update the box.
+ However, this procedure is turned off when you start TeXShop 3.91 because a second procedure is used instead. Cocoa allows programs to contain NSTimer objects which fire periodically. When running on High
+Sierra, the PDF display object sets up a timer to update the pageNumber box once a second. This allows automatic updating during scrolling.
+
+<p> Since the timer has to do extra work to discover the current page, care has been taken to only do the work when necessary. The timer only updates if the corresponding PDF window is the front window. So it does no work when users are editing source. If several projects are open, at most one pdf timer is actually updating.
+
+<p> I still have some fear that the timer will make TeXShop less responsive. This could only happen on High Sierra, and then only until Apple fixes the bug. So I've provided a way for users to turn the timer off. Quit TeXShop and then issue the following command in Terminal:
+<pre>
+     defaults write TeXShop ContinuousHighSierraFix NO
+ </pre>
+ Then restart TeXShop. No timers will be created, so the pageNumber box will not update during scrolling. Click the mouse once in the pdf content area after scrolling to update the pageNumber.
+ 
+ <li>
+ <p> There are no other new features in TeXShop 3.91. But perhaps a list of remaining High Sierra bugs will be useful. They are cosmetic bugs rather than bugs changing the operation of TeXShop. 
+ 
+ <ul>
+ <li> When TeXShop typesets and then displays the revised pdf, there is a momentary gray flash before the new page appears. This only occurs on High Sierra and has been reported to Apple.
+ 
+ <p>
+ <li> If a window which has been converted to a tab is split, the bar separating the split portions cannot be moved, and other things go haywire. This problem is fixed in the latest developer betas, so it should be fixed in the next High Sierra minor release.
+ 
+ <p>
+ <li> I continue to get reports of fuzzy displays on some monitors. This problem has been with us through several iterations of OS X. It was extensively discussed in the changes document for version 3.55, where several TeXShop additions to deal with the problem are summarized in one spot. 
+ 
+ <p> Fuzzy displays have never been a problem on machines with Retina displays. This includes almost all of Apple's current machines.  It includes the 5K LG Display, made possible by Thunderbolt 3.
+ Older displays also work fine; I have the original Thunderbolt display which was not a Retina display and yet shows very clear text. I am no longer able to obtain fuzzy output on any of my equipment.
+ 
+ <p> I suspect that Apple has stopped work on this problem because it will disappear as people upgrade their equipment. Let's recall an analogous situation. When color was first introduced on the Mac, it was 8-bit color which could only display  256 colors. This was not enough for high quality photographs, but the engineers had a work-around. Graphic display hardware contained a color table chip which could be programmed in real time. Thus the particular 256 colors available could be adjusted, depending on the requirements in the front-most window.
+
+<p> 
+ So Apple introduced very elaborate color management software. A program could request, say,  40 colors that it "absolutely, positively had to have", and then 25 colors that it needed only approximately, listing how much variation was permissible for these colors. Apple also reserved a small number of colors for the system. The rules for this color management software seemed to change from system to system. One critic said "I dislike the Macintosh because when I request a color, I can never be sure of the color I'll get back.''
+
+<p> 
+ And then memory prices went down, and 8-bit color became 32-bit color and the color management software vanished. If you lived through those days, as I did, you probably feel that all the time spent on color management was time wasted. I recently discovered that new hires in the mathematics department who know much more than I do about computers have never heard of programmable color tables.
+ 
+ <p> With apologies to those dealing with the problem, I think the fuzzy display problem is a repeat of the 8-bit color situation. The problem has gone away for the majority of users, it will slowly go away for the rest of users, and it now longer makes sense to expect Apple engineers to deal with it. Sorry. 
+ 
+ </ul>
+
+</ul>
+
+
 <P><h3>TeXShop Changes 3.89</h3></P>
 
 Version 3.89 has the following changes:
@@ -146,7 +272,3087 @@ http://mathbook.pugetsound.edu/index.html</A>. This site has exciting material. 
 
 </ul>
 
+<P><h3>TeXShop Changes 3.88</h3></P>
 
+Version 3.88 has the following changes:
+
+<ul>
+
+<li> In version 3.86, .bbl files were added to the list of files automatically removed by "Trash AUX Files". Two users complained, giving reasons. So these files are no longer automatically removed. Notice that there is a hidden preference to add file types to those removed, so users who want to remove.bbl files can still do so.
+
+<p>
+<li> The syntax parser had a bug which could crash TeXShop. This bug was discovered by Yusuke Terada, who provided a fix.
+
+<p>
+<li> Masson Thierry suggested three  new features, and all are in version 3.88. He suggested adding \frametitle to entries added automatically to the tags menu. This should be helpful when using the Beamer slides package.
+
+<p>
+<li> Masson  suggested a new "magic line":
+<dd>
+<dl> % !TEX pdfSinglePage
+</dd>
+When this line is added to the top of a source file, the resulting pdf preview will show single pages, even if the default is to show a single scrollable document. This feature is aimed at Beamer authors, who want slides to display one slide at a time, but other documents to scroll.
+
+<p>
+<li> Several years ago, Ramon Figueroa-Centeno provided beautiful macros to set the magic lines which determine the typesetting program, the encoding, and the program root. Immediately below these macros, the macro menu now has a menu listing all other possible magic lines as submenus. Selecting such a submenu adds the corresponding magic line at the current position of the cursor in the source editor. Thus users need no longer remember the syntax of these magic lines.
+
+<p> See the "About This Release" document in the Help menu for instructions on how to obtain these new macros.   
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.87</h3></P>
+
+The bug fix for Bibtex allowing citation keys with spaces turns out to be a bad idea. Bibtex documentation states that citation keys cannot have spaces, and the fix broke other user's Bibtex interaction. The fix has been removed. There are no other changes.
+
+
+<P><h3>TeXShop Changes 3.86</h3></P>
+
+TeXShop 3.86 fixes several minor issues reported by users since the release of 3.85. Most of these issues have been present for a long time.
+
+<ul>
+<li> The Chinese localization had overlapping text in Preferences; this is fixed.
+
+<p>
+<li> Antti Knowles found two bugs and sent the code to fix them. When synctex is used to sync from the Preview window to the Source window, it colors the matching text yellow. After that in earlier versions of TeXShop, if a selection was made  using only the keyboard, the selection would still be in yellow. The selection color would change to standard selection color only after a click of the mouse. This is fixed.
+
+<p>
+<li> Knowles second fix concerns the autocomplete feature of BibTeX. If a latex label contains a space, the autocomplete feature would show the full label in the list, but selecting this label would only include the label up to the first space. The fix for this is a little iffy. If users of TeXShop and BibTeX run into problems, please write me immediately.
+
+<p>
+<li> Tristan Hubsch pointed out that "hyperref tooltips" used with tables of contents and elsewhere could run off the page to the left or right. In that case, they were cut off. This annoying glitch is  fixed (unless the page is so narrow that the tooltip could never fit on it).
+
+<p>
+<li> Added ".engine" and ".sh" (shell script) as file types that TeXShop can write.
+
+<p>
+<li> At the request of Simon Robinson, addd ".bbl" and ".synctex(busy)" as file types which are automatically removed by the Remove AUX File commands.
+
+<p>
+<li> The remaining items are all motivated by email sent by Bob Kerstetter. He reported that
+<a href="http://tidbits.com/article/17351">http://tidbits.com/article/17351</a> had an article about the  language Markdown, listing editors used on the Macintosh to create these sources, and TeXShop was in that list. Markdown is a very simple markup language invented by John Gruber whose files can be easily converted to html, pdf, latex, and other languages. Many conversion programs are available free on the internet, including a program called "pandoc". In the ~/Library/TeXShop/Engines/Inactive program, there is a folder containing pandoc engines. 
+
+<p> But I discovered that the information about pandoc was out of date. The pandoc site now contains an open source install package for OS X, making it very easy to install pandoc. So I removed the existing engines, and placed a document called Pandoc.pdf in the pandoc folder, with links to the Gruber article and the pandoc site. Note that the pandoc site contains a large number of possible conversions, and details about how they work.
+
+<p>
+<li> I also received email from  Alan Munn, who tried to create stationery for Markdown files (.md files) and failed. This caused me to revise the Stationery feature of TeXShop slightly. Originally, users could create two kinds of files and place them in ~/Library/TeXShop/Stationery. First, they could create a piece of stationery, with extension ".tex". Then they could create a comment file with the same name and extension ".comment" describing the stationery. After that, the TeXShop Stationery menu showed available stationery, with descriptions of each possibility.
+
+<p> It turns out that the extension assigned to stationery was irrelevant. So in TeXShop 3.86, stationery files can have any extension except ".comment", or no extension at all. The extension is actually never used.
+
+<p> Stationery is treated just like blank windows in TeXShop, except that stationery pages are marked as "dirty."
+If you try to close one, or typeset one, or whatever, a dialog will appear asking you to name the file and save it to a location of your choosing. This dialog contains a pull-down menu of file types which TeXShop can write, and that menu is how users actually choose filetype.  Markdown stationery can be saved with type ".md" in this way, and stationery for any other file type can be handled the same way.
+
+<p>
+<li> The folder ~/Library/TeXShop/Engines/Inactive/pandoc contains two new engines. The first, Md2pdf.engine, converts a Markdown source file to a pdf file and opens the pdf file in TeXShop. The second, Md2HTML.engine, converts a Markdown source file to an HTML file and opens the HTML file in Safari.
+
+<p> Users should note that many other conversion engines for Markdown are available on the internet, and in most cases it is very easy to write engine files which call these conversion engines.
+
+<p>
+<li> A few people use TeXShop as a general editor. I'm one of them, but I sort of thought I was alone. If you use TeXShop to edit other things than .tex files, the syntax coloring feature of TeXShop can be annoying.  TeXShop 3.86 has a new menu item which turns syntax coloring on or off. This applies to the source window at the top of the stack. Users can have several source windows, some using syntax coloring and some not. The old "Syntax Color" item in TeXShop Preferences is still there, but it now selects the default choice for syntax coloring when a new document is opened. Changing this Preference does not affect syntax coloring in documents already open.
+
+<p>
+It would, of course, be wonderful if someone would write general syntax coloring code for TeXShop, so users could choose one scheme for Markdown, one for HTML, one for C code, etc. I don't intend to do that, but I'd gratefully accept the code from someone else.
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.85</h3></P>
+
+TeXShop 3.82 introduced "useTabs", an easy way to add tabs to projects with a root file and chapter files. TeXShop 3.84 added "useTabsWithFiles", a second method of adding tabs requiring a little more work for a lot more flexibility. Unhappily, the code for this second method broke the first method.
+
+<p> Grrr.
+
+<p> TeXShop 3.85 again activates both methods. 
+
+<p> In High Sierra, tabs can be given special short names in place of the names of the files they represent. As the number of tabs increases, this becomes more and more useful. The second method of adding tabs has always supported these shorter names. A similar technique is provided in TeXShop 3.85 for the first method.
+
+<p> The magic line containing "useTabs" can be followed by an optional list of short names as in the example below:
+<dd>
+<dl> % !TEX useTabs (one, two, , short name, five)
+</dd>
+This additional parameter must be  on the same line as "useTabs", but notice that single lines can wrap in the editor without adding a line feed. The short names are listed inside a pair of round brackets, and are separated by commas. White space at the beginning and end of a short name will be ignored, but a short name can contain more than one word, as in the above example. If the space between two commas is blank, the original name will be used for that file. If the list has fewer names than the number of tabs, original names will be used for the remaining tabs. If the list is longer than the number of tabs, names at the end will be ignored.
+
+<p> Version 3.85 runs on the original list of supported systems, including High Sierra. Tabs require Sierra and higher, and short names require High Sierra and higher. Short names can be input on Sierra, but they will be ignored on that system.
+
+<p> TeXShop 3.85 was compiled by XCode 8.3.3 running on Sierra. It runs fine on High Sierra, but the "short tab names" feature doesn't work there because XCode doesn't have API's for High Sierra. I  tried compiling TeXShop on High Sierra using the beta copy of XCode provided for that system. The code worked fine in High Sierra and short tab names worked. But unfortunately, the resulting code had minor problems running on Sierra. The High Sierra version is available at the TeXShop web site at http://pages.uoregon.edu/koch/texshop/texshop.html.
+
+<p> The TeXShop 3.85 source code has one line commented out which must be activated to get short tab names on High Sierra. If you want to compile yourself on High Sierra, search the source file TSDocument.m for "High Sierra" and uncomment the following line of code
+<dd>
+<dl> windowToTab.tab.title = self.includeFileShortNames[i];
+</dd>
+
+<P><h3>TeXShop Changes 3.84</h3></P>
+
+When version 3.82 of TeXShop was released, I said that it would be the final version of TeXShop until late fall. But bugs were discovered, so version 3.83 was released. 
+
+<p> These versions of TeXShop created only half of the promised support for tabs, and I found that I couldn't stop in the middle. Version 3.84 completes tab support, and should finally be the last release until late fall. Note that tabs require Sierra or higher because Apple first added tab support in that version of macOS.
+
+<p> Tabs are not appropriate for all TeX projects. They work best on books and large articles with from five to fifteen chapters or divisions, each introduced with an \include command. Some authors prefer to divide their project into many more pieces, perhaps one file per section, and then associating a tab with each file would product unmanageably many tabs.
+
+<p> TeXShop has two mechanisms to enhance Sierra tab support. The first is very simple. Within the top 20 lines of the root file, add the line
+<dd>
+<dl> % !TEX useTabs
+</dd>
+When this command is given, TeXShop itself searches for \include files to associate with tabs; the mechanism should cover perhaps 70 percent of cases.
+
+<p> The second mechanism gives the user considerably more control over the tabs. Within the top 20 lines of the root file, add the line
+<dd>
+<dl> % !TEX useTabsWithFiles
+</dd>
+Below that, within the top 50 lines of the root file, add a line for each tab
+<dd>
+<dl> % !TEX tabbedFile{chapter1/Introduction.tex}  (One)
+</dd> 
+In this command, a path to the file shown in the tab is given in curly brackets. In the example, the path starts from the folder containing the project root file, but see more details below. Notice that the file extension must be included. That is because the second mechanism allows pdf, tiff, jpg, log, aux, and other files as tabs. Authors sometimes give source files long descriptive names, which makes the tab titles very long. The final piece of the above line in round brackets is optional, and gives a shorter tab name. 
+
+<p> The optional short name will only be recognized in High Sierra, because it requires additional Apple API first made available there. Feel free to use the term in Sierra; it will cause no harm there, but will be ignored.
+
+<p> Finally, we list some technical details. The first mechanism searches for \include lines after \begin{document} in the body of the root file. It is common to list files without extensions, and in that case TeXShop adds the extension ".tex" when creating the tab.   In the second mechanism, however, TeXShop will not change the extension given by the user, or add a missing extension, because tab files can have unusual types so the extensions provide crucial information. Both methods create at most 20 tabs and ignore lines which might create more of them. The "useTabs" mechanism only works if the root file has at most 20,000 characters, to avoid very long searches for \include lines in gigantic root files.
+
+<p> If a window with tabs is left open when TeXShop is closed, then the next time TeXShop is opened, macOS opens the window and recreates the tabs. The new tab mechanism recognizes this behavior and lets macOS do the job without itself creating tabs. However, macOS does not understand tabs made from pdf files, graphic files, and a few others, so some of the tabs may be missing.  It is easy to get these tabs back. Close the document and then reopen it. This forces TeXShop to recreate the tabs, and then all tabs come back. Or open the missing files yourself and drag their windows to missing tabs. (This macOS behavior is not a bug; other features of TeXShop depend on it. We cannot have everything.)
+
+<p> Finally, a word about the path information between the curly brackets in the "tabbedFile" magic lines.
+Three types of path strings are recognized. The first are strings that start in the location of the root file. Examples include {chapter1.tex} and {Chapter1/Introduction.tex}. Longer strings of directories are allowed.
+When it sees this sort of string, TeXShop prepends the full path to the folder containing the root file.
+
+<p> Another possibility is a path starting at your home directory, like {~/Galois/Equations.tex}. Here ~ denotes the home directory, so this file is probably not in the project directory.
+
+<p> Finally, TeXShop recognizes full paths like {/Users/koch/Galois/Equations.tex}. 
+
+<p> If you use still more Unix conventions, they may or may not work. No guarantees. Tests suggest that spaces are allowed in both directory names and file names, but I'm loathe to recommend them.
+
+<p> There are a few tricky points. The Finder often lists TeX source files without the ".tex" extension, but this extension is just hidden, not absent. It must be written as part of the tab file path. (During testing, I was confused by this point several times).
+
+<p> When TeXShop is asked to create a tab, it  opens the file exactly as if a user had dragged the file icon to TeXShop and dropped it there. Then the window described in the tab is "tabbed." This creates a few surprising cases that look like bugs but aren't.  For example, then TeXShop opens a dvi file, it actually converts the file to pdf using dvips and Ghostscript, and then opens the pdf file. So tabbing a dvi file will give a pdf file as a tab.
+
+<p> Here is another surprising case. Suppose that you are working on a project named "Galois.tex" and you earlier created a project named "Abel.tex". When you open Galois.tex,  you want Abel.tex as a tab so you can refer to that source file as you write Galois. But if you drop the icon for Galois.tex on TeXShop, both Galois.tex and Galois.pdf will open in separate windows. Similarly dropping the icon for Abel.tex on TeXShop will open Abel.tex and Abel.pdf. After tabbing occurs, you'll have a tabbed window containing Galois.tex and Abel.tex, and you'll have Galois.pdf in a separate window. But you'll also have Abel.pdf in  another window. The existence of this extra pdf file looks like a bug, but isn't.
+
+<p> This release of TeXShop was compiled by XCode 8.3.3 running on Sierra. It runs fine on High Sierra, but the "short tab names" feature doesn't work there because XCode doesn't have API's for High Sierra. I  tried compiling TeXShop on High Sierra using the beta copy of XCode provided for that system. The code worked fine in High Sierra and short tab names worked. But unfortunately, the resulting code had minor problems running on Sierra. No doubt these will be fixed before the release of High Sierra.
+
+<p> Consequently, if you are beta testing High Sierra and want to use short tab names, you'll need to search the source file TSDocument.m for "High Sierra" and uncomment the following line of code
+<dd>
+<dl> windowToTab.tab.title = self.includeFileShortNames[i];
+</dd>
+Then compile on High Sierra.
+
+<P><h3>TeXShop Changes 3.83</h3></P>
+
+Murray Eisenberg discovered problems with the new "useTabs" feature and sent me his full source code to debug. This proved extremely useful! The problems I foresaw with this feature have not materialized, but Eisenberg's source revealed more elementary and embarrassing bugs, now fixed.
+
+<p>
+The only files which receive tabs are those loaded by \include{myfile} statements after \begin{document} in the root file. Here "myfile" can be a file name, partial path, or full path. Murray's document loaded chapters in a more complicated way, but was easily modified to meet this condition. It would be easy to extend TeXShop so an alternate method could also be used, in which the user lists  files to be tabbed using "% !TEX fileForTab = " statements. This technique could assign files to tabs even if they aren't part of the source (for instances, tables of symbols), and could specifiy which chapters are tabbed for books with enormously many chapters. Write if you want this feature, which however will not appear until fall.
+
+<p>
+It is slightly possible that version 3.82 broke UTF-8 encoding in Japan and other far Eastern countries; the evidence is iffy at the moment. But if that happened, it is fixed in 3.83.
+
+
+<P><h3>TeXShop Changes 3.82</h3></P>
+
+After the release of MacTeX-2017 in May, I have been spending time on TeXShop dealing with bugs by other programmers which crashed  TeXShop --- and  TeXShop bugs which were my fault. Now I want to turn to new summer projects, so this should be the last TeXShop update until late fall. I'll return earlier only if significant new bugs are discovered.
+
+<p> This final summer release contains two features, one available only on Sierra and High Sierra, and the other only on High Sierra. We start with the High Sierra feature, which comes automatically to Cocoa applications without any new code by me.
+
+<ul>
+<li> Some time ago, TeXShop was revised to support Apple's Sharing toolbar item. For instance, if the source window is active and you select "Mail" in the item, a mail window opens containing the TeX source as an enclosure. If the preview window is active, this mail window contains the pdf output as an enclosure. 
+
+<p> Another sharing option is "Airdrop". I think of this as an option for  graduate students relaxing in Starbucks. If such a student notices someone interesting drinking coffee, they can use Airdrop to share a selected portion of TeX source code, or a selected region of  Preview output. I keep hoping to be invited to a Wedding due to this feature, but not yet.
+
+<p> I have never actually used any of the features in the sharing tool. 
+
+<p> In High Sierra, the sharing tool is also available from a new "Share" menu in the File menu. This menu has an extra item called "Add People." To use it, save a TeX document in iCloud. Then in Add People, send an email message or other sharing notification to a friend offering to share this document. After that, you and your sharing partner can simultaneously edit the document. You can write the first line of a proof and your colleague can immediately add the next sentence. When the document is being shared with someone else, a gray "Share" message is displayed just right of the file title on the edit window header.
+
+<li> The other new feature is available in both Sierra and High Sierra. Recall that TeXShop allows large projects to be organized as a root document and various chapter files. The root contains header items and \include statements just after \begin{document}. These include statements  input the source files for various chapters into the document. Chapter files include a header pointing back at the root document
+<dl>
+<dd> % !TEX root = ../MyRoot.tex
+</dl>
+but the root file has no such header. When a chapter file is typeset, this magic line tells TeX to typeset the root and thus the entire document.  The magic line also helps  sync and "goto error" locate the correct chapter source, including opening it if it is not yet open.
+
+<p> In Sierra, users can use the new "tabs" feature to manually move the chapter windows into the root source window
+as tab entries. But this is messy work which has to be done every time the project is reopened. The new feature automates this procedure.
+
+<p> To activate this feature, first turn off two TeXShop preferences under the Misc tab: "Open root file automatically on opening. a child" and "Miniaturize the opened root window." Both of these items probably represent bad ideas in the design of TeXShop, so the features might be removed in a later version of TeXShop.
+
+<p> Then add a magic line to the top of the root file source:
+<dl>
+<dd> % !TEX useTabs
+</dl>
+When a project with this line is opened, the various chapter files are opened as tabs in the main window.
+Thus just two windows appear, the source under various chapter tabs, and the single output pdf file.
+
+<p> Sierra already has the ability to recreate tabs in a window if the window is left open when TeXShop quits. But once such a window is closed, the tabs have to be recreated from scratch. The new header creates them automatically.
+
+<p> If the source code has the magic line and its window is left open when TeXShop quits, then Sierra is allowed to recreate the tabs itself when the program reopens. The new code will only run if the user quits a document, and then later opens it again.
+
+<p> This tab feature is somewhat experimental. It works fine for me now, but a number of tricky edge cases make me a little nervous. If you are going to try it, I suggest that you duplicate your project and work using the duplicate. In case of  problems, carefully analyze exactly what you did that caused an error, and then send me a note. If possible, send me full source when a problem occurs.
+Once the tabs are active, I would expect everything to work without problems. It is only the step that creates the tabs that is slightly worrisome. But not enough to hold back this release.
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.81</h3></P>
+
+Version 3.81 fixes a small number of bugs in version 3.80:
+
+<ul>
+<li> E. Lazard reported that inserting a single space in the search field in the preview window drawer causes a crash. This bug has existed for a long time, and is fixed.
+
+<p>
+<li> The "Open for Preview" menu item broke in 3.80. This is fixed. Many users reporting this problem were not aware of the Preference item "Configure for External Editor," which is the more natural way to use an external editor.
+
+<p>
+<li> In High Sierra, the list of user-defined engines in the popup engine menu was not sorted; although it was sorted in Sierra. This is fixed.
+
+<p>
+<li> The French localization contains a translation by Rene Fritz of the latest version of Herbert Schulz's TeXShop Tips and Tricks, available in the Help menu.
+
+<p>
+<li> After typesetting, the page number of the current page in the Preview window was set to 1, even when a later page was  displayed. This is fixed. (The actual bug was that the page number was set to the current page of the lower half of the split window, even when that half was invisible.)
+
+<p>
+<li>  TeXShop's selection of the dictionary to be used when checking spelling is improved. This is a very minor matter for most users, but it requires an extensive discussion.
+
+<p> The basic TeXShop design is that users may have several projects open on the screen at once. Using toolbar and menu items, each can be independently configured. One project may typeset using pdflatex, while a second may use LuaTeX. One source window may have magnified text while a second has regular text in a different font.
+
+<p> The purpose of the TeXShop Preference Pane is to set default values for projects  when they are first opened. Changing a default value usually does not affect files already open.
+
+<p> On the Macintosh, the "Spelling & Grammar" pane is used to pick the spelling dictionary. Originally, TeXShop did not interact with this pane, so the pane worked via the default Apple method. This changed when cocoAspell appeared, because  many TeXShop users wanted a dictionary that didn't mark TeX keywords as misspelled. These users didn't necessarily want to use that dictionary in other applications. So interaction with the spelling dictionary was implemented, but the implementation had a baroque, difficult to understand, structure. Version 3.81 of TeXShop finally treats selecting a dictionary on a par with other similar choices.
+
+<p> A new Dictionary field in TeXShop Preferences under the Source tab has a pop-up menu which can be used to select the default dictionary. Many users will use this menu to select a cocoAspell dictionary, and then ignore everything else about spelling dictionaries. The one unexpected feature is that dictionaries are listed using the ISO 639-1 and ISO 639-2 standards rather than the localized names shown in the Spelling & Grammar pane. These are easy to decipher.
+
+<p> When a new file is opened in TeXShop, it will be set to use the default dictionary. But this dictionary can be changed for that file by opening Spelling & Grammar and selecting a new dictionary. A user who writes in English but corresponds with a French relative can easily do that when writing a note to that relative.
+
+<p> A more unusual situation occurs if a user has several files open at once, some written in one language and some in another. Activate each source file by clicking on the text, and then select the dictionary for that file using Spelling & Grammer. Then with Spelling & Grammar still open, click randomly on these source files and notice that the dictionary field changes to the correct dictionary for each file.
+
+<p> Finally, if you intend to work on a file for an extended period of time and it does not use your default dictionary, the default dictionary for that file can be set with an instruction at the top similar to
+
+<dl>
+<dd> % !TEX spellcheck = de-DE
+</dl>
+
+<p> This particular document will then open with spelling set to German. But the Spelling & Grammar panel can later be used to switch dictionaries temporarily, in case a German letter contains an English quotation which needs to be spell checked.
+
+<p> After working on these changes, I mentioned them to a user who told me in a disappointed tone that he really just wanted to return to the days when TeXShop entirely ignored the Spelling & Grammar panel and let it "do its thing." There is a special hidden preference for that user:
+
+<dl>
+<dd> defaults write TeXShop OriginalSpelling YES
+</dl>
+
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.78 - 3.80</h3></P>
+
+Versions 3.78 and 3.79 were never released. Version 3.80 has the following changes:
+
+<ul>
+<li> SyncTeX, which makes it possible to easily move back and forth between a spot in the source and the corresponding spot in the output, was written by Jérôme Laurens. This software consists of two pieces. One piece adds code to the various TeX engines, causing the creation of appropriate sync information and output of this information to the file myfile.synctex.gz during typesetting. The second piece can be used by authors of front ends; it opens  the myfile.synctex.gz file, parses its contents, and deduces sync positions from the parsed data. TeXShop uses Jérôme's front end parsing code.
+
+<p> By the way, I use SyncTeX every day and offer Jérôme a mighty thanks for creating it.
+
+<p>
+In 2017, Synctex was revised by Jérôme; among other changes, syncing now works between code to input graphics in the source and the resulting image in the output. But when TeXLive 2017 was released, the revised code for front end authors was not yet ready. Luckily the old code continued to work with ordinary tex,  latex, pdftex, and pdflatex.
+
+<p>
+Unfortunately, this code did not work with LuaTeX and LuaLaTeX, so users working with these engines usually could not sync. Even worse, TeXShop often crashed when using these engines because the initial parsing of the file myfile.synctex.gz itself crashed.
+
+<p> The new front end code is now available, and is used by TeXShop 3.80. The crashes of LuaTeX and LuaLaTeX have ceased, and synchronization works again, more accurately than in earlier years. Some new features require setting the flag which turns synctex on to 2 or higher. Thus users may want to write "--synctex=2" rather than "--synctex=1". This change can be made in TeXShop Preferences under the Engine tab, and in individual engines the user may have activated.
+
+<p>
+<li> A new engine called "filltex" was written by David Gerosa, and is available in ~/Library/TeXShop/Engines/Inactive/filltex. This spectacular engine is very easy to install; here's what it does. Two  databases are commonly used in the astronomy and theoretical physics scientific communities: ADS and INSPIRE. These databases list preprints and published papers, referencing each with a citation index like 2016PhRvL.116f1102A. Suppose you have written a scientific paper in one of these fields, and suppose you citations use the standard forms for ADS and INSPIRE. For instance, your paper might have many citations, like "for more details consult \cite{2016PhRvL.116f1102A}." When the paper is done, typeset it using filltex. The engine will scrape bibliographic data from ADS and INSPIRE using the web, construct a bibliography, add the bibliography to the article, and rewrite the citations appropriately. All of this happens in one run of the engine. To see an example, typeset the example in the  Inactive/filltex folder.
+
+<p>
+Many additional databases exist for other fields, and Gerosa tells me that using  these databases with filltex is just a matter of revising the python code appropriately for these databases. He recommends that users interesting in doing this consult his git hub, as listed in the documents in TeXShop/Engines/Inactive/filltex.
+
+<p>
+<li> A modified SageTeX engine is now in Engines/Inactive/sage, together with new instructions for setting it up. These changes are required because the latest release, SageMath-7.6, has new requirements and a new internal structure.
+
+<p>
+<li> In some versions of macOS, opening a TeXShop Preview document  in multipage mode scrolled down to the middle of the first page, rather than starting at the top. This is fixed.
+<p>
+<li> Some users noticed a slight creep of the Preview Window with each typesetting job. This is fixed or at least improved.
+
+<p>
+<li> TeXShop now contains latexmk 4.53a.
+
+<p>
+<li>
+Herbert Schulz  made changes in "TeXShop Tips & Tricks", available in the TeXShop Help menu.
+</ul>
+
+<p>
+In addition to these changes, a small number of users ran into other issues running on macOS Sierra. 
+Most users have had no trouble with Sierra, and find that it fixes a number of problems in the previous two or three systems, so these problems are rare:
+
+<p> First, a few users included the pstricks package in the header of their document, but used no features of this package and typeset with pdflatex. Usually pstricks requires TeX + DVI mode, so including it in the header of a pdflatex document is an error. But in Sierra, typesetting such a document with pdflatex created a pdf file that crashed PDFKit, Apple's pdf rendering code, and thus crashed TeXShop. This bug is fixed in High Sierra.
+
+<p> Second, some users writing beamer documents would typeset and scroll their document in TeXShop.
+A particular image in the middle of the document would create a glitch, and some following pages would be blank. Scrolling back up would give additional blank pages, even though they were correctly rendered earlier in the game. Eventually the document could crash TeXShop. This problem is caused by a PDFKit bug, and is fixed by Apple in High Sierra. 
+
+<p> But in the meantime, we discovered that typesetting the same source with LuaLaTeX or XeLaTeX
+produces pdf files without problems. In addition, opening a defective pdf file with Adobe Acrobat Reader, and then saving that pdf file in Reader, produces a pdf file without problems.
+
+<p> One final problem occasionally occurs in Sierra. Many people use DropBox with TeXShop with no problems. A few of these users store their source files in the DropBox folder. A few of these folks report regular TeXShop crashes. In every case known to me, these crashes end when the TeX source files are removed from DropBox. 
+
+<p> What is the explanation? I don't know, but I have suspicions. Recall that TeXShop uses Apple's Automatic
+Saving code, introduced in Lion. Thus the system can save the source at random times. A source file in DropBox can also be moved to the cloud at random times. What if both the Mac and DropBox want to make changes at the same time?
+
+<p> The Automatic Saving code is buried deep in Cocoa and isn't by me. The only piece of TeXShop code by me related to automatic saving says "turn automatic saving on."
+
+<p>
+Here's all I know about this problem. 
+
+<ul>
+<li> I have never heard of problems from users of iCloud with TeXShop. This is not surprising since Apple wrote both iCloud and Automatic Saving.
+
+<p>
+<li> Users with this crashing problem report that crashes are fixed by creating symbolic links in DropBox to sources, rather than putting the sources there directly. I don't know why.
+
+<p>
+<li> Other users with this crashing problem report that crashes are fixed by turning off DropBox syncing during typesetting sessions.
+
+<p>
+<li> And all users report success moving their sources out of DropBox, and then dragging copies to DropBox at the end of typesetting sessions.
+</ul>
+
+<p> But to repeat, many report no problems. 
+
+
+
+<P><h3>TeXShop Changes 3.76 - 3.77</h3></P>
+
+Version 3.76 was never released. Version 3.77 has the following changes:
+
+<ul>
+<li> Items in the Tags menu are indented to make entries easier to find.
+
+<p>
+<li> A bug in Apple's search routines broke the search tool in the Preview Window's Drawer. This bug was fixed by Apple and search now works as before. It is conceivable that it is broken on Sierra 10.12.0 and 10.12.1; I no longer have such systems to test. Users who run into a problem on these systems should update the operating system to 10.12.2 or higher.
+
+<p> If a user clicks in a search result at the bottom of the Drawer, the corresponding item in the pdf Preview is highlighted. The up and down arrows can be used to rapidly scan various search results. This ability temporarily  broke in 3.76, but works again in 3.77. 
+
+<p>
+<li> At the suggestion of a user, the TeXShop Edit menu has an entry "Paste As Comment." This works essentially like "Paste" except that the newly pasted lines are  marked as comments. This makes it possible to copy and paste a large selection from another document, and then  carefully activate portions of the material.
+
+<p>
+<li> The Sage engine in the "Inactive" portion of ~/Library/TeXShop/Engines was improved by Markus Baldauf. Thanks!
+
+<p>
+<li> The latexmk file was updated to version 4.52c.
+
+<p>
+<li> Updated the TeXShop Help Menu document "First Steps with TeXShop" and the document "Quickstart Guide for Command Completion" in /LibraryTeXShop/Documents.
+
+
+<p>
+<li> At the request of Br. Samuel, OSB, the types gabc, gtex, glog, and gaux are now recognized by TeXShop; these types are used by the Gregario software. The files gabc and gtex are added to the types which receive syntax coloring and other "tex file" privileges, and gaux, glog, and gtex are added to file types deleted by Trash Aux Files.
+
+<p>
+<li> TeX users on Unix platforms often define an environment variable named TEXINPUTS, which lists folder which TeX should search for input files, style files, and the like. Using this variable is actively discouraged in TeX Live and MacTeX, and these systems are configured to make the variable unnecessary. For instance, files used by an individual user can be placed in ~/Library/texmf.
+
+<p>
+ People who answer user questions about  MacTeX sometimes run into problems associated with TEXINPUTS, since mistakes defining the variable can bring TeX crashing to a halt. And often users don't mention that they have set TEXINPUTS, leading to hours of useless debugging.
+
+<p>
+ With these warnings, we now confess that TeXShop has a new facility for those few users with a legitimate need to set TEXINPUTS.
+A user recently described such a case. This user belonged to a group whose members used common input files stored on a server. The members of this group worked on a variety of tasks which all used the same basic template, but then input different files depending on the task. These input files were given the same name, but stored in different folders on the server. To pick a task, a member of the group selected a particular server folder using TEXINPUTS, and proceeded. 
+
+<p> The user in charge of this group wanted a simple way to switch TEXINPUTS so the remaining members of the group could use the system without really understanding how it worked.
+
+<p> To help this user, TeXShop 3.77 recognizes a new command to be added to the first twenty lines at the header of a source file. If a project has a root file and several input chapter files, the command should be in the root file. There are
+four entirely equivalent forms of this command:
+<dd>
+<dl>  % !TEX TS-parameter = 
+<dl>  %!TEX TS-parameter = 
+<dl>  % !TEX parameter = 
+<dl>  %!TEX parameter = 
+</dd>
+Each space is mandatory, and the final equal sign must be followed by one space and then a word or sequence of symbols without spaces.
+For example, the following command might be issued by someone adding ~/MyTeXFiles to the standard TeX search locations:
+<dd>
+<dl> % !TEX TS-parameter = ~/MyTeXFiles//:
+</dd>
+
+<p> The parameter defined by this command need not be connected to TEXINPUTS. It can be used for other purposes. So --- what does TeXShop do with this parameter?
+
+<p> The parameter is ignored unless typesetting is done by a user-defined Engine file. For example, it is ignored if the user types with TeX, LaTeX, pdfTeX, or pdfLaTeX. But it is used with the XeLaTeX Engine, and all other Engines. 
+
+<p> An Engine file is just a shell script, which TeXShop runs to typeset. This shell script is called with two parameters, "$0" and "$1". The parameter "$0" contains a full path to the engine file run by the typesetting command, The parameter "$1" contains the name of the file to be typeset. The parameter command adds a third parameter, "$2", containing the word on the right side of the command. The engine script can do anything it wants with this parameter, including just ignoring it.
+
+<p> It is instructive to look at the XeLaTeX Engine file, which is very simple. The file begins with "#!/bin/tcsh", which says that it is a shell script for the tcsh shell. (There are many different shells, and each of their shell files has a different syntax.) Next comes a command setting the path, and
+then a final command runs xelatex:
+<dd>
+<dl> xelatex -file-line-error -synctrex=1 "$1"
+</dd>
+We can add MyTeXFiles, defined above, to TEXINPUTS by adding the following line  before the call to xelatex:
+<dd>
+<dl> setenv TEXINPUTS "$2"
+</dd>
+
+<p> At this point, several warnings are important. The command to define TEXINPUTS is different in different shells, so copying the above line with another shell will fail. Turn back to the TEXINPUTS setting "~/MyTeXFiles//:" given earlier. The symbol // tells TeX to recursively search subfolders of MyTeXFiles, and the all-important semicolon at the end says to add this to the existing TEXINPUTS from TeX Live. Omit the senicolor and TeX will completely fail.
+
+<p> It is easy to define engines which duplicate the built-in typesetting engines. For example, to obtain an object which typesets using pdflatex, just duplicate and rename for xelatex engine, and replace xelatex by pdflatex in the engine script. Therefore, this mechanism can be used to determine TEXINPUTS with any typesetting method.
+
+
+</ul>
+
+<P><h3>TeXShop Changes 3.75</h3></P>
+
+There is only one change. In TeXShop 3.74 on Sierra 10.12.1, scrolling in the pdf window was jerky. This is fixed.
+
+<P><h3>TeXShop Changes 3.74</h3></P>
+
+TeXShop 3.74 fixes a small number of minor issues.
+
+<ul>
+<li> In Version 3.72, when the mouse hovers over a hyperref link, a popup window shows the linked portion of the document. This did not work well for equations with an equation number on the right side of the page. Now if the link is in the right half of the page, the linked portion is selected further left.
+
+<p>
+<li> TeXShop uses five files by Jerome Laurens to interpret the contents of synctex files. 
+These files are occasionally updated with TeX Live updates. Previous versions of TeXShop used version 1.9 of the files; this version of TeXShop uses version 1.18. Users may notice small changes in sync due to this update.
+
+<p>
+<li> The edit menu contains an item labeled "Experiment...". Selecting this item brings up a small source window; text can be copied from the main source window to this window, and then edited there. A "Typeset" button on the small window  typesets the experiment and shows it in a second small window. Both windows can be enlarged and their contents can also be enlarged using the standard keyboard shortcuts to change font size or pdf size. This facility, suggested by Wendy McKay, is particularly useful when editing complicated equations or tables.
+
+<p> Recently this feature was mentioned on the web site tex.stackexchange.com, and Denis 
+Bitouzé suggested an improvement. Following his suggestion, if a selection of source is made first and then the menu is chosen, the selection is automatically copied into the experiment window. 
+
+<p>
+If no selection is made and instead the cursor is simply positioned by clicking at a point, then the Experiment window opens with its previous contents. Thus if a user carefully edits an equation, closes the experiment window, and then decides on a final change, the contents can be brought back for another edit.
+
+<p>
+<li> A TeXShop preference allows users to set the background color of the preview window, but that preference was ignored by the initial Sierra release. It is working again in a developer update beta. So users will want to install that update when it is released by Apple.
+
+<p>
+<li> CocoAspell is a spell checker by Anton Leuski which understands LaTeX and thus does not mark control words as misspelled. It is an extension of Apple's Spell Check system, controlled by a Spelling Preference Pane. Users get all the benefits of Apple's integration of spell checking with document source editors, but with a dictionary that is LaTeX aware. 
+
+<p> The preference pane associated with this Spell Checker broke in El Capitan, and the entire spell checker broke in Sierra. But luckily, Anton Leuski released a new version for El Capitan and Sierra on November 8, and converted the project to open source. See
+"http://people.ict.usc.edu/~leuski/cocoaspell/". Users need to download the spell checker at Anton's site because he makes many dictionaries available there depending on the language(s) needed. Highly recommended.
+ 
+</ul>
+
+
+<P><h3>TeXShop Changes 3.72 and 3.73</h3></P>
+
+TeXShop 3.72 finishes the task of preparing for macOS 10.12, Sierra. It also contains the changes listed below. The only change in TeXShop 3.73 is to improve the responsiveness of popUps when mousing over links.
+
+<ul>
+<li>
+The LaTeX hyperref package adds active links and url's to pdf documents. Many are under author control, but the package automatically links table of contents items to the starts of chapters and sections, and  links reference items to the corresponding bibliography entries.
+	
+<p> 
+TeXShop 3.72 makes it easy to understand these links at a glance. If the mouse hovers over a link, a popup window appears for several seconds showing the linked portion of the document. This is particularly useful when checking references in the document.
+	
+<p> 
+Normally the popup is on screen for four seconds and then disappears. If the option key is down at the end of these four seconds, the popup will remain on the screen until the mouse moves.
+	
+<p> 
+There is one cosmetic flaw. When the mouse hovers over a link, a small popup from Apple also appears giving the page where the link points. I don't know how to eliminate their popup. It does not appear in Sierra, so if you find it bothersome, upgrade to Sierra. 
+	
+<p> 
+This feature was requested by Mark M. Wilde, who noticed that it is already present in Skim. Indeed Skim has a somewhat more elegant version. 
+
+
+<li> 
+TeXShop  has a hidden preference setting to control the "ColorIndex" tool, as requested by Murray Eisenburg.  Type the following command in Terminal to turn this item on by default for each new document:
+	<dd>
+	<dl> defaults write TeXShop IndexColorStart YES 
+	</dd>
+	
+<li>
+<p>
+The TeXShop magnifying glass has been enhanced, as requested by Steffen Wolfrum, but the enhancements are only available in El Capitan and higher. When either magnifying glass is being used, temporarily pushing the Command, Option, or Control keys will increase the amount of magnification, and temporarily pushing Shift-Command, Shift-Option, Shift-Control will decrease the magnification. 
+	
+<li>
+<p>
+Herbert Schulz updated the Tips & Tricks Help File.
+	
+<li>
+<p>
+Following a request by Markus Gail, the Help commands "ShowHelpForPackage" and "openStyleFile" remove hidden white space, making them more robust.
+	
+<li>
+<p>
+TeXShop is now explicitly released under the GPLv2, and a copy of this license is available in the TeXShop menu.
+
+	
+</ul>
+
+<P><h3>TeXShop Changes 3.71</h3></P>
+
+This version differs from 3.70 only in the German and Dutch localizations:
+
+<ul>
+<li> In both German and Dutch, the pdf search field in the toolbar was not connected to the rest of the program.
+
+<p>
+<li> Some German translations were improved by Michael Rößner.
+
+<p>
+<li> The German source window had  horizontal slack, and scrolled horizontally about half an inch. This was due to a bug in XCode 7.3.1. Merely opening an NSDocument.nib for a specific language creates the bug for that language. Luckily the bug is fixed in XCode 8.0 Beta. All localizations were tested in TeXShop 3.71 and none exhibit the bug.
+
+</ul> 
+
+
+<P><h3>TeXShop Changes 3.69 and 3.70</h3></P>
+
+Version 3.69 was never released. Version 3.70 has the following features.
+
+<ul>
+<li> Version 3.70 again uses the more extensive fixes by Martin Hairer for a memory leak problem, but with a small change to fix the bugs in the Preview toolbar that occurred in version 3.66.
+
+<p>
+<li> The behavior of the pdf search field on the toolbar has been improved. As before, command-F activates the search field so text can immediately be typed into it. Push RETURN to select the first occurrence of the word of phrase typed. This now switches the first responder to the pdf view, so the selection is highlighted in blue and easy to find.
+
+<p> To find the next occurrence, type command-g. To search backward, type shift-command-g. These commands again produce selections highlighted in blue. They are chosen to make searches in the text
+and pdf windows behave the same way. (In earlier versions, RETURN and SHIFT RETURN performed these functions, but this was not parallel to find for text, and left gray selections rather than blue ones.)
+
+<p> To search on a particular page, go to that page and select some text, making sure the selection is not empty. The next search will begin at that spot. An empty selection will start the search at the beginning of the document.
+
+<p> If a search reaches the end of the document, it will cycle back to the beginning.
+
+<li>
+<p> The pdf drawer alternate search method is still available. It works on all systems, including Sierra. However, Sierra's PDF search routines seem to have significant bugs, which have been reported to Apple. If these bugs are fixed, the current version will probably fail on Sierra, but
+this will be very easy to fix. 
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.67 and 3.68</h3></P>
+
+Version 3.67 was never released. The changes in version 3.68 are listed below:
+
+<ul>
+<li> Version 3.66 included a fix for a memory leak written by Martin Hairer. This fix created an unfortunate bug. If the user closed the Preview window associated with a document and later typeset the document, the Preview window reappeared. But many tools in the window's toolbar no longer worked.
+
+<p> Luckily, Martin Hairer provided two different versions of his memory leak fix, one quite conservative with just a few changes, and the other more elaborate with lots of changes.
+The bug only affected the more elaborate version. TeXShop 3.68 has the conservative set of Hairer bug fixes, and no longer exhibits the toolbar bug. 
+
+<p> 
+<li> The new search field on the Preview window has been improved. Now when the pdf window is active, typing command-F will activate the search field so a phrase can immediately be typed there. (The drawer no longer opens.)
+
+<p> As before, after typing a phrase in the search field, type RETURN to select the first occurrence of the phrase in the pdf file. Type RETURN again and again to select later occurrences. Type SHIFT RETURN to do a backward search.
+
+<p>
+<li> In Sierra, the old pdf search routine in the preview window Drawer stopped working.
+In TeXShop 3.66, this search field was deactivated on all systems and replaced by the new
+search field on the window toolbar. Some users missed the old method, so in 3.68 it is restored on all systems. Users who try both search methods will notice some harmless interaction between the two methods. Sierra users will discover that the old method fails.
+
+<p> If Apple later repairs the old method on Sierra, both methods will be kept and the interaction between these methods will be eliminated.
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.66</h3></P>
+
+<ul>
+<li> Version 3.66 has important code changes by Martin Hairer
+of the Department of Mathematics, University of Warwick. These
+code changes fix
+memory leaks in previous versions of the program. 
+
+<p> The changes include replacing several instance variables with 
+class properties, whose retain/release behavior under ARC is more
+predictable. But the primary change is to remove some strong
+reference cycles in which object A referenced object B and object B
+referenced object A, and neither could be released without first releasing
+the other. 
+
+<p> Recent versions of Apple’s PDFKit use large amounts of memory
+because they create and cache bitmaps for faster display. If Activity Monitor
+is used while opening a document in TeXShop and scrolling through the preview pages,
+this memory usage can seem alarming, but in practice it does not cause
+problems. 
+
+<p> The problems solved by Hairer are different and can be seen by closing documents
+without quitting TeXShop. In this case, the program did not recover the
+memory used by the document being closed. Hairer’s fix  dramatically improves this sort of
+problem, although it is likely that smaller memory problems remain.
+
+<p>
+<li> A few users reported a related bug. They would
+close a document, reach into the document’s folder, and throw the pdf into the trash.
+But the Macintosh would claim that the pdf was still in use and refuse to empty the trash
+until TeXShop itself closed. This problem is a symptom of a memory problem and is
+fixed by Hairer's code.
+
+<p>
+<li> In Sierra, the old pdf search routine in the preview window Drawer stopped working.
+In TeXShop 3.65, this search field was replaced with a more useful search
+field in the Preview Window toolbar; the new search works in all versions of OS X. In 
+recent Sierra releases, the old pdf search came partly to life, and interfered with the new search.
+Temporarily, the old search if turned off in all versions of OS X. If the old search works again
+in later versions of Sierra, it may be turned on again, but we suspect most users will use the
+new toolbar search field.
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.65</h3></P>
+
+This fixes a few problems introduced in 3.64:
+
+<ul>
+
+<li> Version 3.65 again works on Lion and Mountain Lion, and thus on all versions of
+Mac OS from Lion to Sierra.
+
+<p>
+<li> I omitted the QTKit framework, and made AVKit and AVFoundation optional. The
+AV frameworks aren't available on Lion and Mountain Lion, hence the crash of 3.64 on these
+systems. Demo Movies will only play on Mavericks and above.
+
+<p>
+<li> The sync fix from source to preview for Sierra is only added on Sierra, since
+it seems to cause minor problems on earlier systems.
+
+<p>
+<li> The tool to search PDF files is now localized.
+
+<p>
+<li> Sparkle in TeXShop is updated to version 1.14.0.
+
+<p>
+<li> Yusuke Terada added code to recalculate tab lengths whenever the user
+changes the font or font size.
+
+
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.64</h3></P>
+
+TeXShop 3.64 fixes a few problems with the Mac OS 10.12 (Sierra) beta. One change
+may be of independent interest.
+
+<ul>
+
+<li> The initial beta release of Sierra had substantial PDFKit problems, but most
+were fixed by Apple in the next beta. One  problem was jumpy, non-responsive scrolling. I fixed this in TeXShop and Apple later fixed it in general. My initial
+fix does no harm and is still present in 3.64.
+
+<p>
+<li> Sync from source to preview worked in Sierra, but the preview selection was not highlighted. This bug was due to TeXShop and is now fixed.
+
+<p>
+<li> TeXShop's Help Menu has a Demo item which can download and display two short movies
+for new users. This was coded using Apple's QTKit, which was deprecated in Mac OS 10.9
+in favor of AVKit. In Sierra, QTKit is gone. TeXShop 3.64 switches to AVKit. The movies, which used to be in .mov format, are now in .mp4 format.
+
+<p>
+<li> TeXShop's Preview window has a drawer, which displays an outline of the pdf if the
+source uses hyperref. The bottom half of the drawer allows searches of the pdf file, but
+does not work in the Sierra beta. Since the code for the search in the drawer comes directly from  PDFKit documentation, I suspect this is an Apple bug which will eventually be fixed.
+
+<p> In the meantime, TeXShop 3.64 adds a new search field to the Preview window's toolbar.
+Type a word and push RETURN and TeXShop will select the first occurrence of the word in the 
+pdf. Push RETURN again to display the next occurrence, etc.
+
+<p> Click the mouse in the PDF window to restart searching at the top of the document. Select some actual text in the PDF window to start searching at that point.
+
+<p> The search item will remain after Sierra is released, even if Apple fixes the drawer bug,
+because I suspect that many users will prefer it.
+
+ </ul>
+
+The most-often-requested new TeXShop feature is tabs in the source and preview windows. Sierra provides this feature automatically, without any additional TeXShop code. Creating these tabbed views 
+is straightforward. Further details will be provided when Sierra is released.
+
+<P><h3>TeXShop Changes 3.63</h3></P>
+
+TeXShop 3.63 is an internal version, never released.
+
+
+<P><h3>TeXShop Changes 3.62</h3></P>
+
+
+<ul>
+
+<li> Latexmk upgraded to version 4.45
+
+<p>
+<li> Slight improvement in TeXShop Tips & Tricks by Herbert Schulz
+
+<p>
+<li> The menu item "Select TeXShop as Default TeX Editor" is now  active
+when either the Source or the Preview window is on top
+
+<p>
+<li> George Gratzer's "First Steps", the first section of his book "More Math
+Into LaTeX", has been updated to the contents of the 5th edition.
+
+<p>
+<li> The TeXShop "Experiment" command ignores smart dashes, and thus does not
+convert multiple dashes into a character which confuses TeX
+
+<p>
+<li> A few error messages referred to http://tug.org/MacTeX rather than the
+correct http://tug.org/mactex. This is fixed.
+
+<p>
+<li> The TeXShop Preference Setting for "Show Console" was not initialized
+to the current value when TeXShop was opened after quitting. This is fixed.
+
+<p>
+<li> Added a fix by Martin Hairer when using a git server with TeXShop. Martin
+wrote "Here is a small improvement which is very useful to me. 
+	 I use a version control system (git) for some of my papers. 
+	When git updates a file, it deletes it and then replaces it more or less 
+	immediately by an updated copy with the same name. The 
+	current version of TeXShop detects this, but it often just notices 
+	that the file was pulled away under it's feet and then either 
+	closes the document or replaces it by a blank.
+
+<p>
+	"I propose to introduce a small latency between the moment TeXShop 
+	gets notified of the file's deletion and the moment it checks for its status 
+	so that it correctly handles changes to the file made in that manner. 
+	More precisely, in TSDocument.h, I propose to add a sleep command 
+	at line 1580" 
+
+
+
+</ul> 
+
+<P><h3>TeXShop Changes 3.61</h3></P>
+
+<ul>
+<li> "What's New" in TeXShop Help claimed that Sparkle was updated to version 1.31.
+The update version number was actually 1.13.1, the latest version.
+
+<p>
+<li> In TeXShop Preferences under the Misc tab, the items "pTeX support" and
+"During File Save" are only useful in Japan. They are now labeled so users elsewhere
+will not be tempted to activate them.
+
+<p>
+<li> The error message when typesetting fails to find pdflatex or another tool has been improved.
+
+<p>
+<li> If the user is running El Capitan and has set the location of TeX binaries to
+/usr/texbin or /Library/TeX/texbin, but this second location does not exist, an error
+message explains what to do.
+
+<p>
+<li> Slight improvements in Korean and Spanish localizations
+
+<p>
+<li> Improved pTeX scripts by Yusuke Terada in ~/Library/TeXShop/bin.
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.60</h3></P>
+
+<ul>
+<li> Updated to Sparkle 1.13.1 for security reasons.
+
+<p>
+<li> TeXShop no longer adds a creator and type to files it writes. These were obsolete
+from the Classic version of the file system.
+
+<p>
+<li> The command "Set TeXShop as Default TeX Editor" is now active when either the Source or  Preview window is active
+
+<p>
+<li> Slight cleanup in English and Korean localization.
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.59</h3></P>
+
+There are several small changes in TeXShop 3.59:
+
+<ul>
+<li> A new item is provided in the TeXShop menu, "Select TeXShop as Default TeX Editor."
+Many programs are able to edit .tex files, so when the user double clicks such a file, it
+is not clear which program will open it. Selecting the new menu item informs Apple's Launch Services that TeXShop should open such files.
+
+<p> The appropriate Launch Services API does not distinguish between different versions of a program. A few users are in the bad habit of keeping several copies of TeXShop on their
+computer, and then the new menu will select a random version to run.
+It is best to keep TeXShop in /Applications/TeX and update it via the Sparkle update mechanism. Then only one copy of TeXShop will be on the disk.
+
+<p> The author of TeXShop sympathizes with sloppier users, since he has dozens of versions
+of TeXShop on his disk. He opens new files by dragging their icons to the TeXShop icon in the Dock
+to insure that the correct copy runs.
+
+<p>
+<li> Alan Munn reported the following strange bug:
+<dl>
+<dd> \documentclass{article} 
+<dd> \begin{document}
+ <dd> \begin{enumerate}
+<dd>  \item John started the car.
+<dd>  \item John stopped the car.
+<dd>  % environment  completion here produces \stoped
+<dd>  % even if the line is commented out
+<dd>  % completing again produces the correct completion
+<dd>  % but environment completion after these comments seems to work
+</dl>
+
+<p>
+This bug is fixed.
+
+<p>
+<li> The TeXShop menu has a new item just below Preferences called "Open ~/Library/TeXShop".
+When this item is selected, the Finder will open the ~/Library/TeXShop folder.
+
+<p> In recent versions of OS X, ~/Library is a hidden folder. The new command makes it easy to access this folder without using special tricks.
+
+<p>
+Files in this location customize TeXShop for the individual user. For example, the Templates subfolder has all templates which appear in the  Templates pulldown menu. These templates can be opened and edited in TeXShop; other templates can be added to the  folder.
+
+<p>
+<li> For many years, users could type a line like
+<dl>
+<dd>     % !TEX encoding = IsoLatinGreek     
+</dl>
+at the top of a source file to indicate that the file should be opened or saved using  the LatinGreek  encoding. But if the encoding name, here "IsoLatinGreek", was not recognized by TeXShop, the program would open the file using the "Mac OS Roman" encoding without reporting an error.
+This bug is now fixed. An unrecognized encoding name will cause an error dialog to appear reporting the error, and then the file will be opened in "ISOLatin9", the current default encoding.
+
+<p> The best way to avoid this sort of error is to use the Encodings Macro to write
+the displayed line, since this Macro lists all legal encodings and allows users to select the one they want.
+
+<p>
+<li> The alternate front end TeXWorks uses the same encoding magic line, but has different
+names for many standard encodings. TeXShop now recognizes the TeXWorks names, making it easier for collaborators to share files. 
+
+<p>
+<li> The TeXShop Help menu now has a new document by Herbert Schulz titled
+"File Encoding in TeXShop". This document explains the significance of
+various encodings of the source file, a topic of importance to users who do
+not write in English.
+</ul>
+
+<P><h3>TeXShop Changes 3.58</h3></P>
+
+Recent TeXShop versions have  been released to fix or work around a series of El Capitan bugs, particularly
+in PDFKit. There are three major bugs:
+<ul>
+<p>
+<li> Magnification broke because a Cocoa command to get the PDF data underneath a portion of a window
+returned a bitmap in El Capitan. A workaround for this bug was included in
+an earlier TeXShop release.
+
+
+<p>
+<li> When a new version of a pdf document is loaded, there is a momentary flash
+before the document is displayed. This bug has not yet been addressed.
+
+<p>
+<li> In several  situations caused by loading a new file, PDFKit displays a blank page rather than the correct content on the page.
+ This seems to be caused by a new Apple design to speed up pdf display
+by creating and caching bitmaps of recent pages. When the bug occurs, the bitmap is displayed
+too soon.
+ 
+</ul>
+
+<p> When this bug occurs, it is fairly easy to obtain the missing image. With the blank page
+active, type command-shift-+ to zoom in and then
+acommand-shift-- to zoom back out. This causes the page to be displayed correctly.
+
+<p> However, it is better to insure that the blank page does not occur.
+Several instances of this bug were fixed in earlier releases. This release fixes three
+other cases:
+
+<ul>
+<li> In external editor mode, typesetting caused blank pages to be displayed. This is fixed, or
+at least mostly fixed. It is important to configure TeXShop correctly so the fix works. There are
+two ways to use TeXShop in external editor mode. You can  typeset with TeXShop, by making
+the pdf page active and typing command-T. Or you can typeset from the editor or from a shell,
+and configure TeXShop to update the display when the pdf file changes. In the first case,
+the 
+TeXShop preference "Automatic Preview Update", under the Preview tab, should be off. In the
+second case, it should be on.
+
+<p>
+<li> When the pdf window is split, the bottom half sometimes became blank. This bug is fixed.
+
+<p>
+<li> When the pdf window is split and then the user typesets,
+half of the display is often blank. This version of TeXShop fixes the problem. The fix works
+well in "multipage format", which I recommend. It can have problems in "single page format"
+and "double page format", although it usually works in these cases. Because of these small
+problems, the fix can be turned off. To do so, type the following command in Terminal:
+<dl>
+<dd> defaults write TeXShop FixSplitBlankPages NO 
+</ul>
+
+<p>
+Incidentally, all three bugs have been reported to Apple.
+
+<p>
+In addition, the following changes were made:
+<ul>
+<li> Max Horn fixed the "unindent" command. The previous version of this command would
+sometimes lose a character.
+
+<p>
+<li> Max Horn also added #defines for NSAppKitVersion10_9 and the link in the TeXShop
+code base,
+so the source code should compile on Yosemite and Mavericks as well as on El Capitan.
+
+<p>
+<li> James Crippen asked that "paragraph" and "subparagraph" be added as 
+default tags because these items are used in the Memoir class. So currently
+in LaTeX, the following receive automatic tags:
+<dl>
+<dd> chapter
+<dd> section
+<dd> subsection
+<dd> subsubsection
+<dd> paragraph
+<dd> subparagraph
+<dd> macro
+<dd> environment
+</dl>
+
+<p>
+<li> Fixed the French localization so both documents in Help
+that have been translated into French occur in the Help menu.
+The translations of documents by Herbert Schulz are by Rene Fritz.
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.57</h3></P>
+
+<ul>
+<li> The command to show the Key Bindings editor broke in the German localization, and is now fixed.
+
+<p>
+<li> The command to split the Source Window broke in 3.56 and is now fixed, at least in most localizations. This is not a bug in the code; instead it is a bug in how XCode processes nib files. Fixing it required
+dropping down to XCode 7.0 and editing very carefully there. The bug still exists in the
+text window when in single window mode.
+
+<p>
+<li> TeXShop can now edit documents with extension lua.
+</ul>
+
+
+<P><h3>TeXShop Changes 3.56</h3></P>
+
+Debugging code accidentally left in version 3.55 caused a pause between typesetting and display of the new pdf. This is fixed.
+
+<P><h3>TeXShop Changes 3.55</h3></P>
+
+This version fixes two significant bugs when running in El Capitan:
+
+<ul>
+<li> The text boxes in the Preview toolbar were incorrectly sized, so numbers in them were not
+properly centered vertically. This includes the page number box, total page box, and magnification box. All are now fixed in all localizations. Localizations other than English are only lightly tested, so problems in the box display in these localizations should be brought to our attention.
+
+<p>
+<li> The magnifying glass displayed bitmapped images rather than clear pdf text when run in El Capitan. This was discovered early on, and a bug report was filed with Apple
+on July 11.
+
+<p>
+<li> Over the years, at least four different designs were written to create a TeXShop
+magnifying glass. All
+were eventually broken by Apple changes. The Yosemite magnifying glass contained three
+major calls:
+
+<dd>
+<dl>  thePDFData = [[self documentView] dataWithPDFInsideRect: [[self documentView] visibleRect]];
+<dl> NSImage *theImage = [[NSImage alloc] initWithData: thePDFData];
+<dl> [theImage drawinRect: magnifiedRect fromRect: sourceRect operation: NSCompositeSourceOver fraction 1.0];   
+</dd>
+
+<p> The first call asked the Preview Window to provide the raw pdf data creating the region visible on the screen. The second converted this to an NSImage, a common object for handling
+illustrations in Cocoa. The final call read from a section of this image, and wrote the result to a (usually larger) section, essentially enlarging the image. Our bug report claimed that the third call was broken in El Capitan.
+
+<p> After furious work this week, it  turned out that the third command works well and the bug is in the first call, which asks for the raw PDF data of a typeset document. Apple claims that drawing of pdf documents is faster in El Capitan; apparently that's because PDFKit converts several pages to bitmaps and saves them  for later drawing. The first call occasionally returns raw PDF code, but more often it just returns a bitmap. Magnifying that bitmap gives unpleasant results.
+
+<p> The bug is fixed by getting the raw PDF data a different way, on a page by page basis. 
+Because I wanted to fix this bug rapidly, the current code only gets data from one page of a document. Imagine that several pages are shown on the screen, perhaps because scrolling left part of one page and part of another page on the screen.  Or perhaps the user is displaying two pages side by side. When magnification begins by clicking on a point, only the material on that page will appear in the magnifying glass. If the glass moves off of the initial page, it will show white contents with no magnified material. Release the mouse, and push it again to magnify a different page. 
+
+<p> This code may be improved in the future.
+On Yosemite and earlier, the old code is used. We could use the old code
+everywhere if Apple fixed the bug.
+
+<p>
+<li> One user was bothered by bouncing behavior when scrolling. Here is advice from a past
+TeXShop release:
+
+<p> In Yosemite, the source code window's scroll controls have some elasticity, so the
+ source bounces slightly at the top and bottom of the document. Yusuke Terada noticed
+ that these bounces sometimes obscure the first or last lines of the document, making it
+ difficult to edit these lines. Yusuke Terada added a hidden preferences to turn off this elasticity.
+ To activate the hidden item, type the following in /Applications/Utilities/Terminal:
+ <dd>
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+
+
+<p>
+<li> Finally, complaints have surfaced that the display of pdf files in El Capitan is
+unsatisfactory for some combinations of monitor and computer. Everyone seems to agree that
+the display is sharp and clear on large Retina display machines, and the problem may be
+caused by Apple optimizing for these machines. If you are bothered by poor display quality, the best we can do is to repeat the advice given two years ago when this problem first surfaced:
+
+<p> 
+ I am just barely able to notice a difference myself, using Apple's 27 inch Thunderbolt Display. A few users sent me email with pairs of png files, showing an image under Mavericks and under Yosemite and pointing out the fuzzy result on Yosemite, but in some of these cases I couldn't see the difference. So the problem seems to depend strongly on the computer screen used, and perhaps on user sensibilities. Some users may be completely happy while others are desperate for fixes.
+
+<p> Version 3.44 of TeXShop has several hidden preference items which may help with this problem. There is no universal solution, so experimentation with these preference settings will be needed
+if you find the display fuzzy. 
+
+<p> TeXShop and many other graphical front ends for TeX and PDF display use Apple's PDFKit and Cocoa frameworks. These frameworks rasterize pdf images are an extremely low level not accessible to programmers. Version 3.44 tries to expose all the routines in Cocoa which could modify this
+rasterization. Notice that TeXWorks and Adobe Acrobat do not use PDFKit and Cocoa and thus behave differently. It does little good to call these programs to our attention since switching to a different pdf display library would betray a key feature of TeXShop (and other programs using these frameworks, namely that they are fully native applications.
+
+<p> With these caveats, let us list possible solutions. Yusuke Terada noticed that in Japan,
+the display could appear fuzzy and then be made legible by tweeking the magnification. So he
+added code in TeXShop to  do this automatically each time a pdf file is opened or typeset. To turn this feature on, type the following in Terminal:
+<dd>
+<dl> defaults write TeXShop FixPreviewBlur YES
+</dd>
+If this tweek fixes the problem, leave it on and stop reading. Otherwise turn the feature
+off by using the same command with YES replaced by NO, since the tweek is likely to interfere
+with  remaining  experiments.
+
+<p>
+Apple's System Preferences in the General Pane has an item labeled "Use LCD font smoothing when available." A few users discovered that turning this item off cured fuzzy behavior. I think this
+fix won't help most users, but it might be worth a try.
+
+<p> TeXShop also has a preference item under the Preview tab labeled "Smooth text and line art."
+This item was originally added to fix a different problem. One user created an illustration with very thin lines. On a previous TeXShop, the lines vanished with regular monitors, although they appeared with the Retina display. The user discovered that the lines appeared in Acrobat, and
+by turning on antialiasing they also appeared in TeXShop.
+
+<p> The code provided by Cocoa to turn on antialiasing has additional features not exposed in
+previous versions of TeXShop. Cocoa provides the ability to set the level of antialiasing. The
+previous "Smooth text and line art" preference set this value as "high".
+In TeXShop 3.44, hidden preference settings can select the interpolation level. To test various levels of antialiasing, turn on "Smooth text and line art" in TeXShop Preferences and then
+set the hidden preference
+<dd>
+<dl> defaults write TeXShop InterpolationValue 3
+</dd> 
+where the final value can be any integer between 0 and 4. Apple's API documentation provides
+the following names for these values, which perhaps give a hint of their function. The list is as follows; the strange reversal of 3 and 4 occurs in the official list:
+<dd>
+<dl> 0 = NSImageInterpolationDefault
+<dl> 1 = NSImageInterpolationNone
+<dl> 2 = NSImageInterpolationLow
+<dl> 4 = NSImageInterpolationMedium
+<dl> 3 = NSImageInterpolationHigh
+</dd>
+
+
+<p> Frankly, I suspect
+an entirely different solution will be best for most people. That solution is to change the font used for your TeX document, via the wonderful macros written by Michael Sharpe and added to TeXShop
+late this summer. For detailed explanation, read the description below under "TeXShop Changes 3.39."
+
+<p> Notice that it is possible to add Michael's commands for one particular font to your
+default template, so that font will always be used for new documents.
+
+<p> All of these fonts are included in the full TeX Live distribution, so using them
+should cause no trouble when collaborating with Windows or Linux users.
+
+<p> The font commands take up four or five lines in the preamble, and are easily discarded
+once the document is complete if you want the final document to have a plain vanilla look.
+On the other hand, Michael's choices come from an expert and may satisfy more readers
+than the previous default font choices.
+  
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.54</h3></P>
+
+The Sparkle update mechanism was broken in 3.53. It is fixed in 3.54.
+
+<p> For some time, TeXShop has not contained the two movies which appear in the
+Help Menu. They are downloaded when the user requests them. This broke in 3.53, and
+is fixed in 3.54.
+
+<P><h3>TeXShop Changes 3.53</h3></P>
+
+<p> El Capitan introduces a significant change for TeX users. The location /usr is no
+longer writeable, even by users with root privileges. Consequently, the symbolic link /usr/texbin has been relocated to /Library/TeX/texbin. This new link is automatically written by
+both MacTeX-2015 and BasicTeX-2015. If you updated to one of these, you have the link.
+Once the link exists, older versions of TeX like TeXLive-2013 also work fine.
+
+<p> GUI programs must  be reconfigured to look for the new link. TeXShop 3.52 and
+later does this automatically.
+
+<p> For more information on TeX and El Capitan, see <a href="http://tug.org/mactex/elcapitan.html"><b>tug.org/mactex/elcapitan.html</b></a>
+
+<p> TeXShop 3.53 includes the following changes:
+
+<ul>
+<li> On Mavericks, the Preview display of text was slightly blurry on many
+			screens. This was probably caused by changes Apple added to support the
+			Retina display. Many work arounds for the problem has been suggested. Terada Yusuke 			added code which improved the display for many. His
+			code is activated by a hidden preference 
+			<dl>
+			<dd> defaults write TeXShop FixPreviewBlur YES 
+			</dl>
+			
+			<p> Apple improved the pdf display in Yosemite, and again in El Capitan.
+			But some users still see traces of the old blur. Terada Yusuke has modified
+			his code for El Capitan, and users unsatisfied with the Preview output should
+			activate the above hidden preference.
+<p>
+<li> Near the end of the Macro menu, there is an item ``Tables --> Table'' which inserts the
+outline for a table into the source. The first line of this source is 
+<dl>
+<dd>     \begin{table}[htdp]
+</dl>
+
+<p> However, ``d'' is not a legal parameter for tables. Previous versions of LaTeX ignored this error, but it is flagged as an error in the 2015 version. 
+
+<p> The easiest way to fix this is to open the TeXShop Macro editor and remove the ``d''. If you have never edited the default macros,
+you can also get the fix by quitting TeXShop, going to ~/Library/TeXShop and
+throwing the entire Macros folder in the trash. Then restart TeXShop and the current
+Macros folder will be created.
+
+<p>
+<li> Some changes made in TeX Live 2015 caused a few programs to output unexpected
+SyncTeX code, which then caused TeXShop to lose control of the mouse. This was a TeXShop
+bug, not a SyncTeX bug. It was fixed in 3.52. 
+
+<p> When using SyncTeX, occasionally the system cannot find a match.
+In those cases, the older Sync method is called. But this older method turned
+out to crash for the same reason. So in 3.53, the old Sync is not called and in
+these unusual situations, no Sync is found.
+
+<p>
+<li> One or two coding changes were made so TeXShop will compile with the latest
+XCode.
+
+</ul>   
+
+
+<P><h3>TeXShop Changes 3.52</h3></P>
+
+Many of the changes in version 3.52 prepare for OS X 10.11, El Capitan.
+In that system, the /usr/texbin link to the TeX binaries is replaced with a new link,
+/Library/TeX/texbin. Users who have installed MacTeX-2015 or BasicTeX-2015 already have
+this new link.
+
+<ul>
+<li> TeXShop 3.52  uses the new link automatically when appropriate, and thus needs no
+configuration for El Capitan. To be specific, on startup, if the path setting in TeXShop Preferences under the Engines tab is /usr/texbin AND /usr/texbin either does not exist or is not a symbolic link AND /Library/TeX/texbin exists and is a symbolic link, then the preference setting is changed to /Library/TeX/texbin. Similarly if the preference setting is /Library/TeX/texbin AND /Library/TeX/texbin either do not exist or is not a symbolic link AND
+/usr/texbin exists and is a symbolic link, then the preference setting is changed to /usr/texbin.
+In all other cases, the setting is not touched.
+
+<p>
+<li> Engine files in ~/Library/TeXShop/Engines which define $PATH have been modified by adding /Library/TeX/texbin to the path; /usr/texbin remains so these files will work on both old and new systems.
+
+<p>
+<li> Macros in ~/Library/TeXShop/Macros has been modified to refer to /Library/TeX/texbin
+rather than /usr/texbin. (Only three occurrences of /usr/texbin were found in the old Macros
+file.) Users do not automatically get the new macros, so users with an older system will not be affected. Users who installed MacTeX-2015 or BasicTeX-2015 can safely use the new Macros
+because they have the new link.
+
+<p>
+<li> The English Help Panel has been modified to mention /Library/TeX/texbin rather than
+/usr/texbin.
+
+<p>
+<li> In the current El Capitan beta, sync from source to preview  switches to the correct pdf page, but does not hilight the new selection in yellow. This is fixed.
+
+<p>
+<li> In the current El Capitan beta, the magnifying glass works but displays a bitmap rather than a sharp pdf image. I suspect this is an Apple bug which will be fixed. 
+
+<p>
+<li> The German localization has been improved by Lukas Christensen. Thanks!
+
+<p>
+<li> Klaus Tichmann reported a synctex bug and a fix. The "synctex_scanner_get_name"
+sometimes returns NULL rather than a valid string. This can lead to loss of mouse control.
+The fix is in version 3.52.
+
+
+  
+</ul>
+
+
+<P><h3>TeXShop Changes 3.51</h3></P>
+
+<ul>
+<li> TeXShop has two new macros by Michael Sharpe, tabularize and tabularize + space.
+These macros were suggested by Nils Enevoldsen and make it easier to construct and edit tables.
+To examine the Macros, go to ~/Library/TeXShop/New/Macros and copy the items tabularize.plist
+and tabularize.pdf to the desktop. The second is documentation for the macros.
+
+<p>
+To add the Macros, select "Open Macro Editor" in the Macro menu. Then select "Add Macros
+from file...", which appears in this menu. Navigate to the desktop and select the file
+tabularize.plist.
+<p>
+<li> Many missing German translations were added to the German localization by Lukas Christensen.
+<p>
+<li> There is a minor fix to the Korean localization by Karnes Kim.
+<p>
+<li> Latexmk was updated to 4.43.
+<p>
+<li> The Help menu contains a short new document by Herbert Schulz, "TeXShop Feature Confusion".
+<p>
+<li> There is a new item in the Edit Menu, "Correct Spelling Automatically", and a related
+new item in the Preferences Panel, "Correct Spelling". The menu item toggles spelling correction on or off for the top most document. The Preferences item sets the default setting when a document is first created or opened. 
+
+<p>
+Spelling correction is a new feature inherited from the iPhone. When it is on, the Mac automatically corrects the spelling of misspelled words, and often suggests completions for words or phrases that are partially typed. Note that "check spelling" and "correct spelling" are
+different; the first underlines misspelled words in red, while the second actually changes the text. 
+
+<p> Many of us dislike spelling correction. When this system doesn't know a word, it can replace it with a new bizarre  choice. For this reason, spelling correction is off by default until the
+Preference setting is changed. 
+
+<p> Spelling correction only works with Apple dictionaries. If cocoAspell has been installed on your system and one of its dictionaries is chosen, spelling correction won't do anything.
+
+<p>
+<li> System 10.10.3 introduces a new emoji feature "Skin tone modifier" for ethnic diversity.
+Yusuke Terada's Character Info feature has been modified to support this feature.
+
+<p>
+<li> Previously, typesetting in single window mode left the text side of the window active. This
+is fixed, and now the behavior is determined by the "After Typesetting" item in TeXShop Preferences. When this item is set to "Bring Preview Forward", typesetting in single
+window mode makes the preview side of the window active.
+
+<p>
+<li> Yosemite 10.10.3, released on April 8, 2015, fixes the "preview blur" problem which cropped up when Yosemite was introduced. The original system was optimized for the Retina display and produced blurry text in the Preview window on regular monitors. In 10.10.3, the display is again
+crisp on these monitors.
+
+<p>
+Consequently,
+fixes for this problem introduced in TeXShop 3.44 and 3.45 are no longer needed. In particular,
+we recommend setting FixPreviewBlur to NO via the Terminal command
+<dd>
+<dl>     defaults write TeXShop FixPreviewBlur NO
+</dd>
+  
+</ul>
+
+
+<P><h3>TeXShop Changes 3.50</h3></P>
+
+<ul>
+<li> Richard Koch's email address changed from koch@math.uoregon.edu to koch@uoregon.edu.
+All occurrences of this address in TeXShop were changed.
+<p>
+<li> A TeXShop Preference item allows the user to set the size and location of
+the console window when it opens. This item has a button titled "Set with current position." In
+3.49, this button was always active, even thought it only makes sense if the option
+"All consoles start at fixed position" is selected. Now it is active only
+in this case. This behavior is consistent with similar Preference item behaviors for the
+Source and Preview windows.
+
+<p>
+<li> Terada Yusuke updated the OgreKit spell panel to the latest version. In the process,
+he added features and fixed bugs:
+<ul>
+<li> There is a Chinese localization by Wei Wang, onev@onevcat.com.
+<p>
+<li> When rich text was pasted to OgreKit, the style was mistakenly pasted. This is fixed.
+<p>
+<li> Previously the Japanese yen mark was incorrectly passed to OgreKit. This is fixed.
+<p>
+<li> A strange behavior of OgreKit when using OS X Spaces, pointed out by Daniel Grieser,
+is fixed. Previously the Preview and Source windows were attached to a space, but the Find
+window floated to whatever space was currently active. 
+</ul>
+
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.49</h3></P>
+
+<ul>
+<li> TeXShop installs two movies for beginners in ~/Library/TeXShop/Movies/TeXShop. These movies
+are quite large, 5.4 MB and 9.4 MB as gzipped files. Until version 3.49, every update of TeXShop
+ contained these movies, slowing download times. TeXShop 3.49 finally does the right thing; it no longer contains the movies. If the user asks to view one of them,  TeXShop downloads that movie from the web site, installs it in the above location, and runs it.
+Once downloaded, the movie remains on the user's machine.
+
+<p> This simple change reduces the size of the TeXShop download from 54 MB to 39 MB, and the
+size of the unzipped program from 83 MB to 53 MB.
+
+<p>
+<li> The Experiment feature of TeXShop, introduced in version 3.37, did not handle the
+"% !TEX encoding = ..." line in the header of the source file correctly, so users with
+UTF-8 files ran into trouble using the feature. This is fixed.
+
+<p>
+<li> The Source <—> Preview menu item and associated keyboard shortcut now work in Single Window mode. 
+
+<p>
+<li> In the French Localization, the item in TeXShop Preferences to set the font of the
+source file was broken. This is fixed.
+
+<p>
+<li> Three hidden preferences were added, allowing users to change the yellow highlight color
+to another color, when used by inverse sync from the pdf window to the source text. This is
+helpful if the user has changed the default colors of the source window. The new items are
+<dd>
+<dl> defaults write TeXShop ReverseSyncRed 1.00
+<dl> defaults write TeXShop ReverseSyncGreen 1.00 
+<dl> defaults write TeXShop ReverseSyncBlue 0.00
+</dd>
+
+<p>
+<li> Latexmk is updated to version 4.42
+
+<p>
+<li> MakeIndex failed on files with multiple dots in the name; now fixed.
+
+<p>
+<li> A new TeXShop Preference item under the Console tab allows users to set the default size and location of the Console Window. To set these values, open a document and use TeXShop’s “Show Console” menu to bring the console to the foreground. Adjust its size and location as desired. Then open TeXShop Preferences, select the Console tab, choose “All consoles start at fixed position” and press the “Set with current position” button. Then click “OK.”
+
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.48.1</h3></P>
+
+<ul>
+<li> Version 3.48 had a serious problem when used in French. Double clicking on a TeX
+file opened TeXShop, but not the source. This was caused by a missing connection in the
+French nib file. This was almost immediately corrected in 3.48.1. 
+</ul>
+
+
+<P><h3>TeXShop Changes 3.48</h3></P>
+
+<ul>
+<li> Currently the keyboard
+shortcut Cmd-F brings up the Find Panel. There are three panels, depending
+on a Preference choice. In 3.48, the command brings up the Find Panel unless the Preview Window
+is active. In that special case, Cmd-F opens the drawer for the Preview Window and places 
+the cursor in its Search Field. 
+
+<p> This simple change was suggested by Markus Gail. 
+
+<p>
+<li> Sparkle has been updated from version 1.5 to version 1.8. The TeXShop Preference
+Pane now has items in the Misc tab controlling the action of Sparkle. 
+Users can choose to update manually with the "Check for Updates" menu. In that
+case, there will be no Sparkle notification of new updates. Or Sparkle
+can search for updates daily, weekly, or monthly, and notify
+the user when an update is available.
+
+<p>
+<li> There is another fix for the Yosemite scroll bug in Single Page and
+Double Page modes. 
+
+<p>
+<li> Updated to latexmk 4.40h.
+
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.47</h3></P>
+<ul>
+<li> The height of the Templates toolbar item for the Source Window was increased by one
+pixel in most localizations to make it match other items in the same toolbar.
+
+<p>
+<li>  The code for keyboard shortcuts in the Preview window has been revised.
+
+<dd>
+
+
+<dl> TeXShop has always enhanced the left and right arrow keys to provide
+	paging if there is no horizontal scroll bar. This code is still present.
+
+<dl> Otherwise, recent versions of TeXShop tried to fix a Yosemite bug in
+	which scrolling paged in the wrong direction.
+	This bug occurs in Single Page and Double Page
+	modes, but not in Multiple Page or Double Multiple Page modes.
+
+<p> The new code only fixes the bug in Single Page and Double Page modes,
+	reverting to the App Kit code  in the non-broken modes. Moreover, the new
+	code only fixes the bug in Yosemite and above. If Apple fixes the bug,
+	the fix can be turned off completely, using the hidden default
+
+<p> defaults write TeXShop YosemiteScrollBug NO
+
+</dd> 
+
+<li> If TeXShop is quit without closing windows, the windows will reappear 
+when TeXShop is restarted. Initially, only the Source Window 
+was restored, but in recent TeXShop versions the Preview window is also restored. 
+
+<p> Previously the Preview window was always restored to the main monitor, even if the
+user had multiple monitors. This is fixed and now the Preview window 
+appears on the monitor it was originally on.
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.46</h3></P>
+<ul>
+
+<li> In Yosemite with Single Page or Double Page modes in the Preview Window,
+the arrow keys scrolled in the wrong direction. This was  fixed in a previous
+TeXShop version. However, the fix partly broke the behavior of the up and
+down arrows in all modes.
+
+<p> In 3.46, the old behavior for up and down arrows returns; these keys scroll up
+or down one line until coming to the end of a page, and then page.
+
+<p>
+<li> In previous versions of TeXShop, each typesetting job caused a slight adjustment in the portion
+of the page displayed. Typically, the window would gradually creep upward. This adjustment seemed to depend on magnification,
+the portion of the page displayed, and more. We tried various kludges to minimize
+the creep.
+
+<p> 
+It looks like Apple fixed this bug in the latest Yosemite, so we have removed the
+kludges. Preliminary tests show that creep is greatly reduced. Notice that the
+problem will definitely remain in earlier versions of OS X. Upgrade to the latest
+version is possible.
+
+<p>
+<li>
+When TeXShop runs with Auto Saving active, some items in the file menu
+are modified automatically by Apple. These
+items are labeled
+<dd>
+<dl> Save As, Duplicate, Rename, Move To, Export, Revert to Saved, Revert
+</dd>
+
+In particular, Revert allows users to activate a "Time Machine" like window and
+revert back to an earlier version.
+
+<p>
+Some of these items do not work in Single Window Mode, and Revert causes
+TeXShop to crash. So (at least temporarily) the items are all disabled in
+Single Window Mode. Obviously they continue to work in the usual mode
+in which the source and preview are placed in different windows.
+
+<p> This crash has never been reported, and we suspect that Single Window users seldom
+try these items. Note that "Save" is unaffected by the change, and often used.
+
+<p> Warning: Apple has experimented with the placement of these items; in
+Lion, for instance, Revert was on a pull down menu activated from the window
+title. We have not gone back to earlier versions of the operating system to
+make corresponding fixes. 
+	
+
+<p>
+<li> There are minor improvements in the Japanese, Korean, and Italian localizations.
+
+<p>
+<li> OgreKit has been updated to the latest version. Also OgreKit is now localized for Korean. 
+
+<p>
+<li> Yusuke Terada fixed "Remember last position" for the Console window. 
+This is complementary to a previous addition of "Always Open Console at
+a Fixed Position".
+
+<p>
+<li> Fixed minor toolbar glitches pointed out by Herbert Schulz: "Page" and "Scale"
+were improperly clipped in some localizations including English.
+
+<p>
+<li> Added a new encoding option: Korean (Windows, DOS)
+
+ 	
+</ul>
+
+
+<P><h3>TeXShop Changes 3.45.2</h3></P>
+<ul>
+
+
+<p>
+<li> A new TeXShop Preference item under the Console tab allows users to set the default size and location of the Console Window. To set these values, open a document and use TeXShop’s "Show Console" menu to bring the console to the foreground. Adjust its size and location as desired. Then open TeXShop Preferences, select the Console tab, choose "All consoles start at fixed position" and press the "Set with current position" button. Then click "OK."
+
+<p>
+<li>
+The Source <—> Preview menu item and associated keyboard shortcut now work in Single Window mode. 
+ 	
+</ul>
+
+
+<P><h3>TeXShop Changes 3.45.1</h3></P>
+<ul>
+<li> In 3.45, the Trash-AUX command did not work if some directory names in the full path to a file contained spaces. This is fixed.
+ 	
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.45</h3></P>
+<ul>
+<li> The left column of the Macro Editor window was essentially blank,
+showing separator images but no text. This error was caused because
+TeXShop 3.44 was compiled on Yosemite. The same source code compiled
+on Mavericks worked on both Mavericks and Yosemite. A work around 
+was found and the source now compiles and works on both Mavericks and Yosemite.
+
+<p>
+<li> The command to trash AUX files had a bug and did not fully work.
+The problem is now fixed.
+
+<p>
+<li> Karnes Kim produced a Korean localization of TeXShop, which is now
+part of the program.
+
+<p>
+<li> Yusuke Terada provided tweeks and fixes for the following:
+
+<ul>
+	<p>
+	<li> The hidden preference setting 
+
+	<dd>
+	<dl> defaults write TeXShop FixPreviewBlur YES
+	</dd>
+
+	has been improved so that it works if users zoom the PDF
+	by pinch gestures with the Magic Mouse or trackpad.
+
+	<p>
+	<li> In TeXShop 3.41, the maximum possible PDF window magnification
+	was increased from 1000% to 2000%. But a few constants in the code
+	still contained the 1000% limit. These have been changed to
+	2000%.
+
+	<p>
+	<li> A small error prevented the fix for remembering the PDF Window
+	location when quitting. This is fixed.
+
+	<p>
+	<li> In the Macro Editor, dashes and quotes were automatically changed to smart dashes and smart quotes, breaking some applescript macros.  This is fixed.
+</ul>	
+</ul>
+
+
+<P><h3>TeXShop Changes 3.44</h3></P>
+
+Version 3.44 has the following changes
+<ul>
+<li> Several users reported a  crash just after typesetting when TeXShop ran on Yosemite. The users told me that only certain documents caused crashes, and under unusual circumstances. For instance,
+some documents caused crashes if typeset twice in succession. By looking at crash logs, I could see that all these crashes occurred at the same spot in the code, but at first I was unable to reproduce these crashes.
+ 
+ <p> Finally a user named Tim Leathart reported a crash, sent the source for a document creating the crash, and gave very precise instructions about producing the crash. Using this information, I was able to crash my machine and thus find the bug. It turned out that only documents using
+ hyperref crashed, and the crash was caused by incorrect code in TeXShop used to process the outline that such documents often contained. It was not necessary to open the Preview drawer and view the outline to get the crash.
+ 
+ <p> The code is fixed.
+ 
+ <li> On Yosemite using a Preview window configured for "Single Page" or "Double Page" display,
+ the keyboard shortcuts to page up or page down were reversed. This bug was noticed by Yusuke Terada and fixed. There are no changes in "MultiPage" or "Double MultiPage" modes since Yosemite behaves correctly for these modes.
+ 
+ <p>
+ <li> Autosave for the Preview window was broken and is fixed.
+ 
+ <p>
+ <li> The next two items discuss hidden preferences to fix minor TeXShop annoyances. Before
+ adopting these hidden preferences, users should determine whether they find the current behavior annoying.
+ 
+ <p> In Yosemite, the source code window's scroll controls have some elasticity, so the
+ source bounces slightly at the top and bottom of the document. Yusuke Terada noticed
+ that these bounces sometimes obscure the first or last lines of the document, making it
+ difficult to edit these lines. Others of us do not have this problem. Yusuke Terada added a hidden preferences to turn off this elasticity.
+ To activate the hidden item, type the following in /Applications/Utilities/Terminal:
+ <dd>
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+ 
+ <li> Herbert Schulz noticed that during scrolling of the source window, the lines numbers
+ scroll at a slightly different rate and require a fraction of a second to catch up. Yusuke Terada pointed
+ out that this is due to a fix implemented in Lion for a Lion bug affecting line numbers. Apparently this line number bug has
+ been fixed by Apple in Yosemite. A hidden preference is available to turn the fix off. When
+ this is done, line numbers and  text scroll in unison except near the ends when source elasticity applies. By turning off source elasticity as well, the line numbers and text scroll together:
+ 
+ <dd>
+ <dl> defaults write TeXShop FixLineNumberScroll NO
+ <dl> defaults write TeXShop SourceScrollElasticity NO
+ </dd>
+ 
+ <p>
+ <li> One user discovered that "Aggressive Trash AUX", which is activated by a hidden
+ preference setting, could remove items in hidden ".git" directories and thus impact repository
+ management systems. In version 3.44, TeXShop does not search hidden directories in aggressive mode.
+
+<p> 
+ <li> Finally, a number of users switching to Yosemite reported fuzzy preview images
+ and inadequate antialiasing on certain monitors. I'm told the image looks fine on Retina
+ displays including the new 27 inch iMac. Perhaps Apple optimized pdf rasterization for these displays without worrying enough about other monitors.
+ 
+<p> Frankly, I am just barely able to notice a difference myself, using Apple's 27 inch Thunderbolt Display. A few users sent me email with pairs of png files, showing an image under Mavericks and under Yosemite and pointing out the fuzzy result on Yosemite, but in some of these cases I couldn't see the difference. So the problem seems to depend strongly on the computer screen used, and perhaps on user sensibilities. Some users may be completely happy while others are desperate for fixes.
+
+<p> Version 3.44 of TeXShop has several hidden preference items which may help with this problem. There is no universal solution, so experimentation with these preference settings will be needed
+if you find the display fuzzy. 
+
+<p> TeXShop and many other graphical front ends for TeX and PDF display use Apple's PDFKit and Cocoa frameworks. These frameworks rasterize pdf images are an extremely low level not accessible to programmers. Version 3.44 tries to expose all the routines in Cocoa which could modify this
+rasterization. Notice that TeXWorks and Adobe Acrobat do not use PDFKit and Cocoa and thus behave differently. It does little good to call these programs to our attention since switching to a different pdf display library would betray a key feature of TeXShop (and other programs using these frameworks, namely that they are fully native applications.
+
+<p> With these caveats, let us list possible solutions. Yusuke Terada noticed that in Japan,
+the display could appear fuzzy and then be made legible by tweeking the magnification. So he
+added code in TeXShop to  do this automatically each time a pdf file is opened or typeset. To turn this feature on, type the following in Terminal:
+<dd>
+<dl> defaults write TeXShop FixPreviewBlur YES
+</dd>
+If this tweek fixes the problem, leave it on and stop reading. Otherwise turn the feature
+off by using the same command with YES replaced by NO, since the tweek is likely to interfere
+with  remaining  experiments.
+
+<p>
+Apple's System Preferences in the General Pane has an item labeled "Use LCD font smoothing when available." A few users discovered that turning this item off cured fuzzy behavior. I think this
+fix won't help most users, but it might be worth a try.
+
+<p> TeXShop also has a preference item under the Preview tab labeled "Smooth text and line art."
+This item was originally added to fix a different problem. One user created an illustration with very thin lines. On a previous TeXShop, the lines vanished with regular monitors, although they appeared with the Retina display. The user discovered that the lines appeared in Acrobat, and
+by turning on antialiasing they also appeared in TeXShop.
+
+<p> The code provided by Cocoa to turn on antialiasing has additional features not exposed in
+previous versions of TeXShop. Cocoa provides the ability to set the level of antialiasing. The
+previous "Smooth text and line art" preference set this value as "high".
+In TeXShop 3.44, hidden preference settings can select the interpolation level. To test various levels of antialiasing, turn on "Smooth text and line art" in TeXShop Preferences and then
+set the hidden preference
+<dd>
+<dl> defaults write TeXShop InterpolationValue 3
+</dd> 
+where the final value can be any integer between 0 and 4. Apple's API documentation provides
+the following names for these values, which perhaps give a hint of their function. The list is as follows; the strange reversal of 3 and 4 occurs in the official list:
+<dd>
+<dl> 0 = NSImageInterpolationDefault
+<dl> 1 = NSImageInterpolationNone
+<dl> 2 = NSImageInterpolationLow
+<dl> 4 = NSImageInterpolationMedium
+<dl> 3 = NSImageInterpolationHigh
+</dd>
+
+
+<p> Frankly, I suspect
+an entirely different solution will be best for most people. That solution is to change the font used for your TeX document, via the wonderful macros written by Michael Sharpe and added to TeXShop
+late this summer. For detailed explanation, read the description below under "TeXShop Changes 3.39."
+
+<p> Notice that it is possible to add Michael's commands for one particular font to your
+default template, so that font will always be used for new documents.
+
+<p> All of these fonts are included in the full TeX Live distribution, so using them
+should cause no trouble when collaborating with Windows or Linux users.
+
+<p> The font commands take up four or five lines in the preamble, and are easily discarded
+once the document is complete if you want the final document to have a plain vanilla look.
+On the other hand, Michael's choices come from an expert and may satisfy more readers
+than the previous default font choices.
+  
+</ul>
+
+
+<P><h3>TeXShop Changes 3.43</h3></P>
+
+Version 3.43 has the following changes
+<ul>
+<li> Fixed a bug after drawing a selection rectangle in the Preview Window. If this
+window became inactive and then was activated again, drawing into the
+window would become erratic or worse. Now when the window is
+deactivated, the selection rectangle is removed.
+
+<p>
+<li> TeXShop has a hidden preference reversing the order of the
+source and preview windows in single-window mode
+<dd>
+<dl>	defaults write TeXShop SwitchSides YES
+</dd>
+After selecting this preference setting, use "Customize Toolbar" with
+the single window active to rearrange tools appropriately.
+
+<p>
+<li> Yusuke Terada fixed Automatic UTF-8-Mac to UTF-8 Conversion, which
+is used mainly in Japan, so it correctly opens root file documents.
+
+<p>
+<li> Yusuke Terada also fixed a couple of cases when TeXShop commands
+created a "ghost window" with no content, and made (command+1) switching
+source window also work on console windows.
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.42</h3></P>
+
+Version 3.42 has the following changes
+<ul>
+<li> In Split Full Window mode, additional toolbar tools are provided: the "Scale" tool, the
+"Color Index" tool, and the "Key Bindings" tool.
+<p> <li>
+Toolbar items for this window now have reasonable localized names, rather than
+the very technical names in version 3.41.
+
+<p><li> Various bugs in the Split Full Window mode are fixed.
+
+<p><li> The Spanish localization temporarily changed to Chinese. This is
+fixed.
+
+<p><li> The Macro menu failed to work in Split Full Window mode if the user switched
+to another window and then back to the split window. This bug is  fixed.
+
+<p><li> In Full Window mode, if the text portion was split, both the
+Macro menu  and the Sync between Preview and Source always used the same piece of text rather than switching when the other piece of text was made active.  This is fixed. 
+
+<p><li>  Yusuke Terada improved the new "Character Info" command
+from 3.41. He writes
+
+<ul>
+<p>
+	<li> National Flags:
+
+<p>	An emoji character of a national flag consists of 2 unicode characters.
+	For example, 🇺🇸 consists of U+1F1FA (REGIONAL INDICATOR SYMBOL LETTER U) 
+	and U+1F1F8 (REGIONAL INDICATOR SYMBOL LETTER S), 
+	and 🇯🇵 consists of U+1F1EF (REGIONAL INDICATOR SYMBOL LETTER J)  
+	and U+1F1F5 (REGIONAL INDICATOR SYMBOL LETTER P).
+	Thus, they should be displayed as "a letter consisting of 2 characters", 
+	but it is displayed as "a letter consisting of 4 characters" in the current version of TeXShop.
+	This is because the regional indicator symbol letters are positioned 
+	outside the BMP (Unicode Basic Multilingual Plane).
+	I fixed this issue so that these national flags are correctly displayed 
+	as "a letter consisting of 2 characters".
+
+<p><li> Support for Ideographic Variation Selector (IVS)
+
+<p>	In Japan and China, some kanji characters have multiple variants.
+	For example, both 神 and 神󠄀 have the same meanings (they mean "God") 
+	and the same readings. They are considered as variant forms of the same kanji.
+	IVS, Ideographic Variation Selector, is used in order to distinguish them.
+	For example, the single unicode character U+795E brings the output "神". 
+	On the other hand, the sequence "U+795E U+E0100" brings the output "神󠄀".
+	U+E0100 itself is not a letter. This is a variation selector.
+	In Unicode, there are variation selectors like this in U+FE00..U+FE0F (Variation Selectors), 
+	U+E0100..U+E01EF (Variation Selectors Supplement), 
+	U+180B..U+180D (Mongolian Free Variation Selectors).
+
+	In the current version of TeXShop, the character info of "神󠄀" is 
+	displayed as "a letter consisting of 3 characters".
+	I modified TSGlyphPopoverController.m for IVS support so that this is
+	 displayed as "CJK UNIFIED IDEOGRAPH-795E (Variant)", like "RED APPLE (Emoji Style)".
+</ul>
+</ul>
+
+<P><h3>TeXShop Changes 3.40 and 3.41</h3></P>
+
+Version 3.40 was never released. Version 3.41 has the following changes
+<ul>
+
+<br>
+<center><img src="Graphics/onewindow.png" border=1>
+</center>
+</br>
+
+<li> When editing a document, it is possible to place the source view and preview view in a
+single window rather than dealing with two windows for these views. This is particularly useful when using the "full screen" option, since the screen will contain both source and preview views. 
+
+<p> To implement this feature, a number of minor changes were required throughout the TeXShop source code. The initial implementation is therefore rather conservative. At the moment, for instance, no Preference
+item is  provided to automatically open documents in this form.
+
+<p> If a document has both source and preview windows, activate the source window and then select the item "Use One
+Window" in the Windows menu. The two windows will be replaced by a single window containing both views. With this window active, select "Use Separate Windows" to replace the single window
+with a pair of windows.
+
+<p> The first time this happens, the single window will not have an appropriate size and position. Resize it appropriately. TeXShop will remember this size and position, but it is even better to
+carefully select an optimal size and position, and then with the window active choose "Save Source Position" in the Source menu. TeXShop will use that size and position in the future.
+
+<p> A source window cannot be converted to single window form unless the corresponding preview window also exists.
+
+<p> If a project has a root view and additional chapter views, only the root view can be converted to single window form. Thus the new feature is not likely to be useful for projects divided in this way. 
+
+<p>
+<li> In previous versions of TeXShop, duplicate copies of many documents in the Help menu were placed in the Localized directories of TeXShop, even though these documents had never been Localized. This duplication is cleaned up in version 3.41, reducing the size of the program by almost a third. The English versions of the documents will still appear when TeXShop is used in another language.
+
+<p>
+<li> Yusuke Terada provided a new menu item in the Edit menu called "Character Info." To use it,
+select one or more letters in the source file and then select the menu item. If only one letter
+is chosen, a  balloon will appear showing a magnified version of the glyph, its full unicode name, and its unicode character. When glyphs require two or three characters, all required characters will  be displayed.
+
+<p> If several letters are selected, the 
+ balloon will list the number of characters, words, and lines in the selection, and show the unicode character for each glyph.
+
+
+<p> 
+Below are sample balloons provided by this feature:
+
+<br>
+<center><img src="Graphics/charinfo1.png" border=1>
+<img src="Graphics/charinfo2.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo3.png" border=1>
+<img src="Graphics/charinfo4.png" border=1></center>
+</br>
+
+<br>
+<center><img src="Graphics/charinfo5.png" border=1>
+<img src="Graphics/charinfo6.png" border=1></center>
+</br>
+
+<br>
+<center>
+<img src="Graphics/charinfo7.png" border=1></center>
+</br>
+
+<p>
+<li> Christian Icking discovered that TeXShop became inoperative or
+crashed when opening a file containing
+
+	% !TEX root = 
+
+but with no non-space characters after the equal sign. This bug
+is fixed.
+
+<p>
+<li> Typesetting for "Experiment" is more robust. It now uses the
+Preference settings for pdflatex and simpdftex latex and the
+personallatex setting. If the user's pulldown menu is set
+to latex, the three choices of  1) pdflatex, 2) tex + dvi, 3) personal
+script are obeyed. This should make the command work for
+TeX in Japan.
+
+<p>
+<li> The commands Next Source Window and Previous Source Window
+in the Window menu again work, and do not bring up "ghosts" of
+closed windows.
+
+<p>
+<li> In the previous version, the Indent and Unindent commands were
+modified to insert spaces rather than tabs in the source. A few users
+preferred tabs. There is now a  preference item for these users; they
+should check "Use Tabs" in TeXShop Preferences, under the Source tab.
+
+<p>
+<li> The Preference command to select the source font
+was broken when TeXShop was used in English, due to a missing connection
+in the English Localization File. This is fixed.
+
+<p>
+<li> Yusuke Terada doubled the maximum magnification level allowed for PDF files,
+so it is now possible to look at very small details of the preview output. 
+
+<p>
+<li> Yusuke Terada  provided new Preference settings under the Miscellaneous
+tab for projects with a root file. When opening a chapter file, TeXShop previously 
+also opened the root file and then immediately miniaturized the root source. Users can choose to
+avoid this miniaturization, or to avoid opening the root file at all. In the second case, the root
+will open when needed, for instance during typesetting.
+</ul>
+
+
+<P><h3>TeXShop Changes 3.39</h3></P>
+<ul>
+<li> The most significant change in 3.39 is the addition of Michael Sharpe's "Recent TeX Fonts" document and associated font Macros.  Michael and I attended the TeX User Group meeting in Portland, Oregon at the end of July, 2014. I knew him as an Applescript expert; several of his scripts are in TeXShop. Other macros from him will appear in a future version. To see his scripts, go to
+<A HREF="https://dl.dropboxusercontent.com/u/3825336/TeX/index.html"> https://dl.dropboxusercontent.com/u/3825336/TeX/index.html. </A>  
+Pay particular attention to 
+macrocopier.zip on this location, a stand alone program which makes it easy to maintain and extend TeXShop macros.
+
+<p>
+At the TUG meeting, I discovered that Sharpe is a font expert widely known to users on other platforms.
+TeX Live contains a very large number of TeX fonts, but it is not that easy to use them.
+Most font sets don't have mathematical symbols, and it becomes a design task to find pleasing combinations of fonts for text, sans-serif sections, and mathematics.
+
+<p>
+Sharpe wrote a document called "Recent TeX Fonts", now available in the TeXShop Help menu. This document describes a number of pleasing font combinations, one per page. Each page lists the features of a set, provides an extensive sample of text and mathematics typeset using
+it, and contains the exact LaTeX code needed to use the font set. These sets are the result
+of extensive work by Sharpe; I understand that some of them took four months to perfect.
+
+<p>
+One way to use the document is to select an article or book written with standard fonts and  copy Sharpe's implementation section into the document's header and retypeset. 
+
+<p>
+To make this even easier, Sharpe slightly modified the LaTeX template which comes with TeXShop, 
+defining a  section in the header bounded by %SetFonts comments. The space between two such comments can be empty when the document is originally written.  Sharpe defined three
+macros called "GetFontSet," "SaveFontSet," and "TestFontSet." The first of these brings up
+a small dialog listing known font sets. When one is selected, its implementation code is written to the source document between the %SetFonts comments, replacing other implementation code there. So with one click and one typeset, the document can be seen written with a new set of fonts.
+
+<p>
+Users can also put their own implementation code between the  %SetFonts comments.
+The SaveFontSet macro reaches between the comments and saves the implementation code to a file in ~/Library/TeXShop/bin named "SetFonts", which is used by the GetFontSet macro to list known font combinations. Thus "SetFonts"  gradually builds into a library of known font combinations. 
+
+<p>
+I'll let the TestFontSet macro speak for itself.
+
+<p>
+To use these Sharpe additions, it is necessary to use the full TeX Live as installed by MacTeX,
+because BasicTeX doesn't contain many fonts. All the font sets defined by Sharpe have been
+tested and are available with TeX Live 2014, except two. The garamondx font has a license permitting free personal use provided the font is not sold. This font is on CTAN, but it cannot
+be in TeX Live because TUG sells a DVD containing TeX Live. However, a script named getnonfreefonts is available to download and install this font. See 
+<A HREF="https://www.tug.org/fonts/getnonfreefonts/">https://www.tug.org/fonts/getnonfreefonts/.</A> 
+
+<p>
+The "SetFonts" template also has a Lucida entry. Lucida is a commercial font, sold by TUG and others. 
+See <A HREF="https://www.tug.org/store/lucida/index.html"> https://www.tug.org/store/lucida/index.html.</A>  
+Many users own this set, and Sharpe's detailed and non-trivial code to use them will help them obtain the most from the fonts.
+
+It is our hope that the existence of these easy techniques will lead to more LaTeX documents that don't scream out "I was written with \TeX," and instead have a professional printed look.
+
+<p>
+<li> TeXShop has a new icon by Thiemo Gamma in Switzerland, designed for Yosemite. Gamma
+also redesigned the dialog which appears when you select the menu item "About TeXShop".
+
+<p>
+The story of TeXShop icons is complicated. The original icon was designed by Jérôme Laurens. 
+Jérôme also designed the TeX Live Utility icon, and I like both a lot.
+
+<p> When the Retina display appeared, it was necessary to redraw the icon, but unfortunately source code for Jérôme's icon did not exist. Other users then contributed revised icons, which I didn't quite like. So I tried myself and discovered that making icons is really, really hard. Eventually William Adams managed to create a high resolution version of  Jérôme's icon and I like it a lot. Adams also provided a document icon.
+
+<p> But Apple revised the look of icons in Yosemite. I intended to ignore the new design.
+
+<p>Then completely unexpectedly, Gamma sent a new icon. I think it is wonderful for a reason I'll explain in a moment. Gamma is extremely modest about it. When he learns how difficult it is for others to make icons and how much in demand good designers are, he'll have a happy life.
+
+<p> My goal for TeXShop has always been that it should  vanish into the background, allowing writers to concentrate  on the document they are writing without distraction. Sometimes this goal is met, and sometimes not. Gamma's icon is a symbol of this goal. It is simple and subdued, sitting there
+in the background.
+
+<p> TeXShop still contains Adams' icon for documents. The source code also still contains his
+program icon. 
+
+<p>
+<li> TeXShop 3.38 has a significant bug, first discovered by James Crippen.  When a source document is long and the preview window is active, clicking on the source window leads to a several second delay before the source window becomes active. This bug was caused by a single line of code, added to help a few users in Japan.
+The bug is fixed in 3.39.
+
+<p> The line of code creating the bug was added for users who meet all of the following
+conditions:
+<ul>
+<li> They use Japanese input methods
+<li> They customize the background and foreground colors of the source window
+<li> They choose a dark color for the background
+</ul>
+
+<p>
+These users can activate the bad line and live with the bug by typing the following in Terminal
+<dl>
+<dd>defaults write TeXShop ResetSourceTextColorEachTime  YES
+</dl>
+
+<p>
+<li> Herbert Shultz provided a new version of the Help document TeXShop Tips and Tricks,
+and René Fritz provided a French translation.
+
+<p>
+<li> The Brazilian localization in TeXShop 3.38 was mistakenly added by Koch to the
+localization for Portuguese in Portugal. This is fixed in 3.39.
+
+<p>
+<li> Will Robertson asked that the TeXShop "indent" command insert spaces rather than a tab.
+This makes fine adjustments afterward easier. Version 3.39 gives Robertson his wish.
+
+<p>
+<li> Yusuke Terada provided fixes for a number of small problems in TeXShop:
+<dl>
+<dd> The color matching options for copying from the Preview window, set in TeXShop Preferences under the Copy tab, were broken in recent versions. This is fixed.
+<dd> The routine which selects an image from the Preview window has been improved.
+<dd> Toolbar tips for mouse actions in the Preview window have been added and localized.
+</dl>
+
+<p>
+<li> Yusuke Terada also fixed a more significant bug. If a particular font is set in TeXShop
+Preferences, either by the user or by default, but that font is no longer in the system,
+then TeXShop would refuse to run. This may explain some very obscure problems reported in the past. The bug is fixed.
+
+
+
+</ul>
+
+<P><h3>TeXShop Changes 3.38</h3></P>
+<ul>
+<li> If the option key is down when a source file is opened, the associated pdf file will not be opened.
+<p>
+<li> TeXShop is written in Cocoa, an object oriented framework inherited from NeXT. Object oriented programs
+create a large number of objects dynamically during program operation. "Memory management" is the
+task of disposing of these objects when they are no longer being used. If an object is disposed too soon,
+ the program crashes when another part of the program tries to use it. If an object is left dangling and not
+disposed, memory gradually clogs up.
+
+<p>
+Recently Apple introduced "automatic reference counting", a technology which leaves the memory management task to the compiler, allowing the programmer to ignore it. TeXShop adopted this technology
+in version 3.35, leading to increased stability and significantly fewer crashes. 
+
+<p> In reference counting, each object keeps a reference number counting  the number of parts of the program using it.
+When a piece of the program is done with the object, that part sends the object a "release" message
+and the object decreases its reference count by one. When the count reaches zero, the object is automatically removed from memory.
+
+<p> There is one situation which the compiler cannot handle automatically. Suppose object A is using object B and object B is using object A. Each object then has a reference count at least one, and usually higher if the objects are being used by other parts of the program. Suppose now that the rest of the program is done with the two objects. The objects are sent a number of "release" messages, until eventually each has reference count one. Since the count is not zero, object A does not go away, so it does not send a release message to object B.
+Similarly ...
+
+<p> The solution of this problem is to manually introduce a "weak reference" from one object to the other. We give object A a reference to object B, but only give object B a weak reference to object A. A weak reference does not increase the reference count. Thus when all other objects are done with the pair, object A has reference count zero, but object B has reference count one. So object A is removed from memory, and just before that happens it sends a "release" to object B. Now object B has reference number zero, and it too is removed from memory.
+
+<p> TeXShop 3.38 completes the process of conversion to automatic reference counting, by correctly indicating weak references. Thus versions 3.35 through 3.37 could leave unused objects in memory,  but 3.38 fixes that problem.
+</ul>
+
+<P><h3>TeXShop Changes 3.37</h3></P>
+<ul>
+<li> Added a  preference setting for the Preview window: ``smooth text and line art.''  By default this is on.
+The setting was requested by Tom Burke, who created an illustration using GeoGebra which
+looked pixelated when displayed at small size in TeXShop. Mysteriously, the illustration looked fine under
+the magnifying glass, or when printed. It also looked fine on a Retina display, but in that case the circles and
+lines were very thin.
+
+<p> To see what the setting does, turn the new preference setting off and  open the file 
+<A HREF="Smoothing/Burke.pdf"> Burke.pdf </A>  with TeXShop. Notice that the illustration is pixelated, but looks fine under a magnifying glass. Then turn the preference on and open the same file again. This pdf file was created typesetting the TeX source file <A HREF="Smoothing/Burke.tex"> Burke.tex </A>
+together with the illustration <A HREF="Smoothing/abI3d8.pdf"> abI3d8.pdf </A>. 
+
+<p>
+The same preference setting is provided by Apple's Preview and other programs. Users with a Retina display may wish to turn it off.
+<p>
+<li> Yusuke Terada added small changes for users in Japan. He wrote "during the time Hiragana is input until it is converted to Kanji, `undecided characters' are displayed, but the source text color is not applied and they are displayed in black. This behavior has been modified."
+
+<p>
+<li> A new item, "Experiment...", was added to the Edit menu and is available when the source window is active. This addition has been a recurring request of Wendy McKay. The item allows users to experiment with short, but complicated, fragments of TeX before copying the source into the main document. 
+
+<p>
+When the item is chosen, a panel appears. Type a TeX fragment into the panel, say $$\sqrt{x^2 + y^2}$$. Push the Typeset button at the bottom of the panel, and a second panel appears showing the result of typesetting the fragment. The fragment can contain anything: a displayed formula, ordinary text, several pages of mixed material.
+To typeset, TeXShop creates a new source file with the header of the current document up until "\begin{document}", the new fragment, and a final "\end{document}." This also works in a project with a root file. In that case the contents of the root file up until "\begin{document}" are used.
+
+<p> Both panels have close buttons. The "escape" key will also close panels when they are active.
+
+<p> Although the two panels do not have resize buttons, they can both be resized. TeXShop will remember
+the new sizes and locations and use them the next time "Experiment..." is selected. The font in the source panel will be the default TeXShop source font. The keyboard shortcuts "command +" and "command -" work in the source panel to enlarge the text if desired. Key bindings and command completion are available in the source panel, but with one caveat. Command completion uses the tab key in the panel even if it uses the escape key for regular source, since the escape key in a panel closes the panel.
+
+<p> The "Experiment..." feature requires a latex-like engine. It will not work with ordinary plain tex. The
+source panel's Typeset button looks at the main source window's toolbar to determine a typesetting engine.,
+and also uses the "% $TEX engine = ..." mechanism if available at the top of the source window.
+If "Plain TeX" or "Context" is selected, nothing happens. If "bibtex" or "make index" are chosen, pdflatex is used. 
+Obviousy "pdflatex, xelatex, and lualatex" can be used. The panel will try to use any user-defined engine selected, but  some such engines may fail if they don't expect latex-like code or output pdf.
+
+<p> The preview panel understands mouse scroll commands and trackpad gesture commands to scroll and resize. It understands "command-shift +" and "command-shift -" to resize contents. 
+
+<p> If you close a panel during work and later reopen it, the contents will be remembered. But the contents
+are lost when quitting TeXShop. It is assumed that the panels will be used for short fragments of work; when
+the user is satisfied, they will transfer the source to the main document using copy and paste. Panel
+contents are not auto-saved and cannot be manually saved except via the copy mechanism.
+
+<p> Each document has its own source and preview panels, so if you have multiple documents open, you could also have multiple source and preview panels open, leading to a confusing mess. I expect users to exercise common sense and only experiment with one fragment at a time.  One way to avoid confusion would be to hide the panels when a document becomes inactive. I didn't want to do that because  a user  constructing
+a complicated example might want to temporarily open a second document and copy source from that
+document into the panel as a starting point.
+
+
+
+</ul>
+<P><h3>TeXShop Changes 3.36.2</h3></P>
+
+<ul>
+<li> Fixed magnification on Yosemite
+<p>
+<li> Fixed sharing icon on source toolbar
+<p>
+<li> fixed two broken IB connections
+<p>
+<li> changed [NSApp delegate] to (TSAppDelegate *)[NSApp delegate] in two spots to make the code compile on XCode 6
+</ul>
+
+<P><h3>TeXShop Changes 3.36.1</h3></P>
+
+This version was released with version number 3.36.1 to test the operation of adding a final digit to the version number. In the future, this
+will be used for "silent updates" in which a minor problem is fixed in the first hours of a release. In the past we did not change
+the version number for such silent updates, but from now on we add a decimal digit to the end of the version in both the TeXShop home page and the program. We do 
+not update change documents for  minors updates. Source files are always updated at the same time as the program, even for minor updates.
+
+<ul>
+<li> The command-1 shortcut to switch from the Preview Window to the Source Window failed if the Preview Window was closed
+and then reopened. This is fixed. Certain other keyboard shortcuts were also affected.
+</ul>
+
+
+<P><h3>TeXShop Changes 3.36</h3></P>
+
+This is a minor update to clear up  issues in the important version 3.35 release. It has the following changes:
+<ul>
+<li> The "remember and restore" operation has been improved to remember the position and size of both the Source and Preview windows
+for all open files and restore them the next time TeXShop is restarted. 
+
+<p> Recall that holding down the option key while quitting closes and forgets all
+windows; in that case, TeXShop will restart with a clean slate. Similarly, holding down the shift key while restarting TeXShop
+will restart with a clean slate.
+
+<p> It would be possible to remember other window positions: Console, Log File, etc. For the moment TeXShop does remember these
+positions since the operation seemed more confusing than helpful.
+
+<p>
+<li> Herbert Schulz improve Command Completion by fixing bugs and controlling whether a forward or reverse search is done
+during the operation.
+
+<p>
+<li> Fixed a bug for "Edit the Key Binding File." Closing this dialog and then bringing it up a second time produced a blank dialog window.
+The bug was pointed out by Emerson Mello and is now fixed.
+
+<p>
+<li> The "Enter Fullscreen" menu item was not localized, but as soon as a source window opened, it switched to the user's language.
+Now it is localized even when no file is open.
+
+<p>
+<li> Protected against a rare bug in which a Notification was sent to a closed Source Window.
+
+<p>
+<li> Attempted to make TeXShop Icon behavior more reliable by providing the extension of the Icon file in the Info.plist, by changing UTI types
+belonging to com.tug to instead belong to org.tug, and by using Apple defined UTI's when available. The Apple mechanism linking icons with
+particular applications continues to have problems in the open source world, where a particular file type
+can be claimed by multiple applications.
+ 
+</ul>
+
+
+<P><h3>TeXShop Changes 3.35</h3></P>
+
+The step from TeXShop 2 to TeXShop 3 marked a significant boundary; version 3 has 64 bit code rather than 32 bit code and was compiled on Lion.
+The step from TeXShop 3.26 to TeXShop 3.35 marks a second significant boundary; version 3.35 uses Automatic Reference Counting rather than
+ manual memory management  and is compiled on Mavericks.
+
+<p>
+When Mavericks appeared a year ago,  magnification code used in earlier TeXShop versions broke. It was replaced in 3.26 with code
+which worked on Mavericks, but not on earlier systems. TeXShop 3.26 used the older magnification code on older systems.
+
+<p> Later versions of TeXShop were compiled on Mavericks. Then the new magnification code worked on earlier systems,
+but the old magnification code broke. So TeXShop 3.35 uses the new magnification code on all systems. However, over the
+last couple of weeks testers discovered that this code leads to obscure crashes on Lion, but not on Mountain Lion and higher.
+
+<p> Consequently, in version 3.35,  both magnification in the Preview window and selection of rectangular regions in the Preview window
+are disabled on Lion. Users of Lion should upgrade to Mountain Lion if at all possible, since these features will  be active again. Users who cannot upgrade
+should consider moving to version 3.26 because the two disabled features work with that version. But version 3.26 will not be
+further upgraded and TeXShop Lion users will be stuck there in the same way that Snow Leopard users are stuck with TeXShop 2.
+
+<p> TeXShop 3.35 has the following additional changes:
+<ul>
+<li> The OgreKit Find Panel was upgraded to the latest version by Yusuke Terada, and additional bugs in it were fixed.  About the
+changes, he wrote "This version is based on the latest OgreKit. The latest OgreKit adopts Onigumo as its regular expression engine instead of Oniguruma, which OgreKit used previously.
+The development of Oniguruma is now stopped, and Onigumo is its fork version.
+Ruby also used to adopt Oniguruma until Ruby 1.9, but it was replaced by Onigumo since Ruby 2.0.
+By using Onigumo, new regular expressions like \K, \R, \X can be used.
+
+<p> " I built the latest OgreKit specialized for TeXShop. In order to solve the problems in which OS X replaced ordinary quotes with smart quotes, etc, I disabled the meddling functions by default:
+<dl>
+<dd> - Smart Copy/Paste
+<dd> - Smart Quotes
+<dd> - Smart Dashes
+<dd> - Smart Links
+<dd> - Automatic Data Detection
+<dd> - Automatic Text Replacement
+<dd> - Automatic Spelling Correction
+</dl>
+
+<p> "A message from Juan Luis Varona Malumbres said: Yusuke, please let to me to explain a small problem with the Ogrekit Find Panel in TeXShop:
+The election Origin: Top/Cursor (in Spanish Origen: Principio/Cursor) works very well in English,
+but not in Spanish: it always does a 'Cursor' search.
+Can you fix it, please?
+
+<p>  "I've fixed it today.
+
+<p> "I found another bug of OgreKit in Spanish environment.
+When you select some range in TeX source and do 'replace all' with OgreKit Find Panel, the entire document is set to the replacement scope, even if you choose "Selection" as the scope of search.
+This issue occurred only in the Spanish environment.
+I've fixed this issue"
+
+<p>
+<li> Previous versions of TeXShop allowed paths with a tilde in the TeX Binary Path Setting Preference. For instance, this setting could be
+"~/Library/TeX/texbin". But such paths caused problems in a small number of minor TeXShop features. A full audit of the TeXShop code was
+performed and now such tilde's should always work in the setting.
+
+<p>
+<li> TeXShop now contains Michael Sharpe's GotoLabel Macro. Here is his description. "This is macro for TeXShop's Macro Menu, 
+allowing you to bring up a list of labels containing specified text, and move to the chosen label.
+
+<p> "To install, choose Macros/Open Macro Editor... (in the TeXShop main menus) and then from the Macros menu, choose Add Macros from File. This brings up a file selector with which you may select GotoLabel.plist. This install the macro in the Macro Menu, where you may move it to any convenient position, and, if you wish, give it a hot key.
+
+<p> "This provides an alternative to adding an item to TeXShop's tags by inserting a line  %:tag_name in the source. With a lengthy document with many labels, it seems advantageous to be able to filter the list of labels."
+
+<p>
+<li> If you open the Edit Menu --> Spelling and Grammar panel, you can set the dictionary using
+by the Spell Checker at the bottom of the Panel. TeXShop now remembers this choice, and will
+automatically use it the next time the program is started.
+
+<p> Unfortunately another feature of TeXShop can interfere with this process, the optional "% !TEX spellcheck = " command at the top of a file. 
+ I suspect that many users don't use the "% !TEX spellcheck" syntax. They will run into no problems.
+
+<p> If no files containing  "% !TEX spellcheck" have been opened since TeXShop was opened, and the user chooses a different dictionary, then that different
+dictionary will be remembered as the new TeXShop default dictionary.
+
+<p> But if the user chooses a different dictionary AFTER opening some files containing the  "% !TEX spellcheck" line, then that
+choice will not be remembered when TeXShop closes. 
+
+<p> So if you do not use the "% !TEX spellcheck" syntax,  you can change the default dictionary used by TeXShop
+by opening the Spelling and Grammar panel and making the change. But if you sometimes use the "% !TEX spellcheck" syntax, the
+foolproof way to change the default dictionary is to open TeXShop without opening files, change the dictionary with the Spelling
+and Grammar panel, and quit.
+
+
+
+</ul>
+
+<P><h3>TeXShop Changes 3.27 - 3.34</h3></P>
+
+Versions 3.27 - 3.31 were never released. An experimental version of 3.32 had a limited release, and 3.33 was never
+released. Version 3.34 is the first regular release with these changes.
+
+<p> The most important feature of release 3.34 is that TeXShop's source code was revised to support ARC and the program was compiled using
+Automatic Reference Counting. Thus memory management is now done by the compiler rather than by hand. This should make the program
+much more stable.
+
+<p> Version 3.34 has the following additional changes:
+
+<ul> 
+
+<li>A localization for Brazilian Portuguese is provided by Emerson Ribeiro de Mello.
+
+<p>
+<li> Spell checking now remembers a dictionary chosen in the "Show Spelling and Grammar" panel.
+This makes it easier to use the CocoAspell package. 
+
+<p> CocoAspell adds dictionaries to Apple's Spelling System which understand LaTeX and thus do not
+claim that LaTeX commands are misspelled. Obtain the system at 
+<a href="http://cocoaspell.leuski.net/">http://cocoaspell.leuski.net/</a>.
+ After installing, notice that an extra Spelling Preference Pane has been added
+to Apple's System Preferences. Select a dictionary and turn on TeX/LaTeX filtering. Then either select this
+dictionary in TeXShop"s "Show Spelling and Grammar" panel, or select it globally in the "Keyboard" pane of
+Apple's System Preferences under the Text tab.
+
+<p>
+<li> In Mavericks, the code for selecting a region of the Preview file and the code for magnifying a region of
+the Preview file broke.  This was fixed in an earlier version of TeXShop by using the old code for Lion and
+Mountain Lion, but using entirely new code for Mavericks. It appears, however, that the old code for Lion
+and Mountain Lion did not work. Now the Mavericks code is used in all cases and works on Lion, Mountain
+Lion, and Mavericks.
+
+<p>
+<li> Added Haskell literate script (lhs) as a type that TeXShop can edit, and that can be typeset and
+syntax colored
+
+<p>
+<li> The Pythontex engine and documentation were slightly altered
+
+<p>
+<li>  Rene Fritz provided a new French translation of TeXShop Tips & Tricks
+
+<p>
+<li> TeXShop now contains Latexmk 4.40
+
+<p>
+<li> TeXShop has a menu command to convert tiff illustrations
+to png. This command uses "convert" if available, but otherwise  uses Apple's "sips" program, which has been
+part of OS X for a long time. Thus the removal of "convert" from MacTeX-2014 will not affect TeXShop.
+
+<p>
+<li> In Multipage mode, each typeset produced a small upward creep in the contents of the Preview
+window for some users. This is slightly improved, though not yet completely fixed.  fixed. 
+
+<p>
+<li> In Single Page mode, typesetting produced a momentary flash in the Preview window showing the document's first page,
+immediately replaced by the current page. This is fixed.
+
+<p>
+<li> New code by Dirk-Willem van Guik to set the "Job Title" for print jobs.
+
+<p>
+<li> The "Show Log File" command has been improved. When this window
+is first opened, it shows the full log file. Twelve check boxes at the top set various queries to texloganalyser, a script in TeX Live which can
+pull various pieces of information from the log file. The Redo button then displays this information. For instance, texloganalyser can display
+all warniings, or all overfull boxes, or all fonts used in a document. Unchecking all boxes and pushing Redo again displays the full log file.
+
+<p> If "Show Log File" is selected while holding down the Command key, a dialog appears asking for an extension. If the user types the extension
+"aux", then the window will display the aux file rather than the log file. Since texloganalyser only works on log files, checking boxes will then
+have no effect.
+
+<p>
+<li> A new Preference item is provided: "Tags Menu in Menubar". When this item is selected, a duplicate of the Tags menu
+will appear in the menubar. The new item allows advanced users to hide the Source window's toolbar: use command-T to typeset,
+selected the appropriate engine using text at the top of the source, use the menu versions of the Macro and Tags menus,
+and notice that "Split Window" is  provided as a menu command in the Windows menu.
+
+<p>
+<li> New versions of the LilyPont and MetaPost engines are provided by Nicola Vitacolonna.
+</ul>
+
+
+<P><h3>TeXShop Changes 3.26</h3></P>
+
+3.26 has the following fixes:
+
+<ul>
+
+<li> The combination of Preference Settings "Configure for  External Editor" and "Automatic    	Preview Update" is now compatible with App Nap in Mavericks. Thanks to
+	Zhiming Wang for pointing out this problem and its connection to
+	App Nap.
+
+<p>
+	In Mavericks, the Get Info panel for many applications has a check box
+	to turn off App Nap. TeXShop has no such box. The reason turns out to be
+	that TeXShop is compiled with XCode 5 on Mavericks, and Apple
+	assumes that applications compiled on Mavericks have been fixed
+	to deal with App Nap. TeXShop is now fixed in the approved manner.
+
+<p>
+<li>
+	Michael Sharpe wrote a beautiful document describing Applescript in
+	TeXShop and problems that might be encountered writing new
+	Applescript Macros. I have added that document to the Help Menu,
+	In addition, I added Michael to the list of TeXShop contributors, because
+	his web page contains a number of AppleScript corrections which I have
+	adopted in the Applescript Macros shipped with TeXShop.
+
+<p>
+<li> The following four Macros had problems with recent versions of OS X.
+	Fixed versions by Michael Sharpe and included in this release.
+	
+	<dd>
+	<dl> 	Open Quickly
+	<dl>	Insert Reference
+	<dl>	New Array
+	<dl>	New Tabular
+	</dd>
+
+
+<p>
+
+<li> There is a new arara engine by Alan Munn in ~/Library/TeXShop/Engines/Inactive/Arara.
+	The arara program is part of TeX Live 2013. Documentation for it is included in the
+	above folder. Roughly speaking, it is a replacement  for both  latexmk and parts of the 	TeXShop
+	engine mechanism.
+
+<p>	
+<li>  Small changes were made in the Japanese localization by Seiji Zenitani
+
+
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.25</h3></P>
+
+TeXShop 3.25 contains the following fixes:
+
+<ul>
+<li> Version 3.24 contained a new version of Sparkle, but unfortunately not the
+latest version. The version in 3.24 didn't have a Japanese localization. Terada Yusuke
+found and compiled the latest version, now in 3.25.
+
+<p>
+<li> A few users report crashes when quitting TeXShop or closing a file. I was never
+able to reproduce this crash. Terada Yusuke made a partial fix, so the number of such
+crashes should diminish.
+
+<p>
+<li> The default preference settings for users in Japan have a small fix for  Kpsetool.
+
+<p>
+<li> Some locations referred to the old TeXShop web url, http://www.uoregon.edu/~koch/texshop/texshop.html. These have been changed to the new url, http://pages.uoregon.edu/koch/texshop/texshop.html.
+
+<p>
+<li> In version 3.17, the old Search sync method broke when syncing from the Preview page
+to the Source page. So it was disabled in version 3.18, and users were told to switch to the
+modern SyncTeX method. This is still recommended. But the Search sync method is now fixed,
+and will be used in those rare cases when SyncTeX does not find a match.
+
+</ul>
+
+<P><h3>TeXShop Changes 3.24</h3></P>
+
+There is only one change. The Sparkle upgrade mechanism in  previous versions of
+the TeXShop 3 series does not work on Mavericks. This is fixed in 3.24.
+
+<P><h3>TeXShop Changes 3.22 and 3.23</h3></P>
+
+TeXShop 3.23 fixed one bug. In 3.22, if the user configured TeXShop to use an external editor
+and then set the hidden preference ExternalEditorTypesetAtStart to YES,  the program crashed when opening a file. This is fixed in 3.23.
+
+<p>
+Version 3.22 has the following changes:
+<ul>
+<li> If the option key is pressed, the "Typeset" menu changes to "Trash Aux & Typeset".
+Selecting it trashes aux and related files before typesetting. Recall that command-T is
+a keyboard shortcut for "Typeset". Similarly option-command-T is a keyboard shortcut for
+"Trash Aux & Typeset." This ingenious addition was suggested and made by Paul Smyth.
+
+<p>
+<li> There is a new engine for pythontex in ~/Library/TeXShop/Engines/Inactive.
+This folder also has a README explaining how to install pythontex, and a tex source file from
+the author of pythontex which can be used to test the engine and simultaneously see some of the features of pythontex in use.
+
+
+
+<p>
+<li> There is a new engine for Sage in ~/Library/TeXShop/Engines/Inactive/Sage. The method of
+installing sagetex.sty in TeX Live explained in "About Sage" in the Sage directory has also changed. These changes was suggested by Daniel Grambihler and 
+improve the ease of use of Sage in TeX.
+
+<p> There were two basic problems with the previous method. First, the TeX file sagetex.sty
+changed with the version of Sage and thus had to be reinstalled each time Sage was updated. Second, the engine file calls the Sage binary, which is inside the Sage program wrapper. But
+the authors of Sage distribute the program with a name that includes the version number,
+so the engine file had to be rewritten whenever Sage was updated.
+
+<p> Daniel Gramhihler recommended that we ask users to change the name of the program to "Sage"
+whenever they update, and that we install a symbolic link to sagetex.tex in TeX Live rather than the actual style file. The result is that when Sage is updated, the engine file automatically finds the new binary and TeX Live automatically uses the new style file.
+
+
+
+
+
+<p>
+<li> TeXShop now opens and edits files of type fdd.
+
+<p>
+<li> There is a new hidden preference to set the line spacing in the source window:
+<dd>
+<dl> defaults write TeXShop SourceInterlineSpace 1.0
+</dd>
+Only values between .5 and 40.0 will be accepted. The standard line spacing is given
+by the default 1.0, and double spacing is given by the value 10.0.
+
+<p>
+<li> Nicola Vitacolonna made extensive changes to the Italian localization of TeXShop.
+Minor changes for other localizations were also made by their localizers.
+</ul>
+
+
+
+
+<P><h3>TeXShop Changes 3.19, 3.20, 3.21</h3></P>
+
+Versions 3.19 and 3.20 were never released.
+<p>
+Version 3.21 has the following changes:
+
+<ul> 
+
+<li> Three bugs appeared when running on  OS X Mavericks: the magnifying
+	glass in the Preview window broke, rubber band selecting of a region of the Preview
+	window broke, and sharing the png of the selected region broke.	All three are fixed. The code which runs on Mountain Lion and below remains
+	in place, so small changes in behavior will only be seen on Mavericks.
+<p>	
+	The magnifying glass has an interesting history. The original code used
+	an unusual call in Cocoa. It broke in Leopard. This code was replaced by tricky
+	code relying on another unusual Cocoa routine. This broke in Mavericks. The new Mavericks code
+	in 3.21 is   straightforward, drawing in a temporary transparent overlay view for
+	both magnification and rubber banding.
+	
+<p>
+<li> In Mountain Lion, sharing of a region of the Preview window provides a png of this
+region. In Mavericks and above, it provides a pdf of the region, which can  be resized without losing detail.
+
+<p>
+<li> For a  long time we have recommended that users new to
+TeXShop  arrange the location and size of the Source and Preview windows on the desktop as desired. Most users prefer a side by side configuration with the Source window on the left and the Preview window on the right. Then activate the Source
+window and in the Source menu select ``Save Source Position''. Similarly activate the Preview window and in the Preview menu select ``Save Preview Position''. From that point on, all
+TeXShop source and preview windows will appear in the selected positions.
+<p>
+If you have a portable connected to a large monitor, this configuration works as long as you are attached to the monitor. But when you are traveling, the windows will appear on the screen of your portable, and probably not in ideal positions. TeXShop 3.21 has an extra configuration to fix this. Arrange a source and preview window on your portable screen  in ideal position; the portable can be attached to the large monitor at the time. Then activate the source window and in the Source menu select ``Save Source Position for Portable''. Activate the preview window and in the Preview menu select ``Save Preview Position for Portable''. After this step, windows will appear in the desired position when you are connected to the large monitor at home or office, and windows will appear in the desired position on the portable screen when you are traveling.
+
+<p> It will do no harm to skip this portable configuration. 
+
+<p> If you have multiple screens, Maverick has the ability to start applications on any screen. Thus it may be convenient to use the "portable" configuration for a second screen even if you do not have a portable.
+
+<p>
+<li> The following bug was pointed out by Simon C. Leemann. Until 3.21, double clicking on a blank space in the source window selected the space and the words on either side of the space. This is fixed and now only the space is selected.
+
+<p>
+<li> TeXShop allows users to select alternate engines on a file by file basis using the
+syntax
+
+<dl>
+<dd>  % !TEX TS-program = 
+</dl>
+TeXworks and other programs use the similar command
+<dl>
+<dd>  % !TEX program = 
+</dl> 
+TeXShop 3.21 now accepts this alternate syntax to specify an engine.
+
+<p>
+For compatibility reasons, the space between "%" and "!" is optional, but highly recommended.
+
+<p>
+<li> The next feature was requested by Alan Munn about a year ago. Apologies for the delay.
+In the meantime, Mark Everitt wrote an ingenious script to provide this feature. The feature provided by that script is now built into TeXShop.
+
+<p> The command BibTeX in the TeXShop typeset menu runs BibTeX; notice that this command has a keyboard shortcut. In Japan, a different program is used instead, so Yusuke Terada provided
+an item in TeXShop Preferences under the Engine tab to select the program to be run when this menu item is selected. Examples are bibtex, biber, pbibtex, etc. The Preferences item can also be used to add flags to the command.
+<p>
+In TeXShop 3.21, the BibTeX engine can be selected on a file-by-file basis using the syntax
+<dl>
+<dd>  % !BIB TS-program = 
+</dl>
+The alternate syntax
+<dl>
+<dd>  % !BIB program = 
+</dl>
+will also be accepted. The item after the equal sign gives the name of the program (for instance "biber") and any required flags. This line should be written within the first twenty lines of
+a source file.
+
+<p> The "% !BIB TS-program = " line takes precedence. If it is absent, the Preference item determines which command is run.
+
+<p>
+<li> TeXShop 3.21 contains latexmk 4.37.
+
+<p>
+<li> The following bug was pointed out by Basil Grammaticos, and is fixed in TeXShop 3.21.
+TeXShop has an AutoCompletion feature. If the user begins typing a phrase like
+<dl>
+<dd>  \begin{
+</dl>
+and then presses the escape key, TeXShop will complete the phrase. If there are several completions, TeXShop will cycle through the possibilities each time the escape key is pressed.
+These completions are listed in a file which users can edit using the command "Edit Command Completion File" in the Source menu. 
+<p>
+But if no completions are found,  TeXShop reverts to a different autocompletion method which is build into Cocoa. This time, pressing the escape key opens a small window  listing all possible completions. Click on one to complete the phrase. These completions come from the system dictionary. 
+<p>
+The first kind of completion is likely to appear when typing a TeX construction, and the
+second kind appears when typing an ordinary word or phrase. 
+<p>
+Basil pointed out that in many programs, the second completion list begins with phrases which
+already appear in the document. In earlier 
+versions of TeXShop, these nearby phrases were missing.
+<p> This bug was caused by adding Autocompletion to TeXShop too early. If no completion was
+found, the code called the dictionary to provide an autocompletion list. Then Apple added
+a similar call to TextEdit, which first finds nearby phrases and then asks the dictionary for further words. TeXShop now calls that TextEdit routine.
+
+<p>
+<li> TeXShop now has a hidden command to turn off AutoSaving:
+<dl>
+<dd>  defaults write TeXShop AutoSaveEnabled NO
+</dl>
+WARNING: This command will cause crashes on Lion, so it should only be used on Mountain Lion
+and above. The TeXShop developers use AutoSave. If you turn off AutoSave, you are entering
+untested waters.
+
+<p>
+<li> The Sage engine script was revised in TeXShop 3.21, and the Sage instruction document in
+~/Library/Engines/Inactive/Sage was rewritten.
+
+<p>
+<li> Ulrich Bauer added a patch to TeXShop 3.17 for users working with a server. This patch
+was supposed to be inactive unless AutoSave was on. But a mistake in the code caused it to be
+used by a few people who didn't use AutoSave. This is fixed.
+
+<p>
+<li> Many users thanked us for Bauer's code, but it caused trouble for a few. There is a
+hidden preference to turn to patch off:
+<dl>
+<dd> defaults write TeXShop WatchServer NO
+</dl>
+ 
+<p>
+<li> Finally, Yusuke Terada provided a number of changes for users in Japan.
+	<p>
+	<ul>
+	<li> At the bottom of the TeXShop Preference window, a pull down menu labeled "Defaults"
+	offers to change all preferences to their default values. The first item in this menu is labeled "Regular" and is for most users. The remaining items are for users in Japan, who interact with TeX in a variety of unusual ways. It contains six new items to replace the original two legacy items.
+	<p>
+	<li> An earlier version of TeXShop contained an automatic UTF-8-Mac to UFT-8 Conversion. 
+	But this routine converted some Japanese Kanji characters to different glyphs. This is
+	fixed by excluding certain characters from the conversion, as explained in the Unicode
+	Consortium Report <A HREF="http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table">http://tug.org/mactex"> http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table</A>.
+	</ul>
+ 
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.18</h3></P>
+
+Version 3.18 has only a single change:
+
+<p>
+TeXShop contains an obsolete sync method called Search Sync, and a modern
+replacement by Jerome Laurens called SyncTeX. In recent versions of TeXShop, the
+obsolete Search Sync from the Preview Window to the Source Window randomly hangs,
+making TeXShop unresponsive This was supposed to be fixed in version 3.17, but it
+wasn't. Unfortunately, when the modern SyncTeX cannot find a match, it calls the old
+Search Sync, so SyncTeX can indirectly hang as well.
+
+<p> It is silly to waste time on an obsolete method, so in TeXShop 3.18,
+Search Sync from the Preview Window to the Source Window is disabled and does nothing.
+Most users will notice no change. Users who misconfigured SyncTeX will lose synchronization.
+
+<p> Users should check that
+<ul>
+<li> in TeXShop Preferences under the Typesetting tab, the "Sync Method" is set to SyncTeX;
+
+<p>
+<li> in TeXShop Preferences under the Engine tab, the two configuration lines for "pdfTeX"
+each contain the following flags
+<dl>
+<dd>     --file-line-error --syncTeX=1
+</dl>
+
+<p>
+<li> in TeXShop Preferences on the same page, the two "TeX + dvips + distiller" lines
+contain the following instruction
+<dl>
+<dd>     --extratexopts "-file-line-error -synctex=1"
+</dl>
+
+<p>	The easy way to do this is to push the four "Default" buttons beside these four entries.
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.17</h3></P>
+
+Version 3.17 has the following features:
+
+<ul>
+
+<li> In 3.15, we introduced a hidden default to fix the rendering of the Monoco font
+when used in the source window on Mountain Lion.
+
+<dl>
+				<dd>
+					defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+			</dl>
+
+<p> This fix does not alter the display of the Monoco font when used in the log window or the console. Another hidden preference can fix Monoco in these windows. This preference causes TeXShop to call the font routine [font screenFontWithRenderingMode:NSFontDefaultRenderingMode] and pass the resulting font to an AppKit object, although Apple's documentation says not to do this. So the new hidden preference should only be used if you cannot tolerate the Monoco font's default rendering.
+
+<dl>
+				<dd>
+					defaults write TeXShop ScreenFontForLogAndConsole -bool YES
+			</dl>
+<p>
+
+<p>
+<li> The spotlight indexer has not been distributed with the version 3 series
+	of TeXShop. Now it is again included. This indexer was written by Norm Gail
+	with additions by Max Horn. It was recently revised by Adam Maxwell.
+
+<li> 
+<p> Choosing the "Source <=> Preview" menu item in External 
+	Editor Mode caused a crash. This is fixed.
+
+
+<p>
+<li> The previous version of TeXShop introduced an improved version of latexmk. TeXShop
+contains two latexmk engines which are active by default: pdflatexmk.engine and sepdflatexmk.engine. The "About This Release" item in TeXShop 3.17's Help Menu explains
+how to update these engines.  
+
+<p>
+<li> A fix in version 3.16 replaced a deprecated method in the
+	"Search sync" routine with a modern equivalent. Unfortunately, this
+	fix had a bug which could crash TeXShop.
+
+<p>	Most users  use the SyncTeX method to sync. But when this method
+	fails to find a reasonable match, TeXShop reverts to the old Search Sync method, 
+	and thus could crash the program. The old Search sync method is now fixed.
+
+<p>	If by chance there are still problems with Search sync, a hidden TeXShop preference 
+	can turn off reverting to it when SyncTeX fails to find a match:
+	
+	<dl>
+				<dd>
+					defaults write TeXShop SyncTeXOnly YES
+			</dl> 
+
+
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.16</h3></P>
+
+Version 3.16 has the following features:
+
+<ul>
+
+<li> After editing the Command Completion File, users had to save twice before
+open documents acknowledged the changes (although quitting and restarting TeXShop
+used the changes after a single click). This is fixed.
+
+<p>
+<li> New latexmk engines are available in ~/Library/TeXShop/Engines/Inactive/Latexmk.
+These engine files allow you to  place a platexmkrc file in the same folder as the
+source you typeset. This "project resource" file provides further latexmk configuration. For instance, you
+could use this process to force latexmk to use texindy rather than the default makeindex
+for a given project.
+
+<p> This improvement was suggested by Michael McNeil Forbes and adopted to latexmk in TeXShop by Herbert Schulz.
+
+<p>
+<li> When the Macro Editor is activated, a new menu item named "Save selection to file..."
+appears. This menu was broken and could not save files, but the problem is fixed. A
+similar problem with "Add macros from file..." is also fixed. 
+
+<p>
+<li> A related problem was fixed in the menu command "Save Selection To File..." which
+saves a selection from the preview page to disk.
+
+<p>
+<li> The Synctex synchronization method worked in 3.15 and earlier. When this method
+fails to find a match, TeXShop reverts to the older search method of synchronization,
+but this was broken in 3.15. The earlier method is now fixed.
+
+<p>
+<li> When a new version of TeXShop first runs, it updates a few subfolders of
+~/Library/TeXShop. Versions 3.12 through 3.15 were broken and updated these folders
+every time they started. This is fixed. Thanks to Yusuke Terada for the bug report.
+
+<p>
+<li> Users with an external Trackpad or builtin Multi-Touch Trackpad can use the
+"App Expose" feature by activating it in the Trackpad Preference Pane of Apple's System
+Preferences. Please three fingers on the pad positioned over the TeXShop Icon in the Dock or a TeXShop Window, and swipe down (you can configure this to use four fingers in System Preferences). Then only TeXShop windows will appear on the screen, and a list of hidden accessory files will appear along the bottom of the screen. The recent switch to UTI's has activated
+this feature of OS X.
+
+
+</ul>
+
+
+
+<P><h3>TeXShop Changes 3.15 </h3></P>
+
+Version 3.15 has the following features:
+
+<ul>
+
+<li> The default editing font has been changed to Menlo 12, which Apple now recommends
+as a fixed width font. This will not affect old users, whose original preference setting remains.
+
+<p> Some users have chosen Monoco 9 or 10 as an editing font. This font may look somewhat fuzzy
+on Mountain Lion because Apple has optimized the text and font rendering routines for the Retina display.
+To get back to the old behavior, type the following command in Terminal. This is not recommended
+unless you are unhappy with the appearance of text in the edit window.
+<dl>
+				<dd>
+					defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+			</dl>
+			
+<li> TeXShop 3.14 began the process of switching from Apple's old style indication of document types
+in the TeXShop Info.plist to the new style using Universal Type Identifiers (UTI).   The process is complete in TeXShop 3.15. The change involved
+extensively rewriting the Info.plist file, and replacing depcrecated Cocoa file commands with modern
+equivalents. The change may improve
+system acceptance of the new high resolution icons by William Adams, but I still expect trouble
+and recommend the techniques outlined in the description of 3.14 to fix them.
+
+
+<p>
+<li> There are a few Japanese localization changes and a code fix  by Yusuke Terada.
+Thanks.
+
+<p>
+<li> Small glitches have been reported when using magnification in the preview window. These
+glitches have been fixed. In case of remaining trouble, please give concrete details explaining
+how to reproduce the problem.
+
+<p>
+<li> The default encoding in TeXShop has been changed from MacOSRoman to ISOLatin9. This will
+not affect old users except at one minor spot.
+
+<p> To understand the change, recall a few encoding basics.
+A computer file is just a long sequence of bytes, each an integer between 0 and 255.
+Other data, including picture data and sound data, is encoded in this form when written to disk. The majority of computer files contain ordinary text.. Text was originally encoded in Ascii format, which assigns
+a byte to each key on an American typewriter; Ascii only uses the first 127 bytes, so the bytes from 128 to 255 are available for other purposes. The Ascii encoding
+was later extended for use in Europe and elsewhere by adding accents, umlauts, and other characters to
+the upper 128 vacent spots. Many such encodings were invented, and a number of them are available in
+TeXShop. ISO Latin 9 is such an encoding. It encodes ascii characters in the first 128 positions, and
+all symbols commonly used in Western Europe in the upper 128 positions. ISO Latin 9 is essentially the same
+as the earlier ISO Latin 1, except that it includes the Euro currency symbol.
+
+<p>
+Eventually, the computer industry invented Unicode, which is theoretically capable of handling
+the symbols used in all of the world's languages.
+Internally, TeXShop and other Mac OS X programs represent and process text in Unicode. There is no standard
+Unicode encoding for writing to disk, so all Apple routines which read text from disk or write text
+to disk require an extra parameter listing the encoding to be used.
+A commonly used encoding for Unicode is UTF-8. It has the advantage
+that ordinary ascii files are legal UTF-8 files. The disadvantage of UTF-8 is that random
+collections of bytes may do not contain legal UTF-8 code, so when the computer tries to open a file
+in UTF-8 which was written in another encoding, the computer sees garbage and returns nil. Encodings which
+extend ascii by adding symbols to the upper 128 places do not have this problem; if a file written
+with one such encoding is opened with a different encoding, the computer will not complain, but some
+symbols may appear with unexpected shapes.
+
+<p> TeXShop must deal with this design in two spots. When TeXShop is asked to open a file, it reads
+the first few bytes in MacOSRoman to check whether a "
+opens it in ISOLatin9.
+
+<p>Some users have requested that TeXShop's default encoding be UTF-8. Users can achieve this
+result by simply switching the default encoding to UTF-8 in TeXShop Preferences. UTF-8 is not the
+current default because I believe that many users have old files which were written with Ascii or
+some other earlier encoding. If these files contain straight ascii, they work fine as UTF-8 files.
+But if by chance a stray non-ascii character was entered by mistake, then users will see a mysterious
+dialog panic when  TeXShop reports that the file cannot open in UTF-8.
+
+<p> 
+<li> In version 3.14 the command "Edit Command Completion File" did not display the file to be
+edited. Now it does again.
+
+<p>
+<li> When displaying the Preview Page in fullscreen mode, users can mouse to the top of the screen
+and select menu options to change the Page Style and ResizeOption. In version 3.15, these new
+choices are remembered in TeXShop Preferences, and thus will be used again even if TeXShop quits between
+sessions.
+
+<p>
+<li> TeXShop 3.15 contains a patch by Ulrich Bauer for file handling. This patch will be
+important for users working with version control or with a server which might change the source
+while it is being edited in TeXShop.  For instance, one such user report stated "we are several authors on a paper and we use svn to keep the versions coordinated. If I have a version of the file in the editor and perform an svn update in the terminal, the file changes on disk. However, if I save or typeset, the local version in the editor gets saved and I get no conflict warnings!"  With Bauer's patch, "an open document is
+monitored for external changes to the file, and updated automatically if an external change
+occurs." Thanks very much to Ulrich Bauer for this important change.
+
+
+</ul>
+
+<P><h3>TeXShop Changes 3.12 - 3.14 </h3></P>
+
+Versions 3.12 and 3.13 were never released. Some users downloaded beta copies
+of 3.12 to fix 3.11  bugs. Version 3.14 has the following features:
+
+<ul>
+
+<li> New high resolution icons are provided for TeXShop itself, and for .tex and .pdf files.
+The icons are by William Adams. 
+
+<p> The original TeXShop icons were made by Jerome Laurens; I like them. With the
+introduction of the Retina display, high resolution icons became essential. A few users
+sent me samples which I claimed I'd use. But the new icons were not easily recognizable
+on the screen. 
+So I tried to create my own icons,, and some users will have versions of
+TeXShop with these icons. This lesson taught me that I am incapable of
+creating icons.
+
+<p> Finally William Adams agreed to create icons closely following Jerome's original idea. 
+I'm very happy with the result. The TeXShop icon itself has changed only a little. For TeX files,
+Adams was able to build on and improve Jerome's icons using high resolution techniques.
+
+<p> Thanks, William; having tried, I know it wasn't easy. And thanks Jerome for the original idea.
+
+<p> TeXShop has received small tweaks in hopes that OS X will pick up the icons, but it may
+be necessary to provide some help. Moving TeXShop into the /Applications/TeX folder will
+help the system notice the icons. Then select a .tex file, and click "Get Info" in the Finder.
+Go down to the "Open with" section and select TeXShop Then press the "Change All" button.
+In one case on my system, a TeX source file was displayed in the Finder with an incorrect icon and no  ".tex" extension. Adding
+that extension caused the Finder to associate the correct icon. 
+
+
+
+<li> On Mountain Lion, sharing support has been added. New sharing items are available for both
+the source window toolbar and the Preview window toolbar. It may be necessary to execute the
+menu command "Customize Toolbar" to obtain them. 
+
+<p> If text is selected in the Source window when the Sharing item is pressed, the program will offer to
+share the selection. If no text is selected, the program will offer to share the entire source document.
+Similarly when a piece of text and/or illustration is selected in the Preview window, the
+program will offer to share the resulting graphic fragment. If there is no selection, the program will
+offer to share the entire pdf output file.
+
+<p> Only appropriate sharing venues will appear, depending on the selection. For instance, it does
+not make sense to post an entire pdf document to Facebook. In all cases, the program will share
+to Email, Messages, or AirDrop. Depending on the selection, it will also share to Facebook, Twitter,
+Flickr, and other venues. Note that some services must be activated in Apple's System Preferences
+before sharing can take place.
+
+<p>
+<li> On Mountain Lion, TeXShop opened an empty window when the user tried to use the program with
+an external editor, and also when the user opened a pdf, png, jpg, or eps file. This is fixed.
+
+<p>
+<li> On Lion and Mountain Lion, selecting a region of the  Preview  left garbage lines
+on the screen as the mouse moved. This bug is mostly fixed.
+
+<p>
+<li> Latex make is upgraded to version 4.34. A new engine, sepdflatexmk, is available in the
+Inactive/LaTeXmk folder. This engine calls pdflatex with the --shell-escape flag, for users who
+need packages which call external programs during typesetting.
+
+
+<p>
+<li> Yusuke Terada fixed two bugs in 3.11. First, the encoding popup button was ignored in the open
+dialog; this is fixed. Second, problems in CommentOrIntentForTag were found and fixed.
+
+<p>
+<li> There is now a Preference interface to change the source text color. A preference to change
+the source background color was present in earlier versions.
+
+<p> 
+<li> There are new metafun and metapost engines by Nicola Vitacolonna.
+
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.11 </h3></P>
+
+<ul>
+
+<li> The ConTeXt engines have been renamed. I promised to make 
+this change a year ago, but checking MacTeX-2012 shortly
+before release, I found that the promise was ignored. The 
+old and new names are
+<dd>
+<dl>	ConTeXt-MKIV.engine --> ConTeXt (LuaTeX).engine
+<dl>	ConTeXt-xetex.engine --> ConTeXt (XeTeX).engine
+<dl>	ConTeXt .engine --> ConTeXt (pdfTeX).engine
+</dd>
+
+The new names make explicit the TeX program which will 
+run the ConTeXt macros for that engine.
+
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.10 </h3></P>
+
+<ul>
+
+<li> The "--shell-escape'' flag has been removed from preference settings for pdftex and pdflatex. This flag
+presented security risks. Old users need to activate the
+change by selecting TeXShop Preferences, clicking the Engine tab, and pushing the "Default" buttons in
+the configuration section for pdfTeX and pdfLaTeX.
+
+<p>
+Recall that pdflatex can accept illustrations in several different formats, including pdf, jpg, and png. But
+it cannot accept eps illustrations used by many old TeX documents.  The epstopdf package 
+solved this problem by calling Ghostscript to convert eps files to pdf format automatically during typesetting.
+This package required --shell-escape and that is why previous versions of TeXShop set the flag.
+
+<p> Two years ago, TeXLive made conversion of eps files to pdf format easier and safer by introducing a restricted
+shell escape mode for pdflatex in which only a limited number of safe programs can be called during typesetting.
+This conversion was made automatic without including epstopdf, provided the graphicx package was included
+by the source document. 
+
+<p> We could have dropped the --shell-escape flag at that time, but there was another reason to continue
+using it. Originally, pdflatex accepted tif and tiff files. Eventually this feature was removed, but it was possible to
+convert these files to png format during typesetting using /usr/local/convert from ImageMagick. Unfortunately,
+TeX Live does not label convert as safe because in the Windows world there is an unrelated program which
+presents security risks. TeXShop 3.10 solves this problem by introducing a new method to convert tif and tiff
+files to png format.
+
+<p>
+<li> TeXShop 3.10 has a  menu command "Convert Tiff" which is active when a source window
+is active. This command opens a dialog which shows all tiff files in the folder containing the
+source file. Users can choose one tiff file or several. Push the "Convert" button to 
+create png forms of all such illustrations. This calls convert from ImageMagick if present, and otherwise
+calls the native sips program.
+
+
+<p> <li> A new Latex Template is provided to reflect these changes. Old users can obtain this template
+by moving it from ~/Library/TeXShop/New/Templates to ~/Library/TeXShop/Templates.
+
+
+
+<p>
+<li> TeXShop 3.10 omits the Create Project Root menu item. Use the alternate "% !TEX root = "
+syntax instead. Old projects using Create Project Root will continue to typeset.
+
+</ul>
+
+
+
+
+<P><h3>TeXShop Changes 3.09</h3></P>
+<ul>
+
+<li> 	When a pdf document is printed, TeXShop now selects Portrait or Landscape mode
+	automatically.  Moreover,  "orientation selection buttons" have been added to the Print Panel,
+	so the user can change the orientation if the auto selection
+	mechanism fails. A "scale selection" was also added, 
+	so the user can rescale the document before printing.
+	
+<p>
+<li> These printing changes also apply  when printing TeX source.  "Orientation selection buttons"
+	and "scale selection" were added to the Print Panel.
+	
+<p>
+<li> 	The split window command for the Preview window has been improved. The second
+	portion now opens on the  section of the document shown in the top portion rather than the top of the
+	document. It has the same magnification as the top section of the window. Finally
+	the magnification toolbar button is now in sync with magnification in appropriate
+	sections of the split window.
+	
+<p>
+<li> 	In the German localization,  menu
+	items to set the PDF display mode were mislabeled, and check
+	marks in this menu didn't work. Both problems are fixed.
+	
+<p>
+<li>  Herb Schulz fixed a bug in Command Completion. When multiple
+	windows were open, command completion in one window could interfere with command completion
+	in another window. This problem is fixed.
+	
+
+</ul>
+
+
+<P><h3>TeXShop Changes 3.08</h3></P>
+
+<ul>
+<li> Fixed a bug when double clicking on a left  brace. This click again selects the text between this
+brace and its matching right brace.
+
+<p>
+<li>  "TeXShop Tips & Tricks" is updated slightly.
+
+</ul>
+
+<P><h3>TeXShop Changes 3.07</h3></P>
+
+<ul>
+
+<li>  TeXShop is now signed, as required in Mountain Lion. See the Gatekeeper
+documentation at http://www.apple.com/macosx/mountain-lion/features.html#gatekeeper.
+
+<p>
+<li> The "Sparkle" update mechanism now works with versions of TeXShop in the
+Lion series, 3.00 and higher.
+
+<p>
+<li> Herb Schulz' "TeXShop Tips & Tricks" was updated to version 0.5.3
+
+<p>
+<li> LatexMk was updated to version 4.31. This version of Latexmk  
+creates a file list named "file.fls", which helps latexmk keep
+track of all file dependencies. The TrashAUX command has been
+extended to remove files with this extension.
+
+<p>
+<li> pdflatexmk is now one of the default engines. Only new users will
+notice this change.
+
+<p>
+<li> TeXShop now creates a ~/Library/TeXShop/Documents folder containing 
+important documents. Currently many are duplicated from elsewhere in 
+~/Library/TeXShop, but this will be the spot to look in the future. 
+
+<p>
+<li>  New TeXShop releases will automatically update the Documents folder, just
+as they now automatically update 
+bin, Engines/inactive, and scripts.
+
+<p> 
+<li> In the German localization, there was a bug in the Preview  Preferences
+for "Default page style." The buttons for 
+"Double Sided" and "Single Sided, Continuous" were reversed,
+ so they didn't do what they claimed to do. This is fixed.
+ 
+ <p>
+ <li> TeXShop contains  the latest customized OgreKit by Yusuke Terada. As in TeXShop
+3.06, this pane uses the same font as TeXShop source windows. Moreover,
+syntax coloring, parenthesis match highlighting, command completion, showing invisible characters and so on 
+work in the OgreKit Panel. However, 
+KeyBinding (AutoCompletion) is disabled in this OgreKit, as requested by
+a number of users in the TeX on OS X mailing list.
+
+<p>
+<li> Yusuke Terada also made the following changes:
+
+<ul>
+	<li> Double clicking on one of the end characters of a
+	"<" ...  ">"   pair selects both ends and all characters in between.
+
+	<p> <li> If the hidden preference MakeatletterEnabled is YES, 
+	selection of sequences containing  '@' by double-clicking is supported.
+	An example is "  \@latex@error" 
+	
+
+	<p> <li> A small number of crashes were isolated and repaired
+
+	<p> <li> "Show Full Path" is improved on Lion, if chosen by the
+	user in an optional tool bar item for the source window
+
+	<p> <li> As before, if text is selected and the "comment" item
+	is chosen, the entire paragraph containing the selection is
+	commented out. But now the text selection is preserved. This also
+	works with the "indent" command.
+
+	<p> <li> When the source window was active and split and a file was drag-and-dropped
+	to the bottom view, the action did not work. Now it does. 
+
+	<p> <li> AppleScript macros are now saved with UTF8 encoding, so scripts
+	can be written containing Japanese and other languages. This required
+	a small modification in the "ScriptRunner" program which runs scripts
+	which start with --applescript rather than --applescript direct.
+</ul>
+
+
+</ul>
 
 
 

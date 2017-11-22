@@ -1548,6 +1548,7 @@ failed. If you change the code below, be sure to test carefully!
 // update "currentPage" text field on scroll or move--used only in Multi/Double page
 - (void)updateCurrentPage
 {
+    
 	NSPoint thePoint;
 	NSRect visRect;
 	NSInteger pageNumber;

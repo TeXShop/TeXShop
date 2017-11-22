@@ -128,6 +128,8 @@
 @property           BOOL                            toolbarFind;
 @property           NSInteger                       handlingLink; // 0 = NO, 1 = Possible, 2 = ShowingLink
 @property           NSInteger                       timerNumber; // 0 <= timerNumber <= 100
+@property           NSRect                          olderVisibleRect;
+@property (retain)  NSTimer                         *updatePageNumberTimer;
 
 
 // - (void) scheduleAddintToolips;

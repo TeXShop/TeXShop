@@ -246,6 +246,7 @@ NSString *IndexColorStartKey = @"IndexColorStart";
 NSString *spellingLanguageDefaultKey = @"SpellingLanguageDefault";
 NSString *spellingAutomaticDefaultKey = @"SpellingAutomaticDefault";
 NSString *originalSpellingKey = @"OriginalSpelling";
+NSString *continuousHighSierraFixKey = @"ContinuousHighSierraFix";
 
 
 // Paths

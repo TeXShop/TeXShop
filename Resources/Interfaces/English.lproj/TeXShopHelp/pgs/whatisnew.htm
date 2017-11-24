@@ -15,6 +15,29 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.92</h5></P>
+
+<ul>
+
+<li> High Sierra has a bug which breaks updating the pageNumber field when scrolling in the Preview Window.
+TeXShop 3.91 has a workaround for this bug, but the workaround broke the ability to enter a new page number and go there. This is fixed. After going to a new page, click once in the pdf content region to activate page updates during scrolling.
+
+<p>
+<li> TeXShop has two magic lines to activate tabs. The first, "useTabs", automatically adds "include" files as tabs, while the second, "useTabsWithFiles", gives the author much tighter control over which source files to use as tabs. 
+
+<p> Tommaso Pecorella wrote asking that the first command also automatically add "input" files as tabs. The reason I didn't do this at first is that the syntax for "input" allows situations that aren't really appropriate for tabs. For example, a source that is "input" can itself "input" other files. Some authors break the source into hundreds of pieces, inputting these pieces as necessary.
+
+<p> So whether the request is appropriate or not depends on the writing style of the user.  
+In TeXShop 3.92, the "useTabs" command will also create tabs for "input" files, but only if the user activates this feature with a hidden preference:
+<pre>
+     defaults write TeXShop TabsAlsoForInputFiles YES
+</pre>
+
+
+
+</ul>
+
+
 <P><h5>TeXShop Changes 3.90 and 3.91</h5></P>
 
 Version 3.90 was never released. Version 3.91 has the following changes:
@@ -59,23 +82,22 @@ framework. In this style of programming, duties are shared between the programme
 the API. In particular, one object, named "PDFView" in the API, displays and scrolls pdf
 documents automatically without programmer intervention. Handling scrolling this way
 is important since there are mice, and smart mice, and portable track pads, and stand
-alone track pads, and gestures, and so forth, so if the duty of responding to them
+alone track pads, and gestures, and so forth. If the duty of responding to them
 fell to the programmer, who doesn't
-even own most of these devices, nothing would work.
+even own many of these devices, nothing would work.
 
 <p>
 TeXShop interacts with the PDFView object by sending it "messages." For instance, one message
 says to switch from single page mode to continuous page mode.
 
 <p> 
-But what if the PDFView has to interact with TeXShop?  Apple programmers don't know the messages understood by TeXShop, so they cannot messages to TeXShop.
-
-The answer is that Cocoa objects can post "notifications". These notifications are fixed by the API; a programmer
+But what if the PDFView has to interact with TeXShop?  Apple programmers don't know the messages understood by TeXShop, so they cannot send messages to TeXShop.
+The answer is that Cocoa objects can post "Notifications". These notifications are fixed by the API; a programmer
 cannot extend them. One crucial notification posted by PDFView is called 
 	"PDFViewPageChanged".
 
 <p>
-These notifications go to a "notification center" in Cocoa. Programs can ask this center to be called
+These notifications go to a "Notification Center" in Cocoa. Programs can ask this center to be called
 whenever a particular kind of notification arrives. TeXShop asks the notification center to be notified
 when PDFViewPageChanged is sent, and it then updates the Page TextField.
 
@@ -134,12 +156,11 @@ Sierra, the PDF display object sets up a timer to update the pageNumber box once
 <p> 
  And then memory prices went down, and 8-bit color became 32-bit color and the color management software vanished. If you lived through those days, as I did, you probably feel that all the time spent on color management was time wasted. I recently discovered that new hires in the mathematics department who know much more than I do about computers have never heard of programmable color tables.
  
- <p> With apologies to those dealing with the problem, I think the fuzzy display problem is a repeat of the 8-bit color situation. The problem has gone away for the majority of users, it will slowly go away for the rest of users, and it now longer makes sense to expect Apple engineers to deal with it. Sorry. 
+ <p> With apologies to those dealing with the problem, I think the fuzzy display problem is a repeat of the 8-bit color situation. The problem has gone away for the majority of users, it will slowly go away for the rest of users, and it no longer makes sense to expect Apple engineers to deal with it. Sorry. 
  
  </ul>
 
 </ul>
-
 
 <P><h5>TeXShop Changes 3.89</h5></P>
 

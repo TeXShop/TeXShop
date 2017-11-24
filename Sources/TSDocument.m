@@ -4327,6 +4327,7 @@ if (! useFullSplitWindow) {
     NSWindow    *windowToTab;
     NSString    *theExtension;
     BOOL        directory;
+    BOOL        found;
     
     if ((! self.useTabs) && (! self.useTabsWithFiles))
         return;
@@ -4344,7 +4345,8 @@ if (! useFullSplitWindow) {
     
     theLength = [content length];
     
-    if ((theLength < 20000) && (self.useTabs))
+    if (self.useTabs)
+   // if ((theLength < 20000) && (self.useTabs))
         {
             myRange.location = 0;
             myRange.length = 1;
@@ -4359,12 +4361,28 @@ if (! useFullSplitWindow) {
                 includeString = [content substringWithRange: theRange];
                 includeString = [includeString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
                 
+                found = NO;
                 includeRange = [includeString rangeOfString:@"\\include{"];
                 if ((includeRange.location != NSNotFound) && (includeRange.location == 0))
                     {
+                        // NSLog(@"found include");
+                        found = YES;
                         includeRange.location = includeRange.location + 9;
                         includeRange.length = theRange.length - 9;
-                        if (includeRange.length > 0)
+                    }
+                else if ([SUD boolForKey:tabsAlsoForInputFilesKey]) {
+                    // NSLog(@"SUD found");
+                    includeRange = [includeString rangeOfString:@"\\input{"];
+                    if ((includeRange.location != NSNotFound) && (includeRange.location == 0))
+                    {
+                        found = YES;
+                        // NSLog(@"got input");
+                        includeRange.location = includeRange.location + 7;
+                        includeRange.length = theRange.length - 7;
+                    }
+                }
+                    if (found) {
+                           if (includeRange.length > 0)
                         {
                             newIncludeString = [includeString substringWithRange: includeRange];
                              newIncludeRange = [includeString rangeOfString:@"}"];

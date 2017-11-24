@@ -979,7 +979,9 @@
           
     if ((pageStyle != PDF_MULTI_PAGE_STYLE) && (pageStyle != PDF_DOUBLE_MULTI_PAGE_STYLE))
         return;
-
+    
+     if ([self.myPDFWindow firstResponder] != self)
+        return;
     
     myVisiblePages = [self visiblePages];
     numberOfPages = [myVisiblePages count];

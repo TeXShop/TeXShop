@@ -460,6 +460,7 @@ extern NSString *spellingLanguageDefaultKey;
 extern NSString *spellingAutomaticDefaultKey;
 extern NSString *originalSpellingKey;
 extern NSString *continuousHighSierraFixKey;
+extern NSString *tabsAlsoForInputFilesKey;
 
 
 // end defaults

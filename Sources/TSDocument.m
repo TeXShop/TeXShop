@@ -1286,31 +1286,88 @@ if (! skipTextWindow) {
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
 {
 	NSView				*oldAccessoryView;
- 
+  
+     if (! atLeastHighSierra)
+     {
+        // Create the contents of the encoding menu on the fly
+        [openSaveBox removeAllItems];
+        [[TSEncodingSupport sharedInstance] addEncodingsToMenu:[openSaveBox menu] withTarget:0 action:0];
+        
+        // Select active encoding
+        [openSaveBox selectItemWithTag: _encoding];
+        
+        // Get the active accessory view.
+        oldAccessoryView = [savePanel accessoryView];
+        
+        // We now loop over all items in the existing accessory view, and add them to
+        // our new accessory view. This is apparently needed to get the file type popup
+        // to show up -- but I can't seem to find any official documentation which
+        // confirms this, which is kinda odd...
+        NSEnumerator *enumerator1 = [[oldAccessoryView subviews] objectEnumerator];
+        id    anObject1;
+        while ((anObject1 = [enumerator1 nextObject]))
+            [openSaveView addSubview: anObject1];
+         [savePanel setAccessoryView: openSaveView];
+        return YES;
+    }
+    
+    else
+   
+        
+    {
 
 	// Create the contents of the encoding menu on the fly
-	[openSaveBox removeAllItems];
-	[[TSEncodingSupport sharedInstance] addEncodingsToMenu:[openSaveBox menu] withTarget:0 action:0];
+	[openSaveBoxHS removeAllItems];
+	[[TSEncodingSupport sharedInstance] addEncodingsToMenu:[openSaveBoxHS menu] withTarget:0 action:0];
 
 	// Select active encoding
-	[openSaveBox selectItemWithTag: _encoding];
+	[openSaveBoxHS selectItemWithTag: _encoding];
+
 
 	// Get the active accessory view.
-	oldAccessoryView = [savePanel accessoryView];
+    theSavePanel = savePanel;
+    oldAccessoryView = [savePanel accessoryView];
+    NSArray *theViews = [oldAccessoryView subviews];
+    NSArray *moreViews = [theViews[0] subviews];
+    NSTextField *theLabel = moreViews[0];
+    NSPopUpButton *theButton = moreViews[1];
+    NSArray *theItems = [theButton itemArray];
+    NSArray *theItemTitles = [theButton itemTitles];
+    [saveFormatMenu removeAllItems];
+    NSInteger i;
+    for (i = 0; i < [theItems count]; i++)
+        [saveFormatMenu addItemWithTitle: theItemTitles[i]];
+    NSInteger theIndex = [theButton indexOfSelectedItem];
+    [saveFormatMenu selectItemAtIndex: theIndex];
+    [saveFormatMenu synchronizeTitleAndSelectedItem];
+    
+    // NSArray *myFileTypes = [NSArray arrayWithObject: @"sty"];
+    // savePanel.allowedFileTypes = myFileTypes;
+    // [savePanel setRequiredFileType:@"sty"];
+    
+     /*
+    for (i = 0; i < [theItems count]; i++)
+    {
+        [saveFormatMenu itemAtIndex:i].target = [(NSMenuItem *)theItems[i] target];
+        [saveFormatMenu itemAtIndex: i].action = [(NSMenuItem *)theItems[i] action];
+    }
+    // saveFormatMenu.target = theButton.target;
+    // saveFormatMenu.action = theButton.action;
+    */
+    
+    [saveFormatLabel takeStringValueFrom: theLabel];
+    [savePanel setAccessoryView: openSaveViewHS];
+    return YES;
 
-	// We now loop over all items in the existing accessory view, and add them to
-	// our new accessory view. This is apparently needed to get the file type popup
-	// to show up -- but I can't seem to find any official documentation which 
-	// confirms this, which is kinda odd...
-	NSEnumerator *enumerator = [[oldAccessoryView subviews] objectEnumerator];
-	id	anObject;
-	while ((anObject = [enumerator nextObject]))
-		[openSaveView addSubview: anObject];
+    }
+    
+ 
+}
 
-//	[openSaveView retain];	// FIXME: Why is this retain needed?
-
-	[savePanel setAccessoryView: openSaveView];
-	return YES;
+- (IBAction)setSaveExtension: sender
+{
+    NSInteger theIndex = [sender indexOfSelectedItem];
+    [theSavePanel setRequiredFileType:fileExtensions[theIndex]];
 }
 
 /* A user reported that while working with an external editor, he quit TeXShop and was

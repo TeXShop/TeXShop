@@ -15,6 +15,59 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.93 and 3.94</h5></P>
+
+Version 3.93 was never released. The main purpose of release 3.94 is to fix crucial bugs in TeXShop running on High Sierra. Here are the bugs:
+
+<ul> 
+<li> After each typesetting job, there is a momentary flash in the preview window before the new version appears. This flash is caused because Mac OS draws the background of the page before the actual page is ready to draw. I tend to typeset after every few sentences, and this bug was so distracting that I avoided switching to High Sierra until now.
+
+<p>
+<li> Scrolling with a gesture or the mouse in the preview window while in multi-page or double-multi-page modes does not update the Page Number in the preview toolbar.
+
+<p>
+<li> If a tabbed source or preview window is split, the split bar is much lower than usual and cannot be moved.
+
+<p>
+<li> In previous versions of Mac OS, the TeXShop Save Panel  has two accessories at the bottom, one to select encoding and one to select file type. But in High Sierra, these are missing in expanded mode. Moreover, the main display in this mode is "flaky"; sometimes it covers the panel and sometimes it is restricted to only three or four lines.
+
+<p>
+<li> The preview window drawer shows a document outline in the top portion, and a search box and search results in the lower portion. The outline only appears when the hyperref package is used; otherwise the area is blank. 
+When the outline exists, the lower portion shows search results in two columns. The first lists the word or phrase being searched, and the second lists the outline section where the word or phrase was found. But in High Sierra, all second column entries are equal. The program gets "stuck" on one, and continues to list it for all entries.
+</ul>
+
+<p> After High Sierra was released, I dutifully noted these bugs and reported many of them to Apple developer support. Then I sat back and waited for fixes. The third entry was indeed fixed in High Sierra 10.13.2, but the other entries are still outstanding. However, unexpected behavior in a new version of Mac OS can have several causes. In some cases, TeXShop might have "shady code" which happened to work in earlier systems but was never really correct. In other cases, the problem could be an Apple bug. The most interesting situations occur when Apple rewrites code to improve the experience of most users, but that code breaks features of TeXShop and cannot be repaired.
+
+<p> All of the bugs  above are  fixed in TeXShop 3.94. Some of these fixes require new program logic. In these cases, the fix only runs on High Sierra and above, while the old code is still used on earlier systems to avoid problems on these systems. 
+
+<p> Because these fixes solve almost all High Sierra problems, I intend to move over to that system immediately after TeXShop 3.94 is released. 
+
+<p> There is one additional feature in 3.94. John Collins updated latexmk to version 4.54c, which fixes a problem with the previous version of latexmk. That version required a recent version of Perl and failed for users with an older version of OS X. The new version should work on all versions of OS X supported by TeXShop 3.94.
+
+<p> The rest of this report explains the fixes of the five bugs for those who are interested. Rather than taking them in order, I'll leave the most interesting case until last. The third item was indeed an Apple bug, and was recently fixed. The fourth item was fixed in TeXShop 3.91. I do not  know if the cause was an Apple bug, so the workaround might eventually be removed or improved.
+
+<p> I found a workaround for the fifth bug. There are two useful pieces of information which could be placed in the second column of the search list. This column could display some of the surrounding text, or it could list the corresponding outline section. In High Sierra, TeXShop 3.94 shows surrounding text, and therefore avoids the bug. On earlier systems, TeXShop 3.94 shows the corresponding outline section if an outline is present, because those systems don't have this bug. But if no outline is present, TeXShop 3.94 shows surrounding text, rather than leaving the second column blank.
+
+<p> This brings us to the second bug, which was not an Apple bug at all but instead "shady code" in earlier versions of TeXShop. The Save Panel is mostly handled by Cocoa automatically. But programmers are allowed to provide an "accessory view" which will appear just above the buttons at the bottom, and extend features of the panel. If the programmer does not provide this accessory view, Apple provides one, showing a Popup Menu allowing the user to select the File Format of the saved file, which is essentially its extension.
+
+<p> TeXShop wants two Popup Menus in this view, one to choose the encoding of the file, and the other to choose its extension. Most users rightly ignore these popups, but they are useful in special cases. Creating an accessory view, and adding an "Encoding Popup Menu" are straightforward tasks. But Apple has already created the  "File Format Popup Menu" and it is just a matter of grabbing their popup and adding it to our accessory view. Earlier versions of TeXShop contain ingenious code to do just that. Another word for "ingenious" is "shady." Unfortunately, the first reaction on rereading that code is "would that even work?"
+The answer is that it works in Sierra but not in High Sierra. It has been replaced with much more straightforward code. A Google search shows that other programmers faced the same problem and selected the straightforward approach rather than the shady one.
+
+<p> Finally, we come to the "flash after typesetting" bug, which was for me the most important problem. This problem turns out to be caused by a reworking of the Mac OS code to render pdf files. The new Apple code will render large documents with greater speed, but a consequence is an unavoidable flash if a pdf file is opened and immediately repositioned to the center of the document. Let's face it, that is an unusual operation <em> unless you are editing and typesetting a TeX document.</em> Unfortunately, the flash is a problem that Apple cannot solve.
+
+<p> However, TeXShop can solve the flash problem. Here's how that works. In Cocoa, "NSView" objects correspond to rectangular portions of the screen; these view objects know how to draw themselves. NSView objects can be layered, and in that case the top layer obscures lower layers unless the top layer is transparent. 
+
+<p> After typesetting is complete and just before switching to the new version of the pdf file, TeXShop 3.94 takes a snapshot of the screen. It then creates a NSView exactly the size of the old pdf view in the Preview window, and places this view on top of the old view. The new view draws by showing the appropriate portion of the screen snapshot. Then the preview window is loaded with the new pdf view, which draws, flash and all. But we see nothing because the drawing is obscured by the NSView on top. Exactly one second later, the top NSView is removed, showing the new pdf underneath. 
+
+<p> You might think that adding and removing this View would provide additional flashes, but such view manipulations have been a part of Cocoa since the beginning and the system is optimized to make such manipulations invisible.
+
+<p> This method depends strongly on the technique to get a snapshot of the screen. Many such techniques are available, but do not work well. For instance, I first tried a technique which obtained the pdf data to draw a portion of the screen. When this data was redrawn, font weights changed, and the screen became blurred for that one second interval. Google led me to the code now used to get that snapshot, and that open source code works like a charm. See the source for details.
+
+<p> There are a couple of possible problems with this fix, which users ought to know about. If you have several monitors, I do not know if the screen snapshot will provide the correct image. My High Sierra machine has only one monitor. I also don't know if one second is enough time to avoid the flash. It is for me, but my machine is quite fast.
+So in case of problems, please write.
+
+
+
 <P><h5>TeXShop Changes 3.92</h5></P>
 
 <ul>

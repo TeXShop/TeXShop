@@ -132,7 +132,9 @@ enum RootCommand
 	IBOutlet NSPanel			*extensionPanel;
 	IBOutlet NSTextField		*extensionResult;
 	IBOutlet NSPopUpButton		*openSaveBox;		// TODO: Rename this to 'encodingPopUp' (don't forget to update the NIBs)
+    IBOutlet NSPopUpButton      *openSaveBoxHS;
 	IBOutlet NSView				*openSaveView;
+    IBOutlet NSView             *openSaveViewHS;
 	IBOutlet NSPanel			*linePanel;
 	IBOutlet NSTextField		*lineBox;
 	IBOutlet NSButton			*typesetButton;
@@ -183,6 +185,11 @@ enum RootCommand
     IBOutlet    NSControl       *uLog;
     IBOutlet    NSControl       *vLog;
     IBOutlet    NSControl       *wLog;
+    
+    IBOutlet    NSTextField     *saveFormatLabel;
+    IBOutlet    NSPopUpButton   *saveFormatMenu;
+    NSSavePanel                 *theSavePanel;
+  
     
     
     NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
@@ -437,6 +444,8 @@ enum RootCommand
 @property           BOOL        scrapDVI;
 @property           BOOL        syntaxColor;
 
+
+ - (IBAction)setSaveExtension: sender;
 
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;

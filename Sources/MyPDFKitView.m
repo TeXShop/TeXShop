@@ -510,17 +510,78 @@
     
 }
 
+// The code below is a crucial routine used to fix the "flash after typesetting" bug in High Sierra and beyond.
+// The idea of the fix is to add an extra transparent view on top of the PDFView just before switching to the
+// new version of the pdf document. This transparent view then shows an Image of the old contents of the PDFView.
+// While the PDFView switches to the new document, there are flashes, but they are not visible to the user because
+// the extra view hides them. After a second, the new view is removed and the new contents underneath appear to the
+// user without a flash.
+//
+// So a key step is to obtain and Image containing the contents of the PDFView before the switch. Several methods
+// are possible, including a call to write to data a PDF representation of these contents, But these alternate
+// versions don't work well; for instance, the imaging of the PDF representation doesn't match the original image.
+// What is needed is a bitmap of the image, but standard ways to obtain this bitmap didn't seem to work.
+//
+// Then I found the code below, which works beautifully. This code comes from stackoverflow, specifically
+//
+// https://stackoverflow.com/questions/11948241/cocoa-how-to-render-view-to-image
+//
+// The basic code was provided by "Remizorrr", who actual name is hidden, in August of 2012.
+//
+// In July of 2013, Darren Wheatley edited the code to work with multiple monitors. The routine below is his
+// version of the code.
+//
+// Note that if the image fails in multiple monitor situations or other obscure situations, new methods can be
+// supplied, and only this one routine needs to be rewritten.
+
+- (NSImage *) screenCacheImageForView:(NSView*)aView
+{
+    NSRect originRect = [aView convertRect:[aView bounds] toView:[[aView window] contentView]];
+    
+    NSArray *screens = [NSScreen screens];
+    NSScreen *primaryScreen = [screens objectAtIndex:0];
+    
+    NSRect rect1 = originRect;
+    rect1.origin.y = 0;
+    rect1.origin.x += [aView window].frame.origin.x;
+    rect1.origin.y = primaryScreen.frame.size.height - [aView window].frame.origin.y - originRect.origin.y - originRect.size.height;
+
+    
+    CGImageRef cgimg = CGWindowListCreateImage(rect1,
+                                               kCGWindowListOptionIncludingWindow,
+                                               (CGWindowID)[[aView window] windowNumber],
+                                               kCGWindowImageDefault);
+    return [[NSImage alloc] initWithCGImage:cgimg size:[aView bounds].size];
+}
+
+
+
+
+// This file contains code for all myPDFKitView objects. In particular, if a window is split, then both portions use this code.
+// However, reShowWithPath below only runs for the top view, and reShowForSecond below only runs for the bottom view.
+//
+// The code below contains a fix for the "flash after typesetting" bug in High Sierra and beyond. The fix consists of adding a
+// transparent HideView on top of the PDFView. This view then shows an image of the old pdf before typesetting for one second,
+// while the view underneath flashes and then shows the new typeset version (but is invisible to the user). Then the HideView
+// is removed, revealing the new pdfFile
+//
+// Notice there are two instance variables for HideView1, on the top, and for HideView2, on the bottom. But actually the code
+// running for the top view of a split view will only set and use HideView1, and the code for the bottom view of a split view
+// will only set and use HideView2. In particular, the routines to remove HideView1 and HideView2 cannot be combined into just
+// one routine since only one variable will be known when the code runs.
 
 - (void) reShowWithPath: (NSString *)imagePath
 {
 	
-	PDFDocument	*pdfDoc, *oldDoc;
-	PDFPage		*aPage;
+	PDFDocument	        *pdfDoc, *oldDoc;
+	PDFPage		        *aPage;
 	NSInteger			theindex, oldindex;
-	BOOL		needsInitialization;
+	BOOL		        needsInitialization;
 	NSInteger			i, amount, newAmount;
-	PDFPage		*myPage;
-	NSData		*theData;
+	PDFPage		        *myPage;
+	NSData		        *theData;
+    NSRect              sizeRect;
+    NSBitmapImageRep    *myRep;
 
  	// A note below explains dangers of NSDisableScreenUpdates
     // but these dangers don't apply to Intel on recent systems.
@@ -561,7 +622,18 @@
 //		[_searchResults release];
 		_searchResults = NULL;
 	}
-			
+    
+if (atLeastHighSierra)
+{
+    NSView *myView = [[self documentView] enclosingScrollView];
+    sizeRect = [myView frame];
+    NSImage *myImage = [self screenCacheImageForView: myView];
+    self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
+    [self.myHideView1 setSizeRect: sizeRect];
+    self.myHideView1.originalImage = myImage;
+    [myView addSubview: self.myHideView1];
+}
+    
 	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 	if ([self doReleaseDocument]) {
 		// NSLog(@"texshop release");
@@ -627,6 +699,8 @@
 //	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
     visibleRect.origin.y = visibleRect.origin.y + difference - 1;
 	[[self documentView] scrollRectToVisible: visibleRect];
+    
+    
 
     
 //    NSLog(@"The index is %d", theindex);
@@ -668,7 +742,31 @@
 //	[self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
 //    if ([SUD boolForKey: FixPreviewBlurKey])
 //        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
+ 
+    if (atLeastHighSierra)
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(removeHideView1:)
+                                   userInfo:Nil
+                                    repeats:NO];
 }
+
+- (void)removeHideView1: (NSTimer *) theTimer
+{
+    if (self.myHideView1) {
+                [self.myHideView1 removeFromSuperview];
+                self.myHideView1 = nil;
+    }
+}
+
+- (void)removeHideView2: (NSTimer *) theTimer
+{
+    if (self.myHideView2) {
+        [self.myHideView2 removeFromSuperview];
+        self.myHideView2 = nil;
+    }
+}
+
 
 - (NSInteger)index
 {
@@ -726,6 +824,23 @@
 - (void) reShowForSecond
 {
 	PDFPage		*aPage;
+    NSRect      sizeRect;
+    
+    if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit))  {
+    
+    NSView *myView = [[self documentView] enclosingScrollView];
+    sizeRect = [myView  frame];
+    NSImage *myImage = [self screenCacheImageForView: myView];
+    self.myHideView2 = [[HideView alloc] initWithFrame: sizeRect];
+    [self.myHideView2 setSizeRect: sizeRect];
+    self.myHideView2.originalImage = myImage;
+    [myView addSubview: self.myHideView2];
+    }
+
+    
+    
+    
+    
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
     {
         [[self window] disableFlushWindow];
@@ -843,6 +958,14 @@
    // [self removeBlurringByResettingMagnification];
    [self fixWhiteDisplay];
  
+     if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit)) {
+         [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(removeHideView2:)
+                                   userInfo:Nil
+                                    repeats:NO];
+     }
+    
 }
 
 - (void) rotateClockwisePrimary
@@ -1021,10 +1144,10 @@
     PDFOutline      *outlineItem;
     
     newPageIndex = pageNumber + 1;
- 	[currentPage setIntegerValue:newPageIndex];
+ 	[currentPage0 setIntegerValue:newPageIndex];
     [scurrentPage setIntegerValue:newPageIndex];
 	[currentPage1 setIntegerValue:newPageIndex];
-    [currentPage display];
+    [currentPage0 display];
     [scurrentPage display];
     [currentPage1 display];
     
@@ -1261,13 +1384,13 @@
 	if (myPage > totalPages)
 		myPage = totalPages;
 
-	[currentPage setIntegerValue:myPage];
+	[currentPage0 setIntegerValue:myPage];
     [scurrentPage setIntegerValue:myPage];
 	[currentPage1 setIntegerValue:myPage];
-	[currentPage display];
+	[currentPage0 display];
     [scurrentPage display];
     
-	[[self window] makeFirstResponder: currentPage];
+	[[self window] makeFirstResponder: currentPage0];
 
 	myPage = myPage - 1;
 	aPage = [[self document] pageAtIndex: myPage];
@@ -1846,6 +1969,11 @@
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) theColumn
 		row: (NSInteger) rowIndex
 {
+    PDFPage *thePage;
+    PDFSelection *theSelection, *newSelection;
+    CGRect theBounds;
+    CGSize theSize;
+    
 	if (self != [self.myDocument topView])
 		return ([[self.myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);
 
@@ -1853,7 +1981,18 @@
 		if ([[theColumn identifier] isEqualToString: @"page"])
 			return ([[[[_searchResults objectAtIndex: rowIndex] pages] objectAtIndex: 0] label]);
 		else if ([[theColumn identifier] isEqualToString: @"section"])
-			return ([[[self document] outlineItemForSelection: [_searchResults objectAtIndex: rowIndex]] label]);
+        {
+            if ((atLeastHighSierra) || (! self.outline))
+            {
+            thePage = [[[_searchResults objectAtIndex: rowIndex] pages] objectAtIndex: 0];
+            theSelection = [_searchResults objectAtIndex: rowIndex];
+            theBounds = [theSelection boundsForPage: thePage];
+            theBounds.size.width = theBounds.size.width + 100;
+            newSelection = [thePage selectionForRect:theBounds];
+            return ([newSelection string]);
+            }
+           else return ([[[self document] outlineItemForSelection: [_searchResults objectAtIndex: rowIndex]] label]);
+        }
 		else
 			return NULL;
 		}

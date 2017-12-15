@@ -360,9 +360,9 @@ scroller position.
 			[self scrollPoint: topLeftPoint];
 			[totalPage setIntegerValue:1];
 			[totalPage1 setIntegerValue:1];
-			[currentPage setIntegerValue:1];
+			[currentPage0 setIntegerValue:1];
 			[currentPage1 setIntegerValue:1];
-			[currentPage display];
+			[currentPage0 display];
 			[[self superview] setPostsBoundsChangedNotifications: NO];
 		}
 	}
@@ -532,9 +532,9 @@ scroller position.
 	// update currentPage text field
 	if (newPageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
-		[currentPage setIntegerValue:pagenumber+1];
+		[currentPage0 setIntegerValue:pagenumber+1];
 				[currentPage1 setIntegerValue:pagenumber+1];
-		[currentPage display];
+		[currentPage0 display];
 	}
 	else
 	{
@@ -789,7 +789,7 @@ failed. If you change the code below, be sure to test carefully!
 	if ([[[self window] currentEvent] type] != NSKeyDown ||
 		[[[[self window] currentEvent] characters] isEqualToString: @"\t"])
 	{
-		if (control == currentPage)
+		if (control == currentPage0)
 		{
 			NSInteger pagenumber;
 			if (pageStyle == PDF_SINGLE_PAGE_STYLE)
@@ -1087,10 +1087,10 @@ failed. If you change the code below, be sure to test carefully!
 			if (pagenumber > 0) {
 				[self cleanupMarquee: YES];
 				pagenumber--;
-				[currentPage setIntegerValue:(pagenumber + 1)];
+				[currentPage0 setIntegerValue:(pagenumber + 1)];
 								[currentPage1 setIntegerValue:(pagenumber + 1)];
 				[self.myRep setCurrentPage: pagenumber];
-				[currentPage display];
+				[currentPage0 display];
 				[self display];
 				}
 			}
@@ -1107,10 +1107,10 @@ failed. If you change the code below, be sure to test carefully!
 								if (pagenumber > 0) {
 					[self cleanupMarquee: YES];
 					pagenumber--;
-					[currentPage setIntegerValue:(pagenumber + 1)];
+					[currentPage0 setIntegerValue:(pagenumber + 1)];
 										[currentPage1 setIntegerValue:(pagenumber + 1)];
 					[self.myRep setCurrentPage: pagenumber];
-					[currentPage display];
+					[currentPage0 display];
 					newVisible = myVisible;
 					newVisible.origin.y = 0;
 					[self scrollRectToVisible:newVisible];
@@ -1123,7 +1123,7 @@ failed. If you change the code below, be sure to test carefully!
 	else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 	{
 	//	pagenumber = [myRep currentPage];
-				pagenumber = [currentPage integerValue] - 1;
+				pagenumber = [currentPage0 integerValue] - 1;
 		if (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE )
 					switch (firstPageStyle) {
 						case PDF_FIRST_LEFT:
@@ -1170,10 +1170,10 @@ failed. If you change the code below, be sure to test carefully!
 		pagenumber = 0;
 		if (pagenumber != [self.myRep currentPage])
 			[self cleanupMarquee: YES];
-		[currentPage setIntegerValue:(pagenumber + 1)];
+		[currentPage0 setIntegerValue:(pagenumber + 1)];
 				[currentPage1 setIntegerValue:(pagenumber + 1)];
 		[self.myRep setCurrentPage: pagenumber];
-		[currentPage display];
+		[currentPage0 display];
 		[self display];
 	}
 	else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
@@ -1233,10 +1233,10 @@ failed. If you change the code below, be sure to test carefully!
 			if (pagenumber < ([self.myRep pageCount]) - 1) {
 				[self cleanupMarquee: YES];
 				pagenumber++;
-				[currentPage setIntegerValue:(pagenumber + 1)];
+				[currentPage0 setIntegerValue:(pagenumber + 1)];
 								[currentPage1 setIntegerValue:(pagenumber + 1)];
 				[self.myRep setCurrentPage: pagenumber];
-				[currentPage display];
+				[currentPage0 display];
 				[self display];
 				}
 			}
@@ -1252,10 +1252,10 @@ failed. If you change the code below, be sure to test carefully!
 				if (pagenumber < ([self.myRep pageCount]) - 1) {
 					[self cleanupMarquee: YES];
 					pagenumber++;
-					[currentPage setIntegerValue:(pagenumber + 1)];
+					[currentPage0 setIntegerValue:(pagenumber + 1)];
 										[currentPage1 setIntegerValue:(pagenumber + 1)];
 					[self.myRep setCurrentPage: pagenumber];
-					[currentPage display];
+					[currentPage0 display];
 					newVisible = myVisible;
 					newVisible.origin.y = (myBounds.size.height - myVisible.size.height);
 					[self scrollRectToVisible:newVisible];
@@ -1267,7 +1267,7 @@ failed. If you change the code below, be sure to test carefully!
 	else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
 	{
 		// pagenumber = [myRep currentPage];
-				pagenumber = [currentPage integerValue] - 1;
+				pagenumber = [currentPage0 integerValue] - 1;
 				if ((pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE ||
 				pageStyle == PDF_TWO_PAGE_STYLE))
 					switch (firstPageStyle) {
@@ -1302,10 +1302,10 @@ failed. If you change the code below, be sure to test carefully!
 		pagenumber = [self.myRep pageCount] - 1;
 		if (pagenumber != [self.myRep currentPage])
 			[self cleanupMarquee: YES];
-		[currentPage setIntegerValue:(pagenumber + 1)];
+		[currentPage0 setIntegerValue:(pagenumber + 1)];
 		[currentPage1 setIntegerValue:(pagenumber + 1)];
 		[self.myRep setCurrentPage: pagenumber];
-		[currentPage display];
+		[currentPage0 display];
 		[self display];
 	}
 	else // PDF_MULTI_PAGE_STYLE, PDF_DOUBLE_MULTI_PAGE_STYLE or PDF_TWO_PAGE_STYLE
@@ -1477,9 +1477,9 @@ failed. If you change the code below, be sure to test carefully!
 
 	if ((documentType == isTIFF) || (documentType == isJPG) || (documentType == isEPS))
 	{
-		[currentPage setIntegerValue:1];
+		[currentPage0 setIntegerValue:1];
 				[currentPage1 setIntegerValue:1];
-		[currentPage display];
+		[currentPage0 display];
 		return;
 	}
 	if (self.myRep == nil) return;
@@ -1487,13 +1487,13 @@ failed. If you change the code below, be sure to test carefully!
 		if (sender == currentPage1)
 				pagenumber = [currentPage1 integerValue];
 			else
-	pagenumber = [currentPage integerValue];
+	pagenumber = [currentPage0 integerValue];
 	if (pagenumber < 1) pagenumber = 1;
 	if (pagenumber > [self.myRep pageCount]) pagenumber = [self.myRep pageCount];
-	[currentPage setIntegerValue:pagenumber];
+	[currentPage0 setIntegerValue:pagenumber];
 		[currentPage1 setIntegerValue:pagenumber];
-	[currentPage display];
-		[[self window] makeFirstResponder: currentPage];
+	[currentPage0 display];
+		[[self window] makeFirstResponder: currentPage0];
 	if (pageStyle == PDF_SINGLE_PAGE_STYLE)
 	{
 		if (pagenumber != [self.myRep currentPage])
@@ -1522,9 +1522,9 @@ failed. If you change the code below, be sure to test carefully!
 
 	if (pageStyle == PDF_TWO_PAGE_STYLE && pagenumber/2 != [self.myRep currentPage]/2)
 		[self cleanupMarquee: YES];
-	[currentPage setIntegerValue:(pagenumber + 1)];
+	[currentPage0 setIntegerValue:(pagenumber + 1)];
 		[currentPage1 setIntegerValue:(pagenumber + 1)];
-	[currentPage display];
+	[currentPage0 display];
 	myBounds = [self bounds];
 	newVisible.size = [self visibleRect].size;
 	thePoint = [self pointForPage: pagenumber];
@@ -1562,9 +1562,9 @@ failed. If you change the code below, be sure to test carefully!
 	//thePoint.x += PAGE_SPACE_H;
 	//thePoint.y += visRect.size.height - PAGE_SPACE_V;
 	pageNumber = [self pageNumberForPoint: thePoint] + 1;
-	[currentPage setIntegerValue:pageNumber];
+	[currentPage0 setIntegerValue:pageNumber];
 		[currentPage1 setIntegerValue:pageNumber];
-	[currentPage display];
+	[currentPage0 display];
 
 	if (pageNumberWindow)
 	{

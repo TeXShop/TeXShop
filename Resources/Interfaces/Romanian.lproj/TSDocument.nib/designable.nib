@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="13771"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -50,7 +50,9 @@
                 <outlet property="nextButton" destination="392" id="397"/>
                 <outlet property="oLog" destination="qVW-sN-VAH" id="00l-1A-OWh"/>
                 <outlet property="openSaveBox" destination="497" id="560"/>
+                <outlet property="openSaveBoxHS" destination="Nf5-aZ-ece" id="T6u-Vo-t1H"/>
                 <outlet property="openSaveView" destination="494" id="515"/>
+                <outlet property="openSaveViewHS" destination="dpf-Cr-E52" id="1ab-W3-vgO"/>
                 <outlet property="outputText" destination="131" id="133"/>
                 <outlet property="outputWindow" destination="120" id="134"/>
                 <outlet property="pLog" destination="Pbg-o9-69O" id="Kza-9B-VEt"/>
@@ -70,6 +72,8 @@
                 <outlet property="requestWindow" destination="209" id="213"/>
                 <outlet property="rightView" destination="xok-BT-23I" id="j95-2x-paW"/>
                 <outlet property="sLog" destination="DI5-Rf-qKs" id="3nI-rC-BhM"/>
+                <outlet property="saveFormatLabel" destination="JqG-9Q-IX8" id="OfE-5X-MV5"/>
+                <outlet property="saveFormatMenu" destination="3rL-sX-elQ" id="NyF-nP-dU6"/>
                 <outlet property="scrapPDFKitView" destination="TTK-3D-cW9" id="8yx-yl-7mw"/>
                 <outlet property="scrapPDFWindow" destination="t9c-bW-e4k" id="Fqe-mh-7SF"/>
                 <outlet property="scrapTextView" destination="FEj-o2-dqq" id="kS8-k2-XbO"/>
@@ -202,13 +206,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="CMm-FI-fZM">
                             <rect key="frame" x="1" y="1" width="635" height="707"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <customView id="314" customClass="MyPDFView">
                                     <rect key="frame" x="0.0" y="0.0" width="625" height="692"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <connections>
-                                        <outlet property="currentPage" destination="368" id="384"/>
+                                        <outlet property="currentPage0" destination="368" id="dHI-N9-TbT"/>
                                         <outlet property="currentPage1" destination="469" id="607"/>
                                         <outlet property="imageTypePopup" destination="593" id="604"/>
                                         <outlet property="imageTypeView" destination="582" id="603"/>
@@ -225,11 +229,11 @@
                             </subviews>
                         </clipView>
                         <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="3910">
-                            <rect key="frame" x="1" y="693" width="620" height="15"/>
+                            <rect key="frame" x="1" y="692" width="635" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="0.95572519302368164" horizontal="NO" id="3909">
-                            <rect key="frame" x="621" y="1" width="15" height="692"/>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="3909">
+                            <rect key="frame" x="620" y="1" width="16" height="707"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
@@ -1540,7 +1544,7 @@ DQ
                                     <outlet property="_searchField" destination="755" id="UMw-Df-nmU"/>
                                     <outlet property="_searchProgress" destination="760" id="856"/>
                                     <outlet property="_searchTable" destination="757" id="887"/>
-                                    <outlet property="currentPage" destination="686" id="858"/>
+                                    <outlet property="currentPage0" destination="686" id="MwG-90-f1p"/>
                                     <outlet property="currentPage1" destination="816" id="872"/>
                                     <outlet property="imageTypePopup" destination="593" id="877"/>
                                     <outlet property="imageTypeView" destination="582" id="878"/>
@@ -1566,7 +1570,7 @@ DQ
                                 <connections>
                                     <outlet property="_drawer" destination="739" id="2864"/>
                                     <outlet property="_searchTable" destination="757" id="3388"/>
-                                    <outlet property="currentPage" destination="686" id="2542"/>
+                                    <outlet property="currentPage0" destination="686" id="EPK-ma-fO7"/>
                                     <outlet property="currentPage1" destination="816" id="3722"/>
                                     <outlet property="imageTypePopup" destination="593" id="2763"/>
                                     <outlet property="imageTypeView" destination="582" id="2762"/>
@@ -2271,6 +2275,77 @@ Gw
                 <outlet property="myDocument" destination="-2" id="uqN-Ac-zHz"/>
             </connections>
         </window>
+        <customView id="dpf-Cr-E52" userLabel="OpenSaveHS">
+            <rect key="frame" x="0.0" y="0.0" width="359" height="80"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="76o-WZ-mFx">
+                    <rect key="frame" x="12" y="45" width="82" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Encoding:" id="T1l-HO-ax1">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="Nf5-aZ-ece">
+                    <rect key="frame" x="96" y="39" width="246" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="abw-TZ-O8t" id="G9S-ua-hnm">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="BCT-l0-1ai">
+                            <items>
+                                <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="abw-TZ-O8t"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="DVF-in-n7j">
+                    <rect key="frame" x="96" y="6" width="246" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Ojh-xd-X28" id="fZK-rF-Zo8">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="bkY-DF-8kA">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="Ojh-xd-X28"/>
+                                <menuItem title="Item 2" id="fg9-pm-xH5"/>
+                                <menuItem title="Item 3" id="ruX-oW-7hx"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="JqG-9Q-IX8">
+                    <rect key="frame" x="10" y="11" width="82" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="File Type:" id="yNz-ap-SQh">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="3rL-sX-elQ">
+                    <rect key="frame" x="96" y="6" width="246" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="EwC-tH-4X9" id="9al-kG-dCl">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="qDi-nf-DSr">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="EwC-tH-4X9"/>
+                                <menuItem title="Item 2" id="Ypy-2l-3DK"/>
+                                <menuItem title="Item 3" id="VNc-np-4rv"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="setSaveExtension:" target="-2" id="RVX-DI-pHt"/>
+                    </connections>
+                </popUpButton>
+            </subviews>
+            <point key="canvasLocation" x="73" y="-660"/>
+        </customView>
     </objects>
     <resources>
         <image name="BackAdorn" width="11" height="13"/>

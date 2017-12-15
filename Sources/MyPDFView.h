@@ -29,7 +29,7 @@
 
 @interface MyPDFView : NSView
 {
-IBOutlet		id                  currentPage;
+IBOutlet		id                  currentPage0;
 IBOutlet		id                  totalPage;
 IBOutlet		id                  myScale;
 IBOutlet		id                  myStepper;

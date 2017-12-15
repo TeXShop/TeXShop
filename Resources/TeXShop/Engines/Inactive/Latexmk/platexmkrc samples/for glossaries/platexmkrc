@@ -1,3 +1,17 @@
+# Custom dependencies and rules for glossaries package
+# if you make custom glossaries you may have to add items
+# to the @cus_dep_list (dependencies) and corresponding sub-routines (rules)
+# NOTE: in these cases the custom dependencies are already defined so only the `rules' need be changed
+#add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
+		sub makeglo2gls {
+				my ($name, $path) = fileparse($$Psource);
+				return system("makeglossaries -d '$path' '$name'");
+		};
+add_cus_dep('acn', 'acr', 0, 'makeacn2acr');
+		sub makeacn2acr {
+				my ($name, $path) = fileparse($$Psource);
+				return system("makeglossaries -d '$path' '$name'");
+		}
 # custom dependencies for glossary-lipsum-examples.tex
 add_cus_dep('glo2', 'gls2', 0, 'makeacn2acr');
 add_cus_dep('glo3', 'gls3', 0, 'makeacn2acr');

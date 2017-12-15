@@ -27,10 +27,11 @@
 #import <AppKit/NSEvent.h>
 #import "OverView.h"
 #import "TSDocument.h"
+#import "HideView.h"
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
-                    IBOutlet	id								currentPage;
+                    IBOutlet	id								currentPage0;
     // "currentPage" is a very dangerous choice, because the PDFView class has a method called 'currentPage"
     // used by our code. But the instance variable holds the 'current page textbox' Luckily, the class has no
     // [self currentPage] method returning this variable. Therefore, all uses like [currentPage setValue:19]
@@ -130,6 +131,8 @@
 @property           NSInteger                       timerNumber; // 0 <= timerNumber <= 100
 @property           NSRect                          olderVisibleRect;
 @property (retain)  NSTimer                         *updatePageNumberTimer;
+@property (retain)  HideView                        *myHideView1;
+@property (retain)  HideView                        *myHideView2;
 
 
 // - (void) scheduleAddintToolips;

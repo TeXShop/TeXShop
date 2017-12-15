@@ -526,6 +526,7 @@ extern NSInteger					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
+extern NSArray*         fileExtensions; /*" Used by SaveAs Panel; "*/
 extern BOOL				fromMenu;
 extern BOOL             doAutoSave;
 extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes

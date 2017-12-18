@@ -73,7 +73,7 @@ IBOutlet		id                  myStepper1;
 @property (unsafe_unretained) TSDocument       *myDocument;
 @property (retain) NSTimer          *selRectTimer;
 @property (retain) NSColor          *pageBackgroundColor;
-@property (retain) OverView                        *overView;
+@property (retain) OverView         *overView;
 
 // set up the view
 - (void) setImageType: (NSInteger)theType;

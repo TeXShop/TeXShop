@@ -133,6 +133,9 @@
 @property (retain)  NSTimer                         *updatePageNumberTimer;
 @property (retain)  HideView                        *myHideView1;
 @property (retain)  HideView                        *myHideView2;
+@property BOOL                                      PDFFlashFix;
+@property double                                    PDFFlashDelay;
+
 
 
 // - (void) scheduleAddintToolips;

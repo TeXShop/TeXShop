@@ -153,11 +153,19 @@
 
 - (void) initializeDisplay
 {
+    double tempDelay;
     
     protectFind = NO;
     self.handlingLink = 0;
     self.timerNumber = 0;
     self.oneOffSearchString = NULL;
+    self.PDFFlashFix = [SUD boolForKey: FlashFixKey];
+    tempDelay = [SUD doubleForKey: FlashDelayKey];
+    if (tempDelay < 0.0)
+        tempDelay = 0.0;
+    if (tempDelay > 2.0)
+        tempDelay = 2.0;
+    self.PDFFlashDelay = tempDelay;
     
     
     // The initial Sierra beta had horrible scrolling, which the line below fixed
@@ -312,6 +320,8 @@
 												 name: PDFViewPageChangedNotification object: self];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scaleChanged:)
 												 name: PDFViewScaleChangedNotification object: self];
+
+    
     
 	// Find notifications.
     /*
@@ -623,7 +633,7 @@
 		_searchResults = NULL;
 	}
     
-if (atLeastHighSierra)
+if ((atLeastHighSierra) && self.PDFFlashFix)
 {
     NSView *myView = [[self documentView] enclosingScrollView];
     sizeRect = [myView frame];
@@ -743,8 +753,8 @@ if (atLeastHighSierra)
 //    if ([SUD boolForKey: FixPreviewBlurKey])
 //        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
  
-    if (atLeastHighSierra)
-        [NSTimer scheduledTimerWithTimeInterval:1.0
+    if ((atLeastHighSierra) && self.PDFFlashFix)
+        [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
                                      target:self
                                    selector:@selector(removeHideView1:)
                                    userInfo:Nil
@@ -826,7 +836,7 @@ if (atLeastHighSierra)
 	PDFPage		*aPage;
     NSRect      sizeRect;
     
-    if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit))  {
+    if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix)  {
     
     NSView *myView = [[self documentView] enclosingScrollView];
     sizeRect = [myView  frame];
@@ -958,8 +968,8 @@ if (atLeastHighSierra)
    // [self removeBlurringByResettingMagnification];
    [self fixWhiteDisplay];
  
-     if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit)) {
-         [NSTimer scheduledTimerWithTimeInterval:1.0
+     if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) & self.PDFFlashFix) {
+         [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
                                      target:self
                                    selector:@selector(removeHideView2:)
                                    userInfo:Nil

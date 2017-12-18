@@ -248,6 +248,9 @@ NSString *spellingAutomaticDefaultKey = @"SpellingAutomaticDefault";
 NSString *originalSpellingKey = @"OriginalSpelling";
 NSString *continuousHighSierraFixKey = @"ContinuousHighSierraFix";
 NSString *tabsAlsoForInputFilesKey = @"TabsAlsoForInputFiles";
+NSString *FlashFixKey = @"FlashFix";
+NSString *FlashDelayKey = @"FlashDelay";
+
 
 
 // Paths

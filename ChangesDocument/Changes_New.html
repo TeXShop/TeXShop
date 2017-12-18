@@ -13,6 +13,28 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 3.95</h3></P>
+
+In High Sierra when previewing in "multipage mode", each typesetting job caused a flash in the Preview window before  new material appeared. I found this behavior so disturbing that I didn't update to High Sierra until this week. TeXShop  3.94 completely fixed the problem. This fix  was particularly significant because Apple revised the way they render pdf files and reported that the flash could not be repaired at their end. Without a TeXShop fix, we'd be stuck with the flash for years to come.
+
+<p> The fix worked by placing a picture of the old preview pdf over the Preview window just before switching to the new version of this pdf. The flash still occurred, but  was hidden by the picture. One second later, the picture was removed, revealing the new pdf. The steps of placing a picture and later removing it were totally invisible to the user.
+
+<p> The fix had one small downside which I found barely noticeable: it caused a one second delay after typesetting before the new material appeared. This lost second caused several users to complain to me. A few of them used the preview in "single page mode," which does not have the flash bug. They complained of  losing a second for no reason. Other users told me that they barely noticed the flash, but were annoyed every time they had to wait that additional second. Huh? Didn't notice the flash??!!
+
+<p> The only change in TeXShop 3.95 is additional preference settings to  mollify these users. The program now has two hidden Preference settings. One turns the fix off. Note that the fix is only applied in High Sierra and above, so this setting only applies to those versions of macOS. To apply the fix, quit TeXShop, open Terminal in /Applications/Utilities, and type the following line:
+<pre>
+     defaults write TeXShop FlashFix NO
+</pre>
+
+<p> However, I strongly recommend not applying this fix. Instead, experiment with the second fix, which reduces the delay before removing the picture of the old pdf. To apply the fix, quit TeXShop and type the following in Terminal:
+<pre>
+     defaults write TeXShop FlashDelay 0.25
+</pre>
+The value of the delay is measured in seconds and can be anything between 0.0 and 2.0. Other values are constrained to these values. If the delay is too short, the flash may still be visible, but on my High Sierra machine, a Mac Pro, the value 0.25 completely eliminates the flash and yet produces a delay of only 1/4 of a second, which is not noticeable to me. If this value works for most others, it may become the default in future versions of TeXShop. 
+
+<p> If you still see the flash with this value, try 0.5. If you don't see a flash, but are still annoyed by the delay, try 0.01.
+If you complain of losing 1/100 of a second from your life every time you typeset, I will sympathize silently.
+
 <P><h3>TeXShop Changes 3.93 and 3.94</h3></P>
 
 Version 3.93 was never released. The main purpose of release 3.94 is to fix crucial bugs in TeXShop running on High Sierra. Here are the bugs:

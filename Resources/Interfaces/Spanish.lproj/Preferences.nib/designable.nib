@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -101,6 +101,8 @@
                 <outlet property="_texGSCommandTextField" destination="202" id="205"/>
                 <outlet property="_texScriptCommandTextField" destination="156" id="209"/>
                 <outlet property="dictionaryPopup" destination="C0D-rV-YSZ" id="Dry-Om-l2U"/>
+                <outlet property="useOneWindowButton" destination="EPg-vM-34f" id="28O-9a-Bwg"/>
+                <outlet property="useTwoWindowsButton" destination="bde-un-wpk" id="72f-lG-LHa"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -834,7 +836,7 @@
                             </tabViewItem>
                             <tabViewItem label="PDF previsto" identifier="2" id="8">
                                 <view key="view" id="10">
-                                    <rect key="frame" x="10" y="33" width="529" height="601"/>
+                                    <rect key="frame" x="10" y="33" width="532" height="636"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Posición de la ventana" id="47">
@@ -1122,6 +1124,39 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="antialiasChanged:" target="-2" id="tS6-Ct-dAw"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box misplaced="YES" title="Al abrir código TeX y PDF" id="PKM-ER-Ux2">
+                                            <rect key="frame" x="15" y="87" width="253" height="78"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="sgY-YJ-Wx9">
+                                                <rect key="frame" x="2" y="2" width="249" height="58"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="bde-un-wpk">
+                                                        <rect key="frame" x="19" y="27" width="182" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Usar ventanas separadas" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pJ1-ev-Yo4">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="ZvJ-qC-2ob"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" misplaced="YES" tag="1" id="EPg-vM-34f">
+                                                        <rect key="frame" x="19" y="8" width="182" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Usar una ventana" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="JjF-za-CpT">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="PDb-2k-DHk"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

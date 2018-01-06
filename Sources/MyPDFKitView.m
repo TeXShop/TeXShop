@@ -206,7 +206,7 @@
 		alpha: 1];
 	*/
     if ((atLeastHighSierra) && ([SUD boolForKey:continuousHighSierraFixKey]))
-       self.updatePageNumberTimer = [NSTimer scheduledTimerWithTimeInterval: 1
+     self.updatePageNumberTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                        target:self selector:@selector(pageChangedNew:) userInfo:nil repeats:YES];
 
 }
@@ -591,7 +591,6 @@
 	PDFPage		        *myPage;
 	NSData		        *theData;
     NSRect              sizeRect;
-    NSBitmapImageRep    *myRep;
 
  	// A note below explains dangers of NSDisableScreenUpdates
     // but these dangers don't apply to Intel on recent systems.
@@ -1081,13 +1080,14 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
     NSRect      visRect;
     NSPoint     thePoint;
     
+    
     if (! [[self window] isKeyWindow])
         return;
     
     if ((pageStyle != PDF_MULTI_PAGE_STYLE) && (pageStyle != PDF_DOUBLE_MULTI_PAGE_STYLE))
         return;
     
-     visRect = [self visibleRect];
+      visRect = [self visibleRect];
      thePoint = visRect.origin;
      // use the center of page, but left for double page situations
      thePoint.x += (visRect.size.width)/4.0;
@@ -1106,14 +1106,15 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
     
     NSArray     *myVisiblePages;
     NSInteger   numberOfPages;
-
+    
+ 
     if (! [[self window] isKeyWindow])
           return;
-          
+    
     if ((pageStyle != PDF_MULTI_PAGE_STYLE) && (pageStyle != PDF_DOUBLE_MULTI_PAGE_STYLE))
         return;
     
-     if ([self.myPDFWindow firstResponder] != self)
+     if (([self.myPDFWindow firstResponder] != self) && ([[self.myDocument fullSplitWindow] firstResponder] != self))
         return;
     
     myVisiblePages = [self visiblePages];
@@ -1982,7 +1983,6 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
     PDFPage *thePage;
     PDFSelection *theSelection, *newSelection;
     CGRect theBounds;
-    CGSize theSize;
     
 	if (self != [self.myDocument topView])
 		return ([[self.myDocument topView] tableView: aTableView objectValueForTableColumn: theColumn row: rowIndex]);

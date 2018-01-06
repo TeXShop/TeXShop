@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -101,6 +101,8 @@
                 <outlet property="_texGSCommandTextField" destination="202" id="205"/>
                 <outlet property="_texScriptCommandTextField" destination="156" id="209"/>
                 <outlet property="dictionaryPopup" destination="o1v-YF-ekd" id="lMg-Vc-6L8"/>
+                <outlet property="useOneWindowButton" destination="MBq-SG-G54" id="WeS-06-WPr"/>
+                <outlet property="useTwoWindowsButton" destination="G6V-Sw-jFT" id="wui-Oz-sOy"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -202,7 +204,7 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <tabView misplaced="YES" initialItem="9" id="7">
-                        <rect key="frame" x="13" y="65" width="562" height="681"/>
+                        <rect key="frame" x="13" y="60" width="562" height="681"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -466,7 +468,7 @@ DQ
                                                             <action selector="changeDocumentFont:" target="-2" id="85"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="18">
+                                                    <textField verticalHuggingPriority="750" id="18">
                                                         <rect key="frame" x="89" y="11" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="873">
@@ -991,7 +993,7 @@ DQ
                                                             <action selector="magChanged:" target="-2" id="117"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="113">
+                                                    <textField verticalHuggingPriority="750" id="113">
                                                         <rect key="frame" x="66" y="10" width="40" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" title="100" drawsBackground="YES" id="865">
@@ -1216,6 +1218,39 @@ DQ
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box misplaced="YES" title="Opening Source and Preview" id="FSn-iA-3oc">
+                                            <rect key="frame" x="19" y="116" width="253" height="78"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="7Xo-ey-gfu">
+                                                <rect key="frame" x="2" y="2" width="249" height="58"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" misplaced="YES" id="G6V-Sw-jFT">
+                                                        <rect key="frame" x="19" y="27" width="182" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Use Separate Windows" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="SfP-Ak-pn3">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="HZI-Ol-LXC"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" misplaced="YES" tag="1" id="MBq-SG-G54">
+                                                        <rect key="frame" x="19" y="7" width="182" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Use One Window" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="vOt-2m-d2s">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="R49-Vh-DWy"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -1242,7 +1277,7 @@ DQ
                                                             <action selector="changeConsoleFont:" target="-2" id="808"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="754">
+                                                    <textField verticalHuggingPriority="750" id="754">
                                                         <rect key="frame" x="89" y="11" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="905">
@@ -1502,7 +1537,7 @@ DQ
                                                             <action selector="defaultProgramChanged:" target="-2" id="223"/>
                                                         </connections>
                                                     </matrix>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="592">
+                                                    <textField verticalHuggingPriority="750" id="592">
                                                         <rect key="frame" x="16" y="26" width="181" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="897">
@@ -1640,7 +1675,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="220" height="120"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="50">
+                                                    <textField verticalHuggingPriority="750" id="50">
                                                         <rect key="frame" x="14" y="54" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="878">
@@ -1649,7 +1684,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="51">
+                                                    <textField verticalHuggingPriority="750" id="51">
                                                         <rect key="frame" x="17" y="76" width="186" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="879">
@@ -1661,7 +1696,7 @@ DQ
                                                             <action selector="texProgramChanged:" target="-2" id="118"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="52">
+                                                    <textField verticalHuggingPriority="750" id="52">
                                                         <rect key="frame" x="14" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="880">
@@ -1670,7 +1705,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="53">
+                                                    <textField verticalHuggingPriority="750" id="53">
                                                         <rect key="frame" x="17" y="32" width="186" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="881">
@@ -1726,7 +1761,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="243" height="120"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="202">
+                                                    <textField verticalHuggingPriority="750" id="202">
                                                         <rect key="frame" x="12" y="76" width="211" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="886">
@@ -1738,7 +1773,7 @@ DQ
                                                             <action selector="texGSProgramChanged:" target="-2" id="203"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="199">
+                                                    <textField verticalHuggingPriority="750" id="199">
                                                         <rect key="frame" x="12" y="30" width="211" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="884">
@@ -1761,7 +1796,7 @@ DQ
                                                             <action selector="savePSPressed:" target="-2" id="226"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1066">
+                                                    <textField verticalHuggingPriority="750" id="1066">
                                                         <rect key="frame" x="14" y="98" width="30" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Tex" id="1069">
@@ -1781,7 +1816,7 @@ DQ
                                                             <action selector="defaultEngineCall:" target="-2" id="1078"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1072">
+                                                    <textField verticalHuggingPriority="750" id="1072">
                                                         <rect key="frame" x="14" y="53" width="36" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Latex " id="1075">
@@ -1812,7 +1847,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="487" height="102"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="256">
+                                                    <textField verticalHuggingPriority="750" id="256">
                                                         <rect key="frame" x="8" y="33" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Distiller (ghostscript) (default: /usr/local/bin)" id="891">
@@ -1821,7 +1856,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="217">
+                                                    <textField verticalHuggingPriority="750" id="217">
                                                         <rect key="frame" x="11" y="55" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="888">
@@ -1833,7 +1868,7 @@ DQ
                                                             <action selector="tetexBinPathChanged:" target="-2" id="220"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="218">
+                                                    <textField verticalHuggingPriority="750" id="218">
                                                         <rect key="frame" x="8" y="80" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="(pdf)TeX (default: /Library/TeX/texbin OR /usr/texbin)" id="889">
@@ -1842,7 +1877,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="255">
+                                                    <textField verticalHuggingPriority="750" id="255">
                                                         <rect key="frame" x="11" y="8" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="890">
@@ -1865,7 +1900,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1021">
+                                                    <textField verticalHuggingPriority="750" id="1021">
                                                         <rect key="frame" x="8" y="24" width="478" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="kpsetool (default: kpsetool -w -n latex tex)" id="1024">
@@ -1874,7 +1909,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1022">
+                                                    <textField verticalHuggingPriority="750" id="1022">
                                                         <rect key="frame" x="11" y="13" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="1023">
@@ -1897,7 +1932,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="487" height="60"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1029">
+                                                    <textField verticalHuggingPriority="750" id="1029">
                                                         <rect key="frame" x="8" y="24" width="478" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="default: bibtex" id="1030">
@@ -1906,7 +1941,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="1028">
+                                                    <textField verticalHuggingPriority="750" id="1028">
                                                         <rect key="frame" x="11" y="13" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="1031">
@@ -1948,7 +1983,7 @@ DQ
                                                             <action selector="colorMapChanged:" target="-2" id="451"/>
                                                         </connections>
                                                     </button>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="429">
+                                                    <textField verticalHuggingPriority="750" id="429">
                                                         <rect key="frame" x="11" y="60" width="82" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Foreground:" id="900">
@@ -1965,7 +2000,7 @@ DQ
                                                             <action selector="copyForeColorChanged:" target="-2" id="452"/>
                                                         </connections>
                                                     </colorWell>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="439">
+                                                    <textField verticalHuggingPriority="750" id="439">
                                                         <rect key="frame" x="11" y="16" width="162" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Foreground Prominence:" id="904">
@@ -1997,7 +2032,7 @@ DQ
                                                             <action selector="colorParam1Changed:" target="-2" id="454"/>
                                                         </connections>
                                                     </popUpButton>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="432">
+                                                    <textField verticalHuggingPriority="750" id="432">
                                                         <rect key="frame" x="139" y="60" width="85" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Background:" id="901">
@@ -2067,7 +2102,7 @@ DQ
                                                 <rect key="frame" x="2" y="2" width="353" height="99"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="153">
+                                                    <textField verticalHuggingPriority="750" id="153">
                                                         <rect key="frame" x="9" y="28" width="153" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Latex Program (no default)" id="894">
@@ -2076,7 +2111,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="156">
+                                                    <textField verticalHuggingPriority="750" id="156">
                                                         <rect key="frame" x="12" y="55" width="329" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="895">
@@ -2088,7 +2123,7 @@ DQ
                                                             <action selector="texScriptProgramChanged:" target="-2" id="207"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="151">
+                                                    <textField verticalHuggingPriority="750" id="151">
                                                         <rect key="frame" x="8" y="73" width="142" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" id="892">
@@ -2100,7 +2135,7 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="152">
+                                                    <textField verticalHuggingPriority="750" id="152">
                                                         <rect key="frame" x="13" y="10" width="328" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="893">
@@ -2292,7 +2327,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
-            <point key="canvasLocation" x="204" y="523"/>
+            <point key="canvasLocation" x="204" y="522.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="UjH-7x-6eW"/>
     </objects>

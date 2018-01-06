@@ -99,8 +99,9 @@
 	if 
 		((! [self.myDocument externalEditor]) && (! [self.myDocument useFullSplitWindow]) &&
 		(([self.myDocument documentType] == isTeX) || ([self.myDocument documentType] == isOther)))
-		
-		[super makeKeyAndOrderFront: sender];
+    {
+        [super makeKeyAndOrderFront: sender];
+    }
 	[self.myDocument tryBadEncodingDialog:self];
 }
 

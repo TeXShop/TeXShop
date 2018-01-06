@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -101,6 +101,8 @@
                 <outlet property="_texGSCommandTextField" destination="202" id="205"/>
                 <outlet property="_texScriptCommandTextField" destination="156" id="209"/>
                 <outlet property="dictionaryPopup" destination="OZM-Tw-x8R" id="gm0-XW-NdD"/>
+                <outlet property="useOneWindowButton" destination="ogf-6L-hrB" id="UNz-F0-Ge8"/>
+                <outlet property="useTwoWindowsButton" destination="8iM-xs-rUq" id="K9J-9j-DdG"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -833,7 +835,7 @@
                             </tabViewItem>
                             <tabViewItem label="プレビュー" identifier="2" id="8">
                                 <view key="view" id="10">
-                                    <rect key="frame" x="10" y="33" width="524" height="595"/>
+                                    <rect key="frame" x="10" y="33" width="519" height="614"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="プレビューウインドウの位置" id="47">
@@ -1126,6 +1128,39 @@
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box misplaced="YES" title="ソースとプレビューの開き方" id="XoP-CC-51k">
+                                            <rect key="frame" x="17" y="97" width="294" height="78"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="YFt-yC-cCU">
+                                                <rect key="frame" x="2" y="2" width="290" height="58"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="8iM-xs-rUq">
+                                                        <rect key="frame" x="19" y="27" width="182" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="ソースとプレビューを分離" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Gso-qi-Ghy">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="oFL-T3-BdZ"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="1" id="ogf-6L-hrB">
+                                                        <rect key="frame" x="19" y="7" width="182" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="ソースとプレビューを統合" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Yjd-AO-9Cp">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="03M-kW-GLA"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" size="13" name=".PingFangSC-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>

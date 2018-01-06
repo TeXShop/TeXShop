@@ -993,10 +993,16 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	[SUD setBool:[(NSCell *)sender state] forKey:AntiAliasKey];
 }
 
-- (IBAction)oneWindowChanged:sender
+- (IBAction)sourceAndPreviewInSameWindowChanged:sender
 {
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SourceAndPreviewInSameWindowKey] forKey:SourceAndPreviewInSameWindowKey];
-	[SUD setBool:[(NSCell *)sender state] forKey:SourceAndPreviewInSameWindowKey];
+    NSInteger myTag = [sender tag];
+    BOOL result;
+    if (myTag == 0)
+        result = NO;
+    else
+        result = YES;
+	[SUD setBool:result forKey:SourceAndPreviewInSameWindowKey];
 }
 
 
@@ -1835,7 +1841,14 @@ This method retrieves the application preferences from the defaults object and s
 		[_consoleResizeMatrix selectCellWithTag:0];
 	else 
 		[_consoleResizeMatrix selectCellWithTag:1];
-
+    
+    if ( [defaults boolForKey:SourceAndPreviewInSameWindowKey])
+      //  NSLog(@"onewindow is no");
+    
+        [useOneWindowButton setState:1];
+    else
+        [useTwoWindowsButton setState:1];
+    
 
 
 	// Create the contents of the encoding menu on the fly & select the active encoding

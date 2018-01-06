@@ -109,7 +109,7 @@
     BOOL            foundMatch, matchMultiple;
     NSInteger        matchStart, matchLength, i, matchAdjust, newLocation;
     NSRange            matchRange;
-    TSDocument      *myDocument, *newDocument;
+    TSDocument      *newDocument;
     CGFloat         myRed, myGreen, myBlue;
     NSColor         *thePossiblyYellowColor;
     // NSString        *lineString;

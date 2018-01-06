@@ -160,6 +160,8 @@
 	IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O)
 	IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)
 	IBOutlet NSMatrix	*_afterTypesettingMatrix;
+    IBOutlet NSButton *useTwoWindowsButton;
+    IBOutlet NSButton *useOneWindowButton;
 }
 
 @property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -203,7 +205,7 @@
 - (IBAction)magChanged:sender;
 - (IBAction)scrollPressed:sender;
 - (IBAction)firstDoublePageChanged:sender;
-- (IBAction)dctionaryPressed: sender;
+- (IBAction)dictionaryPressed: sender;
 
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
@@ -238,7 +240,7 @@
 - (IBAction)setConsoleBackgroundColor:sender;
 - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
-- (IBAction)oneWindowChanged:sender;
+- (IBAction)sourceAndPreviewInSameWindowChanged:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

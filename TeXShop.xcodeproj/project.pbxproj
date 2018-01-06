@@ -308,6 +308,8 @@
 		40BB76911795F2AB008C2B40 /* FactoryDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 40BB76901795F2AB008C2B40 /* FactoryDefaults.plist */; };
 		40BC8E871922D7DD00F3EF2D /* IconsPDF.icns in Resources */ = {isa = PBXBuildFile; fileRef = 40BC8E861922D7DD00F3EF2D /* IconsPDF.icns */; };
 		40BC8E891922D7E900F3EF2D /* IconsTeX.icns in Resources */ = {isa = PBXBuildFile; fileRef = 40BC8E881922D7E900F3EF2D /* IconsTeX.icns */; };
+		40BCDA521FF9589200AAC575 /* TSWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 40BCDA501FF9589100AAC575 /* TSWindowController.h */; };
+		40BCDA531FF9589200AAC575 /* TSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40BCDA511FF9589100AAC575 /* TSWindowController.m */; };
 		40C889DB0F1A852E00B5B8A9 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 40C889DA0F1A852E00B5B8A9 /* dsa_pub.pem */; };
 		40CBED051D3A9C0600415A91 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40CBED041D3A9C0600415A91 /* AVKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		40CBED071D3A9C1000415A91 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40CBED061D3A9C1000415A91 /* AVFoundation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -641,6 +643,8 @@
 		40BB76901795F2AB008C2B40 /* FactoryDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = FactoryDefaults.plist; sourceTree = "<group>"; };
 		40BC8E861922D7DD00F3EF2D /* IconsPDF.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = IconsPDF.icns; sourceTree = SOURCE_ROOT; };
 		40BC8E881922D7E900F3EF2D /* IconsTeX.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = IconsTeX.icns; sourceTree = SOURCE_ROOT; };
+		40BCDA501FF9589100AAC575 /* TSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSWindowController.h; sourceTree = "<group>"; };
+		40BCDA511FF9589100AAC575 /* TSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSWindowController.m; sourceTree = "<group>"; };
 		40C889DA0F1A852E00B5B8A9 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		40CBED041D3A9C0600415A91 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		40CBED061D3A9C1000415A91 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -1293,6 +1297,8 @@
 				40328ADB1340380800AD2EA7 /* TSToolbar.m */,
 				40EB71E50400BE1000000009 /* TSDocumentController.h */,
 				40EB71E60400BE1000000009 /* TSDocumentController.m */,
+				40BCDA501FF9589100AAC575 /* TSWindowController.h */,
+				40BCDA511FF9589100AAC575 /* TSWindowController.m */,
 				00CFF0F5000AD1F27F000001 /* TSPrintView.h */,
 				00CFF0F6000AD1F27F000001 /* TSPrintView.m */,
 				40162B2A0F1873F200E9336E /* NoodleLineNumberMarker.h */,
@@ -1483,6 +1489,7 @@
 				40356AD01F8D157F0093399B /* synctex_parser_old.h in Headers */,
 				407880740519249A006979EA /* TSEncodingSupport.h in Headers */,
 				407880750519249A006979EA /* TSMacroEditor.h in Headers */,
+				40BCDA521FF9589200AAC575 /* TSWindowController.h in Headers */,
 				407880760519249A006979EA /* TSMacroMenuController.h in Headers */,
 				407880770519249A006979EA /* TSMacroTreeNode.h in Headers */,
 				40DE48231FDC4C04003E1D9A /* HideView.h in Headers */,
@@ -1894,6 +1901,7 @@
 				40B288D11398A373005C921D /* synctex_parser.c in Sources */,
 				40A3576013CA151400793021 /* TSApplication.m in Sources */,
 				403B423B178CB65400E38A72 /* OverView.m in Sources */,
+				40BCDA531FF9589200AAC575 /* TSWindowController.m in Sources */,
 				406B626F199934D000C46D2A /* NSText-Extras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2319,8 +2327,10 @@
 				BUNDLE_VERSION = 3.14;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = RBGCY5RJWM;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
@@ -2364,8 +2374,10 @@
 				BUNDLE_VERSION = 3.14;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = RBGCY5RJWM;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",

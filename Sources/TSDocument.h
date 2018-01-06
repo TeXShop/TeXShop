@@ -30,6 +30,7 @@
 #import "TSPreviewWindow.h"
 #import "ScrapTextView.h"
 #import "ScrapPDFKitView.h"
+#import "TSWindowController.h"
 
 #define NUMBEROFERRORS	20
 
@@ -423,8 +424,8 @@ enum RootCommand
 @property (retain)   MySelection         *mSelection;
 @property (retain)   NSTextStorage       *textStorage;
 
-@property (retain)  NSWindowController  *standardController;
-@property (retain)  NSWindowController  *splitController;
+@property (retain)  TSWindowController  *standardController;
+@property (retain)  TSWindowController  *splitController;
     
 @property           BOOL            useTabs;
 @property           BOOL            useTabsWithFiles;
@@ -443,6 +444,7 @@ enum RootCommand
 @property (retain)  NSString    *scrapMenuEngine;
 @property           BOOL        scrapDVI;
 @property           BOOL        syntaxColor;
+
 
 
  - (IBAction)setSaveExtension: sender;
@@ -594,6 +596,8 @@ enum RootCommand
 - (void) runPageLayout:sender;
 - (NSSearchField *) pdfKitSearchField;
 - (void) addTabbedWindows;
+- (NSTextView *)textView1;
+- (NSTextView *)textView2;
 
 
 // BibDesk Completion

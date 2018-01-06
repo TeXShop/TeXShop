@@ -324,9 +324,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 		if (cnt == 0)
 			return;
 		NSString *thisFile = [[self.document fileURL] path];
-		NSUInteger i;
-		// for (i = 0; i < cnt; i++)
-        {
+		{
 			// NSString *filePath = [ar objectAtIndex:i];
 			NSString *tempPath = [ar objectAtIndex:0];
 			NSString *filePath = [self resolveAlias:tempPath];
@@ -526,7 +524,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 {
 	NSRange	    replacementRange = { 0, 0 };
 	NSString	*textString, *searchString;
-    NSString    *firstString, *secondString, *thirdString, *newString, *typeString, *startString, *aString, *bString;
+    NSString    *firstString, *secondString, *thirdString, *newString, *typeString, *aString, *bString;
 	NSInteger	level, length, i, j;
 	BOOL	    done;
 	NSInteger	leftpar, rightpar, nestingLevel, uchar;
@@ -1160,7 +1158,19 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // added by Yusuke Terada
 - (void)changeFont:(id)sender
 {
+    NSTextView  *firstTextView;
+    NSFont      *thisFont;
+    
     [super changeFont:sender];
+    
+    firstTextView = [self.document textView1];
+    thisFont = self.font;
+
+    if (firstTextView == self)
+        [self.document textView2].font = thisFont;
+    else
+        [self.document textView1].font = thisFont;
+    
     [self fixupTabs];
 }
 

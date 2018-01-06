@@ -58,6 +58,7 @@
 #import "NSString-Extras.h"  // Terada
 #import "NSText-Extras.h"  // Terada
 #import "TSGlyphPopoverController.h"  // Terada
+#import "TSWindowController.h"
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
@@ -273,10 +274,10 @@
 - (void) makeWindowControllers
 {
     // [super makeWindowControllers];
-    self.standardController = [[NSWindowController alloc] initWithWindowNibName: @"TSDocument" owner: self];
+    self.standardController = [[TSWindowController alloc] initWithWindowNibName: @"TSDocument" owner: self];
     [self addWindowController: self.standardController];
-    self.splitController = [[NSWindowController alloc] initWithWindow: fullSplitWindow];
-//  [self addWindowController: self.splitController];
+   self.splitController = [[TSWindowController alloc] initWithWindow: fullSplitWindow];
+  //  [self addWindowController: self.splitController];
     
 }
 
@@ -1190,14 +1191,25 @@ if (! skipTextWindow) {
   
 //    [self addTabbedWindows];
     
-    if ((self.useTabs) || (self.useTabsWithFiles))
+    if (([SUD boolForKey:SourceAndPreviewInSameWindowKey])  && (! _externalEditor) && PDFfromKit && (! self.useTabs) && (! self.useTabsWithFiles))
+    {
+        [self doMove:self];
+        SEL aSelector = @selector(hideTextWindow);
+        [self performSelector: aSelector withObject: self afterDelay: .1];
+    }
+    
+    else if ((self.useTabs) || (self.useTabsWithFiles))
     {
         SEL aSelector = @selector(addTabbedWindows);
         [self performSelector: aSelector withObject: self afterDelay: 1];
     }
+    
 }
 
-
+- (void)hideTextWindow
+{
+    [[self textWindow] orderOut: self];
+}
 
 // FIX RULER SCROLL
 - (void) redrawLineNumbers: sender // added by Terada (for Lion bug)
@@ -1893,12 +1905,6 @@ in other code when an external editor is being used. */
 // - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
 	NSData				*myData;
 	NSUInteger		theLength;
-	// NSString            *firstBytes, *encodingString, *testString;
-	// NSRange             encodingRange, newEncodingRange, myRange, theRange;
-	NSUInteger            start, end;
-	BOOL                done;
-    NSRange             theRange, myRange, includeRange, fileNameRange, newIncludeRange, finalRange;
-    NSString            *includeString, *fileNameString, *newIncludeString;
 	
 	if ([self doNotReadSource])
 		return YES;
@@ -4369,7 +4375,7 @@ if (! useFullSplitWindow) {
 {
     NSInteger   numberOfIncludeFiles;
     NSInteger   numberOfLinesChecked;
-    NSString    *thePath, *newPath, *theCorrectedPath, *pdfPath;
+    NSString    *thePath, *newPath;
     TSDocument  *theDocument;
     NSInteger   i, j;
     NSWindow    *theWindow;
@@ -8667,7 +8673,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSString        *theText;
     NSRange         theRange;
     NSString        *theFileName, *thePDFName;
-    NSFileManager   *theManager;
     BOOL            interchange;
     
     interchange = [SUD boolForKey: SwitchSidesKey];
@@ -8774,6 +8779,16 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (NSSearchField *) pdfKitSearchField
 {
     return mySearchField;
+}
+
+- (NSTextView *)textView1
+{
+    return textView1;
+}
+
+- (NSTextView *)textView2
+{
+    return textView2;
 }
 
 

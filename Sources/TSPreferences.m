@@ -1005,6 +1005,19 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 	[SUD setBool:result forKey:SourceAndPreviewInSameWindowKey];
 }
 
+- (IBAction)sourceOnLeftChanged:sender
+{
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SwitchSidesKey] forKey:SwitchSidesKey];
+    NSInteger myTag = [sender tag];
+    BOOL result;
+    if (myTag == 0)
+        result = NO;
+    else
+        result = YES;
+    [SUD setBool:result forKey:SwitchSidesKey];
+}
+
+
 
 #ifdef MITSU_PDF
 
@@ -1848,6 +1861,13 @@ This method retrieves the application preferences from the defaults object and s
         [useOneWindowButton setState:1];
     else
         [useTwoWindowsButton setState:1];
+    
+    if ( [defaults boolForKey:SwitchSidesKey])
+        //  NSLog(@"onewindow is no");
+        
+        [useRightSourceButton setState:1];
+    else
+        [useLeftSourceButton setState:1];
     
 
 

@@ -32,6 +32,7 @@
 
 @implementation TSFullSplitWindow : NSWindow
 
+
 - (void)displayConsole: (id)sender
 {
     [self.myDocument displayConsole: sender];
@@ -224,12 +225,12 @@
     [self.myDocument showStatistics: sender];
 }
 
-/*
+
 - (void)runPageLayout: (id)sender
 {
-    [self.myDocument runPageLayout: sender];
+    return;
 }
-*/
+
 
 - (void)printSource: (id)sender
 {

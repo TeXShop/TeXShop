@@ -68,7 +68,7 @@
 - (void)doLine: (id)sender;
 - (void)doError: (id)sender;
 - (void)showStatistics: (id)sender;
-// - (void)runPageLayout: (id)sender;
+- (void)runPageLayout: (id)sender;
 - (void)printSource: (id)sender;
 - (void)convertTiff: (id)sender;
 - (void)splitWindow: (id)sender;

@@ -1094,6 +1094,8 @@ else
 	// If during the toolbar's initialization, no overriding values are found in the user defaults, or if the
 	// user chooses to revert to the default items self set will be used
 
+    BOOL swapWindows = [SUD boolForKey:SwitchSidesKey];
+    
 	NSString*	toolbarID = [toolbar identifier];
 
 	if ([toolbarID isEqual:kSourceToolbarIdentifier]) {
@@ -1207,7 +1209,8 @@ else
 	}
 }
     
-    if ([toolbarID isEqual:kFullWindowToolbarIdentifier]) {
+    if (([toolbarID isEqual:kFullWindowToolbarIdentifier]) && (! swapWindows)) {
+        
         
         if ([self sharingExists]) {
             
@@ -1258,6 +1261,60 @@ else
                     nil];
         }
     }
+    
+    if (([toolbarID isEqual:kFullWindowToolbarIdentifier]) && (swapWindows)) {
+        
+        
+        if ([self sharingExists]) {
+            
+            return  [NSArray arrayWithObjects:
+                     kPreviousPageKKTID,
+                     kNextPageKKTID,
+                     kDrawerKKTID,
+                     skGotoPageKKTID,
+                     kMouseModeKKTID,
+                     kSearchKKTID,
+                     kSharingKKTID,
+                     kSplitKKTID,
+                     // NSToolbarCustomizeToolbarItemIdentifier,
+                     // NSToolbarSpaceItemIdentifier,
+                     // NSToolbarSeparatorItemIdentifier,
+                     NSToolbarFlexibleSpaceItemIdentifier,
+                     kTypesetTID,
+                     skProgramTID,
+                     NSToolbarPrintItemIdentifier,
+                     skMacrosTID,
+                     skTagsTID,
+                     kTemplatesID,
+                     kSharingTID,
+                     kSplitID,
+                     nil];
+        }
+        else {
+            
+            return [NSArray arrayWithObjects:
+                    kPreviousPageButtonKKTID,
+                    kNextPageButtonKKTID,
+                    kDrawerKKTID,
+                    skGotoPageKKTID,
+                    kMouseModeKKTID,
+                    kSearchKKTID,
+                    kSplitKKTID,
+                    // NSToolbarCustomizeToolbarItemIdentifier,
+                    // NSToolbarSpaceItemIdentifier,
+                    // NSToolbarSeparatorItemIdentifier,
+                    NSToolbarFlexibleSpaceItemIdentifier,
+                    kTypesetTID,
+                    skProgramTID,
+                    NSToolbarPrintItemIdentifier,
+                    skMacrosTID,
+                    skTagsTID,
+                    kTemplatesID,
+                    kSplitID,
+                    nil];
+        }
+    }
+
 
 
 

@@ -162,6 +162,8 @@
 	IBOutlet NSMatrix	*_afterTypesettingMatrix;
     IBOutlet NSButton *useTwoWindowsButton;
     IBOutlet NSButton *useOneWindowButton;
+    IBOutlet NSButton *useLeftSourceButton;
+    IBOutlet NSButton *useRightSourceButton;
 }
 
 @property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -241,6 +243,7 @@
 - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
 - (IBAction)sourceAndPreviewInSameWindowChanged:sender;
+- (IBAction)sourceOnLeftChanged:sender;
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

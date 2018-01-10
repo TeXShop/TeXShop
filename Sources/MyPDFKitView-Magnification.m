@@ -146,7 +146,6 @@
 // Routine for El Capitan
 - (void)doMagnifyingGlassElCapitanNew:(NSEvent *)theEvent level: (NSInteger)level
 {
-    NSLog(@"El Capitan New");
     
     NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
     NSRect magRectWindow, tempRect, theOriginalRect, thePageOriginalRect;

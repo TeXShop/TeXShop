@@ -71,9 +71,11 @@
 - (void)setLogWindowForegroundColorFromPreferences:(NSNotification *)notification;
 - (void)setLogWindowFontFromPreferences:(NSNotification *)notification;
 - (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification;
+- (void)fixPDFPageNumberBox:(NSNotification *)notification;
 @end
 
 @implementation TSDocument
+
 
 - (id)init
 {
@@ -956,7 +958,8 @@ if (! skipTextWindow) {
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(colorizeAll)
 												 name:@"NeedsForRecolorNotification" object:nil]; // added by Terada
-
+    
+    
 	[pdfView setImageType: self.documentType];
 
 	if (!fileIsTex) {
@@ -8771,7 +8774,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void) runPageLayout:sender;
 {
     if (useFullSplitWindow)
-        return;
+       return;
     else
         [super runPageLayout: sender];
 }

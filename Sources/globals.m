@@ -30,6 +30,7 @@ NSString *DefaultScriptKey = @"DefaultScript";
 NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
 NSString *SaveRelatedKey = @"SaveRelated";
 NSString *DocumentFontKey = @"DocumentFont";
+NSString *DocumentFontAttributesKey = @"DocumentFontAttributes";
 NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";
 NSString *PortableDocumentWindowFixedPosKey = @"PortableDocumentWindowFixedPosition";
 NSString *DocumentWindowNameKey = @"DocumentWindow";
@@ -317,6 +318,7 @@ BOOL                atLeastMavericks;
 BOOL                atLeastElCapitan;
 BOOL                atLeastSierra;
 BOOL                atLeastHighSierra;
+BOOL                BuggyHighSierra;
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;

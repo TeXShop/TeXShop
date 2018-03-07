@@ -54,6 +54,7 @@
 - (IBAction)displayTables:sender;
 - (IBAction)displayThisRelease:sender;
 - (IBAction)displayChanges:sender;
+- (IBAction)displayCommentLines:sender;
 
 - (void)okForPanel:sender;
 - (void)cancelForPanel:sender;

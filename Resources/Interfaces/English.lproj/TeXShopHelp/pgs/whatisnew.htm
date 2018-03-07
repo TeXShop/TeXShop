@@ -15,6 +15,38 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.98</h5></P>
+
+<p> There are five  changes in TeXShop 3.98:
+
+<ul>
+<li> Early versions of High Sierra contained a bug which broke updating the Page Number box in the preview window during scrolling. The bug also broke the up and down arrows in the preview toolbar.
+
+<p> This High Sierra bug is fixed in High Sierra 10.13.4, currently in beta release for developers. 
+
+<p> TeXShop 3.91 contains a workaround for the bug. The workaround runs a small routine to update the Page Number box once a second whenever the Preview Window is active, even when the user is not scrolling.
+
+<p>In TeXShop 3.98, the workaround only runs on early versions of High Sierra, and the original more efficient TeXShop code runs on High Sierra 10.13.4 and above.  
+
+<p>
+<li> Latexmk is updared to version 3.44a.
+
+<p>
+<li> Version 3.94 of TeXShop contained a fix for the "flash after typesetting" bug in High Sierra when the preview window is using multipage or double multipage modes. However, the fix was also applied  in single page or double page modes, where is may have caused problems. In addition, the patch caused problems for some users who worked with an external editor, or turned on the "Automatic Preview Update" TeXShop preference. The patch has been reworked slightly to avoid all of these problems.
+
+<p>
+<li> The Font submenu in the Source menu has been enlarged with additional items from Apple allowing users to set interline spacing for the source text, and adjust the kerning and ligatures for this text. Keyboard shortcuts for interline spacing make it easy to adjust this spacing; for instance, double spaced source is possible. Additional items allow copying and pasting this style information, so once one source window has been adjusted, the adjustments can easily be applied to other source windows.
+
+<p>
+<li> The TeXShop Preference item to set the font for TeX source has been changed to also set interline spacing, kerning, and ligatures. Thus the style changes introduced above can be made  default styles for all future files. This works as follows:  clicking the Set button to initiate a font change makes a small sample window drop down to show the effect of Font and Style changes. The Font submenu in the Source menu is active for this small window, allowing Style changes as above. When the OK button for the sample window is pressed, these changes appear in all open TeXShop windows. The main Cancel or OK buttons in the Preference Dialog must still be pressed, either to retreat to previous choices for fonts and styles, or to make the changes permanent.
+
+<p> The code to set default font styles has one minor bug I haven't been able to fix. If an empty window
+is opened, the font is correctly set for the window, but new font styles are not set. For example, suppose a user  has requested double spaced source in TeXShop. If this user selects ``New'' to open an empty window and then selects the LaTeX Template, the new source in the window will be single spaced. It is easy to work around this bug. If the window is saved,  closed, and reopened, the styles will ``take'' and the source will now be double spaced.  Or if another window is open with correct spacing, the font style can be copied from this window and pasted into the new window.
+
+<p>
+<li> Following a suggestion by Emerson Mello, who provides the TeXShop localization for Brazil, an additional item has been added to the TeXShop Help menu. This item lists all "special comment" lines understood by TeXShop, and lists all hidden Preference items which can be set for the program. The special comment list is complete, but in this version of TeXShop, only some hidden preference items are listed. The list will be completed in future TeXShop versions.
+</ul>
+
 <P><h5>TeXShop Changes 3.97</h5></P>
 
 <p> TeXShop 3.97 has a new preference setting determining whether the source editor is placed on the left or right side in Single Page mode.

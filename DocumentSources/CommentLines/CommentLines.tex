@@ -1,0 +1,169 @@
+
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}            
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+%SetFonts
+
+%SetFonts
+
+
+\title{Special Comment Lines; Hidden Preferences}
+% \author{The Author}
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+\section{Special Comment Lines}
+A "Special Comment Line" is a command in the source which is interpreted by TeXShop. Such lines must occur in the first twenty lines of a source file and begin with the comment symbol \%, so they are ignored by LaTeX and other TeX engines.
+
+TeXShop understands the following special comment lines:
+
+\begin{itemize}
+\item \% !TEX program =
+\item \% !TEX encoding =
+\item \% !TEX root =
+\item \% !TEX useTabs
+\item \% !TEX useTabsWithFiles
+\item \% !TEX tabbedFile\{ \}(optional short name)
+\item \% !TEX pdfSinglePage
+\item \% !TEX spellcheck =
+\item \% !BIB program =
+\item \% !TEX parameter =
+\item \% !TEX useOldSyncParser
+\end{itemize}
+
+\section{Program Examples}
+
+TeX source files can be typeset by many programs: TeX, LaTeX, pdfLaTeX, luaLaTeX, etc. TeXShop has an ``Engine mechanism" to extend this list to user defined shell scripts, which can run a sequence of programs one after another. The Special Comment ``program'' line determines which program typesets a particular source file. But using this line is never required because TeXShop has other ways to determine the typesetting program.
+
+If the special comment line is present, it overrides all other methods of determining the typesetting program. Thus if a particular source uses Unicode and requires XeLaTeX, adding a Special Comment line will guarantee that it is always typeset by the correct program.
+
+The syntax of Special Comment lines is very picky about required spaces, cases, etc. Thus I recommend 
+Ramon Figueros-Centeno's ``Program'' macro, because it lists all active engines and the user can simply click the required engine; Ramon's macro will automatically insert a Special Comment with exactly the right syntax.
+
+Below are some examples:
+
+\begin{verbatim}
+     % !TEX program = tex               
+     % !TEX program = latex
+     % !TEX program = pdftex
+     % !TEX program = pdflatex
+     % !TEX program = xelatex
+     % !TEX program = pdflatexmk
+\end{verbatim}
+
+Note that ``tex'' and ``latex'' produce TeX and DVI typesetting, in which TeX outputs a dvi file, which is then processed to produce a final pdf file. ``pdftex'' and ``pdflatex'' use pdftex to directly output pdf files.
+Note also that ``xelatex'' and ``pdflatexmk'' are engines defined by scripts in $\sim$Library/TeXShop/Engines.
+
+\section{Encoding Examples}
+
+These Special Comment lines fix the encoding used to read and write a source file, overriding all other methods of setting this encoding. It is important to use the exact name for an encoding used by the Macintosh, so I again recommend Ramon Figueros-Centeno's ``Encoding'' macro, which lists all possibilities and requires only a click on a choice to produce the correct syntax line.
+ 
+ \begin{verbatim}    
+     % !TEX encoding = UTF-8 Unicode
+     % !TEX encoding = Iso Latin 9
+     % !TEX encoding = Mac Chinese Traditional
+ \end{verbatim}    
+   
+ \section{Tabbed Window Examples}
+  
+ The special comment ``root'' is explain elsewhere in the TeXShop Help Panel, and used when a project is divided into a commanding root file and included chapter files. 
+ 
+ Since macOS Sierra, the Macintosh has supported tabbed windows. See the documentation of Sierra for  instruction on creating these tabs using only the Finder. 
+  
+ TeXShop has three special comment commands to extend this build-in system support for tabs. 
+ 
+ \begin{verbatim}
+     % !TEX useTabs
+	
+     % !TEX useTabsWithFiles
+     % !TEX tabbedFile{Galois.aux}(Aux)
+     % !TEX tabbedFile{Galois.log}
+     % !TEX tabbedFile{~/Graphics/faireyes.eps}
+ \end{verbatim}
+ The first line above assumes a root file containing ``include'' lines for the chapter sources. This special comment creates a window containing the root and various chapter sources as tabs in a single window.
+ In this case, TeXShop searches the root file for the include-lines which name these chapter files.
+ 
+ The last four lines describe a more general method of creating tabbed views. This method requires more
+ information from the user, but produces more flexible tabs. The ``useTabsWithFiles'' line introduces the method, which then produces a tabbed window for each ``tabbedFile'' line. This line contains a partial or full path to the file in curly brackets. The tabs will be named using these paths, but this can create long tab names, so it is possible to provide  shorter names for the tabs inside round brackets. These
+ shorter names are optional. Optional names are only available in High Sierra and above.
+ 
+ \section{More Examples}
+ \begin{verbatim}
+      % \!TEX pdfSinglePage
+ \end{verbatim}
+ This command was proposed by a user for  Beamer. The user preferred Multiple Page mode for the  display of articles and books, but wanted Beamer documents to appear as single pages in preview, ready to be projected onto a screen. Place this special comment in the source of any document whose preview window should appear in single page mode.
+ 
+  \begin{verbatim}
+      % \!TEX spellcheck = German
+ \end{verbatim}
+ This command causes the Spelling and Grammer panel to use the German dictionary when the document is active, even if by default another dictionary is generally used.
+ 
+  \begin{verbatim}
+      % \!BIB program = biber
+ \end{verbatim}
+ This causes the BibTeX command to run an alternate program, in this case biber.    
+  
+  \begin{verbatim}
+      % \!TEX parameter = 
+ \end{verbatim}
+When engine scripts run, they are passed a parameter giving the full path to the source file. This command passes a second parameter to such engine scripts. The engine script can ignore this parameter, but in some cases it is useful to write a script which is able to perform several tasks, depending on the new parameter.  
+     
+  \begin{verbatim}
+      % \!TEX useOldSyncParser
+ \end{verbatim}
+Synctex was written by Jerome Laurens. It causes a TeX engine to output a .synctex file with information needed to jump from a spot in the source to a corresponding spot in the preview, and vice-versa. Laurens also provides parser code for front ends, making it possible for front end authors to provide syncing ability without much extra work. In TeX Live 2017, Laurens fixed bugs and extended both pieces of code.
+
+The ConTeXt system for luaTeX is written by Hans Hagen. Hagen often replaces pieces of TeX Live with his own code in ConTeXt. In 2017, Hagen wrote his own version of the sync code, but unfortunately he based it on Lauren's earlier version 2016 of the code, The 2017 parser cannot handle this code.
+
+After a good deal of work, TeXShop contains both the 2016 and 2017 versions of the parser. By default it uses the 2017 version, but ConTeXt users can switch to the older parser using the special comment above. I don't yet know what will happen in 2018, but shoehorning in both parser libraries was an unpleasant task I am not likely to attempt again.
+
+\newpage
+\section{Hidden Preferences}
+TeXShop has a large number of Preference Settings which make it possible for users to customize the behavior of the program to their liking. The most important settings are made visible by TeXShop Preferences, but more obscure settings are hidden and only available through the Terminal in /Applications/Utilities. To apply such a preference, it is important to quit TeXShop, then enter the setting in Terminal and push RETURN, and then restart TeXShop. 
+
+This section will list all of these Hidden Preferences, but there are so many that only important recent settings will be listed in TeXShop 3.98. I'll keep extending this section over future versions until the full list is available. 
+
+The first installment lists all hidden preferences mentioned in the Changes document which covers TeXShop starting with version 3.07. By looking through the list, you may be able to find a preference setting you need. In that case, search the Changes document for an explanation of the preference. 
+
+Some of these settings are out of date. I had forgotten about others. For instance, writing this document taught me that TeXShop already had the ability to set interline spacing in the source using the preference SourceInterlineSpace. Version 3.98 of TeXShop greatly improves this ability and makes the old setting obsolete.
+
+\newpage
+
+TeXShop obeys the following hidden preferences:
+
+\begin{itemize}
+\item defaults write MakeatletterEnabled YES
+\item defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+\item defaults write TeXShop SyncTeXOnly YES
+\item defaults write TeXShop ScreenFontForLogAndConsole -bool YES
+\item defaults write TeXShop WatchServer NO
+\item defaults write TeXShop AutoSaveEnabled NO
+\item defaults write TeXShop SourceInterlineSpace 1.0
+\item defaults write TeXShop ResetSourceTextColorEachTime YES
+\item defaults write TeXShop SwitchSides YES
+\item defaults write TeXShop InterpolationValue 3
+\item defaults write TeXShop FixPreviewBlur YES
+\item defaults write TeXShop FixLineNumberScroll NO
+\item defaults write TeXShop SourceScrollElasticity NO
+\item defaults write TeXShop YosemiteScrollBug NO
+\item defaults write TeXShop ReverseSyncRed 1.00 
+\item defaults write TeXShop ReverseSyncGreen 1.00 
+\item defaults write TeXShop ReverseSyncBlue 0.00
+\item defaults write TeXShop FixSplitBlankPages NO
+\item defaults write TeXShop IndexColorStart YES
+\item defaults write TeXShop OriginalSpelling YES
+\item defaults write TeXShop ContinuousHighSierraFix NO
+\item defaults write TeXShop TabsAlsoForInputFiles YES
+\item defaults write TeXShop FlashFix NO
+\item defaults write TeXShop FlashDelay 0.25
+†\end{itemize}
+
+\end{document}  

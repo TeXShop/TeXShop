@@ -69,6 +69,15 @@
     [self displayFile: fileName];
 }
 
+- (IBAction)displayCommentLines:sender
+{
+    NSString                *fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"CommentLines" ofType:@"pdf"];
+    [self displayFile: fileName];
+}
+
+
 
 - (IBAction)displayGettingStartedTeXShop:sender
 {

@@ -167,6 +167,9 @@
         tempDelay = 2.0;
     self.PDFFlashDelay = tempDelay;
     
+    self.myHideView1 = nil;
+    self.myHideView2 = nil;
+    
     
     // The initial Sierra beta had horrible scrolling, which the line below fixed
     // Apple fixed the bug in the second beta, but I kept the line through 3.73
@@ -205,10 +208,10 @@
 		green: [SUD floatForKey:PdfPageBack_GKey] blue: [SUD floatForKey:PdfPageBack_BKey]
 		alpha: 1];
 	*/
-    if ((atLeastHighSierra) && ([SUD boolForKey:continuousHighSierraFixKey]))
+    
+    if ((BuggyHighSierra) && ([SUD boolForKey:continuousHighSierraFixKey]))
      self.updatePageNumberTimer = [NSTimer scheduledTimerWithTimeInterval: 1
                        target:self selector:@selector(pageChangedNew:) userInfo:nil repeats:YES];
-
 }
 
 - (void) setupPageStyle
@@ -632,17 +635,18 @@
 		_searchResults = NULL;
 	}
     
-if ((atLeastHighSierra) && self.PDFFlashFix)
-{
-    NSView *myView = [[self documentView] enclosingScrollView];
-    sizeRect = [myView frame];
-    NSImage *myImage = [self screenCacheImageForView: myView];
-    self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
-    [self.myHideView1 setSizeRect: sizeRect];
-    self.myHideView1.originalImage = myImage;
-    [myView addSubview: self.myHideView1];
-}
     
+if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+    {
+        NSView *myView = [[self documentView] enclosingScrollView];
+        sizeRect = [myView frame];
+        NSImage *myImage = [self screenCacheImageForView: myView];
+        self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
+        [self.myHideView1 setSizeRect: sizeRect];
+        self.myHideView1.originalImage = myImage;
+        [myView addSubview: self.myHideView1];
+   }
+
 	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
 	if ([self doReleaseDocument]) {
 		// NSLog(@"texshop release");
@@ -752,12 +756,15 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
 //    if ([SUD boolForKey: FixPreviewBlurKey])
 //        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
  
-    if ((atLeastHighSierra) && self.PDFFlashFix)
-        [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
-                                     target:self
-                                   selector:@selector(removeHideView1:)
-                                   userInfo:Nil
-                                    repeats:NO];
+if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+    {
+            [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
+                                              target:self
+                                           selector:@selector(removeHideView1:)
+                                            userInfo:Nil
+                                             repeats:NO];
+     }
+
 }
 
 - (void)removeHideView1: (NSTimer *) theTimer
@@ -835,7 +842,8 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
 	PDFPage		*aPage;
     NSRect      sizeRect;
     
-    if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix)  {
+if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && (self.myHideView2 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+    {
     
     NSView *myView = [[self documentView] enclosingScrollView];
     sizeRect = [myView  frame];
@@ -844,10 +852,8 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
     [self.myHideView2 setSizeRect: sizeRect];
     self.myHideView2.originalImage = myImage;
     [myView addSubview: self.myHideView2];
-    }
+     }
 
-    
-    
     
     
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
@@ -967,14 +973,16 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
    // [self removeBlurringByResettingMagnification];
    [self fixWhiteDisplay];
  
-     if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) & self.PDFFlashFix) {
+if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+    {
+        
          [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
-                                     target:self
-                                   selector:@selector(removeHideView2:)
-                                   userInfo:Nil
-                                    repeats:NO];
-     }
-    
+                                         target:self
+                                       selector:@selector(removeHideView2:)
+                                       userInfo:Nil
+                                        repeats:NO];
+    }
+
 }
 
 - (void) rotateClockwisePrimary
@@ -1071,7 +1079,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
 
 
 
-
+/* This routine and the next one are only active in High Sierra < 10.13.4, to fix a pageNumber bug */
 - (void) pageChangedNewer
 {
     PDFPage     *aPage;
@@ -1131,6 +1139,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
     
    
 }
+
 
 
 - (void) pageChanged: (NSNotification *) notification
@@ -2568,7 +2577,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix)
 - (void) mouseDown: (NSEvent *) theEvent
 {
  
-    if ((atLeastHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
+    if ((BuggyHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
         {
         if ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE))
             [self pageChangedNewer];

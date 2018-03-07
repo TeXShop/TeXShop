@@ -87,7 +87,7 @@ enum RootCommand
 {
 	IBOutlet NSTextView			*textView1;
 	IBOutlet NSTextView			*textView2;
-	IBOutlet NSScrollView		*scrollView2;
+    IBOutlet NSScrollView		*scrollView2;
 	IBOutlet NSSplitView		*splitView;
 
 	IBOutlet NSTextView			*textView;		/*" textView displaying the current TeX source "*/
@@ -400,6 +400,7 @@ enum RootCommand
 @property (retain)  id					indexColorBox;
 
 @property (retain) 	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
+@property (retain) NSData       *previousFontStyleData; /*" ditto for font style "*/
 @property TSDocumentType			documentType;
 
 @property (retain) 	NSConnection    *completionConnection; //Adam Maxwell

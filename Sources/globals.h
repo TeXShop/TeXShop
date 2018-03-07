@@ -240,6 +240,7 @@ extern NSString *DefaultScriptKey;
 extern NSString *ConsoleBehaviorKey;
 extern NSString *SaveRelatedKey;
 extern NSString *DocumentFontKey;
+extern NSString *DocumentFontAttributesKey;
 extern NSString *DocumentWindowFixedPosKey;
 extern NSString *PortableDocumentWindowFixedPosKey;
 extern NSString *DocumentWindowNameKey;
@@ -536,6 +537,7 @@ extern BOOL             atLeastMavericks;
 extern BOOL             atLeastElCapitan;
 extern BOOL             atLeastSierra;
 extern BOOL             atLeastHighSierra;
+extern BOOL             BuggyHighSierra;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/

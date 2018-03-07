@@ -77,6 +77,7 @@ static id _sharedInstance = nil;
 	_undoManager = [[NSUndoManager alloc] init];
 	// setup the default font here so it's defined when we run for the first time.
 	self.documentFont = [NSFont userFontOfSize:12.0];
+    self.fontAttributes = nil;
 	// self.consoleFont = [NSFont userFixedPitchedFontOfSize:10.0];
 
 	// register for changes in the user defaults
@@ -213,6 +214,10 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	// also register the default font. _documentFont was set in -init, dump it here to
 	// the user defaults
 	[SUD setObject:[NSArchiver archivedDataWithRootObject:self.documentFont] forKey:DocumentFontKey];
+    if (self.fontAttributes == nil)
+        [SUD setObject: nil forKey:DocumentFontAttributesKey];
+    else
+        [SUD setObject:[NSArchiver archivedDataWithRootObject:self.fontAttributes] forKey:DocumentFontAttributesKey];
 	// [SUD setObject:[NSArchiver archivedDataWithRootObject:self.consoleFont] forKey:ConsoleFontKey];
 	[SUD synchronize];
 
@@ -229,13 +234,123 @@ Clicking this button will bring up the font panel.
 "*/
 - (IBAction)changeDocumentFont:sender
 {
+    
+    
 	// become first responder so we will see the events that NSFontManager sends
 	// up the responder chain
+    
+    NSData    *fontData;
+    NSFont     *font;
+    NSRange myRange;
+    NSUInteger thelength;
+    
+    
+    
+    if ([[_fontTextView string] isEqualToString:@"Hello"])
+        {
+        thelength = [[_fontTextView string] length];
+        myRange.location = 0;
+        myRange.length = thelength;
+        [_fontTextView replaceCharactersInRange:myRange withString: NSLocalizedString(@"Type sample text here.\nUse several lines to test\ninterline spacing.", @"Type sample text here.\nUse several lines to test\ninterline spacing.") ];
+        }
+    
+    NSDictionary *fontAttributes =  [NSDictionary dictionary];
+    NSMutableAttributedString *myAttributedString;
+    myAttributedString = _fontTextView.textStorage;
+    thelength = [myAttributedString length];
+    if (thelength > 0)
+    {
+        myRange.location = 0;
+        myRange.length = thelength;
+        [myAttributedString setAttributes: fontAttributes range: myRange];
+    }
+    [_fontTextView setTypingAttributes: fontAttributes];
+
+    
+    {
+        fontData = [SUD objectForKey:DocumentFontKey];
+        if (fontData != nil)
+        {
+            font = [NSUnarchiver unarchiveObjectWithData:fontData];
+            [_fontTextView setFont: font];
+        }
+    }
+    
+    
+     /*
+     
+     NSDictionary *fontAttributes;
+     NSFontManager *fontManager;
+     NSData    *attributesData;
+     
+     
+     NSTextStorage* textViewContent = [_fontTextView textStorage];
+    NSRange area = NSMakeRange(0, [textViewContent length]);
+    [textViewContent invalidateAttributesInRange:area];
+
+    
+      attributesData = [SUD objectForKey:DocumentFontAttributesKey];
+     if (attributesData != nil)
+     {
+     NSLog(@"got here");
+     fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
+     if (fontAttributes != nil)
+     {
+     NSLog(@"and here");
+     myAttributedString = _fontTextView.textStorage;
+     thelength = [myAttributedString length];
+     myRange.location = 0;
+     myRange.length = thelength;
+     NSRange area = NSMakeRange(0, thelength);
+     [myAttributedString setAttributes: fontAttributes range: area];
+     }
+     }
+     */
+
+    [NSApp beginSheet: _samplePanel
+       modalForWindow: _prefsWindow
+        modalDelegate: self
+       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+          contextInfo: nil];
+
 	[_prefsWindow makeFirstResponder:_prefsWindow];
 	[[NSFontManager sharedFontManager] setSelectedFont:self.documentFont isMultiple:NO];
 	[[NSFontManager sharedFontManager] orderFrontFontPanel:self];
 }
 
+- (IBAction)closeSamplePanel: (id)sender
+{
+    NSData  *fontData, *FontAttributesData;
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontKey] forKey:DocumentFontKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontAttributesKey] forKey:DocumentFontAttributesKey];
+    
+    NSDictionary *newTypingAttributes = _fontTextView.typingAttributes;
+    self.fontAttributes = newTypingAttributes;
+    self.documentFont = _fontTextView.font;
+    fontTouched = YES;
+    [self updateDocumentFontTextField];
+    
+    // update the userDefaults
+    fontData = [NSArchiver archivedDataWithRootObject:self.documentFont];
+    [SUD setObject:fontData forKey:DocumentFontKey];
+    [SUD setBool:YES forKey:SaveDocumentFontKey];
+    FontAttributesData = [NSArchiver archivedDataWithRootObject:self.fontAttributes];
+    [SUD setObject:FontAttributesData forKey:DocumentFontAttributesKey];
+    
+    
+    // post a notification so all open documents can change their font
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+    
+    [NSApp endSheet:_samplePanel];
+//    [self changeFont: [NSFontManager sharedFontManager]];
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+}
 
 
 - (IBAction)changeConsoleResize:sender
@@ -261,17 +376,19 @@ Clicking this button will bring up the font panel.
 }
 
 
+
 /*" This method is sent down the responder chain by the font manager when changing fonts in the font panel. Since this class is delegate of the Window, we will receive this method and we can reflect the changes in the textField accordingly.
 "*/
 - (void)changeFont:(id)fontManager
 {
-	NSData	*fontData;
+	
+     NSData	*fontData;
 		
 	NSString *theTab = [[_tabView selectedTabViewItem] identifier];
-
+ 
 	if ([theTab isEqualToString: @"Document"])
 		{
-
+/*
 		self.documentFont = [fontManager convertFont:self.documentFont];
 		fontTouched = YES;
 
@@ -287,6 +404,7 @@ Clicking this button will bring up the font panel.
 
 		// post a notification so all open documents can change their font
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+ */
 		}
 		
 	else if ([theTab isEqualToString: @"Console"])
@@ -1473,6 +1591,11 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setInteger:[[sender selectedCell] tag] forKey:ConsoleBehaviorKey];
 }
 
+- (IBAction)dictionaryPressed: sender
+{
+    return;
+}
+
 /*" This method is connected to the "After Typesetting" matrix on the Preference pane.
 A tag of 0 means "Activate Preview"; a tag of 1 means "Continue Editing".
 "*/
@@ -1546,7 +1669,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 
 	// close the window
-	[_prefsWindow performClose:self];
+	// [_prefsWindow performClose:self];
+    [_prefsWindow close];
 }
 
 /*" This method is connected to the Cancel button.
@@ -1559,7 +1683,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
      [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
 	// close the window
-	[_prefsWindow performClose:self];
+	// [_prefsWindow performClose:self];
+     [_prefsWindow close];
 	
 //	[PreviewBackgroundColor release];
 	PreviewBackgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfPageBack_RKey]
@@ -1708,6 +1833,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	// also register the default font. documentFont was set in -init, dump it here to
 	// the user defaults
 	[SUD setObject:[NSArchiver archivedDataWithRootObject:self.documentFont] forKey:DocumentFontKey];
+    [SUD setObject:[NSArchiver archivedDataWithRootObject:self.fontAttributes] forKey:DocumentFontAttributesKey];
 	[SUD synchronize];
 }
 
@@ -1721,18 +1847,26 @@ This method retrieves the application preferences from the defaults object and s
 "*/
 - (void)updateControlsFromUserDefaults:(NSUserDefaults *)defaults
 {
-	NSData	*fontData;
+	NSData	*fontData, *attributesData;
 	double	magnification;
 	NSInteger		mag, tabSize;
 	NSInteger		myTag;
 	BOOL	myBool;
 	NSNumber    *myNumber;
-	
-	fontData = [defaults objectForKey:DocumentFontKey];
+    
+    fontData = [defaults objectForKey:DocumentFontKey];
 	if (fontData != nil)
 	{
 		self.documentFont = [NSUnarchiver unarchiveObjectWithData:fontData];
 	}
+    
+    attributesData = [defaults objectForKey:DocumentFontAttributesKey];
+    if (attributesData != nil)
+    {
+        self.fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
+    }
+    
+    
 	[self updateDocumentFontTextField];
 	[self updateConsoleFontTextField];
 

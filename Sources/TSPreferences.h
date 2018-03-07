@@ -37,6 +37,8 @@
     IBOutlet NSMatrix	*_consoleWindowPosMatrix;		/* connected to set current position button */
 	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
+    IBOutlet NSPanel    *_samplePanel;
+    IBOutlet NSTextView *_fontTextView;
 
     IBOutlet NSButton       *_tabIndentButton;		/*" connected to "Use Tab" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
@@ -168,6 +170,7 @@
 
 @property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
 @property (retain) NSFont		*consoleFont;			/*" used to track the font that the user has selected for the console window "*/
+@property (retain) NSDictionary *fontAttributes;         /*" used to track the font attributes that the user has selected for the document window "*/
 
 + (id)sharedInstance;
 
@@ -244,6 +247,8 @@
 - (IBAction)changeConsoleResize:sender;
 - (IBAction)sourceAndPreviewInSameWindowChanged:sender;
 - (IBAction)sourceOnLeftChanged:sender;
+- (IBAction)closeSamplePanel:sender;
+
 
 #ifdef MITSU_PDF
 - (IBAction)pageStyleChanged:sender; // mitsu 1.29 (O)

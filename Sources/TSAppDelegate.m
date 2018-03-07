@@ -51,6 +51,7 @@
 #define NSAppKitVersionNumber10_9 1265
 #define NSAppKitVersionNumber10_10 1343
 #define NSAppKitVersionNumber10_12 1504
+#define NSAppKitVersionNumber10_12_4 1504.90
 
 
 @class TSTextEditorWindow;
@@ -225,6 +226,11 @@
         atLeastHighSierra = YES;
     else
         atLeastHighSierra = NO;
+    
+    BuggyHighSierra = NO;
+    if ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12) && (NSAppKitVersionNumber < 1561.3)) // 10_13_3 = 1561.2 and 10_13_4 = 1561.4
+        BuggyHighSierra = YES;
+    // NSLog(@"The app kit version number is %lf", NSAppKitVersionNumber);
     
     
 	NSString *fileName, *currentVersion, *versionString, *myVersion;

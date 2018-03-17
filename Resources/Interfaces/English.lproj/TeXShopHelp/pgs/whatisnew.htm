@@ -15,6 +15,36 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 3.99</h5></P>
+
+<p> There are five changes in TeXShop 3.99:
+
+<ul>
+<li> The German localization was updated.
+
+<p>
+<li> The Spanish localization was slightly improved.
+
+<p>
+<li> The original Preference dialog did not fit on the screen when users had an 11 inch or 13 inch portable. In version 3.99 of TeXShop, an  additional Editor tab was added to the dialog and the Source items were split between the Source and Editor tabs. This allows the entire dialog to be shortened.
+
+<p>
+<li> When TeXShop opens a postscript file, it runs a script which calls ghostscript to convert the ps file to pdf,
+and then displays the pdf file. Bruno Voisin noticed that this process fails when the name of the postscript file contains spaces. He discovered the cause: the ps2pdfwrap script in TeXShop defining the conversion does not quote one filename. This is fixed.
+
+<p>
+<li> Latexmk updated to version 4.55d
+
+</ul>
+
+<p> A user in Israel, Michael Gedalin, is writing a book in Hebrew using TeX. His source file often switches between English for TeX commands and Hebrew for the actual text. He complained that opening his source in TeXShop was slow and adding new text to the middle of the source file was very, very slow.
+Using either English or Hebrew, it was possible to type three words before any letters appeared on the screen.
+
+<p> Debugging this problem revealed an interesting cause. If the font used in the TeXShop editor contained both ASCII and Hebrew characters, there was no slowdown. But if the source font did not contain Hebrew characters,  the Macintosh was smart enough to switch to a Hebrew font for  Hebrew portions of the text. Unfortunately, this switch, repeated over and over in the text, was extremely slow., 
+
+<p> The lesson is clear. If you are writing in an unusual script, pick an editor source font which contains both  ASCII characters and characters for your script. The  Font Book, in Applications, lists for each font the scripts supported by that font.
+
+
 <P><h5>TeXShop Changes 3.98</h5></P>
 
 <p> There are five  changes in TeXShop 3.98:
@@ -29,7 +59,7 @@
 <p>In TeXShop 3.98, the workaround only runs on early versions of High Sierra, and the original more efficient TeXShop code runs on High Sierra 10.13.4 and above.  
 
 <p>
-<li> Latexmk is updared to version 3.44a.
+<li> Latexmk is updared to version 3.55a.
 
 <p>
 <li> Version 3.94 of TeXShop contained a fix for the "flash after typesetting" bug in High Sierra when the preview window is using multipage or double multipage modes. However, the fix was also applied  in single page or double page modes, where is may have caused problems. In addition, the patch caused problems for some users who worked with an external editor, or turned on the "Automatic Preview Update" TeXShop preference. The patch has been reworked slightly to avoid all of these problems.

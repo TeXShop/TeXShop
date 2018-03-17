@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.55a';
-$version_details = "$My_name, John Collins, 25 Jan. 2018";
+$version_num = '4.55d';
+$version_details = "$My_name, John Collins, 16 Mar. 2018";
 
 use Config;
 use File::Basename;
@@ -221,6 +221,20 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    15 Mar 2018   John Collins  Version 4.55d.
+##                                In test for non-existent file in fls, don't give
+##                                  warning.
+##                                Add corresponding test for files reported as
+##                                  output that no longer exist.
+##                                (See minted package for cases where reported
+##                                  input and output files don't exist at end of run.)
+##    15 Mar 2018   John Collins  Version 4.55c.
+##                                Move test for non-existent file in fls to calling routine.
+##    15 Mar 2018   John Collins  Deal with non-existent input files reported in
+##                                fls file.  (Needed to work around bug in lualatex
+##                                in TeXLive 2016, 2017 and pretest 2018 (as of the
+##                                version of 2018 Mar 4).
+##     2 Feb 2018   John Collins  Version 4.55b.  Correct parsing of biber's log file.
 ##    25 Jan 2018   John Collins  Implement $warning_cmd
 ##    24 Jan 2018   John Collins  Version number to 4.55a.  Implement warnings_as_errors option
 ##    17 Jan 2018   John Collins  Version number to 4.55.  Ready for release.
@@ -3733,7 +3747,6 @@ sub check_biber_log {
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
                 || /> INFO - Reading '([^']+)'\s*$/
-                || /> INFO - Reading (.*)$/
                 || /> INFO - Processing .* file '([^']+)' .*$/
               ) {
             if ( defined $Pbiber_source ) {
@@ -3753,6 +3766,7 @@ sub check_biber_log {
     my @not_found = &find_file_list1( $Pbiber_source, $Pbiber_source,
                                       '', \@BIBINPUTS );
     @$Pbiber_source = uniqs( @$Pbiber_source );
+
     if ( ($#not_found < 0) && ($#$Pbiber_source >= 0) ) {
         warn "$My_name: Found biber source file(s) [@$Pbiber_source]\n"
         unless $silent;
@@ -5484,10 +5498,27 @@ sub rdb_set_latex_deps {
     # wasn't used/analyzed, so we don't need a test as to whether the fls file was
     # used.
     foreach (keys %source_fls) {
+        if (! -e ) {
+	    # File is listed in .fls file as read, but doesn't exist now.
+	    # Therefore it is not a true source file, surely.
+	    # Sometimes this is caused by a bug (e.g., lualatex in TeXLive 2016, 
+	    #   2017) when there is an incorrect line in .fls file.  (This
+	    #   would deserve a warning.)
+            # But sometimes (e.g., with minted package), the file could be
+	    #  created during a run, read, and then deleted.
+           next;
+        }
         $dependents{$_} = 4;
 	if ( /\.bbl$/ ) { push @bbl_files, $_; }
     }
     foreach (keys %generated_fls) {
+        if (! -e ) {
+	    # File is listed in .fls file as written, but doesn't exist now.
+	    # Therefore it is not a true externally visible generated file.
+	    # (Typically, e.g., with the minted package, it is a temporary
+	    #   file created during a run and then deleted during the run.)
+            next;
+        }
         rdb_add_generated( $_ );
         if ( exists($dependents{$_}) ) {
             $dependents{$_} = 6;

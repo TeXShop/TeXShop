@@ -324,7 +324,7 @@ Clicking this button will bring up the font panel.
     
     // register the undo message first
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontKey] forKey:DocumentFontKey];
-    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontAttributesKey] forKey:DocumentFontAttributesKey];
+   // [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontAttributesKey] forKey:DocumentFontAttributesKey];
     
     NSDictionary *newTypingAttributes = _fontTextView.typingAttributes;
     self.fontAttributes = newTypingAttributes;
@@ -336,8 +336,8 @@ Clicking this button will bring up the font panel.
     fontData = [NSArchiver archivedDataWithRootObject:self.documentFont];
     [SUD setObject:fontData forKey:DocumentFontKey];
     [SUD setBool:YES forKey:SaveDocumentFontKey];
-    FontAttributesData = [NSArchiver archivedDataWithRootObject:self.fontAttributes];
-    [SUD setObject:FontAttributesData forKey:DocumentFontAttributesKey];
+   // FontAttributesData = [NSArchiver archivedDataWithRootObject:self.fontAttributes];
+   // [SUD setObject:FontAttributesData forKey:DocumentFontAttributesKey];
     
     
     // post a notification so all open documents can change their font

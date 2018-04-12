@@ -3005,13 +3005,8 @@ if ( ! skipTextWindow) {
 /*" Changes the font of %textView to the one saved in the NSUserDefaults. This method is also registered with NSNotificationCenter and a notifictaion will be send whenever the font changes in the preferences panel.
 "*/
 {
-	NSData	*fontData, *attributesData;
+	NSData	*fontData;
 	NSFont 	*font;
-    NSDictionary *fontAttributes;
-    NSFontManager *fontManager;
-    NSRange myRange;
-    NSMutableAttributedString *myAttributedString;
-    NSDictionary *emptyFontAttributes = [NSDictionary dictionary];
  
      {
         fontData = [SUD objectForKey:DocumentFontKey];
@@ -3023,142 +3018,16 @@ if ( ! skipTextWindow) {
         }
     }
     
-    myAttributedString = textView1.textStorage;
-    NSUInteger thelength = [myAttributedString length];
-    if (thelength > 0)
-    {
-        myRange.location = 0;
-        myRange.length = thelength;
-        [myAttributedString setAttributes: emptyFontAttributes range: myRange];
-        /*
-        NSTextStorage* textViewContent = [textView1 textStorage];
-        NSRange area = NSMakeRange(0, [textViewContent length]);
-        if (thelength > 0)
-        [textViewContent invalidateAttributesInRange:area];
-        */
-    
-    attributesData = [SUD objectForKey:DocumentFontAttributesKey];
-    if (attributesData != nil)
-    {
-        fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
-        if (fontAttributes != nil)
-        {
-            [myAttributedString addAttributes: fontAttributes range: myRange];
-            //  [textViewContent addAttributes: fontAttributes range: area];
-            textView1.typingAttributes =  fontAttributes;
-            textView2.typingAttributes = fontAttributes;
-         }
-    }
-    }
-    
-    else
-        
-    {
-        
-        
-        attributesData = [SUD objectForKey:DocumentFontAttributesKey];
-        if (attributesData != nil)
-        {
-            fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
-            if (fontAttributes != nil)
-            {
-                 textView1.typingAttributes = fontAttributes;
-                textView2.typingAttributes = fontAttributes;
-            }
-           //  NSTextStorage *myTextStorage = textView1.textStorage;
-           //  myRange.location = 0;
-           //  myRange.length = 0;
-            
-           //  [myTextStorate addAttributes: fontAttributes range: myRange];
-        }
-        
-        
-        /*
-        myAttributedString = sampleTextView.textStorage;
-        NSUInteger thelength = [myAttributedString length];
-        if (thelength > 0)
-        {
-            myRange.location = 0;
-            myRange.length = thelength;
-            [myAttributedString setAttributes: emptyFontAttributes range: myRange];
-            
-            attributesData = [SUD objectForKey:DocumentFontAttributesKey];
-            if (attributesData != nil)
-            {
-                fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
-                if (fontAttributes != nil)
-                {
-                    [myAttributedString addAttributes: fontAttributes range: myRange];
-                 }
-            }
-        }
-        */
-        
-   /*
-        CGFloat interlinespace = 10.0;
-        NSParagraphStyle         *paraStyle = [NSParagraphStyle defaultParagraphStyle];
-        NSMutableParagraphStyle  *newStyle = [paraStyle mutableCopy] ;
-        [newStyle setLineSpacing: interlinespace];
-        NSMutableDictionary *theTypingAttributes = [[NSMutableDictionary alloc] initWithCapacity:1] ;
-        [theTypingAttributes setObject:newStyle forKey:NSParagraphStyleAttributeName];
-        // [textView1 setTypingAttributes:theTypingAttributes];
-       [textView1 setDefaultParagraphStyle: newStyle];
-    */
-    }
-    
-    
-/*
-
-    CGFloat                     interlinespace      = [SUD floatForKey: SourceInterlineSpaceKey];
-    NSUInteger                    tabWidth            = [SUD integerForKey: tabsKey];
-    NSUInteger                    textStorageLength    = [_textStorage length];
-    NSArray                    *    desiredTabStops        = tabStopArrayForFontAndTabWidth(font, tabWidth);
-    NSParagraphStyle         *    paraStyle            = [NSParagraphStyle defaultParagraphStyle];
-    NSMutableParagraphStyle    *    newStyle            = [paraStyle mutableCopy] ;
-    
-    if (interlinespace < 0.5)
-        interlinespace = 1.0;
-    if (interlinespace > 40.0)
-        interlinespace = 1.0;
-    
-    [newStyle setTabStops:desiredTabStops];
-    [newStyle setLineSpacing: interlinespace];
-    
-    if (textStorageLength)
-        [_textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:NSMakeRange(0, textStorageLength)];
-    
-    // Warning: the next six lines are needed to insure that new text added at the start of a line
-    // does not revert back to the old tab style
-    
-    NSMutableDictionary *theTypingAttributes = [[NSMutableDictionary alloc] initWithCapacity:1] ;
-    [theTypingAttributes setObject:newStyle forKey:NSParagraphStyleAttributeName];
-    [textView1 setTypingAttributes:theTypingAttributes];
-    
-    NSMutableDictionary *theTypingAttributes2 = [[NSMutableDictionary alloc] initWithCapacity:1];
-    [theTypingAttributes2 setObject:newStyle forKey:NSParagraphStyleAttributeName];
-    [textView2 setTypingAttributes:theTypingAttributes2];
-    
-    [textView1 setFontSafely:font];
-    [textView1 setDefaultParagraphStyle: newStyle];
-    [textView2 setFontSafely:font];
-    [textView2 setDefaultParagraphStyle: newStyle];
-
-*/
-    
-    
-    
-    
-    
-
-	[self fixUpTabs];
+    [self fixUpTabs];
 }
+
+
+
 
 - (void)setLogWindowFontFromPreferences:(NSNotification *)notification
 {
-	NSData	*fontData,*attributesData;
+	NSData	*fontData;
 	NSFont 	*font;
-    NSDictionary *fontAttributes;
-    NSFontManager *fontManager;
     
     if (! [SUD boolForKey:ScreenFontForLogAndConsoleKey])
     {
@@ -3167,21 +3036,6 @@ if ( ! skipTextWindow) {
         return;
     }
     
-/*
-    attributesData = [SUD objectForKey:DocumentFontAttributesKey];
-    if (attributesData != nil)
-    {
-        fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
-        NSTextStorage* logViewContent = [self.logTextView textStorage];
-        NSRange area = NSMakeRange(0, [logViewContent length]);
-        [logViewContent invalidateAttributesInRange:area];
-        [logViewContent addAttributes: fontAttributes range: area];
-  //  }
-    
-  //  else
-        
-  //  {
-*/
 	fontData = [SUD objectForKey:DocumentFontKey];
 	if (fontData != nil)
         {

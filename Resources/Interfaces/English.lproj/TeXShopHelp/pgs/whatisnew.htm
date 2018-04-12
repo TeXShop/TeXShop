@@ -15,6 +15,82 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.00</h5></P>
+
+<p> There are three changes in TeXShop 4.00:
+
+<ul>
+
+<p>
+<li> Until this year, an ordinary LaTeX source file with Unicode encoding had to include the line
+<pre>
+     \usepackage[utf8]{inputenc}
+</pre>
+Such an "inputenc" line tells TeX which encoding was used when the input source file was written. From 
+ 2018 on, the line is not required for UTF-8 input because Latex expects UTF-8 Unicode source files by default.
+
+<p>
+Notice that a straight ASCII file is legal UTF-8, so the line above is also not required for ASCII input files. For many years the default TeXShop encoding was IsoLatin9, which contained ASCII code but also  non-ASCII code for accents, umlauts, and other characters required in Western Europe. This was the default encoding in Latex, so no inputenc line was required. But from now on, if a source file is encoded in IsoLatin9 and contains non-ASCII characters, the line below is required in the header:
+<pre>
+     \usepackage[latin9]{inputenc}
+</pre>
+By the way,   XeTeX, XeLaTeX, LuaTeX, and LuaLaTeX <I>require</I> Unicode source files.
+
+<p> The "inputenc" line tells LaTeX how to interprete source code, but it does nothing to guarantee that fonts are used which understand  Unicode characters. Users in the United States with European collaborators and users in Western Europe need only deal with accents, umlauts, and the like, and this font problem is handled with one extra line, which usually comes <I>before</I> the inputenc line:
+<pre>
+     \usepackage[T1]{fontenc}    
+</pre>
+Appropriate latex commands for users in other parts of the world are beyond my expertise. These users are likely to find XeLaTeX or LuaLaTeX particularly attractive.
+
+
+<p> To match this LaTeX change, the default file encoding for TeXShop files has been changed from IsoLatin9 to UTF-8 Unicode.  This change will not affect current TeXShop users because TeXShop doesn't change Preference settings that users may have already set. It affects new users and  it also affects <I>old</I> users who install a copy of TeXShop on a new machine for the first time.  TeXShop has special default values for users in Japan, and their defaults have not changed.
+
+
+<p> If you have already switched to UTF-8 or you use an unusual encoding, then you know all about encodings and can stop reading. The rest of this section is for users who ignored encoding issues until now.
+These users may want to take this opportunity to switch to UTF-8 Unicode. To understand the issues, it is best to tell the story from the beginning.
+
+<p> If you  examine a CD or DVD with a microscope, you will discover that the disk contains a long stream of whole numbers, each between 0 and 255. These are called bytes, and the ability to encode virtually any kind of information into a stream of bytes defines the current <I> digital age</I>. Thus a byte stream might represent music on a CD, or a movie on a DVD, or a jpg picture, or a computer program, or an encyclopedia.  A large fraction of computer files are just text files. From the beginning of the personal computer era, a standard encoding of text known as ASCII has been used. This method encodes all the characters on a standard American typewriter: small letters, capitol letters, punctuation marks, numbers, tabs, carriage return. There are less than 128 such characters, so ASCII only uses bytes between 0 and 127.
+The original version of TeX expected ASCII input.
+
+<p> ASCII had difficulties in Europe and in  regions of the world that used completely different scripts. For instance, scripts in Western Europe use accented vowels, umlauts, upside down question marks, and unusual Scandinavian letters. To solve such problems, the unused 128 bytes in ASCII were used to represent new characters. Different encodings were invented for each country, each with different characters in those 128 spots. One of these encodings, IsoLatin1, contained all of the characters routinely used in Western Europe. When the European currency was introduced, IsoLatin1 was extended by adding the Euro symbol, to become IsoLatin9, and TeXShop adopted that as default. But many more encodings are available in TeXShop Preferences.
+
+<p> Sadly, files encoded in this way do not contain a "magic byte" defining the encoding. So the user has to know which encoding was used to write the file, because the computer has no way to know.
+
+<p> But meanwhile, computer manufacturers realized that the increasing globalization of the world required a new approach to text. They formed an independent organization, which created and oversees Unicode, a standard that can represent all of the scripts of the world, such as hieroglyphics, Arabic, Chinese, and mathematics.  Virtually all computers have switched to Unicode; it is a central part of macOS. Their NSTestView object uses it, and thus TeXShop is entirely Unicode-based internally. You can easily type English, Cyrillic, Chinese, Hebrew, and Arabic in a single TeXShop document;  the Hebrew and Arabic will even be written from right to left.
+
+<p> Unicode does not define a single standard method to read and write Unicode to a file. But one very popular method is called UTF-8 Unicode. This method has the distinctive feature that ordinary ASCII output is correct UTF-8 output. The remaining unicode symbols are coded using characters between 128 and 255. 
+
+<p> Because there is no standard way to write Unicode to disk, every routine in macOS to read or write text requires an <I>encoding parameter</I>, which describes the type of encoding to be used by the operation. 
+If this parameter is UTF-8, then the contents of the editor will be completely preserved. If the parameter is IsoLatin9, then ASCII and Western European characters will be preserved, but Chinese, Arabic, Cyrillic, etc. characters will be lost.
+
+<p> There is one crucial difference between most of the encodings and UTF-8. Since most encodings just define characters for the bytes between 128 and 255, any random stream of bytes is an acceptable file. But  UTF-8 files use coded input, so most random streams  contain illegal bytes and a computer asked to read such a stream will reject the entire file. If that happens, TeXShop will put up an error dialog, and then open the file in IsoLatin9.
+
+<p>If you are a user who ignored encodings up to now, or only used UTF-8 and IsoLatin9, then we can give easy advice about switching permanently to UTF-8.  To actually switch, just choose UTF-8 Unicode as encoding in TeXShop Preferences. All new files will open fine and typeset easily with LaTeX, using only the "fontenc" header line mentioned earlier. Moreover, older files will also open fine and typeset easily if they only contain ASCII characters. But older files with accents or umlauts or other Latin9 characters will bring up an error message and then open using the IsoLatin9 encoding. When that happens,
+add the following to the top of the file:
+<pre>
+     % !TEX encoding = IsoLatin9
+</pre>
+and add the following to the header after the \documentclass line:
+<pre>
+     \usepackage[T1]{fontenc}   
+     \usepackage[latin9]{inputenc}
+</pre>
+With these lines in place, the file will thereafter automatically open in Latin9  and typeset fine.
+
+<p> This advice does not hold if you used other encodings or a mixture of encodings, but in that case you know how to juggle encodings and we have no extra advice to offer. 
+
+<p>
+<li> Latexmk updated to version 3.55d.
+
+<p>
+<li> The change in version 3.98 to set interline spacing and kerning in TeXShop Preferences was hopelessly broken. This was pointed out to me in a phone call from Louis M. Guenin. The method seemed to work, but any lines added later in the editor reverted to the original style.  Consequently, this method has been disabled in 4.00. It is still possible to set interline spacing and kerning for individual files as in 3.98, but Preferences cannot set  default values. 
+
+<p> The Preferences code is still in place and correctly sets font and font size. It also appears to set interline spacing and kerning, but when the user clicks "OK", those settings are ignored.
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 3.99</h5></P>
 
 <p> There are five changes in TeXShop 3.99:

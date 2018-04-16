@@ -32,7 +32,6 @@
 
 @implementation TSFullSplitWindow : NSWindow
 
-
 - (void)displayConsole: (id)sender
 {
     [self.myDocument displayConsole: sender];
@@ -231,6 +230,10 @@
     return;
 }
 
+- (void)printDocument: (id)sender
+{
+    [self.myDocument printDocument: sender];
+}
 
 - (void)printSource: (id)sender
 {
@@ -375,6 +378,51 @@
         // 6: Revert To Saved; revertDocumentToSaved:
         // 7: Revert To: subMenu
     }
+
+    if (enabled == NO)
+    {
+        NSInteger anIndex;
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(displayConsole:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(displayLog:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(performClose:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(saveDocument:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(saveDocumentAs:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+   //     anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(saveDocumentTo:)];
+   //     [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+  
+   //     anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(showConsole:)];
+   //     [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(printDocument:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+    
+  
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(printSource:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+        
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(convertTiff:)];
+       [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+   
+       anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(abort:)];
+       [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+    
+        anIndex = [fileMenu indexOfItemWithTarget:nil andAction:@selector(trashAUXFiles:)];
+        [[fileMenu itemAtIndex:anIndex] setEnabled:YES];
+   
+     }
+
+    
 }
 
 
@@ -407,6 +455,7 @@
     NSMenu  *menuBar;
     NSMenu  *fileMenu;
     
+
     [self setAutoSaveRelatedMenuItemsEnabled: YES];
 
     [super resignMainWindow];

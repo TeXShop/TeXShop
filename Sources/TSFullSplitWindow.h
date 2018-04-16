@@ -70,12 +70,14 @@
 - (void)showStatistics: (id)sender;
 - (void)runPageLayout: (id)sender;
 - (void)printSource: (id)sender;
+- (void)printDocument: (id)sender;
 - (void)convertTiff: (id)sender;
 - (void)splitWindow: (id)sender;
 - (void) becomeMainWindow;
 - (void) resignMainWindow;
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 - (void)associatedWindow:(id)sender;
+- (void)abort:(id)sender;
 
 
 

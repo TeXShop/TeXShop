@@ -37,6 +37,8 @@
 #import "TSTextEditorWindow.h"
 #import "TSFullSplitWindow.h"
 #import "GlobalData.h"
+#import "TSColorSupport.h"
+
 
 
 
@@ -52,6 +54,7 @@
 #define NSAppKitVersionNumber10_10 1343
 #define NSAppKitVersionNumber10_12 1504
 #define NSAppKitVersionNumber10_12_4 1504.90
+// #define NSAppKitVersionNumber10_13 ???  This is in the Mojave app kit, so use it
 
 
 @class TSTextEditorWindow;
@@ -159,6 +162,7 @@
 }
 
 
+
 /*
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
@@ -227,6 +231,24 @@
     else
         atLeastHighSierra = NO;
     
+    
+    if (@available(macOS 10.14, *)) {
+        // Code for macOS 10.14 or later
+        atLeastMojave = YES;
+    } else {
+        // Code for versions earlier than 10.14.
+        atLeastMojave = NO;
+    }
+    
+    
+    /*
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_13)
+        atLeastMojave = YES;
+    else
+        atLeastMojave = NO;
+    */
+    
+    
     BuggyHighSierra = NO;
     if ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12) && (NSAppKitVersionNumber < 1561.3)) // 10_13_3 = 1561.2 and 10_13_4 = 1561.4
         BuggyHighSierra = YES;
@@ -258,6 +280,9 @@
 		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL] propertyList];
 		[SUD registerDefaults:factoryDefaults];
 	}
+    
+    editorCanAddBrackets = [SUD boolForKey:EditorCanAddBracketsKey];
+    
     
     //Set value of NSISOLatin9StringEncoding   NSMacOSRomanStringEncoding
     NSISOLatin9StringEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingISOLatin9);
@@ -371,6 +396,11 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Templates"]
 			  toPath:[TexTemplatePath stringByStandardizingPath]];
 		}
+    
+    if (! [fileManager fileExistsAtPath: [ColorPath stringByStandardizingPath]] ) {
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Themes"]
+                  toPath:[ColorPath stringByStandardizingPath]];
+    }
 	
 	if (! [fileManager fileExistsAtPath: [StationeryPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Stationery"]
@@ -386,8 +416,6 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Movies"]
 			  toPath:[MoviesPath stringByStandardizingPath]];
 		}
-	
-
 		
 	if (([fileManager fileExistsAtPath: [NewPath stringByStandardizingPath]]) && needsUpdating)
         [fileManager removeItemAtPath: [NewPath stringByStandardizingPath] error: NULL];
@@ -540,6 +568,7 @@
 	[self finishAutoCompletionConfigure];
 	[self configureExternalEditor];
 	[self configureMovieMenu];
+    [[TSColorSupport sharedInstance]  initializeColors];
     
     if ( ![[NSUserDefaults standardUserDefaults] boolForKey:TagMenuInMenuBarKey])
     {   

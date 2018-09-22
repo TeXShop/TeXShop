@@ -15,7 +15,7 @@
 
 - (void)getFile: (NSString *)title
 {
-    NSString *fullURLString = @"http://pages.uoregon.edu/koch/texshop/";
+    NSString *fullURLString = @"https://pages.uoregon.edu/koch/texshop/";
     NSString *destination = @"~/Library/TeXShop/Movies/TeXShop/";
     
     if ([title isEqualToString:@"Getting Started.mp4"]) {

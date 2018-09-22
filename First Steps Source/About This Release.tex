@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 4.01}
+\title{About TeXShop 4.08}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -38,7 +38,23 @@ New versions of TeXShop generally do not change these user modifications because
 ccc.
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
 
-\section{Changes in 3.99 - 4.01}
+\section{Changes in 4.08}
+
+Only two changes in 4.08 may require user intervention.
+
+The first concerns missing tools on window toolbars. Users may discover that some of their tools on the Source and Preview window toolbars are missing. This problem will occur only on Mojave, and only if an older version of TeXShop ran first, probably before an update. To fix this problem, open a project with both a Source window and a Preview window. With the Source window active, select ``Customize Toolbar'' in the TeXShop Window menu, and drag the default tools to the Source toolbar. With the Preview window active, select ``Customize Toolbar'' and drag the default tools to the Preview toolbar. Then with the Source Window active, select ``Use One Window'' in the TeXShop Window menu. With this new window active, again select ``Customize Toolbar'' and drag the default tools to the Single Window toolbar. After these actions, all tools should appear.
+
+In previous versions of TeXShop, syntax coloring of the source file was turned off during file loading, and the user had to jiggle the mouse to start this coloring. This code may have been present to fix a bug created by trying to color too early, but experiments suggest that the bug is not longer present. So in version 4.08, source windows are colored immediately.
+
+If this causes problems when loading large documents, the new behavior can be turned off by setting a hidden preference using Apple's Terminal program:
+\begin{verbatim}
+     defaults write TeXShop ColorImmediately NO
+\end{verbatim}
+
+
+
+
+\section{Changes in 3.99 - 4.07}
 
 No changes in 3.99 - 4.01 require user intervention. Some users may want to take this moment to change their encoding preference to UTF-8 Unicode.
 

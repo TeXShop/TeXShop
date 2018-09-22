@@ -109,6 +109,7 @@ enum RootCommand
     BOOL                        useFullSplitWindow;
     
     IBOutlet    NSSearchField   *mySearchField;
+    IBOutlet    NSSearchField   *myFullSearchField;
     
 
 	// IBOutlet MyPDFKitView		*myPDFKitView;
@@ -120,6 +121,7 @@ enum RootCommand
 
 	IBOutlet NSTextField		*texCommand;		/*" connected to the command textField on the errors panel "*/
 	IBOutlet NSPopUpButton		*popupButton;		/*" popupButton displaying all the TeX templates "*/
+    IBOutlet NSPopUpButton      *spopupButton;        /*" popupButton displaying all the TeX templates "*/
 	IBOutlet NSPanel			*projectPanel;
 	IBOutlet NSTextField		*projectName;
 	IBOutlet NSPanel			*requestWindow;
@@ -140,7 +142,9 @@ enum RootCommand
 	IBOutlet NSTextField		*lineBox;
 	IBOutlet NSButton			*typesetButton;
 	IBOutlet NSButton			*typesetButtonEE;
+    IBOutlet NSButton           *stypesetButton;
     IBOutlet NSButton			*shareButton;
+    IBOutlet NSButton           *shareButtonFull;
 	IBOutlet NSButton			*shareButtonEE;
 	IBOutlet NSPopUpButton		*programButton;
 	IBOutlet NSPopUpButton		*programButtonEE;
@@ -151,6 +155,7 @@ enum RootCommand
     IBOutlet NSBox              *smagnificationOutletKK;
 	IBOutlet NSBox				*magnificationOutletKK;
 	IBOutlet NSMatrix			*mouseModeMatrixKK;
+    IBOutlet NSMatrix           *mouseModeMatrixFull;
 	IBOutlet NSSegmentedControl	*backforthKK;
 	IBOutlet NSImageView		*drawerKK;
 
@@ -270,8 +275,8 @@ enum RootCommand
 //	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
 	NSUInteger	tagLocation;
 	NSUInteger	tagLocationLine;
-
-	BOOL				makeError;
+    
+ 	BOOL				makeError;
 	SEL					tempSEL;
 	BOOL                taskDone;
 	NSInteger                 pdfSyncLine;
@@ -316,6 +321,7 @@ enum RootCommand
 	BOOL				isLoading;
 	BOOL				firstTime;
 	NSTimeInterval		colorTime;
+    BOOL                secondTime;
 //	NSString			*spellLanguage;
 	BOOL				consoleCleanStart;
 //	NSString			*statTempFile; // when get statistics for selection, name of temp file where selection is stored.
@@ -354,7 +360,6 @@ enum RootCommand
 
     
 }
-
 
 @property (retain)  NSDictionary		*regularColorAttribute;
 @property (retain)  NSDictionary		*commandColorAttribute;
@@ -449,6 +454,7 @@ enum RootCommand
 
 
  - (IBAction)setSaveExtension: sender;
+- (IBAction)changeMouseMode: sender;
 
 + (BOOL)autosavesInPlace;
 - (void)configureTypesetButton;
@@ -480,6 +486,7 @@ enum RootCommand
 - (void) showStatistics: sender;
 - (void) updateStatistics: sender;
 - (IBAction) doTemplate: sender;
+- (IBAction) doPDFSearch: sender;
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
@@ -599,6 +606,8 @@ enum RootCommand
 - (void) addTabbedWindows;
 - (NSTextView *)textView1;
 - (NSTextView *)textView2;
+- (void)switchFrontWindow;
+
 
 
 // BibDesk Completion
@@ -643,10 +652,11 @@ enum RootCommand
 // Michael Witten: mfwitten@mit.edu
 - (void)insertNewlinesFromSelectionUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;	//mfwitten@mit.edu 22 June 2005
 - (void)removeNewlinesUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;				//mfwitten@mit.edu 22 June 2005
-- (void)setLineBreakMode: (id)sender;																		//mfwitten@mit.edu 31 May 2005
+- (void) setLineBreakMode:(id)sender;                                                                       //mfwitten@mit.edu 31 May 2005
 - (void)hardWrapSelection: (id)sender;																		//mfwitten@mit.edu 7 June 2005
 - (void)removeNewLinesFromSelection: (id)sender;															//mfwitten@mit.edu 22 June 2005
 // end witten
+- (void)setLineBreakModeNew;
 
 //BULLET (H. Neary) (modified by (HS))
 - (void) placeComment: (id)sender;
@@ -705,7 +715,7 @@ enum RootCommand
 - (void) doContextTemp: sender;
 - (void) doIndexTemp: sender;
 - (void) doMetaFontTemp: sender;
-- (void) doTypeset: sender;
+- (IBAction) doTypeset: sender;
 - (void) doTypesetForScriptContinuously:(BOOL)method;
 - (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;
 - (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;
@@ -805,6 +815,14 @@ enum RootCommand
 
 - (void) watchFile:(NSString*)fileName;
 - (void) reloadFileOnExternalChange;
+@end
+
+
+@interface TSDocument (Color)
+
+- (void) changeColors:(BOOL)toDark;
+- (void) changeColorsUsingDictionary: (NSDictionary *)colorDictionary;
+- (void) changeColorsFromNotification:(NSNotification *)notification;
 @end
 
 // END PATCH

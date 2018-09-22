@@ -118,7 +118,13 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 
 	[SUD synchronize];
 
-	[self updateControlsFromUserDefaults:SUD];
+    [self updateControlsFromUserDefaults:SUD];
+    [self PrepareColorPane:SUD];
+    
+    //_sourceBackgroundColorWell.enabled = NO;
+    //_sourceBackgroundColorWell.highlighted = NO;
+    //_sourceTextColorWell.enabled = NO;
+    
 	/* the next command causes windows to remember their font in case it is changed, and then
 	the change is cancelled */
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRememberNotification object:self];
@@ -590,6 +596,21 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         [SUD setInteger:2 forKey:FindMethodKey];
 }
 
+/*" Set Wrap Panel"*/
+- (IBAction)wrapPanelChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:LineBreakModeKey] forKey:LineBreakModeKey];
+    
+    if ([[sender selectedCell] tag] == 0)
+        [SUD setInteger:0 forKey:LineBreakModeKey];
+    else if ([[sender selectedCell] tag] == 1)
+        [SUD setInteger:1 forKey:LineBreakModeKey];
+    else
+        [SUD setInteger:2 forKey:LineBreakModeKey];
+}
+
+
 
 /*" Make Empty Document on Startup "*/
 - (IBAction)emptyButtonPressed:sender
@@ -656,6 +677,88 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setInteger:value forKey:tabsKey];
 }
 
+- (IBAction)tabIndentPressed:(id)sender
+{
+    NSInteger        value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:tabsKey] forKey:tabsKey];
+    
+    value = [tabIndentField integerValue];
+    if (value < 2) {
+        value = 2;
+        [tabIndentField setIntegerValue:2];
+    } else if (value > 50) {
+        value = 50;
+        [tabIndentField setIntegerValue:50];
+    }
+    
+    [SUD setInteger:value forKey:tabsKey];
+
+}
+
+- (IBAction)firstParagraphIndentPressed:(id)sender
+{
+    double        value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceFirstLineHeadIndentKey] forKey:SourceFirstLineHeadIndentKey];
+    
+    value = [firstParagraphIndentField doubleValue];
+    if (value < 0.0) {
+        value = 0.0;
+        [firstParagraphIndentField setDoubleValue:0];
+    } else if (value > 100.0) {
+        value = 100.0;
+        [firstParagraphIndentField setDoubleValue:100.0];
+    }
+    
+    [SUD setFloat:value forKey:SourceFirstLineHeadIndentKey];
+    
+
+}
+
+- (IBAction)remainingParagraphIndentPressed:(id)sender
+{
+    double        value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceHeadIndentKey] forKey:SourceHeadIndentKey];
+    
+    value = [remainingParagraphIndentField doubleValue];
+    if (value < 0.0) {
+        value = 0.0;
+        [remainingParagraphIndentField setDoubleValue:0.0];
+    } else if (value > 100.0) {
+        value = 100.0;
+        [remainingParagraphIndentField setDoubleValue:100.0];
+    }
+    
+    [SUD setFloat:value forKey:SourceHeadIndentKey];
+    
+
+    
+}
+
+- (IBAction)interlineSpacingPressed:(id)sender
+{
+    NSInteger        value;
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceInterlineSpaceKey] forKey:SourceInterlineSpaceKey];
+    
+    value = [interlineSpacingField doubleValue];
+    if (value < 1.0) {
+        value = 1,0;
+        [interlineSpacingField setDoubleValue:1.0];
+    } else if (value > 20.0) {
+        value = 20.0;
+        [interlineSpacingField setDoubleValue:50.0];
+    }
+    
+    [SUD setFloat:value forKey:SourceInterlineSpaceKey];
+    
+
+}
+
+
+
 - (IBAction)useTabPressed:sender
 {
     // register the undo message first
@@ -682,6 +785,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 "*/
 - (IBAction)setSourceBackgroundColor:sender
 {
+    /*
 	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
 
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:background_RKey] forKey:background_RKey];
@@ -694,12 +798,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	
 	sourceBackgroundColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:SourceBackgroundColorChangedNotification object:self];
+     */
 }
 
 /*" This method is connected to the source window background color well.
  "*/
 - (IBAction)setSourceTextColor:sender
 {
+    /*
 	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
     
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:foreground_RKey] forKey:foreground_RKey];
@@ -721,6 +827,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	
 	sourceTextColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:SourceTextColorChangedNotification object:self];
+    */
 }
 
 
@@ -728,6 +835,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 "*/
 - (IBAction)setPreviewBackgroundColor:sender
 {
+    /*
 	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
 
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfPageBack_RKey] forKey:PdfPageBack_RKey];
@@ -747,12 +855,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 //	[PreviewBackgroundColor retain];
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:PreviewBackgroundColorChangedNotification object:self];
+    */
 }
 
 /*" This method is connected to the highlight Braces color well.
  "*/
 - (IBAction)setHighlightBracesColor:sender
 {
+    /*
 	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
 	
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:highlightBracesRedKey] forKey:highlightBracesRedKey];
@@ -762,6 +872,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[SUD setFloat: [newColor redComponent] forKey:highlightBracesRedKey];
 	[SUD setFloat: [newColor greenComponent] forKey:highlightBracesGreenKey];
 	[SUD setFloat: [newColor blueComponent] forKey:highlightBracesBlueKey];
+     */
 }
 
 
@@ -769,7 +880,8 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 "*/
 - (IBAction)setConsoleBackgroundColor:sender
 {
-	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+	/*
+     NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
 
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleBackgroundColor_RKey] forKey:ConsoleBackgroundColor_RKey];
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleBackgroundColor_GKey] forKey:ConsoleBackgroundColor_GKey];
@@ -781,12 +893,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	
 	consoleBackgroundColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleBackgroundColorChangedNotification object:self];
+     */
 }
 
 /*" This method is connected to the console window background color well.
  "*/
 - (IBAction)setConsoleForegroundColor:sender
 {
+    /*
 	NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
 	
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:ConsoleForegroundColor_RKey] forKey:ConsoleForegroundColor_RKey];
@@ -799,6 +913,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	
 	consoleForegroundColorTouched = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:ConsoleForegroundColorChangedNotification object:self];
+     */
 }
 
 /*" This method is connected to the "Source Window Position" Matrix.
@@ -904,6 +1019,14 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SpellCheckEnabledKey] forKey:SpellCheckEnabledKey];
 
 	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SpellCheckEnabledKey];
+}
+
+- (IBAction)editorAddBracketsPressed:(id)sender;
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:EditorCanAddBracketsKey] forKey:EditorCanAddBracketsKey];
+    
+    [SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:EditorCanAddBracketsKey];
 }
 
 - (IBAction)spellCorrectPressed:sender
@@ -1285,30 +1408,6 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 
 
 
-- (IBAction)setDictionaryFrom: sender
-
-{
-    
-    NSString *language = [[sender selectedItem] title];
-    
-    [[_undoManager prepareWithInvocationTarget:SUD] setInteger: [SUD integerForKey: spellingAutomaticDefaultKey] forKey: spellingAutomaticDefaultKey];
-    
-    [[_undoManager prepareWithInvocationTarget:SUD] setObject: [SUD objectForKey: spellingLanguageDefaultKey] forKey: spellingLanguageDefaultKey];
-    
-    if ([language isEqualToString: @"Automatic Language"])
-    {
-        [SUD setBool:YES forKey:spellingAutomaticDefaultKey];
-        [SUD setObject:@" " forKey:spellingLanguageDefaultKey];
-    }
-    else
-    {
-        [SUD setBool:NO forKey:spellingAutomaticDefaultKey];
-        [SUD setObject:language forKey:spellingLanguageDefaultKey];
-    }
-    
-}
-
-
 //==============================================================================
 /*" This method is connected to the textField that holds the tetex bin path.
 "*/
@@ -1593,8 +1692,26 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
 - (IBAction)dictionaryPressed: sender
 {
-    return;
+    
+    NSString *language = [[sender selectedItem] title];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger: [SUD integerForKey: spellingAutomaticDefaultKey] forKey: spellingAutomaticDefaultKey];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject: [SUD objectForKey: spellingLanguageDefaultKey] forKey: spellingLanguageDefaultKey];
+    
+    if ([language isEqualToString: @"Automatic Language"])
+    {
+        [SUD setBool:YES forKey:spellingAutomaticDefaultKey];
+        [SUD setObject:@" " forKey:spellingLanguageDefaultKey];
+    }
+    else
+    {
+        [SUD setBool:NO forKey:spellingAutomaticDefaultKey];
+        [SUD setObject:language forKey:spellingLanguageDefaultKey];
+    }
+    
 }
+
 
 /*" This method is connected to the "After Typesetting" matrix on the Preference pane.
 A tag of 0 means "Activate Preview"; a tag of 1 means "Continue Editing".
@@ -1640,7 +1757,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 {
 	// save everything to the user defaults
 
-
+    [self okForColor];
+    
  /* WARNING: the next seven commands were added by koch on March 17.
 		They are needed because the TextBox fields do not send a command
 		until the return key is pressed. But pressing the return key also
@@ -1667,7 +1785,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
     [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
 
-
+    editorCanAddBrackets = [SUD boolForKey: EditorCanAddBracketsKey];
+    
 	// close the window
 	// [_prefsWindow performClose:self];
     [_prefsWindow close];
@@ -1677,7 +1796,8 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 "*/
 - (IBAction)cancelButtonPressed:sender
 {
-	// undo everyting
+    [self cancelForColor];
+    // undo everyting
 	[_undoManager endUndoGrouping];
 	[_undoManager undo];
 
@@ -1755,6 +1875,9 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	if (highlightTouched || invisibleCharacterTouched) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedsForRecolorNotification" object: self];
 	}
+    
+    [self cancelForColor];
+    
 	// end addition
 
 	// The user defaults have changed. Force update of the user interface.
@@ -1882,6 +2005,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];
 	[_spellCheckButton setState:[defaults boolForKey:SpellCheckEnabledKey]];
+    [_editorAddBracketsButton setState:[defaults boolForKey:EditorCanAddBracketsKey]];
     [_autoSpellCorrectButton setState:[defaults boolForKey:AutomaticSpellingCorrectionEnabledKey]];
 	[_lineNumberButton setState:[defaults boolForKey:LineNumberEnabledKey]];
     [_tagMenuButton setState:[defaults boolForKey:TagMenuInMenuBarKey]];
@@ -1960,6 +2084,7 @@ This method retrieves the application preferences from the defaults object and s
 	}
 	[_bibTeXengineField setStringValue:bibTeXengine]; // added by Terada
 	
+/*
 	NSColor *sourceBackgroundColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:background_RKey]
 		green: [defaults floatForKey:background_GKey] blue: [defaults floatForKey:background_BKey] alpha:1.0];
 	[_sourceBackgroundColorWell setColor:sourceBackgroundColor];
@@ -1983,7 +2108,9 @@ This method retrieves the application preferences from the defaults object and s
 	NSColor *highlightBracesColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:highlightBracesRedKey]
 		green: [defaults floatForKey:highlightBracesGreenKey] blue: [defaults floatForKey:highlightBracesBlueKey] alpha:1.0];
 	[_highlightBracesColorWell setColor:highlightBracesColor];
-	
+ 
+ */
+    
 	if ([defaults boolForKey:ConsoleWidthResizeKey] == YES) 
 		[_consoleResizeMatrix selectCellWithTag:0];
 	else 
@@ -2015,12 +2142,20 @@ This method retrieves the application preferences from the defaults object and s
 	else 
 		[_commandCompletionMatrix selectCellWithTag:1];
     
+    if ([defaults integerForKey:LineBreakModeKey] == 0)
+        [_wrapMatrix selectCellWithTag:0];
+    else if ([defaults integerForKey:LineBreakModeKey] == 1)
+        [_wrapMatrix selectCellWithTag:1];
+    else 
+        [_wrapMatrix selectCellWithTag:2];
+    
     if ([defaults integerForKey:FindMethodKey] == 0)
         [_findMatrix selectCellWithTag:0];
     else if ([defaults integerForKey:FindMethodKey] == 1)
         [_findMatrix selectCellWithTag:1];
-    else 
+    else
         [_findMatrix selectCellWithTag:2];
+    
 	[_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
 	[_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];
     [_consoleWindowPosMatrix selectCellWithTag:[defaults integerForKey:ConsoleWindowPosModeKey]];
@@ -2075,6 +2210,8 @@ This method retrieves the application preferences from the defaults object and s
 	[_mouseModePopup selectItemAtIndex: itemIndex];
 
 	[_colorMapButton setState: [SUD boolForKey:PdfColorMapKey]?NSOnState:NSOffState];
+    
+    /*
 	NSColor *aColor;
 	if ([SUD stringForKey:PdfFore_RKey]) {
 		aColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfFore_RKey]
@@ -2095,7 +2232,8 @@ This method retrieves the application preferences from the defaults object and s
 		aColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1];
 	[_copyBackColorWell setColor: aColor];
 	[_copyBackColorWell setContinuous: YES];
-
+*/
+    
 	myTag = [defaults integerForKey:PdfColorParam1Key];
 	itemIndex = [_colorParam1Popup indexOfItemWithTag: myTag];
 	if (itemIndex == -1) itemIndex = 2; // default idx = 2
@@ -2123,6 +2261,11 @@ This method retrieves the application preferences from the defaults object and s
 	myNumber = [NSNumber numberWithInteger:tabSize];
 	[_tabsTextField setStringValue:[myNumber stringValue]];
 	// [_tabsTextField setIntValue: tabSize];
+    [tabIndentField setStringValue:[myNumber stringValue]];
+    
+    [firstParagraphIndentField setStringValue:[defaults stringForKey: SourceFirstLineHeadIndentKey]];
+    [remainingParagraphIndentField setStringValue:[defaults stringForKey: SourceHeadIndentKey]];
+    [interlineSpacingField setStringValue:[defaults stringForKey: SourceInterlineSpaceKey]];
 
 	[_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];

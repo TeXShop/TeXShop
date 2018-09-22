@@ -872,6 +872,7 @@ failed. If you change the code below, be sure to test carefully!
 		// set a break point here to check the consistency of dataWithPDFInsideRect
 		//NSLog(@"In drawRect aRect: %@", NSStringFromRect(aRect));
 		NSColor *backColor;
+        /*
 		if ([SUD boolForKey:PdfColorMapKey] && [SUD stringForKey:PdfBack_RKey])
 		{
 			backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfBack_RKey]
@@ -880,6 +881,17 @@ failed. If you change the code below, be sure to test carefully!
 			[backColor set];
 			NSRectFill(aRect);
 		}
+         */
+        if ([SUD boolForKey:PdfColorMapKey] && (! (ImageBackgroundColor == nil)))
+        {
+            backColor = ImageBackgroundColor;
+            [backColor set];
+            NSRectFill(aRect);
+        }
+        
+        
+        
+        
 	}
 
 	if ((documentType == isTeX) || (documentType == isPDF))

@@ -58,11 +58,11 @@
         theSelectionRect.origin.y = theSelectionRect.origin.y;
         [path appendBezierPathWithRect: theSelectionRect];
     
-        [self lockFocus];
+      //  [self lockFocus];
         [[NSGraphicsContext currentContext] setShouldAntialias: NO];
         [[NSColor blackColor] set];
         [path stroke];
-        [self unlockFocus];
+      //  [self unlockFocus];
     }
     else if (drawMagnifiedRect) {
         NSBezierPath    *path;
@@ -71,22 +71,22 @@
         theSelectionRect.origin.y = theSelectionRect.origin.y;
         [path appendBezierPathWithRect: theSelectionRect];
         
-        [self lockFocus];
+      //  [self lockFocus];
         [[NSGraphicsContext currentContext] setShouldAntialias: NO];
         [[NSColor redColor] set];
         [path fill];
         NSRectFill(theSelectionRect);
-        [self unlockFocus];
+      //  [self unlockFocus];
     }
     else if (drawMagnifiedImage) {
-        [self lockFocus];
+      //  [self lockFocus];
         [[NSGraphicsContext currentContext] setShouldAntialias: NO];
         [[NSColor whiteColor] set];
         NSRectFill(theSelectionRect);
         [self.magnifiedImage drawInRect: theSelectionRect fromRect: magnifiedRect operation: NSCompositeSourceOver fraction: 1.0 ]; //NSCompositeCopy NSCompositeSourceOver
         [[NSColor blackColor] set];
         NSFrameRect(theSelectionRect);
-        [self unlockFocus];
+     //   [self unlockFocus];
     }
 }
 

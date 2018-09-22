@@ -24,6 +24,7 @@
 
 #import "TSWindowController.h"
 #import "TSDocument.h"
+#import "globals.h"
 
 
 @implementation TSWindowController

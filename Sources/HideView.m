@@ -21,12 +21,12 @@
 
 - (void)drawRect:(NSRect) theRect
 {
-        [self lockFocus];
+   //     [self lockFocus];
         [[NSGraphicsContext currentContext] setShouldAntialias: NO];
         //  [[NSColor redColor] set];
         //  NSRectFill(sizeRect);
         [self.originalImage drawInRect: sizeRect];
-        [self unlockFocus];
+    //    [self unlockFocus];
 }
 
 

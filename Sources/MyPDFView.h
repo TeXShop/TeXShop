@@ -62,7 +62,7 @@ IBOutlet		id                  myStepper1;
 	NSInteger               mouseMode;
 	NSInteger               currentMouseMode;
 	IBOutlet NSMatrix       *mouseModeMatrix;
-	IBOutlet NSMenu         *mouseModeMenu;
+    IBOutlet NSMenu         *mouseModeMenu;
 	IBOutlet NSView         *imageTypeView;
 	IBOutlet NSPopUpButton *imageTypePopup;
 //    NSColor                 *pageBackgroundColor;

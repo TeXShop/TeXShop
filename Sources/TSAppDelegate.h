@@ -26,6 +26,7 @@
 #import "TSMovie.h"
 
 #import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @class OgreTextFinder;
 

@@ -45,12 +45,14 @@
 	[self.myDocument displayConsole: sender];
 }
 
+
+
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame
 {
 	NSRect	oldFrame;
 	NSRect	newFrame;
-
-	
+    
+    
 	oldFrame = [window frame];
 	newFrame = defaultFrame;
 	
@@ -61,6 +63,13 @@
 	
 	return newFrame;
 }
+
+/*
+- observeValueForKeyPath: @"effectiveAppearance" ofObject: self change: context:nil]
+{
+    NSLog(@"aha"_);
+}
+*/
 
 /*
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize

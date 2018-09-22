@@ -251,6 +251,14 @@ NSString *continuousHighSierraFixKey = @"ContinuousHighSierraFix";
 NSString *tabsAlsoForInputFilesKey = @"TabsAlsoForInputFiles";
 NSString *FlashFixKey = @"FlashFix";
 NSString *FlashDelayKey = @"FlashDelay";
+NSString *DefaultLiteThemeKey = @"DefaultLiteTheme";
+NSString *DefaultDarkThemeKey = @"DefaultDarkTheme";
+NSString *EditorCanAddBracketsKey = @"EditorCanAddBrackets";
+NSString *ColorImmediatelyKey = @"ColorImmediately";
+NSString *OpenWithSourceInFrontKey = @"OpenWithSourceInFront";
+NSString *SourceFirstLineHeadIndentKey = @"SourceFirstLineHeadIndent";
+NSString *SourceHeadIndentKey = @"SourceHeadIndent";
+
 
 
 
@@ -280,7 +288,7 @@ NSString *TempPath = @"/tmp/TeXShop_Applescripts";
 NSString *TempOutputKey = @"/tmp/TeXShop_Output";
 NSString *DraggedImageFolderPath = @"~/Library/TeXShop/DraggedImages";
 NSString *DraggedImagePath = @"~/Library/TeXShop/DraggedImages/texshop_image"; // mitsu 1.29 drag & drop
-
+NSString *ColorPath = @"~/Library/TeXShop/Themes";
 
 // Notifications
 NSString *SyntaxColoringChangedNotification = @"SyntaxColoringChangedNotification";
@@ -301,6 +309,8 @@ NSString *DocumentAutoCompleteNotification = @"DocumentAutoCompleteNotification"
 NSString *DocumentBibDeskCompleteNotification = @"DocumentBibDeskCompleteNotification";
 NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotification";
+NSString *SourceColorChangedNotification = @"SourceColorChangedNotification";
+NSString *PreviewColorChangedNotification = @"PreviewColorChangedNotification";
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;
@@ -318,7 +328,9 @@ BOOL                atLeastMavericks;
 BOOL                atLeastElCapitan;
 BOOL                atLeastSierra;
 BOOL                atLeastHighSierra;
+BOOL                atLeastMojave;
 BOOL                BuggyHighSierra;
+BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 
 // Encodings
 NSStringEncoding    NSISOLatin9StringEncoding;
@@ -327,10 +339,18 @@ NSStringEncoding    NSISOLatin9StringEncoding;
 NSString *g_commandCompletionChar = nil;
 NSMutableString *g_commandCompletionList = nil;
 BOOL g_canRegisterCommandCompletion = NO;
-NSColor *PreviewBackgroundColor = nil;
 
+// Below are colors which tend to be set just as they are needed
+// We make them globals, and thus set them from the new Color Preferences
+
+NSColor *InvisibleColor = nil;
+NSColor *ReverseSyncColor = nil;
+NSColor *PreviewBackgroundColor = nil;
 NSDictionary *highlightBracesColorDict; // added by Terada
 NSDictionary *highlightContentColorDict; // added by Terada
+NSColor *ImageForegroundColor = nil;
+NSColor *ImageBackgroundColor = nil;
+NSColor *PreviewDirectSyncColor = nil;
 
 
 // Koch 8/24/03
@@ -345,4 +365,7 @@ NSString *placeholderString;
 NSString *startcommentString;
 NSString *endcommentString;
 NSString *ConsoleWindowNameKey = @"ConsoleWindow";
+
+NSDictionary *liteColors;
+NSDictionary *darkColors;
 

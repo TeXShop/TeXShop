@@ -35,7 +35,7 @@
 	id  result;
 	self.firstResize = NO;
 	result = [super initWithContentRect:contentRect styleMask:styleMask backing:backingType defer:flag];
-	CGFloat alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
+ 	CGFloat alpha = [SUD floatForKey: ConsoleWindowAlphaKey];
 	if (alpha < 0.999)
 		 [self setAlphaValue:alpha];
 	return result;

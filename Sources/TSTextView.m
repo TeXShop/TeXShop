@@ -35,6 +35,7 @@
 #import <unistd.h>
 #import "TSLayoutManager.h" // added by Terada
 #import "GlobalData.h"
+#import "TSColorSupport.h"
 
 @protocol BDSKCompletionProtocol <NSObject>
 - (NSArray *)completionsForString:(NSString *)searchString;
@@ -52,6 +53,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // added by Terada (- (void)awakeFromNib)
 - (void)awakeFromNib
 {
+    
 	TSLayoutManager *layoutManager = [[TSLayoutManager alloc] init];
 	[[self textContainer] replaceLayoutManager:layoutManager];
 	
@@ -78,6 +80,12 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 		[self setAutomaticDashSubstitutionEnabled: [SUD boolForKey:AutomaticDashSubstitutionKey]];
 	
 }
+
+- (void)paste: (id)sender;
+{
+    [self pasteAsPlainText: sender];
+}
+
 
 - (void)pasteAsComment: (id)sender;
 {
@@ -219,6 +227,8 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+  //  [[NSColorPanel sharedColorPanel] close];
+    
 	NSMutableDictionary	*mySelectedTextAttributes;
 
 	if ([theEvent modifierFlags] & NSAlternateKeyMask)
@@ -898,7 +908,9 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 }
          
-    
+// The section below was extensively modified by Koch in September, 2018.  Before the modification,
+// clicking on } located the corresponding {, but the search for matches extended to comments,
+// \% was ignored, and \} and \{ were included as matches
 
 	// Extend word selection to cover an initial backslash (TeX command)
 	if (granularity == NSSelectByWord)
@@ -966,10 +978,20 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	// If the users double clicks an opening or closing parenthesis / bracket / brace,
 	// then the following code will extend the selection to the matching opposite
 	// parenthesis / bracket / brace.
-     
+    
+    
+    NSUInteger start, lineEnd, unmodifiedLineEnd, contentsEnd;
+    NSRange rangeInLine;
+    NSRange newSearchRange, commentRange;
+    NSString *textLine;
+    BOOL commentFound;
+    NSUInteger k;
+    char c1, c2;
+    NSInteger whichLine;
+
     
 	if ((uchar == '}') || (uchar == ')') || (uchar == ']') || (uchar == '>')) { // modified by Terada
-		j = i;
+        j = i;
 		rightpar = uchar;
 		if (rightpar == '}')
 			leftpar = '{';
@@ -979,23 +1001,81 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			leftpar = '<'; // added by Terada
 		else
 			leftpar = '[';
-		nestingLevel = 1;
+        
+        
+        nestingLevel = 1;
 		done = NO;
 		// Try searching to the left to find a match...
-		while ((i > 0) && (! done)) {
-			i--;
-			uchar = [textString characterAtIndex:i];
-			if (uchar == rightpar)
-				nestingLevel++;
-			else if (uchar == leftpar)
-				nestingLevel--;
-			if (nestingLevel == 0) {
-				done = YES;
-				replacementRange.location = i;
-				replacementRange.length = j - i + 1;
-			}
-		}
-	}
+        
+        
+        while ((i > 0) && (! done)) {
+            i--;
+        // find current line containing key i
+            
+            rangeInLine.location = i;
+            rangeInLine.length = 1;
+            [textString getLineStart: &start end: &lineEnd contentsEnd: &contentsEnd forRange: rangeInLine];
+    
+            
+        // truncate this line, removing comments at the end
+       
+            
+            commentFound = NO;
+            newSearchRange.location = start;
+            newSearchRange.length = lineEnd - start;
+            textLine =  [textString substringWithRange: newSearchRange];
+            commentRange = [textLine rangeOfString: @"%"];
+            if ((commentRange.location != NSNotFound) &&
+             (((commentRange.location == 0) || ([textLine characterAtIndex: (commentRange.location - 1)] != '\\'))))
+                {
+                    lineEnd = start + commentRange.location ;
+                    commentFound = YES;
+                }
+             
+            
+        // at this point, we are done except in the very unusual case that a line has a % but the first occurrence is \%.
+        // In this special case, we will use brute force to search the line character by character to see if it needs to be truncated
+    
+            if ((commentRange.location != NSNotFound) && (! commentFound))
+            {   commentFound = NO;
+                k = start;
+                do {
+                        c1 = [textString characterAtIndex:k];
+                        if ((c1 == '%') && ((k == 0) || ( [textString characterAtIndex:(k - 1)] != '\\')))
+                            {
+                                commentFound = YES;
+                                lineEnd = k;
+                            }
+                        k++;
+                            
+                    }
+                while (( ! commentFound) && (k < lineEnd));
+            }
+     
+            
+            
+        // search through the line to find a match
+            
+            if (i >= lineEnd)
+                i = lineEnd - 1;
+            while ((start <= i) && (i < lineEnd) && (! done)) {
+                uchar = [textString characterAtIndex:i];
+                if (start < i) c1 = [textString characterAtIndex:(i - 1)]; else c1 = 'a';
+                if ((uchar == rightpar) && (c1 != '\\'))
+                    nestingLevel++;
+                else if ((uchar == leftpar) && (c1 != '\\'))
+                    nestingLevel--;
+                if (nestingLevel == 0) {
+                    done = YES;
+                    replacementRange.location = i;
+                    replacementRange.length = j - i + 1;
+                }
+                i--;
+            }
+        }
+ 
+    }
+
 	else if ((uchar == '{') || (uchar == '(') || (uchar == '[') ||  (uchar == '<') ) { // modified by Terada
 		j = i;
 		leftpar = uchar;
@@ -1007,6 +1087,100 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			rightpar = '>'; // added by Terada
 		else
 			rightpar = ']';
+        
+        nestingLevel = 1;
+        done = NO;
+        whichLine = 0;
+        // Try searching to the right to find a match...
+        
+        while  ( (i < (length - 1)) && (! done)) {
+            i++;
+ 
+            // find current line containing key i
+            
+            rangeInLine.location = i;
+            rangeInLine.length = 1;
+            [textString getLineStart: &start end: &lineEnd contentsEnd: &contentsEnd forRange: rangeInLine];
+            whichLine++;
+            unmodifiedLineEnd = lineEnd;
+            
+            // truncate this line, removing comments at the end
+            
+            
+            commentFound = NO;
+            newSearchRange.location = start;
+            newSearchRange.length = lineEnd - start;
+            textLine =  [textString substringWithRange: newSearchRange];
+            
+            commentRange = [textLine rangeOfString: @"%"];
+            if ((commentRange.location != NSNotFound) &&
+                (((commentRange.location == 0) || ([textLine characterAtIndex: (commentRange.location - 1)] != '\\'))))
+            {
+                lineEnd = start + commentRange.location ;
+                commentFound = YES;
+            }
+            
+            
+            // at this point, we are done except in the very unusual case that a line has a % but the first occurrence is \%.
+            // In this special case, we will use brute force to search the line character by character to see if it needs to be truncated
+         
+            if ((commentRange.location != NSNotFound) && (! commentFound))
+            {   commentFound = NO;
+                k = start;
+                do {
+                    c1 = [textString characterAtIndex:k];
+                    if ((c1 == '%') && ((k == 0) || ( [textString characterAtIndex:(k - 1)] != '\\')))
+                    {
+                        commentFound = YES;
+                        lineEnd = k;
+         //               NSLog(@"end of line %d", k);
+                    }
+                    k++;
+                    
+                }
+                while (( ! commentFound) && (k < lineEnd));
+            }
+          
+            
+         
+            
+            // search through the line to find a match
+
+      
+            if (whichLine > 1) i = start;
+            while ((start <= i) && (i < lineEnd) && (! done)) {
+                uchar = [textString characterAtIndex:i];
+                if (start < i) c1 = [textString characterAtIndex:(i - 1)]; else c1 = 'a';
+                if ((uchar == leftpar) && (c1 != '\\'))
+                    nestingLevel++;
+                else if ((uchar == rightpar) && (c1 != '\\'))
+                    nestingLevel--;
+                if (nestingLevel == 0) {
+                    done = YES;
+                    replacementRange.location = j;
+                    replacementRange.length = i - j + 1;
+                }
+                i++;
+            }
+            i = unmodifiedLineEnd;
+        }
+    }
+    
+
+        
+        
+        
+        
+   /*
+        
+        
+        
+        
+        
+        
+        
+        
+        
 		nestingLevel = 1;
 		done = NO;
 		while ((i < (length - 1)) && (! done)) {
@@ -1023,10 +1197,11 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 			}
 		}
 	}
+    */
     
-
 	return replacementRange;
 }
+
 
 // added by mitsu --(A) g_texChar filtering
 - (void)insertText:(id)aString
@@ -1681,6 +1856,26 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 // End of the code added by Soheil Hassas Yeganeh
 
 
+// It is easiest for MyPDFKitView to set its background color directly, since this is done within its draw routine.
+// All other colors for a given document are reset in an NSDocument routine after being triggered by this
+// TSTextView method. Only textView1 is allowed to trigger a recoloring.
+
+- (id) viewDidChangeEffectiveAppearance {
+    
+    if (self != self.document.textView1)
+        return NULL;
+
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (self.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        [self.document changeColors: YES];
+    else
+#endif
+        [self.document changeColors: NO];
+    
+    return NULL;
+    
+}
+    
 
 // Command Completion!!
 
@@ -1724,7 +1919,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         [mySelectedTextAttributes setObject: [NSColor colorWithCatalogName: @"System" colorName: @"selectedTextBackgroundColor"] forKey: @"NSBackgroundColor" ];
          [[_document textView] setSelectedTextAttributes: mySelectedTextAttributes];
     }
-
+    
+   
 	
 	// FIXME: Using static variables like this is *EVIL*
 	// It will simply not work correctly when using more than one window/view (which we frequently do)!
@@ -1749,8 +1945,64 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	NSMutableString *indentRETString = [NSMutableString stringWithString:@"\n"]; // **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
 	// End Changed by (HS) - define ins2Range, selectlength, 
 	NSCharacterSet *charSet;
+    NSString *selectedString, *aString, *replacementString;
+    BOOL boolResult;
 	unichar c;
-	
+    
+    // if character is $, {, (, [ and control is down and there is a selection, then enclose the selection in appropriate brackets
+    // and return
+    
+    if ((self.selectedRange.length > 2) && editorCanAddBrackets)
+    { if ([[theEvent characters] isEqualToString: @"["])
+        {
+            selectedString = [[self string] substringWithRange:self.selectedRange];
+            aString = @"[";
+            replacementString =[[aString stringByAppendingString:selectedString] stringByAppendingString: @"]"];
+            boolResult = [self shouldChangeTextInRange: self.selectedRange replacementString: replacementString];
+            if (boolResult) {
+                [self replaceCharactersInRange: self.selectedRange withString: replacementString];
+                [self didChangeText];
+            }
+            return;
+        }
+    else if ([[theEvent characters] isEqualToString: @"{"])
+        {
+            selectedString = [[self string] substringWithRange:self.selectedRange];
+            aString = @"{";
+            replacementString =[[aString stringByAppendingString:selectedString] stringByAppendingString: @"}"];
+            boolResult = [self shouldChangeTextInRange: self.selectedRange replacementString: replacementString];
+            if (boolResult) {
+                [self replaceCharactersInRange: self.selectedRange withString: replacementString];
+                [self didChangeText];
+            }
+            return;
+        }
+    else if ([[theEvent characters] isEqualToString: @"("])
+        {
+            selectedString = [[self string] substringWithRange:self.selectedRange];
+            aString = @"(";
+            replacementString =[[aString stringByAppendingString:selectedString] stringByAppendingString: @")"];
+            boolResult = [self shouldChangeTextInRange: self.selectedRange replacementString: replacementString];
+            if (boolResult) {
+                [self replaceCharactersInRange: self.selectedRange withString: replacementString];
+                [self didChangeText];
+            }
+            return;
+        }
+    else if ([[theEvent characters] isEqualToString: @"$"])
+        {
+            selectedString = [[self string] substringWithRange:self.selectedRange];
+            aString = @"$";
+            replacementString =[[aString stringByAppendingString:selectedString] stringByAppendingString: @"$"];
+            boolResult = [self shouldChangeTextInRange: self.selectedRange replacementString: replacementString];
+            if (boolResult) {
+                [self replaceCharactersInRange: self.selectedRange withString: replacementString];
+                [self didChangeText];
+            }
+            return;
+        }
+    }
+    
 	if ([[theEvent characters] isEqualToString: g_commandCompletionChar] &&
 		( ! [[SUD stringForKey: CommandCompletionAlternateMarkShortcutKey] isEqualToString:@"NO"] ) &&
 		(([theEvent modifierFlags] & NSAlternateKeyMask) != 0))

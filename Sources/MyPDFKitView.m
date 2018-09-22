@@ -47,6 +47,7 @@
 #import "MyDragView.h"
 #import "TSPreviewWindow.h"
 #import "TSFullSplitWindow.h"
+#import "TSColorSupport.h"
 
 #define NUMBER_OF_SOURCE_FILES	60
 
@@ -348,7 +349,15 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(revertMagnification:)
 												 name:MagnificationRevertNotification object:nil];
-	
+   
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(previewBackgroundChange:)
+                                                 name:PreviewColorChangedNotification object:nil];
+    /*
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(cancelPreviewBackgroundChange:)
+                                                 name:CancelPreviewColorChangedNotification object:nil];
+	*/
 }
 
 - (void) setup
@@ -486,6 +495,7 @@
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
         NSEnableScreenUpdates();
 	
+   
     [self.myPDFWindow makeKeyAndOrderFront: self];
     if ([SUD boolForKey: FixPreviewBlurKey])
         [self removeBlurringByResettingMagnification]; // for Yosemite's bug
@@ -2328,6 +2338,13 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
  
 */
 
+
+- (void)previewBackgroundChange: (NSNotification *)notification
+{
+    [self display];
+}
+
+
 - (void)drawPage:(PDFPage *)page
 {
 	
@@ -2338,8 +2355,18 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 	NSAffineTransform   *transform;
     BOOL				redOvals;
 	NSColor				*aColor, *myColor;
+    NSColor             *myBackgroundColor;
 
-	
+    /*
+    if (self.useTemporary != nil)
+        myBackgroundColor = [[TSColorSupport sharedInstance] colorFromDictionary:self.useTemporary andKey: @"PreviewBackground"];
+    else if ((atLeastMojave) && (self.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        myBackgroundColor = [[TSColorSupport sharedInstance] colorFromDictionary:darkColors andKey: @"PreviewBackground"];
+    else
+        myBackgroundColor = [[TSColorSupport sharedInstance] colorFromDictionary:liteColors andKey: @"PreviewBackground"];
+     */
+    myBackgroundColor = PreviewBackgroundColor;
+    
 	// boxRect = [page boundsForBox: [self displayBox]];
 	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
 	rotation = [page rotation];
@@ -2378,6 +2405,8 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 		// set a break point here to check the consistency of dataWithPDFInsideRect
 		//NSLog(@"In drawRect aRect: %@", NSStringFromRect(aRect));
 		NSColor *backColor;
+        
+        /*
 		if ([SUD boolForKey:PdfColorMapKey] && [SUD stringForKey:PdfBack_RKey])
 		{
 			backColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfBack_RKey]
@@ -2386,6 +2415,14 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 			[backColor set];
 			NSRectFill(boxRect);
 		}
+        */
+        
+        if ([SUD boolForKey:PdfColorMapKey])
+        {
+            backColor = ImageBackgroundColor;
+            [backColor set];
+            NSRectFill(boxRect);
+        }
         
 		else {
 			backColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
@@ -2396,7 +2433,8 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 	}
     
 	else {
-		[PreviewBackgroundColor set];
+		// [PreviewBackgroundColor set];
+        [myBackgroundColor set];
 		NSRectFill(boxRect);
 	}
     
@@ -2444,10 +2482,16 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 		else if (redOvals) {
 			myColor = [NSColor redColor];
         }
+        
+        /*
 		else {
 			aColor = [NSColor yellowColor];
 			myColor = [aColor colorWithAlphaComponent: 0.5];
         }
+        */
+        else
+            myColor = PreviewDirectSyncColor;
+        
 		[myColor set];
         if (oldSync) {
 			myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
@@ -3970,6 +4014,8 @@ else
             
 // end YT
 		// color mapping
+        
+        /*
 		if (bitmap && [SUD boolForKey:PdfColorMapKey]) {
 			if ([SUD stringForKey:PdfFore_RKey]) {
 				foreColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:PdfFore_RKey]
@@ -3987,6 +4033,26 @@ else
 			// call transformColor() below to map the colors
 			bitmap = transformColor(bitmap, foreColor, backColor, colorParam1);
 		}
+         */
+        
+        if (bitmap && [SUD boolForKey:PdfColorMapKey]) {
+            if (! (ImageForegroundColor == nil)) {
+                foreColor = ImageForegroundColor;
+              } else
+                foreColor = [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1];
+            if (! (ImageBackgroundColor == nil)) {
+                backColor = ImageBackgroundColor;
+            } else
+                backColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1];
+            NSInteger colorParam1 = [SUD integerForKey:PdfColorParam1Key];
+            // call transformColor() below to map the colors
+            bitmap = transformColor(bitmap, foreColor, backColor, colorParam1);
+        }
+        
+        
+        
+        
+        
 		// convert to the specified format
 		if (bitmap && type != IMAGE_TYPE_PICT) {
 			switch (type) {
@@ -4801,6 +4867,7 @@ else
  }
  if (foundOne && (!foundMoreThanOne)) {
  found = YES;
+     
  if (foundIndex == 0) {
  myTextView = [self.myDocument textView];
  myTextWindow = [self.myDocument textWindow];
@@ -4811,9 +4878,15 @@ else
  myTextWindow = [newDocument textWindow];
  [newDocument setTextSelectionYellow: YES];
  }
+     
  mySelectedAttributes = [myTextView selectedTextAttributes];
  newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
- [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+     
+     
+// [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
+[newSelectedAttributes setObject:ReverseSyncColor forKey:@"NSBackgroundColor"];
+     
+     
  // FIXME: use temporary attributes instead of abusing the text selection
  [myTextView setSelectedTextAttributes: newSelectedAttributes];
  correction = theIndex - testIndex + 5;

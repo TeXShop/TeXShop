@@ -18,3 +18,4 @@
 + (GlobalData *)sharedGlobalData;
 
 @end
+

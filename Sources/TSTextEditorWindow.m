@@ -69,6 +69,7 @@
 
 - (void) becomeMainWindow
 {
+    
  	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];

@@ -15,6 +15,248 @@
 
 <div id="content_normal">
 
+
+<P><h5>TeXShop Changes 4.08</h5></P>
+
+
+This version of TeXShop works on Yosemite and above, but has been compiled on Mojave. The main purpose of the release is to fix  TeXShop bugs when running on Mojave, and to support Dark Mode there. Here are the key details:
+
+<ul>
+<li> When previous versions of TeXShop ran on Mojave, several tools in the Source and Preview toolbars were missing.  These items could be restored using several tricks, including opening the "Customize Toolbar" dialog. But they would again be missing the next time TeXShop ran. 
+
+<p>
+This bug is fixed in version 4.08. But users who ran an earlier TeXShop  on Mojave will have to take one of two actions to restore their tools. The safest is to open a project which has both a source window and a preview window, With the source window active, select the Windows menu item "Customize Toolbar..." and drag the custom set of tools to the toolbar. Repeat this operation with the preview window active. Then with the source window active, select the Windows menu item "Use One Window." Both source and preview will appear in a single window. With this window active, select the Windows menu "Customize Toolbar..." and drag the custom tools to the single-window toolbar.
+
+<p> Another more drastic way to fix the problem is to make sure TeXShop is not running and throw away ~/Library/Preferences/TeXShop.plist. Then run TeXShop. Tools will reappear. Reset any preference item you may have changed.
+
+<p>
+<li> When line numbers were showing on the Source Window in Mojave, the source could scroll by about half an inch in the horizontal direction. Scrolling to the left made the beginnings of line vanish under the line numbers column. Scrolling to the right made half an inch of the source vanish off the right side. This turned out to be a Mojave bug, which Apple fixed in the fifth developer beta.
+
+<p>
+<li> Programs must be recompiled on Mojave before they support Dark Mode on that system. When TeXShop was recompiled, the magnifying glass broke, the fix for a "flash after typesetting" broke, and two other features broke. All depended on drawing into an invisible overlay view above the Preview Window.
+This drawing code has been revised to work on Mojave, and the revised code also works on earlier systems. 
+
+<p>
+<li> On Mojave, the "General" preference pane for Apple's System Preferences has the ability to switch between "Light" and "Dark" appearances of the interface. In Dark mode, the toolbars of windows have a dark background, Preference and Print panels have a dark background, and so forth. But Dark Mode does not change the content regions of program displays. So in initial Mojave betas, the TeXShop editor still had black text on a white background, and the TeXShop Preview window still had the standard appearance of typeset output.
+
+<p>
+Some Apple programs on Mojave change these content regions in Dark Mode and others do not. For instance, Apple's TextEdit shows black text on a white background, but the editor in XCode switches to white text on a dark background. Apple's Preview program continues to show pdf files with their standard appearance, including  black text on a white background. This is not surprising since the alternative would be to reach into the pdf file and switch colors on the fly, a more or less hopeless task.
+
+<p>
+So the question is, what should TeXShop do in Dark Mode? Note that  TeXShop has had the ability for many years to change text color and background color in the Editor, the Console, and the Log file. TeX pdf output  contains black text on a transparent background, so the underlying paper color shines through when printed. Thus the color of the Preview window can be changed by changing the background color of that window, an ability that has been in TeXShop for some time.
+
+<p> In this version of TeXShop, we allow users to design their own "Dark Mode" for content regions. By default, the editor switches to white text on a black background in Dark Mode, and the Preview window receives a darker glow in that mode. But users can decide to keep the original black on white appearance of these content regions, or design their own color theme.
+
+<p> To make this work, the Preference Panel's color choices have been completely rewritten. There is now a tab called "Themes" devoted  to coloring various components of the program. All of the color commands have been moved to this tab. These new color commands work on all systems supported by the program, not just on Mojave. In previous versions of TeXShop, many colors could only be changed using various obscure hidden Preference settings. Now all color choices are available in the Themes tab.
+
+<center> <img src="ThemeTab.png" width="500px" height="auto" /> </center>
+
+<p>
+<li> The Themes portion of Preferences is shown above. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others are obscure. A full set of such choices is called a "Theme". TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave. The second menu sets the theme used in Dark Mode on Mojave. The final menu sets the theme which Preferences is currently editing.
+
+<p> TeXShop is shipped with several themes, including "LiteTheme" and "DarkTheme". These are the default themes for Lite Mode and Dark Mode. As explained later, there is a way for users to rename or remove Themes known to TeXShop. But TeXShop will always replace "LiteTheme" and "DarkTheme"
+and use them if other required themes are missing.
+
+<p> Gary Gray contributed two themes, GLG-Lite for Lite mode and  GLG-Dark for Dark mode. Gray then tweaked GLG-Dark, and ended up with a dark theme that was was so my better than mine  that I ended up using it as the default and thus renaming it DarkTheme. So Gray lost credit, but gained users. Thanks.
+
+<p> Two other themes, SolarizedLite and SolarizedDark, appeared first on the internet before Mojave was introduced. The general page by Ethan Schoonover about this design is
+<A HREF=" https://ethanschoonover.com/solarized/">
+https://ethanschoonover.com/solarized/</A>. Specific lite and dark designs were then created in 2012 by "johannesjh": <A HREF="https://github.com/altercation/solarized/issues/167">
+https://github.com/altercation/solarized/issues/167</A>.
+
+<p> A final theme, which I call Manteuffel, was created in 2016 by Christian Manteuffel based on the design of iA Writer. See <A HREF="http://christian.manteuffel.info/blog/ia-writer-inspired-theme-for-texshop/">
+http://christian.manteuffel.info/blog/ia-writer-inspired-theme-for-texshop/</A>
+
+<p> There is no distinction between themes for Lite Mode and themes for Dark Mode. Thus both Lite Mode Theme and Dark Mode Theme could be set to LiteTheme if the user always wants dark text on a white background.
+
+
+<p> After editing a theme, push "Cancel" or "OK" to end a preference session. If "Cancel" is pressed, the edited colors will not be saved and the Lite Mode and Dark Mode themes will return to choices before opening the Preference Pane. If "OK" is pressed, the edited colors will be saved and Lite Mode and Dark Mode themes will change to their new values.
+
+<p> But some users may want to edit several different themes during a session. When these users are finished editing their first theme, they should press "Save Edited Theme." This will save the changes for that  theme <i> permanently, </i> even if the entire session is ended using the "Cancel" button. Repeat the process for other themes.
+
+<p>
+<li> To create a new theme, first change "Theme to Edit" to obtain reasonable starting colors for your new theme. Then push "Create New Theme" and fill in the resulting dialog with a title for this threme. Do not use spaces in this title. The new theme will become the "Theme to Edit" and you can begin changing colors.
+
+<p>
+<li> You may have  set color preferences for TeXShop in previous versions of the program. These color preferences still exist, but they are no longer used by the program. To create a theme using these old preference settings, push "New Theme from Prefs". You'll be asked to name the theme; please do not use spaces in this name.
+
+<p> Some people on the internet developed color themes for TeXShop and made them available as shell scripts which reset various TeXShop color setting preferences. These shell scripts still work, but they no longer affect the appearance of TeXShop. After running such a script, you can use "New Theme from Prefs" to convert the "preference color scheme" to a regular Theme.
+
+<p>
+<li> Recall that various TeXShop items which users can customize are set in ~/Library/TeXShop where Library is the Library folder in your home directory. This folder is often hidden in the Finder, but TeXShop has a menu item "Open ~/Library/TeXShop" to take you there.  This folder has various subfolders. For example, one of the folders is named Templates. This folder contains the templates that appear in the  Templates toolbar item. Each is an ordinary TeX source file. Adding new files to this Templates folder automatically creates new templates.
+
+<p> There is a new folder in ~/Library/TeXShop named "Themes".  This folder contains very small ".plist" files describing the various Themes in TeXShop. If you create a theme you like, give it to others by putting its plist file on the Internet. To install a new theme of this kind, just drop its plist form in the Themes folder.
+
+<p> You can also remove Themes you no longer use by removing their plist files from the Themes folder. Avoid removing themes being used for Lite Mode or Dark Mode (although TeXShop should react gracefully when it runs into this situation). As explained earlier, the themes LiteTheme and DarkTheme will be recreated if they are removed.
+
+<p>
+<li> When a theme is selected for editing, TeXShop colors will temporarily be reset to those colors. Revising colors is then interactive; as soon as colors change in Preferences, they will also change in TeXShop's Source and Preview windows.
+
+<p>
+<li> Most colors at the top of the Preferences dialog are self explanatory. The colors "Invisible Chars, Enclosed Chars, Braces" are used for some features introduced by Yusuke Terada; see the menu item "Show Invisible Characters" and the item "Parens Targets & Highlight Color" in the Source Tab of Preferences, and the items "Show Invisible Characters" and "Parens Matching Settings" in the Editor Tab of Preferences. The items "Image Copy Foreground, Background" refer to features set in the Copy Tab of Preferences. 
+
+<p>
+<li> Finally, notice that the transparency of the Source, Preview, and Console windows can be set. These settings bring up a full Color Well, but the colors of these items are ignored and only the alpha values of the choices matter. Here "alpha = 1" is the usual value, and smaller values of alpha make the window more transparent.
+</ul>
+
+There are additional features of TeXShop 4.08 that are not related to Mojave: 
+<ul>
+
+<li> The first of these features comes from a bug report by Geoff Pointer. In TeXShop, double clicking on one of {, }, [, ], (, ), or <, > finds the matching symbol and highlights everything in the source between these symbols. Pointer complained that this procedure ignored comments and escaped symbols, so
+	double clicking } might well select a matching { in code that had been commented out, or a match of the form  \{. 
+	
+<p>
+These problems are fixed in version 4.08. When selecting a matching symbol, comments and escaped symbols are ignored. And by the way, TeXShop understands that \% does not begin a comment.
+ 	
+<p> TeXShop has another series of methods  to deal with such brackets, added to the program by Terada Yusuda. These methods provide immediate feedback as the user is typing. One item flashes the matching bracket as soon as a bracket is typed;
+	another  temporarily highlights the region between matching brackets. One item momentarily flashes the screen if an unmatched bracket is typed. Some users depend on these features, while others find them distracting, so each feature can be turned on or off  by preference settings at the top of the right column under the TeXShop Preferences "Editor" tab. 
+
+<p> The bug reported by Geoff Pointer also applies to these second methods, and has not been fixed there. 
+Because these methods are applied in real time during typing, and because they are used in small regions where the user is actively working, efficiency of code seemed more important than global accuracy. At a later time, this decision may be revisited.
+
+
+
+
+<p>
+<li> The second of these features was requested by Brian Levine. If text is selected in the TeXShop editor and the selection is longer than two characters, then pressing (, {, (, or $ will enclose the selection in the appropriate brackets. This new behavior can be turned off in TeXShop Preferences by unchecking the item "Editor Can Add Brackets" under the Editor Tab.
+
+<p>
+<li> The third feature was requested by Stephen Moye. The print dialog now contains an item to set paper size. Moye works with the AMS using a printer with trays for various paper sizes. Previously he had to select the paper size using "Page Setup" before dealing with the Print Dialog and printing. Now only one dialog is involved instead of two.
+
+<p> When Moye initially requested this feature, I told him that printing is controlled entirely by the underlying Cocoa system, so it would be impossible to fulfill his request. This proved to be not entirely true. Hence the new feature.
+
+<p> I'd like to use this occasion for a short aside.  This aside may read like a rant about printers, but in fact its purpose is to explain why application programmers shouldn't have to deal with features of particular printers. 
+
+<p> For years I've used a $1000 Color Laserprinter weighing  60 pounds. Recently a gear broke on the printer. It would be easy to fix it except that I couldn't figure out how to get the printer down my stairs and into the car. So I decided to buy a new printer and discovered that  Laserprinters now cost  $400. The store I visited delivers to the doorstep. But they absolutely, positively refused to deliver on up my stairs, or remove my old printer.
+
+<p>  I asked the service representative what printer he'd recommend. He recommended a $79 HP.
+ This seemed to me like a sort of "bait and switch in reverse," but I had to print, so I bought the $79 machine.
+
+<p> It prints faster than my old printer. The ink doesn't smudge. It has built in internet and was immediately recognized by all my devices. It calls home when it runs out of ink and new ink is delivered to my door, but so far it ran out of ink only once. It scans. It's light and was easy to carry up stairs.
+Apparently I was years and years out of date regarding printers, and I have to apologize to all my friends who asked for advice on buying one. (Remember, however, that I printed often when I was teaching, and I print rarely after retiring.) 
+
+<p> What has this got to do with TeXShop? Well,  TeXShop has essentially no code for handling printers. All of the messy details are handled automatically by Cocoa, Apple, and the printer manufacturers. Imagine what life would be like if programmers had to be involved in that chain. How many printers could we support even if we wanted to?
+
+<p> There are three main interaction points between users and printers. First, printers have their own preference module in Apple's System Preferences where the default page size can be set. This makes sense for most printers, whose paper trays can be configured to hold paper of different sizes, but only one size at a time. Second, the paper size of printers can be changed in "Page Setup", a menu item in TeXShop and most Cocoa programs. And finally, the print dialog handles all sorts of choices, like saving to pdf rather than printing, or many other things.
+
+<p> What is the point of Page Setup? Why is paper size set there? Because many programs use that knowledge to reset the behavior of the program. Should my editor for personal letters be formatted for letter paper? or a4 paper? Aha, Page Setup to the rescue.
+
+<p> However, in TeX, paper size is set by commands in the TeX source or configuration of the entire TeX Distribution. It would make no sense for TeXShop to reach into these sources and change them when Page Setup indicates a new paper size. So the truth is that TeXShop doesn't do anything when the user changes Page Setup. That menu is useless, particularly now that paper size is in the Print Dialog. But I'm keeping it, because otherwise I'd have to answer email questions of the form "where is page setup?"
+
+<p>
+<li>
+In recent versions of TeXShop, the syntax coloring code is  turning off while the source file loads. Therefore, files aren't syntax colored until the user begins moving the mouse. It is possible that this code was added to fix bugs if syntax coloring is started too soon, but experiments suggest that the bug no longer exists. So in version 4.08, files are syntax colored as soon as they are opened. In case of trouble, it is possible to return to the old behavior using a hidden preference:
+<pre>
+         defaults write TeXShop ColorImmediately NO
+</pre>
+
+<p>
+<li> Gary Gray requested that TeXShop start paragraphs flush with the left margin, but indent remaining paragraph lines. TeXShop 4.08 has this feature. Some users are in the habit of inserting line feeds when their source lines approach the right margin; they will not notice any difference. Other users type several lines of source text between line feeds. The resulting "paragraphs" will now be visible for easier scanning. 
+
+<p> This feature is controlled by two new preference settings, available under the Edit Tab. The first sets the indent of the initial paragraph line. By default this is set to 0.0. The second sets the indent of the remaining paragraph lines. By default this is set to 30.0.  
+
+<p> The item to set the length of tabs has been grouped together with the two above preference settings.
+Moreover, one more setting, previously hidden, is available. This setting changes the interline spacing between lines of the source. In particular, users can double space the source text if they desire by changing this value.
+
+<p> The tab length  is an integer, and roughly measures the number of letters between tab settings.  Thus small values of this setting are reasonable. The entry works even if the edit font is not monospaced. 
+
+<p> But the remaining entries for First Line Paragraph Indent, Remaining Lines Paragraph Indent, and Interline Spacing are floating point numbers measured in points in user coordinates. Only limited ranges of these preference settings are allowed, and the Preference dialog will replace unreasonably large or small values by more reasonable maximum and minimum values.
+
+<p>
+<li> TeXShop has a preference to select the desired dictionary used by the program. Thus the system wide dictionary can be a standard Apple dictionary, while TeXShop can be configured to use a cocoAspell dictionary which does not count LaTeX commands as misspelled. During the course of preparing TeXShop 4.08, we discovered that this Preference item was disconnected  in most localizations. This is fixed. If the setting seemed to affect nothing earlier, please try again.
+
+<p>
+<li> Items in the Templates pull-down menu in the toolbar used to be listed  sorted alphabetically. Later,
+this menu was extended to allow sub-menus, and the sorting feature was lost. It is restored in 4.08.
+
+<p>
+<li> Another request from Stephen Moye is to add a preference item forcing TeXShop to place the source window in front of the preview window when opening files. (There is already a preference which causes TeXShop to activate the source window after each typesetting job.) A hidden preference item has been created to do this:
+<pre>
+         defaults write TeXShop OpenWithSourceInFront YES
+</pre>
+This item's behavior is somewhat inconsistent, but users can try it if they wish.
+
+ 
+
+<p>
+<li> Many programs on the Mac access the internet. Apple recently required that programs use the https protocol rather than http for this access, due to the added security of https. But programs can opt out of that requirement. TeXShop directly accesses the internet in only two places (although it can use iCloud indirectly via Cocoa): it uses Sparkle for program updates, and it downloads two small movies if the user doesn't have them and asks to see them in TeXShop Help. Because faculty web pages at the University of Oregon were served with http, TeXShop opted out.
+
+<p> But the University of Oregon recently switched to https for faculty pages, so Sparkle and movie downloads have been switched to https and TeXShop no longer opts out of this security requirement.
+
+<p>
+<li> Latexmk has been updated to version 4.60.
+
+<p>
+<li> The "About" panel has a line giving a range of copyright dates. The range ended in 2017 because I failed to notice that that line was localized. Now it correctly ends in 2018.
+
+<p>
+<li> Scrolling in the editor window has a "bounce" near the top. We added a hidden preference setting to remove that bounce
+<pre>
+defaults write TeXShop SourceScrollElasticity NO
+</pre>
+This preference setting still exists, but it is no longer active because we now always set SourceScrollElasticity to NO. Sadly, this is having less and less effect. 
+ 
+<p>
+<li> Herbert Schulz revised the "File Encoding.pdf" file in the TeXShop Help menu.
+
+<p>
+<li> The Help document "Comment Lines and Hidden Preferences" was revised to remove misprints pointed out by Herbert Schulz. Unfortunately, the document hasn't yet been extended with new information.
+
+<p>
+<li> When TeXShop toolbars showed Text, or both Icons and Text, the Text was broken in many localizations. That was because I did not realize that XCode could set the encoding of the localization files ToolbarItems.strings. The encodings of these files are now all set to UTF-8 Unicode, and Text in the Toolbars finally looks reasonable. 
+
+<p>
+<li> The author of the Spanish localization, Juan Luis Verona, pointed out an important consequence of changing the default encoding in TeXShop to UTF-8. Characters with accents and umlauts can be encoded in Unicode either as special characters, or as combinations of characters. For instance, ü can be encoded as U+00FC or as U+0075 and U+0308. When a LaTeX or pdfLaTeX file is encoded in UTF-8, the typesetting engine calls \usepackage[utf8]{inputenc} to interprete the input file. But this package does not understand combination characters. For an explanation of the reason these characters are hard to read, see <a href="https://tex.stackexchange.com/questions/94418/os-x-umlauts-in-utf8-nfd-yield-package-inputenc-error-unicode-char-u8̈-not/94420#94420">https://tex.stackexchange.com/questions/94418/os-x-umlauts-in-utf8-nfd-yield-package-inputenc-error-unicode-char-u8̈-not/94420#94420</a>.
+
+<p>
+Luckily, source characters with accents and umlauts typed by the user are encoded as single characters in TeXShop. But if a user copies the text from a pdf and pastes it into the source, combination characters are used. These look fine in TeXShop, but typeset incorrectly because of the inputenc problem discussed above. Incidentally, this problem does not occur when using XeLaTeX or LuaLaTeX.
+
+<p> This problem appeared much earlier in Japan, and Yusuke Terada added code to fix the problem. This code is turned on by an item in TeXShop Preferences under the Misc tab. The item used to read
+"During File Save (for Japan), Automatic UTF-8-Mac to UTF-8 Conversion". In version 4.08 of TeXShop, the words "for Japan" have been removed from this item, but it is still off by default. Users who run into the problem should turn it on. A little caution is required here; for instance, the item caused trouble for users writing in Hebrew (which is why we added the words "for Japan"). 
+
+<p>
+<li> In 2005 Michael Witten, then at M.I.T., added a "Wrap Lines" menu item to TeXShop.
+This menu offered to  wrap lines "never", or "by word", or "by character". Witten  added a hidden preference to set the default setting, and this preference is now made public in the Editor tab of TeXShop Preferences. 
+
+<p> Most users are likely to stick with the default setting, "by word".  I've added the setting because I wanted to write a little essay about line feeds. 
+
+<p> In TeX, two line feeds produce a new paragraph; but TeX ignores single line feeds in almost all cases. Exceptions include comments, where adding a line feed in the middle adds the last half of the comment to the active text, and displayed formulas, which often break when line feeds occur in the middle. But otherwise, line feeds are irrelevant.
+
+<p> Thus a TeX paragraph can be written as one long line, or  as several sentences, or as several lines broken in the middle. The style users adopt  can depend on their background. Writers like to write paragraphs unbroken by line feeds. Programmers, however, tend to add line feeds after each sentence because when they are writing programs rather than TeX, these line feeds show the logical structure of the text. As an extreme example, in Apple's programming language Swift, individual statements need not end with a semicolon if they end with a line feed, so semicolons are only needed when stringing several statements together on a single line.
+
+<p> There are several advantages to writing TeX source as a series of lines, rather than as full paragraphs. Errors in TeX are indicated by line, so they can be found more rapidly when the source is a series of lines. Synctex also works by line and can produce more accurate syncs when lines are used.
+
+<p> Of course some programming languages ignore line feeds, and make it possible to write programs as long multi-command paragraphs, but such paragraphs are virtually impossible to read and programmers avoid them religiously.
+
+<p> Since programs are in practice a series of fairly short lines, programmers have many useful utilities built on the premise that they will deal with files containing short lines. One example is "diff", which can compare two files and clearly list the differences. This utility works well on TeX files written as a series of lines, but becomes more or less useless if the paragraph style is adopted. When programmers moonlight  as editors of journal articles and the like, they can become frustrated when their favorite tools no longer apply.
+
+<p> All of this is to suggest to new users that it could be handy to adopt the style of adding line feeds to keep individual lines short. But the advantages are relatively minor and seasoned users have more important things to worry about. 
+
+<p> Why is this issue related to TeXShop? The first key point to understand is that TeXShop <it> never </it> adds line feeds to a source file behind the user's back. Any line feed in a source file is present because the user pushed RETURN.
+
+<p> But what should happen if the user is typing and reaches the right side of the window? By default, TeXShop adds a "soft line feed" so additional characters appear on the next line.  A "soft line feed" is a line feed that affects the appearance of the text, but is not added to the source file. There are several indications that such line feeds are soft. Resize the window, and notice that the text is reformatted and line feeds appear at different places. But the source doesn't change in any way. This is actually an advantage, because users can resize windows on the fly, and because when a source is moved to a new larger screen, the full window is used rather than ending up with blank space on the right.
+
+<p> In addition, such soft wraps are indicated in the line number column on the left of the window. The first line of a paragraph receives a line number, but if there are additional lines created by soft wraps rather than line feeds in the source, these lines have no line number because they are part of the line started above.
+
+<p> Some programmers, however, intensely dislike soft wraps because they destroy the logical appearance of the source which the programmer has carefully created. These programmers prefer no wrapping by the editor. When the user reaches the right boundary of the text, the editor should begin horizontal scrolling so additional characters are shown on the same line. The disadvantage is that users must scroll the text horizontally to read everything (or make the window wider if the screen has room). The advantage is that the logical structure is visible.
+
+<p> Programmers who work as editors of TeX articles may prefer no wrapping by the editor for another reason: it encourages authors to add those hard RETURN line feeds to the text and thus create source which is a series of fairly short lines. Thus the "Wrap Lines: Never" preference could be thought of as training wheels for the user.
+
+<p> That's my little essay. Adopt the editor behavior which makes you most confortable. Even if you stick with "Wrap Lines: by Word", you might like to get in the habit of adding more hard line feeds to the source.
+
+<p> Final question: why would anyone ever want to "Wrap Lines: by Character"? I have no idea. It is one of the options Apple provides, so it is an option Michael Witten provided, and therefore it is in Preferences.
+
+<p> Final observation: adding this Preference gave me a chance to look closely at Michael Witten's code from so long ago. He did not pick an easy programming task. Witten had to deal with the editor, and the scroll bar, and the layout manager, and "paragraph attributes", and lots of other things. In the end, I'm impressed that it all worked. 
+
+</ul>
+
+
+<P><h5>TeXShop Changes 4.02 - 4.07</h5></P>
+
+Versions 4.02 - 4.04 of TeXShop were never released. Version 4.05, the original Mojave Beta, had a number of problems. Versions 4.06 - 4.07 were never released.
+
+
+
 <P><h5>TeXShop Changes 4.01</h5></P>
 
 Daniel Nowacki discovered that in some circumstances, most file menus could be disabled in Single Window Mode. This included Show Console, Show Log File, Close, Save, Print,

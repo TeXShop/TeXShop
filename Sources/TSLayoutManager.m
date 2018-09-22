@@ -117,16 +117,18 @@
 	
     NSFont *theFont = [[self textStorage] font];
 	
+    /*
 	CGFloat r, g, b;
 	r = [SUD floatForKey: invisibleCharRedKey];
 	g = [SUD floatForKey: invisibleCharGreenKey];
 	b = [SUD floatForKey: invisibleCharBlueKey];
 	NSColor *theColor = [NSColor colorWithDeviceRed:r green:g blue:b alpha:1];
     // NSColor *theColor = [NSColor orangeColor];
+    */
 	
     NSDictionary* _attributes = [NSDictionary dictionaryWithObjectsAndKeys:
 								 theFont, NSFontAttributeName, 
-								 theColor, NSForegroundColorAttributeName,  nil];
+								 InvisibleColor, NSForegroundColorAttributeName,  nil];
 
 	BOOL showTabCharacter = (invisibleCharactersShowing && [SUD boolForKey:showTabCharacterKey]);
 	BOOL showNewLineCharacter = (invisibleCharactersShowing && [SUD boolForKey:showNewLineCharacterKey]);

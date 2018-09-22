@@ -37,8 +37,14 @@
     IBOutlet NSMatrix	*_consoleWindowPosMatrix;		/* connected to set current position button */
 	IBOutlet NSMatrix		*_commandCompletionMatrix; /* select ESCAPE or TAB */
 	IBOutlet NSMatrix       *_findMatrix;                   /* connected to Find Panel */
+    IBOutlet NSMatrix       *_wrapMatrix;                    /* connected to Wrap Panel */
     IBOutlet NSPanel    *_samplePanel;
     IBOutlet NSTextView *_fontTextView;
+    IBOutlet NSPanel    *stylePanel;
+    // for Color
+    IBOutlet NSTextField *styleTitle;
+    NSString *oldLiteStyle;
+    NSString *oldDarkStyle;
 
     IBOutlet NSButton       *_tabIndentButton;		/*" connected to "Use Tab" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
@@ -46,6 +52,7 @@
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
 	IBOutlet NSButtonCell	*_spellCheckButton;		/*" connected to "SpellChecking "*/
     IBOutlet NSButtonCell   *_autoSpellCorrectButton;  /*" connect to "Auto Spell Correcting "*/
+    IBOutlet NSButtonCell   *_editorAddBracketsButton; /*" connect to "Editor Can Add Brackets "*/
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
@@ -72,26 +79,30 @@
 	IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
 	IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/
 	IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
-//	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
-//	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/ // comment out by Terada
+	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
+	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/ // comment out by Terada
 	IBOutlet NSMatrix	*_syncMatrix;			/*" connected to "Sync Method" "*/
 	IBOutlet NSMatrix	*_defaultCommandMatrix;		/*" connected to "Default Program" "*/
 	IBOutlet NSTextField    *_engineTextField;
 	IBOutlet NSMatrix       *_distillerMatrix;              /*" connected to "Distiller" "*/
 	IBOutlet NSMatrix	*_consoleMatrix;		/*" connected to "Show Console" "*/
 	IBOutlet NSFormCell	*_tabsTextField;		/*" connected to tab size text field "*/
+    IBOutlet NSTextField *tabIndentField;
+    IBOutlet NSTextField *firstParagraphIndentField;
+    IBOutlet NSTextField *remainingParagraphIndentField;
+    IBOutlet NSTextField *interlineSpacingField;
 	IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)
 	IBOutlet NSButton		*_convertUTFButton;
     IBOutlet NSButton       *_openRootFileButton;
     IBOutlet NSButton       *_miniaturizeRootFileButton;
-	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
-    IBOutlet NSColorWell	*_sourceTextColorWell;
-	IBOutlet NSColorWell	*_previewBackgroundColorWell;
-	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
-	IBOutlet NSColorWell	*_consoleForegroundColorWell;
-	IBOutlet NSColorWell	*_highlightBracesColorWell;
+//	IBOutlet NSColorWell	*_sourceBackgroundColorWell;
+ //   IBOutlet NSColorWell	*_sourceTextColorWell;
+//	IBOutlet NSColorWell	*_previewBackgroundColorWell;
+//	IBOutlet NSColorWell	*_consoleBackgroundColorWell;
+//	IBOutlet NSColorWell	*_consoleForegroundColorWell;
+//	IBOutlet NSColorWell	*_highlightBracesColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
  
@@ -150,7 +161,7 @@
 	BOOL            bibTeXengineTouched; // added by Terada
 //	BOOL            makeatletterTouched; // added by Terada
     BOOL            sparkleTouched;
-	
+   
     IBOutlet NSPopUpButton  *dictionaryPopup;
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
 	IBOutlet NSMatrix       *_firstPageMatrix;// /*" radio buttons for first page left or right in multipage display "*/
@@ -158,14 +169,46 @@
 	IBOutlet NSPopUpButton	*_imageCopyTypePopup;// mitsu 1.29 (O) /*" connected to image copy type popup button "*/
 	IBOutlet NSPopUpButton	*_mouseModePopup;// mitsu 1.29 (O) /*" connected to default mouse mode popup button "*/
 	IBOutlet NSButton	*_colorMapButton;// mitsu 1.29 (O)
-	IBOutlet NSColorWell	*_copyForeColorWell;// mitsu 1.29 (O)
-	IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O)
+	// IBOutlet NSColorWell	*_copyForeColorWell;// mitsu 1.29 (O)
+	// IBOutlet NSColorWell	*_copyBackColorWell;// mitsu 1.29 (O)
 	IBOutlet NSPopUpButton	*_colorParam1Popup;// mitsu 1.29 (O)
 	IBOutlet NSMatrix	*_afterTypesettingMatrix;
     IBOutlet NSButton *useTwoWindowsButton;
     IBOutlet NSButton *useOneWindowButton;
     IBOutlet NSButton *useLeftSourceButton;
     IBOutlet NSButton *useRightSourceButton;
+    
+    // Color Tab
+    IBOutlet NSPopUpButton  *LiteStyle;
+    IBOutlet NSPopUpButton  *DarkStyle;
+    IBOutlet NSPopUpButton  *EditingStyle;
+    //Actual Colors
+    IBOutlet NSColorWell    *SourceTextColorWell;
+    IBOutlet NSColorWell    *SourceBackgroundColorWell;
+    IBOutlet NSColorWell    *SourceInsertionPointColorWell;
+    IBOutlet NSColorWell    *PreviewBackgroundColorWell;
+    IBOutlet NSColorWell    *ConsoleTextColorWell;
+    IBOutlet NSColorWell    *ConsoleBackgroundColorWell;
+    IBOutlet NSColorWell    *LogTextColorWell;
+    IBOutlet NSColorWell    *LogBackgroundColorWell;
+    IBOutlet NSColorWell    *SyntaxCommentColorWell;
+    IBOutlet NSColorWell    *SyntaxCommandColorWell;
+    IBOutlet NSColorWell    *SyntaxMarkerColorWell;
+    IBOutlet NSColorWell    *SyntaxIndexColorWell;
+    
+    IBOutlet NSColorWell    *EditorHighlightBracesColorWell;
+    IBOutlet NSColorWell    *EditorHighlightContentColorWell;
+    IBOutlet NSColorWell    *EditorInvisibleCharColorWell;
+    IBOutlet NSColorWell    *EditorReverseSyncColorWell;
+    IBOutlet NSColorWell    *PreviewDirectSyncColorWell;
+    IBOutlet NSColorWell    *SourceAlphaColorWell;
+    IBOutlet NSColorWell    *PreviewAlphaColorWell;
+    IBOutlet NSColorWell    *ConsoleAlphaColorWell;
+    IBOutlet NSColorWell    *ImageForegroundColorWell;
+    IBOutlet NSColorWell    *ImageBackgroundColorWell;
+    
+    NSMutableDictionary     *EditingColors;
+    
 }
 
 @property (retain) NSFont		*documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -181,7 +224,6 @@
 
 - (IBAction)changeDocumentFont:sender;
 - (IBAction)changeConsoleFont:sender;
-- (IBAction)setDictionaryFrom:sender;
 - (IBAction)sourceWindowPosChanged:sender;
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
@@ -189,6 +231,7 @@
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
 - (IBAction)spellCorrectPressed:sender;
+- (IBAction)editorAddBracketsPressed:sender;
 - (IBAction)autoCompletePressed:sender;
 - (IBAction)bibDeskCompletePressed:sender;
 - (IBAction)tagMenuButtonPressed:sender;
@@ -200,9 +243,14 @@
 - (IBAction)encodingChanged:sender;
 - (IBAction)tabsChanged:sender;
 - (IBAction)useTabPressed:sender;
+- (IBAction)tabIndentPressed:sender;
+- (IBAction)firstParagraphIndentPressed:sender;
+- (IBAction)remainingParagraphIndentPressed:sender;
+- (IBAction)interlineSpacingPressed:sender;
 - (IBAction)commandCompletionChanged:sender;
 - (IBAction)findPanelChanged:sender;
 - (IBAction)defaultEngineCall:sender;
+- (IBAction)wrapPanelChanged:sender;
 
 
 - (IBAction)pdfWindowPosChanged:sender;
@@ -239,15 +287,17 @@
 - (IBAction)miniaturizeRootFilePressed:sender;
 - (IBAction)afterTypesettingChanged:sender;
 - (IBAction)setSourceBackgroundColor:sender;
-- (IBAction)setSourceTextColor:sender;
-- (IBAction)setPreviewBackgroundColor:sender;
+ - (IBAction)setSourceTextColor:sender;
+ - (IBAction)setPreviewBackgroundColor:sender;
 - (IBAction)setHighlightBracesColor:sender;
-- (IBAction)setConsoleBackgroundColor:sender;
-- (IBAction)setConsoleForegroundColor:sender;
+ - (IBAction)setConsoleBackgroundColor:sender;
+ - (IBAction)setConsoleForegroundColor:sender;
 - (IBAction)changeConsoleResize:sender;
 - (IBAction)sourceAndPreviewInSameWindowChanged:sender;
 - (IBAction)sourceOnLeftChanged:sender;
 - (IBAction)closeSamplePanel:sender;
+
+
 
 
 #ifdef MITSU_PDF
@@ -289,5 +339,48 @@
 - (void)updateControlsFromUserDefaults:(NSUserDefaults *)defaults;
 - (void)updateDocumentFontTextField;
 - (void)updateConsoleFontTextField;
+
+@end
+
+@interface TSPreferences (Color)
+
+- (void)PrepareColorPane:(NSUserDefaults *)defaults;
+
+- (IBAction)LiteStyleChoice:sender;
+- (IBAction)DarkStyleChoice:sender;
+- (IBAction)EditingStyleChoice:sender;
+- (IBAction)SaveEditedStyle:sender;
+- (IBAction)SaveNewStyle:sender;
+- (IBAction)NewStyleFromPrefs:sender;
+// Actual Colors
+- (IBAction)SourceTextColorChanged:sender;
+- (IBAction)SourceBackgroundColorChanged:sender;
+- (IBAction)SourceInsertionPointColorChanged:sender;
+- (IBAction)PreviewBackgroundColorChanged:sender;
+- (IBAction)ConsoleTextColorChanged:sender;
+- (IBAction)ConsoleBackgroundColorChanged:sender;
+- (IBAction)LogTextColorChanged:sender;
+- (IBAction)LogBackgroundColorChanged:sender;
+- (IBAction)SyntaxCommentColorChanged:sender;
+- (IBAction)SyntaxCommandColorChanged:sender;
+- (IBAction)SyntaxMarkerColorChanged:sender;
+- (IBAction)SyntaxIndexColorChanged:sender;
+
+- (IBAction)EditorReverseSyncChanged:sender;
+- (IBAction)PreviewDirectSyncChanged:sender;
+- (IBAction)EditorHighlightBracesChanged:sender;
+- (IBAction)EditorHighlightContentChanged:sender;
+- (IBAction)EditorInvisibleCharChanged:sender;
+- (IBAction)SourceAlphaChanged:sender;
+- (IBAction)PreviewAlphaChanged:sender;
+- (IBAction)ConsoleAlphaChanged:sender;
+- (IBAction)ImageForegroundChanged:sender;
+- (IBAction)ImageBackgroundChanged:sender;
+
+- (IBAction)okForStylePanel:sender;
+- (IBAction)cancelForStylePanel:sender;
+- (void)okForColor;
+- (void)cancelForColor;
+
 
 @end

@@ -338,11 +338,14 @@
         NSDictionary *mySelectedAttributes = [myTextView selectedTextAttributes];
         NSMutableDictionary *newSelectedAttributes = [NSMutableDictionary dictionaryWithDictionary: mySelectedAttributes];
         
+        /*
         myRed = [SUD floatForKey: reverseSyncRedKey];
         myGreen = [SUD floatForKey: reverseSyncGreenKey];
         myBlue = [SUD floatForKey: reverseSyncBlueKey];
         thePossiblyYellowColor = [NSColor colorWithCalibratedRed:myRed green:myGreen blue:myBlue alpha:1.00];
         [newSelectedAttributes setObject: thePossiblyYellowColor forKey:@"NSBackgroundColor"];
+        */
+        [newSelectedAttributes setObject: ReverseSyncColor forKey:@"NSBackgroundColor"];
         
         // [newSelectedAttributes setObject:[NSColor yellowColor] forKey:@"NSBackgroundColor"];
         // FIXME: use temporary attributes instead of abusing the text selection

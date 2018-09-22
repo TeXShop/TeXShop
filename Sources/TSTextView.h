@@ -53,6 +53,9 @@
 - (NSString *)resolveAlias: (NSString *)path;
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 - (void)autoComplete:(NSMenuItem *)theMenu; //Added by soheil
+- viewDidChangeEffectiveAppearance;
+- (void)paste: (id)sender;
+    
 @end
 
 

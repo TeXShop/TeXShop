@@ -76,6 +76,14 @@
 
 @implementation TSDocument
 
+NSInteger strSort(id s1, id s2, void *context)
+{
+    NSComparisonResult result;
+        
+    result =  [(NSString *)s1 localizedCaseInsensitiveCompare: (NSString *)s2];
+               
+    return result;
+}
 
 - (id)init
 {
@@ -148,7 +156,8 @@
 	lastCursorLocation = 0; // added by Terada
 	lastStringLength = 0; // added by Terada
 	lastInputIsDelete = NO;  // added by Terada
-	
+
+/*
 	CGFloat r, g, b;
 	r = [SUD floatForKey: highlightBracesRedKey];
 	g = [SUD floatForKey: highlightBracesGreenKey];
@@ -165,6 +174,7 @@
 	// 							 [NSColor magentaColor], NSForegroundColorAttributeName, nil ] retain];	 // added by Terada magentaColor
 	// highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
 	// 							  [NSColor colorWithDeviceRed:1 green:1 blue:0.5 alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada
+ */
 	
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
 
@@ -319,7 +329,7 @@
             thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
             [self.pdfKitWindow setFrameOrigin: thePoint];
             }
-        }
+         }
     
     if (([coder containsValueForKey:@"ForFullSplitWindow"]) && ([coder containsValueForKey:@"TeXShopTextWindow"]))
         {
@@ -455,12 +465,18 @@
 		[scrollView setRulersVisible:YES];
 		[scrollView2 setRulersVisible:YES];
 		[self.logScrollView setRulersVisible:YES];
+        [scrollView tile];
+        [scrollView2 tile];
+        [self.logScrollView tile];
 		lineNumbersShowing = YES;
 	} else {
 		[scrollView setRulersVisible:NO];
 		[scrollView2 setRulersVisible:NO];
 		[self.logScrollView setRulersVisible:NO];
-		lineNumbersShowing = NO;
+        [scrollView tile];
+        [scrollView2 tile];
+        [self.logScrollView tile];
+ 		lineNumbersShowing = NO;
 	}
 }
 
@@ -573,7 +589,7 @@
 {
 
 	NSColor		*foregroundColor, *backgroundColor, *insertionpointColor;
-
+/*
 	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
 												green: [SUD floatForKey:foreground_GKey]
 												 blue: [SUD floatForKey:foreground_BKey]
@@ -588,19 +604,20 @@
 													green: [SUD floatForKey:insertionpoint_GKey]
 													 blue: [SUD floatForKey:insertionpoint_BKey]
 													alpha:1.0];
-													
+*/
+   
 										
 
 	[aTextView setAutoresizingMask: NSViewWidthSizable];
 	[[aTextView textContainer] setWidthTracksTextView:YES];
 	[aTextView setDelegate:self];
 	[aTextView setAllowsUndo:YES];
-	[aTextView setRichText:NO];
+	[aTextView setRichText:YES]; // was NO
 	[aTextView setUsesFontPanel:YES];
-	[aTextView setFontSafely:[NSFont userFontOfSize:12.0]];
-	[aTextView setTextColor: foregroundColor];
-	[aTextView setBackgroundColor: backgroundColor];
-	[aTextView setInsertionPointColor: insertionpointColor];
+    [aTextView setFontSafely:[NSFont userFontOfSize:12.0]];
+	// [aTextView setTextColor: foregroundColor];
+	// [aTextView setBackgroundColor: backgroundColor];
+	// [aTextView setInsertionPointColor: insertionpointColor];
 	[aTextView setAcceptsGlyphInfo: YES]; // suggested by Itoh 1.35 (A)
     if ([SUD integerForKey: FindMethodKey] == 0)
         [aTextView setUsesFindPanel: YES];
@@ -823,9 +840,13 @@ if (! skipTextWindow) {
 	textView = textView1;
 	[self setupTextView:textView1];
 	[self setupTextView:textView2];
+ 
+    
     
     // Terada: Stop bouncing scrolling on Yosemite
-    if (! [SUD boolForKey: SourceScrollElasticityKey]) {
+    // May 27, 2018; Koch turned off elasticity for everyone
+    // if (! [SUD boolForKey: SourceScrollElasticityKey])
+        {
         [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
         [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
         [scrollView2 setHorizontalScrollElasticity:NSScrollElasticityNone];
@@ -889,15 +910,26 @@ if (! skipTextWindow) {
 		[self.logScrollView setRulersVisible:YES];
 		}
 
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        [self changeColors: YES];
+    else
+#endif
+        [self changeColors: NO];
+    
+    
+
 	}
 
 
     
     
    
+    [self setupToolbar];
+  
+    [self configureTypesetButton];
+     
 
-	[self configureTypesetButton];
-	[self setupToolbar];
 
 	if ([SUD boolForKey:ShowSyncMarksKey]) {
 		[self.syncBox setState:1];
@@ -1015,7 +1047,7 @@ if (! skipTextWindow) {
 
 				PDFfromKit = YES;
 				[self.myPDFKitView showWithPath: imagePath];
-				// [myPDFKitView2 prepareSecond];
+  				// [myPDFKitView2 prepareSecond];
 				// [[myPDFKitView document] retain];
 				[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
 				[self.myPDFKitView2 showForSecond];
@@ -1142,7 +1174,8 @@ if (! skipTextWindow) {
 		self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate];
 
 		[self.myPDFKitView showWithPath: imagePath];
-		// [myPDFKitView2 prepareSecond];
+        
+ 		// [myPDFKitView2 prepareSecond];
 		// [[myPDFKitView document] retain];
 		[self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
 		[self.myPDFKitView2 showForSecond];
@@ -1151,6 +1184,7 @@ if (! skipTextWindow) {
 		//[self.pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
 		[self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // added by Terada
 		[self fillLogWindowIfVisible];
+        
  	} else if (_externalEditor) {
 
 		PDFfromKit = YES;
@@ -1171,6 +1205,9 @@ if (! skipTextWindow) {
             [self allocateSyncScannerOld];
         else
             [self allocateSyncScanner];
+        
+        [self setLineBreakModeNew];
+        
     }
     
 
@@ -1202,13 +1239,29 @@ if (! skipTextWindow) {
         [self performSelector: aSelector withObject: self afterDelay: .1];
     }
     
-    else if ((self.useTabs) || (self.useTabsWithFiles))
+    else
     {
-        SEL aSelector = @selector(addTabbedWindows);
-        [self performSelector: aSelector withObject: self afterDelay: 1];
+        SEL aSelector = @selector(switchFrontWindow);
+        [self performSelector: aSelector withObject: self afterDelay: .5];
+    
+     if ((self.useTabs) || (self.useTabsWithFiles))
+    {
+        SEL bSelector = @selector(addTabbedWindows);
+        [self performSelector: bSelector withObject: self afterDelay: 1];
     }
     
+    }
+    
+    
 }
+    
+- (void)switchFrontWindow
+   {
+       if (([SUD boolForKey: OpenWithSourceInFrontKey]) && ([textWindow isVisible]))
+       {
+        [textWindow makeKeyAndOrderFront: self];
+       }
+   }
 
 - (void)hideTextWindow
 {
@@ -2205,8 +2258,9 @@ else {
         [printOperation setShowsPrintPanel:flag];
         [printOperation setShowsProgressPanel:flag];
         printPanel = [printOperation printPanel];
-        [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
+        [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling | NSPrintPanelShowsPaperSize)];
        //  [printPanel setOptions: (NSPrintPanelShowsPreview | NSPrintPanelShowsOrientation | NSPrintPanelShowsPageRange) ]; //( NSPrintPanelShowsPageSetupAccessory & [printPanel options])]; // NSPrintPanelShowsOrientation)];
+        
 		[printOperation runOperation];
 //		[printView release];
 	} else if (self.documentType == isTeX)
@@ -2587,6 +2641,9 @@ if ( ! skipTextWindow)
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setConsoleForegroundColorFromPreferences:) name:ConsoleForegroundColorChangedNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPreviewBackgroundColorFromPreferences:) name:PreviewBackgroundColorChangedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeColorsFromNotification:)
+          name:SourceColorChangedNotification object:nil];
 	
 
 
@@ -2921,7 +2978,7 @@ if ( ! skipTextWindow) {
 	// new template menu (by S. Zenitani, Jan 31, 2003)
 	NSFileManager *fm;
 	NSString      *basePath, *path, *title;
-	NSArray       *fileList;
+	NSArray       *fileListOld, *fileList;
 	id 	  newItem;
 	NSMenu 	  *submenu;
 	BOOL	   isDirectory;
@@ -2930,7 +2987,8 @@ if ( ! skipTextWindow) {
 
 	fm       = [ NSFileManager defaultManager ];
 	basePath = [ TexTemplatePath stringByStandardizingPath ];
-	fileList = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
+	fileListOld = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
+    fileList = [fileListOld sortedArrayUsingFunction: strSort context: NULL ];
 
 	for (i = 0; i < [fileList count]; i++) {
 		title = [ fileList objectAtIndex: i ];
@@ -2938,20 +2996,33 @@ if ( ! skipTextWindow) {
 		if ([fm fileExistsAtPath:path isDirectory: &isDirectory]) {
 			if (isDirectory ){
 				[popupButton addItemWithTitle: @""];
-				newItem = [popupButton lastItem];
+                [spopupButton addItemWithTitle: @""];
+               newItem = [popupButton lastItem];
 				[newItem setTitle: title];
 				submenu = [[NSMenu alloc] init];
 				[self makeMenuFromDirectory: submenu basePath: path
 									 action: @selector(doTemplate:) level: lv];
 				[newItem setSubmenu: submenu];
+                newItem = [spopupButton lastItem];
+                [newItem setTitle: title];
+                submenu = [[NSMenu alloc] init];
+                [self makeMenuFromDirectory: submenu basePath: path
+                                     action: @selector(doTemplate:) level: lv];
+                [newItem setSubmenu: submenu];
 			} else if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
 				title = [title stringByDeletingPathExtension];
 				[popupButton addItemWithTitle: @""];
+                [spopupButton addItemWithTitle: @""];
 				newItem = [popupButton lastItem];
 				[newItem setTitle: title];
 				[newItem setAction: @selector(doTemplate:)];
 				[newItem setTarget: self];
 				[newItem setRepresentedObject: path];
+                newItem = [spopupButton lastItem];
+                [newItem setTitle: title];
+                [newItem setAction: @selector(doTemplate:)];
+                [newItem setTarget: self];
+                [newItem setRepresentedObject: path];
 			}
 		}
 	}
@@ -2962,7 +3033,7 @@ if ( ! skipTextWindow) {
 /* build a submenu from the specified directory (by S. Zenitani, Jan 31, 2003) */
 {
 	NSFileManager *fm;
-	NSArray       *fileList;
+	NSArray       *fileListOld, *fileList;
 	NSString      *path, *title;
 	id 	  newItem;
 	NSMenu 	  *submenu;
@@ -2971,7 +3042,8 @@ if ( ! skipTextWindow) {
 
 	level--;
 	fm       = [ NSFileManager defaultManager ];
-	fileList = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
+	fileListOld = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
+    fileList = [fileListOld sortedArrayUsingFunction: strSort context: NULL ];
 
 	for (i = 0; i < [fileList count]; i++) {
 		title = [ fileList objectAtIndex: i ];
@@ -2994,6 +3066,7 @@ if ( ! skipTextWindow) {
 		}
 	}
 }
+
 
 - (void)setDocumentFontBoth:(NSNotification *)notification
 {
@@ -3047,7 +3120,7 @@ if ( ! skipTextWindow) {
 
 - (void)setConsoleFontFromPreferences:(NSNotification *)notification
 {
-	NSFont		*theFont;
+    NSFont		*theFont;
 
 	theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
     
@@ -3059,6 +3132,7 @@ if ( ! skipTextWindow) {
 
 - (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	NSColor		*backgroundColor;
 		
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:ConsoleBackgroundColor_RKey]
@@ -3066,10 +3140,12 @@ if ( ! skipTextWindow) {
 												blue: [SUD floatForKey:ConsoleBackgroundColor_BKey]
 												alpha:([SUD floatForKey:ConsoleBackgroundAlphaKey] == 0 ) ? 1.0 : [SUD floatForKey:ConsoleBackgroundAlphaKey]]; // modified by Terada
 	[outputText setBackgroundColor:backgroundColor];
+    */
 }
 
 - (void)setConsoleForegroundColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	NSColor		*foregroundColor;
 	
 	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:ConsoleForegroundColor_RKey]
@@ -3077,24 +3153,30 @@ if ( ! skipTextWindow) {
 												 blue: [SUD floatForKey:ConsoleForegroundColor_BKey]
 												alpha:1.0];
 	[outputText setTextColor:foregroundColor];
+     */
 }
 
 - (void)setBackgroundColorBoth:(NSNotification *)notification
 {
+    /*
 	[self setSourceBackgroundColorFromPreferences: notification];
 	[self setLogWindowBackgroundColorFromPreferences: notification];
+    */
 }
 
 - (void)setTextColorBoth:(NSNotification *)notification
 {
+    /*
 	[self setSourceTextColorFromPreferences: notification];
  	[self setLogWindowForegroundColorFromPreferences: notification];
+    */
 }
 
 
 - (void)setSourceBackgroundColorFromPreferences:(NSNotification *)notification
 {
-	NSColor	*backgroundColor;
+	/*
+     NSColor	*backgroundColor;
 	
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
 												green: [SUD floatForKey:background_GKey]
@@ -3102,10 +3184,12 @@ if ( ! skipTextWindow) {
 												alpha:1.0];
 	[textView1 setBackgroundColor: backgroundColor];
 	[textView2 setBackgroundColor: backgroundColor];
+     */
 }
 
 - (void)setSourceTextColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	NSColor	*textColor, *insertionpointColor;
 	
 	textColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
@@ -3125,11 +3209,13 @@ if ( ! skipTextWindow) {
     [self setupColors];
     [self colorizeVisibleAreaInTextView:textView1];
 	[self colorizeVisibleAreaInTextView:textView2];
+     */
 }
 
 
 - (void)setLogWindowBackgroundColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	NSColor	*backgroundColor;
 	
 	backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
@@ -3137,10 +3223,12 @@ if ( ! skipTextWindow) {
 												 blue: [SUD floatForKey:background_BKey]
 												alpha:1.0];
 	[self.logTextView setBackgroundColor: backgroundColor];
+    */
 }
 
 - (void)setLogWindowForegroundColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	NSColor		*foregroundColor;
 	
 	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
@@ -3149,14 +3237,17 @@ if ( ! skipTextWindow) {
 												alpha:1.0];
 	
 	[self.logTextView setTextColor: foregroundColor];
+     */
 }
 
 
 
 - (void)setPreviewBackgroundColorFromPreferences:(NSNotification *)notification
 {
+    /*
 	[self.myPDFKitView setNeedsDisplay: YES];
 	[self.myPDFKitView2 setNeedsDisplay: YES];
+    */
 }
 
 
@@ -3342,6 +3433,7 @@ preference change is cancelled. "*/
 	NSPrintingPaginationMode    originalPaginationMode;
 	BOOL                        originalVerticallyCentered;
     NSPrintPanel                *printPanel;
+    NSColor                     *oldTextColor, *oldBackgroundColor;
 
 	myPrintInfo = [self printInfo];
 	originalPaginationMode = [myPrintInfo horizontalPagination];
@@ -3350,12 +3442,21 @@ preference change is cancelled. "*/
 	[myPrintInfo setHorizontalPagination: NSFitPagination];
 	[myPrintInfo setVerticallyCentered:NO];
     [myPrintInfo setOrientation: NSPortraitOrientation];
-	printOperation = [NSPrintOperation printOperationWithView:textView printInfo: myPrintInfo];
+	
+    oldTextColor = textView.textColor;
+    oldBackgroundColor = textView.backgroundColor;
+    [textView setBackgroundColor:[NSColor whiteColor]];
+    [textView setTextColor: [NSColor blackColor]];
+    
+    printOperation = [NSPrintOperation printOperationWithView:textView printInfo: myPrintInfo];
     [printOperation setShowsPrintPanel:YES];
     [printOperation setShowsProgressPanel:YES];
     printPanel = [printOperation printPanel];
     [printPanel setOptions:([printPanel options] | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling)];
 	[printOperation runOperation];
+    
+    [textView setBackgroundColor:oldBackgroundColor];
+    [textView setTextColor: oldTextColor];
 
 	[myPrintInfo setHorizontalPagination: originalPaginationMode];
 	[myPrintInfo setVerticallyCentered:originalVerticallyCentered];
@@ -3900,9 +4001,29 @@ preference change is cancelled. "*/
 // added by Terada (- (void)resetHighlight:)
 - (void)resetHighlight:(id)sender
 {
-	if([textView1 hasMarkedText] || [textView2 hasMarkedText]) 
+    
+  // item added by Koch in August, 2018
+    
+    if (braceHighlighting)
+    {
+        
+       NSRange theRange;
+        
+        theRange.location = 0;
+        theRange.length = [self.textStorage length];
+        [[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+        [[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+        [self colorizeVisibleAreaInTextView:textView1];
+        [self colorizeVisibleAreaInTextView:textView2];
+        
+        
+        braceHighlighting = NO;
+    }
+    
+	 if([textView1 hasMarkedText] || [textView2 hasMarkedText])
 		return;
-	
+    
+  	
 	if(windowIsSplit){
 		[self colorizeVisibleAreaInTextView:textView1];
 		[self colorizeVisibleAreaInTextView:textView2];
@@ -3910,7 +4031,6 @@ preference change is cancelled. "*/
 	else {
 		[self colorizeVisibleAreaInTextView:textView];
 	}
-	braceHighlighting = NO;
 }
 
 // added by Terada ( - (void)showIndicator: )
@@ -3972,6 +4092,7 @@ preference change is cancelled. "*/
 // added by Terada (- (void)hilightBraceAt:)
 - (void)highlightBracesAt:(NSArray*)locations
 {
+    
 	NSInteger location1 = [[locations objectAtIndex:0] integerValue];
 	NSInteger location2 = [[locations objectAtIndex:1] integerValue];
 
@@ -4250,7 +4371,7 @@ preference change is cancelled. "*/
 	if ([replacementString length] != 1)
 		return YES;
 	rightpar = [replacementString characterAtIndex:0];
-	
+
 	if ([SUD boolForKey:ParensMatchingEnabledKey]) {
 		if (!(   ((rightpar == '}') && [SUD boolForKey:CheckBraceEnabledKey]) 
 			  || ((rightpar == ')') && [SUD boolForKey:CheckParenEnabledKey])
@@ -4274,7 +4395,7 @@ preference change is cancelled. "*/
 		
 		if (((i > 0) ? [textString characterAtIndex:i-1] : 0) == g_texChar) return YES; // added by Terada
 		
-		/* modified Jan 26, 2001, so we don't search entire text */
+		// modified Jan 26, 2001, so we don't search entire text
 		while ((i > 0) && (j < 5000)) {
 			i--; j++;
 			uchar = [textString characterAtIndex:i];
@@ -4293,8 +4414,7 @@ preference change is cancelled. "*/
 							   afterDelay:0.0];
 				}
 				else {
-					/* koch: here 'affinity' and 'stillSelecting' are necessary,
-					 else the wrong range is selected. */
+					// koch: here 'affinity' and 'stillSelecting' are necessary, else the wrong range is selected.
 					[textView setSelectedRange: matchRange
 									  affinity: NSSelectByCharacter stillSelecting: YES];
 					
@@ -4304,7 +4424,7 @@ preference change is cancelled. "*/
 					
 					[textView display];
 					myDate = [NSDate date];
-					/* Koch: Jan 26, 2001: changed -0.15 to -0.075 to speed things up */
+					// Koch: Jan 26, 2001: changed -0.15 to -0.075 to speed things up
 					while ([myDate timeIntervalSinceNow] > - 0.075);
 					[textView setSelectedRange: affectedCharRange];
 					
@@ -4315,6 +4435,9 @@ preference change is cancelled. "*/
 			}
 		}
 	}
+
+    
+
 	
 	return YES;
 }
@@ -4681,7 +4804,9 @@ if (! useFullSplitWindow) {
                           else
                               windowToTab = (NSWindow *)[theDocument textWindow];
                           // the next line requires XCode on High Sierra; comment it out for XCode on Sierra
+#ifdef HIGHSIERRAORHIGHER
                               windowToTab.tab.title = self.includeFileShortNames[i];
+#endif
                       }
                  
                   if (([theExtension isEqualToString: @"pdf"]) || (theDocument.documentType == isPDF))
@@ -5949,7 +6074,6 @@ if (! useFullSplitWindow) {
 
 - (void) flipIndexColorState: sender
 {
-    
     NSInteger   theState;
     
     if (useFullSplitWindow)
@@ -5972,7 +6096,7 @@ if (! useFullSplitWindow) {
 
 - (IBAction)toggleSyntaxColor:sender {
     
-    self.syntaxColor = ! self.syntaxColor;
+     self.syntaxColor = ! self.syntaxColor;
     [sender setState: self.syntaxColor];
     
     [self reColor:nil];
@@ -5982,14 +6106,15 @@ if (! useFullSplitWindow) {
 
 - (void) flipIndexColor: (NSInteger)state
 {
-    
-    NSInteger newState = 1 - state;
+     NSInteger newState = 1 - state;
     [self.indexColorBox setState: newState];
     [indexColorSplitBox setState: newState];
     if (newState == 1)
         showIndexColor = YES;
-    else
+    else {
         showIndexColor = NO;
+    //    [self reColor: nil];
+    }
     [self colorizeVisibleAreaInTextView:textView1];
     [self colorizeVisibleAreaInTextView:textView2];
 }
@@ -6170,6 +6295,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
 	
     CGFloat                     interlinespace      = [SUD floatForKey: SourceInterlineSpaceKey];
+    CGFloat                     myFirstLineHeadIndent = [SUD floatForKey: SourceFirstLineHeadIndentKey];
+    CGFloat                     myHeadIndent          = [SUD floatForKey: SourceHeadIndentKey];
+    
 	NSUInteger					tabWidth			= [SUD integerForKey: tabsKey];
 	NSUInteger					textStorageLength	= [_textStorage length];
     NSArray					*	desiredTabStops		= tabStopArrayForFontAndTabWidth(font, tabWidth);
@@ -6182,8 +6310,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         interlinespace = 1.0;
 	
 	[newStyle setTabStops:desiredTabStops];
-    [newStyle setLineSpacing: interlinespace]; 
-	
+    [newStyle setLineSpacing: interlinespace];
+    newStyle.firstLineHeadIndent = myFirstLineHeadIndent;
+    newStyle.headIndent = myHeadIndent;
+    
 	if (textStorageLength)
 		[_textStorage addAttribute:NSParagraphStyleAttributeName value:newStyle range:NSMakeRange(0, textStorageLength)];
 		
@@ -7275,12 +7405,19 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (void) showIndexColor: sender
 {
     NSInteger myState;
+    NSRange     theRange;
     
     myState = [(NSButton *)sender state];
     if (myState == 1)
         showIndexColor = YES;
     else
-        showIndexColor = NO;
+    {
+         showIndexColor = NO;
+        theRange.location = 0;
+        theRange.length = [self.textStorage length];
+        [[textView1 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+        [[textView2 layoutManager] removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:theRange];
+    }
 	[self colorizeVisibleAreaInTextView:textView1];
 	[self colorizeVisibleAreaInTextView:textView2];
 }
@@ -7328,7 +7465,10 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 
 - (id) mousemodeMatrix
 {
-	return mouseModeMatrixKK;
+    if (useFullSplitWindow)
+        return mouseModeMatrixFull;
+    else
+        return mouseModeMatrixKK;
 }
 
 - (BOOL) textSelectionYellow
@@ -7507,7 +7647,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 // The code below to handle line break algorithms and hard wrapping was written by
 // Michael Witten: mfwitten@mit.edu; May, June, 2005
 
-- (void)setLineBreakMode: (id)sender
+
+- (void)setLineBreakMode:(id)sender
 {
 	//choose the mode
 	NSInteger modeNew = [sender tag];
@@ -7620,6 +7761,118 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	[textView  setDefaultParagraphStyle: styleNew];
 	[textView2 setDefaultParagraphStyle: styleNew];
 }
+
+
+- (void)setLineBreakModeNew
+{
+    
+    if (lineBreakMode == NSLineBreakByWordWrapping)
+        return;
+    
+    
+    //Setup the stuff
+    switch (lineBreakMode)
+    {
+        case NSLineBreakByClipping:
+        {
+            
+            // modified by Terada
+            NSTextContainer *container;
+#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
+#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
+            NSSize maximumSize = NSMakeSize(FLT_MAX, FLT_MAX);
+            
+            [scrollView setAutoresizingMask:NSViewWidthSizable];
+            [[scrollView contentView] setAutoresizesSubviews:YES];
+            [scrollView setHasHorizontalScroller:YES];
+            
+            container = [textView textContainer];
+            [container setContainerSize:maximumSize];
+            [container setWidthTracksTextView:NO];
+            
+            [textView setMaxSize:maximumSize];
+            [textView setHorizontallyResizable:YES];
+            
+            //Do the same for the second textView:
+            [scrollView2 setAutoresizingMask:NSViewWidthSizable];
+            [[scrollView2 contentView] setAutoresizesSubviews:YES];
+            [scrollView2 setHasHorizontalScroller:YES];
+            
+            container = [textView2 textContainer];
+            [container setContainerSize:maximumSize];
+            [container setWidthTracksTextView:NO];
+            
+            [textView2 setMaxSize:maximumSize];
+            [textView2 setHorizontallyResizable:YES];
+            
+            /*
+             NSTextContainer *   container       = [textView textContainer];
+             NSSize              containerSize   = [container containerSize];
+             containerSize.width = FLT_MAX;
+             
+             [scrollView setHasHorizontalScroller:  YES];
+             [textView setHorizontallyResizable: YES];
+             [container setWidthTracksTextView: NO];
+             [container setContainerSize: containerSize];
+             
+             //Apparently, the frame must be made the largest possible so as to make the scroll bars correct.
+             [textView setFrameSize: containerSize];
+             
+             //The above code causes the text to be incorrectly drawn. This fixes that.
+             [textView setFrameSize: [scrollView contentSize]];
+             
+             //Do the same for the second textView:
+             container       = [textView2 textContainer];
+             containerSize   = [container containerSize];
+             containerSize.width = FLT_MAX;
+             
+             [scrollView2 setHasHorizontalScroller:  YES];
+             [textView2 setHorizontallyResizable: YES];
+             [container setWidthTracksTextView: NO];
+             [container setContainerSize: containerSize];
+             [textView2 setFrameSize: containerSize];
+             [textView2 setFrameSize: [scrollView contentSize]];
+             */
+            
+            break;
+        }
+            //case NSLineBreakByWordWrapping:
+            //case NSLineBreakByCharWrapping:
+        default:
+            [scrollView setHasHorizontalScroller: NO];
+            [textView setHorizontallyResizable: NO];
+            [textView setAutoresizingMask: NSViewWidthSizable];
+            [[textView textContainer] setWidthTracksTextView: YES];
+            [textView setFrameSize: [scrollView contentSize]];
+            
+            //Do the same for the second textView:
+            [scrollView2 setHasHorizontalScroller: NO];
+            [textView2 setHorizontallyResizable: NO];
+            [textView2 setAutoresizingMask: NSViewWidthSizable];
+            [[textView2 textContainer] setWidthTracksTextView: YES];
+            [textView2 setFrameSize: [scrollView contentSize]];
+            
+            break;
+    }
+    
+    //Reformat the text
+    NSUInteger                        textStorageLength    = [_textStorage length];
+    NSMutableParagraphStyle        *    styleNew;
+    if (textStorageLength)
+    {
+        styleNew = [[_textStorage attribute: NSParagraphStyleAttributeName atIndex: 0 effectiveRange: nil] mutableCopy] ;
+        [styleNew setLineBreakMode: lineBreakMode];
+        [_textStorage addAttribute: NSParagraphStyleAttributeName value: styleNew range: NSMakeRange(0, textStorageLength)];
+    }
+    
+    //This is so that the when everything is deleted, the format remains the same.
+    styleNew = [[textView defaultParagraphStyle] mutableCopy];
+    [styleNew setLineBreakMode: lineBreakMode];
+    
+    [textView  setDefaultParagraphStyle: styleNew];
+    [textView2 setDefaultParagraphStyle: styleNew];
+}
+
 
 
 - (void)hardWrapSelection: (id)sender
@@ -8866,6 +9119,19 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (BOOL) useFullSplitWindow
 {
     return useFullSplitWindow;
+}
+
+- (IBAction) doPDFSearch: sender
+{
+    [[self pdfKitView] doFindOne:sender];
+}
+
+- (IBAction)changeMouseMode: sender
+{
+    if (useFullSplitWindow)
+        [self.pdfKitWindow changeMouseMode: sender]; // seems to work!!
+    else
+        [self.pdfKitWindow changeMouseMode: sender];
 }
 
 - (void) runPageLayout:sender;

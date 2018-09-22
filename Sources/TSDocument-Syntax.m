@@ -80,25 +80,30 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	NSUInteger		length;
 	NSRange			colorRange;
 	NSUInteger		location;
-	NSInteger				theChar;
+	NSInteger		theChar;
 	NSUInteger		aLineStart;
 	NSUInteger		aLineEnd;
 	NSUInteger		end;
 	BOOL			colorIndexDifferently;
 	NSTimeInterval	theTime;
-	
+
+
 	if (isLoading) {
 		if (firstTime == YES) {
 			colorTime = [[NSDate date] timeIntervalSince1970];
 			firstTime = NO;
+            // secondTime = YES;
 			}
 		else {
 			theTime = [[NSDate date] timeIntervalSince1970];
+            
+            // secondTime = NO;
 			// NSLog([NSString stringWithFormat:@"%f", theTime]);
 			// NSLog([NSString stringWithFormat:@"%f",colorTime]);
 			if ((theTime - colorTime) < 1.0) {
 				colorTime = theTime;
-				return;
+                if (! [SUD boolForKey: ColorImmediatelyKey] )
+                       return;
 				}
 			else {
 				isLoading = NO;
@@ -106,8 +111,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 				}
 			}
 		}
-	
-	
+
+    
 	/*
 	
 	Experiments show that TSDocument routines can be called in the following order
@@ -184,14 +189,29 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	// then only recolor anything which is supposed to have another color.
 	colorRange.location = aLineStart;
 	colorRange.length = aLineEnd - aLineStart;
+    
+    /* September 4, 2018: Below is a dialog I don't understand. I don't understand why
+     the first author commented out my line of code below, or why I put it back, or why
+     Toudykov's code made it unnecessary!
+     
+     All I know is that when color support was completely rewritten for Mojave, removing a comment did not
+     change the color of the ordinary text which followed from the comment color back to the ordinary text
+     color. Then I reactivated my code, which fixed the problem, and then commented out
+     Toudykov's code, which changed nothing. So we are back where we started. */
+    
+    
 	// WARNING!! The following line has been commented out to restore changing the text color
     
+   
 	// June 27, 2008; Koch; I don't understand the previous warning; the line below fixes cases when removing a comment leaves text red
     // Sept 3, 2011; the Toudykov patch below makes this unnecessary
-	// [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
+	 [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
     
     // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
-    [layoutManager addTemporaryAttributes:self.regularColorAttribute forCharacterRange:colorRange];
+   // [layoutManager addTemporaryAttributes:self.regularColorAttribute forCharacterRange:colorRange];
+    /* End of this strange section.
+     */
+    
     
 	// Now we iterate over the whole text and perform the actual recoloring.
 	location = aLineStart;
@@ -299,6 +319,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // Load the color definitions from the config system
 - (void)setupColors
 {
+    /*
 	CGFloat		r, g, b;
 	NSColor		*color;
 
@@ -343,6 +364,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	b = [SUD floatForKey:indexblueKey];
 	color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
 	self.indexColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+    */
+    
+    [self colorizeVisibleAreaInTextView:textView1];
+    [self colorizeVisibleAreaInTextView:textView2];
+    
 }
 
 // This method is invoked when the syntax highlighting preferences are changed.
@@ -448,8 +474,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	// TODO: Consider intersecting the range with the visible range ...
 
 	// Colorize the range
-	[self colorizeText:textView1 range:colorRange];
+    [self colorizeText:textView1 range:colorRange];
 	[self colorizeText:textView2 range:colorRange];
+    
 }
 
 

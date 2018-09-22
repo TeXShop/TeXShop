@@ -40,4 +40,5 @@
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
 */
 
+
 @end

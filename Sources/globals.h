@@ -22,6 +22,21 @@
  *
  */
 
+/*
+ Compile options. Comment out to compile on earlier versions of macOS, with limited facilities
+*/
+
+// This provides short names in tabs
+#define HIGHSIERRAORHIGHER
+
+// This provides dark mode
+#define MOJAVEORHIGHER
+
+/*
+ End
+*/
+
+
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
@@ -464,7 +479,13 @@ extern NSString *continuousHighSierraFixKey;
 extern NSString *tabsAlsoForInputFilesKey;
 extern NSString *FlashFixKey;
 extern NSString *FlashDelayKey;
-
+extern NSString *DefaultLiteThemeKey;
+extern NSString *DefaultDarkThemeKey;
+extern NSString *EditorCanAddBracketsKey;
+extern NSString *ColorImmediatelyKey;
+extern NSString *OpenWithSourceInFrontKey;
+extern NSString *SourceFirstLineHeadIndentKey;
+extern NSString *SourceHeadIndentKey;
 
 // end defaults
 
@@ -493,6 +514,7 @@ extern NSString *CommandCompletionFolderPath;
 extern NSString *CommandCompletionPath; // mitsu 1.29 (P)
 extern NSString *DraggedImageFolderPath;
 extern NSString *DraggedImagePath; // mitsu 1.29 drag & drop
+extern NSString *ColorPath;
 
 
 /*" Notifications "*/
@@ -505,6 +527,8 @@ extern NSString *ConsoleBackgroundColorChangedNotification;
 extern NSString *ConsoleForegroundColorChangedNotification;
 extern NSString *SourceBackgroundColorChangedNotification;
 extern NSString *SourceTextColorChangedNotification;
+extern NSString *SourceColorChangedNotification;
+extern NSString *PreviewColorChangedNotification;
 extern NSString *PreviewBackgroundColorChangedNotification;
 extern NSString *MagnificationChangedNotification;
 extern NSString *MagnificationRememberNotification;
@@ -537,19 +561,33 @@ extern BOOL             atLeastMavericks;
 extern BOOL             atLeastElCapitan;
 extern BOOL             atLeastSierra;
 extern BOOL             atLeastHighSierra;
+extern BOOL             atLeastMojave;
 extern BOOL             BuggyHighSierra;
+extern BOOL             editorCanAddBrackets;
 
 // Command completion
 extern NSString *g_commandCompletionChar;	/*" The key triggering completion. Always set to ESC in finishCommandCompletionConfigure "*/
 extern NSMutableString *g_commandCompletionList;/*" The list of completions, read from CommandCompletion.txt "*/
 extern BOOL g_canRegisterCommandCompletion;	/*" This is set to NO while e.g. CommandCompletion.txt is open "*/
-extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview window PDFKitView pages "*/
 
+// Below are colors which tend to be set just as they are needed
+// We make them globals, and thus set them from the new Color Preferences
+
+extern NSColor *InvisibleColor;
+extern NSColor *ReverseSyncColor;
+extern NSColor *PreviewBackgroundColor; /*" The background color for all Preview window PDFKitView pages "*/
 extern NSDictionary *highlightBracesColorDict; // added by Terada
 extern NSDictionary *highlightContentColorDict; // added by Terada
+extern NSColor *ImageForegroundColor;
+extern NSColor *ImageBackgroundColor;
+extern NSColor *PreviewDirectSyncColor;
+
 #define LEOPARD 568 // added by Terada
 
 extern NSString *placeholderString;
 extern NSString *startcommentString;
 extern NSString *endcommentString;
 extern NSString *ConsoleWindowNameKey;
+
+extern NSDictionary *liteColors;
+extern NSDictionary *darkColors;

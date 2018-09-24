@@ -378,8 +378,8 @@ NSInteger stringSort(id s1, id s2, void *context)
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorText"];
         ((NSColorWell *)sender).color = oldColor;
     }
-    
-   [colorSupport changeColorValueInDictionary: EditingColors forKey: @"EditorText" fromColorWell:sender];
+
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"EditorText" fromColorWell:sender];
     [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
     
 }

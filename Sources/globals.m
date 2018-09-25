@@ -258,6 +258,7 @@ NSString *ColorImmediatelyKey = @"ColorImmediately";
 NSString *OpenWithSourceInFrontKey = @"OpenWithSourceInFront";
 NSString *SourceFirstLineHeadIndentKey = @"SourceFirstLineHeadIndent";
 NSString *SourceHeadIndentKey = @"SourceHeadIndent";
+NSString *expl3SyntaxColoringKey = @"expl3SyntaxColoring";
 
 
 

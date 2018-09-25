@@ -37,6 +37,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 		return YES;
 	else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
 		return YES; // added by Terada
+    else if (((c == '@') || (c == '_') || (c == ':')) && [SUD boolForKey:expl3SyntaxColoringKey])
+        return YES;
 	else
 		return NO;
 }
@@ -218,8 +220,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	while (location < aLineEnd) {
 		theChar = [textString characterAtIndex: location];
 
-		if ((theChar == '{') || (theChar == '}') || (theChar == '$')) {
-			// The three special characters { } $ get an extra color.
+		if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '$')) {
+			// The five special characters { } [ ] $ get an extra color.
 			colorRange.location = location;
 			colorRange.length = 1;
 			[layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:colorRange];

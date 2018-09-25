@@ -122,12 +122,12 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    [SUD setObject: oldLiteStyle forKey: DefaultLiteThemeKey];
-    [SUD setObject: oldDarkStyle forKey: DefaultDarkThemeKey];
+   [SUD setObject: oldLiteStyle forKey: DefaultLiteThemeKey];
+   [SUD setObject: oldDarkStyle forKey: DefaultDarkThemeKey];
     [colorSupport checkAndRestoreDefaults];
     [colorSupport initializeColors];
     [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: nil];
-    [[NSColorPanel sharedColorPanel] close];
+   [[NSColorPanel sharedColorPanel] close];
   
 }
 

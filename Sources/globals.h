@@ -486,6 +486,7 @@ extern NSString *ColorImmediatelyKey;
 extern NSString *OpenWithSourceInFrontKey;
 extern NSString *SourceFirstLineHeadIndentKey;
 extern NSString *SourceHeadIndentKey;
+extern NSString *expl3SyntaxColoringKey;
 
 // end defaults
 

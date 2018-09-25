@@ -59,6 +59,7 @@
 #import "NSText-Extras.h"  // Terada
 #import "TSGlyphPopoverController.h"  // Terada
 #import "TSWindowController.h"
+#import "TSColorSupport.h"
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
@@ -676,6 +677,10 @@ NSInteger strSort(id s1, id s2, void *context)
 	return [super displayName];
 }
 
+- (void) callNotification: (NSNotification *) notification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName: SourceColorChangedNotification object: self userInfo: nil];
+}
 
 // FIXME/TODO: Obviously windowControllerDidLoadNib is *way* too big. Need to simplify it,
 // and possibly move code to other functions.
@@ -909,6 +914,10 @@ if (! skipTextWindow) {
 		 [scrollView2 setRulersVisible:YES];
 		[self.logScrollView setRulersVisible:YES];
 		}
+    
+    
+    
+    
 
 #ifdef MOJAVEORHIGHER
     if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
@@ -917,8 +926,11 @@ if (! skipTextWindow) {
 #endif
         [self changeColors: NO];
     
-    
-
+    [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(callNotification:)
+                                   userInfo:nil
+                                    repeats:NO];
 	}
 
 

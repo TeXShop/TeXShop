@@ -13,6 +13,28 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.10</h3></P>
+
+<ul>
+<li> When a blank new document was opened in 4.08 and 4.09, the text was colored black regardless of the chosen Theme. This is fixed.
+<p>
+<li> Previously, {, }, and $ were syntax colored, but [, ] were not. Now all of these symbols receive the same syntax coloring.
+<p>
+<li> TeXShop gives a Command Color to symbols beginning with / and continuing with 'a' - 'z' or 'A' - 'Z'. These are the typical commands used by Latex authors.
+
+<p> Latex Macro authors also use '@' in commands. A special hidden preference setting adds those to characters receiving a Command Color:
+<pre>
+         defaults write TeXShop MakeatletterEnabled YES
+</pre>
+
+<p> Latex3 programmers  use '_', ':' and '@' in their commands, so a command begins with / and continues with 'a' - 'z', 'A' - 'Z', '_', ':', or '@'. A special hidden preference setting adds all of these to characters receiving a Command Color. This preference alone is enough; the previous setting is then irrelevant.
+<pre>
+         defaults write TeXShop expl3SyntaxColoring YES
+</pre>
+
+
+</ul>
+
 <P><h3>TeXShop Changes 4.09</h3></P>
 
 This version fixes a bug in the  Theme Preference code of TeXShop 4.08. Apple's color picker has several modes, including options to choose colors using CMYK values or gray scale sliders. In version 4.08, TeXShop obtained colors from color wells, and asked these colors for their RGB values without first converting colors in other color spaces to RGB. Fixed.

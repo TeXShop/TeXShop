@@ -220,8 +220,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	while (location < aLineEnd) {
 		theChar = [textString characterAtIndex: location];
 
-		if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '$')) {
-			// The five special characters { } [ ] $ get an extra color.
+		if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
+			// The six special characters { } [ ] & $ get an extra color.
 			colorRange.location = location;
 			colorRange.length = 1;
 			[layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:colorRange];

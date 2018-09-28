@@ -282,6 +282,8 @@ Clicking this button will bring up the font panel.
         }
     }
     
+    [_fontTextView setTextColor: NSColor.textColor];
+    [_fontTextView  setBackgroundColor: NSColor.textBackgroundColor];
     
      /*
      

@@ -135,6 +135,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 
 		[outlineView setTarget: self];
 		[outlineView setDoubleAction: @selector(doMacroTest:)];
+        [outlineView setBackgroundColor: NSColor.textBackgroundColor];
 		// custom text view
 		NSScrollView *scrollView = [contentTextView enclosingScrollView];
 		NSSize contentSize = [scrollView contentSize];
@@ -146,6 +147,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setAllowsUndo:YES];
 		[contentTextView setRichText:YES];
 		[contentTextView setUsesFontPanel:YES];
+       // [contentTextView setTextColor: NSColor.systemBlueColor];
 		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
         [contentTextView setContinuousSpellCheckingEnabled: NO];
         [contentTextView setAutomaticSpellingCorrectionEnabled: NO];

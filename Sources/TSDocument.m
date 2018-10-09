@@ -4073,10 +4073,24 @@ preference change is cancelled. "*/
 // added by Terada (- (void)resetBackgroundColorOfTextView:)
 - (void)resetBackgroundColorOfTextView:(id)sender
 {
-	NSColor* backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
+
+    NSDictionary *colorDictionary;
+    
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        colorDictionary = darkColors;
+    else
+#endif
+        colorDictionary = liteColors;
+
+ NSColor *backgroundColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"EditorBackground"];
+    
+ /*
+    NSColor* backgroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:background_RKey]
 														 green: [SUD floatForKey:background_GKey]
 														  blue: [SUD floatForKey:background_BKey]
 														 alpha: ([SUD floatForKey:backgroundAlphaKey] == 0 ) ? 1.0 : [SUD floatForKey:backgroundAlphaKey]]; // modified by Terada
+  */
 	if(windowIsSplit){
 		[textView1 setBackgroundColor:backgroundColor];
 		[textView2 setBackgroundColor:backgroundColor];
@@ -4275,7 +4289,43 @@ preference change is cancelled. "*/
 	
     if(beep) NSBeep();
 	if(flashBackground) {
-		[textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
+        
+        BOOL withDarkColors;
+        NSDictionary *theDictionary;
+        
+        
+#ifdef MOJAVEORHIGHER
+        if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+            withDarkColors = YES;
+        else
+#endif
+            withDarkColors = NO;
+        
+        if (withDarkColors)
+            theDictionary = darkColors;
+        else
+            theDictionary = liteColors;
+        
+        NSColor *flashColor =  [[TSColorSupport sharedInstance] colorFromDictionary:theDictionary andKey: @"EditorFlash"];
+        
+
+    // this Color should be set in Themes, but if so, we need to face the issue of adding colors and what
+    // that does to the data structure. For now we offer a very rough fix. Dick Koch
+        
+        if (flashColor != nil)
+            
+            [textView setBackgroundColor: flashColor];
+        
+        else {
+        
+        if (withDarkColors)
+            [textView setBackgroundColor:[NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00]];
+        else
+            [textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
+            
+        }
+        
+       
 		[self performSelector:@selector(resetBackgroundColorOfTextView:) 
 				   withObject:nil afterDelay:0.20];
 	}

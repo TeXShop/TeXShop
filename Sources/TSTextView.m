@@ -2107,6 +2107,9 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 			}
 			// [self.currentString release];
 		}
+        
+        
+  
 
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary

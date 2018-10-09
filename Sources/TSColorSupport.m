@@ -93,6 +93,8 @@ static id sharedColorSupport = nil;
 - (NSColor *) colorFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey
 {
     NSArray *theColorArray = [theDictionary objectForKey: theKey];
+    if (theColorArray == nil)
+        return nil;
     NSColor *theColor = [NSColor colorWithRed: [theColorArray[0] doubleValue]  green: [theColorArray[1] doubleValue]  blue: [theColorArray[2] doubleValue]  alpha:1.00];
     
     return theColor;
@@ -101,6 +103,8 @@ static id sharedColorSupport = nil;
 - (NSColor *) colorAndAlphaFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey
 {
     NSArray *theColorArray = [theDictionary objectForKey: theKey];
+    if (theColorArray == nil)
+        return nil;
     NSColor *theColor = [NSColor colorWithRed: [theColorArray[0] doubleValue]  green: [theColorArray[1] doubleValue]  blue: [theColorArray[2] doubleValue]  alpha: [theColorArray[3] doubleValue]];
     
     return theColor;

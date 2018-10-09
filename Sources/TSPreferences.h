@@ -199,6 +199,7 @@
     IBOutlet NSColorWell    *EditorHighlightBracesColorWell;
     IBOutlet NSColorWell    *EditorHighlightContentColorWell;
     IBOutlet NSColorWell    *EditorInvisibleCharColorWell;
+    IBOutlet NSColorWell    *EditorFlashColorWell;
     IBOutlet NSColorWell    *EditorReverseSyncColorWell;
     IBOutlet NSColorWell    *PreviewDirectSyncColorWell;
     IBOutlet NSColorWell    *SourceAlphaColorWell;
@@ -371,6 +372,7 @@
 - (IBAction)EditorHighlightBracesChanged:sender;
 - (IBAction)EditorHighlightContentChanged:sender;
 - (IBAction)EditorInvisibleCharChanged:sender;
+- (IBAction)EditorFlashChanged:sender;
 - (IBAction)SourceAlphaChanged:sender;
 - (IBAction)PreviewAlphaChanged:sender;
 - (IBAction)ConsoleAlphaChanged:sender;

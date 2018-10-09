@@ -148,6 +148,17 @@ NSInteger stringSort(id s1, id s2, void *context)
 - (void)FillInColorWells
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    NSColor *flashColor;
+    BOOL withDarkColors;
+    
+    
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (_prefsWindow.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        withDarkColors = YES;
+    else
+#endif
+        withDarkColors = NO;
+
     
     SourceTextColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorText"];
     SourceBackgroundColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorBackground"];
@@ -165,6 +176,14 @@ NSInteger stringSort(id s1, id s2, void *context)
     EditorHighlightBracesColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorHighlightBraces"];
     EditorHighlightContentColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorHighlightContent"];
     EditorInvisibleCharColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorInvisibleChar"];
+    flashColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorFlash"];
+    if (flashColor != nil)
+        EditorFlashColorWell.color = flashColor;
+    else if (withDarkColors)
+        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00];
+    else
+        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1];
+        
     EditorReverseSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorReverseSync"];
     PreviewDirectSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"PreviewDirectSync"];
     SourceAlphaColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SourceAlpha"];
@@ -274,6 +293,7 @@ NSInteger stringSort(id s1, id s2, void *context)
                                       Green: [SUD floatForKey:highlightContentGreenKey] Blue: [SUD floatForKey:highlightContentBlueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorInvisibleChar" withRed: [SUD floatForKey:invisibleCharRedKey]
                                       Green: [SUD floatForKey:invisibleCharGreenKey] Blue: [SUD floatForKey:invisibleCharBlueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorFlash" withRed: 1.0 Green: 0.95 Blue: 1.0 Alpha:1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorReverseSync" withRed: [SUD floatForKey:reverseSyncRedKey]
                                       Green: [SUD floatForKey:reverseSyncGreenKey] Blue: [SUD floatForKey:reverseSyncBlueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"PreviewDirectSync" withRed: 1.0 Green: 1.0 Blue: 0.0 Alpha: 1.0];
@@ -372,7 +392,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorText"];
@@ -388,7 +408,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorBackground"];
@@ -403,7 +423,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorInsertionPoint"];
@@ -418,7 +438,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"PreviewBackground"];
@@ -433,7 +453,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"ConsoleText"];
@@ -448,7 +468,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"ConsoleBackground"];
@@ -463,7 +483,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"LogText"];
@@ -478,7 +498,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"LogBackground"];
@@ -494,7 +514,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"SyntaxComment"];
@@ -509,7 +529,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"SyntaxCommand"];
@@ -524,7 +544,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"SyntaxMarker"];
@@ -539,7 +559,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"SyntaxIndex"];
@@ -554,7 +574,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorReverseSync"];
@@ -569,7 +589,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"PreviewDirectSync"];
@@ -585,7 +605,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorHighlightBraces"];
@@ -600,7 +620,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorHighlightContent"];
@@ -615,7 +635,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorInvisibleChar"];
@@ -626,11 +646,26 @@ NSInteger stringSort(id s1, id s2, void *context)
     
 }
 
+- (IBAction)EditorFlashChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorFlash"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"EditorFlash" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
 - (IBAction)SourceAlphaChanged:sender
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SourceAlpha"];
@@ -645,7 +680,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+   if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"PreviewAlpha"];
@@ -660,7 +695,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"ConsoleAlpha"];
@@ -675,7 +710,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"ImageForeground"];
@@ -690,7 +725,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     
-    if (! _prefsWindow.keyWindow )
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"ImageBackground"];

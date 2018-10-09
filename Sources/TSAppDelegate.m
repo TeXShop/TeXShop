@@ -54,6 +54,7 @@
 #define NSAppKitVersionNumber10_10 1343
 #define NSAppKitVersionNumber10_12 1504
 #define NSAppKitVersionNumber10_12_4 1504.90
+#define NSAppKitVersionNumber10_13 1561
 // #define NSAppKitVersionNumber10_13 ???  This is in the Mojave app kit, so use it
 
 
@@ -232,23 +233,20 @@
         atLeastHighSierra = NO;
     
     
-    if (@available(macOS 10.14, *)) {
+#ifdef MOJAVEORHIGHER
+    if (@available(macOS 10.14, *))
         // Code for macOS 10.14 or later
         atLeastMojave = YES;
-    } else {
+    else
         // Code for versions earlier than 10.14.
         atLeastMojave = NO;
-    }
-    
-    
-    /*
+#else
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_13)
         atLeastMojave = YES;
     else
         atLeastMojave = NO;
-    */
-    
-    
+#endif
+
     BuggyHighSierra = NO;
     if ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12) && (NSAppKitVersionNumber < 1561.3)) // 10_13_3 = 1561.2 and 10_13_4 = 1561.4
         BuggyHighSierra = YES;

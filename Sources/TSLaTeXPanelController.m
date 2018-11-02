@@ -131,11 +131,13 @@ static id _sharedInstance = nil;
 		for (i=0;i<55;i++)
 		{
 			[[mathbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
+            // [[mathbuttonmatrix cellWithTag:i] image].template=YES;
 		}
 
 		for (i=0;i<55;i++)
 		{
 			[[symbolsbuttonmatrix cellWithTag:i] setShowsBorderOnlyWhileMouseInside:YES];
+            // if (i > 10)  [[symbolsbuttonmatrix cellWithTag:i] image].template=YES;
 		}
 
 		for (i=0;i<30;i++)
@@ -169,6 +171,14 @@ static id _sharedInstance = nil;
 	}
 
 	// this adjust the look of buttons at startup
+    
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && ([self window].effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        [self setIconTemplate: YES];
+    else
+#endif
+        [self setIconTemplate: NO];
+    
 }
 
 - (IBAction)putenvironments:(id)sender
@@ -223,9 +233,12 @@ static id _sharedInstance = nil;
 
 - (void)textWindowDidBecomeKey:(NSNotification *)note
 {
+    
 	// if latex panel is hidden, show it
 	if (shown)
+    {
 		[[self window] orderFront:self];
+    }
 }
 
 - (void)pdfWindowDidBecomeKey:(NSNotification *)note
@@ -238,6 +251,7 @@ static id _sharedInstance = nil;
 - (IBAction)showWindow:(id)sender
 {
 	shown = YES;
+    
 	[super showWindow:sender];
 }
 
@@ -267,5 +281,20 @@ static id _sharedInstance = nil;
 	// [[self window] saveFrameUsingName:@"theLatexPanel"];
 }
 
+- (void)setIconTemplate:(BOOL)value
+{
+    NSInteger   i;
+    
+    for (i=0;i<55;i++)
+    {
+        [[mathbuttonmatrix cellWithTag:i] image].template=value;
+    }
+    
+    for (i=0;i<55;i++)
+    {
+        if (i > 10)  [[symbolsbuttonmatrix cellWithTag:i] image].template=value;
+    }
+
+ }
 
 @end

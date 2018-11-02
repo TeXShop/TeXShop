@@ -850,15 +850,13 @@ if (! skipTextWindow) {
     
     // Terada: Stop bouncing scrolling on Yosemite
     // May 27, 2018; Koch turned off elasticity for everyone
-    // if (! [SUD boolForKey: SourceScrollElasticityKey])
-        {
-        [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
-        [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
-        [scrollView2 setHorizontalScrollElasticity:NSScrollElasticityNone];
-        [scrollView2 setVerticalScrollElasticity:NSScrollElasticityNone];
-        }
+ //    if (! [SUD boolForKey: SourceScrollElasticityKey])
     
-	
+
+
+    
+    
+
     if (spellExists) {
 		[textView2 setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
         [textView2 setAutomaticSpellingCorrectionEnabled:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey]];
@@ -915,8 +913,16 @@ if (! skipTextWindow) {
 		[self.logScrollView setRulersVisible:YES];
 		}
     
-    
-    
+    // Terada: Stop bouncing scrolling on Yosemite
+    // May 27, 2018; Koch turned off elasticity for everyone
+    //    if (! [SUD boolForKey: SourceScrollElasticityKey])
+
+    {
+        scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
+        scrollView.verticalScrollElasticity = NSScrollElasticityNone;
+        scrollView2.horizontalScrollElasticity = NSScrollElasticityNone;
+        scrollView2.verticalScrollElasticity = NSScrollElasticityNone;
+    }
     
 
 #ifdef MOJAVEORHIGHER
@@ -1283,11 +1289,15 @@ if (! skipTextWindow) {
 // FIX RULER SCROLL
 - (void) redrawLineNumbers: sender // added by Terada (for Lion bug)
 {
+  
+    return; // Fix jiggling at top and bottom of scroll; Koch Oct 12, 2018
+    
     if(!lineNumbersShowing) return;
     
 	NSSize		newSize;
 	NSRect		theFrame;
     
+
     if ((sender == textView1) && ([scrollView scrollerStyle] == NSScrollerStyleOverlay)) {
     
     NSRect currentRect = [scrollView documentVisibleRect];

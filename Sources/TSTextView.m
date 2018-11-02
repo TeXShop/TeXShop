@@ -21,6 +21,7 @@
  */
 
 #import "TSTextView.h"
+#import "TSLaTeXPanelController.h"
 
 // added by mitsu --(A) g_texChar filtering
 #import "TSEncodingSupport.h"
@@ -1864,13 +1865,20 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     
     if (self != self.document.textView1)
         return NULL;
+    
 
 #ifdef MOJAVEORHIGHER
     if ((atLeastMojave) && (self.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+    {
         [self.document changeColors: YES];
+        [[TSLaTeXPanelController sharedInstance] setIconTemplate:YES];
+    }
     else
 #endif
+    {
         [self.document changeColors: NO];
+        [[TSLaTeXPanelController sharedInstance] setIconTemplate:NO];
+    }
     
     return NULL;
     

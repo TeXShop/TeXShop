@@ -52,4 +52,5 @@
 - (IBAction)putsymbols:(id)sender;
 - (IBAction)puttypeface:(id)sender;
 - (void)hideWindow:(id)sender;
+- (void)setIconTemplate:(BOOL)value;
 @end

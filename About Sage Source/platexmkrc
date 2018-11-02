@@ -1,0 +1,21 @@
+# This is to allow the use of sagetex package 
+# (http://www.ctan.org/pkg/sagetex)
+# with latexmk.  Sagetex outputs a file with the extension .sage.
+# This file is to be processed by sage software (http://sagemath.org) 
+# to make a file with extension .sout.  This file is then read in by
+# sagetex during a later run of (pdf)latex.
+#
+# This can be done by normal custom dependency.  However the .sage
+# contains unimportant information about line numbers for error
+# reporting. It is useful not to rerun sage if this is the only
+# information that has changed in the .sage file.  So the
+# hash_calc_ignore_pattern variable is used to configure latexmk to
+# ignore this lines when computing whether the .sage file has
+# changed. 
+
+
+add_cus_dep( 'sage', 'sout', 0, 'makesout' );
+$hash_calc_ignore_pattern{'sage'} = '^( _st_.goboom|print .SageT)';
+sub makesout {
+   system( "sage \"$_[0].sage\"" );
+}

@@ -15,6 +15,53 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.14</h5></P>
+
+Version 4.14 is mainly about two small fixes:
+
+<ul>
+
+<li> In macOS Lion, Apple added  a "bounce" when the text in Text Edit scrolled to the top or bottom of the screen. Some users found this bounce excessive, and we added two hidden Preference Items to control it. The first, 
+<pre>
+         defaults write TeXShop SourceScrollElasticity NO
+</pre>
+was supposed to turn this bounce off, but in succeeding versions of macOS  had less and less effect. The bounce also caused line number scrolling to break near the top and bottom of the text, and we added an extra fix for this problem:
+<pre>
+         defaults write TeXShop FixLineNumberScroll YES
+</pre>
+But future versions of macOS fixed this  "Line Number Scroll Bug", so our fix wasn't necessary and instead caused harm by dramatically increasing the bounce effect.
+
+<p>
+In version 4.14 we have given up on  bounces and disabled both of these hidden preference items. The result is a mild bounce similar to the behavior of scrolling in other text programs. For many of us, the change improves the behavior of scrolling near the top and bottom of the source in TeXShop.
+
+<p>
+<li> In Dark Mode on Mojave, many symbols in the LaTeX Panel were barely visible. This is fixed.
+
+<p>
+<li> The Sparkle Update Framework in TeXShop has been updated to the latest version. Sparkle updates are protected by a public key encryption system. Until this update, that public key was DSA, but Sparkle has switched to EdDSA, a system based on elliptic curves. This version of TeXShop contains both public keys so updates from older versions of TeXShop still work. Once you have TeXShop 4.14, further Sparkle updates will use the EdDSA key. For some time to come, TeXShop will contain both keys to protect users who are slow to update.
+
+<p>
+<li> Latexmk has been updated to version 4.61.
+
+<p>
+<li> The German translation of buttons in the log window is fixed.
+
+<p>
+<li> The Sage engine documentation in TeXShop/Engines/Inactive has been updated for the current version of Sage.
+
+<p>
+<li> For a number of years, TeXShop has been signed using my Apple Developer ID. This protects users who download the program from the internet  and have the default Apple security system enabled. The first time they run TeXShop, a dialog appears saying "TeXShop is an app downloaded from the internet. Are you sure you want to open it?" If we didn't sign the program, this dialog would instead report that it was from an unknown developer and should be thrown into the trash.
+
+<p> Starting next year, Apple will require two additional steps from developers. First, they will require that programs be compiled with a "Hardened Runtime." This is a system in which programs  indicate that they intend to use facilities which could compromise security: camera, location services, address book, photo library, execution of JIT-compiled code, etc. Version 4.14 was compiled with the hardened runtime turned on, but did not have to turn on any of these exceptions. Note that a Hardened Runtime is NOT a sandboxed application. Sandboxing, which is required for applications in the App Store, could seriously affect TeXShop's interaction with the command line programs in TeX Live, so I have never even investigated sandboxing the program or adding it to the store
+
+<p> The second additional step is to send the program to Apple before signing so they can "machine check" it for viruses and other security flaws. At the 2018 Developer Conference, Apple strongly emphasized that this was not a code review or interface validation, but just an additional check for security problems. The check takes from five to ten minutes and requires a hardened runtime in advance.
+
+<p> The two steps are optional this year, but become mandatory next year. TeXShop 4.14 passed both steps. According to the Developer Conference, there is a way for users to detect this: in the dialog that appears when TeXShop is first opened, the TeXShop icon should appear rather than just a generic icon.
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 4.13</h5></P>
 
 Version 4.13 fixes two small bugs in the Themes coloring system, and makes two other minor changes.

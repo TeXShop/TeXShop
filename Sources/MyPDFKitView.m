@@ -2999,7 +2999,7 @@ The system then remembers the new number and sends is to the Timer which will di
 - (void)killPopup: (NSTimer *)theTimer
 {
     
- //   return; // activate this to leave "link destination" until cursor moves
+   // return; // activate this to leave "link destination" until cursor moves
     
     if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
         return;

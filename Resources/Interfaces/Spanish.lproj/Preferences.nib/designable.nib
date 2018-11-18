@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="9Bc-68-MCl" id="tSz-hA-21R"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="d8k-Tu-bTk" id="f9C-sN-wuX"/>
                 <outlet property="EditorReverseSyncColorWell" destination="Bb0-ek-5dE" id="G0s-9n-rgA"/>
+                <outlet property="FootnoteColorWell" destination="DHT-dj-MoI" id="qNw-sE-0um"/>
                 <outlet property="ImageBackgroundColorWell" destination="SLj-FQ-SG3" id="Mqn-N8-r57"/>
                 <outlet property="ImageForegroundColorWell" destination="2Q9-Cf-gE3" id="sLw-bh-GhZ"/>
                 <outlet property="LiteStyle" destination="8LQ-sB-UJy" id="rCg-Gq-F5z"/>
@@ -2960,6 +2961,23 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="XwC-3A-2jv">
+                                                        <rect key="frame" x="288" y="268" width="61" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Nota al pie" id="iJs-QZ-ZsX">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell id="DHT-dj-MoI">
+                                                        <rect key="frame" x="290" y="244" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="FootnoteColorChanged:" target="-2" id="QqT-W7-1ai"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -3002,7 +3020,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
-            <point key="canvasLocation" x="11" y="-180"/>
+            <point key="canvasLocation" x="85" y="28"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="aAy-uJ-yB8" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>

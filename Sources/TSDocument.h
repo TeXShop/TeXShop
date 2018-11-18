@@ -366,6 +366,7 @@ enum RootCommand
 @property (retain)  NSDictionary		*commentColorAttribute;
 @property (retain)  NSDictionary		*markerColorAttribute;
 @property (retain)  NSDictionary		*indexColorAttribute;
+@property (retain)  NSDictionary        *footnoteColorAttribute;
 
 @property (retain)  NSTask              *synctexTask;
 @property (retain)  NSPipe              *synctexPipe;

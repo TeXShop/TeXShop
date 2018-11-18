@@ -195,6 +195,7 @@
     IBOutlet NSColorWell    *SyntaxCommandColorWell;
     IBOutlet NSColorWell    *SyntaxMarkerColorWell;
     IBOutlet NSColorWell    *SyntaxIndexColorWell;
+    IBOutlet NSColorWell    *FootnoteColorWell;
     
     IBOutlet NSColorWell    *EditorHighlightBracesColorWell;
     IBOutlet NSColorWell    *EditorHighlightContentColorWell;
@@ -366,6 +367,7 @@
 - (IBAction)SyntaxCommandColorChanged:sender;
 - (IBAction)SyntaxMarkerColorChanged:sender;
 - (IBAction)SyntaxIndexColorChanged:sender;
+- (IBAction)FootnoteColorChanged:sender;
 
 - (IBAction)EditorReverseSyncChanged:sender;
 - (IBAction)PreviewDirectSyncChanged:sender;

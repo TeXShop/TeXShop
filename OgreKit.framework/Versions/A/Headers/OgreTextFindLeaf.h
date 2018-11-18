@@ -3,8 +3,8 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 26 2003
- * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
- * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
+ * Author: Isao Sonobe <sonoisa@gmail.com>
+ * Copyright: Copyright (c) 2003-2018 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
  * Encoding: UTF8
@@ -19,7 +19,7 @@
 @interface OgreTextFindLeaf : NSObject <OgreTextFindComponent>
 {
     OgreTextFindBranch      *_parent;
-    int                     _index;
+    NSInteger               _index;
     BOOL                    _isParentRetained;
     
     BOOL                    _isTerminal;
@@ -29,7 +29,7 @@
 
 - (void)beginEditing;       // begin editing
 - (void)endEditing;         // end editing
-- (void)beginRegisteringUndoWithCapacity:(unsigned)aCapacity;  // begin resistering undo oprations
+- (void)beginRegisteringUndoWithCapacity:(NSUInteger)aCapacity;  // begin resistering undo oprations
 - (void)endRegisteringUndo;  // end resistering undo oprations
 
 - (BOOL)isSelected;

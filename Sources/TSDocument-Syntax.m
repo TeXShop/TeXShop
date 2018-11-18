@@ -87,9 +87,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	NSUInteger		aLineEnd;
 	NSUInteger		end;
 	BOOL			colorIndexDifferently;
+    BOOL            colorFootnoteDifferently;
 	NSTimeInterval	theTime;
-
-
+    
 	if (isLoading) {
 		if (firstTime == YES) {
 			colorTime = [[NSDate date] timeIntervalSince1970];
@@ -131,6 +131,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	*/
 	
 	colorIndexDifferently = [self indexColorState];
+    colorFootnoteDifferently = [SUD boolForKey: SyntaxColorFootnoteKey];
+
 
 	
 	// Fetch the underlying layout manager and string.
@@ -250,6 +252,30 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 					colorRange.length = location - colorRange.location;
 				}
 			}
+            
+            NSString *commandString = [textString substringWithRange: colorRange];
+            
+            if ((colorFootnoteDifferently) &&
+                 (([commandString isEqualToString: @"\\footnote"]) || ([commandString isEqualToString: @"\\autocite"]) || ([commandString isEqualToString: @"\\footcite"]))) {
+                    int parens = 0;
+                    BOOL notDone = YES;
+                    while ((location < aLineEnd) && (notDone)) {
+                        theChar = [textString characterAtIndex: location];
+                        location++;
+                        colorRange.length = location - colorRange.location;
+                        if (theChar == '{')
+                            parens++;
+                        if (theChar == '}')
+                            parens--;
+                        if (parens == 0)
+                            notDone = NO;
+                    }
+                    [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
+                }
+          
+            
+            
+            
 			/*
 			if (colorIndexDifferently) {
 				NSString *commandString = [textString substringWithRange: colorRange];
@@ -274,10 +300,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 				/* the above code was patched by Tammo Jan Dijkema to handle optional arguments for ColorIndex
 				 (this is useful when using the package index, which creates optional indices). With this patch, 
 				 the command \index[notation]{foo} gets colored as expected.*/
-			if (colorIndexDifferently) {
-				NSString *commandString = [textString substringWithRange: colorRange];
+			else if ((colorIndexDifferently) &&
 				// esindex below is a Spanish indexing command
-				if (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"])) {
+				 (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"]))) {
 					NSInteger parens = 0;
 					BOOL optparens = NO;
 					BOOL notDone = YES;
@@ -311,12 +336,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 				else
 					[layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
 				}
-			else
-				[layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
-		} else
+		 else
 			location++;
-	}
+    }
 }
+
 
 // Load the color definitions from the config system
 - (void)setupColors

@@ -50,6 +50,24 @@
     NSColor *myColor;
     NSArray *myArray;
     NSNumber *myNumber;
+    BOOL    withDarkColors;
+    
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (textWindow.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        withDarkColors = YES;
+    else
+#endif
+        withDarkColors = NO;
+    
+ /*
+      flashColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorFlash"];
+    if (flashColor != nil)
+        EditorFlashColorWell.color = flashColor;
+    else if (withDarkColors)
+        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00];
+    else
+        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1];
+*/
     
     
     // EDITOR
@@ -86,13 +104,6 @@
     [textView1 setTextColor: myTextColor];
     [textView2 setTextColor: myTextColor];
 
-    
-/*
-    NSTextStorage *textViewContent = [textView1 textStorage];
-    NSRange total = NSMakeRange(0, [textViewContent length]);
-    [textViewContent removeAttribute: NSForegroundColorAttributeName range: total];
-    [textViewContent addAttribute: NSForegroundColorAttributeName value: myTextColor range: total];
-*/
  
     // LOG WINDOW
     
@@ -125,8 +136,29 @@
     self.markerColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:mySyntaxColor, NSForegroundColorAttributeName, nil];
     
     mySyntaxColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"SyntaxIndex"];
+    if (mySyntaxColor == nil) {
+        if (withDarkColors)
+            mySyntaxColor = [NSColor colorWithDeviceRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
+        else
+            mySyntaxColor = [NSColor colorWithDeviceRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
+        }
     self.indexColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:mySyntaxColor, NSForegroundColorAttributeName, nil];
-
+    
+    mySyntaxColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"FootnoteColor"];
+    if (mySyntaxColor == nil)
+        mySyntaxColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"SyntaxCommand"];
+    /*
+        {
+        if (withDarkColors)
+            // mySyntaxColor = [NSColor colorWithDeviceRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.00];
+            mySyntaxColor = [[TSColorSupport sharedInstance] darkColorWithKey: @"FootnoteColor"];
+        else
+            // mySyntaxColor = [NSColor colorWithDeviceRed: 0.35 green: 0.35 blue: 0.35 alpha: 1.00];
+            mySyntaxColor = [[TSColorSupport sharedInstance] liteColorWithKey: @"FootnoteColor"];
+        }
+     */
+    self.footnoteColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:mySyntaxColor, NSForegroundColorAttributeName, nil];
+   
     myColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"EditorHighlightBraces"];
     highlightBracesColorDict = [NSDictionary dictionaryWithObjectsAndKeys: myColor, NSForegroundColorAttributeName, nil ] ;
     

@@ -13,6 +13,39 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.16</h3></P>
+
+This version has several simple changes:
+
+<ul>
+<li> The Ogrekit Find Panel has been modified by the author, Isao Sonobe, to use the latest Apple technologies . These changes include slight fixes to fully support Dark Mode. The changes are greatly appreciated.
+
+<p>
+<li> The Korean localization has been brought up to date by Kangsu Kim. Many thanks.
+
+<p>
+<li> The Matrix Panel has been improved slightly to support Dark Mode, although the table deliberately  has a white background in both modes.
+
+<p>
+<li>Following a request of Kasper Steensgaard, syntax coloring for \footnote, \footcite, and \autocite is modified to also color the inserted text. For example, the entire source phrase "\footnote{This is well known}" is syntax colored. Steensgaard works in the field of law where footnotes are common, and this change makes editing them easier. 
+
+<p> The color of these footnotes is initially the same as the color of other LaTeX commands, but this color is now editable in the Themes panel of TeXShop Preferences.
+
+<p> I have learned that some users object to even slight editor changes, so there is a hidden preference to turn this feature off:
+<pre>
+     defaults write TeXShop SyntaxColorFootnote NO
+</pre>
+
+<p>
+<li> The latest version of the Sparkle update code, adopted in TeXShop 4.14, supports delta updates. These updates load much faster because they only contain code that has changed since a previous version. The update to 4.16 will contain delta updates 4.14 --> 4.16 and 4.15 --> 4.16. Thus if you update from a version of TeXShop earlier than 4.14, you will download the complete program rather than the delta update.
+
+<p>
+Future updates will contain a delta update from the previous version only, so this is an incentive to keep the program up to date.
+
+
+</ul>
+
+
 <P><h3>TeXShop Changes 4.15</h3></P>
 
 In TeXShop 4.14, a file named TeXShop,scriptSuite and a program named ScriptRunner were inadvertently omitted from the TeXShop Application Bundle. This broke several Applescript macros. The missing files are again present in TeXShop 4.15.
@@ -58,7 +91,7 @@ In version 4.14 we have given up on  bounces and disabled both of these hidden p
 
 <p> The second additional step is to send the program to Apple before signing so they can "machine check" it for viruses and other security flaws. At the 2018 Developer Conference, Apple strongly emphasized that this was not a code review or interface validation, but just an additional check for security problems. The check takes from five to ten minutes and requires a hardened runtime in advance.
 
-<p> The two steps are optional this year, but become mandatory next year. TeXShop 4.14 passed both steps. According to the Developer Conference, there is a way for users to detect this: in the dialog that appears when TeXShop is first opened, the TeXShop icon should appear rather than just a generic icon.
+<p> The two steps are optional this year, but become mandatory next year. TeXShop 4.14 passed both steps. There is a way for users to detect that the code has been submitted to Apple: in the dialog that appears when TeXShop is first opened, the text should end with the phrase "Apple checked it for malicious software and none was detected."
 
 </ul>
 

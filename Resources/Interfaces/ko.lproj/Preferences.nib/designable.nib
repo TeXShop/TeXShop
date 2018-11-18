@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="0.0" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <deployment version="101000" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="ahT-zi-zrr" id="8jm-2g-R2b"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="OLP-gz-ZMj" id="nB9-8e-Yvq"/>
                 <outlet property="EditorReverseSyncColorWell" destination="1vO-cp-TK3" id="Ebx-fS-MGG"/>
+                <outlet property="FootnoteColorWell" destination="eis-GZ-7cy" id="BAQ-Ol-z6Y"/>
                 <outlet property="ImageBackgroundColorWell" destination="BkC-FY-Y79" id="NoR-vS-sP9"/>
                 <outlet property="LiteStyle" destination="p8S-s9-WPM" id="Y4D-CF-qFZ"/>
                 <outlet property="LogBackgroundColorWell" destination="Bo6-S8-Kc7" id="kd2-qi-TEy"/>
@@ -692,7 +693,7 @@ DQ
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
-                                                                <buttonCell type="check" title="Editor Can Add Brackets" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="WXS-6y-Gg1">
+                                                                <buttonCell type="check" title="괄호 자동 완성" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="WXS-6y-Gg1">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                     <connections>
@@ -1005,7 +1006,7 @@ DQ
                                             </view>
                                             <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
-                                        <box title="Editor Style" id="mu1-Sp-QbD">
+                                        <box title="에디터 스타일" id="mu1-Sp-QbD">
                                             <rect key="frame" x="323" y="67" width="232" height="181"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="3KM-U9-aBE">
@@ -1036,19 +1037,19 @@ DQ
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="sbe-99-JcW">
-                                                        <rect key="frame" x="15" y="87" width="116" height="34"/>
+                                                        <rect key="frame" x="15" y="84" width="116" height="23"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" title="First Line Paragraph Indent:" id="sW1-gY-YMy">
-                                                            <font key="font" metaFont="system"/>
+                                                        <textFieldCell key="cell" selectable="YES" title="첫 줄 들여쓰기" id="sW1-gY-YMy">
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="3kQ-lL-nqF">
-                                                        <rect key="frame" x="15" y="48" width="116" height="34"/>
+                                                        <rect key="frame" x="15" y="45" width="116" height="24"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" title="Remaining Lines Paragraph Indent:" id="W9z-xJ-5SX">
-                                                            <font key="font" metaFont="system"/>
+                                                        <textFieldCell key="cell" selectable="YES" title="문단 들여쓰기" id="W9z-xJ-5SX">
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -1056,8 +1057,8 @@ DQ
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="q8f-EA-0Sl">
                                                         <rect key="frame" x="15" y="6" width="116" height="26"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" title="Interline Spacing:" id="rRV-3v-PKR">
-                                                            <font key="font" metaFont="system"/>
+                                                        <textFieldCell key="cell" selectable="YES" title="줄 간격" id="rRV-3v-PKR">
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -1078,8 +1079,8 @@ DQ
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="iIG-UA-XEO">
                                                         <rect key="frame" x="15" y="121" width="91" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" selectable="YES" title="Tab Indent:" id="IBc-eG-Cwh">
-                                                            <font key="font" metaFont="system"/>
+                                                        <textFieldCell key="cell" selectable="YES" title="탭 들여쓰기" id="IBc-eG-Cwh">
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -1099,7 +1100,7 @@ DQ
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>
@@ -1359,7 +1360,7 @@ DQ
                                             </view>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="Opening Source and Preview" id="Z4m-QX-PVb">
+                                        <box title="창 배치" id="Z4m-QX-PVb">
                                             <rect key="frame" x="51" y="13" width="253" height="78"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="FsO-dz-b0j">
@@ -1369,9 +1370,9 @@ DQ
                                                     <button verticalHuggingPriority="750" id="qsy-ZW-PkD">
                                                         <rect key="frame" x="19" y="26" width="182" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="radio" title="Use Separate Windows" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ckI-D7-vkt">
+                                                        <buttonCell key="cell" type="radio" title="별도 창으로" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ckI-D7-vkt">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="t1v-LG-GGI"/>
@@ -1380,9 +1381,9 @@ DQ
                                                     <button verticalHuggingPriority="750" tag="1" id="ZFL-Cz-rYP">
                                                         <rect key="frame" x="19" y="6" width="182" height="26"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="radio" title="Use One Window" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="puV-Bg-D1V">
+                                                        <buttonCell key="cell" type="radio" title="단일 창으로" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="puV-Bg-D1V">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="sourceAndPreviewInSameWindowChanged:" target="-2" id="cKQ-H3-HS9"/>
@@ -1390,7 +1391,7 @@ DQ
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
                                         <box title="페이지 버튼" id="123">
                                             <rect key="frame" x="334" y="449" width="225" height="61"/>
@@ -1414,7 +1415,7 @@ DQ
                                             </view>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
-                                        <box title="One Window Mode" id="6bD-xb-7iv">
+                                        <box title="단일 창 모드" id="6bD-xb-7iv">
                                             <rect key="frame" x="317" y="171" width="242" height="78"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="V5O-Zy-UV7">
@@ -1424,9 +1425,9 @@ DQ
                                                     <button verticalHuggingPriority="750" id="OOO-ox-Ifv">
                                                         <rect key="frame" x="19" y="26" width="182" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="radio" title="Source on the Left" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="wEp-dV-kiX">
+                                                        <buttonCell key="cell" type="radio" title="편집 창을 왼쪽에" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="wEp-dV-kiX">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="sourceOnLeftChanged:" target="-2" id="Jyv-VI-1hi"/>
@@ -1435,9 +1436,9 @@ DQ
                                                     <button verticalHuggingPriority="750" tag="1" id="qES-ds-tI8">
                                                         <rect key="frame" x="19" y="6" width="182" height="26"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="radio" title="Source on the Right" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="eQq-2t-cZ5">
+                                                        <buttonCell key="cell" type="radio" title="편집 창을 오른쪽에 " bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="eQq-2t-cZ5">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="sourceOnLeftChanged:" target="-2" id="iIL-IG-9D6"/>
@@ -1445,7 +1446,7 @@ DQ
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>
@@ -2443,12 +2444,12 @@ DQ
                                     </subviews>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Themes" identifier="" id="vRH-ih-Phg">
+                            <tabViewItem label="테마" identifier="" id="vRH-ih-Phg">
                                 <view key="view" id="3eK-dD-Y1y">
                                     <rect key="frame" x="10" y="33" width="611" height="518"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <box title="Themes" id="cQl-3n-PZu">
+                                        <box title="테마" id="cQl-3n-PZu">
                                             <rect key="frame" x="14" y="329" width="188" height="194"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="jWT-yX-wNE">
@@ -2480,19 +2481,19 @@ DQ
                                                         </connections>
                                                     </popUpButton>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0MK-ri-ka2">
-                                                        <rect key="frame" x="8" y="149" width="96" height="14"/>
+                                                        <rect key="frame" x="8" y="149" width="46" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Lite Mode Theme" id="e8Z-Sl-9nN">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="밝은 테마" id="e8Z-Sl-9nN">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="oNc-ha-3yw">
-                                                        <rect key="frame" x="8" y="104" width="101" height="14"/>
+                                                        <rect key="frame" x="8" y="104" width="55" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Dark Mode Theme" id="Di1-Pp-wLH">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="아두운 테마" id="Di1-Pp-wLH">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2520,9 +2521,9 @@ DQ
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
-                                        <box title="Actions" id="Gad-Xv-pXz">
+                                        <box title="작업" id="Gad-Xv-pXz">
                                             <rect key="frame" x="14" y="18" width="188" height="197"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="T37-Ib-WYN">
@@ -2532,9 +2533,9 @@ DQ
                                                     <button verticalHuggingPriority="750" id="avg-fe-Y85">
                                                         <rect key="frame" x="2" y="135" width="171" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="push" title="Save Edited Theme" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zzB-ZI-fNU">
+                                                        <buttonCell key="cell" type="push" title="편집 테마 저장" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zzB-ZI-fNU">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="SaveEditedStyle:" target="-2" id="Avg-n7-Kzy"/>
@@ -2543,9 +2544,9 @@ DQ
                                                     <button verticalHuggingPriority="750" id="H4l-zu-b1M">
                                                         <rect key="frame" x="2" y="102" width="171" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="push" title="Create New Theme" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MrP-lS-9ZJ">
+                                                        <buttonCell key="cell" type="push" title="새 테마" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MrP-lS-9ZJ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="SaveNewStyle:" target="-2" id="blw-r7-9hI"/>
@@ -2554,9 +2555,9 @@ DQ
                                                     <button verticalHuggingPriority="750" id="tVZ-pK-GOf">
                                                         <rect key="frame" x="2" y="69" width="171" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="push" title="New Theme from Prefs" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sGU-c7-HWY">
+                                                        <buttonCell key="cell" type="push" title="설정에서 새 테마" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sGU-c7-HWY">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="NewStyleFromPrefs:" target="-2" id="Hhi-93-1PK"/>
@@ -2564,9 +2565,9 @@ DQ
                                                     </button>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
-                                        <box title="Colors" id="aPD-Ge-g4L">
+                                        <box title="색상" id="aPD-Ge-g4L">
                                             <rect key="frame" x="213" y="-5" width="389" height="528"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="K5K-Ts-BSd">
@@ -2606,19 +2607,19 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="8fe-c1-UPV">
-                                                        <rect key="frame" x="129" y="481" width="26" height="14"/>
+                                                        <rect key="frame" x="129" y="481" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Text" id="b5A-Hw-CNT">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="텍스트" id="b5A-Hw-CNT">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2lC-e2-9fm">
-                                                        <rect key="frame" x="201" y="481" width="67" height="14"/>
+                                                        <rect key="frame" x="201" y="481" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Background" id="S7L-zw-6JS">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="배경색" id="S7L-zw-6JS">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2665,19 +2666,19 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Wo4-Pb-yBP">
-                                                        <rect key="frame" x="32" y="454" width="41" height="14"/>
+                                                        <rect key="frame" x="32" y="454" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Source" id="V7y-2H-ySn">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="소스" id="V7y-2H-ySn">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="vKJ-Y3-Iqw">
-                                                        <rect key="frame" x="32" y="422" width="47" height="14"/>
+                                                        <rect key="frame" x="32" y="422" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Console" id="kXo-Vd-h6d">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="콘솔" id="kXo-Vd-h6d">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2685,8 +2686,8 @@ DQ
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="N2L-A1-Kiv">
                                                         <rect key="frame" x="32" y="390" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Log" id="oZj-88-qC4">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="로그" id="oZj-88-qC4">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2716,28 +2717,28 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="jpM-HD-KaD">
-                                                        <rect key="frame" x="32" y="358" width="46" height="14"/>
+                                                        <rect key="frame" x="32" y="358" width="43" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Preview" id="Czu-6V-Do3">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="결과보기" id="Czu-6V-Do3">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Q31-Jn-8pO">
-                                                        <rect key="frame" x="32" y="295" width="41" height="14"/>
+                                                        <rect key="frame" x="32" y="295" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Source" id="fQD-9a-kCL">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="소스" id="fQD-9a-kCL">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="sI9-6T-VlI">
-                                                        <rect key="frame" x="32" y="251" width="40" height="14"/>
+                                                        <rect key="frame" x="32" y="251" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Syntax" id="mSY-8V-lub">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="구문" id="mSY-8V-lub">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2752,19 +2753,19 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="t2h-5S-Iul">
-                                                        <rect key="frame" x="37" y="109" width="67" height="14"/>
+                                                        <rect key="frame" x="37" y="109" width="55" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Image Copy" id="Iop-6R-zep">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="이미지 복사" id="Iop-6R-zep">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="GnR-oo-tQj">
-                                                        <rect key="frame" x="36" y="59" width="62" height="14"/>
+                                                        <rect key="frame" x="36" y="59" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Characters" id="709-fc-MBM">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="문자" id="709-fc-MBM">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2788,46 +2789,46 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Fho-BQ-2hC">
-                                                        <rect key="frame" x="117" y="127" width="65" height="14"/>
+                                                        <rect key="frame" x="117" y="127" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Foreground" id="61l-6x-Pb1">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="전경색" id="61l-6x-Pb1">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Var-x1-XGL">
-                                                        <rect key="frame" x="118" y="174" width="39" height="14"/>
+                                                        <rect key="frame" x="106" y="174" width="93" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Direct " id="DjL-bZ-Dja">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="소스에서 보기창으로" id="DjL-bZ-Dja">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="WRN-xJ-5Yk">
-                                                        <rect key="frame" x="117" y="268" width="55" height="14"/>
+                                                        <rect key="frame" x="117" y="268" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Comment" id="MW0-Z8-0jC">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="주석문" id="MW0-Z8-0jC">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="UwB-AX-Smc">
-                                                        <rect key="frame" x="205" y="268" width="58" height="14"/>
+                                                        <rect key="frame" x="205" y="268" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Command" id="sHB-7e-zTN">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="명령어" id="sHB-7e-zTN">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Q8C-A8-L7p">
-                                                        <rect key="frame" x="119" y="222" width="41" height="14"/>
+                                                        <rect key="frame" x="119" y="222" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Marker" id="9eU-e9-isU">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="마커" id="9eU-e9-isU">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2835,8 +2836,8 @@ DQ
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="TxA-ta-jqi">
                                                         <rect key="frame" x="204" y="222" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Index" id="aMP-N6-BIa">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="인덱스" id="aMP-N6-BIa">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2850,10 +2851,10 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="itV-9E-eb4">
-                                                        <rect key="frame" x="115" y="316" width="51" height="14"/>
+                                                        <rect key="frame" x="115" y="316" width="24" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Insertion" id="Dou-1S-dts">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="삽입" id="Dou-1S-dts">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2899,10 +2900,10 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="r63-L1-ux5">
-                                                        <rect key="frame" x="205" y="175" width="46" height="14"/>
+                                                        <rect key="frame" x="209" y="175" width="84" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Reverse" id="IjT-nm-L0O">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="보기창에서 소스로" id="IjT-nm-L0O">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2932,10 +2933,10 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="O06-hq-bIf">
-                                                        <rect key="frame" x="201" y="127" width="67" height="14"/>
+                                                        <rect key="frame" x="201" y="127" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Background" id="Hm0-vw-ha8">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="배경색" id="Hm0-vw-ha8">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2974,17 +2975,34 @@ DQ
                                                         </connections>
                                                     </colorWell>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="nGo-7p-QzE">
-                                                        <rect key="frame" x="204" y="316" width="32" height="14"/>
+                                                        <rect key="frame" x="204" y="316" width="33" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Flash" id="PdF-uv-CKT">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="플래시" id="PdF-uv-CKT">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="keQ-SE-gkN">
+                                                        <rect key="frame" x="292" y="268" width="24" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="각주" id="jrQ-GK-Oop">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell id="eis-GZ-7cy">
+                                                        <rect key="frame" x="290" y="244" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="FootnoteColorChanged:" target="-2" id="JbE-nP-dSl"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="system"/>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>
@@ -3070,7 +3088,7 @@ DQ
             </view>
             <point key="canvasLocation" x="-106" y="-336"/>
         </window>
-        <window title="Style Title" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="5Rz-Ua-oxR" userLabel="LinePanel" customClass="NSPanel">
+        <window title=" 테마 타이틀" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="5Rz-Ua-oxR" userLabel="LinePanel" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="311" y="495" width="261" height="107"/>
@@ -3083,9 +3101,9 @@ DQ
                     <button verticalHuggingPriority="750" id="cnx-gM-ebi">
                         <rect key="frame" x="158" y="16" width="84" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="Pjp-54-Ew3">
+                        <buttonCell key="cell" type="push" title="승인" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="Pjp-54-Ew3">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
@@ -3106,9 +3124,9 @@ DQ
                     <button verticalHuggingPriority="750" id="PNn-yN-xVE">
                         <rect key="frame" x="62" y="16" width="84" height="33"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="OyM-BO-Ymq">
+                        <buttonCell key="cell" type="push" title="취소" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="OyM-BO-Ymq">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
 Gw
 </string>
@@ -3120,8 +3138,8 @@ Gw
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="TNa-jg-fNt">
                         <rect key="frame" x="18" y="69" width="50" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Title:" id="wnp-RC-2hS">
-                            <font key="font" metaFont="smallSystem"/>
+                        <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="타이틀" id="wnp-RC-2hS">
+                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>

@@ -3,8 +3,8 @@
  * Project: OgreKit
  *
  * Creation Date: Jun 13 2004
- * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
- * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
+ * Author: Isao Sonobe <sonoisa@gmail.com>
+ * Copyright: Copyright (c) 2003-2018 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
  * Encoding: UTF8
@@ -17,15 +17,15 @@
 
 @interface OgreOutlineView : NSOutlineView <OgreView>
 {
-    int     _ogreSelectedColumn;
-    id      _ogreSelectedItem;
-    NSRange _ogreSelectedRange;
+    NSInteger   _ogreSelectedColumn;
+    id          _ogreSelectedItem;
+    NSRange     _ogreSelectedRange;
     
     NSMutableArray  *_ogrePathComponents;
 }
 
-- (int)ogreSelectedColumn;
-- (void)ogreSetSelectedColumn:(int)column;
+- (NSInteger)ogreSelectedColumn;
+- (void)ogreSetSelectedColumn:(NSInteger)column;
 
 - (NSArray*)ogrePathComponentsOfSelectedItem;
 - (void)ogreSetSelectedItem:(id)item;

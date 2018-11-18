@@ -3,8 +3,8 @@
  * Project: OgreKit
  *
  * Creation Date: Jun 13 2004
- * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
- * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
+ * Author: Isao Sonobe <sonoisa@gmail.com>
+ * Copyright: Copyright (c) 2003-2018 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
  * Encoding: UTF8
@@ -18,9 +18,9 @@
 {
 }
 
-- (int)ogreNumberOfChildrenOfItem:(id)item;
+- (NSInteger)ogreNumberOfChildrenOfItem:(id)item;
 - (BOOL)ogreIsItemExpandable:(id)item;
-- (id)ogreChild:(int)index ofItem:(id)item;
+- (id)ogreChild:(NSInteger)index ofItem:(id)item;
 - (id)ogreObjectValueForItem:(id)item;
 - (void)ogreSetObjectValue:(id)anObject forItem:(id)item;
 

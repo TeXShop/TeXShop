@@ -19,6 +19,12 @@
 - (NSMutableDictionary *) dictionaryForColorFile: (NSString *) fileTitle;
 - (NSColor *)colorFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey;
 - (NSColor *)colorAndAlphaFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey;
+
+- (NSColor *)liteColorWithKey: (NSString *)theKey;
+- (NSColor *)darkColorWithKey: (NSString *)theKey;
+- (NSColor *)liteColorAndAlphaWithKey: (NSString *)theKey;
+- (NSColor *)darkColorAndAlphaWithKey: (NSString *)theKey;
+
 - (void)changeColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey fromColorWell: (id)theWell;
 - (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (float)red
     Green: (float)green Blue: (float)blue Alpha: (float)alpha;

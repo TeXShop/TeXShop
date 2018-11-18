@@ -3,8 +3,8 @@
  * Project: OgreKit
  *
  * Creation Date: Sep 26 2003
- * Author: Isao Sonobe <sonoisa (AT) muse (DOT) ocn (DOT) ne (DOT) jp>
- * Copyright: Copyright (c) 2003 Isao Sonobe, All rights reserved.
+ * Author: Isao Sonobe <sonoisa@gmail.com>
+ * Copyright: Copyright (c) 2003-2018 Isao Sonobe, All rights reserved.
  * License: OgreKit License
  *
  * Encoding: UTF8
@@ -39,7 +39,7 @@
 	OGRegularExpression *_regex;			// regular expression
 	OGReplaceExpression *_repex;			// replace expression
 	NSColor				*_highlightColor;	// highlight color
-	unsigned			_searchOptions;		// search option
+	OnigOptionType		_searchOptions;		// search option
 	BOOL				_inSelection;		// find scope
 	BOOL				_asynchronous;		// synchronous or asynchronous 
 	SEL					_didEndSelector;	// selector for sending a finish message
@@ -54,7 +54,7 @@
 	BOOL				_exceptionRaised;
 	unsigned			_numberOfMatches;	// number of matches
 	OgreTextFindResult	*_textFindResult;	// result
-	int					_numberOfDoneLeaves,
+	NSInteger			_numberOfDoneLeaves,
 						_numberOfTotalLeaves;
 	
 	NSDate				*_processTime;		// process time

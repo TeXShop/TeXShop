@@ -100,6 +100,7 @@ static id sharedColorSupport = nil;
     return theColor;
 }
 
+
 - (NSColor *) colorAndAlphaFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey
 {
     NSArray *theColorArray = [theDictionary objectForKey: theKey];
@@ -109,6 +110,40 @@ static id sharedColorSupport = nil;
     
     return theColor;
 }
+
+// When colors are added later, dictionaries may not have them; the four calls below give default values until the user selects new
+// colors for these keys and consequentlycolor adds entries to dictionaries
+- (NSColor *)liteColorWithKey: (NSString *)theKey
+{
+    if ([theKey isEqualToString: @"EditorFlash"])
+        return [NSColor colorWithDeviceRed: 1 green: 0.95 blue: 1 alpha:1.00];
+    else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
+        return [NSColor colorWithDeviceRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
+    else
+        return [NSColor colorWithDeviceRed: 1.00  green: 1.00 blue: 1.00 alpha:1.00];
+}
+
+- (NSColor *)darkColorWithKey: (NSString *)theKey
+{
+    if ([theKey isEqualToString: @"EditorFlash"])
+        return [NSColor colorWithDeviceRed: 0.00 green: 0.20  blue: 0.20 alpha:1.00];
+    else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
+        return [NSColor colorWithDeviceRed: 0.75 green: 0.75 blue: 0.75 alpha:1.00];
+    else
+        return [NSColor colorWithDeviceRed: 0.00  green: 0.00 blue: 0.00 alpha:1.00];
+}
+
+
+- (NSColor *)liteColorAndAlphaWithKey: (NSString *)theKey
+{
+    return [self liteColorWithKey: theKey];
+}
+
+- (NSColor *)darkColorAndAlphaWithKey: (NSString *)theKey
+{
+      return [self darkColorWithKey: theKey];
+}
+
 
 - (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (float)red
         Green: (float)green Blue: (float)blue Alpha: (float)alpha

@@ -149,6 +149,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     NSColor *flashColor;
+    NSColor *footnoteCol;
     BOOL withDarkColors;
     
     
@@ -180,9 +181,24 @@ NSInteger stringSort(id s1, id s2, void *context)
     if (flashColor != nil)
         EditorFlashColorWell.color = flashColor;
     else if (withDarkColors)
-        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00];
+        // EditorFlashColorWell.color = [NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00];
+        EditorFlashColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"EditorFlash"];
     else
-        EditorFlashColorWell.color = [NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1];
+        // EditorFlashColorWell.color = [NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1];
+        EditorFlashColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"EditorFlash"];
+    
+    footnoteCol = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"FootnoteColor"];
+    if (footnoteCol == nil)
+        footnoteCol = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SyntaxCommand"];
+    FootnoteColorWell.color = footnoteCol;
+/*
+    else if (withDarkColors)
+        // FootnoteColorWell.color = [NSColor colorWithDeviceRed:0.75 green:0.75 blue:0.75 alpha:1.00];
+        FootnoteColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"FootnoteColor"];
+    else
+        // FootnoteColorWell.color = [NSColor colorWithDeviceRed:0.35 green:0.35 blue:0.35 alpha:1];
+        FootnoteColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"FootnoteColor"];
+ */
         
     EditorReverseSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorReverseSync"];
     PreviewDirectSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"PreviewDirectSync"];
@@ -286,6 +302,8 @@ NSInteger stringSort(id s1, id s2, void *context)
                                       Green: [SUD floatForKey:markergreenKey] Blue: [SUD floatForKey:markerblueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxIndex" withRed: [SUD floatForKey:indexredKey]
                                       Green: [SUD floatForKey:indexgreenKey] Blue: [SUD floatForKey:indexblueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"FootnoteColor" withRed: 0.35
+                                      Green: 0.35 Blue: 0.35 Alpha: 1.0];
     
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightBraces" withRed: [SUD floatForKey:highlightBracesRedKey]
                                       Green: [SUD floatForKey:highlightBracesGreenKey] Blue: [SUD floatForKey:highlightBracesBlueKey] Alpha: 1.0];
@@ -570,6 +588,23 @@ NSInteger stringSort(id s1, id s2, void *context)
     
 }
 
+- (IBAction)FootnoteColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"FootnoteColor"];
+        if (oldColor != nil)
+            ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"FootnoteColor" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+
 - (IBAction)EditorReverseSyncChanged:sender
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
@@ -654,7 +689,8 @@ NSInteger stringSort(id s1, id s2, void *context)
     {
         [[NSColorPanel sharedColorPanel] close];
         NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EditorFlash"];
-        ((NSColorWell *)sender).color = oldColor;
+        if (oldColor != nil)
+            ((NSColorWell *)sender).color = oldColor;
     }
     [colorSupport changeColorValueInDictionary: EditingColors forKey: @"EditorFlash" fromColorWell:sender];
     [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];

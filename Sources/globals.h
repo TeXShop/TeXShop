@@ -487,6 +487,7 @@ extern NSString *OpenWithSourceInFrontKey;
 extern NSString *SourceFirstLineHeadIndentKey;
 extern NSString *SourceHeadIndentKey;
 extern NSString *expl3SyntaxColoringKey;
+extern NSString *SyntaxColorFootnoteKey;
 
 // end defaults
 

@@ -4329,10 +4329,11 @@ preference change is cancelled. "*/
         else {
         
         if (withDarkColors)
-            [textView setBackgroundColor:[NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00]];
+            // [textView setBackgroundColor:[NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00]];
+            [textView setBackgroundColor: [[TSColorSupport sharedInstance] darkColorWithKey: @"EditorFlash"]];
         else
-            [textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
-            
+            // [textView setBackgroundColor:[NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1]];
+            [textView setBackgroundColor: [[TSColorSupport sharedInstance] liteColorWithKey: @"EditorFlash"]];
         }
         
        

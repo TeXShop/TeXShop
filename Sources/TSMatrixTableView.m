@@ -47,7 +47,7 @@ static NSColor *sStripeColor = nil;
 - (void) highlightSelectionInClipRect:(NSRect)rect
 {
 	[self drawStripesInRect:rect];
-	[super highlightSelectionInClipRect:rect];
+	//[super highlightSelectionInClipRect:rect];
 }
 
 -(void) reloadData
@@ -74,6 +74,7 @@ static NSColor *sStripeColor = nil;
 
 - (void) drawStripesInRect:(NSRect)clipRect
 {
+    
 	NSRect stripeRect;
 	NSInteger actCols = [[(TSMatrixPanelController *)[self dataSource] theMatrix] actCols];
 	NSInteger actRows = [[(TSMatrixPanelController *)[self dataSource] theMatrix] actRows];
@@ -109,7 +110,40 @@ static NSColor *sStripeColor = nil;
 
 @end
 
-
+/*
+//Old
+ 
+ @implementation InactiveTextFieldCell
+ 
+ -(id)init
+ {
+ if ((self = [super init])) {
+ [self setTextColor:[NSColor colorWithCalibratedWhite:0.827 alpha:1]];
+ [self setEditable:YES];
+ [self setEnabled:YES];
+ [self setDrawsBackground:YES];
+ [self setBackgroundColor:[NSColor colorWithCalibratedRed:1 green:1 blue:.985 alpha:1]];
+ }
+ return self;
+ }
+ 
+ @end
+ 
+ 
+ 
+ @implementation ActiveTextFieldCell
+ 
+ -(id)init
+ {
+ if ((self = [super init])) {
+ //[self setTextColor:[NSColor disabledControlTextColor]];
+ [self setEditable:YES];
+ [self setDrawsBackground:NO];
+ // [self setBackgroundColor:[NSColor blueColor]];
+ }
+ return self;
+ }
+ */
 
 @implementation InactiveTextFieldCell
 
@@ -117,10 +151,12 @@ static NSColor *sStripeColor = nil;
 {
 	if ((self = [super init])) {
 		[self setTextColor:[NSColor colorWithCalibratedWhite:0.827 alpha:1]];
+       // [self setTextColor: [NSColor blackColor]];  //textColor
 		[self setEditable:YES];
 		[self setEnabled:YES];
 		[self setDrawsBackground:YES];
 		[self setBackgroundColor:[NSColor colorWithCalibratedRed:1 green:1 blue:.985 alpha:1]];
+       // [self setBackgroundColor: [NSColor textBackgroundColor]];
 	}
 	return self;
 }
@@ -134,8 +170,11 @@ static NSColor *sStripeColor = nil;
 -(id)init
 {
 	if ((self = [super init])) {
-		//[self setTextColor:[NSColor disabledControlTextColor]];
-		[self setEditable:YES];
+		// [self setTextColor:[NSColor disabledControlTextColor]];
+        [self setTextColor:[NSColor redColor]];
+        // [self setTextColor:[NSColor colorWithCalibratedWhite:0.011 alpha:1]];
+       // [self setTextColor:[NSColor blackColor]];
+ 		[self setEditable:YES];
 		[self setDrawsBackground:NO];
 	   // [self setBackgroundColor:[NSColor blueColor]];
 	}

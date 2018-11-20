@@ -20,6 +20,8 @@
  *
  */
 
+// Goto SECONDCOLOR to find code, commented out, to produce second yellow color
+
 #import "TSDocument.h"
 #import "TSTextView.h"
 #import "globals.h"
@@ -233,7 +235,7 @@
 
 		TSTextView *myTextView = [newDocument textView];
 		NSWindow *myTextWindow = [newDocument textWindow];
-		[newDocument setTextSelectionYellow: YES];
+        [newDocument setTextSelectionYellow: YES];
               
 		
         // Now try to refine the selection
@@ -2407,7 +2409,6 @@
         return [self doPreviewSyncTeXWithFilenameOld:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
     
     
-	
 	// THIS IS ACTIVE
 	
 	// rootFile = [self fileName]; // root document
@@ -2902,11 +2903,12 @@
 	
 	[self.pdfKitWindow.activeView goToPage: thePage];
     
+// SECONDCOLOR
     if (theSelection != NULL) {
         [self.pdfKitWindow.activeView setCurrentSelection: nil];
-        [theSelection setColor: [NSColor yellowColor]];
-        [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
-        [self.pdfKitWindow.activeView scrollSelectionToVisible:self];
+      //  [theSelection setColor: [NSColor yellowColor]];
+      //  [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+      //  [self.pdfKitWindow.activeView scrollSelectionToVisible:self];
         if (atLeastSierra)
             ;
         else

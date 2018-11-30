@@ -111,6 +111,9 @@
                 <outlet property="_sparkleAutomaticButton" destination="AK8-3x-fBj" id="jlg-iZ-qbl"/>
                 <outlet property="_sparkleIntervalMatrix" destination="hjb-Wl-tYb" id="xAX-Pt-xPf"/>
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
+                <outlet property="_spellCheckCommands" destination="uPk-TW-KLC" id="YDO-UY-pvQ"/>
+                <outlet property="_spellCheckComments" destination="XxQ-wE-i94" id="A7k-Fx-GCf"/>
+                <outlet property="_spellCheckParameters" destination="R5x-IZ-xXi" id="VDD-6g-dh8"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
                 <outlet property="_tabIndentButton" destination="0Ad-oh-5Ny" id="776-bV-FiD"/>
@@ -598,6 +601,53 @@ DQ
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="スペルチェック" id="gYL-Ff-Rga">
+                                            <rect key="frame" x="320" y="91" width="257" height="110"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="B7O-uO-08g">
+                                                <rect key="frame" x="3" y="3" width="251" height="89"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="YGy-QL-IO9">
+                                                        <rect key="frame" x="13" y="16" width="238" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="bNq-Gu-sVT">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="TeXコマンドを対象外にする" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="uPk-TW-KLC">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommandPressed:" target="-2" id="gAo-3B-QLJ"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="特定のコマンド引数を対象外にする" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="R5x-IZ-xXi">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckParameterPressed:" target="-2" id="agH-tf-Pvg"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="コメントを対象外にする" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="XxQ-wE-i94">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommentPressed:" target="-2" id="W6N-TW-Kes"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" size="13" name=".PingFangSC-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>

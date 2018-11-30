@@ -2354,7 +2354,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 	NSRect				boxRect;
 	NSAffineTransform   *transform;
     BOOL				redOvals;
-	NSColor				*aColor, *myColor;
+	NSColor				*myColor;
     NSColor             *myBackgroundColor;
 
     /*
@@ -4812,7 +4812,6 @@ else
  if (! aString) {
  aString = [[NSString alloc] initWithData:myData encoding:NSMacOSRomanStringEncoding] ;
  }
- 
  sourceText[i + 1] = aString;
  sourcelength[i + 1] = [sourceText[i + 1] length];
  }
@@ -4834,9 +4833,11 @@ else
  endIndex = testIndex + searchWindow;
  else
  endIndex = length - 1;
- 
  myRange.location = startIndex;
  myRange.length = endIndex - startIndex;
+ 
+ if (myRange.location > [fullText length])
+     return NO;
  searchText = [fullText substringWithRange: myRange];
  testIndex = testIndex - 5;
  numberOfTests++;

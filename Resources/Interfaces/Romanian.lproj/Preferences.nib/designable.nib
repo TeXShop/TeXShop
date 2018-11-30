@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" identifier="macosx"/>
+        <deployment version="101000" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -111,6 +111,9 @@
                 <outlet property="_sparkleAutomaticButton" destination="Zub-rC-9kU" id="vy1-ys-CJq"/>
                 <outlet property="_sparkleIntervalMatrix" destination="OEd-Pb-QRI" id="esu-39-d26"/>
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
+                <outlet property="_spellCheckCommands" destination="QYe-nH-k25" id="DXl-gj-9vn"/>
+                <outlet property="_spellCheckComments" destination="OCa-Kh-8Mv" id="7q4-RF-srt"/>
+                <outlet property="_spellCheckParameters" destination="kG6-vg-zHG" id="b2g-JJ-vce"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
                 <outlet property="_tabIndentButton" destination="mZw-sb-Xsu" id="BiH-No-gWz"/>
@@ -538,6 +541,53 @@ DQ
                                                             </connections>
                                                         </buttonCell>
                                                     </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Spell Checking" id="78f-0d-IXp">
+                                            <rect key="frame" x="328" y="81" width="258" height="110"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="FSF-dj-Nlz">
+                                                <rect key="frame" x="3" y="3" width="252" height="89"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="0hC-fl-duK">
+                                                        <rect key="frame" x="13" y="16" width="238" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="oAt-mg-3JP">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="Do not check TeX commands" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="QYe-nH-k25">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommandPressed:" target="-2" id="sbX-of-3H5"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check selected parameters" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="kG6-vg-zHG">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckParameterPressed:" target="-2" id="Eyk-jx-0Hi"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check comments" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="OCa-Kh-8Mv">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommentPressed:" target="-2" id="6F9-XT-HWj"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -3019,7 +3069,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
-            <point key="canvasLocation" x="194.5" y="214"/>
+            <point key="canvasLocation" x="-40" y="212"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="anA-Aq-PEH" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>

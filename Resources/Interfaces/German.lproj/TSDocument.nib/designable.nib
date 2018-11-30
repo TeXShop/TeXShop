@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14313.18"/>
+        <deployment version="101000" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -26,6 +26,7 @@
                 <outlet property="iLog" destination="uEF-aW-hGW" id="gWj-my-f15"/>
                 <outlet property="indexColorBox" destination="923" id="924"/>
                 <outlet property="indexColorSplitBox" destination="QhR-Z4-PBG" id="Tf8-tN-UyE"/>
+                <outlet property="labels" destination="ZTb-eh-Ie2" id="eJm-4V-t2S"/>
                 <outlet property="leftView" destination="n7H-ak-IWs" id="IgM-Au-pal"/>
                 <outlet property="lineBox" destination="217" id="221"/>
                 <outlet property="linePanel" destination="214" id="220"/>
@@ -788,17 +789,6 @@ DQ
                         <action selector="changeMouseMode:" target="314" id="574"/>
                     </connections>
                 </matrix>
-                <button id="440">
-                    <rect key="frame" x="254" y="186" width="113" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="AutoComplete" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3858">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="changeAutoComplete:" target="-2" id="442"/>
-                    </connections>
-                </button>
                 <button id="sN7-vf-b8c">
                     <rect key="frame" x="131" y="10" width="113" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
@@ -989,49 +979,6 @@ DQ
                     </view>
                     <font key="titleFont" metaFont="message"/>
                 </box>
-                <popUpButton verticalHuggingPriority="750" id="360">
-                    <rect key="frame" x="121" y="181" width="105" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Templates" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="362" id="3843">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" title="OtherViews" id="361">
-                            <items>
-                                <menuItem title="Templates" hidden="YES" id="362"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <action selector="doTemplate:" target="-2" id="378"/>
-                    </connections>
-                </popUpButton>
-                <popUpButton verticalHuggingPriority="750" id="357">
-                    <rect key="frame" x="516" y="178" width="125" height="33"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="359" id="3842">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" title="OtherViews" id="358">
-                            <items>
-                                <menuItem title="Tags" state="on" hidden="YES" id="359"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <action selector="doTag:" target="-2" id="381"/>
-                    </connections>
-                </popUpButton>
-                <button id="3921">
-                    <rect key="frame" x="377" y="186" width="116" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Show Full Path" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="3922">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="changeShowFullPath:" target="-2" id="3923"/>
-                    </connections>
-                </button>
                 <button verticalHuggingPriority="750" id="3925">
                     <rect key="frame" x="462" y="83" width="48" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1198,8 +1145,109 @@ DQ
                         </connections>
                     </searchFieldCell>
                 </searchField>
+                <button verticalHuggingPriority="750" id="417">
+                    <rect key="frame" x="158" y="39" width="90" height="32"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="push" title="Setzen" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="3855">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="doTypesetEE:" target="-2" id="429"/>
+                    </connections>
+                </button>
+                <popUpButton verticalHuggingPriority="750" id="ZTb-eh-Ie2">
+                    <rect key="frame" x="732" y="172" width="87" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="bcz-xX-IOD" id="kDk-YD-AQH">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="Ydf-l9-fyU">
+                            <items>
+                                <menuItem title="Labels" state="mixed" hidden="YES" id="bcz-xX-IOD">
+                                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doLabel:" target="-2" id="2H5-rx-Dwz"/>
+                    </connections>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="Sd5-vY-OKu">
+                    <rect key="frame" x="839" y="172" width="87" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="GIp-P1-niA" id="2mx-c3-2Ju">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="hdq-Fn-efy">
+                            <items>
+                                <menuItem title="Labels" state="mixed" hidden="YES" id="GIp-P1-niA">
+                                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doLabel:" target="-2" id="bAd-De-pJc"/>
+                    </connections>
+                </popUpButton>
+                <button id="440">
+                    <rect key="frame" x="173" y="178" width="113" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="AutoComplete" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3858">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="changeAutoComplete:" target="-2" id="442"/>
+                    </connections>
+                </button>
+                <popUpButton verticalHuggingPriority="750" id="360">
+                    <rect key="frame" x="40" y="173" width="105" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Templates" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="362" id="3843">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="361">
+                            <items>
+                                <menuItem title="Templates" hidden="YES" id="362"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doTemplate:" target="-2" id="378"/>
+                    </connections>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="357">
+                    <rect key="frame" x="435" y="170" width="125" height="33"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="359" id="3842">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="358">
+                            <items>
+                                <menuItem title="Tags" state="on" hidden="YES" id="359"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doTag:" target="-2" id="381"/>
+                    </connections>
+                </popUpButton>
+                <button id="3921">
+                    <rect key="frame" x="296" y="178" width="116" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Show Full Path" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="3922">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="changeShowFullPath:" target="-2" id="3923"/>
+                    </connections>
+                </button>
                 <popUpButton verticalHuggingPriority="750" id="KKh-4u-2lh">
-                    <rect key="frame" x="664" y="181" width="125" height="26"/>
+                    <rect key="frame" x="583" y="173" width="125" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="wp5-Iy-WDt" id="zgn-Sl-AAc">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -1214,17 +1262,6 @@ DQ
                         <action selector="doTag:" target="-2" id="O3u-Ot-eHt"/>
                     </connections>
                 </popUpButton>
-                <button verticalHuggingPriority="750" id="417">
-                    <rect key="frame" x="158" y="39" width="90" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="push" title="Setzen" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="3855">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="doTypesetEE:" target="-2" id="429"/>
-                    </connections>
-                </button>
             </subviews>
             <point key="canvasLocation" x="155" y="-247"/>
         </customView>
@@ -1986,7 +2023,7 @@ DQ
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="yPs-Zh-bDh">
                             <rect key="frame" x="1" y="1" width="621" height="485"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" usesRuler="YES" smartInsertDelete="YES" id="1608">
                                     <rect key="frame" x="0.0" y="0.0" width="621" height="485"/>

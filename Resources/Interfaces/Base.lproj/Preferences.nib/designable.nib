@@ -111,6 +111,9 @@
                 <outlet property="_sparkleAutomaticButton" destination="Tu2-Zu-ut5" id="Uy8-e4-eBh"/>
                 <outlet property="_sparkleIntervalMatrix" destination="ssL-3D-6IR" id="DAc-Md-cc9"/>
                 <outlet property="_spellCheckButton" destination="841" id="851"/>
+                <outlet property="_spellCheckCommands" destination="teg-0p-Q8J" id="CXh-o0-of5"/>
+                <outlet property="_spellCheckComments" destination="8Wq-gx-FqO" id="C4b-Bl-gss"/>
+                <outlet property="_spellCheckParameters" destination="3eF-XA-ahc" id="1hI-qD-YhN"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="839" id="847"/>
                 <outlet property="_tabIndentButton" destination="9oZ-Jg-MfD" id="07w-LG-QB8"/>
@@ -242,47 +245,6 @@ DQ
                                     <rect key="frame" x="10" y="33" width="616" height="527"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <box title="Find Panel (after restart)" id="585">
-                                            <rect key="frame" x="323" y="357" width="256" height="86"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView" id="M4W-gm-CJz">
-                                                <rect key="frame" x="3" y="3" width="250" height="65"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
-                                                        <rect key="frame" x="36" y="3" width="139" height="58"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="cellSize" width="139" height="18"/>
-                                                        <size key="intercellSpacing" width="4" height="2"/>
-                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="914">
-                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <cells>
-                                                            <column>
-                                                                <buttonCell type="radio" title="Apple Find Panel" imagePosition="left" alignment="left" inset="2" id="582">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <buttonCell type="radio" title="Apple Find Bar" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="583">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <buttonCell type="radio" title="OgreKit Find Panel" imagePosition="left" alignment="left" tag="2" inset="2" id="1080">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                            </column>
-                                                        </cells>
-                                                        <connections>
-                                                            <action selector="findPanelChanged:" target="-2" id="587"/>
-                                                        </connections>
-                                                    </matrix>
-                                                </subviews>
-                                            </view>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
                                         <box title="Command Completion Triggered By:" id="925">
                                             <rect key="frame" x="58" y="187" width="256" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -316,33 +278,6 @@ DQ
                                                             <action selector="commandCompletionChanged:" target="-2" id="930"/>
                                                         </connections>
                                                     </matrix>
-                                                </subviews>
-                                            </view>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
-                                        <box title="Encoding" id="262">
-                                            <rect key="frame" x="323" y="260" width="256" height="75"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView" id="o5n-nj-mAS">
-                                                <rect key="frame" x="3" y="3" width="250" height="54"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <popUpButton verticalHuggingPriority="750" id="278">
-                                                        <rect key="frame" x="8" y="11" width="232" height="26"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="877">
-                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
-                                                            <menu key="menu" title="OtherViews" id="277">
-                                                                <items>
-                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
-                                                                </items>
-                                                            </menu>
-                                                        </popUpButtonCell>
-                                                        <connections>
-                                                            <action selector="encodingChanged:" target="-2" id="282"/>
-                                                        </connections>
-                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -514,8 +449,35 @@ DQ
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
+                                        <box title="Encoding" id="262">
+                                            <rect key="frame" x="340" y="442" width="256" height="75"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="o5n-nj-mAS">
+                                                <rect key="frame" x="3" y="3" width="250" height="54"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" id="278">
+                                                        <rect key="frame" x="8" y="11" width="232" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="566" id="877">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" title="OtherViews" id="277">
+                                                                <items>
+                                                                    <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="566"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="encodingChanged:" target="-2" id="282"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
                                         <box title="Dictionary" id="ENd-QB-0Uf">
-                                            <rect key="frame" x="322" y="193" width="257" height="56"/>
+                                            <rect key="frame" x="330" y="260" width="257" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="ldk-MN-KjH">
                                                 <rect key="frame" x="3" y="3" width="251" height="35"/>
@@ -533,6 +495,94 @@ DQ
                                                             <action selector="dictionaryPressed:" target="-2" id="emt-gz-3WV"/>
                                                         </connections>
                                                     </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Spell Checking" id="kgx-Sa-LDF">
+                                            <rect key="frame" x="331" y="111" width="257" height="110"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="nKk-Hj-6Xi">
+                                                <rect key="frame" x="3" y="3" width="251" height="89"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="cp7-bc-avh">
+                                                        <rect key="frame" x="13" y="16" width="238" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="uAi-0W-9KI">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="Do not check TeX commands" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="teg-0p-Q8J">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommandPressed:" target="-2" id="a6J-B5-iq3"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check selected parameters" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="3eF-XA-ahc">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckParameterPressed:" target="-2" id="JzZ-6E-lKG"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check comments" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="8Wq-gx-FqO">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommentPressed:" target="-2" id="rvH-ej-dXs"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                    </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Find Panel (after restart)" id="585">
+                                            <rect key="frame" x="340" y="346" width="256" height="86"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="M4W-gm-CJz">
+                                                <rect key="frame" x="3" y="3" width="250" height="65"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
+                                                        <rect key="frame" x="36" y="3" width="139" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="139" height="18"/>
+                                                        <size key="intercellSpacing" width="4" height="2"/>
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="914">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="radio" title="Apple Find Panel" imagePosition="left" alignment="left" inset="2" id="582">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="Apple Find Bar" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="583">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <buttonCell type="radio" title="OgreKit Find Panel" imagePosition="left" alignment="left" tag="2" inset="2" id="1080">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                        <connections>
+                                                            <action selector="findPanelChanged:" target="-2" id="587"/>
+                                                        </connections>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

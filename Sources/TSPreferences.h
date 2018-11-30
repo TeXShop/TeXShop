@@ -130,6 +130,10 @@
     
     IBOutlet NSButton  *_sparkleAutomaticButton;
     IBOutlet NSMatrix  *_sparkleIntervalMatrix;
+    
+    IBOutlet NSButtonCell   *_spellCheckCommands;
+    IBOutlet NSButtonCell   *_spellCheckParameters;
+    IBOutlet NSButtonCell   *_spellCheckComments;
 
 	NSUndoManager		*_undoManager;			/*" used for discarding all changes when the cancel button was pressed "*/
 //	NSFont			*_documentFont;			/*" used to track the font that the user has selected for the document window "*/
@@ -326,6 +330,10 @@
 
 - (IBAction)sparkleAutomaticCheck:sender;
 - (IBAction)sparkleInterval:sender;
+
+- (IBAction)spellCheckCommandPressed:sender;
+- (IBAction)spellCheckParameterPressed:sender;
+- (IBAction)spellCheckCommentPressed:sender;
 
 
 //------------------------------------------------------------------------------

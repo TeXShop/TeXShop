@@ -74,6 +74,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // again. If the user tries to edit during this time, the rotating cursor appears, and eventually
 // the program crashes.
 //
+
+
 // Notice the code below to avoid recoloring when the file is first opened!
 - (void)colorizeText:(NSTextView *)aTextView range:(NSRange)range
 {
@@ -89,6 +91,18 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 	BOOL			colorIndexDifferently;
     BOOL            colorFootnoteDifferently;
 	NSTimeInterval	theTime;
+    BOOL            TurnOffCommandSpellChecking;
+    BOOL            TurnOffCommentSpellChecking;
+    BOOL            TurnOffParameterSpellChecking;
+    BOOL            ListHasWordsWhoseParametersShouldBeChecked;
+    NSString        *commandString;
+    
+    
+    TurnOffCommandSpellChecking = [SUD boolForKey:TurnOffCommandSpellCheckKey];
+    TurnOffCommentSpellChecking = [SUD boolForKey:TurnOffCommentSpellCheckKey];
+    TurnOffParameterSpellChecking = [SUD boolForKey:TurnOffParameterSpellCheckKey];
+    ListHasWordsWhoseParametersShouldBeChecked = [SUD boolForKey:ExceptionListExcludesParametersKey];
+    
     
 	if (isLoading) {
 		if (firstTime == YES) {
@@ -236,6 +250,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			colorRange.length = (end - location);
 			[layoutManager addTemporaryAttributes:self.commentColorAttribute forCharacterRange:colorRange];
 			location = end;
+            // NDS - disable spell check for the range. Since comments aren't typeset this seems to make sense.
+            if (TurnOffCommentSpellChecking)
+                [aTextView setSpellingState:0 range:colorRange];
 		} else if (theChar == g_texChar) {
 			// A backslash (or a yen): a new TeX command starts here.
 			// There are two cases: Either a sequence of letters A-Za-z follow, and we color all of them.
@@ -246,14 +263,95 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			if ((location < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: location]))) {
 				location++;
 				colorRange.length = location - colorRange.location;
+                commandString = [textString substringWithRange: colorRange];
 			} else {
 				while ((location < aLineEnd) && (isValidTeXCommandChar([textString characterAtIndex: location]))) {
 					location++;
 					colorRange.length = location - colorRange.location;
 				}
-			}
+                commandString = [textString substringWithRange: colorRange];
+                //NDS - disable spell check for the range, since it is a TeX command
+                if (TurnOffCommandSpellChecking) {
+                    [aTextView setSpellingState:0 range:colorRange];
+                    
+                    
+                    /* Next comes a big decision. We can automatically  remove the first two parameters, either
+                        optional or required or both. In that case, there is a built-in list of commands to skip
+                        while doing this. This list can be extended by a hidden preference.
+                     
+                     OR
+                     
+                      We can conditionally remove the first two parameters, either optional or required or both.
+                     In this ase, there is a built-in list of commands which we do this with. This list can be
+                      extended by a hidden preference.
+                    */
+                    
+                   
+                    // Below the top works!
+                    
+                    if (
+                        (( TurnOffParameterSpellChecking) && (ListHasWordsWhoseParametersShouldBeChecked) && (! [commandsToSpellCheck containsObject: commandString] ) &&
+                            (! [userCommandsToSpellCheck containsObject: commandString] ))
+                        ||
+                        (( TurnOffParameterSpellChecking) && ( ! ListHasWordsWhoseParametersShouldBeChecked) && (( [commandsNotToSpellCheck containsObject: commandString] ) ||
+                         ( [userCommandsNotToSpellCheck containsObject: commandString]) ))
+                        )
+                                        
+                        {
+                    int square = 0;
+                    int curly = 0;
+                    BOOL notYetDone = YES;
+                    NSRange spellRange = colorRange;
+                    NSUInteger spellLocation = location;
+                    NSUInteger spellLength = spellRange.length;
+                    while ((spellLocation < aLineEnd) && (notYetDone)) {
+                            theChar = [textString characterAtIndex: spellLocation];
+                            spellLocation++;
+                            spellLength++;
+                            if (theChar == '[')
+                                square++;
+                            if (theChar == ']')
+                                square--;
+                        if (theChar == '{')
+                                curly++;
+                        if (theChar == '}')
+                                curly--;
+                        if ((square == 0) && (curly == 0))
+                            {
+                                notYetDone = NO;
+                                spellRange.length = spellLength;
+                            }
+                        }
+                    
+                    square = 0;
+                    notYetDone = YES;
+                    spellLocation = location++;
+                    
+                    while ((spellLocation < aLineEnd) && (notYetDone)) {
+                        theChar = [textString characterAtIndex: spellLocation];
+                        spellLocation++;
+                        spellLength++;
+                        if (theChar == '[')
+                            square++;
+                        if (theChar == ']')
+                            square--;
+                        if (theChar == '{')
+                            curly++;
+                        if (theChar == '}')
+                            curly--;
+                        if ((square == 0) && (curly == 0))
+                        {
+                            notYetDone = NO;
+                            spellRange.length = spellLength;
+                        }
+                    }
+                    
+                    [aTextView setSpellingState:0 range:spellRange];
+                    }
+                    
+                }
+            }
             
-            NSString *commandString = [textString substringWithRange: colorRange];
             
             if ((colorFootnoteDifferently) &&
                  (([commandString isEqualToString: @"\\footnote"]) || ([commandString isEqualToString: @"\\autocite"]) || ([commandString isEqualToString: @"\\footcite"]))) {
@@ -270,10 +368,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         if (parens == 0)
                             notDone = NO;
                     }
-                    [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
-                }
-          
             
+            [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
+            
+        }
+        
             
             
 			/*
@@ -417,13 +516,15 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // Recolor when scrolling takes place
 - (void)viewBoundsDidChange:(NSNotification *)notification
 {
+    
 	[self colorizeVisibleAreaInTextView:[[notification object] documentView]];
 }
 
 // Recolor when resizing
 - (void)viewFrameDidChange:(NSNotification *)notification
 {
-	[self colorizeVisibleAreaInTextView:[notification object]];
+    
+   [self colorizeVisibleAreaInTextView:[notification object]];
 }
 
 // Recolor when typing / text is inserted...
@@ -449,7 +550,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 
 - (void)colorizeAll
 {
-	// No syntax coloring if the file is not TeX, or if it is disabled
+  
+   
+  // No syntax coloring if the file is not TeX, or if it is disabled
 	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
     if (!fileIsTex || !self.syntaxColor)
 		return;
@@ -461,7 +564,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 
 - (void) colorizeVisibleAreaInTextView:(NSTextView *)aTextView
 {
-	// No syntax coloring if the file is not TeX, or if it is disabled
+	
+    
+    // No syntax coloring if the file is not TeX, or if it is disabled
 	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
      if (!fileIsTex || !self.syntaxColor)
 		return;

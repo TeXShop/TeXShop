@@ -20,6 +20,8 @@
  *
  */
 
+/* Note: NDS stands for Neil Sims, from The University of Sheffield, who added four features for version 4.18 */
+
 #import "UseMitsu.h"
 
 #import "TSDocument.h"
@@ -52,6 +54,17 @@
 	[path appendString:@":"];
 	[path appendString:[SUD stringForKey:GSBinPath]];
 	[env setObject: path forKey: @"PATH"];
+    
+    //  NDS - add the current file location as a new env variable called TS_CHAR.
+    // this allows custom engines to operate based upon the current location in the file.
+    // the corresponding line number can be calculated from the bash script ('engine') using:
+    //     line=`head -c $TS_CHAR $1 | wc -l`; line = `expr $line + 1`
+    NSMutableString *envtschar;
+    NSRange sel;
+    sel=[[[textView selectedRanges] objectAtIndex:0] rangeValue];
+    envtschar = [NSMutableString stringWithString: [NSString stringWithFormat: @"%lu",sel.location]];
+    [env setObject:envtschar forKey: @"TS_CHAR"];
+    // End NDS
 
 
 	// Set 'TEXEDIT' env var (see the 'tex' man page for details). We construct a simple shell

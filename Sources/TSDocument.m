@@ -589,7 +589,6 @@ NSInteger strSort(id s1, id s2, void *context)
 - (void)setupTextView:(NSTextView *)aTextView
 {
 
-	NSColor		*foregroundColor, *backgroundColor, *insertionpointColor;
 /*
 	foregroundColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:foreground_RKey]
 												green: [SUD floatForKey:foreground_GKey]
@@ -1123,7 +1122,8 @@ if (! skipTextWindow) {
 			[textView setContinuousSpellCheckingEnabled:[SUD boolForKey:SpellCheckEnabledKey]];
             [textView setAutomaticSpellingCorrectionEnabled:[SUD boolForKey:AutomaticSpellingCorrectionEnabledKey]];
             }
-		[textWindow setInitialFirstResponder: textView];
+        
+  		[textWindow setInitialFirstResponder: textView];
 		[textWindow makeFirstResponder: textView];
 	}
 
@@ -2627,6 +2627,8 @@ else {
 	// the frontmost. This is needed for the preferences.
     
 if ( ! skipTextWindow) {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelsAndTagsAtClick:) name:NSPopUpButtonWillPopUpNotification object:nil];
+    
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
@@ -3792,78 +3794,356 @@ preference change is cancelled. "*/
 	}
 }
 
+#pragma mark Labels menu
+
+// Both tags and labels are filled with items in two different ways.
+// The new method fills them when the user clicks in the toolbar item, which notifies us of this click
+// The methods that fill are called "setupLabels1" and "setupTags1"
+//
+// The original methods filled these menus each time the user added text
+// to the source. This is obviously very inefficient. Those methods are
+// called "setupLabels2" and "setupTags"
+
+- (void) updateLabelsAndTagsAtClick:(NSNotification *)notification
+{
+    if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
+        return;
+    if ((notification.object == labels) || (notification.object == slabels))
+        [self setupLabels1];
+    else if ((notification.object == tags) || (notification.object == stags))
+    [self setupTags1];
+}
+
+// NDS edit start
+- (void) doLabel: (id)sender
+{
+    NSString  *titleString;
+    NSRange     nameRange;
+    NSUInteger    destchar;
+    
+    titleString = [sender title];               //the label itself - also the popup string entry
+    //matchString = [sender representedObject];
+    destchar = [sender tag];                    //this should have been set as the character number of the entry
+    nameRange.location=destchar-titleString.length; //select the start of the label
+    nameRange.length=titleString.length;        //select the label text
+    [textView setSelectedRange: nameRange];     //sets the range
+    [textView scrollRangeToVisible: nameRange]; // makes it visible
+}
+
+- (void) setupLabels1
+{
+    if (!fileIsTex)
+        return;
+    //NDS - update labels here, whenever tags are updated
+    if ([SUD boolForKey:CreateLabelListKey])
+        [self fixLabels];
+}
+
+
+
+- (void) setupLabels2
+{
+    if (!fileIsTex)
+        return;
+    //NDS - update labels here, whenever tags are updated
+    if ([SUD boolForKey:CreateLabelListKey]) {
+        NSArray *myItems = [[[self textWindow] toolbar] items];
+        NSArray *mySplitItems = [[[self fullSplitWindow] toolbar] items];
+        
+        if ( (([[self textWindow] toolbar].isVisible) && ([myItems containsObject: theLabels]))
+            || ( ([[self fullSplitWindow] toolbar].isVisible) && ([mySplitItems containsObject: theSLabels])))
+        {
+            [self fixLabels];
+        }
+    }
+}
+
+
+
+// NDS added - generate label entries
+- (void) fixLabels
+{
+    if (!fileIsTex) return;     //only for TeX docs
+    NSString *text;             //the whole doc
+    id newItem;                 //new popup entries
+    NSUInteger    length;
+    
+    text = [textView string];
+    NSScanner *labelScanner = [[NSScanner alloc] initWithString:text];
+    NSString *scanned = nil;
+    NSString *scanFormat;
+    
+    [labelScanner setCharactersToBeSkipped:nil];
+    length = [text length];
+    scanFormat = @"\\label{";
+    
+    [labels removeAllItems];
+    [labels addItemWithTitle:NSLocalizedString(@"Labels", @"Labels")];
+    [slabels removeAllItems];
+    [slabels addItemWithTitle:NSLocalizedString(@"Labels", @"Labels")];
+    while(![labelScanner isAtEnd]){
+        scanned=nil;
+        [labelScanner scanUpToString:scanFormat intoString:nil]; // scan for strings with \label{ in them
+        [labelScanner scanString:@"\\label{" intoString:nil];    // scan away the \label{
+        [labelScanner scanUpToString:@"}" intoString:&scanned];  // scan up to the next brace
+        if(scanned != nil) {
+            //[setOfLabels addObject:scanned]; // add it to the set
+            [labels addItemWithTitle:@""];
+            [slabels addItemWithTitle:@""];
+            newItem = [labels lastItem];
+            [newItem setAction: @selector(doLabel:)];
+            [newItem setTarget: self];
+            [newItem setTitle: scanned];
+            [newItem setTag: [labelScanner scanLocation]];
+            newItem = [slabels lastItem];
+            [newItem setAction: @selector(doLabel:)];
+            [newItem setTarget: self];
+            [newItem setTitle: scanned];
+            [newItem setTag: [labelScanner scanLocation]];
+        }
+    }
+    //    [labelScanner release]; No longer needed
+}
+
+
+
+/* Seems to be irrelevant; Koch
+ // NDS added - label popup menu initialisation
+ - (void) setupLabels
+ {
+ [labels removeAllItems];//start from scratch
+ [labels addItemWithTitle:NSLocalizedString(@"Labels", @"Labels")];//add a title entry
+ [slabels removeAllItems];//start from scratch
+ [slabels addItemWithTitle:NSLocalizedString(@"Labels", @"Labels")];//add a title entry
+ }
+ */
+
+
+// NDS Edit end
+
+
+
+
 
 #pragma mark Tag menu
 
 - (void)newTag: (id)sender
 {
-
-	NSString		*text;
-	NSRange		myRange, tempRange;
-	NSUInteger		start, end, end1, changeStart, changeEnd;
-
-	text = [textView string];
-	myRange = [textView selectedRange];
-	// get old string for Undo
-	[text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
-	tempRange.location = start;
-	tempRange.length = 0;
-	[textView replaceCharactersInRange:tempRange withString:@"%:\n"];
-	changeStart = tempRange.location;
-	changeEnd = changeStart + 2;
-	[self fixColor:changeStart :changeEnd];
-	[self registerUndoWithString:@"" location:tempRange.location
-						length:3 key: @"New Tag"];
-	tempRange.location = start+2;
-	tempRange.length = 0;
-	[textView setSelectedRange: tempRange];
+    
+    NSString        *text;
+    NSRange        myRange, tempRange;
+    NSUInteger        start, end, end1, changeStart, changeEnd;
+    
+    text = [textView string];
+    myRange = [textView selectedRange];
+    // get old string for Undo
+    [text getLineStart:&start end:&end contentsEnd:&end1 forRange:myRange];
+    tempRange.location = start;
+    tempRange.length = 0;
+    [textView replaceCharactersInRange:tempRange withString:@"%:\n"];
+    changeStart = tempRange.location;
+    changeEnd = changeStart + 2;
+    [self fixColor:changeStart :changeEnd];
+    [self registerUndoWithString:@"" location:tempRange.location
+                          length:3 key: @"New Tag"];
+    tempRange.location = start+2;
+    tempRange.length = 0;
+    [textView setSelectedRange: tempRange];
 }
+
 
 - (void) doTag: (id)sender
 {
-	NSString	*text, *titleString, *matchString;
-	NSUInteger	start, end;
-	NSRange	myRange, nameRange, gotoRange;
-	NSUInteger	length;
-	NSUInteger	lineNumber = 0;
-	NSUInteger	destLineNumber;
-
-	titleString = [sender title];
-	matchString = [sender representedObject];
-	destLineNumber = [sender tag];
-
-	if (!matchString)
-		return;
-
-	text = [textView string];
-	length = [text length];
-	myRange.location = 0;
-	myRange.length = 1;
-
-	// Search for the line with number 'destLineNumber'.
-	while ((myRange.location < length) && (lineNumber < destLineNumber)) {
-		[text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
-		myRange.location = end;
-		lineNumber++;
-	}
-
-	nameRange.location	= start;
-	nameRange.length	= [matchString length];
-	if ((lineNumber == destLineNumber) && (start + nameRange.length < length)) {
-		if (NSOrderedSame == [text compare:matchString options:0 range:nameRange]) {
-			gotoRange.location = start;
-			gotoRange.length = (end - start);
-			[textView setSelectedRange: gotoRange];
-			[textView scrollRangeToVisible: gotoRange];
-		}
-	}
+    NSString    *text, *titleString, *matchString;
+    NSUInteger    start, end;
+    NSRange    myRange, nameRange, gotoRange;
+    NSUInteger    length;
+    NSUInteger    lineNumber = 0;
+    NSUInteger    destLineNumber;
+    
+    titleString = [sender title];
+    matchString = [sender representedObject];
+    destLineNumber = [sender tag];
+    
+    if (!matchString)
+        return;
+    
+    text = [textView string];
+    length = [text length];
+    myRange.location = 0;
+    myRange.length = 1;
+    
+    // Search for the line with number 'destLineNumber'.
+    while ((myRange.location < length) && (lineNumber < destLineNumber)) {
+        [text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+        myRange.location = end;
+        lineNumber++;
+    }
+    
+    nameRange.location    = start;
+    nameRange.length    = [matchString length];
+    if ((lineNumber == destLineNumber) && (start + nameRange.length < length)) {
+        if (NSOrderedSame == [text compare:matchString options:0 range:nameRange]) {
+            gotoRange.location = start;
+            gotoRange.length = (end - start);
+            [textView setSelectedRange: gotoRange];
+            [textView scrollRangeToVisible: gotoRange];
+        }
+    }
 }
+
+
+
+- (void) setupTags1
+{
+    NSString    *text;
+    NSUInteger    start, end;
+    NSRange    myRange, nameRange;
+    NSUInteger    length, idx;
+    NSUInteger    lineNumber;
+    NSMenuItem  *anItem;
+    id newItem;
+    BOOL enableAutoTagSections;
+    NSString    *commentTab = @"                ";
+    
+    tagLocation = 0;
+    tagLocationLine = 0;
+    [tags removeAllItems];
+    [stags removeAllItems];
+    [tags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
+    [stags addItemWithTitle:NSLocalizedString(@"Tags", @"Tags")];
+    NSMenu *tagsMenu = [[[NSApp mainMenu] itemWithTitle:
+                         NSLocalizedString(@"Tags", @"Tags")] submenu];
+    [tagsMenu removeAllItems];
+    
+    if (!fileIsTex) return;
+    if (! [SUD boolForKey:CreateTagListKey])
+        return;
+//self.tagTimer = [NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] ;
+    
+    
+    text = [textView string];
+    length = [text length];
+    idx = tagLocation + 10000;
+    lineNumber = tagLocationLine; // added
+    myRange.location = tagLocation;
+    myRange.length = 1;
+    
+    enableAutoTagSections = [SUD boolForKey: TagSectionsKey];
+    
+    // Iterate over all lines
+    while (myRange.location < length) {
+        [text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+        myRange.location = end;
+        lineNumber++;
+        
+        // Only consider lines which aren't too short...
+        if (end-start > 3) {
+            NSString *line, *titleString;
+            nameRange.location = start;
+            nameRange.length = end - start;
+            line = [text substringWithRange: nameRange];
+            titleString = 0;
+            
+            // Lines starting with '%:' are added to the tags menu.
+            if ([line hasPrefix:@"%:"]) {
+                titleString = [commentTab stringByAppendingString: [line substringFromIndex:2]];
+            }
+            // Scan for lines containing a chapter/section/... command (any listed in g_taggedTeXSections).
+            // To short-circuit the search, we only consider lines that start with a backslash (or yen) symbol.
+            // TODO: Actually, that's kind of overly restrictive. After all, having spaces in front
+            // of a \section command is valid. Might want to remove this limitation...
+            else if (enableAutoTagSections && (([text characterAtIndex: start] == g_texChar) || ([text characterAtIndex: start] == g_commentChar)) ) {
+                NSUInteger    i;
+                for (i = 0; i < [g_taggedTeXSections count]; ++i) {
+                    NSString* tag = [g_taggedTeXSections objectAtIndex:i];
+                    
+                    if ([line hasPrefix:tag]) {
+                        // Extract the text after the 'section' command, then prefix it with a nice header
+                        // text taken from g_taggedTagSections.
+                        // This tries to only extract the text inside a matching pair of braces '{' and '}'.
+                        // To see why, consider this example:
+                        //   \section*{Section {\bf headers} are important} \label{a-section-label}
+                        
+                        NSInteger braceCount = 0;
+                        unichar c;
+                        
+                        titleString = [line substringFromIndex: [tag length]];
+                        tag = [g_taggedTagSections objectAtIndex:i];
+                        
+                        // Next we scan for braces. Note that a section command could
+                        // span more than one line, have embedded comments etc.. We can't
+                        // cope with all these cases in a sensible fashion, though. If
+                        // the user really wants to shoot himself into the foot, let 'em
+                        // do it, just make sure to act nicely and fail gracefully...
+                        nameRange.location = 0;
+                        nameRange.length = [titleString length];
+                        for (i = 0; i < nameRange.length; ++i) {
+                            c = [titleString characterAtIndex:i];
+                            if (c == '{') {
+                                if (braceCount == 0)
+                                    nameRange.location = i + 1;
+                                braceCount++;
+                            } else if (c == '}') {
+                                braceCount--;
+                                if (braceCount == 0)
+                                    break;
+                            }
+                        }
+                        nameRange.length = i - nameRange.location;
+                        
+                        titleString = [titleString substringWithRange:nameRange];
+                        titleString = [tag stringByAppendingString: titleString];
+                        break;
+                    }
+                }
+            }
+            // TODO: Hierarchical menus would be cool. This could be achieved
+            // by assiging the tags a 'level', maybe based on their position
+            // in the g_taggedTagSections array (and '%:' markers would have
+            // level = infinity). Then, we keep a stack of items of a given
+            // level, and append new items to a submenu on the last previous
+            // item which had a lower level... So sections would be subitems
+            // of chapters, etc.
+            if (titleString) {
+                // Add new menu item. We do *not* use addItemWithTitle since that would
+                // overwrite any existing item with the same title.
+                [tags addItemWithTitle: @""];
+                [stags addItemWithTitle: @""];
+                newItem = [tags lastItem];
+                [newItem setAction: @selector(doTag:)];
+                [newItem setTarget: self];
+                [newItem setTag: lineNumber];
+                [newItem setTitle: titleString];
+                [newItem setRepresentedObject: line];
+                newItem = [stags lastItem];
+                [newItem setAction: @selector(doTag:)];
+                [newItem setTarget: self];
+                [newItem setTag: lineNumber];
+                [newItem setTitle: titleString];
+                [newItem setRepresentedObject: line];
+                
+                NSMenu *tagsMenu = [[[NSApp mainMenu] itemWithTitle:
+                                     NSLocalizedString(@"Tags", @"Tags")] submenu];
+                anItem = [[NSMenuItem alloc] initWithTitle: titleString action: @selector(doTag:) keyEquivalent: @""];
+                [anItem setTarget: self];
+                [anItem setTag: lineNumber];
+                [anItem setRepresentedObject: line];
+                [tagsMenu addItem: anItem];
+            }
+        }
+    }
+    
+
+}
+
 
 
 - (void) setupTags
 {
-// The test below is an error, since it completely turns off tagging.
-//	if ([SUD boolForKey: TagSectionsKey]) { 
+    if (  [SUD boolForKey:UseNewTagsAndLabelsKey])
+       return;
+    
 		[self.tagTimer invalidate];
 	//	[self.tagTimer release];
 		self.tagTimer = nil;
@@ -3878,9 +4158,11 @@ preference change is cancelled. "*/
 							NSLocalizedString(@"Tags", @"Tags")] submenu];
         [tagsMenu removeAllItems];
     
-
+    [self setupLabels2];
+ 
+    if ([SUD boolForKey:CreateTagListKey])
         self.tagTimer = [NSTimer scheduledTimerWithTimeInterval: .02 target:self selector:@selector(fixTags:) userInfo:nil repeats:YES] ;
-//	}
+
 }
 
 - (void) fixTags:(NSTimer *)timer
@@ -3896,7 +4178,8 @@ preference change is cancelled. "*/
     NSString    *commentTab = @"                ";
 
 	if (!fileIsTex) return;
-
+    
+ 
 	text = [textView string];
 	length = [text length];
 	idx = tagLocation + 10000;
@@ -4019,6 +4302,9 @@ preference change is cancelled. "*/
 	}
 
 }
+
+// End of Tags
+
 
 // added by Terada (- (void)resetHighlight:)
 - (void)resetHighlight:(id)sender
@@ -4153,7 +4439,7 @@ preference change is cancelled. "*/
 // added by Terada (- (void)textViewDidChangeSelection:(NSNotification *)inNotification)
 - (void)textViewDidChangeSelection:(NSNotification *)inNotification
 {
-	BOOL alwaysHighlight  = [SUD boolForKey:AlwaysHighlightEnabledKey]; 
+	BOOL alwaysHighlight  = [SUD boolForKey:AlwaysHighlightEnabledKey];
 	BOOL highlightContent = [SUD boolForKey:HighlightContentEnabledKey];
 	BOOL showIndicatorForMove = [SUD boolForKey:ShowIndicatorForMoveEnabledKey];
 	BOOL beep = [SUD boolForKey:BeepEnabledKey];

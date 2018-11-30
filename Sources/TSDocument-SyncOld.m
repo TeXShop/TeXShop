@@ -110,8 +110,6 @@
     NSInteger        matchStart, matchLength, i, matchAdjust, newLocation;
     NSRange            matchRange;
     TSDocument      *newDocument;
-    CGFloat         myRed, myGreen, myBlue;
-    NSColor         *thePossiblyYellowColor;
     // NSString        *lineString;
     
     

@@ -328,7 +328,7 @@ Clicking this button will bring up the font panel.
 
 - (IBAction)closeSamplePanel: (id)sender
 {
-    NSData  *fontData, *FontAttributesData;
+    NSData  *fontData;
     
     // register the undo message first
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:DocumentFontKey] forKey:DocumentFontKey];
@@ -390,8 +390,7 @@ Clicking this button will bring up the font panel.
 - (void)changeFont:(id)fontManager
 {
 	
-     NSData	*fontData;
-		
+ 		
 	NSString *theTab = [[_tabView selectedTabViewItem] identifier];
  
 	if ([theTab isEqualToString: @"Document"])
@@ -1675,6 +1674,31 @@ person script. See also: DefaultTypesetMode.
     [SUD setBool:[(NSButton *)sender state] forKey:MiniaturizeRootFileKey];
 }
 
+- (IBAction)spellCheckCommandPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:TurnOffCommandSpellCheckKey] forKey:TurnOffCommandSpellCheckKey];
+    
+    [SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:TurnOffCommandSpellCheckKey];
+}
+
+- (IBAction)spellCheckParameterPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:TurnOffParameterSpellCheckKey] forKey:TurnOffParameterSpellCheckKey];
+    
+    [SUD setBool:[(NSCell *)[sender selectedCell] state]  forKey:TurnOffParameterSpellCheckKey];
+    
+}
+
+- (IBAction)spellCheckCommentPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:TurnOffCommentSpellCheckKey] forKey:TurnOffCommentSpellCheckKey];
+    
+    [SUD setBool:[(NSCell *)[sender selectedCell] state]  forKey:TurnOffCommentSpellCheckKey];
+}
+
 
 
 
@@ -2029,6 +2053,9 @@ This method retrieves the application preferences from the defaults object and s
     [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
     [_consoleMatrix selectCellWithTag: [defaults integerForKey: ConsoleBehaviorKey]];
+    [_spellCheckCommands setState:[defaults boolForKey:TurnOffCommandSpellCheckKey]];
+    [_spellCheckParameters setState:[defaults boolForKey:TurnOffParameterSpellCheckKey]];
+    [_spellCheckComments setState:[defaults boolForKey:TurnOffCommentSpellCheckKey]];
 
     [dictionaryPopup addItemWithTitle: @"Automatic Language"];
     NSArray *theLanguages = [[NSSpellChecker sharedSpellChecker] availableLanguages];

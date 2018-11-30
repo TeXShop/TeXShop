@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" identifier="macosx"/>
+        <deployment version="101000" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -111,6 +111,9 @@
                 <outlet property="_sparkleAutomaticButton" destination="k81-qd-Xqj" id="esv-3g-agE"/>
                 <outlet property="_sparkleIntervalMatrix" destination="REX-vV-Jtx" id="p4M-bu-Fh7"/>
                 <outlet property="_spellCheckButton" destination="685" id="694"/>
+                <outlet property="_spellCheckCommands" destination="97F-YK-qK1" id="l7D-l3-wbd"/>
+                <outlet property="_spellCheckComments" destination="zrF-5s-2DN" id="owY-vz-jhX"/>
+                <outlet property="_spellCheckParameters" destination="1f8-mr-F2B" id="UwU-8w-D1C"/>
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
                 <outlet property="_tabIndentButton" destination="fjx-q1-Asx" id="6Pg-mc-0fE"/>
@@ -241,10 +244,10 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Find Panel (after restart)" id="585">
-                                            <rect key="frame" x="339" y="405" width="223" height="90"/>
+                                            <rect key="frame" x="326" y="405" width="257" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="CUs-9b-pL1">
-                                                <rect key="frame" x="3" y="3" width="217" height="69"/>
+                                                <rect key="frame" x="3" y="3" width="251" height="69"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autosizesCells="NO" id="581">
@@ -431,10 +434,10 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Dictionary" id="XeT-lO-qoP">
-                                            <rect key="frame" x="326" y="221" width="236" height="56"/>
+                                            <rect key="frame" x="326" y="221" width="257" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="VvU-Sc-C6e">
-                                                <rect key="frame" x="3" y="3" width="230" height="35"/>
+                                                <rect key="frame" x="3" y="3" width="251" height="35"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" id="cNs-6G-XbN">
@@ -454,10 +457,10 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box title="Codificação" id="262">
-                                            <rect key="frame" x="326" y="305" width="236" height="68"/>
+                                            <rect key="frame" x="326" y="305" width="257" height="68"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="hc4-iV-8rM">
-                                                <rect key="frame" x="3" y="3" width="230" height="47"/>
+                                                <rect key="frame" x="3" y="3" width="251" height="47"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" id="278">
@@ -531,6 +534,53 @@ DQ
                                                             <action selector="highlightChanged:" target="-2" id="1065"/>
                                                         </connections>
                                                     </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box title="Spell Checking" id="Ild-o6-ZfO">
+                                            <rect key="frame" x="326" y="83" width="257" height="110"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="K8P-nI-iMA">
+                                                <rect key="frame" x="3" y="3" width="251" height="89"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="Rg7-Gi-Efp">
+                                                        <rect key="frame" x="13" y="16" width="238" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="Rkl-gi-eLX">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="Do not check TeX commands" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="97F-YK-qK1">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommandPressed:" target="-2" id="9pM-gm-iII"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check selected parameters" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="1f8-mr-F2B">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckParameterPressed:" target="-2" id="SGk-AM-q4j"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="Do not check comments" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="zrF-5s-2DN">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommentPressed:" target="-2" id="z6S-fD-f5H"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -2960,7 +3010,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
-            <point key="canvasLocation" x="89" y="82"/>
+            <point key="canvasLocation" x="-40" y="171"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="TF7-HZ-RDT" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>

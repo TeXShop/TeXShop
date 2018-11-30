@@ -260,7 +260,15 @@ NSString *SourceFirstLineHeadIndentKey = @"SourceFirstLineHeadIndent";
 NSString *SourceHeadIndentKey = @"SourceHeadIndent";
 NSString *expl3SyntaxColoringKey = @"expl3SyntaxColoring";
 NSString *SyntaxColorFootnoteKey = @"SyntaxColorFootnote";
-
+NSString *CreateLabelListKey = @"CreateLabelList";
+NSString *CreateTagListKey = @"CreateTagList";
+NSString *UseNewTagsAndLabelsKey = @"UseNewTagsAndLabels";
+NSString *TurnOffCommandSpellCheckKey = @"TurnOffCommandSpellCheck";
+NSString *TurnOffCommentSpellCheckKey = @"TurnOffCommentSpellCheck";
+NSString *TurnOffParameterSpellCheckKey = @"TurnOffParameterSpellCheck";
+NSString *ExceptionListExcludesParametersKey = @"ExceptionListExcludesParameters";
+NSString *ExtraCommandsToCheckParametersKey = @"ExtraCommandsToCheckParameters";
+NSString *ExtraCommandsNotToCheckParametersKey = @"ExtraCommandsNotToCheckParameters";
 
 
 
@@ -323,6 +331,14 @@ NSInteger           g_commentChar;
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
 NSArray             *fileExtensions;
+NSArray             *commandsToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/
+NSArray             *userCommandsToSpellCheck;
+NSArray             *commandsNotToSpellCheck; 
+NSArray             *userCommandsNotToSpellCheck;
+
+extern NSArray*         userCommandsNotToSpellCheck;
+
+
 BOOL				fromMenu;	// by default, NO. Equals YES if menu items "TeX", "LaTeX", etc. are chosen, so "%!TEX program = ..." is ignored. Must be global to work with Root Files
 BOOL                doAutoSave; // this is present so changes in AutoSave only take effect on restart
 BOOL                activateBauerPatch; // this is set in

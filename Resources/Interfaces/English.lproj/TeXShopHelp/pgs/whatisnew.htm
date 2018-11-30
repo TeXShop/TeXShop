@@ -15,6 +15,154 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.18</h5></P>
+
+Version 4.17 was intended to remain the release version for several months. Two days after the release and out of the blue, I received four suggested code changes from Neil Sims, the Head of the Department of Mechanical Engineering at The University of Sheffield. Version 4.18 contains his changes and a minor extra bug fix. These changes are listed first. Sims' changes led to significant improvements in the underlying TeXShop code, and these improvements are explained at the end of this section  for interested readers.
+
+<ul>
+
+<li> There is a new tool in the Source and Combined Windows toolbars called "Labels". It behaves like the
+existing Tags tool except that it lists all labels in the source code. Selecting an item in the resulting pull down menu takes the user to the definition of that particular label.
+
+
+
+<p>
+<li> The Tags menu now also tags lines beginning with the following commands, for users of Beamer and Powerdot:
+
+<pre>
+     \begin{frame}
+     \begin{slide}
+     \begin{wideslide}
+     \begin{notes}
+</pre>
+
+
+<p>
+<li> When a TeXShop engine job runs, it will find that TeXShop has set a new environmental variable for it called TS_CHAR. This variable holds the current selection location in the source file. Some engine authors may find this useful.
+
+
+<p>
+<li> Michael Beeson sent a crash report for TeXShop when using the "search" method of synchronization, a very old method mostly superseded by Lauren's SyncTeX. The crash is fixed in 4.18.
+
+
+<p>
+<li> The most controversial Sims' addition, and the most useful for some, concerns to spell checking in TeXShop.
+When spell checking is on, many LaTeX commands are marked as misspelled. This is annoying. One common solution is to install a LaTeX-aware spell checker like cocoAspell. Thanks to Sims, TeXShop can now handle this problem  --- for some users --- while using the standard Apple spell checker and standard Apple dictionaries.
+
+<p> Apple provides three ways to spell check text in Cocoa, and TeXShop inherits these three methods.
+The methods are activated for the current file in TeXShop's Edit menu, and default values can be set in TeXShop Preferences.
+
+<p>
+ The first of these items is titled "Check Spelling", and has a keyboard shortcut "command + semicolon". When this combination is pressed, the first misspelled word is highlighted. Each additional press causes TeXShop to jump to the next misspelled word and highlight it. This spell check command is thus a glorified search in which only misspelled words are found.
+ 
+ <p> A second way to spell check is to activate the menu item "Correct Spelling Automatically." This converts your computer into a giant iPhone, constantly standing behind you and changing what you type into what it thinks you ought to have typed. This feature can be turned off in system preferences, but users had a hard time discovering how to do it. So  I added this item to TeXShop, not because I wanted users to use it, but  because I wanted users to easily turn it off !
+ 
+ <p> The final way to spell check is to use the menu item "Check Spelling While Typing." This item underlines misspelled words as they are typed, and the user can then go back and correct these words. This is how I spell check in TeXShop. <i>The new spelling code works well with this style of spell checking.</i> The new code doesn't work with the other methods, but it does no harm there.
+
+<p>
+In TeXShop Preferences, there is a new box of selections labeled "Spell Checking". These items are off by default. Leave them off if you use cocoAspell or any spell checking method except "Check Spelling While Typing."
+
+<p> The first  spell checking item turns off spell checking for all TeX command words:
+\documentclass, \usepackage, \begin, \alpha and the like. The second  is explained in the next paragraph and the third turns off spell checking inside comments. Some users may write little essays as source comments and prefer to leave spell checking on for them
+
+
+<p> Many TeX commands have optional parameters [...] and mandatory parameters {...}. The entries inside these parameters can also be specialized TeX words. That is true of the first example below, and it is annoying if the spell checker marks "parfill" and "parskip" as misspelled. On the other hand, in the second example the parameter is a user-supplied string which ought to be spell checked. 
+<pre>
+     \usepackage[parfill]{parskip}
+     \emph{This remark has been made before}
+ </pre>
+ The second item in the "Spell Checking" box of TeXShop Preferences turns on a somewhat crude method of handling both kinds of parameters. When this item is on, most TeX command parameters are  spell checked. But TeXShop has an internal list of certain TeX commands whose parameters  contain specialized words, and for these it turns off spell checking for the first two parameters (if they occur in the source). This internal list, incidentally, is exactly the list marked for special handling by cocoAspell. But cocoAspell is more intelligent, and can mark which parameters to spell check and which to skip. 
+ 
+ <p> There is a hidden preference setting to extend the list of specialized TeX commands. The first command below adds one more element to the existing array of user supplied exceptions. The second command erases the array so the user can start over. Note that neither command affects TeXShop's default list of special commands.
+ <pre>
+      defaults write TeXShop UserCommandsWithoutParameterSpellCheck -array-add "\\verbatim"
+      defaults write TeXShop UserCommandsWithoutParameterSpellCheck -array
+ </pre>
+ 
+
+ 
+ <p> What is the mechanism used to turn off spell checking?  I wish I had thought of Sims' idea. 
+The text in the TeXShop source window is an
+"attributed string." This means it is an ordinary (often very long) string, with an additional data structure associated
+with the string that lists attributes like "text color" and "background color" for selected ranges of the string.  Sims noticed
+that one of the available attributes is "do not spell check this selection." So Sims added lines to TeXShop's syntax coloring code which prevent the Mac from spell checking  TeX commands or comments.
+ This means in particular that the feature only works if syntax coloring is turned on. 
+ 
+ <p> Note that cocoAspell uses more sophisticated methods and operates at the optimal moment when the system is actually checking spelling, rather than at an earlier syntax coloring moment. So if you use cocoAspell, you will  want to turn all the "Spell Checking" preferences off. 
+
+<p> Because TeXShop doesn't act at the "spell checking moment", there are some minor glitches with our method. When a document is first opened, there can be a slight delay and then all TeX commands will be marked as misspelled. But a single click in the edit window will fix this problem. Similarly, while source is being typed, some commands may be marked as misspelled, but the mark will be removed when RETURN is pressed.
+
+<p> Unfortunately, the new attribute is totally ignored by the "Check Spelling" search item, so it will not help when you go through the manuscript word by word looking for misspellings.
+
+
+
+</ul>
+
+<p>
+<b> Aside: </b>  Each time I release TeXShop, I fear a complaint will arrive that the editor has become sluggish.
+ Last summer I got exactly that complaint from an author writing a new physics textbook. He told me that  it was painful to add new source text for his book, and  sent the source to me. I typed a phrase, and then looked  in horror as the letters I typed appeared on the screen at a rate of one every second.
+ 
+ <p>
+ This author's book was written in Hebrew, and he told me that most technical books in Israel are in English and don't run into this problem. At first I didn't understand the significance of this clue. Then by accident I changed the font used in TeXShop's source editor and  completely fixed the problem. It turned out that the author was using a source font which did not contain Hebrew, but the Macintosh was intelligent and switched to a different font every time he typed in Hebrew. Since each  LaTeX command was in English and the actual text was in Hebrew; the entire document had hundreds of thousands of font switches. Selecting a source font which contained both English and Hebrew fixed the problem.
+ 
+ <p>
+ <b> Confession: </b> TeXShop's editor must remain crisp and rapid, but for years there has been a dirty little secret within that editor.  You might think that nothing much happens when you type a few letters into the editor, but you would be wrong. Every time new letters are about to enter the source, the NSText Cocoa class warns TeXShop and allows it to modify the letters. Then just after the letters appear, the class notifies TeXShop that it has added them. At these two moments, TeXShop is able to perform other tasks, and it is quite greedy using this power.
+ 
+ <p> First, TeXShop must add syntax colors  to the new characters. This cannot be done in isolation, since there is no way of knowing if the user is adding to a comment or finishing a TeX command. So TeXShop syntax colors the entire visible text on the screen after each new letter.
+ 
+ <p> But in addition, the new letters may form a new tag. So every time a new letter is typed, the entire tags menu is reconstructed, which means that the entire source file must be read!
+As you'll guess, there are optimizations to speed this up. First, tag lines start with a backslash or comment sign. So TeXShop looks at the first character of each line and discards lines that could not contain tags. Second, the menu is constructed in "chunks". TeXShop studies 1000 characters at a time, and then pauses for .02 of a second to allow other things to happen. One of these other possible things is a new typed character, and in that case the menu construction starts from scratch. 
+ 
+ <p>  Sims added an entirely new process to the list, which had to scan every word of the entire source to make his second popup menu. He hadn't optimized his code, so every time a new letter was added, TeXShop would have to read the entire source file a second time. So clearly I needed to optimize the label code, and  I looked carefully at the tag code  that I hadn't read for years. One interesting piece of code was added ten years ago by someone else just before the optimization to test the first letter of each line. That code read
+ <pre>
+      if 1
+       return;
+  </pre>
+ Said another way, it turned the optimization <i>off!</i>
+ 
+ <p> Next I read Apple's documentation about PopupButtons, and discovered that such a button can notify the calling program when it is pressed, <i>before</i> it displays the menu. This suggested that TeXShop could postpone constructing the Tags and Labels popup menus until the user wants to use them, entirely removing those scary calls when entering text into the source. Experiments show that both menus are constructed rapidly.
+ Thus in  TeXShop 4.18 there a new Label tool from Neil Sims and both the Tags and Label popup menus are constructed on the fly when needed. Text entry should be <i> much</i> more efficient.
+ 
+ <p>
+ <b> Some New Hidden Preferences, just in case: </b>
+  One lesson from the  upgrades this summer is that things can go wrong and it is useful to protect users from new ideas. Therefore version 4.18 contains several hidden preference settings to switch back to old code if the new code causes problems.
+ 
+ <ul>
+<li>
+The first series of hidden preferences protects the Tag and Label code. If something goes wrong with the process of constructing the Tags menu on the fly, users can switch back to the old method via
+ <pre>
+      defaults write TeXShop UseNewTagsAndLabels NO
+ </pre>
+ But in this case, the Labels menu is constructed in the old unoptimized manner. It can be turned off by
+ <pre>
+      defaults write TeXShop CreateLabelList NO
+ </pre>
+ If the old Tag code is inefficient, it can be turned off (although the user might as well switch to the new method and just never use Tags!)
+ <pre>
+      defaults write TeXShop CreateTagList NO
+ </pre>
+ 
+ <p>
+<li>
+ The second series of hidden preferences is related to an earlier experiment with spelling and TeX command parameters. Originally I thought it might be better to turn off spell checking the first two parameters for <i>all</i>  TeX commands, and then have a list of special commands whose parameters should be checked. This is the opposite of the current logic. It is possible to test this idea, although I suspect nobody will do it:
+ <pre>
+     defaults write TeXShop ExceptionListExcludesParameters YES
+ </pre>
+ In this case there is a very small list of exceptions, mainly containing \emph and \verbatim, but users can again add exceptions of their own using
+<pre>
+      defaults write TeXShop ExtraCommandsNotToCheckParameter -array-add "\\emph"
+      defaults write TeXShop ExtraCommandsNotToCheckParameter -array
+ </pre>
+ 
+</ul>
+
+<p> 
+<b></p> Remarks on cocoAspell:</b>  Coco-Aspell is an alternate spell checker by Anton Leuski.  Leuski's project allows users to replace Apple's own dictionaries with new dictionaries that can be made "LaTeX aware", while still using all the Apple spelling facilities. Leuski made the project open source recently; see https://github.com/leuski/cocoAspell,
+
+<p> I think of the project as the "gold standard" for TeX-aware spell checking.  It has some minor problems. It can be difficult to install, and the latest commit  to the open source project was August 5, 2017. Moreover, users must then use the dictionaries supplied with cocoAspell, rather than dictionaries by Apple or others. But it is my recommended approach.
+
+ 
+
 <P><h5>TeXShop Changes 4.17</h5></P>
 
 There are just two changes in 4.17:

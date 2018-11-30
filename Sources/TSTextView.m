@@ -987,7 +987,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
     NSString *textLine;
     BOOL commentFound;
     NSUInteger k;
-    char c1, c2;
+    char c1;
     NSInteger whichLine;
 
     
@@ -1837,6 +1837,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 		to = from + [newString length];
 		[self.document fixColor:from :to];
 		[self.document setupTags];
+     
 	}
 	// currentStringNew = [newString retain];
 	wasCompleted = YES;
@@ -2281,7 +2282,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 				from = replaceLocation;
 				to = from + [newString length];
 				[self.document fixColor:from :to];
-				[self.document setupTags];
+    			[self.document setupTags];
+                
 			}
 			self.currentString = newString;
 			wasCompleted = YES;

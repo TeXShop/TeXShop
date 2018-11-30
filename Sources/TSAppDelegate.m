@@ -492,6 +492,12 @@
                                @"% \\subparagraph",
                                @"% \\begin{macro}",
                                @"% \\begin{environment}",
+                               // NDS - add powerdot support here
+                               @"\\begin{slide}",
+                               @"\\begin{wideslide}",
+                               @"\\begin{notes}",
+                               @"\\begin{frame}",
+                               // NDS end
                                nil];
         
 		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
@@ -509,6 +515,13 @@
                                @"            subparagraph: ",
                                @"                macro: ",
                                @"                environment: ",
+                               // NDS - add powerdot support here
+                               @"      slide: ",
+                               @"      wideslide: ",
+                               @"      notes: ",
+                               @"      frame: ",
+                               // NDS end
+                               
                                nil];
 	}
     
@@ -557,6 +570,30 @@
                       @"sh",
                       @"xml",
                       nil];
+    
+    commandsToSpellCheck = [[NSArray alloc] initWithObjects:
+                    @"\\emph",
+                    @"\\verbatim",
+                    nil];
+    
+    commandsNotToSpellCheck = [[NSArray alloc] initWithObjects:
+                    @"\\addtocounter", @"\\addtolength", @"\\alpha", @"\\arabic", @"\\fnsymbol", @"\\roman", @"\\stepcounter", @"\\setcounter",
+                               @"\\usecounter", @"\\value", @"\\newcounter", @"\\label", @"\\pageref", @"\\ref", @"\\newcommand", @"\\renewcommand",
+                               @"\\newenvironment", @"\\renewenvironment", @"\\newtheorem", @"\\newfont", @"\\documentclass", @"\\usepackage",
+                               @"\\begin", @"\\end", @"\\setlength", @"\\setwidth", @"\\settodepth", @"\\settoheight", @"\\enlargethispage",
+                               @"\\hyphenation", @"\\pagenumbering", @"\\pagestyle", @"\\addvspace", @"\\framebox", @"\\hspace", @"\\vspace",
+                               @"\\makebox", @"\\parbox", @"\\raisebox", @"\\rule", @"\\sbox", @"\\savebox",
+                               @"\\usebox", @"\\include", @"\\includeonly",
+                               @"\\input", @"\\addcontentsline", @"\\\\addtocontents", @"fontencoding", @"\\fontfamily", @"\\fontseries",
+                               @"\\fontshape", @"\\fontsize", @"\\usefont", @"\\documentstyle", @"\\cite", @"\\nocite",
+                               @"\\psfig", @"\\selectlanguage",
+                               @"\\includegraphics", @"\\bibitem", @"\\geometry",
+                    nil];
+                               
+    
+    userCommandsToSpellCheck = [SUD stringArrayForKey: ExtraCommandsToCheckParametersKey];
+    
+    userCommandsNotToSpellCheck = [SUD stringArrayForKey: ExtraCommandsNotToCheckParametersKey];
 
     doAutoSave = [SUD boolForKey:AutoSaveEnabledKey]; // this is a new hidden Preference, which can be used to turn it off
     

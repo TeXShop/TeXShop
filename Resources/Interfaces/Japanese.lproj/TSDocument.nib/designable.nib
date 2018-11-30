@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14313.18"/>
+        <deployment version="101000" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -26,6 +26,7 @@
                 <outlet property="iLog" destination="kDb-1x-TJ4" id="8ps-rf-XMC"/>
                 <outlet property="indexColorBox" destination="923" id="924"/>
                 <outlet property="indexColorSplitBox" destination="i5N-fW-gO8" id="PCh-R4-zch"/>
+                <outlet property="labels" destination="n3r-OG-kGX" id="Nob-WL-MTU"/>
                 <outlet property="leftView" destination="JeP-h5-zmi" id="WXH-SF-IYU"/>
                 <outlet property="lineBox" destination="217" id="221"/>
                 <outlet property="linePanel" destination="214" id="220"/>
@@ -86,6 +87,7 @@
                 <outlet property="shareButtonEE" destination="3927" id="3931"/>
                 <outlet property="shareButtonFull" destination="3926" id="J8H-l7-CVm"/>
                 <outlet property="showFullPathButton" destination="3922" id="3925"/>
+                <outlet property="slabels" destination="Jgz-fy-Kpl" id="cbt-YA-gQ5"/>
                 <outlet property="smacroButton" destination="3Hn-HS-wx1" id="Bcy-mG-hBC"/>
                 <outlet property="smagnificationOutletKK" destination="xja-Wh-wFM" id="UQO-jc-F2m"/>
                 <outlet property="splitView" destination="445" id="446"/>
@@ -1223,6 +1225,42 @@ DQ
                         <action selector="chooseProgram:" target="-2" id="414"/>
                     </connections>
                 </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="n3r-OG-kGX">
+                    <rect key="frame" x="582" y="177" width="87" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="atf-hz-kcf" id="s6G-GG-Dhu">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="a9M-JW-4WM">
+                            <items>
+                                <menuItem title="Labels" state="mixed" hidden="YES" id="atf-hz-kcf">
+                                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doLabel:" target="-2" id="K96-yK-i6g"/>
+                    </connections>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" id="Jgz-fy-Kpl">
+                    <rect key="frame" x="754" y="175" width="87" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="6JC-UR-Ktm" id="tDb-fy-Xqt">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="4Q5-Kz-Kns">
+                            <items>
+                                <menuItem title="Labels" state="mixed" hidden="YES" id="6JC-UR-Ktm">
+                                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="doLabel:" target="-2" id="WK8-Yr-P5H"/>
+                    </connections>
+                </popUpButton>
             </subviews>
             <point key="canvasLocation" x="156" y="1455"/>
         </customView>
@@ -1981,7 +2019,7 @@ DQ
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="Ogw-eb-2Cn">
                             <rect key="frame" x="1" y="1" width="621" height="484"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" usesRuler="YES" smartInsertDelete="YES" id="1608">
                                     <rect key="frame" x="0.0" y="0.0" width="621" height="484"/>

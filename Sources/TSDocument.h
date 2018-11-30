@@ -162,6 +162,11 @@ enum RootCommand
 
 	IBOutlet NSPopUpButton		*tags;
     IBOutlet NSPopUpButton		*stags;
+    IBOutlet NSPopUpButton      *labels;   //NDS added dropdown for going to a label
+    IBOutlet NSPopUpButton      *slabels;  //NDS added dropdown for going to a label
+    NSToolbarItem               *theLabels;
+    NSToolbarItem               *theSLabels;
+
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
@@ -504,11 +509,14 @@ enum RootCommand
 - (void) setProjectFile: sender;
 - (void) doLine: sender;
 - (IBAction) doTag: sender;
+- (IBAction) doLabel: sender;
 - (IBAction) chooseProgram: sender;
 - (void) chooseProgramEE: sender;
 - (id) pdfView;
 - (id) pdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
+- (void) updateTagsAtClick:(NSNotification *)notification;
+
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
 - (void) changeShowFullPath: sender; // added by Terada
@@ -627,6 +635,10 @@ enum RootCommand
 //-----------------------------------------------------------------------------
 - (void)fixTags:(NSTimer *)timer;
 // - (void)fixColor1:(NSTimer *)timer;
+
+// added by NDS
+- (void)fixLabels;
+
 
 //-----------------------------------------------------------------------------
 // Extra methods

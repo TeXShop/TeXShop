@@ -57,6 +57,7 @@ static NSString*	kMetaPostTID 		= @"MetaPost";
 static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*    kTagsTID             = @"Tags";
+static NSString*    kLabelsTID           = @"Labels";        //NDS added dropdown for going to a label
 static NSString*	kTemplatesID 		= @"Templates";
 static NSString*	kAutoCompleteID		= @"AutoComplete";  //warning: used in TSDocument's fixAutoMenu
 static NSString*	kShowFullPathID		= @"ShowFullPath";  // added by Terada
@@ -107,6 +108,7 @@ static NSString*	skProgramTID		= @"ProgramSplit";
 static NSString*	skMacrosTID			= @"MacrosSplit";
 static NSString*    skTemplatesID       = @"TemplatesSplit";
 static NSString*	skTagsTID 			= @"TagsSplit";
+static NSString*    skLabelsTID           = @"LabelsSplit";        //NDS added dropdown for going to a label
 static NSString*	skGotoPageKKTID 	= @"GotoPageSplit";
 static NSString*    skMagnificationKKTID = @"MagnificationSplit";
 static NSString*	skAutoCompleteID	 = @"AutoCompleteSplit";
@@ -513,6 +515,30 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    //NDS added dropdown for going to a label
+    if ([itemIdent isEqual: kLabelsTID]) {
+        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:labels];
+        menuFormRep = [[NSMenuItem alloc] init] ;
+        
+        [menuFormRep setSubmenu: [labels menu]];
+        [menuFormRep setTitle: [toolbarItem label]];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        theLabels = toolbarItem;
+        return toolbarItem;
+    }
+    //NDS added dropdown for going to a label
+    if ([itemIdent isEqual: skLabelsTID]) {
+        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:slabels];
+        menuFormRep = [[NSMenuItem alloc] init] ;
+        
+        [menuFormRep setSubmenu: [slabels menu]];
+        [menuFormRep setTitle: [toolbarItem label]];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        theSLabels = toolbarItem;
+        return toolbarItem;
+    }
+
 
 
 	if ([itemIdent isEqual: kTemplatesID]) {
@@ -996,6 +1022,7 @@ else
                            // kBibTeXTID,
                            kMacrosTID,
                            kTagsTID,
+                           kLabelsTID,
                            kTemplatesID,
                            NSToolbarFlexibleSpaceItemIdentifier,
                            kSharingTID,
@@ -1017,6 +1044,7 @@ else
 					// kBibTeXTID,
 					kMacrosTID,
 					kTagsTID,
+                    kLabelsTID,
 					kTemplatesID,
 					NSToolbarFlexibleSpaceItemIdentifier,
 					kSplitID,
@@ -1105,6 +1133,7 @@ else
                      skProgramTID,
                      skMacrosTID,
                      skTagsTID,
+                     skLabelsTID, //NDS Added
                      skTemplatesID,
                      skSharingTID,
                      kSplitID,
@@ -1130,6 +1159,7 @@ else
 					skProgramTID,
                     skMacrosTID,
 					skTagsTID,
+                    skLabelsTID, //NDS Added
 					skTemplatesID,
 					kSplitID,
                     NSToolbarFlexibleSpaceItemIdentifier,
@@ -1172,6 +1202,7 @@ else
                      skProgramTID,
                      skMacrosTID,
                      skTagsTID,
+                     skLabelsTID, //NDS Added
                      skTemplatesID,
                      skSharingTID,
                      kSplitID,
@@ -1196,6 +1227,7 @@ else
                     skProgramTID,
                     skMacrosTID,
                     skTagsTID,
+                    skLabelsTID, //NDS Added
                     skTemplatesID,
                     kSplitID,
                     nil];
@@ -1234,6 +1266,7 @@ else
 					kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
+                    kLabelsTID, // NDS added
 					kTemplatesID,
 					kAutoCompleteID,
 					kShowFullPathID, // added by Terada
@@ -1262,6 +1295,7 @@ else
 					kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
+                    kLabelsTID, // NDS added
 					kTemplatesID,
 					kAutoCompleteID,
 					kShowFullPathID, // added by Terada
@@ -1391,6 +1425,7 @@ else
 					skProgramTID,
                     skMacrosTID,
 					skTagsTID,
+                    skLabelsTID, //NDS Added
 					skTemplatesID,
 					skSharingTID,
 					kSplitID,
@@ -1422,6 +1457,7 @@ else
 					skProgramTID,
                     skMacrosTID,
 					skTagsTID,
+                    skLabelsTID, //NDS Added
 					skTemplatesID,
 					kSplitID,
 					kPreviousPageButtonKKTID,

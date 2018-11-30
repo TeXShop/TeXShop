@@ -110,6 +110,9 @@
                 <outlet property="_sparkleAutomaticButton" destination="550" id="559"/>
                 <outlet property="_sparkleIntervalMatrix" destination="551" id="560"/>
                 <outlet property="_spellCheckButton" destination="34" id="430"/>
+                <outlet property="_spellCheckCommands" destination="hso-Ov-93M" id="w2X-Jn-sZT"/>
+                <outlet property="_spellCheckComments" destination="oAl-Nq-R8P" id="07M-b6-ZhI"/>
+                <outlet property="_spellCheckParameters" destination="zi0-wA-Pvf" id="u1G-Vv-j08"/>
                 <outlet property="_syncMatrix" destination="217" id="431"/>
                 <outlet property="_syntaxColorButton" destination="32" id="432"/>
                 <outlet property="_tabIndentButton" destination="28" id="433"/>
@@ -242,7 +245,7 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="찾기 바꾸기 패널 (재실행 후 적용)" id="8">
-                                            <rect key="frame" x="306" y="417" width="256" height="86"/>
+                                            <rect key="frame" x="321" y="417" width="256" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="wbA-0k-K2T">
                                                 <rect key="frame" x="3" y="3" width="250" height="61"/>
@@ -495,10 +498,10 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="인코딩" id="19">
-                                            <rect key="frame" x="323" y="333" width="235" height="68"/>
+                                            <rect key="frame" x="321" y="333" width="256" height="68"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="bPo-5T-xgx">
-                                                <rect key="frame" x="3" y="3" width="229" height="43"/>
+                                                <rect key="frame" x="3" y="3" width="250" height="43"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" id="20">
@@ -522,10 +525,10 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box title="Dictionary" id="umo-h5-U9Z">
-                                            <rect key="frame" x="329" y="260" width="233" height="56"/>
+                                            <rect key="frame" x="321" y="246" width="256" height="56"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="fVY-8R-bWf">
-                                                <rect key="frame" x="3" y="3" width="227" height="35"/>
+                                                <rect key="frame" x="3" y="3" width="250" height="35"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" id="h4B-dx-Vp0">
@@ -595,6 +598,53 @@ DQ
                                                             <action selector="highlightChanged:" target="-2" id="qhZ-fF-06D"/>
                                                         </connections>
                                                     </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
+                                        </box>
+                                        <box title="철자 검사" id="Emu-YS-OX4">
+                                            <rect key="frame" x="321" y="93" width="256" height="110"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="KTx-oM-BaI">
+                                                <rect key="frame" x="3" y="3" width="250" height="89"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <matrix verticalHuggingPriority="750" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" id="w9C-zr-STr">
+                                                        <rect key="frame" x="13" y="16" width="238" height="58"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="cellSize" width="238" height="18"/>
+                                                        <size key="intercellSpacing" width="0.0" height="2"/>
+                                                        <buttonCell key="prototype" type="check" title="Switch" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="-1" inset="2" id="7Ky-Z1-tuO">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <cells>
+                                                            <column>
+                                                                <buttonCell type="check" title="TeX 명령 제외" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="hso-Ov-93M">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommandPressed:" target="-2" id="jAM-o3-zOk"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="파라미터 부분 제외" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="zi0-wA-Pvf">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckParameterPressed:" target="-2" id="xhZ-rU-eWV"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                                <buttonCell type="check" title="주석문 제외" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="oAl-Nq-R8P">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <connections>
+                                                                        <action selector="spellCheckCommentPressed:" target="-2" id="As8-L4-egk"/>
+                                                                    </connections>
+                                                                </buttonCell>
+                                                            </column>
+                                                        </cells>
+                                                    </matrix>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
@@ -3014,7 +3064,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="441"/>
             </connections>
-            <point key="canvasLocation" x="8.5" y="129"/>
+            <point key="canvasLocation" x="-38" y="134"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="8Uq-Mc-ZGi" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>

@@ -488,6 +488,17 @@ extern NSString *SourceFirstLineHeadIndentKey;
 extern NSString *SourceHeadIndentKey;
 extern NSString *expl3SyntaxColoringKey;
 extern NSString *SyntaxColorFootnoteKey;
+extern NSString *CreateLabelListKey;
+extern NSString *CreateTagListKey;
+extern NSString *UseNewTagsAndLabelsKey;
+extern NSString *TurnOffCommandSpellCheckKey;
+extern NSString *TurnOffCommentSpellCheckKey;
+extern NSString *TurnOffParameterSpellCheckKey;
+extern NSString *ExceptionListExcludesParametersKey; // if YES while turning off command spell checking, list of words to spell check parameters
+extern NSString *ExtraCommandsToCheckParametersKey; // array of keywords whose parameters should be spell checked
+extern NSString *ExtraCommandsNotToCheckParametersKey; // array of keywhords whose parameters should not be spell checked
+
+
 
 // end defaults
 
@@ -556,6 +567,11 @@ extern NSInteger					g_macroType; // = EngineCommand for current window
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
 extern NSArray*         fileExtensions; /*" Used by SaveAs Panel; "*/
+extern NSArray*         commandsToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/
+extern NSArray*         commandsNotToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/
+extern NSArray*         userCommandsToSpellCheck;
+extern NSArray*         userCommandsNotToSpellCheck;
+
 extern BOOL				fromMenu;
 extern BOOL             doAutoSave;
 extern BOOL             activateBauerPatch; // this is set in TSAppDelegate and turns on or off Bauer's patch to watch servers and catch file changes
@@ -593,3 +609,5 @@ extern NSString *ConsoleWindowNameKey;
 
 extern NSDictionary *liteColors;
 extern NSDictionary *darkColors;
+
+extern NSArray *userCommandsToSpellCheck;

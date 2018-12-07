@@ -803,14 +803,12 @@ failed. If you change the code below, be sure to test carefully!
 					NSMakePoint(visRect.origin.x+visRect.size.width/2,
 							visRect.origin.y+visRect.size.height/2)] + 1;
 			}
-#warning 64BIT: Check formatting arguments
-			[fieldEditor setString:[NSString stringWithFormat:@"%d", pagenumber]];
+			[fieldEditor setString:[NSString stringWithFormat:@"%ld", (long)pagenumber]];
 		}
 		else if (control == myScale)
 		{
 			NSInteger magPercent = round(theMagSize * 100.0);
-#warning 64BIT: Check formatting arguments
-			[fieldEditor setString: [NSString stringWithFormat: @"%d", magPercent]];
+			[fieldEditor setString: [NSString stringWithFormat: @"%ld", (long)magPercent]];
 		}
 	}
 	return YES;
@@ -1588,8 +1586,7 @@ failed. If you change the code below, be sure to test carefully!
 		aPoint.y += aRect.size.height/2 + PAGE_WINDOW_V_OFFSET;
 		[pageNumberWindow setFrameOrigin: aPoint];
 
-#warning 64BIT: Check formatting arguments
-		NSString *pageString = [NSString stringWithFormat: @"%d/%d", (long)pageNumber, [self.myRep pageCount]];
+		NSString *pageString = [NSString stringWithFormat: @"%ld/%ld", (long)pageNumber, (long)[self.myRep pageCount]];
 
 
 		NSView *theView = [pageNumberWindow contentView];
@@ -2796,9 +2793,8 @@ failed. If you change the code below, be sure to test carefully!
 			aPoint.y += SIZE_WINDOW_V_OFFSET;
 			[sizeWindow setFrameOrigin: aPoint]; // set the position
 			// do the drawing
-#warning 64BIT: Check formatting arguments
-						NSString *sizeString = [NSString stringWithFormat: @"%d x %d",
-				(NSInteger)floor(selRectWindow.size.width), (NSInteger)floor(selRectWindow.size.height)];
+						NSString *sizeString = [NSString stringWithFormat: @"%ld x %ld",
+				(long)floor(selRectWindow.size.width), (long)floor(selRectWindow.size.height)];
 						NSView *sizeView = [sizeWindow contentView];
 			[sizeView lockFocus];
 						[[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.5 alpha:0.8] set];//change color?

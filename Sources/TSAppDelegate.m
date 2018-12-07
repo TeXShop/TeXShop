@@ -1211,7 +1211,6 @@
 	{
 		button = NSRunAlertPanel(NSLocalizedString(@"New version available",
 													   @"New version available"),
-#warning 64BIT: Check formatting arguments
 									 [NSString stringWithFormat:
 										 NSLocalizedString(@"A new version of TeXShop is available (version %@). Would you like to download it now?",
 														   @"A new version of TeXShop is available (version %@). Would you like to download it now?"), latestVersion],
@@ -1275,7 +1274,6 @@
 			NS_ENDHANDLER
 			if (!result) {
 				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), reason,
-#warning 64BIT: Check formatting arguments
 					[NSString stringWithFormat: NSLocalizedString(@"Couldn't create folder:\n%@", @"Message when creating a directory failed"), dstPath],
 					nil, nil);
 				return;

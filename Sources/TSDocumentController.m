@@ -112,6 +112,7 @@
 }
 
 
+
 /* The code below was an attempt to support the "Stationery Bit", but I don't know how to find its
  value in Cocoa. NSFileImmutable isn't it.
  

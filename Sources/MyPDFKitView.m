@@ -3707,9 +3707,8 @@ The system then remembers the new number and sends is to the Timer which will di
 			aPoint.y += SIZE_WINDOW_V_OFFSET;
 			[sizeWindow setFrameOrigin: aPoint]; // set the position
 			// do the drawing
-#warning 64BIT: Check formatting arguments
-						NSString *sizeString = [NSString stringWithFormat: @"%d x %d",
-				(NSInteger)floor(selRectWindow.size.width), (NSInteger)floor(selRectWindow.size.height)];
+						NSString *sizeString = [NSString stringWithFormat: @"%ld x %ld",
+				(long)floor(selRectWindow.size.width), (long)floor(selRectWindow.size.height)];
 						NSView *sizeView = [sizeWindow contentView];
 			[sizeView lockFocus];
 						[[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:0.5 alpha:0.8] set];//change color?

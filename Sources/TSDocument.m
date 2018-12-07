@@ -1250,6 +1250,7 @@ if (! skipTextWindow) {
   
 //    [self addTabbedWindows];
     
+    
     if (([SUD boolForKey:SourceAndPreviewInSameWindowKey])  && (! _externalEditor) && PDFfromKit && (! self.useTabs) && (! self.useTabsWithFiles))
     {
         [self doMove:self];
@@ -2117,7 +2118,7 @@ else {
 	int u, d;
 	if( sscanf([[aMatch substringAtIndex:2] cStringUsingEncoding: NSJapaneseEUCStringEncoding],"%02X%02X",&u,&d) != 2 ) return nil;
 // 	NSLog([NSString stringWithFormat: @"%d %d %C", u, d, 256*u + d]);
-	return [NSString stringWithFormat: @"%C", 256*u + d];
+    return [NSString stringWithFormat: @"%C", (unichar)(256*u + d)];
 }
 
 
@@ -3814,6 +3815,16 @@ preference change is cancelled. "*/
     [self setupTags1];
 }
 
+- (void)doUpdate: (id)sender;
+{
+    if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
+        return;
+    
+    [self setupTags1];
+    [self setupLabels1];
+}
+
+
 // NDS edit start
 - (void) doLabel: (id)sender
 {
@@ -3839,6 +3850,11 @@ preference change is cancelled. "*/
         [self fixLabels];
 }
 
+- (void)fixUpLabels:(id)sender
+{
+    NSLog(@"got here");
+   [self fixLabels];
+}
 
 
 - (void) setupLabels2
@@ -4138,7 +4154,8 @@ preference change is cancelled. "*/
 }
 
 
-
+// This is only present if the user wants to retreat to the old method
+// Otherwise it does nothing
 - (void) setupTags
 {
     if (  [SUD boolForKey:UseNewTagsAndLabelsKey])
@@ -4647,6 +4664,11 @@ preference change is cancelled. "*/
 	// Record the modified range (for the syntax coloring code).
 	colorStart = affectedCharRange.location;
 	colorEnd = colorStart + [replacementString length];
+    
+// Temporarily we leave the code below in case the user wants to return to the old method of handling tags
+// This code always says to fix up tags using a given line
+// The else statement would limit the lines which might contain tags
+// In the new method, the first items causes all lines to "potentially" be searched, but that search is later turned off
 	
 #if 1
 	// FIXME HACK: Always rebuild the tags menu when things change...
@@ -6746,11 +6768,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	} else
 		fileInfo = @"Not saved";
 
-#warning 64BIT: Check formatting arguments
 	infoTitle = [NSString stringWithFormat:
 					NSLocalizedString(@"Info: %@", @"Info: %@"),
 					[self displayName]];
-#warning 64BIT: Check formatting arguments
 	infoText = [NSString stringWithFormat:
 					NSLocalizedString(@"%@\n\nCharacters: %d", @"InfoText"),
 					fileInfo,
@@ -9157,9 +9177,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
     if(newString){
         if ([prefix isEqualToString:@"begin"]) {
-            newString = [NSString stringWithFormat:@"%cend{%@}", g_texChar, newString];
+            newString = [NSString stringWithFormat:@"%ldend{%@}", (long)g_texChar, newString];
         }else{
-            newString = [NSString stringWithFormat:@"%cstop%@", g_texChar, newString];
+            newString = [NSString stringWithFormat:@"%ldstop%@", (long)g_texChar, newString];
         }
         if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) {
             [textView replaceCharactersInRange:oldRange withString:newString];

@@ -426,7 +426,7 @@
             && !latexSpecial)
 		{
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-                       [NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]]; //should be global?
+                       [NSString stringWithFormat: @"\n \t.,:;{}()%C", (unichar)g_texChar]]; //should be global?
 			foundRange = [textString rangeOfCharacterFromSet:charSet
                                                      options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation-1)];
 			if (foundRange.location != NSNotFound  &&  foundRange.location >= 6  &&
@@ -505,7 +505,7 @@
 		if (!wasCompleted && !latexSpecial) {
 			// determine the word to complete--search for word boundary
 			charSet = [NSCharacterSet characterSetWithCharactersInString:
-                       [NSString stringWithFormat: @"\n \t.,:;{}()%C", g_texChar]];
+                       [NSString stringWithFormat: @"\n \t.,:;{}()%C", (unichar)g_texChar]];
 			foundRange = [textString rangeOfCharacterFromSet:charSet
                                                      options:NSBackwardsSearch range:NSMakeRange(0,selectedLocation)];
 			if (foundRange.location != NSNotFound) {
@@ -631,7 +631,7 @@
 				// newString = [NSMutableString stringWithFormat: @"\n%Cend%@\n",
 				//					g_texChar, latexString];
 				newString = [NSMutableString stringWithFormat: @"\n%@%Cend%@\n",
-							 indentString, g_texChar, latexString]; // Alvise Trevisan; preserve tabs code (revision of previous lines)
+                             indentString, (unichar)g_texChar, latexString]; // Alvise Trevisan; preserve tabs code (revision of previous lines)
 				insRange.location = 0;
 				completionListLocation = NSNotFound; // just to remember that it wasn't completed
 			} else {
@@ -639,7 +639,7 @@
 				// newString = [NSMutableString stringWithFormat: @"%@\n%Cend%@\n",
 				//					currentString, g_texChar, latexString];
 				newString = [NSMutableString stringWithFormat: @"%@\n%@%Cend%@\n",
-							 self.currentString, indentString, g_texChar, latexString];  // Alvise Trevisan; preserve tabs code (revision of previous lines)
+                             self.currentString, indentString, (unichar)g_texChar, latexString];  // Alvise Trevisan; preserve tabs code (revision of previous lines)
 				insRange.location = [self.currentString length];
 				// [self.currentString release];
 			}

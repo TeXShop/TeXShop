@@ -15,6 +15,34 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.19</h5></P>
+
+Version 4.19 cleans up three minor issues in 4.18:
+
+<ul>
+<li> In some situations, the initial bracket or brace of a command parameter was not syntax colored. The bug was hard to see in Lite mode, but stood out like a sore thumb in Dark mode. The bug is fixed.  Many users may not have noticed this bug because it only occurred when the second of the three new "Spell Checking" options in TeXShop Preferences was on.
+
+<p>
+<li> John Farragut pointed out that the console transparency was set to the source transparency  rather than  to its own value as set in Themes. This is fixed.
+
+
+
+<p>
+<li> Before version 4.18, the tags menu was entirely reconstructed after each new text entry. This was wasteful of computer resources and risked making the editor sluggish. In 4.18, this  code was deactivated and instead the tags menu is constructed just before it is displayed. 
+
+<p> Tag entries can be displayed in three different menus. If the toolbar is in "Icon Mode" or "Icon + Text" mode, the icon itself is a drop-down menu which displays the tags. If the toolbar is in "Text Only" mode, the "Tags text" is a drop-down menu which displays the tags. Finally, there us a TeXShop Preference setting which  adds a Tags menu to the menu bar, and this menu also displays the tags. Clicking on the Tags Icon updates all three menus. 
+
+<p> However, there was a bug in 4.18, so that clicking on the "text only" tool or on the Tag menu in the menu bar did not update any menus. This caused problems for users whose toolbars are in "Text Only" mode, since nothing they clicked updated the menus. Consequently, all tag menus remained empty. This problem also affected the new Labels item. Most users set the toolbar to "Icon" or "Icon + Text" modes, and did not run into this problem. I got only one bug report.
+
+<p>Unfortunately, this problem does not have an easy solution. The code in version 4.18 depended on a feature of PopUp menus in Cocoa; they can send a notification when first clicked, before displaying their popup menu, giving time for the menu to be constructed on the fly. Ordinary menus and menus attached to "Text Only" mode do not come with this Cocoa feature. I spent several days trying to find a work-around, before deciding that any work around would not be in the spirit of Cocoa and could easily break in the future. Returning to the old method of updating the Tag menu would fix the problem. But this would  risk a sluggish editor, and benefit only 10% of users who set the toolbar to text only mode.
+
+<p> Consequently, version 4.19 introduces another tool for these special users affected by the problem. The name of the tool is "Update" because clicking it updates all tag and labels menus to the current state of the text. 
+Users who adopt text-only toolbars should add the Update tool to their Source toolbar. If they sometimes use "single window mode", they should also add the Update tool to that toolbar. Then use Tags and Labels as usual, even after editing text. But if you begin to notice that Tags or Labels doesn't take you to exactly the correct line, hit Update  before continuing. Incidentally, when syntax coloring is on, the Tags and Labels menus are updated once when a document is first opened.
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 4.18</h5></P>
 
 Version 4.17 was intended to remain the release version for several months. Two days after the release and out of the blue, I received four suggested code changes from Neil Sims, the Head of the Department of Mechanical Engineering at The University of Sheffield. Version 4.18 contains his changes and a minor extra bug fix. These changes are listed first. Sims' changes led to significant improvements in the underlying TeXShop code, and these improvements are explained at the end of this section  for interested readers.
@@ -46,7 +74,7 @@ existing Tags tool except that it lists all labels in the source code. Selecting
 
 
 <p>
-<li> The most controversial Sims' addition, and the most useful for some, concerns to spell checking in TeXShop.
+<li> The most controversial Sims' addition, and the most useful for some, concerns spell checking in TeXShop.
 When spell checking is on, many LaTeX commands are marked as misspelled. This is annoying. One common solution is to install a LaTeX-aware spell checker like cocoAspell. Thanks to Sims, TeXShop can now handle this problem  --- for some users --- while using the standard Apple spell checker and standard Apple dictionaries.
 
 <p> Apple provides three ways to spell check text in Cocoa, and TeXShop inherits these three methods.

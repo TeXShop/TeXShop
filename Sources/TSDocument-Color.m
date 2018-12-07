@@ -184,7 +184,7 @@
     textWindow.alphaValue = [myNumber floatValue];
     fullSplitWindow.alphaValue = [myNumber floatValue];
     
-    myArray = [colorDictionary objectForKey:@"SourceAlpha"];
+    myArray = [colorDictionary objectForKey:@"ConsoleAlpha"];
     myNumber = myArray[3];
     outputWindow.alphaValue = [myNumber floatValue];
     

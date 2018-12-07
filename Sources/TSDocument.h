@@ -143,6 +143,7 @@ enum RootCommand
 	IBOutlet NSButton			*typesetButton;
 	IBOutlet NSButton			*typesetButtonEE;
     IBOutlet NSButton           *stypesetButton;
+
     IBOutlet NSButton			*shareButton;
     IBOutlet NSButton           *shareButtonFull;
 	IBOutlet NSButton			*shareButtonEE;
@@ -278,6 +279,7 @@ enum RootCommand
 
 
 //	NSTimer		*tagTimer;		/*" Timer that repeatedly handles tag updates "*/
+ 
 	NSUInteger	tagLocation;
 	NSUInteger	tagLocationLine;
     
@@ -603,6 +605,7 @@ enum RootCommand
 - (BOOL)skipTextWindow;
 - (void)doShareSource:(id)sender;
 - (void)doSharePreview:(id)sender;
+- (void)fixUpLabels:(id)sender;
 - (void)setupTextView:(NSTextView *)aTextView;
 - (NSPopUpButton *)programButton;
 - (BOOL) useDVI;
@@ -729,6 +732,7 @@ enum RootCommand
 - (void) doIndexTemp: sender;
 - (void) doMetaFontTemp: sender;
 - (IBAction) doTypeset: sender;
+- (IBAction) doUpdate: sender; // Tool to update tags and labels
 - (void) doTypesetForScriptContinuously:(BOOL)method;
 - (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;
 - (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;

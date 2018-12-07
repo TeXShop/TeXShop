@@ -39,4 +39,5 @@
 - (void)noteNewRecentDocument:(NSDocument *)aDocument;
 - (void)listDocument:(BOOL)value;
 // - (id)openDocumentWithContentsOfURL:(NSURL *)absoluteURL display:(BOOL)displayDocument error:(NSError **)outError; // Support Stationery bit?
+
 @end

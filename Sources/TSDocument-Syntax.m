@@ -75,7 +75,6 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // the program crashes.
 //
 
-
 // Notice the code below to avoid recoloring when the file is first opened!
 - (void)colorizeText:(NSTextView *)aTextView range:(NSRange)range
 {
@@ -96,6 +95,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     BOOL            TurnOffParameterSpellChecking;
     BOOL            ListHasWordsWhoseParametersShouldBeChecked;
     NSString        *commandString;
+    NSRange         specialRange;
     
     
     TurnOffCommandSpellChecking = [SUD boolForKey:TurnOffCommandSpellCheckKey];
@@ -123,6 +123,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 				}
 			else {
 				isLoading = NO;
+                [self doUpdate:self];
 				// NSLog(@"it ended");
 				}
 			}
@@ -263,7 +264,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 			if ((location < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: location]))) {
 				location++;
 				colorRange.length = location - colorRange.location;
-                commandString = [textString substringWithRange: colorRange];
+            //    commandString = [textString substringWithRange: colorRange];
 			} else {
 				while ((location < aLineEnd) && (isValidTeXCommandChar([textString characterAtIndex: location]))) {
 					location++;
@@ -306,6 +307,13 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                     NSUInteger spellLength = spellRange.length;
                     while ((spellLocation < aLineEnd) && (notYetDone)) {
                             theChar = [textString characterAtIndex: spellLocation];
+                            if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
+                                // The six special characters { } [ ] & $ get an extra color.
+                                specialRange.location = spellLocation;
+                                specialRange.length = 1;
+                                [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:specialRange];
+                                }
+                            
                             spellLocation++;
                             spellLength++;
                             if (theChar == '[')
@@ -329,6 +337,13 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                     
                     while ((spellLocation < aLineEnd) && (notYetDone)) {
                         theChar = [textString characterAtIndex: spellLocation];
+                        if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
+                            // The six special characters { } [ ] & $ get an extra color.
+                            specialRange.location = spellLocation;
+                            specialRange.length = 1;
+                            [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:specialRange];
+                            }
+                        
                         spellLocation++;
                         spellLength++;
                         if (theChar == '[')
@@ -399,7 +414,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 				/* the above code was patched by Tammo Jan Dijkema to handle optional arguments for ColorIndex
 				 (this is useful when using the package index, which creates optional indices). With this patch, 
 				 the command \index[notation]{foo} gets colored as expected.*/
-			else if ((colorIndexDifferently) &&
+			 if ((colorIndexDifferently) &&
 				// esindex below is a Spanish indexing command
 				 (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"]))) {
 					NSInteger parens = 0;

@@ -9177,9 +9177,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
     if(newString){
         if ([prefix isEqualToString:@"begin"]) {
-            newString = [NSString stringWithFormat:@"%ldend{%@}", (long)g_texChar, newString];
+            newString = [NSString stringWithFormat:@"%cend{%@}", (int)g_texChar, newString];
         }else{
-            newString = [NSString stringWithFormat:@"%ldstop%@", (long)g_texChar, newString];
+            newString = [NSString stringWithFormat:@"%cstop%@", (int)g_texChar, newString];
         }
         if ([textView shouldChangeTextInRange:oldRange replacementString:newString]) {
             [textView replaceCharactersInRange:oldRange withString:newString];

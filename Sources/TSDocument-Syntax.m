@@ -87,6 +87,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     NSUInteger        aLineStart;
     NSUInteger        aLineEnd;
     NSUInteger        end;
+    NSInteger       count;
     BOOL            colorIndexDifferently;
     BOOL            colorFootnoteDifferently;
     NSTimeInterval    theTime;
@@ -288,6 +289,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                     
                     if (theChar == '{')
                     {
+                        count = 1;
                         charRange.location = location;
                         charRange.length = 1;
                         [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
@@ -296,7 +298,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         BOOL notDone = YES;
                         while ((location < aLineEnd) && (notDone)) {
                             theChar = [textString characterAtIndex: location];
-                            if (theChar == '}') {
+                            if (theChar == '{')
+                                count++;
+                            if (theChar == '}')
+                                count--;
+                            if (count == 0) {
                                 notDone = NO;
                                 colorRange.length = location - colorRange.location;
                                 [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
@@ -321,6 +327,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                     
                     if (theChar == '[')
                     {
+                        count = 1;
                         charRange.location = location;
                         charRange.length = 1;
                         [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
@@ -328,7 +335,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         BOOL notDone = YES;
                         while ((location < aLineEnd) && (notDone)) {
                             theChar = [textString characterAtIndex: location];
-                            if (theChar == ']') {
+                            if (theChar == '[')
+                                count++;
+                            if (theChar == ']')
+                                count--;
+                            if (count == 0) {
                                 notDone = NO;
                                 charRange.location = location;
                                 charRange.length = 1;
@@ -342,6 +353,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                     
                     if (theChar == '{')
                     {
+                        count = 1;
                         charRange.location = location;
                         charRange.length = 1;
                         [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
@@ -350,10 +362,14 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         BOOL notDone = YES;
                         while ((location < aLineEnd) && (notDone)) {
                             theChar = [textString characterAtIndex: location];
-                            if (theChar == '}') {
+                            if (theChar == '{')
+                                count++;
+                            if (theChar == '}')
+                                count--;
+                            if (count == 0) {
                                 notDone = NO;
                                 colorRange.length = location - colorRange.location;
-                                [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
+                                [layoutManager addTemporaryAttributes:self.indexColorAttribute forCharacterRange:colorRange];
                                 charRange.location = location;
                                 charRange.length = 1;
                                 [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];

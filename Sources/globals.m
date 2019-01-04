@@ -321,6 +321,8 @@ NSString *ExternalEditorNotification = @"ExternalEditorNotification";
 NSString *CommandCompletionCharNotification = @"CommandCompletionCharNotification";
 NSString *SourceColorChangedNotification = @"SourceColorChangedNotification";
 NSString *PreviewColorChangedNotification = @"PreviewColorChangedNotification";
+NSString *DoNotFixTeXCrashKey = @"DoNotFixTeXCrash";
+NSString *DisplayLogInfoKey = @"DisplayLogInfo";
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;

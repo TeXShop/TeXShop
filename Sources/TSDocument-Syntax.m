@@ -75,6 +75,37 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // the program crashes.
 //
 
+// bypass [...], leaving "theLocation" pointing to the next element, and appropriately syntax coloring brackets
+- (void)bypassBracketUsing: (NSLayoutManager *) layoutManager atLocation: (NSUInteger *)theLocation andLineEnd: (NSUInteger) aLineEnd
+                      with: (NSString *) textString
+{
+    NSInteger       count;
+    NSRange         charRange;
+    BOOL            notDone;
+    NSInteger       theChar;
+   
+    count = 1;
+    charRange.location = *theLocation;
+    charRange.length = 1;
+    [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
+    (*theLocation)++;
+    notDone = YES;
+    while ((*theLocation < aLineEnd) && (notDone)) {
+    theChar = [textString characterAtIndex: *theLocation];
+    if (theChar == '[')
+        count++;
+    if (theChar == ']')
+        count--;
+    if (count == 0) {
+        notDone = NO;
+        charRange.location = *theLocation;
+        charRange.length = 1;
+        [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
+        }
+    (*theLocation)++;
+    }
+}
+    
 // Notice the code below to avoid recoloring when the file is first opened!
 - (void)colorizeText:(NSTextView *)aTextView range:(NSRange)range
 {
@@ -97,6 +128,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     BOOL            ListHasWordsWhoseParametersShouldBeChecked;
     NSString        *commandString;
     NSRange         specialRange;
+    BOOL            allDone;
     
     
     TurnOffCommandSpellChecking = [SUD boolForKey:TurnOffCommandSpellCheckKey];
@@ -281,14 +313,17 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             
             
             if ((colorFootnoteDifferently) &&
-                (([commandString isEqualToString: @"\\footnote"]) || ([commandString isEqualToString: @"\\autocite"]) || ([commandString isEqualToString: @"\\footcite"]))) {
-                // treat first {
-                if (location < aLineEnd)
-                {
-                    theChar = [textString characterAtIndex: location];
-                    
-                    if (theChar == '{')
-                    {
+                (([commandString isEqualToString: @"\\footnote"]) ||
+                 ([commandString isEqualToString: @"\\autocite"]) ||
+                 ([commandString isEqualToString: @"\\cite"]) ||
+                 ([commandString isEqualToString: @"\\footcite"]))) {
+             
+                
+                while ((location < aLineEnd) && ([textString characterAtIndex:location] == '['))
+                    [self bypassBracketUsing: layoutManager atLocation: &location andLineEnd: aLineEnd with: textString];
+                        
+                if ((location < aLineEnd) && ([textString characterAtIndex:location] == '{'))
+                        {
                         count = 1;
                         charRange.location = location;
                         charRange.length = 1;
@@ -304,6 +339,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                                 count--;
                             if (count == 0) {
                                 notDone = NO;
+                                allDone = YES;
                                 colorRange.length = location - colorRange.location;
                                 [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
                                 charRange.location = location;
@@ -314,44 +350,16 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         }
                     }
                 }
-                
-            }
             
-            else if ((colorIndexDifferently) &&
-                     // esindex below is a Spanish indexing command
-                     (([commandString isEqualToString: @"\\index"]) || ([commandString isEqualToString: @"\\esindex"]))) {
-                // treat first {
-                if (location < aLineEnd)
-                {
-                    theChar = [textString characterAtIndex: location];
+            if ((colorIndexDifferently) &&
+                // esindex below is a Spanish indexing command
+                (([commandString isEqualToString: @"\\index"]) ||
+                 ([commandString isEqualToString: @"\\esindex"]))) {
                     
-                    if (theChar == '[')
-                    {
-                        count = 1;
-                        charRange.location = location;
-                        charRange.length = 1;
-                        [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                        location++;
-                        BOOL notDone = YES;
-                        while ((location < aLineEnd) && (notDone)) {
-                            theChar = [textString characterAtIndex: location];
-                            if (theChar == '[')
-                                count++;
-                            if (theChar == ']')
-                                count--;
-                            if (count == 0) {
-                                notDone = NO;
-                                charRange.location = location;
-                                charRange.length = 1;
-                                [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                            }
-                            location++;
-                        }
-                    }
+                    while ((location < aLineEnd) && ([textString characterAtIndex:location] == '['))
+                        [self bypassBracketUsing: layoutManager atLocation: &location andLineEnd: aLineEnd with: textString];
                     
-                    theChar = [textString characterAtIndex: location];
-                    
-                    if (theChar == '{')
+                    if ((location < aLineEnd) && ([textString characterAtIndex:location] == '{'))
                     {
                         count = 1;
                         charRange.location = location;
@@ -368,6 +376,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                                 count--;
                             if (count == 0) {
                                 notDone = NO;
+                                allDone = YES;
                                 colorRange.length = location - colorRange.location;
                                 [layoutManager addTemporaryAttributes:self.indexColorAttribute forCharacterRange:colorRange];
                                 charRange.location = location;
@@ -378,10 +387,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
                         }
                     }
                 }
-                
-            }
             
             
+      
             
             // Next comes a big decision. We can automatically  remove the first two parameters, either
             //    optional or required or both. In that case, there is a built-in list of commands to skip

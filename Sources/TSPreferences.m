@@ -1375,7 +1375,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_BKey] forKey:PdfFore_BKey];
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfFore_AKey] forKey:PdfFore_AKey];
 
-	NSColor *aColor = [[sender color] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+	NSColor *aColor = [[sender color] colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
 	[SUD setFloat:[aColor redComponent] forKey:PdfFore_RKey];
 	[SUD setFloat:[aColor greenComponent] forKey:PdfFore_GKey];
 	[SUD setFloat:[aColor blueComponent] forKey:PdfFore_BKey];
@@ -1390,7 +1390,7 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_BKey] forKey:PdfBack_BKey];
 	[[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:PdfBack_AKey] forKey:PdfBack_AKey];
 
-	NSColor *aColor = [[sender color] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+	NSColor *aColor = [[sender color] colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
 	[SUD setFloat:[aColor redComponent] forKey:PdfBack_RKey];
 	[SUD setFloat:[aColor greenComponent] forKey:PdfBack_GKey];
 	[SUD setFloat:[aColor blueComponent] forKey:PdfBack_BKey];

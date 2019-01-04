@@ -45,7 +45,15 @@
 	// get copy of environment and add the preferences paths
 	env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
 
-
+NSEnumerator *enu = [env keyEnumerator];
+/*
+for(NSString *key in enu)
+    { NSLog(@"key : %@", key);
+   //     NSLog(@"value : %@",[[env valueForKey:key] string]);
+        
+    }
+ */
+    
 	// Customize 'PATH'
 	NSMutableString *path;
 	path = [NSMutableString stringWithString: [env objectForKey:@"PATH"]];
@@ -54,6 +62,8 @@
 	[path appendString:@":"];
 	[path appendString:[SUD stringForKey:GSBinPath]];
 	[env setObject: path forKey: @"PATH"];
+    
+//    enu = [dict keyEnumerator]; for(NSString *key in enu) {         NSLog(@"key : %@",key);         NSLog(@"value : %@",[[dic // //valueForKey:keystring]);  }
     
     //  NDS - add the current file location as a new env variable called TS_CHAR.
     // this allows custom engines to operate based upon the current location in the file.
@@ -76,6 +86,7 @@
 	//   end tell
 	NSMutableString *script = [NSMutableString string];
 
+/*
 #warning 64BIT: Check formatting arguments
 	[script appendFormat:@"open -a '%@' '%%s' &&", [[NSBundle mainBundle] bundlePath]];
 	[script appendString:@" osascript"];
@@ -85,6 +96,7 @@
 	[script appendString:@" -e 'end tell'"];
 
 	[env setObject: script forKey:@"TEXEDIT"];
+ */
 	
 	return env;
 }
@@ -906,14 +918,33 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	[self completeSaveFinished];
 }
 
+-(void)repeatTypeset
+{
+    BOOL result;
+    BOOL DisplayLogs = [SUD boolForKey: DisplayLogInfoKey];
+    if (DisplayLogs)
+        NSLog(@"Repeating Job");
+    if ([SUD boolForKey: DoNotFixTeXCrashKey])
+        return;
+    
+    [self trashAUXFiles: self];
+    [self doTypeset:self];
+//    result = [self startTask: self.texTask running: oldLeafName withArgs: oldArgs inDirectoryContaining: oldSourcePath withEngine: oldTheEngine];
+}
 
 - (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine
 {
 	BOOL            isFile;
 	BOOL            isExecutable;
     NSDictionary    *myAttributes;
+    NSURL           *myFileURL, *myCurrentDirectoryURL;
+    BOOL            result;
+    NSError         *error = nil;
+    BOOL            DisplayLogs = [SUD boolForKey: DisplayLogInfoKey];
+    
+    doAbort = NO;
 	
-	// Ensure we have an absolute filename for the executable, prepending  the teTeX bin path if need be.
+ 	// Ensure we have an absolute filename for the executable, prepending  the teTeX bin path if need be.
 	NSString* filename = leafname;
 	if (filename != nil && [filename length] > 0 && ([filename characterAtIndex: 0] != '/') && ([filename characterAtIndex: 0] != '~')) {
 		NSString* tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
@@ -981,15 +1012,95 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     }
 	
 	// We know the executable is okay, so give it a go...
- 	[task setLaunchPath: filename];
- 	[task setArguments: args];
-	[task setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
-	[task setEnvironment: [self environmentForSubTask]];
-	[task setStandardOutput: self.outputPipe];
-	[task setStandardError: self.outputPipe];
-	[task setStandardInput: self.inputPipe];
-	[task launch];
-	return TRUE;
+
+    [task setArguments: args];
+    [task setEnvironment: [self environmentForSubTask]];
+    [task setStandardOutput: self.outputPipe];
+    [task setStandardError: self.outputPipe];
+    [task setStandardInput: self.inputPipe];
+    
+    task.terminationHandler = ^(NSTask *myTask){
+    
+        id stdoutString = nil;
+        id stderrString = nil;
+    @try {
+        id stdoutData = [[myTask.standardOutput fileHandleForReading] readDataToEndOfFile];
+        stdoutString = [[NSString alloc] initWithData:stdoutData encoding:NSUTF8StringEncoding];
+        id stderrData = [[myTask.standardError fileHandleForReading] readDataToEndOfFile];
+        stderrString = [[NSString alloc] initWithData:stderrData encoding:NSUTF8StringEncoding];
+        }
+    @catch (NSException *exception) {
+            ;
+            }
+    @finally {
+            ;
+        }
+        int theReason = myTask.terminationReason;
+        BOOL doAbort1 = doAbort;
+        doAbort = NO;
+        
+        if (myTask.terminationReason == NSTaskTerminationReasonExit && myTask.terminationStatus == 0)
+            ;
+        else
+            {
+            id cmd = [NSMutableArray arrayWithObject:myTask.launchPath];
+            [cmd addObjectsFromArray:myTask.arguments];
+            cmd = [cmd componentsJoinedByString:@" "];
+            NSString *mainString = [NSString stringWithFormat:@"Failed executing: %@.", cmd];
+            if (DisplayLogs)
+                NSLog(mainString);
+                
+            if (! (stdoutString == nil)) {
+                NSString *aString = [NSString stringWithFormat: @"Standard output: %@.", stdoutString];
+                if (DisplayLogs)
+                    NSLog(aString);
+                }
+            
+            if (! (stderrString == nil)) {
+                NSString *bString = [NSString stringWithFormat: @"Standard error: %@.", stderrString];
+                if (DisplayLogs)
+                    NSLog(bString);
+                }
+            
+                
+            NSString *cString = [NSString stringWithFormat: @"Termination Reason: %d.", theReason];
+            if (DisplayLogs)
+                NSLog(cString);
+            
+            }
+                
+        if ((! doAbort1) && (myTask.terminationReason == 2) && (myTask == self.texTask))
+            {
+            if (myTask.running)
+            [myTask terminate];
+            [self performSelectorOnMainThread: @selector(repeatTypeset) withObject:nil waitUntilDone:NO];
+            }
+          else
+          {
+              [self performSelectorOnMainThread: @selector(checkATaskStatusFromTerminationRoutine:) withObject:myTask waitUntilDone:NO];
+          }
+    };
+        
+   
+#ifdef HIGHSIERRAORHIGHER
+    if (atLeastHighSierra)
+        {
+            myFileURL = [NSURL fileURLWithPath:filename isDirectory:NO];
+            task.executableURL = myFileURL;
+            myCurrentDirectoryURL = [NSURL fileURLWithPath:[sourcePath stringByDeletingLastPathComponent] isDirectory:YES];
+            task.currentDirectoryURL = myCurrentDirectoryURL;
+            if (DisplayLogs)
+                NSLog(@"Start task");
+            result = [task launchAndReturnError:&error];
+        }
+    else
+#endif
+        {
+            [task setLaunchPath: filename];
+            [task setCurrentDirectoryPath: [sourcePath stringByDeletingLastPathComponent]];
+            [task launch];
+        }
+        return TRUE;
 }
 
 
@@ -1665,6 +1776,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void)abort:(id)sender
 {
+    doAbort = YES;
+    
 	if (! fileIsTex)
 		return;
 	
@@ -1694,6 +1807,147 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	self.inputPipe = 0;
 }
 
+
+// The two routines below run after each Task exits. The crucial tasks are texTask, indexTask, bibTask, metafontTask. For these
+// the system uses the new NSTask API for High Sierra and above, including a TerminationHandler. This handler then calls
+// "checkATaskStatusFromTerminationRoutine" to clean up for texTask, indexTask, bibTask, and metafontTask.
+//
+// Until 2018, we did not use a TerminationHandler, and instead relied on NSTaskDidTerminateNotification, which was handled by
+// "checkATaskStatus", one routine below. This still holds for many tasks: displayPackageHelpTask (calling texdoc to display
+// documentation, scrapTask (to handle the "Experiment" menu item, detexTask (to find statistics for a source), convertTask (to
+// convert tiff to pdf), and scriptTask (to run Applescript). All of these tasks still use the old NSTask API and call "checkATaskStatus".
+// However, in most cases "checkATaskStatus" does nothing or very little. It only directly handles scrapTask and thus "Experiment".
+// All other tasks are sent to checkATaskStatusFromTerminationRoutine, but this routine really does something significant only
+// for the key tasks sent there directly from the TerminationHandler.
+
+- (void)checkATaskStatusFromTerminationRoutine: (NSTask *)theTask
+{
+    NSString        *imagePath;
+    NSString        *alternatePath;
+    NSDictionary    *myAttributes;
+    NSDate            *endDate;
+    NSInteger                status;
+    BOOL            alreadyFound;
+    BOOL            front;
+    BOOL            DisplayLogs = [SUD boolForKey: DisplayLogInfoKey];
+
+    if (DisplayLogs)
+    {
+        NSLog(@"CheckATaskStatusNew");
+        if (theTask != nil)
+            NSLog(theTask.launchPath);
+    }
+    
+    status = [theTask terminationStatus];
+    [outputText setSelectable: YES];
+    taskDone = YES;  // for Applescript
+    
+    // Key Point: This routine does nothing else except for bibTask, indexTask, metaFontTask, and texTask
+    
+    if ((theTask == self.bibTask) || (theTask == self.indexTask) || (theTask == self.metaFontTask)) {
+        if (self.inputPipe == [theTask standardInput]) {
+            //        [self.outputPipe release];
+            [self.writeHandle closeFile];
+            //        [self.inputPipe release];
+            self.inputPipe = 0;
+            if (theTask == self.bibTask) {
+                [self.bibTask terminate];
+                //            [self.bibTask release];
+                self.bibTask = nil;
+            } else if (theTask == self.indexTask) {
+                [self.indexTask terminate];
+                //            [self.indexTask release];
+                self.indexTask = nil;
+            } else if (theTask == self.metaFontTask) {
+                [self.metaFontTask terminate];
+                //            [self.metaFontTask release];
+                self.metaFontTask = nil;
+            }
+        }
+    }
+    
+   
+    
+    if (theTask != self.texTask)
+        return;
+    
+    if (self.inputPipe == [theTask standardInput]) {
+        status = [theTask terminationStatus];
+        
+        if ((status == 0) || (status == 1))  {
+            imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            
+            alreadyFound = NO;
+            if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
+                myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
+                endDate = [myAttributes objectForKey:NSFileModificationDate];
+                if ((self.startDate == nil) || ! [self.startDate isEqualToDate: endDate]) {
+                    alreadyFound = YES;
+                    PDFfromKit = YES;
+                    [self.myPDFKitView reShowWithPath: imagePath];
+                    [self.myPDFKitView2 prepareSecond];
+                    // [[self.myPDFKitView document] retain];
+                    [self.myPDFKitView2 setDocument: [self.myPDFKitView document]];
+                    [self.myPDFKitView2 reShowForSecond];
+                    if (! useFullSplitWindow) {
+                        [self.pdfKitWindow setRepresentedFilename: imagePath];
+                        //[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
+                        [self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
+                        [self fillLogWindowIfVisible];
+                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                        if ((front) || (! [self.pdfKitWindow isVisible]))
+                            [self.pdfKitWindow makeKeyAndOrderFront: self];
+                        {
+                            if (self.useOldSyncParser)
+                                [self allocateSyncScannerOld];
+                            else
+                                [self allocateSyncScanner];
+                        }
+                    }
+                    else {
+                        [self fillLogWindowIfVisible];
+                        [fullSplitWindow makeKeyAndOrderFront: self];
+                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                        if (front)
+                            [fullSplitWindow makeFirstResponder:self.myPDFKitView];
+                        {
+                            if (self.useOldSyncParser)
+                                [self allocateSyncScannerOld];
+                            else
+                                [self allocateSyncScanner];
+                        }
+                        
+                    }
+                }
+            }
+            
+            if (! alreadyFound)  { // see if there is a temporary file
+                alternatePath = [[TempOutputKey stringByAppendingString:@"/"] stringByAppendingString:[imagePath lastPathComponent]];
+                if ([[NSFileManager defaultManager] fileExistsAtPath: alternatePath]) {
+                    self.texRep = [NSPDFImageRep imageRepWithContentsOfFile: alternatePath] ;
+                    [[NSFileManager defaultManager] removeItemAtPath: alternatePath error:NULL];
+                    if (self.texRep) {
+                        [pdfWindow setTitle: [imagePath lastPathComponent]];
+                        [pdfView setImageRep: self.texRep];
+                        [pdfView setNeedsDisplay:YES];
+                        [pdfWindow makeKeyAndOrderFront: self];
+                    }
+                }
+                
+            }
+            [self.texTask terminate];
+            //        [self.texTask release];
+        }
+        
+        //    [self.outputPipe release];
+        [self.writeHandle closeFile];
+        //    [self.inputPipe release];
+        self.inputPipe = 0;
+        self.texTask = nil;
+    }
+
+}
+
 - (void)checkATaskStatus:(NSNotification *)aNotification
 {
 	NSString		*imagePath;
@@ -1703,6 +1957,44 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	NSInteger				status;
 	BOOL			alreadyFound;
 	BOOL			front;
+    NSError         *error;
+    BOOL            DisplayLogs = [SUD boolForKey: DisplayLogInfoKey];
+    
+    if (DisplayLogs)
+        NSLog(@"CheckATaskStatus");
+    
+    
+   if ([aNotification object] == self.scrapTask)
+    {
+    if (DisplayLogs)
+        NSLog(@"Doing Scrap Task");
+    error = nil;
+    //  [[NSFileManager defaultManager] removeItemAtURL:self.scrapDirectoryURL error:&error];
+    self.scrapDirectoryURL = nil;
+    [outputText setSelectable: YES];
+    status = [[aNotification object] terminationStatus];
+    [self.writeHandle closeFile];
+    self.inputPipe = 0;
+    self.scrapTask = nil;
+    
+    if ((status == 0) || (status == 1)) {
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath: self.scrapImagePath])
+            [scrapPDFKitView reShowWithPath: self.scrapImagePath];
+        
+        [scrapPDFWindow setHidesOnDeactivate:YES];
+        [scrapPDFWindow makeKeyAndOrderFront:self];
+        
+    }
+    
+    self.scrapImagePath = nil;
+    }
+
+else
+       [self checkATaskStatusFromTerminationRoutine: [aNotification object]];
+    
+    
+/*
     
     status = [[aNotification object] terminationStatus];
     // NSLog(@"The termination status is %d", (int) status);
@@ -1814,6 +2106,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		self.inputPipe = 0;
 		self.texTask = nil;
 	}
+*/
 }
 
 - (BOOL) getWillClose

@@ -3660,10 +3660,10 @@ NSBitmapImageRep *transformColor(NSBitmapImageRep *srcBitmap, NSColor *foreColor
 						&& [srcBitmap samplesPerPixel]>=3))
 		return nil;
 
-	NSColor *newForeColor = [foreColor colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+	NSColor *newForeColor = [foreColor colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
 	foreR = [newForeColor redComponent];  foreG = [newForeColor greenComponent];
 	foreB = [newForeColor blueComponent]; foreA = [newForeColor alphaComponent];
-	NSColor *newBackColor = [backColor colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+	NSColor *newBackColor = [backColor colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
 	backR = [newBackColor redComponent];  backG = [newBackColor greenComponent];
 	backB = [newBackColor blueComponent]; backA = [newBackColor alphaComponent];
 	destHasAlpha = !(foreA == 1.0 && backA == 1.0);

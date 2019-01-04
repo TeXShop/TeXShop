@@ -14,6 +14,127 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.22</h3></P>
+
+Version 4.22 improves syntax coloring for footnotes and takes a first stab at fixing a typesetting bug.
+Unless version 4.22 is unstable, this will be the last version of TeXShop for several months because work is  starting on MacTeX-2019.
+
+<ul>
+<li> Footnote syntax coloring is now triggered by \footnote, \autocite, \footcite, and \cite.
+In each of these commands, optional parameters [...] are ignored but do not turn off coloring the  required {...}.
+
+<p>
+<li> A small number of users have reported a bug while typesetting large documents (700 pages and larger). The bug occurs randomly. Typesetting will suddenly stop in the middle, without an error message, and input to the console will end, but the rest of TeXShop will remain active. Recovery is easy; just typeset again. Since the aux file was not properly closed, it is usually necessary to "Trash Aux Files" before typesetting.
+
+<p> TeXShop 4.22 has a workaround for this bug. Because it adopted a new Apple API for NSTask, and implemented a "terminationHandler" provided by that API, it can identify typesetting jobs which ended because of the bug. It then automatically calls "Trash Aux Files" and typesets again. This happens so rapidly that users may not notice the double typesetting job.
+
+<p>
+<li> There is a possibility that this "fix" will have unintended consequences, although several users have tested it for a week. So there is a hidden preference to turn it off:
+<pre>
+     defaults write TeXShop DoNotFixTeXCrash YES
+</pre>
+ 
+ <p>
+<li> TeXShop can output log information about NSTask and the typesetting bug. This is off by default, but can be turned on with a hidden preference:
+<pre>
+     defaults write TeXShop DisplayLogInfo  YES
+</pre>
+
+<p>
+<li> Finally, we provide further technical information about the bug and these log reports for interested readers who would like to help debug the program.
+
+<p>Finding the source of the typesetting bug is  difficult because the action is random and happens rarely. 
+We know that when the independent typesetting process end, it has been killed with "termination status 2", which Apple defines as "Task Exited Due to an Uncaught Signal."
+
+<p> Explanations of methods in TeXShop 4.22 to detect the bug depend on an understanding of the Cocoa object NSTask and its ability to run independent  typesetting jobs. This is discussed next.
+ When TeXShop typesets, it creates a Cocoa object called NSTask. This object uses the Unix fork call to create an entirely new Unix process or program, running pdflatex or some other TeX engine. Unix processes communicate with the outside world using three standard streams called standardInput, standardOutput, and standardError. The first, standardInput, if often connected to the keyboard; the second, standard Output, is often connected to the computer screen. But these streams can be connected to other  programs using what Unix calls a pipe. When pdflatex runs, its standardOutput is displayed in the TeXShop Console using a pipe. If pdflatex pauses for user input, its standardInput comes from the input box at the bottom of the console using a second pipe. Aside from these pipes, there is no connection between TeXShop and pdflatex until typesetting ends, when NSTask notifies TeXShop that the pdflatex process has quit.
+
+<p> Until version 4.22, this message was sent to TeXShop with what Cocoa calls a "Notification". Every time an NSTask ends, it sends the program  an NSTaskDidTerminateNotification. TeXShop responds by running a routine called "CheckATaskStatus";  this routine cleans up after the task, opens the new pdf output, and so forth.
+
+<p> In High Sierra, Apple revised the NSTask programming API's and deprecated some of the old NSTask calls. 
+TeXShop 4.22 adopted the new APIs while running in High Sierra, Mojave, and systems of the future, while using the older calls if run on earlier versions of macOS. Actually there are a number of NSTasks in TeXShop. All of the typesetting calls (to tex, pdftex, xetex, luatex, makeindex, bibtex, etc.) were updated. But the secondary tasks, 
+displaying package documentation via texdoc, typesetting small samples via "Experiment", finding statistics of a source file, converting tiff documents to pdf, and running Applescript, still use the old NSTask APIs.
+
+<p> 
+ The new API's provide a "Termination Handler" for tasks, a block of code which runs when the task terminates
+  normally or abnormally.  This handler allows TeXShop to learn how the process ended and display debugging information. After that step, the handler calls a cleanup routine called "CheckATaskStatusNew", which does the same sorts of things that the old "CheckATaskStatus" did.
+  
+ <p> In TeXShop 4.22, the procedures "CheckATaskStatus" and "CheckATaskStatusNew"  have been mostly merged together. The first one handles "Experiment Tasks", while all other task cleanup is passed on to      CheckATaskStatusNew. It turns out that neither routine does much of anything for any NSTask except the typesetting tasks. 
+ 
+
+<p> We hoped that switching to the modern NSTask API's would fix the bug, but they did not. However, a change in the "environment" passed to a task may have reduced or eliminated the bug; there hasn't been sufficient time to test this. 
+
+<p>
+If you turn on "DisplayLogInfo", you can  see the log statements by running the Apple Console program in /Applications/Utilities. In the left hand side of the panel it puts up, select the first item, which may contain the name you have given your machine. This item says "Richard's Macbook Pro" here. At the top of Console, there is a "search field." Type "texshop" there. Then only texshop logs will appear in the console. Scroll down to make sure you are at the bottom of the console. Then each new message will scroll up a line and you can easily follow the log statements.
+
+<p> The  log messages for a successful typesetting job will be
+<pre>
+     Start Task
+     CheckATaskStatusNew
+     /Library/TeX/texbin/pdflatex
+</pre>
+This sequence says a typesetting job was started, it ended normally, the terminationHandler was called but there were no errors to report, so CheckATaskStatusNew was called for our task. The final line says that this task ran pdflatex.
+
+<p> If there is an error during typesetting and the user pushes RETURN to continue and typesetting then proceeds to a peaceful end, the log messages will read
+<pre>
+     Start task
+     Failed executing: ...
+     Standard output: .
+     Standard input: .
+     Standard error: .
+     Termination Reason: 1.
+     CheckATaskStatusNew
+     /Library/TeX/texbin/pdflatex
+</pre>
+Here the second through fourth lines come from the terminationHandler, which has detected a termination error: 1. But a termination error numbered 1 is rather mild; it says TeX ran into an error, and then proceeded normally to conclusion. After the terminationHandler did its job, it called CheckATaskStatusNew to finish, as usual.
+
+<p> Next a more serious job. Suppose we run into an error, fix it, but then typeset again rather than continuing to typeset until the job ends. We get 
+ <pre>
+     Start task
+     Failed executing: ...
+     Standard output: .
+     Standard input: .
+     Standard error: .
+     Termination Reason: 2.
+     CheckATaskStatusNew
+     /Library/TeX/texbin/pdflatex
+     Start task
+     CheckATaskStatusNew
+     /Library/TeX/texbin/pdflatex
+</pre>
+This time the initial error number is 2 because we killed the initial task when we started typesetting again. The last three lines show that this second typesetting job succeeded.
+
+<p> Here is the result if we use the TeXShop Help Menu to display the pdftex documentation:
+<pre>
+     CheckATaskStatus
+     CheckATaskStatusNew
+     /Library/TeX/texbin/texdoc
+     CheckATaskStatus
+     CheckATaskStatusNew
+     /Library/TeX/texbin/texdoc
+</pre>
+Note that we called texdoc with NSTask using the old API's. So terminationHandler was never involved, but after texdoc ran, a notification called the old CheckATaskStatus, which has been rewritten to usually just call the new CheckATaskStatusNew. This process happened twice, apparently because texdoc was called twice. I didn't investigate.
+
+<p> Finally, what does the bug look like? Unfortunately, I haven't been able to reproduce it recently. It will look almost or exactly like this:
+<pre>
+     Start task
+     Failed executing: ...
+     Standard output: .
+     Standard input: .
+     Standard error: .
+     Termination Reason: 2.
+     Repeating Job
+     CheckATaskStatusNew
+     /Library/TeX/texbin/pdflatex
+</pre>
+The key line here is "Repeating Job", which says that terminationHandler determined that the bug occurred and called TrashAUX and then TypeSet to typeset again.
+
+<p> I would be very interested in such debugging information. How often does the bug occur? Is "Repeating Job" always called when the bug occurs? Does the second typesetting always succeed?
+
+</ul>
+
+
+
 <P><h3>TeXShop Changes 4.21</h3></P>
 
 Version 4.21 is a minor release to clean up two syntax coloring bugs:

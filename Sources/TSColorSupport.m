@@ -116,21 +116,21 @@ static id sharedColorSupport = nil;
 - (NSColor *)liteColorWithKey: (NSString *)theKey
 {
     if ([theKey isEqualToString: @"EditorFlash"])
-        return [NSColor colorWithDeviceRed: 1 green: 0.95 blue: 1 alpha:1.00];
+        return [NSColor colorWithRed: 1 green: 0.95 blue: 1 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
-        return [NSColor colorWithDeviceRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
+        return [NSColor colorWithRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
     else
-        return [NSColor colorWithDeviceRed: 1.00  green: 1.00 blue: 1.00 alpha:1.00];
+        return [NSColor colorWithRed: 1.00  green: 1.00 blue: 1.00 alpha:1.00];
 }
 
 - (NSColor *)darkColorWithKey: (NSString *)theKey
 {
     if ([theKey isEqualToString: @"EditorFlash"])
-        return [NSColor colorWithDeviceRed: 0.00 green: 0.20  blue: 0.20 alpha:1.00];
+        return [NSColor colorWithRed: 0.00 green: 0.20  blue: 0.20 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
-        return [NSColor colorWithDeviceRed: 0.75 green: 0.75 blue: 0.75 alpha:1.00];
+        return [NSColor colorWithRed: 0.75 green: 0.75 blue: 0.75 alpha:1.00];
     else
-        return [NSColor colorWithDeviceRed: 0.00  green: 0.00 blue: 0.00 alpha:1.00];
+        return [NSColor colorWithRed: 0.00  green: 0.00 blue: 0.00 alpha:1.00];
 }
 
 
@@ -145,15 +145,15 @@ static id sharedColorSupport = nil;
 }
 
 
-- (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (float)red
-        Green: (float)green Blue: (float)blue Alpha: (float)alpha
+- (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (double)red
+        Green: (double)green Blue: (double)blue Alpha: (double)alpha
 {
     NSNumber *redNumber, *greenNumber, *blueNumber, *alphaNumber;
     
-    redNumber = [NSNumber numberWithFloat: red];
-    greenNumber = [NSNumber numberWithFloat: green];
-    blueNumber = [NSNumber numberWithFloat: blue];
-    alphaNumber = [NSNumber numberWithFloat: alpha];
+    redNumber = [NSNumber numberWithDouble: red];
+    greenNumber = [NSNumber numberWithDouble: green];
+    blueNumber = [NSNumber numberWithDouble: blue];
+    alphaNumber = [NSNumber numberWithDouble: alpha];
     NSArray *theArray = @[redNumber, greenNumber, blueNumber, alphaNumber];
     [theDictionary setObject: theArray forKey:theKey];
 }

@@ -291,6 +291,7 @@ enum RootCommand
 //	id					indexColorBox;
 	BOOL                aggressiveTrash;
 	BOOL				willClose;
+    BOOL                doAbort;
 
 	BOOL		_externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
@@ -306,7 +307,6 @@ enum RootCommand
     // for Jobs
     NSString    *parameterString;
     BOOL        parameterExists;
-    
     
 //	NSDate              *_pdfLastModDate;
 //	NSTimer             *_pdfRefreshTimer;
@@ -498,6 +498,7 @@ enum RootCommand
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
+
 
 // - (void) tryScrap:(id)sender;
 // - (IBAction) typesetScrap:(id)sender;
@@ -740,6 +741,8 @@ enum RootCommand
 
 - (void) saveFinished: (NSDocument *)doc didSave:(BOOL)didSave contextInfo:(void *)contextInfo;
 
+- (void)repeatTypeset;
+- (void)checkATaskStatusFromTerminationRoutine: (NSTask *)theTask;
 
 - (BOOL) startTask: (NSTask*) task running: (NSString*) leafname withArgs: (NSMutableArray*) args inDirectoryContaining: (NSString*) sourcePath withEngine: (NSInteger)theEngine;
 
@@ -823,7 +826,7 @@ enum RootCommand
 @interface TSDocument (Scrap)
 - (void) tryScrap:(id)sender;
 - (IBAction) typesetScrap:(id)sender;
-- (void)checkScrapTaskStatus:(NSNotification *)notification;
+// - (void)checkScrapTaskStatus:(NSNotification *)notification;
 @end
 
 

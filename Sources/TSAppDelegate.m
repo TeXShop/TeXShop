@@ -233,6 +233,7 @@
         atLeastHighSierra = NO;
     
     
+    
 #ifdef MOJAVEORHIGHER
     if (@available(macOS 10.14, *))
         // Code for macOS 10.14 or later

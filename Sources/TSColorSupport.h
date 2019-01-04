@@ -26,6 +26,6 @@
 - (NSColor *)darkColorAndAlphaWithKey: (NSString *)theKey;
 
 - (void)changeColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey fromColorWell: (id)theWell;
-- (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (float)red
-    Green: (float)green Blue: (float)blue Alpha: (float)alpha;
+- (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (double)red
+    Green: (double)green Blue: (double)blue Alpha: (double)alpha;
 @end

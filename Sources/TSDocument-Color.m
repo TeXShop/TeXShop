@@ -138,9 +138,9 @@
     mySyntaxColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"SyntaxIndex"];
     if (mySyntaxColor == nil) {
         if (withDarkColors)
-            mySyntaxColor = [NSColor colorWithDeviceRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
+            mySyntaxColor = [NSColor colorWithRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
         else
-            mySyntaxColor = [NSColor colorWithDeviceRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
+            mySyntaxColor = [NSColor colorWithRed: 1.0 green: 1.0 blue: 0.00 alpha: 1.00];
         }
     self.indexColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:mySyntaxColor, NSForegroundColorAttributeName, nil];
     
@@ -150,10 +150,10 @@
     /*
         {
         if (withDarkColors)
-            // mySyntaxColor = [NSColor colorWithDeviceRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.00];
+            // mySyntaxColor = [NSColor colorWithRed: 0.75 green: 0.75 blue: 0.75 alpha: 1.00];
             mySyntaxColor = [[TSColorSupport sharedInstance] darkColorWithKey: @"FootnoteColor"];
         else
-            // mySyntaxColor = [NSColor colorWithDeviceRed: 0.35 green: 0.35 blue: 0.35 alpha: 1.00];
+            // mySyntaxColor = [NSColor colorWithRed: 0.35 green: 0.35 blue: 0.35 alpha: 1.00];
             mySyntaxColor = [[TSColorSupport sharedInstance] liteColorWithKey: @"FootnoteColor"];
         }
      */

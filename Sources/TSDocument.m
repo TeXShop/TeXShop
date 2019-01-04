@@ -2738,8 +2738,8 @@ if ( ! skipTextWindow) {
 		name:NSTaskDidTerminateNotification object:nil];
     
     // notification for scrap
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkScrapTaskStatus:)
-                                                 name:NSTaskDidTerminateNotification object:nil];
+	// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkScrapTaskStatus:)
+    //                                              name:NSTaskDidTerminateNotification object:nil];
 		
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
 		name:NSFileHandleReadCompletionNotification object:nil];

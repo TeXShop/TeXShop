@@ -181,10 +181,10 @@ NSInteger stringSort(id s1, id s2, void *context)
     if (flashColor != nil)
         EditorFlashColorWell.color = flashColor;
     else if (withDarkColors)
-        // EditorFlashColorWell.color = [NSColor colorWithDeviceRed:0.00 green:0.20 blue:0.20 alpha:1.00];
+        // EditorFlashColorWell.color = [NSColor colorWithRed:0.00 green:0.20 blue:0.20 alpha:1.00];
         EditorFlashColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"EditorFlash"];
     else
-        // EditorFlashColorWell.color = [NSColor colorWithDeviceRed:1 green:0.95 blue:1 alpha:1];
+        // EditorFlashColorWell.color = [NSColor colorWithRed:1 green:0.95 blue:1 alpha:1];
         EditorFlashColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"EditorFlash"];
     
     footnoteCol = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"FootnoteColor"];
@@ -193,10 +193,10 @@ NSInteger stringSort(id s1, id s2, void *context)
     FootnoteColorWell.color = footnoteCol;
 /*
     else if (withDarkColors)
-        // FootnoteColorWell.color = [NSColor colorWithDeviceRed:0.75 green:0.75 blue:0.75 alpha:1.00];
+        // FootnoteColorWell.color = [NSColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.00];
         FootnoteColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"FootnoteColor"];
     else
-        // FootnoteColorWell.color = [NSColor colorWithDeviceRed:0.35 green:0.35 blue:0.35 alpha:1];
+        // FootnoteColorWell.color = [NSColor colorWithRed:0.35 green:0.35 blue:0.35 alpha:1];
         FootnoteColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"FootnoteColor"];
  */
         
@@ -279,59 +279,59 @@ NSInteger stringSort(id s1, id s2, void *context)
     prefsDictionary = [NSMutableDictionary dictionaryWithCapacity:19];
     [prefsDictionary setObject: theTitle forKey:@"Title"];
      
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorText" withRed: [SUD floatForKey:foreground_RKey]
-                                          Green: [SUD floatForKey:foreground_GKey] Blue: [SUD floatForKey:foreground_BKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorBackground" withRed: [SUD floatForKey:background_RKey]
-                                      Green: [SUD floatForKey:background_GKey] Blue: [SUD floatForKey:background_BKey] Alpha: [SUD floatForKey:backgroundAlphaKey]];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"LogText" withRed: [SUD floatForKey:foreground_RKey]
-                                      Green: [SUD floatForKey:foreground_GKey] Blue: [SUD floatForKey:foreground_BKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"LogBackground" withRed: [SUD floatForKey:background_RKey]
-                                      Green: [SUD floatForKey:background_GKey] Blue: [SUD floatForKey:background_BKey] Alpha: [SUD floatForKey:backgroundAlphaKey]];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ConsoleText" withRed: [SUD floatForKey:ConsoleForegroundColor_RKey]
-                                      Green: [SUD floatForKey:ConsoleForegroundColor_GKey] Blue: [SUD floatForKey:ConsoleForegroundColor_BKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ConsoleBackground" withRed: [SUD floatForKey:ConsoleBackgroundColor_RKey]
-                                      Green: [SUD floatForKey:ConsoleBackgroundColor_GKey] Blue: [SUD floatForKey:ConsoleBackgroundColor_BKey] Alpha: [SUD floatForKey:ConsoleBackgroundAlphaKey]];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorInsertionPoint" withRed: [SUD floatForKey:insertionpoint_RKey]
-                                      Green: [SUD floatForKey:insertionpoint_GKey] Blue: [SUD floatForKey:insertionpoint_BKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorText" withRed: [SUD doubleForKey:foreground_RKey]
+                                          Green: [SUD doubleForKey:foreground_GKey] Blue: [SUD doubleForKey:foreground_BKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorBackground" withRed: [SUD doubleForKey:background_RKey]
+                                      Green: [SUD doubleForKey:background_GKey] Blue: [SUD doubleForKey:background_BKey] Alpha: [SUD doubleForKey:backgroundAlphaKey]];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"LogText" withRed: [SUD doubleForKey:foreground_RKey]
+                                      Green: [SUD doubleForKey:foreground_GKey] Blue: [SUD doubleForKey:foreground_BKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"LogBackground" withRed: [SUD doubleForKey:background_RKey]
+                                      Green: [SUD doubleForKey:background_GKey] Blue: [SUD doubleForKey:background_BKey] Alpha: [SUD doubleForKey:backgroundAlphaKey]];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ConsoleText" withRed: [SUD doubleForKey:ConsoleForegroundColor_RKey]
+                                      Green: [SUD doubleForKey:ConsoleForegroundColor_GKey] Blue: [SUD doubleForKey:ConsoleForegroundColor_BKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ConsoleBackground" withRed: [SUD doubleForKey:ConsoleBackgroundColor_RKey]
+                                      Green: [SUD doubleForKey:ConsoleBackgroundColor_GKey] Blue: [SUD doubleForKey:ConsoleBackgroundColor_BKey] Alpha: [SUD doubleForKey:ConsoleBackgroundAlphaKey]];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorInsertionPoint" withRed: [SUD doubleForKey:insertionpoint_RKey]
+                                      Green: [SUD doubleForKey:insertionpoint_GKey] Blue: [SUD doubleForKey:insertionpoint_BKey] Alpha: 1.0];
     
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxComment" withRed: [SUD floatForKey:commentredKey]
-                                      Green: [SUD floatForKey:commentgreenKey] Blue: [SUD floatForKey:commentblueKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxCommand" withRed: [SUD floatForKey:commandredKey]
-                                      Green: [SUD floatForKey:commandgreenKey] Blue: [SUD floatForKey:commandblueKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxMarker" withRed: [SUD floatForKey:markerredKey]
-                                      Green: [SUD floatForKey:markergreenKey] Blue: [SUD floatForKey:markerblueKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxIndex" withRed: [SUD floatForKey:indexredKey]
-                                      Green: [SUD floatForKey:indexgreenKey] Blue: [SUD floatForKey:indexblueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxComment" withRed: [SUD doubleForKey:commentredKey]
+                                      Green: [SUD doubleForKey:commentgreenKey] Blue: [SUD doubleForKey:commentblueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxCommand" withRed: [SUD doubleForKey:commandredKey]
+                                      Green: [SUD doubleForKey:commandgreenKey] Blue: [SUD doubleForKey:commandblueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxMarker" withRed: [SUD doubleForKey:markerredKey]
+                                      Green: [SUD doubleForKey:markergreenKey] Blue: [SUD doubleForKey:markerblueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SyntaxIndex" withRed: [SUD doubleForKey:indexredKey]
+                                      Green: [SUD doubleForKey:indexgreenKey] Blue: [SUD doubleForKey:indexblueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"FootnoteColor" withRed: 0.35
                                       Green: 0.35 Blue: 0.35 Alpha: 1.0];
     
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightBraces" withRed: [SUD floatForKey:highlightBracesRedKey]
-                                      Green: [SUD floatForKey:highlightBracesGreenKey] Blue: [SUD floatForKey:highlightBracesBlueKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightContent" withRed: [SUD floatForKey:highlightContentRedKey]
-                                      Green: [SUD floatForKey:highlightContentGreenKey] Blue: [SUD floatForKey:highlightContentBlueKey] Alpha: 1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorInvisibleChar" withRed: [SUD floatForKey:invisibleCharRedKey]
-                                      Green: [SUD floatForKey:invisibleCharGreenKey] Blue: [SUD floatForKey:invisibleCharBlueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightBraces" withRed: [SUD doubleForKey:highlightBracesRedKey]
+                                      Green: [SUD doubleForKey:highlightBracesGreenKey] Blue: [SUD doubleForKey:highlightBracesBlueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightContent" withRed: [SUD doubleForKey:highlightContentRedKey]
+                                      Green: [SUD doubleForKey:highlightContentGreenKey] Blue: [SUD doubleForKey:highlightContentBlueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorInvisibleChar" withRed: [SUD doubleForKey:invisibleCharRedKey]
+                                      Green: [SUD doubleForKey:invisibleCharGreenKey] Blue: [SUD doubleForKey:invisibleCharBlueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorFlash" withRed: 1.0 Green: 0.95 Blue: 1.0 Alpha:1.0];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorReverseSync" withRed: [SUD floatForKey:reverseSyncRedKey]
-                                      Green: [SUD floatForKey:reverseSyncGreenKey] Blue: [SUD floatForKey:reverseSyncBlueKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorReverseSync" withRed: [SUD doubleForKey:reverseSyncRedKey]
+                                      Green: [SUD doubleForKey:reverseSyncGreenKey] Blue: [SUD doubleForKey:reverseSyncBlueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"PreviewDirectSync" withRed: 1.0 Green: 1.0 Blue: 0.0 Alpha: 1.0];
     
     
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"PreviewBackground" withRed: [SUD floatForKey:PdfPageBack_RKey]
-                                      Green: [SUD floatForKey:PdfPageBack_GKey] Blue: [SUD floatForKey:PdfPageBack_BKey] Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"PreviewBackground" withRed: [SUD doubleForKey:PdfPageBack_RKey]
+                                      Green: [SUD doubleForKey:PdfPageBack_GKey] Blue: [SUD doubleForKey:PdfPageBack_BKey] Alpha: 1.0];
     
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"SourceAlpha" withRed: 1.0
-                                      Green: 1.0 Blue: 1.0 Alpha: [SUD floatForKey: SourceWindowAlphaKey]];
+                                      Green: 1.0 Blue: 1.0 Alpha: [SUD doubleForKey: SourceWindowAlphaKey]];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"PreviewAlpha" withRed: 1.0
-                                      Green: 1.0  Blue: 2.0 Alpha: [SUD floatForKey: PreviewWindowAlphaKey]];
+                                      Green: 1.0  Blue: 2.0 Alpha: [SUD doubleForKey: PreviewWindowAlphaKey]];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ConsoleAlpha" withRed: 1.0
-                                      Green: 1.0 Blue: 1.0 Alpha: [SUD floatForKey: ConsoleWindowAlphaKey]];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ImageForeground" withRed: [SUD floatForKey:PdfFore_RKey]
-                                      Green: [SUD floatForKey:PdfFore_GKey] Blue: [SUD floatForKey:PdfFore_BKey]
-                                      Alpha: [SUD floatForKey:PdfFore_AKey]];
-    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ImageBackground" withRed: [SUD floatForKey:PdfBack_RKey]
-                                      Green: [SUD floatForKey:PdfBack_GKey] Blue: [SUD floatForKey:PdfBack_BKey]
-                                      Alpha: [SUD floatForKey:PdfBack_AKey]];
+                                      Green: 1.0 Blue: 1.0 Alpha: [SUD doubleForKey: ConsoleWindowAlphaKey]];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ImageForeground" withRed: [SUD doubleForKey:PdfFore_RKey]
+                                      Green: [SUD doubleForKey:PdfFore_GKey] Blue: [SUD doubleForKey:PdfFore_BKey]
+                                      Alpha: [SUD doubleForKey:PdfFore_AKey]];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"ImageBackground" withRed: [SUD doubleForKey:PdfBack_RKey]
+                                      Green: [SUD doubleForKey:PdfBack_GKey] Blue: [SUD doubleForKey:PdfBack_BKey]
+                                      Alpha: [SUD doubleForKey:PdfBack_AKey]];
     
     
     [prefsDictionary writeToFile: ourColorPath atomically: YES];

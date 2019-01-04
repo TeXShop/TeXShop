@@ -476,6 +476,8 @@
 
 }
 
+/*
+
 - (void)checkScrapTaskStatus:(NSNotification *)notification
 {
      NSInteger		status;
@@ -507,6 +509,7 @@
     
     self.scrapImagePath = nil;
 }
+*/
 
 
 @end

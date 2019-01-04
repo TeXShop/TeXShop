@@ -497,6 +497,8 @@ extern NSString *TurnOffParameterSpellCheckKey;
 extern NSString *ExceptionListExcludesParametersKey; // if YES while turning off command spell checking, list of words to spell check parameters
 extern NSString *ExtraCommandsToCheckParametersKey; // array of keywords whose parameters should be spell checked
 extern NSString *ExtraCommandsNotToCheckParametersKey; // array of keywhords whose parameters should not be spell checked
+extern NSString *DoNotFixTeXCrashKey;
+extern NSString *DisplayLogInfoKey;
 
 
 

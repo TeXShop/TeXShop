@@ -923,19 +923,21 @@ if (! skipTextWindow) {
         scrollView2.verticalScrollElasticity = NSScrollElasticityNone;
     }
     
-
+/*
 #ifdef MOJAVEORHIGHER
     if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
         [self changeColors: YES];
     else
 #endif
         [self changeColors: NO];
+
     
     [NSTimer scheduledTimerWithTimeInterval:1.0
                                      target:self
                                    selector:@selector(callNotification:)
                                    userInfo:nil
                                     repeats:NO];
+ */
 	}
 
 
@@ -952,6 +954,19 @@ if (! skipTextWindow) {
 		[self.syncBox setState:1];
 		showSync = YES;
 	}
+    
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && (textView1.effectiveAppearance.name == NSAppearanceNameDarkAqua))
+        [self changeColors: YES];
+    else
+#endif
+        [self changeColors: NO];
+
+    [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(callNotification:)
+                                   userInfo:nil
+                                    repeats:NO];
 
 	[self setupColors];
 

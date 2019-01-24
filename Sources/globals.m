@@ -323,6 +323,7 @@ NSString *SourceColorChangedNotification = @"SourceColorChangedNotification";
 NSString *PreviewColorChangedNotification = @"PreviewColorChangedNotification";
 NSString *DoNotFixTeXCrashKey = @"DoNotFixTeXCrash";
 NSString *DisplayLogInfoKey = @"DisplayLogInfo";
+NSString *UseTerminationHandlerKey = @"UseTerminationHandler";
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;

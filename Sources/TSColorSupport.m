@@ -41,9 +41,9 @@ static id sharedColorSupport = nil;
         reserveLitePath = [[NSBundle mainBundle] pathForResource:@"LiteTheme" ofType:@"plist"];
         [fileManager copyItemAtPath: reserveLitePath toPath: liteColorPath error: nil];
     }
-    if (! [fileManager fileExistsAtPath: liteColorPath])
+    if (! [fileManager fileExistsAtPath: darkColorPath])
     {
-        darkColorPath = [[NSBundle mainBundle] pathForResource:@"DarkTheme" ofType:@"plist"];
+        reserveDarkPath = [[NSBundle mainBundle] pathForResource:@"DarkTheme" ofType:@"plist"];
         [fileManager copyItemAtPath: reserveDarkPath toPath: darkColorPath error: nil];
     }
 }

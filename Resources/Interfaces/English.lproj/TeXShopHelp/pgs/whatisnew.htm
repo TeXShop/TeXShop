@@ -15,6 +15,61 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.23</h5></P>
+
+The changes in 4.23 are of two types. Some changes fix bugs in coloring and themes, and some fix bugs when NSTask is running latex and other TeX programs.
+
+<ul>
+<li> TeXShop provides default light and dark themes in ~/Library/TeXShop/Themes, named LiteTheme.plist and DarkTheme.plist. These are available in case the user activates other themes and then accidentally removes them. If   LiteTheme.plist or DarkTheme.plist is removed from the directory, TeXShop will recreate it. However, previous versions of TeXShop failed to recreate DarkTheme. That is because the code to recreate LiteTheme was copied and pasted to recreate DarkTheme, but variables inside this code were not changed. This bug is fixed. It is unlikely that many users ran into it.
+
+<p>
+<li>  Several users, however, ran into a second bug. When they started TeXShop, the Preview Window and the Console Window did not update their colors. In dark mode, the font color and background color of the console were equal, so the contents were invisible. Opening TeXShop Preferences and editing these colors fixed the problem, but this had to be done every time TeXShop started.
+
+<p> This problem only affected users who configured TeXShop to use an external editor. The problem is now fixed.
+
+<p> Most theme colors are for the editor, so the initialization code which set these colors was placed in the section of TeXShop initializing the editor, and thus never ran in external editor mode. The fix involved moving this color initialization code five lines down in the code base, so it covered all documents.
+
+<p>
+<li> Kurt Roth pointed out that version 4.22 broke "makeIndex" and provided a useful source file which clearly showed this binary working in version 4.21 and failing in 4.22. This problem is fixed. The source file made it easy to isolate the problem. Thanks, Kurt!
+<p>
+ There were two main changes in 4.22 which could affect makeIndex. The first was that I switched from the old NSTask API's,  now deprecated, to the new API's. Roth's source code revealed that this switch was not the cause of his problem.
+
+<p>
+The second change was that I switched from the  "notification" method of telling TeXShop that an external task ended to the "termination Handler" method. This handler failed with makeIndex, announcing a termination before the task was finished. The fix involved switching back to the old method when makeIndex is run.
+
+<li>
+<p> It is possible that the terminationHandler is misbehaving for other TeX tasks, so that instead of fixing the NSTask problem discussed at length in the 4.22 changes, it made the problem worse. Consequently, in TeXShop 4.23 we use the new NSTask API's on High Sierra and Mojave (where they are available), but revert on all operating systems  to the old notification method of telling TeXShop that an external task ended.
+
+<li>
+<p> This fix bypasses the fix for NSTask problems implemented in TeXShop 4.22 and described in detail in the associated Changes document. Therefore if latex seems to have failed due to the bug, TeXShop will not call
+"Trash AUX Files" and will not try to typeset a second time. Moreover, it will not display log information in the console.
+
+<li>
+<p> However, hidden preference items are available to turn this behavior back on, and activate the terminationHandler, for users who'd like to help debug the NSTask problem. To turn on the terminationHandler,
+which is off by default, 
+<pre>
+     defaults write TeXShop UseTerminationHandler YES
+</pre>
+
+<p> Turning this on will also turn on the NSTask bug fix by default. To turn it off
+<pre>
+     defaults write TeXShop DoNotFixTeXCrash YES
+</pre>
+
+<p> Logging information will be off by default. To turn it on
+<pre>
+     defaults write TeXShop DisplayLogInfo  YES
+</pre>
+Note: A very small number of users got an experimental version of TeXShop 4.23 before its official release. For those users, the default value of UseTerminationHandler was YES rather than the current NO. These users should run
+<pre>
+     defaults write TeXShop UseTerminationHandler NO
+</pre>
+so they are in sync with most users of TeXShop 4.23.
+
+
+</ul>
+
+
 <P><h5>TeXShop Changes 4.22</h5></P>
 
 Version 4.22 improves syntax coloring for footnotes and takes a first stab at fixing a typesetting bug.

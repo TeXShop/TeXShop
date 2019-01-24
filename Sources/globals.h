@@ -499,6 +499,7 @@ extern NSString *ExtraCommandsToCheckParametersKey; // array of keywords whose p
 extern NSString *ExtraCommandsNotToCheckParametersKey; // array of keywhords whose parameters should not be spell checked
 extern NSString *DoNotFixTeXCrashKey;
 extern NSString *DisplayLogInfoKey;
+extern NSString *UseTerminationHandlerKey;
 
 
 

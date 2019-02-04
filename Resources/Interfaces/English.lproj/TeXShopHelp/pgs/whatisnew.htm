@@ -15,6 +15,56 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.24</h5></P>
+
+Version 4.24 has three very minor changes:
+
+<ul>
+<li> Seiji Zenitani reported that In localized versions of TeXShop,  the Tags and Index pulldown menus first appear in English and then  switch to the correct language when initialized. This is particularly annoying in Japanese because English stands out like a sore thumb. Fixed.
+
+<p>
+<li> Jesús Soto uses TeXShop with an external editor, TextMate, and requested that SyncTeX in TeXShop be given the ability to sync from the Preview window to the corresponding source in TextMate. I absolutely, positively, refused to honor this request. But I couldn't help thinking about it. In the end I relented.
+
+<p>
+ TextMate installs a command line program in /usr/local/bin which is able to control some of the features of the editor. For instance, the command 
+ <pre>
+      /usr/local/bin/mate --line 50 /Users/koch/Syllabus.tex
+ </pre>
+ opens Syllabus.tex in TextMate (if not already open) and highlights line number 50.  This  makes it easy to support syncTeX from TeXShop to TextMate because the standard TeXShop routine to implement syncTeX
+ can still be used until the last moment when a line in the Source Window would be highlighted; this final step can be replaced by a call to "mate".
+
+
+<p>Therefore  TeXShop 4.24 can sync from the Preview window to TextMate in the standard way: click on a spot in the pdf display while holding down the command key. As a bonus, Goto Error works from the Console window if the user is using TeXShop to typeset. Click this button to be taken to the first error, and click again and again to cycle through the first few errors.  Of course TeXShop must be in "external editor" mode to use these features; It is also necessary to activate the features  with a hidden preference:
+<pre>
+     defaults write TeXShop TextMateSync YES
+</pre>
+
+<li>
+<p> TextMate is  one of many editors for the Macintosh. The ultimate goal is to  add the same support for most other editors. TeXShop Preferences would have a drop-down menu listing editors it understands. The user could select their editor in this menu and automatically "sync from pdf to editor" and "Goto Error". 
+
+<p> Unfortunately, I don't have time or money to accumulate editors and determine how each can be controlled. But users can gather this information for me. TeXShop 4.24 already supports other editors provided their users can write simple shell scripts, as will be explained shortly. If a user adds this support, they should send information back to me on how it was done, so I can make it easier for future users of their editor to gain the feature.
+
+<p> If you use a different external editor and want to implement the feature, you must first turn it on using a hidden preference:
+<pre>
+     defaults write TeXShop OtherEditorSync YES
+</pre>
+This default deactivates the TextMateSync preference mentioned earlier. Instead whenever TeXShop wants to "sync from pdf to editor" or "Goto Error", it calls a shell script in /usr/local/bin named "othereditor". When it calls this script, it sends two parameters to the call: $1 contains the line number (as a string), and $2 contains a full path to the desired tex source file. The othereditor script then calls the external editor using its version of the "mate" program.
+
+<p> But there is no "othereditor" script in /usr/local/bin. The user needs to create this  script. The script must be named "othereditor" with no extension, and have its execute bit turned on. The script should call whatever binary is used by the desired editor to open the file $2 if it is not already open, and jump to line $1. 
+
+<p> For example here is the complete "othereditor" script file for TextMate:
+<pre>
+     #!/bin/tcsh
+     set path= ($path /Library/TeX/texbin /usr/texbin /usr/local/bin)
+     /usr/local/bin/mate --line $1 $2 
+</pre>
+
+<p> A final word of warning. Since this code is preliminary, I haven't worried about paths or file names containing spaces. Avoid these spaces for now. When the final code is released supporting many editors, I'll polish that aspect of the code.
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 4.23</h5></P>
 
 The changes in 4.23 are of two types. Some changes fix bugs in coloring and themes, and some fix bugs when NSTask is running latex and other TeX programs.

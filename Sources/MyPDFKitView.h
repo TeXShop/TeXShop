@@ -28,6 +28,7 @@
 #import "OverView.h"
 #import "TSDocument.h"
 #import "HideView.h"
+#import "synctex_parser.h"
 
 @interface MyPDFKitView : PDFView <NSTableViewDelegate, NSWindowDelegate>
 {
@@ -110,6 +111,11 @@
     BOOL							oldSync;
     NSRect							syncRect[200];
 	int								numberSyncRect;
+    
+    NSTask                          *externalSyncTask;
+    NSTask                          *textMateTask;
+    NSTask                          *otherEditorTask;
+    struct synctex_scanner_t        *external_scanner;
 //    OverView                        *overView;
 	
 	
@@ -262,5 +268,15 @@
 - (void)doMagnifyingGlassML:(NSEvent *)theEvent level: (NSInteger)level;
 @end
 
+@interface MyPDFKitView (ExternalEditor)
+- (void)doErrorWithLine: (NSInteger)myErrorLine andPath: (NSString *)myErrorPath;
+- (void)doExternalSync: (NSPoint)thePoint;
+- (void)doNewExternalSync: (NSPoint)thePoint;
+- (void)allocateExternalSyncScanner;
+- (void)doExternalSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+@end
 
-
+@interface MyPDFKitView (TextMate)
+- (void)sendLineToTextMate: (NSInteger)aLine forPath: (NSString *)aPath;
+- (void)sendLineToOtherEditor: (NSInteger)aLine forPath: (NSString *)aPath;
+@end

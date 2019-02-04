@@ -5403,6 +5403,12 @@ else
 	NSUInteger        start, end, irrelevant;
 	BOOL			result;
     NSStringEncoding      theEncoding;
+    
+    if ([self.myDocument externalEditor])
+    {
+        [self doExternalSync:thePoint];
+        return;
+    }
 	
 	NSInteger syncMethod = [SUD integerForKey:SyncMethodKey];
 	

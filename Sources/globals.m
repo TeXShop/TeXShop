@@ -324,6 +324,9 @@ NSString *PreviewColorChangedNotification = @"PreviewColorChangedNotification";
 NSString *DoNotFixTeXCrashKey = @"DoNotFixTeXCrash";
 NSString *DisplayLogInfoKey = @"DisplayLogInfo";
 NSString *UseTerminationHandlerKey = @"UseTerminationHandler";
+NSString *TextMateSyncKey = @"TextMateSync";
+NSString *OtherEditorSyncKey = @"OtherEditorSync";
+
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;

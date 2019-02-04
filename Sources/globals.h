@@ -500,6 +500,8 @@ extern NSString *ExtraCommandsNotToCheckParametersKey; // array of keywhords who
 extern NSString *DoNotFixTeXCrashKey;
 extern NSString *DisplayLogInfoKey;
 extern NSString *UseTerminationHandlerKey;
+extern NSString *TextMateSyncKey;
+extern NSString *OtherEditorSyncKey;
 
 
 

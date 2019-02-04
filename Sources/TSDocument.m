@@ -1130,6 +1130,11 @@ if (! skipTextWindow) {
 
 	if (!_externalEditor) {
 		[self setupTags];
+        if (  [SUD boolForKey:UseNewTagsAndLabelsKey])
+            {
+                [self setupTags1];
+                [self setupLabels1];
+            }
 		myRange.location = 0;
 		myRange.length = 0;
 		[textView setSelectedRange: myRange];
@@ -4926,7 +4931,14 @@ if (! useFullSplitWindow) {
 		}
 	}
 	
-	
+    if (_externalEditor && doError)
+        {
+            NSString *fullPath = [[[[self fileURL] path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: [myErrorPath stringByStandardizingPath]];
+            NSString *fullCorrectedPath = [fullPath stringByStandardizingPath];
+            [self.myPDFKitView doErrorWithLine: myErrorLine andPath: fullCorrectedPath];
+            return;
+        }
+    
 	if (!_externalEditor && fileIsTex && doError) {
 		if (myErrorPath == nil) {
             [textWindow makeKeyAndOrderFront: self];

@@ -1245,7 +1245,6 @@ if (! skipTextWindow) {
             [self allocateSyncScanner];
         
         [self setLineBreakModeNew];
-        
     }
     
 

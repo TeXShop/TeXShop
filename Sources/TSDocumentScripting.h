@@ -83,6 +83,11 @@
 - (id)handleRefreshPDFCommand:(NSScriptCommand*)command;
 - (id)handleRefreshPDFBackgroundCommand:(NSScriptCommand*)command;
 - (id)handleTaskDoneCommand:(NSScriptCommand*)command;
+- (id)handleSyncToPreviewCommand:(NSScriptCommand*)command;
+- (id)handleSyncLineCommand:(NSScriptCommand*)command;
+- (id)handleSyncIndexCommand:(NSScriptCommand*)command;
+- (id)handleSyncNameCommand:(NSScriptCommand*)command;
+- (id)handleSyncPreviewCommand:(NSScriptCommand*)command;
 @end
 
 // Scripting support for TSAppDelegate

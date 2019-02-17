@@ -459,7 +459,10 @@ enum RootCommand
 @property           BOOL        scrapDVI;
 @property           BOOL        syntaxColor;
 
-
+// for Applescript
+@property           NSInteger   syncLine;
+@property           NSInteger   syncIndex;
+@property (retain)  NSString    *syncName;
 
  - (IBAction)setSaveExtension: sender;
 - (IBAction)changeMouseMode: sender;
@@ -793,9 +796,10 @@ enum RootCommand
 
 @interface TSDocument (SyncTeX)
 
- - (BOOL)doSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
- - (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
+- (BOOL)doSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+- (BOOL)doPreviewSyncTeXWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
 - (void)allocateSyncScanner;
+- (void)doPreviewSyncTeXExternalWithFilename: (NSString *) filePath andLine: (NSInteger)line andCharacterIndex: (NSUInteger)characterIndex;
 
 
 @end

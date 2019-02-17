@@ -2926,7 +2926,186 @@
 }
 
 
-
+- (void)doPreviewSyncTeXExternalWithFilename:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx
+{
+    int                pageNumber[200];
+    float            hNumber[200], vNumber[200], WNumber[200], HNumber[200]; //, xNumber[200], yNumber[200];
+    BOOL            firstPage[200];
+    int                initialFirstPage;
+    int                boxNumber;
+    NSRect            myOval;
+    PDFPage            *thePage;
+    int                i;
+    PDFSelection    *theSelection;
+    NSRect          pageSize;
+    NSString        *mySyncTeXFileName; //, *mySyncTeX;
+    const char        *name;
+    NSString        *theName;
+    NSString        *theFullName; //, *aName;
+    NSString        *rootFile, *rootPath, *theFile;
+    float            x, y, h, v, width, height;
+    PDFPage         *aPage;
+    NSInteger       theindex;
+    
+     
+    rootFile = [[self fileURL] path];
+    rootPath = [rootFile stringByDeletingLastPathComponent]; //path to root document
+    
+    theFile = fileName; //file we want to sync; this is always a full path
+    
+    // NSLog(@"Using New Source->Output Sync");
+    if (! rootFile)
+        return;
+    mySyncTeXFileName = [[rootFile stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+    if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+    {
+        mySyncTeXFileName = [[rootFile stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+            return;
+    }
+    
+    [self allocateSyncScanner];
+    
+    synctex_node_p node = synctex_scanner_input(scanner);
+    BOOL found = NO;
+    while (node != NULL) {
+        name = synctex_scanner_get_name(scanner, synctex_node_tag(node));
+        theName = [NSString stringWithCString:name encoding: NSUTF8StringEncoding];
+        theFullName = [theName stringByStandardizingPath];
+        
+        if ([theFile isEqualToString: theFullName]) {
+            found = YES;
+            break;
+        }
+        
+        theFullName = [[rootPath stringByAppendingPathComponent: theName] stringByStandardizingPath];
+        if ([theFile isEqualToString: theFullName]) {
+            found = YES;
+            break;
+        }
+        node = synctex_node_sibling(node);
+    }
+    
+    if (! found) {
+        NSLog(@"Nope, Couldn't Find File");
+        return;
+    }
+    
+    boxNumber = 0;
+    
+    //   NSLog(@"got here");
+    aPage = self.myPDFKitView.currentPage;
+    theindex = [[self.myPDFKitView document] indexForPage: aPage];
+    //  NSLog(@"thePageNumberIs %d", (long)theindex);
+    
+    
+    
+    if (synctex_display_query(scanner, name, line, 0, theindex) > 0) {  //last argument = page_hint
+        int page = -1;
+        BOOL gotSomething = NO;
+        
+        
+        while (((node = synctex_scanner_next_result(scanner)) != NULL) && (boxNumber < 200)) {
+            if (page == -1) {
+                page = synctex_node_page(node);
+                thePage = [[self.myPDFKitView document] pageAtIndex: (page - 1)];
+                pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+            }
+            if (synctex_node_page(node) != page)
+                continue;
+            gotSomething = YES;
+            // x = synctex_node_box_visible_x(node);
+            // y = synctex_node_box_visible_y(node);
+            x = 0; y = 0;
+            h = synctex_node_box_visible_h(node);
+            v = synctex_node_box_visible_v(node) - synctex_node_box_visible_height(node);
+            width = synctex_node_box_visible_width(node);
+            height = synctex_node_box_visible_height(node) + synctex_node_box_visible_depth(node);
+            
+            myOval.size.height = HNumber[0];
+            myOval.size.width = WNumber[0];
+            myOval.origin.x = hNumber[0];
+            myOval.origin.y = pageSize.size.height - vNumber[0] - myOval.size.height; //vNumber[0]; //pageSize.size.height - vNumber[0] - myOval.size.height;
+            
+            // The equations below define a rectangle, with origin (hNumber, vNumber) and size (WNumber, HNumber)
+            
+            hNumber[boxNumber] = h;
+            vNumber[boxNumber] = pageSize.size.height - v - height; // v;
+            WNumber[boxNumber] = width;
+            HNumber[boxNumber] = height;
+            pageNumber[boxNumber] = page;
+            firstPage[boxNumber] = YES;
+            boxNumber++;
+            
+        }
+        
+    }
+    
+    if (boxNumber == 0)
+        return;
+    
+    
+    [(MyPDFKitView *)self.pdfKitWindow.activeView setNumberSyncRect:boxNumber];
+    
+    i = 0;
+    while (i < boxNumber) {
+        [(MyPDFKitView *)self.pdfKitWindow.activeView setSyncRect: i originX: hNumber[i] originY: vNumber[i] width: WNumber[i] height: HNumber[i]];
+        i++;
+    }
+    
+    
+  
+    initialFirstPage = pageNumber[0];
+    thePage = [[self.myPDFKitView document] pageAtIndex: (pageNumber[0] - 1)];
+    pageSize = [thePage boundsForBox: kPDFDisplayBoxMediaBox];
+    
+    
+    myOval.size.height = HNumber[0];
+    myOval.size.width = WNumber[0];
+    myOval.origin.x = hNumber[0];
+    myOval.origin.y = vNumber[0];
+    
+    if (atLeastElCapitan) {
+        myOval.size.height = myOval.size.height + 40.0;
+        myOval.origin.y = myOval.origin.y - 20.0;
+    }
+    
+    // NSLog(@"The dimensions are %f and %f and %f and %f.", myOval.size.height, myOval.size.width, myOval.origin.x, myOval.origin.y);
+    
+    if ((HNumber[0] < 0.1) || (WNumber[0] <= 0.1))
+        theSelection = NULL;
+    else
+        theSelection = [thePage selectionForRect: myOval];
+    
+    
+    i = 1;
+     
+    [(MyPDFKitView *)self.pdfKitWindow.activeView setIndexForMark: (initialFirstPage - 1)];
+    [(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
+    [(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
+    [self.pdfKitWindow.activeView goToPage: thePage];
+    
+    [self.pdfKitWindow.activeView goToPage: thePage];
+    
+    // SECONDCOLOR
+    if (theSelection != NULL) {
+        [self.pdfKitWindow.activeView setCurrentSelection: nil];
+        //  [theSelection setColor: [NSColor yellowColor]];
+        //  [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+        //  [self.pdfKitWindow.activeView scrollSelectionToVisible:self];
+        if (atLeastSierra)
+            ;
+        else
+            [self.pdfKitWindow.activeView setCurrentSelection: nil];
+    }
+    
+    [self.pdfKitWindow.activeView display];
+    
+    if (! useFullSplitWindow)
+        [self.pdfKitWindow makeKeyAndOrderFront:self];
+    
+    
+}
 
 
 @end

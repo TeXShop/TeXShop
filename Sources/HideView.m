@@ -9,7 +9,19 @@
 
 #import "HideView.h"
 
+
 @implementation HideView
+
+/*
+- (void)dealloc
+{
+  [self.originalImage recache];
+ //   self.originalImage = nil;
+    if (self.originalImage)
+        NSLog(@"bad");
+    NSLog(@"releasing");
+}
+*/
 
 
 - (void) setSizeRect: (NSRect)theRect
@@ -19,14 +31,16 @@
 
 
 
+
 - (void)drawRect:(NSRect) theRect
 {
-   //     [self lockFocus];
-        [[NSGraphicsContext currentContext] setShouldAntialias: NO];
-        //  [[NSColor redColor] set];
-        //  NSRectFill(sizeRect);
-        [self.originalImage drawInRect: sizeRect];
-    //    [self unlockFocus];
+    //   [self lockFocus];
+    //    [[NSGraphicsContext currentContext] setShouldAntialias: NO];
+    
+        if (self.originalImage)
+             [self.originalImage drawInRect: sizeRect];
+    
+    //   [self unlockFocus];
 }
 
 

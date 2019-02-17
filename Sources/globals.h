@@ -616,3 +616,4 @@ extern NSDictionary *liteColors;
 extern NSDictionary *darkColors;
 
 extern NSArray *userCommandsToSpellCheck;
+

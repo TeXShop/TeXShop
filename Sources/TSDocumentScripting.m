@@ -352,6 +352,74 @@
 	return nil;
 }
 
+- (id)handleSyncToPreviewCommand:(NSScriptCommand*)command
+{
+    NSString    *filePath;
+    NSInteger   line;
+    NSUInteger  characterIndex;
+    
+    // NSLog(@"got here");
+    
+    NSDictionary* args = [command evaluatedArguments];
+    filePath = [args objectForKey:@"SourceName"];
+    line = [[args objectForKey:@"SourceLine"] integerValue];
+    characterIndex = [[args objectForKey:@"SourceCharIndex"] integerValue];
+    // NSLog(@"The line is $d", line);
+    // NSLog(@"The index is $d", characterIndex);
+    // NSLog(filePath);
+ //   [self doPreviewSyncTeXExternalWithFilename: filePath andLine: line andCharacterIndex: characterIndex];
+    
+    return nil;
+}
+
+- (id)handleSyncLineCommand:(NSScriptCommand*)command
+{
+    NSDictionary* args = [command evaluatedArguments];
+    self.syncLine = [[args objectForKey:@"Line"] unsignedIntegerValue];
+ //   NSLog(@"The value is %d", self.syncLine);
+    return nil;
+}
+
+- (id)handleSyncIndexCommand:(NSScriptCommand*)command
+{
+    NSDictionary* args = [command evaluatedArguments];
+    self.syncIndex = [[args objectForKey:@"Index"] unsignedIntegerValue];
+ //   NSLog(@"The value is %d", self.syncIndex);
+    return nil;
+}
+
+- (id)handleSyncNameCommand:(NSScriptCommand*)command
+{
+     NSDictionary* args = [command evaluatedArguments];
+    NSString *myString = [args objectForKey:@"Name"];
+    self.syncName = myString;
+ //   NSLog(myString);
+ //   NSLog(@"got here");
+ //   NSLog(@"At end, line is %d", self.syncLine);
+ //   NSLog(@"At end, index is %d", self.syncIndex);
+ //   NSLog(self.syncName);
+    
+    if ((_externalEditor) && (([SUD boolForKey: OtherEditorSyncKey]) || ([SUD boolForKey: TextMateSyncKey])) )
+        [self doPreviewSyncTeXExternalWithFilename: self.syncName andLine: self.syncLine andCharacterIndex: self.syncIndex];
+    
+    return nil;
+}
+
+- (id)handleSyncPreviewCommand:(NSScriptCommand*)command
+{
+    NSLog(@"got here");
+    NSLog(@"At end, line is %d", self.syncLine);
+    NSLog(@"At end, index is %d", self.syncIndex);
+    NSLog(self.syncName);
+    
+    // [self doPreviewSyncTeXExternalWithFilename: self.syncName andLine: self.syncLine andCharacterIndex: self.syncIndex];
+    
+    return nil;
+}
+
+
+
+
 
 @end
 

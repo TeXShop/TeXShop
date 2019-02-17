@@ -393,3 +393,4 @@ NSString *ConsoleWindowNameKey = @"ConsoleWindow";
 NSDictionary *liteColors;
 NSDictionary *darkColors;
 
+

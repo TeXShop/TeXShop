@@ -15,6 +15,137 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.25</h5></P>
+
+TeXShop 4.25 fixes an important memory leak. It fixes Applescript support, which broke a couple of months ago. And it continues the story of synchronizing with external editors started by TeXShop 4.24. Only people who configure TeXShop for an external editor will be interested in that third feature. But first, the memory leak, and applescript support.
+
+<ul>
+<li> Since at least High Sierra, there have been  reports of a strange bug that occurs during typesetting. For some users, console output stops in the middle for no apparent reason, as if TeX itself crashed. For other users, console output stops but typesetting continues to the end. These bugs are random and not reproducible, so I cannot report that they have been quashed. But maybe.
+
+<p>
+Recently, I was using TeXShop to write mathematics rather than programming the damn thing, and my Mac put up a dialog reporting that it was almost out of memory. That caused me to run Activity Monitor in /Applications/Utilities. Almost immediately, I noticed an astonishing leak. Every time I typeset, TeXShop used another 20 megabytes of memory, and never gave it back. 
+
+<p>
+Occasionally, Activity Monitor showed a different behavior. TeXShop would require additional memory, use it for a while, and eventually return it.  That is to be expected. But 20 megabytes of additional memory for each typesetting job is something else again.
+
+<p>  After each typesetting job, TeXShop opens the new pdf and displays it in the Preview Window. Recall that Apple's High Sierra introduced a  bug that affected TeXShop. When the new pdf replaced the old one, there was a noticeable flash in the Preview window. I reported this bug to Apple, and eventually they told me that they would not fix the bug. But they suggested a workaround, which I implemented. After typesetting and before loading the new pdf, TeXShop takes a picture of the Preview window and staples this picture over the window. When the new pdf is loaded, there is a flash, but it  happens underneath the stapled picture and is invisible. Then the picture is removed. The picture is in place for about half a second.
+
+<p> TeXShop has a hidden preference to turn off this fix, and using that preference I discovered that the fix is responsible for the memory leak. I'm using a 5K monitor with many pixels, so the memory leak may be larger for me than for other users. Next I investigated exactly where the leak occurred. It turned out that I could create the image, paste it on top of the window, comment out drawing the new image, and then remove the image from the window after the new pdf loaded, all without any leak. There was only a leak when the image was told to draw itself. Documentation suggests that the image caches information when it draws, and it is that cached information that is not released. I suspect this is an Apple bug. Luckily, there are several different ways to create that Image, and all but one do not produce memory leaks.
+
+<p> So TeXShop 4.25 still has the flash fix (unless users use the hidden preference to turn it off), but no longer has the memory leak. The new method is not quite as precise as the old one and users will be able to notice the moment when the old image is replaced by the new one. But I judge it tolerable.
+
+<li>
+<p> Apple introduced Applescript changes in Mojave. Before that system, programs were allowed to communicate with other programs via applescript without restriction. But in Mojave, programs must give permission to other programs which want to access them via applescript. A dialog appears on the screen and the user is asked to withhold or give permission. If the user selects "Don't Allow", the dialog never appears again and the calling program can never access that program. If the user selects "OK", the permission is listed in the Security and Privacy pane of Apple's System Preferences, often under "Privacy - Automation".  The permission can then be temporarily withheld, and given again, by checking items in this panel.
+
+<p> An additional step is  required if keyboard commands are to be sent to another application. In that case, TeXShop must be added to the "Privacy - Accessibility" section of Security and Privacy. To do this, click on the padlock in the pane to unlock it, drag the TeXShop icon to the Pane, and click the box left of this icon to activate TeXShop.
+
+<p> Apple's "Don't Allow" design has been widely criticized, since after withholding permission, the user is never given another chance to use the program which displayed the permission dialog. To fix this, run "tccutil remove All" in Terminal to remove all permissions and start the process all over again.
+
+<p> To participate in these permission dialogs, a Cocoa program must contain an item in its Info.plist with key 
+NSAppleEventsUsageDescription. Both TeXShop (for running "applescript direct" commands) and ScriptRunner (for running "applescript" commands) have this item.
+
+<p> A couple of months ago, these dialogs in Applescript stopped working in new versions of TeXShop. This is now fixed. But why did Applescript stop working?
+
+<p> When an Apple program is released, it must be "signed" by the developer. This signature indicates that the developer is known to Apple and is in good standing. Signing programs is a fairly elaborate process which is  automated in Apple's XCode programming system.
+
+<p> A few months ago, Apple added a new feature to this signing process. The new feature is currently optional, but will be required in the next version of macOS. When the procedure is used, the code is sent to Apple during signing, and tested there to make sure it contains no viruses. This testing is done by computer; Apple personnel do not directly examine the code. I immediately adopted the process.
+
+<p> When programs are submitted for inclusion in the Apple Store, they must be "sandboxed". This process restricts interaction with other programs and that would be unacceptable in the TeX world, so I will never do it. Thus TeXShop does not appear in the Apple Store.
+
+<p> The new signing feature does not require sandboxing. But it does require a related feature, called a "hardened runtime." When a program adopts a hardened runtime, then it cannot interact with other programs unless its developer selects interactions that will be used from a list provided by XCode. For instance, TeXShop never uses a camera, so I need not request that feature. And then if TeXShop is contaminated by a virtus, that virus will be unable to use the camera. TeXShop never uses the Contacts database, so with a hardened runtime, a contaminated TeXShop still could not use your contacts to forward viruses to all of your friends. Therefore this "hardened runtime" is a good deal.
+
+<p> Unfortunately, I failed to notice that one of the exceptions allowed TeXShop to "send Apple Events to other programs." So I didn't request that exception and Appletalk broke in TeXShop. Now I've checked that box.
+
+
+</ul>
+
+
+<p>
+If you do not use an external editor, you can stop reading here. Recall that TeXShop 4.24 and 4.25 have additional code for users of external editors.
+Both versions of TeXShop require some technical knowledge from users because they are concerned with  activating the new features for as many editors as possible. Later versions of TeXShop will simplify the steps required of users, perhaps only requiring that they select an editor from a list in TeXShop Preferences. 
+
+<ul>
+<li>
+TeXShop 4.24 activated "Goto Error" and "Sync from Preview to Editor" for External Editors. It did that by calling an external script, which had to be located in /usr/local/bin, had to have its execute bit set, and had to be named <b>othereditor</b>. This script received two inputs, $1 and $2. The first variable contained a line number of the source window and the second variable contained a full path to the  file to be displayed by the editor. When called in this way, the script should cause the editor to open the source file if it is not already open, scroll to the line number, and mark that line in some fashion. 
+
+<p> Activating this feature also required that TeXShop run in external editor mode, and that the hidden preference item "OtherEditorSync" be set to YES. 
+
+<p> The actual script would be written by the authors of the external editor, because only they know how to ask their editor to perform this action. The script might contains an applescript command, or perhaps activate a third party program which  communicates with the external editor. In a couple of cases, the script is already known because these editors communicate with other front ends. Below are scripts for TextMate, and for BBEdit.
+Thanks to Max Horn for these.
+
+<p> TextMate:
+<pre>
+     #!/bin/sh
+     /usr/local/bin/mate --line "$1" "$2"
+</pre>
+
+<p> BBEdit:
+<pre>
+      #!/bin/sh
+     /usr/local/bin/bbedit "$2:$1"
+</pre>
+
+Both of these scripts ultimately call binary programs in /usr/local/bin provided by the editors: mate for TextMate and bbedit for BBEdit. So they require that the editors install their associated binaries. In TextMate, for instance, there is a preference item which causes TextMate to install the mate program. 
+
+<li>
+<p> TeXShop 4.25 also allows syncing the other direction, from the editor to TeXShop. This time the editor must call TeXShop, giving it three variables, $1, $2, and $3. The first is the line number in the source file which the user clicked. The second is the character position in that line where the user clicked. Both are strings representing integers, so values might be 625 and 35. The final variable is a full path to the source file being displayed by the editor. This could be "/Users/koch/deRham/Chapter2.tex".
+
+<p> For this to work, TeXShop must be in External Editor mode and the hidden preference OtherEditorSync must be set to YES.
+
+<p> Notice that TeXShop will then open the synctex file and do all processing to finish syncing. Ultimately it will scroll to  the corresponding spot in the pdf Preview Window, and mark that spot.
+
+<p>The Editor can call TeXShop to perform this operation in one of two ways. First, there is a shell script which makes the call. Here is that script. Copy this text, say in TeXShop, and save it to a file named "ExternalSync" with no extension, and with its execute bit set. I recommend putting the file in /usr/local/bin. The location and name of the file are not important, provided the editor knows which name and location the user picked.
+<pre>
+      #!/bin/bash
+
+     MyShellVar=$1
+     MyShellVas=$2
+     MyShellVat=$3
+
+     osascript  &lt&ltEOD
+
+     tell application "TeXShop"
+	
+	activate
+	set the front_document to the front document
+	set MyAppVar to $MyShellVar
+	set MyAppVas to $MyShellVas
+	set MyAppVat to "$MyShellVat"
+	
+	tell front_document
+		sync_preview_line theLine MyAppVar
+		sync_preview_index theIndex MyAppVas
+		sync_preview_name theName MyAppVat
+		return 0
+	end tell
+	
+     end tell
+     EOD
+</pre>
+
+<p> Notice that this shell script receives three variables, and passes them on to an applescript which then runs and connects with TeXShop. Some editors may be able to run applescript commands directly. They can ignore the shell script and copy and run the applescript command.
+
+</ul>
+
+When I was an undergraduate, my teacher claimed that Niels Bohr would say after a conversation ``We clearly don't understand this theory; let's write a paper about it.'' In that spirit, let me write about communication between independent programs on the Mac. In Unix, each program runs as a separate process with an independent address space, so direct communication is not easy and usually involves the Unix kernel. 
+
+<p> One form of communication occurs when a program starts another program. It can then provide that second program with an unlimited number of parameters. GUI programs on the Mac are actually standard Unix programs in disguise, so they can be opened from the Terminal and additional parameters can be prescribed at that time.
+ TeXShop doesn't use that ability, but it certainly calls programs like TeX, MakeIndex, XeTeX, etc., providing each with additional parameters.  Some editors can also typeset; they call other programs in this way. 
+
+<p> Shell scripts are a special case of this. When such a script first starts, it can retrieve the parameters used to call it, as $1, $2, $3, and so forth. Cocoa has a special class called NSTask for starting other programs, so communicating when new programs start is easy to implement on the Mac, and in particular communicating by starting shell scripts is easy.
+
+<p> Applescript is another form of communication between independent programs.  Indeed, a major use of applescript is to make programs "scriptable", so they can be controlled by other pieces of code. Deep down inside, applescript implements special methods to make this communication between independent tasks possible.
+There are, however, two problems with applescript. The first is that it can be insecure, and in Mojave Apple started to address this problem by allowing programs to refuse to accept applescript communication. It is reasonable to fear future additional restrictions. (The second problem with Applescript may be my fault. I don't grok the language, and it doesn't grok me. So I waste hours and hours trying to make Applescript do something trivial, like pass more than one variable in a procedure.)
+
+<p> Notice that TextMate and BBEdit have another method of communicating with external programs. Each has an independent program in /usr/local/bin, which can ask the main program to perform certain tasks. I looked at the TextMate code. It called low level Unix socket commands; I admired it in the same way that I admired a 21 year old pianist who performed Liszt's Hungarian Rhapsody Number 6: fantastic, but something I could never do.
+
+<p> I once went to a NeXT developer conference, maybe the only one they held. At that conference, NeXT introduced "Distributed Objects", an easy way for independent programs to communicate on a NeXT. First, special "Connection Objects" established a connection between two programs. After that, one computer could run objects on the second machine and receive results back. The two programs could be running on the same machine, or different machines on a single ethernet network, or machines half way across the world. In the conference, NeXT showed slides containing the code necessary to establish such a connection. Each slide contained eight or ten lines of code.
+
+<p> This was in NeXTStep, which became OpenStep, and then Cocoa. So distributed objects are in Cocoa. I looked up the code recently. Every single routine in the API was deprecated.
+
+<p> However, there is a replacement, called XPC Services. I looked briefly at the code. It may be that this is the correct way to provide interconnection, particularly if AppleTalk has further restrictions. At the moment, I'm too lazy to proceed.
+
+
 <P><h5>TeXShop Changes 4.24</h5></P>
 
 Version 4.24 has three very minor changes:

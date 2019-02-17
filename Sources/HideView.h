@@ -17,9 +17,8 @@
     NSRect          sizeRect;
 }
 
-@property (retain) NSImage *originalImage;
+@property (strong) NSImage *originalImage;
 
 - (void) setSizeRect: (NSRect)theRect;
-
 
 @end

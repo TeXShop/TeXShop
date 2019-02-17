@@ -58,6 +58,14 @@
 
 @implementation MyPDFKitView : PDFView
 
+- (void)dealloc
+{
+    if (external_scanner != NULL)
+        synctex_scanner_free(external_scanner);
+    external_scanner = NULL;
+}
+
+
 - (void) breakConnections
 {
     // Breaks retain cycles to prevent memory leaks.
@@ -559,6 +567,7 @@
 
 - (NSImage *) screenCacheImageForView:(NSView*)aView
 {
+    
     NSRect originRect = [aView convertRect:[aView bounds] toView:[[aView window] contentView]];
     
     NSArray *screens = [NSScreen screens];
@@ -575,6 +584,9 @@
                                                (CGWindowID)[[aView window] windowNumber],
                                                kCGWindowImageDefault);
     return [[NSImage alloc] initWithCGImage:cgimg size:[aView bounds].size];
+    
+    
+    
 }
 
 
@@ -648,12 +660,40 @@
     
 if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
     {
-        NSView *myView = [[self documentView] enclosingScrollView];
-        sizeRect = [myView frame];
+    
+        // NSView *myView = [[self documentView] enclosingScrollView];
+        NSView *myView = [[self window] contentView];
+  
+    // First method
+        
+        /*
+        NSData* data = [myView dataWithPDFInsideRect:[myView frame]];
+        NSImage *myImage = [[NSImage alloc] initWithData:data];
+        */
+        
+    // Alternate method, creates some blur
+        
+        
+        NSBitmapImageRep *myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+        [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
+        NSSize mySize = [myView bounds].size;
+        NSSize imgSize = NSMakeSize( mySize.width, mySize.height );
+        NSImage *myImage = [[NSImage alloc]initWithSize:imgSize];
+        [myImage addRepresentation:myRep];
+        
+        
+    // Alternate method, has giant memory leak
+        
+        /*
         NSImage *myImage = [self screenCacheImageForView: myView];
+        */
+        
+        sizeRect = [myView bounds];
+       
         self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
         [self.myHideView1 setSizeRect: sizeRect];
         self.myHideView1.originalImage = myImage;
+        
         [myView addSubview: self.myHideView1];
    }
 
@@ -782,9 +822,10 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
     if (self.myHideView1) {
                 [self.myHideView1 removeFromSuperview];
                 self.myHideView1 = nil;
-    }
+                }
 }
 
+/*
 - (void)removeHideView2: (NSTimer *) theTimer
 {
     if (self.myHideView2) {
@@ -792,7 +833,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
         self.myHideView2 = nil;
     }
 }
-
+*/
 
 - (NSInteger)index
 {
@@ -852,18 +893,46 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
 	PDFPage		*aPage;
     NSRect      sizeRect;
     
+/*
 if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && (self.myHideView2 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
     {
     
-    NSView *myView = [[self documentView] enclosingScrollView];
-    sizeRect = [myView  frame];
-    NSImage *myImage = [self screenCacheImageForView: myView];
-    self.myHideView2 = [[HideView alloc] initWithFrame: sizeRect];
-    [self.myHideView2 setSizeRect: sizeRect];
-    self.myHideView2.originalImage = myImage;
-    [myView addSubview: self.myHideView2];
-     }
+   // NSView *myView = [[self documentView] enclosingScrollView];
+        
+    NSView *myView = [[self window] contentView];
+        
+        // First method
+        
+ 
+        // NSData* data = [myView dataWithPDFInsideRect:[myView frame]];
+        // NSImage *myImage2 = [[NSImage alloc] initWithData:data];
+ 
+        
+        // Alternate method, creates some blur
+        
+        
+        NSBitmapImageRep *myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+        [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
+        NSSize mySize = [myView bounds].size;
+        NSSize imgSize = NSMakeSize( mySize.width, mySize.height );
+        NSImage *myImage2 = [[NSImage alloc]initWithSize:imgSize];
+        [myImage2 addRepresentation:myRep];
+        
+        
+        // Alternate method, has giant memory leak
+        
+ 
+         // NSImage *myImage2 = [self screenCacheImageForView: myView];
+ 
 
+    sizeRect = [myView  frame];
+    
+//    self.myHideView2 = [[HideView alloc] initWithFrame: sizeRect];
+//    [self.myHideView2 setSizeRect: sizeRect];
+//    self.myHideView2.originalImage = myImage2;
+//    [myView addSubview: self.myHideView2];
+     }
+*/
     
     
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
@@ -982,7 +1051,8 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
     [self display]; //this is needed outside disableFlushWindow when the user does not bring the window forward
    // [self removeBlurringByResettingMagnification];
    [self fixWhiteDisplay];
- 
+
+/*
 if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
     {
         
@@ -992,6 +1062,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
                                        userInfo:Nil
                                         repeats:NO];
     }
+*/
 
 }
 

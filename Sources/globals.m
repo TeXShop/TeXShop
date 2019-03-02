@@ -393,4 +393,5 @@ NSString *ConsoleWindowNameKey = @"ConsoleWindow";
 NSDictionary *liteColors;
 NSDictionary *darkColors;
 
-
+NSPoint menuPoint;
+//double ppx, ppy;

@@ -177,18 +177,36 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 }
  
 #pragma mark =====pdfSync=====
+
+
+// WARNING:  This is called by mouse events with an actual event as parameter
+// but it is also alled by menuForEvent with, I think, a menu item number
+// Note that "theEvent" is never actually used! RMK; Feb, 2019
+
+- (void)doSyncForMenu: (NSInteger)theIndex
+{
+    NSPoint screenPosition = menuPoint;
+    [self doSyncFinal: screenPosition];
+}
+
 - (void)doSync:(NSEvent *)theEvent
+{
+    NSPoint screenPosition = [NSEvent  mouseLocation];
+    [self doSyncFinal: screenPosition];
+}
+
+- (void)doSyncFinal:(NSPoint)screenPosition
 {
 	NSInteger             line;
 	NSString        *text;
 	BOOL            found;
 	NSUInteger        start, end, irrelevant, stringlength, theIndex;
 	NSRange         myRange;
-	NSPoint         screenPosition;
+	// NSPoint         screenPosition;
 	NSString        *theSource;
 
 	// find the line number
-	screenPosition = [NSEvent  mouseLocation];
+	// screenPosition = [NSEvent  mouseLocation];
 	theIndex = [self characterIndexForPoint: screenPosition];
 	[self.document setCharacterIndex: theIndex];
 	text = [[self.document textView] string];
@@ -2633,11 +2651,18 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     [self setSelectedRange: selectedRange];
 }
 
+// Something fishy is going on here; I think the parameter of doSync is a menu item number, but doSync expects an event.
+// However, it never uses this event
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
 	NSMenu *theMenu = [super menuForEvent: theEvent];
 	if (theMenu != nil) {
-		[theMenu insertItemWithTitle:NSLocalizedString(@"Sync", @"Sync") action:@selector(doSync:) keyEquivalent:@"" atIndex:0];
+        menuPoint = [NSEvent mouseLocation];
+        // menuPoint = [theEvent locationInWindow];
+        // NSLog(@"The new values are %f and %f", menuPoint.x, menuPoint.y);
+        
+		[theMenu insertItemWithTitle:NSLocalizedString(@"Sync", @"Sync") action:@selector(doSyncForMenu:) keyEquivalent:@"" atIndex:0];
 		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
 		}
     return theMenu;

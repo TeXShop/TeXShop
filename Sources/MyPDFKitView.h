@@ -101,7 +101,6 @@
 	NSRect							rect;  // to simulate cacheImageInRect
 	
 	NSPoint							offsetPoint;
-	NSPoint							menuSyncPoint;  // For calling sync using a contextual menu
 	
 	BOOL							secondNeedsInitialization;
 	NSInteger								secondTheIndex;
@@ -117,6 +116,7 @@
     NSTask                          *otherEditorTask;
     struct synctex_scanner_t        *external_scanner;
 //    OverView                        *overView;
+    
 	
 	
 }

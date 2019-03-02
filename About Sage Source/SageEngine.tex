@@ -9,6 +9,7 @@
 
 \title{The Sage Engine}
 \author{Richard Koch}
+\date{\today}
 
 \begin{document}
 \maketitle
@@ -20,13 +21,13 @@ Sage is a mathematical software system providing an open source alternative to M
 Download sage from the above web site. As of October, 2018, two Macintosh downloads are provided. One provides a regular Macintosh application, and the other provides a Unix command line interface. These instructions assume you obtained the version with a Macintosh application.
 
 Move the resulting ``Sage'' program to /Applications. The
-application will have a longer name, currently SageMath-8.4.app.  Long ago, the name of this application could be changed, and then for a time it couldn't be renamed. It seems that the name is again changeable.  We recommend changing the name to SageMath.app, because then the process described below won't have to be redone every time SageMath is updated.
+application will have a longer name, currently SageMath-8.6.app.  Long ago, the name of this application could be changed, and then for a time it couldn't be renamed. The name is again changeable.  We recommend changing the name to SageMath.app, because then the process described below won't have to be redone every time SageMath is updated.
 
-(When renaming was first possible, we wrote 
+(An earlier version of this document contained this paragraph: 
 \begin{verbatim}
 If we keep the current name, the engine file will be tied to one particular
 version of Sage. To fix this, change the name to just ``SageMath''. This 
-clever step, which simplifies several steps below, is due to 
+clever step, which simplifies several steps originally added below, is due to 
 Daniel Grambihler.)
 \end{verbatim}
 
@@ -57,12 +58,12 @@ Notice in particular that sage can plot standard functions. Sage can also comput
 
 This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. This engine will work without changes if you rename the program to SageMath as recommended earlier.
 
- The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. The current engine assumes that the program was renamed ``SageMath'' and uses that name.  In the initial engine, the line reads
+ The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. The current engine assumes that the program was renamed ``SageMath'' and uses that name.  The line reads
 \begin{verbatim}
 /Applications/SageMath.app/Contents/Resources/sage/sage "$sagename"
 \end{verbatim}
-Here ``/Applications/SageMath.app'' is the name of the current SageMath being
-used, and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
+Here ``/Applications/SageMath.app'' is the name of the SageMath program,
+and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
 sage binary it contains.
 Dan Drake, who is responsible for SageTeX, wrote this engine.
 
@@ -88,6 +89,23 @@ Finally issue the command
      sudo mktexlsr
 \end{verbatim}
 	
+\section{A Debugging Warning}
+
+This document was revised in February, 2019 for a new version of SageTeX. We renamed the  application  "SageMath", and the Sage Engine and SageTeX immediately worked. 
+
+But the sample  document at the end of this report failed completely; no sage command worked. Ultimately that taught us a significant lesson we are passing along here.
+
+The problem in the sample document was a single sage command. We wrote 
+\begin{verbatim}
+     \sage{integrate((x^2+x+1)/((x-1)^3*(x^2+x+ 2)) )}
+\end{verbatim}
+and should have written
+\begin{verbatim}
+     \sage{integrate((x^2+x+1)/((x-1)^3*(x^2+x+ 2)), x )}
+\end{verbatim}
+Here Sage is being asked to symbolically integrate a rational function. If that function contained both $x$ and $y$, Sage would need to know which is the variable to integrate against. In earlier versions of Sage, apparently, Sage assumed the independent variable was $x$ if this information was omitted.  But now the extra comma and $x$ are required to indicate the variable.
+
+The key point here is that breaking just one sage command caused them all to fail. Consequently, if you intend to use Sage together with TeX and suddenly nothing works, a little clever debugging will be required to determine and fix the bad sage command.
 
 
 

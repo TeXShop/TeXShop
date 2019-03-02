@@ -617,3 +617,6 @@ extern NSDictionary *darkColors;
 
 extern NSArray *userCommandsToSpellCheck;
 
+extern NSPoint menuPoint;
+// extern double ppx, ppy;
+

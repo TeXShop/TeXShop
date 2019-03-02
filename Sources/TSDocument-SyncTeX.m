@@ -122,7 +122,6 @@
     TSDocument      *newDocument;
 	// NSString		*lineString;
 	
-    
     if (self.useOldSyncParser)
         return [self doSyncTeXForPageOld: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
   
@@ -212,6 +211,8 @@
    //     else
    //   newDocument = self;
 */
+       
+        
         
         if ([foundFileName isAbsolutePath])
 			newFile = [foundFileName stringByStandardizingPath];
@@ -235,8 +236,7 @@
 		NSWindow *myTextWindow = [newDocument textWindow];
         [newDocument setTextSelectionYellow: YES];
               
-		
-        // Now try to refine the selection
+         // Now try to refine the selection
         // ------------------------------------------
 		
 		viewPosition.x = xPosition;
@@ -1682,7 +1682,7 @@
 		paramString = [outputString substringWithRange: range2];
 		// NSLog(paramString);
 		yoffset = [paramString integerValue];
-		// NSLog(@"%f", yoffset);
+		// S(@"%f", yoffset);
 		outputString = [outputString substringFromIndex: lineEndIndex];
 		xoffset = xoffset * 65536;
 		yoffset = yoffset * 65536;

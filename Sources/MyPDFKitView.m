@@ -5480,7 +5480,8 @@ else
         [self doExternalSync:thePoint];
         return;
     }
-	
+    
+ 	
 	NSInteger syncMethod = [SUD integerForKey:SyncMethodKey];
 	
 	if (syncMethod == SYNCTEXFIRST) {
@@ -5492,8 +5493,7 @@ else
 			// syncMethod = SEARCHONLY;
 		}
 	
-	
-	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
+  	if ((syncMethod == SEARCHONLY) || (syncMethod == SEARCHFIRST)) {
 		result = [self doNewSync: thePoint];
 		if (result)
 			return;
@@ -6391,9 +6391,15 @@ else
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
+    NSPoint screenPosition;
+    NSRect  aRect, bRect;
+    NSPoint aPoint;
+
 	NSMenu *theMenu = [super menuForEvent: theEvent];
 	if (theMenu != nil) {
-		menuSyncPoint = [theEvent locationInWindow];
+		menuPoint = [theEvent locationInWindow];
+        // NSLog(@"The new values are %f and %f", menuPoint.x, menuPoint.y);
+        
 		[theMenu insertItemWithTitle: NSLocalizedString(@"Sync", @"Sync") action:@selector(doMenuSync:) keyEquivalent:@"" atIndex:0];
 		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
 	}
@@ -6403,7 +6409,9 @@ else
 - (void)doMenuSync: (id)theItem
 {
 	[[self window] invalidateCursorRectsForView: self];
- 	[self doSync: menuSyncPoint];
+    
+    // NSLog(@"The values are %f and %f", menuPoint.x, menuPoint.y);
+    [self doSync: menuPoint];
 }
 
 

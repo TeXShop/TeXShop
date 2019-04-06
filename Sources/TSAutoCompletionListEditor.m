@@ -1,4 +1,4 @@
-// TSAutoCompletionListEditor.m
+	// TSAutoCompletionListEditor.m
 // Created by Terada, Apr 2011
 
 #import "globals.h"
@@ -58,6 +58,8 @@
 - (IBAction)addPressed:(id)sender
 {
 	NSString *newKey = [newKeyField stringValue];
+  //  if ([newKey isEqualToString:@"tab"])
+  //\t      newKey = @"\t";
 	if ([newKey isEqualToString:@""]) {
 		NSBeep();
 	}else{

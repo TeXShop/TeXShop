@@ -1292,6 +1292,7 @@ if (! skipTextWindow) {
     
     
 }
+
     
 - (void)switchFrontWindow
    {

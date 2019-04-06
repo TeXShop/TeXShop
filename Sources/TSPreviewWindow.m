@@ -363,6 +363,8 @@ extern NSPanel *pageNumberWindow;
 	}
 }
 
+
+
 - (void)doMove: (id)sender
 {
     [self.myDocument doMove:sender];

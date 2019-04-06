@@ -27,6 +27,7 @@
 #import "TSDocument.h" // for the definition of isTeX (move this to a separate file!!)
 #import "globals.h"
 #import "TSDocumentController.h"
+#import "MyPDFKitView.h"
 
 
 
@@ -249,6 +250,12 @@
  {
      [self.myDocument splitWindow: sender];
  }
+
+- (void)performFindPanelAction: sender
+{
+    [self.myDocument.textView performFindPanelAction: sender];
+}
+
 
 - (void)close
 {

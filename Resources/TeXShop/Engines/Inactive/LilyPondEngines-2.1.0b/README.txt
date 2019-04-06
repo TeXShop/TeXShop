@@ -1,17 +1,17 @@
 [This file is UTF8-encoded]
 
-LilyPond engines for TeXShop
+LILYPOND ENGINES FOR TEXSHOP
 by Nicola Vitacolonna
 
 
-Installation
+INSTALLATION
 
 Copy LilyPond.engine, LilyPond-Book.engine and convert-ly.engine into
 ~/Library/TeXShop/Engines. Close and re-open TeXShop. The engines should now
 be available in TeXShop's drop-down menu.
 
 
-Usage
+USAGE
 
 Open a .ly or .lytex document, choose an engine and typeset!
 The LilyPond engine is meant for “pure” LilyPond documents (it runs lilypond).
@@ -47,14 +47,32 @@ name of your source file. It is safe to remove those folders at any time: they
 will be re-created at the next run.
 
 
-Troubleshooting
+WORKING WITH POINT-AND-CLICK
+
+Clicking on a note in TeXShop's PDF viewer opens LilyPond editor by default. If
+you want to jump to the source document in TeXShop instead, proceed as follows:
+
+1. Install the SwiftDefaultApps pref pane from https://github.com/Lord-Kamina/SwiftDefaultApps
+2. Open GotoTeXShop.applescript in Script Editor.
+3. Go to File > Export…
+4. Choose Application as the File Format.
+5. Save GotoTeXShop.app.
+6. Go to the SwiftDefaultApps pref pane and choose GotoTeXShop.app as the
+   handler for textedit URL Schemes.
+
+That's it. Go to TeXShop, typeset a LilyPond document, click on a note in the
+resulting PDF. You should get a dialog telling you that GotoTeXShop wants access
+to control “TeXShop” (this dialog appears only once). Click OK.
+
+
+TROUBLESHOOTING
 
 Q: When I try to typeset a document, a dialog appears with the following error:
    “[the] engine does not have the executable bit set”.
-   
+
 A: Open Terminal.app (you find it in /Applications/Utilities) and type the
    following, pressing Enter after each line:
-   
+
      cd ~/Library/TeXShop/Engines
      chmod +x *.engine
 
@@ -64,7 +82,7 @@ A: Yes, they should work out-of-the-box (I have not tested that, though).
 
 Q: In my system, LilyPond is not in the Applications folder, but in a
    subfolder of it. How can I modify your engines so that they will find it?
-   
+
 A: Edit LilyPond-Book.engine and set the $LILYPONDFOLDER variable to the
    path of the folder containing LilyPond.app. Then, edit LilyPond.engine and
    convert-ly.engine and set the lilypondfolder variable to the
@@ -86,35 +104,35 @@ A: A few things you may want to check:
 
    - Do your source filenames contain spaces, accented characters or
      non-ASCII characters? If so, try to rename the file(s).
-     
+
    - Does the path to your source file contain folders whose names include
      slashes, spaces, or non-ASCII characters? Try to rename the folder(s).
-     
+
    - If you have used my old engine lilypond-latex with a document
      including figures, you have probably written the following command
      in your main source:
-     
+
      \graphicspath{../}
-     
+
      Delete the above line. It was a workaround needed for lilypond-latex.engine,
      but it is not necessary for LilyPond-Book.engine.
-     
+
    - Does your source file require latex+dvips+ps2pdf or xe(la)tex? Then,
      you have to specify the TeX processor in your source file (see Usage
      section above).
-     
+
   If all the above fails, try to compile your document on the command line:
-  
+
     a) [optional, but recommended] make a duplicate of your document's folder.
-  
+
     b) Open Terminal.app and cd into your document's folder. For example,
        if your document's folder is MyBook and is located inside your Downloads
        folder, type
-     
+
          cd ~/Downloads/MyBook
-     
+
        and press Enter.
-     
+
     c) Type the following, pressing Enter after each line (this assumes that
        LilyPond.app is in your /Applications folder and that your main source
        file is called mybook.lytex):
@@ -123,37 +141,37 @@ A: A few things you may want to check:
          latex mybook.tex
          dvips -Ppdf mybook.dvi
          ps2pdf mybook.ps
-        
+
        If your document needs pdflatex, type the following instead:
 
          /Applications/LilyPond.app/Contents/Resources/bin/lilypond-book --latex-program=pdflatex mybook.lytex
          pdflatex mybook.tex
-         
+
        If you document needs xelatex, type the following instead:
-       
+
          /Applications/LilyPond.app/Contents/Resources/bin/lilypond-book --latex-program=xelatex mybook.lytex
          xelatex --output-driver="xdvipdfmx -q -E" mybook.tex
-     
+
        If compilation from the command-line goes wrong, the problem is unrelated
        to the TeXShop engine. You'd better check with the LilyPond mailing list.
 
   If compilation from the command line is successful, but it fails from within
   TeXShop, please do the following:
-  
+
     a) Open LilyPond-Book.engine with a plain text editor (not a word processor!)
 
     b) Search for the lines
-    
+
        my $VERBOSE = 0;
        my $DEBUG = 0;
 
        and change them to
-       
+
        my $VERBOSE = 1;
        my $DEBUG = 1;
-       
+
        Save the file.
-       
+
     c) Drag your -out and -lily folders to the trash (if they exist).
 
     d) Typeset your document again.
@@ -161,7 +179,7 @@ A: A few things you may want to check:
     e) Copy the whole log from TeXShop's console and send it to me at
        nvitacolonna@gmail.com, specifying which version of TeXShop and LilyPond
        you are using.
-       
+
 
 Running the engines from the shell (for advanced users only)
 

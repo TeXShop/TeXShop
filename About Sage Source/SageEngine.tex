@@ -18,18 +18,28 @@
 Sage is a mathematical software system providing an open source alternative to Magma, Maple, Mathematica, and Matlab. It is available from 
 \url{http://www.sagemath.org/} as a free download. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
-Download sage from the above web site. As of October, 2018, two Macintosh downloads are provided. One provides a regular Macintosh application, and the other provides a Unix command line interface. These instructions assume you obtained the version with a Macintosh application.
+Download sage from the above web site. As of April, 2019, SageMath 8.7 is provided. Different binaries are provided for different versions of macOS. For this note, we used the Mojave version. Even then, users have the choice of downloading a command line version or a version packaged as a Macintosh application. We picked the Macintosh application.
 
 Move the resulting ``Sage'' program to /Applications. The
-application will have a longer name, currently SageMath-8.6.app.  Long ago, the name of this application could be changed, and then for a time it couldn't be renamed. The name is again changeable.  We recommend changing the name to SageMath.app, because then the process described below won't have to be redone every time SageMath is updated.
+application will have a version specific name, currently SageMath-8.7.app.  Long ago, the name of this application could be changed, and we recommended changing the name to SageMath.app so upgrades could easily be installed. Then for a time the application broke if renamed. Now we get varying reports about renaming. So we'll give instructions below for two cases: the case when the application can be renamed SageMath.app and the case when the original name must be used.
 
-(An earlier version of this document contained this paragraph: 
+In $\sim$/Library/TeXShop/Engines/Inactive/Sage we provide a typesetting engine for Sage. The last lines of this engine read as follows:
 \begin{verbatim}
-If we keep the current name, the engine file will be tied to one particular
-version of Sage. To fix this, change the name to just ``SageMath''. This 
-clever step, which simplifies several steps originally added below, is due to 
-Daniel Grambihler.)
+ if [ "$run_sage" = "yes" ]
+ then
+    echo Running Sage, please wait a moment...
+    # New versions of Sage cannot be renamed; thus users need to read the
+    # documentation in ~/TeXShop/Engines/Inactive/Sage whenever they update Sage;
+    # for instance, the line below must contain the current name of Sage
+     
+    /Applications/SageMath-8.7.app/Contents/Resources/sage/sage "$sagename"
+    pdflatex --file-line-error --synctex=1 "$filename"
+ else
+     echo No Sage commands have changed, so running Sage is unnecessary.	  
+ fi
 \end{verbatim}
+
+Notice the line five lines from the bottom containing the string {\em SageMath-8.7.app}. If the Sage program name can be changed, we recommend changing this string to {\em SageMath.app}. After that, the engine need never be changed as long as the user changes the name of updates to just SageMath.app. But if the name of the Sage application cannot be changed, then this engine will have to be updated with the new name whenever you update Sage.
 
 
 SageTeX is a piece of the Sage download. It is basically a LaTeX style file, which  allows users to embed and process Sage code from within TeX files. The last three pages of this document show this style file in action. The source code on page four is followed by LaTeX output on pages five and six.
@@ -56,21 +66,12 @@ Notice in particular that sage can plot standard functions. Sage can also comput
 
 \section{Setting Up the Engine}
 
-This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. This engine will work without changes if you rename the program to SageMath as recommended earlier.
-
- The fifth line from the bottom of this engine contains a full path to the sage binary inside the Sage program, and includes the precise name of the version of Sage downloaded. The current engine assumes that the program was renamed ``SageMath'' and uses that name.  The line reads
-\begin{verbatim}
-/Applications/SageMath.app/Contents/Resources/sage/sage "$sagename"
-\end{verbatim}
-Here ``/Applications/SageMath.app'' is the name of the SageMath program,
-and ``/Contents/Resoures/sage/sage'' reaches inside the application bundle to find the
-sage binary it contains.
-Dan Drake, who is responsible for SageTeX, wrote this engine.
+This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. This engine will work unchanged for SageMath-8.7. Otherwise it must be edited as explained earlier in this document. Dan Drake, who is responsible for SageTeX, wrote this engine.
 
 The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you might also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this.
 
 But there is an ingenious way to work around this upgrade problem. Rather than copying the style file, we just
-create a symbolic link from it's location in TeX Live to its location in Sage. If we always rename the sage program to "SageMath", then this link will remain valid after updates and need not be changed.
+create a symbolic link from it's location in TeX Live to its location in Sage. If we always rename the sage program to "SageMath", then this link will remain valid after updates and need not be changed. Otherwise, it will need to be changed every time Sage is updated. Here is how to create the link:
 
 Run Terminal in /Applications/Utilities. Type the following
 \begin{verbatim}
@@ -80,9 +81,11 @@ Then type the following on a single line. Terminal may make a linefeed when
 the line  grows too long and that is fine, but do not for instance make a linefeed
 after the top "local" and before the bottom "/share".
 \begin{verbatim}
-     sudo ln -s /Applications/SageMath.app/Contents/Resources/sage/local
+     sudo ln -s /Applications/SageMath-8.7.app/Contents/Resources/sage/local
         /share/texmf/tex/latex/sagetex/sagetex.sty sagetex.sty
 \end{verbatim}
+
+Change SageMath-8.7.app to SageMath.app if renaming is possible, and change it to the appropriate version number if renaming is not possible and you update Sage.
 
 Finally issue the command
 \begin{verbatim}		
@@ -91,9 +94,9 @@ Finally issue the command
 	
 \section{A Debugging Warning}
 
-This document was revised in February, 2019 for a new version of SageTeX. We renamed the  application  "SageMath", and the Sage Engine and SageTeX immediately worked. 
+This document was revised in April, 2019 for a new version of SageTeX. 
 
-But the sample  document at the end of this report failed completely; no sage command worked. Ultimately that taught us a significant lesson we are passing along here.
+The sample  document at the end of this report failed completely; no sage command worked. Ultimately that taught us a significant lesson we are passing along here.
 
 The problem in the sample document was a single sage command. We wrote 
 \begin{verbatim}

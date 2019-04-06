@@ -78,7 +78,7 @@
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 - (void)associatedWindow:(id)sender;
 - (void)abort:(id)sender;
-
+- (void)performFindPanelAction: sender;
 
 
 /*

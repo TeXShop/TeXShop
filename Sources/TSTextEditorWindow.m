@@ -204,6 +204,11 @@
 - (void)saveSourcePosition: sender
 {
 	[self.myDocument saveSourcePosition];
+} 
+
+- (void)performFindPanelAction: sender
+{
+    [self.myDocument.textView performFindPanelAction:sender];
 }
 
 

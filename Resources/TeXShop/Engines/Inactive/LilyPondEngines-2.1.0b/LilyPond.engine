@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-# Version 2.0.4
+# Version 2.1.0b
 # Author: Nicola Vitacolonna (nvitacolonna@gmail.com)
 
 # Uncomment the following to debug:
@@ -9,12 +9,13 @@
 
 set lilypondfolder = /Applications/TeX  # Custom LilyPond folder
 set path = ($path /Applications/LilyPond.app/Contents/Resources/bin/)
+set path = ($path /usr/local/bin)
 set path = ($path /opt/local/bin)
 set path = ($path /sw/bin)
 if ( $?lilypondfolder ) then
 	set path = ($path $lilypondfolder/LilyPond.app/Contents/Resources/bin/)
 endif
 echo "Feeding $1 to lilypond... Please wait...";
-#lilypond "$1"                      # With "point-and-click"
-lilypond -dno-point-and-click "$1"  # Without "point-and-click"
+lilypond "$1"                      # With "point-and-click"
+#lilypond -dno-point-and-click "$1"  # Without "point-and-click"
 echo "Finished."

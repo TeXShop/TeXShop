@@ -51,6 +51,7 @@
 // forsplit
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 - (void)close;
+- (void)performFindPanelAction: sender;
 
 // end forsplit
 @end

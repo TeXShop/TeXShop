@@ -8,48 +8,53 @@ try:
 except:
  _st_.goboom(23)
 try:
- _st_.current_tex_line = 27
+ _st_.current_tex_line = 25
+ _st_.inline(1, latex(1324^9))
+except:
+ _st_.goboom(25)
+try:
+ _st_.current_tex_line = 29
  _st_.plot(0, format='notprovided', _p_=plot(x * sin( 30 * x), -1, 1))
 except:
- _st_.goboom(27)
+ _st_.goboom(29)
 try:
- _st_.current_tex_line = 31
- _st_.inline(1, latex(integrate( (x^2 + x + 1) / ((x - 1)^3 * (x^2 + x + 2)), x )))
+ _st_.current_tex_line = 33
+ _st_.inline(2, latex(integrate( (x^2 + x + 1) / ((x - 1)^3 * (x^2 + x + 2)), x )))
 except:
- _st_.goboom(31)
-try:
- _st_.current_tex_line = 36
- _st_.inline(2, latex(matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])^3))
-except:
- _st_.goboom(36)
+ _st_.goboom(33)
 try:
  _st_.current_tex_line = 38
- _st_.inline(3, latex(Matrix([[1, 2], [3, 4]])))
+ _st_.inline(3, latex(matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])^3))
 except:
  _st_.goboom(38)
 try:
- _st_.current_tex_line = 38
- _st_.inline(4, latex(Matrix([[5, 6], [6, 8]])))
+ _st_.current_tex_line = 40
+ _st_.inline(4, latex(Matrix([[1, 2], [3, 4]])))
 except:
- _st_.goboom(38)
+ _st_.goboom(40)
 try:
- _st_.current_tex_line = 38
- _st_.inline(5, latex(Matrix([[1, 2], [3, 4]]) * Matrix([[5, 6], [6, 8]])))
+ _st_.current_tex_line = 40
+ _st_.inline(5, latex(Matrix([[5, 6], [6, 8]])))
 except:
- _st_.goboom(38)
+ _st_.goboom(40)
 try:
- _st_.current_tex_line = 42
+ _st_.current_tex_line = 40
+ _st_.inline(6, latex(Matrix([[1, 2], [3, 4]]) * Matrix([[5, 6], [6, 8]])))
+except:
+ _st_.goboom(40)
+try:
+ _st_.current_tex_line = 44
  _st_.plot(1, format='notprovided', _p_=plot(x * ln(x), 0, 2))
 except:
- _st_.goboom(42)
+ _st_.goboom(44)
 try:
- _st_.current_tex_line = 46
- _st_.inline(6, latex(pi * e))
+ _st_.current_tex_line = 48
+ _st_.inline(7, latex(pi * e))
 except:
- _st_.goboom(46)
+ _st_.goboom(48)
 try:
- _st_.current_tex_line = 46
- _st_.inline(7, latex(N(pi * e)))
+ _st_.current_tex_line = 48
+ _st_.inline(8, latex(N(pi * e)))
 except:
- _st_.goboom(46)
+ _st_.goboom(48)
 _st_.endofdoc()

@@ -1,0 +1,409 @@
+#!/usr/bin/perl
+
+#     Copyright © 2009-2014 by Nicola Vitacolonna. All rights reserved.
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#     Portions Copyright 2002 Per Einar Ellefsen.
+#     Some parts copyright 2009 Adam Kennedy.
+#
+#     This program is free software; you can redistribute it and/or modify
+#     it under the same terms as Perl itself.
+use strict;
+use warnings;
+
+use File::Basename;
+use File::Copy;
+use File::Spec;
+use Module::Load::Conditional qw[can_load];
+
+my $VERSION = '2.1.0b';
+my $RELEASE_DATE = '2019/03/11';
+
+#===============================================================================
+# Start of configurable parameters
+#===============================================================================
+my $LILYPONDFOLDER = '/Applications/TeX'; # Custom path to Lilypond.app (OS X only)
+my $TEX = 'pdflatex'; # Name of TeX processor
+my $LILYSUFF = '-lily'; # Default suffix for directory for lily-XXX files
+my $OUTPUTSUFF = '-out'; # Default suffix for output directory
+my $VERBOSE = 1; # Set to 1 for added verbosity
+my $DEBUG = 0; # Set to 1 for debugging purposes only
+#===============================================================================
+# End of configurable parameters
+#===============================================================================
+
+print "This is LilyPond-Book engine $VERSION ($RELEASE_DATE) by Nicola Vitacolonna\n";
+
+### Adapted from File::Which
+use constant IS_VMS => ($^O eq 'VMS');
+use constant IS_MAC => ($^O eq 'MacOS');
+use constant IS_DOS => ($^O eq 'MSWin32' or $^O eq 'dos' or $^O eq 'os2');
+use constant IS_DARWIN => ($^O eq 'darwin');
+
+# For Win32 systems, stores the extensions used for
+# executable files
+# For others, the empty string is used
+# because 'perl' . '' eq 'perl' => easier
+my @PATHEXT = ('');
+if ( IS_DOS ) {
+	# WinNT. PATHEXT might be set on Cygwin, but not used.
+	if ( $ENV{PATHEXT} ) {
+		push @PATHEXT, split ';', $ENV{PATHEXT};
+	} else {
+		# Win9X or other: doesn't have PATHEXT, so needs hardcoded.
+		push @PATHEXT, qw{.com .exe .bat};
+	}
+} elsif ( IS_VMS ) {
+	push @PATHEXT, qw{.exe .com};
+}
+### End adapted from File::Which
+
+if (IS_DARWIN) {
+  $ENV{'PATH'} .= ':/Applications/LilyPond.app/Contents/Resources/bin:/usr/local/bin:/opt/local/bin:/sw/bin';
+  if ($LILYPONDFOLDER) {
+	  $ENV{'PATH'} .= ':' . $LILYPONDFOLDER . '/LilyPond.app/Contents/Resources/bin:'
+  }
+}
+
+my $extra_options = ''; # Extra options to be passed to lilypond-book
+$extra_options .= ' --verbose' if $VERBOSE;
+my $sourcepath = File::Spec->rel2abs($ARGV[0]);
+my ($volume, $dir, $filename) = File::Spec->splitpath($sourcepath);
+my $pwd = File::Spec->catdir($volume, $dir);
+my $rsync = which('rsync');
+
+print 'Filename: ' . $filename . "\n" if $VERBOSE;
+
+debug('Source path = ' . $sourcepath);
+debug("OS = " . $^O);
+debug("Working directory = $pwd");
+debug('PATH = ' . $ENV{PATH});
+debug('lilypond-book = ' . which('lilypond-book'));
+debug("$TEX = " . which($TEX));
+debug("dvips = " . which('dvips'));
+debug("ps2pdf = " . which('ps2pdf'));
+if (defined $rsync) {
+  debug('rsync = ' . which('rsync'));
+  debug(`$rsync --version`);
+}
+else {
+  debug('No rsync');
+}
+
+if ($filename =~ /(\\|\%)/) {
+  print "Sorry, the file name must not contain the character '$1'.";
+  print " Please rename the source file and try again.\n";
+	exit(1);
+}
+my ($suffix) = ($filename =~ /(\.(tex|ly|lytex|tely))$/);
+unless (defined $suffix) {
+	print "Sorry, the only valid suffixes for $filename are .tex, .lytex, .tely and .ly.\n";
+	exit(1);
+}
+my ($jobname) = ($filename =~ /^(.+)$suffix$/);
+die "Gosh! Empty file name!." unless (defined $jobname);
+if ($jobname =~ /\s/) {
+  print "WARNING: '$jobname$suffix' contain spaces, which *may* cause trouble.\n";
+  print " If compilation fails, try to rename '$jobname$suffix' without spaces.\n";
+}
+my $outdir  = File::Spec->catdir($pwd, $jobname . $OUTPUTSUFF);
+my $lilydir = File::Spec->catdir($pwd, $jobname . $LILYSUFF);
+
+debug("Job name = $jobname");
+debug("Outdir = $outdir");
+debug("Lilydir: $lilydir");
+
+# Search for %! LILYPOND directives in the source file
+if (open(SOURCE, '<', $sourcepath)) {
+	my $line;
+	while ($line = <SOURCE>) {
+		next if ($line =~ /^\s*$/);
+		last if ($line !~ /^\s*%/); # Read until the first non-comment line is found
+		if ($line =~ /^\s*%\s?!LILYPOND/) { # Parse %! LILYPOND directives
+			my ($directive, $value) =
+				($line =~ /^\s*%\s?!LILYPOND\s+(tex)\s*=\s*(.*)/);
+			unless (defined $directive) {
+				print "WARNING: skipping wrong directive: $line";
+				next;
+			}
+			if ($directive eq 'tex') {
+				$TEX = $value;
+				# Filter potentially dangerous characters
+				$TEX =~ s/[\;"'~&]//g;
+				if ($TEX ne $value) {
+					print "WARNING: stripped forbidden characters in ";
+					print $line;
+					print "The following characters are not allowed: \ ; \" ' ~ &\n";
+				}
+				# Strip leading and trailing spaces
+				$TEX =~ s/^\s*//;
+				$TEX =~ s/\s*$//;
+				print "Set TeX processor to '$TEX'.\n" if $VERBOSE;
+			}
+		} # end if
+	} # end while
+	close(SOURCE);
+}
+else {
+	print "WARNING: could not open " . $sourcepath . ".\n" if $VERBOSE;
+}
+
+my @texfiles = ();
+if (opendir(CURRDIR, $pwd)) {
+	if (@texfiles = map { ($_ =~ /\.tex$/) ? $_ : () } readdir(CURRDIR)) {
+		if (map { ($_ =~ /^$jobname\.tex$/) ? () : $_ } @texfiles) {
+			print "WARNING: the source directory contains .tex files other than";
+			print " the main source. If the main source includes those files,";
+			print " lilypond-book will fail.";
+			print " If you get an error, try changing their suffix to .lytex.\n";
+		}
+	}
+	closedir(CURRDIR);
+}
+else {
+	print "ERROR: could not access the source directory.\n";
+	exit(1);
+}
+
+# Create the output dir and copy all the needed files there
+if (defined $rsync and (not IS_DOS)) { # Use faster copy with rsync
+  my @exclude = ();
+  push(@exclude, '.*');
+  push(@exclude, '*.ly');
+  push(@exclude, '*.tex');
+  push(@exclude, basename($outdir));
+  push(@exclude, basename($lilydir));
+  push(@exclude, "$jobname.pdf");
+
+  my $filter = '';
+  foreach my $e (@exclude) {
+    $filter .= "--filter 'exclude $e' ";
+  }
+  my $cp_opt = '-az';
+  $cp_opt .= 'v' if $VERBOSE;
+  my $rsync_cmd = "$rsync $cp_opt $filter $pwd/ $outdir/";
+  mkdir $outdir;
+  runbabyrun($rsync_cmd, 'rsync');
+}
+else { # Recursive copy
+  if (can_load(modules => {
+    'File::Copy::Recursive' => undef,
+    'File::Path' => undef,
+    'File::Temp' => undef
+  })) {
+    File::Path::remove_tree($outdir,  {verbose => $DEBUG});
+    File::Path::remove_tree($lilydir, {verbose => $DEBUG});
+    # Use $tmpdir to avoid deep recursion condition
+    my $tmpdir = File::Temp::tempdir(CLEANUP => 1);
+    File::Copy::Recursive::dircopy($pwd, $tmpdir);
+    move($tmpdir, $outdir);
+  }
+  else {
+    print "The following Perl module must be installed: File::Copy::Recursive\n";
+    exit(1);
+  }
+}
+
+# Remove existing .tex and .ly files from the output directory,
+# because these may cause lilypond-book to fail with:
+#
+#     "lilypond-book: error: Output would overwrite input file; use --output."
+#
+unlink glob(File::Spec->catfile($outdir, "*.tex"));
+unlink glob(File::Spec->catfile($outdir, "*.ly"));
+
+# Run lilypond-book!
+if ($TEX =~ /^pdflatex/ or $TEX =~ /^xelatex/) {
+	$extra_options .= ' --pdf';
+}
+my $lily_cmd = "lilypond-book --latex-program='$TEX' --output '$outdir' --lily-output-dir '$lilydir' $extra_options '$jobname$suffix'";
+print "Going to process $jobname$suffix...\n";
+{
+  chdir($pwd) or die "$!";
+  debug("Working dir changed to $pwd");
+  runbabyrun($lily_cmd, 'lilypond-book',
+    "Sorry, an error has occurred during the engraving process\n");
+}
+
+# Typeset with (pdf|xe|)latex
+if ($TEX =~ /^xelatex/) {
+	$TEX .= " --output-driver='xdvipdfmx -q -E'";
+}
+
+{
+  chdir($outdir) or die "$!";
+  debug("Working dir changed to $outdir");
+  runbabyrun("$TEX '$jobname.tex'", $TEX);
+  if ($TEX =~ /^latex/) {
+    runbabyrun("dvips -Ppdf '$jobname.dvi'", 'dvips');
+    runbabyrun("ps2pdf '$jobname.ps'", 'ps2pdf');
+  }
+}
+
+# Move output to the source directory
+move(File::Spec->catfile($outdir, "$jobname.pdf"), $pwd);
+
+# Copy auxiliary files to the source directory.
+# This is needed for further processing by tools like bibtex, makeindex, etc...
+my @aux = ();
+if (opendir(OUTDIR, $outdir)) {
+	@aux = map { ($_ =~ /^$jobname\..+$/) ? $_ : () } readdir(OUTDIR);
+	@aux = map { ($_ =~ /\.(tex|ly|lytex|tely|dep|bib)$/) ? () : $_ } @aux;
+	closedir(OUTDIR);
+}
+else {
+	print "ERROR: access to $outdir has failed.";
+	exit(1);
+}
+print "Auxiliary files: @aux.\n" if $VERBOSE;
+foreach my $f (@aux) {
+  copy(File::Spec->catfile($outdir, $f), File::Spec->catfile($pwd, $f));
+}
+print "Success!\n";
+exit(0);
+
+sub debug {
+  return unless $DEBUG;
+  print "### DEBUG: " . shift . "\n";
+}
+
+# Runs a command and exits if the command fails.
+#
+#  runbabyrun($cmd): run the given command
+#  runbabyrun($cmd, $prog): run the given command, use $prog as the name of the
+#                           program in error messages
+#  runbabyrun($cmd, $prog, $msg): also specify a custom error message
+sub runbabyrun {
+	my $cmd = shift;
+	my $prog =  shift;
+	$prog = ($cmd =~ /^(\w+)/) unless defined $prog;
+	my $msg = shift;
+	$msg = "Sorry, an error has occurred on running $prog.\n" unless defined $msg;
+	debug('Executing ' . $cmd);
+	system($cmd);
+	my $exit_code = verifySystemCall($prog);
+	if ($exit_code != 0) {
+		print $msg;
+		debug("$cmd has exited with exit status $exit_code.");
+		exit($exit_code);
+	}
+}
+
+# verifySystemCall()
+#
+#  Usage    : my $exit_status = verifySystemCall($program_name);
+#  Returns  : -1 if the program couldn't be run;
+#             -2 if the program died (a msg is printed to stdout);
+#             the exit code of the program, otherwise.
+sub verifySystemCall {
+	my $prog = shift;
+	return -1 if ($? == -1);
+    if ($? & 127) {
+	    my $sig = ($? & 127);
+	    my $core = ($? & 128) ? 'with' : 'without';
+		print "$prog died with signal $sig, $core coredump.\n";
+		return -2;
+	}
+	elsif (($? >> 8) != 0) {
+		my $x = $? >> 8;
+		return $x;
+	}
+	return 0;
+}
+
+# This subroutine is copied verbatim from File::Which.
+# We copied here because we don't want this script to
+# have dependencies outside core Perl.
+sub which {
+	my ($exec) = @_;
+
+	return undef unless $exec;
+
+	my $all = wantarray;
+	my @results = ();
+
+	# check for aliases first
+	if ( IS_VMS ) {
+		my $symbol = `SHOW SYMBOL $exec`;
+		chomp($symbol);
+		unless ( $? ) {
+			return $symbol unless $all;
+			push @results, $symbol;
+		}
+	}
+	if ( IS_MAC ) {
+		my @aliases = split /\,/, $ENV{Aliases};
+		foreach my $alias ( @aliases ) {
+			# This has not been tested!!
+			# PPT which says MPW-Perl cannot resolve `Alias $alias`,
+			# let's just hope it's fixed
+			if ( lc($alias) eq lc($exec) ) {
+				chomp(my $file = `Alias $alias`);
+				last unless $file;  # if it failed, just go on the normal way
+				return $file unless $all;
+				push @results, $file;
+				# we can stop this loop as if it finds more aliases matching,
+				# it'll just be the same result anyway
+				last;
+			}
+		}
+	}
+
+	my @path = File::Spec->path;
+	if ( IS_DOS or IS_VMS or IS_MAC ) {
+		unshift @path, File::Spec->curdir;
+	}
+
+	foreach my $base ( map { File::Spec->catfile($_, $exec) } @path ) {
+		for my $ext ( @PATHEXT ) {
+			my $file = $base.$ext;
+
+			# We don't want dirs (as they are -x)
+			next if -d $file;
+
+			if (
+				# Executable, normal case
+				-x _
+				or (
+					# MacOS doesn't mark as executable so we check -e
+					IS_MAC
+					||
+					(
+						IS_DOS
+						and
+						grep {
+							$file =~ /$_\z/i
+						} @PATHEXT[1..$#PATHEXT]
+					)
+					# DOSish systems don't pass -x on
+					# non-exe/bat/com files. so we check -e.
+					# However, we don't want to pass -e on files
+					# that aren't in PATHEXT, like README.
+					and -e _
+				)
+			) {
+				return $file unless $all;
+				push @results, $file;
+			}
+		}
+	}
+
+	if ( $all ) {
+		return @results;
+	} else {
+		return undef;
+	}
+}
+

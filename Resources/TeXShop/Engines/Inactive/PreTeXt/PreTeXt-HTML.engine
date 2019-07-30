@@ -1,9 +1,29 @@
 #!/bin/bash
 
-OUTFILE="`basename $1`"
+OUTFILE="`basename "$1"`"
 
-OUTFILE="${OUTFILE%.*}.html"
+EXTENSION="${OUTFILE##*.}"
 
-xsltproc $HOME/Library/TeXShop/bin/xsl/mathbook-html.xsl "$1" 1>&2
+if [[ "$EXTENSION" = "tex" ]]; then
+	echo "Cannot typeset file with extension .tex"
+	exit
+fi
 
-/Applications/Safari.app/Contents/MacOS/Safari "$OUTFILE"  &
+if  [[ "$EXTENSION" = "ctx" ]]; then
+	echo "Cannot typeset file with extension .ctx"
+	exit
+fi
+
+if  [[ "$EXTENSION" = "ltx" ]]; then
+	echo "Cannot typeset file with extension .ltx"
+	exit
+fi
+
+DIR="$PWD"
+SLASH="/"
+TITLE="index.html"
+HTMLFILE="$DIR$SLASH$TITLE"
+
+xsltproc --xinclude $HOME/Documents/mathbook/xsl/mathbook-html.xsl "$1" 
+
+open "$HTMLFILE" 

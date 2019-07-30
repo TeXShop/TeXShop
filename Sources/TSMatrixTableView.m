@@ -198,7 +198,7 @@ static NSColor *sStripeColor = nil;
 		//[_inactiveDataCell init];
 		
 		// FIXME: BAD HACK! We are directly accessing a member variable of NSTextFieldCell here!
-		_dataCell = [[ActiveTextFieldCell alloc] init];
+		self.dataCell = [[ActiveTextFieldCell alloc] init];
 		
 		_inactiveDataCell = [[InactiveTextFieldCell alloc] init];
 	}

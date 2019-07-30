@@ -47,6 +47,7 @@
 - (IBAction)previousTeXWindow:(id)sender; // added by Taylor
 // - (BOOL)forPreview;
 - (void)finishCommandCompletionConfigure; // mitsu 1.29 (P)
+- (void)reReadCommandCompletionData;
 - (void)openCommandCompletionList: (id)sender; // mitsu 1.29 (P)
 #ifdef MITSU_PDF
 - (void)changeImageCopyType: (id)sender; // mitsu 1.29 (O)
@@ -62,4 +63,5 @@
 - (IBAction)doMovie:(id)sender;
 // - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 - (void)makeDefaultEditor:(id)sender;
+- (void)updateXMLTabs;
 @end

@@ -61,4 +61,5 @@
 
 @interface NSTextView (TeXShop)
 - (NSRange)visibleCharacterRange;
+- (void) closeTag: (id)sender;
 @end

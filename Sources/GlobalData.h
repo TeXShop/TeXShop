@@ -13,6 +13,7 @@
 @property (retain) NSDictionary		*g_autocompletionDictionary;
 @property (retain) NSArray			*g_autocompletionKeys;  // added by Terada
 @property (retain) NSString         *g_defaultLanguage;
+@property (retain) NSString         *CommandCompletionPath;
 
 
 + (GlobalData *)sharedGlobalData;

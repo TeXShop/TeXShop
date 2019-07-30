@@ -28,9 +28,6 @@
     NSMutableDictionary     *environmentForTask;
     NSArray                 *args;
     NSString                *filename, *sourcePath;
-    NSURL                   *myFileURL, *myCurrentDirectoryURL;
-    BOOL                    result;
-    NSError                 *error;
     
     if (textMateTask != nil)
     {
@@ -76,10 +73,7 @@
     NSMutableDictionary     *environmentForTask;
     NSArray                 *args;
     NSString                *filename, *sourcePath;
-    NSURL                   *myFileURL, *myCurrentDirectoryURL;
-    BOOL                    result;
-    NSError                 *error;
-    
+     
     if (otherEditorTask != nil)
     {
         if ([otherEditorTask isRunning])

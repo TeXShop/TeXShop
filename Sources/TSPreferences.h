@@ -165,6 +165,7 @@
 	BOOL            bibTeXengineTouched; // added by Terada
 //	BOOL            makeatletterTouched; // added by Terada
     BOOL            sparkleTouched;
+    BOOL            xmlTagsTouched;
    
     IBOutlet NSPopUpButton  *dictionaryPopup;
 	IBOutlet NSPopUpButton	*_pageStylePopup;// mitsu 1.29 (O) /*" connected to page style popup button "*/
@@ -212,6 +213,24 @@
     IBOutlet NSColorWell    *ConsoleAlphaColorWell;
     IBOutlet NSColorWell    *ImageForegroundColorWell;
     IBOutlet NSColorWell    *ImageBackgroundColorWell;
+    
+    IBOutlet NSColorWell    *XMLCommentColorWell;
+    IBOutlet NSColorWell    *XMLTagColorWell;
+    IBOutlet NSColorWell    *XMLSpecialColorWell;  // for &
+    IBOutlet NSColorWell    *XMLParameterColorWell;
+    IBOutlet NSColorWell    *XMLValueColorWell;
+    
+    IBOutlet NSButton       *XMLchapter;
+    IBOutlet NSButton       *XMLsection;
+    IBOutlet NSButton       *XMLsubsection;
+    IBOutlet NSButton       *XMLsubsubsection;
+    IBOutlet NSButton       *XMLintroduction;
+    IBOutlet NSButton       *XMLconclusion;
+    IBOutlet NSButton       *XMLexercises;
+    IBOutlet NSButton       *XMLproject;
+    IBOutlet NSButton       *XMLfigure;
+    IBOutlet NSButton       *XMLtable;
+    IBOutlet NSButton       *XMLmark;
     
     NSMutableDictionary     *EditingColors;
     
@@ -389,10 +408,29 @@
 - (IBAction)ImageForegroundChanged:sender;
 - (IBAction)ImageBackgroundChanged:sender;
 
+- (IBAction)XMLCommentChanged:sender;
+- (IBAction)XMLTagChanged:sender;
+- (IBAction)XMLSpecialChanged:sender;
+- (IBAction)XMLParameterChanged:sender;
+- (IBAction)XMLValueChanged:sender;
+
+- (IBAction)XMLChapterButtonChanged:sender;
+- (IBAction)XMLSectionButtonChanged:sender;
+- (IBAction)XMLSubsectionButtonChanged:sender;
+- (IBAction)XMLSubsubsectionButtonChanged:sender;
+- (IBAction)XMLIntroductionButtonChanged:sender;
+- (IBAction)XMLConclusionButtonChanged:sender;
+- (IBAction)XMLExercisesButtonChanged:sender;
+- (IBAction)XMLProjectButtonChanged:sender;
+- (IBAction)XMLFigureButtonChanged:sender;
+- (IBAction)XMLTableButtonChanged:sender;
+- (IBAction)XMLMarkButtonChanged:sender;
+
 - (IBAction)okForStylePanel:sender;
 - (IBAction)cancelForStylePanel:sender;
 - (void)okForColor;
 - (void)cancelForColor;
+
 
 
 @end

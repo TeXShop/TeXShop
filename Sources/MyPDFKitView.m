@@ -120,6 +120,7 @@
 }
 */
 
+
 - (void)setScaleFactor:(CGFloat)scale
 {
     [super setScaleFactor: scale];
@@ -891,7 +892,6 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
 - (void) reShowForSecond
 {
 	PDFPage		*aPage;
-    NSRect      sizeRect;
     
 /*
 if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && (self.myHideView2 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
@@ -2691,7 +2691,6 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 
 - (void) mouseDown: (NSEvent *) theEvent
 {
- 
     if ((BuggyHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
         {
         if ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE))
@@ -6391,10 +6390,7 @@ else
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    NSPoint screenPosition;
-    NSRect  aRect, bRect;
-    NSPoint aPoint;
-
+ 
 	NSMenu *theMenu = [super menuForEvent: theEvent];
 	if (theMenu != nil) {
 		menuPoint = [theEvent locationInWindow];

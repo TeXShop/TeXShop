@@ -32,6 +32,9 @@
 // This provides dark mode
 #define MOJAVEORHIGHER
 
+// This makes the XML tag in the Save Panel's Type List be the default for xml files
+#define XMLINDEX    42
+
 /*
  End
 */
@@ -503,6 +506,18 @@ extern NSString *UseTerminationHandlerKey;
 extern NSString *TextMateSyncKey;
 extern NSString *OtherEditorSyncKey;
 
+extern NSString *XMLChapterTagKey;
+extern NSString *XMLSectionTagKey;
+extern NSString *XMLSubsectionTagKey;
+extern NSString *XMLSubsubsectionTagKey;
+extern NSString *XMLIntroductionTagKey;
+extern NSString *XMLConclusionTagKey;
+extern NSString *XMLExercisesTagKey;
+extern NSString *XMLProjectTagKey;
+extern NSString *XMLFigureTagKey;
+extern NSString *XMLTableTagKey;
+extern NSString *XMLMarkTagKey;
+
 
 
 // end defaults
@@ -529,7 +544,9 @@ extern NSString *AutoCompletionPath;
 extern NSString *MenuShortcutsPath;
 extern NSString *MacrosPath;
 extern NSString *CommandCompletionFolderPath;
-extern NSString *CommandCompletionPath; // mitsu 1.29 (P)
+// extern NSString *CommandCompletionPath; // mitsu 1.29 (P)
+extern NSString *CommandCompletionPathRegular;
+extern NSString *CommandCompletionPathXML;
 extern NSString *DraggedImageFolderPath;
 extern NSString *DraggedImagePath; // mitsu 1.29 drag & drop
 extern NSString *ColorPath;
@@ -560,6 +577,7 @@ extern NSString *CommandCompletionCharNotification;
 
 
 /*" Other variables "*/
+
 extern TSFilterMode			g_shouldFilter;		/*" Used for Japanese yen conversion "*/
 extern NSInteger			g_texChar;			/*" The tex command character; usually \ but yen in Japanese yen "*/
 extern NSInteger            g_commentChar;
@@ -571,6 +589,9 @@ extern NSInteger					g_macroType; // = EngineCommand for current window
 
 extern NSArray*			g_taggedTeXSections; /*" Used by Tag menu; modified slightly for Japanese yen "*/
 extern NSArray*			g_taggedTagSections; /*" Used by Tag menu; "*/
+extern NSArray*         g_taggedXMLSections;
+extern NSArray*         g_taggedXMLTagSections;
+extern bool             g_activeXMLTags[];
 extern NSArray*         fileExtensions; /*" Used by SaveAs Panel; "*/
 extern NSArray*         commandsToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/
 extern NSArray*         commandsNotToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/

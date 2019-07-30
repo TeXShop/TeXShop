@@ -1,0 +1,356 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{hyperref}
+
+%SetFonts
+
+%SetFonts
+
+
+\title{Using PreTeXt with TeXShop}
+\author{Richard Koch}
+\date{\today}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+\section{PreTeXt and XML}
+
+In PreTeXt,  document formatting is described using XML, but mathematical formulas are described using LaTeX. To understand what this means, we'll compare two short documents, one completely in LaTeX and the other in PreTeXt. Here's the LaTeX version:
+\begin{verbatim}
+     \section{Introduction}
+         Portland has many attractions.
+
+     \section{Details}
+         The important attractions are the Oyster Bar in the downtown area 
+         and Reed college where Steve Jobs learned about fonts. 
+
+         Reed also teaches Greek, starting with $\alpha, \beta, \gamma$.
+\end{verbatim}
+ \vspace{.1in}
+ and here is the PreTeXt version:
+ \vspace{.1in}
+ \begin{verbatim}
+     <section>
+          <title>Introduction</title>
+          <p> Portland has many attractions.</p>
+     </section>
+      
+     <section>
+          <title>Details</title>
+          <p>The important attractions are the Oyster Bar in the downtown area 
+               and Reed college where Steve Jobs learned about fonts. </p>
+     
+          <p>Reed also teaches Greek, starting with <m>\alpha, \beta, \gamma</m>.</p>
+      </section>
+\end{verbatim}
+
+The obvious difference is that TeX has commands like ``\textbackslash section'' while PreTeXt has tags like ``$<$section$>$''. The more significant difference is that PreTeXt and XML rigidly insist that each opening tag have an associated closing tag. This makes it easy to parse XML files, a very significant advantage. 
+
+The acronym XML means ``extensible markup language''. It codifies a general tag-based schema for encoding information.  Many document formats in use today are extensions of XML, and PreTeXt is one of them, defining an extensive set of tag pairs to structure documents. 
+
+The most familiar tag-based data structure is HTML for web documents, but it was defined before XML existed and follows the XML rules  ``rather loosely''.  In the HTML world, browsers exist to convert the data into display form for humans, and CSS style files are often used to describe how to display various HTML elements. The notion of a style file was  extended to the XML world, where XSL style sheets describe how to display various XML elements, or more generally, how to convert these elements into other formats. PreTeXt contains many such XSL files, including one to convert PreTeXt documents to html and one to convert PreTeXt documents to LaTeX.
+
+There is an open source program called xsltproc which accepts an XML file and an XSL style sheet and uses this information to output the data in converted form. This program is already in Mac OS X.
+
+Therefore, TeXShop can ``typeset'' PreTeXt documents using xsltproc as soon as it has access to the PreTeXt  XSL files. This is easy because the PreTeXt folks package these files, together with examples, documentation, and everything else needed to use PreTeXt, in a single folder named ``mathbook''. So the first step in using PreTeXt on Mac OS is to retrieve this folder. Before doing that, we must make sure that TeXShop features are up to date.
+
+ 
+ \section{Updating ~/Library/TeXShop}
+ 
+ When TeXShop first runs, it saves a default Preferences file, which users cannot access directly. But they can change these preference choices using TeXShop Preferences.  TeXShop updates never modify these individual  choices.
+ 
+TeXShop can be customized in another way. When TeXShop first runs, it creates a folder in the user's Library folder in their home directory,  $\sim$/Library/TeXShop. Inside this ``TeXShop'' folder, TeXShop writes various subfolders  holding individualized  Templates, Stationery, Macros, CommandCompletion files, Engine files, and Themes, i.e., color choices for the editor. TeXShop has a menu command ``Open $\sim$/Library/TeXShop'' taking users to this folder; the menu is important because Apple generally hides the $\sim$/Library folder. Users can modify the items in the various folders. For instance, they edit or replace  templates and  stationery. They define new macros and delete  default macros (usually via an internal editor rather than writing directly to the Macros folder). They extend and edit the command completion file, and so forth.
+
+Since these folders contain user information, TeXShop cannot update them. But sometimes TeXShop provides new default information for these folders and it is important that users get these updated files.  Indeed, several PreTeXt features require such updated files. Before starting PreTeXt work, you must obtain them. How?
+
+If you just installed TeXShop for the first time, you have the latest files. Stop reading and go to the next section.
+
+If you previously installed TeXShop, but seldom used it, and in particular if you never modified files in $\sim$/Library/TeXShop, then it is easy to get the latest updates. Use TeXShop to open $\sim$/Library/TeXShop. Then quit TeXShop.
+Throw the ``TeXShop'' folder in the trash. Restart TeXShop. It will create a brand new TeXShop folder and fill it with up to date subfolders. Stop reading and go to the next section.
+
+If, however, you use TeXShop extensively and have created your own macros, or edited your own templates, or changed the default colors, then you have to obtain the new material more carefully. Go to the TeShop Help menu, and open the first item, ``About This Release.''  A short section at the start of this document is about version 4.31 and carefully explains how to obtain the new items for the TeXShop folder.
+ 
+
+\section{Getting mathbook into $\sim$/Documents}
+
+Inside the folder $\sim$/Library/TeXShop/Engines/Inactive where you found this document, there is a file named ``updatemathbook.sh.'' Drag a copy of this file into $\sim$/Documents, that is, the Documents folder in your home directory. 
+
+This shell  file calls the command 
+     ``git clone https://github.com/rbeezer/mathbook''
+which tells your Macintosh to download a copy of mathbook from Robert Beezer's server. We'll first explain what to do if you are familiar with Apple's Terminal program; otherwise read to the end of this section. To get  the mathbook folder,  open Terminal and change directory to $\sim$/Documents. Execute the shellscript command 
+below and you are done:
+\begin{verbatim}
+     sh updatemathbook.sh
+\end{verbatim}
+
+\newpage
+It is useful to remember this command, because PreTeXt is a moving target at the moment and users are currently urged to update the folder once a week or so. Eventually as the project matures this updating can happen less frequently. To update, use the previous command again. The command  will refuse to overwrite an existing folder, so rename ``mathbook'' to ``mathbook-old'' before issuing the command and keep this backup copy until you are certain that the new version works.
+
+It is possible that the Macintosh will not run the command and instead print a dialog claiming that your Macintosh does not have the command line tools. The dialog will offer to download and install them. Accept the offer. After a couple of minutes, repeat the command.
+
+If this explanation was too brief, we'll give details.
+Find Terminal in /Applications/Utilities. Drag a copy of this program to your dock. Double click the Terminal  icon to run Terminal.   In the Terminal window, type  ``cd $\sim$/Documents'' without the quotation marks and push RETURN. This causes Terminal to change to the directory $\sim$/Documents.
+
+In Terminal, type ``sh updatemathbook.sh'' without the quotation marks and push RETURN. Terminal will print some information as the folder downloads. Done.
+
+
+\section{Activating the PreTeXt Engines}
+
+Return to the folder $\sim$/Library/TeXShop/Engines/Inactive/PreTeXt where the document you are reading resides. Inside this folder you will find three engine files named PreTeXt-HTML.engine, PreTeXt-LaTeX.engine, and PreTeXt-Validate.engine.
+Drag these files or copies of the files two levels up to the folder $\sim$/Library/TeXShop/Engines. The engines are now active. The first will convert a PreTeXt source file to an html file, and  open that file in your default browser. The second will convert a PreTeXt source file to a LaTeX file, typeset that file, and open the resulting pdf file. The third will check your XML source for tag placement errors, but requires further setup before use. See section \ref{validate}.
+
+\section{The Minimal Example}
+
+In $\sim$/Documents/mathbook there is a folder named ``examples'' with a subfolder named ``minimal''. Make a copy of this ``minimal'' folder and drag it to your home directory.  Inside you will find a file named ``minimal.xml''. Open this file in TeXShop by dragging its icon to the TeXShop icon in the dock and dropping it there.
+
+It is possible to typeset this source by selecting the engine PreTeXt-LaTeX in the pulldown menu next to the Typeset button, and then pushing Typeset. Try that now if you like. You have to typeset twice to get index You can also typeset to html by selecting the engine PreTeXt-HTML and then pushing Typeset.
+
+However there is an easier way which I recommend for the future. Just below the top line of the file, add three extra lines so the four lines read as follows:
+\begin{verbatim}
+     <?xml version="1.0" encoding="UTF-8" ?>
+     <!--
+     % !TEX TS-program = PreTeXt-LaTeX
+     -->
+\end{verbatim}
+The second and fourth of these lines form an xml comment, so PreTeXt will ignore the important third line. But TeXShop recognizes magic lines starting with \% !TEX as instructions to TeXShop itself. This particular line says to always typeset using the PreTeXt-LaTeX engine. Thus it isn't necessary to reach up and select the correct engine in the toolbar. It isn't even necessary to reach up and press the Typeset button, because the shortcut command-T will automatically typeset. 
+
+But suppose you want to  create an html file. Simple. Go to the top of the source and change LaTeX to HTML at the end of the magic line. Then typeset.
+
+It isn't even necessary to remember the three magic lines, Place the cursor between the first and second lines and in the Macros pulldown menu select PreTeXt Header. The magic lines will automatically be written to the source.
+
+\section{The Sample-Article Example}
+
+Go to $\sim$/Documents/mathbook/examples and find the folder sample-article. Make a copy of this folder and drag it to your home directory. Inside you will find a file sample-article.xml. Open this file in TeXShop. Add the three magic lines to the top as before, and then typeset as LaTeX and typeset again as HTML. This is a very large document, so typesetting will take quite a long time, particularly the first time through. Have patience.
+
+The significance of this file is that it is supposed to contain an example of every feature in PreTeXt, and as new features are invented, they are documented in sample-article. So reading through this source is a good way to learn the details of PreTeXt.
+
+\section{The PreTeXt Guide}
+
+Go to $\sim$/Documents/mathbook/doc and find the folder ``guide''. Make a copy of this folder and drag it to your home directory. Inside you will find a file guide.xml. Open this file in TeXShop. Add the three magic lines to the top as before, and then typeset as LaTeX.
+
+The output is a  document, {\em The PreTeXt Guide}, giving a very readable systematic introduction to PreTeXt, followed by precise details of the language features. This is a good place to learn a little PreTeXt, start using it, and then read more as needed.
+
+
+\section{Using TeXShop with PreTeXt}
+
+The remaining sections of this document explain features of TeXShop which have been added to improve the experience of creating PreTeXt source files. 
+
+One example is syntax-coloring. TeXShop uses different algorithms to syntax-color xml files and to syntax-color other files. How does it know the difference? It uses its old algorithm unless the file extension is xml, and in that case it uses its new xml syntax-coloring. The same method is used to switch  other TeXShop behaviors to be described shortly.
+
+When the user brings a new window to the foreground, TeXShop checks its extension. So a user can edit tex files and xml files at the same time. When a tex file is in front, TeXShop will use its old methods. When an xml file is in front, it will use new methods from version 4.30.
+
+\section{Starting a New Document}
+
+When TeXShop first starts, it  displays a blank window waiting for input. This also happens when the user chooses ``New'' in the File menu. By default, this window is waiting for TeX or LaTeX input, which it will display using Latex syntax coloring. But the TeXShop ``Source'' menu has a new command labeled ``Convert to XML.'' Select this command to switch to PreTeXt syntax coloring in the window. 
+
+If you have several windows open, some for editing LaTeX sources and some for editing PreTeXt sources, the ``Convert to XML'' menu will be checked if the top window is in XML mode, and otherwise will be unchecked.
+
+The first time you typeset a New file, TeXShop will  present a Save dialog and ask you to name the file and select its location. Toward the bottom of this dialog, there is a popup menu listing the extension of the file to be created. The default item chosen in this menu will be ``tex'' for TeX or LaTeX sources, and ``xml'' for PreTeXt sources, as determined by the ``Convert to XML'' menu item.  When the item is "xml",  it is necessary to "click" this item before saving, since otherwise Apple's Cocoa frameworks will not recognize the unusual choice and you will end up with a file which will not typeset.  Once the file is saved  with the "xml" extension, all future save operations with that file will work correctly without further help.
+
+If by mistake you save with the wrong extension, close the source window in TeXShop, switch to the Finder to manually change the file's extension from "tex" to "xml", and then switch back to TeXShop and reopen the file.
+
+Another way to create a new PreTeXt document is to use the File menu item ``New from Stationery.'' This shows a choice of stationery, and one type offered is a generic PreTeXt document. This document will already be set to accept xml source.
+
+After creating a new document, a typical TeXShop user would use the Templates item in the toolbar to fill it with boilerplate starting data. Users can create their own templates, which are just ordinary .tex files, and store them in $\sim$/Library/TeXShop/Templates. We haven't created any new templates specifically for PreTeXt users, but this would be an easy task if you feel the need for some. Note that templates have extension .tex, but would work perfectly well as PreTeXt templates.
+
+\section{Syntax Coloring}
+
+Examine the ``minimal'' and ``sample-article'' files to see how syntax coloring works. Notice that TeXShop uses new methods for the tags in xml, but continues to use its old methods for  mathematical sections of the document.
+
+The syntax colors TeXShop uses can be adjusted using the Themes tab of TeXShop Preferences. Five colors are used. The ``Comment'' color is for xml comments and the ``Tag'' color is for xml tags. Some tags contain extra information; for instance, the minimal.xml file contains 
+\begin{verbatim}
+     <section xml:id="section-textual">
+\end{verbatim}
+In this example, xml:id receives the ``Attribute'' color and section-textual receives the ``Value'' color. Finally,
+some rare commands have the form \&lt and \&amp and in these cases, lt and amp are given the ``Escape'' color.
+Here \&lt represents $<$ and \&amp represents \&.
+
+The TeXShop Themes pane in Preferences, used to change colors, is rather complicated and readers can learn about it in the Changes document in the TeXShop Help Menu. Read about changes for version 4.08, when it was introduced. Let me  list some general principles here. A collection of color choices is called a ``theme'' and TeXShop can create and use as many themes as desired. These themes are stored as small files in $\sim$/Library/TeXShop/Themes. If you like a theme you have created, you can retrieve it from this location and send the file to other TeXShop users. Similarly, if someone else creates a theme you like, get their file and put it in this location.
+
+There aren't special themes  for Lite mode and Dark mode. Instead, any theme can be used for either of these modes. At the top of the panel, the user can choose which theme to use for Lite mode and which theme to use for Dark mode. 
+
+When the Themes panel first opens, it is set to edit the theme that is active at the time. So if the computer is in Dark mode, and Dark mode uses the Manteuffel theme, then the panel is set up to edit Manteuffel. However, the third button on top left can change to a different theme to edit.
+
+During editing, all windows use the Editing theme, and any color change made to a specific color will be instantly changed in all of these windows.
+
+Incidentally, a new theme called ``PreTeXt-Dark'' is provided for dark mode in TeXShop. It is not the default dark theme, but can be selected in TeXShop Preferences. This scheme should be close to the Sublime Text syntax coloring which many people were using at the Portland Conference.
+
+\section{The Tags Item on the Toolbar}
+
+In LaTeX mode, the Tags menu lists all \textbackslash chapter, \textbackslash section, and \textbackslash subsection commands in a  source file, identified by associated text. Selecting an item takes the user to that location in the source. The Tags menu works the same way in xml mode, but this time it lists all
+$<$chapter$>$,  $<$section$>$, $<$subsection$>$, etc. locations, with associated text. Indeed, the command recognizes eleven distinct tags. Since this is a large number, it can cause very long scrollable Tags menus. So under the Misc tab in TeXShop Preferences, an item lists all eleven possibilities and allows the user to select the items that create entries in the menu.
+
+It is possible to mark your own important spots in the source using the command
+\begin{verbatim}
+     <!--!mytext-->
+\end{verbatim}
+
+Here ``mytext'' can be replaced by any desired string. These locations will be listed as tags, with accompanying text. It is not necessary to remember the syntex; just select a location in the source and choose the Macro
+``PreTeXt Personal Mark'' to insert appropriate text.
+
+\section{Some Keyboard Tricks}
+
+Two new keystroke commands are available to aid in text entry. Here is the first. Suppose $<$hello$>$ is an xml tag. Double click in the ``hello'' while holding down the option key to select all text between this tag and its associated $<$/hello$>$. This action understands xml comments and will ignore text inside these comments. This technique also works in reverse; double click on ``hello'' in $<$/hello$>$ while holding down the option key and TeXShop will find the associated key $<$hello$>$ and select all text between these tags. 
+
+ 
+ The second keystroke command is called ``Close Tag'' and is initiated by a TeXShop menu item of the same name. The command has a keyboard shortcut option-command-period for easy entry. This command will search for an unclosed tag like $<$hello$>$ and close it with $<$/hello$>$ at the cursor spot. The command understands xml comments and ignores text in such comments. 
+ 
+This command is often used by PreTeXt authors, who insert a new tag and then click on the appropriate closing spot and type option-command-period to insert its close. 
+
+Close Tab works by searching backward until it finds an open tag that has not been closed. Note that ``the rules of xml'' limit the spots where commands can be legally closed. If a user tries to close a command at an illegal spot, a different closing tag will almost always be entered at that spot. When that happens, back up and think carefully about what you want to do.
+
+ For example, consider the text below, where $<$hello$>$ has no associated closing tag.
+ Notice that the initial $<$hello$>$ can be completed immediately after it occurs, or after the ending $<$/sage$>$, or after the following $<$/p$>$, but not elsewhere. If you try to close it after A.rref(), Close Tag backs up and finds that $<$input$>$ has not been closed, so it closes that rather than $<$hello$>$.
+  
+
+ \begin{verbatim}
+ <section>
+     <hello>
+               <sage>
+                    <input>
+                    A = matrix(4,5, srange(20))
+                    A.rref()
+                    </input>
+                    <output>
+                    [ 1  0 -1 -2 -3]
+                    [ 0  1  2  3  4]
+                    [ 0  0  0  0  0]
+                    [ 0  0  0  0  0]
+                    </output>
+               </sage>
+            
+               <p>This is extra text.</p>
+            
+</section>
+\end{verbatim}
+
+\section{Command Completion}
+
+Finally a new completion dictionary is provided for xml files, listing phrases likely to occur in a PreTeXt document. When an xml file is opened, TeXShop will automatically switch to this dictionary, and the menu command ``Edit Command Completion File'' will open this dictionary. 
+ 
+Command completion works as it already does for LaTeX files. Recall the idea. Type a few letters like
+$<$sec and push a magic key. This can be either the Escape key or the Tab key, as selected in TeXShop Preferences. I'll suppose the Tab key has been selected. TeXShop will then complete the command using one of the selections which matches $<$sec, like $<$section$>$ or $<$section xml-id="•"$>$. Pushing Tab again will cycle through all possible completions, including the original $<$sec. 
+
+Aside: Command completion originally used the Escape key. A few users asked to use Tab instead, so the choice was added to TeXShop Preferences. I didn't understand the request, but I made the change anyway.
+
+Recent events changed my mind. My main work machine is a 2016 Macbook Pro with 2 TB of flash memory. It has great features, not so great features, and blah features. The flash memory is very fast, and there is enough of it that I have all the operating systems MacTeX currently supports on the machine: Sierra, High Sierra, Mojave, and Catalina. When I travel, I unplug the external display (which also supplies power) and take my entire computing life with me. Wonderful.
+
+The not so great feature is the butterfly keyboard, and if Apple would release a portable without it, I'd snap it up in a minute. Grrrr.
+
+The blah feature is the Touch Bar, and to get right down to the nitty-gritty, the Escape key is now not a key at all, but a touch spot on the Touch Bar. It isn't nearly as stable as an actual key, even if that key uses the butterfly mechanism. So if you have such a portable, I recommend using the Tab (actual) key, rather than the Escape (fake) key, for command completion. End of Aside.
+
+\section{More on Command Completion}
+ 
+ If course it would be a shame to lose the ability to enter tabs, so  completion only occurs if certain rules are followed. The material to be completed, say $<$sec, can start at the left margin or follow a whitespace character like a space. Moreover,  this material must have at least one possible completion. So typing `` sec'' and pushing Tab gives a Tab.
+ In practice Tab almost always gives a tab if you want a tab, and gives a completion if you want a completion.
+ 
+The completion might be just one word, but often it is a phrase, or even a collection of several lines of text. The cursor may appear after the full completion text, but it can also appear in the middle of the completion text if the author of the completion entry in the dictionary selected such a spot. Indeed, there can be several spots where additional entry is needed, and each such spot is indicated by a small black circle called a ``mark''. Typing control-command-F moves to the next mark, and typing control-command-G moves to the previous mark. In this manner, a completion can produce several lines of boiler-plate text which the user can easily fill in.
+
+Possible completions are described in a dictionary named CommandCompletionXML.txt. TeXShop has a command which opens this dictionary for editing, so if the user thinks of a new useful completion, they can immediately add it to the list.
+
+Perhaps an example will best illustrate how this works. Suppose a PreTeXt user types $<$f and then a Tab.
+Below is  one possible completion TeXShop will propose:
+
+\begin{verbatim}
+     <frontmatter xml:id="•"> 
+          <titlepage> 
+               <author> 
+                    <personname>•</personname> 
+                    <department>•</department> 
+                    <institution> 
+                         <line>•</line> 
+                         <line>•</line> 
+                    </institution> 
+                    <email>•</email> 
+               </author> 
+               <date>•</date> 
+          </titlepage> 
+          <abstract> 
+          • 
+          </abstract> 
+     </frontmatter>
+\end{verbatim}
+
+How is this completion described in the Completion Dictionary? The first thing to realize is that each entry in this dictionary is a single (possibly very long) line.
+
+The line for the previous entry is shown below, artificially written on several lines:
+\begin{verbatim}
+     <frontmatter xml:id="#INS#•#INS#"> #RET##T#<titlepage> #RET#
+     #T##T#<author> #RET##T##T##T#<personname>•</personname> #RET#
+     #T##T##T#<department>•</department>
+     #RET##T##T##T##T#<line>•</line> #RET##T##T##T#</institution> 
+     #RET##T##T##T#<email>•</email> #RET##T##T#</author> 
+     #RET##T##T#<date>•</date> #RET##T#</titlepage> #RET#
+     #T#<abstract> #RET##T# • #RET##T#</abstract> #RET#
+     </frontmatter>
+\end{verbatim}
+
+Each black dot in the completion is a spot where the author will enter information. Although not shown here, the cursor will be placed at the first black dot. When the author begins typing, this dot will be replaced by new material. When this material is complete,  type control-option-F to jump to the second dot. Start typing and the dot will be replaced by  new material. Etc.
+
+In the definition of the completion, the symbols \#INS\#•\#INS\# determine where the cursor will appear. Material between the two symbols will be selected, and thus will vanish when the user starts typing. Incidentally, command-8 produces that period symbol.
+
+The symbol \#RET\# will cause a line feed. This command repeats the white space (spaces and tabs) before the initial word of the completion, but no additional initial white space created by later stages of the completion.
+So a completion without \#T\# would end up as a vertically aligned series of lines.
+
+Finally, \#T\# is a new symbol introduced for PreTeXt, and it simply causes a tab. Notice that the indented nature of the completion was created by using an appropriate number of tabs following each RETURN linefeed.
+
+The dictionary CommandCompletionXML.txt is rather sparse in the initial beta release of TeXShop 4.30. I need help in finding appropriate completion symbols, which I'll happily add to the dictionary. Important symbols should occur several times with more and more parameters displayed. Thus for sections the following entries, and probably several others, should be included:
+\begin{verbatim}
+     <section>
+     <section xml-i="#INS#•#INS#">
+     <section xml-i="#INS#•#INS#">#RET##T#<title>•</title>
+\end{verbatim}
+
+\section{Latexmk and XeLaTeX} 
+
+Currently the PreTeXt-LaTeX engine uses pdflatex to typeset the tex file produced by conversion from the xml source. But it can easily be edited to use xelatex instead. Ordinary pdflatex will correctly process some extended Unicode characters, but xetex expects unicode source files by design. So any project using extensive non-Roman fonts should switch to xelatex.
+
+Similarly, the PreTeXt-LaTeX engine can be edited to use pdflatexmk rather than pdflatex. Latexmk is a make script which keeps track of files that have changed and typesets as many times as necessary to give updated documents. For instance, it will typeset twice if there are references that require the aux file and a second pass to correctly update. 
+
+\section{\label{validate}The Validate Engine}
+
+There are  rules governing the placement of tags in a PreTeXt document. For example, only selected tags are allowed between $<$section$>$ and $<$/section$>$; one of the prohibited tags is another $<$section$>$ because it does not make sense to start a new section inside an existing section. That's what ``subsections'' are for.
+
+Tools are available to check your xml source and report placement errors for tags. These tools consult a file in mathbook, mathbook/schema/pretext.rng, to learn the PreTeXt rules for tags.  The PreTeXt authors recommend running a validation tool regularly, and recommend ``jing'', a Java program.   TeXShop has a typesetting engine to run this specific tool. Reach up to the magic comment line near the top and change ``LaTeX'' or ``HTML'' to ``Validate''. If there are errors, this tool will print very clear descriptions of the errors in the console. If there are no errors, it will write a  soothing message.
+
+The jing applet is included in $\sim$/Library/TeXShop/bin. It was obtained from the web site  \url{https://relaxng.org/jclark/jing.html}. In the middle of this web page, the following text occurs: ``The latest version of Jing will always be available in the Downloads section of the project site.'' The word ``Downloads'' is a link; clicking it leads to a link to download ``jing-20091111.zip''. The jing in TeXShop is the applet provided by this link.
+
+If you do not already have Java, then you must also download and install it. Apple used to supply Java, but now it is maintained by Oracle. Go to the web site \url{https://www.java.com/en/download/mac\_download.jsp}. Click the red link titled ``Agree and Start Free Download''. This will produce a Macintosh install package. Double click to install. You have Java, but you are not yet done.
+
+The Macintosh will not run this Java until you obtain a Java Runtime. Go to the site  {\url 
+https://www.oracle.com/technetwork/java/javase/downloads/jdk12-downloads-5295953.html}. Download the file jdk-12.0.2\_osx-x64\_bin.dmg from the table toward the bottom of the page. This will lead to another Macintosh install package. Install this package. 
+
+On April 16, 2019, Oracle substantially changed the Oracle Java License. Use of these files is permitted for personal and development use, but apparently not for businesses. The sites  claim to have OpenJDK packages released under the GPL license. If this is a matter of concern, you probably should examine the sites more carefully to find the GPL versions, or read the new license carefully.
+
+\section{PreTeXt Projects with Several Source Files} 
+Some PreTeXT projects, particularly books, tend to divide the source file into several files which are input by a master file. TeXShop has a magic line to handle this situation. Each source file {\em except the master file} should have an extra line at the top similar to the third line of the example below. In the TeXShop Macro menu, the item "Root (Short Version)" will produce the start of this line.
+
+\begin{verbatim}
+     <!--
+     % !TEX TS-program = PreTeXt-LaTeX
+     % !TEX root =  Main.xml
+     -->
+\end{verbatim}
+
+Once these lines are in place, you can edit any project source file. Typing command-T will save the file you are working on, and then typeset the Main file, and thus the entire project.
+
+The Main file can be given any name desired in this magic line. Naming just the file is fine if it is in the same folder as the subfile being edited. TeXShop also understands constructions like ``../Main.xml'' or full paths. 
+
+LaTeX has a command called ``includeonly'' for the Main file, which reads the header information in this file, but only includes listed chapter files to typeset. This is useful when working on a particular chapter. I don't know if PreTeXt has a similar facility.
+
+\section{Miscellaneous Features}
+
+Users will discover other TeXShop features that work fine with PreTeXt. We mention two here. The TeXShop Window menu has an item named ``Use One Window.'' If it is selected, the xml source and the pdf output will be placed side by side in a single window. A preference setting determines which is on the left and which is on the right. The command "Use Separate Windows" returns to two window mode.
+
+If a project requires several source files, there are magic lines for TeXShop which tell it to open all of these source files as tabbed entries of a single source window. Read the Comments document in TeXShop Help and experiment to see how this works.
+
+\end{document}

@@ -121,6 +121,7 @@ NSInteger strSort(id s1, id s2, void *context)
 	tagLine = NO;
 	self.texRep = nil;
 	fileIsTex = YES;
+    self.fileIsXML = NO;
 	self.mSelection = nil;
 	self.rootDocument = nil;
 	warningGiven = NO;
@@ -728,7 +729,25 @@ NSInteger strSort(id s1, id s2, void *context)
 	/* when opening an empty document, must open the source editor */
 	theFileName = [[self fileURL] path];
     fileExtension = [theFileName pathExtension];
-
+    
+    if (! (theFileName == nil))
+    {
+        if (
+            ([fileExtension isEqualToString: @"xml"]) ||
+            ([fileExtension isEqualToString: @"XML"]) ||
+            ([fileExtension isEqualToString: @"ptx"]) ||
+            ([fileExtension isEqualToString: @"PTX"]) ||
+            ([fileExtension isEqualToString: @"html"]) ||
+            ([fileExtension isEqualToString: @"HTML"]) 
+            )
+        {
+            self.fileIsXML = TRUE;
+           g_canRegisterCommandCompletion = NO;
+           [GlobalData sharedGlobalData].CommandCompletionPath = CommandCompletionPathXML;
+            [(TSAppDelegate *)[[NSApplication sharedApplication] delegate] reReadCommandCompletionData];
+        }
+     }
+ 
 	_externalEditor = [(TSAppDelegate *)[[NSApplication sharedApplication] delegate] forPreview];
 	if ((theFileName == nil) && _externalEditor)
 		_externalEditor = NO;
@@ -1130,11 +1149,16 @@ if (! skipTextWindow) {
 
 	if (!_externalEditor) {
 		[self setupTags];
+        
+        // the next line initializes tags and labels
+        // this is only important in "text only mode" on the toolbar, since otherwise it happens automatically
+        
         if (  [SUD boolForKey:UseNewTagsAndLabelsKey])
             {
-                [self setupTags1];
+                [self setupTags2];
                 [self setupLabels1];
             }
+     
 		myRange.location = 0;
 		myRange.length = 0;
 		[textView setSelectedRange: myRange];
@@ -1398,6 +1422,7 @@ if (! skipTextWindow) {
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
 {
 	NSView				*oldAccessoryView;
+    NSInteger           theXMLIndex;
   
      if (! atLeastHighSierra)
      {
@@ -1447,10 +1472,16 @@ if (! skipTextWindow) {
     NSArray *theItemTitles = [theButton itemTitles];
     [saveFormatMenu removeAllItems];
     NSInteger i;
+   
     for (i = 0; i < [theItems count]; i++)
         [saveFormatMenu addItemWithTitle: theItemTitles[i]];
+        
     NSInteger theIndex = [theButton indexOfSelectedItem];
-    [saveFormatMenu selectItemAtIndex: theIndex];
+    theXMLIndex = XMLINDEX;
+    if ((self.fileIsXML) && (self.fileURL == nil))
+        [saveFormatMenu selectItemAtIndex: theXMLIndex];
+    else
+        [saveFormatMenu selectItemAtIndex: theIndex];
     [saveFormatMenu synchronizeTitleAndSelectedItem];
     
     // NSArray *myFileTypes = [NSArray arrayWithObject: @"sty"];
@@ -1532,6 +1563,8 @@ in other code when an external editor is being used. */
         || ([extension isEqualToString: @"lhs"])
         || ([extension isEqualToString: @"lua"])
         || ([extension isEqualToString: @"xml"])
+        || ([extension isEqualToString: @"html"])
+        || ([extension isEqualToString: @"ptx"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -2351,7 +2384,7 @@ else {
 
 	// mitsu 1.29 (P)
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
-		[CommandCompletionPath stringByStandardizingPath]])
+		[[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]])
 		g_canRegisterCommandCompletion = YES;
  	// end mitsu 1.29
     
@@ -2383,13 +2416,21 @@ else {
 - (void)saveDocument: (id)sender
 {
 	[super saveDocument: sender];
+  
 	// if CommandCompletion list is being saved, reload it.
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
-				[CommandCompletionPath stringByStandardizingPath]])
+				[[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]])
         {
+            NSLog(@"AHA, WRITING");
            // [[NSApp delegate] finishCommandCompletionConfigure];
             // write is immediately followed by read and these can occur in the wrong order; so ...
-            [(TSAppDelegate *)[NSApp delegate] performSelector:@selector(finishCommandCompletionConfigure) withObject: nil afterDelay:0.2];
+            
+          //  [GlobalData sharedGlobalData].CommandCompletionPath = CommandCompletionPathRegular;
+          //  [self reReadCommandCompletionData];
+            
+           [(TSAppDelegate *)[NSApp delegate] performSelector:@selector(reReadCommandCompletionData) withObject: nil afterDelay:2.0];
+            
+         //  [(TSAppDelegate *)[NSApp delegate] performSelector:@selector(finishCommandCompletionConfigure) withObject: nil afterDelay:2.0]; //0.2
         }
      if(showFullPath) [textWindow performSelector:@selector(refreshTitle) withObject:nil afterDelay:0.2]; // added by Terada
 }
@@ -3840,7 +3881,7 @@ preference change is cancelled. "*/
     if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
         return;
     
-    [self setupTags1];
+    [self setupTags2];
     [self setupLabels1];
 }
 
@@ -3981,7 +4022,7 @@ preference change is cancelled. "*/
     changeEnd = changeStart + 2;
     [self fixColor:changeStart :changeEnd];
     [self registerUndoWithString:@"" location:tempRange.location
-                          length:3 key: @"New Tag"];
+                          length:3 key: NSLocalizedString(@"New Tag", @"New Tag")];
     tempRange.location = start+2;
     tempRange.length = 0;
     [textView setSelectedRange: tempRange];
@@ -4028,19 +4069,55 @@ preference change is cancelled. "*/
     }
 }
 
+- (NSString *) getNextLineForText: (NSString *)text ofLength: (NSUInteger)length fromLocation: (NSUInteger *)startLocation
+{
+    NSUInteger myStart, myEnd;
+    NSRange myRange;
+    NSString *nextLine;
+    
+    myRange.location = *startLocation;
+    myRange.length = 1;
+    if (myRange.location < length)
+    {
+        [text getLineStart: &myStart end: &myEnd contentsEnd: nil forRange: myRange];
+        *startLocation = myEnd;
+        myRange.location = myStart;
+        myRange.length = myEnd - myStart;
+        nextLine = [text substringWithRange: myRange];
+        return nextLine;
+    }
+    else
+        return nil;
+}
 
+- (void)setupTags2
+{
+    if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
+        return;
+    
+    NSToolbar *theToolbar =    [[self textWindow] toolbar];
+    if ((! [SUD boolForKey:TagMenuInMenuBarKey]) && (! (theToolbar.displayMode == NSToolbarDisplayModeLabelOnly)))
+        return;
+    
+    
+    [self setupTags1];
+}
 
 - (void) setupTags1
 {
     NSString    *text;
     NSUInteger    start, end;
-    NSRange    myRange, nameRange;
+    NSRange    myRange, nameRange, cutRange, startRange, endRange, tempRange;
     NSUInteger    length, idx;
     NSUInteger    lineNumber;
+    NSUInteger    tempLocation;  // this will be the start of the next line, but if we get that line, it will start the next line after that
     NSMenuItem  *anItem;
     id newItem;
     BOOL enableAutoTagSections;
     NSString    *commentTab = @"                ";
+    NSInteger  xmlTag;
+    NSString   *line, *titleString, *nextLine, *extraString, *aString;
+    
     
     tagLocation = 0;
     tagLocationLine = 0;
@@ -4071,15 +4148,78 @@ preference change is cancelled. "*/
     while (myRange.location < length) {
         [text getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
         myRange.location = end;
+        tempLocation = end;
         lineNumber++;
         
         // Only consider lines which aren't too short...
         if (end-start > 3) {
-            NSString *line, *titleString;
+            // NSString *line, *titleString;
             nameRange.location = start;
             nameRange.length = end - start;
             line = [text substringWithRange: nameRange];
             titleString = 0;
+          
+            if (self.fileIsXML)
+                
+            {
+                xmlTag = [self xmlTag: line];
+                
+                
+                if ((xmlTag == 10) && (g_activeXMLTags[10]))
+                {
+                    
+                    titleString = @"main: ";
+                    startRange = [line rangeOfString:@"<!--!"];
+                    endRange = [line rangeOfString: @"-->"];
+                    if ((startRange.location != NSNotFound) && (endRange.location != NSNotFound) && ((startRange.location + 5) < endRange.location))
+                    {
+                        
+                        tempRange.location = startRange.location + 5;
+                        tempRange.length = endRange.location - tempRange.location;
+                        aString = [line substringWithRange: tempRange];
+                        titleString = [titleString stringByAppendingString: aString];
+                        
+                    }
+                    
+                }
+                else
+                
+                 
+                 if (xmlTag >= 0)
+                {
+                    titleString = [g_taggedXMLTagSections objectAtIndex:xmlTag];
+                    nextLine = [self getNextLineForText:text ofLength:length fromLocation: &tempLocation];
+                    xmlNoParameter = false;
+                    if (nextLine)
+                        extraString = [self xmlGetTitle: nextLine];
+                    else
+                        extraString = @"";
+                    if (([extraString length] == 0) && (xmlTag == 8))
+                        
+                    {
+                        nextLine = [self getNextLineForText:text ofLength:length fromLocation: &tempLocation];
+                        xmlNoParameter = false;
+                        if (nextLine)
+                            extraString = [self xmlGetImageSource: nextLine];
+                        else
+                            extraString = @"";
+                    }
+                    
+                    if (extraString && [extraString length] > 40)
+                    {
+                        cutRange.location = 0;
+                        cutRange.length = 40;
+                        extraString = [extraString substringWithRange: cutRange];
+                    }
+                    if (extraString)
+                    titleString = [titleString stringByAppendingString: extraString];
+                }
+            }
+        
+          
+            else
+           
+            {
             
             // Lines starting with '%:' are added to the tags menu.
             if ([line hasPrefix:@"%:"]) {
@@ -4134,6 +4274,10 @@ preference change is cancelled. "*/
                     }
                 }
             }
+                
+            }
+            
+            
             // TODO: Hierarchical menus would be cool. This could be achieved
             // by assiging the tags a 'level', maybe based on their position
             // in the g_taggedTagSections array (and '%:' markers would have
@@ -5445,6 +5589,14 @@ if (! useFullSplitWindow) {
 			[anItem setState:NSOffState];
 		return YES;
 	}
+    
+    if ([anItem action] == @selector(toggleXML:)) {
+        if (self.fileIsXML)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+        return YES;
+    }
 
 	
 

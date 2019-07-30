@@ -45,7 +45,7 @@
 	// get copy of environment and add the preferences paths
 	env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
 
-NSEnumerator *enu = [env keyEnumerator];
+// NSEnumerator *enu = [env keyEnumerator];
 /*
 for(NSString *key in enu)
     { NSLog(@"key : %@", key);
@@ -920,7 +920,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 -(void)repeatTypeset
 {
-    BOOL result;
     BOOL DisplayLogs;
     
     DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
@@ -1963,14 +1962,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void)checkATaskStatus:(NSNotification *)aNotification
 {
-	NSString		*imagePath;
-	NSString		*alternatePath;
-	NSDictionary	*myAttributes;
-	NSDate			*endDate;
-	NSInteger				status;
-	BOOL			alreadyFound;
-	BOOL			front;
-    NSError         *error;
+	NSInteger		status;
+   NSError         *error;
     BOOL            DisplayLogs;
     
     DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);

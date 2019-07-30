@@ -256,6 +256,8 @@ enum RootCommand
 //	NSPDFImageRep	*texRep;
 //	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
+
+    
 //    TSDocumentType			_documentType;
 	NSInteger			errorLine[NUMBEROFERRORS];
 	NSString	*errorLinePath[NUMBEROFERRORS];
@@ -292,6 +294,7 @@ enum RootCommand
 	BOOL                aggressiveTrash;
 	BOOL				willClose;
     BOOL                doAbort;
+    BOOL                xmlNoParameter;
 
 	BOOL		_externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
@@ -375,6 +378,14 @@ enum RootCommand
 @property (retain)  NSDictionary		*indexColorAttribute;
 @property (retain)  NSDictionary        *footnoteColorAttribute;
 
+@property (retain)  NSDictionary        *commentXMLColorAttribute;
+@property (retain)  NSDictionary        *tagXMLColorAttribute;
+@property (retain)  NSDictionary        *parameterXMLColorAttribute;
+@property (retain)  NSDictionary        *valueXMLColorAttribute;
+@property (retain)  NSDictionary        *specialXMLColorAttribute;
+
+
+
 @property (retain)  NSTask              *synctexTask;
 @property (retain)  NSPipe              *synctexPipe;
 @property (retain)  NSFileHandle        *synctexHandle;
@@ -399,6 +410,8 @@ enum RootCommand
 
 @property (retain)  NSString            *spellLanguage;
 @property           BOOL                automaticSpelling;
+
+@property           BOOL                fileIsXML;
 
 @property           BOOL                pdfSinglePage;
 
@@ -847,6 +860,20 @@ enum RootCommand
 - (void) changeColors:(BOOL)toDark;
 - (void) changeColorsUsingDictionary: (NSDictionary *)colorDictionary;
 - (void) changeColorsFromNotification:(NSNotification *)notification;
+@end
+
+@interface TSDocument (XML)
+
+- (void) syntaxColorXML: (NSUInteger *)location from: (NSUInteger) lineStart to: (NSUInteger) lineEnd
+                  using: (NSString *)textString with: (NSLayoutManager *) layoutManager;
+- (void) syntaxColorLimitedXML: (NSUInteger *)location and: (NSUInteger) lineEnd
+                  using: (NSString *)textString with: (NSLayoutManager *) layoutManager;
+- (void) syntaxColorXMLCommentsfrom: (NSUInteger) aLineStart to: (NSUInteger) aLineEnd using: (NSString *) textString
+                with: (NSLayoutManager *) layoutManager;
+- (NSInteger)xmlTag: (NSString *)line;
+- (NSString *)xmlGetTitle: (NSString *)titleLine;
+- (NSString *)xmlGetImageSource: (NSString *)titleLine;
+- (IBAction) toggleXML: sender;
 @end
 
 // END PATCH

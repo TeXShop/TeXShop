@@ -204,7 +204,6 @@
 
 // printing
 - (void) printDocument: sender;
-
 - (void)selectARect: (NSEvent *)theEvent;
 - (void)selectAll: (id)sender;
 - (void)updateMarquee: (NSTimer *)timer;

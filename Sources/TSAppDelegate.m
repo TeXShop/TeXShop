@@ -526,6 +526,55 @@
                                nil];
 	}
     
+    
+    
+    g_taggedXMLSections = [[NSArray alloc] initWithObjects:
+                           @"<chapter",
+                           @"<section",
+                           @"<subsection",
+                           @"<subsubsection",
+                           @"<introduction",
+                           @"<conclusion",
+                           @"<exercises",
+                           @"<project",
+                           @"<figure",
+                           @"<table",
+                           @"<!--!",
+                           nil];
+    
+    [self updateXMLTabs];
+    
+    /*
+    
+    g_activeXMLTags[0] = [SUD boolForKey: XMLChapterTagKey];
+    g_activeXMLTags[1] = [SUD boolForKey: XMLSectionTagKey];
+    g_activeXMLTags[2] = [SUD boolForKey: XMLSubsectionTagKey];
+    g_activeXMLTags[3] = [SUD boolForKey: XMLSubsubsectionTagKey];
+    g_activeXMLTags[4] = [SUD boolForKey: XMLIntroductionTagKey];
+    g_activeXMLTags[5] = [SUD boolForKey: XMLConclusionTagKey];
+    g_activeXMLTags[6] = [SUD boolForKey: XMLExercisesTagKey];
+    g_activeXMLTags[7] = [SUD boolForKey: XMLProjectTagKey];
+    g_activeXMLTags[8] = [SUD boolForKey: XMLFigureTagKey];
+    g_activeXMLTags[9] = [SUD boolForKey: XMLTableTagKey];
+    g_activeXMLTags[10] = [SUD boolForKey: XMLMarkTagKey];
+    
+    */
+        
+    g_taggedXMLTagSections = [[NSArray alloc] initWithObjects:
+                            @"chapter: ",
+                            @" section: ",
+                            @"   subsection: ",
+                            @"     subsubsection: ",
+                            @" introduction: ",
+                            @" conclusion: ",
+                            @"   exercises: ",
+                            @"project: ",
+                            @"   figure: ",
+                            @"   table: ",
+                            @"mark: ",
+                            nil];
+
+    
     fileExtensions = [[NSArray alloc] initWithObjects:
                       @"tex",
                       @"ltx",
@@ -687,6 +736,21 @@
 
 }
 
+- (void)updateXMLTabs
+{
+    g_activeXMLTags[0] = [SUD boolForKey: XMLChapterTagKey];
+    g_activeXMLTags[1] = [SUD boolForKey: XMLSectionTagKey];
+    g_activeXMLTags[2] = [SUD boolForKey: XMLSubsectionTagKey];
+    g_activeXMLTags[3] = [SUD boolForKey: XMLSubsubsectionTagKey];
+    g_activeXMLTags[4] = [SUD boolForKey: XMLIntroductionTagKey];
+    g_activeXMLTags[5] = [SUD boolForKey: XMLConclusionTagKey];
+    g_activeXMLTags[6] = [SUD boolForKey: XMLExercisesTagKey];
+    g_activeXMLTags[7] = [SUD boolForKey: XMLProjectTagKey];
+    g_activeXMLTags[8] = [SUD boolForKey: XMLFigureTagKey];
+    g_activeXMLTags[9] = [SUD boolForKey: XMLTableTagKey];
+    g_activeXMLTags[10] = [SUD boolForKey: XMLMarkTagKey];
+}
+
 /*
 
 - (void)setForPreview: (BOOL)value
@@ -842,12 +906,18 @@
 			g_commandCompletionChar = [NSString stringWithCharacters: &tab length: 1];
 		
 	}
-			
+		
+  [GlobalData sharedGlobalData].CommandCompletionPath = CommandCompletionPathRegular;
+  [self reReadCommandCompletionData];
+    
+ 
+    /*
+     
 	// [g_commandCompletionList release];
 	g_commandCompletionList = nil;
 	g_canRegisterCommandCompletion = NO;
 	completionPath = [CommandCompletionPath stringByStandardizingPath];
-	if ([[NSFileManager defaultManager] fileExistsAtPath: completionPath])
+ 	if ([[NSFileManager defaultManager] fileExistsAtPath: completionPath])
 		myData = [NSData dataWithContentsOfFile:completionPath];
 	else
 		myData = [NSData dataWithContentsOfFile:
@@ -869,8 +939,44 @@
 	if ([g_commandCompletionList characterAtIndex: [g_commandCompletionList length]-1] != '\n')
 		[g_commandCompletionList appendString: @"\n"];
 	g_canRegisterCommandCompletion = YES;
+     */
 }
 // end mitsu 1.29
+
+- (void)reReadCommandCompletionData // CommandCompletionPathRegular or CommandCompletionPathXML
+{
+    
+    NSString            *filePath, *completionPath, *small, *completionFileName;
+    NSData              *myData;
+
+    g_commandCompletionList = nil;
+    g_canRegisterCommandCompletion = NO;
+    completionPath = [[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath];
+    completionFileName = [[completionPath lastPathComponent] stringByDeletingPathExtension];
+    if ([[NSFileManager defaultManager] fileExistsAtPath: completionPath])
+        myData = [NSData dataWithContentsOfFile:completionPath];
+    else
+        myData = [NSData dataWithContentsOfFile:
+                  [[NSBundle mainBundle] pathForResource:completionFileName ofType:@"txt"]];
+    if (!myData)
+        return;
+    
+    NSStringEncoding myEncoding = NSUTF8StringEncoding;
+    g_commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
+    if (! g_commandCompletionList) {
+        myEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
+        g_commandCompletionList = [[NSMutableString alloc] initWithData:myData encoding: myEncoding];
+    }
+    
+    if (!g_commandCompletionList)
+        return;
+    
+    [g_commandCompletionList insertString: @"\n" atIndex: 0];
+    if ([g_commandCompletionList characterAtIndex: [g_commandCompletionList length]-1] != '\n')
+        [g_commandCompletionList appendString: @"\n"];
+    g_canRegisterCommandCompletion = YES;
+
+}
 
 
 - (void)configureExternalEditor
@@ -1110,7 +1216,7 @@
 {
       
 	 [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:
-       [NSURL fileURLWithPath:[CommandCompletionPath stringByStandardizingPath]] display:YES
+       [NSURL fileURLWithPath:[[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]] display:YES
                                                                    completionHandler: ^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error) {
                                                                        if (document != nil) {
                                                                            g_canRegisterCommandCompletion = NO;

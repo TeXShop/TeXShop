@@ -270,7 +270,13 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     while (location < aLineEnd) {
         theChar = [textString characterAtIndex: location];
         
-        if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
+        if ((self.fileIsXML) && (theChar == '<'))
+            [self syntaxColorXML: &location from: aLineStart to: aLineEnd using: textString with: layoutManager];
+        
+        else if ((self.fileIsXML) && (theChar == '&'))
+             [self syntaxColorLimitedXML: &location and: aLineEnd using: textString with: layoutManager];
+        
+        else if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
             // The six special characters { } [ ] & $ get an extra color.
             colorRange.location = location;
             colorRange.length = 1;
@@ -483,6 +489,15 @@ static BOOL isValidTeXCommandChar(NSInteger c)
         }
         else location++;
     }
+    
+    // finally, syntax color comments in XML
+    if (self.fileIsXML)
+         [self syntaxColorXMLCommentsfrom: aLineStart to: aLineEnd using: textString with: layoutManager];
+    // we syntax color comments in xml separately at the end; do from aLineStart to aLineEnd
+    // first search backward from aLineStart to find first "<~--" and "-->". If the first exists
+    // and was LAST, then we are still in a comment. So find first "-->". If one does not exist
+    // synctax color all as comment. Otherwise plow through pairs. When finally "<~-" is found
+    // if "-->" does not exist, then color rest, else up to it
 }
 
 

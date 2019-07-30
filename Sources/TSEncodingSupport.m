@@ -25,6 +25,7 @@
 #import "TSEncodingSupport.h"
 #import "TSDocument.h" // mitsu 1.29 (P)
 #import "globals.h"
+#import "GlobalData.h"
 #import "NSString-Extras.h"  //Terada
 
 static NSString *yenString = nil;
@@ -249,7 +250,7 @@ static TSEncoding _availableTexworksEncodings[] = {
 			[g_commandCompletionList replaceOccurrencesOfString: @"\\" withString: yenString
 						options: 0 range: NSMakeRange(0, [g_commandCompletionList length])];
 			theDoc = [[NSDocumentController sharedDocumentController]
-				documentForFileName: [CommandCompletionPath stringByStandardizingPath]];
+				documentForFileName: [[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]];
 			if (theDoc)
 				[[theDoc textView] setString: filterBackslashToYen([[theDoc textView] string])];
 		}
@@ -286,7 +287,7 @@ static TSEncoding _availableTexworksEncodings[] = {
 			[g_commandCompletionList replaceOccurrencesOfString: yenString withString: @"\\"
 						options: 0 range: NSMakeRange(0, [g_commandCompletionList length])];
 			theDoc = [[NSDocumentController sharedDocumentController]
-				documentForFileName: [CommandCompletionPath stringByStandardizingPath]];
+				documentForFileName: [[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]];
 			if (theDoc)
 				[[theDoc textView] setString: filterYenToBackslash([[theDoc textView] string])];
 		}

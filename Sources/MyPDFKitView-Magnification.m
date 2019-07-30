@@ -16,6 +16,7 @@
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
     
+    
     // Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
     // and the old routine has problems in all of these places.
     
@@ -52,6 +53,7 @@
     NSPDFImageRep   *thePDFImageRep;
     NSImage         *theImage;
     NSRect          theOriginalRect;
+    
     
     cursorVisible = YES;
     originalLevel = level+[theEvent clickCount];
@@ -90,10 +92,11 @@
             
             // get Mouse location and check if it is with the view's rect
             
-            if (!([theEvent type]==NSFlagsChanged))
+            if (!([theEvent type]==NSFlagsChanged)) {
                 mouseLocWindow = [theEvent locationInWindow];
-            mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
-            mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+                mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+                mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+            }
             // check if the mouse is in the rect
             
             if([self mouse:mouseLocView inRect:[self visibleRect]]) {
@@ -128,7 +131,7 @@
         } else if ([theEvent type] == NSLeftMouseUp) {
             break;
         }
-        theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask |
+        theEvent = [[self window] nextEventMatchingMask: NSLeftMouseDownMask | NSLeftMouseUpMask |
                     NSLeftMouseDraggedMask | NSFlagsChangedMask];
     } while (YES);
     
@@ -216,10 +219,11 @@
             
             // get Mouse location and check if it is with the view's rect
             
-            if (!([theEvent type]==NSFlagsChanged))
+            if (!([theEvent type]==NSFlagsChanged)) {
                 mouseLocWindow = [theEvent locationInWindow];
-            mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
-            mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+                mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
+                mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+            }
             // check if the mouse is in the rect
             
             if([self mouse:mouseLocView inRect:[self visibleRect]]) {

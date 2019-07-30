@@ -19,7 +19,7 @@
  
 
 #import "MyPDFKitView.h"
-#import "Globals.h"
+#import "globals.h"
 
 @implementation MyPDFKitView (ExternalEditor)
 
@@ -43,8 +43,6 @@
     NSError                 *error;
     NSString                *filename, *sourcePath, *pdfPath;
     NSMutableDictionary     *environmentForTask;
-    NSEnumerator            *enu;
-    NSMutableString         *path;
     NSArray                 *args;
     NSString                *editorString;
     

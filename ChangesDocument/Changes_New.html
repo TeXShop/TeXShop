@@ -14,6 +14,93 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.31</h3></P>
+
+Versions 4.28, 4.29, and 4.30 were never released. Version 4.31 has the following changes:
+<ul>
+<li> Latexmk has been updated to version 4.65.
+
+<p>
+<li> The "flip" binary in ~/Library/TeXShop/bin is only used by four macros. It was compiled for 32 bits, but is now compiled for 64 bits.
+
+<p>
+<li> There is a minor change in updating the Tags and Index menus. To understand this change, it helps to know how the contents of these menus are created.  Until recently, these menus were reconstructed from scratch every time text was added to the source! This required a vast amount of work. When an Index menu was added by someone else, this work increased. So the code was modified to only update the two menus just before they are used. This makes TeXShop more responsive.
+
+<p>
+ The change was possible because the toolbar Tags and Index icons notify the program that they are about to be used before displaying their menus, so the program can construct these menus. Sadly, the Tags menu in the program menu bar and the tags menu in the toolbar when in "Text Only" mode do not provide this notification. To fix this problem, the Tags and Index menus are constructed once just as the source file opens. 
+ After this point, these menus are updated if the user uses the toolbar items in Icon mode. Otherwise, the menus become gradually out of date until the user closes and opens the file again. For this reason, I <em> strongly recommend </em> that the Tag menu not be added to the menu bar, and that the toolbar be used in "Icon Only" or "Icon and Text" modes. 
+
+<p>
+ As further inducement, in this version of TeXShop the two menus are not written when files are first opened if there is no Tag menu in the menu bar and the toolbar is not in "Text Only" mode. This makes opening files slightly faster.
+ 
+ <p>
+ <li> When TeXShop opens an html file, the file is now syntax colored using "XML rules". This is a free dividend of the changes for PreTeXt described next.
+ 
+ <p>
+ <li> Most changes in version 4.30 are for users of PreTeXt. A summary of these changes is given here, but many more details are provided in documents in ~/Library/TeXShop/Engines/Inactive/PreTeXt.
+ 
+ <p> At recent TeX conferences, attendees are likely to run across talks about the imminent death of TeX and LaTeX. These talks usually explain that TeX is great for writing static documents like articles and books, but not good at writing interactive documents required for more and more university courses. It is difficult to embed short movies in a TeX document, or include exercise sets to be submitted to a server for grading.  It is difficult to keep track of which pages are being read and which are being skipped.
+ 
+ <p> PreTeXt, developed by Robert A. Beezer at the University of Puget Sound, is one solution to this problem. The textual source for a PreTeXt document is written in xml markup, but the mathematical content is written in standard LaTeX. Engines are provided to convert this source to standard LaTeX and typeset with TeX, or to convert the same source to html and view on any browser. Thus exactly the same source produces a static book and a dynamic interactive web page.
+ 
+ <p> This project has received support from the NSF and from other institutions, and the really attractive feature of the project is its practical emphasis on converting actual textbooks into PreTeXt and then testing the material in the classroom. This June, the PreTeXt folks held a conference in Portland, where the main point was to help authors doing such conversions over rough spots. I went to one day of the conference, and discussed adding changes to TeXShop  to help PreTeXt authors. TeXShop 4.30 is the result of those talks.
+ 
+ <p> Three TeXShop engines are available for typesetting PreTeXt files: PreTeXt-LaTeX, PreTeXt-HTML, and PreTeXt-Validate. 
+ The first generates a pdf window opened in the standard manner. The second generates an html file and opens it in the user's standard browser. These engines have been available for earlier versions of PreTeXt, but are updated for the 2019 version. The final engine checks the PreTeXt source for tag errors.
+ 
+ <p> A PreTeXt source file has extension ".xml". A new PreTeXt article document is available via TeXShop's "New from Stationery" menu; this document automatically has extension "xml".  Whenever TeXShop creates a new document in this way or opens an existing xml document, it switches into "PreTeXT mode". The extension ``.ptx'' is used in the PreTeXt project and also causes this switch. If the user later opens a regular LaTeX window, it will be back in "LaTeX mode". Therefore documents of both types can be constructed at once, and TeXShop will switch  features depending on which document is in front.
+ 
+ <p> TeXShop users often begin with a blank window, which either appears when the program is opened or when the user selects the "New" menu item. By default, this window is in "LaTeX mode". A new item in the Source menu called "Toggle XML" can be used to put the window into "XML mode." In this mode, the window's syntax coloring will follow "XML rules" rather than "LaTeX rules". When the front window is in LaTeX mode, the Toggle XML menu will not be checked, but when the front window is in XML mode, the menu will have a checkmark. 
+ 
+ <p> When a new document is typeset,  TeXShop first asks that it be saved by displaying a Save Panel. Near the bottom of this panel is a popup menu allowing users to select the file extension of the new file. TeXShop users usually ignore this button because the default choice is to use the extension "tex". If the window is in XML mode, the default extension displayed by the Save panel will be "xml", but it is necessary to "click" this item before saving. Otherwise Apple's Cocoa frameworks will not recognize the unusual choice and you will end up with a file which will not typeset.  Once the file is saved  with the "xml" extension, all future save operations with that file will work correctly without further help.
+ 
+<p> If by mistake you save with the wrong extension, close the source window in TeXShop, switch to the Finder to manually change the file's extension from "tex" to "xml", and then switch back to TeXShop and reopen the file.
+  
+ 
+ <p> When TeXShop is in PreTeXt mode, several changes in its operation occur. Here is a list:
+ <ul>
+ <li> A new syntax coloring scheme is used which makes sense for PreTeXt documents. This scheme uses five colors for comments, tags, the special symbol  &, commands, and values. These colors have been added to the Theme sets maintained for TeXShop colors, and can be changed in the usual way.
+ 
+ <p>
+ <li> The Tags menu constructs tags appropriate for PreTeXt. Ten different keywords generate tags, and users can also mark special spots in the source file which should appear in the Tags menu. Because so many items generate tags, the Tags menu can become quite long. In the Misc section of TeXShop Preferences, users can select those keywords which should generate tags.
+ 
+ <p>
+ <li> Two additional keystroke commands are available to aid in text entry. Here is the first. Suppose &lthello&gt is an xml tag. Double clicking in the "hello" while holding down the option key will select all text between this tag and its associated &lt/hello&gt. The logic of this operation understands xml comments and will ignore text inside these comments. This operation also works in reverse by double clicking on "/hello" while holding down the option key. 
+
+ 
+ <p>
+ <li> The second keystroke command is initiated by clicking at a spot in the source and selecting the menu item "Close Tag". This command will search for an unclosed tag like &lthello&gt and close it with &lt/hello&gt at the indicated spot. The keyboard shortcut option-command-period replaces the menu command for faster entry. The command understands xml comments and ignores text in such comments. Note that "the rules of xml" limit the spots where commands can be legally closed. If you try to close a command at an illegal spot, the action will almost always close the wrong tag, suggesting that you back up and reconsider. The reason is that Close Tag works by searching backward until it finds an open tag that was not closed. 
+ <p>
+ <li> Finally a new completion dictionary is provided for xml files, listing phrases likely to occur in a PreTeXt document. When an xml file is opened, TeXShop will automatically switch to this dictionary, and the menu command "Edit Command Completion File" will open this dictionary. 
+ 
+ <p>
+ Command completion works as it already does for LaTeX files. Recall a few details. Type a few symbols like
+ &ltsec and push a magic key. This can be either the Escape key or the Tab key, as selected in TeXShop Preferences. I'll suppose the Tab key has been selected. TeXShop will then complete the selection by one of the selections which matches &ltsec . Pushing Tab again will cycle through all possible completions, including the original &ltsec. 
+ 
+ <p>
+  If course it would be a shame to lose the ability to enter tabs, so this completion only works if certain rules are followed. It works if the symbol &ltsec starts at the left margin, or if &ltsec has a space before the first element.
+ Moreover, it only works if there is at least one possible completion. So typing " sec" and pushing Tab gives a Tab.
+ In practice Tab almost always gives a tab if you want a tab, and gives a completion if you want a completion.
+ 
+ <p>
+ The completion entry can be just one word, but often it is a phrase, or even a collection of several lines of text. The cursor may appear after the full completion text, but it can also appear in the middle of the completion text if the author of the completion entry in the dictionary selected such a spot. Indeed, there can be several spots where additional entry is needed, and each such spot is indicated by a small black circle called a "mark". The keyboard command control-command-F moves to the next mark, and the command control-command-G moves to the previous mark. In this manner, a completion can produce several lines of boiler-plate text which the user can easily fill in.
+ 
+ <p> There is one final change for PreTeXt. When constructing entries in the command completion dictionary, each entry is a single (possibly very long) line. The special symbol #INS#•#INS# marks the insertion point. The keyboard shortcut command-8 produces a mark symbol for the dictionary. The symbol #RET# creates a line feed.
+ 
+ <p> In general when a user is entering text into the source, TeXShop understands initial tabs and spaces. Thus if a line starts with white space and then a word and the user pushes Return, the next line will start right under that initial word with the same amount of white space before it.
+ 
+ <p> The symbol #RET# in command completions works the same way. If the line containing a word to be completed started with a certain amount of white space, then the new line after #RET# will start with the same amount of white space. So several #RET# commands in a completion will produce a completion with several lines lined up with starting points in a vertical line.
+ 
+ <p> However, xml source code tends to be written with beautifully indented tags illustrating the logical structure of the document. If a command completion adds several lines, they should be similarly indented. So this version of TeXShop adds a new completion symbol #T# for command completion files, which is interpreted as a tab. 
+ Note that the #RET# symbol in these completion commands does not react to lines starting with a #T#. So if a
+ completion has several words separated by #RET# symbols, the words will be vertically aligned in the output.
+ If the first of these words is prefaced by #RET##T#, then that word will be intended, but the words on the remaining lines will not see this indent and retain their original vertical  alignment.
+ 
+ <p> PreTeXt authors can use this feature to their advantage and there is no need to invent #U# for "unindent." If a completion has many lines, with the lines indented more and more toward the middle, and then less and less toward the end, it should be defined by a completion command dictionary entry with new lines indicated by symbols #RET##T##T##T#. There should be more and more #T# entries as we approach the middle, and then less and less as we approach the end.
+  
+  </ul>
+</ul>
+
 <P><h3>TeXShop Changes 4.27</h3></P>
 
 TeXShop 4.27 has four minor changes:

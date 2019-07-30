@@ -1,9 +1,29 @@
 #!/bin/bash
 
-OUTFILE="`basename $1`"
+
+
+OUTFILE="`basename "$1"`"
+
+EXTENSION="${OUTFILE##*.}"
+
+
+if [[ "$EXTENSION" = "tex" ]]; then
+	echo "Cannot typeset file with extension .tex"
+	exit
+fi
+
+if  [[ "$EXTENSION" = "ctx" ]]; then
+	echo "Cannot typeset file with extension .ctx"
+	exit
+fi
+
+if  [[ "$EXTENSION" = "ltx" ]]; then
+	echo "Cannot typeset file with extension .ltx"
+	exit
+fi
 
 OUTFILE="${OUTFILE%.*}.tex"
 
-xsltproc 2>&1 --xinclude $HOME/Library/TeXShop/bin/xsl/mathbook-latex.xsl "$1" 
+xsltproc -o "$OUTFILE"  --xinclude $HOME/Documents/mathbook/xsl/mathbook-latex.xsl "$1" 
 
 pdflatex "$OUTFILE"

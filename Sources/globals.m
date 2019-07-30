@@ -291,7 +291,9 @@ NSString *AutoCompletionPath = @"~/Library/TeXShop/Keyboard";
 NSString *MenuShortcutsPath = @"~/Library/TeXShop/Menus";
 NSString *MacrosPath = @"~/Library/TeXShop/Macros";
 NSString *CommandCompletionFolderPath = @"~/Library/TeXShop/CommandCompletion";
-NSString *CommandCompletionPath = @"~/Library/TeXShop/CommandCompletion/CommandCompletion.txt";
+// CNSString *CommandCompletionPath = nil;
+NSString *CommandCompletionPathRegular = @"~/Library/TeXShop/CommandCompletion/CommandCompletion.txt";
+NSString *CommandCompletionPathXML = @"~/Library/TeXShop/CommandCompletion/CommandCompletionXML.txt";
 
 // TODO: Shouldn't we use  NSTemporaryDirectory() (or a path based on it) rather than the following three paths?
 NSString *TempPath = @"/tmp/TeXShop_Applescripts";
@@ -327,6 +329,19 @@ NSString *UseTerminationHandlerKey = @"UseTerminationHandler";
 NSString *TextMateSyncKey = @"TextMateSync";
 NSString *OtherEditorSyncKey = @"OtherEditorSync";
 
+NSString *XMLChapterTagKey = @"XMLChapterTag";
+NSString *XMLSectionTagKey = @"XMLSectionTag";
+NSString *XMLSubsectionTagKey = @"XMLSubsectionTag";
+NSString *XMLSubsubsectionTagKey = @"XMLSubsubsectionTag";
+NSString *XMLIntroductionTagKey = @"XMLIntroductionTag";
+NSString *XMLConclusionTagKey = @"XMLConclusionTag";
+NSString *XMLExercisesTagKey = @"XMLExercisesTag";
+NSString *XMLProjectTagKey = @"XMLProjectTag";
+NSString *XMLFigureTagKey = @"XMLFigureTag";
+NSString *XMLTableTagKey = @"XMLTableTag";
+NSString *XMLMarkTagKey = @"XMLMarkTag";
+
+
 
 /*" Other variables "*/
 TSFilterMode		g_shouldFilter;
@@ -336,6 +351,10 @@ NSInteger           g_commentChar;
 
 NSArray				*g_taggedTeXSections;
 NSArray				*g_taggedTagSections;
+NSArray             *g_taggedXMLSections;
+NSArray             *g_taggedXMLTagSections;
+bool                g_activeXMLTags[11];
+
 NSArray             *fileExtensions;
 NSArray             *commandsToSpellCheck; /*"Used by Syntax Coloring; their parameters should all be spell checked"*/
 NSArray             *userCommandsToSpellCheck;

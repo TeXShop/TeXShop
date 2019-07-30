@@ -119,6 +119,18 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 1 green: 0.95 blue: 1 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
         return [NSColor colorWithRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
+    
+    else if ([theKey isEqualToString: @"XMLComment"])
+        return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLTag"])
+        return [NSColor colorWithRed: 1.00  green: 0.00  blue: 0.20 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLSpecial"])
+        return [NSColor colorWithRed: 0.00  green: 0.30  blue: 1.00 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLParameter"])
+        return [NSColor colorWithRed: 0.00  green: 1.00  blue: 0.00 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLValue"])
+        return [NSColor colorWithRed: 0.60  green: 0.60  blue: 0.20 alpha:1.00];
+    
     else
         return [NSColor colorWithRed: 1.00  green: 1.00 blue: 1.00 alpha:1.00];
 }
@@ -129,6 +141,19 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 0.00 green: 0.20  blue: 0.20 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
         return [NSColor colorWithRed: 0.75 green: 0.75 blue: 0.75 alpha:1.00];
+    
+    else if ([theKey isEqualToString: @"XMLComment"]) //not actually used
+        return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLTag"]) //not actually used
+        return [NSColor colorWithRed: 1.00  green: 0.00  blue: 0.20 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLSpecial"]) //not actually used
+        return [NSColor colorWithRed: 0.00  green: 0.30  blue: 1.00 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLParameter"]) //not actually used
+        return [NSColor colorWithRed: 0.00  green: 1.00  blue: 0.00 alpha:1.00];
+    else if ([theKey isEqualToString: @"XMLValue"]) //not actually used
+        return [NSColor colorWithRed: 0.60  green: 0.60  blue: 0.20 alpha:1.00];
+
+    
     else
         return [NSColor colorWithRed: 0.00  green: 0.00 blue: 0.00 alpha:1.00];
 }

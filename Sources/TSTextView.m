@@ -342,7 +342,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 // zenitani 1.33 begin
 - (void) concludeDragOperation : (id <NSDraggingInfo>) sender {
-    [_window makeFirstResponder:self]; // added by Terada (required in the case of split window)
+    [[self window] makeFirstResponder:self]; // added by Terada (required in the case of split window)
 	NSPasteboard *pb = [ sender draggingPasteboard ];
 	NSString *type = [ pb availableTypeFromArray:
 		[NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil]];
@@ -1970,7 +1970,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	NSRange ins2Range;
 	NSUInteger selectlength = 0;
 	NSMutableString *indentRETString = [NSMutableString stringWithString:@"\n"]; // **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
-	// End Changed by (HS) - define ins2Range, selectlength, 
+	// End Changed by (HS) - define ins2Range, selectlength,
+    NSMutableString *TABString = [NSMutableString stringWithString:@"\t"];
 	NSCharacterSet *charSet;
     NSString *selectedString, *aString, *replacementString;
     BOOL boolResult;
@@ -2234,6 +2235,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 					    [indentRETString appendString:@" "];
 					[newString replaceOccurrencesOfString: @"#RET#" withString: indentRETString
 								      options: 0 range: NSMakeRange(0, [newString length])];
+                    [newString replaceOccurrencesOfString: @"#T#" withString: TABString
+                                                  options: 0 range: NSMakeRange(0, [newString length])];
 					//[newString replaceOccurrencesOfString: @"#RET#" withString: @"\n"
 					//			  options: 0 range: NSMakeRange(0, [newString length])];
 					// **** 2011/03/05 preserve proper indent (HS) **** Copied from Alvise Trevisan; preserve tabs code
@@ -2602,7 +2605,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	if ([g_commandCompletionList characterAtIndex: [g_commandCompletionList length]-1] != '\n')
 		[g_commandCompletionList appendString: @"\n"];
 
-	completionPath = [CommandCompletionPath stringByStandardizingPath];
+	completionPath = [[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath];
 	// back up old list
 	backupPath = [completionPath stringByDeletingPathExtension];
 	backupPath = [backupPath stringByAppendingString:@"~"];
@@ -2631,7 +2634,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 	if ([anItem action] == @selector(registerForCommandCompletion:))
 		return (g_canRegisterCommandCompletion && ([self selectedRange].length > 0));
-
+    
 	return [super validateMenuItem: anItem];
 }
 
@@ -2687,6 +2690,254 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 	visibleRange = [layoutManager characterRangeForGlyphRange:visibleRange actualGlyphRange:nil];
 	
 	return visibleRange;
+}
+
+- (BOOL) countTest: (NSString *)word countStart: (NSUInteger)locationStart countEnd: (NSUInteger)locationEnd
+{   NSString *text;
+    NSUInteger textlength;
+    NSUInteger startCount;
+    NSUInteger endCount;
+    NSRange    searchRange, selectedRange, selectedCommentRange;
+    NSString   *searchString, *commentStart, *commentEnd;
+    
+    
+    text = [self string];
+    textlength = [text length];
+    
+    startCount = 0; endCount = 0;
+    searchRange.location = locationStart; searchRange.length = locationEnd - locationStart;
+    searchString = @"<";
+    searchString = [searchString stringByAppendingString: word];
+    NSLog(searchString);
+    commentStart = @"<!--";
+    commentEnd = @"-->";
+  
+    do {
+        selectedRange = [text rangeOfString: searchString options:NSLiteralSearch range: searchRange];
+        selectedCommentRange = [text rangeOfString: commentStart options:NSLiteralSearch range: searchRange];
+        if ((selectedRange.location != NSNotFound) && (selectedCommentRange.location != NSNotFound)
+            && (selectedRange.location > selectedCommentRange.location))
+        {
+            selectedCommentRange = [text rangeOfString: commentEnd options:NSLiteralSearch range: searchRange];
+            if (selectedCommentRange.location != NSNotFound)
+            {
+               searchRange.location = selectedCommentRange.location + 3;
+                searchRange.length = textlength - searchRange.location;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
+        else if ( selectedRange.location != NSNotFound)
+        {
+            startCount++;
+            searchRange.location = selectedRange.location + 1;
+            searchRange.length = textlength - searchRange.location;
+        }
+    }
+    while ( selectedRange.location != NSNotFound);
+        
+        
+    searchRange.location = locationStart; searchRange.length = locationEnd - locationStart;
+    searchString = @"</";
+    searchString = [[searchString stringByAppendingString: word] stringByAppendingString: @">"];
+    
+    NSLog(searchString);
+ 
+ //   selectedRange = [text rangeOfString: searchString options:NSLiteralSearch range: searchRange];
+
+    do {
+        selectedRange = [text rangeOfString: searchString options:NSLiteralSearch range: searchRange];
+        selectedCommentRange = [text rangeOfString: commentStart options:NSLiteralSearch range: searchRange];
+        if ((selectedRange.location != NSNotFound) && (selectedCommentRange.location != NSNotFound)
+            && (selectedRange.location > selectedCommentRange.location))
+        {
+            selectedCommentRange = [text rangeOfString: commentEnd options:NSLiteralSearch range: searchRange];
+            if (selectedCommentRange.location != NSNotFound)
+            {
+                searchRange.location = selectedCommentRange.location + 3;
+                searchRange.length = textlength - searchRange.location;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
+        else if ( selectedRange.location != NSNotFound)
+        {
+            endCount++;
+            searchRange.location = selectedRange.location + 1;
+            searchRange.length = textlength - searchRange.location;
+        }
+    }
+    while ( selectedRange.location != NSNotFound);
+    
+    NSLog(@"Start = %d  End = %d", startCount, endCount);
+    
+    if (startCount ==  (endCount + 1))
+        return TRUE;
+    else
+        return FALSE;
+    
+}
+
+
+- (void) closeTag: (id)sender
+{
+    /* For a moment, we ignore comments. Here is an outline of the code. Invent a variable named "textlocation". Initially set it to the
+     position of the cursor. Search backward for </aword> and for <bword, where aword and bword must have at least one character. If the first such element, searching backward, is <bword, then enter </bword> at the cursor location and quit. Otherwise, search backward for <aword. Set
+     textlocation to the character just before < and continue the process. If the process reaches the start of the text, do nothing. */
+    
+    NSUInteger textlocation, cursorlocation, textlength;
+    NSRange cursorRange, selectedRange, searchRange, selectedCommentEndRange, selectedCommentStartRange;
+    BOOL  done, stillletter;
+    BOOL tagOpens;
+    NSUInteger state, newstate;
+    NSString *text;
+    NSString *pureword, *charString, *oppositeTag, *foundTag;
+    NSString *commentStart, *commentEnd, *desiredOpening;
+    NSUInteger myIndex;
+    unichar    c;
+    NSCharacterSet *letterset;
+    commentStart = @"<!--";
+    commentEnd = @"-->";
+    tagOpens = TRUE;
+    
+ //   NSLog(@"here");
+    letterset = [NSCharacterSet letterCharacterSet];
+    text = [self string];
+    textlength = [text length];
+    cursorRange = [self selectedRange];
+    cursorlocation = cursorRange.location;
+    
+    if ((cursorlocation < 2) || (cursorlocation >= textlength))
+        return;
+    textlocation = cursorlocation - 1;
+    
+    // we will only search source before cursor location
+    done = FALSE;
+    searchRange.location = 0;
+    searchRange.length = textlocation;
+    
+    selectedCommentStartRange = [text rangeOfString: commentStart options:NSBackwardsSearch range: searchRange];
+    selectedCommentEndRange = [text rangeOfString: commentEnd options:NSBackwardsSearch range: searchRange];
+    if ((selectedCommentStartRange.location != NSNotFound) && (selectedCommentEndRange.location != NSNotFound)
+        && (selectedCommentStartRange.location > selectedCommentEndRange.location))
+        // the user clicked inside a comment
+        return;
+    if ((selectedCommentStartRange.location != NSNotFound) && (selectedCommentEndRange.location == NSNotFound))
+        // again a click in a comment
+        return;
+    
+    // at this point, we know that the click was not in a comment, so we do serious work
+    // we look for start tags like <section and end tags like </section>, avoiding comments
+    // if the first element we find is <section, then it closes the tag and we are done
+    // if the first element we find is </section>, then we find its matching <section, while again
+    // avoiding comments. After we find it, we start again looking for <section and </section>.
+    // So we really have a two state machine. We can be looking for both kinds of tags, or we can be
+    // trying to match a close tag. Call these states 1 and 2. If we first come to a comment, then we
+    // skip it without changing the state.
+    
+    state = 1;
+    
+    do {
+        
+        selectedRange = [text rangeOfString: @"<" options:NSBackwardsSearch range: searchRange];
+        if (selectedRange.location == NSNotFound)
+            return;
+        if ((selectedRange.location < 2) || (selectedRange.location >= textlength))
+            return;
+        selectedCommentStartRange = [text rangeOfString: commentStart options:NSBackwardsSearch range: searchRange];
+        selectedCommentEndRange = [text rangeOfString: commentEnd options:NSBackwardsSearch range: searchRange];
+        if ((selectedCommentStartRange.location != NSNotFound) && (selectedRange.location == selectedCommentStartRange.location))
+            // our tag string is actually the start of a comment
+            {
+            searchRange.length = selectedCommentStartRange.location - 1;
+            }
+        else if ((selectedCommentEndRange.location != NSNotFound) &&
+                 (selectedCommentEndRange.location > selectedRange.location))
+            // a comment started before we got to < and might end before or after this symbol
+            {
+                if (selectedCommentStartRange.location != NSNotFound)
+                    searchRange.length = selectedCommentStartRange.location - 1;
+                else
+                    return;
+            }
+                
+        else
+         // now we have a true element <, so either we are in state 1 and this is an opening and we are done,
+        // or else we are in state 1 and this is a closing and we switch to state 2, while saving the opening
+        // or else we are in state 2, and we will ignore the element unless it opens the thing previously closed, in which case we switch to state 1
+        {
+            myIndex = selectedRange.location + 1;
+            if (myIndex >= textlength)
+                return;
+            c = [text characterAtIndex:myIndex];
+            charString = [NSString stringWithFormat:@"%c" , c];
+            if (c == '/')
+                {
+                    tagOpens = FALSE;
+                    oppositeTag = @"<"; pureword = @""; foundTag = @"</";
+                    myIndex++;
+                    if (myIndex >= textlength)
+                        return;
+                    c = [text characterAtIndex:myIndex];
+                    charString = [NSString stringWithFormat:@"%c" , c];
+                }
+            else
+                {
+                    tagOpens = TRUE;
+                    oppositeTag = @"</"; pureword = @""; foundTag = @"<";
+                }
+            
+           do {
+                c = [text characterAtIndex:myIndex];
+                charString = [NSString stringWithFormat:@"%c" , c];
+                stillletter = [letterset characterIsMember:c];
+                if (stillletter) {
+                    oppositeTag = [oppositeTag stringByAppendingString: charString];
+                    foundTag = [foundTag stringByAppendingString: charString];
+                    pureword = [pureword stringByAppendingString: charString];
+                }
+                myIndex++;
+                if (myIndex >= textlength)
+                    return;
+            }
+            while (stillletter);
+            if (tagOpens)
+                oppositeTag = [oppositeTag stringByAppendingString:@">"];
+            
+           newstate = state;
+            if ((state == 1) && ( tagOpens))
+            {
+                // oppositeTag = [oppositeTag stringByAppendingString: @">"];
+                [self replaceCharactersInRange:cursorRange withString: oppositeTag];
+                return;
+            }
+            else if ((state == 1) && (! tagOpens))
+            {
+                newstate = 2;
+                desiredOpening = oppositeTag;
+            }
+            else if ((state == 2) && ([desiredOpening isEqualToString: foundTag]))
+            {
+                newstate = 1;
+            }
+            
+            state = newstate;
+            searchRange.length = selectedRange.location - 1;
+        }
+        
+    } while (searchRange.length > 3);
+        
+  
+    
+ //   if (! [self countTest: pureword])
+ //       return;
+    
+     
+    
 }
 
 @end

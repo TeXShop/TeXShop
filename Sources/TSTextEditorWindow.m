@@ -26,7 +26,9 @@
 #import "TSTextEditorWindow.h"
 #import "TSDocument.h" // for the definition of isTeX (move this to a separate file!!)
 #import "globals.h"
+#import "GlobalData.h"
 #import "TSDocumentController.h"
+#import "TSAppDelegate.h"
 
 
 
@@ -74,6 +76,27 @@
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
 	[self.myDocument fixMacroMenuForWindowChange];
+    
+    if (self.myDocument.fileIsXML)
+    {
+        if (! [[GlobalData sharedGlobalData].CommandCompletionPath isEqualToString: CommandCompletionPathXML])
+        {
+            [GlobalData sharedGlobalData].CommandCompletionPath = CommandCompletionPathXML;
+             [(TSAppDelegate *)[[NSApplication sharedApplication] delegate] reReadCommandCompletionData];
+        }
+        
+    }
+    else
+    {
+       if (! [[GlobalData sharedGlobalData].CommandCompletionPath isEqualToString: CommandCompletionPathRegular])
+       {
+           [GlobalData sharedGlobalData].CommandCompletionPath = CommandCompletionPathRegular;
+         [(TSAppDelegate *)[[NSApplication sharedApplication] delegate] reReadCommandCompletionData];
+       }
+    }
+    
+    
+    
 // WARNING: The following line caused a BIG delay when switching from the pdf window to the text window!!
 // It can be turned on with a hidden preference, but the only users who need it
 // a) use Japanese input methods and b) customize the background and foreground source colors and c) have a dark background color

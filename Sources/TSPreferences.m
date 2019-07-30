@@ -130,6 +130,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRememberNotification object:self];
 	[[NSNotificationCenter defaultCenter] postNotificationName:MagnificationRememberNotification object:self];
 	fontTouched = NO;
+    xmlTagsTouched = NO;
 	consoleFontTouched = NO;
 	consoleBackgroundColorTouched = NO;
 	consoleForegroundColorTouched = NO;
@@ -987,6 +988,99 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     }
 }
 
+- (IBAction)XMLChapterButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLChapterTagKey] forKey:XMLChapterTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLChapterTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLSectionButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLSectionTagKey] forKey:XMLSectionTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLSectionTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLSubsectionButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLSubsectionTagKey] forKey:XMLSubsectionTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLSubsectionTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLSubsubsectionButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLSubsubsectionTagKey] forKey:XMLSubsubsectionTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLSubsubsectionTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLIntroductionButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLIntroductionTagKey] forKey:XMLIntroductionTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLIntroductionTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLConclusionButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLConclusionTagKey] forKey:XMLConclusionTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLConclusionTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLExercisesButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLExercisesTagKey] forKey:XMLExercisesTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLExercisesTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLProjectButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLProjectTagKey] forKey:XMLProjectTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLProjectTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLFigureButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLFigureTagKey] forKey:XMLFigureTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLFigureTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLTableButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLTableTagKey] forKey:XMLTableTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLTableTagKey];
+    xmlTagsTouched = YES;
+}
+
+- (IBAction)XMLMarkButtonChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:XMLMarkTagKey] forKey:XMLMarkTagKey];
+    [SUD setBool:[(NSButton *)sender state] forKey:XMLMarkTagKey];
+    xmlTagsTouched = YES;
+}
+
+
+
+
+
+
 
 
 
@@ -1813,7 +1907,10 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 
     editorCanAddBrackets = [SUD boolForKey: EditorCanAddBracketsKey];
     
-	// close the window
+    if (xmlTagsTouched)
+        [(TSAppDelegate *)[[NSApplication sharedApplication] delegate] updateXMLTabs];
+    
+ 	// close the window
 	// [_prefsWindow performClose:self];
     [_prefsWindow close];
 }
@@ -1830,6 +1927,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
      [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
 	// close the window
 	// [_prefsWindow performClose:self];
+    [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Tags", @"Tags")] setHidden:( ![SUD boolForKey:TagMenuInMenuBarKey])];
      [_prefsWindow close];
 	
 //	[PreviewBackgroundColor release];
@@ -1871,6 +1969,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[SUD setBool:oldBibDeskComplete forKey:BibDeskCompletionKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 	}
+    
     
     if (sparkleTouched) {
         [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: oldSparkleAutomaticUpdate];
@@ -2159,7 +2258,17 @@ This method retrieves the application preferences from the defaults object and s
     else
         [useLeftSourceButton setState:1];
     
-
+    [XMLchapter setState: [defaults boolForKey: XMLChapterTagKey]];
+    [XMLsection setState: [defaults boolForKey: XMLSectionTagKey]];
+    [XMLsubsection setState: [defaults boolForKey: XMLSubsectionTagKey]];
+    [XMLsubsubsection setState: [defaults boolForKey: XMLSubsubsectionTagKey]];
+    [XMLintroduction setState: [defaults boolForKey: XMLIntroductionTagKey]];
+    [XMLconclusion setState: [defaults boolForKey: XMLConclusionTagKey]];
+    [XMLexercises setState: [defaults boolForKey: XMLExercisesTagKey]];
+    [XMLproject setState: [defaults boolForKey: XMLProjectTagKey]];
+    [XMLfigure setState: [defaults boolForKey: XMLFigureTagKey]];
+    [XMLtable setState: [defaults boolForKey: XMLTableTagKey]];
+    [XMLmark setState: [defaults boolForKey: XMLMarkTagKey]];
 
 	// Create the contents of the encoding menu on the fly & select the active encoding
 	[_defaultEncodeMatrix removeAllItems];

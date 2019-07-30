@@ -148,7 +148,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 - (void)FillInColorWells
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
-    NSColor *flashColor;
+    NSColor *flashColor, *aColor;
     NSColor *footnoteCol;
     BOOL withDarkColors;
     
@@ -208,6 +208,46 @@ NSInteger stringSort(id s1, id s2, void *context)
     ImageForegroundColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"ImageForeground"];
     ImageBackgroundColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"ImageBackground"];
     
+    aColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"XMLComment"];
+    if (aColor != nil)
+        XMLCommentColorWell.color = aColor;
+    else if (withDarkColors)
+        XMLCommentColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"XMLComment"];
+    else
+        XMLCommentColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"XMLComment"];
+    
+    aColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"XMLTag"];
+    if (aColor != nil)
+        XMLTagColorWell.color = aColor;
+    else if (withDarkColors)
+        XMLTagColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"XMLTag"];
+    else
+        XMLTagColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"XMLTag"];
+    
+    aColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"XMLSpecial"];
+    if (aColor != nil)
+        XMLSpecialColorWell.color = aColor;
+    else if (withDarkColors)
+        XMLSpecialColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"XMLSpecial"];
+    else
+        XMLSpecialColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"XMLSpecial"];
+    
+    aColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"XMLParameter"];
+    if (aColor != nil)
+        XMLParameterColorWell.color = aColor;
+    else if (withDarkColors)
+        XMLParameterColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"XMLParameter"];
+    else
+        XMLParameterColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"XMLParameter"];
+    
+    aColor = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"XMLValue"];
+    if (aColor != nil)
+        XMLValueColorWell.color = aColor;
+    else if (withDarkColors)
+        XMLValueColorWell.color = [colorSupport darkColorAndAlphaWithKey: @"XMLValue"];
+    else
+        XMLValueColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"XMLValue"];
+       
     
 }
 
@@ -771,6 +811,83 @@ NSInteger stringSort(id s1, id s2, void *context)
      [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
     
 }
+
+- (IBAction)XMLCommentChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"XMLComment"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLComment" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+- (IBAction)XMLTagChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"XMLTag"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLTag" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+- (IBAction)XMLSpecialChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"XMLSpecial"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLSpecial" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+- (IBAction)XMLParameterChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"XMLParameter"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLParameter" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+- (IBAction)XMLValueChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"XMLValue"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLValue" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
+
 
 
 @end

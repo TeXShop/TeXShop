@@ -22,6 +22,26 @@
  *
  */
 
+/* KEY TESTING DEFAULTS
+    defaults write TeXShop DisplayLogInfo YES
+    defaults write TeXShop UseTerminationHandler YES
+    defaults write TeXShop RepeatTypesetOnError13 YES
+ 
+    In the current code, if the bug occurs, the program will typeset again. This happened to me, and the Termination Reason was
+    NSTaskTerminationReasonUncaughtSignal = 2
+ 
+    Also the status was 13; this seems to be the key sign of this sort of error. According to the webb, error 13 means "couldn't posix spawn" or "permission denied".
+    Here status means [myTask terminationStatus]
+    Later I found the following url: https://support.circleci.com/hc/en-us/articles/360002341673-Identifying-Exit-Codes-and-their-meanings
+    This page has a table listing "standard Linux signals" and 13 = Broken pipe: write to pipe with no readers; see pipe(7)". This suggests that
+    the real bug occurs in the routine which reads standard output and writes it to the console.
+ 
+    The final default says that if termination leads to status 13, TeXShop should remove the aux file and typeset again. For testing, the default value NO
+    is reasonable, but if version 4.32 is released, it should be set to YES until the bug is fixed
+ 
+ 
+*/
+
 /*
  Compile options. Comment out to compile on earlier versions of macOS, with limited facilities
 */
@@ -517,6 +537,9 @@ extern NSString *XMLProjectTagKey;
 extern NSString *XMLFigureTagKey;
 extern NSString *XMLTableTagKey;
 extern NSString *XMLMarkTagKey;
+
+extern NSString *RepeatTypesetOnError13Key;
+extern NSString *CreateImageKey;
 
 
 

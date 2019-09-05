@@ -105,7 +105,15 @@ for(NSString *key in enu)
 - (void)killRunningTasks
 {
 	NSDate	*myDate;
-
+    BOOL    MainLogs;
+    
+    //MainLogs = [SUD boolForKey: DisplayLogInfoKey];
+    // Not needed since "sudden halt" bug is fixed
+    MainLogs = NO;
+    
+    if (MainLogs)
+        NSLog(@"killRunningTasks");
+    
 	/* The lines of code below kill previously running tasks. This is
 		necessary because otherwise the source file will be open when the
 		system tries to save a new version. If the source file is open,
@@ -437,7 +445,8 @@ for(NSString *key in enu)
 	BOOL			writeable, result;
 	NSString		*argumentString;
 	NSString           *tempDestinationString;
-
+    
+    NSLog(@"convertDocument");
 	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 
@@ -560,6 +569,7 @@ for(NSString *key in enu)
 			[self.texTask setLaunchPath:enginePath];
 			[self.texTask setArguments:args];
 			[self.texTask launch];
+            [self.texTask waitUntilExit];
 		} else {
 	//		[self.inputPipe release];
 	//		[self.texTask release];
@@ -922,7 +932,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
     BOOL DisplayLogs;
     
-    DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // Not needed since "sudden halt" bug is fixed
+    DisplayLogs = NO;
     
     if (DisplayLogs)
         NSLog(@"Repeating Job");
@@ -942,9 +954,16 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     NSURL           *myFileURL, *myCurrentDirectoryURL;
     BOOL            result;
     NSError         *error = nil;
-    BOOL            DisplayLogs;
+    BOOL            DisplayLogs, MainLogs;
     
-    DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // MainLogs = [SUD boolForKey: DisplayLogInfoKey];
+    // DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // Not needed since "sudden halt" bug is fixed
+    MainLogs = NO;
+    DisplayLogs = NO;
+    
+    if (MainLogs)
+        NSLog(@"startTask");
     
     doAbort = NO;
 	
@@ -1023,8 +1042,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     [task setStandardError: self.outputPipe];
     [task setStandardInput: self.inputPipe];
 
-    if ((task != self.indexTask) && ([SUD boolForKey: UseTerminationHandlerKey]))
+   //  if ((task != self.indexTask) && ([SUD boolForKey: UseTerminationHandlerKey]))
+    // last part not needed since "sudden halt" bug is fixed
+    
+    if (task != self.indexTask)
     {
+    
+    if (MainLogs)
+        NSLog(@"got to using termination Handler");
+        
     task.terminationHandler = ^(NSTask *myTask){
     
         id stdoutString = nil;
@@ -1042,6 +1068,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             ;
         }
         int theReason = myTask.terminationReason;
+        int theStatus = [myTask terminationStatus];
+        if (DisplayLogs)
+            NSLog(@"The status is %d:", theStatus);
         BOOL doAbort1 = doAbort;
         doAbort = NO;
         
@@ -1056,6 +1085,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             NSString *mainString = [NSString stringWithFormat:@"Failed executing: %@.", cmd];
             if (DisplayLogs)
                 NSLog(mainString);
+            // if (DisplayLogs)
+            //    NSLog(@"The status is %d.", [myTask terminationStatus]);
                 
             if (! (stdoutString == nil)) {
                 NSString *aString = [NSString stringWithFormat: @"Standard output: %@.", stdoutString];
@@ -1076,9 +1107,11 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             
             }
          
+      //  BOOL repeatTypesetOnError13 = [SUD boolForKey: RepeatTypesetOnError13Key];
+      //  Not needed since "sudden halt" bug is fixed
+     BOOL   repeatTypesetOnError13 = NO;
         
-        
-        if ((! doAbort1) && (myTask.terminationReason == 2) && (myTask == self.texTask))
+        if ((! doAbort1) && (myTask.terminationReason == 2) && (myTask == self.texTask) && (theStatus == 13) && (repeatTypesetOnError13))
             {
             if (myTask.running)
             [myTask terminate];
@@ -1091,7 +1124,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     };
     }
         
-   
 #ifdef HIGHSIERRAORHIGHER
     if (atLeastHighSierra) // && (task != self.indexTask))
         {
@@ -1099,8 +1131,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             task.executableURL = myFileURL;
             myCurrentDirectoryURL = [NSURL fileURLWithPath:[sourcePath stringByDeletingLastPathComponent] isDirectory:YES];
             task.currentDirectoryURL = myCurrentDirectoryURL;
-            if (DisplayLogs)
-                NSLog(@"Start task");
+         //   if (DisplayLogs)
+         //       NSLog(@"Start task");
             result = [task launchAndReturnError:&error];
         }
     else
@@ -1127,9 +1159,17 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	BOOL                continuous;
 	BOOL                fixPath;
 	NSInteger                 whichEngineLocal;
+    BOOL        MainLogs;
 
 	whichEngineLocal = useTempEngine ? tempEngine : whichEngine;
-
+    
+    // MainLogs = [SUD boolForKey: DisplayLogInfoKey];
+    // Not needed since "sudden halt" bug is fixed
+    MainLogs = NO;
+    
+    if (MainLogs)
+        NSLog(@"completeSaveFinished");
+    
 	fixPath = YES;
 	continuous = typesetContinuously;
 	typesetContinuously = NO;
@@ -1158,7 +1198,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		
 		self.outputPipe = [NSPipe pipe];
 		self.readHandle = [self.outputPipe fileHandleForReading];
-		[self.readHandle readInBackgroundAndNotify];
+		// [self.readHandle readInBackgroundAndNotify];
+        [self.readHandle waitForDataInBackgroundAndNotify];
 		self.inputPipe = [NSPipe pipe];
 		self.writeHandle = [self.inputPipe fileHandleForWriting];
 		
@@ -1839,20 +1880,40 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     NSInteger                status;
     BOOL            alreadyFound;
     BOOL            front;
-    BOOL            DisplayLogs;
+    BOOL            DisplayLogs, MainLogs;
     
-    DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
-
-    if (DisplayLogs)
-    {
-        NSLog(@"CheckATaskStatusNew");
-        if (theTask != nil)
+    // Crucial note: I now know that when the bug occurs, this routine is called,
+    // possibly with terminationStatus = 13
+    
+    // MainLogs = [SUD boolForKey: DisplayLogInfoKey];
+    // Not needed since "sudden halt" bug is fixed
+    MainLogs = NO;
+    
+    if (MainLogs)
+        NSLog(@"checkATaskStatusFromTerminationRoutine");
+    if (theTask != nil){
+        if (MainLogs)
             NSLog(theTask.launchPath);
+        if (MainLogs)
+            NSLog(@"The status is %d:", [theTask terminationStatus]);
+ //       if ([theTask terminationStatus] == 13)
+ //           return;
     }
     
-    status = [theTask terminationStatus];
-    [outputText setSelectable: YES];
-    taskDone = YES;  // for Applescript
+    // DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // Not needed since "sudden halt" bug is fixed
+    DisplayLogs = NO;
+
+//    if (DisplayLogs)
+//    {
+//        NSLog(@"CheckATaskStatusNew");
+//        if (theTask != nil)
+//            NSLog(theTask.launchPath);
+//    }
+    
+//    status = [theTask terminationStatus];
+//    [outputText setSelectable: YES];
+//    taskDone = YES;  // for Applescript
     
     // Key Point: This routine does nothing else except for bibTask, indexTask, metaFontTask, and texTask
     
@@ -1881,7 +1942,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
    
     
     if (theTask != self.texTask)
+    {   NSLog(@"not tex task, %l and %l", theTask, self.texTask);
         return;
+    }
+    
+    [outputText setSelectable: YES];
+    taskDone = YES;  // for Applescript
     
     if (self.inputPipe == [theTask standardInput]) {
         status = [theTask terminationStatus];
@@ -1956,6 +2022,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         //    [self.inputPipe release];
         self.inputPipe = 0;
         self.texTask = nil;
+        
     }
 
 }
@@ -1964,9 +2031,18 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 	NSInteger		status;
    NSError         *error;
-    BOOL            DisplayLogs;
+    BOOL            DisplayLogs, MainLogs;
     
-    DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // MainLogs = [SUD boolForKey: DisplayLogInfoKey];
+    // Not needed since "sudden halt" bug is fixed
+    MainLogs = NO;
+    
+    if (MainLogs)
+        NSLog(@"checkATaskStatus");
+    
+    // DisplayLogs = ([SUD boolForKey: DisplayLogInfoKey] && [SUD boolForKey: UseTerminationHandlerKey]);
+    // Not needed since "sudden halt" bug is fixed
+    DisplayLogs = NO;
     
     if (DisplayLogs)
         NSLog(@"CheckATaskStatus");

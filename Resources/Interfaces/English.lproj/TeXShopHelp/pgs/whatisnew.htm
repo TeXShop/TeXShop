@@ -15,6 +15,229 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.35</h5></P>
+
+Versions 4.32, 4.33, and 4.34 were never officially released. They were  experimental versions as I attempted to understand the "sudden halt" bug. 
+
+<p>
+The key feature of version 4.35 is that it contains a fix for the "sudden halt" bug. This is explained in detail at the end of this section. Version 4.35 has these additional changes:
+
+<ul>
+<li> Frank Mittelbach talked about LaTeX changes at the TUG Summer Conference for 2019 in Palo Alto. Work on LaTeX has become more active in the last few years. The team tests new features on a large collection of test documents, but every so often a feature causes problems that are not discovered until after the official release. Consequently, there is now a new step before these releases. The development version of LaTeX is added to TeX Live and special formats are created called lualatex-dev, pdflatex-dev, and xelatex-dev for testing with this potential release.
+
+<p> TeXShop has engines for these versions in "$\sim$/Library/Engines/Inactive/LaTeX 'dev' versions".
+Move these to the active portion of Engines to activate them.
+
+<li>
+<p>Bruno Voisin discovered that the "left/right" arrow tool in the Preview window sometimes vanishes in Catalina.
+This problem is fixed. If you already installed Catalina beta and activated the bug, use TeXShop's Customize Toolbar command to remove this tool from the toolbar, and then put it back if desired. Do this for the PDF window in both single and double window modes.
+
+<li>
+<p> Jörg Christian Kirchhof complained that TeXShop's "hard wrap" code does not work correctly on lines ending with comments. When a new line break is added in the middle of the comment, the second half of the comment becomes active TeX code. I told Jörg Christian that I don't use this feature and it would be difficult to fix. Twenty-four hours later, he sent a fix, which is now in TeXShop 4.33. The fix allows Undo, so "Undo hard wrap" returns to the original line breaks. My own opinion is that "hard wrap" is useful for the first time after this fix.
+
+<li>
+<p> In High Sierra, Apple's rewrite of the PDFKit introduced an annoying bug. When a new pdf  file loaded after typesetting, there was a brief  flash in the preview window. I filed a bug report with Apple, and eventually they told me that they could not fix the bug at their end, but I could work around it in TeXShop. My fix is described in the changes document for versions 3.95 and 3.96. The fix involves taking a picture of the preview window  before loading the new pdf, glueing this picture over the window, loading beneath the picture and thus hiding the flash, and then removing the picture.
+
+<p> The original method of taking that picture created such a good match to the window that the moment when the picture was glued in place was undetectable. But unfortunately, this method created a memory leak of 20 MB with each typesetting job. So in version 4.25, I replaced the original method with a new method of taking the picture. It doesn't work as well, so there is a slight blur for a second or longer.
+
+<p> Perhaps in the future someone will be able to eliminate the memory leak so we can return to the original method. In the meantime, I've added a new preference for users interested in experimenting. It is called CreateImage and takes values 0, 1, or 2. For example
+<pre>
+     defaults write TeXShop CreateImage 2
+ </pre>
+ The value 0 gives an old attempt never used, the value 1 gives the current method with a slight blur (and is the default value), and the value 2 gives the method with wonderful results but a memory leak. Use at your own risk.
+
+<li>
+<p> A few people received one of the experimental releases 4.32, 4.33, or 4.34 as I was trying to solve the "sudden halt" bug. These releases output various Log statements and tested other changes using three new defaults: 
+<pre>
+        defaults write TeXShop UseTerminationHandler YES
+        defaults write TeXShop DisplayLogInfo YES
+        defaults write RepeatTypesetOnError13 NO
+</pre> 
+While the defaults are still present, they have been deactivated and have no effect. So users can ignore them.
+</ul>
+
+<p> The "sudden hang" problem is by far the most difficult debugging task I've faced in TeXShop history.
+You may want to stop reading here, because I'm about to recount the  story leading to elimination of the bug. It turns out  that someone else faced the same bug in 2006 and found a solution.
+<p>
+Around two years ago, a small number of users reported that occasionally during typesetting, output to the console abruptly stopped. This could happen in the middle of output, so the console output looked like this:
+<pre>
+   Chapter 6.
+   [65] [66 <./Cover.pdf> <./Mesh.pdf
+   pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./Mesh.pdf): PDF inclusion: 
+   multiple pdfs with page group included in a single page
+   >] [67] [68] [69
+</pre>
+
+<p>
+A few users believed that  typesetting continued to the end of the document, but the majority stated that typesetting ended with this console output. I could not reproduce the bug. The first reports were  for macOS Sierra, and continued with High Sierra and Mojave. When the bug occurred, users just typeset again and continued their work.
+
+<p>
+Gradually the bug reports became more urgent. Users reporting the bugs tended to be working on the last stages of a book with pdflatexmk, so they would change scattered pages throughout the document and then typeset, run makeindex, typeset, run bibtex, and typeset twice more in a run. In the end, some users ran into the problem every three or four jobs.
+
+<p> I ran across the bug very, very rarely in my work, perhaps three times in a two year span. This made it impossible to debug. Eventually, three users sent their complete projects and I could at last see the bug with regularity. Thanks to all three. At the time I got these projects, I was creating MacTeX-2019, and then learning how to notarize it and make the TeXLive command line programs adopt a hardened runtime, since Catalina will require these features. When that was done, I was invited to spend a day at the PreTeXt conference and got interested in modifying TeXShop so it could be used with PreTeXt. Only then, about two weeks before the 2019 TUG Conference in Palo Alto, did I have time to turn to the "sudden hang" bug. By that time, the document which displayed the bug most readily was a book by M. Tamer Özsu and Patrick Valduriez, and that became my standard debugging document. Thanks in particular to those authors.
+
+<p>
+Several people reporting the bug tried their own debugging, and discovered to their dismay that when TeXShop was run in XCode using the debugger, the bug did not occur. Gulp.
+
+<p>
+When TeXShop typesets, it uses a Cocoa object named NSTask to spawn an independent process which runs tex or latex. TeXShop uses NSTask to run several other TeX binaries, for instance to convert dvi files to pdf. My first suspicion was that these various NSTasks were interfering with each other, and I was inadvertently killing the TeX task in the middle of typesetting. To test this, I added a large number of NSLog statements to the TeXShop code and watched these in Apple's Console app during typesetting. These logs convinced me that no other Tasks ran during typesetting, so the initial guess was wrong. Moreover, the logs revealed that when typesetting abruptly halted, TeX reported that the terminationStatus was 13 or 141.
+
+<p>
+Then I turned to Google for an explanation of these  numbers. But unfortunately, the first article I read said that programmers were allowed to number exceptions any way they pleased, so  it would not be possible to decipher the numbers. For a few days, I gave up. Then I turned to Google again, and found that some programmers like small numbers for their own exceptions, and report (exception + 128) for system exceptions. Notice that 141 = 128 + 13. Aha.
+
+<p>
+More Google searching  turned up an article listing standard exception numbers used in Linux and Unix programs, and exception 13 was listed as "SIGPIPE or 'Broken pipe', sometimes indicating an attempt to write to a pipe with no readers."
+
+<p> At this point, it helps to know more about how Cocoa programs run other independent programs. As mentioned earlier, Cocoa has an object called NSTask which abstracts this operation.
+To call a separate program, a programmer initializes several NSTask instance variables to point to a full path to the new program, to fix the environment variables, to determine the location of the file to be processed, and so forth. Then the programmer starts that task using the call [NSTask launch]. At that point, an entirely separate program begins running on the Macintosh.
+
+<p> In Unix, separate programs are completely independent. TeXShop knows nothing about TeX and TeX knows nothing about TeXShop. But sometimes these separate programs must communicate. For example, TeX needs to send a stream of information to the TeXShop console during typesetting. This communication is handled in Unix by creating a Pipe. You can imagine a Pipe as  an area of memory which both programs are allowed to access; TeX can write to this memory area, and TeXShop can read from it. Cocoa has an object called NSPipe for creating and processing such a pipe.
+
+<p> Typical Unix programs have a very beautiful structure. They open three pipes when they run, called "standard input", "standard output", and "standard error." By default, standard input is connected to the keyboard, so anything typed on the keyboard will be sent to the program. By default, standard output is connected to the computer screen, so any information produced by the program will be sent to the screen. Ignore standard error for the moment. As an example, open Apple's Terminal program and type "cat". This runs a very simple program which accepts strings from standard input and outputs the string to standard output. Notice that everything you type flows to the screen. Type command-C to kill the program.
+
+<p> However, Unix has a simple method to connect standard input and standard output to different devices, like files. If the standard input of "cat" is connected to a file, then that program will output the file to the screen.
+
+<p> Unix also allows programs to be chained together, so standard output of the first program becomes standard input of the second program. In this way, complicated actions can be done by stringing simple programs together.
+
+<p> The information TeX sends to the console during typesetting is actually sent to its standard output. Occasionally, TeX will report an error and then stop. Users learn to type RETURN in the console at this moment. This RETURN is sent to TeX's standard input, where it tells TeX to ignore the error and continue typesetting.
+
+<p> So now we know that the "sudden halt" error occurs when the console suddenly stops writing data, and we know that the error is caused by a problem in a Pipe, and we know that data gets from TeX to TeXShop by flowing through the pipe called standard output. It is all beginning to make sense!
+
+<p> How exactly does data get from that Pipe into TeXShop. I remember very well the day in 2001 when I learned how to do that, because the method seemed magical. The first step is to attach to the standard output pipe another Cocoa object called a ReadHandle. The line of code that does that is
+<pre>
+     self.readHandle = [self.outputPipe fileHandleForReading];
+</pre>
+
+<p>
+How does this readHandle work? It works sort of magically; we  ask it to read from the Pipe and it does that and sends us the result. For instance, two methods we can call are
+"readDataToEndOfFile" and "readDataOfLength:". 
+
+<p> The documentation for this object suggests that fairly complicated things are happening in the background.
+Here is part of this documentation: "When using a file handle object to communicate asynchronously with a socket, you must initiate the corresponding operations from a thread with an active run loop. Although the read, accept, and wait operations themselves are performed asynchronously on background threads, the file handle uses a run loop source to monitor the operations and notify your code appropriately. Therefore, you must call those methods from your application’s main thread".
+
+<p> But notice that the file operations just mentioned are not exactly what we want when sending information to the console. We don't want to wait until typesetting is over, and then send everything to the console at once. Instead, we want to send information to the console as TeX writes it out to the pipe. Here is when the real magic starts to occur. NSFileHandle objects have another call called "readInBackgroundAndNotify". This call causes the fileHandle to wait until data appears in the Pipe, and then read what is there (removing it from the Pipe) and then send a Notification to anyone who asks to see that data. Such "notifications" are a standard part of Cocoa programming. A procedure can register to see particular notifications when they are
+send, and then act upon them.
+
+<p> Early in TeXShop operation, the program runs the code
+<pre>
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeConsoleOutput:)
+                 name:NSFileHandleReadCompletionNotification object:nil];
+</pre>
+This says that whenever a ReadHandle has data waiting, TeXShop will receive the information in a method called writeConsoleOutput, and do with it whatever it wants to do. The current code looks something like this:
+<pre>
+     - (void) writeConsoleOutput: (NSNotification *)aNotification {
+         NSFileHandle *myFileHandle = [aNotification object];
+         if (myFileHandle == self.readHandle) {
+              NSData *myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+              if ([myData length]) {
+                    NSString *newOutput = [[NSString alloc] initWithData: myData encoding: NSUTF8StringEncoding];
+                    NSRange theRange = [outputText selectedRange];
+                    theRange.length = [newOutput length];
+                    [outputText replaceCharactersInRange: [outputText selectedRange] withString: newOutput];
+                    [outputText scrollRangeToVisible: [outputText selectedRange]];
+                    }
+              [self.readHandle readInBackgroundAndNotify];
+         }
+     }
+</pre>
+Skipping the small details, this code says to ignore the notification unless it came from the ReadHandle associated with this particular document. In that case, it should obtain the Data which the handle read, and
+convert it to a string. If the string is not empty, it should be added to outputText, the text object in the Console Window.
+
+<p>
+Notice carefully that the procedure ends by calling ReadInBackgroundAndNotify again. So that call only asks the FileHandle to read once. If we want it to occur over and over, we need to call it after processing the data from the previous call.
+
+<p> Our detective story has reached the moment when the TeX User Group Summer Conference at Palo Alto began. So at the moment, I suspected a bug  in readInBackgroundAndNotify or in writeConsoleOutput.
+
+<p> Two discoveries were made at the conference. First, I tried the sample Özsu and Valduriez document on Catalina and could not produce the bug. So maybe it was an Apple Bug which is fixed in Catalina. That would be good news. On the other hand, beta versions of macOS contain a lot of debugging code which is later removed, and our bug is hard to reproduce in a debugger. So another possibility was that when Catalina was released, the bug would suddenly show up there.
+
+<p> Second, on the first day of the conference I got email from Martin Hairer at Imperial College, London. He had run into the bug, had independently performed the analysis just discussed, and had decided that the problem was the routine "writeConsoleOutput" displayed earlier. I did not display the full TeXShop code when I displayed the code a few paragraphs ago; my routine also had code to parse the TeX output, looking for error messages. These messages were later used to create a "Goto Error" button. Hairer thought that the bug was caused by too much processing in "writeConsoleOutput" so that by the time  "ReadInBackgroundAndNotify" was called, the Pipe was completely full. He sent a really beautiful fix. Rather than process the output in "writeConsoleOutput", he called "dispatch_async" to do the processing on a separate thread and then ReadInBackgroundAndNotify could be called immediately. This code was deeper than code I usually write; I glued it into TeXShop and crossed my fingers.
+
+<p> Unfortunately, both Hairer and I concluded a few hours later that this code does not really fix the bug. But the code remains in TeXShop 4.35 because I think it is much safer than my original code.
+
+
+<p> At any rate, I left the TUG conference convinced that our "sudden hang" bug is really an Apple bug, and I needed to report it to Apple. My experience is that developer support gives much better response if you send them a small application, together with source code, which exhibits the bug. So I knew that before writing Apple, I needed to create a very primitive form of TeXShop to send them. I spent labor day weekend writing that application.
+
+<p> I'm proud of the resulting small app. It had only five pages of source code and typesetting code was confined to a single page. It could read and write TeX files, and put up a source window, a preview window, and a console window. At the top of the source window were three objects: a Typeset button, a popup menu listing available typesetting engines, and a Kill Aux Files button. The program contained all engine files currently in TeXShop and thus could do any typesetting job that TeXShop now does.
+
+<p> When the program was completed on Labor Day in the U.S., I typeset the Özsu and Valduriez document and almost immediately got a "hang bug."  This was good news, absolving TeXShop of most possible blame. 
+
+<p>
+But before sending the code to Apple, I wanted to make sure that NSTask in the typesetting part used all the latest ideas, so Apple's wouldn't respond by saying I was using deprecated calls. For instance, I used Hairer's code for  writeConsoleOutput . I also spent a little time Monday Evening reading Google to see if I could find other pages I hadn't yet read about NSTask.
+
+<p> This led to a page https://stackoverflow.com/questions/412562/execute-a-terminal-command-from-a-cocoa-app from 2011. This page contained a question about calling Terminal from a Cocoa App, and the answers all involved using NSTask to call Terminal and getting output back through a Pipe. Early answers suggested
+reading that Pipe with "readDataToEndOfFile" and later answers suggested instead the call
+"readInBackgroundAndNotify". I knew all of that. But then, about 2/3 of the way down the page, a user named
+ Custos Mortem said:
+<pre>
+     I'm surprised no one really got into blocking/non-blocking call issues
+     For blocking/non-blocking call issues regarding NSTask read below:
+          asynctask.m -- sample code that shows how to implement asynchronous 
+          stdin, stdout, and stderr streams for processing data with NSTask
+     Source code of asynctask.m is available at GitHub.
+ </pre>
+Here "asynctask.m" was a link to a page of code, also from around 2011. This code had an interesting routine I'll come to in a moment, and the following associated text:
+<pre>
+        ADDED
+        For "availableDataOrError:" see:
+        - "NSTasks, NSPipes, and deadlocks when reading...",
+        http://dev.notoptimal.net/2007/04/nstasks-nspipes-and-deadlocks-when.html
+        - "NSTask stealth bug in readDataOfLength!! :(",
+        http://www.cocoabuilder.com/archive/cocoa/173348-nstask-stealth-bug-in-readdataoflength.html#173647
+</pre>
+Unhappily, both of these links were dead.
+
+<p> Later, Bruno Voisin taught me about an archive site which archives important dead pages, and I've managed to read both of these links. So I know that the crucial code in asynctask.m was actually written in 2006 by
+ by Chris Suter, and described on CocoaBuilder.com. His code was then modified very slightly by Juan Leon.
+ 
+ <p> So late Monday evening, I added this code to my small test program. The changes were minor.
+ And then I tested the Özsu and Valduriez document and could not get a hang. The code on these pages, essentially due to Chris Suter, fixed the bug.
+ 
+ <p> I hear you crying "enough history; what's the fix???" 
+ 
+ <p> 
+ The crucial call which reads the Pipe is <pre>  [self.readHandle readInBackgroundAndNotify];
+</pre>
+Something goes wrong during this read operation, but since it is done inside Cocoa, we have no chance to fix it. But actually, there is a slightly different call
+<pre>
+       [self.readHandle waitForDataInBackgroundAndNotify];
+</pre>
+This call again notifies us when data is waiting to be read, but this time it doesn't read it. So if we make this call, then we get to read the data ourselves, and if an exception occurs during the reading, we get a chance to fix it.
+
+<p> Both methods issue a Notification which calls writeConsoleOutput, listed above. The key difference will occur in the fourth line of the method. Originally this line reads
+<pre>
+     NSData *myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+</pre>
+which gets the data, already read, from the Notification object. The new code will replace this with
+<pre>
+     NSData *myData = [self availableDataOrError: myFileHandle];
+</pre>
+which calls a new routine to read the data. (We also need to replace the line "readInBackgroundAndNotify"
+at the end of the routine with "waitForDataInBackgroundAndNotify".
+
+<p> And now, at last, here is the new reading code by Chris Suter:
+<pre>
+ -(NSData *) availableDataOrError: (NSFileHandle *)file {
+    for (;;)
+    {
+       @try {
+          return [file availableData];
+       } @catch (NSException *e) {
+          if ([[e name] isEqualToString:NSFileHandleOperationException])
+          {
+            if ([[e reason] isEqualToString: @"*** -[NSConcreteFileHandle availableData]: Interrupted system call"])
+              {
+                 continue;
+              }
+                 return nil;
+           }
+          @throw;
+      }
+   }  // for
+ }
+</pre>
+
+
+
 <P><h5>TeXShop Changes 4.31</h5></P>
 
 Versions 4.28, 4.29, and 4.30 were never released. Version 4.31 has the following changes:
@@ -25,10 +248,10 @@ Versions 4.28, 4.29, and 4.30 were never released. Version 4.31 has the followin
 <li> The "flip" binary in ~/Library/TeXShop/bin is only used by four macros. It was compiled for 32 bits, but is now compiled for 64 bits.
 
 <p>
-<li> There is a minor change in updating the Tags and Index menus. To understand this change, it helps to know how the contents of these menus are created.  Until recently, these menus were reconstructed from scratch every time text was added to the source! This required a vast amount of work. When an Index menu was added by someone else, this work increased. So the code was modified to only update the two menus just before they are used. This makes TeXShop more responsive.
+<li> There is a minor change in updating the Tags and Labels menus. To understand this change, it helps to know how the contents of these menus are created.  Until recently, these menus were reconstructed from scratch every time text was added to the source! This required a vast amount of work. When a Label menu was added by someone else, this work increased. So the code was modified to only update the two menus just before they are used. This makes TeXShop more responsive.
 
 <p>
- The change was possible because the toolbar Tags and Index icons notify the program that they are about to be used before displaying their menus, so the program can construct these menus. Sadly, the Tags menu in the program menu bar and the tags menu in the toolbar when in "Text Only" mode do not provide this notification. To fix this problem, the Tags and Index menus are constructed once just as the source file opens. 
+ The change was possible because the toolbar Tags and Label icons notify the program that they are about to be used before displaying their menus, so the program can construct these menus. Sadly, the Tags menu in the program menu bar and the tags menu in the toolbar when in "Text Only" mode do not provide this notification. To fix this problem, the Tags and Labels menus are constructed once just as the source file opens. 
  After this point, these menus are updated if the user uses the toolbar items in Icon mode. Otherwise, the menus become gradually out of date until the user closes and opens the file again. For this reason, I <em> strongly recommend </em> that the Tag menu not be added to the menu bar, and that the toolbar be used in "Icon Only" or "Icon and Text" modes. 
 
 <p>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14810.11"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14810.11"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -76,6 +76,7 @@
                 <outlet property="sLog" destination="S6b-FX-MMb" id="lTm-aa-XKk"/>
                 <outlet property="saveFormatLabel" destination="V4g-xj-3k6" id="QUy-5s-bxf"/>
                 <outlet property="saveFormatMenu" destination="tZ7-ZO-gwE" id="UCF-5E-Er6"/>
+                <outlet property="sbackforthKK" destination="Cld-d2-wfT" id="5X1-Ry-zTh"/>
                 <outlet property="scrapPDFKitView" destination="QNW-n0-grJ" id="3T5-1K-tI7"/>
                 <outlet property="scrapPDFWindow" destination="OKH-8d-Quy" id="CvY-B4-OcH"/>
                 <outlet property="scrapTextView" destination="GUN-AI-fmM" id="G8f-gj-kDI"/>
@@ -267,7 +268,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" ambiguous="YES" id="4EU-j0-vS1">
                             <rect key="frame" x="1" y="1" width="503" height="344"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView ambiguous="YES" importsGraphics="NO" verticallyResizable="YES" fieldEditor="YES" usesFontPanel="YES" id="131">
                                     <rect key="frame" x="0.0" y="0.0" width="503" height="344"/>
@@ -294,7 +295,7 @@
                         <rect key="frame" x="20" y="0.0" width="464" height="53"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" placeholderString="On error: &lt;ret&gt; ignore, [s] ignore all, [x] complete, [i]+text to insert replacement" bezelStyle="round" id="3824">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -340,6 +341,7 @@
             <connections>
                 <outlet property="myDocument" destination="-2" id="288"/>
             </connections>
+            <point key="canvasLocation" x="80" y="-497"/>
         </window>
         <window title="Project" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="191" userLabel="Project" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
@@ -355,7 +357,7 @@
                         <rect key="frame" x="59" y="112" width="304" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" id="3828">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <string key="title">If this document belongs to a project with several files,
 and a "root" file should be typeset when changes 
 are made, name that root file below. </string>
@@ -404,7 +406,7 @@ Gw
                         <rect key="frame" x="112" y="90" width="197" height="14"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="EXAMPLES: &quot;Main.tex&quot;, &quot;../Main.tex&quot;" id="3833">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -413,7 +415,7 @@ Gw
                         <rect key="frame" x="17" y="62" width="78" height="14"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Current root:" id="3830">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -496,7 +498,7 @@ DQ
                         <rect key="frame" x="55" y="68" width="34" height="14"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Line:" id="3838">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -670,7 +672,7 @@ DQ
                                 <rect key="frame" x="-3" y="7" width="42" height="14"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="3865">
-                                    <font key="font" metaFont="label" size="11"/>
+                                    <font key="font" metaFont="message" size="11"/>
                                     <string key="title">Scale
 </string>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -797,7 +799,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Macros" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="626" id="3859">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="628">
                             <items>
                                 <menuItem title="Macros" hidden="YES" id="626"/>
@@ -872,7 +874,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Macros" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="438" id="3857">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="435">
                             <items>
                                 <menuItem title="Macros" hidden="YES" id="438"/>
@@ -885,7 +887,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="ConTeXt" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="6" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="420" id="3856">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="424">
                             <items>
                                 <menuItem title="Plain TeX" tag="1" id="422"/>
@@ -917,7 +919,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="ConTeXt" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="6" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="psc-bg-Tuv" id="eyO-Xh-m9F">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="2yk-cN-Dwk">
                             <items>
                                 <menuItem title="Plain TeX" tag="1" id="j9n-8D-315"/>
@@ -1051,7 +1053,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="3842">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="358">
                             <items>
                                 <menuItem title="Tags" hidden="YES" id="359">
@@ -1146,7 +1148,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Tags" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="Jng-6Q-vuP" id="gNn-gf-2Vs">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="CiH-MC-Jfm">
                             <items>
                                 <menuItem title="Tags" hidden="YES" id="Jng-6Q-vuP"/>
@@ -1162,7 +1164,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Templates" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="kMA-9C-duh" id="HlO-gE-7SU">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="xGx-rX-aci">
                             <items>
                                 <menuItem title="Templates" hidden="YES" id="kMA-9C-duh">
@@ -1191,7 +1193,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Macros" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="MMk-pp-xn6" id="cUe-Tv-cCO">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="dNH-bk-5NA">
                             <items>
                                 <menuItem title="Macros" hidden="YES" id="MMk-pp-xn6"/>
@@ -1204,7 +1206,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="ConTeXt" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="6" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="401" id="3854">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="402">
                             <items>
                                 <menuItem title="Plain TeX" tag="1" id="406"/>
@@ -1237,7 +1239,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="RVS-SP-K8q" id="oMA-jM-m6f">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="Ok4-Js-hg4">
                             <items>
                                 <menuItem title="Labels" state="mixed" hidden="YES" id="RVS-SP-K8q">
@@ -1255,7 +1257,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Labels" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="mixed" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="jhb-F2-vNr" id="vaA-lX-Xpm">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="9oA-vz-ZsE">
                             <items>
                                 <menuItem title="Labels" state="mixed" hidden="YES" id="jhb-F2-vNr">
@@ -1268,6 +1270,20 @@ DQ
                         <action selector="doLabel:" target="-2" id="yCd-v3-gJU"/>
                     </connections>
                 </popUpButton>
+                <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cld-d2-wfT">
+                    <rect key="frame" x="381" y="15" width="57" height="22"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="ONx-iv-uf2">
+                        <font key="font" metaFont="system"/>
+                        <segments>
+                            <segment image="BackAdorn" imageScaling="none" width="27"/>
+                            <segment image="ForwardAdorn" imageScaling="none" width="27"/>
+                        </segments>
+                    </segmentedCell>
+                    <connections>
+                        <action selector="doBackForward:" target="-2" id="EA1-fA-lSK"/>
+                    </connections>
+                </segmentedControl>
             </subviews>
             <point key="canvasLocation" x="456" y="-411"/>
         </customView>
@@ -1434,7 +1450,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="496" id="3880">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="507">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="496"/>
@@ -1450,7 +1466,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bPv-3O-T2A" id="u68-2U-ae2">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" id="QMU-ba-cFa">
                             <items>
                                 <menuItem title="Item 1" state="on" id="bPv-3O-T2A"/>
@@ -1474,7 +1490,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Dcm-6w-9G0" id="afI-Jp-WTQ">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" id="nP1-U6-bu7">
                             <items>
                                 <menuItem title="Item 1" state="on" id="Dcm-6w-9G0"/>
@@ -1528,7 +1544,7 @@ DQ
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="JPEG (Low)" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" tag="15" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="592" id="3883">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="595">
                             <items>
                                 <menuItem title="JPEG (High)" tag="11" id="596"/>
@@ -1746,7 +1762,7 @@ DQ
                                                         <tableColumns>
                                                             <tableColumn editable="NO" width="261" minWidth="16" maxWidth="1000" id="764">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                                                    <font key="font" metaFont="message" size="11"/>
+                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1795,7 +1811,7 @@ DQ
                                             <rect key="frame" x="20" y="236" width="229" height="22"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" alignment="left" bezelStyle="round" id="3885">
-                                                <font key="font" metaFont="label" size="12"/>
+                                                <font key="font" metaFont="cellTitle"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </searchFieldCell>
@@ -1819,7 +1835,7 @@ DQ
                                                         <tableColumns>
                                                             <tableColumn identifier="page" editable="NO" width="40" minWidth="40" maxWidth="1000" id="758">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Page">
-                                                                    <font key="font" metaFont="message" size="11"/>
+                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1832,7 +1848,7 @@ DQ
                                                             </tableColumn>
                                                             <tableColumn identifier="section" width="233.06399536132812" minWidth="46.563999176025391" maxWidth="1000" id="759">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Section">
-                                                                    <font key="font" metaFont="message" size="11"/>
+                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -2283,7 +2299,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" ambiguous="YES" drawsBackground="NO" id="l5q-NL-hjT">
                             <rect key="frame" x="1" y="1" width="276" height="323"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView ambiguous="YES" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="GUN-AI-fmM" customClass="ScrapTextView">
                                     <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>
@@ -2310,7 +2326,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="roundRect" title="Typeset" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ag5-OO-jXY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="label" size="12"/>
+                            <font key="font" metaFont="cellTitle"/>
                         </buttonCell>
                         <connections>
                             <action selector="typesetScrap:" target="-2" id="doW-4M-rzG"/>
@@ -2389,7 +2405,7 @@ Gw
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="juE-u1-M4T" id="do4-jV-qZH">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="cfq-hr-jn6">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="juE-u1-M4T"/>
@@ -2420,7 +2436,7 @@ Gw
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Templates" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" borderStyle="borderAndBezel" inset="2" pullsDown="YES" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="PCy-6N-WoN" id="lgE-UC-fXW">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="hMG-4W-g2s">
                             <items>
                                 <menuItem title="Templates" hidden="YES" id="PCy-6N-WoN">

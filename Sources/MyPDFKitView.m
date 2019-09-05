@@ -664,30 +664,45 @@ if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pa
     
         // NSView *myView = [[self documentView] enclosingScrollView];
         NSView *myView = [[self window] contentView];
-  
+        NSImage *myImage;
+        NSData  *data;
+        NSBitmapImageRep *myRep;
+        NSSize mySize, imgSize;
+        
+        NSInteger myChoice = [SUD integerForKey:CreateImageKey];
+        
     // First method
         
-        /*
-        NSData* data = [myView dataWithPDFInsideRect:[myView frame]];
-        NSImage *myImage = [[NSImage alloc] initWithData:data];
-        */
+        switch (myChoice)
+        {
+    case 0:
+        
+        data = [myView dataWithPDFInsideRect:[myView frame]];
+        myImage = [[NSImage alloc] initWithData:data];
+        break;
         
     // Alternate method, creates some blur
         
+    case 1:
         
-        NSBitmapImageRep *myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+        myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
         [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
-        NSSize mySize = [myView bounds].size;
-        NSSize imgSize = NSMakeSize( mySize.width, mySize.height );
-        NSImage *myImage = [[NSImage alloc]initWithSize:imgSize];
+        mySize = [myView bounds].size;
+        imgSize = NSMakeSize( mySize.width, mySize.height );
+        myImage = [[NSImage alloc]initWithSize:imgSize];
         [myImage addRepresentation:myRep];
+        break;
         
         
     // Alternate method, has giant memory leak
         
-        /*
-        NSImage *myImage = [self screenCacheImageForView: myView];
-        */
+    default:
+        
+        myImage = [self screenCacheImageForView: myView];
+        break;
+    }
+        
+   
         
         sizeRect = [myView bounds];
        

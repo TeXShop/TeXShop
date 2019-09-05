@@ -158,6 +158,7 @@ enum RootCommand
 	IBOutlet NSMatrix			*mouseModeMatrixKK;
     IBOutlet NSMatrix           *mouseModeMatrixFull;
 	IBOutlet NSSegmentedControl	*backforthKK;
+    IBOutlet NSSegmentedControl *sbackforthKK;
 	IBOutlet NSImageView		*drawerKK;
 
 
@@ -272,6 +273,8 @@ enum RootCommand
 //	NSDictionary		*commentColorAttribute;
 //	NSDictionary		*markerColorAttribute;
 //	NSDictionary		*indexColorAttribute;
+    
+    dispatch_queue_t process_queue;
     
     // for full screen operation
     NSInteger           oldPageStyle;
@@ -684,11 +687,20 @@ enum RootCommand
 
 // Michael Witten: mfwitten@mit.edu
 - (void)insertNewlinesFromSelectionUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;	//mfwitten@mit.edu 22 June 2005
-- (void)removeNewlinesUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;				//mfwitten@mit.edu 22 June 2005
+- (void)removeCharactersUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName;				//mfwitten@mit.edu 22 June 2005
 - (void) setLineBreakMode:(id)sender;                                                                       //mfwitten@mit.edu 31 May 2005
 - (void)hardWrapSelection: (id)sender;																		//mfwitten@mit.edu 7 June 2005
 - (void)removeNewLinesFromSelection: (id)sender;															//mfwitten@mit.edu 22 June 2005
 // end witten
+- (bool)isTextSelected;
+- (NSRange)getTextSelectionOrWholeDocument;
+- (bool)textContainsComment: (NSString*)inspectedText
+                 withPrefix: (NSString**)prefix;
+- (bool)textContainsComment: (NSString*)inspectedText;
+- (bool)lastCharacterOfRangeIsLinebreak: (NSRange)currentLine;
+- (void)insertCharactersFromSelectionUsingIndexes: (NSArray*)indexes
+                                       characters: (NSArray*)characters
+                                   withActionName: (NSString*)actionName;
 - (void)setLineBreakModeNew;
 
 //BULLET (H. Neary) (modified by (HS))

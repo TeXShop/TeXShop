@@ -177,6 +177,8 @@ NSInteger strSort(id s1, id s2, void *context)
 	// highlightContentColorDict = [[NSDictionary dictionaryWithObjectsAndKeys:
 	// 							  [NSColor colorWithDeviceRed:1 green:1 blue:0.5 alpha:1], NSBackgroundColorAttributeName, nil ] retain];	 // added by Terada
  */
+    
+    process_queue = dispatch_queue_create("Serialisation queue", DISPATCH_QUEUE_SERIAL);
 	
 	_encoding = [[TSDocumentController sharedDocumentController] encoding];
 
@@ -279,7 +281,7 @@ NSInteger strSort(id s1, id s2, void *context)
     self.myPDFKitView2 = nil;
 	
 	[self invalidateCompletionConnection];
-	
+    
 //	[myPDFKitView2 release];
 
 //	[super dealloc];
@@ -2495,7 +2497,8 @@ else {
  	[args addObject: [myFileName  stringByStandardizingPath]];
 	self.detexPipe = [NSPipe pipe];
 	self.detexHandle = [self.detexPipe fileHandleForReading];
-	[self.detexHandle readInBackgroundAndNotify];
+	//[self.detexHandle readInBackgroundAndNotify];
+    [self.detexHandle waitForDataInBackgroundAndNotify];
 	[self.detexTask setStandardOutput: self.detexPipe];
 	if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
 		[self.detexTask setLaunchPath:enginePath];
@@ -2802,8 +2805,11 @@ if ( ! skipTextWindow) {
 	// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkScrapTaskStatus:)
     //                                              name:NSTaskDidTerminateNotification object:nil];
 		
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
-		name:NSFileHandleReadCompletionNotification object:nil];
+//	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
+//		name:NSFileHandleReadCompletionNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeTexOutput:)
+             name:NSFileHandleDataAvailableNotification object:nil];
 
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetMacroButton:)
@@ -6235,27 +6241,52 @@ if (! useFullSplitWindow) {
 	}
 }
 
+-(NSData *) availableDataOrError: (NSFileHandle *)file {
+    for (;;)
+    {
+        @try {
+            return [file availableData];
+        } @catch (NSException *e) {
+            if ([[e name] isEqualToString:NSFileHandleOperationException])
+            {
+                if ([[e reason] isEqualToString: @"*** -[NSConcreteFileHandle availableData]: Interrupted system call"])
+                {
+                    continue;
+                }
+                return nil;
+            }
+            @throw;
+        }
+    }  // for
+}
+
 - (void) writeTexOutput: (NSNotification *)aNotification
 {
-	NSString		*newOutput, *numberOutput, *searchString, *tempString, *detexString, *texloganalyserString;
-	NSData		*myData, *detexData, *texloganalyserData;
-	NSRange		myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange;
-	NSInteger			error;
-	NSInteger                 lineCount, wordCount, charCount;
-	NSUInteger	myLength;
-	NSUInteger		start, end, start1, end1;
-	NSStringEncoding	theEncoding;
-	BOOL                result;
-	NSString	*thePath;
-	NSNumber	*theNumber;
-	NSString	*theNumberString, *theLine;
-	NSString	*searchText;
+    NSString        *detexString, *texloganalyserString;
+    NSData        *detexData, *texloganalyserData;
+    NSInteger  charCount;
+    NSInteger                 lineCount, wordCount;
+    BOOL                result;
 
 	NSFileHandle *myFileHandle = [aNotification object];
 	if (myFileHandle == self.readHandle) {
-		myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
-		if ([myData length]) {
-			// theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
+		// NSData* myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+        NSData* myData = [self availableDataOrError: myFileHandle];
+//        myData = [myFileHandle availableData];
+        if ([myData length]) {
+            dispatch_async(process_queue, ^{
+                NSString        *newOutput, *numberOutput, *searchString, *tempString;
+                NSRange        myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange;
+                NSInteger            error;
+                NSUInteger    myLength;
+                NSUInteger        start, end, start1, end1;
+                NSStringEncoding    theEncoding;
+                NSString    *thePath;
+                NSNumber    *theNumber;
+                NSString    *theNumberString, *theLine;
+                NSString    *searchText;
+
+                // theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
             theEncoding = _encoding;
 			newOutput = [[NSString alloc] initWithData: myData encoding: theEncoding];
 			
@@ -6286,13 +6317,13 @@ if (! useFullSplitWindow) {
 					if ((myRange.location = 1) && (myRange.length > 0)) {
 						numberOutput = [tempString substringFromIndex:(myRange.location + 1)];
 						error = [numberOutput integerValue];
-						if ((error > 0) && (errorNumber < NUMBEROFERRORS)) {
-							errorLine[errorNumber] = error;
+						if ((error > 0) && (self->errorNumber < NUMBEROFERRORS)) {
+							self->errorLine[self->errorNumber] = error;
 							
 							// new code to find text just before error
-							if (errorText[errorNumber] != nil)
+							if (self->errorText[self->errorNumber] != nil)
 				//				[errorText[errorNumber] release];
-							errorText[errorNumber] = nil;
+							self->errorText[self->errorNumber] = nil;
 							
 							searchDotsRange = [numberOutput rangeOfString: @"..."];
 							if (searchDotsRange.location == NSNotFound) {
@@ -6300,13 +6331,13 @@ if (! useFullSplitWindow) {
 								if (searchDotsRange.location != NSNotFound) {
 									searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 1)];
 									if (searchText != nil)
-										errorText[errorNumber] = searchText ;
+										self->errorText[self->errorNumber] = searchText ;
 								}
 							}
 							else {
 								searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 3)];
 								if (searchText != nil)
-									errorText[errorNumber]  = searchText ;
+									self->errorText[self->errorNumber]  = searchText ;
 							}
 								
 							
@@ -6314,7 +6345,7 @@ if (! useFullSplitWindow) {
 							// ----------
 					//		if (errorLinePath[errorNumber] != nil)
 					//			[errorLinePath[errorNumber] release];
-							errorLinePath[errorNumber] = nil;
+							self->errorLinePath[self->errorNumber] = nil;
 							
 							theNumber = [NSNumber numberWithInteger:error];
 							theNumberString = [theNumber stringValue];
@@ -6325,34 +6356,38 @@ if (! useFullSplitWindow) {
 								pathRange.location = start1;
 								pathRange.length = errorRange.location - pathRange.location;
 								thePath = [newOutput substringWithRange: pathRange];
-								errorLinePath[errorNumber] = thePath ;
+								self->errorLinePath[self->errorNumber] = thePath ;
 							}
 							// end of new code
 							// -----------
 							
-							errorNumber++;
-							[outputWindow makeKeyAndOrderFront: self];
+							self->errorNumber++;
+                            [self->outputWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:)
+                                                                withObject:self waitUntilDone:NO];
 						}
 					}
-				}
+                }
 			}
 
-			
-			typesetStart = YES;
-			NSRange theRange = [outputText selectedRange];
-			theRange.length = [newOutput length];
-			[outputText replaceCharactersInRange: [outputText selectedRange] withString: newOutput];
-			if (! consoleCleanStart) {
-				[outputText setTextColor:[NSColor redColor] range: theRange];
-			}
-			[outputText scrollRangeToVisible: [outputText selectedRange]];
+			dispatch_sync(dispatch_get_main_queue(), ^{ // GUI stuff should happen on main thread
+                self->typesetStart = YES;
+                NSRange theRange = [self->outputText selectedRange];
+                theRange.length = [newOutput length];
+                [self->outputText replaceCharactersInRange: [self->outputText selectedRange] withString: newOutput];
+                if (! self->consoleCleanStart) {
+                    [self->outputText setTextColor:[NSColor redColor] range: theRange];
+                }
+                [self->outputText scrollRangeToVisible: [self->outputText selectedRange]];
+                });
 	//		[newOutput release];
-			[self.readHandle readInBackgroundAndNotify];
-		}
+            });
+            // [self.readHandle readInBackgroundAndNotify];
+            [self.readHandle waitForDataInBackgroundAndNotify];
+            }
 	}
     else if (myFileHandle == self.texloganalyserHandle) {
-        
-        texloganalyserData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+        texloganalyserData = [self availableDataOrError: myFileHandle];
+        // texloganalyserData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         if ([texloganalyserData length]) {
             texloganalyserString = [[NSString alloc] initWithData: texloganalyserData encoding: NSISOLatin9StringEncoding];
             // NSLog(texloganalyserString);
@@ -6363,7 +6398,8 @@ if (! useFullSplitWindow) {
 			theRange.length = [texloganalyserString length];
 			[self.logTextView replaceCharactersInRange: [self.logTextView selectedRange] withString: texloganalyserString];
 			[self.logTextView scrollRangeToVisible: [self.logTextView selectedRange]];
- 			[self.texloganalyserHandle readInBackgroundAndNotify];
+ 			// [self.texloganalyserHandle readInBackgroundAndNotify];
+            [self.texloganalyserHandle waitForDataInBackgroundAndNotify];
         }
         
         
@@ -6377,7 +6413,8 @@ if (! useFullSplitWindow) {
    
     
     else if (myFileHandle == self.detexHandle) {
-		detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+		// detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+        detexData = [self availableDataOrError: myFileHandle];
 		if ([detexData length]) {
 			detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];
 			NSScanner *myScanner = [NSScanner scannerWithString:detexString];
@@ -8432,7 +8469,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 }
 
 
-
+/*
 - (void)hardWrapSelection: (id)sender
 {
 	NSRange				charRange			= [textView selectedRange];
@@ -8581,6 +8618,276 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	[[undoManager prepareWithInvocationTarget: self]
 			insertNewlinesFromSelectionUsingIndexes: indexesReversed withActionName: actionName];
 }
+ 
+*/
+
+- (bool)isTextSelected {
+    bool selectedInTextView = [textView selectedRange].length != 0;
+    bool selectedInTextView2 = [textView2 selectedRange].length != 0;
+    return selectedInTextView || selectedInTextView2;
+}
+
+- (NSRange)getTextSelectionOrWholeDocument {
+    
+    // Get selected text
+    NSRange charRange = [textView selectedRange];
+    
+    // If no text is selected, select whole document
+    if (![self isTextSelected])
+    {
+        charRange = NSMakeRange(0, [_textStorage length]);
+    }
+    
+    return charRange;
+}
+
+- (void)hardWrapSelection: (id)sender
+{
+    NSRange                    charRange                        = [self getTextSelectionOrWholeDocument];
+    NSUInteger        textStorageIndexLast      = [_textStorage length] - 1;
+    NSMutableArray    *    insertedCharactersIndexes    = [[NSMutableArray alloc] init];
+    NSMutableArray  * insertedCharacters        = [[NSMutableArray alloc] init];
+    NSLayoutManager    *    layoutManager               = [textView layoutManager];
+    
+    NSUInteger charRangeLocationLast = charRange.location + charRange.length - 1;
+    
+    // While end of selection or end of document is not reached, hard wrap
+    while (charRange.location < charRangeLocationLast &&
+           charRange.location < textStorageIndexLast)
+    {
+        NSRange currentLine;
+        [layoutManager lineFragmentRectForGlyphAtIndex: charRange.location effectiveRange: &currentLine];
+        
+        // If last character of line does not break the line, add a line break
+        if (![self lastCharacterOfRangeIsLinebreak:currentLine])
+        {
+            NSString *currentLineText = [[_textStorage string] substringWithRange:currentLine];
+            
+            if (![self textContainsComment:currentLineText]) {
+                // This line contains no comment: Just add a newline at the end
+                [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
+                [insertedCharacters insertObject:@"\n" atIndex:0];
+            } else {
+                // This line contains a comment. If we break the line we need to comment out the newly created line
+                [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
+                [insertedCharacters insertObject:@"\n" atIndex:0];
+                
+                // Add comment symbol to new line
+                [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
+                [insertedCharacters insertObject:@"%" atIndex:0];
+                
+                // Add optional prefix after comment (to cover cases where all lines begin with, e.g., '%%  ')
+                NSString* prefix = [[NSString alloc] init];
+                [self textContainsComment:currentLineText withPrefix:&prefix];
+                for (int i = 0; i < prefix.length; i++)
+                {
+                    [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
+                    unichar nextPrefixChar = [prefix characterAtIndex:i];
+                    [insertedCharacters insertObject:[NSString stringWithCharacters:&nextPrefixChar length:1]
+                                             atIndex:0];
+                }
+            }
+        }
+        
+        // Proceed to next line
+        charRange.location += currentLine.length;
+    }
+    
+    // Apply newly created line breaks
+    if ([insertedCharactersIndexes count])
+    {
+        [self insertCharactersFromSelectionUsingIndexes:insertedCharactersIndexes
+                                             characters:insertedCharacters
+                                         withActionName:NSLocalizedString(@"Hard Wrap", @"Hard Wrap")];
+    }
+}
+
+- (bool)textContainsComment: (NSString*)inspectedText
+                 withPrefix: (NSString**)prefix {
+    NSInteger         commentSymbol   = '%';
+    NSInteger         spaceSymbol     = ' ';
+    NSUInteger        location        = 0;
+    unichar           currentCharacter;
+    bool              foundComment    = false;
+    
+    // Go over the text character by character and search for the beginning of a comment
+    while (location < inspectedText.length) {
+        currentCharacter = [inspectedText characterAtIndex: location];
+        
+        if (currentCharacter == commentSymbol) {
+            // Comment found
+            foundComment = true;
+            location++;
+            currentCharacter = [inspectedText characterAtIndex: location];
+            
+            // Get prefix consisting of multiple % followed by (multiple) blanks
+            while (prefix != NULL &&
+                   location < inspectedText.length &&
+                   (currentCharacter == commentSymbol || currentCharacter == spaceSymbol)) {
+                *prefix = [*prefix stringByAppendingString:[NSString stringWithCharacters:&currentCharacter length:1]];
+                
+                // Get next char
+                location++;
+                currentCharacter = [inspectedText characterAtIndex: location];
+            }
+            
+            // We're done searching
+            break;
+        }
+        else if (currentCharacter == g_texChar) {
+            // A backslash (or a yen): a new TeX command starts here.
+            // Skip a character to not interpret \% as comment
+            location++;
+        }
+        location++;
+    }
+    
+    return foundComment;
+}
+
+- (bool)textContainsComment: (NSString*)inspectedText {
+    return [self textContainsComment:inspectedText withPrefix:NULL];
+}
+
+- (bool)lastCharacterOfRangeIsLinebreak: (NSRange)currentLine
+{
+    NSString* textStorageString  = [_textStorage string];
+    
+    // Get range of last character
+    NSRange lastCharacterOfCurrentLine;
+    lastCharacterOfCurrentLine.location += currentLine.length - 1;
+    lastCharacterOfCurrentLine.length  = 1;
+    
+    // Check if last character matches
+    return [[textStorageString substringWithRange: lastCharacterOfCurrentLine]
+            isEqualToString: @"\n"];
+}
+
+- (void)removeNewLinesFromSelection: (id)sender
+{
+    NSString            *    textStorageString    = [_textStorage string];
+    NSMutableArray    *    newlineIndexes        = [[NSMutableArray alloc] init] ;
+    NSRange                    charRange                = [self getTextSelectionOrWholeDocument];
+    
+    NSUInteger charRangeStart = charRange.location;
+    
+    for (charRange.location = (charRange.location + charRange.length - 1), charRange.length = 1; charRange.location > charRangeStart; charRange.location--)
+    {
+        if ([[textStorageString substringWithRange: charRange] isEqualToString: @"\n"])
+            [newlineIndexes addObject: [NSNumber numberWithUnsignedInt: (unsigned int)charRange.location]];
+    }
+    
+    if ([newlineIndexes count])
+    {
+        [self removeCharactersUsingIndexes: newlineIndexes
+                            withActionName: NSLocalizedString(@"Newline Removal", @"Newline Removal")];
+    }
+}
+
+- (void)insertNewlinesFromSelectionUsingIndexes: (NSArray*)indexes
+                                 withActionName: (NSString*)actionName
+{
+    // Create necessary array of newline characters
+    NSMutableArray *newlines = [[NSMutableArray alloc] init];
+    for (int i = 0; i < indexes.count; i++)
+    {
+        [newlines addObject:@"\n"];
+    }
+    
+    // Insert newlines
+    [self insertCharactersFromSelectionUsingIndexes:indexes
+                                         characters:newlines
+                                     withActionName:actionName];
+}
+
+- (void)insertCharactersFromSelectionUsingIndexes: (NSArray*)indexes
+                                       characters: (NSArray*)characters
+                                   withActionName: (NSString*)actionName //added by mfwitten@mit.edu
+{
+    NSUndoManager      *    undoManager             = [textView undoManager];
+    NSMutableArray    *    indexesReversed        = [[NSMutableArray alloc] init];
+    NSEnumerator      *    indexesEnumerator    = [indexes objectEnumerator];
+    NSNumber            *    idx;
+    NSUInteger        idxCount          = 0;
+    
+    // Save selection state as it will be outdated after inserting characters
+    bool              isTextSelected    = [self isTextSelected];
+    NSRange           selectedRange     = [textView selectedRange];
+    
+    // Insert given characters
+    while ((idx = (NSNumber*)[indexesEnumerator nextObject]))
+    {
+        [textView replaceCharactersInRange:NSMakeRange([idx unsignedIntegerValue], 0) withString:characters[idxCount++]];
+        [indexesReversed insertObject: idx atIndex: 0];
+    }
+    
+    // Update selection to include the characters just added
+    if (isTextSelected)
+    {
+        NSUInteger offset         = 0;
+        NSUInteger indexesCount   = [indexes count];
+        
+        if ([(NSNumber*)[indexes objectAtIndex: indexesCount - 1] unsignedIntegerValue] <= selectedRange.location)
+        {
+            selectedRange.location++;
+            offset = 1;
+        }
+        
+        selectedRange.length += indexesCount - offset;
+        [textView setSelectedRange: selectedRange];
+    }
+    
+    [undoManager setActionName: actionName];
+    [[undoManager prepareWithInvocationTarget: self]
+     removeCharactersUsingIndexes: indexesReversed withActionName: actionName];
+    [self colorizeAll];
+}
+
+- (void)removeCharactersUsingIndexes: (NSArray*)indexes withActionName: (NSString*)actionName //added by mfwitten@mit.edu
+{
+    NSUndoManager      *    undoManager                    = [textView undoManager];
+    NSMutableArray    *    indexesReversed            = [[NSMutableArray alloc] init];
+    NSMutableArray  * removedCharacters   = [[NSMutableArray alloc] init];
+    NSEnumerator      *    indexesEnumerator        = [indexes objectEnumerator];
+    NSNumber            *    idx;
+    
+    // Save selection state as it will be outdated after inserting characters
+    bool              isTextSelected    = [self isTextSelected];
+    NSRange           selectedRange     = [textView selectedRange];
+    
+    // Remove characters at given idices
+    while ((idx = (NSNumber*)[indexesEnumerator nextObject]))
+    {
+        NSRange rangeToDelete = NSMakeRange([idx unsignedIntegerValue], 1);
+        [removedCharacters insertObject:[[_textStorage string] substringWithRange: rangeToDelete] atIndex: 0];
+        [_textStorage deleteCharactersInRange: rangeToDelete];
+        [indexesReversed insertObject: idx atIndex: 0];
+    }
+    
+    // Update selection range to match with removed characters
+    if (isTextSelected)
+    {
+        
+        NSUInteger offset         = 0;
+        NSUInteger indexesCount   = [indexes count];
+        
+        if ([(NSNumber*)[indexes objectAtIndex: 0] unsignedIntegerValue] <= selectedRange.location)
+        {
+            selectedRange.location--;
+            offset = 1;
+        }
+        
+        selectedRange.length -= indexesCount - offset;
+        [textView setSelectedRange: selectedRange];
+    }
+    
+    [undoManager setActionName: actionName];
+    [[undoManager prepareWithInvocationTarget: self]
+     insertCharactersFromSelectionUsingIndexes: indexesReversed characters:removedCharacters withActionName: actionName];
+    [self colorizeAll];
+}
+
+// end witten
 
 // end witten
 
@@ -8823,7 +9130,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 [args addObject: flags];
                 self.texloganalyserPipe = [NSPipe pipe];
                 self.texloganalyserHandle = [self.texloganalyserPipe fileHandleForReading];
-                [self.texloganalyserHandle readInBackgroundAndNotify];
+                // [self.texloganalyserHandle readInBackgroundAndNotify];
+                [self.texloganalyserHandle waitForDataInBackgroundAndNotify];
                 [self.texloganalyserTask setStandardOutput: self.texloganalyserPipe];
                 if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
                     [self.texloganalyserTask setLaunchPath:enginePath];

@@ -118,6 +118,7 @@ static NSString*    skColorIndexTID		= @"ColorIndexSplit";
 static NSString *   skSharingTID       = @"SharingSplit";
 static NSString*    skSearchTID          = @"SearchKITSplit";
 static NSString*    skMouseModeTID         = @"MouseModeKITSplit";
+static NSString*    skBackForthKKTID       = @"BackForthKITSplit";
 
 @implementation TSDocument (ToolbarSupport)
 
@@ -799,6 +800,28 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    if ([itemIdent isEqual: skBackForthKKTID]) {
+        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:sbackforthKK];
+        menuFormRep = [[NSMenuItem alloc] init];
+        [menuFormRep setTitle: [toolbarItem label]];
+
+        submenu = [[NSMenu alloc] init];
+        submenuItem = [[NSMenuItem alloc] initWithTitle: @"Back" action: @selector(doBack:) keyEquivalent:@""];
+        [submenuItem setTarget: self];
+        [submenu addItem: submenuItem];
+        submenuItem = [[NSMenuItem alloc] initWithTitle: @"Forward" action: @selector(doForward:) keyEquivalent:@""];
+        [submenuItem setTarget: self];
+        [submenu addItem: submenuItem];
+        [menuFormRep setSubmenu: submenu];
+
+
+
+        // [menuFormRep setAction: @selector(doBackForth:)];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        return toolbarItem;
+    }
 
 
 	if ([itemIdent isEqual: kPreviousPageButtonKKTID]) {
@@ -1484,7 +1507,7 @@ else
 					kNextPageButtonKKTID,
 					kPreviousPageKKTID,
 					kNextPageKKTID,
-					kBackForthKKTID,
+					skBackForthKKTID,
 					kDrawerKKTID,
 	                skGotoPageKKTID,
                     skMagnificationKKTID,
@@ -1516,7 +1539,7 @@ else
 					kNextPageButtonKKTID,
 					kPreviousPageKKTID,
 					kNextPageKKTID,
-					kBackForthKKTID,
+					skBackForthKKTID,
 					kDrawerKKTID,
 	                skGotoPageKKTID,
                     skMagnificationKKTID,

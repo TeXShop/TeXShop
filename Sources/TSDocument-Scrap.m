@@ -350,7 +350,8 @@
     
     self.outputPipe = [NSPipe pipe];
     self.readHandle = [self.outputPipe fileHandleForReading];
-    [self.readHandle readInBackgroundAndNotify];
+    // [self.readHandle readInBackgroundAndNotify];
+    [self.readHandle waitForDataInBackgroundAndNotify];
     self.inputPipe = [NSPipe pipe];
     self.writeHandle = [self.inputPipe fileHandleForWriting];
     

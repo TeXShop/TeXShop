@@ -340,6 +340,9 @@ NSString *XMLProjectTagKey = @"XMLProjectTag";
 NSString *XMLFigureTagKey = @"XMLFigureTag";
 NSString *XMLTableTagKey = @"XMLTableTag";
 NSString *XMLMarkTagKey = @"XMLMarkTag";
+NSString *CreateImageKey = @"CreateImage";
+
+NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
 
 
 

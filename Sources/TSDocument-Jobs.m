@@ -1923,6 +1923,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             [self.writeHandle closeFile];
             //        [self.inputPipe release];
             self.inputPipe = 0;
+        }
             if (theTask == self.bibTask) {
                 [self.bibTask terminate];
                 //            [self.bibTask release];
@@ -1937,12 +1938,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                 self.metaFontTask = nil;
             }
         }
-    }
-    
    
     
+    taskDone = YES; // for Applescript
+    
     if (theTask != self.texTask)
-    {   NSLog(@"not tex task, %l and %l", theTask, self.texTask);
+    { //  NSLog(@"not tex task, %l and %l", theTask, self.texTask);
         return;
     }
     

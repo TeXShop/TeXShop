@@ -50,6 +50,7 @@
 @property (retain)      PDFView        *myPDFKitView2;
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
+@property               double          mytimestamp;
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 

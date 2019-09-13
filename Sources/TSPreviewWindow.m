@@ -47,6 +47,7 @@ extern NSPanel *pageNumberWindow;
 
 @implementation TSPreviewWindow
 
+
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag
 {
 	id		result;
@@ -408,6 +409,8 @@ extern NSPanel *pageNumberWindow;
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
+
+    
 	 if (self.willClose) {
 		[super sendEvent: theEvent];
 		return;
@@ -427,7 +430,34 @@ extern NSPanel *pageNumberWindow;
 		} 
 	
 	}
-
+  
+    
+#ifdef IMMEDIATEMAGNIFY
+  if (([self.myDocument fromKit]) && ([theEvent type] == NSLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
+  {
+      
+      NSUInteger modifiers = NSEvent.modifierFlags;
+      NSUInteger modifiersPressed = modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption);
+      if (! (modifiersPressed == 0))
+      {
+          [super sendEvent: theEvent];
+          return;
+      }
+      NSPoint thePoint = [theEvent locationInWindow];
+      NSPoint aPoint = [[self.myDocument pdfKitView] convertPoint:thePoint fromView:nil];
+      NSView *aView = [self.myDocument pdfKitView];
+      BOOL inPDF = [aView mouse: aPoint inRect: aView.bounds];
+      if (inPDF)
+      {
+          [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
+          [super sendEvent: theEvent];
+          // [self discardEventsMatchingMask: NSAnyEventMask  beforeEvent: self.currentEvent];
+          return;
+          
+      }
+   }
+#endif
+ 
 	if (![self.myDocument fromKit]) {
 		
 		unichar	theChar;

@@ -199,7 +199,8 @@
 - (void) scrollByDragging: (NSEvent *)theEvent;
 - (void) zoomIn: (id)sender;
 - (void) zoomOut: (id)sender;
-
+- (void) fancyMouseDown: (NSEvent *)theEvent;
+- (BOOL) toolIsMagnification;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 
 // printing

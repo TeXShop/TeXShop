@@ -55,6 +55,9 @@
 // This makes the XML tag in the Save Panel's Type List be the default for xml files
 #define XMLINDEX    42
 
+// undefine this to avoid mag fix, so the mouse must move for the glass to appear
+#define IMMEDIATEMAGNIFY 0 // undefine this to avoid mag fix, so the mouse must move for the glass to appear
+
 /*
  End
 */

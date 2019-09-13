@@ -1,0 +1,18 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\c84706\cname labelColor;}
+\margl1440\margr1440\vieww17900\viewh15440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+\
+1) Return to original routine used to fix the "flash bug", fixing its memory leak\
+\
+2) The magnifying glass in the Preview Window would only appear if the user pushed the mouse button AND THEN MOVED THE MOUSE. This is fixed.\
+(No, it isn't. Special cases did the fix in. Notice two things: if you click in white space, the magnifying glass instantly appears. And in Apple's Preview, the glass is hokey; it is activated by typing ` rather than clicking the mouse button. The basic problem is that in the PDFKitView, if you click on a point, the mouseDown routine will not be called until the mouse moves because this code is used to select stretches of text. If you click in text and hold the mouse down for several seconds, then mouseDown and mouseUp arrive at the same time or not at all. Grrrrr.)\
+\
+3) The CreateImage default for version 4.35 is inactive in 4.36, since we again use the best method to fix the flash bug.\
+\
+4) Fixed a bug reported by  Aron Tobias; when BibTeX was run by Applescript, it did not report back that it successfully quit. 
+\f1 \cf2 T\'f3bi\'e1s \'c1ron}

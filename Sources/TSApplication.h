@@ -13,5 +13,6 @@
 - (void)terminate:(id)sender;
 - (void)sendEvent:(NSEvent *)anEvent;
 - (IBAction)GotoLibraryTeXShop: (id)sender;
+- (void)sendEvent:(NSEvent *)event;
 
 @end

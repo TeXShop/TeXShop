@@ -496,6 +496,58 @@
 */
 }
 
+- (void)sendEvent:(NSEvent *)theEvent
+{
+    
+    
+    
+    //    if (([theEvent type] == NSFlagsChanged) && ([theEvent modifierFlags] & NSCommandKeyMask))
+    //        NSLog(@"yes");
+    
+    if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+        
+        if  ([[theEvent characters] characterAtIndex:0] == '[') {
+            [self.myDocument doCommentOrIndentForTag:Munindent];
+            return;
+        }
+        
+        if  ([[theEvent characters] characterAtIndex:0] == ']') {
+            [self.myDocument doCommentOrIndentForTag:Mindent];
+            return;
+        }
+    }
+    
+#ifdef IMMEDIATEMAGNIFY
+    
+    if (([self.myDocument fromKit]) && ([theEvent type] == NSLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
+    {
+        NSUInteger modifiers = NSEvent.modifierFlags;
+        NSUInteger modifiersPressed = modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption);
+        if (! (modifiersPressed == 0))
+        {
+            [super sendEvent: theEvent];
+            return;
+        }
+        NSPoint thePoint = [theEvent locationInWindow];
+        NSPoint aPoint = [[self.myDocument pdfKitView] convertPoint:thePoint fromView:nil];
+        NSView *aView = [self.myDocument pdfKitView];
+        BOOL inPDF = [aView mouse: aPoint inRect: aView.bounds];
+        if (inPDF)
+        {
+            [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
+            [super sendEvent: theEvent];
+            // [self discardEventsMatchingMask: NSAnyEventMask  beforeEvent: self.currentEvent];
+            return;
+            
+        }
+    }
+#endif
+    
+    
+    
+    [super sendEvent: theEvent];
+}
+
 
 
 /*
@@ -584,27 +636,6 @@
 	[super close];
 }
 
-- (void)sendEvent:(NSEvent *)theEvent
-{
-	
-//	if (([theEvent type] == NSFlagsChanged) && ([theEvent modifierFlags] & NSCommandKeyMask))
-//		NSLog(@"yes");
-	
-	if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
-		
-		if  ([[theEvent characters] characterAtIndex:0] == '[') {
-			[self.myDocument doCommentOrIndentForTag:Munindent];
-			return;
-		} 
-	
-		if  ([[theEvent characters] characterAtIndex:0] == ']') {
-			[self.myDocument doCommentOrIndentForTag:Mindent];
-			return;
-		} 
-	}
-	
-	[super sendEvent: theEvent];
-}
 
 - (void)saveSourcePosition: sender
 {

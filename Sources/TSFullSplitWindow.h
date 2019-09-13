@@ -79,6 +79,7 @@
 - (void)associatedWindow:(id)sender;
 - (void)abort:(id)sender;
 - (void)performFindPanelAction: sender;
+- (void) sendEvent:(NSEvent *)theEvent;
 
 
 /*

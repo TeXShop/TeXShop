@@ -14,6 +14,34 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.37</h3></P>
+ 
+ Version 4.35 fixed an important and long-standing bug. Version 4.36 was never released. Version 4.37 fixes two cosmetic bugs, which have annoyed me for some time.
+ 
+ <ul>
+ <li> Apple's PDF software has a routine to load and display a new pdf file. A common use case is to display the first page of the new file, and then the routine works well. But we  want to display the same page before and after typesetting, and it is usually not the first page. Then Apple's routine introduces an annoying "flash".
+ 
+ <p> TeXShop has a fix for this problem. Just before loading the new pdf file, it takes a picture of the old page and glues this picture on top of the Preview window.  When the new pdf is loaded, it creates a flash but the flash is hidden beneath the picture. Then the picture is removed. This whole process takes about half a second.
+ 
+ <p> Several routines are available in Apple's API's to take that picture. At first TeXShop used a routine named "screenCacheImageForView" which worked perfectly. But later I realized that this routine had a memory leak and each typesetting job used up 20 megs of memory. So I switched to a second routine called
+ "bitmapImageRepForCachingDisplayInRect". This routine had no memory leak, but caused a blurry display for a moment after each typesetting job.
+ 
+ <p> In version 4.37, the original screenCacheImageForView is used, but the memory leak is fixed. Four hours after finding this fix, the exact same fix was emailed to me by Martin Hairer. Thanks!
+ 
+ <p> Version 4.35 introduced a hidden preference setting called "CreateImage" which allowed users to experiment with various picture taking routines. This preference is still present, but has been completely deactivated.
+ 
+ <li>
+ <p> The Preview window has a magnifying glass, but it behaved in a strange way. To magnify, the user pressed the mouse button and then moved the mouse by a few pixels. Pressing the mouse without moving it did not reveal the magnifying glass (unless the press occurred in the white space surrounding the text). 
+ 
+ <p> This is fixed; the magnifying glass now appears immediately when the mouse button is pressed.
+ 
+ <li>
+ <p> Tóbiás Áron reported an interesting bug. If BibTeX was run by an Applescript, it failed to report to Applescript that it had finished. This broke the Applescript macro "Bibliography", which called pdflatex and then BibTeX and then pdflate twice more. Fixed.
+ 
+ </ul>
+ TeXShop should  be  ready for Catalina, so I anticipate several months of stability before further work is again required.
+ 
+ 
 <P><h3>TeXShop Changes 4.35</h3></P>
 
 Versions 4.32, 4.33, and 4.34 were never officially released. They were  experimental versions as I attempted to understand the "sudden halt" bug. 

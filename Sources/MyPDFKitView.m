@@ -565,6 +565,13 @@
 //
 // Note that if the image fails in multiple monitor situations or other obscure situations, new methods can be
 // supplied, and only this one routine needs to be rewritten.
+//
+// September 6, 2019: I had to replace the routine below, which worked beautifully, because it created a memory leak.
+// Today I finally read the createCGImage:fromRect: documentation; I hadn't read it earlier because I just copied this routine from the web
+// Note that cgim if a Core Graphics image object, not a Cocoa object; the documentation says "you are responsible for releasing the
+// returned image when you no longer need it". Documentation elsewhere says that this is done using CGImageRelease, even when using ARC.
+// Hence the revised code below, which has no memory leak.
+// (Michael Ledoux)
 
 - (NSImage *) screenCacheImageForView:(NSView*)aView
 {
@@ -584,7 +591,9 @@
                                                kCGWindowListOptionIncludingWindow,
                                                (CGWindowID)[[aView window] windowNumber],
                                                kCGWindowImageDefault);
-    return [[NSImage alloc] initWithCGImage:cgimg size:[aView bounds].size];
+    NSImage *myImage =  [[NSImage alloc] initWithCGImage:cgimg size:[aView bounds].size];
+    CGImageRelease(cgimg);
+    return myImage;
     
     
     
@@ -668,7 +677,8 @@ if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pa
         NSData  *data;
         NSBitmapImageRep *myRep;
         NSSize mySize, imgSize;
-        
+  
+/*
         NSInteger myChoice = [SUD integerForKey:CreateImageKey];
         
     // First method
@@ -701,8 +711,9 @@ if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pa
         myImage = [self screenCacheImageForView: myView];
         break;
     }
+ */
         
-   
+        myImage = [self screenCacheImageForView: myView];
         
         sizeRect = [myView bounds];
        
@@ -2704,8 +2715,37 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 
 #pragma mark =====mouse routines=====
 
-- (void) mouseDown: (NSEvent *) theEvent
+- (BOOL) toolIsMagnification
 {
+    if ((currentMouseMode != NEW_MOUSE_MODE_MAG_GLASS) && (currentMouseMode != NEW_MOUSE_MODE_MAG_GLASS_L))
+        return NO;
+    else
+        return YES;
+}
+
+- (void) fancyMouseDown: (NSEvent *)theEvent
+{
+    
+    switch (currentMouseMode)
+    {
+        case NEW_MOUSE_MODE_MAG_GLASS:
+#ifndef SELECTION_SHOUND_PERSIST
+            [self cleanupMarquee: YES];
+#endif
+            [self doMagnifyingGlass: theEvent level: 0];
+            break;
+        case NEW_MOUSE_MODE_MAG_GLASS_L:
+#ifndef SELECTION_SHOUND_PERSIST
+            [self cleanupMarquee: YES];
+#endif
+            [self doMagnifyingGlass: theEvent level: 1];
+            break;
+    }
+}
+
+ - (void) mouseDown: (NSEvent *) theEvent
+{
+    
     if ((BuggyHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
         {
         if ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE))
@@ -2749,6 +2789,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 	//	[[self window] makeFirstResponder: [self window]]; // mitsu 1.29b
 	[[self window] makeFirstResponder: self];
 
+#ifndef IMMEDIATEMAGNIFY
 	if ([theEvent clickCount] >= 2)
 	{
 		currentMouseMode = NEW_MOUSE_MODE_MAG_GLASS;
@@ -2760,6 +2801,9 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 			((mouseMode==NEW_MOUSE_MODE_MAG_GLASS_L)?1:((mouseMode==NEW_MOUSE_MODE_MAG_GLASS)?0:(-1)))];
 	}
 	else
+#endif
+ 
+    if ([theEvent clickCount] <= 1)
 	{
 		switch (currentMouseMode)
 		{
@@ -2769,6 +2813,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 #endif
 				[self scrollByDragging: theEvent];
 				break;
+#ifndef IMMEDIATEMAGNIFY
 			case NEW_MOUSE_MODE_MAG_GLASS:
 #ifndef SELECTION_SHOUND_PERSIST
 				[self cleanupMarquee: YES];
@@ -2781,7 +2826,8 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 #endif
 				[self doMagnifyingGlass: theEvent level: 1];
 				break;
-			case NEW_MOUSE_MODE_SELECT_PDF:
+#endif
+ 			case NEW_MOUSE_MODE_SELECT_PDF:
                 
       //       if (atLeastMavericks && [self overView] && [self mouse: [self convertPoint:
                 if ([self overView] && [self mouse: [self convertPoint:
@@ -2885,7 +2931,6 @@ The system then remembers the new number and sends is to the Timer which will di
 
 - (void) mouseMoved: (NSEvent *) theEvent
 {
-        
     BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
     
    if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
@@ -3105,8 +3150,7 @@ The system then remembers the new number and sends is to the Timer which will di
 
 - (void) mouseDragged: (NSEvent *) theEvent
 {
-
-	if (downOverLink) {
+ 	if (downOverLink) {
 		[super mouseDragged: theEvent];
 		return;
 	}

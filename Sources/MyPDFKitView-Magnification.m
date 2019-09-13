@@ -16,7 +16,6 @@
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
     
-    
     // Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
     // and the old routine has problems in all of these places.
     

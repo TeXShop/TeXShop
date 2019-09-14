@@ -523,27 +523,23 @@
     {
         NSUInteger modifiers = NSEvent.modifierFlags;
         NSUInteger modifiersPressed = modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption);
-        if (! (modifiersPressed == 0))
+        if (! modifiersPressed)
         {
-            [super sendEvent: theEvent];
-            return;
-        }
-        NSPoint thePoint = [theEvent locationInWindow];
-        NSPoint aPoint = [[self.myDocument pdfKitView] convertPoint:thePoint fromView:nil];
-        NSView *aView = [self.myDocument pdfKitView];
-        BOOL inPDF = [aView mouse: aPoint inRect: aView.bounds];
-        if (inPDF)
-        {
-            [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
-            [super sendEvent: theEvent];
-            // [self discardEventsMatchingMask: NSAnyEventMask  beforeEvent: self.currentEvent];
-            return;
-            
+            NSPoint thePoint = [theEvent locationInWindow];
+            NSPoint aPoint = [[self.myDocument pdfKitView] convertPoint:thePoint fromView:nil];
+            NSView *aView = [self.myDocument pdfKitView];
+            NSRect Inside = aView.bounds;
+            Inside = NSInsetRect(Inside, 15, 15);
+            BOOL inPDF = [aView mouse: aPoint inRect: Inside];
+            if (inPDF)
+            {
+                [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
+                // [super sendEvent: theEvent]; This kills scrolling with the track pad
+                return;
+            }
         }
     }
 #endif
-    
-    
     
     [super sendEvent: theEvent];
 }

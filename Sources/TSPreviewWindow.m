@@ -447,9 +447,12 @@ extern NSPanel *pageNumberWindow;
           BOOL inPDF = [aView mouse: aPoint inRect: Inside];
           if (inPDF)
           {
-              [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
-              // [super sendEvent: theEvent]; this call kills scrolling by trackpad in the pdf window
-              return;
+              if ([self isMainWindow])
+              {
+                  [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
+                  // [super sendEvent: theEvent]; this call kills scrolling by trackpad in the pdf window
+                  return;
+              }
           }
       }
    }

@@ -533,9 +533,12 @@
             BOOL inPDF = [aView mouse: aPoint inRect: Inside];
             if (inPDF)
             {
-                [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
-                // [super sendEvent: theEvent]; This kills scrolling with the track pad
-                return;
+                if ([self isMainWindow])
+                {
+                    [[self.myDocument pdfKitView] fancyMouseDown: theEvent];
+                    // [super sendEvent: theEvent]; This kills scrolling with the track pad
+                    return;
+                }
             }
         }
     }

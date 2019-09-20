@@ -724,6 +724,12 @@
 		[OgreTextFinder sharedTextFinder];  //this line modifies menus and hooks up the OgreTextFinder
 	else 
         [TextFinder sharedInstance];
+    
+    if ([SUD integerForKey:DefaultCommandKey] == 3)
+    {
+        [SUD setInteger: 2 forKey: DefaultCommandKey];
+        [SUD synchronize];
+    }
   
 	    
 	[self testForIntel];

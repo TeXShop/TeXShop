@@ -39,9 +39,11 @@ enum DefaultCommand
 {
 	DefaultCommandTeX = 0,
 	DefaultCommandLaTeX = 1,
-	DefaultCommandConTEXt = 2,
-	DefaultCommandUser = 3
+	DefaultCommandUser = 2
 };
+
+//     DefaultCommandConTEXt = 2,
+
 
 typedef enum
 {

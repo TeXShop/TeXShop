@@ -1190,11 +1190,13 @@ if (! skipTextWindow) {
 			[programButtonEE selectItemWithTitle: @"LaTeX"];
 			whichEngine = LatexEngine;	// just remember the default command
 			break;
+/*
 		case DefaultCommandConTEXt: [programButton selectItemWithTitle: @"ConTeXt"];
             [sprogramButton selectItemWithTitle: @"ConTeXt"];
 			[programButtonEE selectItemWithTitle: @"ConTeXt"];
 			whichEngine = ContextEngine;	// just remember the default command
 			break;
+ */
 		case DefaultCommandUser:    i = UserEngine;
 			done = NO;
 			defaultCommand = [[SUD stringForKey: DefaultEngineKey] lowercaseString];

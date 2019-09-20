@@ -1665,7 +1665,7 @@ A tag of 0 means use TeX, a tag of 1 means use LaTeX.
 	// since the default program values map identically to the tags of the NSButtonCells,
 	// we can use the tag directly here.
 	[SUD setInteger:[[sender selectedCell] tag] forKey:DefaultCommandKey];
-	if ([[sender selectedCell] tag] == 3) {
+	if ([[sender selectedCell] tag] == 2) {
 		[_engineTextField setEnabled: YES];
 		[_engineTextField setEditable: YES];
 		[_engineTextField setSelectable: YES];
@@ -2417,7 +2417,7 @@ This method retrieves the application preferences from the defaults object and s
 
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
 	[_engineTextField setStringValue:[defaults stringForKey:DefaultEngineKey]];
-	if ([defaults integerForKey:DefaultCommandKey] == 3) {
+	if ([defaults integerForKey:DefaultCommandKey] == 2) {
 		[_engineTextField setEnabled: YES];
 		[_engineTextField setEditable: YES];
 		[_engineTextField setSelectable: YES];
@@ -2426,7 +2426,7 @@ This method retrieves the application preferences from the defaults object and s
 	else
 		[_engineTextField setEnabled: NO];
 
-	if ([defaults integerForKey:DefaultCommandKey] == 3)
+	if ([defaults integerForKey:DefaultCommandKey] == 2)
 		[_engineTextField setEditable: YES];
 	[_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
 	[_syncMatrix selectCellWithTag:[defaults integerForKey:SyncMethodKey]];

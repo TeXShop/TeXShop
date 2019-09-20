@@ -667,12 +667,14 @@
 		_searchResults = NULL;
 	}
     
-    
-if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+   if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil))
+// if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
     {
-    
+        NSView *myView;
+        
         // NSView *myView = [[self documentView] enclosingScrollView];
-        NSView *myView = [[self window] contentView];
+        // NSView *myView = [[self window] contentView];
+        
         NSImage *myImage;
         NSData  *data;
         NSBitmapImageRep *myRep;
@@ -712,8 +714,29 @@ if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pa
         break;
     }
  */
-        
+     if (atLeastMojave)
+     {
+         myView = [[self window] contentView];
+         myImage = [self screenCacheImageForView: myView];
+     }
+
+    else
+    {
+        myView = [[self documentView] enclosingScrollView];
         myImage = [self screenCacheImageForView: myView];
+    }
+/*
+     else
+     {
+         myView = [[self documentView] enclosingScrollView];
+         myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+         [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
+         mySize = [myView bounds].size;
+         imgSize = NSMakeSize( mySize.width, mySize.height );
+         myImage = [[NSImage alloc]initWithSize:imgSize];
+         [myImage addRepresentation:myRep];
+     }
+ */
         
         sizeRect = [myView bounds];
        
@@ -833,7 +856,8 @@ if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil) && ((pa
 //    if ([SUD boolForKey: FixPreviewBlurKey])
 //        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
  
-if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+if ((atLeastHighSierra) && (self.PDFFlashFix))
+// if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
     {
             [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
                                               target:self
@@ -852,7 +876,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
                 }
 }
 
-/*
+
 - (void)removeHideView2: (NSTimer *) theTimer
 {
     if (self.myHideView2) {
@@ -860,7 +884,7 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
         self.myHideView2 = nil;
     }
 }
-*/
+
 
 - (NSInteger)index
 {
@@ -917,48 +941,24 @@ if ((atLeastHighSierra) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STY
 
 - (void) reShowForSecond
 {
-	PDFPage		*aPage;
-    
-/*
-if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && (self.myHideView2 == nil) && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
-    {
-    
-   // NSView *myView = [[self documentView] enclosingScrollView];
-        
-    NSView *myView = [[self window] contentView];
-        
-        // First method
-        
- 
-        // NSData* data = [myView dataWithPDFInsideRect:[myView frame]];
-        // NSImage *myImage2 = [[NSImage alloc] initWithData:data];
- 
-        
-        // Alternate method, creates some blur
-        
-        
-        NSBitmapImageRep *myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
-        [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
-        NSSize mySize = [myView bounds].size;
-        NSSize imgSize = NSMakeSize( mySize.width, mySize.height );
-        NSImage *myImage2 = [[NSImage alloc]initWithSize:imgSize];
-        [myImage2 addRepresentation:myRep];
-        
-        
-        // Alternate method, has giant memory leak
-        
- 
-         // NSImage *myImage2 = [self screenCacheImageForView: myView];
- 
+	PDFPage	*aPage;
+    NSView  *myView;
+    NSImage *myImage2;
+    NSRect  sizeRect;
 
-    sizeRect = [myView  frame];
+if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.windowIsSplit) && (self.PDFFlashFix) && (self.myHideView2 == nil))
+    {
+ 
+        myView = [[self documentView] enclosingScrollView];
+        myImage2 = [self screenCacheImageForView: myView];
+        sizeRect = [myView  frame];
     
-//    self.myHideView2 = [[HideView alloc] initWithFrame: sizeRect];
-//    [self.myHideView2 setSizeRect: sizeRect];
-//    self.myHideView2.originalImage = myImage2;
-//    [myView addSubview: self.myHideView2];
+        self.myHideView2 = [[HideView alloc] initWithFrame: sizeRect];
+        [self.myHideView2 setSizeRect: sizeRect];
+        self.myHideView2.originalImage = myImage2;
+        [myView addSubview: self.myHideView2];
      }
-*/
+
     
     
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max)
@@ -966,70 +966,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
         [[self window] disableFlushWindow];
     }
 	totalPages = [[self document] pageCount];
-	/*
-	[self cleanupMarquee: YES];
-
-	if ([self document] == nil)
-		secondNeedsInitialization = YES;
-	else
-		secondNeedsInitialization = NO;
-
-
-	NSRect visibleRect = [[self documentView] visibleRect];
-	NSRect fullRect = [[self documentView] bounds];
-
-
-	drawMark = NO;
-	aPage = [self currentPage];
-	theindex = [[self document] indexForPage: aPage];
-	oldindex = theindex;
-	theindex++;
-	*/
-	
-/*
-	if ([[self document] isFinding])
-		[[self document] cancelFindString];
-	if (_searchResults != NULL) {
-		[_searchResults removeAllObjects];
-		[_searchTable reloadData];
-		[_searchResults release];
-		_searchResults = NULL;
-	}
-
-	
-	// if ([SUD boolForKey:ReleaseDocumentClassesKey]) {
-	if ([self doReleaseDocument]) {
-		// NSLog(@"texshop release");
-		pdfDoc = [[[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]] autorelease]; 
-		[self setDocument: pdfDoc];
-		// [pdfDoc release];
-	} else {
-		oldDoc = [self document];
-		theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
-		pdfDoc = [[[PDFDocument alloc] initWithData: theData] retain];
-		// pdfDoc = [[PDFDocument alloc] initWithData: theData];
-		[self setDocument: pdfDoc];
-		if (oldDoc != NULL) {
-			[oldDoc setDelegate: NULL];
-			[oldDoc release];
-		}
-	}
- */
-// ----------------------------------	
     
-	
-/*
-	[[self document] setDelegate: self];
-*/
-	totalPages = [[self document] pageCount];
-/*
-	[totalPage setIntValue:totalPages];
-    [atotalPage setIntValue:totalPages];
-	[totalPage1 setIntValue: totalPages];
-	[totalPage display];
-    [stotalPage display];
-	[totalPage1 display];
- */
 	if (secondTheIndex > totalPages)
 		secondTheIndex = totalPages;
 	secondTheIndex--;
@@ -1038,18 +975,6 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
 	if (secondNeedsInitialization)
 		[self initializeDisplay];
 	
-/*
-	if (totalRotation != 0) {
-		for (i = 0; i < totalPages; i++) {
-			myPage = [[self document] pageAtIndex:i];
-			amount = [myPage rotation];
-			newAmount = amount + totalRotation;
-			[myPage setRotation: newAmount];
-		}
-		[self layoutDocumentView];
-	}
-	[self setupOutline];
-*/
 	
 	// WARNING: The next 9 lines of code are very fragile. Initially I used
 	// NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
@@ -1078,8 +1003,8 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
    // [self removeBlurringByResettingMagnification];
    [self fixWhiteDisplay];
 
-/*
-if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.PDFFlashFix && ((pageStyle == PDF_MULTI_PAGE_STYLE) || (pageStyle == PDF_DOUBLE_MULTI_PAGE_STYLE)))
+
+if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.windowIsSplit) && (self.PDFFlashFix))
     {
         
          [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
@@ -1088,7 +1013,7 @@ if ((atLeastHighSierra) && (self.myDocument.pdfKitWindow.windowIsSplit) && self.
                                        userInfo:Nil
                                         repeats:NO];
     }
-*/
+
 
 }
 

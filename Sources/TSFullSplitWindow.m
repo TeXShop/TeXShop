@@ -114,10 +114,12 @@
 	[self.myDocument doMetapost: sender];
 }
 
+/*
 - (void) doContext: sender
 {
 	[self.myDocument doContext: sender];
 }
+*/
 
 - (void) closeCurrentEnvironment: sender
 {

@@ -197,7 +197,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		case BibtexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Bibtex"]; break;
 		case IndexEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Index"]; break;
 		case MetapostEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Metapost"]; break;
-		case ContextEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Context"]; break;
+	//	case ContextEngine: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Context"]; break;
 		default: pathStr = [pathStr stringByAppendingPathComponent:@"Macros_Latex"]; break;
 	}
 	pathStr = [pathStr stringByAppendingPathExtension:@"plist"];

@@ -406,8 +406,8 @@
                       return;
     else if ([userEngine isEqualToString: @"metapost"])
                       return;
-    else if ([userEngine isEqualToString: @"context"])
-                      return;
+//    else if ([userEngine isEqualToString: @"context"])
+//                      return;
     else if ([userEngine isEqualToString: @"personaltex"])
                       return;
     // else if ([userEngine isEqualToString: @"personallatex"])

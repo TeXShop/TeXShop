@@ -72,8 +72,8 @@
 - (id)handleTexInteractiveCommand:(NSScriptCommand*)command;
 - (id)handleBibtexCommand:(NSScriptCommand*)command;
 - (id)handleBibtexInteractiveCommand:(NSScriptCommand*)command;
-- (id)handleContextCommand:(NSScriptCommand*)command;
-- (id)handleContextInteractiveCommand:(NSScriptCommand*)command;
+//- (id)handleContextCommand:(NSScriptCommand*)command;
+//- (id)handleContextInteractiveCommand:(NSScriptCommand*)command;
 - (id)handleMetapostCommand:(NSScriptCommand*)command;
 - (id)handleMetapostInteractiveCommand:(NSScriptCommand*)command;
 - (id)handleMakeindexCommand:(NSScriptCommand*)command;

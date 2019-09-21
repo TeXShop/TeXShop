@@ -778,12 +778,14 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
 					done = YES;
+        /*
 				} else if ([programString isEqualToString:@"context"]) {
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
 					whichEngine = ContextEngine;
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
-					done = YES;
+                    done = YES;
+         */
 				} else {
 					i = UserEngine;
 					j = [programButton numberOfItems];
@@ -877,12 +879,16 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 					whichEngine = IndexEngine;
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
-				} else if ([lowerprogramName isEqualToString:@"context"]) {
+				}
+                
+            /*      else if ([lowerprogramName isEqualToString:@"context"]) {
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
 					whichEngine = ContextEngine;
 					[[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
 					[self fixMacroMenu];
-				} else {
+				}
+             */
+                    else {
 					i = UserEngine;
 					j = [programButton numberOfItems];
 					done = NO;
@@ -1237,7 +1243,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		
 		
 		//   if (whichEngine < 5)
-		if ((whichEngineLocal == TexEngine) || (whichEngineLocal == LatexEngine) || (whichEngineLocal == MetapostEngine) || (whichEngineLocal == ContextEngine)) {
+        if ((whichEngineLocal == TexEngine) || (whichEngineLocal == LatexEngine) || (whichEngineLocal == MetapostEngine)) { //} || (whichEngineLocal == ContextEngine)) {
 			NSString* enginePath = 0;
 			NSString* myEngine = 0;
 /*
@@ -1253,6 +1259,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 			}
 			self.texTask = [[NSTask alloc] init];
 			
+    /*
 			if (whichEngineLocal == ContextEngine) {
 				if (theScript == kTypesetViaPDFTeX) {
 					enginePath = [[NSBundle mainBundle] pathForResource:@"contextwrap" ofType:nil];
@@ -1281,7 +1288,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 					// if ([SUD boolForKey:SavePSEnabledKey])
 					//     [args addObject: [NSString stringWithString:@"--keep-psfile"]];
 				}
-			} else if (whichEngineLocal == MetapostEngine) {
+			} else
+     */
+            if (whichEngineLocal == MetapostEngine) {
 				NSString* mpEngineString;
 				switch ([SUD integerForKey:MetaPostCommandKey]) {
 					case 0: mpEngineString = @"metapostwrap"; break;
@@ -1368,7 +1377,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 			
 			
 			//  if ((whichEngine != 2) && (whichEngine != 3) && (whichEngine != 4)) {
-			if ((whichEngineLocal != MetapostEngine) && (whichEngineLocal != ContextEngine)) {
+            if ((whichEngineLocal != MetapostEngine)) { //} && (whichEngineLocal != ContextEngine)) {
 				
 				enginePath = [self separate:myEngine into:args];
 
@@ -1626,6 +1635,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	[self doJob:whichEngine withError:YES runContinuously:NO];
 }
 
+/*
 - (void) doContext: sender
 {
 	fromMenu = YES;
@@ -1641,6 +1651,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 // end addition
 	[self doJob:ContextEngine withError:YES runContinuously:NO];
 }
+*/
 
 - (void) doMetapost: sender
 {
@@ -1717,10 +1728,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 	[self doJobForScript:MetapostEngine withError:YES runContinuously:NO];
 }
+/*
 - (void) doContextTemp: sender
 {
 	[self doJobForScript:ContextEngine withError:YES runContinuously:NO];
 }
+*/
 
 - (void) doIndexTemp: sender
 {
@@ -1743,7 +1756,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
     fromMenu = NO;
 	useError = NO;
-	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
+	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine)) // || (whichEngine == ContextEngine))
 		useError = YES;
 	if (whichEngine >= UserEngine)
 		useError = YES;
@@ -1766,7 +1779,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
    
    fromMenu = NO;
    useError = NO;
-	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine) || (whichEngine == ContextEngine))
+	if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine)) // || (whichEngine == ContextEngine))
 		useError = YES;
 	if (whichEngine >= UserEngine)
 		useError = YES;

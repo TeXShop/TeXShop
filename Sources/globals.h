@@ -175,8 +175,8 @@ enum EngineCommand
 	BibtexEngine = 3,
 	IndexEngine = 4,
 	MetapostEngine = 5,
-	ContextEngine = 6,
-	UserEngine = 7
+//	ContextEngine = 6,
+	UserEngine = 6,
 };
 
 // mitsu 1.29 (O)

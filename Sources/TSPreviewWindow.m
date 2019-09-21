@@ -243,10 +243,12 @@ extern NSPanel *pageNumberWindow;
 	[self.myDocument doMetapost: sender];
 }
 
+/*
 - (void) doContext: sender
 {
 	[self.myDocument doContext: sender];
 }
+*/
 
 - (void) doMetaFont: sender
 {

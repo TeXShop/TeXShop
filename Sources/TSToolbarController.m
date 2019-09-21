@@ -54,7 +54,7 @@ static NSString*	kLaTeXTID 			= @"LaTeX";
 static NSString*	kBibTeXTID 			= @"BibTeX";
 static NSString*	kMakeIndexTID 		= @"MakeIndex";
 static NSString*	kMetaPostTID 		= @"MetaPost";
-static NSString*	kConTeXTID 			= @"ConTeX";
+//static NSString*	kConTeXTID 			= @"ConTeX";
 static NSString*	kMetaFontID			= @"MetaFont";
 static NSString*    kTagsTID             = @"Tags";
 static NSString*    kLabelsTID           = @"Labels";        //NDS added dropdown for going to a label
@@ -473,10 +473,12 @@ else
 											 imageName:@"MetaPostAction" target:self action:@selector(doMetapostTemp:)];
 	}
 
+    /*
 	if ([itemIdent isEqual: kConTeXTID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 											 imageName:@"ConTeXAction" target:self action:@selector(doContextTemp:)];
 	}
+    */
 
 	if ([itemIdent isEqual: kSplitID]) {
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -1334,7 +1336,7 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-					kConTeXTID,
+				//	kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
                     kLabelsTID, // NDS added
@@ -1364,7 +1366,7 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-					kConTeXTID,
+				//	kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
                     kLabelsTID, // NDS added
@@ -1400,7 +1402,7 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-					kConTeXTID,
+				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageTID,
 					kMagnificationTID,
@@ -1434,7 +1436,7 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-					kConTeXTID,
+				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageKKTID,
 					kMagnificationKKTID,
@@ -1469,7 +1471,7 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-					kConTeXTID,
+				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageKKTID,
 					kMagnificationKKTID,

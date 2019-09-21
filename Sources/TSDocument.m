@@ -5550,8 +5550,8 @@ if (! useFullSplitWindow) {
 			[anItem action] == @selector(doLatex:) ||
 			[anItem action] == @selector(doBibtex:) ||
 			[anItem action] == @selector(doIndex:) ||
-			[anItem action] == @selector(doMetapost:) ||
-			[anItem action] == @selector(doContext:))
+			[anItem action] == @selector(doMetapost:))
+//			[anItem action] == @selector(doContext:))
 			return NO;
 		if ([anItem action] == @selector(printDocument:))
 			return ((self.documentType == isPDF) ||

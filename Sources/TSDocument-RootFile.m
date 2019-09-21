@@ -100,7 +100,7 @@
 						switch (theEngine) {
 							case TexEngine: [obj doTex1:nil]; break;
 							case LatexEngine: [obj doLatex1:nil]; break;
-							case ContextEngine: [obj doContext1:nil]; break;
+							// case ContextEngine: [obj doContext1:nil]; break;
 							case MetapostEngine: [obj doMetapost1:nil]; break;
 							case BibtexEngine: [obj doBibtex:nil]; break;
 							case IndexEngine: [obj doIndex:nil]; break;
@@ -172,7 +172,7 @@
 				switch (theEngine) {
 					case TexEngine: [obj doTex1:nil]; break;
 					case LatexEngine: [obj doLatex1:nil]; break;
-					case ContextEngine: [obj doContext1:nil]; break;
+					// case ContextEngine: [obj doContext1:nil]; break;
 					case MetapostEngine: [obj doMetapost1:nil]; break;
 					case BibtexEngine: [obj doBibtex:nil]; break;
 					case IndexEngine: [obj doIndex:nil]; break;

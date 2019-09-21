@@ -750,8 +750,8 @@ enum RootCommand
 - (void) doBibtex: sender;
 - (void) doMetapost: sender;
 - (void) doMetapost1: sender;
-- (void) doContext: sender;
-- (void) doContext1: sender;
+// - (void) doContext: sender;
+// - (void) doContext1: sender;
 - (void) doIndex: sender;
 - (void) doMetaFont: sender;
 - (void) doMetaFont1: sender;
@@ -759,7 +759,7 @@ enum RootCommand
 - (void) doLatexTemp: sender;
 - (void) doBibtexTemp: sender;
 - (void) doMetapostTemp: sender;
-- (void) doContextTemp: sender;
+// - (void) doContextTemp: sender;
 - (void) doIndexTemp: sender;
 - (void) doMetaFontTemp: sender;
 - (IBAction) doTypeset: sender;

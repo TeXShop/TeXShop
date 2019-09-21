@@ -249,7 +249,7 @@
 	return nil;
 }
 
-
+/*
 - (id)handleContextCommand:(NSScriptCommand*)command
 {
 	taskDone = NO;
@@ -265,6 +265,7 @@
 
 	return nil;
 }
+*/
 
 - (id)handleMetapostCommand:(NSScriptCommand*)command
 {

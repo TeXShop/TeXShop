@@ -46,7 +46,7 @@
 - (void)doBibtex: (id)sender;
 - (void)doIndex: (id)sender;
 - (void)doMetapost: (id)sender;
-- (void)doContext: (id)sender;
+//- (void)doContext: (id)sender;
 - (void)closeCurrentEnvironment: (id)sender;
 - (void)changeAutoComplete: (id)sender;
 - (void)showHideLineNumbers: (id)sender;

@@ -81,6 +81,26 @@
 - (void)performFindPanelAction: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
 
+- (void)toggleDrawer: sender;
+- (void)previousPage: sender;
+- (void)nextPage: sender;
+- (void)goBack: sender;
+- (void)goForward: sender;
+- (void)rotateClockwise: sender;
+- (void)rotateCounterclockwise: sender;
+- (void)saveSelectionToFile: sender;
+- (void)changePDFViewSize: sender;
+- (void)zoomIn: sender;
+- (void)zoomOut: sender;
+- (void)changePageStyle: sender;
+
+/* WARNING: These do not make sense in single window mode
+- (void)duplicateDocument: sender;
+- (void)renameDocument: sender;
+- (void)moveDocument: sender;
+- (void)saveDocumentTo: sender;
+- (void)revertDocumentToSaved: sender;
+*/
 
 /*
 

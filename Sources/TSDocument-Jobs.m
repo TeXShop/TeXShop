@@ -1861,7 +1861,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	// NSData *theData = [theString dataUsingEncoding: NSASCIIStringEncoding];
 	// [[inputPipe fileHandleForWriting] writeData: theData ];
 	
-   // [outputText setSelectable: NO];
+    [outputText setSelectable: YES];
 
 	taskDone = YES;
 

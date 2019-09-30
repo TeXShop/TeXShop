@@ -7548,15 +7548,18 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     text = [textView string];
     NSRange oldRange = [textView selectedRange];
     
-    
+ 
     //Expand the selectedRange to include whole lines
     [text getLineStart:&blockStart end:&blockEnd contentsEnd:NULL forRange:[textView selectedRange]];
     tabWidth = [SUD integerForKey: tabsKey];
     
+ 
+ 
     //Save the oldString for undo
     modifyRange.location = blockStart;
     modifyRange.length = (blockEnd - blockStart);
     oldString = [[textView string] substringWithRange: modifyRange];
+
     
     lineStart = blockStart;
     BOOL firstLine = YES;
@@ -7670,6 +7673,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
     [self registerUndoWithString:oldString location:modifyRange.location
                           length:modifyRange.length key: theCommand];
+
     
     rangeIncrement = increment + ((increment > 0) ? (-1) : 1);
     if(fixRangeStart){
@@ -7677,7 +7681,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     }else{
         oldRange.location += (increment > 0) ? 1 : -1;
     }
-    if(!(oldRange.length == 0 && rangeIncrement < 0)) oldRange.length += rangeIncrement;
+    if(!(oldRange.length == 0 && rangeIncrement < 0))
+        oldRange.length += rangeIncrement;
+    
     
     [textView setSelectedRange: oldRange];
     
@@ -7687,6 +7693,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     modifyRange.location = blockStart;
     modifyRange.length = (blockEnd - blockStart);
     [textView setSelectedRange: modifyRange];
+    
 }
 
 // end mitsu 1.29 // end rewritten Scott Lambert 3/1/2010 // end rewritten Terada 2012

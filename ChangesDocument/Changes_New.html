@@ -14,6 +14,47 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.42</h3></P>
+
+Version 4.42 has three small changes. 
+<ul>
+<li> During typesetting, it is not possible to cut and paste text from the console, but cut/paste works after typesetting ends. If there is an error, TeX waits for further input but cut/paste remains inactive. Pushing RETURN until typesetting ends will make it active. If the user pushes ABORT, cut/paste remained inactive in earlier versions of TeXShop, but now it becomes active.
+
+<p>
+<li> In single window mode, several Preview menu items were deactivated. Now most remain active.
+
+<p>  A similar deactivation occurs in the Source menu; the  five items between "Duplicate" and "Revert" are deactivated. Many of these items behave unexpectedly in Single Window Mode because they only change the source file, so the active Source and Preview are no longer related. Moreover, none of these menu items is in the TeXShop source code, as can be verified by opening the source in XCode. Instead, they are added to the menu automatically by Cocoa when Automatic Saving is activated. Because they are entirely encoded in Cocoa, changing their behavior for Single Window mode could lead to instabilities in file saving behavior, and instability in that system would be intolerable. So in single window mode, these items are still disabled in TeXShop 4.42.
+
+<p>
+<li> The Macintosh uses Uniform Type Identifiers (UTI) to identify various kinds of files: tex files, latex files, pdf files, html files, etc. On  other operating systems, these types are often determined by file extensions: .tex, .ltx, .pdf., .html, etc. Macintosh programs contain a file named Info.plist which, among other things, associates file extensions used by the program with corresponding UTI's.
+
+<p>
+When the UTI system was invented, Apple predefined UTI's for various well-known types. Examples include
+ public.html, public.xml, public.jpeg, public.png. Some types are associated with companies primarily in charge: com.apple.rtfd for .rtfd files, and com.adobe.pdf for pdf files.
+ 
+ <p> When this system was designed, the designers did not pay enough attention to  open source types not on their generic list and  not controlled by a particular company.  This creates  headaches for authors of programs dealing with these open source files. The TeX world is a prime example; our files have extensions .tex, .ltx, .ctx, and .texi among others, but Apple does not provide public.tex, public.ltx, public.ctx, or public.texi, and the rules say that the "public domain" is under Apple's control and cannot be extended by  developers.
+
+<p> Faced with this dilemma, developers for TeX programs on the Macintosh have by and large invented their own UTI's for these fundamental types. Originally, TeXShop used org.tug.tex, etc., but as other front ends and editors appeared defining their own UTI's, TeXShop switched to edu.uo.texshop, etc. If a user has several front ends and editors, the UTI assigned to a TeX file becomes unpredictable. These UTI's are used for QuickLook and Spotlight Searching, and these also begin to fail.  Icons attached to these files can change at random, for no known reason.
+
+<p> In early September, I filed a developer support incident about this issue and requested that Apple extend the public list and define public.tex. I now wish I had requested public.tex, public.ltx, public.ctx, and public.texi.
+
+<p> Developer support wrote back correctly pointing out that the existence of these UTI's would not solve the problem unless all front end developers and editor developers dealing with TeX agreed to adopt the UTI's. Instead, they suggested that the governing body overseeing TeX development propose appropriate UTI's and obtain agreement from software authors to use them. In a separate message, they acknowledged that in the current environment with multiple UTI's defined by multiple pieces of software, there was no way to make QuickLook and Spotlight work correctly. 
+
+<p> In the TeX world, I know of no "governing body overseeing TeX." Perhaps the closest approximation to such a body would be TUG, the TeX User Group, but in fact there are dozens of such groups across the world, and they are mostly independent of each other. In the windows world, the primary TeX distribution is MikTeX, which is independent of TUG. And as for TUG itself, it is a loose collection of people passionately devoted to TeX, but certainly not to any particular computer platform running TeX. Since UTI is a Mac-only design, there would  be reluctance within TUG to get involved with this issue.
+
+<p> One more item in Info.plist is probably relevant here. When defining UTI's, an application lists each as 
+an "Exported Type" or an "Imported Type". An Exported Type is a type created by that particular application, while an Imported Type is created by some other entity but used by the application. When I switched to edu.uo.texshop.tex, I defined it as an Exported Type in hopes that the operating system would pay more attention. I now think this was a mistake.
+
+<p> Our only hope is that someone will take on the thankless task of rounding up software authors and getting them to agree to a single UTI, at least for the four types I've listed above. I'm not willing to be that person, and indeed I suspect it isn't reasonable for someone developing  one of the TeX applications to perform the task.
+I suspect that the job would be infinitely easier if Apple began by defining public.tex, public.ltx, public.ctx, and public.texi, and perhaps a first userful step would be for others to add their request to the pile.
+
+<p> But in the meantime, TeXShop 4.42 takes an initial step in the required direction. It reverts to the original choice of org.tug.tex, org.tug.ltx, org.tug.ctx, and org.tug.texi for files with extensions .tex, .ltx, .ctx, and .texi,
+and all four are defined as Imported Types rather than Exported Types. 
+
+<p> Perhaps the day will come when these four items can become public.tex, public.ltx, public.ctx, and public.texi.
+
+</ul>
+
 <P><h3>TeXShop Changes 4.41</h3></P>
 
 Version 4.41 fixes minor engine problems caused by the elimination of the default ConTeXt menu item. Note that up to date ConTeXt engine files remain in 4.41; the version of ConTeXt in the menu was years out of date.

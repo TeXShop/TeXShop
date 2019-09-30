@@ -33,6 +33,100 @@
 
 @implementation TSFullSplitWindow : NSWindow
 
+- (void)toggleDrawer: sender
+{
+    [[self myDocument].myPDFKitView toggleDrawer:sender];
+}
+
+- (void)previousPage: sender;
+{
+    [[self myDocument].myPDFKitView previousPage:sender];
+}
+
+
+- (void)nextPage: sender;
+{
+    [[self myDocument].myPDFKitView nextPage:sender];
+}
+
+- (void)goBack: sender;
+{
+    [[self myDocument].myPDFKitView nextPage:sender];
+}
+
+- (void)goForward: sender;
+{
+    [[self myDocument].myPDFKitView goForward:sender];
+}
+
+- (void)rotateClockwise: sender;
+{
+    [[self myDocument].myPDFKitView rotateClockwise:sender];
+}
+
+- (void)rotateCounterclockwise: sender;
+{
+    [[self myDocument].myPDFKitView rotateCounterclockwise:sender];
+}
+
+- (void)saveSelectionToFile: sender;
+{
+    [[self myDocument].myPDFKitView saveSelectionToFile:sender];
+}
+
+- (void)changePDFViewSize: sender;
+{
+    [[self myDocument].myPDFKitView changePDFViewSize:sender];
+}
+
+- (void)zoomIn: sender;
+{
+    [[self myDocument].myPDFKitView zoomIn:sender];
+}
+
+- (void)zoomOut: sender;
+{
+    [[self myDocument].myPDFKitView zoomOut:sender];
+}
+
+- (void)changePageStyle: sender;
+{
+    [[self myDocument].myPDFKitView changePageStyle:sender];
+}
+
+
+/* WARNING: These do not make sense in single user mode
+- (void)duplicateDocument: sender;
+{
+    [[self myDocument] duplicateDocument:sender];
+}
+
+- (void)renameDocument: sender;
+{
+    [[self myDocument] renameDocument:sender];
+}
+
+- (void)moveDocument: sender;
+{
+    [[self myDocument] moveDocument:sender];
+}
+
+- (void)saveDocumentTo: sender;
+{
+    [[self myDocument] saveDocumentTo:sender];
+}
+
+- (void)revertDocumentToSaved: sender;
+{
+    [[self myDocument] revertDocumentToSaved:sender];
+}
+*/
+
+
+
+
+
+
 - (void)displayConsole: (id)sender
 {
     [self.myDocument displayConsole: sender];
@@ -337,6 +431,8 @@
 
 - (void)setAutoSaveRelatedMenuItemsEnabled:(BOOL)enabled
 {
+    
+    
     NSString    *theTitle, *theAction;
     SEL         anAction;
     

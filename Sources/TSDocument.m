@@ -540,7 +540,11 @@ NSInteger strSort(id s1, id s2, void *context)
     if ([SUD integerForKey: FindMethodKey] == 0)
         [outputText setUsesFindPanel: YES];
     else if ([SUD integerForKey: FindMethodKey] == 1)
+    {
         [outputText setUsesFindBar:YES];
+        if ([SUD boolForKey:IncrementalSearchKey] == YES)
+            [outputText setIncrementalSearchingEnabled: YES];
+    }
     else
         [outputText setUsesFindPanel: YES];
     
@@ -582,7 +586,11 @@ NSInteger strSort(id s1, id s2, void *context)
     if ([SUD integerForKey: FindMethodKey] == 0)
         [self.logTextView setUsesFindPanel: YES];
     else if ([SUD integerForKey: FindMethodKey] == 1)
+    {
         [self.logTextView setUsesFindBar:YES];
+        if ([SUD boolForKey:IncrementalSearchKey])
+            [self.logTextView setIncrementalSearchingEnabled: YES];
+    }
     else
         [self.logTextView setUsesFindPanel: YES];
 }
@@ -625,7 +633,11 @@ NSInteger strSort(id s1, id s2, void *context)
     if ([SUD integerForKey: FindMethodKey] == 0)
         [aTextView setUsesFindPanel: YES];
     else if ([SUD integerForKey: FindMethodKey] == 1)
+    {
         [aTextView setUsesFindBar:YES];
+        if ([SUD boolForKey:IncrementalSearchKey])
+            [aTextView setIncrementalSearchingEnabled: YES];
+    }
     else
         [aTextView setUsesFindPanel: YES];
     

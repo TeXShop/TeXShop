@@ -341,6 +341,8 @@ NSString *XMLFigureTagKey = @"XMLFigureTag";
 NSString *XMLTableTagKey = @"XMLTableTag";
 NSString *XMLMarkTagKey = @"XMLMarkTag";
 NSString *CreateImageKey = @"CreateImage";
+NSString *IncrementalSearchKey = @"IncrementalSearch";
+
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
 

@@ -14,6 +14,20 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.43</h3></P>
+
+In an evening phone call, Louis M. Guenin pointed out that the Apple Find Bar in TeXShop doesn't behave like the similar Find Bar in Safari, TextEdit, and other Apple programs. In  other programs, the entire window being searched darkens during a search and all instances of the phrase being searched stand out in white, with the active element in yellow. 
+
+<p>  The Find Bar is created by  Cocoa  with only a single line of TeXShop source code turning it on. It has an extra parameter called ``incrementalSearchingEnabled'' which TeXShop did not set. Now TeXShop sets the parameter.
+
+<p> There is a hidden preference to turn the feature off for users who dislike it:
+<pre>
+     defaults write TeXShop IncrementalSearch NO
+</pre>
+
+<p> TeXShop has three search panels, the Apple Find Panel, the Apple Find Bar, and the OgreKit Find Panel. The choice among them is made in TeXShop Preferences and becomes active the next time TeXShop starts. The Apple Find Bar is the least intrusive, simply adding an extra search line at the top of the source window, but it is surprisingly powerful; users should give it a try. It supports "search and replace" once the word "replace" is checked, and there is a hidden pull down menu with other options, triggered by the symbol on the left side of the bar. And it fully supports Dark Mode.
+
+
 <P><h3>TeXShop Changes 4.42</h3></P>
 
 Version 4.42 has three small changes. 
@@ -139,7 +153,7 @@ This problem is fixed. If you already installed Catalina beta and activated the 
 <p> The original method of taking that picture created such a good match to the window that the moment when the picture was glued in place was undetectable. But unfortunately, this method created a memory leak of 20 MB with each typesetting job. So in version 4.25, I replaced the original method with a new method of taking the picture. It doesn't work as well, so there is a slight blur for a second or longer.
 
 <p> Perhaps in the future someone will be able to eliminate the memory leak so we can return to the original method. In the meantime, I've added a new preference for users interested in experimenting. It is called CreateImage and takes values 0, 1, or 2. For example
-<pre>
+
      defaults write TeXShop CreateImage 2
  </pre>
  The value 0 gives an old attempt never used, the value 1 gives the current method with a slight blur (and is the default value), and the value 2 gives the method with wonderful results but a memory leak. Use at your own risk.

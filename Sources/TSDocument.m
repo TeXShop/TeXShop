@@ -8662,15 +8662,39 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     return charRange;
 }
 
+- (NSUInteger)getStartOfWord: (NSUInteger)at {
+    NSUInteger startOfWord = at;
+    while (![self lastCharacterOfRange:NSMakeRange(startOfWord, 1) equals:@" "]) {
+        startOfWord--;
+    }
+    
+    // select the first letter, not the space before the word
+    startOfWord++;
+    
+    return startOfWord;
+}
+
+- (NSUInteger)getEndOfWord: (NSUInteger)at {
+    NSUInteger endOfWord = at;
+    while (![self lastCharacterOfRange:NSMakeRange(endOfWord, 1) equals:@" "]) {
+        endOfWord++;
+    }
+    return endOfWord;
+}
+
 - (void)hardWrapSelection: (id)sender
 {
-    NSRange                    charRange                        = [self getTextSelectionOrWholeDocument];
+    NSRange                    charRange        = [self getTextSelectionOrWholeDocument];
     NSUInteger        textStorageIndexLast      = [_textStorage length] - 1;
     NSMutableArray    *    insertedCharactersIndexes    = [[NSMutableArray alloc] init];
     NSMutableArray  * insertedCharacters        = [[NSMutableArray alloc] init];
-    NSLayoutManager    *    layoutManager               = [textView layoutManager];
+    NSLayoutManager    *layoutManager           = [textView layoutManager];
     
     NSUInteger charRangeLocationLast = charRange.location + charRange.length - 1;
+  
+    bool lastLineWasHardWrappedAndCommented = false;
+    NSUInteger charsLastWordUsedInNextLine = 0;
+    NSString* oldPrefix = [[NSString alloc] init];
     
     // While end of selection or end of document is not reached, hard wrap
     while (charRange.location < charRangeLocationLast &&
@@ -8678,16 +8702,40 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     {
         NSRange currentLine;
         [layoutManager lineFragmentRectForGlyphAtIndex: charRange.location effectiveRange: &currentLine];
+        currentLine.location += charsLastWordUsedInNextLine;
+        currentLine.length -= charsLastWordUsedInNextLine;
         
+        // Here we handle words that for some reason are wrapped (e.g. because they include a colon)
+        // Wrapping such words could break commands like \cite{abc:def}
+        // Hence, these words get their own line
+        NSMutableArray *currentLineParts = [[NSMutableArray alloc] init];
+        if (![self lastCharacterOfRange:currentLine equals:@" "] && ![self lastCharacterOfRangeIsLinebreak:currentLine]) {
+            NSUInteger startOfWordAtEndOfLine = [self getStartOfWord:currentLine.location+currentLine.length];
+            NSUInteger endOfWordAtEndOfLine = [self getEndOfWord:currentLine.location+currentLine.length];
+            // Also include the space after the word
+            endOfWordAtEndOfLine++;
+            [currentLineParts addObject:[NSValue valueWithRange:NSMakeRange(currentLine.location,
+                                                                            startOfWordAtEndOfLine - currentLine.location)]];
+            [currentLineParts addObject:[NSValue valueWithRange:NSMakeRange(startOfWordAtEndOfLine,
+                                                                            endOfWordAtEndOfLine - startOfWordAtEndOfLine)]];
+            charsLastWordUsedInNextLine = endOfWordAtEndOfLine - (currentLine.location+currentLine.length);
+        } else {
+            [currentLineParts addObject:[NSValue valueWithRange:currentLine]];
+            charsLastWordUsedInNextLine = 0;
+        }
+        
+        for (int i = 0; i < [currentLineParts count]; i++) {
+            currentLine = [currentLineParts[i] rangeValue];
         // If last character of line does not break the line, add a line break
         if (![self lastCharacterOfRangeIsLinebreak:currentLine])
         {
             NSString *currentLineText = [[_textStorage string] substringWithRange:currentLine];
             
-            if (![self textContainsComment:currentLineText]) {
+            if (!([self textContainsComment:currentLineText] || lastLineWasHardWrappedAndCommented)) {
                 // This line contains no comment: Just add a newline at the end
                 [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
                 [insertedCharacters insertObject:@"\n" atIndex:0];
+                lastLineWasHardWrappedAndCommented = false;
             } else {
                 // This line contains a comment. If we break the line we need to comment out the newly created line
                 [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
@@ -8699,7 +8747,12 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 
                 // Add optional prefix after comment (to cover cases where all lines begin with, e.g., '%%  ')
                 NSString* prefix = [[NSString alloc] init];
-                [self textContainsComment:currentLineText withPrefix:&prefix];
+                if (lastLineWasHardWrappedAndCommented) {
+                    prefix = [oldPrefix copy];
+                } else {
+                    [self textContainsComment:currentLineText withPrefix:&prefix];
+                    oldPrefix = [prefix copy];
+                }
                 for (int i = 0; i < prefix.length; i++)
                 {
                     [insertedCharactersIndexes insertObject: [NSNumber numberWithUnsignedInt: (unsigned int)(currentLine.location+currentLine.length)] atIndex: 0];
@@ -8707,9 +8760,14 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                     [insertedCharacters insertObject:[NSString stringWithCharacters:&nextPrefixChar length:1]
                                              atIndex:0];
                 }
+                lastLineWasHardWrappedAndCommented = true;
             }
+        } else {
+          lastLineWasHardWrappedAndCommented = false;
+        }
         }
         
+        [layoutManager lineFragmentRectForGlyphAtIndex: charRange.location effectiveRange: &currentLine];
         // Proceed to next line
         charRange.location += currentLine.length;
     }
@@ -8770,18 +8828,23 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     return [self textContainsComment:inspectedText withPrefix:NULL];
 }
 
-- (bool)lastCharacterOfRangeIsLinebreak: (NSRange)currentLine
+- (bool)lastCharacterOfRangeIsLinebreak:(NSRange)currentLine {
+    return [self lastCharacterOfRange:currentLine equals:@"\n"];
+}
+
+- (bool)lastCharacterOfRange: (NSRange)currentLine
+                      equals: (NSString*)character
 {
     NSString* textStorageString  = [_textStorage string];
     
     // Get range of last character
     NSRange lastCharacterOfCurrentLine;
-    lastCharacterOfCurrentLine.location += currentLine.length - 1;
+    lastCharacterOfCurrentLine.location = currentLine.location + currentLine.length - 1;
     lastCharacterOfCurrentLine.length  = 1;
     
     // Check if last character matches
     return [[textStorageString substringWithRange: lastCharacterOfCurrentLine]
-            isEqualToString: @"\n"];
+            isEqualToString: character];
 }
 
 - (void)removeNewLinesFromSelection: (id)sender

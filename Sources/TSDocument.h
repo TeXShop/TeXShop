@@ -699,6 +699,8 @@ enum RootCommand
 - (bool)textContainsComment: (NSString*)inspectedText
                  withPrefix: (NSString**)prefix;
 - (bool)textContainsComment: (NSString*)inspectedText;
+- (bool)lastCharacterOfRange: (NSRange)currentLine
+                      equals: (NSString*)character;
 - (bool)lastCharacterOfRangeIsLinebreak: (NSRange)currentLine;
 - (void)insertCharactersFromSelectionUsingIndexes: (NSArray*)indexes
                                        characters: (NSArray*)characters

@@ -715,6 +715,11 @@ extern NSPanel *pageNumberWindow;
 	NSSize		newSize;
 	NSRect		theFrame;
     BOOL        result;
+    
+    if ([NSEvent modifierFlags ] & NSEventModifierFlagOption)
+        [self.pdfKitSplitView setVertical:YES];
+    else
+        [self.pdfKitSplitView setVertical: NO];
 	
 	[(MyPDFKitView *)self.myPDFKitView cleanupMarquee: YES];
 	[(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];

@@ -1,0 +1,112 @@
+% !TEX TS-program = pdflatexmk
+% !TEX encoding = UTF-8 Unicode
+% The following lines are standard LaTeX preamble statements.
+\documentclass[11pt, oneside]{amsart}
+\usepackage{geometry}     
+\geometry{letterpaper}         
+\usepackage[parfill]{parskip} 
+\usepackage{graphicx}
+\usepackage{amssymb}
+%\usepackage{epstopdf}
+\title{Brief Article}
+\author{The Author}
+\usepackage{url}
+
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{microtype}
+
+% Only one command is required to use Sage within the LaTeX source:
+\usepackage{sagetex}
+
+\usepackage{xcolor}
+\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+
+\newcommand{\TS}{\textsf{\TeX Shop}}
+
+\begin{document}
+\maketitle
+
+\section{Setup}
+
+Go to <\url{https://www.sagemath.org/download.html}>, pick a repository, choose the \textsf{Apple Mac OS X} version and download the latest version on the list whose name ends with \textsf{.app.dmg}. Open the \textsf{.dmg} file and copy the \textsf{SageMath-x.x.app} (where \textsf{x.x} is the version number of \textsf{Sage}) to your Desktop. Rename \textsf{SageMath-x.x.app} to \textsf{SageMath.app} and move it into \textsf{/Applications}. Make a symbolic link of the \textsf{sage} executable in \textsf{/usr/local/bin} (note the final period, it's important):
+{\footnotesize\begin{verbatim}
+cd /usr/local/bin
+sudo ln -s /Applications/SageMath.app/Contents/Resources/sage/sage .
+\end{verbatim}
+}
+
+
+If you are running \textsf{macOS Catalina (10.15.x)} or later, add \textsf{SageMath.app} to the \textsf{Full Disk Access} list under the \textsf{Privacy} tab in the \textsf{Security \& Privacy} pane of \textsf{System Preferences}. Then \textsf{Double-Click} the \textsf{SageMath.app} to open it for the first time. If you get a rather ominous sounding message\footnote{This is because the application isn't signed.} that doesn't allow you to \textsf{Open} the application you need to \textsf{Ctl-Click} (or \textsf{Right-Click}) the application and use the \textsf{Open} option in the resulting \textsf{Contextual Menu} which will produce another message that does have an \textsf{Open} button.
+
+Finally make sure sage is expanded by running
+{\footnotesize\begin{verbatim}
+cd
+sage --version
+\end{verbatim}
+}
+which \emph{may} generate quite a few lines of output and finally end with a line giving the version number of the \textsf{sage} you are running.
+
+Next create a \textsf{sagetex} folder in \url{/usr/local/texlive/texmf-local/tex/latex} and make a symbolic link of \textsf{sagetex.sty} in that folder (again, notice the line with a final period):
+{\footnotesize\begin{verbatim}
+cd /usr/local/texlive/texmf-local/tex/latex
+sudo mkdir sagetex
+cd sagetex
+sudo ln -s \
+   /Applications/SageMath.app/Contents/Resources/sage/local/share/texmf/tex/latex/sagetex/sagetex.sty .
+sudo mktexlsr
+\end{verbatim}
+}
+to allow \TeX\ to use the \textsf{sagetex} package.
+
+When the \textsf{SageMath} application is updated copy it to your \textsf{Desktop}, rename it  \textsf{SageMath.app} as noted above and then drag and drop it onto the \textsf{Applications} folder, simply replacing the version already there. There is no need to rebuild the symbolic links. If you are using \textsf{macOS Catalina} or later follow the isntructions above to enable the application. Then run
+{\footnotesize\begin{verbatim}
+cd
+sage --version
+\end{verbatim}
+}
+which again \emph{may} generate quite a few lines of output and finally end with a line giving the version number of the \textsf{sage} you are running.
+
+\section{Using \textsf{SageTeX} with \TS's \textsf{latexmk} based engines}
+
+You can use any of \TS's basic \textsf{latexmk} engines, \textsf{(pdf/xe/lua)latexmk}, with \textsf{SageTeX}. Just have the enclosed \textsf{platexmkrc} file, written by John Collins, the maintainer of \textsf{latexmk}. in the same folder as the file that gets typeset.
+
+\section{Sample}
+
+This is an example of using Sage within a \TeX\ document. We can compute extended values like 
+
+	$$32^{31} = \sage{32^31}$$
+	
+%\newpage
+We can plot functions like $x \sin x$:
+
+\begin{center}
+ \sageplot[width=4in]{plot(x * sin( 30 * x), -1, 1)}
+\end{center}
+
+\newpage 
+ We can integrate:
+ 
+ $$\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}\,dx$$
+ $$=  \sage{integrate( (x^2 + x + 1) / ((x - 1)^3 * (x^2 + x + 2)), x )}$$
+ 
+%\newpage
+ We can perform matrix calculations:
+ 
+$$\sage{matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])^3}$$
+
+$$AB=  \sage{Matrix([[1, 2], [3, 4]])} \sage{Matrix([[5, 6], [6, 8]])} = \sage{Matrix([[1, 2], [3, 4]]) * Matrix([[5, 6], [6, 8]])}$$
+
+Plots are fun; here is a second one showing $x \ln x$. The ``width'' command in the source is sent to the include graphics command in LaTeX rather than to Sage.
+
+\begin{center}
+\sageplot[width=4in]{plot(x * ln(x), 0, 2)}
+\end{center}
+
+Sage understands mathematical constants and writes them symbolically unless it is told to produce a numerical approximation. The term $e \pi$ below is not in the LaTeX source; instead it is the result of a Sage calculation, as is the numerical value on the other side of the equal sign.
+
+The product of $e$ and $\pi$ is $\sage{pi * e} = \sage{N(pi * e)}.$
+
+\end{document}
+

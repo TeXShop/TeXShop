@@ -1,0 +1,24 @@
+#!/bin/bash
+simpdftexversion=`simpdftex -v | cut -c 52-60`
+minsimpdftexversion=20180924
+
+if [ ${minsimpdftexversion} -gt ${simpdftexversion} ] ; then
+	echo "You need simpdftex version ${minsimpdftexversion} or later to use this engine"
+	exit
+fi
+
+gsversion=`gs --version`
+mytemp=( ${gsversion//./ } )                   	# replace points, split into array
+gsmajorversion="${mytemp[0]}"       						# major version number
+gsminorversion="${mytemp[1]}"										# minor version number
+
+if [ \( ${gsmajorversion} -eq 9 \) -a \( ${gsminorversion} -gt 50 \) ] || [ \( ${gsmajorversion} -gt 9 \) ] ; then
+export gstransparencyarg="-dALLOWPSTRANSPARENCY"
+else
+export gstransparencyarg="-dNOSAFER"
+fi
+
+echo ${gstransparencyarg}
+
+#simpdftex latex --maxpfb --extradvipsopts "-R0" --extratexopts "-synctex=1 -shell-escape -file-line-error" --distilleropts "-dNOSAFER" "$1"
+simpdftex latex --maxpfb --extradvipsopts "-R0" --extratexopts "-synctex=1 -shell-escape -file-line-error" --distilleropts "${gstransparencyarg}" "$1"

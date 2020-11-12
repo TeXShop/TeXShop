@@ -33,6 +33,12 @@
 
 @implementation TSDocument (SyncOld)
 
+- (void)StopSyncScannerOld
+{
+  old_synctex_scanner_free(scanner);
+}
+
+
 - (BOOL)checkForUniqueMatch: (NSString *)previewString withStart: (NSInteger)start andOffsetLength: (NSInteger)offset inSource: (NSString *)sourceString returnedRange: (NSRange *)foundRangeLocation multipleMatch: (BOOL *)multiple
 {
 	NSRange		searchRange, resultRange, newResultRange;

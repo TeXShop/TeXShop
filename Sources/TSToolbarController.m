@@ -101,6 +101,12 @@ static NSString*	kDrawerKKTID			= @"DrawerKIT";
 static NSString*    kSearchKKTID             = @"SearchKIT";
 static NSString*    kSharingKKTID          = @"SharingKIT";
 static NSString*	kSplitKKTID				= @"SplitKIT";
+
+static NSString*    kHandKKTID              = @"HandKIT";
+static NSString*    kTextKKTID              = @"TextKIT";
+static NSString*    kGlassKKTID             = @"GlassKit";
+static NSString*    kDashKKTID              = @"DashKit";
+static NSString*    kToolsKKTID             = @"ToolsKit";
 #endif
 
 // FullSplitWindow special toolbar items
@@ -168,6 +174,25 @@ else
 	return toolbarItem;
 }
 
+- (NSToolbarItem*) makeToolbarSearchItemWithItemIdentifier:(NSString*)itemIdent key:(NSString*)itemKey
+{
+    NSSearchToolbarItem*    toolbarItem = [[NSSearchToolbarItem alloc] initWithItemIdentifier: itemIdent] ;
+
+    NSString*    labelKey = [NSString stringWithFormat:@"tiLabel%@", itemKey];
+    NSString*    paletteLabelKey    = [NSString stringWithFormat:@"tiPaletteLabel%@", itemKey];
+    NSString*    toolTipKey = [NSString stringWithFormat:@"tiToolTip%@", itemKey];
+
+    [toolbarItem setLabel: NSLocalizedStringFromTable(labelKey, @"ToolbarItems", itemKey)];
+    [toolbarItem setPaletteLabel: NSLocalizedStringFromTable(paletteLabelKey, @"ToolbarItems",         [toolbarItem label])];
+    [toolbarItem setToolTip: NSLocalizedStringFromTable(toolTipKey, @"ToolbarItems", [toolbarItem     label])];
+    
+    toolbarItem.searchField.sendsWholeSearchString = YES;
+    
+   
+    return toolbarItem;
+}
+
+
 // -----------------------------------------------------------------------------
 //
 // -----------------------------------------------------------------------------
@@ -187,16 +212,120 @@ else
 //
 // -----------------------------------------------------------------------------
 
+- (NSToolbarItem*) makeToolbarItemWithItemIdentifier:(NSString*)itemIdent key:(NSString*)itemKey image:(NSImage *)theImage target:(id)target action:(SEL)action
+{
+    NSToolbarItem*    toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey];
+    [toolbarItem setImage:theImage];
+
+    // Tell the item what message to send when it is clicked
+    [toolbarItem setTarget: target];
+    [toolbarItem setAction: action];
+    return toolbarItem;
+}
+
+- (NSToolbarItem*) makeToolbarSymbolsItemWithItemIdentifier:(NSString *)itemIdent key:(NSString *)itemKey symbolName: (NSString *)symbolName accessibility: (NSString *)accessibility imageName:(NSString *)imageName newImageName:(NSString *)newImageName target:(id)target action:(SEL)action
+{
+    if ([SUD boolForKey: NewToolbarIconsKey])
+        {
+             if (@available(macOS 11.0, *)) {
+                NSImage *symbolImage = [NSImage imageWithSystemSymbolName: symbolName
+                                                accessibilityDescription: accessibility];
+                return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                     image:symbolImage target:self action:action];
+                }
+            else
+             
+                return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey
+                                            imageName:imageName target:target action:action];
+        }
+    else
+         return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey
+                                            imageName:imageName target:target action:action];
+}
+    
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+
 - (NSToolbarItem*) makeToolbarItemWithItemIdentifier:(NSString*)itemIdent key:(NSString*)itemKey customView:(id)customView
 {
 	NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey];
 	[toolbarItem setView: customView];
-
-	[toolbarItem setMinSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
-	[toolbarItem setMaxSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
-
+    if ([SUD boolForKey: NewToolbarIconsKey]) {
+        NSButton *myButton = customView;
+        if ([[customView class] isSubclassOfClass: [NSButton class]])
+            myButton.bezelStyle = NSBezelStyleTexturedRounded;
+    }
+    else {
+	    [toolbarItem setMinSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
+	    [toolbarItem setMaxSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
+    }
+  
 	return toolbarItem;
 }
+
+- (NSToolbarItem*) makeMouseModeItemWithItemIdentifier: (NSString *)itemIdent key:(NSString *)itemKey customView: (NSView *)theView
+{
+    NSToolbarItem *theToolbarItem;
+    
+    if ([SUD boolForKey: NewToolbarIconsKey])
+    {
+        if (@available(macOS 11.0, *)) {
+            NSImage *firstImage = [NSImage imageWithSystemSymbolName: @"hand.point.up.left"
+                                            accessibilityDescription: @"Move Tool"];
+            NSImage *secondImage = [NSImage imageWithSystemSymbolName: @"a"
+                                             accessibilityDescription: @"Text Tool"];
+            NSImage *thirdImage = [NSImage imageWithSystemSymbolName: @"text.magnifyingglass"
+                                             accessibilityDescription: @"Smaller Magnifying Glass"];
+            NSImage *fourthImage = [NSImage imageWithSystemSymbolName: @"magnifyingglass"
+                                            accessibilityDescription: @"Magnifying Glass"];
+            NSImage *fifthImage = [NSImage imageWithSystemSymbolName: @"rectangle.dashed"
+                                             accessibilityDescription: @"Choose Tool"];
+            NSArray *myArray = @[firstImage, secondImage, thirdImage, fourthImage, fifthImage ];
+            NSSegmentedControl *mySegmentedControl = [NSSegmentedControl segmentedControlWithImages: myArray trackingMode:NSSegmentSwitchTrackingSelectOne target: self action:@selector(changeMouseMode:)];
+            [mySegmentedControl setTag: 1 forSegment: 0];
+            [mySegmentedControl setTag: 2 forSegment: 1];
+            [mySegmentedControl setTag: 3 forSegment: 2];
+            [mySegmentedControl setTag: 4 forSegment: 3];
+            [mySegmentedControl setTag: 5 forSegment: 4];
+            theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mySegmentedControl];
+            }
+                
+        else
+            theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:theView];
+
+    }
+else
+    theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:theView];
+    
+    return theToolbarItem;
+}
+
+- (NSToolbarItem*) makeBackForthItemWithItemIdentifier: (NSString *)itemIdent key:(NSString *)itemKey customView: (NSView *)theView
+{
+    NSToolbarItem *theToolbarItem;
+    
+    if ([SUD boolForKey: NewToolbarIconsKey])
+    {
+        if (@available(macOS 11.0, *)) {
+            NSImage *firstImage = [NSImage imageWithSystemSymbolName: @"arrowtriangle.left.fill"
+                                            accessibilityDescription: @"Left Move"];
+            NSImage *secondImage = [NSImage imageWithSystemSymbolName: @"arrowtriangle.right.fill"
+                                             accessibilityDescription: @"Right Move"];
+             NSArray *myArray = @[firstImage, secondImage];
+            NSSegmentedControl *mySegmentedControl = [NSSegmentedControl segmentedControlWithImages: myArray trackingMode:NSSegmentSwitchTrackingSelectOne target: self action:@selector(doBackForward:)];
+             theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mySegmentedControl];
+            }
+        else
+            theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:theView];
+    }
+else
+    theToolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:theView];
+    
+    return theToolbarItem;
+}
+
 
 // -----------------------------------------------------------------------------
 //
@@ -204,59 +333,18 @@ else
 
 - (void) setupToolbar
 {
-/*
-	[typesetButton retain];
-	[typesetButton removeFromSuperview];
-    [shareButton retain];
-    [shareButton removeFromSuperview];
-    [shareButtonEE retain];
-    [shareButtonEE removeFromSuperview];
-	[programButton retain];
-	[programButton removeFromSuperview];
-	[typesetButtonEE retain];
-	[typesetButtonEE removeFromSuperview];
-	[programButtonEE retain];
-	[programButtonEE removeFromSuperview];
-	[tags retain];
-	[tags removeFromSuperview];
-	[popupButton retain];
-	[popupButton removeFromSuperview];
-	[autoCompleteButton retain];
-	[autoCompleteButton removeFromSuperview];
-	[showFullPathButton retain]; // added by Terada
-	[showFullPathButton removeFromSuperview]; // added by Terada
-	// added by mitsu --(H) Macro menu; macroButton
-	[macroButton retain];
-	[macroButton removeFromSuperview];
-	[macroButtonEE retain];
-	[macroButtonEE removeFromSuperview];
-	[indexColorBox retain];
-	[indexColorBox removeFromSuperview];
-*/
+    NSWindow *tempWindow;
+    
 	// end addition
+    
+    if (@available(macOS 11.0, *))
+        {
+            tempWindow = (NSWindow *)[self textWindow];
+            tempWindow.toolbarStyle = NSWindowToolbarStyleExpanded;
+        }
 	[[self textWindow] setToolbar: [self makeToolbar: kSourceToolbarIdentifier]];
 
-/*
-	[previousButton retain];
-	[previousButton removeFromSuperview];
-	[nextButton retain];
-	[nextButton removeFromSuperview];
-	[gotopageOutlet retain];
-	[gotopageOutlet removeFromSuperview];
-	[magnificationOutlet retain];
-	[magnificationOutlet removeFromSuperview];
-	[gotopageOutletKK retain];
-	[gotopageOutletKK removeFromSuperview];
-	[magnificationOutletKK retain];
-	[magnificationOutletKK removeFromSuperview];
- */
 #ifdef MITSU_PDF
-/*
-	[mouseModeMatrix retain];
-	[mouseModeMatrix removeFromSuperview];
-	[mouseModeMatrixKK retain];
-	[mouseModeMatrixKK removeFromSuperview];
- */
 	// WARNING: this must be called now, because calling it when the matrix is active but offscreen causes defective toolbar display
 	NSInteger mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
 	[mouseModeMatrixKK selectCellWithTag: mouseMode];
@@ -265,12 +353,6 @@ else
 	
 
 #endif
-/*
-	[syncBox retain];
-	[syncBox removeFromSuperview];
-	[backforthKK retain];
-	[backforthKK removeFromSuperview];
-*/
 
 	// HACK: The following is a trick to get the NSSegmentedControl to display correctly
 	// (i.e. the same way as in Preview.app). There seems to be a bug (or misfeature?) in
@@ -279,11 +361,16 @@ else
 	[backforthKK setLabel:0 forSegment:0];
 	[backforthKK setLabel:0 forSegment:1];
 
-/*
-	[drawerKK retain];
-	[drawerKK removeFromSuperview];
-*/
 
+if (@available(macOS 11.0, *))
+    {
+        tempWindow = (NSWindow *)[self pdfWindow];
+        tempWindow.toolbarStyle = NSWindowToolbarStyleExpanded;
+        self.pdfKitWindow.toolbarStyle = NSWindowToolbarStyleExpanded;
+        tempWindow = (NSWindow *)[self fullSplitWindow];
+        tempWindow.toolbarStyle = NSWindowToolbarStyleExpanded;
+    }
+    
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 	[self.pdfKitWindow setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
     [[self fullSplitWindow] setToolbar: [self makeToolbar: kFullWindowToolbarIdentifier]];
@@ -322,6 +409,11 @@ else
 	[[self pdfKitView] toggleDrawer: sender];
 }
 
+- (void)doNothing:(id)sender
+{
+    ;
+}
+
 
 // -----------------------------------------------------------------------------
 //
@@ -339,15 +431,13 @@ else
     
     if ([itemIdent isEqual: kSharingTID]) {
         [[shareButton cell] setImageScaling: NSImageAlignCenter];
-        //  [shareButton setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
-       [shareButton setImage: [NSImage imageNamed: @"NSShareTemplate"]];
+        [shareButton setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButton sendActionOn: NSLeftMouseDownMask];
         [shareButton setTarget: self];
         [shareButton setAction:@selector(doShareSource:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButton];
         menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
-      //  [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doShareSource:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -357,7 +447,6 @@ else
     
     if ([itemIdent isEqual: skSharingTID]) {
         [[shareButtonFull cell] setImageScaling: NSImageAlignCenter];
-        //  [shareButtonFull setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [shareButtonFull setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButtonFull sendActionOn: NSLeftMouseDownMask];
         [shareButtonFull setTarget: self];
@@ -365,7 +454,6 @@ else
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButtonFull];
         menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
-        //  [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doShareSource:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -375,7 +463,6 @@ else
     
     if ([itemIdent isEqual: kSharingKKTID]) {
         [[shareButtonEE cell] setImageScaling: NSImageAlignCenter];
-        // [shareButtonEE setImage: [NSImage imageNamed: NSImageNameShareTemplate]];
         [shareButtonEE setImage: [NSImage imageNamed: @"NSShareTemplate"]];
         [shareButtonEE sendActionOn:NSLeftMouseDownMask];
         [shareButtonEE setTarget: self];
@@ -383,7 +470,6 @@ else
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:shareButtonEE];
         menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
-       // [menuFormRep sendActionOn:NSLeftMouseDownMask];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doSharePreview:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -418,15 +504,9 @@ else
     }
 
 
-	/*
-	 if ([itemIdent isEqual: kProgramTID]) {
-		 return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 customView:programButton];
-	 }
-	 */
-
 	if ([itemIdent isEqual: kProgramTID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButton];
+        
 		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [programButton menu]];
@@ -473,27 +553,23 @@ else
 											 imageName:@"MetaPostAction" target:self action:@selector(doMetapostTemp:)];
 	}
 
-    /*
-	if ([itemIdent isEqual: kConTeXTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"ConTeXAction" target:self action:@selector(doContextTemp:)];
-	}
-    */
 
 	if ([itemIdent isEqual: kSplitID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"split1" target:self action:@selector(splitWindow:)];
-	}
-	
-	if ([itemIdent isEqual: kSplitKKTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"split1" target:self action:@selector(splitPreviewWindow:)];
-	}
+        
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"rectangle.grid.1x2" accessibility: @"Split Window" imageName:@"split1" newImageName:@"fakesplit" target:self action:@selector(splitWindow:)];
+    }
+    
+if ([itemIdent isEqual: kSplitKKTID]) {
+    
+    return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"rectangle.grid.1x2" accessibility: @"Split Preview Window" imageName:@"split1" newImageName:@"fakesplit" target:self action:@selector(splitPreviewWindow:)];
+}
+  
 
-	if ([itemIdent isEqual: kDrawerKKTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"DrawerToggleToolbarImage" target:self action:@selector(toggleTheDrawer:)];
-	}
+	if ([itemIdent isEqual: kDrawerKKTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"rectangle.portrait" accessibility: @"ToggleDrawer" imageName:@"DrawerToggleToolbarImage" newImageName:@"fakedrawer" target:self action:@selector(toggleTheDrawer:)];
+    }
+    
 
 
 	if ([itemIdent isEqual: kMetaFontID]) {
@@ -525,7 +601,7 @@ else
     //NDS added dropdown for going to a label
     if ([itemIdent isEqual: kLabelsTID]) {
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:labels];
-        menuFormRep = [[NSMenuItem alloc] init] ;
+         menuFormRep = [[NSMenuItem alloc] init] ;
         
         [menuFormRep setSubmenu: [labels menu]];
         [menuFormRep setTitle: [toolbarItem label]];
@@ -538,7 +614,7 @@ else
     //NDS added dropdown for going to a label
     if ([itemIdent isEqual: skLabelsTID]) {
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:slabels];
-        menuFormRep = [[NSMenuItem alloc] init] ;
+         menuFormRep = [[NSMenuItem alloc] init] ;
         
         [menuFormRep setSubmenu: [slabels menu]];
         [menuFormRep setTitle: [toolbarItem label]];
@@ -553,37 +629,6 @@ else
                                          imageName:@"UpdateAction.png" target:self action:@selector(doUpdate:)];
     }
     
-    /*
-    if ([itemIdent isEqual: kUpdateTID]) {
-        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-                                                   customView: updateButton];
-        [toolbarItem setTarget: self];
-        [toolbarItem setAction: @selector(doUpdate:)];
-
-       // menuFormRep = [[NSMenuItem alloc] init];
-       // submenu = [[NSMenu alloc] init];
-       // submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Update", @"Update") action: @selector(doUpdate:) keyEquivalent:@""];
-       // [submenu addItem: submenuItem];
-       // [menuFormRep setSubmenu: submenu];
-       // [menuFormRep setTitle: [toolbarItem label]];
-       // [toolbarItem setMenuFormRepresentation: menuFormRep];
-        return toolbarItem;
-    }
-     
-    
-    if ([itemIdent isEqual: skUpdateTID]) {
-        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-                                                   customView: sUpdateButton];
-        menuFormRep = [[NSMenuItem alloc] init];
-        submenu = [[NSMenu alloc] init];
-        submenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Update", @"Update") action: @selector(doUpdate:) keyEquivalent:@""];
-        [submenu addItem: submenuItem];
-        [menuFormRep setSubmenu: submenu];
-        [menuFormRep setTitle: [toolbarItem label]];
-        [toolbarItem setMenuFormRepresentation: menuFormRep];
-        return toolbarItem;
-    }
-   */
     
     if ([itemIdent isEqual: skUpdateTID]) {
         
@@ -688,9 +733,18 @@ else
 
 
 	// PDF toolbar
-
-
-	if ([itemIdent isEqual: kTypesetEETID]) {
+    
+    /* TeXShop used to provide "Typeset Buttons" for the Source, Preview, and Single Window modes.
+     At first all three tools used the same interface builder button. Eventually systems broke that
+     design and three buttons were provided for the tools. In the 4.50 release, one of the buttons
+     was incorrectly created in Interface Builder. In addition, the button broke in "Big Sur Tools"
+     mode. Rather than fixing this problem, I decided to remove the button as a Preview Window tool.
+     It was originally provided for users with an external editor, but they can use command-T or
+     the Typesetting menu item instead.
+     */
+    
+    /*
+	if (([itemIdent isEqual: kTypesetEETID]) && ! ([SUD boolForKey: NewToolbarIconsKey])) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:typesetButtonEE];
 		menuFormRep = [[NSMenuItem alloc] init];
@@ -702,11 +756,13 @@ else
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    */
+ 
 
 
 	if ([itemIdent isEqual: kProgramEETID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:programButtonEE];
-
+        
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 
@@ -722,13 +778,8 @@ else
 			tempString = [tempsubmenuItem title];
 			tempTarget = [tempsubmenuItem target];
 			tempAction = [tempsubmenuItem action];
-            /*
-			submenuItem = [[NSMenuItem alloc] initWithTitle: tempString action:@selector(chooseProgramFF:)  keyEquivalent:@""];
-			[submenuItem setTarget: self];
-			[submenuItem setTag: i];
-			[submenu addItem: submenuItem];
-            */
-		}
+  
+        }
 
 
 		[menuFormRep setSubmenu: submenu];
@@ -739,7 +790,7 @@ else
 
 	if ([itemIdent isEqual: kMacrosEETID]) {
 		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:macroButtonEE];
-		menuFormRep = [[NSMenuItem alloc] init];
+  		menuFormRep = [[NSMenuItem alloc] init];
 
 		[menuFormRep setSubmenu: [macroButtonEE menu]];
 		[[TSMacroMenuController sharedInstance] addItemsToPopupButton: macroButtonEE];
@@ -750,9 +801,27 @@ else
 	}
 
 
-	if ([itemIdent isEqual: kPreviousPageButtonTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-													customView:previousButton];
+    if ([itemIdent isEqual: kPreviousPageButtonTID]){
+
+        if ([SUD boolForKey: NewToolbarIconsKey])
+        {
+            if (@available(macOS 11.0, *)) {
+                NSString *theName = @"chevron.left";
+                NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
+                                                accessibilityDescription: @"Previous Page"];
+                [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:previousImage];
+                }
+            else
+                 [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                             customView:previousButton];
+        }
+    else
+
+         [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                             customView:previousButton];
+
+           
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 		[menuFormRep setAction: @selector(previousPage:)];
@@ -761,8 +830,25 @@ else
 	}
 
 	if ([itemIdent isEqual: kNextPageButtonTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-													customView:nextButton];
+        
+        if ([SUD boolForKey: NewToolbarIconsKey])
+        {
+            if (@available(macOS 11.0, *)) {
+                NSString *theName = @"chevron.right";
+                NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
+                                                accessibilityDescription: @"Next Page"];
+                [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:previousImage];
+                }
+            else
+                [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                         customView:nextButton];
+        }
+    else
+
+         [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                             customView:nextButton];
+
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 		[menuFormRep setAction: @selector(nextPage:)];
@@ -771,19 +857,21 @@ else
 	}
 
 
-	if ([itemIdent isEqual: kPreviousPageTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-							 imageName:@"PreviousPageAction" target:self action:@selector(doPreviousPage:)];
-	}
-
-	if ([itemIdent isEqual: kNextPageTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-							 imageName:@"NextPageAction" target:self action:@selector(doNextPage:)];
-	}
-
+	if ([itemIdent isEqual: kPreviousPageTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.left" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"chevron.left" target:self action:@selector(doPreviousPage:)];
+     }
+	if ([itemIdent isEqual: kNextPageTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doNextPage:)];
+     }
+\
 	if ([itemIdent isEqual: kBackForthKKTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-													customView:backforthKK];
+        
+        toolbarItem = [self makeBackForthItemWithItemIdentifier: itemIdent key:itemIdent customView: backforthKK];
+        
+  		//toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		//											customView:backforthKK];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
 
@@ -804,8 +892,10 @@ else
 	}
     
     if ([itemIdent isEqual: skBackForthKKTID]) {
-        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-                                                    customView:sbackforthKK];
+        
+        toolbarItem = [self makeBackForthItemWithItemIdentifier: itemIdent key:itemIdent customView: sbackforthKK];
+        
+         
         menuFormRep = [[NSMenuItem alloc] init];
         [menuFormRep setTitle: [toolbarItem label]];
 
@@ -818,35 +908,43 @@ else
         [submenu addItem: submenuItem];
         [menuFormRep setSubmenu: submenu];
 
-
-
-        // [menuFormRep setAction: @selector(doBackForth:)];
-        [toolbarItem setMenuFormRepresentation: menuFormRep];
+       [toolbarItem setMenuFormRepresentation: menuFormRep];
         return toolbarItem;
     }
 
 
-	if ([itemIdent isEqual: kPreviousPageButtonKKTID]) {
+	if ([itemIdent isEqual: kPreviousPageButtonKKTID])
+    {
+        /*
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 											 imageName:@"PreviousPageAlternateAction" target:self action:@selector(doPreviousPageKK:)];
+        */
+        
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.up.doc" accessibility: @"Previous Page" imageName:@"PreviousPageAlternateAction" newImageName:@"PreviousPageAlternateAction" target:self action:@selector(doPreviousPageKK:)];
 	}
+ 
 
 	if ([itemIdent isEqual: kNextPageButtonKKTID]) {
+        /*
 		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 											 imageName:@"NextPageAlternateAction" target:self action:@selector(doNextPageKK:)];
+        */
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.down.doc" accessibility: @"Next Page" imageName:@"NextPageAlternateAction" newImageName:@"NextPageAlternateAction" target:self action:@selector(doNextPageKK:)];
+        
 	}
 
 
-	if ([itemIdent isEqual: kPreviousPageKKTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"PreviousPageAction" target:self action:@selector(doPreviousPageKK:)];
-	}
+	if ([itemIdent isEqual: kPreviousPageKKTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.left" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"chevron.left" target:self action:@selector(doPreviousPageKK:)];
+     }
+        
 
-	if ([itemIdent isEqual: kNextPageKKTID]) {
-		return [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-											 imageName:@"NextPageAction" target:self action:@selector(doNextPageKK:)];
-	}
-
+	if ([itemIdent isEqual: kNextPageKKTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doNextPageKK:)];
+     }
+    
 	if ([itemIdent isEqual: kGotoPageTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutlet];
@@ -867,11 +965,6 @@ else
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
-		/*
-		 submenu = [[[NSMenu alloc] init] autorelease];
-		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
-		 [submenu addItem: submenuItem];
-		 [menuFormRep setSubmenu: submenu];*/
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextPage:)];
@@ -879,42 +972,57 @@ else
 		return toolbarItem;
 	}
 
-    
-    if ([itemIdent isEqual: kSearchKKTID]) {
-        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-                                                    customView: mySearchField];
-        /*
-        menuFormRep = [[NSMenuItem alloc] init];
-         [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
-        [toolbarItem setMenuFormRepresentation: menuFormRep];
-        [menuFormRep setAction: @selector(doTextPage:)];
-        [menuFormRep setTarget: pdfKitWindow];
-        */
+     if ([itemIdent isEqual: kSearchKKTID]) {
+        
+        if ([SUD boolForKey: NewToolbarIconsKey])
+            
+        { if (@available(macOS 11.0, *)) {
+                /*
+                toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+                */
+            
+                   toolbarItem =
+                    [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
+                     [toolbarItem setTarget: self];
+                     [toolbarItem setAction: @selector(doPDFSearch:)];
+                    
+                }
+            else
+                toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+            }
+        else
+             
+            toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+        
         return toolbarItem;
     }
     
     if ([itemIdent isEqual: skSearchTID]) {
-        toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
-                                                    customView: myFullSearchField];
-        /*
-         menuFormRep = [[NSMenuItem alloc] init];
-         [menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
-         [toolbarItem setMenuFormRepresentation: menuFormRep];
-         [menuFormRep setAction: @selector(doTextPage:)];
-         [menuFormRep setTarget: pdfKitWindow];
-         */
+        if ([SUD boolForKey: NewToolbarIconsKey])
+            
+        { if (@available(macOS 11.0, *)) {
+                
+                   toolbarItem =
+                    [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
+                     [toolbarItem setTarget: self];
+                     [toolbarItem setAction: @selector(doPDFSearch:)];
+                    
+                }
+            else
+                toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: myFullSearchField];
+            }
+        else
+             
+            toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: myFullSearchField];
+        
         return toolbarItem;
     }
+        
     
     if ([itemIdent isEqual: skGotoPageKKTID]) {
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:sgotopageOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
-		/*
-		 submenu = [[[NSMenu alloc] init] autorelease];
-		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
-		 [submenu addItem: submenuItem];
-		 [menuFormRep setSubmenu: submenu];*/
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextPage:)];
@@ -926,11 +1034,6 @@ else
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:smagnificationOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
-		/*
-		 submenu = [[[NSMenu alloc] init] autorelease];
-		 submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Page Number Panel", @"Page Number Panel") action: 				@selector(doTextPage:) 	keyEquivalent:@""] autorelease];
-		 [submenu addItem: submenuItem];
-		 [menuFormRep setSubmenu: submenu];*/
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
@@ -945,10 +1048,6 @@ else
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutlet];
 		menuFormRep = [[NSMenuItem alloc] init];
-		/* submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
-		[submenu addItem: submenuItem];
-		[menuFormRep setSubmenu: submenu];*/
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
@@ -961,10 +1060,6 @@ else
 		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
-		/* submenu = [[[NSMenu alloc] init] autorelease];
-		submenuItem = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Magnification Panel", @"Magnification Panel") action: 			@selector(doTextMagnify:) keyEquivalent:@""] autorelease];
-		[submenu addItem: submenuItem];
-		[menuFormRep setSubmenu: submenu];*/
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
@@ -975,7 +1070,11 @@ else
 #ifdef MITSU_PDF
 	// mitsu 1.29 (O)
 	if ([itemIdent isEqual: kMouseModeTID]) {
-		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrix];
+       
+		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+       customView:mouseModeMatrix];
+      
+         
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setSubmenu: mouseModeMenu];
 
@@ -989,33 +1088,44 @@ else
 
 	// mitsu 1.29 (O)
 	if ([itemIdent isEqual: kMouseModeKKTID]) {
-		toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrixKK];
-		menuFormRep = [[NSMenuItem alloc] init];
-		[menuFormRep setSubmenu: mouseModeMenuKit];
+           
+            NSToolbarItem *myToolbarItem;
+            
+            myToolbarItem = [self makeMouseModeItemWithItemIdentifier: kMouseModeKKTID key:kMouseModeKKTID
+                                                           customView: mouseModeMatrixKK];
+            
+            
+            menuFormRep = [[NSMenuItem alloc] init];
+            [menuFormRep setSubmenu: mouseModeMenu];
 
 
-		[menuFormRep setTitle: [toolbarItem label]];
-		[toolbarItem setMenuFormRepresentation: menuFormRep];
-		
+            [menuFormRep setTitle: [myToolbarItem label]];
+            [myToolbarItem setMenuFormRepresentation: menuFormRep];
 
-		return toolbarItem;
-		// return nil;
-	}
+            return myToolbarItem;
+        }
+        
     
-    if ([itemIdent isEqual: skMouseModeTID]) {
-        toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:mouseModeMatrixFull];
-        menuFormRep = [[NSMenuItem alloc] init];
-        [menuFormRep setSubmenu: mouseModeMenuKit];
-        
-        
-        [menuFormRep setTitle: [toolbarItem label]];
-        [toolbarItem setMenuFormRepresentation: menuFormRep];
-        
-        
-        return toolbarItem;
-        // return nil;
-    }
+    if ([itemIdent isEqual: skMouseModeTID])
+   
+    {
+           
+            NSToolbarItem *myToolbarItem;
+            
+            myToolbarItem = [self makeMouseModeItemWithItemIdentifier: skMouseModeTID key:skMouseModeTID
+                                                           customView: mouseModeMatrixFull];
+            
+            
+            menuFormRep = [[NSMenuItem alloc] init];
+            [menuFormRep setSubmenu: mouseModeMenu];
 
+
+            [menuFormRep setTitle: [myToolbarItem label]];
+            [myToolbarItem setMenuFormRepresentation: menuFormRep];
+
+            return myToolbarItem;
+        }
+    
 
 	// end mitsu 1.29
 #endif
@@ -1090,18 +1200,13 @@ else
                            kTypesetTID,
                            kProgramTID,
                            NSToolbarPrintItemIdentifier,
-                           // NSToolbarSeparatorItemIdentifier,
-                           // kLaTeXTID,
-                           // kBibTeXTID,
-                           kMacrosTID,
+                            kMacrosTID,
                            kTagsTID,
                            kLabelsTID,
                            kTemplatesID,
                            NSToolbarFlexibleSpaceItemIdentifier,
                            kSharingTID,
                            kSplitID,
-                           // NSToolbarFlexibleSpaceItemIdentifier,
-                           // NSToolbarSpaceItemIdentifier,
                            nil];
         }
         else {
@@ -1112,32 +1217,23 @@ else
 					kTypesetTID,
 					kProgramTID,
 					NSToolbarPrintItemIdentifier,
-					// NSToolbarSeparatorItemIdentifier,
-					// kLaTeXTID,
-					// kBibTeXTID,
-					kMacrosTID,
+						kMacrosTID,
 					kTagsTID,
                     kLabelsTID,
 					kTemplatesID,
 					NSToolbarFlexibleSpaceItemIdentifier,
 					kSplitID,
-					// NSToolbarFlexibleSpaceItemIdentifier,
-					// NSToolbarSpaceItemIdentifier,
-				nil];
+					nil];
         }
     }
 
 	if ([toolbarID isEqual:kPDFToolbarIdentifier]) {
 
 		return [NSArray arrayWithObjects:
-					// kPreviousPageButtonTID,
-					// kNextPageButtonTID,
 					kPreviousPageTID,
 					kNextPageTID,
 					kTypesetEETID,
-					// kProgramEETID,
 					NSToolbarPrintItemIdentifier,
-					// NSToolbarSeparatorItemIdentifier,
 					kMagnificationTID,
 					kGotoPageTID,
 					kMouseModeTID, // mitsu 1.29 (O)
@@ -1155,18 +1251,15 @@ else
 					kNextPageKKTID,
 					kBackForthKKTID,
 					kDrawerKKTID,
-				   // kTypesetEETID,
-					// kProgramEETID,
 					NSToolbarPrintItemIdentifier,
-					// NSToolbarSeparatorItemIdentifier,
 					kMagnificationKKTID,
 					kGotoPageKKTID,
 					kMouseModeKKTID, // mitsu 1.29 (O)
-					NSToolbarFlexibleSpaceItemIdentifier,
-                    kSearchKKTID,
-                     kSharingKKTID,
+					kSharingKKTID,
 					kSplitKKTID,
-					// NSToolbarSpaceItemIdentifier,
+                    NSToolbarFlexibleSpaceItemIdentifier,
+                    kSearchKKTID,
+                
 				nil];
 	}
         
@@ -1174,23 +1267,17 @@ else
      
         
 		return [NSArray arrayWithObjects:
-                // kPreviousPageButtonTID,
-                // kNextPageButtonTID,
                 kPreviousPageKKTID,
                 kNextPageKKTID,
                 kBackForthKKTID,
                 kDrawerKKTID,
-                // kTypesetEETID,
-                // kProgramEETID,
                 NSToolbarPrintItemIdentifier,
-                // NSToolbarSeparatorItemIdentifier,
                 kMagnificationKKTID,
                 kGotoPageKKTID,
                 kMouseModeKKTID, // mitsu 1.29 (O)
+                 kSplitKKTID,                // NSToolbarSpaceItemIdentifier,
                 NSToolbarFlexibleSpaceItemIdentifier,
                 kSearchKKTID,
-                kSplitKKTID,
-                // NSToolbarSpaceItemIdentifier,
 				nil];
 	}
 }
@@ -1210,20 +1297,18 @@ else
                      skTemplatesID,
                      skSharingTID,
                      kSplitID,
-                     NSToolbarFlexibleSpaceItemIdentifier,
+                     NSToolbarSpaceItemIdentifier,
+                     NSToolbarSpaceItemIdentifier,
                      kPreviousPageKKTID,
                      kNextPageKKTID,
                      kDrawerKKTID,
                      NSToolbarPrintItemIdentifier,
                      skGotoPageKKTID,
                      skMouseModeTID,
-                     skSearchTID,
-                     //kSharingKKTID,
                      kSplitKKTID,
-                     // NSToolbarCustomizeToolbarItemIdentifier,
-                     // NSToolbarSpaceItemIdentifier,
-                     // NSToolbarSeparatorItemIdentifier,
-                     nil];
+                     NSToolbarFlexibleSpaceItemIdentifier,
+                     skSearchTID,
+                      nil];
         }
         else {
             
@@ -1235,18 +1320,17 @@ else
                     skLabelsTID, //NDS Added
 					skTemplatesID,
 					kSplitID,
-                    NSToolbarFlexibleSpaceItemIdentifier,
+                    NSToolbarSpaceItemIdentifier,
+                    NSToolbarSpaceItemIdentifier,
 					kPreviousPageButtonKKTID,
 					kNextPageButtonKKTID,
 					kDrawerKKTID,
                     NSToolbarPrintItemIdentifier,
                     skGotoPageKKTID,
                     skMouseModeTID,
+             		kSplitKKTID,
+                    NSToolbarFlexibleSpaceItemIdentifier,
                     skSearchTID,
-					kSplitKKTID,
-					// NSToolbarCustomizeToolbarItemIdentifier,
-					// NSToolbarSpaceItemIdentifier,
-					// NSToolbarSeparatorItemIdentifier,
                     nil];
         }
     }
@@ -1264,21 +1348,19 @@ else
                      NSToolbarPrintItemIdentifier,
                      skGotoPageKKTID,
                      skMouseModeTID,
-                     skSearchTID,
-                     // kSharingKKTID,
                      kSplitKKTID,
-                     // NSToolbarCustomizeToolbarItemIdentifier,
-                     // NSToolbarSpaceItemIdentifier,
-                     // NSToolbarSeparatorItemIdentifier,
                      NSToolbarFlexibleSpaceItemIdentifier,
+                     skSearchTID,
+                     NSToolbarSpaceItemIdentifier,
+                     NSToolbarSpaceItemIdentifier,
                      skTypesetTID,
                      skProgramTID,
                      skMacrosTID,
                      skTagsTID,
                      skLabelsTID, //NDS Added
                      skTemplatesID,
-                     skSharingTID,
                      kSplitID,
+                     skSharingTID,
                      nil];
         }
         else {
@@ -1290,12 +1372,11 @@ else
                     NSToolbarPrintItemIdentifier,
                     skGotoPageKKTID,
                     skMouseModeTID,
-                    skSearchTID,
                     kSplitKKTID,
-                    // NSToolbarCustomizeToolbarItemIdentifier,
-                    // NSToolbarSpaceItemIdentifier,
-                    // NSToolbarSeparatorItemIdentifier,
                     NSToolbarFlexibleSpaceItemIdentifier,
+                    skSearchTID,
+                    NSToolbarSpaceItemIdentifier,
+                    NSToolbarSpaceItemIdentifier,
                     skTypesetTID,
                     skProgramTID,
                     skMacrosTID,
@@ -1336,7 +1417,6 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-				//	kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
                     kLabelsTID, // NDS added
@@ -1366,7 +1446,6 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-				//	kConTeXTID,
 					kMetaFontID,
 					kTagsTID,
                     kLabelsTID, // NDS added
@@ -1402,7 +1481,6 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageTID,
 					kMagnificationTID,
@@ -1436,7 +1514,6 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageKKTID,
 					kMagnificationKKTID,
@@ -1445,6 +1522,7 @@ else
                     kSearchKKTID,
                     kSharingKKTID,
 					kSplitKKTID,
+                    kToolsKKTID,
 					NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,
@@ -1471,13 +1549,13 @@ else
 					kBibTeXTID,
 					kMakeIndexTID,
 					kMetaPostTID,
-				//	kConTeXTID,
 					kMetaFontID,
 					kGotoPageKKTID,
 					kMagnificationKKTID,
 					kMouseModeKKTID,
 					kSyncMarksTID,
                     kSplitKKTID,
+                    kToolsKKTID,
                     NSToolbarPrintItemIdentifier,
 					NSToolbarCustomizeToolbarItemIdentifier,
 					NSToolbarFlexibleSpaceItemIdentifier,

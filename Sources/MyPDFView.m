@@ -71,10 +71,10 @@ NSData *draggedData;
 	self.myDocument = nil; // can be connected in InterfaceBuilder
 	pageStyle = [SUD integerForKey: PdfPageStyleKey]; // set in "initWithFrame:"
 		firstPageStyle = [SUD integerForKey: PdfFirstPageStyleKey];
-	if (!pageStyle) pageStyle = PDF_MULTI_PAGE_STYLE; // should be single? set also in "updateControlsFromUserDefaults"
+	if (!pageStyle) pageStyle = PDF_MULTI_PAGE_STYLE; // should be single? set al/Users/koch/Desktop/MouseTest/Test.texso in "updateControlsFromUserDefaults"
 	mouseMode = [SUD integerForKey:PdfMouseModeKey];
 	if (!mouseMode) mouseMode = MOUSE_MODE_MAG_GLASS;
-	currentMouseMode = mouseMode;
+    currentMouseMode = mouseMode;
 	self.selRectTimer = nil;
 	self.pageBackgroundColor = [NSColor whiteColor];
 	// end mitsu 1.29
@@ -97,6 +97,9 @@ NSData *draggedData;
 // mitsu 1.29 (O)
 - (void)awakeFromNib
 {
+    mouseMode = [SUD integerForKey:PdfMouseModeKey];
+    if (!mouseMode) mouseMode = MOUSE_MODE_MAG_GLASS;
+    currentMouseMode = mouseMode;
 	[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[mouseModeMatrix selectCellWithTag: mouseMode];
 	[[mouseModeMenu itemWithTag: mouseMode] setState: NSOnState];
@@ -3384,7 +3387,6 @@ failed. If you change the code below, be sure to test carefully!
  */
 
 
-
 // control image type popup
 - (void) chooseExportImageType: sender
 {
@@ -3400,7 +3402,6 @@ failed. If you change the code below, be sure to test carefully!
 		[SUD setInteger:imageExportType forKey:PdfExportTypeKey];
 	}
 }
-
 
 
 // mitsu 1.29 drag & drop

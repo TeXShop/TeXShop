@@ -1,9 +1,8 @@
-#!/bin/tcsh
-
-set path= ($path /Library/TeX/texbin /usr/texbin /usr/local/bin)
-set filename = "$1"
-set asyname = "${filename:r}"
-
-pdflatex -synctex=1 "$filename"
-asy -v "$asyname"-*.asy
-pdflatex -synctex=1 "$filename"
+#!/bin/sh
+  location=$(dirname "$1")
+  basename="${1%.tex}"
+  #process
+  cd $location
+  pdflatex "$1"
+  asy "${basename}"-*.asy
+  pdflatex "$1"

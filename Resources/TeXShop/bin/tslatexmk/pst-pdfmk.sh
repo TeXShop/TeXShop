@@ -43,7 +43,8 @@ else
   echo $Myname: Using latexmk to process: $1 
   cp "$1.tex" "$1-pics.tex"
 #  cp "$1.aux" "$1-pics.aux"
-  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$latex = q/latex --shell-escape/; $dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None %B.ps %D; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/' "$1-pics.tex"
+#  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$latex = q/latex --shell-escape/; $dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None -dALLOWPSTRANSPARENCY %B.ps %D; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/' "$1-pics.tex"
 #${LTMKBIN}/latexmk -pdfps -r "${TSBIN}/latexmkrc" "$1-pics.tex"
+  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$latex = q/latex --shell-escape/; $dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None ${gstransparencyarg} %B.ps %D; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/' "$1-pics.tex"
  rm "$1-pics.tex"
 fi

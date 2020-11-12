@@ -146,6 +146,7 @@
 
 // - (void) scheduleAddintToolips;
 - (id) init;
+- (void) awakeFromNib;
 - (void) setup;
 - (void) initializeDisplay;
 - (void) showWithPath: (NSString *)imagePath;
@@ -214,7 +215,7 @@
 - (NSData *)imageDataFromSelectionType: (NSInteger)type;
 - (NSData *)PDFImageDataFromSelection;
 // - (void)saveSelectionToFile: (id)sender;
-- (void) chooseExportImageType: sender;
+// - (void) chooseExportImageType: sender;
 // drag & drop
 - (void)startDragging: (NSEvent *)theEvent; // mitsu 1.29 drag & drop
 - (void)flagsChanged:(NSEvent *)theEvent;

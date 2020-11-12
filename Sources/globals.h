@@ -544,6 +544,7 @@ extern NSString *XMLMarkTagKey;
 extern NSString *RepeatTypesetOnError13Key;
 extern NSString *CreateImageKey;
 extern NSString *IncrementalSearchKey;
+extern NSString *NewToolbarIconsKey;
 
 
 

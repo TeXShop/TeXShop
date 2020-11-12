@@ -15,6 +15,72 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.50</h5></P>
+
+Versions 4.45 through 4.49 were never released. This version has the following changes:
+
+<ul>
+<li> Apple redesigned the look of the toolbar on Big Sur, macOS 11, and provided a  large number of toolbar icons, recommending that programmers use these icons rather than designing their own. The toolbar has a cleaner look and the icons are less elaborate than before.
+
+<p> When version 4.50 of TeXShop is run on Big Sur, it adopts this new look for the toolbar and its icons. The new icons cannot be provided on earlier systems because they depend on Big Sur APIs, so the TeXShop toolbar is unchanged when run on earlier systems.
+
+<p> Some Big Sur users may prefer the old icons. A new preference item under the "Misc" tab allows them to switch back to old icons. When it is selected, the change will apply to any new window opened afterward. The toolbar itself will still have the new Big Sur look. This preference item has no effect on earlier systems. I recommend avoiding the preference item and using the new icons, which will seem natural after a few days.
+
+<p> TeXShop provided three "Typeset Button" tools, for the Source, Preview, and Single Window Mode windows. In the initial release of
+version 4.50, the button in the Preview window caused the program to crash. Rather than resurrecting that button, it has been removed from the program. The Preview button was mainly used with an External Editor, but these users can still typeset by using an item in the Typesetting menu, or by typing command-T.
+
+
+<p> <li> TeXShop now has universal binaries and runs natively on Arm machines.
+
+<p> <li> The toolbar has items to split the Edit Window and the Preview Window into two independent portions.  In previous versions of TeXShop, this split was done horizontally, with one portion on the top half and one on the bottom half. That still works in TeXShop 4.50, but if the option key is held down while clicking the tool, the split is now vertical rather than horizontal.
+
+<p><li> The TeXShop Preview window has a tool to select a portion of the page and convert it to an illustration in pdf, tiff, jpeg, or png format. Several ways are provided to output this illustration.
+It can be copied from the page and pasted into another program, or dragged to the desktop to form a file there. Alternately, the menu command "Save Selection to File"  opens a Save Panel which the user can use to save the illustration to any chosen folder, with any chosen  name, and in any of the possible formats.
+But at some point in the past, this "Save Selection to File" command stopped worked. It is fixed in TeXShop 4.50.
+
+<p> One of the possible illustration formats was "PICT", a format used in the original Macintosh from 1984 to 2000. As far as I know, no other computer system used this format. Saving illustrations in this format failed in recent versions of macOS, probably because support was removed from the operating system. All traces of the PICT format have been removed from TeXShop 4.50.
+
+<p><li> Latexmk has been upgraded to version 4.70b.
+
+<p><li> A LuaHBTeX engine is available in ~/Library/TeXShop/Engines/Inactive. This location also contains a MetaPost engine by Vafa Khalighi which uses only pdfTeX and mptopdf.
+
+<p><li> The asymptote engine has been upgraded to a version supplied by Vishaal Rajani and Cole Zmurchok. Moreover the .asy filetype has been upgraded to be one of the "TeX Extensions" eligible for syntax coloring and the like. 
+
+<p><li>If a TeX command has the form \cite[...][...]{word}, then in addition to syntax coloring the  "\cite", TeXShop syntax colors "word".  At the suggestion of Akshay Gupte, citation syntax coloring has been extended to natbib commands. So in version 4.50 the same rule applies to any command with begins with the letters "cite" or "Cite". 
+
+<p><li> MacTeX-2020 installed Ghostscript 9.50 rather than Ghostscript 9.51 or 9.52 because these more recent versions did not correctly handle transparency. This bug is fixed in Ghostscript 9.53.3, released on October 15, 2020, and available as an install package from <a href="https://pages.uoregon.edu/koch">https://pages.uoregon.edu/koch</a>. Ghostscript 9.53.3 will be part of  MacTeX-2021.
+
+<p>If you install Ghostscript 9.53.3 and use transparency in illustrations, you should go to
+~/Library/TeXShop/Engines/Inactive/, find the folder GhostscriptTransparencyEngines, and inside that folder find "For TeXShop/Engines". Find the file latexTR.engine in this folder and move this file or a copy to ~/Library/TeXShop/Engines, making it an active engine. Then instead of typesetting with pdflatex in DVI mode, you should use this engine. These engines and samples are due to Herbert Schulz. For an explanation, continue reading.
+
+<p> The default typesetting engine in TeXShop is pdftex or pdflatex, which is a modified version of the original TeX program. This modified version outputs pdf files, which are easily processed by macOS and other modern  systems. The original TeX program output a dvi file;  the instructions in this dvi file essentially said "open a specific font, say computer modern, and stamp glyph 57 here, stamp glyph 71 here, stamp glyph 91 here, etc." Knuth assumed that other programmers would then write software which read the dvi file and output printing instructions for specific printers. The first printers used by TeX were postscript printers, and the first such program was dvips, which converted the dvi output to postscript for the printer.
+
+<p> As for illustrations, the original TeX did not itself process them. Instead, if the author inserted an eps illustration, TeX set aside an area for the illustration and then inserted a "special" command in the dvi file. Such special commands were intended for the printer driver, which could ignore some such commands and process others it understood. Since dvips understood postscript, it could insert the postscript code from the eps file into the postscript output stream. Later the "pstricks" package was written, allowing authors to directly insert postscript instructions in their source code. Again TeX just passed these instructions to dvips, which knew what to do with the postscript.
+
+<p> Adobe invented and controlled postscript, and licensed their postscript code to printer makers for a hefty fee. But Adobe released the postscript language specification for anyone to use, so the open source community was free to reimplement the language in open source form. The resulting code, Ghostscript, is extensively used everywhere, and very actively maintained. In the TeX world, the program ps2pdf is extensively used to convert postscript to pdf (it calls Ghostscript to do the hard work). This makes it possible to typeset using the chain TeX -> dvips -> ps2pdf, which is exactly what the DVI command does in TeXShop.
+
+<p> Postscript is actually a von Neumann complete programming language, which theoretically can perform any calculation, although it is optimized for making two-dimensional images. A common trick is to write a postscript program to compute a table of prime numbers and simultaneously print the table. Since postscript is a complete language, it is vulnerable to security attacks, and the team responsible for Ghostscript actively searches for such attack points and patches them. For this reason, users should keep their copy of Ghostscript up to date.
+
+<p> In particular, certain features of postscript are inherently dangerous, but luckily rarely used for TeX. These features must be retained so old projects are not damaged, but the Ghostscript team has marked them for special consideration. They  added a flag called dSAFER; if this flag is set, these dangerous commands are disabled. For example, deletefile and renamefile are disabled, and Ghostscript can only open stdout and stderr for writing.
+
+<p> In Ghostscript 9.50, the SAFER mode was made the default. So dSAFER is mostly replaced by the flag -dNOSAFER which allows dangerous features to run.
+
+<p> But meanwhile, the Ghostscript programmers discovered that the postscript commands setting transparency produced inconsistent results when mixed with other methods. The fix ultimately will require replacing .setopacityalpha, .currentopacityalpha, .setshapealpha, .currentshapealpha. For the moment, these commands still exist but are marked as deprecated as of 9.53. Authors of several TeX style files and packages will have to replace these commands by modern equivalents defined in Ghostscript. The 9.53 documentation says for each "Note, it is strongly suggested that this method not be used as it currently may give inconsistent results when mixed with methods that set stroke and fill alpha values."
+
+<p> In 9.50, these commands were disabled by default, and turned on by -dNOSAFER. This meant that authors who needed them had to accept the full set of insecurities allowed by -dNOSAFER. In 9.53.1, this is no longer the case. Instead the deprecated commands are enabled by adding the flag
+-dALLOWPSTRANSPARENCY.
+
+<p> This design broke in 9.51 and 9.52 for reasons that are unclear to me. TeX users should stick with 9.50 or upgrade to 9.53.3.
+
+<p> Many more details, including the replacements for the deprecated transparency commands, can be found in the Ghostscript documentation. Special thanks to Herbert Schulz and Bruno Voisin, who are the experts in all this. Herbert wrote the new engine for DVI mode, which looks at the version number of the Ghostscript installed on a machine and adjusts the flags accordingly. Bruno Voisin created the setup we use to provide Ghostscript on the Mac, including additional font support and so forth. I just follow his instructions.
+
+<p> Herbert Schulz provides support for many TeXShop users and is an expert in features of the program which I seldom use. He has a special web page devoted to issues he has studied with suggested macros, scripts, engines, and documents. This page is well worth visiting: <a href="https://herbs.github.io">https://herbs.github.io</a>
+
+
+</ul>
+
+
+
 <P><h5>TeXShop Changes 4.44</h5></P>
 
 This version has four small changes:

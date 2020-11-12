@@ -2,10 +2,12 @@
 
 # Engine by Dan Drake
 
-# Note: It may be possible to rename Sage in /Applications. It comes as Sage-8.7 but we recommend
-# changing the name to just Sage. After that, updates can be installed without modifying the engine
-# or the symbolic link to sagetex.tex. This engine contains commented out sections from an earlier
-# engine which wasn't well-adapted to updates of Sage.
+# Note: If you are installing Sage for the first time, read the document "About Sage" carefully.
+# The document is in ~/Library/TeXShop/Engines/Inactive/Sage.
+# When installing Sage, it is important to rename it to just SageMath.app BEFORE RUNNING IT.
+# A couple of symbolic links to the program  need to be created at that moment. Once this is
+# done, updating Sage is very easy. Download the new version, rename it to SageMath.app,
+# place it in Applications, run it once, and that's it.
 
 PATH=$PATH:/Library/TeX/texbin:/usr/texbin:/usr/local/bin
 filename=$1
@@ -34,10 +36,7 @@ fi
 if [ "$run_sage" = "yes" ]
 then
     echo Running Sage, please wait a moment...
-   # New versions of Sage cannot be renamed; thus users need to read the
-   # documentation in ~/TeXShop/Engines/Inactive/Sage whenever they update Sage;
-   # for instance, the line below must contain the current name of Sage
-    /Applications/SageMath-8.7.app/Contents/Resources/sage/sage "$sagename"
+    /Applications/SageMath.app/Contents/Resources/sage/sage "$sagename"
     pdflatex --file-line-error --synctex=1 "$filename"
 else
     echo No Sage commands have changed, so running Sage is unnecessary.

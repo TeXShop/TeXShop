@@ -90,6 +90,15 @@
      return self;
 }
 
+- (void)awakeFromNib
+{
+    mouseMode = [SUD integerForKey:PdfMouseModeKey];
+    if (!mouseMode) mouseMode = MOUSE_MODE_MAG_GLASS;
+    currentMouseMode = mouseMode;
+    [mouseModeMatrix selectCellWithTag: mouseMode];
+    [[mouseModeMenu itemWithTag: mouseMode] setState: NSOnState];
+}
+
 /*
 - (BOOL)resignFirstResponder
 {
@@ -1758,7 +1767,6 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 
 - (void) doFindOne: (id) sender
 {
-   
     PDFSelection                    *searchSelection;
     self.oneOffSearchString = [sender stringValue];
     
@@ -1788,7 +1796,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
         [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
     }
     
-    [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+   [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+
     
 /*
     if (searchSelection == NULL)
@@ -2092,8 +2101,15 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 	NSInteger	oldMouseMode;
 
 	oldMouseMode = mouseMode;
-
-	if ([sender isKindOfClass: [NSButton class]] || [sender isKindOfClass: [NSMenuItem class]])
+    
+    if ([sender isKindOfClass: [NSSegmentedControl class]])
+    {
+        [[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
+        mouseMode = currentMouseMode = [sender tagForSegment:[sender selectedSegment]];
+        //[[self.myDocument mousemodeMatrix] selectCellWithTag: mouseMode];
+        [[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOnState];
+    }
+	else if ([sender isKindOfClass: [NSButton class]] || [sender isKindOfClass: [NSMenuItem class]])
 	{
 		[[[self.myDocument mousemodeMenu] itemWithTag: mouseMode] setState: NSOffState];
 		mouseMode = currentMouseMode = [sender tag];
@@ -2120,6 +2136,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 //        [self cleanupMarquee: YES]; // added by koch to erase marquee
 */
 }
+
 
 // mitsu 1.29 (S2)
 // derived from Apple's Sample code PDFView/DraggableScrollView.m
@@ -4295,24 +4312,33 @@ else
 	return data;
 }
 
-
-
-// start save-dialog as a sheet
 -(void)saveSelectionToFile: (id)sender
 {
-	NSSavePanel *savePanel = [NSSavePanel savePanel];
-	[savePanel  setAccessoryView: self.imageTypeView];
-//	[self.imageTypeView retain];
-	NSInteger itemIndex = [self.imageTypePopup indexOfItemWithTag: [SUD integerForKey: PdfExportTypeKey]];
-	if (itemIndex == -1) itemIndex = 0; // default PdfExportTypeKey
-	[self.imageTypePopup selectItemAtIndex: itemIndex];
-	[self chooseExportImageType: self.imageTypePopup]; // this sets up required type
-	[savePanel setCanSelectHiddenExtension: YES];
+    NSInteger imageExportType;
+    
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    [savePanel  setAccessoryView: self.imageTypeView];
+//    [self.imageTypeView retain];
+    NSInteger itemIndex = [self.imageTypePopup indexOfItemWithTag: [SUD integerForKey: PdfExportTypeKey]];
+    if (itemIndex == -1) itemIndex = 0; // default PdfExportTypeKey
+     [self.imageTypePopup selectItemAtIndex: itemIndex];
+    
+    // Note: Originally, the next five lines were replaced by a call to chooseExportImageType:, but this call eventually broke,
+    // probably because one of the parameters no longer got passed correctly. The routine chooseExportImageType still exists,
+    // but is now irrelevant because it is replaced by these five lines.
+    imageExportType = [[self.imageTypePopup selectedItem] tag];
+    NSArray *myTypes = [NSArray arrayWithObject: extensionForType(imageExportType)];
+    [savePanel setAllowedFileTypes: myTypes];
+    if (imageExportType != [SUD integerForKey: PdfExportTypeKey]) {
+        [SUD setInteger:imageExportType forKey:PdfExportTypeKey];
+    }
 
-//	[savePanel beginSheetForDirectory:nil file:nil
-//		modalForWindow:[self window] modalDelegate:self
-//		didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
-//		contextInfo:nil];
+    [savePanel setCanSelectHiddenExtension: YES];
+
+//    [savePanel beginSheetForDirectory:nil file:nil
+//        modalForWindow:[self window] modalDelegate:self
+//        didEndSelector:@selector(saveSelectionPanelDidEnd:returnCode:contextInfo:)
+//        contextInfo:nil];
     
     [savePanel beginSheetModalForWindow: [self window]
             completionHandler:^(NSInteger result) {
@@ -4335,6 +4361,7 @@ else
                 }
             }];
 }
+
 
 
 // save the image data from selected rectangle to a file
@@ -4364,8 +4391,7 @@ else
 }
 */
 
-
-
+/*
 // control image type popup
 - (void) chooseExportImageType: sender
 {
@@ -4376,11 +4402,13 @@ else
 	savePanel = (NSSavePanel *)[sender window];
 	// [savePanel setRequiredFileType: extensionForType(imageExportType)];// mitsu 1.29 drag & drop
     NSArray *myTypes = [NSArray arrayWithObject: extensionForType(imageExportType)];
-    [savePanel setAllowedFileTypes: myTypes];
+    // below is the bad routine which crashes thingsextension
+//    [savePanel setAllowedFileTypes: myTypes];
 	if (imageExportType != [SUD integerForKey: PdfExportTypeKey]) {
 		[SUD setInteger:imageExportType forKey:PdfExportTypeKey];
 	}
 }
+ */
 
 // mitsu 1.29 drag & drop
 #pragma mark =====drag & drop=====

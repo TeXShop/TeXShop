@@ -4,7 +4,17 @@ export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
 # make sure latexmkrcedit exists in bin
 if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then
-	cp "${LTMKBIN}/latexmkrcDONTedit" "${LTMKEDIT}/latexmkrcedit"
+	cp "${TSBIN}/latexmkrcDONTedit" "${LTMKEDIT}/latexmkrcedit"
+fi
+# Setup the correct tranparency argument
+gsversion=`gs --version`
+mytemp=( ${gsversion//./ } )                   	# replace points, split into array
+gsmajorversion="${mytemp[0]}"       						# major version number
+gsminorversion="${mytemp[1]}"										# minor version number
+if [ \( ${gsmajorversion} -eq 9 \) -a \( ${gsminorversion} -gt 50 \) ] || [ \( ${gsmajorversion} -gt 9 \) ] ; then
+export gstransparencyarg="-dALLOWPSTRANSPARENCY"
+else
+export gstransparencyarg="-dNOSAFER"
 fi
 # Use local rc file platexmkrc if it exists. p = project
 export localrc=""

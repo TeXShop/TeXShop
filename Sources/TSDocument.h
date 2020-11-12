@@ -170,7 +170,7 @@ enum RootCommand
     IBOutlet NSPopUpButton      *slabels;  //NDS added dropdown for going to a label
     NSToolbarItem               *theLabels;
     NSToolbarItem               *theSLabels;
-
+    
 
 	IBOutlet NSMatrix			*mouseModeMatrix; // mitsu 1.29 (O)
 	IBOutlet NSMenu				*mouseModeMenu; // mitsu 1.29 (O)
@@ -226,6 +226,7 @@ enum RootCommand
 //	TSFullscreenWindow	*fullscreenWindow;
 //	PDFView				*fullscreenPDFView;
 //   TSDocument          *rootDocument;
+    
 
 
 	NSStringEncoding	_encoding;
@@ -415,6 +416,7 @@ enum RootCommand
 
 @property (retain)  NSString            *spellLanguage;
 @property           BOOL                automaticSpelling;
+
 
 @property           BOOL                fileIsXML;
 
@@ -838,6 +840,7 @@ enum RootCommand
 - (BOOL)doSyncTeXForPageOld: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
 - (BOOL)doPreviewSyncTeXWithFilenameOld:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
 - (void)allocateSyncScannerOld;
+- (void)StopSyncScannerOld;
 
 
 @end

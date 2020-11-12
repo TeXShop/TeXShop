@@ -702,6 +702,12 @@
 #ifdef MITSU_PDF
 	// mitsu 1.29b check menu item for image format for copying and exporting
 	NSInteger imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
+    if (imageCopyType == IMAGE_TYPE_PICT)
+    {
+        imageCopyType = IMAGE_TYPE_TIFF_LZW;
+        [SUD setInteger:imageCopyType forKey:PdfCopyTypeKey];
+        [SUD synchronize];
+    }
 	if (!imageCopyType)
 		imageCopyType = IMAGE_TYPE_JPEG_MEDIUM; // default PdfCopyTypeKey
 	NSMenu *previewMenu = [[[NSApp mainMenu] itemWithTitle:

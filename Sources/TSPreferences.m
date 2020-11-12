@@ -1,4 +1,5 @@
 /*
+ * SUUpdate = KOCHSU
  * TeXShop - TeX editor for Mac OS
  * Copyright (C) 2000-2007 Richard Koch
  *
@@ -32,7 +33,7 @@
 #import "TSAppDelegate.h" // mitsu 1.29 (O)
 #import "TSDocument.h"
 #import "TSConsoleWindow.h"
-#import <Sparkle/SUUpdater.h>
+#import <Sparkle/SUUpdater.h> 
 
 //#import "MyPDFView.h" // mitsu 1.29 (O)
 
@@ -1614,7 +1615,6 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
     
     [SUD setInteger:[[sender selectedCell] tag] forKey:SparkleIntervalKey];
     
-    
     switch ([[sender selectedCell] tag])
     {
         case 1: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 86400];
@@ -1626,8 +1626,28 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
         case 3: [[SUUpdater sharedUpdater] setUpdateCheckInterval: 2629800];
             break;
     }
+ 
     
 }
+
+
+
+- (IBAction)NewToolbarIconsCheck:sender;
+{
+    newToolbarIconsTouched = YES;
+    oldNewToolbarIcons = [SUD boolForKey:NewToolbarIconsKey];
+    
+    BOOL theValue = [(NSCell *) sender state];
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:NewToolbarIconsKey] forKey:NewToolbarIconsKey];
+    [SUD setBool:theValue forKey:NewToolbarIconsKey];
+    
+    
+    [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: theValue ];
+    
+}
+
 
 
 
@@ -1970,7 +1990,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 	}
     
-    
+  
     if (sparkleTouched) {
         [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: oldSparkleAutomaticUpdate];
         
@@ -1986,6 +2006,7 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
                 break;
         }
     }
+   
     
 	// added by mitsu --(G) TSEncodingSupport
 	if (encodingTouched) {
@@ -2151,6 +2172,7 @@ This method retrieves the application preferences from the defaults object and s
     [_sparkleAutomaticButton setState: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix setEnabled: [defaults boolForKey: SparkleAutomaticUpdateKey]];
     [_sparkleIntervalMatrix selectCellWithTag: [defaults integerForKey: SparkleIntervalKey]];
+    [_useNewToolbarIconsButton setState: [defaults boolForKey: NewToolbarIconsKey]];
     [_consoleMatrix selectCellWithTag: [defaults integerForKey: ConsoleBehaviorKey]];
     [_spellCheckCommands setState:[defaults boolForKey:TurnOffCommandSpellCheckKey]];
     [_spellCheckParameters setState:[defaults boolForKey:TurnOffParameterSpellCheckKey]];

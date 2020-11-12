@@ -1,0 +1,24 @@
+To compile flip,
+
+	c++ flipsource.cpp
+	
+Then
+
+	mv a.out fliparm
+	
+Then copy the Intel version of flip to this folder and rename it
+
+	flipintel
+	
+Finally
+
+	lipo fliparm flipintel -create -output flip
+	
+Then codesign:
+
+	codesign -s "Developer ID Application: Richard Koch" --force --timestamp --options=runtime flip
+	
+To test
+
+	lipo -archs flip
+	

@@ -147,7 +147,8 @@ NSInteger strSort(id s1, id s2, void *context)
 	willClose = NO;
     self.spellLanguage = [SUD stringForKey: spellingLanguageDefaultKey];
     self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
-	
+    
+    
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
 	self.lineNumberView1 = nil;
@@ -199,7 +200,8 @@ NSInteger strSort(id s1, id s2, void *context)
     if (scanner != NULL)
     {
         if (self.useOldSyncParser)
-            old_synctex_scanner_free(scanner);
+            [self StopSyncScannerOld];
+            // old_synctex_scanner_free(scanner);
         else
             synctex_scanner_free(scanner);
     }
@@ -593,6 +595,7 @@ NSInteger strSort(id s1, id s2, void *context)
     }
     else
         [self.logTextView setUsesFindPanel: YES];
+    [self.logTextView setAutoresizingMask: NSViewWidthSizable];
 }
 
 
@@ -1581,6 +1584,7 @@ in other code when an external editor is being used. */
         || ([extension isEqualToString: @"xml"])
         || ([extension isEqualToString: @"html"])
         || ([extension isEqualToString: @"ptx"])
+        || ([extension isEqualToString: @"asy"])
 		|| ([extension isEqualToString: @"lbx"]))
 		return YES;
 		
@@ -2647,6 +2651,12 @@ else {
 	NSSize		newSize;
 	NSRect		theFrame;
 	NSRange		selectedRange;
+    
+    if ([NSEvent modifierFlags ] & NSEventModifierFlagOption)
+        [splitView setVertical: YES];
+    else
+        [splitView setVertical: NO];
+    
 
 	selectedRange = [textView selectedRange];
 	newSize.width = 100;
@@ -6655,6 +6665,7 @@ if (! useFullSplitWindow) {
     
     if (!popoverController) { return; }
     
+    @try {
     NSRange glyphRange = [[aView layoutManager] glyphRangeForCharacterRange:selectedRange actualCharacterRange:NULL];
     NSRect selectedRect = [[aView layoutManager] boundingRectForGlyphRange:glyphRange inTextContainer:[aView textContainer]];
     NSPoint containerOrigin = [aView textContainerOrigin];
@@ -6664,7 +6675,17 @@ if (! useFullSplitWindow) {
     
     [popoverController showPopoverRelativeToRect:selectedRect ofView:aView];
     [aView showFindIndicatorForRange:selectedRange];
+    }
+    @catch (NSException *exception) {
+        ;
+    }
+    @finally {
+            // optional block of clean-up code
+            // executed whether or not an exception occurred'
+        return;
+        }
 }
+
 
 
 

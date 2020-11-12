@@ -321,7 +321,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             if ((colorFootnoteDifferently) &&
                 (([commandString isEqualToString: @"\\footnote"]) ||
                  ([commandString isEqualToString: @"\\autocite"]) ||
-                 ([commandString isEqualToString: @"\\cite"]) ||
+                //  ([commandString isEqualToString: @"\\cite"]) ||
+                 ([commandString hasPrefix: @"\\cite"]) ||
+                 ([commandString hasPrefix: @"\\Cite"]) ||
                  ([commandString isEqualToString: @"\\footcite"]))) {
              
                 

@@ -1,0 +1,41 @@
+About the Universal Version of OgreKit:
+
+I slightly revised OgreKit so it will compile for both x86_64 and arm64. This short document explains how that was done. 
+
+The OgreKit build settings for the various pieces had a "Valid Architectures" field containing one element, x86_64. Clicking this field brings up a small editor in which additional elements can be added. I added arm64 and arm64e. I don't know if the second if necessary, but I saw it in a WWDC slide. This field needs to be changed for each of the subprojects of OgreKit.
+
+To build OgreKit, select "Build for Running". With this minor change, everything is ready to build, but the build won't work because the libonig.a linked library has only x86_64 code. Fixing this is somewhat tricky.  
+
+You cannot find the key elements in the XCode directory on the left side. Instead, go to the full source code at OgreKit-3.0.2-Universal/RegularExpression/oniguruma. Inside this folder there is a subfolder named x86_64 with the source code. Make a copy of this folder and name the copy arm64. Inside this arm64 folder, type ./configure and then "make clean" and finally maybe ./configure again and then make. This will create the desired arm library in a hidden folder of the arm64 folder named .libs. 
+
+Next make another subfolder of oniguruma named lipostuff. In both x86_64.libs and arm64.libs, find libonig.a and make copies of these files in lipostuff named libonigintel.a and libonigarm.a. Then run the command
+
+	lipo libonigintel.a libonigarm.a -create -output libonig.a
+	
+You now have a universal library file. Test by running the command
+
+	lipo -archs libonig.a
+	
+It should report binaries for x86_64 and arm64.
+
+You are still now done. It turns out the build system will look for that library file in the x86_64 folder. So rename libonig.a in that folder to, say, libonigintel.a, and then copy libonig.a to the x86_64 folder.
+
+But you still aren't done, because building OgreKit will remake the x86_64 copy of libonig.a. So the final step is to stop that from happening. In the folder OgreKit-3.0.2-Universal/RegularExpression/oniguruma, there is a file named Makefile. Rename this file MakeFile.original in case you need to go back to it. Then create a new (executible) Makefile containing essentially no instructions. The file I used is
+
+-------
+ONIGURUMA_VERSION=Onigmo-Onigmo-5.13.5
+OS_VERSION=$(shell uname -r)
+
+INTEL_64_DIR=x86_64
+
+
+all: 
+
+clean:
+-----------
+
+After all this, XCode will create a universal OgreKit framework and you are good to go.
+
+Richard Koch
+July 1, 2020
+

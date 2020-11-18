@@ -2666,7 +2666,8 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
         // NSLog(@"The new values are %f and %f", menuPoint.x, menuPoint.y);
         
 		[theMenu insertItemWithTitle:NSLocalizedString(@"Sync", @"Sync") action:@selector(doSyncForMenu:) keyEquivalent:@"" atIndex:0];
-		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
+        [theMenu insertItemWithTitle:NSLocalizedString(@"Split Window", @"Split Window") action:@selector(splitWindow:) keyEquivalent:@"" atIndex:1];
+		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:2];
 		}
     return theMenu;
 }

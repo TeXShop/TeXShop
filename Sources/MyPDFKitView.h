@@ -117,7 +117,11 @@
     struct synctex_scanner_t        *external_scanner;
 //    OverView                        *overView;
     
-	
+// Variables used when splitting window
+    
+    NSInteger   splitTheIndex;
+    NSRect      splitVisibleRect, splitFullRect;
+    
 	
 }
 
@@ -141,6 +145,15 @@
 @property (retain)  HideView                        *myHideView2;
 @property BOOL                                      PDFFlashFix;
 @property double                                    PDFFlashDelay;
+
+@property BOOL                                      locationSaved;
+@property BOOL                                      verticalSplitSaved;
+@property BOOL                                      horizontalSplitSaved;
+@property double                                    horizontalHeight1;
+@property double                                    horizontalHeight2;
+@property double                                    verticalWidth1;
+@property double                                    verticalWidth2;
+
 
 
 
@@ -253,6 +266,12 @@
 // - (OverView *)overView;
 // - (BOOL)resignFirstResponder;
 - (void)fixWhiteDisplay;
+
+// splittingWindow
+- (void)saveLocation;
+- (void)writeLocation: (NSInteger)anIndex andFullRect: (NSRect) fullRect andVisibleRect: (NSRect) visibleRect;
+- (void)readLocation: (NSInteger *) anIndex andFullRect: (NSRect *) fullRect andVisibleRect: (NSRect *) visibleRect;
+- (void)restoreLocation;
 @end
 
 @interface MyPDFKitView (PDFDocumentDelegate)

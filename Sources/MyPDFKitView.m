@@ -86,6 +86,9 @@
         self.handlingLink = 0;
         self.timerNumber = 0;
         self.oneOffSearchString = NULL;
+        self.locationSaved = NO;
+        self.verticalSplitSaved = NO;
+        self.horizontalSplitSaved = NO;
   		}
      return self;
 }
@@ -875,6 +878,43 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
                                              repeats:NO];
      }
 
+}
+
+- (void)saveLocation
+{
+    splitTheIndex = [self index];
+    splitVisibleRect = [[self documentView] visibleRect];
+    splitFullRect = [[self documentView] bounds];
+}
+
+- (void)writeLocation: (NSInteger)anIndex andFullRect: (NSRect) fullRect andVisibleRect: (NSRect) visibleRect
+{
+    splitTheIndex = anIndex;
+    splitVisibleRect = visibleRect;
+    splitFullRect = fullRect;
+}
+
+- (void)readLocation: (NSInteger *) anIndex andFullRect: (NSRect *) fullRect andVisibleRect: (NSRect *) visibleRect
+{
+    anIndex = &splitTheIndex;
+    fullRect = &splitFullRect;
+    visibleRect = &splitVisibleRect;
+}
+
+
+- (void)restoreLocation
+{
+    NSRect      newFullRect;
+    NSInteger   difference;
+
+    [self moveSplitToCorrectSpot: splitTheIndex];
+    
+    newFullRect = [[self documentView] bounds];
+    difference = newFullRect.size.height - splitFullRect.size.height;
+   
+    splitVisibleRect.origin.y = splitVisibleRect.origin.y + difference - 1;
+    [[self documentView] scrollRectToVisible: splitVisibleRect];
+        
 }
 
 - (void)removeHideView1: (NSTimer *) theTimer
@@ -6409,7 +6449,8 @@ else
         // NSLog(@"The new values are %f and %f", menuPoint.x, menuPoint.y);
         
 		[theMenu insertItemWithTitle: NSLocalizedString(@"Sync", @"Sync") action:@selector(doMenuSync:) keyEquivalent:@"" atIndex:0];
-		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
+        [theMenu insertItemWithTitle: NSLocalizedString(@"Split Window", @"Split Window") action:@selector(splitWindow:) keyEquivalent:@"" atIndex:1];
+		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:2];
 	}
     return theMenu;
 }

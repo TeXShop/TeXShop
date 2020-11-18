@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin20.0.0
-host_triplet = x86_64-apple-darwin20.0.0
+build_triplet = x86_64-apple-darwin19.6.0
+host_triplet = x86_64-apple-darwin19.6.0
 noinst_PROGRAMS = encode$(EXEEXT) listcap$(EXEEXT) names$(EXEEXT) \
 	posix$(EXEEXT) simple$(EXEEXT) sql$(EXEEXT) syntax$(EXEEXT) \
 	crnl$(EXEEXT)
@@ -105,18 +105,18 @@ DIST_SOURCES = crnl.c $(encode_SOURCES) $(listcap_SOURCES) \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run aclocal-1.11
+ACLOCAL = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run aclocal-1.11
 ALLOCA = 
-AMTAR = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run tar
+AMTAR = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run autoconf
-AUTOHEADER = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run autoheader
-AUTOMAKE = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run autoconf
+AUTOHEADER = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run autoheader
+AUTOMAKE = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run automake-1.11
 AWK = awk
-CC = /usr/bin/gcc -arch x86_64
-CCDEPMODE = depmode=none
+CC = gcc
+CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /usr/bin/gcc -arch x86_64 -E
+CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -135,7 +135,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
+LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = 
 LIBOBJS = 
 LIBS = 
@@ -144,9 +144,9 @@ LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
 LTVERSION = 5:0:5
-MAKEINFO = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run makeinfo
+MAKEINFO = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run makeinfo
 MKDIR_P = .././install-sh -c -d
-NM = /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/nm -B
+NM = /usr/bin/nm -B
 NMEDIT = nmedit
 OBJDUMP = objdump
 OBJEXT = o
@@ -168,11 +168,11 @@ SHELL = /bin/sh
 STATISTICS = 
 STRIP = strip
 VERSION = 5.13.5
-abs_builddir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/sample
-abs_srcdir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/sample
-abs_top_builddir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-abs_top_srcdir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-ac_ct_CC = 
+abs_builddir = /Users/koch/ArmTransition/x86_64/sample
+abs_srcdir = /Users/koch/ArmTransition/x86_64/sample
+abs_top_builddir = /Users/koch/ArmTransition/x86_64
+abs_top_srcdir = /Users/koch/ArmTransition/x86_64
+ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
@@ -180,10 +180,10 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin20.0.0
-build_alias = x86_64-apple-darwin20.0.0
+build = x86_64-apple-darwin19.6.0
+build_alias = 
 build_cpu = x86_64
-build_os = darwin20.0.0
+build_os = darwin19.6.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -191,15 +191,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-apple-darwin20.0.0
-host_alias = x86_64-apple-darwin20.0.0
+host = x86_64-apple-darwin19.6.0
+host_alias = 
 host_cpu = x86_64
-host_os = darwin20.0.0
+host_os = darwin19.6.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/install-sh
+install_sh = ${SHELL} /Users/koch/ArmTransition/x86_64/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -305,35 +305,35 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-#include ./$(DEPDIR)/crnl.Po
-#include ./$(DEPDIR)/encode.Po
-#include ./$(DEPDIR)/listcap.Po
-#include ./$(DEPDIR)/names.Po
-#include ./$(DEPDIR)/posix.Po
-#include ./$(DEPDIR)/simple.Po
-#include ./$(DEPDIR)/sql.Po
-#include ./$(DEPDIR)/syntax.Po
+include ./$(DEPDIR)/crnl.Po
+include ./$(DEPDIR)/encode.Po
+include ./$(DEPDIR)/listcap.Po
+include ./$(DEPDIR)/names.Po
+include ./$(DEPDIR)/posix.Po
+include ./$(DEPDIR)/simple.Po
+include ./$(DEPDIR)/sql.Po
+include ./$(DEPDIR)/syntax.Po
 
 .c.o:
-#	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-#	source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(COMPILE) -c $<
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c $<
 
 .c.obj:
-#	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-#	source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-#	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-#	source='$<' object='$@' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+#	source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LTCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo

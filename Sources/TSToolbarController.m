@@ -1096,7 +1096,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
             
             
             menuFormRep = [[NSMenuItem alloc] init];
-            [menuFormRep setSubmenu: mouseModeMenu];
+            [menuFormRep setSubmenu: mouseModeMenuKit];
 
 
             [menuFormRep setTitle: [myToolbarItem label]];
@@ -1117,7 +1117,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
             
             
             menuFormRep = [[NSMenuItem alloc] init];
-            [menuFormRep setSubmenu: mouseModeMenu];
+            [menuFormRep setSubmenu: mouseModeMenuKit];
 
 
             [menuFormRep setTitle: [myToolbarItem label]];

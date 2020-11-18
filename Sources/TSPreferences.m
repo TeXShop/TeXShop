@@ -391,10 +391,8 @@ Clicking this button will bring up the font panel.
 "*/
 - (void)changeFont:(id)fontManager
 {
-	
- 		
-	NSString *theTab = [[_tabView selectedTabViewItem] identifier];
- 
+    NSString *theTab = [[_tabView selectedTabViewItem] identifier];
+
 	if ([theTab isEqualToString: @"Document"])
 		{
 /*

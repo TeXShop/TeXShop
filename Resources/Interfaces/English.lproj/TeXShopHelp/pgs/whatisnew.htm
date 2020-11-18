@@ -15,6 +15,42 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.51</h5></P>
+
+This minor update has four changes:
+
+<ul>
+<li> In about half of the localizations of TeXShop, the Preference setting  which changes the font used by the console broke. This is fixed. Thanks to Jacques Bloch for this bug report.
+
+<p><li> A tool in the Preview Window selects Scroll, Select Text, Magnify, Magnify (Large), or Select PDF. If the window becomes too narrow, this item falls off the window and becomes a pull down menu, but the menu only displayed four choices. This is fixed; the menu now displays all five choices. Thanks to John Pryce for this bug report.
+
+<p><li> Uwe Schmock in Vienna requested a change in the code which splits the Preview window, based on an experience using it while teaching remotely. The new code has three features: 
+
+<p> The contextual menus for  the Source window and the Preview window have an additional item to split the window. This item recognizes the option and shift keys if held down when the item is chosen. Recall that the Option key switches from horizontal to vertical splitting.
+
+<p> All other changes affect only the Preview window. Suppose the window is split, so the original full window goes to the top pane. Scroll both panes and then undo the split so the top pane becomes the full window again. The next time you split, the second pane will still hold its original scrolled material. So if you are editing chapter 4, but referring to a section in chapter 2 over and over, that section in chapter 2 will remain present when you split.
+
+<p> If the window is split and you hold down the Shift key and push the split icon, the two pieces will switch positions. If you then undo the split, you'll go to a full view of the region originally in the bottom.
+
+<p> I hope this code is immediately useful. It has a few rough edges which will be fixed soon. I need to get this version out because of the following item.
+
+<p> <li> For a long time, the default Find option in TeXShop was the OgreKit Panel, a third party project from Japan.
+Now the default option is the Apple Find Bar, which is also used by several Apple applications. Users may want to switch.
+
+<p> OgreKit is an open source project on GitHub and the last commits to the code were two years ago. It supports regular expressions, so I was thrilled to include it in TeXShop. For many years, TeXShop contained version 2 of this code.
+
+<p> When Dark Mode was released on Mojave, the code was modified to support it, but this modification was never finished. The changes are in version 3, which includes a number of other important changes under the hood. Version 3 was briefly in TeXShop, but one feature seriously broke TeXShop. If "Find All" is selected in Version 3, it seems to work, but TeXShop freezes after that,  new material typed in the editor is not accepted, and the program cannot be quit. After it is aborted and  started again, the user discovers that material was actually added to the Source, and these changes were actually saved. This is, of course, a fatal error, and I immediately switched back to version 2, which is still used in TeXShop 4.44.
+
+<p>  Version 2 of OgreKit used Garbage Collection, but Apple soon deprecated that and replaced it by ARC, Automatic Reference Counting. Version 3 of OgreKit switched to ARC. The garbage collection code is still in Big Sur, and thus TeXShop 4.44 with OgreKit Version 2 still runs on Big Sur. But XCode will no longer compile code with garbage collection, a sure sign that Apple is about to remove it completely from the operating system.  So TeXShop 4.44 may no longer run on future systems, and at any rate it is impossible to compile TeXShop 4.51 for Apple Silicon and still use Version 2 of OgreKit.
+
+<p> Thus Versions 4.50 and 4.51 of TeXShop use Version 3 of OgreKit. But in Version 4.51, I have removed the "Find All" button from the OgreKit Panel, so users should be unable to create the unacceptable error. 
+
+<p> There is no chance that I'll find time to fix OgreKit, but I prefer to leave it in TeXShop in its imperfect state for users who need regular expressions. Since I don't use it myself, I'd appreciate bug reports, and I'd like to be notified immediately if some other feature breaks the TeXShop editor. These bugs won't be fixed unless some volunteer is willing to take over the project, which would be wonderful. But if a bug breaks the TeXShop editor, I'll remove the feature if possible and otherwise remove the entire Find Pane.
+
+
+</ul> 
+
+
 <P><h5>TeXShop Changes 4.50</h5></P>
 
 Versions 4.45 through 4.49 were never released. This version has the following changes:

@@ -35,8 +35,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin20.0.0
-host_triplet = x86_64-apple-darwin20.0.0
+build_triplet = x86_64-apple-darwin19.6.0
+host_triplet = x86_64-apple-darwin19.6.0
 TESTS = testc$(EXEEXT) testp$(EXEEXT) testcu$(EXEEXT)
 check_PROGRAMS = testc$(EXEEXT) testp$(EXEEXT) testcu$(EXEEXT)
 subdir = .
@@ -182,18 +182,18 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run aclocal-1.11
+ACLOCAL = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run aclocal-1.11
 ALLOCA = 
-AMTAR = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run tar
+AMTAR = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run autoconf
-AUTOHEADER = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run autoheader
-AUTOMAKE = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run autoconf
+AUTOHEADER = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run autoheader
+AUTOMAKE = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run automake-1.11
 AWK = awk
-CC = /usr/bin/gcc -arch x86_64
-CCDEPMODE = depmode=none
+CC = gcc
+CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /usr/bin/gcc -arch x86_64 -E
+CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -212,7 +212,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
+LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = 
 LIBOBJS = 
 LIBS = 
@@ -221,9 +221,9 @@ LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
 LTVERSION = 5:0:5
-MAKEINFO = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/missing --run makeinfo
+MAKEINFO = ${SHELL} /Users/koch/ArmTransition/x86_64/missing --run makeinfo
 MKDIR_P = ./install-sh -c -d
-NM = /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/nm -B
+NM = /usr/bin/nm -B
 NMEDIT = nmedit
 OBJDUMP = objdump
 OBJEXT = o
@@ -245,11 +245,11 @@ SHELL = /bin/sh
 STATISTICS = 
 STRIP = strip
 VERSION = 5.13.5
-abs_builddir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-abs_srcdir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-abs_top_builddir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-abs_top_srcdir = /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64
-ac_ct_CC = 
+abs_builddir = /Users/koch/ArmTransition/x86_64
+abs_srcdir = /Users/koch/ArmTransition/x86_64
+abs_top_builddir = /Users/koch/ArmTransition/x86_64
+abs_top_srcdir = /Users/koch/ArmTransition/x86_64
+ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
@@ -257,10 +257,10 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin20.0.0
-build_alias = x86_64-apple-darwin20.0.0
+build = x86_64-apple-darwin19.6.0
+build_alias = 
 build_cpu = x86_64
-build_os = darwin20.0.0
+build_os = darwin19.6.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -268,15 +268,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-apple-darwin20.0.0
-host_alias = x86_64-apple-darwin20.0.0
+host = x86_64-apple-darwin19.6.0
+host_alias = 
 host_cpu = x86_64
-host_os = darwin20.0.0
+host_os = darwin19.6.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/koch/Desktop/OgreKit-3.0.2/RegularExpression/oniguruma/x86_64/install-sh
+install_sh = ${SHELL} /Users/koch/ArmTransition/x86_64/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -511,305 +511,305 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-#include ./$(DEPDIR)/ascii.Plo
-#include ./$(DEPDIR)/big5.Plo
-#include ./$(DEPDIR)/cp1251.Plo
-#include ./$(DEPDIR)/cp932.Plo
-#include ./$(DEPDIR)/euc_jp.Plo
-#include ./$(DEPDIR)/euc_kr.Plo
-#include ./$(DEPDIR)/euc_tw.Plo
-#include ./$(DEPDIR)/gb18030.Plo
-#include ./$(DEPDIR)/iso8859_1.Plo
-#include ./$(DEPDIR)/iso8859_10.Plo
-#include ./$(DEPDIR)/iso8859_11.Plo
-#include ./$(DEPDIR)/iso8859_13.Plo
-#include ./$(DEPDIR)/iso8859_14.Plo
-#include ./$(DEPDIR)/iso8859_15.Plo
-#include ./$(DEPDIR)/iso8859_16.Plo
-#include ./$(DEPDIR)/iso8859_2.Plo
-#include ./$(DEPDIR)/iso8859_3.Plo
-#include ./$(DEPDIR)/iso8859_4.Plo
-#include ./$(DEPDIR)/iso8859_5.Plo
-#include ./$(DEPDIR)/iso8859_6.Plo
-#include ./$(DEPDIR)/iso8859_7.Plo
-#include ./$(DEPDIR)/iso8859_8.Plo
-#include ./$(DEPDIR)/iso8859_9.Plo
-#include ./$(DEPDIR)/koi8_r.Plo
-#include ./$(DEPDIR)/regcomp.Plo
-#include ./$(DEPDIR)/regenc.Plo
-#include ./$(DEPDIR)/regerror.Plo
-#include ./$(DEPDIR)/regexec.Plo
-#include ./$(DEPDIR)/regext.Plo
-#include ./$(DEPDIR)/reggnu.Plo
-#include ./$(DEPDIR)/regparse.Plo
-#include ./$(DEPDIR)/regposerr.Plo
-#include ./$(DEPDIR)/regposix.Plo
-#include ./$(DEPDIR)/regsyntax.Plo
-#include ./$(DEPDIR)/regtrav.Plo
-#include ./$(DEPDIR)/regversion.Plo
-#include ./$(DEPDIR)/sjis.Plo
-#include ./$(DEPDIR)/st.Plo
-#include ./$(DEPDIR)/testc.Po
-#include ./$(DEPDIR)/testp-testc.Po
-#include ./$(DEPDIR)/testu.Po
-#include ./$(DEPDIR)/unicode.Plo
-#include ./$(DEPDIR)/utf16_be.Plo
-#include ./$(DEPDIR)/utf16_le.Plo
-#include ./$(DEPDIR)/utf32_be.Plo
-#include ./$(DEPDIR)/utf32_le.Plo
-#include ./$(DEPDIR)/utf8.Plo
+include ./$(DEPDIR)/ascii.Plo
+include ./$(DEPDIR)/big5.Plo
+include ./$(DEPDIR)/cp1251.Plo
+include ./$(DEPDIR)/cp932.Plo
+include ./$(DEPDIR)/euc_jp.Plo
+include ./$(DEPDIR)/euc_kr.Plo
+include ./$(DEPDIR)/euc_tw.Plo
+include ./$(DEPDIR)/gb18030.Plo
+include ./$(DEPDIR)/iso8859_1.Plo
+include ./$(DEPDIR)/iso8859_10.Plo
+include ./$(DEPDIR)/iso8859_11.Plo
+include ./$(DEPDIR)/iso8859_13.Plo
+include ./$(DEPDIR)/iso8859_14.Plo
+include ./$(DEPDIR)/iso8859_15.Plo
+include ./$(DEPDIR)/iso8859_16.Plo
+include ./$(DEPDIR)/iso8859_2.Plo
+include ./$(DEPDIR)/iso8859_3.Plo
+include ./$(DEPDIR)/iso8859_4.Plo
+include ./$(DEPDIR)/iso8859_5.Plo
+include ./$(DEPDIR)/iso8859_6.Plo
+include ./$(DEPDIR)/iso8859_7.Plo
+include ./$(DEPDIR)/iso8859_8.Plo
+include ./$(DEPDIR)/iso8859_9.Plo
+include ./$(DEPDIR)/koi8_r.Plo
+include ./$(DEPDIR)/regcomp.Plo
+include ./$(DEPDIR)/regenc.Plo
+include ./$(DEPDIR)/regerror.Plo
+include ./$(DEPDIR)/regexec.Plo
+include ./$(DEPDIR)/regext.Plo
+include ./$(DEPDIR)/reggnu.Plo
+include ./$(DEPDIR)/regparse.Plo
+include ./$(DEPDIR)/regposerr.Plo
+include ./$(DEPDIR)/regposix.Plo
+include ./$(DEPDIR)/regsyntax.Plo
+include ./$(DEPDIR)/regtrav.Plo
+include ./$(DEPDIR)/regversion.Plo
+include ./$(DEPDIR)/sjis.Plo
+include ./$(DEPDIR)/st.Plo
+include ./$(DEPDIR)/testc.Po
+include ./$(DEPDIR)/testp-testc.Po
+include ./$(DEPDIR)/testu.Po
+include ./$(DEPDIR)/unicode.Plo
+include ./$(DEPDIR)/utf16_be.Plo
+include ./$(DEPDIR)/utf16_le.Plo
+include ./$(DEPDIR)/utf32_be.Plo
+include ./$(DEPDIR)/utf32_le.Plo
+include ./$(DEPDIR)/utf8.Plo
 
 .c.o:
-#	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-#	source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(COMPILE) -c $<
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c $<
 
 .c.obj:
-#	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-#	source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-#	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-#	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-#	source='$<' object='$@' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+#	source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LTCOMPILE) -c -o $@ $<
 
 unicode.lo: $(encdir)/unicode.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unicode.lo -MD -MP -MF $(DEPDIR)/unicode.Tpo -c -o unicode.lo `test -f '$(encdir)/unicode.c' || echo '$(srcdir)/'`$(encdir)/unicode.c
-#	$(am__mv) $(DEPDIR)/unicode.Tpo $(DEPDIR)/unicode.Plo
-#	source='$(encdir)/unicode.c' object='unicode.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unicode.lo `test -f '$(encdir)/unicode.c' || echo '$(srcdir)/'`$(encdir)/unicode.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT unicode.lo -MD -MP -MF $(DEPDIR)/unicode.Tpo -c -o unicode.lo `test -f '$(encdir)/unicode.c' || echo '$(srcdir)/'`$(encdir)/unicode.c
+	$(am__mv) $(DEPDIR)/unicode.Tpo $(DEPDIR)/unicode.Plo
+#	source='$(encdir)/unicode.c' object='unicode.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o unicode.lo `test -f '$(encdir)/unicode.c' || echo '$(srcdir)/'`$(encdir)/unicode.c
 
 ascii.lo: $(encdir)/ascii.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ascii.lo -MD -MP -MF $(DEPDIR)/ascii.Tpo -c -o ascii.lo `test -f '$(encdir)/ascii.c' || echo '$(srcdir)/'`$(encdir)/ascii.c
-#	$(am__mv) $(DEPDIR)/ascii.Tpo $(DEPDIR)/ascii.Plo
-#	source='$(encdir)/ascii.c' object='ascii.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ascii.lo `test -f '$(encdir)/ascii.c' || echo '$(srcdir)/'`$(encdir)/ascii.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ascii.lo -MD -MP -MF $(DEPDIR)/ascii.Tpo -c -o ascii.lo `test -f '$(encdir)/ascii.c' || echo '$(srcdir)/'`$(encdir)/ascii.c
+	$(am__mv) $(DEPDIR)/ascii.Tpo $(DEPDIR)/ascii.Plo
+#	source='$(encdir)/ascii.c' object='ascii.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ascii.lo `test -f '$(encdir)/ascii.c' || echo '$(srcdir)/'`$(encdir)/ascii.c
 
 utf8.lo: $(encdir)/utf8.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf8.lo -MD -MP -MF $(DEPDIR)/utf8.Tpo -c -o utf8.lo `test -f '$(encdir)/utf8.c' || echo '$(srcdir)/'`$(encdir)/utf8.c
-#	$(am__mv) $(DEPDIR)/utf8.Tpo $(DEPDIR)/utf8.Plo
-#	source='$(encdir)/utf8.c' object='utf8.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf8.lo `test -f '$(encdir)/utf8.c' || echo '$(srcdir)/'`$(encdir)/utf8.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf8.lo -MD -MP -MF $(DEPDIR)/utf8.Tpo -c -o utf8.lo `test -f '$(encdir)/utf8.c' || echo '$(srcdir)/'`$(encdir)/utf8.c
+	$(am__mv) $(DEPDIR)/utf8.Tpo $(DEPDIR)/utf8.Plo
+#	source='$(encdir)/utf8.c' object='utf8.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf8.lo `test -f '$(encdir)/utf8.c' || echo '$(srcdir)/'`$(encdir)/utf8.c
 
 utf16_be.lo: $(encdir)/utf16_be.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf16_be.lo -MD -MP -MF $(DEPDIR)/utf16_be.Tpo -c -o utf16_be.lo `test -f '$(encdir)/utf16_be.c' || echo '$(srcdir)/'`$(encdir)/utf16_be.c
-#	$(am__mv) $(DEPDIR)/utf16_be.Tpo $(DEPDIR)/utf16_be.Plo
-#	source='$(encdir)/utf16_be.c' object='utf16_be.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf16_be.lo `test -f '$(encdir)/utf16_be.c' || echo '$(srcdir)/'`$(encdir)/utf16_be.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf16_be.lo -MD -MP -MF $(DEPDIR)/utf16_be.Tpo -c -o utf16_be.lo `test -f '$(encdir)/utf16_be.c' || echo '$(srcdir)/'`$(encdir)/utf16_be.c
+	$(am__mv) $(DEPDIR)/utf16_be.Tpo $(DEPDIR)/utf16_be.Plo
+#	source='$(encdir)/utf16_be.c' object='utf16_be.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf16_be.lo `test -f '$(encdir)/utf16_be.c' || echo '$(srcdir)/'`$(encdir)/utf16_be.c
 
 utf16_le.lo: $(encdir)/utf16_le.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf16_le.lo -MD -MP -MF $(DEPDIR)/utf16_le.Tpo -c -o utf16_le.lo `test -f '$(encdir)/utf16_le.c' || echo '$(srcdir)/'`$(encdir)/utf16_le.c
-#	$(am__mv) $(DEPDIR)/utf16_le.Tpo $(DEPDIR)/utf16_le.Plo
-#	source='$(encdir)/utf16_le.c' object='utf16_le.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf16_le.lo `test -f '$(encdir)/utf16_le.c' || echo '$(srcdir)/'`$(encdir)/utf16_le.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf16_le.lo -MD -MP -MF $(DEPDIR)/utf16_le.Tpo -c -o utf16_le.lo `test -f '$(encdir)/utf16_le.c' || echo '$(srcdir)/'`$(encdir)/utf16_le.c
+	$(am__mv) $(DEPDIR)/utf16_le.Tpo $(DEPDIR)/utf16_le.Plo
+#	source='$(encdir)/utf16_le.c' object='utf16_le.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf16_le.lo `test -f '$(encdir)/utf16_le.c' || echo '$(srcdir)/'`$(encdir)/utf16_le.c
 
 utf32_be.lo: $(encdir)/utf32_be.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf32_be.lo -MD -MP -MF $(DEPDIR)/utf32_be.Tpo -c -o utf32_be.lo `test -f '$(encdir)/utf32_be.c' || echo '$(srcdir)/'`$(encdir)/utf32_be.c
-#	$(am__mv) $(DEPDIR)/utf32_be.Tpo $(DEPDIR)/utf32_be.Plo
-#	source='$(encdir)/utf32_be.c' object='utf32_be.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf32_be.lo `test -f '$(encdir)/utf32_be.c' || echo '$(srcdir)/'`$(encdir)/utf32_be.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf32_be.lo -MD -MP -MF $(DEPDIR)/utf32_be.Tpo -c -o utf32_be.lo `test -f '$(encdir)/utf32_be.c' || echo '$(srcdir)/'`$(encdir)/utf32_be.c
+	$(am__mv) $(DEPDIR)/utf32_be.Tpo $(DEPDIR)/utf32_be.Plo
+#	source='$(encdir)/utf32_be.c' object='utf32_be.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf32_be.lo `test -f '$(encdir)/utf32_be.c' || echo '$(srcdir)/'`$(encdir)/utf32_be.c
 
 utf32_le.lo: $(encdir)/utf32_le.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf32_le.lo -MD -MP -MF $(DEPDIR)/utf32_le.Tpo -c -o utf32_le.lo `test -f '$(encdir)/utf32_le.c' || echo '$(srcdir)/'`$(encdir)/utf32_le.c
-#	$(am__mv) $(DEPDIR)/utf32_le.Tpo $(DEPDIR)/utf32_le.Plo
-#	source='$(encdir)/utf32_le.c' object='utf32_le.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf32_le.lo `test -f '$(encdir)/utf32_le.c' || echo '$(srcdir)/'`$(encdir)/utf32_le.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT utf32_le.lo -MD -MP -MF $(DEPDIR)/utf32_le.Tpo -c -o utf32_le.lo `test -f '$(encdir)/utf32_le.c' || echo '$(srcdir)/'`$(encdir)/utf32_le.c
+	$(am__mv) $(DEPDIR)/utf32_le.Tpo $(DEPDIR)/utf32_le.Plo
+#	source='$(encdir)/utf32_le.c' object='utf32_le.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf32_le.lo `test -f '$(encdir)/utf32_le.c' || echo '$(srcdir)/'`$(encdir)/utf32_le.c
 
 euc_jp.lo: $(encdir)/euc_jp.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_jp.lo -MD -MP -MF $(DEPDIR)/euc_jp.Tpo -c -o euc_jp.lo `test -f '$(encdir)/euc_jp.c' || echo '$(srcdir)/'`$(encdir)/euc_jp.c
-#	$(am__mv) $(DEPDIR)/euc_jp.Tpo $(DEPDIR)/euc_jp.Plo
-#	source='$(encdir)/euc_jp.c' object='euc_jp.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_jp.lo `test -f '$(encdir)/euc_jp.c' || echo '$(srcdir)/'`$(encdir)/euc_jp.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_jp.lo -MD -MP -MF $(DEPDIR)/euc_jp.Tpo -c -o euc_jp.lo `test -f '$(encdir)/euc_jp.c' || echo '$(srcdir)/'`$(encdir)/euc_jp.c
+	$(am__mv) $(DEPDIR)/euc_jp.Tpo $(DEPDIR)/euc_jp.Plo
+#	source='$(encdir)/euc_jp.c' object='euc_jp.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_jp.lo `test -f '$(encdir)/euc_jp.c' || echo '$(srcdir)/'`$(encdir)/euc_jp.c
 
 sjis.lo: $(encdir)/sjis.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sjis.lo -MD -MP -MF $(DEPDIR)/sjis.Tpo -c -o sjis.lo `test -f '$(encdir)/sjis.c' || echo '$(srcdir)/'`$(encdir)/sjis.c
-#	$(am__mv) $(DEPDIR)/sjis.Tpo $(DEPDIR)/sjis.Plo
-#	source='$(encdir)/sjis.c' object='sjis.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sjis.lo `test -f '$(encdir)/sjis.c' || echo '$(srcdir)/'`$(encdir)/sjis.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sjis.lo -MD -MP -MF $(DEPDIR)/sjis.Tpo -c -o sjis.lo `test -f '$(encdir)/sjis.c' || echo '$(srcdir)/'`$(encdir)/sjis.c
+	$(am__mv) $(DEPDIR)/sjis.Tpo $(DEPDIR)/sjis.Plo
+#	source='$(encdir)/sjis.c' object='sjis.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sjis.lo `test -f '$(encdir)/sjis.c' || echo '$(srcdir)/'`$(encdir)/sjis.c
 
 cp932.lo: $(encdir)/cp932.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cp932.lo -MD -MP -MF $(DEPDIR)/cp932.Tpo -c -o cp932.lo `test -f '$(encdir)/cp932.c' || echo '$(srcdir)/'`$(encdir)/cp932.c
-#	$(am__mv) $(DEPDIR)/cp932.Tpo $(DEPDIR)/cp932.Plo
-#	source='$(encdir)/cp932.c' object='cp932.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cp932.lo `test -f '$(encdir)/cp932.c' || echo '$(srcdir)/'`$(encdir)/cp932.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cp932.lo -MD -MP -MF $(DEPDIR)/cp932.Tpo -c -o cp932.lo `test -f '$(encdir)/cp932.c' || echo '$(srcdir)/'`$(encdir)/cp932.c
+	$(am__mv) $(DEPDIR)/cp932.Tpo $(DEPDIR)/cp932.Plo
+#	source='$(encdir)/cp932.c' object='cp932.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cp932.lo `test -f '$(encdir)/cp932.c' || echo '$(srcdir)/'`$(encdir)/cp932.c
 
 iso8859_1.lo: $(encdir)/iso8859_1.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_1.lo -MD -MP -MF $(DEPDIR)/iso8859_1.Tpo -c -o iso8859_1.lo `test -f '$(encdir)/iso8859_1.c' || echo '$(srcdir)/'`$(encdir)/iso8859_1.c
-#	$(am__mv) $(DEPDIR)/iso8859_1.Tpo $(DEPDIR)/iso8859_1.Plo
-#	source='$(encdir)/iso8859_1.c' object='iso8859_1.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_1.lo `test -f '$(encdir)/iso8859_1.c' || echo '$(srcdir)/'`$(encdir)/iso8859_1.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_1.lo -MD -MP -MF $(DEPDIR)/iso8859_1.Tpo -c -o iso8859_1.lo `test -f '$(encdir)/iso8859_1.c' || echo '$(srcdir)/'`$(encdir)/iso8859_1.c
+	$(am__mv) $(DEPDIR)/iso8859_1.Tpo $(DEPDIR)/iso8859_1.Plo
+#	source='$(encdir)/iso8859_1.c' object='iso8859_1.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_1.lo `test -f '$(encdir)/iso8859_1.c' || echo '$(srcdir)/'`$(encdir)/iso8859_1.c
 
 iso8859_2.lo: $(encdir)/iso8859_2.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_2.lo -MD -MP -MF $(DEPDIR)/iso8859_2.Tpo -c -o iso8859_2.lo `test -f '$(encdir)/iso8859_2.c' || echo '$(srcdir)/'`$(encdir)/iso8859_2.c
-#	$(am__mv) $(DEPDIR)/iso8859_2.Tpo $(DEPDIR)/iso8859_2.Plo
-#	source='$(encdir)/iso8859_2.c' object='iso8859_2.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_2.lo `test -f '$(encdir)/iso8859_2.c' || echo '$(srcdir)/'`$(encdir)/iso8859_2.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_2.lo -MD -MP -MF $(DEPDIR)/iso8859_2.Tpo -c -o iso8859_2.lo `test -f '$(encdir)/iso8859_2.c' || echo '$(srcdir)/'`$(encdir)/iso8859_2.c
+	$(am__mv) $(DEPDIR)/iso8859_2.Tpo $(DEPDIR)/iso8859_2.Plo
+#	source='$(encdir)/iso8859_2.c' object='iso8859_2.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_2.lo `test -f '$(encdir)/iso8859_2.c' || echo '$(srcdir)/'`$(encdir)/iso8859_2.c
 
 iso8859_3.lo: $(encdir)/iso8859_3.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_3.lo -MD -MP -MF $(DEPDIR)/iso8859_3.Tpo -c -o iso8859_3.lo `test -f '$(encdir)/iso8859_3.c' || echo '$(srcdir)/'`$(encdir)/iso8859_3.c
-#	$(am__mv) $(DEPDIR)/iso8859_3.Tpo $(DEPDIR)/iso8859_3.Plo
-#	source='$(encdir)/iso8859_3.c' object='iso8859_3.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_3.lo `test -f '$(encdir)/iso8859_3.c' || echo '$(srcdir)/'`$(encdir)/iso8859_3.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_3.lo -MD -MP -MF $(DEPDIR)/iso8859_3.Tpo -c -o iso8859_3.lo `test -f '$(encdir)/iso8859_3.c' || echo '$(srcdir)/'`$(encdir)/iso8859_3.c
+	$(am__mv) $(DEPDIR)/iso8859_3.Tpo $(DEPDIR)/iso8859_3.Plo
+#	source='$(encdir)/iso8859_3.c' object='iso8859_3.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_3.lo `test -f '$(encdir)/iso8859_3.c' || echo '$(srcdir)/'`$(encdir)/iso8859_3.c
 
 iso8859_4.lo: $(encdir)/iso8859_4.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_4.lo -MD -MP -MF $(DEPDIR)/iso8859_4.Tpo -c -o iso8859_4.lo `test -f '$(encdir)/iso8859_4.c' || echo '$(srcdir)/'`$(encdir)/iso8859_4.c
-#	$(am__mv) $(DEPDIR)/iso8859_4.Tpo $(DEPDIR)/iso8859_4.Plo
-#	source='$(encdir)/iso8859_4.c' object='iso8859_4.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_4.lo `test -f '$(encdir)/iso8859_4.c' || echo '$(srcdir)/'`$(encdir)/iso8859_4.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_4.lo -MD -MP -MF $(DEPDIR)/iso8859_4.Tpo -c -o iso8859_4.lo `test -f '$(encdir)/iso8859_4.c' || echo '$(srcdir)/'`$(encdir)/iso8859_4.c
+	$(am__mv) $(DEPDIR)/iso8859_4.Tpo $(DEPDIR)/iso8859_4.Plo
+#	source='$(encdir)/iso8859_4.c' object='iso8859_4.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_4.lo `test -f '$(encdir)/iso8859_4.c' || echo '$(srcdir)/'`$(encdir)/iso8859_4.c
 
 iso8859_5.lo: $(encdir)/iso8859_5.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_5.lo -MD -MP -MF $(DEPDIR)/iso8859_5.Tpo -c -o iso8859_5.lo `test -f '$(encdir)/iso8859_5.c' || echo '$(srcdir)/'`$(encdir)/iso8859_5.c
-#	$(am__mv) $(DEPDIR)/iso8859_5.Tpo $(DEPDIR)/iso8859_5.Plo
-#	source='$(encdir)/iso8859_5.c' object='iso8859_5.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_5.lo `test -f '$(encdir)/iso8859_5.c' || echo '$(srcdir)/'`$(encdir)/iso8859_5.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_5.lo -MD -MP -MF $(DEPDIR)/iso8859_5.Tpo -c -o iso8859_5.lo `test -f '$(encdir)/iso8859_5.c' || echo '$(srcdir)/'`$(encdir)/iso8859_5.c
+	$(am__mv) $(DEPDIR)/iso8859_5.Tpo $(DEPDIR)/iso8859_5.Plo
+#	source='$(encdir)/iso8859_5.c' object='iso8859_5.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_5.lo `test -f '$(encdir)/iso8859_5.c' || echo '$(srcdir)/'`$(encdir)/iso8859_5.c
 
 iso8859_6.lo: $(encdir)/iso8859_6.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_6.lo -MD -MP -MF $(DEPDIR)/iso8859_6.Tpo -c -o iso8859_6.lo `test -f '$(encdir)/iso8859_6.c' || echo '$(srcdir)/'`$(encdir)/iso8859_6.c
-#	$(am__mv) $(DEPDIR)/iso8859_6.Tpo $(DEPDIR)/iso8859_6.Plo
-#	source='$(encdir)/iso8859_6.c' object='iso8859_6.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_6.lo `test -f '$(encdir)/iso8859_6.c' || echo '$(srcdir)/'`$(encdir)/iso8859_6.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_6.lo -MD -MP -MF $(DEPDIR)/iso8859_6.Tpo -c -o iso8859_6.lo `test -f '$(encdir)/iso8859_6.c' || echo '$(srcdir)/'`$(encdir)/iso8859_6.c
+	$(am__mv) $(DEPDIR)/iso8859_6.Tpo $(DEPDIR)/iso8859_6.Plo
+#	source='$(encdir)/iso8859_6.c' object='iso8859_6.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_6.lo `test -f '$(encdir)/iso8859_6.c' || echo '$(srcdir)/'`$(encdir)/iso8859_6.c
 
 iso8859_7.lo: $(encdir)/iso8859_7.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_7.lo -MD -MP -MF $(DEPDIR)/iso8859_7.Tpo -c -o iso8859_7.lo `test -f '$(encdir)/iso8859_7.c' || echo '$(srcdir)/'`$(encdir)/iso8859_7.c
-#	$(am__mv) $(DEPDIR)/iso8859_7.Tpo $(DEPDIR)/iso8859_7.Plo
-#	source='$(encdir)/iso8859_7.c' object='iso8859_7.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_7.lo `test -f '$(encdir)/iso8859_7.c' || echo '$(srcdir)/'`$(encdir)/iso8859_7.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_7.lo -MD -MP -MF $(DEPDIR)/iso8859_7.Tpo -c -o iso8859_7.lo `test -f '$(encdir)/iso8859_7.c' || echo '$(srcdir)/'`$(encdir)/iso8859_7.c
+	$(am__mv) $(DEPDIR)/iso8859_7.Tpo $(DEPDIR)/iso8859_7.Plo
+#	source='$(encdir)/iso8859_7.c' object='iso8859_7.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_7.lo `test -f '$(encdir)/iso8859_7.c' || echo '$(srcdir)/'`$(encdir)/iso8859_7.c
 
 iso8859_8.lo: $(encdir)/iso8859_8.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_8.lo -MD -MP -MF $(DEPDIR)/iso8859_8.Tpo -c -o iso8859_8.lo `test -f '$(encdir)/iso8859_8.c' || echo '$(srcdir)/'`$(encdir)/iso8859_8.c
-#	$(am__mv) $(DEPDIR)/iso8859_8.Tpo $(DEPDIR)/iso8859_8.Plo
-#	source='$(encdir)/iso8859_8.c' object='iso8859_8.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_8.lo `test -f '$(encdir)/iso8859_8.c' || echo '$(srcdir)/'`$(encdir)/iso8859_8.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_8.lo -MD -MP -MF $(DEPDIR)/iso8859_8.Tpo -c -o iso8859_8.lo `test -f '$(encdir)/iso8859_8.c' || echo '$(srcdir)/'`$(encdir)/iso8859_8.c
+	$(am__mv) $(DEPDIR)/iso8859_8.Tpo $(DEPDIR)/iso8859_8.Plo
+#	source='$(encdir)/iso8859_8.c' object='iso8859_8.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_8.lo `test -f '$(encdir)/iso8859_8.c' || echo '$(srcdir)/'`$(encdir)/iso8859_8.c
 
 iso8859_9.lo: $(encdir)/iso8859_9.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_9.lo -MD -MP -MF $(DEPDIR)/iso8859_9.Tpo -c -o iso8859_9.lo `test -f '$(encdir)/iso8859_9.c' || echo '$(srcdir)/'`$(encdir)/iso8859_9.c
-#	$(am__mv) $(DEPDIR)/iso8859_9.Tpo $(DEPDIR)/iso8859_9.Plo
-#	source='$(encdir)/iso8859_9.c' object='iso8859_9.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_9.lo `test -f '$(encdir)/iso8859_9.c' || echo '$(srcdir)/'`$(encdir)/iso8859_9.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_9.lo -MD -MP -MF $(DEPDIR)/iso8859_9.Tpo -c -o iso8859_9.lo `test -f '$(encdir)/iso8859_9.c' || echo '$(srcdir)/'`$(encdir)/iso8859_9.c
+	$(am__mv) $(DEPDIR)/iso8859_9.Tpo $(DEPDIR)/iso8859_9.Plo
+#	source='$(encdir)/iso8859_9.c' object='iso8859_9.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_9.lo `test -f '$(encdir)/iso8859_9.c' || echo '$(srcdir)/'`$(encdir)/iso8859_9.c
 
 iso8859_10.lo: $(encdir)/iso8859_10.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_10.lo -MD -MP -MF $(DEPDIR)/iso8859_10.Tpo -c -o iso8859_10.lo `test -f '$(encdir)/iso8859_10.c' || echo '$(srcdir)/'`$(encdir)/iso8859_10.c
-#	$(am__mv) $(DEPDIR)/iso8859_10.Tpo $(DEPDIR)/iso8859_10.Plo
-#	source='$(encdir)/iso8859_10.c' object='iso8859_10.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_10.lo `test -f '$(encdir)/iso8859_10.c' || echo '$(srcdir)/'`$(encdir)/iso8859_10.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_10.lo -MD -MP -MF $(DEPDIR)/iso8859_10.Tpo -c -o iso8859_10.lo `test -f '$(encdir)/iso8859_10.c' || echo '$(srcdir)/'`$(encdir)/iso8859_10.c
+	$(am__mv) $(DEPDIR)/iso8859_10.Tpo $(DEPDIR)/iso8859_10.Plo
+#	source='$(encdir)/iso8859_10.c' object='iso8859_10.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_10.lo `test -f '$(encdir)/iso8859_10.c' || echo '$(srcdir)/'`$(encdir)/iso8859_10.c
 
 iso8859_11.lo: $(encdir)/iso8859_11.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_11.lo -MD -MP -MF $(DEPDIR)/iso8859_11.Tpo -c -o iso8859_11.lo `test -f '$(encdir)/iso8859_11.c' || echo '$(srcdir)/'`$(encdir)/iso8859_11.c
-#	$(am__mv) $(DEPDIR)/iso8859_11.Tpo $(DEPDIR)/iso8859_11.Plo
-#	source='$(encdir)/iso8859_11.c' object='iso8859_11.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_11.lo `test -f '$(encdir)/iso8859_11.c' || echo '$(srcdir)/'`$(encdir)/iso8859_11.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_11.lo -MD -MP -MF $(DEPDIR)/iso8859_11.Tpo -c -o iso8859_11.lo `test -f '$(encdir)/iso8859_11.c' || echo '$(srcdir)/'`$(encdir)/iso8859_11.c
+	$(am__mv) $(DEPDIR)/iso8859_11.Tpo $(DEPDIR)/iso8859_11.Plo
+#	source='$(encdir)/iso8859_11.c' object='iso8859_11.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_11.lo `test -f '$(encdir)/iso8859_11.c' || echo '$(srcdir)/'`$(encdir)/iso8859_11.c
 
 iso8859_13.lo: $(encdir)/iso8859_13.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_13.lo -MD -MP -MF $(DEPDIR)/iso8859_13.Tpo -c -o iso8859_13.lo `test -f '$(encdir)/iso8859_13.c' || echo '$(srcdir)/'`$(encdir)/iso8859_13.c
-#	$(am__mv) $(DEPDIR)/iso8859_13.Tpo $(DEPDIR)/iso8859_13.Plo
-#	source='$(encdir)/iso8859_13.c' object='iso8859_13.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_13.lo `test -f '$(encdir)/iso8859_13.c' || echo '$(srcdir)/'`$(encdir)/iso8859_13.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_13.lo -MD -MP -MF $(DEPDIR)/iso8859_13.Tpo -c -o iso8859_13.lo `test -f '$(encdir)/iso8859_13.c' || echo '$(srcdir)/'`$(encdir)/iso8859_13.c
+	$(am__mv) $(DEPDIR)/iso8859_13.Tpo $(DEPDIR)/iso8859_13.Plo
+#	source='$(encdir)/iso8859_13.c' object='iso8859_13.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_13.lo `test -f '$(encdir)/iso8859_13.c' || echo '$(srcdir)/'`$(encdir)/iso8859_13.c
 
 iso8859_14.lo: $(encdir)/iso8859_14.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_14.lo -MD -MP -MF $(DEPDIR)/iso8859_14.Tpo -c -o iso8859_14.lo `test -f '$(encdir)/iso8859_14.c' || echo '$(srcdir)/'`$(encdir)/iso8859_14.c
-#	$(am__mv) $(DEPDIR)/iso8859_14.Tpo $(DEPDIR)/iso8859_14.Plo
-#	source='$(encdir)/iso8859_14.c' object='iso8859_14.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_14.lo `test -f '$(encdir)/iso8859_14.c' || echo '$(srcdir)/'`$(encdir)/iso8859_14.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_14.lo -MD -MP -MF $(DEPDIR)/iso8859_14.Tpo -c -o iso8859_14.lo `test -f '$(encdir)/iso8859_14.c' || echo '$(srcdir)/'`$(encdir)/iso8859_14.c
+	$(am__mv) $(DEPDIR)/iso8859_14.Tpo $(DEPDIR)/iso8859_14.Plo
+#	source='$(encdir)/iso8859_14.c' object='iso8859_14.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_14.lo `test -f '$(encdir)/iso8859_14.c' || echo '$(srcdir)/'`$(encdir)/iso8859_14.c
 
 iso8859_15.lo: $(encdir)/iso8859_15.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_15.lo -MD -MP -MF $(DEPDIR)/iso8859_15.Tpo -c -o iso8859_15.lo `test -f '$(encdir)/iso8859_15.c' || echo '$(srcdir)/'`$(encdir)/iso8859_15.c
-#	$(am__mv) $(DEPDIR)/iso8859_15.Tpo $(DEPDIR)/iso8859_15.Plo
-#	source='$(encdir)/iso8859_15.c' object='iso8859_15.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_15.lo `test -f '$(encdir)/iso8859_15.c' || echo '$(srcdir)/'`$(encdir)/iso8859_15.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_15.lo -MD -MP -MF $(DEPDIR)/iso8859_15.Tpo -c -o iso8859_15.lo `test -f '$(encdir)/iso8859_15.c' || echo '$(srcdir)/'`$(encdir)/iso8859_15.c
+	$(am__mv) $(DEPDIR)/iso8859_15.Tpo $(DEPDIR)/iso8859_15.Plo
+#	source='$(encdir)/iso8859_15.c' object='iso8859_15.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_15.lo `test -f '$(encdir)/iso8859_15.c' || echo '$(srcdir)/'`$(encdir)/iso8859_15.c
 
 iso8859_16.lo: $(encdir)/iso8859_16.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_16.lo -MD -MP -MF $(DEPDIR)/iso8859_16.Tpo -c -o iso8859_16.lo `test -f '$(encdir)/iso8859_16.c' || echo '$(srcdir)/'`$(encdir)/iso8859_16.c
-#	$(am__mv) $(DEPDIR)/iso8859_16.Tpo $(DEPDIR)/iso8859_16.Plo
-#	source='$(encdir)/iso8859_16.c' object='iso8859_16.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_16.lo `test -f '$(encdir)/iso8859_16.c' || echo '$(srcdir)/'`$(encdir)/iso8859_16.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iso8859_16.lo -MD -MP -MF $(DEPDIR)/iso8859_16.Tpo -c -o iso8859_16.lo `test -f '$(encdir)/iso8859_16.c' || echo '$(srcdir)/'`$(encdir)/iso8859_16.c
+	$(am__mv) $(DEPDIR)/iso8859_16.Tpo $(DEPDIR)/iso8859_16.Plo
+#	source='$(encdir)/iso8859_16.c' object='iso8859_16.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iso8859_16.lo `test -f '$(encdir)/iso8859_16.c' || echo '$(srcdir)/'`$(encdir)/iso8859_16.c
 
 euc_tw.lo: $(encdir)/euc_tw.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_tw.lo -MD -MP -MF $(DEPDIR)/euc_tw.Tpo -c -o euc_tw.lo `test -f '$(encdir)/euc_tw.c' || echo '$(srcdir)/'`$(encdir)/euc_tw.c
-#	$(am__mv) $(DEPDIR)/euc_tw.Tpo $(DEPDIR)/euc_tw.Plo
-#	source='$(encdir)/euc_tw.c' object='euc_tw.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_tw.lo `test -f '$(encdir)/euc_tw.c' || echo '$(srcdir)/'`$(encdir)/euc_tw.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_tw.lo -MD -MP -MF $(DEPDIR)/euc_tw.Tpo -c -o euc_tw.lo `test -f '$(encdir)/euc_tw.c' || echo '$(srcdir)/'`$(encdir)/euc_tw.c
+	$(am__mv) $(DEPDIR)/euc_tw.Tpo $(DEPDIR)/euc_tw.Plo
+#	source='$(encdir)/euc_tw.c' object='euc_tw.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_tw.lo `test -f '$(encdir)/euc_tw.c' || echo '$(srcdir)/'`$(encdir)/euc_tw.c
 
 euc_kr.lo: $(encdir)/euc_kr.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_kr.lo -MD -MP -MF $(DEPDIR)/euc_kr.Tpo -c -o euc_kr.lo `test -f '$(encdir)/euc_kr.c' || echo '$(srcdir)/'`$(encdir)/euc_kr.c
-#	$(am__mv) $(DEPDIR)/euc_kr.Tpo $(DEPDIR)/euc_kr.Plo
-#	source='$(encdir)/euc_kr.c' object='euc_kr.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_kr.lo `test -f '$(encdir)/euc_kr.c' || echo '$(srcdir)/'`$(encdir)/euc_kr.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT euc_kr.lo -MD -MP -MF $(DEPDIR)/euc_kr.Tpo -c -o euc_kr.lo `test -f '$(encdir)/euc_kr.c' || echo '$(srcdir)/'`$(encdir)/euc_kr.c
+	$(am__mv) $(DEPDIR)/euc_kr.Tpo $(DEPDIR)/euc_kr.Plo
+#	source='$(encdir)/euc_kr.c' object='euc_kr.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euc_kr.lo `test -f '$(encdir)/euc_kr.c' || echo '$(srcdir)/'`$(encdir)/euc_kr.c
 
 big5.lo: $(encdir)/big5.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT big5.lo -MD -MP -MF $(DEPDIR)/big5.Tpo -c -o big5.lo `test -f '$(encdir)/big5.c' || echo '$(srcdir)/'`$(encdir)/big5.c
-#	$(am__mv) $(DEPDIR)/big5.Tpo $(DEPDIR)/big5.Plo
-#	source='$(encdir)/big5.c' object='big5.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o big5.lo `test -f '$(encdir)/big5.c' || echo '$(srcdir)/'`$(encdir)/big5.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT big5.lo -MD -MP -MF $(DEPDIR)/big5.Tpo -c -o big5.lo `test -f '$(encdir)/big5.c' || echo '$(srcdir)/'`$(encdir)/big5.c
+	$(am__mv) $(DEPDIR)/big5.Tpo $(DEPDIR)/big5.Plo
+#	source='$(encdir)/big5.c' object='big5.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o big5.lo `test -f '$(encdir)/big5.c' || echo '$(srcdir)/'`$(encdir)/big5.c
 
 gb18030.lo: $(encdir)/gb18030.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gb18030.lo -MD -MP -MF $(DEPDIR)/gb18030.Tpo -c -o gb18030.lo `test -f '$(encdir)/gb18030.c' || echo '$(srcdir)/'`$(encdir)/gb18030.c
-#	$(am__mv) $(DEPDIR)/gb18030.Tpo $(DEPDIR)/gb18030.Plo
-#	source='$(encdir)/gb18030.c' object='gb18030.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gb18030.lo `test -f '$(encdir)/gb18030.c' || echo '$(srcdir)/'`$(encdir)/gb18030.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gb18030.lo -MD -MP -MF $(DEPDIR)/gb18030.Tpo -c -o gb18030.lo `test -f '$(encdir)/gb18030.c' || echo '$(srcdir)/'`$(encdir)/gb18030.c
+	$(am__mv) $(DEPDIR)/gb18030.Tpo $(DEPDIR)/gb18030.Plo
+#	source='$(encdir)/gb18030.c' object='gb18030.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gb18030.lo `test -f '$(encdir)/gb18030.c' || echo '$(srcdir)/'`$(encdir)/gb18030.c
 
 koi8_r.lo: $(encdir)/koi8_r.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT koi8_r.lo -MD -MP -MF $(DEPDIR)/koi8_r.Tpo -c -o koi8_r.lo `test -f '$(encdir)/koi8_r.c' || echo '$(srcdir)/'`$(encdir)/koi8_r.c
-#	$(am__mv) $(DEPDIR)/koi8_r.Tpo $(DEPDIR)/koi8_r.Plo
-#	source='$(encdir)/koi8_r.c' object='koi8_r.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o koi8_r.lo `test -f '$(encdir)/koi8_r.c' || echo '$(srcdir)/'`$(encdir)/koi8_r.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT koi8_r.lo -MD -MP -MF $(DEPDIR)/koi8_r.Tpo -c -o koi8_r.lo `test -f '$(encdir)/koi8_r.c' || echo '$(srcdir)/'`$(encdir)/koi8_r.c
+	$(am__mv) $(DEPDIR)/koi8_r.Tpo $(DEPDIR)/koi8_r.Plo
+#	source='$(encdir)/koi8_r.c' object='koi8_r.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o koi8_r.lo `test -f '$(encdir)/koi8_r.c' || echo '$(srcdir)/'`$(encdir)/koi8_r.c
 
 cp1251.lo: $(encdir)/cp1251.c
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cp1251.lo -MD -MP -MF $(DEPDIR)/cp1251.Tpo -c -o cp1251.lo `test -f '$(encdir)/cp1251.c' || echo '$(srcdir)/'`$(encdir)/cp1251.c
-#	$(am__mv) $(DEPDIR)/cp1251.Tpo $(DEPDIR)/cp1251.Plo
-#	source='$(encdir)/cp1251.c' object='cp1251.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cp1251.lo `test -f '$(encdir)/cp1251.c' || echo '$(srcdir)/'`$(encdir)/cp1251.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cp1251.lo -MD -MP -MF $(DEPDIR)/cp1251.Tpo -c -o cp1251.lo `test -f '$(encdir)/cp1251.c' || echo '$(srcdir)/'`$(encdir)/cp1251.c
+	$(am__mv) $(DEPDIR)/cp1251.Tpo $(DEPDIR)/cp1251.Plo
+#	source='$(encdir)/cp1251.c' object='cp1251.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cp1251.lo `test -f '$(encdir)/cp1251.c' || echo '$(srcdir)/'`$(encdir)/cp1251.c
 
 testp-testc.o: testc.c
-#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -MT testp-testc.o -MD -MP -MF $(DEPDIR)/testp-testc.Tpo -c -o testp-testc.o `test -f 'testc.c' || echo '$(srcdir)/'`testc.c
-#	$(am__mv) $(DEPDIR)/testp-testc.Tpo $(DEPDIR)/testp-testc.Po
-#	source='testc.c' object='testp-testc.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -c -o testp-testc.o `test -f 'testc.c' || echo '$(srcdir)/'`testc.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -MT testp-testc.o -MD -MP -MF $(DEPDIR)/testp-testc.Tpo -c -o testp-testc.o `test -f 'testc.c' || echo '$(srcdir)/'`testc.c
+	$(am__mv) $(DEPDIR)/testp-testc.Tpo $(DEPDIR)/testp-testc.Po
+#	source='testc.c' object='testp-testc.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -c -o testp-testc.o `test -f 'testc.c' || echo '$(srcdir)/'`testc.c
 
 testp-testc.obj: testc.c
-#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -MT testp-testc.obj -MD -MP -MF $(DEPDIR)/testp-testc.Tpo -c -o testp-testc.obj `if test -f 'testc.c'; then $(CYGPATH_W) 'testc.c'; else $(CYGPATH_W) '$(srcdir)/testc.c'; fi`
-#	$(am__mv) $(DEPDIR)/testp-testc.Tpo $(DEPDIR)/testp-testc.Po
-#	source='testc.c' object='testp-testc.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -c -o testp-testc.obj `if test -f 'testc.c'; then $(CYGPATH_W) 'testc.c'; else $(CYGPATH_W) '$(srcdir)/testc.c'; fi`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -MT testp-testc.obj -MD -MP -MF $(DEPDIR)/testp-testc.Tpo -c -o testp-testc.obj `if test -f 'testc.c'; then $(CYGPATH_W) 'testc.c'; else $(CYGPATH_W) '$(srcdir)/testc.c'; fi`
+	$(am__mv) $(DEPDIR)/testp-testc.Tpo $(DEPDIR)/testp-testc.Po
+#	source='testc.c' object='testp-testc.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testp_CFLAGS) $(CFLAGS) -c -o testp-testc.obj `if test -f 'testc.c'; then $(CYGPATH_W) 'testc.c'; else $(CYGPATH_W) '$(srcdir)/testc.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

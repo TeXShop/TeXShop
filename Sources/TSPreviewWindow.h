@@ -51,6 +51,8 @@
 @property (weak)      NSSplitView    *pdfKitSplitView;
 @property (weak)      TSDocument      *myDocument;
 @property               double          mytimestamp;
+@property               BOOL            horizontal;
+@property               double          scrolladjust;
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 

@@ -887,6 +887,11 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     splitFullRect = [[self documentView] bounds];
 }
 
+- (double)returnHeight
+{
+    return splitFullRect.size.height;
+}
+
 - (void)writeLocation: (NSInteger)anIndex andFullRect: (NSRect) fullRect andVisibleRect: (NSRect) visibleRect
 {
     splitTheIndex = anIndex;
@@ -916,6 +921,8 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     [[self documentView] scrollRectToVisible: splitVisibleRect];
         
 }
+
+
 
 - (void)removeHideView1: (NSTimer *) theTimer
 {

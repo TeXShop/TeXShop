@@ -15,6 +15,22 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.53</h5></P>
+
+Version 4.52 was never released. There are only two changes in 4.53, but the first is a big deal.
+
+<ul>
+<li>  Isao Sonobe created version 2.1.8 of OgreKit (this is the older of the two versions mentioned in the 4.51 Changes below) and compiled it for both Apple Silicon and Intel using XCode 12.2, the latest development system for macOS. This version does not use Garbage Collection and thus compiles fine for Apple Silicon, and it does not have the "Find All" bug described in the 4.51 Changes. Thus OgreKit is restored as a full-fledged modern component of TeXShop again, thanks entirely to Sonobe's work. TeXShop again supports regular expressions. 
+
+<p> It is a thrill to release TeXShop restored to normal, without having to do any work myself.
+
+<p> Note that command-+ can be used to increase the font size in the Find and Restore fields of OgreKit. A "select all" is needed before doing this in the Restore field, so "command-A  command-+   command-+   ..." Copying text from the source to the Find panel also respects size. These size changes are not remembered when erasing  fields and entering  new searches, but that is a minor problem which can be fixed later on.
+
+<p><li> In 4.51, some changes were added to improve the experience  splitting the Preview window. Further work has been done which slightly improves this action. Now the position of the top portion matches its position in the unsplit window for certain sizes. This is working on my large monitor, but not on the portable screen, so this is very much work-in-progress.
+
+</ul>
+
+
 <P><h5>TeXShop Changes 4.51</h5></P>
 
 This minor update has four changes:
@@ -37,13 +53,15 @@ This minor update has four changes:
 <p> <li> For a long time, the default Find option in TeXShop was the OgreKit Panel, a third party project from Japan.
 Now the default option is the Apple Find Bar, which is also used by several Apple applications. Users may want to switch.
 
-<p> OgreKit is an open source project on GitHub and the last commits to the code were two years ago. It supports regular expressions, so I was thrilled to include it in TeXShop. For many years, TeXShop contained version 2 of this code.
+<p> OgreKit is an open source project on GitHub. It supports regular expressions, so I was thrilled to include it in TeXShop. For many years, TeXShop used version 2 of the OgreKit code.
 
-<p> When Dark Mode was released on Mojave, the code was modified to support it, but this modification was never finished. The changes are in version 3, which includes a number of other important changes under the hood. Version 3 was briefly in TeXShop, but one feature seriously broke TeXShop. If "Find All" is selected in Version 3, it seems to work, but TeXShop freezes after that,  new material typed in the editor is not accepted, and the program cannot be quit. After it is aborted and  started again, the user discovers that material was actually added to the Source, and these changes were actually saved. This is, of course, a fatal error, and I immediately switched back to version 2, which is still used in TeXShop 4.44.
+<p> When Dark Mode was released on Mojave, OgreKit was modified to support it. This modification was called version 3 of OgreKit. At the same time, a number of important changes were made to OgreKit "under the hood." The most important change involved memory management: version 2 uses garbage collection while version 3 uses ARC, automatic reference counting.
 
-<p>  Version 2 of OgreKit used Garbage Collection, but Apple soon deprecated that and replaced it by ARC, Automatic Reference Counting. Version 3 of OgreKit switched to ARC. The garbage collection code is still in Big Sur, and thus TeXShop 4.44 with OgreKit Version 2 still runs on Big Sur. But XCode will no longer compile code with garbage collection, a sure sign that Apple is about to remove it completely from the operating system.  So TeXShop 4.44 may no longer run on future systems, and at any rate it is impossible to compile TeXShop 4.51 for Apple Silicon and still use Version 2 of OgreKit.
+<p> Unfortunately, version 3 was never finished and the last modification to the GitHub source occurred two years ago. Very briefly, TeXShop switched to this version 3 of OgreKit, but it turned out that the code had a fatal error and we immediately switched back to version 2. This fatal error involved "Find All". This button seemed to work if pressed in OgreKit. But afterward, TeXShop froze. The user could type, but nothing new appeared on the screen. At that point, it was necessary to abort the program and restart. But when the user did that, they discovered that their new typing actually had been accepted and then saved. In particular, if they typed gobbledygook when the editor stopped responding, the gobbledygook was now in their source. Of course this is a fatal error.
 
-<p> Thus Versions 4.50 and 4.51 of TeXShop use Version 3 of OgreKit. But in Version 4.51, I have removed the "Find All" button from the OgreKit Panel, so users should be unable to create the unacceptable error. 
+<p> To repeat, version 4.44 of TeXShop uses version 2 of the OgreKit code, which works fine except for minor Dark Mode problems. However, version 2 cannot be used in the Apple Silicon era because it uses garbage collection. Apple has deprecated garbage collection and recommends that users switch to ARC. The garbage collection code is still in Big Sur, so TeXShop 4.44 continues to work there. But XCode 12, which is required to compile for Apple Silicon, refuses to compile programs which use it. This is a sure sign that it will be removed from future version of macOS, perhaps very soon.
+
+<p> Since TeXShop 4.50 and higher support Apple Silicon, we had to switch to Version 3 of OgreKit. TeXShop 4.50 contains an OgreKit with the fatal "Find All" bug. But in Version 4.51 of TeXShop, I  removed the "Find All" button from the OgreKit Panel, so users should be unable to create the error. 
 
 <p> There is no chance that I'll find time to fix OgreKit, but I prefer to leave it in TeXShop in its imperfect state for users who need regular expressions. Since I don't use it myself, I'd appreciate bug reports, and I'd like to be notified immediately if some other feature breaks the TeXShop editor. These bugs won't be fixed unless some volunteer is willing to take over the project, which would be wonderful. But if a bug breaks the TeXShop editor, I'll remove the feature if possible and otherwise remove the entire Find Pane.
 

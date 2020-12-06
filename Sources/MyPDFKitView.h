@@ -272,6 +272,7 @@
 - (void)writeLocation: (NSInteger)anIndex andFullRect: (NSRect) fullRect andVisibleRect: (NSRect) visibleRect;
 - (void)readLocation: (NSInteger *) anIndex andFullRect: (NSRect *) fullRect andVisibleRect: (NSRect *) visibleRect;
 - (void)restoreLocation;
+- (double)returnHeight;
 @end
 
 @interface MyPDFKitView (PDFDocumentDelegate)

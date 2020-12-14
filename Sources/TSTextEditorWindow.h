@@ -30,7 +30,7 @@
 {
 }
 
-@property (weak) TSDocument   *myDocument;
+@property (weak) IBOutlet TSDocument   *myDocument;
 @property BOOL wasClosed;
 
 // added by mitsu --(H) Macro menu; used to detect the document from a window

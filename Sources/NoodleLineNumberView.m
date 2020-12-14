@@ -280,6 +280,7 @@
 
         oldThickness = [self ruleThickness];
         newThickness = [self requiredThickness];
+        /*
         if (fabs(oldThickness - newThickness) > 1)
         {
 			NSInvocation			*invocation;
@@ -290,9 +291,18 @@
 			[invocation setSelector:@selector(setRuleThickness:)];
 			[invocation setTarget:self];
 			[invocation setArgument:&newThickness atIndex:2];
-			
+			// The following line was suggested by Martin Hairer to avoid a crash on x86_64 Big Sur. Nobody else reported such a crash.
+            [invocation retainArguments];
 			[invocation performSelector:@selector(invoke) withObject:nil afterDelay:0.0];
         }
+    */
+    // Later Martin Hairer proposed the following safer and shorter fix
+        if (fabs(oldThickness - newThickness) > 1)
+              {
+                  dispatch_async(dispatch_get_main_queue(), ^{
+                      [self setRuleThickness:newThickness];
+                  });
+              }
 	}
 }
 

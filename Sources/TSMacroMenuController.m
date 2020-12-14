@@ -291,11 +291,13 @@ static id sharedMacroMenuController = nil;
 	{
 		// do ordinary macro
 		// mitsu 1.29 (T2)
-		NSWindow *activeDocWindow = [[TSWindowManager sharedInstance] activeTextWindow];
+        NSWindow *activeDocWindow = [[TSWindowManager sharedInstance] activeTextWindow];
 		if (activeDocWindow != nil) {
             if ([activeDocWindow isKindOfClass:[TSTextEditorWindow class]])
+            {
                 [[(TSTextEditorWindow *)activeDocWindow document] insertSpecial: macroString
 																	undoKey: NSLocalizedString(@"Macro", @"Macro")];
+            }
             else if ([activeDocWindow isKindOfClass:[TSFullSplitWindow class]])
                 {
                     TSFullSplitWindow *activeWindow = (TSFullSplitWindow *)activeDocWindow;

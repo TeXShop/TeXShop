@@ -1845,6 +1845,20 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	if (! fileIsTex)
 		return;
 	
+    NSEvent *currentEvent = [NSApp currentEvent];
+    NSInteger optionKeyPressed = [currentEvent modifierFlags] & NSEventModifierFlagOption;
+    
+    if (optionKeyPressed)
+    {
+        // NSLog(@"option pressed in abort");
+        [outputText replaceCharactersInRange: [outputText selectedRange] withString:@"\nConsole output killed.\n"];
+        [outputText scrollRangeToVisible:[outputText selectedRange]];
+        
+        [self.readHandle closeFile];
+        self.readHandle = nil;
+        return;
+       // [self.readHandle waitForDataInBackgroundAndNotify];
+    }
 
 	/* The lines of code below kill previously running tasks. This is
 	necessary because otherwise the source file will be open when the

@@ -15,6 +15,46 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.57</h5></P>
+
+Version 4.56 was released briefly and quickly withdrawn.
+
+Version 4.57 of TeXShop has a new version of OgreKit, 2.1.10, thanks to Isao Sonobe. The changes are
+<ul>
+<li>  Fixed the issue about ".LucidaGrandeUI" font.
+<li>  Increased the default font size of the Find/Replace text view to 18pt (on Mojave and higher).
+<li>  In darkmode, the text color will be automatically adjusted.
+</ul>
+Users will not notice the first item, which fixed debugging messages in XCode.
+
+<p> This should end the flurry of changes caused by Apple's Arm release, and I expect that TeXShop will remain unchanged through the holidays at least. 
+
+
+<P><h5>TeXShop Changes 4.55</h5></P>
+
+The previous version, 4.54, fixed a bug when running on Sierra and High Sierra. After that fix, TeXShop could again run on macOS 10.12 and higher. The fix made no changes in the code; instead it replaced the Source Window in the English Interface Builder file with a copy of the German version, and then hooked up the connections for this object. Unfortunately, the window had several layers: a Split View, followed by two Scroll Views lying over two Clip Views, each containing a Text View. So some of the connections were not made.
+
+<p> That had rather dramatic consequences. Splitting the source window failed, various macros no longer worked, and Single Window mode failed.
+Thanks to rapid and detailed complaints from users, these problems were fixed by adding the missing connections. Version 4.55 is exactly what 4.54 was intended to be.
+</p>
+
+
+<P><h5>TeXShop Changes 4.54</h5></P>
+
+Version 4.54 has two changes:
+
+<ul>
+<li>  Version 4.50 had a bug which caused text in the editor to slide under the line numbers, making the initial characters of lines unreadable. This bug only occurred on Sierra and High Sierra. Consequently I revised the TeXShop web pages to say that TeXShop requires Mojave or higher, and I modified the Sparkle update mechanism to only offer updates to users running Mojave or higher.
+
+<p> By mistake this modification of Sparkle was  omitted when version 4.53 was released. Several users consequently encountered the bug again and wrote me.  One of them, Bernard Magneron, provided screen snapshots and a very clear description of the bug, and then added a key fact I did not know: <em> the bug only occurred in the English version of TeXShop, but not in other languages.</em>. 
+
+<p> That important hint led to an easy fix. So TeXShop 4.54 again works on Sierra and High Sierra as well as all higher systems. The web pages have been revised and the Sparkle restriction has been permanently removed. Thank you, Bernard. 
+
+<p><li> The "Abort" routine, available by pushing a button on the console, kills the typesetting process in case of severe trouble and prints "Process aborted" in the console. In version 4.54 of TeXShop, if this button is pressed while  the option key is down, then TeXShop closes the file handle piping information from the typesetting process to the console and prints "Console output killed".  This addition is provided for very rare cases when a defective macro creates a loop causing TeX to ignore the kill signal.
+
+</ul>
+
+
 <P><h5>TeXShop Changes 4.53</h5></P>
 
 Version 4.52 was never released. There are only two changes in 4.53, but the first is a big deal.

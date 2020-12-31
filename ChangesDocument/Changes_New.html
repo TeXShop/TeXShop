@@ -14,6 +14,32 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.58</h3></P>
+
+Version 4.58 is a relatively minor update to clean up a few issues which appeared over the holiday.
+<ul>
+<li> Claudio Beccari asked if the font used by the log window can be changed. In version 4.58, the console font and font size are also used by the log window. Changing the console font and font size  modifies  the font in both the console and the log window.
+
+<p>
+<li> Some time ago a preference was added which modified kerning and ligatures in the source window. This never worked and was abandoned, but an unfortunate souvenir remained. Setting the document font in Preferences became unnecessarily complicated: a sample window appeared and font changes were first sampled in that window. When the OK button was pressed, the sample window went away and the font change appeared in all open source windows. But the change was not permanent until the OK button at the bottom of the Preference Pane was pressed.
+
+<p> In 4.58, changing the document font works like setting the console font. Press the "Set" button and the Font Panel appears. Selecting a new font or size in the Panel immediately changes the display of all open source windows. Click "OK" at the bottom of the Preference Pane to make the change permanent and "Cancel" to revert to the original font choice. The Sample Window is gone.
+
+<p><li> Updated to the latest Sparkle update framework, version 1.24.0.
+
+<p><li> The French localization of the Preference Pane's Source Tab had a missing item to set Parens Targets and HighLite colors. This is back. 
+
+<p><li> The author of latexmk, John Collins, remarks that TeXShop engines used by latexmk should not move output files out of the source folder to alternate folders. This restriction can easily be enforced by adding the following lines to the file ~/Library/TeXShop/bin/latexmkrcedit:
+<pre>
+     # make sure the output directories are not re-directed.
+     $out_dir = $aux_dir = '';
+</pre>
+
+<p> The latexmkrcedit file just mentioned is created automatically by latexmk the first time it is used, and then left in place because some users edit it and add personal features. If you have never edited this file, please remove it from
+~/Library/TeXShop/bin. A revised version will be written the first time latexmk is used. If you <it> have </it> edited latexmkrcedit, please edit the file now and add the lines above to the file.
+
+</ul>
+
 <P><h3>TeXShop Changes 4.57</h3></P>
 
 Version 4.56 was released briefly and quickly withdrawn.

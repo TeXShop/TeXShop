@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 4.57}
+\title{About TeXShop 4.58}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -37,6 +37,17 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 ccc.
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
+
+\section{Changes in 4.58}
+
+The author of latexmk, John Collins, remarks that TeXShop engines used by latexmk should not move output files out of the source folder to alternate folders. This restriction can easily be enforced by adding the following lines to the file \url{~Library/TeXShop/bin/latexmkrcedit}:
+\begin{verbatim}
+     # make sure the output directories are not re-directed.
+     $out_dir = $aux_dir = '';
+\end{verbatim}
+
+The latexmkrcedit file just mentioned is created automatically by latexmk the first time it is used, and then left in place so some users can edit it and add personal features. If you have never edited this file, please remove it from
+\url{~Library/TeXShop/bin}. A revised version will be written the first time latexmk is used. If you {\em have} edited latexmkrcedit, please re-edit the file now and add the lines above.
 
 \section{Changes in 4.52 - 4.57}
 

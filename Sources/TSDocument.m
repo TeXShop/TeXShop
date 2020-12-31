@@ -596,6 +596,8 @@ NSInteger strSort(id s1, id s2, void *context)
     else
         [self.logTextView setUsesFindPanel: YES];
     [self.logTextView setAutoresizingMask: NSViewWidthSizable];
+    self.logTextView.continuousSpellCheckingEnabled = NO;
+    self.logTextView.grammarCheckingEnabled = NO;
 }
 
 
@@ -3216,12 +3218,17 @@ if ( ! skipTextWindow) {
 - (void)setLogWindowFontFromPreferences:(NSNotification *)notification
 {
 	NSData	*fontData;
-	NSFont 	*font;
+	NSFont 	*font, *theFont;
     
     if (! [SUD boolForKey:ScreenFontForLogAndConsoleKey])
     {
       //  [self.logTextView setFontSafely:[NSFont screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
-        [self.logTextView setFontSafely: [NSFont userFontOfSize:12.0]];
+        
+        theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+     
+        // change below requested by Claudio Beccari on Dec 25, 2020
+        // [self.logTextView setFontSafely: [NSFont userFontOfSize:12.0]];
+        [self.logTextView setFontSafely: theFont];
         return;
     }
     
@@ -3244,6 +3251,8 @@ if ( ! skipTextWindow) {
         [outputText setFontSafely: [theFont screenFontWithRenderingMode:NSFontDefaultRenderingMode]];
     else
         [outputText setFontSafely: theFont];
+    
+    [self setLogWindowFontFromPreferences:notification];
 }
 
 - (void)setConsoleBackgroundColorFromPreferences:(NSNotification *)notification

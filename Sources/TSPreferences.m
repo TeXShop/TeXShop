@@ -240,6 +240,20 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 
 Clicking this button will bring up the font panel.
 "*/
+
+- (IBAction)changeDocumentFont:sender
+{
+    // self.documentFont = [fontManager convertFont:self.documentFont];
+    // fontTouched = YES;
+    [_prefsWindow makeFirstResponder:_prefsWindow];
+    [[NSFontManager sharedFontManager] setSelectedFont:self.documentFont isMultiple:NO];
+    [[NSFontManager sharedFontManager] orderFrontFontPanel:self];
+}
+
+// Below was part of an attempt to set additional attributes of the source panel. This was a failure.
+// So we retreat to the original method.
+
+/*
 - (IBAction)changeDocumentFont:sender
 {
     
@@ -286,7 +300,10 @@ Clicking this button will bring up the font panel.
     
     [_fontTextView setTextColor: NSColor.textColor];
     [_fontTextView  setBackgroundColor: NSColor.textBackgroundColor];
-    
+    */
+
+// the next section was commented out even when the original code with a sample window was
+// active; this code was a central part of the failed attempt to set attributes
      /*
      
      NSDictionary *fontAttributes;
@@ -316,8 +333,8 @@ Clicking this button will bring up the font panel.
      }
      }
      */
-
-    [NSApp beginSheet: _samplePanel
+/*
+ [NSApp beginSheet: _samplePanel
        modalForWindow: _prefsWindow
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
@@ -361,7 +378,14 @@ Clicking this button will bring up the font panel.
 {
     [sheet orderOut:self];
 }
+ */
 
+// We leave the code below present so IB files need not be changed
+// this code will never be called
+- (IBAction)closeSamplePanel: (id)sender
+{
+    [NSApp endSheet:_samplePanel];
+}
 
 - (IBAction)changeConsoleResize:sender
 {
@@ -391,11 +415,13 @@ Clicking this button will bring up the font panel.
 "*/
 - (void)changeFont:(id)fontManager
 {
+    
+    NSData    *fontData;
     NSString *theTab = [[_tabView selectedTabViewItem] identifier];
 
 	if ([theTab isEqualToString: @"Document"])
 		{
-/*
+
 		self.documentFont = [fontManager convertFont:self.documentFont];
 		fontTouched = YES;
 
@@ -411,7 +437,7 @@ Clicking this button will bring up the font panel.
 
 		// post a notification so all open documents can change their font
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
- */
+
 		}
 		
 	else if ([theTab isEqualToString: @"Console"])

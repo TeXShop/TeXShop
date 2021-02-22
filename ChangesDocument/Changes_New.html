@@ -14,6 +14,89 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.59</h3></P>
+Version 4.59 has five changes:
+<ul>
+<li> The TeXShop Help Menu has been rearranged slightly and a new item has been added labeled "TeX Live Documentation". TeX Live contains a massive amount of documentation, and this item makes these documents available to the user by displaying a page of links to alphabetical lists of documents and certain individual items. The links respect  the active distribution, so files in TeX Live 2020 will be displayed if that is your active distribution, but when you update to TeX Live 2021,  document files in TeX Live 2021 will be displayed. If you install a distribution like BasicTeX which omits the documentation,  these links will become inactive.
+
+<p> Some links refer to material on the internet and are always active.
+
+<p> Among the linked information is the "learnlatex online LaTeX lessons" for new users (with interactive examples), a recent document by Jim Hefferon listing  packages all LaTeX users should know about, and a catalog illustrating all fonts  in TeX Live.
+
+<li> Applescript macros begin with the line "--applescript direct" or "--applescript". If the first form is used, TeXShop itself runs the script. If the second form is used, a small program called ScriptRunner in TeXShop runs the macro. This second form is required if the script asks TeXShop to perform tasks.
+
+<p> In previous versions of TeXShop, ScriptRunner only had x86_64 code and macros starting with "--applescript" failed on Arm machines. In TeXShop 4.59, the bug is fixed because ScriptRunner has a universal binary.
+
+<li> The next two items were requested by Uwe Schmock. After a TeX typesetting job completes, the console becomes active and items can be copied from it and pasted elsewhere. But this didn't work after BibTeX or MakeIndex jobs. Now it does.
+
+<p>
+<li> Suppose a project has a root file and  include files for various book chapters. When the user uses SyncTeX to sync from the Preview Window to the Source Window, it sometimes has to open chapter files. A new Preference item makes these files open as  tabs in the Source Window rather than as independent windows. This feature requires Catalina or higher; the preference item is ignored on earlier systems.
+
+<p> The feature also does not work in Single Window mode. Tabs were added to Cocoa by Apple and work with very little code, often no code at all. But they assume a basic window design which doesn't hold in Single Window mode, so adding them to Single Window mode would involve dangerous kludges. Using independent windows for source and preview is the primary TeXShop mode and highly recommended for projects large enough to divide into independent chapters.
+
+<p>
+<li> There is a famous text editor named <i>emacs</i>. This editor was written before computers had mice, so it had elaborate commands to move the cursor. There were keystrokes to move forward one character, back one character, forward one word, back one word, forward one sentence, back one sentence, etc. Additional keystroke commands were available for copy and paste. The great disadvantage of emacs was that the editor came with a two page table of instructions and took weeks to master. The advantage is that it allowed rapid entry of text without lifting a hand to reach  the mouse. (Modern versions of emacs accommodate mice.)
+
+<p> The Cocoa text editing code used by TeXShop and many other programs on the Macintosh was originally written by engineers at NeXT;  many of these engineers used emacs. So they added a vast number of emacs keystroke shortcuts to the editor. I don't know the history of this code, but I like to imagine that the emacs keystrokes were added secretly without telling Steve Jobs. Most modern Mac users are completely unaware of this  feature.
+
+<p> For a small sample, hold down the control key and type the letter "f". Notice that the cursor moves forward one character with each keystroke. Replace "f" by "b" and the cursor moves backward.
+
+<p> The site https://www.hcs.harvard.edu/~jrus/site/system-bindings.html has a long list of such shortcuts; appropriate Google searches will explain in detail how the system works. Herbert Schulz has a useful website with many items for TeXShop users: https://herbs.github.io. One of this items is a folder with  Key Binding documents and samples.
+
+
+
+<p> Emacs keystrokes were completely customizable and the  shortcuts for the Cocoa editor are similarly customizable. This is done by placing a file named DefaultKeyBinding.dict in ~/Library/KeyBindings. The structure of this file can be found with  Google searches; some sites contain sample customization files.
+
+<p> Essentially, the DefaultKeyBindings file is  a list of keystrokes and calls to procedures in NSTextView, the Cocoa editing code. For example, one line might read
+<pre>
+     "^f" = "moveForward:";
+</pre>
+Here ^f stands for Control-f and moveForward is the Cocoa procedure which moves the cursor one character forward, documented as follows:
+<pre>
+	- (void)moveForward:(id)sender;
+</pre>
+
+<p> A few days ago, a professor of mathematics named David Wang asked me to add a keyboard shortcut to TeXShop which moved the cursor past the next dollar sign. I wrote back that the appropriate way to do that would be to use the emacs key bindings system. It turned out that Wang knew about and  used the emacs cursor moving shortcuts. But unfortunately, searching for a string is not a procedure that the Key Bindings system can use. So I added four calls to TeXShop:
+<pre>
+	- (void)moveForwardTo$:(id)sender;
+	- (void)moveForwardTo$$:(id)sender;
+	- (void)moveBackwardTo$:(id)sender;
+	- (void)moveBackwardTo$$:(id)sender;
+</pre>
+These calls move the cursor from its current position to just after the next $, just after the next $$, and so forth. Using the calls, the required shortcuts can easily be obtained. Below is a sample DefaultKeyBinding.dict file. If you want to test the feature, create this file and place it in ~/Library/KeyBindings. Then push the option key and f or b to move to an appropriate $, or push the control key and f or b to move to an appropriate $$.
+<pre>
+/* ~/Library/KeyBindings/DefaultKeyBinding.dict */
+ 
+{
+    /* Sample Math Mode bindings */
+    "~f" = "moveForwardTo$:";
+    "~b" = "moveBackwardTo$:";
+    "^f" = "moveForwardTo$$:";
+    "^b" = "moveBackwardTo$$:";
+}
+</pre>
+
+<p> The above DefaultKeyBinding file is not appropriate for permanent use. For one thing, it shadows other commands already available in the default system. Most users should just ignore this new feature, which is only provided for users who have already customized the Key Bindings system. If they want to add the new item, they will need to edit their DefaultKeyBinding.dict file and choose appropriate keystrokes to add the new search.
+
+<p> Note that DefaultKeyBinding.dict adds keyboard shortcuts to <i>all</i> editors which use the Cocoa code, not just TeXShop. This file is read when a program first starts. It turns out that commands like "moveForwardTo$" not in a program's code base are ignored. So, for example, the above sample does not harm Apple's TextEdit.
+
+<p> User-defined edit commands like moveForwardTo$ used by Key Bindings cannot have parameters. 
+Thus I could not expose general procedures like
+<pre>
+	moveForwardTo: (String *)s;
+	moveBackwardTo: (String *)s;
+</pre>
+However, these two procedures are now in TeXShop, and the four procedures listed earlier just call them. This means that if you would like to write a keyboard shortcut which searches for a different string like "begin" or "end" and moves the cursor appropriately, you will need to add appropriate routines to TeXShop and recompile. But writing these routines would be trivial because you can just call my generic routines.
+
+<p> I'd be happy to add such special routines to TeXShop upon request, so they remain available after program updates. Just write.
+
+</ul>
+
+
+
+
+
+
 <P><h3>TeXShop Changes 4.58</h3></P>
 
 Version 4.58 is a relatively minor update to clean up a few issues which appeared over the holiday.

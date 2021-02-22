@@ -369,11 +369,20 @@
         }
         else
             [newDocument toLine: line];
+        
+        if  (! useFullSplitWindow)
+            
+            {
+            if ([SUD boolForKey:SyncUseTabsKey] && atLeastCatalina)
+            {
+                [[self textWindow] addTabbedWindow: myTextWindow ordered:1];
+                [myTextWindow makeKeyAndOrderFront:self];
+            }
+            else
+                [myTextWindow makeKeyAndOrderFront:self];
+            }
 		
-		if (! useFullSplitWindow)
-            [myTextWindow makeKeyAndOrderFront:self];
-		
-		return YES;
+  		return YES;
 		
 	}
 	

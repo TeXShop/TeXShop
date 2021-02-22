@@ -69,6 +69,15 @@
     [self displayFile: fileName];
 }
 
+- (IBAction)displayTeXLiveDocumentation:sender
+{
+    NSString                *fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"TeXLiveDocumentation" ofType:@"pdf"];
+    [self displayFile: fileName];
+}
+
+
 - (IBAction)displayCommentLines:sender
 {
     NSString                *fileName;

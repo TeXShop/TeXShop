@@ -1966,7 +1966,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             }
         }
    
-    
+    [outputText setSelectable: YES];
     taskDone = YES; // for Applescript
     
     if (theTask != self.texTask)
@@ -1974,8 +1974,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         return;
     }
     
-    [outputText setSelectable: YES];
-    taskDone = YES;  // for Applescript
+ //   [outputText setSelectable: YES];
+ //   taskDone = YES;  // for Applescript
     
     if (self.inputPipe == [theTask standardInput]) {
         status = [theTask terminationStatus];

@@ -54,6 +54,10 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 - (void)autoComplete:(NSMenuItem *)theMenu; //Added by soheil
 - viewDidChangeEffectiveAppearance;
+- (void)moveForwardTo$:(id)sender;
+- (void)moveBackwardTo$:(id)sender;
+- (void)moveForwardTo$$:(id)sender;
+- (void)moveBackwardTo$$:(id)sender;
 - (void)paste: (id)sender;
     
 @end

@@ -1,0 +1,229 @@
+% !TEX encoding = UTF-8 Unicode 
+
+\documentclass[12pt, oneside]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue]{hyperref}
+            
+%\usepackage{fontspec,xltxtra,xunicode} 
+%\defaultfontfeatures{Mapping=tex-text} 
+%\setromanfont{Hoefler Text} 
+%\setromanfont{Optima}
+%\setromanfont{Baskerville}
+%\setsansfont[Scale=MatchLowercase] {Gill Sans} 
+%\setmonofont[Scale=MatchLowercase] {Andale Mono} 
+
+            
+\title{Read Me First}
+%\author{The Author}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+
+\section{\TeX, \LaTeX, and TeXShop}
+
+\TeX{} is a typesetting program, originally designed for mathematical and scientific documents and increasingly used in other fields as well. The Mac\TeX{} distribution contains the \TeX{} program and a large number of support files: fonts, style files, and so forth.
+
+Most of these files remain hidden from the user, who interacts with \TeX{} via a front end. Mac\TeX{} installs the front end TeXShop, which has been available for OS X since the introduction of the operating system.
+
+\TeX\ itself  has a very primitive input language. Quoting \url{https://tex.stackexchange.com/questions/97520/what-is-plain-tex}, ``The 'smallest' possible \TeX\ is what Knuth called 'virgin' \TeX; it knows just primitive commands, no macros. Plain \TeX\ is the set of macros (developed by Knuth) which makes \TeX\ usable in everyday life of a typist.'' 
+
+Later on, Leslie Lamport developed a more extensive macro set, called \LaTeX, which is often used today, and will be used in this document. If you are writing in \LaTeX, you are using \TeX\ with a particular set of macros, and you are probably adding many of the style files and packages developed by a multitude of others after Lamport's work.
+
+
+\section{First Steps with \TeX\ and TeXShop}
+
+Go to \path{/Applications/TeX} and find TeXShop. Drag its icon to your dock. Click this icon to run the program. You will be presented with a blank window; at the top right of this window you'll find a pull down menu named ``Templates''. From this menu choose ``LaTeX Template''. The blank window will fill with some standard boilerplate required in each \TeX\ source file. The red lines are comments which \TeX\ ignores.
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=3.5in]{edit.png} 
+   \caption{Edit Window}
+   \label{fig:example}
+\end{figure}
+
+
+New material goes between the lines
+
+\begin{verbatim}
+     \begin{document}
+\end{verbatim}
+
+and
+
+\begin{verbatim}
+     \end{document}
+\end{verbatim}
+
+
+Type some sentences there now.  \TeX\ will ignore most carriage returns because it knows how to format text, so insert them randomly if you wish. Use a blank line to indicate  the start of a new paragraph. 
+
+
+
+Uncomment the source line with the words ``usepackage[parfill]{parskip}''
+if you prefer to separate paragraphs with an empty line instead of an indent.
+
+When you have some material, hit the ``Typeset'' button at the top left of the window. A dialog will appear asking you to save the document. When \TeX\ typesets, it creates three or four additional files, so it is not a good idea to save directly to a location with many other files. Instead,  put your source in a folder within such a location. To do that, navigate to a reasonable location, say \path{~/Documents}, and then click the ``New Folder'' button at the bottom of the dialog. Accept the default name or choose another and create the folder. Then name the document and save it. The default ``Untitled'' name will do.
+
+As soon as you save, \TeX\ will typeset the document and open a second window showing the result.
+
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5in]{edit2.png} 
+   \caption{Typeset Window}
+   \label{fig:example}
+\end{figure}
+
+
+
+
+
+
+Go back to the original window and add some additional text. Hit ``Typeset'' again. This time \TeX\ immediately typesets the new material and updates the output window.
+
+Close the document by hitting the red button at the top of the edit window. There is no need to save the program first because TeXShop automatically saves regularly. Quit TeXShop.
+
+Restart TeXShop by clicking on the icon in the dock. 
+
+It is possible to reopen the project by double clicking on the Untitled file or by starting TeXShop and navigating to Untitled in the Open dialog, but there is a much easier way. Start TeXShop and under the File menu choose the item ``Open Recent...'' In the resulting list, choose ``Untitled'' and you will immediately return to the document.
+
+If you do not close the document before quitting TeXShop, then it may reappear automatically the next time you run TeXShop. This depends on a setting in Apple's System Preferences. Run System Preferences and select the General module. In the middle of the resulting dialog, boxes appear labeled ``Ask to keep changes when closing documents'' and ``Close windows when quitting an app''. If both are unchecked, then TeXShop and most other programs will reopen windows automatically if they were open when the programs quit.
+
+One configuration step is highly recommended when you first run TeXShop. Open a project which has both source and preview windows. Resize and position these windows as you prefer. Most users position the source window on the left half of the screen and the preview window on the right half of the screen, with both covering most of their half of the screen, but the choice is up to you. Select the source window and at the bottom of the TeXShop ``Source'' menu select ``Save Source Position''. Select the preview window and at the bottom of the TeXShop
+``Preview'' menu select ``Save Preview Position.'' After this step is done, all TeXShop windows will open in these positions.
+
+Those are the basics. You will find further information in the TeXShop Help menu. The item ``TeXShop Demos'' contains two short movies. The first illustrates starting and typesetting a short document, and the second illustrates the configuration just made.
+
+
+\section{Second Steps with \TeX}
+The next crucial step is to learn \TeX. The easiest way to do that is to pick one or two short introductions to \TeX\ and work through them while trying examples in TeXShop. After a week or so working in this manner, it will be time to start using the program to write lecture notes and articles. 
+
+Ask friends where to start. Because it is how I started, I'd recommend Leslie Lamport's book {\em \LaTeX, A Document Preparation System}. Be sure to get the second edition, which will say ``Updated for \LaTeX\ 2e''. It would be enough to read chapters 2 and 3, a total of 52 pages. 
+
+Another source is the 139 page book on \LaTeX, \emph {The Not So Short Introduction to \LaTeX 2e}, by Tobias Oetiker, Hubert Partl, Irene Hyna and Elisabeth Schlegl. This is available in TeX Live, so you already have it:
+     \url{file:///usr/local/texlive/2019/texmf-dist/doc/latex/lshort-english/lshort.pdf}
+
+A third source is the first portion of George Gr\"{a}tzer's book \emph{More Math Into \LaTeX}. Gr\"{a}tzer gave permission to put this section in the TeXShop Help window, so you already have this as well.
+
+After reading one of these short works, I'd recommend starting to use the program for serious writing. This will be frustrating at first, and you'll probably want to buy one of the excellent books on \TeX\ for reference as you work. But don't ignore Google! A vast amount of information is available about \TeX\ and \LaTeX\ by asking succinct questions of Google. Try ``how do I type a url in LaTeX'' if you don't believe me.
+
+\section{More General Links}
+
+A vast amount of material is available over the internet. Please start using \TeX\ for a few days before diving into this material. These links work if you are reading this pdf document in Apple's Preview or
+in Safari. They also work in the latest Acrobat Reader, but Acrobat Reader first requires you to acknowledge security concerns when reading documents
+over the internet.
+
+
+It is  a good idea to read some of the material on the Mac\TeX{} web site: \url{http://www.tug.org/mactex}. The link ``References'' at the top of this page leads to a particularly useful page
+which has a lot of information about learning \TeX. In particular, several useful online tutorials are available. If you are serious about \TeX, you'll probably want to buy some books. Visit  \url{http://tug.org/books/} for an excellent list of classics, available at a discount with free shipping.
+
+The following locations may prove useful:
+\begin{itemize}
+	
+
+	
+	\item Information on joining the \TeX\ on Mac OS X mailing list: \newline \url{https://email.esm.psu.edu/mailman/listinfo/macosx-tex}
+\end{itemize}
+
+For specialized versions of \TeX\ and \LaTeX\ see:
+\begin{itemize}
+\item	Information on XeTeX and XeLaTeX: \newline \url{http://scripts.sil.org/xetex}
+
+\item	Information on Con\TeX t:\newline  \url{http://wiki.contextgarden.net/Main_Page}
+and
+	\newline  \url{http://wiki.contextgarden.net/ConTeXt_Minimals}
+\end{itemize}
+
+Mac\TeX{} is brought you by the TeX user groups across the world, including the one for English speakers:
+\begin{itemize}
+	\item \TeX\ Users Group Site: \newline \url{http://www.tug.org}
+\end{itemize}
+
+Searching this site will reveal a vast reservoir of information, including
+\begin{itemize}
+\item	A Short History of \TeX: \newline  \url{http://www.tug.org/whatis.html}
+
+\item	A free online journal focused on practical use: \newline  \url{http://www.tug.org/pracjourn/}
+
+\item	Archived issues of the main journal about \TeX: \newline  \url{http://www.tug.org/TUGboat/}
+
+\item	Information on joining TUG, to get the latest issues and much more:  \newline \url{http://www.tug.org/join.html}. 
+ \newline See also  \newline \url{http://www.tug.org/usergroups.html}  \newline for a list of other user groups; please join the one best for you!
+
+\item	The Comprehensive \TeX\ Archive Network (CTAN): \newline  \url{http://www.ctan.org/}
+\end{itemize}
+
+TeXShop is just one of the many available editors and previewers for \TeX\ on OS X. After you are comfortable with \TeX, you'll want to investigate other possibilities. A good starting point is the Gray-Slater site listed above.
+
+
+\section{Mac\TeX{} for Experts}
+
+Mac\TeX{} installs \TeX\ Live 2019 in \path{/usr/local/texlive/2019}. The distribution it installs is exactly the same as the distribution that would be obtained by using \TeX\ Live's standard install script. \TeX\ Live runs on almost all architectures: OS X, Windows, GNU/Linux, and other Unix systems. The distribution is the same on all of these platforms; nothing has been added or removed to customize it for OS X.
+
+The Mac\TeX{} installer performs extra tasks which aren't done when you install with \TeX\ Live's standard script. Mac\TeX{} extends PATH and MANPATH so \TeX\ binaries and man pages for the distribution are available within Unix shells. 
+
+ If you were using an earlier TeX distribution like  \TeX\ Live 2018  before you installed Mac\TeX{}-2019,  that distribution remains unchanged on your machine after installing the new distribution. You can switch back and forth between \TeX\ Live 2019 and your old distribution by using the program TeX Live Utility in /Applications/TeX.
+(Note that TeX Live Utility is temporarily not installed by MacTeX. Go to its web page to get the program.)  Run this
+ program and select the menu item ``Reconfigure Distributions...'' in the Configure menu. A panel will appear listing all TeX distributions on your machine.
+ Click the radio button attached to one of these items to activate that distribution.
+ 
+ 
+ When  you click that button, PATH and MANPATH and all front ends and utilities are automatically reconfigured. A consequence of the mechanism used to make the command work is that all of the \TeX\ front ends and utilities provided by MacTeX are automatically configured for \TeX; this applies to most current programs available over the web, not just those we supply with Mac\TeX{}.
+
+On other Unix machines it is common to set environment variables like TEXINPUTS. While \TeX\ Live recognizes these variables, it is usually not necessary or desirable to set them.
+
+Mac\TeX{} tries to guess your paper size at installation time. If it makes a mistake, you can set the paper size by running the program TeX Live Utility in /Applications/TeX, and selecting the ``Change Paper Size...'' item in the Action menu.
+
+Use TeX Live Utility to keep your distribution up to date. When the program starts, it lists packages in TeX for which updates are available. 
+Select the ``Update All Packages'' item in the Action menu to update these packages over the net.
+
+For details about these features, read "What Is Installed" in \path{/Applications/TeX}.
+
+\section{\TeX\ Live Documentation}
+
+\TeX\ Live comes with extensive documentation. To browse through the full set, it is useful to read the Index to the documentation. The first two links below
+lead to this index. Curiously, the links work if you are reading this paper in Safari or Acrobat Reader, but  not if you are reading with Apple's Preview.
+
+First go to 
+\url{file:///usr/local/texlive/2019/index.html}.  This leads to several deceptively simple README links in various languages. If you follow links within these  files, you will soon reach extensive amounts of information, including some book length introductions to \TeX. An important link is \url{file:///usr/local/texlive/2019/doc.html}
+which has links pointing to all of the html and pdf package documentation, sorted by package name. 
+
+There are so many links that it is difficult to pick favorites; here are a few samples to show the variety of available information. The remaining links work
+when reading in Safari, Preview, or Adobe Reader:
+
+\begin{itemize}
+\item
+     A 139 page book on \LaTeX, \emph {The Not So Short Introduction to \LaTeX 2e}, by Tobias Oetiker, Hubert Partl, Irene Hyna and Elisabeth Schlegl: 
+     \url{file:///usr/local/texlive/2019/texmf-dist/doc/latex/lshort-english/lshort.pdf}
+     
+%\item     \emph{A Survey of Free Math Fonts for \TeX\ and \LaTeX } by Stephen G. Hartke:
+%     \url{file:///usr/local/texlive/2019/texmf-dist/doc/fonts/free-math-font-survey/survey.pdf}
+%
+\item     \emph{The \TeX\ Live Guide} for 2019, edited by Karl Berry:
+    \url{file:///usr/local/texlive/2019/texmf-dist/doc/texlive/texlive-en/texlive-en.pdf}
+
+\item     The documentation for Beamer, a \LaTeX\ class to create presentations for a projector:
+     \url{file:///usr/local/texlive/2019/texmf-dist/doc/latex/beamer/beameruserguide.pdf} 
+\end{itemize}
+
+%\section{Spell Checking}
+%
+%Apple's spell checker doesn't understand \TeX, so it marks most \TeX\ control words as misspelled. TeXShop can provide partial help for this problem; preference items tell the program to avoid marking TeX Command words and certain words in their parameters as misspelled. An even better solution is to install Anton Leuski's \emph{cocoAspell}, a plugin for Apple's system which does recognize \TeX\ control words. 
+%The install package and instructions can be found in \emph{Docs and Spell Utilities/Spelling/cocoAspell} inside  \path{/Applications/TeX}.
+
+
+
+
+\end{document}
+  

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -1165,6 +1165,27 @@
                                     <action selector="displayChanges:" target="675" id="M5d-v0-NAF"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="I0b-U0-6zZ">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Documentation de TeX Live" id="mgL-nF-khH">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayTeXLiveDocumentation:" target="675" id="4Tg-3g-snS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Afficher l'aide pour le package... " keyEquivalent="i" id="824">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="displayHelpForPackage:" target="675" id="825"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Ouvrir le fichier style..." id="913">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="displayStyleFile:" target="675" id="934"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="854"/>
                             <menuItem title="Premiers pas avec TeXShop" id="664">
                                 <connections>
@@ -1242,24 +1263,9 @@
                                     <action selector="supplementsToDesktop:" target="675" id="764"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="683">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
                             <menuItem title="Tables des symboles de LaTeX" id="802">
                                 <connections>
                                     <action selector="displayTables:" target="675" id="803"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Afficher l'aide pour le package... " keyEquivalent="i" id="824">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="displayHelpForPackage:" target="675" id="825"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Ouvrir le fichier style..." id="913">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="displayStyleFile:" target="675" id="934"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -1332,7 +1338,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="407" width="323" height="153"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="819">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="153"/>
@@ -1398,7 +1404,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <view key="contentView" id="891">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1407,18 +1413,18 @@ Gw
                         <rect key="frame" x="-1" y="60" width="513" height="382"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="rLR-rw-Cnl">
-                            <rect key="frame" x="1" y="0.0" width="511" height="381"/>
+                            <rect key="frame" x="1" y="1" width="511" height="380"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="895" id="896">
-                                    <rect key="frame" x="0.0" y="0.0" width="511" height="364"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="511" height="363"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn identifier="Source" width="116" minWidth="100" maxWidth="3.4028234663852886e+38" id="900">
+                                        <tableColumn identifier="Source" width="100" minWidth="100" maxWidth="3.4028234663852886e+38" id="900">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Source">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1451,7 +1457,7 @@ Gw
                             </subviews>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="897">
-                            <rect key="frame" x="1" y="482" width="387" height="15"/>
+                            <rect key="frame" x="1" y="365" width="511" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="898">
@@ -1498,7 +1504,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="423" width="332" height="137"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="925">
                 <rect key="frame" x="0.0" y="0.0" width="332" height="137"/>

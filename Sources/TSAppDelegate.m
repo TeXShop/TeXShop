@@ -48,7 +48,7 @@
 #include <sys/sysctl.h>     // for testForIntel
 #include <mach/machine.h>   // for testForIntel
 
-
+/*
 #define NSAppKitVersionNumber10_8 1187
 #define NSAppKitVersionNumber10_9 1265
 #define NSAppKitVersionNumber10_10 1343
@@ -56,7 +56,7 @@
 #define NSAppKitVersionNumber10_12_4 1504.90
 #define NSAppKitVersionNumber10_13 1561
 // #define NSAppKitVersionNumber10_13 ???  This is in the Mojave app kit, so use it
-
+*/
 
 @class TSTextEditorWindow;
 
@@ -232,8 +232,18 @@
     else
         atLeastHighSierra = NO;
     
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_13)
+        atLeastMojave = YES;
+    else
+        atLeastMojave = NO;
+    
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_14)
+        atLeastCatalina = YES;
+    else
+        atLeastCatalina = NO;
     
     
+/*
 #ifdef MOJAVEORHIGHER
     if (@available(macOS 10.14, *))
         // Code for macOS 10.14 or later
@@ -247,6 +257,7 @@
     else
         atLeastMojave = NO;
 #endif
+*/
 
     BuggyHighSierra = NO;
     if ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_12) && (NSAppKitVersionNumber < 1561.3)) // 10_13_3 = 1561.2 and 10_13_4 = 1561.4

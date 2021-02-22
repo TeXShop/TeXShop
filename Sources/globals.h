@@ -545,6 +545,7 @@ extern NSString *RepeatTypesetOnError13Key;
 extern NSString *CreateImageKey;
 extern NSString *IncrementalSearchKey;
 extern NSString *NewToolbarIconsKey;
+extern NSString *SyncUseTabsKey;
 
 
 
@@ -634,6 +635,7 @@ extern BOOL             atLeastElCapitan;
 extern BOOL             atLeastSierra;
 extern BOOL             atLeastHighSierra;
 extern BOOL             atLeastMojave;
+extern BOOL             atLeastCatalina;
 extern BOOL             BuggyHighSierra;
 extern BOOL             editorCanAddBrackets;
 

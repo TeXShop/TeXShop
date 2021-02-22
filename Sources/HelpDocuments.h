@@ -31,6 +31,7 @@
 - (IBAction)displayNotesonApplescript:sender;
 - (IBAction)displayRecentTeXFonts:sender;
 - (IBAction)displayGPLLicense:sender;
+- (IBAction)displayTeXLiveDocumentation:sender;
 
 - (IBAction)displayShortCourse:sender;
 - (IBAction)displayHG:sender;

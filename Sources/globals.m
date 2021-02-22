@@ -343,7 +343,7 @@ NSString *XMLMarkTagKey = @"XMLMarkTag";
 NSString *CreateImageKey = @"CreateImage";
 NSString *IncrementalSearchKey = @"IncrementalSearch";
 NSString *NewToolbarIconsKey = @"NewToolbarIcons";
-
+NSString *SyncUseTabsKey = @"SyncUseTabs";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
@@ -379,6 +379,7 @@ BOOL                atLeastElCapitan;
 BOOL                atLeastSierra;
 BOOL                atLeastHighSierra;
 BOOL                atLeastMojave;
+BOOL                atLeastCatalina;
 BOOL                BuggyHighSierra;
 BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 

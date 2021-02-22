@@ -82,6 +82,67 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 	
 }
 
+- (void)moveForwardTo: (NSString *)c;
+{
+//    NSLog(@"moveForwardTo");
+//    NSLog(c);
+//    NSLog(@"that's it");
+    
+    NSRange cursorRange, searchRange, resultRange, finalRange;
+    NSString *text, *searchText;
+    
+    text = [self string];
+    cursorRange = [self selectedRange];
+    searchRange.location = cursorRange.location + cursorRange.length;
+    searchRange.length = text.length - searchRange.location;
+    searchText = [text substringWithRange: searchRange];
+    resultRange = [searchText rangeOfString: c ];
+    if (resultRange.location == NSNotFound)
+        return;
+    finalRange.location = cursorRange.location + resultRange.location + [c length];
+    finalRange.length = 0;
+    [self setSelectedRange: finalRange];
+}
+
+- (void)moveBackwardTo: (NSString *)c;
+{
+    NSRange cursorRange, searchRange, resultRange, finalRange;
+    NSString *text, *searchText;
+    
+    text = [self string];
+    cursorRange = [self selectedRange];
+    searchRange.length = cursorRange.location;
+    searchRange.location = 0;
+    searchText = [text substringWithRange: searchRange];
+    resultRange = [searchText rangeOfString: c options: NSBackwardsSearch];
+    if (resultRange.location == NSNotFound)
+        return;
+    finalRange.location = resultRange.location;
+    finalRange.length = 0;
+    [self setSelectedRange: finalRange];
+}
+
+- (void)moveForwardTo$: (id)sender;
+{
+    [self moveForwardTo: @"$"];
+}
+
+- (void)moveBackwardTo$: (id)sender;
+{
+    [self moveBackwardTo: @"$"];
+}
+
+- (void)moveForwardTo$$: (id)sender;
+{
+    [self moveForwardTo: @"$$"];
+}
+
+- (void)moveBackwardTo$$: (id)sender;
+{
+    [self moveBackwardTo: @"$$"];
+}
+
+
 - (void)paste: (id)sender;
 {
     [self pasteAsPlainText: sender];

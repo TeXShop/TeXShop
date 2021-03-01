@@ -120,6 +120,7 @@
 	NSInteger		matchStart, matchLength, i, matchAdjust, newLocation;
 	NSRange			matchRange;
     TSDocument      *newDocument;
+    BOOL            documentIsSelf, documentIsAlreadyOpen;
 	// NSString		*lineString;
 	
     if (self.useOldSyncParser)
@@ -226,9 +227,25 @@
 		id newURL = [NSURL fileURLWithPath: newFile];
         
        newDocument = [[TSDocumentController sharedDocumentController] documentForURL: newURL];
+        
+       // at this point, we want to remember if this newDocument is just the current document or something else
+       // and if it is something else, we want to remember if it is currently open or needs to be opened
+        documentIsSelf = YES;
+        documentIsAlreadyOpen = YES;
+        
+        
+        
         if (newDocument != self)
+        {
+            documentIsSelf = NO;
+            newDocument = [[TSDocumentController sharedDocumentController] documentForURL:newURL];
+            if (newDocument == nil)
+            {
+            documentIsAlreadyOpen = NO;
             newDocument = [[TSDocumentController sharedDocumentController] openDocumentWithContentsOfURL:newURL display:YES error: &myError];
-		
+            }
+        }
+        
 		if (newDocument == nil)
 			return NO;
 
@@ -373,9 +390,10 @@
         if  (! useFullSplitWindow)
             
             {
-            if ([SUD boolForKey:SyncUseTabsKey] && atLeastCatalina)
+            if ([SUD boolForKey:SyncUseTabsKey] && atLeastCatalina && (! documentIsSelf))
             {
-                [[self textWindow] addTabbedWindow: myTextWindow ordered:1];
+                if (! documentIsAlreadyOpen)
+                    [[self textWindow] addTabbedWindow: myTextWindow ordered:1];
                 [myTextWindow makeKeyAndOrderFront:self];
             }
             else

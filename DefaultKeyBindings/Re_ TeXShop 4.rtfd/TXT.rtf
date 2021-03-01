@@ -1,0 +1,56 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2578
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red9\green79\blue209;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\cname textColor;\cssrgb\c0\c0\c0;\cssrgb\c0\c40784\c85490;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 From: Bruno Voisin via MacTeX <mactex@tug.org>\
+Subject: Re: TeXShop 4.59\
+Date: February 23, 2021 at 8:32:02 AM PST\
+To: MacOS X and TeX. <mactex@tug.org>\
+Reply-To: Bruno Voisin <bvoisin@icloud.com>, MacOS X and TeX. <mactex@tug.org>\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf2 \
+\pard\pardeftab720\partightenfactor0
+
+\fs29\fsmilli14667 \cf3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 > On 23 Feb 2021, at 16:38, Herbert Schulz <herbs@wideopenwest.com> wrote:\
+> \
+> There are quite a few emacs-style key bindings that are set by default (e.g., Ctl-F, Ctl-B, Ctl-T, Ctl-V) that reference methods in NSTextView. It's not a good idea to change those bindings since they work in all applications that use that framework.\
+\
+Finally after some more googling I realised it's all explained at\
+\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 {\field{\*\fldinst{HYPERLINK "https://urldefense.com/v3/__https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/TextDefaultsBindings/TextDefaultsBindings.html__;!!C5qS4YX3!QaZnIFDDBP_1EDLWTNRhwNgoWi1UEMUMfSF3cq3-vFyATqBzKXAoIQhwQaaL8qo$"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 https://urldefense.com/v3/__https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/TextDefaultsBindings/TextDefaultsBindings.html__;!!C5qS4YX3!QaZnIFDDBP_1EDLWTNRhwNgoWi1UEMUMfSF3cq3-vFyATqBzKXAoIQhwQaaL8qo$}} \
+\
+Unfortunately, this part of the Apple Developer Documentation seems to be an archive that is considered obsolete. I did not manage to find an up-to-date version of the same information inside the Developer Documentation in XCode 12.4.\
+\
+In particular, the above page says the standard emacs-style macOS key bindings are defined in\
+\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 /System/Library/Frameworks/AppKit.framework/Resources/StandardKeyBinding.dict\
+\
+which is an XML or NeXt-style property list. I was interested to look at it, to see which bindings were already taken.\
+\
+This file exists indeed in Big Sur, but it's a binary plist file. Based on\
+\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 {\field{\*\fldinst{HYPERLINK "https://urldefense.com/v3/__https://medium.com/@karaiskc/understanding-apples-binary-property-list-format-281e6da00dbd__;!!C5qS4YX3!QaZnIFDDBP_1EDLWTNRhwNgoWi1UEMUMfSF3cq3-vFyATqBzKXAoIQhwvuE1Y_8$"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 https://urldefense.com/v3/__https://medium.com/@karaiskc/understanding-apples-binary-property-list-format-281e6da00dbd__;!!C5qS4YX3!QaZnIFDDBP_1EDLWTNRhwNgoWi1UEMUMfSF3cq3-vFyATqBzKXAoIQhwvuE1Y_8$}} \
+\
+I used plutil (after double-checking with "man plutil") to convert it to XML format with\
+\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 plutil -convert xml1 StandardKeyBinding.dict\
+\
+The output is attached. It seems that by default\
+\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 ^b = moveToBeginningOfParagraph\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0 ^f = moveToEndOfParagraph\
+\
+Other than that, most of the file contain shortcuts like $\uc0\u63233  which I can't make sense of.\
+\
+Bruno\
+\
+\
+\
+\
+}

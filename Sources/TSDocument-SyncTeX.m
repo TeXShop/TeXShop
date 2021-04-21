@@ -73,28 +73,28 @@
     }
  */
     
-	NSString		*myFileName, *mySyncTeXFileName;
-	const char		*fileString;
-	
-	// myFileName = [self fileName];
+    NSString        *myFileName, *mySyncTeXFileName;
+    const char        *fileString;
+    
+    // myFileName = [self fileName];
     myFileName = [[self fileURL] path];
-	if (! myFileName)
-		return;
-	
-	mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
-	if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
-	{ 
-		mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
-		if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
-			return;
-	}
-	
-	if (scanner != NULL)
-		synctex_scanner_free(scanner);
-	scanner = NULL;
-	
-	fileString = [myFileName cStringUsingEncoding:NSUTF8StringEncoding];
-	scanner = synctex_scanner_new_with_output_file(fileString, NULL, 1);
+    if (! myFileName)
+        return;
+    
+    mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+    if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+    {
+        mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+            return;
+    }
+    
+    if (scanner != NULL)
+        synctex_scanner_free(scanner);
+    scanner = NULL;
+    
+    fileString = [myFileName cStringUsingEncoding:NSUTF8StringEncoding];
+    scanner = synctex_scanner_new_with_output_file(fileString, NULL, 1);
 }
 
 

@@ -53,8 +53,7 @@
     NSImage         *theImage;
     NSRect          theOriginalRect;
     
-    
-    cursorVisible = YES;
+     cursorVisible = YES;
     originalLevel = level+[theEvent clickCount];
     
     OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];

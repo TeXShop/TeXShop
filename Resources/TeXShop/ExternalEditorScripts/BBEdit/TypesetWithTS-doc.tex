@@ -1,0 +1,130 @@
+% !TEX TS-program = pdflatexmk
+% CMD=SyncWithOvals
+% CMD=Log=
+
+\documentclass[11pt]{amsart}   
+\usepackage[margin=1in]{geometry} 
+\usepackage[parfill]{parskip}%Begin paragraphs with an empty line rather than an indent 
+\usepackage{graphicx}
+\usepackage{upquote}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\pdfmapfile{=Cochineal.map}  
+%SetFonts
+%fbb+newtxmath
+\usepackage{textcomp} % to get the right copyright, etc.   
+%\usepackage{lmodern}
+%\usepackage[osf,tabular,largesc]{newpxtext}  
+\usepackage[osf,p,swashQ,sups]{cochineal}
+%\linespread{1.05}
+\usepackage[scaled=.95]{cabin}
+%\usepackage[varqu]{zi4}% typewriter
+\usepackage[nomono]{newtxtt}
+\usepackage[vvarbb]{newpxmath}
+\usepackage[cal=boondoxo]{mathalfa}
+\usepackage[T1]{fontenc}
+%SetFonts
+%\usepackage{microtype}
+%\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\usepackage{url}%\DisableLigatures{encoding =*, family =*}
+\usepackage{xspace} 
+\def\TeXShop{\TeX Shop\xspace}
+\def\UNIX{\textsc{unix}\xspace}
+\def\Macros{\textsf{Macros}\xspace}
+\hyphenation{Script-Runner Apple-Script}
+\title{BBEdit to \TeXShop Preview Script} 
+\author{Michael Sharpe}
+\date{\today}  % Activate to display a given date or no date
+\email{msharpe@ucsd.edu}
+\begin{document}
+\maketitle
+This note documents the Applescript {\tt TypsesetWithTS.scpt} which, after installation in  the {\tt BBEdit} scripts folder and, for greatest convenience, given a shortcut, allows you to typset and preview in \TeXShop a {\tt.tex} document open in {\tt BBEdit}, allowing two way synching. Most of this works  correctly for versions of \TeXShop 4.24 or higher,  though one or two features require 4.65 or higher. Some preparation is needed, as laid out  in the \TeXShop documentation. 
+
+\section{Preparing \TeXShop}
+Three steps are needed.
+\begin{itemize}
+\item Check the \TeXShop preference {\tt Source/Configure for external editor}.
+\item In a {\tt Terminal} window, type\\
+\verb|defaults write TeXShop OtherEditorSync YES|\\
+%(You should replace {\tt OtherEditorSync} with {\tt SyncOtherEditor} in \TeXShop 4.65 and     above.)
+\item You must create a file named {\tt othereditor} (no extension) in\verb|/usr/local/bin| with contents
+\begin{verbatim}
+#!/bin/sh
+/usr/local/bin/bbedit "$2:$1"  
+\end{verbatim}
+This file must be made executable with, e.g.,\\
+\verb|chmod 755 /usr/local/bin/othereditor|
+\item Restart \TeXShop.  
+\end{itemize}
+Once you take these steps, \TeXShop will not be able to  open {\tt.tex} files using the   normal {\tt Open} menu item, or by double-clicking on a {\tt.tex} file in the {\tt Finder}. These will instead open the corresponding {\tt.pdf} files, should they exist. 
+You will need to open  the source files from {\tt BBEdit}. If the change is [semi-]permanent, you should change the default application to open your {\tt.tex} files to {\tt BBEdit}. 
+\section{Preparing BBEdit}
+The script {\tt TypesetWithTS.scpt} should be added to {\tt BBEdit's Scripts} Folder. To do this from {\tt BBEdit}, go to the menu with the script icon and select {\tt Open Scripts Folder} and copy the file {\tt TypesetWithTS.scpt} to that folder. An item by the name {\tt TypesetWithTS} will now be visible on {\tt BBEdit's Scripts} menu. I recommend strongly that you associate a shortcut to that item. From the {\tt BBEdit} preferences, select {\tt Menus .../Scripts/TypesetWithTS}, highlight the keyboard shortcut entry by double-clicking on the right end of the line and typing the keys you wish to serve as the shortcut. I use {\tt option-command-T}, as  {\tt command-T} appears to be already used to select the font selector for {\tt BBEdit}.
+
+\section{What the Script Does}
+Once you have made the preparations described above, the normal course of events would be as follows.
+\begin{itemize}
+\item Open an existing {\tt.tex} file in {\tt BBEdit} or start a new {\.tex} document in {\tt BBEdit}. 
+\item You do not need to save the document in {\tt BBEdit} before the next step. 
+\item Run the script {\tt TypesetWithTS} either from the {\tt BBEdit} script menu or by using the shortcut. The script then works as follows:
+\begin{itemize} % begin subitemize
+\item Check that there is a document open in {\tt BBEdit}, with error message if not.
+\item Check that there is the front document has been saved, with error message if not.
+\item Check that there is the front document's name ends with {\tt.tex}, with error message if not.
+\iffalse
+\item Check whether the document has a magic line of the form
+\begin{verbatim}
+% !TEX TS-program = ...
+\end{verbatim}
+in the first 20 lines. If not, it inserts
+\begin{verbatim}
+% !TEX TS-program = pdflatex
+\end{verbatim}
+and bails out with a message to edit this line to use a tex program or engine appropriate to your needs before proceeding.
+\fi
+\item Check whether the document requires  compiling. Several steps are involved:
+\begin{itemize}
+\item If the document has been modified since the last save, the document is resaved and a compile flag is set.
+\item If there is no corresponding {\tt .pdf}, then the compile flag is set, otherwise the timestamps on the {\tt.tex} and the {\tt.pdf} are compared and  the compile flag is set if the {\tt.tex} is more recent.
+\end{itemize} % end subitemize
+\item The script now parses the first 20 lines of the {\tt.tex}, looking for ``magic'' lines that begin with \verb|% CMD=| which can be used to pass options to the script. The options available are described at the end of ths documentation. 
+\item The script now turns its focus to \TeXShop:
+\begin{itemize}
+\item Check whether the the {\tt.pdf} is already open. Bring it to the front if so and open it if not so it is automatically frontmost.
+\item If the compile flag is set, typeset the front document using {\tt typesetinteractive  (document of window 1)} the document in \TeXShop. To ensure the correct engine is used, be sure that your {\tt.tex} document begins with a program line, like\\
+\verb|% !TEX TS-program = pdflatexmk|
+\item The script checks every  second for whether typesetting is completed successfully, which it measures by checking the value of \verb|taskdone (document of window 1)|.
+\item The sync information derived from the corresponding {\tt.synctex.gz} file is then passed to the {\tt.pdf}, causing it to highlight the line in the pdf matching the position of the cursor in the source file. (There will be no highlighted line if the cursor in the text file is in the document preamble.)
+
+\end{itemize} % end subitemize
+\item If your source and preview are up to date, then running the script in {\tt BBEdit} with the cursor, or the beginning of the selection, not in the preamble, will simply reveal  the preview with the corresponding line highlighted. It would be desirable for {\tt BBEdit} to be able to follow a {\tt command-left click} by running the script {\tt TypesetWithTS.scpt}.
+\item The default highlighting is a yellow background that may be hard to detect on some screens. As described in the \TeXShop documentation to version 4.65, you may change this to a red oval using the hidden preference\\
+\verb|defaults write TeXShop syncWithRedOvals YES|\\
+The change is permanent until you use \\
+\verb|defaults write TeXShop syncWithRedOvals NO|\\
+There are also two new Applescript commands to change this temporarily: {\tt SyncWithOvals} and {\tt SyncWithoutOvals}. This script allows you to make the change for  the current document only as one of the \verb|$ CMD=| ``magic'' lines in your document, described in the next section.
+
+\end{itemize} % end subitemize
+\end{itemize}
+\section{More on the ``magic'' lines}
+\TeXShop uses its own magic lines in the first 20 lines of the source document. Such lines start with 
+\begin{verbatim}
+% !TEX TS-
+\end{verbatim}
+One in particular can be critical when writing your source in {\tt BBEdit} and processing it in \TeXShop, and that is
+\begin{verbatim}
+% !TEX TS-program = <some program or engine>
+\end{verbatim}
+which tell \TeXShop how to process your document. \TeXShop itself understands a number of programs: {\tt tex, latex, pdflatex, pdftex, personaltex, personallatex, metapost, metafont, context}. The engines that are installed in \verb|~/Library/TeXShop/Engines| (but not its subfolders) may be specified instead. The script {\tt TS-program.scpt} should be added to the {\tt BBEdit} scripts menu to give you a convenient way to add or modify an existing magic program line in a document. The script acts on the text in the document, not on the underlying file, if there is one, and works perfectly well with a new empty document. It deletes all existing magic program lines in the first twenty lines of the document and adds the selected magic program line as the first line of the document, unless the first line begins with \verb|%&| or \verb|% &|, in which case it is added as the second line. The script tries to preserve any existing selection in the document.
+
+There are other  ``magic'' lines understood by the script that allow you to set some script parameters:
+\begin{itemize}
+\item\verb|% CMD=SyncWithOvals| --- sets the synched highlight marker to a red oval shape  for this document only. (\TeXShop 4.65 or higher)
+\item\verb|% CMD=SyncWithoutOvals| --- sets the synched highlight marker to a yellow background for this document only. (\TeXShop 4.65 or higher)
+\item\verb|% CMD=Log=| --- turn on logging to the file \verb|~/_TypesetWithTS.log|
+\item\verb|% CMD=Log=path_to_logfile| --- turn on logging to the file \verb|path_to_logfile|, where the file must be specified in POSIX form into an existing folder.
+\item\verb|% CMD=timeout=xxx| --- change the value of the timeout limit for checking  whether compiling is complete. (The default is 45 (seconds).)
+\end{itemize}
+Note that with either logging option you also get one or two free beeps. You always get a beep as the script end as a progress indicator, and if the script has to typeset the {\tt.tex} file other than as a result of opening it from an {\tt open -a "TeXShop" ...} command, you get a beep at the beginning of the typesetting. This give a more analog version of the information in the log file.
+
+\end{document}

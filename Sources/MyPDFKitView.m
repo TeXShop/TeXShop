@@ -105,7 +105,7 @@
 /*
 - (BOOL)resignFirstResponder
 {
-    NSLog(@"resign");
+ //   NSLog(@"resign");
     BOOL result = [super resignFirstResponder];
     [self cleanupMarquee: YES];
     return result;
@@ -841,9 +841,9 @@
 //   line around the rectange (?)
     
     NSNumber *myNumber = [NSNumber numberWithInteger: visibleRect.origin.y];
-    NSLog([myNumber stringValue]);
+   // NSLog([myNumber stringValue]);
     myNumber = [NSNumber numberWithInteger: visibleRect.size.height];
-    NSLog([myNumber stringValue]);
+   // NSLog([myNumber stringValue]);
 //
    NSInteger difference = -1;
     
@@ -2451,6 +2451,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     else
         myBackgroundColor = [[TSColorSupport sharedInstance] colorFromDictionary:liteColors andKey: @"PreviewBackground"];
      */
+    
     myBackgroundColor = PreviewBackgroundColor;
     
 	// boxRect = [page boundsForBox: [self displayBox]];
@@ -2528,6 +2529,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     
 	[NSGraphicsContext restoreGraphicsState];
 	
+if ( ! self.myDocument.useConTeXtSyncParser)
+{
     [NSGraphicsContext saveGraphicsState];
 	switch (rotation)
 	{
@@ -2559,9 +2562,13 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 	[self drawDotsForPage:pagenumber atPoint: p];
 	
     int theIndex = [[self document] indexForPage: page];
-	redOvals = [SUD boolForKey: syncWithRedOvalsKey];
-	if (drawMark && (theIndex == pageIndexForMark)) {
-		int i = 0;
+//	redOvals = [SUD boolForKey: syncWithRedOvalsKey];
+    if (self.myDocument.syncWithOvals == 1)
+        redOvals = YES;
+    else
+        redOvals = NO;
+    if (drawMark && (theIndex == pageIndexForMark)) {
+        int i = 0;
 		NSBezierPath *myPath;
         if (oldSync)
 			myColor = [NSColor redColor];
@@ -2599,6 +2606,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     
     
 	[NSGraphicsContext restoreGraphicsState];
+}
     
     [NSGraphicsContext saveGraphicsState];
     BOOL shouldAntiAlias = [SUD boolForKey: AntiAliasKey];
@@ -2638,6 +2646,88 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     
 	[page drawWithBox:[self displayBox]];
     [NSGraphicsContext restoreGraphicsState];
+    
+   // FIX
+if (self.myDocument.useConTeXtSyncParser)
+{
+    [NSGraphicsContext saveGraphicsState];
+    switch (rotation)
+    {
+        case 90:
+            transform = [NSAffineTransform transform];
+            [transform translateXBy: 0 yBy: boxRect.size.width];
+            [transform rotateByDegrees: 360 - rotation];
+            [transform concat];
+            break;
+            
+        case 180:
+            transform = [NSAffineTransform transform];
+            [transform translateXBy: boxRect.size.width yBy: boxRect.size.height];
+            [transform rotateByDegrees: 360 - rotation];
+            [transform concat];
+            
+            break;
+            
+        case 270:
+            transform = [NSAffineTransform transform];
+            [transform translateXBy: boxRect.size.height yBy: 0];
+            [transform rotateByDegrees: 360 - rotation];
+            [transform concat];
+            break;
+    }
+    
+    p.x = 0; p.y = 0;
+    pagenumber = [[self document] indexForPage:page];
+    [self drawDotsForPage:pagenumber atPoint: p];
+    
+    int theIndex1 = [[self document] indexForPage: page];
+//    redOvals = [SUD boolForKey: syncWithRedOvalsKey];
+    if (self.myDocument.syncWithOvals == 1)
+        redOvals = YES;
+    else
+        redOvals = NO;
+    if (drawMark && (theIndex1 == pageIndexForMark)) {
+        int i = 0;
+        NSBezierPath *myPath;
+        if (oldSync)
+            myColor = [NSColor redColor];
+        else if (redOvals) {
+            myColor = [NSColor redColor];
+        }
+        
+   //     else {
+   //         aColor = [NSColor yellowColor];
+   //         myColor = [aColor colorWithAlphaComponent: 0.5];
+  //      }
+        else
+            myColor = PreviewDirectSyncColor;
+        
+        [myColor set];
+      //  if (oldSync) {
+        if (oldSync) {
+            myPath = [NSBezierPath bezierPathWithOvalInRect: pageBoundsForMark];
+            [myPath stroke];
+            }
+        else while (i < numberSyncRect) {
+            {
+                if (redOvals) {
+                myPath = [NSBezierPath bezierPathWithOvalInRect: syncRect[i]];
+                 [myPath stroke];
+            }
+            else {
+                myPath = [NSBezierPath bezierPathWithRect: syncRect[i]];
+                [myPath fill];
+                }
+            }
+            i++;
+        }
+    }
+    
+    
+    
+    [NSGraphicsContext restoreGraphicsState];
+}
+// END FIX
 
     
 	// Set up transform to handle rotated page.

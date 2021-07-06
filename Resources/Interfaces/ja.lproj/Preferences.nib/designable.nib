@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -56,6 +56,7 @@
                 <outlet property="_SpaceCharacterKindMatrix" destination="1090" id="1180"/>
                 <outlet property="_TabCharacterKindMatrix" destination="1118" id="1183"/>
                 <outlet property="_afterTypesettingMatrix" destination="678" id="682"/>
+                <outlet property="_altPathField" destination="kfQ-Qh-Vcc" id="erH-yj-5iP"/>
                 <outlet property="_alwaysHighlightButton" destination="1213" id="1216"/>
                 <outlet property="_antialiasButton" destination="fyB-vX-69R" id="twA-MY-t3O"/>
                 <outlet property="_autoCompleteButton" destination="686" id="696"/>
@@ -1919,7 +1920,7 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="pdfTeX" translatesAutoresizingMaskIntoConstraints="NO" id="54">
-                                            <rect key="frame" x="62" y="237" width="224" height="140"/>
+                                            <rect key="frame" x="62" y="182" width="224" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Ssb-DM-98L">
                                                 <rect key="frame" x="3" y="3" width="218" height="120"/>
@@ -2005,7 +2006,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="TeX+dvipdfmx / TeX+dvips+distiller" translatesAutoresizingMaskIntoConstraints="NO" id="200">
-                                            <rect key="frame" x="306" y="237" width="247" height="140"/>
+                                            <rect key="frame" x="306" y="182" width="247" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="5bX-5J-nEh">
                                                 <rect key="frame" x="3" y="3" width="241" height="120"/>
@@ -2091,14 +2092,14 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="パス設定" translatesAutoresizingMaskIntoConstraints="NO" id="215">
-                                            <rect key="frame" x="62" y="386" width="491" height="122"/>
+                                            <rect key="frame" x="62" y="341" width="491" height="167"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Kly-56-tzS">
-                                                <rect key="frame" x="3" y="3" width="485" height="102"/>
+                                                <rect key="frame" x="3" y="3" width="485" height="147"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="256">
-                                                        <rect key="frame" x="8" y="30" width="424" height="17"/>
+                                                        <rect key="frame" x="8" y="77" width="424" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Distiller (Ghostscript) (デフォルト: /usr/local/bin)" id="1038">
                                                             <font key="font" metaFont="message" size="11"/>
@@ -2107,7 +2108,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="217">
-                                                        <rect key="frame" x="11" y="55" width="437" height="22"/>
+                                                        <rect key="frame" x="11" y="102" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="1035">
                                                             <font key="font" metaFont="system"/>
@@ -2119,7 +2120,7 @@ DQ
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="218">
-                                                        <rect key="frame" x="8" y="77" width="424" height="17"/>
+                                                        <rect key="frame" x="8" y="124" width="424" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="(pdf)TeX (デフォルト: /Library/TeX/texbin OR /usr/texbin)" id="1036">
                                                             <font key="font" metaFont="message" size="11"/>
@@ -2128,7 +2129,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="255">
-                                                        <rect key="frame" x="11" y="8" width="437" height="22"/>
+                                                        <rect key="frame" x="11" y="55" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="1037">
                                                             <font key="font" metaFont="system"/>
@@ -2139,12 +2140,33 @@ DQ
                                                             <action selector="gsBinPathChanged:" target="-2" id="257"/>
                                                         </connections>
                                                     </textField>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mch-JL-FAA">
+                                                        <rect key="frame" x="9" y="33" width="424" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title=" 別のパス (デフォルト:  ~/bin/context/tex/texmf-osx-arm64/bin)" id="jgQ-Ci-iCq">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kfQ-Qh-Vcc">
+                                                        <rect key="frame" x="11" y="8" width="437" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="62r-9m-tzv">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <action selector="altPathChanged:" target="-2" id="6A7-qI-gA6"/>
+                                                        </connections>
+                                                    </textField>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="検索用コマンド" translatesAutoresizingMaskIntoConstraints="NO" id="1192">
-                                            <rect key="frame" x="62" y="153" width="491" height="80"/>
+                                            <rect key="frame" x="62" y="98" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="0Pa-M5-xW4">
                                                 <rect key="frame" x="3" y="3" width="485" height="60"/>
@@ -2176,7 +2198,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="BibTeX エンジン" translatesAutoresizingMaskIntoConstraints="NO" id="1205">
-                                            <rect key="frame" x="62" y="69" width="491" height="80"/>
+                                            <rect key="frame" x="62" y="14" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="wWV-Yi-DOc">
                                                 <rect key="frame" x="3" y="3" width="485" height="60"/>

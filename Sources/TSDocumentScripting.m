@@ -385,7 +385,20 @@
 {
     NSDictionary* args = [command evaluatedArguments];
     self.syncIndex = [[args objectForKey:@"Index"] unsignedIntegerValue];
- //   NSLog(@"The value is %d", self.syncIndex);
+//   NSLog(@"The value is %d", self.syncIndex);
+    return nil;
+}
+
+- (id)handleSyncRootNameCommand:(NSScriptCommand*)command
+{
+    NSString    *rootFile;
+    
+  //  NSLog(@"SyncRootName");
+    
+    rootFile = [[self fileURL] path];
+    if ((_externalEditor) && (self.syncEditorMethod != 0))
+        [self doPreviewSyncTeXExternalWithFilename: rootFile andLine: self.syncLine andCharacterIndex: self.syncIndex];
+    
     return nil;
 }
 
@@ -400,25 +413,89 @@
  //   NSLog(@"At end, index is %d", self.syncIndex);
  //   NSLog(self.syncName);
     
-    if ((_externalEditor) && (([SUD boolForKey: OtherEditorSyncKey]) || ([SUD boolForKey: TextMateSyncKey])) )
+ //   if ((_externalEditor) && (self.syncEditorMethod != 0))
         [self doPreviewSyncTeXExternalWithFilename: self.syncName andLine: self.syncLine andCharacterIndex: self.syncIndex];
     
     return nil;
 }
 
+
 - (id)handleSyncPreviewCommand:(NSScriptCommand*)command
 {
-    NSLog(@"got here");
-    NSLog(@"At end, line is %d", self.syncLine);
-    NSLog(@"At end, index is %d", self.syncIndex);
-    NSLog(self.syncName);
+//    NSLog(@"got here");
+//    NSLog(@"At end, line is %d", self.syncLine);
+ //   NSLog(@"At end, index is %d", self.syncIndex);
+//    NSLog(self.syncName);
     
     // [self doPreviewSyncTeXExternalWithFilename: self.syncName andLine: self.syncLine andCharacterIndex: self.syncIndex];
     
     return nil;
 }
 
+- (id)handleSyncRegularCommand:(NSScriptCommand*)command
+{
+    self.useConTeXtSyncParser = NO;
+ //   NSLog(@"sync regular");
+    return nil;
+}
 
+- (id)handleSyncConTeXtCommand:(NSScriptCommand*)command
+{
+    self.useConTeXtSyncParser = YES;
+ //   NSLog(@"sync context");
+    return nil;
+}
+
+- (id)handleSyncWithNoEditorCommand:(NSScriptCommand*)command
+{
+    self.syncEditorMethod = 0;
+ //   NSLog(@"sync no editor");
+    return nil;
+}
+
+- (id)handleSyncWithTextMateCommand:(NSScriptCommand*)command
+{
+    self.syncEditorMethod = 2;
+ //   NSLog(@"sync textmate");
+    return nil;
+}
+
+- (id)handleSyncWithOtherEditorCommand:(NSScriptCommand*)command
+{
+    self.syncEditorMethod = 1;
+//    NSLog(@"sync other editor");
+    return nil;
+}
+
+- (id)handleAlternateBinPathCommand:(NSScriptCommand*)command
+{
+    self.useAlternatePath = YES;
+ //   NSLog(@"alternate bin path");
+    return nil;
+}
+
+- (id)handleStandardBinPathCommand:(NSScriptCommand*)command
+{
+    self.useAlternatePath = NO;
+//    NSLog(@"standard bin path");
+    return nil;
+}
+
+- (id)handleSyncWithOvalsCommand:(NSScriptCommand*)command
+{
+    self.syncWithOvals = 1;
+//    NSLog(@"syncWithOvals");
+//    NSLog(@"%d", self.syncWithOvals);
+    return nil;
+}
+
+- (id)handleSyncWithoutOvalsCommand:(NSScriptCommand*)command
+{
+    self.syncWithOvals = 0;
+ //   NSLog(@"syncWithoutOvals");
+ //   NSLog(@"%d", self.syncWithOvals);
+    return nil;
+}
 
 
 

@@ -1,0 +1,146 @@
+bplist00—_WebMainResource’	
+_WebResourceMIMEType_WebResourceTextEncodingName^WebResourceURL_WebResourceFrameName_WebResourceDataYtext/htmlUUTF-8_$https://msneep.home.xs4all.nl/latex/PO+<!DOCTYPE html><html lang="en"><head>
+	<meta charset="utf-8">
+	<title>BBEdit TeX integration scripts</title>
+	<meta name="generator" content="BBEdit 10">
+</head>
+<body>
+  <h1>CompileTeX for BBEdit and TextWrangler</h1>
+
+  <p>CompileTeX is an AppleScript/Shell script combination for use with BBEdit. It allows you to duplicate some TeXShop functionality in BBEdit (in particular the use of master documents through the <code>%SourceDoc</code> comment or the newer <code>#!TEX Root=file.tex</code> syntax). It also allows you to generate draft documents without touching the master document (by passing <code>\PassOptionsToClass{draft}{your main documentclass}</code> to pdflatex before starting the TeX run).</p>
+
+  <p>You may need to adapt the script to your needs. In particular I include scripts to generate metapost graphics (and I assume that the figures reside in a folder "Figures" next to the master document). I use a separate script to translate the metapost figure into pdf if needed. Of course if you do not use metapost, the figure scripts are useless, since you aren't likely to edit your figures in a text editor anyway.</p>
+
+  <p>This version is for use with BBEdit 8/9/10/11/12. I did test the pdflatex script in both, so that should at least work.</p>
+
+  <p>The script-set have two main parts: a shell script that runs in the Terminal that does the actual processing. The AppleScripts merely call this shell-script with the correct parameters. I've taken this approach, because I really dislike the AppleScript syntax: I find it unclear, and I never seem to be able to find the correct syntax first time round. Because the work is actually done in your normal terminal, you just have to make sure that latex works from the terminal, and then you're set. This also means that you're not stuck with MacTeX, but could use a TeX installed with Fink or Macports, if you feel so inclined. I strongly recommend you use <a href="http://www.tug.org/mactex/">MacTeX</a> though.</p>
+
+  <p>The current scripts prefer <a href="http://www.tug.org/mactex/">MacTeX 2008</a> or later, as synctex is enabled by default. When used with an older TeX you'll receive a harmless error message. The standard previewer which I suggest for SyncTex is <a href="http://skim-app.sourceforge.net/">Skim</a>. I've tested with TeXLive&nbsp;2017 and Skim&nbsp;1.4.36 (Skim is current on 2018-08-19, I just haven't update TeXLive yet).</p>
+
+  <p>A list of descriptions is added at the end of this document.</p>
+
+  <h2>How to install</h2>
+
+  <ol>
+    <li>Mount this <a href="http://www.xs4all.nl/~msneep/latex/BBEdit_TeX_Scripts.dmg">disk image</a>.</li>
+
+    <li>Copy the folder "ShellScripts" from the mounted disk image to your "Library" folder in your home folder. In Mac OS X 10.7 ‚ÄúLion‚Äù, this folder is hidden. You can go there by holding the option key, and clicking the ‚ÄúGo‚Äù menu in the Finder. An item for the Library will then appear. </li>
+
+    <li>Copy the folder "TeX Compilation" from the "AppleScripts" folder on the mounted disk image to the folder "Scripts" in the folder "BBEdit" in the folder "Application Support" in your "Library" folder.
+    <br>
+    <em>Eh?</em>
+    <br>
+    Exactly, in traditional Unix notation, that becomes '<code>~/Library/Application Support/BBEdit/Scripts/</code>'. If you have run BBEdit once, this folder should have been created already. The destination folder path for TextWrangler is similar to the BBEdit version, at '<code>~/Library/Application Support/TextWrangler/Scripts/</code>'. The same remark on your Library applies as above.</li>
+
+    <li><em>[optional]</em> You can alter the name of a script to move the item up or down in the menu: the number in front of the ")" will determine the sort order within the menu. The same is true for for the levels below. You may also want to set some shortcuts: From the "Windows" menu, go to the "Palettes" sub-menu and select "Scripts" from there. You can now select a script, and set a key for it. The BBEdit and TextWrangler help both contain a lot of extra information to, well, <em>help</em> you here.</li>
+
+    <li><em>[optional]</em> The script "File‚Ä¢Open Selection.scpt" is a menu script for BBEdit. It modifies the "Open Selection" command in the file menu so that it may work for LaTeX files. For more information on where to put this script refer to the section "Attaching Scripts to Menu Items" on page 280 in the BBEdit user manual (BBEdit 10.0).</li>
+  </ol>
+
+  <h2>Disclaimer</h2>
+
+  <p>This software is in the public domain, entirely <em>unsupported</em>. It does what I (Maarten Sneep) need it to do, and is distributed in the hope that it might be useful to others. There is no warranty of any kind.</p>
+
+  <p>I disclaim all copyrights on these scripts.</p>
+
+  <p>The archive was last updated on July 23, 2011.</p>
+
+  <h2>Latest changes</h2>
+  
+  <p>Remove support for TextWrangler, as this editor has been <a href="https://www.barebones.com/products/textwrangler/">withdrawn by Bare Bones Software</a>.</p>
+
+  <p>The <a href="http://www.uoregon.edu/~koch/texshop/">TeXShop</a> construction to indicate the wanted program for typesetting is supported as well, for additional control over the engine. The engine indicated in the master file is used (no other files are searched for a program meta-comment). The syntax is <code>%!TEX TS-program = <em>program</em></code> (see note below, the same variations are supported). Note that dvi engines are not fully supported, <code>simpdftex</code> may be an alternative in some cases, although I do not use this myself. Update October 2009: the <code>TS-</code> part is now optional.</p>
+
+  <p>(Again) Altered the search pattern for the master file in the shell script. <code>^%?% ?!TEX *[Rr]oot</code> is now use as the regular expression to find the correct pattern, and splits on the <code>=</code> on that line. It is recommended to avoid <code>%!</code> to prevent broken applications calling a TeX file a PostScript file (although I never encountered those). <code>%%!TEX root = <em>root</em></code> and <code>% !TEX root = <em>root</em></code> are now all recognised to indicate a program root, in addtion to <code>%!TEX root = <em>root</em></code>.</p>
+
+  <p>Added a check at the start of the script to see if <code>tex</code> (the application) can actually be found. If not, the MacTeX default <code>/usr/texbin</code> is added to the path to see if things improve. If not we bail out.</p>
+
+  <h2>List of the supplied scripts with short descriptions</h2>
+
+  <p>Most scripts will save all files currently open in BBEdit or TextWrangler, unless they haven't been saved yet, unless you are calling the script on an unsaved active document. Yes, I do like Monty Python.</p>
+
+  <dl>
+    <dt>Run pdflatex.scpt</dt>
+
+    <dd>Typeset the master document once.</dd>
+
+    <dt>Run BibTeX.scpt</dt>
+
+    <dd>Run bibtex on the master of the front document.</dd>
+
+    <dt>Run MakeIndex.scpt</dt>
+
+    <dd>Run makeindex on the front document. It assumes that a file with the same name as the master document, but with an .ist extension exists to stand in as an index style file.</dd>
+
+    <dt>Show result.scpt</dt>
+
+    <dd>Open the typeset result of the front file (metapost or (la)tex in your preferred pdf-viewer). The viewer to use is set near the top of the shell script.</dd>
+
+    <dt>Synchronise with Skim.scpt</dt>
+
+    <dd>You can use this to go to the point in the typeset document which corresponds to the insertion point. This assumes you use <a href="http://skim-app.sourceforge.net/">Skim</a> as your viewer.</dd>
+
+    <dt>Make draft version.scpt</dt>
+
+    <dd>Pass the draft class option to the documentclass, allowing TeX to mark overful lines. Note that if used this way, the draft option does not reach any included packages (like graphics or hyperref). Figures are included in the normal way.</dd>
+
+    <dt>Make fast draft version.scpt</dt>
+
+    <dd>Pass the draft class option to the documentclass, allowing TeX to mark overful lines. In addition, the draft option is passed to hyperref and graphics as well, so figures are not included, and hyperlinks are not created. This speeds up pdflatex.</dd>
+
+    <dt>Full document compilation.scpt</dt>
+
+    <dd>The whole shebang: pdflatex, bibtex, pdflatex &amp; pdflatex (for as long as there happen to be undefined references etc). Including makeindex in this cycle is left as an exercise to the reader‚Ä¶ The first few runs are done in full draft mode to speed things up.</dd>
+
+    <dt>Show figure mps.scpt</dt>
+
+    <dd>Run the front document through metapost, and open the result in the preferred pdf viewer (a temporary pdf version is created for viewing). This requires the front most file to contain metapost source, with a single figure (number 0).</dd>
+
+    <dt>Show figure pdf.scpt</dt>
+
+    <dd>Very similar to the previous script, except that here the pdf version will be kept (and the mps version will be ditched).</dd>
+
+    <dt>Make all figures mps.scpt</dt>
+
+    <dd>This will run all .mp files in the figures directory next to the master document through metapost, and create the figures. Only generate .mps output</dd>
+
+    <dt>Make all figures pdf.scpt</dt>
+
+    <dd>Same as above, create pdf files.</dd>
+
+    <dt>Open master file.scpt</dt>
+
+    <dd>Search the front document for a master directive, and open the referenced file.</dd>
+
+    <dt>Open selected file.scpt</dt>
+
+    <dd>Search the current line for \input, \include and \includegraphics commands and open the document you find here. The \includegraphics command is assumed to reference a metapost figure, and will open the .mp associated file (or at least try to).</dd>
+
+    <dt>Open all referenced files.scpt</dt>
+
+    <dd>Same as above, except the complete document is searched for referenced files, and they are all opened.</dd>
+
+    <dt>Open log file.scpt</dt>
+
+    <dd>Open the log file of the master document to check for errors.</dd>
+
+    <dt>Run xetex.scpt, Run xelatex.scpt, Run latex.scpt, Run pdftex.scpt, Run tex.scpt</dt>
+
+    <dd>The scripts in the "Other TeX Engines" all run the current master document once through the respective engine. Other scripts/TeX engines can be added easily: as long as the command ends in "tex", you can just feed the command to the script. So if you have a command "froobletex", the switch -froobletex is acceptable, and there is no need to actually change the shell script.</dd>
+
+    <dt>Run Make.scpt</dt>
+
+    <dd>Run make pdf in the directory where the master document lives. Other targets are added easily, should the need arise.</dd>
+
+    <dt>Run pdflatex+PP4.scpt</dt>
+
+    <dd>Run pdflatex, followed by a run of pp4, for producing presentations. (Obsolete, use PowerDot or Beamer instead).</dd>
+    
+    <dt>Run latexdiff.scpt</dt>
+
+    <dd>Run latexdiff, comparing the current document with an original version (<code><i>master</i>.orig.tex</code> or <code><i>master</i>.submit.tex</code> in the same directory as <code><i>master</i>.tex</code>).</dd>
+    
+  </dl>
+
+
+</body></html>    ( > \ k Ç î û § À Ã                           +‚

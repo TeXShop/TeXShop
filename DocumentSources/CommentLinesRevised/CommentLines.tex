@@ -37,6 +37,8 @@ TeXShop understands the following special comment lines:
 \item \% !BIB program =
 \item \% !TEX parameter =
 \item \% !TEX useOldSyncParser
+\item \% !TEX useConTeXtSyncParser
+\item \% !TEX useAlternatePath
 \end{itemize}
 
 \section{Program Examples}
@@ -118,6 +120,7 @@ When engine scripts run, they are passed a parameter giving the full path to the
      
   \begin{verbatim}
       % !TEX useOldSyncParser
+      % !TEX useConTeXtSyncParser
  \end{verbatim}
 Synctex was written by Jerome Laurens. It causes a TeX engine to output a .synctex file with information needed to jump from a spot in the source to a corresponding spot in the preview, and vice-versa. Laurens also provides parser code for front ends, making it possible for front end authors to provide syncing ability without much extra work. In TeX Live 2017, Laurens fixed bugs and extended both pieces of code.
 
@@ -125,7 +128,23 @@ The ConTeXt system for luaTeX is written by Hans Hagen. Hagen often replaces pie
 
 After a good deal of work, TeXShop contains both the 2016 and 2017 versions of the parser. By default it uses the 2017 version, but ConTeXt users can switch to the older parser using the special comment above. I don't yet know what will happen in 2018, but shoehorning in both parser libraries was an unpleasant task I am not likely to attempt again.
 
+(Added in 2021): Hans modified the sync code in ConTeXt, Then he wrote routines which front ends can call to obtain  sync information from the ConTeXt synctex file. In short, Laurens' parser code is completely replaced by code in ConTeXt. The special comment line "useConTeXtSyncParser" causes TeXShop to call this ConTeXt code. From 2021 on, this is the preferred sync method for ConTeXt users. 
+
+One consequence of this development is that Hans can  modify sync code if he wishes without breaking sync in TeXShop. This is a welcome development. Thanks to Nicola Vitacolonna for calling this to my attention and urging TeXShop to adopt the new calls.
+
 \newpage
+
+\begin{verbatim}
+       % !TEX useAlternatePath
+\end{verbatim}
+ 
+ Most TeXShop users pair it with the TeX Live distribution of TeX. This distribution is updated once a year, when new versions of the various executable files are released. The style files, class files, fonts, etc. in TeX Live are updated daily.
+ 
+ This organization works for most TeX binaries. ConTeXt is an exception because Hans Hagen updates it regularly and often. Luckily, there is an easy way to install and update ConTeXt, supported by a beautiful series of web pages called the "ConTeXt Garden." See https://wiki.contextgarden.net/Main\_Page. Notice the link on this page titled "Install ConTeXt and start typesetting." This link downloads and installs everything needed to typeset using ConTeXt, placing it in a location of the user's choice. One typical place is $\sim$/bin/context. 
+ 
+TeXShop needs to be reconfigured to use this distribution rather than TeX Live. This is easy for someone who always typesets with ConTeXt, but troublesome for users who write some documents in LaTeX and some in ConTeXt. TeXShop now has a Preference setting in the Engine tab called "Alternate Path" where users can insert the full path to their ConTeXt distribution. The special command line "useAlternatePath" can then be added to the top of a ConTeXt document to use that path to ConTeXt rather than the standard path to TeX Live.
+ 
+ 
 \section{Hidden Preferences}
 TeXShop has a large number of Preference Settings which make it possible for users to customize the behavior of the program to their liking. The most important settings are made visible by TeXShop Preferences, but more obscure settings are hidden and only available through the Terminal in /Applications/Utilities. To apply such a preference, it is important to quit TeXShop, then enter the setting in Terminal and push RETURN, and then restart TeXShop. 
 
@@ -135,7 +154,6 @@ The first installment lists all hidden preferences mentioned in the Changes docu
 
 Some of these settings are out of date. I had forgotten about others. For instance, writing this document taught me that TeXShop already had the ability to set interline spacing in the source using the preference SourceInterlineSpace. Version 3.98 of TeXShop greatly improves this ability and makes the old setting obsolete.
 
-\newpage
 
 
 

@@ -22,7 +22,7 @@
 
 @implementation MyPDFKitView (TextMate)
 
-- (void)sendLineToTextMate: (NSInteger)aLine forPath: (NSString *)aPath
+- (void) sendLineToTextMate: (NSInteger)aLine forPath: (NSString *)aPath
 {
     NSTask                  *task;
     NSMutableDictionary     *environmentForTask;
@@ -73,6 +73,9 @@
     NSMutableDictionary     *environmentForTask;
     NSArray                 *args;
     NSString                *filename, *sourcePath;
+    
+ //   NSLog(@"The line is %d ", aLine);
+  //  NSLog(aPath);
      
     if (otherEditorTask != nil)
     {

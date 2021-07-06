@@ -123,10 +123,13 @@
     BOOL            documentIsSelf, documentIsAlreadyOpen;
 	// NSString		*lineString;
 	
-    if (self.useOldSyncParser)
-        return [self doSyncTeXForPageOld: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
+    if (self.useConTeXtSyncParser)
+        return [self doSyncTeXForPageConTeXt: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
   
+    else if (self.useOldSyncParser)
+        return [self doSyncTeXForPageOld: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
     
+
 	line = 0;
     foundFileName = NULL;
 	
@@ -2430,7 +2433,11 @@
     PDFPage         *aPage;
     NSInteger       theindex;
     
-    if (self.useOldSyncParser)
+    
+    if (self.useConTeXtSyncParser)
+        return [self doPreviewSyncTeXWithFilenameConTeXt:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
+    
+    else if (self.useOldSyncParser)
         return [self doPreviewSyncTeXWithFilenameOld:fileName andLine:line andCharacterIndex:idx andTextView:aTextView];
     
     
@@ -2456,7 +2463,8 @@
 		if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
 			return NO;
 	}
-	
+    
+ 	
 	if (scanner == NULL)
 		return NO;
 	
@@ -2466,7 +2474,8 @@
 		name = synctex_scanner_get_name(scanner, synctex_node_tag(node));
 		theName = [NSString stringWithCString:name encoding: NSUTF8StringEncoding];
 		theFullName = [theName stringByStandardizingPath];
-		
+        
+        
 		if ([theFile isEqualToString: theFullName]) {
 			found = YES;
 			break;
@@ -2481,7 +2490,7 @@
 	}
 	
 	if (! found) {
-		NSLog(@"Nope, Couldn't Find File");
+		// NSLog(@"Nope, Couldn't Find File");
 		return NO;
 	}
 	
@@ -2974,7 +2983,15 @@
     PDFPage         *aPage;
     NSInteger       theindex;
     
-     
+    
+    if (self.useConTeXtSyncParser)
+    {
+ //       NSLog(@"using ConTeXt Sync Parwer for External");
+        [self doPreviewSyncTeXExternalWithFilenameConTeXt:fileName andLine:line andCharacterIndex: idx];
+        return;
+    }
+    
+    
     rootFile = [[self fileURL] path];
     rootPath = [rootFile stringByDeletingLastPathComponent]; //path to root document
     
@@ -2984,6 +3001,7 @@
     if (! rootFile)
         return;
     mySyncTeXFileName = [[rootFile stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+    
     if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
     {
         mySyncTeXFileName = [[rootFile stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
@@ -3014,7 +3032,7 @@
     }
     
     if (! found) {
-        NSLog(@"Nope, Couldn't Find File");
+     //   NSLog(@"Nope, Couldn't Find File");
         return;
     }
     

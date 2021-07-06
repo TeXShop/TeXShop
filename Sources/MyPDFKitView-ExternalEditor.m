@@ -26,9 +26,9 @@
 
 - (void)doErrorWithLine: (NSInteger)myErrorLine andPath: (NSString *)myErrorPath
 {
-    if ([SUD boolForKey: OtherEditorSyncKey])
+    if (self.myDocument.syncEditorMethod == 1)
         [self sendLineToOtherEditor: myErrorLine forPath: myErrorPath];
-    else if ([SUD boolForKey: TextMateSyncKey])
+    else if (self.myDocument.syncEditorMethod == 2)
         [self sendLineToTextMate: myErrorLine forPath: myErrorPath];
 }
 
@@ -160,8 +160,10 @@
 
 - (void)doNewExternalSync: (NSPoint)thePoint
 {
-    if ((! [SUD boolForKey: TextMateSyncKey]) && (! [SUD boolForKey: OtherEditorSyncKey]))
-        return;
+  // The next line seems irrelevant, since this will only be called if the user asked for an external sync,
+  // and since our response is the same for all external editors
+  //  if ( (self.myDocument.syncMethod == 0) && (! [SUD boolForKey: TextMateSyncKey]) && (! [SUD boolForKey: OtherEditorSyncKey]))
+  //      return;
     
     NSPoint windowPosition = thePoint;
     NSPoint kitPosition = [self convertPoint: windowPosition fromView:nil];
@@ -188,6 +190,14 @@
     NSInteger       line;
     BOOL            gotSomething;
     NSString        *newFile;
+    
+    
+    if (self.myDocument.useConTeXtSyncParser)
+    {
+        [self doExternalSyncTeXForPageConTeXt: pageNumber x: xPosition y: yPosition yOriginal: yOriginalPosition];
+        return;
+    }
+        
     
     line = 0;
     foundFileName = NULL;
@@ -230,17 +240,100 @@
         else
             newFile = [[[[[self.myDocument fileURL] path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: foundFileName] stringByStandardizingPath];
         
-        if ([SUD boolForKey: OtherEditorSyncKey])
+  //      NSLog(@"the regular line is %d", line);
+  //      NSLog(newFile);
+        
+        if (self.myDocument.syncEditorMethod == 1)
             [self sendLineToOtherEditor: line forPath: newFile];
         
-        else if ([SUD boolForKey: TextMateSyncKey])
+        else if (self.myDocument.syncEditorMethod == 2)
             [self sendLineToTextMate: line forPath: newFile];
     }
 }
 
 
+- (void)doExternalSyncTeXForPageConTeXt: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition
+{
+    NSString        *myFileName, *mySyncTeXFileName;
+    NSString        *foundFileName;
+    NSInteger       line;
+    NSString        *newFile;
+    NSString        *enginePath, *tetexBinPath, *alternateBinPath;
+    NSDate          *myDate;
+    NSMutableArray  *args;
+    NSInteger       tolerance;
+    NSNumber        *myNumber;
+    
+    line = 0;
+    foundFileName = NULL;
+    
+ 
+    myFileName = [[self.myDocument fileURL] path];
+    if (! myFileName)
+        return;
+    mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex"];
+    if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+    {
+        mySyncTeXFileName = [[myFileName stringByDeletingPathExtension] stringByAppendingPathExtension: @"synctex.gz"];
+        if (! [[NSFileManager defaultManager] fileExistsAtPath: mySyncTeXFileName])
+            return;
+    }
+    
+ 
+    if ([foundFileName isAbsolutePath])
+        newFile = [foundFileName stringByStandardizingPath];
+    else
+        newFile = [[[[[self.myDocument fileURL] path] stringByDeletingLastPathComponent] stringByAppendingPathComponent: foundFileName] stringByStandardizingPath];
+    
+     if (self.myDocument.backwardSyncTaskExternal != nil) {
+        [self.myDocument.backwardSyncTaskExternal terminate];
+        myDate = [NSDate date];
+        while (([self.myDocument.backwardSyncTaskExternal isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+        self.myDocument.backwardSyncTaskExternal = nil;
+        self.myDocument.backwardSyncTaskExternal = nil;
+    }
+    
+    self.myDocument.backwardSyncTaskExternal = [[NSTask alloc] init];
+    [self.myDocument.backwardSyncTaskExternal setCurrentDirectoryPath: [myFileName stringByDeletingLastPathComponent]];
+    [self.myDocument.backwardSyncTaskExternal setEnvironment: [self.myDocument environmentForSubTask]];
+    enginePath = [[NSBundle mainBundle] pathForResource:@"contextbackwardsyncwrap" ofType:nil];
+    tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+    alternateBinPath = [[SUD stringForKey:AltPathKey] stringByExpandingTildeInPath];
+ 
+    args = [NSMutableArray array];
+    if (self.myDocument.useAlternatePath )
+        [args addObject: alternateBinPath];
+    else
+        [args addObject: tetexBinPath];
+    [args addObject: [[[myFileName  stringByStandardizingPath] stringByDeletingPathExtension] stringByAppendingPathExtension:@"synctex"]];
+    
+    tolerance = 30;
+    
+//    NSLog(@"Page %d x %f y %f  %d", pageNumber, xPosition, yPosition, tolerance);
+    
+    myNumber = [NSNumber numberWithInteger: pageNumber];
+    [args addObject: [myNumber stringValue]];
+    myNumber = [NSNumber numberWithFloat: xPosition];
+    [args addObject: [myNumber stringValue]];
+    myNumber = [NSNumber numberWithFloat: yPosition];
+    [args addObject: [myNumber stringValue]];
+    myNumber = [NSNumber numberWithInteger: tolerance];
+    [args addObject: [myNumber stringValue]];
+    
+    self.myDocument.backwardSyncPipeExternal = [NSPipe pipe];
+    self.myDocument.backwardSyncHandleExternal = [self.myDocument.backwardSyncPipeExternal fileHandleForReading];
+    [self.myDocument.backwardSyncHandleExternal waitForDataInBackgroundAndNotify];
+    [self.myDocument.backwardSyncTaskExternal setStandardOutput: self.myDocument.backwardSyncPipeExternal];
+    if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+        [self.myDocument.backwardSyncTaskExternal setLaunchPath:enginePath];
+        [self.myDocument.backwardSyncTaskExternal setArguments:args];
+        [self.myDocument.backwardSyncTaskExternal launch];
 
-
-
-         
+    } else {
+        self.myDocument.backwardSyncTaskExternal = nil;
+    }
+    
+}
+    
+ 
 @end

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -55,6 +55,7 @@
                 <outlet property="_SpaceCharacterKindMatrix" destination="70" id="356"/>
                 <outlet property="_TabCharacterKindMatrix" destination="82" id="357"/>
                 <outlet property="_afterTypesettingMatrix" destination="212" id="358"/>
+                <outlet property="_altPathField" destination="f5B-FV-f4U" id="4xD-7x-bH9"/>
                 <outlet property="_alwaysHighlightButton" destination="107" id="359"/>
                 <outlet property="_antialiasButton" destination="159" id="360"/>
                 <outlet property="_autoCompleteButton" destination="35" id="361"/>
@@ -253,7 +254,7 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="4" y="34" width="631" height="564"/>
+                        <rect key="frame" x="13" y="46" width="631" height="564"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -1914,7 +1915,7 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="pdfTeX" translatesAutoresizingMaskIntoConstraints="NO" id="225">
-                                            <rect key="frame" x="60" y="243" width="224" height="140"/>
+                                            <rect key="frame" x="60" y="183" width="224" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="pQe-jc-ZPE">
                                                 <rect key="frame" x="3" y="3" width="218" height="120"/>
@@ -2000,7 +2001,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="TeX + dvips + distiller" translatesAutoresizingMaskIntoConstraints="NO" id="240">
-                                            <rect key="frame" x="304" y="243" width="247" height="140"/>
+                                            <rect key="frame" x="304" y="183" width="247" height="140"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="RgH-Ai-Xe4">
                                                 <rect key="frame" x="3" y="3" width="241" height="120"/>
@@ -2086,14 +2087,14 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="경로 설정" translatesAutoresizingMaskIntoConstraints="NO" id="255">
-                                            <rect key="frame" x="60" y="392" width="491" height="122"/>
+                                            <rect key="frame" x="60" y="345" width="491" height="169"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="9B4-So-9cz">
-                                                <rect key="frame" x="3" y="3" width="485" height="102"/>
+                                                <rect key="frame" x="3" y="3" width="485" height="149"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="256">
-                                                        <rect key="frame" x="8" y="33" width="424" height="14"/>
+                                                        <rect key="frame" x="15" y="81" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Distiller (ghostscript) (default: /usr/local/bin)" id="257">
                                                             <font key="font" metaFont="message" size="11"/>
@@ -2102,7 +2103,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="258">
-                                                        <rect key="frame" x="11" y="55" width="437" height="22"/>
+                                                        <rect key="frame" x="18" y="103" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="259">
                                                             <font key="font" metaFont="system"/>
@@ -2114,7 +2115,7 @@ DQ
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="260">
-                                                        <rect key="frame" x="8" y="80" width="424" height="14"/>
+                                                        <rect key="frame" x="15" y="128" width="424" height="14"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="(pdf)TeX (default: /Library/TeX/texbin OR /usr/texbin)" id="261">
                                                             <font key="font" metaFont="message" size="11"/>
@@ -2123,7 +2124,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="262">
-                                                        <rect key="frame" x="11" y="8" width="437" height="22"/>
+                                                        <rect key="frame" x="18" y="56" width="437" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="263">
                                                             <font key="font" metaFont="system"/>
@@ -2134,12 +2135,33 @@ DQ
                                                             <action selector="gsBinPathChanged:" target="-2" id="462"/>
                                                         </connections>
                                                     </textField>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-aw-sgi">
+                                                        <rect key="frame" x="15" y="34" width="424" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Alternate Path (default: ~/bin/context/tex/texmf-osx-arm64/bin)" id="h48-rn-DLQ">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f5B-FV-f4U">
+                                                        <rect key="frame" x="17" y="9" width="437" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="qw9-Lc-5H7">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <action selector="altPathChanged:" target="-2" id="b0V-rT-5ZY"/>
+                                                        </connections>
+                                                    </textField>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box fixedFrame="YES" title="명령 찾기" translatesAutoresizingMaskIntoConstraints="NO" id="264">
-                                            <rect key="frame" x="60" y="159" width="491" height="80"/>
+                                            <rect key="frame" x="60" y="99" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="gv0-Qv-78A">
                                                 <rect key="frame" x="3" y="3" width="485" height="60"/>
@@ -2171,7 +2193,7 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box fixedFrame="YES" title="BibTeX 엔진" translatesAutoresizingMaskIntoConstraints="NO" id="269">
-                                            <rect key="frame" x="60" y="75" width="491" height="80"/>
+                                            <rect key="frame" x="60" y="15" width="491" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="x5u-qV-mxA">
                                                 <rect key="frame" x="3" y="3" width="485" height="60"/>

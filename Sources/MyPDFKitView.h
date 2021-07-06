@@ -295,6 +295,7 @@
 - (void)doNewExternalSync: (NSPoint)thePoint;
 - (void)allocateExternalSyncScanner;
 - (void)doExternalSyncTeXForPage: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+- (void)doExternalSyncTeXForPageConTeXt: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
 @end
 
 @interface MyPDFKitView (TextMate)

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>TeXShop</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <style type="text/css" media="screen">@import "v1.css";</style>
+</head>
+
+<body style="padding:25px">
+
+
+<!-- main content -->
+<div id="main">
+
+<P><h3>Using TeXShop, LaTeX and ConTeXt Simultaneously</h3></P>
+
+Version 4.66 of TeXShop introduced several changes, so a summary explaining how to use them is in order.
+In this section, we suppose that TeXShop has been used to typeset LaTeX documents using pdflatex,  xelatex, or lualatex and we  want to add ConTeXt to the mix. ConTeXt is in TeX Live, but that version tends to be out-of-date because TeX Live is only updated once a year. It is possible to get the latest ConTeXt by going to the ConTeXt Garden Wiki
+at https://wiki.contextgarden.net/Main_Page and installing the version available there for Intel Macs, or the version for Arm Macs. This process is clearly described on the Wiki, and very easy. The distribution can be installed anywhere you like; a natural place is in your home directory at ~/bin/context. A simple command allows this distribution to be updated, say weekly.
+
+<p>
+If you install ConTeXt this way, go to TeXShop Preferences under the "Engine" tab and change the third item at the top, which is labeled "Alternate Path", to the path to ConTeXt binaries. If the binaries were installed in ~/bin/context, this path might be ~/bin/context/tex/texmf-osx-arm64/bin.
+<p>
+Your latex files will continue to work as always.
+<p>
+At the top of each ConTeXt source file, add the magic lines
+<PRE>
+     % !TEX TS-program = ConTeXt2021
+     % !TEX useAlternatePath
+     % !TEX useConTeXtSyncParser
+</PRE>
+<p>
+In the header of the ConTeXt document, add the command
+<PRE>
+     \setupsynctex[state=start,method=min] 
+</PRE>
+Move the engine file ConTeXt2021 from ~/Library/TeXShop/Engines/Inactive/ConTeXt-Sync to ~/Library/TeXShop/Engines.
+
+<p> Then typesetting for the ConTeXt file will also work as usual, and syncTeX will work as usual. But this typesetting will use the new ConTeXt Garden distribution, and syncTeX will use new routines in ConTeXt rather than the usual syncTeX code. 
+<p>
+Done.
+
+<P><h3>Using TeXShop, LaTeX, and ConTeXt with an External Editor.</h3></P>
+
+These ConTeXt changes also work with an external editor, but the configuration steps are a little more difficult. These steps are clearly described in the Changes document for TeXShop 4.66 available in the TeXShop Help menu, so read that document for details.
+
+<br />
+<br />
+
+<p> 
+Richard Koch   <br />
+2740 Washington St <br />
+Eugene, Oregon 97405 <br />
+</p>
+</div>
+</body>
+</html>

@@ -117,8 +117,19 @@ NSInteger strSort(id s1, id s2, void *context)
     self.includeFileShortNames = [NSMutableArray arrayWithCapacity:20];
 
     self.useOldSyncParser = NO;
-   
-	tagLine = NO;
+    self.useConTeXtSyncParser = NO;
+    self.useAlternatePath = NO;
+    self.syncEditorMethod = 0;
+    if ([SUD boolForKey: TextMateSyncKey])
+        self.syncEditorMethod = 2;
+    if ([SUD boolForKey: OtherEditorSyncKey])
+        self.syncEditorMethod = 1;
+    if ([SUD boolForKey: syncWithRedOvalsKey])
+        self.syncWithOvals = 1;
+    else
+        self.syncWithOvals = 0;
+    
+ 	tagLine = NO;
 	self.texRep = nil;
 	fileIsTex = YES;
     self.fileIsXML = NO;
@@ -202,7 +213,7 @@ NSInteger strSort(id s1, id s2, void *context)
         if (self.useOldSyncParser)
             [self StopSyncScannerOld];
             // old_synctex_scanner_free(scanner);
-        else
+        else if (! self.useConTeXtSyncParser)
             synctex_scanner_free(scanner);
     }
 	scanner = NULL;
@@ -1163,6 +1174,11 @@ if (! skipTextWindow) {
 	self.metaFontTask = nil;
 	self.detexTask = nil;
 	self.detexPipe = nil;
+    self.backwardSyncTask = nil;
+    self.backwardSyncPipe = nil;
+    self.forwardSyncTask = nil;
+    self.forwardSyncPipe = nil;
+    
 	// synctexTask = nil;
 	// synctexPipe = nil;
 
@@ -1286,7 +1302,7 @@ if (! skipTextWindow) {
     {
         if (self.useOldSyncParser)
             [self allocateSyncScannerOld];
-        else
+        else if (! self.useConTeXtSyncParser)
             [self allocateSyncScanner];
         
         [self setLineBreakModeNew];
@@ -1869,10 +1885,19 @@ in other code when an external editor is being used. */
         theRange.location = start; theRange.length = (end - start);
         testString = [firstBytes substringWithRange: theRange];
         parserRange = [testString rangeOfString:@"% !TEX useOldSyncParser"];
-        if (parserRange.location != NSNotFound) {
+        if (parserRange.location != NSNotFound)
             self.useOldSyncParser = YES;
-        }
+        parserRange = [testString rangeOfString:@"% !TEX useConTeXtSyncParser"];
+            if (parserRange.location != NSNotFound)
+                self.useConTeXtSyncParser = YES;
+        parserRange = [testString rangeOfString:@"% !TEX useAlternatePath"];
+            if (parserRange.location != NSNotFound)
+                self.useAlternatePath = YES;
+        
     }
+        
+    if (self.useConTeXtSyncParser)
+        self.useOldSyncParser = NO;
 
 
     
@@ -1883,8 +1908,7 @@ in other code when an external editor is being used. */
         myRange.location = 0;
         myRange.length = 1;
         
-     
-        while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+         while ((myRange.location < length) && (!done) && (linesTested < 20)) {
             [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
             myRange.location = end;
             myRange.length = 1;
@@ -1912,6 +1936,7 @@ in other code when an external editor is being used. */
                     }
                 }
         }
+        
     }
     
 	
@@ -2443,7 +2468,7 @@ else {
 	if (!fileIsTex && [[[self fileURL] path] isEqualToString:
 				[[GlobalData sharedGlobalData].CommandCompletionPath stringByStandardizingPath]])
         {
-            NSLog(@"AHA, WRITING");
+         //   NSLog(@"AHA, WRITING");
            // [[NSApp delegate] finishCommandCompletionConfigure];
             // write is immediately followed by read and these can occur in the wrong order; so ...
             
@@ -3648,7 +3673,7 @@ preference change is cancelled. "*/
 {
     
     if (skipTextWindow) {
-        NSLog(@"got to terminate");
+      //  NSLog(@"got to terminate");
         if ([pdfWindow isVisible]) 
             [pdfWindow performClose:self];
         else if ([self.pdfKitWindow isVisible]) 
@@ -3952,7 +3977,7 @@ preference change is cancelled. "*/
 
 - (void)fixUpLabels:(id)sender
 {
-    NSLog(@"got here");
+//    NSLog(@"got here");
    [self fixLabels];
 }
 
@@ -5291,8 +5316,8 @@ if (! useFullSplitWindow) {
             done = NO;
             numberOfLinesChecked = 0;
             
-            
-            while ((numberOfLinesChecked < 50) && (!done)) {
+            while ((numberOfLinesChecked < 50) &&  (myRange.location < theLength) && (!done)) {
+                
                 [content getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
                 myRange.location = end;
                 myRange.length = 1;
@@ -5361,6 +5386,7 @@ if (! useFullSplitWindow) {
             }
          }
 
+    
       numberOfIncludeFiles = self.numberOfTabs;
       if (numberOfIncludeFiles == 0)
           return;
@@ -8274,7 +8300,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		    
 	if (err != 0) 
 #warning 64BIT: Check formatting arguments
-	    NSLog(@"Error %d in AuthorizationExecuteWithPrivileges", err);
+	//    NSLog(@"Error %d in AuthorizationExecuteWithPrivileges", err);
     }
     
     AuthorizationFree(authorizationRef,kAuthorizationFlagDestroyRights);
@@ -9093,7 +9119,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		return;
 		
 	if (CGDisplayCapture( kCGDirectMainDisplay ) != kCGErrorSuccess) {
-        NSLog( @"Couldn't capture the main display!" );
+      //  NSLog( @"Couldn't capture the main display!" );
 		}
 	else {
 		isFullScreen = YES;
@@ -9134,7 +9160,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		
         // Release the display(s)
         if (CGDisplayRelease( kCGDirectMainDisplay ) != kCGErrorSuccess) {
-        	NSLog( @"Couldn't release the display(s)!" );
+        	// NSLog( @"Couldn't release the display(s)!" );
         	// Note: if you display an error dialog here, make sure you set
         	// its window level to the same one as the shield window level,
         	// or the user won't see anything.

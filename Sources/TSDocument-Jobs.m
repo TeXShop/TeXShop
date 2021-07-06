@@ -48,7 +48,7 @@
 // NSEnumerator *enu = [env keyEnumerator];
 /*
 for(NSString *key in enu)
-    { NSLog(@"key : %@", key);
+    { // NSLog(@"key : %@", key);
    //     NSLog(@"value : %@",[[env valueForKey:key] string]);
         
     }
@@ -112,7 +112,7 @@ for(NSString *key in enu)
     MainLogs = NO;
     
     if (MainLogs)
-        NSLog(@"killRunningTasks");
+     //   NSLog(@"killRunningTasks");
     
 	/* The lines of code below kill previously running tasks. This is
 		necessary because otherwise the source file will be open when the
@@ -446,7 +446,7 @@ for(NSString *key in enu)
 	NSString		*argumentString;
 	NSString           *tempDestinationString;
     
-    NSLog(@"convertDocument");
+   // NSLog(@"convertDocument");
 	myFileName = [[self fileURL] path];
 	if ([myFileName length] > 0) {
 
@@ -943,7 +943,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     DisplayLogs = NO;
     
     if (DisplayLogs)
-        NSLog(@"Repeating Job");
+    //    NSLog(@"Repeating Job");
+        ;
     if ([SUD boolForKey: DoNotFixTeXCrashKey])
         return;
     
@@ -973,12 +974,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     
     doAbort = NO;
 	
- 	// Ensure we have an absolute filename for the executable, prepending  the teTeX bin path if need be.
-	NSString* filename = leafname;
-	if (filename != nil && [filename length] > 0 && ([filename characterAtIndex: 0] != '/') && ([filename characterAtIndex: 0] != '~')) {
-		NSString* tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
-		filename = [tetexBinPath stringByAppendingString: leafname];
-	}
+    // Ensure we have an absolute filename for the executable, prepending  the teTeX bin path if need be.
+   NSString* filename = leafname;
+   if (filename != nil && [filename length] > 0 && ([filename characterAtIndex: 0] != '/') && ([filename characterAtIndex: 0] != '~')) {
+       NSString* tetexBinPath = [[[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath] stringByAppendingString:@"/"];
+       filename = [tetexBinPath stringByAppendingString: leafname];
+   }
 	
 	// If the executable doesn't exist, we can't launch it.
 	filename = [filename stringByExpandingTildeInPath];
@@ -1091,13 +1092,13 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             NSString *mainString = [NSString stringWithFormat:@"Failed executing: %@.", cmd];
             if (DisplayLogs)
                 NSLog(mainString);
-            // if (DisplayLogs)
-            //    NSLog(@"The status is %d.", [myTask terminationStatus]);
+              if (DisplayLogs)
+                NSLog(@"The status is %d.", [myTask terminationStatus]);
                 
             if (! (stdoutString == nil)) {
                 NSString *aString = [NSString stringWithFormat: @"Standard output: %@.", stdoutString];
                 if (DisplayLogs)
-                    NSLog(aString);
+                   NSLog(aString);
                 }
             
             if (! (stderrString == nil)) {
@@ -1137,8 +1138,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             task.executableURL = myFileURL;
             myCurrentDirectoryURL = [NSURL fileURLWithPath:[sourcePath stringByDeletingLastPathComponent] isDirectory:YES];
             task.currentDirectoryURL = myCurrentDirectoryURL;
-         //   if (DisplayLogs)
-         //       NSLog(@"Start task");
+            if (DisplayLogs)
+                NSLog(@"Start task");
             result = [task launchAndReturnError:&error];
         }
     else
@@ -1551,6 +1552,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                   
                   if (parameterExists)
                       [args addObject: parameterString];
+                  else
+                      [args addObject: @" "];
+                  
+                  NSString *tetexBinPath = [[SUD stringForKey:TetexBinPath] stringByExpandingTildeInPath];
+                  NSString *alternateBinPath = [[SUD stringForKey:AltPathKey] stringByExpandingTildeInPath];
+                  if ( self.useAlternatePath )
+                      [args addObject: alternateBinPath];
+                  else
+                      [args addObject: tetexBinPath];
 
 				 
 				 if (self.texTask != nil) {
@@ -1965,6 +1975,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                 self.metaFontTask = nil;
             }
         }
+    
+    if (theTask == self.backwardSyncTask)
+        [self finishBackwardContextSync];
+    
+    if (theTask == self.backwardSyncTaskExternal)
+        [self finishBackwardContextSyncExternal];
+    
+    if (theTask == self.forwardSyncTask)
+        [self finishForwardContextSync];
    
     [outputText setSelectable: YES];
     taskDone = YES; // for Applescript
@@ -2006,7 +2025,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];
-                            else
+                            else if (! self.useConTeXtSyncParser)
                                 [self allocateSyncScanner];
                         }
                     }
@@ -2019,7 +2038,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];
-                            else
+                            else if (! self.useConTeXtSyncParser)
                                 [self allocateSyncScanner];
                         }
                         
@@ -2173,7 +2192,7 @@ else
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];
-                            else
+                            else if (! self.useConTeXtParser)
                                 [self allocateSyncScanner];
                         }
                         }
@@ -2186,7 +2205,7 @@ else
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];
-                            else
+                            else if (! self.useConTeXtSyncParser)
                                 [self allocateSyncScanner];
                         }
                         

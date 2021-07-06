@@ -88,6 +88,13 @@
 - (id)handleSyncIndexCommand:(NSScriptCommand*)command;
 - (id)handleSyncNameCommand:(NSScriptCommand*)command;
 - (id)handleSyncPreviewCommand:(NSScriptCommand*)command;
+- (id)handleSyncRegularCommand:(NSScriptCommand*)command;
+- (id)handleSyncConTeXtCommand:(NSScriptCommand*)command;
+- (id)handleSyncWithNoEditorCommand:(NSScriptCommand*)command;
+- (id)handleSyncWithTextMateCommand:(NSScriptCommand*)command;
+- (id)handleSyncWithOtherEditorCommand:(NSScriptCommand*)command;
+- (id)handleSyncWithOvalsCommand:(NSScriptCommand*)command;
+- (id)handleSyncWithoutOvalsCommand:(NSScriptCommand*)command;
 @end
 
 // Scripting support for TSAppDelegate

@@ -14,6 +14,292 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.65 and 4.66</h3></P>
+
+TeXShop 4.65 was never released.
+
+<p>
+There are eight changes in TeXShop 4.66. The first four are minor; the remaining four are more important, but only affect ConTeXt and External Editors:
+<p> <ul>
+<li> Latexmk was updated to version 4.74b.
+<p>
+<li> Herbert Schulz discovered that when the magic line
+<pre>
+	% !TEX tabbedFile{ }(optional short name)
+</pre>
+occurs in a file with less than 50 lines, no tabs appear. This bug is fixed.
+<p>
+<li> When syncTeX syncs from the source window to the preview window, it highlights the selected text in yellow. This can be a little difficult to see. Years ago, TeXShop  circled the selected text with a red oval rather than highlighting it.
+There is a hidden preference to make this the default:
+<pre>
+     defaults write TeXShop syncWithRedOvals YES
+</pre>
+But users may wish to momentarily switch to ovals without making the change permanent. TeXShop 4.65 provides two applescript commands for this: SyncWithOvals and SyncWithoutOvals. These commands can be made into macros. For instance, the complete macro to switch to ovals is:
+<pre>
+     --Applescript direct
+
+     set frontName to #DOCUMENTNAME#
+     tell document frontName of application "TeXShop"
+
+	SyncWithOvals
+
+     end tell
+</pre>
+When using a document, you can temporarily activate the macro "SyncWithOvals" and proceed with ovals; when they are no longer needed, activate the macro "SyncWithoutOvals". There is one tricky point. If you have a project with a root document and several included chapters, the root document typesets and displays the pdf file, so it must be the front document when calling the macros. If the source for a chapter is instead the top document, the macros will have no effect because that chapter source isn't responsible for creating the pdf output. 
+<p>
+<li> A new encoding is added, Ascii. This encoding outputs  ascii code with bytes between 0 and 127. When the encoding encounters a character that is not pure ascii, it usually outputs "?". Certain common characters are handled more intelligently. If the original source contains a German word with umlauts, the encoding outputs the characters without their umlauts.
+
+<p> Almost all encodings produce standard ascii for characters on an American keyboard. Consequently, a file saved with Ascii encoding can be read and written with any encoding, certainly including ISO Latin 9 and UTF-8 Unicode.  
+
+<p> Although Ascii can be made the default TeXShop encoding in Preferences, that is not a reasonable choice. The encoding is  provided for a different purpose. A few TeXShop users have created files which refuse to typeset because LaTeX claims they have illegal characters. These files look fine on the screen and it can be  difficult to find the offending character. In that case, save the file using "Save As". In the resulting save dialog, give the file a different name and in the "Encoding" pull down menu at the bottom of the dialog, select "Ascii". Your main source file is unchanged, but you now have a second copy in which suspicious characters are replaced with a question mark. Search for this question mark and repair instances where it  clearly stands for another character. This second copy of the source has no illegal characters.
+
+<p> The TeXShop "File" menu does not have a "Save As" item. But if you push the Options key when opening the menu, a "Save As" item will be added. This behavior is actually standard across all Macintosh applications.
+
+<p>
+<li> Nicola Vitacolonna is responsible for the next few developments, first calling some new features in ConTeXt to my attention and then helping me support them in TeXShop. Send thanks to him!
+
+<p> The binaries in the TeX Live distribution of TeX are updated once a year. All other style files, class files, and the like are updated daily. This approach is reasonable because the binaries are quite stable, while the auxiliary files are constantly being updated by thousands of contributors.
+
+<p> ConTeXt is a special case because its author, Hans Hagen, is constantly making improvements. So the copy of ConTeXt in TeX Live is often out of date. Luckily, ConTeXt users have access to a beautiful wiki called the ConTeXt Garden; see https://wiki.contextgarden.net/Main_Page. This page has a link titled "Install ConTeXt and start typesetting" which leads to a page with easy ways to install a complete ConTeXt system on MacOS, Windows, GNU/Linux, FreeBSD, and OpenBSD. The MacOS portion has binaries for both Intel and  Arm. The distribution contains everything needed to typeset, including a recent copy of LuaTeX, but it is quite small. It can be installed  in a user's home directory. 
+
+<p>
+ConTeXt users should certainly use this distribution, and reconfigure TeXShop to point to it. However, this makes life difficult for users who write both ConTeXt and ordinary LaTeX documents. The new version of TeXShop fixes this problem. In TeXShop Preferences under the "Engine" tab, the "Path Settings" item at the top has a new item named "Alternative Distribution." Set this item to the path of your  ConTeXt distribution, which depends on the location you picked to install it. Then add the magic line below to the top of your ConTeXt source files:
+<PRE>
+     % !TEX useAlternatePath
+</PRE>
+These ConTeXt documents will be typeset by the ConTeXt Garden distribution, while ordinary LaTeX documents will continue to use TeX Live.
+<p>
+Other users may find this feature useful in special circumstances. The "Alternate Distribution" preference item can point to any TeX distribution and the magic line can be used in any source file. However, the magic line only affects typesetting "engines", and not the built-in calls to TeX, LaTeX, BibTeX, or Make Index. Recall that these engine files are just shell scripts. When such a script is called, it is called with three arguments:
+<PRE>
+	"$1": the full path to the source file
+	"$2": an optional parameter determined by the magic line 
+	            % !TEX parameter
+	      in the source, or just a space " " if no such line is given
+	"$3": the full path to the binaries in the distribution; this is usually 
+	      /Library/TeX/texbin but points to the ConTeXt binaries if the line
+	            % !TEX useAlternatePath
+	      is in the source
+</PRE>
+Existing engine files don't use "$3", so they need to be revised if you want to use an alternate path with them.
+<p> Putting this all together, here is an engine file which calls the Magic Garden version of ConTeXt:
+<PRE>
+	#!/bin/tcsh
+		
+	setenv PATH "$3"\:$PATH
+	mtxrun --script context --autogenerate "$1"
+</PRE>
+<p>
+A historical aside: The original TeXShop had two typesetting buttons labeled "TeX" and "LaTeX". Then users wanted to typeset using latex --> dvips --> ps2pdf, so the "pdfTeX vs TeX and DVI" mechanism was added. Later the menu items "BibTeX" and "MakeIndex" were added. When Jonathan Kew introduced XeTeX, I finally saw the light and added the "engine" mechanism. If I were writing from scratch, I'd eliminate  the special cases and handle all typesetting with engines. 
+Users sometimes ask me to modify "MakeIndex" or "pdfTeX" calls. In such cases, my canonical answer is "write your own engine."
+<p>
+<li> Jerome Laurens wrote synctex and it is used for all typesetting engines in TeX Live. Laurens adds code to the engines which generate a synctex file. He also provides C code for front end developers to process the synctex file and provide the key information to display a sync location.
+
+<p> But Hans Hagen eventually rewrites everything for ConTeXt, and several years ago he replaced Laurens' code with his own version to generate the synctex file in ConTeXt. This was painful for me because Hagen used Lauren's original design of synctex and ignored a later modern version. So TeXShop had to include two versions of the C code for front end developers, one for all engines except ConTeXt and a second just for ConTeXt. A magic line
+<PRE>
+	% !TEX useOldSyncParser
+</PRE>
+was added for ConTeXt users, telling TeXShop to use the original Lauren's code rather than the latest version to interprete the synctex file in ConTeXt.
+
+<p> But recently Hagen also wrote  code to interprete the synctex file for ConTeXt users. Version 4.65 of TeXShop
+has code to call this ConTeXt interpretation code. To use it, ConTeXt uses should replace the previous magic line with
+<PRE>
+	% !TEX useConTeXtSyncParser
+</PRE>
+
+This is a welcome improvement, because now Hans both generates the synctex file for ConTeXt users and also provides the code to interprete the file. Consequently, he is free to make any further changes without requiring changes in the front ends. 
+
+<p> How should a ConTeXt user react to these changes. I recommend
+<ul>
+<li> Go to the ConTeXt Garden site and install the latest version of ConTeXt in your home directory
+<li> Add the ConTeXt engine listed earlier to ~/Library/TeXShop/Engines. I call it ConTeXt2021. This engine is available in ~/Library/TeXShop/Engines/Inactive/ConTeXt-Sync.
+<li> Add the magic lines
+<PRE>
+		% !TEX TS-program = ConTeXt2021
+		% !TEX useAlternatePath
+		% !TEX useConTeXtSyncParser
+</PRE>
+to the heading of your ConTeXt source files
+<li> Add the line
+<PRE>
+		\setupsynctex[state=start,method=min] 
+</PRE>
+to your ConTeXt source file; this line tells ConTeXt to generate the new synctex information.
+</ul>
+
+<p>All of this works for users who prefer to use the ConTeXt in TeX Live. They should just omit the magic line "useAlternatePath". But I do not know if the ConTeXt currently in TeX Live supports the new ConTeXt Sync Parser.
+
+<p>
+<li> The above changes also work when an external editor is used. The details will be given shortly. To support users who prefer an external editor, a new folder has been added to ~/Library/TeXShop named "ExternalEditorScripts." This folder will be updated with each new version of TeXShop, just as ~/Library/TeXShop/Engines/Inactive is updated now. The new folder contains scripts contributed by users for various  editors, each in a folder with the editor's name. TeXShop 4.66 contains scripts by Michael Sharpe for BBEdit, and scripts by Nicola Vitacolonna for MacVim.
+
+<p>
+<li> TeXShop 4.66 contains new Applescript commands making it easy to interact with external editors. These commands are documented below, but the text is quite technical. In practice, this information can be used to write scripts which automate the interaction, and these scripts will then end up in the ExternalEditorScripts folder. In the end, users can interact with TeXShop without understanding the details below.
+
+<p>
+The above ConText changes also apply  when an external editor is used. In that case TeXShop does not open the source file and thus cannot see the magic lines introduced above. So a method is needed for external editors to pass this type of information to TeXShop. We provide new applescript commands for this purpose.
+
+<p>
+Eight new applescript commands have been added to TeXShop:
+<p>
+<ul>
+<li> StandardBinPath
+<li> AlternateBinPath
+<li> SyncRegular
+<li> SyncConTeXt
+<li> SyncWithNoEditor
+<li> SyncWithTextMate
+<li> SyncWithOtherEditor
+<li> SyncRootName
+</ul>
+<p> These commands return nothing and have no parameters. The commands apply to the front window in TeXShop. The commands are only needed when an external editor is used; otherwise use the magic lines explained earlier.
+The first line says that typesetting commands are in the standard location, ~/Library/TeX/texbin. The second command says that the Alternate Binary Path should be used to find typesetting commands. By default, the first statement is active.
+The third command says that sync commands for the active window should use Jerome Laurens' code; the fourth command says that sync commands for the active window should use the new ConTeXt sync. By default, SyncRegular is active.
+
+<p> Syncing with an external editor was introduced in TeXShop 4.24 and users may wish to read the Changes documents for both 4.24 and 4.25. The editor TextMate already had built-in commands to communicate and we used those for users of TextMate. But we also introduced a more generic method for other editors.
+
+<p> In version 4.24, two hidden Preference items were introduced:
+<PRE>
+     defaults write TeXShop TextMateSync YES
+     defaults write TeXShop OtherEditorSync YES
+</PRE>
+These items still work, but are no longer recommended. Instead, use the next three applescript commands. The command "SyncWithNoEditor" tells TeXShop that the editor does not communicate at all. The command "SyncWithTextMate" says that TextMate is the external editor and TeXShop should use the commands built into this program. The command "SyncWithOtherEditor" says that some other editor is being used and TeXShop should call a shell script to communicate with that editor, as described below and also in the 4.24 release notes.
+
+<p> The SyncRootName command is rarely used and will be explained later.
+
+<p> To clarify the use of these commands, the following applescript command tells TeXShop to typeset using the version of ConTeXt installed in the alternate location, to sync using the new ConTeXt methods, and to interact using the "other editors" method: 
+<PRE>
+      tell application "TeXShop"
+           set the front_document to the front document
+           
+           tell front_document
+                AlternateBinPath
+                SyncConTeXt
+                SyncWithOtherEditor
+                return 0
+           end tell
+      end tell
+</PRE>
+
+<p> This script can be made into a TeXShop applescript macro. Recall that TeXShop has a menu item to call Macros, so the Macro can be called even if TeXShop is in external editor mode. Call it just once when you work on a ConTeXt source, and after that the TeXShop typeset command will use the alternate ConTeXt distribution, will sync using the new ConTeXt sync methods, and will communicate using the "other editors" protocol. 
+
+<p> If your editor supports applescript and allows users to add additional commands, you can build this command into the editor rather than creating a macro.  If your editor does not support applescript but can call shellscripts,  you can easily embed the applescript in a shell script:
+<p>
+<PRE>
+      #!/bin/bash
+     
+      osascript  &lt&ltEOD
+
+      tell application "TeXShop"
+          set the front_document to the front document
+          tell front_document
+          	AlternateBinPath
+		SyncConTeXt
+		SyncWithOtherEditor
+		return 0
+          end tell
+      end tell
+      EOD
+</PRE>
+
+<p> From now on, we concentrate on the actual communication between TeXShop and the external editor.
+
+<p> Your editor may already support sync from preview to source. When TeXShop syncs in that direction, it finds the location of the click in the preview window and processes this information using either Jerome Lauren's original sync code or the new ConTeXt Sync code. It ultimately produces two pieces of information,  the line number of the corresponding text in the source file, and a full path to the source file. This full path is required when source documents include other files, so the correct file will be opened and displayed. The remaining issue is communicating those two parameters, "$1" = line number and "$2" = source path, to the editor, so it will open "$2" if it is not already open and then select line "$1".
+
+<p>
+As it happens, TextMate contains a small file named "mate" which it can install in /usr/local/bin.  If mate is called with two string parameters "$1" and "$2", it opens the file with path "$2" if it is not already open, and then selects line "$1". 
+If the command SyncWithTextMate has been called, then TeXShop will call this "mate" program and configuration is complete. Incidentally, this call is also used when a TeXShop user selects "Go To Error". 
+
+<p> If a different external editor is being used and the command SyncWithOtherEditor has been called, then
+TeXShop behaves in more or less the same way. Instead of called "mate" in /usr/local/bin, it called a binary named "othereditor" in /usr/local/bin. It calls this with the same two parameters "$1" and "$2". 
+
+The catch is that someone else has to write this "othereditor" file, which must have its execute bit set. However, it may be trivial to write this file for widely used editors, provided they have provided the necessary hooks.  Below are two such scripts, one for TextMate and one for BBEdit. The TextMate script is provided to show that SyncWithOtherEditor also works for it; the BBEdit script shows that another famous editor supports the required communication.
+
+<p> For TextMate:
+<PRE>
+     #!/bin/sh
+     /usr/local/bin/mate --line "$1" "$2"
+</PRE>
+
+<p> For BBEdit:
+ <PRE>
+     #!/bin/sh
+     /usr/local/bin/bbedit "$2:$1"
+</PRE>
+
+<p> If you use some other editor and discover an easy way to write an "othereditor" file for it, please communicate that discovery to the TeX on OS X mailing list or in some other way. 
+
+<p> Finally, we must implement sync the other way from source file to preview. In that case, it is up to the editor to recognize a click in the source while the command key is down, and to supply TeXShop with three pieces of information:
+"$1" = the line number clicked in the source file, "$2" = the character index of the click in that line, and
+"$3" a full path to the source file. If the source file clicked was just the original file which TeXShop opened in external editor mode, then it already knows "$3". But if the user's projects involve included or input files, then the third parameter is essential to tell TeXShop where to find the sync information.
+
+The author of your editor must supply the code to convert a click into these three pieces of information. The editor should then call TeXShop, giving it the three parameters "$1", "$2", "$3". 
+TeXShop expects the information to come as an applescript command. Below is that command. Of course the editor has to supply the strings "linenumber", "indexnumber", and "full path to source file":
+<PRE>
+     tell application "TeXShop"
+          activate
+          set the front_document to the front document
+          
+          tell front_document
+               sync_preview_line theLine "linenumber"
+               sync_preview_line theIndex "indexnumber"
+               sync_preview_line theName "full path to source file"
+               return 0
+          end tell
+     end tell
+</PRE>
+
+<p> If your editor prefers to call a shell script, it is easy to embed the applescript in such a script:
+<pre>
+      #!/bin/bash
+
+     MyShellVar=$1
+     MyShellVas=$2
+     MyShellVat=$3
+
+     osascript  &lt&ltEOD
+
+     tell application "TeXShop"
+	
+	activate
+	set the front_document to the front document
+	set MyAppVar to $MyShellVar
+	set MyAppVas to $MyShellVas
+	set MyAppVat to "$MyShellVat"
+	
+	tell front_document
+		sync_preview_line theLine MyAppVar
+		sync_preview_index theIndex MyAppVas
+		sync_preview_name theName MyAppVat
+		return 0
+	end tell
+	
+     end tell
+     EOD
+</pre>
+
+<p> The two code samples just provided are a little confusing, because when I wrote them several years ago, I didn't know how to send more than one parameter to an applescript call. So I used a trick. The "sync_preview_line" applescript call  sends the parameter "$1" to TeXShop, where it is stored as an instance variable. The "sync_preview_index" command sends "$2" to TeXShop in the same way. <b>But</b> the call "sync_preview_name" call sends "$3" to TeXShop and then runs the sync command to highlight the appropriate spot in the preview window.
+
+<p> Note that before using the above call, you must tell TeXShop the information it cannot find from magic lines:
+<p>
+<ul>
+<li> The editor, either SyncWithTextMate or SyncWithOtherEditor
+<li> The sync method, either SyncRegular or SyncConTeXt
+<li> The binary location, either StandardBinPath or AlternateBinPath
+</ul>
+
+<p> Before asking the author of your editor to write the required code for syncing from editor to preview window, you may wish to test that it works. To simplify your life, you might suppose that all of the source code is in the main file.
+In that case, it isn't necessary to pass the full path to the source file, and so the last line of the applescript command
+which reads 
+<pre>
+     sync_preview_name theName "full path to source file"
+</pre>
+ can be replaced with an applescript command with no parameter:
+ <pre>
+      SyncRootName
+ </pre>
+
+
+</ul>
+
 <P><h3>TeXShop Changes 4.64</h3></P>
 
 Latexmk is updated to version 4.73. Version 4.72b of latexmk, introduced in the previous version of TeXShop, had a serious bug causing long pauses when the program parsed the log file of certain book length projects. This is fixed.

@@ -75,6 +75,7 @@
 	IBOutlet NSTextField	*_latexGSCommandTextField;	/*" connected to "Latex + GS" "*/
 	IBOutlet NSButton	*_savePSButton;			/*" connect to save postscript "*/
 	IBOutlet NSTextField	*_tetexBinPathField;		/*" connected to tetex bin path "*/
+    IBOutlet NSTextField    *_altPathField;             /*" connected to alternate path "*/
 	IBOutlet NSTextField	*_gsBinPathField;		/*" connected to tetex bin path "*/
 	IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
 	IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/
@@ -298,6 +299,7 @@
 - (IBAction)latexGSProgramChanged:sender;
 - (IBAction)savePSPressed:sender;
 - (IBAction)tetexBinPathChanged:sender;
+- (IBAction)altPathChanged:sender;
 - (IBAction)gsBinPathChanged:sender;
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;

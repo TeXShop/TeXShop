@@ -285,6 +285,7 @@ NSString *MatrixPanelPath = @"~/Library/TeXShop/MatrixPanel";
 NSString *BinaryPath = @"~/Library/TeXShop/bin";
 NSString *EnginePath = @"~/Library/TeXShop/Engines";
 NSString *EngineInactivePath = @"~/Library/TeXShop/Engines/Inactive";
+NSString *ExternalEditorScriptsPath = @"~/Library/TeXShop/ExternalEditorScripts";
 NSString *ScriptsPath = @"~/Library/TeXShop/Scripts";
 NSString *NewPath = @"~/Library/TeXShop/New";
 NSString *AutoCompletionPath = @"~/Library/TeXShop/Keyboard";
@@ -344,6 +345,7 @@ NSString *CreateImageKey = @"CreateImage";
 NSString *IncrementalSearchKey = @"IncrementalSearch";
 NSString *NewToolbarIconsKey = @"NewToolbarIcons";
 NSString *SyncUseTabsKey = @"SyncUseTabs";
+NSString *AltPathKey = @"AltPath";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

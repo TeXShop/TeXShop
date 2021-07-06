@@ -126,7 +126,7 @@ static TSFilterMode savedFilter = kNoFilterMode;
 	if (!outlineView) {
 		if (![NSBundle loadNibNamed:@"MacroEditor" owner:self]) {
 			// TODO: Show an error dialog to the user here
-			NSLog(@"Failed to load MacroEditor.nib");
+		//	NSLog(@"Failed to load MacroEditor.nib");
 			NSBeep();
 			return;
 		}

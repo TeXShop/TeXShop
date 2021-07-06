@@ -319,11 +319,11 @@ Clicking this button will bring up the font panel.
       attributesData = [SUD objectForKey:DocumentFontAttributesKey];
      if (attributesData != nil)
      {
-     NSLog(@"got here");
+ //    NSLog(@"got here");
      fontAttributes = [NSUnarchiver unarchiveObjectWithData:attributesData];
      if (fontAttributes != nil)
      {
-     NSLog(@"and here");
+  //   NSLog(@"and here");
      myAttributedString = _fontTextView.textStorage;
      thelength = [myAttributedString length];
      myRange.location = 0;
@@ -1543,6 +1543,21 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 }
 
 //==============================================================================
+/*" This method is connected to the textField that holds the alternate path.
+"*/
+- (IBAction)altPathChanged:sender
+{
+    NSString *newValue;
+    
+    // register the undo messages first
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:AltPathKey] forKey:AltPathKey];
+
+    newValue = [[_altPathField stringValue] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [SUD setObject: newValue forKey:AltPathKey];
+}
+
+
+//==============================================================================
 /*" This method is connected to the textField that holds the gs bin path.
 "*/
 - (IBAction)gsBinPathChanged:sender
@@ -2470,6 +2485,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_texGSCommandTextField setStringValue:[defaults stringForKey:TexGSCommandKey]];
 	[_latexGSCommandTextField setStringValue:[defaults stringForKey:LatexGSCommandKey]];
 	[_tetexBinPathField setStringValue:[defaults stringForKey:TetexBinPath]];
+    [_altPathField setStringValue:[defaults stringForKey:AltPathKey]];
 	[_gsBinPathField setStringValue:[defaults stringForKey:GSBinPath]];
 
 	[_texScriptCommandTextField setStringValue:[defaults stringForKey:TexScriptCommandKey]];

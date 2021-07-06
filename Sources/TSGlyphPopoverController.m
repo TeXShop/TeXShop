@@ -244,7 +244,7 @@ static const UTF32Char kType6EmojiModifierChar = 0x1F3FF;  // Emoji Modifier Fit
                 [unicodesTextView sizeToFit];
                 NSRect rect = [unicodesTextView.layoutManager usedRectForTextContainer:unicodesTextView.textContainer];
                 CGFloat newHeight = rect.size.height + 50;
-                NSLog(@"%f", rect.size.width);
+             //   NSLog(@"%f", rect.size.width);
                 
                 newHeight = (newHeight < oldHeight) ? oldHeight : MIN(newHeight, 300); // maximal height of popover
                 

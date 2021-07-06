@@ -546,7 +546,7 @@ extern NSString *CreateImageKey;
 extern NSString *IncrementalSearchKey;
 extern NSString *NewToolbarIconsKey;
 extern NSString *SyncUseTabsKey;
-
+extern NSString *AltPathKey;
 
 
 // end defaults
@@ -565,6 +565,7 @@ extern NSString *MatrixPanelPath; // Jonas' Matrix addition
 extern NSString *BinaryPath;
 extern NSString *EnginePath;
 extern NSString *EngineInactivePath;
+extern NSString *ExternalEditorScriptsPath;
 extern NSString *ScriptsPath;
 extern NSString *NewPath;
 extern NSString *TempPath;

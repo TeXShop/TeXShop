@@ -120,11 +120,9 @@
 
 - (id)openDocumentWithContentsOfURL:(NSURL *)absoluteURL display:(BOOL)displayDocument error:(NSError **)outError
 {
-	NSLog(@"got here");
 	
 	NSString *path = [absoluteURL path];
 	if (path) {
-		NSLog(@"and here");
 		NSFileManager *fileManager = [NSFileManager defaultManager];
 		NSDictionary *values = [fileManager attributesOfItemAtPath: path error: NULL];
 		NSNumber *theResult = [values valueForKey: @"NSFileImmutable"];

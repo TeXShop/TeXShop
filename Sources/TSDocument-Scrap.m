@@ -293,7 +293,7 @@
 			}
             
             if (encodingRange.location != NSNotFound) {
-                NSLog(@"also got here");
+             //   NSLog(@"also got here");
                 newEncodingRange.location = encodingRange.location + offset;
                 newEncodingRange.length = [testString length] - newEncodingRange.location;
                 if (newEncodingRange.length > 0) {
@@ -424,7 +424,7 @@
 //  LatexScriptCommandKey
     
     if ([userEngine isEqualToString:@"personallatex"]) {
-        NSLog(@"got here");
+      //  NSLog(@"got here");
         theProgramWithFlags = [[SUD stringForKey: LatexScriptCommandKey] stringByExpandingTildeInPath];
         enginePath = [self separate:theProgramWithFlags into:args];
         // [args addObject: [sourcePath lastPathComponent]];

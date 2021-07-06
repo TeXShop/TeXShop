@@ -1,0 +1,18 @@
+#!/bin/tcsh
+
+# This short script calls "mtxrun --script synctex --report --page=<PDF-PAGE-NR> --x=<PDF-X-COORD> --y=<PDF-Y-COORD> --console <PDF NAME>.synctex"
+# to get information for a backward sync from context
+# Richard Koch; June, 2021
+
+set mypath = "$argv[1]"
+setenv PATH "${mypath}:${PATH}"
+rehash
+
+set enginepath = "$argv[1]"
+set pdffilename = "$argv[2]"
+set pdfpagenumber = "$argv[3]"
+set pdfxcoordinate = "$argv[4]"
+set pdfycoordinate = "$argv[5]"
+set tolerancenumber = "$argv[6]"
+
+"${enginepath}"/mtxrun --script synctex --report --page="${pdfpagenumber}" --x="${pdfxcoordinate}" --y="${pdfycoordinate}" --tolerance="${tolerancenumber}" --console "${pdffilename}"

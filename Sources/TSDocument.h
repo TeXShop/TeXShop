@@ -411,6 +411,17 @@ enum RootCommand
 @property (retain) NSTask              *texloganalyserTask;
 @property (retain) NSPipe              *texloganalyserPipe;
 @property (retain) NSFileHandle        *texloganalyserHandle;
+
+@property (retain) NSTask              *backwardSyncTask;
+@property (retain) NSPipe              *backwardSyncPipe;
+@property (retain) NSFileHandle        *backwardSyncHandle;
+@property (retain) NSTask              *backwardSyncTaskExternal;
+@property (retain) NSPipe              *backwardSyncPipeExternal;
+@property (retain) NSFileHandle        *backwardSyncHandleExternal;
+@property (retain) NSTask              *forwardSyncTask;
+@property (retain) NSPipe              *forwardSyncPipe;
+@property (retain) NSFileHandle        *forwardSyncHandle;
+
 @property (retain) NSDate              *startDate;
 @property (retain) NSPDFImageRep       *texRep;
 
@@ -468,6 +479,8 @@ enum RootCommand
 @property (retain)  NSMutableArray  *includeFileShortNames;
 
 @property           BOOL            useOldSyncParser;
+@property           BOOL            useConTeXtSyncParser;
+@property           BOOL            useAlternatePath;
 
 
 // forScrap
@@ -483,6 +496,12 @@ enum RootCommand
 @property           NSInteger   syncLine;
 @property           NSInteger   syncIndex;
 @property (retain)  NSString    *syncName;
+
+// for Sync
+@property           NSInteger   syncEditorMethod; // 0 = no editor, 1 = other editor, 2 = TextMate editor
+@property           NSInteger   syncWith; // 0 = OtherEditor, 1 = TextMate
+@property           NSInteger   syncWithOvals; // 0 = NO, 1 = YES
+
 
  - (IBAction)setSaveExtension: sender;
 - (IBAction)changeMouseMode: sender;
@@ -843,6 +862,16 @@ enum RootCommand
 - (void)StopSyncScannerOld;
 
 
+@end
+
+@interface TSDocument (SyncConTeXt)
+
+- (BOOL)doSyncTeXForPageConTeXt: (NSInteger)pageNumber x: (CGFloat)xPosition y: (CGFloat)yPosition yOriginal: (CGFloat)yOriginalPosition;
+- (BOOL)doPreviewSyncTeXWithFilenameConTeXt:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx andTextView:(id)aTextView;
+- (BOOL)finishBackwardContextSync;
+- (BOOL)finishBackwardContextSyncExternal;
+- (BOOL)finishForwardContextSync;
+- (void)doPreviewSyncTeXExternalWithFilenameConTeXt:(NSString *)fileName andLine:(NSInteger)line andCharacterIndex:(NSUInteger)idx;
 @end
 
 @interface TSDocument (Console)

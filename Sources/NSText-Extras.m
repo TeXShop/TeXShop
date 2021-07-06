@@ -7,10 +7,12 @@
         if([[[NSFontManager sharedFontManager] availableFonts] containsObject:[aFont fontName]])
             [self setFont:aFont];
         else
-            NSLog(@"Font %@ is missing.", [aFont fontName]);
+          //  NSLog(@"Font %@ is missing.", [aFont fontName]);
+            ;
     }
     else
-        NSLog(@"The font is nil!");
+      //  NSLog(@"The font is nil!");
+        ;
 
 }
 @end

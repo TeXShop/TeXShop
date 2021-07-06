@@ -2770,7 +2770,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     searchRange.location = locationStart; searchRange.length = locationEnd - locationStart;
     searchString = @"<";
     searchString = [searchString stringByAppendingString: word];
-    NSLog(searchString);
+ //   NSLog(searchString);
     commentStart = @"<!--";
     commentEnd = @"-->";
   
@@ -2805,7 +2805,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     searchString = @"</";
     searchString = [[searchString stringByAppendingString: word] stringByAppendingString: @">"];
     
-    NSLog(searchString);
+ //   NSLog(searchString);
  
  //   selectedRange = [text rangeOfString: searchString options:NSLiteralSearch range: searchRange];
 
@@ -2835,7 +2835,7 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     }
     while ( selectedRange.location != NSNotFound);
     
-    NSLog(@"Start = %d  End = %d", startCount, endCount);
+ //   NSLog(@"Start = %d  End = %d", startCount, endCount);
     
     if (startCount ==  (endCount + 1))
         return TRUE;

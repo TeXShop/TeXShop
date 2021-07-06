@@ -75,6 +75,7 @@ static TSEncoding _availableEncodings[] = {
 	{ 0, kCFStringEncodingGBK_95}, //				@"GBK" },
 	{ 0, kCFStringEncodingGB_2312_80}, //			@"GB 2312" },
 	{ 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
+    { 0, kCFStringEncodingASCII}, //
 };
 
 // List of the supported encodings.
@@ -95,6 +96,7 @@ static TSEncoding _availableTexworksEncodings[] = {
     { 0, kCFStringEncodingWindowsCyrillic}, //		@"Windows Cyrillic" },
     { 0, kCFStringEncodingKOI8_R}, //				@"KOI8_R" },
     { 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
+    { 0, kCFStringEncodingASCII}, //
 };
 
 
@@ -133,7 +135,7 @@ static TSEncoding _availableTexworksEncodings[] = {
 	} else {
 		sharedEncodingSupport = [super init];
         
-       myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"DOSKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", nil];
+       myArray = [NSMutableArray arrayWithObjects: @"MacOSRoman", @"IsoLatin", @"IsoLatin2", @"IsoLatin5", @"IsoLatin9", @"IsoLatinGreek", @"Mac Central European Roman", @"MacJapanese", @"DOSJapanese", @"SJIS_X0213", @"EUC_JP", @"JISJapanese", @"MacKorean", @"DOSKorean", @"UTF-8 Unicode", @"Standard Unicode", @"Mac Cyrillic", @"DOS Cyrillic", @"DOS Russian", @"Windows Latin 1", @"WindowsCentralEurRoman", @"Windows Cyrillic", @"KOI8_R", @"Mac Chinese Traditional", @"Mac Chinese Simplified", @"DOS Chinese Traditional", @"DOS Chinese Simplified", @"GBK", @"GB 2312", @"GB 18030", @"Ascii", nil];
         
         
         texWorksArray = [NSMutableArray arrayWithObjects:  @"Apple Roman", @"ISO 8859-1", @"ISO 8859-2", @"ISO 8859-9", @"ISO 8859-15", @"ISO 8859-7", @"macce", @"Shift-JIS", @"EUC_JP", @"UTF-8", @"UTF-16", @"ansinew", @"Windows-1250", @"Windows-1251", @"KOI8-R", @"GB18030-0", nil];

@@ -1,0 +1,17 @@
+#!/bin/tcsh
+
+# This short script calls "mtxrun --script synctex --find=<SOURCE>.tex --line=<SOURCE-LINE-NR> --direct <ROOT-SOURCE>.tex"
+# to get information for forward sync from context
+# Richard Koch; June, 2021
+
+set mypath = "$argv[1]"
+setenv PATH "${mypath}:${PATH}"
+rehash
+
+
+set enginepath = "$argv[1]"
+set filename = "$argv[2]"
+set linenumber = "$argv[3]"
+set rootsourcename = "$argv[4]"
+
+"${enginepath}"/mtxrun --script synctex --find --file="${filename}" --line="${linenumber}" --direct "${rootsourcename}"

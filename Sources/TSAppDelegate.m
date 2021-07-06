@@ -167,7 +167,7 @@
 /*
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-    NSLog(@"called");
+ //   NSLog(@"called");
     return NO;
 }
 */
@@ -371,6 +371,15 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines/Inactive"]
 				  toPath:[EngineInactivePath stringByStandardizingPath]];
 	}
+    
+    if (! [fileManager fileExistsAtPath: [ExternalEditorScriptsPath stringByStandardizingPath]] ){
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/ExternalEditorScripts"]
+              toPath:[ExternalEditorScriptsPath stringByStandardizingPath]];
+        }
+    else if (needsUpdating) {
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/ExternalEditorScripts"]
+                  toPath:[ExternalEditorScriptsPath stringByStandardizingPath]];
+    }
 		
 	if (! [fileManager fileExistsAtPath: [AutoCompletionPath stringByStandardizingPath]] ) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Keyboard"]

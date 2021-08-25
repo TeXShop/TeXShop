@@ -637,6 +637,7 @@ extern BOOL             atLeastSierra;
 extern BOOL             atLeastHighSierra;
 extern BOOL             atLeastMojave;
 extern BOOL             atLeastCatalina;
+extern BOOL             atLeastMonterey;
 extern BOOL             BuggyHighSierra;
 extern BOOL             editorCanAddBrackets;
 

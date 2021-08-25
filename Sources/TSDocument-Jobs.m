@@ -87,7 +87,6 @@ for(NSString *key in enu)
 	// NSMutableString *script = [NSMutableString string];
 
 /*
-#warning 64BIT: Check formatting arguments
 	[script appendFormat:@"open -a '%@' '%%s' &&", [[NSBundle mainBundle] bundlePath]];
 	[script appendString:@" osascript"];
 	[script appendString:@" -e 'tell application \"TeXShop\"'"];
@@ -922,7 +921,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		if (aRange.location == NSNotFound)
 			warningGiven = YES;
 		else {
-#warning 64BIT: Check formatting arguments
 			NSBeginCriticalAlertSheet (nil, nil, NSLocalizedString(@"Omit Shell Escape", @"Omit Shell Escape"), NSLocalizedString(@"Cancel", @"Cancel"),
 									  textWindow, self, @selector(sheetDidEnd:returnCode:contextInfo:), NULL, nil,
 									  NSLocalizedString(@"Warning: Using Shell Escape", @"Warning: Using Shell Escape"));
@@ -987,7 +985,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	if (theEngine >= UserEngine) {
 		isFile = [[NSFileManager defaultManager] fileExistsAtPath: filename];
 		if (! isFile) {
-#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil, nil, nil,[textView window], nil, nil, nil, nil,
 							  NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), filename);
@@ -995,7 +992,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		} else
 			isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 		if (! isExecutable) {
-#warning 64BIT: Check formatting arguments
 			NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 							  nil,nil,nil,[textView window],nil,nil,nil,nil,
 							  NSLocalizedString(@"%@ does not have the executable bit set.", @"%@ does not have the executable bit set."), filename);
@@ -1005,7 +1001,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	else
 		isExecutable = [[NSFileManager defaultManager] isExecutableFileAtPath: filename];
 	if (filename == nil || [filename length] == 0 || isExecutable == FALSE) {
-#warning 64BIT: Check formatting arguments
+
         
         BOOL standardPath = NO;
         BOOL linkBad = NO;

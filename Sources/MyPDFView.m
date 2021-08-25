@@ -789,7 +789,7 @@ failed. If you change the code below, be sure to test carefully!
 	// if we use [currentPage setIntValue: ...], it sometimes fails.
 	// set the string directly to the field editor.
 
-	if ([[[self window] currentEvent] type] != NSKeyDown ||
+	if ([[[self window] currentEvent] type] != NSEventTypeKeyDown ||
 		[[[[self window] currentEvent] characters] isEqualToString: @"\t"])
 	{
 		if (control == currentPage0)
@@ -2293,10 +2293,10 @@ failed. If you change the code below, be sure to test carefully!
 	[[self window] discardCachedImage]; // make sure not use the cached image
 
 	do {
-		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged)
 		{
 			// set up the size and magScale
-			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+			if ([theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged)
 			{
 				currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
 				if (currentLevel <= 1)
@@ -2334,7 +2334,7 @@ failed. If you change the code below, be sure to test carefully!
 				}
 			}
 			// get Mouse location and check if it is with the view's rect
-			if (!([theEvent type]==NSFlagsChanged))
+			if (!([theEvent type]==NSEventTypeFlagsChanged))
 				mouseLocWindow = [theEvent locationInWindow];
 			mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
 			// check if the mouse is in the rect
@@ -2416,7 +2416,7 @@ failed. If you change the code below, be sure to test carefully!
 				[[self window] restoreCachedImage];
 				[[self window] flushWindow];
 				// autoscroll
-				if (!([theEvent type]==NSFlagsChanged))
+				if (!([theEvent type]==NSEventTypeFlagsChanged))
 					[self autoscroll: theEvent];
 				if (currentLevel >= 3)
 					[[self window] cacheImageInRect:magRectWindow];
@@ -2480,10 +2480,10 @@ failed. If you change the code below, be sure to test carefully!
     
 	do {
         
-		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
             
 			// set up the size and magScale
-			if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+			if ([theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
 				currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
 				if (currentLevel <= 1) {
 					magWidth = 150; magHeight = 100;
@@ -2499,7 +2499,7 @@ failed. If you change the code below, be sure to test carefully!
             
 			// get Mouse location and check if it is with the view's rect
 			
-			if (!([theEvent type]==NSFlagsChanged))
+			if (!([theEvent type]==NSEventTypeFlagsChanged))
 				mouseLocWindow = [theEvent locationInWindow];
             mouseLocView = [[self overView  ]convertPoint: mouseLocWindow fromView: nil];
            //  mouseLocView = [[[self window] contentView] convertPoint:mouseLocWindow toView: nil];
@@ -2697,13 +2697,13 @@ failed. If you change the code below, be sure to test carefully!
 #endif
 
 	do {
-		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown ||
-			[theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic)
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown ||
+			[theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic)
 		{
 			// restore the cached image in order to clear the rect
 			[[self window] restoreCachedImage];
 			// get Mouse location and check if it is with the view's rect
-			if (!([theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic))
+			if (!([theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic))
 			{
 				mouseLocWindow = [theEvent locationInWindow];
 				// scroll if the mouse is out of visibleRect
@@ -3004,13 +3004,13 @@ failed. If you change the code below, be sure to test carefully!
 	[path setLineWidth: 0.01];
 
 	do {
-		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown ||
-			[theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic)
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown ||
+			[theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic)
 		{
 			// restore the cached image in order to clear the rect
 			[[self window] restoreCachedImage];
 			// get Mouse location and check if it is with the view's rect
-			if (!([theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic))
+			if (!([theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic))
 			{
 				mouseLocWindow = [theEvent locationInWindow];
 				// scroll if the mouse is out of visibleRect

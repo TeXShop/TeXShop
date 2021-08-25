@@ -211,7 +211,6 @@
 	//   end tell
 	NSMutableString *script = [NSMutableString string];
     
-#warning 64BIT: Check formatting arguments
 	[script appendFormat:@"open -a '%@' '%%s' &&", [[NSBundle mainBundle] bundlePath]];
 	[script appendString:@" osascript"];
 	[script appendString:@" -e 'tell application \"TeXShop\"'"];

@@ -2518,7 +2518,6 @@ This method updates the textField that represents the name of the selected font 
 {
 	NSString *fontDescription;
 
-#warning 64BIT: Check formatting arguments
 	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [self.documentFont displayName], [self.documentFont pointSize]];
 	[_documentFontTextField setStringValue:fontDescription];
 }
@@ -2527,7 +2526,6 @@ This method updates the textField that represents the name of the selected font 
 {
 	NSString *fontDescription;
 
-#warning 64BIT: Check formatting arguments
 	fontDescription = [NSString stringWithFormat:@"%@ - %2.0f", [SUD stringForKey:ConsoleFontNameKey], [SUD floatForKey:ConsoleFontSizeKey]];
 	[_consoleFontTextField setStringValue:fontDescription];
 }

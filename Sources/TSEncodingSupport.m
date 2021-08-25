@@ -96,7 +96,7 @@ static TSEncoding _availableTexworksEncodings[] = {
     { 0, kCFStringEncodingWindowsCyrillic}, //		@"Windows Cyrillic" },
     { 0, kCFStringEncodingKOI8_R}, //				@"KOI8_R" },
     { 0, kCFStringEncodingGB_18030_2000}, //		@"GB 18030" },
-    { 0, kCFStringEncodingASCII}, //
+//    { 0, kCFStringEncodingASCII}, //
 };
 
 
@@ -373,6 +373,7 @@ static TSEncoding _availableTexworksEncodings[] = {
 			return _availableEncodings[i].nsEnc;
 	}
     
+    NSLog(@"no TeXShop code");
 
     for (i = 0; i < ARRAYSIZE(_availableTexworksEncodings); ++i) {
         //		if ([key isEqualToString:_availableEncodings[i].name])

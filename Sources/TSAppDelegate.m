@@ -153,7 +153,6 @@
 	
 		// Determine CPU type
 		cpu_type_t cputype;
-#warning 64BIT: Inspect use of sizeof
 		size_t s = sizeof cputype;
 		if (sysctlbyname("hw.cputype", &cputype, &s, NULL, 0) == 0 && cputype == CPU_TYPE_I386) {
 			[SUD setObject:@"/usr/local/teTeX/bin/i386-apple-darwin-current" forKey:TetexBinPath];
@@ -241,6 +240,11 @@
         atLeastCatalina = YES;
     else
         atLeastCatalina = NO;
+    
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_11_1)
+        atLeastMonterey = YES;
+    else
+        atLeastMonterey = NO;
     
     
 /*
@@ -909,8 +913,7 @@
 // mitsu 1.29 (P)
 - (void) finishCommandCompletionConfigure
 {
-	NSString            *completionPath, *small;
-	NSData              *myData;
+	NSString            *small;
     
     unichar bullet = 0x2022;
     unichar smallless = 0x2039;
@@ -978,7 +981,7 @@
 - (void)reReadCommandCompletionData // CommandCompletionPathRegular or CommandCompletionPathXML
 {
     
-    NSString            *filePath, *completionPath, *small, *completionFileName;
+    NSString            *completionPath, *completionFileName;
     NSData              *myData;
 
     g_commandCompletionList = nil;

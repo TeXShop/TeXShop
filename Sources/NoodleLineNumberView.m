@@ -57,6 +57,14 @@
 		_linesToMarkers = [[NSMutableDictionary alloc] init];
 		
         [self setClientView:[aScrollView documentView]];
+        
+        // In Monterey, a bug causes many line numbers to be omitted during scrolling. Below is a fix. 8/8/2021 Koch
+        
+        if (atLeastMonterey)
+            
+            self.myScrollView = aScrollView;
+        
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollEnded:) name:NSScrollViewDidEndLiveScrollNotification object:(NSScrollView *)aScrollView];
     }
     return self;
 }
@@ -184,10 +192,21 @@
 
 - (void)textDidChange:(NSNotification *)notification
 {
-	// Invalidate the line indices. They will be recalculated and recached on demand.
-	[self invalidateLineIndices];
+  //  if (notification.object == [self.clientView textStorage])
+    {
+        // Invalidate the line indices. They will be recalculated and recached on demand.
+        [self invalidateLineIndices];
 	
-    [self setNeedsDisplay:YES];
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (void)scrollEnded:(NSNotification *)notification
+{
+    // Invalidate the line indices. They will be recalculated and recached on demand.
+   // [self invalidateLineIndices];
+    if (notification.object == self.myScrollView)
+        [self setNeedsDisplay:YES];
 }
 
 - (NSUInteger)lineNumberForLocation:(CGFloat)location
@@ -297,12 +316,14 @@
         }
     */
     // Later Martin Hairer proposed the following safer and shorter fix
+        
         if (fabs(oldThickness - newThickness) > 1)
               {
                   dispatch_async(dispatch_get_main_queue(), ^{
                       [self setRuleThickness:newThickness];
                   });
               }
+         
 	}
 }
 

@@ -89,7 +89,7 @@
         self.locationSaved = NO;
         self.verticalSplitSaved = NO;
         self.horizontalSplitSaved = NO;
-  		}
+        }
      return self;
 }
 
@@ -522,15 +522,20 @@
         [self removeBlurringByResettingMagnification]; // for Yosemite's bug
 	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
 		[self toggleDrawer: self];
+   
     
      aPage = [[self document] pageAtIndex: 0];
     [self goToPage: aPage];
-    visibleRect = [[self documentView] bounds];
-     visibleRect.origin.x = visibleRect.size.width / 2.0;
-    visibleRect.origin.y = visibleRect.size.height;
+     visibleRect = [[self documentView] bounds];
+      visibleRect.origin.x = visibleRect.size.width / 2.0;
+     visibleRect.origin.y = visibleRect.size.height;
+    // visibleRect.origin.x = 0;
+    // visibleRect.origin.y = 0;
      visibleRect.size.width = 10;
      visibleRect.size.height = 10;
     [[self documentView] scrollRectToVisible: visibleRect];
+//    NSLog(@"This is page routine.");
+     
     
     
     
@@ -638,6 +643,8 @@
 	PDFPage		        *myPage;
 	NSData		        *theData;
     NSRect              sizeRect;
+    BOOL                visibleRectExists;
+
 
  	// A note below explains dangers of NSDisableScreenUpdates
     // but these dangers don't apply to Intel on recent systems.
@@ -662,7 +669,21 @@
 	else
 		needsInitialization = NO;
 	
-	NSRect visibleRect = [[self documentView] visibleRect];
+	// NSRect visibleRect = [[self documentView] visibleRect];
+    
+    NSRect visibleRect = [[[self documentView] enclosingScrollView] documentVisibleRect];
+    
+//    double a, b, c, d;
+//    a = visibleRect.origin.x; b = visibleRect.origin.y; c = visibleRect.size.height; d = visibleRect.size.width;
+//    if ((a * a < 0.5) && (b * b < 0.5) && (c * c < 0.5) && (d * d < 0.5))
+      if ((visibleRect.origin.x == 0) && (visibleRect.origin.y == 0) && (visibleRect.size.height == 0) && (visibleRect.size.height == 0))
+        visibleRectExists = NO;
+    else
+        visibleRectExists = YES;
+    
+      
+    // NSLog(@"1: OriginX = %f, OriginY = %f, Size.height = %f, Size.width = %f", visibleRect.origin.x, visibleRect.origin.y, visibleRect.size.height, visibleRect.size.width);
+    
 	NSRect fullRect = [[self documentView] bounds];
 	
 	drawMark = NO;
@@ -688,10 +709,7 @@
         // NSView *myView = [[self window] contentView];
         
         NSImage *myImage;
-        NSData  *data;
-        NSBitmapImageRep *myRep;
-        NSSize mySize, imgSize;
-  
+      
 /*
         NSInteger myChoice = [SUD integerForKey:CreateImageKey];
         
@@ -821,12 +839,47 @@
  //   release, so the "fix" has been removed. Only time will tell ...
     
     
-//	visibleRect.origin.y = visibleRect.origin.y + difference - 1;
-    visibleRect.origin.y = visibleRect.origin.y + difference - 1;
-	[[self documentView] scrollRectToVisible: visibleRect];
+	visibleRect.origin.y = visibleRect.origin.y + difference ;
     
+    //comment this out in August, 2021
+   //  visibleRect.origin.y = visibleRect.origin.y  - 1;
     
+//  The line below is an attempt to fix the slight displacement after typesetting. The idea behind the fix is that
+//  documentation claims the scrolling is just enough to display the visible rect. So we make it very thin so the stuff at the bottom doesn't
+//  cause problems. This seems to work (at first glance!). 8/8/2021; Koch
+    visibleRect.size.height = 3;
+//    NSLog(@"The value is %@", @(difference - 1));
+    if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5))
+    {
+        [[self documentView] scrollRectToVisible: visibleRect];
+   // NSLog(@"2: New OriginX = %f, OriginY = %f, Size.height = %f, Size.width = %f", visibleRect.origin.x, visibleRect.origin.y, visibleRect.size.height, visibleRect.size.width);
+    }
+    else if (! visibleRectExists)
+    {
+        aPage = [[self document] pageAtIndex: 0];
+       [self goToPage: aPage];
+       visibleRect = [[self documentView] bounds];
+        visibleRect.origin.x = visibleRect.size.width / 2.0;
+       visibleRect.origin.y = visibleRect.size.height;
+        // visibleRect.origin.x = 0;
+        // visibleRect.origin.y = 0;
+        visibleRect.size.width = 10;
+        visibleRect.size.height = 10;
+       [[self documentView] scrollRectToVisible: visibleRect];
+       //  NSLog(@"Should be at top");
+    }
+    else
+    {
+       //  NSLog(@"Fell through");
+       //  NSLog(@"The index is %d", theindex);
+        visibleRect.origin.x = 0;
+        visibleRect.origin.y = 0;
+        visibleRect.size.width = 10;
+        visibleRect.size.height = 10;
+       [[self documentView] scrollRectToVisible: visibleRect];
 
+    }
+    
     
 //    NSLog(@"The index is %d", theindex);
 //    [currentPage setIntegerValue:theindex];
@@ -3493,7 +3546,7 @@ The system then remembers the new number and sends is to the Timer which will di
  rect = NSMakeRect(0, 0, 1, 1);
  
  do {
- if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+ if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged)
  {
  
  
@@ -3501,7 +3554,7 @@ The system then remembers the new number and sends is to the Timer which will di
  // [[self window] flushWindow];
  
  // get Mouse location and check if it is with the view's rect
- if (!([theEvent type]==NSFlagsChanged ))
+ if (!([theEvent type]==NSEventTypeFlagsChanged ))
  {
  mouseLocWindow = [theEvent locationInWindow];
  // scroll if the mouse is out of visibleRect
@@ -3584,12 +3637,12 @@ The system then remembers the new number and sends is to the Timer which will di
     rect = NSMakeRect(0, 0, 1, 1);
     
     do {
-        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged)
+        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged)
         {
             
             
              // get Mouse location and check if it is with the view's rect
-            if (!([theEvent type]==NSFlagsChanged ))
+            if (!([theEvent type]==NSEventTypeFlagsChanged ))
             {
                 mouseLocWindow = [theEvent locationInWindow];
                 // scroll if the mouse is out of visibleRect
@@ -3805,8 +3858,8 @@ The system then remembers the new number and sends is to the Timer which will di
 #endif
 
 	do {
-		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown ||
-			[theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic)
+		if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown ||
+			[theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic)
 		{
 			// restore the cached image in order to clear the rect
             
@@ -3817,7 +3870,7 @@ The system then remembers the new number and sends is to the Timer which will di
  			 [[self window] flushWindow];
             
 			// get Mouse location and check if it is with the view's rect
-			if (!([theEvent type]==NSFlagsChanged || [theEvent type]==NSPeriodic))
+			if (!([theEvent type]==NSEventTypeFlagsChanged || [theEvent type]==NSPeriodic))
 			{
 				mouseLocWindow = [theEvent locationInWindow];
 				// scroll if the mouse is out of visibleRect

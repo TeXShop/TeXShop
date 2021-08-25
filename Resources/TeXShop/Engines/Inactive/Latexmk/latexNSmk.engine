@@ -1,5 +1,4 @@
 #!/bin/bash
-# For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
@@ -12,10 +11,10 @@ export localrc=""
 if [ -e ./platexmkrc ] ; then
 	export localrc="-r ./platexmkrc"
 fi
-# For transpareency set variable to read special config file if if it exists
-if [ -e "/Library/TeX/Root/texmf-dist/dvipdfmx/dvipdfmx-unsafe.cfg" ]; then
-	export specialconfig="-i dvipdfmx-unsafe.cfg"
+# Add the requested options to $pdflatex if there
+if [ -n "${2}" ] ; then
+#"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions=q/${2}/" -r "${TSBIN}/latexNSmkrc" ${localrc} "$1"
+"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions='${2}'" -r "${TSBIN}/latexNSmkrc" ${localrc} "$1"
 else
-	export specialconfig=""
+"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/latexNSmkrc" ${localrc} "$1"
 fi
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" ${2} -r "${TSBIN}/xelatexTRmkrc" ${localrc} "$1"

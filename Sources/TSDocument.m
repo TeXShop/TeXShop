@@ -2509,7 +2509,6 @@ else {
 	if (theRange.length > 0) {
 		NSString *statString = [[textView string] substringWithRange:theRange];
 		NSString *tempDir = NSTemporaryDirectory();
-#warning 64BIT: Check formatting arguments
 		myFileName = [tempDir stringByAppendingPathComponent: [NSString stringWithFormat: @"%.0f.%@", [NSDate timeIntervalSinceReferenceDate] * 1000.0, @"txt"]];
 		self.statTempFile = myFileName; // when we are done, the file will be erased and the variable released and set to zero
 		[statString writeToFile:myFileName atomically:YES encoding:_encoding error: NULL];
@@ -2600,7 +2599,6 @@ else {
 {
 	if (showBadEncodingDialog) {
 		NSString *theEncoding = [[TSEncodingSupport sharedInstance] localizedNameForStringEncoding: _badEncoding];
-#warning 64BIT: Check formatting arguments
 		NSBeginAlertSheet(NSLocalizedString(@"This file was opened with IsoLatin9 encoding.", @"This file was opened with IsoLatin9 encoding."),
 						  nil, nil, nil, theWindow, nil, nil, nil, nil,
 						  NSLocalizedString(@"The file could not be opened with %@ encoding because it was not saved with that encoding. If you wish to open in another encoding, close the window and open again.",
@@ -3070,7 +3068,6 @@ if ( ! skipTextWindow) {
             NSCountWindows(&numberOfWindows);
 			
 			if (numberOfWindows>0){
-#warning 64BIT: Inspect use of sizeof
 				listOfWindows = malloc(numberOfWindows * sizeof(NSInteger));
 				//NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
 				NSWindowList(numberOfWindows, listOfWindows);
@@ -3877,7 +3874,6 @@ preference change is cancelled. "*/
 		templateString = [[NSMutableString alloc] initWithData:myData encoding:theEncoding] ;
 
 		// check and rebuild the trailing string...
-#warning 64BIT: Inspect pointer casting
 		numTabs = [self textViewCountTabs:textView andSpaces:(NSInteger *)&numSpaces];
 		for (i = 0; i < numTabs; i++)
 			[indentString appendString:@"\t"];
@@ -7044,7 +7040,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		fsize = [fileAttrs objectForKey:NSFileSize];
 		creationDate = [fileAttrs objectForKey:NSFileCreationDate];
 		modificationDate = [fileAttrs objectForKey:NSFileModificationDate];
-#warning 64BIT: Check formatting arguments
 		fileInfo = [NSString stringWithFormat:
 					NSLocalizedString(@"Path: %@\nFile size: %d bytes\nCreation date: %@\nModification date: %@", @"File Info"),
 		filePath,
@@ -7919,7 +7914,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	NSString                *fileName, *objectFileName, *objectName;
 	NSMutableArray          *pathsToBeMoved, *fileToBeMoved = 0;
 	id                      anObject, stringObject;
-	NSInteger               myTag;
 	BOOL                    doMove, isOneOfOther, trashPDF;
     NSDirectoryEnumerator   *dirEnumerator;
 	NSEnumerator            *enumerator;
@@ -8056,9 +8050,25 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         [fileToBeMoved replaceObjectAtIndex:0 withObject: [anObject lastPathComponent]];
    //     NSLog(path2);
    //     NSLog([anObject lastPathComponent]);
+        
+  // August, 2021. A note from Erik A. Johnson reports that the following code fails on files in a Google Drive folder, because
+  // Google Drive does not support a trash folder. Moreover, the call itself is deprecated in Big Sur. See the Johnson email
+  // message in the source code Bugs folder.
+
+    /*
         [[NSWorkspace sharedWorkspace]
             performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved tag:&myTag];
-    }
+    */
+        
+ // Johnson provided the following fix. The fix tries to trash the file, but if there is an error, it completely removes the file.
+    
+         
+        NSError *err;
+        [[NSFileManager defaultManager] trashItemAtURL: [NSURL fileURLWithPath:anObject] resultingItemURL: nil error:&err];
+        (err.code==NSFeatureUnsupportedError && [[NSFileManager defaultManager] removeItemAtPath:anObject error:nil]);
+        
+     
+     }
 	
 }
 
@@ -8299,7 +8309,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 		    myPath, 0, args, &iopipe);
 		    
 	if (err != 0) 
-#warning 64BIT: Check formatting arguments
 	//    NSLog(@"Error %d in AuthorizationExecuteWithPrivileges", err);
     }
     
@@ -8339,8 +8348,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 			
 			// modified by Terada
 			NSTextContainer *container;
-#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
-#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
 			NSSize maximumSize = NSMakeSize(FLT_MAX, FLT_MAX);
 			
 			[scrollView setAutoresizingMask:NSViewWidthSizable];
@@ -8450,8 +8457,6 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             
             // modified by Terada
             NSTextContainer *container;
-#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
-#warning 64BIT: Inspect use of MAX/MIN constant; consider one of LONG_MAX/LONG_MIN/ULONG_MAX/DBL_MAX/DBL_MIN, or better yet, NSIntegerMax/Min, NSUIntegerMax, CGFLOAT_MAX/MIN
             NSSize maximumSize = NSMakeSize(FLT_MAX, FLT_MAX);
             
             [scrollView setAutoresizingMask:NSViewWidthSizable];

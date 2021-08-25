@@ -336,7 +336,6 @@
 			}
 			if(pclose(fp) != 0) {
 				NSBeep();
-#warning 64BIT: Check formatting arguments
 				NSRunAlertPanel(NSLocalizedString(@"Error", @"Error"), [NSString stringWithFormat:NSLocalizedString(@"%@ does not exist.", @"%@ does not exist."), target], @"OK", nil, nil);
 			}
 		}

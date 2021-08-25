@@ -53,7 +53,7 @@
     //   @property (retain)  NSDictionary        *limitedXMLColorAttribute;
     
 
-    NSRange colorRange, searchRange, search1Range, myRange, aRange;
+    NSRange colorRange, searchRange, search1Range, myRange;
     NSUInteger  location;
     BOOL        done;
     

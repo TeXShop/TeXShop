@@ -1680,7 +1680,6 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
     
     if (noErr == err) {
         LSLaunchURLSpec spec;
-#warning 64BIT: Inspect use of sizeof
         memset(&spec, 0, sizeof(LSLaunchURLSpec));
         spec.appURL = appURL;
         spec.itemURLs = (CFArrayRef)CFBridgingRetain(fileURLs);
@@ -1786,7 +1785,6 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
                 name = @"";
             else if (nameCount > 2)
                 name = [name stringByAppendingString:@" et al"];
-#warning 64BIT: Check formatting arguments
             NSString *compValue = [NSString stringWithFormat:@"%@%@%% %@, %@", citeKey, COMPLETIONSTRING, name, title];
             [returnArray addObject:compValue];
         }

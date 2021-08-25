@@ -382,6 +382,7 @@ BOOL                atLeastSierra;
 BOOL                atLeastHighSierra;
 BOOL                atLeastMojave;
 BOOL                atLeastCatalina;
+BOOL                atLeastMonterey;
 BOOL                BuggyHighSierra;
 BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 

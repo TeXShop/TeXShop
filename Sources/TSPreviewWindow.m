@@ -423,7 +423,7 @@ extern NSPanel *pageNumberWindow;
 		return;
 	}
 	
-	if ([self.myDocument fromKit] && ([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+	if ([self.myDocument fromKit] && ([theEvent type] == NSEventTypeKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		if ([[theEvent characters] characterAtIndex:0] == '[') {
 			// [[self.myDocument pdfKitView] goBack: self];
 			[self.activeView zoomOut:nil];
@@ -440,7 +440,7 @@ extern NSPanel *pageNumberWindow;
   
     
 #ifdef IMMEDIATEMAGNIFY
-  if (([self.myDocument fromKit]) && ([theEvent type] == NSLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
+  if (([self.myDocument fromKit]) && ([theEvent type] == NSEventTypeLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
   {
       NSUInteger modifiers = NSEvent.modifierFlags;
       NSUInteger modifiersPressed = modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption);
@@ -469,7 +469,7 @@ extern NSPanel *pageNumberWindow;
 		
 		unichar	theChar;
 
-		if ([theEvent type] == NSKeyDown) {
+		if ([theEvent type] == NSEventTypeKeyDown) {
 
 			/*
 			if (([theEvent modifierFlags] & NSControlKeyMask) &&
@@ -523,12 +523,12 @@ extern NSPanel *pageNumberWindow;
 
 #ifdef MITSU_PDF
 
-		else if ([theEvent type] == NSFlagsChanged) // mitsu 1.29 (S2)
+		else if ([theEvent type] == NSEventTypeFlagsChanged) // mitsu 1.29 (S2)
 		{
 			[[self.myDocument pdfView] flagsChanged: theEvent];
 			return;
 		}
-		else if ([theEvent type] == NSLeftMouseDown) // mitsu 1.29 (O) resize PDF view
+		else if ([theEvent type] == NSEventTypeLeftMouseDown) // mitsu 1.29 (O) resize PDF view
 		{
 			// check if mouse was in vertical scroller's knob
 			MyPDFView *pdfView = [self.myDocument pdfView];
@@ -762,15 +762,12 @@ extern NSPanel *pageNumberWindow;
 - (void) splitPdfKitWindow: (id)sender
 {
 	NSSize		theSize, newSize1, newSize2;
-	NSRect		theFrame, theFrame1, theFrame2, theBounds;
-    NSRect      oldVisibleRect, oldBounds, revisedBounds, oldFrame, revisedFrame;
-    NSRect      myVisibleRect, myFrameRect, myBoundsRect;
+	NSRect		theFrame, theFrame1, theFrame2;
+    NSRect      myVisibleRect;
     double      myScrollAmount;
     BOOL        result;
     double      temp1, temp2, myHeight, myHeight1;
-    NSRect      tempBounds;
-    NSInteger   theIndex;
- 
+    
     /*
     theFrame = [[(MyPDFKitView *)self.myPDFKitView documentView] frame];
     theBounds = [[(MyPDFKitView *)self.myPDFKitView documentView] visibleRect];

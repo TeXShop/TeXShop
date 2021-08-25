@@ -71,10 +71,10 @@
     
     do {
         
-        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
             
             // set up the size and magScale
-            if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+            if ([theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
                 currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
                 if (currentLevel <= 1) {
                     magWidth = 150; magHeight = 100;
@@ -90,7 +90,7 @@
             
             // get Mouse location and check if it is with the view's rect
             
-            if (!([theEvent type]==NSFlagsChanged)) {
+            if (!([theEvent type]==NSEventTypeFlagsChanged)) {
                 mouseLocWindow = [theEvent locationInWindow];
                 mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
                 mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
@@ -177,10 +177,10 @@
     
     do {
         
-        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
             
             // set up the size and magScale
-            if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+            if ([theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
                 currentLevel = originalLevel; // +(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
                 if (currentLevel <= 1) {
                     magWidth = 150; magHeight = 100;
@@ -217,7 +217,7 @@
             
             // get Mouse location and check if it is with the view's rect
             
-            if (!([theEvent type]==NSFlagsChanged)) {
+            if (!([theEvent type]==NSEventTypeFlagsChanged)) {
                 mouseLocWindow = [theEvent locationInWindow];
                 mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
                 mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
@@ -305,12 +305,12 @@
     
     do {
         
-        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+        if ([theEvent type]==NSLeftMouseDragged || [theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
             
             // [[self window] disableFlushWindow];
             
             // set up the size and magScale
-            if ([theEvent type]==NSLeftMouseDown || [theEvent type]==NSFlagsChanged) {
+            if ([theEvent type]==NSEventTypeLeftMouseDown || [theEvent type]==NSEventTypeFlagsChanged) {
                 currentLevel = originalLevel+(([theEvent modifierFlags] & NSAlternateKeyMask)?1:0);
                 if (currentLevel <= 1) {
                     magWidth = 150; magHeight = 100;
@@ -341,7 +341,7 @@
             }
             // get Mouse location and check if it is with the view's rect
             
-            if (!([theEvent type]==NSFlagsChanged))
+            if (!([theEvent type]==NSEventTypeFlagsChanged))
                 mouseLocWindow = [theEvent locationInWindow];
             mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
             mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
@@ -395,7 +395,7 @@
                 // [self updateBackground: rect]; // [[self window] restoreCachedImage];
                 [self updateBackground:rect];
                 // autoscroll
-                if (!([theEvent type]==NSFlagsChanged))
+                if (!([theEvent type]==NSEventTypeFlagsChanged))
                     [self autoscroll: theEvent];
                 if (currentLevel >= 3)
                     ; // [[self window] cacheImageInRect:magRectWindow];

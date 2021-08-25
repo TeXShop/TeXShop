@@ -1,0 +1,103 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fswiss\fcharset0 Helvetica;\f2\fswiss\fcharset0 Helvetica-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red9\green79\blue209;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\cname textColor;\cssrgb\c0\c0\c0;\cssrgb\c0\c40784\c85490;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 From: Erik A Johnson <johnsone@usc.edu>\
+Subject: Trash Aux Files not working in a Google Drive folder\
+Date: August 16, 2021 at 2:31:22 AM PDT\
+To: Richard Koch <koch@math.uoregon.edu>\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf2 \
+\pard\pardeftab720\partightenfactor0
+\cf3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 Dear Richard:\
+\
+The current version of Google Drive does not have a Trash folder, so trying to move items in the Finder from a Google Drive to the trash results in a dialog\
+\
+Are you sure you want to delete \'93<filename>\'94?\
+This item will be deleted immediately. You can\'92t undo this action.\
+\
+For a .tex file in a Google Drive folder, the Trash Aux Files button in the TeXShop console, as well as the corresponding menu item, fails because there is no trash folder into which to move them. \'a0While I've been working on a paper in the past few weeks, it has gotten quite tedious to go into the Finder or the command line to delete all of the aux files every time I mess up in my LaTeX code (which, I'm afraid to say, is all too often).\
+\
+Below is my exploration of alternate options in the TeXShop source code and a suggestion for a fix. \'a0Hope this is helpful.\
+\
+Best regards,\
+\
+Erik\
+\
+--\
+Erik A Johnson, PhD\
+Vice Dean for Academic Programs, Viterbi School\'a0of Engineering\
+Professor, Sonny Astani Department of Civil and\'a0Environmental Engineering\
+University of Southern California\
+\'a0\'a0\
+------------------------------------------------------------------------\
+\
+\
+To explore, I downloaded the source and found where your code does this: TSDocument.m -trashAux method uses\
+\
+[[NSWorkspace sharedWorkspace]\'a0performFileOperation:NSWorkspaceRecycleOperation source:path2 destination:nil files:fileToBeMoved\'a0tag:&myTag];\
+\
+I verified that, for the aux files in a Google Drive folder, the above returns NO and myTag is set to -1 (negative number indicates some form of failure).\
+\
+1. Since NSWorkspace's -performFileOperation:... is deprecated and\'a0Xcode suggests using NSWorkspace's recycleURLs:..., I tried\'a0recycleURLs:... -- it worked a little better in that TeXShop gives a dialog similar\'a0to the Finder's "Are you sure ...". \'a0However, 99% of the time I hit the Trash Aux Files button, I am sure I want to do trash them, so to be presented with that warning each time would also be annoying. \'a0(Additionally, I am not sure of the "right" way to make this a synchronous call; there is a suggestion at\'a0{\field{\*\fldinst{HYPERLINK "https://stackoverflow.com/questions/35694608/recycleurlscompletionhandler-with-nil-makes-it-block-until-completion"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 https://stackoverflow.com/questions/35694608/recycleurlscompletionhandler-with-nil-makes-it-block-until-completion}}\'a0but it is said to be not ideal; I don't know enough about dispatch queues to evaluate.)\
+\
+2. I tried replacing\'a0performFileOperation:... with NSFileManager's -trashItemAtURL:...\
+\
+NSError\'a0*err;\
+[[NSFileManager defaultManager]\'a0[fm trashItemAtURL:[NSURL\'a0fileURLWithPath:anObject]\'a0resultingItemURL:nil error:&err];\
+\
+But this failed for aux files\'a0in a Google Drive folder (again because there is no trash folder to which to move the file).\
+\
+3. I adapted the\'a0askFinderToMoveFilesToTrash(...) routine and it's helper\'a0getFinderPID() from\'a0{\field{\*\fldinst{HYPERLINK "https://github.com/ali-rantakari/trash/blob/master/trash.m"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 https://github.com/ali-rantakari/trash/blob/master/trash.m}}\'a0-- this sends an Apple Event to the Finder to tell it to trash the items. \'a0This does work but seems overkill since the Finder just permanently\'a0deletes the files (because there is no Trash folder on the\'a0Google Drive volume) and items #4 and #5 do the same thing but without the overhead of sending Apple Events.\
+\
+4. So finally I changed to:\
+\
+NSError\'a0*err;\
+[[NSWorkspace\'a0sharedWorkspace]\'a0performFileOperation:NSWorkspaceRecycleOperation\'a0source:path2\'a0destination:nil\'a0files:fileToBeMoved\'a0tag:&myTag] // the existing code\
+||\
+[[NSFileManager\'a0defaultManager]\'a0trashItemAtURL:[NSURL\'a0fileURLWithPath:anObject]\'a0resultingItemURL:nil\'a0error:&err] // try again to see if the error indicates that there is no Trash on the volume\
+||\
+(err.code==NSFeatureUnsupportedError\'a0&& [[NSFileManager\'a0defaultManager]\'a0removeItemAtPath:anObject\'a0error:nil]); // finally fall back and just permanently delete\
+\
+that tries\'a0performFileOperation:NSWorkspaceRecycleOperation... and on failure falls back to\'a0trashItemAtURL:... and if that fails with the\'a0NSFeatureUnsupportedError code ({\field{\*\fldinst{HYPERLINK "https://stackoverflow.com/questions/18479522/how-to-determine-if-a-volume-supports-trash"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 https://stackoverflow.com/questions/18479522/how-to-determine-if-a-volume-supports-trash}}), then just delete the file using\'a0removeItemAtPath:...\
+\
+5. Arguably, using both performFileOperation:NSWorkspaceRecycleOperation and\'a0trashItemAtURL:... is quite redundant and one probably should just use\
+\
+NSError\'a0*err;\
+[[NSFileManager\'a0defaultManager]\'a0trashItemAtURL:[NSURL\'a0fileURLWithPath:anObject]\'a0resultingItemURL:nil\'a0error:&err]\
+||\
+(err.code==NSFeatureUnsupportedError\'a0&& [[NSFileManager\'a0defaultManager]\'a0removeItemAtPath:anObject\'a0error:nil]);\
+\
+This tries to send the file to the Trash but, if not supported, just\'a0deletes it. \'a0One\'a0could augment this a bit with some error checking and warning:\
+\
+NSUInteger numErrors = 0;\
+while\'a0(anObject = [enumerator\'a0nextObject]) \{\
+...\
+NSError *err;\
+[[NSFileManager defaultManager] trashItemAtURL:[NSURL fileURLWithPath:anObject] resultingItemURL:nil error:&err]\
+||\
+(err.code==NSFeatureUnsupportedError && [[NSFileManager defaultManager] removeItemAtPath:anObject error:nil]\
+|| numErrors++;\
+\}\
+If\'a0(numErrors) \{\
+NSBeginAlertSheet([NSString stringWithFormat:@"%@ Aux File%@ could not be trashed",@(numErrors),numErrors==1?@"":@"s"],...);\
+//\'a0or\'a0NSAlertPanel(...) or ...\
+\}\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b \cf3 \ul \ulc3 CAVEAT
+\f1\b0 \ulnone : This summer, Google merged the individual consumer oriented Backup & Sync and the\'a0enterprise oriented Google Drive File Sream apps together into the Google Drive for Desktop; I do not recall\'a0(but could possibly be wrong) there being problems with B&S or GDFS, and I think TeXShop's Trash Aux Files worked as expected. \'a0It's possible that Google will fix Google Drive's shortcomings and will enable a Trash folder at some time in the future. \'a0If they do, the code in #5 should still work fine as the\'a0trashItemAtURL:... call should then start working properly and the fallback\'a0removeItemAtPath:... will never be called for a Google Drive folder.\
+\
+Anyway, hope that helps. \'a0Feel free to use.\
+\
+--------------------------------------------------------------\
+\
+}

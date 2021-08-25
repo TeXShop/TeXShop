@@ -14,6 +14,26 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.67</h3></P>
+There are six important changes:
+<ul>
+<li> In version 4.66, an unfortunate bug was introduced when the "Ascii" encoding was added to TeXShop. If the source file contains a magic line  at the top setting the encoding,  but the encoding is misspelled and
+thus not one of the encodings understood by TeXShop, then TeXShop hangs, and no typesetting can be done until the user quits and  restarts TeXShop. This is fixed, and TeXShop now puts up an error dialog and  chooses an alternate encoding. Incidentally, the best way to avoid this error is to use the "Encoding" Macro, which forces you to choose an encoding from a menu and only presents legal choices.
+
+
+<p>
+<li> Erik A. Johnson discovered that the "Trash AUX File" command in TeXShop fails when the source file is in a Google Drive volume  because Google Drive does not have a Trash Folder. He  examined the TeXShop sources and supplied several fixes for this problem. TeXShop 4.67 contains the most straightforward of his fixes. The fix calls the NSFileManager's "trashItemAtURL" method to put the item in the trash, but if this method returns an error, then it calls the "removeItemAtPath" method to remove the item entirely.
+
+<p><li> TeXShop now understands the "perl script" file type for files with extension ".pk". 
+<p><li>  Herbert Schulz revised the active engines pdflatexmk.engine and sepdflatexmk.engine and revised the 
+folders "Latexmk" and "GhostscriptTransparencyEngines" in ~/Library/TeXShop/Engines/Inactive/Latexmk. These
+changes have to do with passing parameters to the engines and on through pdflatexmk to the various binary
+files being called. Users should read the documentation in the Latexmk folder.
+<p><li> The remaining items fix bugs when TeXShop is run on macOS 12.1, Monterey. When line numbers are activated in the source window, the first bug caused missing line numbers during scrolling. The fix replaces these missing line numbers after the scroll is completed.
+<p><li> A second bug caused a slight displacement in the pdf window after each typesetting job. This has been a problem for many years, but the displacement was worse in Monterey. The bug fixes this problem, both in Monterey and in earlier versions of macOS.
+</ul>
+<p> During Monterey testing, an initial switch to "Single Window Mode" displayed only the tool bar of the new window, without the two content regions. This proved to be a resizing problem, fixed by resizing the window appropriately. Once fixed, the bug did not recur. Users who run into this problem should resize.
+
 <P><h3>TeXShop Changes 4.65 and 4.66</h3></P>
 
 TeXShop 4.65 was never released.
@@ -1979,7 +1999,7 @@ So the question is, what should TeXShop do in Dark Mode? Note that  TeXShop has 
 
 <p> To make this work, the Preference Panel's color choices have been completely rewritten. There is now a tab called "Themes" devoted  to coloring various components of the program. All of the color commands have been moved to this tab. These new color commands work on all systems supported by the program, not just on Mojave. In previous versions of TeXShop, many colors could only be changed using various obscure hidden Preference settings. Now all color choices are available in the Themes tab.
 
-<center> <img src="ThemeTab.png" width="500px" height="auto" /> </center>
+<center> <img src="ThemeTab.png" width="600px" height="auto" /> </center>
 
 <p>
 <li> The Themes portion of Preferences is shown above. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others are obscure. A full set of such choices is called a "Theme". TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave. The second menu sets the theme used in Dark Mode on Mojave. The final menu sets the theme which Preferences is currently editing.

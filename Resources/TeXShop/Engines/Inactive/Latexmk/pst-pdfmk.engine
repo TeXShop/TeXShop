@@ -1,4 +1,5 @@
 #!/bin/bash
+# For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
@@ -21,4 +22,4 @@ export localrc=""
 if [ -e ./platexmkrc ] ; then
 	export localrc="-r ./platexmkrc"
 fi
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/pst-pdfmkrc" ${localrc} "$1"
+"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" ${2} -r "${TSBIN}/pst-pdfmkrc" ${localrc} "$1"

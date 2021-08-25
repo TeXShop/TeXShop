@@ -298,13 +298,10 @@
 {
     
         NSString        *myFileName;
-        NSString        *foundFileName;
         NSNumber        *myNumber;
         NSDate          *myDate;
         NSMutableArray  *args;
         NSString        *enginePath, *tetexBinPath;
-        NSInteger       pageNumber;
-        CGFloat         xPosition, yPosition;
         NSString        *alternateBinPath;
         NSString        *rootFile, *mySyncTeXFileName;  
     
@@ -386,11 +383,8 @@
     float           hNumber[200], vNumber[200], WNumber[200], HNumber[200]; //, xNumber[200], yNumber[200];
     BOOL            firstPage[200];
     int             initialFirstPage;
-    int             boxNumber;
     NSRect          myOval;
     PDFPage         *thePage;
-    int             i;
-    PDFSelection    *theSelection;
     NSRect          pageSize;
     NSInteger       aPage;
     NSInteger       llx, lly;

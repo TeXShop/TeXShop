@@ -57,6 +57,7 @@
 }
 
 @property (weak)  TSDocument    *document;
+@property (weak)  NSScrollView  *myScrollView;
 
 - (id)initWithScrollView:(NSScrollView *)aScrollView;
 

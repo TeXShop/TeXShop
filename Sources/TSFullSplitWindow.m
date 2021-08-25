@@ -599,10 +599,10 @@
     
     
     
-    //    if (([theEvent type] == NSFlagsChanged) && ([theEvent modifierFlags] & NSCommandKeyMask))
+    //    if (([theEvent type] == NSEventTypeFlagsChanged) && ([theEvent modifierFlags] & NSCommandKeyMask))
     //        NSLog(@"yes");
     
-    if (([theEvent type] == NSKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
+    if (([theEvent type] == NSEventTypeKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
         
         if  ([[theEvent characters] characterAtIndex:0] == '[') {
             [self.myDocument doCommentOrIndentForTag:Munindent];
@@ -617,7 +617,7 @@
     
 #ifdef IMMEDIATEMAGNIFY
     
-    if (([self.myDocument fromKit]) && ([theEvent type] == NSLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
+    if (([self.myDocument fromKit]) && ([theEvent type] == NSEventTypeLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
     {
         NSUInteger modifiers = NSEvent.modifierFlags;
         NSUInteger modifiersPressed = modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption);

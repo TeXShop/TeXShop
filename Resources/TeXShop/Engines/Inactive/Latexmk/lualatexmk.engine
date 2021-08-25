@@ -1,6 +1,8 @@
 #!/bin/bash
+# for TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+#export LTMKBIN="/Library/TeX/texbin"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
 # make sure latexmkrcedit exists in bin
 if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then
@@ -11,9 +13,4 @@ export localrc=""
 if [ -e ./platexmkrc ] ; then
 	export localrc="-r ./platexmkrc"
 fi
-# Add the requested options to $pdflatex if there
-if [ -n "${2}" ] ; then
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions='${2}'" -r "${TSBIN}/lualatexmkrc" ${localrc} "$1"
-else
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/lualatexmkrc" ${localrc} "$1"
-fi
+"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" ${2} -r "${TSBIN}/lualatexmkrc" ${localrc} "$1"

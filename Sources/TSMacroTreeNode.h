@@ -150,7 +150,6 @@
 
 #define PRINT(str1, str2) (printf("%s: %s\n", (str1)?[str1 cStringUsingEncoding: NSASCIIstringEncoding]:nil, (str2)?[str2 cStringUsingEncoding: NSASCIIStringEncoding]:nil))
 
-// #warning 64BIT: Check formatting arguments
 #define _PRINT_NODE_INFO(str, node, ptr) (printf("[%p] %s(%d): %s\n", (ptr), (str)?[str cStringUsingEncoding: NSASCIIStringEncoding]:nil, [node retainCount], ([node name])?[[node name] cStringUsingEncoding: NSASCIIStringEncoding]:"(no name)"))
 #define NODE_INFO(str, node) (_PRINT_NODE_INFO(str, node, node))
 #define NODE_INFO_PLUS(str, node) (_PRINT_NODE_INFO(str, node, node+1))

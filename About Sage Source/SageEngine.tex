@@ -15,37 +15,49 @@
 \maketitle
 \vspace{-.3in}
 \section{Sage}
-Sage is a mathematical software system providing an open source alternative to Maple, Mathematica, and Matlab. Download from   
-\url{https://www.sagemath.org/download.html} for free. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
+Sage is an open source alternative to Maple, Mathematica, and Matlab. It can be downloaded from \url{https://www.sagemath.org}.
+At the time this report was written, that site directs Macintosh users to   
+\url{https://github.com/3-manifolds/Sage_macOS/releases} for a Macintosh version which contains  Intel code but also runs under emulation on Arm machines. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
 
-Begin by downloading Sage. Pick a repository, and then the page for Mac OS X, and then binaries for Intel, and finally a download package. Be sure to pick the package with name ending in x86\_64.app.dmg, rejecting the other offered distributions. 
+The Macintosh version of Sage 9.4 has been reconfigured, so it is important to use version 9.4 or later with this engine. When Sage 9.4 was first released, the Macintosh version had serious bugs. These were fixed by October, 2021; be sure to use the fixed version.
 
-Double click the dmg file to open it, and drag SageMath to your /Applications folder. Then rename the program to just SageMath.app. {\em It is very important to rename the program before running it for the first time.}
+To install, double click the dmg file to open it, and drag SageMath-9-4.app to your /Applications folder. Then double-click the install package in the dmg to install a small number of other programs.
 
-Using Apple's Terminal program in /Applications/Utilities, create a symbolic link to Sage in /usr/local/bin by typing each of the following lines. It is safest to  copy and paste these lines.
+Sage is updated regularly, so by the time you read this document there may be a later version available. This document will pinpoint changes you may need to make in our installation for a later version.
+
+\section{Installing the Sage Typesetting Engine and SageTeX}
+
+To use Sage, drag  the sage.engine file in this folder to $\sim/Library/TeXShop/Engines$, the folder of active engines for TeXShop. This step need only be done once, when you first install Sage. Unless the structure of Sage changes drastically, this engine should work with later versions of Sage as well.
+
+The Sage program comes with a folder of TeX style files named {\em sagetex}.  These style files allow Sage code to be embedded in a LaTeX document. During typesetting, Sage is called to process the Sage code, and the output is included in the pdf output file. This is an easy way to add graphs of functions to documents, perform symbolic integration, and include intricate numerical calculations. 
+
+The one tricky step is to find the sagetex folder in the Sage application  and copy it to a location where TeX will find it. Since sagetex depends strongly on the particular version of Sage being used, this step must be repeated each time Sage is updated on your system. 
+
+We will copy the sagetex folder to $\sim$/Library/texmf/tex/latex. Here $\sim$/Library is the Library folder in your home directory, not the system Library folder, and Apple usually hides the folder. But TeXShop has a command which opens
+$\sim$/Library/TeXShop. Create the texmf/tex/latex folders inside $\sim$/Library if they do not currently exist.
+
+In the folder containing the document you are now reading, there is a folder named ``Sage and Latexmk''  That folder contains the sagetex folder for SageMath-9-4. If you have version 9-4, drag and drop this sagetex folder to the location
+$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
+
+If you have a later version of SageMath, the program itself contains the sagetex folder for that version. Follow the steps below to obtain this folder. These instructions list the version number of Sage. Change the two occurrences of 9-4 to the later version number for future versions of Sage.
 \begin{verbatim}
-  cd /usr/local/bin
-  sudo ln -s /Applications/SageMath.app/Contents/Resources/sage/sage .
+    cd /Applications/SageMath-9-4.app/Contents/Frameworks/Sage.framework
+    cd Versions/9.4/local/share/texmf/tex/latex
 \end{verbatim}
 
-Next create a sagetex folder in /usr/local/texlive/texmf-local/tex/latex and make a symbolic link of sagetex.sty in that folder to allow TEX to use the sagetex package.
-{\fontsize{8}{8}
+These commands set the current Terminal directory to the location of sagetex. Issue the command
 \begin{verbatim}
- cd /usr/local/texlive/texmf-local/tex/latex 
- sudo mkdir sagetex
- cd sagetex
- sudo ln -s \
-  /Applications/SageMath.app/Contents/Resources/sage/local/share/texmf/tex/latex/sagetex/sagetex.sty . 
- sudo mktexlsr
+     open .
 \end{verbatim}
-}
 
-Now run the SageMath program once; the first time it starts there will be a delay as it initializes various internal files. On Catalina, the first time you run the program, a dialog will appear warning that it is not properly signed. To get around this, hold down the command key and click on the program icon. A contextual menu will appear; click ``Open''. A warning dialog will appear, but continue anyway. From then on, the program will open naturally.
+to open this location in the Finder; notice the period at the end of this command. The result will be a Finder window containing the sagetex folder. Drag and drop this sagetex folder to the location
+$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
 
-These steps are only needed when Sage is first installed. To update to a later version of Sage, download the program as before, move it to /Applications, rename it to SageMath.app, and run it once. Done.
+
 
 \section{How SageTeX Works}
 
+This document ends with sample source code and output illustrating how sagetex works.
  In the source file, the initial line
 \begin{verbatim}
      % !TEX TS-program = sage
@@ -59,28 +71,34 @@ In the remaining source, sage commands are entered within lines of the form
 \begin{verbatim}
      \sage{....}
 \end{verbatim}
-These line cause sage to process commands and output LaTeX source fragments, which become part of the LaTeX document.
+These lines cause sage to process commands and output LaTeX source fragments, which become part of the LaTeX document.
 
 Notice in particular that sage can plot standard functions. Sage can also compute integrals symbolically; for example, look carefully at the command which processes $\int {{x^2 + x + 1} \over {(x - 1)^3 (x^2 + x + 2)}}$. This command contains standard LaTeX code to display the integral, but then Sage integrates and returns a typeset copy of the result.
 
 
-\section{Setting Up the Engine}
+%\section{Setting Up the Engine}
+%
+%This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. Dan Drake, who is responsible for SageTeX, wrote this engine.
+%
+%The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you might also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this.
+%
+%But there is an ingenious way to work around this upgrade problem. Rather than copying the style file, we just
+%create a symbolic link from it's location in TeX Live to its location in Sage. If we always rename the sage program to "SageMath", then this link will remain valid after updates and need not be changed. That is why we created a symbolic link inside TeX Live to Sage.
 
-This folder contains an engine file named ``sage.engine''. Move this file to the active portion of $\sim$/Library/TeXShop/Engines. Dan Drake, who is responsible for SageTeX, wrote this engine.
+\section{Another Sample}
 
-The ``Sage'' program contains a style file named ``sagetex.sty'' and a number of support files. This style file is supposed to be copied to your TeX distribution. The file depends on other features of sage, so whenever you upgrade sage, you might also need to upgrade sagetex.sty in your TeX distribution. It is easy to forget to do this.
+The ``Sage and Latexmk" folder contains a more extensive sample file called ``example.tex'' by Dan Drake. That sample is set up to use pdflatexmk, but it also works with the standard sage engine by changing the word ``pdflatexmk'' to ``sage'' on the top line.
+Make a copy of this file in a separate folder and typeset to try out Sage.
 
-But there is an ingenious way to work around this upgrade problem. Rather than copying the style file, we just
-create a symbolic link from it's location in TeX Live to its location in Sage. If we always rename the sage program to "SageMath", then this link will remain valid after updates and need not be changed. That is why we created a symbolic link inside TeX Live to Sage.
 
 \section{A Debugging Warning}
 
-After one update to Sage, the sample document included in this folder stopped working. It turned out that the syntax for one Sage command had changed slightly. Breaking just one sage command caused them all to fail. Consequently, if you intend to use Sage together with TeX and suddenly nothing works, a little clever debugging will be required to determine and fix the bad sage command.
+After one update to Sage, the sample document included in this folder stopped working. It turned out that the syntax for one Sage command had changed slightly. Breaking just one sage command caused them all to fail. Consequently, if you intend to use Sage together with TeX and suddenly nothing works, a little clever debugging will be required to determine and fix the bad Sage command.
 
 
 
 \section{Final Remarks}
  
-A Sage tutorial is available at the Sage page \url{https://www.sagemath.org/help.html}. It is definitely recommended. Extensive additional documentation is available at the same web page.
+A Sage tutorial is available at the Sage page \url{https://www.sagemath.org}. It is definitely recommended. Extensive additional documentation is available at the same web page.
 \end{document}
 

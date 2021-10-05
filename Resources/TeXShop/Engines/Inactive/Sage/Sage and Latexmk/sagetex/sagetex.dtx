@@ -1,0 +1,1232 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2008--2015 by Dan Drake <dr.dan.drake (at) gmail (dot) com>
+% Copyright (C) 2016--2020 by SageMath Developers <sage-devel (at) googlegroups (dot) com>
+% -------------------------------------------------------
+%
+% See the "Copying and licenses" section in this file for the terms
+% under which this source code and documentation may be modified and
+% distributed.
+%
+% This package is not licensed under the LPPL, but it seems reasonable
+% to say:
+%
+%   This work has the LPPL maintenance status `maintained'.
+%
+%   The Current Maintainers of this work are Sagemath Developers.
+%
+%   This work consists of the files sagetex.dtx, py-and-sty.dtx,
+%   scripts.dtx, remote-sagetex.dtx, sagetex.ins, example.tex,
+%   and the derived files sagetex.sty, sagetex.py, sagetexparse.py,
+%   makestatic.py, extractsagecode.py, and remote-sagetex.py.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{sagetex.dtx}
+%</driver>
+%<latex>\NeedsTeXFormat{LaTeX2e}
+%<latex>\ProvidesPackage{sagetex}
+%<python>__version__ = """
+%<*latex|python>
+  [2020/08/12 v3.5 embedding Sage into LaTeX documents]
+%</latex|python>
+%<python>""".strip()
+%<latex>\newcommand{\ST@ver}{2020/08/12 v3.5}
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{sagetex}
+\usepackage{xspace}
+\usepackage{tikz}
+\usepackage{hyperref}
+% \iffalse
+% Work around a problem with using Docstrip and hyperref; for macros and
+% such described with DescribeMacro and friends, plain Docstrip puts
+% something like this into the .idx file:
+%
+%  \indexentry{sage=\verb!*+\sage+|usage}{5}
+%
+% and defines \usage{}. hyperref comes along and sneakily alters those
+% lines and adds:
+%
+%  \indexentry{sage=\verb!*+\sage+|usage|hyperpage}{5}
+%
+% and makeindex gets confused because you can't have two | things in one
+% indexentry. I could probably figure out how to fix this in LaTeX, but
+% it's easier to run sed on the .idx file to remove the extra | and
+% define a new macro that makes the text italic and puts in the
+% hyperlink.
+%
+% Another option is to forget about all this and just pass the
+% hyperindex=false option to hyperref, but then you don't get
+% hyperlinked page numbers.
+% \fi
+\newcommand{\usagehyperpage}[1]{\textit{\hyperpage{#1}}}
+
+\renewcommand{\subsubsectionautorefname}{section}
+\renewcommand{\subsectionautorefname}{section}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+\DocInput{sagetex.dtx}
+\StopEventually{
+\section{Credits and acknowledgments}
+
+According to the original README file, this system was originally done
+by Gonzalo Tornaria and Joe Wetherell. Later Harald Schilly made some
+improvements and modifications. Many of the examples in the
+|example.tex| file are from Harald.
+
+Dan Drake rewrote and extended the style file (there is effectively zero
+original code there), made significant changes to the Python module, put
+both files into \textsf{Docstrip} format, and wrote all the
+documentation and extra Python scripts.
+
+Many thanks to Jason Grout for his numerous comments, suggestions, and
+feedback. Thanks to Nicolas Thi\'ery for the initial code and
+contributions to the \texttt{sageexample} environment and Volker Braun
+for the \texttt{sagecommandline} environment.
+
+\section{Copying and licenses}
+\label{sec:copying-licenses}
+
+If you are unnaturally curious about the current state of the \ST
+package, you can visit \url{https://github.com/sagemath/sagetex}. (The
+old Bitbucket and Github dandrake repositories are deprecated.)
+
+As for the terms and conditions under which you can copy and modify \ST:
+
+The \emph{source code} of the \ST package may be redistributed and/or
+modified under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 2 of the License, or (at
+your option) any later version. To view a copy of this license, see
+\url{http://www.gnu.org/licenses/} or send a letter to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301, USA.
+
+The \emph{documentation} of the \ST package is licensed under the
+Creative Commons Attribution-Share Alike 3.0 License. To view a copy of
+this license, visit \url{http://creativecommons.org/licenses/by-sa/3.0/}
+or send a letter to Creative Commons, 171 Second Street, Suite 300, San
+Francisco, California, 94105, USA.
+
+I am not terribly dogmatic about these licenses, so if you would like to
+do something with \ST that's not possible under these license
+conditions, please contact me. I will likely be receptive to
+suggestions.
+
+\iffalse meta-comment
+ I've run into a situation where the index wants to start on the very
+ last line of the page, and I actually get errors: ``Package multicol
+ Error: Error saving partial page.'' The problem goes away if I fiddle
+ with some lines so that the index starts elsewhere. Putting in a
+ clearpage below makes the index start nicely in the middle of a page
+ (until my change history gets too long!) and solves all those
+ problems. It can be removed/pulled into this comment if you're
+ confident the page break problems won't occur.
+\fi
+\clearpage
+
+}
+
+\DocInput{py-and-sty.dtx}
+\DocInput{scripts.dtx}
+\DocInput{remote-sagetex.dtx}
+\Finale
+\PrintChanges
+\PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.0}{2008/03/03}{Initial version}
+% \changes{v1.1}{2008/03/05}{Wrapped user-provided Sage code in
+% try/except clauses; plotting now has optional format argument}
+% \changes{v1.2}{2008/03/07}{Imagemagick option; better documentation}
+% \changes{v1.3.1}{2008/03/10}{Internal variables renamed; fixed typos}
+% \changes{v1.4}{2008/03/11}{MD5 fix, percent sign macro, CTAN upload}
+% \changes{v2.0}{2008/12/16}{External Python scripts for parsing
+% SageTeX-ified documents, tons of documentation improvements,
+% sagetex.py refactored, include in Sage as spkg}
+% \changes{v2.0}{2009/01/09}{Miscellaneous fixes, final 2.0 version}
+% \changes{v2.1}{2009/05/12}{Add pausing support}
+% \changes{v2.1}{2009/05/12}{Get version written to .py file}
+% \changes{v2.2}{2009/06/17}{Add remote-sagetex.py script}
+% \changes{v2.3}{2010/10/20}{Add sagecommandline environment}
+%
+% \GetFileInfo{sagetex.sty}
+%
+% \DoNotIndex{\newcommand,\newenvironment,\the}
+%
+% \newcommand{\ST}{\textsf{Sage\TeX}\xspace}
+% \iffalse
+% so I don't have to put \ or {} after \LaTeX:
+% \fi
+% \newcommand{\LTX}{\LaTeX\xspace}
+%
+% \newcommand{\TikZ}{Ti\emph{k}Z\xspace}
+%
+% \newcommand{\warningbox}[1]{\colorbox[rgb]{1, 0.6, 0.6}%
+% {\parbox{.97\textwidth}{#1}}}
+%
+% \tikzstyle{box}=[draw, shape=rectangle, thick]
+%
+% \title{The \ST{} package\thanks{This document corresponds to
+%     \ST \fileversion, dated \filedate.}}
+%
+% \author{Dan Drake and others\thanks{Package's website:
+%     \href{https://github.com/sagemath/sagetex}
+%     {\texttt{github.com/sagemath/sagetex}}.}}
+%
+% \iffalse
+% Don't put any other code from this file into the .sty or .py
+% file:
+%<*!latex&!python>
+% This lets us use verbatim environments in the documentation.
+% \fi
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% Why should the Haskell and R folks have all the fun?
+% \href{http://www.haskell.org/haskellwiki/Literate_programming}{Literate
+%   Haskell} is a popular way to mix Haskell source code and \LTX
+% documents. (Actually any kind of text or document, but here we're
+% concerned only with \LTX.) You can even embed Haskell code in your
+% document that writes part of your document for you. Similarly, the R
+% statistical computing environment includes
+% \href{http://tug.org/pracjourn/2008-1/zahn/}{Sweave}, which lets you
+% do the same thing with R code and \LTX.
+%
+% The \ST package allows you to do (roughly) the same thing with the
+% Sage mathematics software suite (see \url{http://sagemath.org}) and
+% \LTX. (If you know how to write literate Haskell: the |\eval| command
+% corresponds to |\sage|, and the |code| environment to the |sageblock|
+% environment.) As a simple example, imagine in your document you are
+% writing about how to count license plates with three letters and three
+% digits. With this package, you can write something like this:
+% \begin{quote}
+%  |There are $26$ choices for each letter, and $10$ choices for|\\
+%  |each digit, for a total of $26^3 \cdot 10^3 =|\\
+%  |\sage{26^3*10^3}$ license plates.|
+% \end{quote}
+% and it will produce
+% \begin{quote}
+%   There are $26$ choices for each letter, and $10$ choices for each
+%   digit, for a total of $26^3 \cdot 10^3 = \sage{26^3 * 10^3}$ license
+%   plates.
+% \end{quote}
+% The great thing is, you don't have to do the multiplication. Sage does
+% it for you. This process mirrors one of the great aspects of \LTX:
+% when writing a \LTX document, you can concentrate on the logical
+% structure of the document and trust \LTX and its army of packages to
+% deal with the presentation and typesetting. Similarly, with \ST, you
+% can concentrate on the mathematical structure (``I need the product of
+% $26^3$ and $10^3$'') and let Sage deal with the base-$10$ presentation
+% of the number.
+%
+% A less trivial, and perhaps more useful example is plotting. You can
+% include a plot of the sine curve without manually producing a plot,
+% saving an EPS or PDF file, and doing the |\includegraphics| business
+% with the correct filename yourself. If you write this:
+% \begin{quote}
+% |Here is a lovely graph of the sine curve:|
+%
+% |\sageplot[width=.75\textwidth]{plot(sin(x), x, 0, 2*pi)}|
+% \end{quote}
+% in your \LTX file, it produces
+% \begin{quote}
+% Here is a lovely graph of the sine curve:
+%
+% \sageplot[width=.75\textwidth]{plot(sin(x), x, 0, 2*pi)}
+% \end{quote}
+% Again, you need only worry about the logical/mathematical structure of
+% your document (``I need a plot of the sine curve over the interval
+% $[0, 2\pi]$ here''), while \ST{} takes care of the gritty details of
+% producing the file and sourcing it into your document.
+%
+% \paragraph{But \texttt{\bslash sageplot} isn't magic} I just tried to
+% convince you that \ST makes putting nice graphics into your document
+% very easy; let me turn around and warn you that using graphics
+% \emph{well} is not easy, and no \LTX package or Python script will
+% ever make it easy. What \ST does is make it easy to \emph{use Sage} to
+% create graphics; it doesn't magically make your graphics good,
+% appropriate, or useful. (For instance, look at the sine plot above---I
+% would say that a truly lovely plot of the sine curve would not mark
+% integer points on the $x$-axis, but rather $\pi/2$, $\pi$, $3\pi/2$,
+% and $2\pi$. Incidentally, you can do this in Sage: do
+% |sage.plot.plot?| and look for |ticks| and |tick_formatter|.)
+%
+% Till Tantau has some good commentary on the use of graphics in the
+% \href{http://www.ctan.org/tex-archive/help/Catalogue/entries/pgf.html}{``Guidelines
+%   on Graphics'' section of the \textsc{pgf} manual} (chapter 7 of the
+% manual for version 2.10). You should always give careful thought and
+% attention to creating graphics for your document; I have in mind that
+% a good workflow for using \ST for plotting is something like this:
+%
+% \begin{enumerate}
+%   \item Figure out what sort of graphic you need to communicate your
+%   ideas or information.
+%   \item Fiddle around in Sage until you get a graphics object and set
+%   of options that produce the graphic you need.
+%   \item Copy those commands and options into \ST commands in your
+%   \LTX document.
+% \end{enumerate}
+%
+% The \ST{} package's plotting capabilities don't help you find those
+% Sage commands to make your lovely plot, but they do eliminate the need
+% to muck around with saving the result to a file, remembering the
+% filename, including it into your document, and so on. In
+% \autoref{sec:usage}, we will see what what we can do with \ST.
+%
+%
+% \section{Installation}
+% \label{sec:installation}
+% \changes{v2.0}{2009/01/14}{Fixed up installation section, final
+% \emph{final} 2.0}
+% \changes{v2.2.3}{2009/12/29}{Rewrote installation section to reflect
+% inclusion as standard spkg}
+%
+% \newcommand{\sageroot}{\$SAGE\_ROOT}
+%
+% \ST needs two parts to work: a Python module known to Sage, and a \LTX
+% package known to \TeX. These two parts need to come from the same
+% version of \ST to guarantee that everything works properly. As of Sage
+% version 4.3.1, \ST comes included with Sage, so you only need to make
+% \texttt{sagetex.sty}, the \LTX package, known to \TeX. Full details of
+% this are in the Sage tutorial at
+% \href{http://doc.sagemath.org/html/en/tutorial/sagetex.html}{\texttt{doc.sagemath.org/html/en/tutorial/sagetex.html}}
+% in the obviously-named section ``Make \ST known to \TeX''. Here's a
+% brief summary of how to do that:
+%
+% \begin{itemize}
+% \item Copy \texttt{sagetex.sty} to the same directory as your
+%   document. This always works, but requires lots of copies of
+%   \texttt{sagetex.sty} and is prone to version skew.
+%
+% \item Copy the directory containing \texttt{sagetex.sty} to your home
+%   directory with a command like
+%   \begin{quotation}
+%     \texttt{cp -R \sageroot/local/share/texmf \textasciitilde/}
+%   \end{quotation}
+%   where \texttt{\sageroot} is replaced with the location of your
+%   Sage installation.
+%
+% \item Use the environment variable \texttt{TEXINPUTS} to tell \TeX{}
+%   to search the directory containing \texttt{sagetex.sty}; in the bash
+%   shell, you can do
+%   \begin{quotation}
+%     \texttt{export TEXINPUTS=\sageroot/local/share/texmf//:}
+%   \end{quotation}
+%   You should again replace \texttt{\sageroot} with the location of
+%   your Sage installation.
+% \end{itemize}
+%
+% The best method is likely the second; while that does require you to
+% recopy the files every time you update your copy of Sage, it does not
+% depend on your shell, so if you use, say, Emacs with Auc\TeX{} or some
+% other editor environment, everything will still work since \TeX's
+% internal path-searching mechanisms can find \texttt{sagetex.sty}.
+%
+% Note that along with \texttt{sagetex.sty}, this documentation, an
+% example file, and other useful scripts are all located in the
+% directory \texttt{\sageroot/local/share/texmf}.
+%
+% \subsection{\ST and \TeX Live}
+%
+% \ST was included in \TeX Live, which seemed nice, except that the Python
+% module and \LTX package for \ST need to be synchronized and the Python
+% module in Sage was much easier to update than the \LTX style file in
+% \TeX Live. If you are so unlucky as to be using a version of \TeX Live
+% that includes \ST, I strongly recommend using \ST only from what is
+% included with Sage and ignoring what's included with \TeX Live.
+%
+% \subsection{The noversioncheck option}
+% \label{sec:noversioncheck}
+%
+% As of version 2.2.4, \ST automatically checks to see if the versions
+% of the style file and Python module match. This is intended to prevent
+% strange version mismatch problems, but if you would like to use
+% mismatched sources, you can---at your peril---give the
+% |noversioncheck| option when you load the \ST package. Don't be
+% surprised if things don't work when you do this.
+%
+% If you are considering using this option because the Sage script
+% complained and exited, you really should just get the \LTX and Python
+% modules synchronized. Every copy of Sage since version 4.3.2 comes
+% with a copy of |sagetex.sty| that is matched up to Sage's baked-in \ST
+% support, so you can always use that. See the
+% \href{http://doc.sagemath.org/html/en/tutorial/sagetex.html}{\ST section of the Sage
+%   tutorial}.
+%
+% \subsection{Using \TeX Shop}
+% \label{sec:using-texshop}
+% \changes{v2.0.1}{2009/03/10}{Add \TeX Shop info}
+%
+% Starting with version 2.25,
+% \href{http://www.uoregon.edu/~koch/texshop/}{\TeX Shop} includes
+% support for \ST. If you move the file |sage.engine| from
+% |~/Library/TeXShop/Engines/Inactive/Sage| to
+% |~/Library/TeXShop/Engines| and put the line
+% \begin{quotation}
+%   |%!TEX TS-program = sage|
+% \end{quotation}
+% at the top of your document, then \TeX Shop will automatically run Sage
+% for you when compiling your document.
+%
+% Note that you will need to make sure that \LTX can find |sagetex.sty|
+% using any of the methods above. You also might need to edit the
+% |sage.engine| script to reflect the location of your Sage
+% installation. \TeX Shop includes further documentation in the
+% |~/Library/TeXShop/Engines/Inactive/Sage| folder; be sure to check out
+% the ``About Sage'' PDF there, which has good advice on setting up
+% things so that typesetting \ST-ified documents works automatically,
+% and so that it continues to work when you upgrade your Sage
+% installation.
+%
+% \subsection{Other scripts included with \ST}
+% \label{sec:inst-other-scripts}
+%
+% \ST includes several Python files which may be useful for working with
+% ``\ST-ified'' documents. At this point they have likely bitrotted but
+% are, for now, included for archaeological purposes.
+%
+% The |remote-sagetex.py| script allows you to use \ST on a computer
+% that doesn't have Sage installed; see \autoref{sec:remote-sagetex} for
+% more information.
+%
+% Also included are |makestatic.py| and |extractsagecode.py|, which are
+% convenience scripts that you can use after you've written your
+% document. See \autoref{sec:makestatic-usage} and
+% \autoref{sec:extractsagecode} for information on using those scripts.
+% The file |sagetexparse.py| is a module used by both those scripts.
+% These three files are independent of \ST. If you install from a spkg,
+% these scripts can be found in \texttt{\sageroot/local/share/texmf/}.
+%
+% \section{Usage}
+% \label{sec:usage}
+%
+% Let's begin with a rough description of how \ST works. Naturally the
+% very first step is to put |\usepackage{sagetex}| in the preamble of
+% your document. When you use macros from this package and run \LTX on
+% your file, along with the usual zoo of auxiliary files, a |.sage| file
+% is written with the same basename as your document. This is a Sage
+% source file that uses the Python module from this package and when you
+% run Sage on that file, it will produce a |.sout| and a |.scmd| file.
+% The |.sout| file contains \LTX code that, when you run \LTX on your
+% source file again, will pull in all the results of Sage's computation.
+%
+% The |sagecommandline| environment additionally logs the plain sage
+% commands and output furthermore in a |.scmd| file.
+%
+% All you really need to know is that to typeset your document, you need
+% to run \LTX, then run Sage, then run \LTX again.
+%
+% Also keep in mind that everything you send to Sage is done within one
+% Sage session. This means you can define variables and reuse them
+% throughout your \LTX document; if you tell Sage that |foo| is
+% $12$, then anytime afterwards you can use |foo| in your Sage code and
+% Sage will remember that it's $12$---just like in a regular Sage
+% session.
+%
+% Now that you know that, let's describe what macros \ST provides and
+% how to use them. If you are the sort of person who can't be bothered
+% to read documentation until something goes wrong, you can also just
+% look through the |example.tex| file included with this
+% package.\footnote{Then again, if you're such a person, you're probably
+% not reading this, and are already fiddling with
+% \texttt{example.tex}\dots}\\
+%
+% \noindent\warningbox{\textbf{WARNING!} When you run \LTX on a file
+%   named \texttt{\meta{filename}.tex}, the file
+%   \texttt{\meta{filename}.sagetex.sage} is created---and will be
+%   \emph{automatically overwritten} if it already exists. If you keep
+%   Sage scripts in the same directory as your \ST-ified \LTX documents,
+%   use a different file name!}
+%
+% \noindent\warningbox{\textbf{WARNING!} Speaking of filenames, \ST
+%   really works best on files whose names don't have spaces or other
+%   ``funny'' characters in them. \ST \emph{should} work on such
+%   files---and you should let us know if it doesn't---but it's safest
+%   to stick to files with alphanumeric characters and ``safe''
+%   punctuation (i.e., nothing like |<|, |"|, |!|,
+%   \texttt{\bslash}, or other characters that would confuse a
+%   shell).}
+%
+% \paragraph{The final option} On a similar note, \ST, like many \LTX
+% packages, accepts the |final| option. When passed this option, either
+% directly in the |\usepackage| line, or from the |\documentclass| line,
+% \ST will not write a |.sage| file. It will try to read in the |.sout|
+% file so that the \ST macros can pull in their results. However, this
+% will not allow you to have an independent Sage script with the same
+% basename as your document, since to get the |.sout| file, you need the
+% |.sage| file.
+%
+% \subsection{Inline Sage}
+% \label{sec:sagemacro-usage}
+%
+% \DescribeMacro{sage}
+% \fbox{\texttt{\bslash sage}\marg{Sage code}}
+% takes whatever Sage code you give it, runs Sage's |latex| function on
+% it, and puts the result into your document.
+%
+% For example, if you do |\sage{matrix([[1, 2], [3,4]])^2}|, then that
+% macro will get replaced by
+% \begin{quote}
+% |\left(\begin{array}{rr}|\\
+% |7 & 10 \\|\\
+% |15 & 22|\\
+% |\end{array}\right)|
+% \end{quote}
+% in your document---that \LTX code is exactly exactly what you get
+% from doing
+% \begin{center}
+% |latex(matrix([[1, 2], [3,4]])^2)|
+% \end{center}
+% in Sage.
+%
+% Note that since \LTX will do macro expansion on whatever you give
+% to |\sage|, you can mix \LTX variables and Sage variables! If
+% you have defined the Sage variable |foo| to be $12$ (using, say, the
+% |sageblock| environment), then you can do something like this:
+% \begin{quote}
+% |The prime factorization of the current page number plus foo|\\
+% |is $\sage{factor(foo + \thepage)}$|.
+% \end{quote}
+%
+% Here, I'll do just that right now: the prime factorization of the
+% current page number plus $12$ is $\sage{factor(\thepage + 12)}$.
+% (Wrong answer? See footnote.\footnote{Is the above factorization
+%   wrong? If the current page number plus $12$ is one larger than the
+%   claimed factorization, another Sage/\LTX cycle on this source file
+%   should fix it. Why? The first time you run \LTX on this file, the
+%   sine graph isn't available, so the text where I've talked about the
+%   prime factorization is back one page. Then you run Sage, and it
+%   creates the sine graph and does the factorization. When you run \LTX
+%   again, the sine graph pushes the text onto the next page, but it
+%   uses the Sage-computed value from the previous page. Meanwhile, the
+%   |.sage| file has been rewritten with the correct page number, so if
+%   you do another Sage/\LTX cycle, you should get the correct value
+%   above. However, in some cases, even \emph{that} doesn't work because
+%   of some kind of \TeX{} weirdness in ending the one page a bit short
+%   and starting another.}) The |\sage| command doesn't automatically
+% use math mode for its output, so be sure to use dollar signs or a
+% displayed math environment
+% as appropriate.\\
+%
+% \DescribeMacro{\sagestr}
+% \fbox{\texttt{\bslash sagestr}\marg{Sage code}}
+% is identical to |\sage|, but is does \emph{not} run Sage's |latex|
+% function on the code you give it; it simply runs the Sage code and
+% pulls the result into your \LTX file. This is useful for calling
+% functions that return \LTX code; see the example file distributed
+% along with \ST for a demonstration of using this command to easily
+% produce a table.
+%
+% \DescribeMacro{\percent} If you are doing modular arithmetic or string
+% formatting and need a percent sign in a call to |\sage| (or
+% |\sageplot|), you can use |\percent|. Using a bare percent sign won't
+% work because \LTX will think you're starting a comment and get
+% confused; prefixing the percent sign with a backslash won't work
+% because then ``|\%|'' will be written to the |.sage| file and Sage
+% will get confused. The |\percent| macro makes everyone happy.
+%
+% Note that using |\percent| inside the verbatim-like environments
+% described in \autoref{sec:codeblockenv} isn't necessary; a literal
+% ``\percent'' inside such an environment will get written, uh, verbatim
+% to the |.sage| file.
+%
+% \paragraph{Arguments with side effects}
+%
+% Be careful when feeding |\sage| and |\sagestr| arguments that have
+% side effects, since in some situations they can get evaluated more
+% than once; see section \ref{sec:sage-inside-align}.
+%
+%
+% \subsection{Graphics and plotting}
+% \label{sec:graphics-plotting}
+%
+% \noindent \DescribeMacro{\sageplot}
+% \fbox{\texttt{\bslash sageplot}\oarg{ltx opts}\oarg{fmt}\{\meta{graphics
+% obj}, \meta{keyword args}\}}
+% plots the given Sage graphics object and runs an
+% |\includegraphics| command to put it into your document. It does not
+% have to actually be a plot of a function; it can be any Sage graphics
+% object. The options are described in \autoref{t:sageplotopts}.
+%
+% \begin{table}[h]
+%   \centering
+%   \begin{tabular}{l p{8cm}}
+%   Option & Description \\
+%   \hline
+%   \meta{ltx options} & Any text here is passed directly into the
+%   optional arguments (between the square brackets) of an
+%   |\includegraphics| command.\\
+%   \meta{fmt} & You can optionally specify a file extension here; Sage
+%   will then try to save the graphics object to a file with extension
+%   \emph{fmt}. If not specified, \ST\ will save to EPS and PDF files;
+%   if saving to those formats does not work, \ST will save to a PNG file.\\
+%   \meta{graphics obj} & A Sage object on which you can call |.save()|
+%   with a graphics filename.\\
+%   \meta{keyword args} & Any keyword arguments you put here will
+%   all be put into the call to |.save()|.
+%   \end{tabular}
+%   \caption{Explanation of options for the \texttt{\bslash sageplot}
+%   command.}
+%   \label{t:sageplotopts}
+% \end{table}
+%
+% This setup allows you to control both the Sage side of things, and the
+% \LTX side. For instance, the command
+% \begin{quote}
+% |\sageplot[angle=30, width=5cm]{plot(sin(x), 0, pi), axes=False,|\\
+% |chocolate=True}|
+% \end{quote}
+% will run the following command in Sage:
+% \begin{quote}
+% |sage: plot(sin(x), 0, pi).save(filename=autogen, axes=False,|\\
+% |chocolate=True)|
+% \end{quote}
+% Then, in your \LTX file, the following command will be issued
+% automatically:
+% \begin{center}
+% |\includegraphics[angle=30, width=5cm]{autogen}|
+% \end{center}
+% You can specify a file format if you like. This must be the
+% \emph{second} optional argument, so you must use empty brackets if
+% you're not passing anything to |\includegraphics|:
+% \begin{center}
+% |\sageplot[][png]{plot(sin(x), x, 0, pi)}|
+% \end{center}
+% The filename is automatically generated, and unless you specify a
+% format, both EPS and PDF files will be generated. This allows you to
+% freely switch between using, say, a DVI viewer (many of which have
+% support for automatic reloading, source specials and make the writing
+% process easier) and creating PDFs for posting on the web or emailing
+% to colleagues. \ST will fall back to creating a PNG file for any
+% graphics object that cannot be saved as an EPS or PDF file; this is
+% useful for three dimensional plot objects, which currently cannot be
+% saved as EPS or PDF files.
+%
+% If you ask for, say, a PNG file (or if one is automatically generated
+% for you as described above), keep in mind that ordinary |latex| and
+% DVI files have no support for PNG files; \ST detects this and will
+% warn you that it cannot find a suitable file if using
+% |latex|.\footnote{We use a typewriter font here to indicate the
+%   executables which produce DVI and PDF files, respectively, as
+%   opposed to ``\LTX'' which refers to the entire typesetting system.}
+% If you use |pdflatex|, there will be no problems because PDF files can
+% include PNG graphics.
+%
+% When \ST cannot find a graphics file, it inserts this into your
+% document:
+%
+% \begin{center}
+%   \framebox[2cm]{\rule[-1cm]{0cm}{2cm}\textbf{??}}
+% \end{center}
+%
+% \noindent That's supposed to resemble the image-not-found graphics
+% used by web browsers and use the traditional ``\textbf{??}'' that \LTX
+% uses to indicate missing references.
+%
+% You needn't worry about the filenames; they are automatically
+% generated and will be put into the directory
+% |sage-plots-for-filename.tex|. You can safely delete that directory
+% anytime; if \ST can't find the files, it will warn you to run Sage to
+% regenerate them.\\
+%
+% \noindent\warningbox{\textbf{WARNING!} When you run Sage on your
+%   |.sage| file, all files in the
+%   \texttt{sage-plots-for-\meta{filename}.tex} directory \emph{will be
+%     deleted!} Do not put any files into that directory that you do not
+%   want to get automatically deleted.}
+%
+% \paragraph{The epstopdf option} One of the graphics-related options
+% supported by \ST is |epstopdf|. This option causes \ST to use the
+% |epstopdf| command to convert EPS files into PDF files. Like with the
+% |imagemagick| option, it doesn't check to see if the |epstopdf|
+% command exists or add options: it just runs the command. This option
+% was motivated by a bug in the matplotlib PDF backend which caused it
+% to create invalid PDFs. Ideally, this option should never be
+% necessary; if you do need to use it, file a bug!
+%
+% This option will eventually be removed, so do not use it.
+%
+% \subsubsection{3D plotting}
+%
+% Right now there is, to put it nicely, a bit of tension between the
+% sort of graphics formats supported by |latex| and |pdflatex|, and the
+% graphics formats supported by Sage's 3D plotting systems. \LTX is
+% happiest, and produces the best output, with EPS and PDF files, which
+% are vector formats. Tachyon, Sage's 3D plotting system, produces
+% bitmap formats like BMP and PNG.
+%
+% \ST will automatically fall back to saving plot objects in PNG format
+% if saving to EPS and PDF fails, so it should automatically work with
+% 3D plot objects. However, since |latex| does not support PNGs, when
+% using 3D plotting (and therefore a bitmap format like PNG), \ST will
+% always issue a warning about incompatible graphics if you use |latex|,
+% provided you've processed the |.sage| file and the PNG file exists.
+% The only exception is if you're using the |imagemagick| option below.
+%
+% \paragraph{The imagemagick option} As a response to the above issue,
+% the \ST package has an |imagemagick| option. If you specify this
+% option in the preamble of your document with the usual
+% ``|\usepackage[imagemagick]{sagetex}|'', then when you are compiling
+% your document using |latex|, any |\sageplot| command which requests a
+% non-default format will cause the \ST Python script to convert the
+% resulting file to EPS using the Imagemagick |convert| utility. It does
+% this by executing ``|convert filename.EXT filename.eps|'' in a
+% subshell. It doesn't add any options, check to see if the |convert|
+% command exists or belongs to Imagemagick---it just runs the command.
+%
+% The resulting EPS files are not very high quality, but they will work.
+% This option is not intended to produce good graphics, but to allow you
+% to see your graphics when you use |latex| and DVI files while writing
+% your document.
+%
+% \subsubsection{But that's not good enough!}
+% \label{sec:notgoodenough}
+%
+% The |\sageplot| command tries to be both flexible and easy to use, but
+% if you are just not happy with it, you can always do things manually:
+% inside a |sagesilent| environment (see the next section) you could do
+% \begin{quote}
+%   |your special commands|\\
+%   |x = your graphics object|\\
+%   |x.save(filename=myspecialfile.ext, options, etc)|
+% \end{quote}
+% and then, in your source file, do your own |\includegraphics| command.
+% The \ST package gives you full access to Sage and Python and doesn't
+% turn off anything in \LTX, so you can always do things manually.
+%
+% \subsection{Verbatim-like environments}
+% \label{sec:codeblockenv}
+%
+% The \ST package provides several environments for typesetting and
+% executing blocks of Sage code.\\
+%
+% \DescribeEnv{sageblock} Any text between |\begin{sageblock}| and
+% |\end{sageblock}| will be typeset into your file, and also written into
+% the |.sage| file for execution. This means you can do something like
+% this:
+% \begin{quote}
+% |\begin{sageblock}|\\
+% |   var('x')|\\
+% |   f(x) = sin(x) - 1|\\
+% |   g(x) = log(x)|\\
+% |   h(x) = diff(f(x) * g(x), x)|\\
+% |\end{sageblock}|
+% \end{quote}
+% and then anytime later write in your source file
+% \begin{quote}
+%   |We have $h(2) = \sage{h(2)}$, where $h$ is the derivative of|\\
+%   |the product of $f$ and $g$.|
+% \end{quote}
+% and the |\sage| call will get correctly replaced by $\sage{
+% diff((sin(x) - 1)*log(x), x)(x=1)}$. You can use any Sage or Python
+% commands inside a |sageblock|; all the commands get sent directly to
+% Sage.\\
+%
+% \iffalse meta-comment
+%   Sadly, we can't use sageblock or similar environments in this file!
+%   If you prefix the lines inside the environment with percent signs,
+%   then those percent signs get written to your .sage file. If you
+%   *don't* prefix the lines with percent signs, those lines get written
+%   into the .sty or .py file. It's just too tricky to get docstrip and
+%   the verbatim stuff to play nicely together. I'd have to redefine how
+%   those environments work, and get them to strip off initial percents.
+% \fi
+%
+% \DescribeEnv{sagesilent} This environment is like |sageblock|, but it
+% does not typeset any of the code; it just writes it to the |.sage|
+% file. This is useful if you have to do some setup in Sage that is not
+% interesting or relevant to the document you are writing.\\
+%
+% \DescribeEnv{sageverbatim} This environment is the opposite of the one
+% above: whatever you type will be typeset, but not written into the
+% |.sage| file. This allows you to typeset psuedocode, code that will
+% fail, or take too much time to execute, or whatever.\\
+%
+% \DescribeEnv{comment} Logically, we now need an environment that
+% neither typesets nor executes your Sage code\ldots but the |verbatim|
+% package, which is always loaded when using \ST, provides such an
+% environment: |comment|. Another way to do this is to put stuff between
+% |\iffalse| and |\fi|.\\
+%
+% \DescribeMacro{\sagetexindent} There is one final bit to our
+% verbatim-like environments: the indentation. The \ST package defines a
+% length |\sagetexindent|, which controls how much the Sage code is
+% indented when typeset. You can change this length however you like
+% with |\setlength|: do |\setlength{\sagetexindent}{6ex}| or whatever.
+%
+% \DescribeEnv{sageexample} This environment allow you to include
+% doctest-like snippets in your document that will be nicely typeset.
+% For example,
+% \begin{quote}
+% |\begin{sageexample}|\\
+% |  sage: 1+1|\\
+% |  2|\\
+% |  sage: factor(x^2 + 2*x + 1)|\\
+% |  (x + 1)^2|\\
+% |\end{sageexample}|
+% \end{quote}
+% in your document will be typeset with the Sage inputs in the usual
+% fixed-width font, and the outputs will be typeset as if given to a
+% |\sage| macro, as you see below:
+\begin{sageexample}
+  sage: 1+1
+  2
+  sage: factor(x^2 + 2*x + 1)
+  (x + 1)^2
+\end{sageexample}
+% When typesetting the document, there is no test of the
+% validity of the outputs (that is, typesetting with a typical
+% \LTX-Sage-\LTX cycle does not do doctesting), but when using the
+% |sageexample| environment, an extra file named
+% ``|myfile_doctest.sage|'' is created with the contents of all those
+% environments; it is formatted so that Sage can doctest that file. You
+% should be able to doctest your document with ``|sage -t myfile_doctest.sage|''.
+% (This does not always work; if this fails for you, please contact
+% the sage-support group.)
+%
+% If you would like to see both the original text input and the
+% typeset output, you can issue
+% |\renewcommand{\sageexampleincludetextoutput}{True}| in your
+% document. You can do the same thing with ``False'' to later turn it
+% off. In the above example, this would cause \ST to output both
+% |(x + 1)^2| and $(x + 1)^{2}$ in your typeset document.
+%
+% Just as in doctests, multiline statements are acceptable. The only
+% limitation is that triple-quoted strings delimited by |"""| cannot be
+% used in a |sageexample| environment; instead, you can use
+% triple-quoted strings delimited by |'''|.
+%
+% See the |example.tex| file for many examples and more explanation.
+%
+% The initial implementation of this environment is due to Nicolas M.
+% Thi\'ery.\\
+%
+% \DescribeEnv{sagecommandline} This environment is similar to the
+% sageexample environment in that it allow you to use \ST as a
+% pretty-printing command line, or to include doctest-like snippets in
+% your document. The difference is that the output is typeset as text,
+% much like running Sage on the command line, using the
+% |lstlisting| environment. In particular, this environment
+% provides Python syntax highlighting and line numbers. For example,
+% \begin{quote}
+% |\begin{sagecommandline}|\\
+% |  sage: t = 1+1|\\
+% |  sage: for i in range(101): # multiline input example|\\
+% |  ....:     t+=1|\\
+% |  sage: t|\\
+% |  103|\\
+% |  sage: factor(x^2 + 2*x + 1)|\\
+% |\end{sagecommandline}|
+% \end{quote}
+% becomes
+\begin{sagecommandline}
+  sage: t = 1+1
+  sage: for i in range(101): # multiline input example
+  ....:     t+=1
+  sage: t
+  103
+  sage: factor(x^2 + 2*x + 1)
+\end{sagecommandline}
+% You have a choice of either explicitly providing the Sage output or
+% leaving it up to the computer to fill in the blanks. Above, the output
+% for $t$ was provided, but the output for the |factor()| command
+% wasn't. Moreover, any Sage comment that starts with a ``at'' sign is
+% escaped to \LTX. In particular, you can use |\label| to mark line
+% numbers in order to |\ref|erence and |\pageref|erence them as usual.
+% See the example file to see this mechanism in action.
+%
+% If you prefer to typeset the output in \LTX, you can set
+% \begin{quote}
+% |\renewcommand{\sagecommandlinetextoutput}{False}|
+% \end{quote}
+% which produces
+\renewcommand{\sagecommandlinetextoutput}{False}
+\begin{sagecommandline}
+  sage: var('a, b, c');
+  sage: ( a*x^2+b*x+c ).solve(x)
+\end{sagecommandline}
+\renewcommand{\sagecommandlinetextoutput}{True}
+% The Sage input and output is typeset using the |listings| package
+% with the styles |SageInput| and |SageOutput|, respectively. If you
+% don't like the defaults you can change them. It is recommended to
+% derive from |DefaultSageInput| and |DefaultSageOutput|, for example
+% \begin{quote}
+%   |\lstdefinestyle{SageInput}{style=DefaultSageInput,|\\
+%   |                           basicstyle={\color{red}}}|\\
+%   |\lstdefinestyle{SageOutput}{style=DefaultSageOutput,|\\
+%   |                            basicstyle={\color{green}}}|
+% \end{quote}
+% makes things overly colorful:
+\lstdefinestyle{SageInput}{style=DefaultSageInput,basicstyle={\color{red}}}
+\lstdefinestyle{SageOutput}{style=DefaultSageOutput,basicstyle={\color{green}}}
+\begin{sagecommandline}
+  sage: pi.n(100)
+\end{sagecommandline}
+\lstdefinestyle{SageInput}{style=DefaultSageInput}
+\lstdefinestyle{SageOutput}{style=DefaultSageOutput}
+%
+% \subsection{Pausing \ST}
+% \label{sec:pausing-st-usage}
+%
+% Sometimes when you are writing a document, you may wish to temporarily
+% turn off or pause \ST to concentrate more on your document than on the
+% Sage computations, or to simply have your document typeset faster. You
+% can do this with the following commands.
+%
+% \DescribeMacro{\sagetexpause} \DescribeMacro{\sagetexunpause} Use
+% these macros to ``pause'' and ``unpause'' \ST. After issuing this
+% macro, \ST will simply skip over the corresponding calculations.
+% Anywhere a |\sage| macro is used while paused, you will simply see
+% \sagetexpause ``\sage{dummy call to sage to illustrate
+% pausing}'', and anywhere a |\sageplot| macro is used, you will see:\\
+%
+% \noindent
+% \sageplot{dummy call to sageplot to illustrate pausing}
+% \sagetexunpause\\
+%
+% \noindent Anything in the verbatim-like environments of
+% \autoref{sec:codeblockenv} will be typeset or not as usual, but none
+% of the Sage code will be executed.
+%
+% Obviously, you use |\sagetexunpause| to unpause \ST and return to the
+% usual state of affairs. Both commands are idempotent; issuing them
+% twice or more in a row is the same as issuing them once. This means
+% you don't need to precisely match pause and unpause commands: once
+% paused, \ST stays paused until it sees |\sagetexunpause| and
+% vice versa.
+%
+% \section{Other notes}
+%
+% Here are some other notes on using \ST.
+%
+% \subsection{Using the \texttt{sage} macro inside align (and similar) environments}
+% \label{sec:sage-inside-align}
+%
+% The |align|, |align*|, and some other ``fancy'' math environments in
+% the |amsmath| package do some special processing---in particular, they
+% evaluate everything inside twice. This means that if you use |\sage|
+% or |\sagestr| inside such an environment, it will be evaluated twice,
+% and its argument will be put into the generated |.sage| file
+% twice---and if that argument has side effects, those side effects will
+% be executed twice! Doing something such as popping an element from a
+% list will actually pop \emph{two} elements and typeset the second. The
+% solution is to do any processing that has side effects before the
+% |align| environment (in a |sagesilent| environment, say) and to give
+% |\sage| or |\sagestr| an argument with no side effects.
+%
+% Thanks to Bruno Le Floch for reporting this.
+%
+%
+% \subsection{Using \texttt{sage} inside \texttt{caption}}
+% \label{sec:sage-inside-caption}
+%
+% If you want to use |\sage| inside the |\caption| for a figure, you'll
+% need to prepend it with |\protect|, because (in \TeX{} parlance) the
+% |\sage| macro is not ``robust''. For example:
+% \begin{quote}
+% |\caption{this figure illustrates why $2 + 2 = \protect\sage{2 + 2}$.}|
+% \end{quote}
+%
+% \subsection{Using \ST with TeXworks}
+%
+% On Linux and OS X, it's easy to get the
+% \href{https://www.tug.org/texworks/}{\TeX works} editor to work with
+% \ST. You will define a new ``typesetting engine'' following
+% \href{https://github.com/TeXworks/texworks/wiki/AdvancedTypesettingTools#defining-new-typesetting-tools}{these
+%   directions}. First, in some convenient location, create a shell
+% script with these contents:
+% \begin{quote}
+% |#!/bin/sh|\\
+% |pdflatex $1.tex|\\
+% |sage $1.sagetex.sage|\\
+% |pdflatex $1.tex|
+% \end{quote}
+% Name it \texttt{sagetex-engine} or something similar. Then, in the
+% Edit $\to$ Preferences menu, click the $+$ button in the Processing
+% tools section. Give the new tool a good name, like ``SageTeX''. In the
+% Program space, browse to your script. Click the $+$ for the Arguments
+% and type \texttt{\$basename} in the resulting box.
+%
+% Then, back in your document, you should be able to select SageTex in
+% the typesetting engine dropdown menu and then typeset.
+%
+% (You can also replace "|sage|" above with the
+% |run-sagetex-if-necessary| script---see
+% \autoref{sec:run-sagetex-if-necessary}.)
+%
+% \subsection{Using Beamer}
+%
+% The \textsc{beamer} package does not play nicely with verbatim-like
+% environments unless you ask it to. To use code block environments in a
+% \textsc{beamer} presentation, do:
+% \begin{quote}
+%  |\begin{frame}[fragile]|\\
+%  |\begin{sageblock}|\\
+%  |# sage stuff|\\
+%  |# more stuff \end{sageblock}|\\
+%  |\end{frame}|\\
+% \end{quote}
+% For some reason, \textsc{beamer} inserts an extra line break at the
+% end of the environment; if you put the |\end{sageblock}| on the same
+% line as the last line of your code, it works properly. See section
+% 12.9, ``Verbatim and Fragile Text'', in the \textsc{beamer} manual.
+% (Thanks to Franco Saliola for reporting this.)
+%
+% \textsc{beamer}'s overlays and |\sageplot| also need some help in
+% order to work together, as discussed in
+% \href{http://groups.google.com/group/sage-support/browse_thread/thread/9a0a2d60ef1126fd}{this
+%   sage-support thread}. If you want a plot to only appear in a certain
+% overlay, you might try something like this in your frame:
+% \begin{quote}
+% |\begin{itemize}|\\
+% |\item item 1|\\
+% |\item item 2|\\
+% |\item \sageplot[height=4cm][png]{(plot_slope_field(2*x,(x,-4,4),|\\
+% |     (y,-4,4))+(x^2-2).plot(-2,2))}|\\
+% |\end{itemize}|\\
+% \end{quote}
+% but the plot will appear on all the overlays, instead of the third.
+% The solution is to use the |\visible| macro:
+% \begin{quote}
+% |\begin{itemize}|\\
+% |\item item 1|\\
+% |\item item 2|\\
+% |\item \visible<3->{\sageplot[height=4cm][png]{(plot_slope_field(2*x,(x,-4,4),|\\
+% |     (y,-4,4))+(x^2-2).plot(-2,2))}}|\\
+% |\end{itemize}|\\
+% \end{quote}
+% Then the plot will only appear on the third (and later) overlays.
+% (Thanks to Robert Ma{\v r}{\'\i}k for this solution.)
+%
+% \subsection{Using the \texttt{rccol} package}
+%
+% If you are trying to use the |\sage| macro inside a table when using
+% the
+% \href{http://www.ctan.org/tex-archive/macros/latex/contrib/rccol/}{\texttt{rccol}}
+% package, you need to use an extra pair of braces or typesetting will
+% fail. That is, you need to do something like this:
+% \begin{quote}
+%   | abc & {\sage{foo.n()}} & {\sage{bar}} \\|
+% \end{quote}
+% with each ``|\sage{}|'' enclosed in an extra |{}|. Thanks to Sette
+% Diop for reporting this.
+%
+% \subsection{Plotting from Mathematica, Maple, etc.}
+%
+% Sage can use Mathematica, Maple, and friends and can tell them to do
+% plotting, but since it cannot get those plots into a Sage graphics
+% object, you cannot use |\sageplot| to use such graphics. You'll need
+% to use the method described in ``But that's not good enough!''
+% (\autoref{sec:notgoodenough}) with some additional bits to get the
+% directory right---otherwise your file will get saved to someplace in a
+% hidden directory.
+%
+% For Mathematica, you can do something like this inside a |sagesilent|
+% or |sageblock| environment:
+% \begin{quote}
+%   |mathematica('myplot = commands to make your plot')|\\
+%   |mathematica('Export["%s/graphicsfile.eps", myplot]' % os.getcwd())|
+% \end{quote}
+% then put |\includegraphics[opts]{graphicsfile}| in your file.
+%
+% For Maple, you'll need something like
+% \begin{quote}
+%   |maple('plotsetup(ps, plotoutput=`%s/graphicsfile.eps`, \|\\
+%   |  plotoptions=`whatever`);' % os.getcwd())|\\
+%   |maple('plot(function, x=1..whatever);')|
+% \end{quote}
+% and then |\includegraphics| as necessary.
+%
+% These interfaces, especially when plotting, can be finicky. The above
+% commands are just meant to be a starting point.
+%
+% \subsection{Sending \ST files to others who don't use Sage}
+% \label{sec:makestatic-usage}
+%
+% \subsubsection{The 21st century way}
+%
+% The SageMathCloud
+% (\href{http://cloud.sagemath.com}{\texttt{cloud.sagemath.com}}) service has
+% full support for \ST, is free to use, and has many fantastic
+% collaboration features. If you somehow want to collaborate on a
+% \ST-enabled \TeX document with a colleague, using SageMathCloud is one
+% of the best and easiest ways to do it. You and your collaborators
+% simply create an account, then make a project for your collaboration,
+% and add all the collaborators to the project. Then you can all enjoy
+% realtime collaborative editing, PDF previews, chat, and more.
+%
+% \subsubsection{The $N$th century way, for $N < 21$}
+%
+% Using anything other than SageMathCloud, |git|, or similar tools these
+% days seems pretty primitive. If emailing |.tex| files back and forth
+% seems perfectly reasonable to you, or if you have to send a file to a
+% journal, the easiest way is to simply include with your document the
+% following files:
+% \begin{enumerate}
+%   \item |sagetex.sty|
+%   \item the generated |.sout| and |.scmd| files
+%   \item the \texttt{sage-plots-for-\meta{filename}.tex} directory and
+%     its contents
+% \end{enumerate}
+% As long as |sagetex.sty| is available, your document can be typeset
+% using any reasonable \LTX system. Since it is very common to include
+% graphics files with a paper submission, this is a solution that should
+% always work. (In particular, it will work with arXiv submissions.)
+%
+% There is another option, and that is to use the |makestatic.py| script
+% included with \ST. This script has been unmaintained for some time and
+% likely won't work. If you want or need to use it and run into trouble,
+% email the
+% \href{https://groups.google.com/forum/#!forum/sage-support}{\texttt{sage-support}
+% group} and let us know.
+%
+% Use of the script is quite simple. Copy it and |sagetexparse.py| to
+% the directory with your document, and run
+% \begin{quote}
+%   |python makestatic.py inputfile [outputfile]|
+% \end{quote}
+% where |inputfile| is your document. (You can also set the executable
+% bit of |makestatic.py| and use |./makestatic.py|.) This script needs
+% the \href{http://pyparsing.wikispaces.com}{pyparsing} module to be
+% installed.\footnote{If you don't have pyparsing installed, you can
+%   simply copy the file
+%   \texttt{\sageroot/local/lib/python/matplotlib/pyparsing.py} into
+%   your directory.} You may optionally specify |outputfile|; if you do
+% so, the results will be written to that file. If the file exists, it
+% won't be overwritten unless you also specify the |-o| switch.
+%
+% You will need to run this after you've compiled your document and
+% run Sage on the |.sage| file. The script reads in the |.sout| file
+% and replaces all the calls to |\sage| and |\sageplot| with their
+% plain \LTX equivalent, and turns the |sageblock| and |sageverbatim|
+% environments into |verbatim| environments. Any |sagesilent|
+% environment is turned into a |comment| environment. Any
+% |sagecommandline| environment is turned into a |lstlisting|
+% environment, typesetting the relevant part of the |.scmd| file. The
+% resulting document should compile to something identical, or very
+% nearly so, to the original file.
+%
+% One large limitation of this script is that it can't change anything
+% while \ST is paused, since Sage doesn't compute anything for such
+% parts of your document. It also doesn't check to see if pause and
+% unpause commands are inside comments or verbatim environments. If
+% you're going to use |makestatic.py|, just remove all pause/unpause
+% statements.
+%
+% The parsing that |makestatic.py| does is pretty good, but not perfect.
+% Right now it doesn't support having a comma-separated list of
+% packages, so you can't have |\usepackage{sagetex, foo}|. You need to
+% have just |\usepackage{sagetex}|. (Along with package options; those
+% are handled correctly.) If you find other parsing errors, please let
+% me know.
+%
+% \subsection{Extracting the Sage code from a document}
+% \label{sec:extractsagecode}
+%
+% (This script has the same unmaintained-and-probably-doesn't-work
+% status as |makestatic.py|; see above.)
+%
+% This next script is probably not so useful, but having done the above,
+% this was pretty easy. The |extractsagecode.py| script does the
+% opposite of |makestatic.py|, in some sense: given a document, it
+% extracts all the Sage code and removes all the \LTX.
+%
+% Its usage is the same as |makestatic.py|.
+%
+% Note that the resulting file will almost certainly \emph{not} be a
+% runnable Sage script, since there might be \LTX commands in it, the
+% indentation may not be correct, and the plot options just get written
+% verbatim to the file. Nevertheless, it might be useful if you just
+% want to look at the Sage code in a file.
+%
+% \section{Using \ST without Sage installed}
+% \label{sec:remote-sagetex}
+%
+% (This script has the same unmaintained-and-probably-doesn't-work
+% status as |makestatic.py|; see above.)
+%
+% You may want to edit and typeset a \ST-ified file on a computer that
+% doesn't have Sage installed. How can you do that? We need to somehow
+% run Sage on the |.sage| file. The included script
+% \texttt{remote-sagetex.py} takes advantage of Sage's network
+% transparency and will use a remote server to do all the computations.
+% Anywhere in this manual where you are told to ``run Sage'', instead of
+% actually running Sage, you can run
+% \begin{center}
+%   \texttt{python remote-sagetex.py filename.sage}
+% \end{center}
+% The script will ask you for a server, username, and password, then
+% process all your code and write a |.sout| file and graphics files
+% exactly as if you had used a local copy of Sage to process the |.sage|
+% script. (With some minor limitations and differences; see below.)
+%
+% One important point: \emph{the script requires Python 2.6}. It will
+% not work with earlier versions. (It will work with Python 3.0 or later
+% with some trivial changes.)
+%
+% You can provide the server, username and password with the
+% command-line switches |--server|, |--username|, and |--password|, or
+% you can put that information into a file and use the |--file| switch
+% to specify that file. The format of the file must be like the
+% following:
+% \begin{verbatim}
+    # hash mark at beginning of line marks a comment
+    server = "http://example.com:1234"
+    username = 'my_user_name'
+    password = 's33krit'\end{verbatim}
+% As you can see, it's really just like assigning a string to a variable
+% in Python. You can use single or double quotes and use hash marks to
+% start comments. You can't have comments on the same line as an
+% assignment, though. You can omit any of those pieces of information
+% information; the script will ask for anything it needs to know.
+% Information provided as a command line switch takes precedence over
+% anything found in the file.
+%
+% You can keep this file separate from your \LTX documents in a secure
+% location; for example, on a USB thumb drive or in an automatically
+% encrypted directory (like |~/Private| in Ubuntu). This makes it much
+% harder to accidentally upload your private login information to the
+% arXiv, put it on a website, send it to a colleague, or otherwise make
+% your private information public.
+%
+% \subsection{Limitations of \texttt{remote-sagetex.py}}
+% \label{sec:remote-sagetex-limitations}
+%
+% The |remote-sagetex.py| script has several limitations. It completely
+% ignores the |epstopdf| and |imagemagick| flags. The |epstopdf| flag is
+% not a big deal, since it was originally introduced to work around a
+% matplotlib bug which has since been fixed. Not having |imagemagick|
+% support means that you cannot automatically convert 3D graphics to eps
+% format; using |pdflatex| to make PDFs works around this issue.
+%
+%
+% \subsection{Other caveats}
+% \label{sec:remote-sagetex-caveats}
+%
+% Right now, the ``simple server API'' that |remote-sagetex.py| uses is
+% not terribly robust, and if you interrupt the script, it's possible to
+% leave an idle session running on the server. If many idle sessions
+% accumulate on the server, it can use up a lot of memory and cause the
+% server to be slow, unresponsive, or maybe even crash. For now, I
+% recommend that you only run the script manually. It's probably best to
+% not configure your \TeX{} editing environment to automatically run
+% |remote-sagetex.py| whenever you typeset your document, at least not
+% without showing you the output or alerting you about errors.
+%
+
+
+% \iffalse
+% Local Variables:
+% mode: doctex
+% TeX-master: t
+% End:
+% \fi

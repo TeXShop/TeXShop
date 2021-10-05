@@ -1,0 +1,644 @@
+% General example LaTeX file for including Sage calculations and plots
+% Build with:
+%
+%   (pdf)latex example.tex; sage example.sagetex.sage; pdflatex example.tex
+%
+% Please read README and the documentation of the SageTeX package for
+% more information!
+%
+
+\documentclass{article}
+\title{Examples of embedding Sage in \LaTeX{} with \textsf{Sage\TeX}}
+\author{Dan Drake and others}
+\usepackage{hyperref}
+% If you want to see the examples in the section "Plotting
+% (combinatorial) graphs with TikZ" remove the \begin{comment}
+% and \end{comment} in that section and uncomment the following line.
+%\usepackage{tkz-berge}
+
+
+\usepackage{sagetex}
+%
+% If you want SageTeX to use Imagemagick's `convert' utility to make eps
+% files from png files when generating a dvi file, add the "imagemagick"
+% option above:
+%
+%    \usepackage[imagemagick]{sagetex}
+
+\setlength{\sagetexindent}{10ex}
+
+\begin{document}
+\maketitle
+
+\section{Inline Sage, code blocks}
+
+This is an example $2+2=\sage{2+2}$. If you raise the current year mod
+$100$ (which equals $\sage{mod(\the\year, 100)}$) to the power of the
+current day ($\the\day$), you get $\sage{Integer(mod(\the\year,
+100))^\the\day}$. Also, $\the\year$ modulo $42$ is $\sage{\the\year
+\percent 42}$.
+
+Code block which uses a variable \texttt{s} to store the solutions:
+\begin{sageblock}
+ 1+1
+ var('a,b,c')
+ eqn = [a+b*c==1, b-a*c==0, a+b==5]
+ s = solve(eqn, a,b,c)
+\end{sageblock}
+
+Solutions of $\mbox{eqn}=\sage{eqn}$:
+\[
+\sage{s[0]}
+\]
+\[
+\sage{s[1]}
+\]
+
+Now we evaluate the following block:
+\begin{sageblock}
+E = EllipticCurve("37a")
+\end{sageblock}
+You can't do assignment inside \verb|\sage| macros, since Sage doesn't
+know how to typeset the output of such a thing. So you have to use a
+code block. The elliptic curve $E$ given by $\sage{E}$ has discriminant
+$\sage{E.discriminant()}$.
+
+You can do anything in a code block that you can do in Sage and/or
+Python. Here we save an elliptic curve into a file.
+\begin{sageblock}
+try:
+    E = load('E2')
+except IOError:
+    E = EllipticCurve([1,2,3,4,5])
+    E.anlist(100000)
+    E.save('E2')
+\end{sageblock}
+
+The 9999th Fourier coefficient of $\sage{E}$ is
+$\sage{E.anlist(100000)[9999]}$.
+
+The following code block doesn't appear in the typeset file\dots
+\begin{sagesilent}
+  e = 2
+  e = 3*e + 1
+\end{sagesilent}
+but we can refer to whatever we did in that code block: $e=\sage{e}$.
+
+\begin{sageblock}
+  var('x')
+  f(x) = log(sin(x)/x)
+\end{sageblock}
+The Taylor Series of $f$ begins: $\sage{ f.taylor(x, 0, 10) }$.
+
+\section{Plotting}
+
+Here's a very large plot of the elliptic curve $E$.
+
+\sageplot{E.plot(-3,3)}
+
+\begin{sagesilent}
+  # the var line is unecessary unless you've defined x to be something
+  # other than a symbolic variable
+  var('x')
+  f(x) = -x^3+3*x^2+7*x-4
+\end{sagesilent}
+
+You can use variables to hold plot objects and do stuff with them.
+\begin{sageblock}
+  p = plot(f, x, -5, 5)
+\end{sageblock}
+
+Here's a small plot of $f$ from $-5$ to $5$, which I've centered:
+
+\begin{center} \sageplot[scale=.2]{p} \end{center}
+
+On second thought, use a size of $3/4$ the \verb|\textwidth| and don't
+use axes:
+
+\sageplot[width=.75\textwidth]{p, axes=False}
+
+Remember, you're using Sage, and can therefore call upon any of the
+software packages Sage is built out of.
+\begin{sageblock}
+f = maxima('sin(x)^2*exp(x)')
+g = f.integrate('x')
+\end{sageblock}
+Plot $g(x)$, but don't typeset it.
+\begin{sagesilent}
+  # g is a Maxima thingy, it needs to get converted into a Sage object
+  plot1 = plot(g.sage(),x,-1,2*pi)
+\end{sagesilent}
+
+You can specify a file format and options for \verb|includegraphics|.
+The default is for EPS and PDF files, which are the best choice in
+almost all situations. (Although see the section on 3D plotting.)
+
+\sageplot[angle=45, width=.5\textwidth][png]{plot1}
+
+If you use regular \verb|latex| to make a DVI file, you'll see a box,
+because DVI files can't include PNG files. If you use \verb|pdflatex|
+that will work. See the documentation for details.
+
+When using \verb|\sageplot|, you can pass in just about anything that
+Sage can call \verb|.save()| on to produce a graphics file:
+
+\begin{center}
+\sageplot[width=.7\textwidth]{plot1 + plot(f.sage(),x,-1,2*pi,rgbcolor=hue(0.4)), figsize=[5,3]}
+\end{center}
+
+To fiddle with aspect ratio, first save the plot object:
+
+\begin{sageblock}
+  p = plot(x, 0, 1) + circle((0,0), 1)
+  p.set_aspect_ratio(1)
+\end{sageblock}
+
+Now plot it and see the circular circle and nice 45 degree angle:
+
+\sageplot[scale=.33]{p}
+
+Indentation and so on works fine.
+\begin{sageblock}
+ s     = 7
+ s2    = 2^s
+ P.<x> = GF(2)[]
+ M     = matrix(parent(x),s2)
+ for i in range(s2):
+    p  = (1+x)^i
+    pc = p.coefficients(sparse=False)
+    a  = pc.count(1)
+    for j in range(a):
+        idx        = pc.index(1)
+        M[i,idx+j] = pc.pop(idx)
+
+ matrixprogram = matrix_plot(M,cmap='Greys')
+\end{sageblock}
+And here's the picture:
+
+\sageplot[scale=.5]{matrixprogram}
+
+Reset \texttt{x} in Sage so that it's not a generator for the polynomial
+ring: \sage{var('x')}
+
+
+\subsection{Plotting (combinatorial) graphs with TikZ}
+\label{sec:plotting-graphs-with}
+
+Sage now includes some nice support for plotting graphs using
+\href{http://www.texample.net/tikz/}{TikZ}. Here, we mean things with
+vertices and edges, not graphs of a function of one or two variables.
+
+The graphics in this section depends on the \texttt{tkz-berge} package,
+which is generally only available in newer \TeX{} distributions (for
+example, \TeX Live 2011 and newer). That package depends in turn on
+TikZ 2.0, which is also only available in newer \TeX{} distributions.
+Installing both of those is in some cases nontrivial, so this section is
+disabled by default.
+
+If you have TikZ and \texttt{tkz-berge} and friends, remove the
+\texttt{comment} environments below.
+
+\begin{comment}
+
+First define our graph:
+
+\begin{sageblock}
+  g = graphs.PetersenGraph()
+  g.set_latex_options(tkz_style='Art')
+\end{sageblock}
+
+Now just do \verb|\sage{}| on it to plot it. You'll need to use the
+\texttt{tkz-berge} package for this to work; that package in turn
+depends on \texttt{tkz-graph} and TikZ. See
+\href{http://altermundus.fr/pages/tkz.html}{\texttt{altermundus.fr/pages/tkz.html}};
+if you're using a recent version of \TeX Live, you can use its package
+manager to install those packages, or get them from CTAN:
+\href{http://www.ctan.org/pkg/tkz-berge}{\texttt{www.ctan.org/pkg/tkz-berge}}.
+See
+\href{http://doc.sagemath.org/html/en/reference/sage/graphs/graph_latex.html}{``\LaTeX{}
+  Options for Graphs''} in the Sage reference manual for more details.
+
+\begin{center}
+  \sage{g}
+\end{center}
+
+The above command just outputs a \texttt{tikzpicture} environment, and
+you can control that environment using anything supported by
+TikZ---although the output of \verb|\sage{g}| explicitly hard-codes a
+lot of things and cannot be flexibly controlled in its current form.
+
+\tikzstyle{every picture}=[rotate=45, scale=1/2]
+
+\begin{center}
+  \sage{g}
+\end{center}
+
+\tikzstyle{every picture}=[]
+
+Here's some more graphs, plotted using the usual plot routines.
+
+\sageplot[scale=.5]{graphs.FlowerSnark().plot()}
+
+\begin{sageblock}
+G4 = DiGraph({1:[2,2,3,5], 2:[3,4], 3:[4], 4:[5,7], 5:[6]},\
+             multiedges=True)
+G4plot = G4.plot(layout='circular')
+\end{sageblock}
+
+\sageplot[scale=.5]{G4plot, axes=False}
+
+\end{comment}
+
+\subsection{3D plotting}
+
+3D plotting right now (Sage version 4.3.4) is problematic because
+there's no convenient way to produce vector graphics. We can make PNGs,
+though, so if you pass \verb|sageplot| a graphics object that cannot be
+saved to EPS or PDF format, we will automatically save to a PNG file,
+which can be used when typesetting a PDF file, but not when creating a
+DVI file. However, you can specify the ``\texttt{imagemagick}'' option,
+which will use the Imagemagick \texttt{convert} utility to make EPS
+files. See the documentation for details.
+
+% FIXME: not sure this works with remote sagetex
+
+\begin{sagesilent}
+  x, y = var('x y')
+\end{sagesilent}
+
+Here's a 3D plot whose format we do not specify; it will automatically
+get saved as a PNG file and won't work when using \texttt{latex} to make
+a DVI file.
+
+\sageplot[scale=.5]{plot3d(sin(pi*(x^2+y^2))/2,(x,-1,1),(y,-1,1))}
+
+Here's the (perhaps-not-so-) famous Sage cube graph in 3D.
+
+\begin{sageblock}
+  G = graphs.CubeGraph(5)
+\end{sageblock}
+
+% need empty [] so sageplot knows you want png format, and aren't
+% passing an option to includegraphics
+\sageplot[][png]{G.plot3d()}
+
+\section{Pausing Sage\TeX}
+\label{sec:pausing-sagetex}
+
+Sometimes you want to ``pause'' for a bit while writing your document if
+you have embedded a long calculation or just want to concentrate on the
+\LaTeX{} and ignore any Sage stuff. You can use the \verb|\sagetexpause|
+and \verb|\sagetexunpause| macros to do that.
+
+\sagetexpause
+
+A calculation: $\sage{factor(2^325 + 1)}$ and a code environment that
+simulates a time-consuming calculation. While paused, this will get
+skipped over.
+\begin{sageblock}
+  import time
+  time.sleep(15)
+\end{sageblock}
+
+Graphics are also skipped: \sageplot{plot(2*sin(x^2) + x^2, (x, 0, 5))}
+
+\sagetexunpause
+
+\section{Make Sage write your \LaTeX{} for you}
+
+With \textsf{Sage\TeX}, you can not only have Sage do your math for you,
+it can write parts of your \LaTeX{} document for you! For example, I
+hate writing \texttt{tabular} environments; there's too many fiddly
+little bits of punctuation and whatnot\ldots and what if you want to add
+a column? It's a pain---or rather, it \emph{was} a pain. Just write a
+Sage/Python function that outputs a string of \LaTeX{} code, and use
+\verb|\sagestr|. Here's how to make Pascal's triangle.
+
+\begin{sageblock}
+def pascals_triangle(n):
+    # start of the table
+    s  = [r"\begin{tabular}{cc|" + "r" * (n+1) + "}"]
+    s.append(r"  & & $k$: & \\")
+    # second row, with k values:
+    s.append(r"  & ")
+    for k in [0..n]:
+        s.append("& {0} ".format(k))
+    s.append(r"\\")
+    # the n = 0 row:
+    s.append(r"\hline" + "\n" + r"$n$: & 0 & 1 & \\")
+    # now the rest of the rows
+    for r in [1..n]:
+        s.append(" & {0} ".format(r))
+        for k in [0..r]:
+            s.append("& {0} ".format(binomial(r, k)))
+        s.append(r"\\")
+    # add the last line and return
+    s.append(r"\end{tabular}")
+    return ''.join(s)
+
+# how big should the table be?
+n = 8
+\end{sageblock}
+
+Okay, now here's the table. To change the size, edit \texttt{n} above.
+If you have several tables, you can use this to get them all the same
+size, while changing only one thing.
+
+\begin{center}
+  \sagestr{pascals_triangle(n)}
+\end{center}
+
+\section{Include doctest-like examples in your document}
+
+Here are some examples of using the \texttt{sageexample} environment:
+\begin{sageexample}
+  sage: 2+2
+  4
+  sage: print('middle')
+  middle
+  sage: factor(x^2 + 2*x + 1)
+  (x + 1)^2
+\end{sageexample}
+Note above that no output from the \texttt{print} statement appears.
+That is because we have to use Python's \texttt{exec} to execute that
+statement (and not \texttt{eval()}), and we can't get the output from
+that.
+
+That said, if you want to see the plain-text output you put into your
+\verb|.tex| file as well as the Sage-computed typeset output, renew the
+\texttt{sageexampleincludetextoutput} command to True:
+\begin{verbatim}
+  \renewcommand{\sageexampleincludetextoutput}{True}
+\end{verbatim}
+\renewcommand{\sageexampleincludetextoutput}{True}
+This can be useful to check that the two outputs are consistent. Here's
+the print statement with text output included:
+\begin{sageexample}
+  sage: print('middle')
+  middle
+\end{sageexample}
+When typesetting your document, the validity of the outputs is not
+checked. In fact, the provided outputs are completely ignored:
+\renewcommand{\sageexampleincludetextoutput}{True}
+\begin{sageexample}
+  sage: is_prime(57)
+  toothpaste
+\end{sageexample}
+\renewcommand{\sageexampleincludetextoutput}{False}%
+Multiline statements with the ``\verb|....:|'' continuation marks are
+supported, as are triple-quoted strings delimited by single quotes
+(double quotes won't work):
+\begin{sageexample}
+  sage: gcd([5656565656,
+  ....:      4747474747,
+  ....:      123456789])
+  1
+  sage: mystr = '''my
+  ....: string
+  ....: has
+  ....: several
+  ....: lines.'''
+  sage: len(mystr)
+  28
+  sage: def f(a):
+  ....:     '''This function is really quite nice,
+  ....:     although perhaps not very useful.'''
+  ....:     print("f called with a = {}".format(a))
+  ....:     y = integrate(SR(cyclotomic_polynomial(10)) + a, x)
+  ....:     return y + 1
+  sage: f(x)
+  f called with a =  x
+  1/5*x^5 - 1/4*x^4 + 1/3*x^3 + x + 1
+\end{sageexample}
+Note that the ``$f$ called with\ldots'' stuff doesn't get typeset, since
+when running Sage on \texttt{example.sagetex.sage}, that gets printed to the
+terminal.
+
+Typesetting your document produces a file named
+\texttt{example\_doctest.sage} containing all the doctest-like examples,
+and you can have Sage check them for you with:
+\begin{verbatim}
+  $ sage -t  example_doctest.sage
+\end{verbatim}
+You should get a doctest failure from the ``toothpaste'' line above. The
+line numbers from \texttt{sage -t} refer to the ``\verb|_doctest.sage|''
+file.
+
+Beware that \texttt{sage -t} does not really handle file names with
+special characters in them, particularly dashes, dots, and spaces---this
+ultimately comes from the way Python interprets \texttt{import}
+statements. Also, running doctests on files outside the main Sage
+library does not always work, so contact \texttt{sage-support} if you
+run into troubles.
+
+Some more examples. This environment is implemented a little bit
+differently than the other environments, so it's good to make sure that
+definitions are preserved across multiple uses. This will correctly
+define $a$, but not print its output because the statement is made up of
+a sequence of expressions and we can't use Python's \texttt{eval()}; we
+have to use \texttt{exec} and we can't capture the output from that.
+\begin{sageexample}
+  sage: 1; 2; a=4; 3; a
+  1
+  2
+  3
+  4
+\end{sageexample}
+However, after that, Sage should remember that $a = \sage{a}$ and be
+able to use that in future \texttt{sageexample} blocks:
+\begin{sageexample}
+  sage: f(a)
+  f called with a =  4
+  1/5*x^5 - 1/4*x^4 + 1/3*x^3 - 1/2*x^2 + 5*x + 1
+\end{sageexample}
+
+\section{Plotting functions in Ti\emph{k}Z with Sage\TeX}
+
+(The code in this section should work with any reasonable version of
+Ti\emph{k}Z, which means it should work with all but the most terribly
+out-of-date \TeX{} installations---but to make sure we can accomodate
+everyone, the code here is commented out. You can almost certainly
+uncomment and run them. Make sure you do \verb|\usepackage{tikz}| in the
+preamble.)
+
+\begin{comment}
+
+The wonderful graphics package TikZ has the ability to plot functions by
+reading in a sequence of points from an external file---see chapter 18,
+page 193 of the TikZ manual. This facility is designed around files
+produced by Gnuplot, but the file format is so simple that it's very
+easy to use Sage\TeX{} to generate them. First you need a function that
+will evaluate functions and write the results into a file:
+
+
+% set up plotting stuff
+\begin{sageblock}
+  def gnuplot(x, y, tvals_, fn):
+      """
+      Write out a gnuplot-style file of points x(t), y(t).
+      """
+      tvals = list(tvals_)
+      lines = ['#This is a gnuplot-style file written by SageTeX.',
+               '#x: {0}'.format(x),
+               '#y: {0}'.format(y),
+               '#Curve 0, {0} points'.format(len(tvals)),
+               '#x y type']
+      fmt = lambda _: _.n().str(no_sci=2)
+      for t in tvals:
+          try:
+              lines.append('{0} {1}  i'.format(fmt(x(t)), fmt(y(t))))
+          except (ValueError, ZeroDivisonError):
+              pass
+      with open(fn, 'w') as f:
+          f.write('\n'.join(lines) + '\n')
+\end{sageblock}
+
+There probably should be some more exceptions in that list, and the
+above code doesn't check to make sure it's writing real values, but then
+again, this is just a file of examples!
+
+Then you define callable functions x and y and pass them in, along with
+a sequence of values and a file name. Here's a plot that I used on a
+calculus exam:
+
+\begin{sageblock}
+  r(t) = 1 - 2*sin(3*t)
+  x(t) = r(t)*cos(t)
+  y(t) = r(t)*sin(t)
+  gnuplot(x, y, srange(0, 2*pi + .05, .05), 'example-tikz1.table')
+\end{sageblock}
+
+(Usually you would do that in sagesilent environments, I guess.)
+
+Then you call TikZ with your plot.
+
+\begin{tikzpicture}
+ \draw[very thin,->] (-3.25,0) -- (3.25,0);
+ \draw[very thin,->] (0,-3.25) -- (0,3.25);
+ \draw[smooth] plot file {example-tikz1.table};
+\end{tikzpicture}
+
+For regular Cartesian plots, just pass in the identity function for x:
+
+\begin{sageblock}
+  x = lambda t: t
+  y(t) = t*sin(1/t)
+  gnuplot(x, y, [0.01, 0.02..(0.5)] + [0.55, 0.6..2], 'example-tikz2.table')
+\end{sageblock}
+
+\begin{center}
+\begin{tikzpicture}[scale=3]
+ \draw[very thin,->] (-0.25,0) -- (2,0);
+ \draw[very thin,->] (0,-1/3) -- (0,1);
+ \draw[smooth, red] plot file {example-tikz2.table};
+\end{tikzpicture}
+\end{center}
+
+This style of plotting will become even more useful and powerful when
+the new TikZ Data Visualization library is available---you will be able
+to feed TikZ a bunch of data points, and it automatically make a very
+nice plot for you, including axes, labels, and so on.
+
+\end{comment}
+
+\section{The \texttt{sagecommandline} environment}
+
+When writing a \TeX{} document about Sage, you may want to show some
+examples of commands and their output. But naturally, you are lazy and
+don't want to cut and paste the output into your document. ``Why should
+I have to do anything? Why can't Sage and \TeX{} cooperate and do it for
+me?'' you may cry. Well, they \emph{can} cooperate:
+
+\begin{sagecommandline}
+  sage: 1+1
+  sage: is_prime(57)
+  sage: if is_prime(57):
+  ....:     print('prime')
+  ....: else:
+  ....:     print('composite')
+\end{sagecommandline}
+
+Note that the output of the commands is not included in the source file,
+but are included in the typeset output.
+
+Because of the way the environment is implemented, not everything is
+exactly like using Sage in a terminal: the two commands below (and the
+``if is prime'' one above, did you notice that?) would produce some
+output, but don't here:
+
+\begin{sagecommandline}
+  sage: x = 2010; len(x.divisors())
+  sage: print('Hola, mundo!')
+\end{sagecommandline}
+
+The difference lies in the Python distinction between statements and
+expressions; we can use \texttt{eval()} for an expression and get its
+output, but we must use \texttt{exec} for a statement and can't get the
+output, if any.
+
+One nice thing is that you can set labels by using an @ sign:
+
+\begin{sagecommandline}
+  sage: l = matrix([[1,0,0],[3/5,1,0],[-2/5,-2,1]])
+  sage: d = diagonal_matrix([15, -1, 4]) #@\label{diagonal}
+  sage: u = matrix([[1,0,1/3],[0,1,2],[0,0,1]]) #@\label{anotherlabel} \# foo
+  sage: l*d*u   # this is a comment
+\end{sagecommandline}
+
+And then refer to that label: it was on line \ref{diagonal}, which is on
+page \pageref{diagonal}. Note that the other text after the hash mark on
+that line does not get typeset as a comment, and that you cannot have
+any space between the hash mark and the~@. You will also need to typeset
+your document \emph{twice}
+
+You can also typeset the output by changing the value of
+\verb|\sagecommandlinetextoutput| to False:
+\renewcommand{\sagecommandlinetextoutput}{False}
+\begin{sagecommandline}
+  sage: l*d*u
+  sage: x = var('x')
+  sage: (1-cos(x)^2).trig_simplify()
+\end{sagecommandline}
+
+\renewcommand{\sagecommandlinetextoutput}{True}
+
+The Sage input and output is typeset using the \texttt{listings} package
+with the styles \texttt{SageInput} and \texttt{SageOutput},
+respectively. If you don't like the defaults you can change them. It is
+recommended to derive from \texttt{DefaultSageInput} and
+\texttt{DefaultSageOutput}, for example\ldots
+\lstdefinestyle{SageInput}{style=DefaultSageInput,basicstyle={\color{red}}}
+\lstdefinestyle{SageOutput}{style=DefaultSageOutput,basicstyle={\color{green}}}
+makes things overly colorful:
+\begin{sagecommandline}
+  sage: pi.n(100)
+\end{sagecommandline}
+\lstdefinestyle{SageInput}{style=DefaultSageInput}
+\lstdefinestyle{SageOutput}{style=DefaultSageOutput}
+
+Plotting things doesn't automatically pull in the plot, just the text
+representation of the plot (the equivalent of applying \texttt{str()} to
+it):
+
+\begin{sagecommandline}
+  sage: plot(sin(x), (x, 0, 2*pi))
+\end{sagecommandline}
+
+You can include output, but it will be ignored. This is useful for
+doctesting, as all the \texttt{sagecommandline} environment things get
+put into the ``\texttt{\_doctest.sage}'' file. However, note that if you
+don't include any output, then the corresponding doctest will fail if
+the command produces output. The doctest output from this file will have
+lots of failures because not many of the commands have output included
+in the source \texttt{.tex} file.
+
+The command below has incorrect output included in the \texttt{.tex}
+file; in the PDF, you see the correct Sage-computed answer, but if you
+do \texttt{sage -t example\_doctest.sage} you will get a genuine doctest
+failure.
+\begin{sagecommandline}
+  sage: factor(x^2 + 2*x + 1)
+  (x + 999)^2
+\end{sagecommandline}
+
+\end{document}

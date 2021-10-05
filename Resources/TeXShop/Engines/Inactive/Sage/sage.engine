@@ -4,10 +4,6 @@
 
 # Note: If you are installing Sage for the first time, read the document "About Sage" carefully.
 # The document is in ~/Library/TeXShop/Engines/Inactive/Sage.
-# When installing Sage, it is important to rename it to just SageMath.app BEFORE RUNNING IT.
-# A couple of symbolic links to the program  need to be created at that moment. Once this is
-# done, updating Sage is very easy. Download the new version, rename it to SageMath.app,
-# place it in Applications, run it once, and that's it.
 
 PATH=$PATH:/Library/TeX/texbin:/usr/texbin:/usr/local/bin
 filename=$1
@@ -20,24 +16,25 @@ pdflatex --file-line-error --synctex=1 "$filename"
 # do we need to run Sage?
 if [ -f "$soutname" ]
 then
-	new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | egrep -v '(_st_.current_tex_line)' | md5)
+#	new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | egrep -v '(_st_.current_tex_line)' | md5)
+new_sum=$(egrep -v '^( _st_.goboom|print .SageT)|(_st_.current_tex_line|SageTeX pause|SageTeX unpause)' "$sagename" | md5)
 #   above line replaces original line below; thanks to Markus Baldauf
 #   new_sum=$(egrep -v '^( _st_.goboom|print .SageT)' "$sagename" | md5)
-    old_sum=$(egrep -o ^%[0-9a-f]{32}% "$soutname" | cut -b 2-33)
-    if [ "$new_sum" != "$old_sum" ]
-    then
-        run_sage=yes
-    fi
+   old_sum=$(egrep -o ^%[0-9a-f]{32}% "$soutname" | cut -b 2-33)
+   if [ "$new_sum" != "$old_sum" ]
+   then
+       run_sage=yes
+   fi
 else
-    # no .sout file, so run Sage
-    run_sage=yes
+   # no .sout file, so run Sage
+   run_sage=yes
 fi
 
 if [ "$run_sage" = "yes" ]
 then
-    echo Running Sage, please wait a moment...
-    /Applications/SageMath.app/Contents/Resources/sage/sage "$sagename"
-    pdflatex --file-line-error --synctex=1 "$filename"
+   echo Running Sage, please wait a moment...
+   /usr/local/bin/sage "$sagename"
+   pdflatex --file-line-error --synctex=1 "$filename"
 else
-    echo No Sage commands have changed, so running Sage is unnecessary.
+   echo No Sage commands have changed, so running Sage is unnecessary.
 fi

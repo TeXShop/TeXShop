@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/sh
 # DO NOT EDIT OR COPY THIS FILE. TEXSHOP WILL AUTOMATICALLY UPDATE IT 
 # pdftricksmk.sh : pst2pdf adapted to use latexmk
 # PSTricks 2 PDF converter :

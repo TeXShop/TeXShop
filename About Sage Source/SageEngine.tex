@@ -15,43 +15,41 @@
 \maketitle
 \vspace{-.3in}
 \section{Sage}
-Sage is an open source alternative to Maple, Mathematica, and Matlab. It can be downloaded from \url{https://www.sagemath.org}.
-At the time this report was written, that site directs Macintosh users to   
-\url{https://github.com/3-manifolds/Sage_macOS/releases} for a Macintosh version which contains  Intel code but also runs under emulation on Arm machines. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
+Sage is an open source alternative to Maple, Mathematica, and Matlab. The program provides all of the standard features expected from such a system: arbitrary precision arithmetic, symbolic integration and differentiation, two-dimensional plotting of functions, matrix algebra, and much more.
+It can be downloaded from \url{https://www.sagemath.org}.
+That site will in turn direct macOS users to a specific site with two install packages for Sage, one for Arm machines and one for Intel machines. We strongly recommend the latest version, currently SageMath 9.5. Sage is updated regularly, so by the time you read this document there may be a later version available. 
 
-The Macintosh version of Sage 9.4 has been reconfigured, so it is important to use version 9.4 or later with this engine. When Sage 9.4 was first released, the Macintosh version had serious bugs. These were fixed by October, 2021; be sure to use the fixed version.
 
-To install, double click the dmg file to open it, and drag SageMath-9-4.app to your /Applications folder. Then double-click the install package in the dmg to install a small number of other programs.
+The Sage developers have dramatically improved installation for the Macintosh, so the many installation steps  we used to provide in this document can be replaced with the words ``follow their instructions.'' 
 
-Sage is updated regularly, so by the time you read this document there may be a later version available. This document will pinpoint changes you may need to make in our installation for a later version.
+To use Sage, drag  the sage.engine file in this folder to $\sim/Library/TeXShop/Engines$, the folder of active engines for TeXShop. This step need only be done once, when you first install Sage. This engine will work with Sage 9.4 and higher.
 
-\section{Installing the Sage Typesetting Engine and SageTeX}
+%The Sage program comes with a folder of TeX style files named {\em sagetex}.  These style files allow Sage code to be embedded in a LaTeX document. During typesetting, Sage is called to process the Sage code, and the output is included in the pdf output file. This is an easy way to add graphs of functions to documents, perform symbolic integration, and include intricate numerical calculations. 
+%
+%The one tricky step is to find the sagetex folder in the Sage application  and copy it to a location where TeX will find it. Since sagetex depends strongly on the particular version of Sage being used, this step must be repeated each time Sage is updated on your system. 
+%
+%We will copy the sagetex folder to $\sim$/Library/texmf/tex/latex. Here $\sim$/Library is the Library folder in your home directory, not the system Library folder, and Apple usually hides the folder. But TeXShop has a command which opens
+%$\sim$/Library/TeXShop. Create the texmf/tex/latex folders inside $\sim$/Library if they do not currently exist.
 
-To use Sage, drag  the sage.engine file in this folder to $\sim/Library/TeXShop/Engines$, the folder of active engines for TeXShop. This step need only be done once, when you first install Sage. Unless the structure of Sage changes drastically, this engine should work with later versions of Sage as well.
 
-The Sage program comes with a folder of TeX style files named {\em sagetex}.  These style files allow Sage code to be embedded in a LaTeX document. During typesetting, Sage is called to process the Sage code, and the output is included in the pdf output file. This is an easy way to add graphs of functions to documents, perform symbolic integration, and include intricate numerical calculations. 
+%% Sage and Latexmk
 
-The one tricky step is to find the sagetex folder in the Sage application  and copy it to a location where TeX will find it. Since sagetex depends strongly on the particular version of Sage being used, this step must be repeated each time Sage is updated on your system. 
-
-We will copy the sagetex folder to $\sim$/Library/texmf/tex/latex. Here $\sim$/Library is the Library folder in your home directory, not the system Library folder, and Apple usually hides the folder. But TeXShop has a command which opens
-$\sim$/Library/TeXShop. Create the texmf/tex/latex folders inside $\sim$/Library if they do not currently exist.
-
-In the folder containing the document you are now reading, there is a folder named ``Sage and Latexmk''  That folder contains the sagetex folder for SageMath-9-4. If you have version 9-4, drag and drop this sagetex folder to the location
-$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
-
-If you have a later version of SageMath, the program itself contains the sagetex folder for that version. Follow the steps below to obtain this folder. These instructions list the version number of Sage. Change the two occurrences of 9-4 to the later version number for future versions of Sage.
-\begin{verbatim}
-    cd /Applications/SageMath-9-4.app/Contents/Frameworks/Sage.framework
-    cd Versions/9.4/local/share/texmf/tex/latex
-\end{verbatim}
-
-These commands set the current Terminal directory to the location of sagetex. Issue the command
-\begin{verbatim}
-     open .
-\end{verbatim}
-
-to open this location in the Finder; notice the period at the end of this command. The result will be a Finder window containing the sagetex folder. Drag and drop this sagetex folder to the location
-$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
+%In the folder containing the document you are now reading, there is a folder named ``Sage and Latexmk''  That folder contains the sagetex folder for SageMath-9-4. If you have version 9-4, drag and drop this sagetex folder to the location
+%$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
+%
+%If you have a later version of SageMath, the program itself contains the sagetex folder for that version. Follow the steps below to obtain this folder. These instructions list the version number of Sage. Change the two occurrences of 9-4 to the later version number for future versions of Sage.
+%\begin{verbatim}
+%    cd /Applications/SageMath-9-4.app/Contents/Frameworks/Sage.framework
+%    cd Versions/9.4/local/share/texmf/tex/latex
+%\end{verbatim}
+%
+%These commands set the current Terminal directory to the location of sagetex. Issue the command
+%\begin{verbatim}
+%     open .
+%\end{verbatim}
+%
+%to open this location in the Finder; notice the period at the end of this command. The result will be a Finder window containing the sagetex folder. Drag and drop this sagetex folder to the location
+%$\sim$/Library/texmf/tex/latex/ while holding down the Option key so you only make a copy of the folder.
 
 
 

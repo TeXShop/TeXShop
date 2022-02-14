@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 # DO NOT EDIT OR COPY THIS FILE. TEXSHOP WILL AUTOMATICALLY UPDATE IT 
 # pst-pdfmk.sh : pst-pdf converter using latexmk
 # PST-PDF converter :

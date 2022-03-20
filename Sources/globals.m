@@ -346,6 +346,7 @@ NSString *IncrementalSearchKey = @"IncrementalSearch";
 NSString *NewToolbarIconsKey = @"NewToolbarIcons";
 NSString *SyncUseTabsKey = @"SyncUseTabs";
 NSString *AltPathKey = @"AltPath";
+NSString *IgnoreStartOnRebootKey = @"IgnoreStartOnReboot";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

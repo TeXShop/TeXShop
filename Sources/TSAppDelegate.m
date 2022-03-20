@@ -210,6 +210,7 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     
+    
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
         atLeastMavericks = YES;
     else
@@ -286,9 +287,10 @@
 	// that the app is useable.
 	if (([[NSUserDefaults standardUserDefaults] boolForKey:TSHasBeenUsedKey] == NO) ||
 		([[NSUserDefaults standardUserDefaults] objectForKey:TetexBinPath] == nil)) {
+        // then no defaults have ever been set, so we need to set them on disk
 		[[TSPreferences sharedInstance] registerFactoryDefaults];
 	} else {
-		// register defaults
+		// register defaults; this does not interfere with values previously set by the user, but provides default values for all other defaults
 		fileName = [[NSBundle mainBundle] pathForResource:@"FactoryDefaults" ofType:@"plist"];
 		NSParameterAssert(fileName != nil);
 		factoryDefaults = [[NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL] propertyList];

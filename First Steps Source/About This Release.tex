@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 4.69}
+\title{About TeXShop 4.70}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -37,6 +37,27 @@ The default behavior of TeXShop can be modified in two ways: by making Preferenc
 New versions of TeXShop generally do not change these user modifications because users don't like changes made behind their backs. But sometimes, new features require a few modifications. This paper explains what to do.
 ccc.
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
+\section{Changes in 4.70}
+Apple has been warning that the Python scripting language is deprecated and will eventually be removed from macOS.
+It was finally removed in the latest update of macOS, Monterey 12.3, released in March, 2022. Luckily, TeXShop does not use Python. 
+
+This caused developers to worry about other deprecated features of macOS. One of these is the default shell, which changed from bash to zsh in Catalina, introduced in 2019. Bash is still available in Monterey, but it has not been upgraded in many years and could be removed in the future. To protect against that, shell scripts in TeXShop that previously used bash have been changed to use zsh. In most cases, the switch was trivial.
+
+Herbert Schulz revised the latexmk and transparency engines in TeXShop in this way. The new versions are in
+$\sim$/Library/TeXShop/Engines/Inactive, in folders named ``GhostscriptTransparencyEngines'' and ``Latexmk''. The update to TeXShop 4.70 changed these but did not change your active engines, since you might have edited these engines. Most of these old engines  continue to work. Here is what Herbert Schulz responded when asked if users should update:
+
+\begin{verbatim}
+The basic engines, (pdf/xe/lua)latexmk, will work. The only engines that 
+really will have to be updated are the (seldom used) pdftricksmk.engine 
+and pst-pdfmk.engine since the 4 updated files in bin/tslatexmk have 
+changes that need the updated engines.
+\end{verbatim}
+
+\begin{verbatim}
+My general feeling is that all the engines that are used should be updated 
+so I know the base I'm working with when things come up. Too bad changing 
+to zsh from bash/sh wasn't as simple as changing the shebang line.
+\end{verbatim}
 
 \section{Changes in 4.69}
 

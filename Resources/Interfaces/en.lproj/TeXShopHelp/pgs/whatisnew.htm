@@ -15,6 +15,36 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.70</h5></P>
+
+The following minor changes were made.
+
+<ul>
+<li> 
+Apple warned that the Python scripting language is deprecated and will eventually be removed. 
+That finally happened in Monterey 12.3, released in March, 2022. Luckily, TeXShop does not use Python. 
+ <p>
+Another deprecated item in macOS is the bash shell.  The default shell changed from bash to zsh in 2019, but bash is still available in Monterey. It has not been upgraded in many years and could be removed in the future. To protect against that, shell scripts in TeXShop that previously used bash have been changed to use zsh. In most cases, the switch was trivial.
+<p>
+Herbert Schulz revised the latexmk and transparency engines in TeXShop in this way. The new versions are in
+~/Library/TeXShop/Engines/Inactive, in folders named ``GhostscriptTransparencyEngines'' and ``Latexmk''. The update to TeXShop did not change active engines because users may have edited these engines. Although most old latexmk and transparency engines continue to work, Schulz recommends updating them to the latest versions so he has a fixed base for future changes.
+
+<li> When macOS is shut down, a dialog appears with an optional check box labeled "Reopen windows when logging back in." If this is checked, all programs running when the machine was shut down will restart the next time the machine is rebooted. One user reported that TeXShop gets into an infinite loop when restarted in this way, but after it is force quit and other programs are loaded, TeXShop runs without difficulty. I could not reproduce this problem.
+
+<p> TeXShop 4.70 has a  hidden preference item for users who run into this problem. The item is called IgnoreStartOnReboot and has default value NO. To change it to YES, issue the following command in Terminal.
+<pre>
+     defaults write TeXShop IgnoreStartOnReboot YES
+</pre>
+After this change, all other programs will start when the machine is rebooted, but TeXShop will not. Restart TeXShop manually. The preference affects the behavior of the "Restart" item in the Apple menu in the same way.
+
+<p> This preference does not modify the Open at Login list set for users in System Preferences, so if TeXShop is listed there, it will still start on login. 
+
+<li> Latexmk is upgraded to version 4.77.
+ <p>
+<li> When an "Experiment" source window closes, the related preview and console windows now also close. Thanks to Murray Eisenberg for reporting the bug.
+</ul>
+
+
 <P><h5>TeXShop Changes 4.69</h5></P>
 
 The latest version of Sage simplifies the installation of Sage on the Macintosh. The Sage engine and corresponding documentation in ~/Library/TeXShop0/Engines/Inactive/Sage have been revised to reflect this change. It is no longer necessary to revise the Sage engine or the installation of sagetex after each Sage update.
@@ -22,8 +52,7 @@ The latest version of Sage simplifies the installation of Sage on the Macintosh.
 <p>
 In addition, the following relatively minor TeXShop changes have been made:
 <ul>
-<li> Added "perl script" = pk to the list of file typ\input{../../current/texshop/documentation.html}
-es understood by TeXShop
+<li> Added "perl script" = pk to the list of file types understood by TeXShop
 <p>
 <li> Herbert Schulz revised the active engines pdflatexmk.engine and sepdflatexmk.engine and revised the folders
 "Latexmk" and "GhostscriptTransparencyEngines" in ~/Library/TeXShop/Engines/Inactive to improve passing

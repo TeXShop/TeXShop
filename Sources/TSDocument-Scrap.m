@@ -38,6 +38,15 @@
 
 @implementation TSDocument (Scrap)
 
+- (void)windowWillClose:(NSNotification *)notification
+{
+    if ([notification object] == scrapWindow)
+    {
+        [outputWindow close];
+        [scrapPDFWindow close];
+    }
+}
+
 
 - (NSString *)getFilePath
 {

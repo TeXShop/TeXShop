@@ -9,6 +9,7 @@
 #import "TSApplication.h"
 #import "TSDocumentController.h"
 #import "TSDocument.h"
+#import "Globals.h"
 
 @implementation TSApplication
 
@@ -20,6 +21,9 @@
         
     }
     
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:IgnoreStartOnRebootKey] == YES)
+        [self disableRelaunchOnLogin];
+
     return self;
 }
 

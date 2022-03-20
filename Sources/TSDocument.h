@@ -85,7 +85,7 @@ enum RootCommand
 @class NoodleLineNumberView;
 // END FIX RULER SCROLL
 
-@interface TSDocument : NSDocument <NSTextViewDelegate, NSToolbarDelegate>
+@interface TSDocument : NSDocument <NSTextViewDelegate, NSToolbarDelegate, NSWindowDelegate>
 {
 	IBOutlet NSTextView			*textView1;
 	IBOutlet NSTextView			*textView2;
@@ -892,6 +892,9 @@ enum RootCommand
 - (void) tryScrap:(id)sender;
 - (IBAction) typesetScrap:(id)sender;
 // - (void)checkScrapTaskStatus:(NSNotification *)notification;
+
+// NSWindowDelegate methods
+- (void)windowWillClose:(NSNotification *)notification;
 @end
 
 

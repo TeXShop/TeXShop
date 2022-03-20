@@ -1,6 +1,79 @@
-# special custom dependency for asymptote
-add_cus_dep("asy","eps",0,"asy2x");
-add_cus_dep("asy","pdf",0,"asy2x");
-add_cus_dep("asy","tex",0,"asy2x");
-sub asy2x {return system("asy '$_[0]'"); }
-#sub asy2x {return system("asy '$_[0]'; pdfcrop '$_[0].pdf'; mv '$_[0]-crop.pdf' '$_[0].pdf'"); }
+# This shows how to use Asymptote (http://asymptote.sourceforge.net/,
+# or http://www.ctan.org/pkg/asymptote/)
+# with latexmk.  Asymptote is a vector graphics language with a
+# processing program that generates graphics files that can be used in
+# a LaTex file.  
+#
+# A standard method of using it is with the asymptote LaTeX style file
+# (http://mirror.ctan.org/graphics/asymptote/doc/asymptote.sty)
+# The graphics drawing code is in the tex file, and applying pdflatex to
+# the tex file produces one or more files with a base name the same as
+# or related to the main tex file, but with the extension 'asy'.  The
+# .asy is processed by the program asy (part of the asymptote
+# software) to produce graphics files (which may be eps, tex, or pdf
+# files) that are used the next time pdflatex is run on the main tex
+# file.    
+#
+# Latexmk can be arranged to run asymptote (i.e., the program asy)
+# when needed, by defining the following custom dependency.  (The code
+# is to be put in one of latexmk's rc files, e.g., ~/.latexmkrc.)
+#
+
+## OLD simple method (taken from the documentation for V. 2.03 of
+## asymptote).  These definitions are simple, but they may not always
+## give the desired type of output file, and they do not ensure that
+## latexmk has dependency information about files imported from the
+## asy file.
+#OLD sub asy {return system("asy \"$_[0]\"");}
+#OLD add_cus_dep("asy","eps",0,"asy");
+#OLD add_cus_dep("asy","pdf",0,"asy");
+#OLD add_cus_dep("asy","tex",0,"asy");
+
+
+# The following definitions arrange to run asy with the correct output
+# file type.  They run asy in a verbose mode so that dependency
+# information on imported files can be extracted.  To avoid adding a
+# lot of extra printout on the screen of unimportant messages, the
+# output is sent to a log file.  Since this includes error messages,
+# which the user should see, latexmk types out error messages and the
+# like. These definitions need latexmk 4.48 or later.
+
+add_cus_dep("asy","eps",0,"asy2eps");
+add_cus_dep("asy","pdf",0,"asy2pdf");
+add_cus_dep("asy","tex",0,"asy2tex");
+
+sub asy2eps { return asy2x( $_[0], 'eps' ); }
+sub asy2pdf { return asy2x( $_[0], 'pdf' ); }
+sub asy2tex { return asy2x( $_[0], 'tex' ); }
+
+sub asy2x   {
+   my $ret = system("asy -vv -f '$_[1]' '$_[0]' >& '$_[0].log'");
+   my $FH = new FileHandle;
+   open $FH, "$_[0].log";
+   %imp = ();
+
+   while (<$FH>) {
+       if (/^(Including|Loading) .* from (.*)\s*$/) {
+          my $import = $2;
+	  $imp{$import} = 1;
+       }
+       elsif ( /^error/ || /^.*\.asy: \d/ ) {
+           warn "==Message from asy: $_";
+	   $ret = 1;
+       }
+       elsif ( /^kpsewhich / || /^Processing / || /^Using /
+               || /^Welcome / || /^Wrote /|| /^cd /|| /^gs /
+	     ) {
+       }
+       else {
+           warn "==Message from asy: $_";
+       }
+   }
+   close $FH;
+# For latexmk 4.48
+   rdb_set_source( $rule, keys %imp );
+   return $ret;
+}
+
+# Don't allow use of -auxdir
+$aux_dir='';

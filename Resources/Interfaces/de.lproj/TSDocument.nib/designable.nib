@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -75,7 +75,7 @@
                 <outlet property="rightView" destination="c82-fb-gTh" id="yFb-9G-M58"/>
                 <outlet property="sLog" destination="tHH-dw-4gE" id="EHT-Qu-JTf"/>
                 <outlet property="saveFormatLabel" destination="ofe-lc-Nwh" id="wNT-SR-Re2"/>
-                <outlet property="saveFormatMenu" destination="fz1-rk-E4g" id="BTp-zb-x6s"/>
+                <outlet property="saveFormatMenu" destination="Rrg-6s-kCg" id="die-vc-Qyc"/>
                 <outlet property="sbackforthKK" destination="eBL-Mg-4nV" id="tLC-pj-xLp"/>
                 <outlet property="scrapPDFKitView" destination="U3l-DN-xsG" id="xHi-jq-cmb"/>
                 <outlet property="scrapPDFWindow" destination="eVz-Pe-v7u" id="JZ6-Yz-dmd"/>
@@ -1789,7 +1789,7 @@ DQ
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="section" width="224.06399536132812" minWidth="46.563999176025391" maxWidth="1000" id="759">
+                                                            <tableColumn identifier="section" width="195.06399536132812" minWidth="46.563999176025391" maxWidth="1000" id="759">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Section">
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
@@ -2240,7 +2240,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="ud4-hp-Qbn">
                             <rect key="frame" x="1" y="1" width="276" height="323"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="Odw-uT-b8h" customClass="ScrapTextView">
                                     <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>
@@ -2275,6 +2275,10 @@ Gw
                     </button>
                 </subviews>
             </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="ba5-9M-Sc2"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="825"/>
         </window>
         <window title="Try This Output" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapPDFWindow" animationBehavior="default" id="eVz-Pe-v7u" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
@@ -2356,17 +2360,20 @@ Gw
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rrg-6s-kCg">
                     <rect key="frame" x="96" y="6" width="246" height="26"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="zld-HU-9ai" id="lfm-Ew-goP">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="zld-HU-9ai" id="lfm-Ew-goP">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="Jwl-G3-Iv6">
                             <items>
-                                <menuItem title="Item 1" state="on" id="zld-HU-9ai"/>
+                                <menuItem state="on" id="zld-HU-9ai"/>
                                 <menuItem title="Item 2" id="RHt-E1-K2X"/>
                                 <menuItem title="Item 3" id="vWs-Wh-fcy"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="setSaveExtension:" target="-2" id="Bgh-AK-noz"/>
+                    </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ofe-lc-Nwh">
                     <rect key="frame" x="10" y="11" width="82" height="17"/>
@@ -2377,26 +2384,8 @@ Gw
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fz1-rk-E4g">
-                    <rect key="frame" x="96" y="6" width="246" height="26"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="6a0-eF-RtM" id="lTF-TC-s1w">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="tQS-Kh-KY3">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="6a0-eF-RtM"/>
-                                <menuItem title="Item 2" id="uVX-aq-pQr"/>
-                                <menuItem title="Item 3" id="wKA-fK-9uw"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <action selector="setSaveExtension:" target="-2" id="sgy-Kt-BBX"/>
-                    </connections>
-                </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="73" y="-660"/>
+            <point key="canvasLocation" x="72.5" y="-660"/>
         </customView>
         <customView id="Gv1-2X-Uxz" customClass="NSMatrix">
             <rect key="frame" x="0.0" y="0.0" width="587" height="220"/>

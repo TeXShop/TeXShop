@@ -1,7 +1,4 @@
-#!/bin/sh
-#PATH = "$PATH:/Library/TeX/texbin:/usr/local/bin"
-#export PATH
-#set path= ($path /Library/TeX/texbin /usr/local/bin)
+#!/bin/zsh
 if [ -e "/Library/TeX/Root/texmf-dist/dvipdfmx/dvipdfmx-unsafe.cfg" ]; then
 	xelatex -output-driver="xdvipdfmx -i dvipdfmx-unsafe.cfg -q -E" -file-line-error -synctex=1 "$1"
 else

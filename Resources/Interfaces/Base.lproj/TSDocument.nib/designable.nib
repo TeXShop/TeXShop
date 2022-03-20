@@ -75,7 +75,7 @@
                 <outlet property="rightView" destination="SV4-bf-Sy6" id="zwX-oQ-iDt"/>
                 <outlet property="sLog" destination="S6b-FX-MMb" id="lTm-aa-XKk"/>
                 <outlet property="saveFormatLabel" destination="V4g-xj-3k6" id="QUy-5s-bxf"/>
-                <outlet property="saveFormatMenu" destination="tZ7-ZO-gwE" id="UCF-5E-Er6"/>
+                <outlet property="saveFormatMenu" destination="lQb-gt-Zw6" id="sZW-yQ-YmI"/>
                 <outlet property="sbackforthKK" destination="Cld-d2-wfT" id="5X1-Ry-zTh"/>
                 <outlet property="scrapPDFKitView" destination="QNW-n0-grJ" id="3T5-1K-tI7"/>
                 <outlet property="scrapPDFWindow" destination="OKH-8d-Quy" id="CvY-B4-OcH"/>
@@ -1393,17 +1393,20 @@ DQ
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lQb-gt-Zw6">
                     <rect key="frame" x="96" y="6" width="246" height="26"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bPv-3O-T2A" id="u68-2U-ae2">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bPv-3O-T2A" id="u68-2U-ae2">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="QMU-ba-cFa">
                             <items>
-                                <menuItem title="Item 1" state="on" id="bPv-3O-T2A"/>
+                                <menuItem state="on" id="bPv-3O-T2A"/>
                                 <menuItem title="Item 2" id="17K-Sp-tEl"/>
                                 <menuItem title="Item 3" id="gfr-Dd-NmM"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="setSaveExtension:" target="-2" id="F2z-gW-p7S"/>
+                    </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V4g-xj-3k6">
                     <rect key="frame" x="10" y="11" width="82" height="17"/>
@@ -1414,26 +1417,8 @@ DQ
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tZ7-ZO-gwE">
-                    <rect key="frame" x="96" y="6" width="246" height="26"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Dcm-6w-9G0" id="afI-Jp-WTQ">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="nP1-U6-bu7">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="Dcm-6w-9G0"/>
-                                <menuItem title="Item 2" id="mxc-q4-yce"/>
-                                <menuItem title="Item 3" id="XIT-bx-Zqf"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <action selector="setSaveExtension:" target="-2" id="J7u-tH-olq"/>
-                    </connections>
-                </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="73" y="-660"/>
+            <point key="canvasLocation" x="72.5" y="-660"/>
         </customView>
         <menu title="Menu" id="577" userLabel="KitMouseMode">
             <items>
@@ -1681,7 +1666,7 @@ DQ
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="4fN-LJ-bIK">
                                                 <rect key="frame" x="1" y="1" width="279" height="283"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" headerView="3918" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="764" id="763">
                                                         <rect key="frame" x="0.0" y="0.0" width="279" height="266"/>
@@ -1753,7 +1738,7 @@ DQ
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="ARC-h6-YBj">
                                                 <rect key="frame" x="1" y="1" width="279" height="226"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="3915" id="757">
                                                         <rect key="frame" x="0.0" y="0.0" width="279" height="209"/>
@@ -2229,7 +2214,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="l5q-NL-hjT">
                             <rect key="frame" x="1" y="1" width="276" height="323"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="GUN-AI-fmM" customClass="ScrapTextView">
                                     <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>
@@ -2264,6 +2249,9 @@ Gw
                     </button>
                 </subviews>
             </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="ndX-a0-UFY"/>
+            </connections>
             <point key="canvasLocation" x="1176" y="715"/>
         </window>
         <window title="Try This Output" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="ScrapPDFWindow" animationBehavior="default" id="OKH-8d-Quy" customClass="NSPanel">
@@ -2515,7 +2503,7 @@ Gw
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="YzU-yo-34W">
                                     <rect key="frame" x="1" y="1" width="589" height="368"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" smartInsertDelete="YES" id="Bvt-aO-BRZ" customClass="TSTextView">
                                             <rect key="frame" x="0.0" y="0.0" width="589" height="368"/>
@@ -2542,7 +2530,7 @@ Gw
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="yoe-cU-m6A">
                                     <rect key="frame" x="1" y="1" width="589" height="404"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" smartInsertDelete="YES" id="dJF-dD-dTg" customClass="TSTextView">
                                             <rect key="frame" x="0.0" y="0.0" width="589" height="404"/>
@@ -2578,6 +2566,25 @@ Gw
             </connections>
             <point key="canvasLocation" x="139" y="147"/>
         </window>
+        <popUpButton verticalHuggingPriority="750" id="tZ7-ZO-gwE">
+            <rect key="frame" x="0.0" y="0.0" width="118" height="26"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Dcm-6w-9G0" id="afI-Jp-WTQ">
+                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                <font key="font" metaFont="menu"/>
+                <menu key="menu" id="nP1-U6-bu7">
+                    <items>
+                        <menuItem title="Item 1" state="on" id="Dcm-6w-9G0"/>
+                        <menuItem title="Item 2" id="mxc-q4-yce"/>
+                        <menuItem title="Item 3" id="XIT-bx-Zqf"/>
+                    </items>
+                </menu>
+            </popUpButtonCell>
+            <connections>
+                <action selector="setSaveExtension:" target="-2" id="J7u-tH-olq"/>
+            </connections>
+            <point key="canvasLocation" x="221" y="-535"/>
+        </popUpButton>
     </objects>
     <resources>
         <image name="BackAdorn" width="11" height="13"/>

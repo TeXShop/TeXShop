@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 # DO NOT EDIT OR COPY THIS FILE. TEXSHOP WILL AUTOMATICALLY UPDATE IT 
 # pdftricksmk.sh : pst2pdf adapted to use latexmk
 # PSTricks 2 PDF converter :
@@ -35,9 +35,11 @@ echo "This is $myname modified to use latexmk, by John Collins (processing chang
 
 FILE=$1
 if test -z $FILE; then
-		FIGURES=`ls *-fig*.tex`;
+#		FIGURES=`ls *-fig*.tex`;
+		FIGURES=( `ls *-fig*.tex` );
 else
-		FIGURES=`ls -- $FILE-fig*.tex`;
+#		FIGURES=`ls -- $FILE-fig*.tex`;
+		FIGURES=( `ls -- $FILE-fig*.tex` );
 fi
 
 
@@ -47,5 +49,6 @@ else
   echo $Myname: Using latexmk to process: $FIGURES 
 #  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -E -o %B.eps %S && epstopdf %B.eps --outfile=%D/'  $FIGURES
 #  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None -dALLOWPSTRANSPARENCY %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
-  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None ${gstransparencyarg} %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
+#  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- ${xargs} -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None ${gstransparencyarg} %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
+  ${LTMKBIN}/latexmk -pdfdvi -ps- -dvi- ${xargarray} -e '$dvipdf = q/dvips -o %B.ps %S ; ps2pdf -dAutoRotatePages=\/None ${gstransparencyarg} %B.ps ; pdfcrop %D ; \/bin\/mv %B-crop.pdf %D/'  $FIGURES
 fi

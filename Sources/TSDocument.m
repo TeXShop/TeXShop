@@ -1536,7 +1536,7 @@ if (! skipTextWindow) {
     */
     
     [saveFormatLabel takeStringValueFrom: theLabel];
-    [savePanel setAccessoryView: openSaveViewHS];
+    [savePanel setAccessoryView: openSaveViewHS]; //weird stuff!
     return YES;
 
     }

@@ -1,4 +1,10 @@
-#!/bin/sh
+#!/bin/zsh
+
+# create a zsh argument list from $2
+xargarray=( ${(z)2} )
+for ((i=1; i <= $#xargarray; i++ )); do xargarray[$i]=${(Q)xargarray[$i]}; done;
+
+##!/bin/sh
 # For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
@@ -10,17 +16,20 @@ fi
 # Use local rc file platexmkrc if it exists. p = project
 export localrc=""
 if [ -e ./platexmkrc ] ; then
-	export localrc="-r ./platexmkrc"
+	export localrc=( -r ./platexmkrc )
 fi
-# set up correct argument for transparency for gs
-gsversion=`gs --version`
-mytemp=( ${gsversion//./ } )                   	# replace points, split into array
-gsmajorversion="${mytemp[0]}"       						# major version number
-gsminorversion="${mytemp[1]}"										# minor version number
-if [ \( ${gsmajorversion} -eq 9 \) -a \( ${gsminorversion} -gt 50 \) ] || [ \( ${gsmajorversion} -gt 9 \) ] ; then
+# set up correct argument for transparency for gs in zsh
+gsversionlist=( ${(s/./)$(gs --version)} )
+if [ \( ${gsversionlist[1]} -eq 9 \) -a \( ${gsversionlist[2]} -ge 51 \) ] || [ \( ${gsversionlist[1]} -ge 10 \) ] ; then
 export gstransparencyarg="-dALLOWPSTRANSPARENCY"
 else
 export gstransparencyarg="-dNOSAFER"
 fi
 
-"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" ${2} -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"
+# Add the requested options to $pdflatex if there
+#if [ -n "${2}" ] ; then
+#"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions='${2}'" -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"
+#else
+#"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"
+#fi
+"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" ${xargarray} -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"

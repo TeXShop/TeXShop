@@ -547,6 +547,7 @@ extern NSString *IncrementalSearchKey;
 extern NSString *NewToolbarIconsKey;
 extern NSString *SyncUseTabsKey;
 extern NSString *AltPathKey;
+extern NSString *IgnoreStartOnRebootKey;
 
 
 // end defaults

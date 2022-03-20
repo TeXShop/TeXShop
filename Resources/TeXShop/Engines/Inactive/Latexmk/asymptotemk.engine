@@ -1,4 +1,10 @@
-#!/bin/sh
+#!/bin/zsh
+
+# create a zsh argument list from $2
+xargarray=( ${(z)2} )
+for ((i=1; i <= $#xargarray; i++ )); do xargarray[$i]=${(Q)xargarray[$i]}; done;
+
+# For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
@@ -9,11 +15,6 @@ fi
 # Use local rc file platexmkrc if it exists. p = project
 export localrc=""
 if [ -e ./platexmkrc ] ; then
-	export localrc="-r ./platexmkrc"
+	export localrc=( -r ./platexmkrc )
 fi
-# Add the requested options to $pdflatex if there
-if [ -n "${2}" ] ; then
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions='${2}'" -r "${TSBIN}/asymptotemkrc" ${localrc} "$1"
-else
-"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/asymptotemkrc" ${localrc} "$1"
-fi
+"${LTMKBIN}"/latexmk -pdf -r "${LTMKEDIT}/latexmkrcedit" ${xargarray} -r "${TSBIN}/asymptotemkrc" ${localrc} "$1"

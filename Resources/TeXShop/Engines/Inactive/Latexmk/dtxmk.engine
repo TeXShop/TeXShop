@@ -1,4 +1,10 @@
-#!/bin/sh
+#!/bin/zsh
+
+# create a zsh argument list from $2
+xargarray=( ${(z)2} )
+for ((i=1; i <= $#xargarray; i++ )); do xargarray[$i]=${(Q)xargarray[$i]}; done;
+
+# For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
@@ -9,6 +15,6 @@ fi
 # Use local rc file platexmkrc if it exists. p = project
 export localrc=""
 if [ -e ./platexmkrc ] ; then
-	export localrc="-r ./platexmkrc"
+	export localrc=( -r ./platexmkrc )
 fi
-"${LTMKBIN}"/latexmk -pdf -r "${TSBIN}/dtxmkrc" ${localrc} "$1"
+"${LTMKBIN}"/latexmk -pdf ${xargarray} -r "${TSBIN}/dtxmkrc" ${localrc} "$1"

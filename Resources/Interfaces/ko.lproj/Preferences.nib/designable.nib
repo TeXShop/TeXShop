@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -103,6 +103,7 @@
                 <outlet property="_midEastButton" destination="39" id="404"/>
                 <outlet property="_miniaturizeRootFileButton" destination="335" id="405"/>
                 <outlet property="_mouseModePopup" destination="127" id="406"/>
+                <outlet property="_openAsTabsMatrix" destination="fQW-JT-YDh" id="qZj-q6-GhQ"/>
                 <outlet property="_openEmptyButton" destination="54" id="407"/>
                 <outlet property="_openRootFileButton" destination="333" id="408"/>
                 <outlet property="_pageStylePopup" destination="143" id="409"/>
@@ -667,6 +668,39 @@ DQ
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="윈도우 대신 탭에서 열기" translatesAutoresizingMaskIntoConstraints="NO" id="9CE-jV-BS0">
+                                            <rect key="frame" x="49" y="16" width="256" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="9lv-yp-utM">
+                                                <rect key="frame" x="3" y="3" width="250" height="48"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fQW-JT-YDh">
+                                                        <rect key="frame" x="25" y="14" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="안 함" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="aX7-gV-07Q" id="Uqg-Uz-2az">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="k6W-Gm-4YD">
+                                                                <items>
+                                                                    <menuItem title="안 함" tag="2" id="aX7-gV-07Q">
+                                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    </menuItem>
+                                                                    <menuItem title="자동" state="on" id="DAh-g6-WdF"/>
+                                                                    <menuItem title="항상" tag="1" id="Z1a-mj-JNf">
+                                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    </menuItem>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="rrJ-9t-nm8"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>

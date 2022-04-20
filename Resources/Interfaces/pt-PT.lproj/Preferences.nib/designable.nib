@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="ev8-IL-aCz" id="yyG-JU-VXk"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="4I9-cp-KO0" id="tQE-mA-q27"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="aYO-zj-Pn0" id="pig-xw-9ei"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -503,7 +504,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Matching Target" translatesAutoresizingMaskIntoConstraints="NO" id="974">
-                                            <rect key="frame" x="62" y="83" width="256" height="57"/>
+                                            <rect key="frame" x="62" y="90" width="256" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="Zfx-8Z-YRt">
                                                 <rect key="frame" x="3" y="3" width="250" height="37"/>
@@ -600,6 +601,35 @@ DQ
                                                             </column>
                                                         </cells>
                                                     </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Open New Windows as Tabs" translatesAutoresizingMaskIntoConstraints="NO" id="cub-dC-CuO">
+                                            <rect key="frame" x="62" y="15" width="256" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="fw3-7N-XOT">
+                                                <rect key="frame" x="3" y="3" width="250" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4I9-cp-KO0">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Never" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="Gl6-ZX-PiQ" id="imW-9a-t6W">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="wje-qe-3oY">
+                                                                <items>
+                                                                    <menuItem title="Never" state="on" tag="2" id="Gl6-ZX-PiQ"/>
+                                                                    <menuItem title="Automatically" id="Gc8-YK-vp4"/>
+                                                                    <menuItem title="Always" tag="1" id="jD4-eE-I5J"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="8Ml-Ys-0sQ"/>
+                                                        </connections>
+                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

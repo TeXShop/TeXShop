@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="MgN-wY-x3t" id="gcK-a4-xdZ"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="R3g-Io-VmP" id="jCI-GS-Av5"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="yN6-6F-K4G" id="xly-ML-Kg6"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -614,7 +615,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Garantir correspondência de" translatesAutoresizingMaskIntoConstraints="NO" id="QqP-F3-Jx8">
-                                            <rect key="frame" x="10" y="69" width="283" height="57"/>
+                                            <rect key="frame" x="10" y="84" width="283" height="57"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="hK1-SE-xeI">
                                                 <rect key="frame" x="3" y="3" width="277" height="37"/>
@@ -664,6 +665,35 @@ DQ
                                                             <action selector="highlightChanged:" target="-2" id="gLS-Zh-dOR"/>
                                                         </connections>
                                                     </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Abrir novas janelas como abas" translatesAutoresizingMaskIntoConstraints="NO" id="mA8-i7-hba">
+                                            <rect key="frame" x="9" y="2" width="284" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="Vtn-if-byI">
+                                                <rect key="frame" x="3" y="3" width="278" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R3g-Io-VmP">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Nunca" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="up2-Tz-yBc" id="MOb-ve-8O7">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="VZ8-VU-Jw0">
+                                                                <items>
+                                                                    <menuItem title="Nunca" state="on" tag="2" id="up2-Tz-yBc"/>
+                                                                    <menuItem title="Automaticamente" id="m8g-5b-aEf"/>
+                                                                    <menuItem title="Sempre" tag="1" id="gKT-Q8-PT8"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="4H2-Ca-IXa"/>
+                                                        </connections>
+                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

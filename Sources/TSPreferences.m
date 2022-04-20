@@ -685,6 +685,19 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 
 }
 
+/*" Change Window Opening Behavior "*/
+- (IBAction)openAsTabsChanged:sender
+{
+    NSInteger    oldValue, value;
+
+    oldValue = [SUD integerForKey:OpenAsTabsKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:OpenAsTabsKey] forKey:OpenAsTabsKey];
+
+    value = [[sender selectedCell] tag];
+    [SUD setInteger:value forKey:OpenAsTabsKey];
+}
+
+
 /*" Change tab size "*/
 - (IBAction)tabsChanged:sender
 {
@@ -2349,6 +2362,8 @@ This method retrieves the application preferences from the defaults object and s
 	[_defaultEncodeMatrix removeAllItems];
 	[[TSEncodingSupport sharedInstance] addEncodingsToMenu:[_defaultEncodeMatrix menu] withTarget:0 action:0];
 	[_defaultEncodeMatrix selectItemWithTag: [[TSEncodingSupport sharedInstance] defaultEncoding]];
+    
+    [_openAsTabsMatrix selectItemWithTag: [defaults integerForKey: OpenAsTabsKey]];
 
 	if ([[defaults stringForKey:CommandCompletionCharKey] isEqualToString: @"ESCAPE"])
 		[_commandCompletionMatrix selectCellWithTag:0];

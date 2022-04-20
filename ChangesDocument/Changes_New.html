@@ -14,6 +14,193 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.72</h3></P>
+
+Version 4.71 was never released. The following changes were made in 4.72.
+
+<ul>
+<li> Latexmk by John Collins is supported by Herbert Schulz for TeXShop. TeXShop contains the actual latexmk script, and engines which use this script. Collins also uploads the script to CTAN so it is in TeX Live. When the script is updated, the update is available almost immediately via TeX Live Utility, but it doesn't arrive in TeXShop until a  new version of the program is released.
+
+<p> TeXShop now contains revised latexmk engines by Schulz which use the latexmk in the active TeX Distribution. If this distribution does not have latexmk, then the internal version in TeXShop is used. 
+
+<p>
+<li>  If you did not select "Close windows when quitting an app" in Apple's System Preferences, windows that are open when TeXShop quits will reappear when  it is next opened. The source window scrolls to the spot it was at when closed, but the preview window didn't do this in previous TeXShop versions. Now it does.
+
+<p>
+<li> If the TeXShop Preference item "When 0pening Source and Preview, Use One Window" is selected at the bottom of the Preview tab, the interface is  converted to one where each document is displayed in a single window, with source on  one side and preview on the other. There are only two situations when the old window pair must be used: when starting a new document, and when typesetting a source file sent by someone else. But in both of these cases, you can immediately switch to one-window mode after typesetting using the menu command "Use One Window."
+
+<p> However, the situation when quitting and then restarting TeXShop had problems. After restarting TeXShop, both the source and preview panes in the window did not scroll to their old spots, but instead opened at the top of the document. Moreover if two documents were open, the windows for these documents did not move to their old positions on the screen, but instead ended up exactly on top of each other. Both problems are now fixed. Therefore "single window mode" and the original "double window mode" have essentially equal footing in the program.
+
+<p>
+<li> There were similar problems with tabs.
+In double window mode, some tabs were reproduced and others were not. In single window mode, tabbed windows were recreated as separate windows for each tab. Both problems are fixed when operating in "tabbed mode" to be described next.
+
+<p>
+<li> Incidentally, there are a few remaining problems when windows are reopened and repositioned. In either single window mode or double window mode, it is possible to wind up with both kinds of windows. If you quit the program, and then restart it, all windows are recreated in the current mode. So if documents always open in single window mode, but you also have a separate source-preview pair and you quit and then restart, the source-preview pair will open in single window mode. Or if you always open documents as two windows, one for source and one for preview, but you happen to have created a single-window pair, and you then quit TeXShop and restart it, the single window pair will have become separate source and preview windows. These cases should rarely happen; I have never had a complaint about the problem. 
+<p>
+<li> Several years ago Apple introduced support for tabs in windows. Recently a user, Szilágyi Zsolt, wrote that TeXShop has a problem with tabs, and he sent a movie showing the problem in action. A few days later he solved the problem himself. I looked at the movie anyway, and Zsolt was doing things with tags in TeXShop that I never dreamed were possible. So I asked how he did them and was told that in Apple's System 
+Preferences under the General tab, there is an item labeled "Prefer tabs in full screen when opening documents." Here the words "full screen" appear in a pull-down menu whose other choices are "never" and "always". Selecting "always" greatly improves the way tabs work in TeXShop.  
+
+<p> Next I discovered that some applications have a similar preference. This makes it possible to improve tab support in these applications without forcing it upon the full system. For example, Safari has an item labeled "Open pages in tabs instead of windows" with possible values "Never", "Automatically", and "Always".  The choice "Automatically" causes Safari to follow the global preference item in System Preferences.
+
+<p> Version 4.72 adds a similar preference  for TeXShop. The item is at the bottom of the  Source tab in TeXShop Preferences, with the same choices as Safari. 
+
+<p> TeXShop's editor can work in several modes: external editor, separate source and preview windows, one window containing both source and preview, and full screen. I'll describe the behavior of tabs in the second and third cases.
+There is nothing to say about external editors, and nobody I know works exclusively in full screen mode.
+
+<p> When separate source and preview windows are used
+	<ul>
+	<li> Set the new preference to "Always" and close all windows. Open a document from disk. A source window and a preview window appear. Open another document. The source and preview for the new document are added as  tabs to the existing source and preview windows. We still have only two windows. Open a third document, perhaps this time one based on a root file with various chapter files. A tab for the root file appears in the source window, and a  tab for the preview appears in the preview window. We still have only two windows.
+	<p> <li> Select one of the source tabs and typeset. A console window appears; when typesetting ends, the appropriate preview tab is activated.  Select a different source tab and typeset again. Rather than creating a new console window, a tab is created in the existing console; after typesetting ends, the appropriate preview tab is activated. We still have only three windows: source, preview, console.
+	
+	<p><li> Try sync from source to preview or preview to source. These work and  activate the appropriate tab in the destination of the sync. 
+	
+	<p><li> Select the log file for a document. A new window appears containing the log. Change to a different document and show its log file. A tab appears in the log window for the new log. We only have four windows: source, preview, console, log.
+	
+	<p><li> Open a document in the Help menu. A new window appears containing the document. Note that the document does not appear as a tab in the source or preview windows. This is deliberate since help pages are often used in conjunction with TeX tasks and both need to be visible. We don't want to clutter the source and preview windows with  documents which aren't source or preview items. Each Help document gets a separate window because multiple items aren't often used simultaneously and some of the items are displayed by other programs like Apple's Preview and not even governed by the new TeXShop preference.
+	
+	<p><li> Select the menu item "About TeXShop." It is displayed in a separate dialog, as we would hope.
+		
+	<p><li> In the preview window, open the Drawer. Then switch to another tab and notice that the Drawer disappears. That is because each tab controls its own drawer. Switch back to the original tab and notice that the drawer opens again.
+	Activate  drawers for two different preview tabs. Notice that when switching from one tab to another, the contents of the drawer change to match the selected tab.
+	
+	<p><li> Select a tab for a document containing a root file and various chapter files. Sync from the preview to the source. Notice that the appropriate chapter file opens and a new tab for it is created. Using sync in this way, you can obtain tabs for all chapters currently being edited. It is also possible to set up tabs using the magic line  % !TEX useTabs.
+	In that case, these chapter tabs will be created when the document is first opened. But if a book project has many chapters, this can cause a bewildering list of tabs; it is probably better to use sync to create tabs only for the chapters currently being edited.
+	
+	<p><li> So far, things work in the expected manner. We end with a couple of cases where surprising things happen. Suppose we still have source and preview windows with three tabs for three projects. Activate one of these tabs and select "Use One Window." A new window is created containing both source and preview panes, but only for the active tab, not for all three projects. If we select "Use One Window" again, another of the documents is converted to single window mode, but this time that single window becomes a tab in the single window for the first document. Selecting "Use One Window" a third time converts the remaining document, and now at last we have what we expected to get immediately, namely a one-window object with three tabs for the three documents. Unwrapping these windows using 
+"Use Separate Windows" works the same way, unwrapping one document at a time.	
+	
+	<p><li> The surprising behavior of tabs and "Use One Window" is actually useful because it solves a problem with full screen mode. This mode is essentially useless if you are a "separate window mode" person, because it is impossible to write TeX if you only have access to the source, or only have access to the output. But suppose you are writing a very tricky portion of a document and would like to concentrate only on it without distractions. Convert the document to a single window with "Use One Window." Then click the green button to make this window full screen. You now have both source and text on the screen, which is exactly what you need. Moreover, you can typeset because when you do that, the console becomes a floating window on top of the screen. Use it to fix errors and then close it. Continue editing. When you are done, click the green button to return to a single window, and then select "Use Separate Windows" to return your document to tabs  where it started.
+	
+	<p><li> You can also move two different source tabs to tabs in a single window and then convert this window to full screen. This makes it possible to work on two separate documents at the same time in full screen mode.
+	
+	<p><li> There is only one really bad piece of news for people who use separate source and preview windows. If you have a document with a root file and various chapter files, tabs work fine as long as you stay in this mode. But converting such a document to single-window mode and then taking it full screen will completely fail. Single windows contain ONE source file and ONE preview file. If your project also has chapter files and you try to convert it to single window mode, you end up with a single window for the root source and the preview output, and then lots of source windows for the individual chapters. This isn't something I can fix.
+	
+	<p><li> So you have to make a choice. If you like to split your projects into a root and chapters, fine. This decision is completely reasonable. Always work with separate source and preview windows. Tabs may make your screen less cluttered; give them a try. Never convert projects to one window mode, and never use full screen mode.  This is actually how I work.
+	
+	<p><li> The other choice is to  write books with just a single source file. Many famous authors work this way. I used to use ROOT-CHAPTER, but recently I've written even longer documents with just a single source. In that case, the full TeXShop interface is available to you. 
+</ul>
+<p> If you work exclusively in single-window mode:
+	<ul>
+	<li> I recommend activating the preference item "Opening Source and Preview: Use One Window" at the bottom of the 
+	Preview Tab in TeXShop Preferences. Then documents immediately open in one window mode.
+	
+	<p><li> Although the Window menu has items "Use One Window" and "Use Separate Windows", there are only two circumstances when these are helpful. The first occurs when you start a new document. The second occurs when someone sends you a TeX source document without an associated pdf. In both cases, create or open the source file. Typeset. Now you have both windows. Activate one of the two and select "Use One Window". 
+	
+	<p> 	<li> 
+	Set the new preference to "Always" and close all windows. Open a document from disk. A  window opens containing the source and the output of the document. Open a second document. A new tab appears in the  window, showing the source and output of the second document. We still have  one window. Open a third document. Another tab appears and our window contains all three documents.
+	
+	<p><li> We do not get one set of tabs for the preview portion and a separate set for the output portion. Instead we only get one set of tabs because tabs select entire documents.	
+	<p> <li> Select a tab and typeset. A console window appears and the new output appears in the window. Select a different source tab and typeset again. Rather than creating a new console window, a tab is created in the existing console. We still have only two windows: project and console.
+	
+	<p><li> Sync works fine.
+	
+	<p><li> Select the log file for a document. A new window appears containing the log. Change to a different document and show its log file. A tab appears in the log window for the new log. We only have three windows: project,  console, log.
+	
+	<p><li> Open a document in the Help menu. A new window appears containing the document, so the help document does not appear as a tab in the document window. This is deliberate since help pages are often used in conjunction with TeX tasks and both need to be visible. Note that each Help document gets a separate window. 
+		
+	<p><li> Select the menu item "About TeXShop." It is displayed in a separate dialog, as usual. 
+		
+	<p><li> Open the drawer. Then switch to another tab and notice that the Drawer disappears. That is because each tab controls its own drawer. Switch back to the original tab and notice that the drawer opens again.
+	Activate  drawers for two different  tabs. Notice that when switching from one tab to another, the contents of the drawer change to match the selected tab.
+	
+	<p><li> So far, things work in the expected manner. There is one surprise. Suppose we still have three tabs. Activate one of these tabs and select "Use Separate Windows" Two new windows are created containing the source and preview for the active tab, not for all three tabs. If we select "Use Separate Windows" again, another of the tabs is converted source and preview files, this time as tabs in the source and preview windows. So we work one project at a time, rather than converting all tabs at once. However, this is a task that is rarely done if you use one-window mode.
+	
+	<p><li> Select a window with tabs. Click the green button to convert the window to full screen mode. You can still typeset because the console will appear as a floating window over the screen, and can be closed to give a full screen view. Now tabs allow you to work on several projects at once in full screen mode.
+		
+<p><li> There is only one bad piece of news. If you work in one-window mode, you cannot work with projects that have a ROOT file and then various CHAPTER files. But you couldn't do that before tabs either. Many authors of books  keep the full source in a single file.
+
+	</ul>
+</ul>
+
+Since I write the Changes document, I feel free to use it as my personal blog. The rest of the text for 4.72 has nothing to do with changes and can be skipped. It is a short essay about the evolution of macOS in the last twenty years. I used to believe that the great times for macOS were from 2000 to July of 2011. This covers the start of macOS through Snow Leopard. After that, 
+the iPhone and iPad became  dominant and smaller minor changes were made to macOS.  I'm about to argue that this view is wrong. 
+
+<p> When Apple bought NeXT, they obtained a method of programming called Cocoa. Programs written in Cocoa are broken into small  pieces called "objects" described by "classes." Each object performs "methods," that is, small tasks that can be requested by other objects. Each object has "instance variables", which store values used by the object. Apple supplies the base classes and programmers add their own classes. A program is thus a cooperative endeavor between Apple and the  author.
+
+<p> At the first developer conference about the new macOS, Apple announced that programs for it would be written in Cocoa. This announcement landed with a thud, and no significant company endorsed the system. So at the following conference, Apple introduced an alternate way to program called "Carbon," because, as they said, "Carbon is the basis of all life." Carbon was in fact the old system of programming the Mac, allowing old programs to be tweaked to run on the new system. Carbon was immediately endorsed by Microsoft, Adobe, and others, who said that Apple had finally come to its senses.
+
+<p> I went to some of those early developer conferences. Sessions about Carbon filled the enormous main hall to the brim, while sessions on Cocoa were given across the street and attended by 20 or 30 people who all seemed to know each other.
+Some Apple officials said that Cocoa was mainly for prototyping, and might transition from Objective C to Java. 
+
+<p> Meanwhile, there was a dream in the minds of a few Apple engineers, not voiced publicly at the time. If everyone used Cocoa, then Apple could modify the base classes, and when the operating system was upgraded all programs on the Mac would get new features automatically, without even being recompiled. We aren't talking about minor cosmetic issues, but about major new abilities. However, a problem stood in the way known as the ``fragile base class problem.'' In an object oriented language, the base classes can be rewritten to optimize their operation. But new methods cannot be added to the base objects, and new instance variables cannot be added to them.  This restriction more or less squashed the dream.
+
+<p> These problems affected all object oriented programming languages: C++, Objective Pascal, etc. However, Apple used an unusual language named Objective C, and in that language new methods can be added to the base classes. So half of the problem did not exist for Apple.
+
+<p> And then Apple engineers discovered a solution for the instance variable piece of the puzzle. But there was still a complication. Unlike other languages, Objective C requires ''runtime code" in the system, to assist the communication between objects. To fix the fragile base class program, Apple would have to modify this runtime code, and that would break all existing Cocoa applications.
+
+<p>Incidentally, this problem did not exist on the iPhone, which is programmed in Cocoa. Before Leopard, there were no iPhone programs. So Apple could fix Objective C on the phone before any programs were written for it.
+
+<p> Meanwhile, another transition was occurring in the world of computers. The processor used by the Macintosh was internally a 32-bit chip. By the time of macOS Tiger, Motorola was transitioning to a 64 bit chip. About the same time, Apple switched to Intel. The first Intel macs had 32 bit chips. But almost immediately, 64 bit chips became available and within a year, all Intel Macs had 64 bit processors. These processors could run both 32 bit and 64 bit programs, but at first all Mac programs were compiled for 32 bits so they could support a variety of machines.
+This meant that Apple could fix Objective C for 64 bit code, because at the time there were no programs written for the Mac using 64 bit Intel code. 
+
+<p> After Snow Leopard, Apple did something that gave them a bad reputation for  years. They very rapidly made old machines obsolete, so only machines with 64 bit processors could use the new system. As soon as this transition was finished, Apple returned to their older policy that new versions of macOS support most older machines. 
+
+<p> Consequently,  new versions of macOS only ran on 64 bit machines, the fragile base class problem was fixed on these machines, and all programs running on them in 64 bits had been compiled by code understanding the new runtime. The old dream was close to being realized. 
+
+<p> But how about all those programs written in Carbon. Changing base classes would be irrelevant for them. That's another completely independent story. I'm going to tell it.
+
+<p> In the 2006 developer conference, Apple gave developers an initial beta of Leopard and announced that the system would be released in early 2007. The announcement included a series of slides describing features of the system,  and one of the slides read "Full 64 Bit Support for both Cocoa and Carbon." So when the system appeared in 2007, developers could compile 64 bit versions of their applications.
+
+<p> However, Apple missed this release date. In January of 2007, Apple announced the iPhone. System engineers were pulled from macOS to work on completing the software for the phone, and Leopard was still unreleased when the 2007 developer conference opened. I went to both the 2006 and 2007 conferences, and the two conferences were almost identical: same keynotes, same slides, same sessions. This was one week before the release of the iPhone, but I didn't see a single iPhone at the conference. 
+
+<p> There was <i> one </i> very significant slide difference. I'm ashamed that I didn't notice it during the keynote. The old slide for 64 bits now read "Full 64 Bit Support for Cocoa". After the keynote, there is a lunch break, and listening to engineers during that lunch, I gradually realized that Carbon was deprecated. Apple had been so successful that they no longer needed to pander to the big software companies and could push the programming environment they desired. Carbon applications continued to run until Catalina was released, but got no new features. This was a courageous decision by Apple, but it was also made possible by a secret fact.
+
+<p> During the first year after the iPhone was released, developers could not write programs for it. So in 2007, Apple knew something the rest of us didn't know. The iPhone was programmed in Cocoa.
+
+<p>  I finally come to my point. As a result of this long development, the story of macOS from 2010 to 2020 is not at all a story of small tweaks. It is instead a story of astonishing improvement in the abilities of Macintosh applications caused by Apple revisions of the base classes.  More people ought to know about this! Let me list some major steps taken.
+
+<p> For years, a standard request made by TeXShop users was that if they quit TeXShop and then restarted it, all the programs it was running when it was quit would load again, and their windows would be in exactly the positions they were in when the program quit. This seemed doable, but I never got around to doing it. Then one year I installed the beta for the new system and TeXShop got that feature automatically with not a single extra letter of code. 
+
+<p> Recently I discovered the source code for the original version of TeXShop written in 2000.  The program was very primitive, but it had a source window and a preview window and could typeset with TeX or LaTeX. I compiled it with the latest XCode and to my astonishment the code still compiled and the program was able to typeset latex documents. Even more remarkably, when  I quit the program and restarted, all my documents reloaded and the windows appeared just where they had been before. In 2000, that feature was a distant dream. Now without any changes in my code the feature was there.
+
+<p> When Apple introduced the Retina display, programs written in Carbon didn't work because they expected much bigger dots. So Apple introduced a "compatibility mode"; the image they created was magnified by two before being displayed. Another way to say that is that for these programs, the Retina display was just an ordinary display. However, Cocoa programs  worked because the base classes handled the needed modifications for much higher resolution.
+
+<p> Maybe the most astonishing change is "automatic saving." In this mode, you no longer have to save documents before quitting. The document is actually saved every few minutes while you work, but only the changes are saved, so the moments when saving occur are completely invisible. Documents are also saved when you close and at other important times. If you happen to erase a paragraph and then realize that you need it, you can issue the command "Revert To: Browse All Versions." A Time-machine display opens (even if you don't back up with Time machine) revealing old versions going back in time and you can go back, copy that paragraph, and paste it into the latest version. There are many other advantages of this system. I have <i> never</i> had a complaint about losing a file using it. But I would never dare to write such code myself; too scary.
+
+<p> Programmers have to write extra code to use automatic saving. Here is the complete TeXShop code to use this feature:
+<pre>
+     + (BOOL) autosavesInPlace
+     {
+          return YES;
+     }
+ </pre> 
+
+<p> Many features of a Cocoa program are created pictorially rather than by writing code. For instance,
+in the TeXShop source code there is  a Menu object which defines the TeXShop menus and looks  like a real menu. But if you compare the menu in this object to the actual menu shown when TeXShop runs, they are different. Why? Because as part of rewriting the base classes for automatic saving, Apple's base classes actually remove and add items in the menus. It's hard to believe that would actually work, but it does.
+
+<p> I've written this long essay because tabs in macOS are another example of a feature added by modifying the base classes. The additional code I wrote to obtain all the features summarized in the above changes document consist mainly of code to add the new preference item, but the actual code to activate the tabs is the routine given below, which is applied to four windows before they are opened:
+<pre>
+   - (void)setTabBehavior: (NSWindow *) theWindow
+   {
+       if (! atLeastSierra)
+           return;
+    
+       NSInteger value = [SUD integerForKey:OpenAsTabsKey];
+    
+       switch (value) {
+            
+           case 0: break;
+            
+           case 1: theWindow.tabbingMode = NSWindowTabbingModePreferred; break;
+            
+           case 2: theWindow.tabbingMode = NSWindowTabbingModeDisallowed; break;
+            
+           default: break;
+        
+       }
+   }
+ </pre> 
+
+<p> Don't tell me that Apple has just been tweaking the system for the last ten years!
+
+
+<!--
+, \and in that period Apple supported 32 bit PowerPC, and then 32/64 bit PowerPC, and eventually 32/64 bit Intel. 
+
+Incidentally, after Snow Leopard came Lion, and from that point on the operating system required a 64 bit processor, eventually either Intel or Arm, and applications ran in either 32 bit Intel or 64 bit Intel until Catalina. From Catalina on, applications must be 64 bit, either Intel or Arm.
+-->
+
 <P><h3>TeXShop Changes 4.70</h3></P>
 
 The following minor changes were made.

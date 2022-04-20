@@ -548,6 +548,7 @@ extern NSString *NewToolbarIconsKey;
 extern NSString *SyncUseTabsKey;
 extern NSString *AltPathKey;
 extern NSString *IgnoreStartOnRebootKey;
+extern NSString *OpenAsTabsKey;
 
 
 // end defaults

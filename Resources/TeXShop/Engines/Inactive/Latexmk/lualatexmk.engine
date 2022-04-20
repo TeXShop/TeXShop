@@ -6,8 +6,16 @@ for ((i=1; i <= $#xargarray; i++ )); do xargarray[$i]=${(Q)xargarray[$i]}; done;
 
 # for TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
-export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
-#export LTMKBIN="/Library/TeX/texbin"
+
+#export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+whereisit="`which latexmk`"
+if [ "${whereisit}" != "latexmk not found" ] ; then
+export LTMKBIN="`dirname ${whereisit}`"
+else
+echo "sorry latexmk not found: using internal default"
+export LTMKBIN="${HOME}/Library/TeXShop/bin/tslatexmk"
+fi 
+
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
 # make sure latexmkrcedit exists in bin
 if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then

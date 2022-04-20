@@ -4,10 +4,18 @@
 xargarray=( ${(z)2} )
 for ((i=1; i <= $#xargarray; i++ )); do xargarray[$i]=${(Q)xargarray[$i]}; done;
 
-##!/bin/sh
 # For TeXShop 4.66+ only
 export TSBIN="$HOME/Library/TeXShop/bin/tslatexmk"
-export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+
+#export LTMKBIN="$HOME/Library/TeXShop/bin/tslatexmk"
+whereisit="`which latexmk`"
+if [ "${whereisit}" != "latexmk not found" ] ; then
+export LTMKBIN="`dirname ${whereisit}`"
+else
+echo "sorry latexmk not found: using internal default"
+export LTMKBIN="${HOME}/Library/TeXShop/bin/tslatexmk"
+fi 
+
 export LTMKEDIT="$HOME/Library/TeXShop/bin"
 # make sure latexmkrcedit exists in bin
 if [ ! -e "${LTMKEDIT}/latexmkrcedit" ] ; then
@@ -26,10 +34,4 @@ else
 export gstransparencyarg="-dNOSAFER"
 fi
 
-# Add the requested options to $pdflatex if there
-#if [ -n "${2}" ] ; then
-#"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -e "\$TSUserCompileOptions='${2}'" -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"
-#else
-#"${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"
-#fi
 "${LTMKBIN}"/latexmk -pdfps -r "${LTMKEDIT}/latexmkrcedit" ${xargarray} -r "${TSBIN}/latexTRmkrc" ${localrc} "$1"

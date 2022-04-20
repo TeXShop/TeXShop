@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="IOR-vQ-abf" id="E92-MZ-Ti1"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="hI7-sK-MhO" id="XSX-cR-K1O"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="X6x-8g-qvS" id="98Y-St-5e7"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -665,6 +666,35 @@ DQ
                                                             </column>
                                                         </cells>
                                                     </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Open New Windows as Tabs" translatesAutoresizingMaskIntoConstraints="NO" id="zRF-bw-M9R">
+                                            <rect key="frame" x="25" y="4" width="283" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="be2-Gt-jxc">
+                                                <rect key="frame" x="3" y="3" width="277" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hI7-sK-MhO">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Never" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="enS-XZ-SP5" id="iIT-R1-r2H">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="WHF-pO-xTY">
+                                                                <items>
+                                                                    <menuItem title="Never" state="on" tag="2" id="enS-XZ-SP5"/>
+                                                                    <menuItem title="Automatically" id="nZk-KP-LJH"/>
+                                                                    <menuItem title="Always" tag="1" id="j9N-uj-u1o"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="Wqc-Tz-Di2"/>
+                                                        </connections>
+                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

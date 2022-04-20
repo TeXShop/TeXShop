@@ -347,6 +347,7 @@ NSString *NewToolbarIconsKey = @"NewToolbarIcons";
 NSString *SyncUseTabsKey = @"SyncUseTabs";
 NSString *AltPathKey = @"AltPath";
 NSString *IgnoreStartOnRebootKey = @"IgnoreStartOnReboot";
+NSString *OpenAsTabsKey = @"OpenAsTabs";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

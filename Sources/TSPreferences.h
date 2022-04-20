@@ -62,6 +62,7 @@
 	IBOutlet NSButton		*_openEmptyButton;		/*" open empty document on start "*/
 	IBOutlet NSButton		*_externalEditorButton;		/*" use external editor "*/
 	IBOutlet NSPopUpButton	*_defaultEncodeMatrix;		/*" text encoding "*/
+    IBOutlet NSPopUpButton  *_openAsTabsMatrix;     /*" windows opening behavior "*/
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
 	IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
     IBOutlet NSButton       *_antialiasButton;      /* connect to antialias checkbox */
@@ -273,6 +274,7 @@
 - (IBAction)emptyButtonPressed:sender;
 - (IBAction)externalEditorButtonPressed:sender;
 - (IBAction)encodingChanged:sender;
+- (IBAction)openAsTabsChanged:sender;
 - (IBAction)tabsChanged:sender;
 - (IBAction)useTabPressed:sender;
 - (IBAction)tabIndentPressed:sender;

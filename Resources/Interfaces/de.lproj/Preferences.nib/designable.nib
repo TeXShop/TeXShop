@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="Jhg-1j-Bkq" id="igO-t1-AD8"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="mR2-vy-vbl" id="3a8-8i-ImL"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="SFG-vm-N8V" id="okI-1D-7v2"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -602,6 +603,35 @@ DQ
                                                             </column>
                                                         </cells>
                                                     </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Öffnen Sie Windows als Registerkarten" translatesAutoresizingMaskIntoConstraints="NO" id="c07-Ys-wsS">
+                                            <rect key="frame" x="30" y="23" width="271" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="GO8-Qo-2AT">
+                                                <rect key="frame" x="3" y="3" width="265" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mR2-vy-vbl">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Niemals" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="G6j-Ij-Nou" id="H0w-EH-raU">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="8pO-Ns-EIt">
+                                                                <items>
+                                                                    <menuItem title="Niemals" state="on" tag="2" id="G6j-Ij-Nou"/>
+                                                                    <menuItem title="Automatisch" id="7ON-bv-yeR"/>
+                                                                    <menuItem title="Stets" tag="1" id="eFH-dc-avy"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="iEz-pd-ThD"/>
+                                                        </connections>
+                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

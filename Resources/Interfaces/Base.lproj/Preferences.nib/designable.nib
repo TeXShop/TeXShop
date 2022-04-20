@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="846" id="862"/>
                 <outlet property="_miniaturizeRootFileButton" destination="4J7-3F-0ja" id="H19-zo-8gu"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="M7m-FU-qKi" id="hBZ-Kc-cvo"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="UtV-tr-Xnu" id="fug-bq-F4l"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -602,6 +603,35 @@ DQ
                                                             <action selector="findPanelChanged:" target="-2" id="587"/>
                                                         </connections>
                                                     </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Open New Windows as Tabs" translatesAutoresizingMaskIntoConstraints="NO" id="aig-4m-gAG">
+                                            <rect key="frame" x="58" y="30" width="256" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="Ri9-vJ-bJO">
+                                                <rect key="frame" x="3" y="3" width="250" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M7m-FU-qKi">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Never" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="Mo3-zf-BYT" id="27R-oJ-v4a">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="ort-oZ-gQU">
+                                                                <items>
+                                                                    <menuItem title="Never" state="on" tag="2" id="Mo3-zf-BYT"/>
+                                                                    <menuItem title="Automatically" id="aI9-3B-vVE"/>
+                                                                    <menuItem title="Always" tag="1" id="ypQ-Gc-HUa"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="R0i-Cn-BBd"/>
+                                                        </connections>
+                                                    </popUpButton>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -3319,7 +3349,7 @@ DQ
                 <outlet property="delegate" destination="-2" id="106"/>
                 <outlet property="myPreferences" destination="-2" id="LWa-UN-wNb"/>
             </connections>
-            <point key="canvasLocation" x="-161" y="62"/>
+            <point key="canvasLocation" x="-145" y="-11"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="UjH-7x-6eW"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="3SW-ET-Cpd" customClass="NSPanel">

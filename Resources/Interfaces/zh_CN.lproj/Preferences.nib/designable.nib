@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -104,6 +104,7 @@
                 <outlet property="_midEastButton" destination="846" id="862"/>
                 <outlet property="_miniaturizeRootFileButton" destination="lPg-WB-RRa" id="QR6-2I-VT3"/>
                 <outlet property="_mouseModePopup" destination="345" id="371"/>
+                <outlet property="_openAsTabsMatrix" destination="ZJ9-xE-8FK" id="w9V-s5-X2g"/>
                 <outlet property="_openEmptyButton" destination="238" id="240"/>
                 <outlet property="_openRootFileButton" destination="zqB-9J-WUc" id="caY-b5-wFW"/>
                 <outlet property="_pageStylePopup" destination="340" id="372"/>
@@ -254,7 +255,7 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="16" y="53" width="630" height="552"/>
+                        <rect key="frame" x="16" y="56" width="630" height="552"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -305,7 +306,7 @@ DQ
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
                                         <box fixedFrame="YES" title="命令补全触发键:" translatesAutoresizingMaskIntoConstraints="NO" id="925">
-                                            <rect key="frame" x="55" y="143" width="256" height="69"/>
+                                            <rect key="frame" x="55" y="145" width="256" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Phr-lz-jFu">
                                                 <rect key="frame" x="3" y="3" width="250" height="52"/>
@@ -567,7 +568,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="配对目标和高亮颜色" translatesAutoresizingMaskIntoConstraints="NO" id="gfe-7j-MWI">
-                                            <rect key="frame" x="55" y="64" width="256" height="57"/>
+                                            <rect key="frame" x="55" y="76" width="256" height="57"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="0lt-4W-Plq">
                                                 <rect key="frame" x="3" y="3" width="250" height="37"/>
@@ -667,6 +668,35 @@ DQ
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="以标签页打开新窗口" translatesAutoresizingMaskIntoConstraints="NO" id="g4t-Vd-svw">
+                                            <rect key="frame" x="55" y="2" width="256" height="65"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="C8s-Bv-aTh">
+                                                <rect key="frame" x="3" y="3" width="250" height="45"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZJ9-xE-8FK">
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" title="永不" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="JaL-f4-Day" id="9Q3-aq-Bwt">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="Mau-HM-AVZ">
+                                                                <items>
+                                                                    <menuItem title="永不" state="on" tag="2" id="JaL-f4-Day"/>
+                                                                    <menuItem title="自动" id="TFE-a5-WtM"/>
+                                                                    <menuItem title="始终" tag="1" id="A2A-5z-IRl"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="openAsTabsChanged:" target="-2" id="G2y-F2-xqK"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" size="13" name=".PingFangSC-Regular"/>
                                         </box>
                                     </subviews>
                                 </view>

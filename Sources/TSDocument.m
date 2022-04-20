@@ -330,30 +330,78 @@ NSInteger strSort(id s1, id s2, void *context)
         return NO;
 }
 
+- (void)setTabBehavior: (NSWindow *) theWindow
+{
+    if (! atLeastSierra)
+        return;
+    
+    NSInteger value = [SUD integerForKey:OpenAsTabsKey];
+    
+    switch (value) {
+            
+        case 0: break;
+            
+        case 1: theWindow.tabbingMode = NSWindowTabbingModePreferred; break;
+            
+        case 2: theWindow.tabbingMode = NSWindowTabbingModeDisallowed; break;
+            
+        default: break;
+        
+    }
+}
+
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    NSString *windowState;
-    NSPoint  thePoint;
-    BOOL     fromFullSplitWindow;
+    NSString    *windowState, *rangeString;
+    NSPoint     thePoint, splitPoint;
+    BOOL        fromFullSplitWindow;
+    NSRect      theVisibleRect;
+    NSRange     theRange;
     
     [super restoreStateWithCoder:coder];
     
-    if ([coder containsValueForKey:@"TeXShopPDFWindow"])
-        {
-        windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
-        [self.pdfKitWindow setFrameFromString:windowState];
-        if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
-            thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
-            [self.pdfKitWindow setFrameOrigin: thePoint];
-            }
-         }
-    
-    if (([coder containsValueForKey:@"ForFullSplitWindow"]) && ([coder containsValueForKey:@"TeXShopTextWindow"]))
-        {
+    if ([coder containsValueForKey:@"ForFullSplitWindow"]) {
+        
         fromFullSplitWindow = [coder decodeBoolForKey:@"ForFullSplitWindow"];
+        
+        if (! fromFullSplitWindow) {
+            if ([coder containsValueForKey:@"TeXShopPDFWindow"]) {
+                windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
+                [self.pdfKitWindow setFrameFromString:windowState];
+                }
+            if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
+                thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
+                [self.pdfKitWindow setFrameOrigin: thePoint];
+                }
+            if ([coder containsValueForKey:@"VisiblePDFRect"]) {
+                theVisibleRect = [coder decodeRectForKey:@"VisiblePDFRect"];
+                [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
+                }
+            }
+                    
         if (fromFullSplitWindow) {
-            windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopTextWindow"];
-            [textWindow setFrameFromString:windowState];
+            if ([coder containsValueForKey:@"SplitWindow"])
+                {
+                    windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
+                    [fullSplitWindow setFrameFromString:windowState];
+                }
+            if ([coder containsValueForKey:@"SplitWindowOrigin"])
+                {
+                    splitPoint = [coder decodePointForKey:@"SplitWindowOrigin"];
+                    [fullSplitWindow setFrameOrigin: splitPoint];
+                }
+            if ([coder containsValueForKey:@"VisibleSplitPDFRect"]) {
+                theVisibleRect = [coder decodeRectForKey:@"VisibleSplitPDFRect"];
+                [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
+                }
+            if ([coder containsValueForKey:@"TextSelection"]) {
+                rangeString = [coder decodeObjectForKey:@"TextSelection"];
+                theRange = NSRangeFromString(rangeString);
+                [self.textView setSelectedRange: theRange];
+                [self.textView scrollRangeToVisible: theRange];
+                }
+            if (fullSplitWindow.tabbingMode == NSWindowTabbingModePreferred)
+                [fullSplitWindow mergeAllWindows: fullSplitWindow];
             }
         }
 }
@@ -363,21 +411,40 @@ NSInteger strSort(id s1, id s2, void *context)
     [super encodeRestorableStateWithCoder: coder];
     
     // record PDF window's size and position
-    NSString *theCode;
+    NSString *theCode, *theSplitCode;
  
-    
-    NSRect theRect = [self.pdfKitWindow frame];
-    NSPoint theOrigin = theRect.origin;
-    
-    theCode = [self.pdfKitWindow stringWithSavedFrame];
-    [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
-    [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
-        
-    
-    theCode = [textWindow stringWithSavedFrame];
-    [coder encodeObject: theCode forKey:@"TeXShopTextWindow"];
+     
+     
     [coder encodeBool:useFullSplitWindow forKey:@"ForFullSplitWindow"];
+
+    if (! useFullSplitWindow) {
+        NSRect theRect = [self.pdfKitWindow frame];
+        NSPoint theOrigin = theRect.origin;
+        NSRect theVisibleRect = [[self.myPDFKitView documentView] visibleRect];
+       
+        theCode = [self.pdfKitWindow stringWithSavedFrame];
+        [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
+        [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
+        [coder encodeRect: theVisibleRect forKey:@"VisiblePDFRect"];
+     }
     
+    if (useFullSplitWindow) {
+        NSRect theSplitRect = [fullSplitWindow frame];
+        NSPoint theSplitOrigin = theSplitRect.origin;
+        NSRect theVisibleSplitRect = [[self.myPDFKitView documentView] visibleRect];
+        NSRange theSelectedRange = [self.textView selectedRange];
+        NSString *stringForRange = NSStringFromRange(theSelectedRange);
+ 
+       
+        theSplitCode = [fullSplitWindow stringWithSavedFrame];
+        [coder encodeObject: theSplitCode forKey:@"SplitWindow"];
+        [coder encodePoint: theSplitOrigin forKey: @"SplitWindowOrigin"];
+        [coder encodeRect: theVisibleSplitRect forKey:@"VisibleSplitPDFRect"];
+        [coder encodeObject:stringForRange forKey:@"TextSelection"];
+ 
+    }
+    
+     
 }
 
 
@@ -570,11 +637,12 @@ NSInteger strSort(id s1, id s2, void *context)
         [outputWindow setFrameAutosaveName:ConsoleWindowNameKey];
     }
     
-
+    [self setTabBehavior: outputWindow];
 	
 /*
 	minWindowSize = [outputWindow minSize];
 	maxWindowSize = [outputWindow maxSize];
+ 
 	
 	if ([SUD boolForKey: ConsoleWidthResizeKey] == YES) {
 		minWindowSize.width = 200;
@@ -587,6 +655,8 @@ NSInteger strSort(id s1, id s2, void *context)
 		
 	[outputWindow setMinSize: minWindowSize];
 	[outputWindow setMaxSize: maxWindowSize];
+ 
+    
 */
 }
 
@@ -609,6 +679,7 @@ NSInteger strSort(id s1, id s2, void *context)
     [self.logTextView setAutoresizingMask: NSViewWidthSizable];
     self.logTextView.continuousSpellCheckingEnabled = NO;
     self.logTextView.grammarCheckingEnabled = NO;
+    [self setTabBehavior: [self logWindow]];
 }
 
 
@@ -1209,7 +1280,10 @@ if (! skipTextWindow) {
 	if (!fileIsTex)
 		return;
     
-
+    [self setTabBehavior: textWindow];
+    [self setTabBehavior: self.pdfKitWindow];
+    [self setTabBehavior: self.fullSplitWindow];
+    
 	// changed by mitsu --(J) Typeset command and (J++) Program popup button indicating Program name
 	defaultcommand = [SUD integerForKey:DefaultCommandKey];
 	switch (defaultcommand) {
@@ -10085,6 +10159,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             NSString *splitPosition = [SUD stringForKey:DocumentSplitWindowPositionKey];
             if ([splitPosition length] > 5)
                 [fullSplitWindow setFrameFromString:splitPosition];
+            
+         //   [fullSplitWindow mergeAllWindows:self]; // WOW this line makes all split windows load as tabs
+            
             [self.splitController showWindow: nil];
             // [fullSplitWindow makeKeyAndOrderFront:self];
             [textWindow orderOut:self];

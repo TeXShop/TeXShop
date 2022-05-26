@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="tnp-tY-NAX" id="pgq-sL-9cT"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="176-ah-g8m" id="dBV-Nt-Cpy"/>
                 <outlet property="EditorReverseSyncColorWell" destination="dOa-qE-k50" id="b6e-vc-Mp1"/>
+                <outlet property="EntryColorWell" destination="dl3-aa-Pcl" id="uIp-8b-Ddj"/>
                 <outlet property="FootnoteColorWell" destination="ht7-SJ-k3Y" id="Kqt-p0-tgD"/>
                 <outlet property="ImageBackgroundColorWell" destination="uTg-Np-bMw" id="PLh-xi-9FY"/>
                 <outlet property="ImageForegroundColorWell" destination="pND-FI-sDy" id="vhQ-Ix-t0y"/>
@@ -135,6 +136,7 @@
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syncTabButton" destination="snd-4x-vSh" id="dYh-ah-UMs"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_syntaxColorLineButton" destination="Ckn-mH-VpJ" id="mFR-lt-7i4"/>
                 <outlet property="_tabIndentButton" destination="0Ad-oh-5Ny" id="776-bV-FiD"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tagMenuButton" destination="k06-Ik-w4h" id="eef-q6-C9j"/>
@@ -696,7 +698,7 @@ DQ
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" size="13" name=".PingFangSC-Regular"/>
+                                            <font key="titleFont" metaFont="system"/>
                                         </box>
                                     </subviews>
                                 </view>
@@ -885,14 +887,14 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="エディタ" translatesAutoresizingMaskIntoConstraints="NO" id="63">
-                                            <rect key="frame" x="57" y="231" width="256" height="291"/>
+                                            <rect key="frame" x="57" y="213" width="256" height="309"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="jER-Wf-WAH">
-                                                <rect key="frame" x="3" y="3" width="250" height="274"/>
+                                                <rect key="frame" x="3" y="3" width="250" height="292"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Ad-oh-5Ny">
-                                                        <rect key="frame" x="24" y="238" width="127" height="18"/>
+                                                        <rect key="frame" x="24" y="256" width="127" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="タブでインデント" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hlo-et-iCo">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -900,6 +902,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="Hu0-g8-Inj"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ckn-mH-VpJ">
+                                                        <rect key="frame" x="22" y="234" width="203" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="現在の行をハイライト" bezelStyle="regularSquare" imagePosition="left" inset="2" id="LMb-ug-eUu">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="Gts-Aj-gcC"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -973,7 +986,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="621">
-                                            <rect key="frame" x="83" y="244" width="204" height="218"/>
+                                            <rect key="frame" x="83" y="230" width="204" height="218"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="204" height="18"/>
@@ -3389,6 +3402,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mPD-1M-vjP">
+                                                        <rect key="frame" x="286" y="252" width="69" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="現在の行" id="QhW-6i-5cC">
+                                                            <font key="font" size="11" name=".PingFangSC-Regular"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dl3-aa-Pcl">
+                                                        <rect key="frame" x="288" y="228" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="isL-St-zcV"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
@@ -3403,7 +3433,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="106"/>
             </connections>
-            <point key="canvasLocation" x="-74" y="180"/>
+            <point key="canvasLocation" x="-74.5" y="180"/>
         </window>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="Ipf-g9-RdG" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>

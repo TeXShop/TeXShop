@@ -59,7 +59,8 @@
 - (void)moveForwardTo$$:(id)sender;
 - (void)moveBackwardTo$$:(id)sender;
 - (void)paste: (id)sender;
-    
+- (void)updateInsertionPointStateAndRestartTimer:(BOOL)restartFlag;
+
 @end
 
 

@@ -389,7 +389,7 @@ enum RootCommand
 @property (retain)  NSDictionary        *parameterXMLColorAttribute;
 @property (retain)  NSDictionary        *valueXMLColorAttribute;
 @property (retain)  NSDictionary        *specialXMLColorAttribute;
-
+@property (retain)  NSDictionary        *EntryColorAttribute;
 
 
 @property (retain)  NSTask              *synctexTask;
@@ -427,6 +427,7 @@ enum RootCommand
 
 @property (retain)  NSString            *spellLanguage;
 @property           BOOL                automaticSpelling;
+@property           BOOL                syntaxcolorEntry;
 
 
 @property           BOOL                fileIsXML;
@@ -540,6 +541,7 @@ enum RootCommand
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
+- (IBAction)toggleSyntaxColorEntry:sender;
 
 
 // - (void) tryScrap:(id)sender;
@@ -561,6 +563,7 @@ enum RootCommand
 - (id) pdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
 - (void) updateTagsAtClick:(NSNotification *)notification;
+  
 
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas
 - (void) changeAutoComplete: sender;
@@ -662,6 +665,7 @@ enum RootCommand
 - (NSTextView *)textView1;
 - (NSTextView *)textView2;
 - (void)switchFrontWindow;
+- (void)activateFrontWindow;
 
 
 
@@ -840,6 +844,8 @@ enum RootCommand
 - (void)fixColor:(NSUInteger)from :(NSUInteger)to;
 - (void)colorizeAll;
 - (void)colorizeVisibleAreaInTextView:(NSTextView *)aTextView;
+- (void)cursorMoved: (NSTextView *)aTextView;
+- (void)removeCurrentLineColor: (NSTextView *)aTextView;
 
 @end
 

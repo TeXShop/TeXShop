@@ -159,13 +159,14 @@ NSInteger strSort(id s1, id s2, void *context)
     self.spellLanguage = [SUD stringForKey: spellingLanguageDefaultKey];
     self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
     
-    
+    self.syntaxcolorEntry = [SUD boolForKey:SyntaxColorEntryLineKey];
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
 	self.lineNumberView1 = nil;
 	self.lineNumberView2 = nil;
 	self.logLineNumberView = nil;
 	self.logExtension = nil;
+
 
 	lastCursorLocation = 0; // added by Terada
 	lastStringLength = 0; // added by Terada
@@ -357,8 +358,22 @@ NSInteger strSort(id s1, id s2, void *context)
     BOOL        fromFullSplitWindow;
     NSRect      theVisibleRect;
     NSRange     theRange;
+    NSInteger   drawerState, tabPreference;
     
     [super restoreStateWithCoder:coder];
+    
+    if (atLeastSierra)
+    {
+        tabPreference = [SUD integerForKey:OpenAsTabsKey];
+        if ((tabPreference != 1) && ([coder containsValueForKey:@"TeXShopDrawerState"]))
+        {
+            drawerState = [coder decodeIntegerForKey:@"TeXShopDrawerState"];
+            if (drawerState == NSDrawerOpenState)
+                [myDrawer open];
+            else
+                [myDrawer close];
+        }
+    }
     
     if ([coder containsValueForKey:@"ForFullSplitWindow"]) {
         
@@ -416,6 +431,7 @@ NSInteger strSort(id s1, id s2, void *context)
      
      
     [coder encodeBool:useFullSplitWindow forKey:@"ForFullSplitWindow"];
+    [coder encodeInteger:[myDrawer state] forKey:@"TeXShopDrawerState"];
 
     if (! useFullSplitWindow) {
         NSRect theRect = [self.pdfKitWindow frame];
@@ -1404,12 +1420,19 @@ if (! skipTextWindow) {
   
 //    [self addTabbedWindows];
     
+    NSInteger value = [SUD integerForKey:OpenAsTabsKey];
     
     if (([SUD boolForKey:SourceAndPreviewInSameWindowKey])  && (! _externalEditor) && PDFfromKit && (! self.useTabs) && (! self.useTabsWithFiles))
     {
         [self doMove:self];
         SEL aSelector = @selector(hideTextWindow);
         [self performSelector: aSelector withObject: self afterDelay: .1];
+    }
+    
+    else if ((atLeastSierra) && (value == 1) && (! [SUD boolForKey:SourceAndPreviewInSameWindowKey])  && (! _externalEditor) && PDFfromKit && (! self.useTabs) && (! self.useTabsWithFiles))
+    {
+        SEL aSelector = @selector(activateFrontWindow);
+        [self performSelector: aSelector withObject: self afterDelay: .5];
     }
     
     else
@@ -1427,6 +1450,14 @@ if (! skipTextWindow) {
     
     
 }
+
+- (void)activateFrontWindow
+   {
+       if ([textWindow isVisible])
+       {
+        [textWindow makeKeyAndOrderFront: self];
+       }
+   }
 
     
 - (void)switchFrontWindow
@@ -2727,8 +2758,7 @@ else {
 - (void) setTextView: (id)aView
 {
 	NSRange		theRange;
-
-	textView = aView;
+ 	textView = aView;
 	if (textView == textView1) {
 		theRange = [textView2 selectedRange];
 		theRange.length = 0;
@@ -2791,6 +2821,7 @@ else {
 
 		windowIsSplit = YES;
 		textView = textView1;
+        [self removeCurrentLineColor:textView2];
 	}
 }
 
@@ -5668,6 +5699,21 @@ if (! useFullSplitWindow) {
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
     
+    if ([anItem action] == @selector(toggleSyntaxColor:))
+    {
+        if (self.syntaxColor)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+    }
+    
+    if ([anItem action] == @selector(toggleSyntaxColorEntry:))
+    {
+        if (self.syntaxcolorEntry)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+    }
     
 	if (!fileIsTex) {
 		if ([anItem action] == @selector(saveDocument:) ||
@@ -6835,10 +6881,25 @@ if (! useFullSplitWindow) {
     
      self.syntaxColor = ! self.syntaxColor;
     [sender setState: self.syntaxColor];
-    
+        
     [self reColor:nil];
     
 }
+
+- (IBAction)toggleSyntaxColorEntry:sender {
+    
+     self.syntaxcolorEntry = ! self.syntaxcolorEntry;
+    [sender setState: self.syntaxcolorEntry];
+   
+    if (self.syntaxcolorEntry)
+        [self cursorMoved: textView];
+    else
+    {
+        [self removeCurrentLineColor: textView1];
+        [self removeCurrentLineColor: textView2];
+    }
+}
+
 
 
 - (void) flipIndexColor: (NSInteger)state

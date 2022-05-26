@@ -4605,68 +4605,111 @@ else
 
 - (void)startDragging: (NSEvent *)theEvent
 {
-	NSPasteboard *pboard;
-	NSInteger imageCopyType;
-	NSString *dataType = 0, *filePath;
-	NSData *data;
-	NSImage *image;
-	NSSize dragOffset = NSMakeSize(0, 0);
-	NSRect	mySelectedRect;
-	NSPoint	offset;
-	
-	mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
+    NSPasteboard *pboard;
+    NSInteger imageCopyType;
+    NSString *dataType = 0, *filePath;
+    NSData *data, *data1;
+    NSImage *image;
+    NSSize dragOffset = NSMakeSize(0, 0);
+    NSRect    mySelectedRect;
+    NSPoint    offset;
+    NSInteger rotation;
+    
+    NSPoint myLocation = [[self window] mouseLocationOutsideOfEventStream];
+    myLocation = [self convertPoint: myLocation fromView:nil];
+    PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
+    rotation = myPage.rotation;
 
-	
-	pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-	imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
-	if (imageCopyType != IMAGE_TYPE_PDF && imageCopyType != IMAGE_TYPE_EPS)
-		dataType = NSTIFFPboardType;
-	else if (imageCopyType == IMAGE_TYPE_PDF)
-		dataType = NSPDFPboardType;
-	else if (imageCopyType == IMAGE_TYPE_EPS)
-		dataType = NSPostScriptPboardType;
-	// FIXME: If imageCopyType is unknown, then dataType is 0 here!
-	[pboard declareTypes:[NSArray arrayWithObjects: dataType,
-							NSFilenamesPboardType, nil] owner:self];
-	
+    mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
 
-	if (!((imageCopyType == IMAGE_TYPE_PDF || imageCopyType == IMAGE_TYPE_EPS)
-		&& [SUD boolForKey: PdfQuickDragKey])) {
-		data = [self imageDataFromSelectionType: imageCopyType];
-		if (data) {
-			
-			[pboard setData:data forType:dataType];
-			filePath = [[DraggedImagePath stringByStandardizingPath]
-					stringByAppendingPathExtension: extensionForType(imageCopyType)];
-			if ([data writeToFile: filePath atomically: NO])
-				
-			// WARNING: the next line causes a crash at program end!
-				[pboard setPropertyList:[NSArray arrayWithObject: filePath]
-									forType:NSFilenamesPboardType];
-			image = [[NSImage alloc] initWithData: data] ;
-			if (image) {
-				// drag pdf image here
-				offset = mySelectedRect.origin;
-				offset.x = offset.x + offsetPoint.x; offset.y = offset.y + offsetPoint.y;
-				[self dragImage:image at:offset offset:dragOffset
-					event:theEvent pasteboard:pboard source:self slideBack:YES];
-			}
-		}
-	} else { // quick drag for PDF & EPS
-		// TODO / FIXME: MyPDFKitView currently does *not* implement imageFromRect:!
-		// Hence I am disabling this code for now.
-#if 0
-		image = [self imageFromRect: mySelectedRect];
-		
-		if (image) {
-			//[self pasteboard:pboard provideDataForType:dataType];
-			//[self pasteboard:pboard provideDataForType:NSFilenamesPboardType];
-			[self dragImage:image at:mySelectedRect.origin offset:dragOffset
-					event:theEvent pasteboard:pboard source:self slideBack:YES];
-		}
-#endif
-	}
+    
+    pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    imageCopyType = [SUD integerForKey:PdfCopyTypeKey];
+    if (rotation != 0)
+        dataType = NSPDFPboardType;
+    else if (imageCopyType != IMAGE_TYPE_PDF && imageCopyType != IMAGE_TYPE_EPS)
+        dataType = NSTIFFPboardType;
+    else if (imageCopyType == IMAGE_TYPE_PDF)
+        dataType = NSPDFPboardType;
+    else if (imageCopyType == IMAGE_TYPE_EPS)
+        dataType = NSPostScriptPboardType;
+    // FIXME: If imageCopyType is unknown, then dataType is 0 here!
+    [pboard declareTypes:[NSArray arrayWithObjects: dataType,
+                            NSFilenamesPboardType, nil] owner:self];
+    
+  if ((imageCopyType != IMAGE_TYPE_PDF) && (imageCopyType != IMAGE_TYPE_EPS))
+        {
+        data = [self imageDataFromSelectionType: imageCopyType];
+        if (data) {
+            [pboard setData:data forType:dataType];
+            filePath = [[DraggedImagePath stringByStandardizingPath]
+                    stringByAppendingPathExtension: extensionForType(imageCopyType)];
+            if ([data writeToFile: filePath atomically: NO])
+                
+            // WARNING: the next line causes a crash at program end!
+                [pboard setPropertyList:[NSArray arrayWithObject: filePath]
+                                    forType:NSFilenamesPboardType];
+            image = [[NSImage alloc] initWithData: data] ;
+            if (image) {
+                // drag pdf image here
+                offset = mySelectedRect.origin;
+                offset.x = offset.x + offsetPoint.x; offset.y = offset.y + offsetPoint.y;
+                [self dragImage:image at:offset offset:dragOffset
+                    event:theEvent pasteboard:pboard source:self slideBack:YES];
+            }
+        }
+    }
+    
+    
+  
+  else if
+    (   ((imageCopyType == IMAGE_TYPE_PDF) || (imageCopyType == IMAGE_TYPE_EPS)) && (rotation == 0)  )
+            {
+       data = [self imageDataFromSelectionType: imageCopyType];
+       if (data) {
+           [pboard setData:data forType:dataType];
+           filePath = [[DraggedImagePath stringByStandardizingPath]
+                   stringByAppendingPathExtension: extensionForType(imageCopyType)];
+           if ([data writeToFile: filePath atomically: NO])
+               
+           // WARNING: the next line causes a crash at program end!
+               [pboard setPropertyList:[NSArray arrayWithObject: filePath]
+                                   forType:NSFilenamesPboardType];
+           image = [[NSImage alloc] initWithData: data] ;
+           if (image) {
+               // drag pdf image here
+               offset = mySelectedRect.origin;
+               offset.x = offset.x + offsetPoint.x; offset.y = offset.y + offsetPoint.y;
+               [self dragImage:image at:offset offset:dragOffset
+                   event:theEvent pasteboard:pboard source:self slideBack:YES];
+           }
+       }
+   }
+    
+    
+       
+   else {
+       data1 = [self dataWithPDFInsideRect:mySelectedRect];
+       filePath = [[DraggedImagePath stringByStandardizingPath]
+               stringByAppendingPathExtension: extensionForType(IMAGE_TYPE_PDF)];
+       [data1 writeToFile:filePath atomically:NO];
+       image = [[NSImage alloc] initWithData: data1] ;
+       [pboard setPropertyList:[NSArray arrayWithObject: filePath]
+                           forType:NSFilenamesPboardType];
+      [pboard setData:data1 forType:dataType];
+       
+        if (image) {
+           // drag pdf image here
+           offset = mySelectedRect.origin;
+           
+           offset.x = offset.x + offsetPoint.x; offset.y = offset.y + offsetPoint.y;
+           [self dragImage:image at:offset offset:dragOffset
+               event:theEvent pasteboard:pboard source:self slideBack:YES];
+       }
+   }
 }
+
+
 
 // NSDraggingSource required method
 - (NSUInteger)draggingSourceOperationMaskForLocal:(BOOL)isLocal

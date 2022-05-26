@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="ahT-zi-zrr" id="8jm-2g-R2b"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="OLP-gz-ZMj" id="nB9-8e-Yvq"/>
                 <outlet property="EditorReverseSyncColorWell" destination="1vO-cp-TK3" id="Ebx-fS-MGG"/>
+                <outlet property="EntryColorWell" destination="DIs-nL-06I" id="FcJ-Ex-H8z"/>
                 <outlet property="FootnoteColorWell" destination="eis-GZ-7cy" id="BAQ-Ol-z6Y"/>
                 <outlet property="ImageBackgroundColorWell" destination="BkC-FY-Y79" id="NoR-vS-sP9"/>
                 <outlet property="LiteStyle" destination="p8S-s9-WPM" id="Y4D-CF-qFZ"/>
@@ -134,6 +135,7 @@
                 <outlet property="_syncMatrix" destination="217" id="431"/>
                 <outlet property="_syncTabButton" destination="KT1-Ag-NwE" id="gHe-VG-gEs"/>
                 <outlet property="_syntaxColorButton" destination="32" id="432"/>
+                <outlet property="_syntaxColorLineButton" destination="M4H-oQ-6aF" id="X5F-df-A3p"/>
                 <outlet property="_tabIndentButton" destination="28" id="433"/>
                 <outlet property="_tabView" destination="5" id="434"/>
                 <outlet property="_tagMenuButton" destination="40" id="436"/>
@@ -673,21 +675,21 @@ DQ
                                             <rect key="frame" x="49" y="16" width="256" height="65"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="9lv-yp-utM">
-                                                <rect key="frame" x="3" y="3" width="250" height="48"/>
+                                                <rect key="frame" x="3" y="3" width="250" height="45"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fQW-JT-YDh">
-                                                        <rect key="frame" x="25" y="14" width="169" height="25"/>
+                                                        <rect key="frame" x="25" y="11" width="169" height="25"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <popUpButtonCell key="cell" type="push" title="안 함" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="aX7-gV-07Q" id="Uqg-Uz-2az">
+                                                        <popUpButtonCell key="cell" type="push" title="안 함" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="aX7-gV-07Q" id="Uqg-Uz-2az">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="menu"/>
                                                             <menu key="menu" id="k6W-Gm-4YD">
                                                                 <items>
-                                                                    <menuItem title="안 함" tag="2" id="aX7-gV-07Q">
+                                                                    <menuItem title="안 함" state="on" tag="2" id="aX7-gV-07Q">
                                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                                     </menuItem>
-                                                                    <menuItem title="자동" state="on" id="DAh-g6-WdF"/>
+                                                                    <menuItem title="자동" id="DAh-g6-WdF"/>
                                                                     <menuItem title="항상" tag="1" id="Z1a-mj-JNf">
                                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                                     </menuItem>
@@ -700,7 +702,7 @@ DQ
                                                     </popUpButton>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" size="13" name=".AppleSDGothicNeoI-Regular"/>
+                                            <font key="titleFont" metaFont="system"/>
                                         </box>
                                     </subviews>
                                 </view>
@@ -711,10 +713,10 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="에디터" translatesAutoresizingMaskIntoConstraints="NO" id="24">
-                                            <rect key="frame" x="63" y="214" width="256" height="291"/>
+                                            <rect key="frame" x="63" y="204" width="256" height="301"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Jqp-gg-4td">
-                                                <rect key="frame" x="3" y="3" width="250" height="271"/>
+                                                <rect key="frame" x="3" y="3" width="250" height="281"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30">
@@ -810,7 +812,7 @@ DQ
                                                         </connections>
                                                     </matrix>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="28">
-                                                        <rect key="frame" x="24" y="243" width="87" height="18"/>
+                                                        <rect key="frame" x="25" y="259" width="87" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="탭 문자 사용" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="29">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -818,6 +820,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="538"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M4H-oQ-6aF">
+                                                        <rect key="frame" x="26" y="236" width="203" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="현재 줄 강조" bezelStyle="regularSquare" imagePosition="left" inset="2" id="vqZ-PU-oUb">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" size="13" name=".AppleSDGothicNeoI-Regular"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="wtq-JR-C0M"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -3390,6 +3403,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tnj-w1-Qh1">
+                                                        <rect key="frame" x="288" y="251" width="69" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="현재 줄" id="EM4-SG-RUf">
+                                                            <font key="font" size="11" name=".AppleSDGothicNeoI-Regular"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DIs-nL-06I">
+                                                        <rect key="frame" x="290" y="227" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="bCh-og-boT"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

@@ -265,6 +265,16 @@ else
 	return toolbarItem;
 }
 
+- (NSToolbarItem*) makeToolbarItemFixedWithItemIdentifier:(NSString*)itemIdent key:(NSString*)itemKey customView:(id)customView
+{
+    NSToolbarItem*    toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey];
+    [toolbarItem setView: customView];
+    [toolbarItem setMinSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
+    [toolbarItem setMaxSize:NSMakeSize(NSWidth([customView frame]), NSHeight([customView frame]))];
+  
+    return toolbarItem;
+}
+
 - (NSToolbarItem*) makeMouseModeItemWithItemIdentifier: (NSString *)itemIdent key:(NSString *)itemKey customView: (NSView *)theView
 {
     NSToolbarItem *theToolbarItem;
@@ -946,7 +956,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
      }
     
 	if ([itemIdent isEqual: kGotoPageTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutlet];
 		menuFormRep = [[NSMenuItem alloc] init];
 		/*
@@ -962,7 +972,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 	}
 
 	if ([itemIdent isEqual: kGotoPageKKTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:gotopageOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
@@ -1020,7 +1030,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         
     
     if ([itemIdent isEqual: skGotoPageKKTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:sgotopageOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
@@ -1031,7 +1041,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 	}
     
     if ([itemIdent isEqual: skMagnificationKKTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:smagnificationOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -1045,7 +1055,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
 
 	if ([itemIdent isEqual: kMagnificationTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutlet];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];
@@ -1057,7 +1067,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
 
 	if ([itemIdent isEqual: kMagnificationKKTID]) {
-		toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+		toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
 													customView:magnificationOutletKK];
 		menuFormRep = [[NSMenuItem alloc] init];
 		[menuFormRep setTitle: [toolbarItem label]];

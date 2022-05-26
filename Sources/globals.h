@@ -549,6 +549,7 @@ extern NSString *SyncUseTabsKey;
 extern NSString *AltPathKey;
 extern NSString *IgnoreStartOnRebootKey;
 extern NSString *OpenAsTabsKey;
+extern NSString *SyntaxColorEntryLineKey;
 
 
 // end defaults

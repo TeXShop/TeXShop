@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="IYP-Df-FLD" id="dAz-Ue-qAK"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="PUO-rX-UEV" id="gR4-na-Iiz"/>
                 <outlet property="EditorReverseSyncColorWell" destination="3HS-Fg-v9M" id="PkR-Md-k3N"/>
+                <outlet property="EntryColorWell" destination="3bO-Zn-FDL" id="uSP-a2-dTe"/>
                 <outlet property="FootnoteColorWell" destination="Z3d-aJ-J3l" id="I42-kl-358"/>
                 <outlet property="ImageBackgroundColorWell" destination="G0V-Lr-1Wx" id="TSQ-NS-V3c"/>
                 <outlet property="ImageForegroundColorWell" destination="Q0B-KZ-gpy" id="Ysn-9i-MOO"/>
@@ -135,6 +136,7 @@
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syncTabButton" destination="qOg-t3-hoW" id="aOc-0t-Xo1"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_syntaxColorLineButton" destination="AoT-3x-ntL" id="mVW-IW-rRC"/>
                 <outlet property="_tabIndentButton" destination="l7P-zz-DVV" id="4PF-82-kwt"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tagMenuButton" destination="hro-gW-tY2" id="gb7-0k-YBI"/>
@@ -711,14 +713,14 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="Editor" translatesAutoresizingMaskIntoConstraints="NO" id="63">
-                                            <rect key="frame" x="46" y="223" width="253" height="285"/>
+                                            <rect key="frame" x="46" y="217" width="253" height="291"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="HYX-ve-fxK">
-                                                <rect key="frame" x="3" y="3" width="247" height="265"/>
+                                                <rect key="frame" x="3" y="3" width="247" height="271"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l7P-zz-DVV">
-                                                        <rect key="frame" x="20" y="235" width="222" height="18"/>
+                                                        <rect key="frame" x="17" y="249" width="222" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="Usa tabulazione per la rientranza" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="yWV-mG-2DE">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -726,6 +728,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="xoh-7m-6Qc"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AoT-3x-ntL">
+                                                        <rect key="frame" x="17" y="229" width="203" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Evidenzia la linea corrente" bezelStyle="regularSquare" imagePosition="left" inset="2" id="7UH-Ad-EhO">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="Unx-lc-h21"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -911,7 +924,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="621">
-                                            <rect key="frame" x="69" y="239" width="227" height="218"/>
+                                            <rect key="frame" x="66" y="228" width="227" height="218"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="227" height="18"/>
@@ -3318,6 +3331,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lDX-AK-WYy">
+                                                        <rect key="frame" x="288" y="253" width="86" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Linea corrente" id="sNC-vS-sHj">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bO-Zn-FDL">
+                                                        <rect key="frame" x="290" y="229" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="fqr-ca-yYZ"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

@@ -348,6 +348,7 @@ NSString *SyncUseTabsKey = @"SyncUseTabs";
 NSString *AltPathKey = @"AltPath";
 NSString *IgnoreStartOnRebootKey = @"IgnoreStartOnReboot";
 NSString *OpenAsTabsKey = @"OpenAsTabs";
+NSString *SyntaxColorEntryLineKey = @"SyntaxColorEntryLine";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

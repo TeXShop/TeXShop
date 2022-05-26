@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="Y2X-VS-rXU" id="3j9-Jr-Xl4"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="q2V-ay-BqP" id="dzz-sE-xIZ"/>
                 <outlet property="EditorReverseSyncColorWell" destination="T51-gj-1uI" id="ADw-m1-1yw"/>
+                <outlet property="EntryColorWell" destination="LsK-hp-acK" id="7No-bu-lOM"/>
                 <outlet property="FootnoteColorWell" destination="sfd-NE-Kxe" id="kzp-bK-fYQ"/>
                 <outlet property="ImageBackgroundColorWell" destination="urs-4X-c3I" id="9wV-HF-UYW"/>
                 <outlet property="ImageForegroundColorWell" destination="c4O-8u-ShZ" id="ffy-94-Cww"/>
@@ -135,6 +136,7 @@
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syncTabButton" destination="7eh-qn-V9N" id="oJ5-x4-TVd"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_syntaxColorLineButton" destination="8Hp-sq-plN" id="jqi-VJ-xLG"/>
                 <outlet property="_tabIndentButton" destination="rsl-HO-9FW" id="BM9-wr-ssn"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tagMenuButton" destination="kQL-uw-ZyN" id="bbF-Z4-ccR"/>
@@ -707,10 +709,10 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="Editor" translatesAutoresizingMaskIntoConstraints="NO" id="63">
-                                            <rect key="frame" x="35" y="210" width="262" height="278"/>
+                                            <rect key="frame" x="35" y="203" width="262" height="285"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Efq-Zx-IgF">
-                                                <rect key="frame" x="3" y="3" width="256" height="258"/>
+                                                <rect key="frame" x="3" y="3" width="256" height="265"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="621">
@@ -809,7 +811,7 @@ DQ
                                                         </connections>
                                                     </matrix>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rsl-HO-9FW">
-                                                        <rect key="frame" x="26" y="224" width="189" height="20"/>
+                                                        <rect key="frame" x="25" y="240" width="189" height="20"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="Usar Tab no menu de recuo" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="XRA-H0-tTl">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -817,6 +819,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="wmR-mU-Nzq"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Hp-sq-plN">
+                                                        <rect key="frame" x="25" y="222" width="203" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Destacar linha atual" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tal-oF-Uyj">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="rAp-Rl-O8L"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -3396,6 +3409,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CYb-98-xic">
+                                                        <rect key="frame" x="288" y="259" width="69" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Linha atual" id="2Z4-LU-X5h">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LsK-hp-acK">
+                                                        <rect key="frame" x="290" y="235" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="zj4-sP-XQ0"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

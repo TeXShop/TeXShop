@@ -119,6 +119,8 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 1 green: 0.95 blue: 1 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
         return [NSColor colorWithRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
+    else if ([theKey isEqualToString: @"EntryColor"])
+        return [NSColor colorWithRed: 0.9  green: 0.99  blue: 0.99 alpha:1.00];
     
     else if ([theKey isEqualToString: @"XMLComment"])
         return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];
@@ -141,6 +143,8 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 0.00 green: 0.20  blue: 0.20 alpha:1.00];
     else if ([theKey isEqualToString: @"FootnoteColor"]) //not actually used
         return [NSColor colorWithRed: 0.75 green: 0.75 blue: 0.75 alpha:1.00];
+    else if ([theKey isEqualToString: @"EntryColor"])
+        return [NSColor colorWithRed: 0.1 green: 0.01 blue: 0.01 alpha:1.00];
     
     else if ([theKey isEqualToString: @"XMLComment"]) //not actually used
         return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];

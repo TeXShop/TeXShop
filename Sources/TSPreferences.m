@@ -140,7 +140,9 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	previewBackgroundColorTouched = NO;
 	externalEditorTouched = NO;
 	syntaxColorTouched = NO;
+    syntaxColorLineTouched = NO;
 	oldSyntaxColor = [SUD boolForKey:SyntaxColoringEnabledKey];
+    oldSyntaxLineColor = [SUD boolForKey:SyntaxColorEntryLineKey];
 	autoCompleteTouched = NO;
 	bibDeskCompleteTouched = NO;
 	oldAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
@@ -808,17 +810,31 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
 }
 
 
-
 /*" This method is connected to the 'syntax coloring' checkbox.
 "*/
 - (IBAction)syntaxColorPressed:sender
 {
-	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SyntaxColoringEnabledKey] forKey:SyntaxColoringEnabledKey];
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SyntaxColoringEnabledKey] forKey:SyntaxColoringEnabledKey];
 
-	[SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SyntaxColoringEnabledKey];
-	syntaxColorTouched = YES;
-	[[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
+    [SUD setBool:[(NSCell *)[sender selectedCell] state] forKey:SyntaxColoringEnabledKey];
+    syntaxColorTouched = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
+}
+
+
+
+/*" This method is connected to the 'syntax line coloring' checkbox.
+"*/
+- (IBAction)syntaxColorLinePressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SyntaxColorEntryLineKey] forKey:SyntaxColorEntryLineKey];
+
+     
+    [SUD setBool: [(NSCell *)sender state]  forKey:SyntaxColorEntryLineKey];
+    syntaxColorLineTouched = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 }
 
 /*" This method is connected to the source window background color well.
@@ -2047,6 +2063,10 @@ A tag of 0 means "no", a tag of 1 means "yes".
 		[SUD setBool:oldSyntaxColor forKey:SyntaxColoringEnabledKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 	}
+    if (syntaxColorLineTouched) {
+        [SUD setBool:oldSyntaxLineColor forKey:SyntaxColorEntryLineKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
+    }
 	if (autoCompleteTouched) {
 		[SUD setBool:oldAutoComplete forKey:AutoCompleteEnabledKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentAutoCompleteNotification object:self];
@@ -2212,7 +2232,8 @@ This method retrieves the application preferences from the defaults object and s
 	else
 		[_docWindowPosButton setEnabled: NO];
     [_tabIndentButton setState:[defaults boolForKey:TabIndentKey]];
-	[_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
+	[_syntaxColorLineButton setState:[defaults boolForKey:SyntaxColorEntryLineKey]];
+    [_syntaxColorButton setState:[defaults boolForKey:SyntaxColoringEnabledKey]];
 	[_selectActivateButton setState:[defaults boolForKey:AcceptFirstMouseKey]];
 	[_parensMatchButton setState:[defaults boolForKey:ParensMatchingEnabledKey]];
 	[_escapeWarningButton setState:[defaults boolForKey:WarnForShellEscapeKey]];

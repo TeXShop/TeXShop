@@ -15,6 +15,79 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.73</h5></P>
+
+The following changes were made:
+
+<ul>
+<li>  When using large monitors, it is easy to lose the position of the cursor in the source window. Johan Havermans suggested a fix: "color the current line in the editor." In TeXShop 4.73, the current line is printed over a slightly blue background. 
+
+<p> This feature can be turned on and off. 
+In the TeXShop Source menu, a new item is titled "Highlight Current Line." If highlighting is on, this item will turn is off. If highlighting is off, this item will turn it back on. The menu item only applies to the currently active source window.
+The default behavior when windows are first opened is controlled by a new Preference checkmark item under the Edit tab: "Highlight Current Line".  When TeXShop 4.73 first runs this item is off, but many users may prefer to turn it on.
+
+<p> The background highlight color can be set by a new color item under the Preferences Themes tab: "Current Line".  Users who have never edited TeXShop Themes (i.e., TeXShop Colors)  should quit TeXShop and then move the file ~/Library/TeXShop/Themes to the Desktop. When TeXShop runs again, it will generate a new Themes folder in which each theme has a value for the "Current Line" color.  Users who have edited a theme can instead edit the Current Line color in this theme, making sure to change its value in the process, and then save the theme. This will add the new color to the list of colors defined by the theme.
+
+<p>
+<li> John Havermans also suggested that the state of the Drawer attached to the Preview window be remembered when TeXShop quits and restored when it restarts and reopens windows. This feature is in version 4.73, but only if the Preference item "Open New Windows as Tabs" is set to "Automatically" rather than "Always". 
+
+<p>
+<li> Bruno Voisin reported that the magnifying glass does not work on pages that are rotated. This is fixed. 
+
+<p> In the course of reporting this bug, Voisin called my attention to new support in LaTeX for PDF files, added as of the June, 2022 release. He sent the following illuminating source file. The source creates a document with three pages. The first and third pages contain text formatted in the standard way, but the second page is in landscape mode showing a wide picture. If this output came from a book, all three pages would be standard pages and the user would rotate the book to look at the picture. But when the author is creating the pages on a computer screen, the second page should be rotated for easier viewing. This source file causes the second page to be appropriately rotated. If you want to try this example, supply your own jpg file.
+<pre>
+     % !TEX program = xelatex-dev
+
+     \DocumentMetadata{}
+
+     \documentclass[12pt]{article}
+     \usepackage{graphicx}
+     \usepackage[figuresright]{rotating}
+
+     \ExplSyntaxOn
+     \AddToHook{env/sidewaysfigure/end}{\pdfmanagement_add:nnn{ThisPage}{Rotate}{90}}
+     \ExplSyntaxOff
+
+     \begin{document}
+
+     Some text.
+
+     \begin{sidewaysfigure}
+       \centering
+       \includegraphics[width=\textheight]{YourPicture.jpg}
+       \caption{Then a nice rotated figure.}
+       \label{fig-stprof}
+     \end{sidewaysfigure}
+
+     \clearpage
+
+     And more text.
+
+     \end{document}
+</pre>
+
+<p> When TeXShop prints pdf files containing rotated pages, all pages are printed in portrait mode and information is lost on rotated pages. The solution to this problem is easy. Before printing, comment out the three lines starting with "ExplSyntaxOn" and typeset. Then no page needs to be rotated in the printed output.  
+
+<p> One problem remains. Suppose you are creating a document which most users will read on the screen, but a few will  print. Should pages with sideways-figures be rotated or not? This is a problem I cannot solve, since the fix must be in the software your readers use to display pdf, not the software you use to create it.
+
+<p>
+<li> If users opened the "Customize Toolbar" dialog, the "Go to page" and "Magnification" items were displayed too high and difficult to grab. 
+This bug is fixed.
+
+<p>
+<li> Chris Goedde reported that when TeXShop Preferences says to open files as tabs, the active Preview tab was for the new file just opened, but the active Source tab was for an earlier file. This is fixed. (A similar problem when opening as tabs in single window mode is not fixed; sorry. After opening in this situation, activate the desired tab by hand. )
+
+<p>
+<li> Several users reported problems when opening projects with a root file after indicating that all files should open as tabs. This problem is caused by the Preference item under the Misc tab  labeled "Project Root File: Minaturize the opened root window." Uncheck this item.
+
+<p> In previous versions of TeXShop, this item was checked by default. Starting with TeXShop 4.73, it is not checked by default. But this change will not help users who have  installed earlier versions of TeXShop.  Even if you do not use root files, you probably should uncheck the item so you don't  run into the problem later on.
+
+<p>
+<li> Two default preference items were changed: "Highlight Enclosed Characters" is now unchecked and "Blink Highlight" is now checked. Both are in the Edit tab. These preferences determine behavior when a right curly bracket  is typed; the first sets the text between matching brackets to red, and the second blinks the matching bracket. First time users found the second behavior helpful, but were surprised by the first behavior.  Users who have already run TeXShop will see no change. 
+
+</ul>
+
+
 <P><h5>TeXShop Changes 4.72</h5></P>
 
 Version 4.71 was never released. The following changes were made in 4.72.

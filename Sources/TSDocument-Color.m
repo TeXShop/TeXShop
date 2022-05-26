@@ -47,6 +47,7 @@
     NSColor *myBackgroundColor;
     NSColor *myTextColor;
     NSColor *mySyntaxColor;
+    NSColor *myEntryColor;
     NSColor *myColor;
     NSArray *myArray;
     NSNumber *myNumber;
@@ -242,6 +243,12 @@
         }
      */
     self.footnoteColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:mySyntaxColor, NSForegroundColorAttributeName, nil];
+    
+    myEntryColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"EntryColor"];
+    if (myEntryColor == nil)
+        myEntryColor = [[TSColorSupport sharedInstance] liteColorAndAlphaWithKey: @"EntryColor"];
+    
+    self.EntryColorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys: myEntryColor, NSBackgroundColorAttributeName, nil];
    
     myColor = [[TSColorSupport sharedInstance] colorFromDictionary:colorDictionary andKey: @"EditorHighlightBraces"];
     highlightBracesColorDict = [NSDictionary dictionaryWithObjectsAndKeys: myColor, NSForegroundColorAttributeName, nil ] ;

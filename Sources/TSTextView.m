@@ -173,6 +173,14 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
     
 }
 
+- (void)updateInsertionPointStateAndRestartTimer:(BOOL)restartFlag
+{
+    [super updateInsertionPointStateAndRestartTimer: restartFlag];
+    [self.document performSelector: @selector(cursorMoved:) withObject:[self.document textView] afterDelay:0];
+  //  [self.document cursorMoved:[self.document textView]];
+}
+
+
 - (void)toggleSmartInsertDelete:(id)sender
 {
 	BOOL value;

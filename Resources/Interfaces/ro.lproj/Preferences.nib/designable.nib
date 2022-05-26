@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="Rol-hd-sLX" id="O5B-9U-7kV"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="RIX-x9-Kmn" id="K3h-a7-vMf"/>
                 <outlet property="EditorReverseSyncColorWell" destination="qYc-0V-CTD" id="PgU-1V-pdC"/>
+                <outlet property="EntryColorWell" destination="Kjh-xe-XYx" id="POR-DO-Ucf"/>
                 <outlet property="FootnoteColorWell" destination="6JM-wv-Jxj" id="9qc-4c-Rko"/>
                 <outlet property="ImageBackgroundColorWell" destination="fe5-xZ-zPo" id="Zxj-D7-xfc"/>
                 <outlet property="ImageForegroundColorWell" destination="Lvi-qt-0CL" id="xt1-aI-IeF"/>
@@ -135,6 +136,7 @@
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syncTabButton" destination="51e-3k-aTX" id="U1z-MO-IW6"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_syntaxColorLineButton" destination="RCy-mM-Kbx" id="YXu-wp-FK8"/>
                 <outlet property="_tabIndentButton" destination="mZw-sb-Xsu" id="BiH-No-gWz"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tagMenuButton" destination="l35-Xl-tru" id="vVb-HW-djF"/>
@@ -715,7 +717,7 @@ DQ
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="621">
-                                                        <rect key="frame" x="20" y="2" width="193" height="218"/>
+                                                        <rect key="frame" x="20" y="-2" width="193" height="218"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="193" height="18"/>
@@ -810,7 +812,7 @@ DQ
                                                         </connections>
                                                     </matrix>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mZw-sb-Xsu">
-                                                        <rect key="frame" x="21" y="227" width="75" height="18"/>
+                                                        <rect key="frame" x="21" y="237" width="75" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="Use Tab" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vS3-Zy-wp5">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -818,6 +820,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="YK7-zj-c2e"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RCy-mM-Kbx">
+                                                        <rect key="frame" x="20" y="217" width="202" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Highlight Current Line" bezelStyle="regularSquare" imagePosition="left" inset="2" id="JMS-9t-czj">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="cIv-3W-plp"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -3391,6 +3404,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sWt-91-dK9">
+                                                        <rect key="frame" x="288" y="247" width="77" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Current Line" id="0es-7g-H9h">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-xe-XYx">
+                                                        <rect key="frame" x="290" y="223" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="evM-ID-US8"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

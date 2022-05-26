@@ -149,7 +149,7 @@ NSInteger stringSort(id s1, id s2, void *context)
 {
     TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
     NSColor *flashColor, *aColor;
-    NSColor *footnoteCol;
+    NSColor *footnoteCol, *EntryCol;
     BOOL withDarkColors;
     
     
@@ -199,6 +199,13 @@ NSInteger stringSort(id s1, id s2, void *context)
         // FootnoteColorWell.color = [NSColor colorWithRed:0.35 green:0.35 blue:0.35 alpha:1];
         FootnoteColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"FootnoteColor"];
  */
+    
+   EntryCol = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EntryColor"];
+    if (EntryCol != nil)
+        EntryColorWell.color = EntryCol;
+    else
+        EntryColorWell.color = [colorSupport liteColorAndAlphaWithKey: @"EntryColor"];
+
         
     EditorReverseSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorReverseSync"];
     PreviewDirectSyncColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"PreviewDirectSync"];
@@ -344,6 +351,8 @@ NSInteger stringSort(id s1, id s2, void *context)
                                       Green: [SUD doubleForKey:indexgreenKey] Blue: [SUD doubleForKey:indexblueKey] Alpha: 1.0];
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"FootnoteColor" withRed: 0.35
                                       Green: 0.35 Blue: 0.35 Alpha: 1.0];
+    [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EntryColor" withRed: 0.9
+                                      Green: 0.99 Blue: 0.99 Alpha: 1.0];
     
     [colorSupport setColorValueInDictionary: prefsDictionary forKey: @"EditorHighlightBraces" withRed: [SUD doubleForKey:highlightBracesRedKey]
                                       Green: [SUD doubleForKey:highlightBracesGreenKey] Blue: [SUD doubleForKey:highlightBracesBlueKey] Alpha: 1.0];
@@ -643,6 +652,23 @@ NSInteger stringSort(id s1, id s2, void *context)
     [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
     
 }
+
+- (IBAction)EntryColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"EntryColor"];
+        if (oldColor != nil)
+            ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"EntryColor" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+    
+}
+
 
 
 - (IBAction)EditorReverseSyncChanged:sender

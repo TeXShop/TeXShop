@@ -178,11 +178,14 @@ static BOOL isValidTeXCommandChar(NSInteger c)
      
      */
     
+    // The next line may not be necessary, but seems to produce a smoother result. Koch/2022
+    [self cursorMoved:[self textView]];
+
+    
     colorIndexDifferently =  [self indexColorState];
     colorFootnoteDifferently = [SUD boolForKey: SyntaxColorFootnoteKey];
     
-    
-    
+   
     // Fetch the underlying layout manager and string.
     layoutManager = [aTextView layoutManager];
     textString = [aTextView string];
@@ -258,6 +261,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     // June 27, 2008; Koch; I don't understand the previous warning; the line below fixes cases when removing a comment leaves text red
     // Sept 3, 2011; the Toudykov patch below makes this unnecessary
     [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
+    
+    // the following line is deactivaeed active-line-colors are used because it caused them to to be removed when scrolling on May, 2022
+   
+    if ( ! self.syntaxcolorEntry)
+     [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:colorRange];
     
     // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
     // [layoutManager addTemporaryAttributes:self.regularColorAttribute forCharacterRange:colorRange];
@@ -492,6 +500,38 @@ static BOOL isValidTeXCommandChar(NSInteger c)
         else location++;
     }
     
+    // Now we color the background of the active line
+    
+/*
+    float           r, g, b;
+    NSColor         *color;
+    NSRange         mySelectedLineRange, currentLineRange;
+    NSUInteger      startl, endl, theEnd;
+    NSDictionary    *emphasizeAttribute;
+    
+    if (self.syntaxcolorEntry)
+    {
+
+       
+    //    r = 0.9;
+    //    g = 0.99;
+    //    b = 0.99;
+    
+    //    color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
+    //    emphasizeAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSBackgroundColorAttributeName, nil];
+        
+        mySelectedLineRange = [aTextView selectedRange];
+        [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];
+        currentLineRange.location = startl;
+        currentLineRange.length = theEnd - startl;
+        [layoutManager addTemporaryAttributes:self.EntryColorAttribute forCharacterRange:currentLineRange];
+    }
+*/
+    
+    // END OF ADDITION
+ 
+    
+    
     // finally, syntax color comments in XML
     if (self.fileIsXML)
          [self syntaxColorXMLCommentsfrom: aLineStart to: aLineEnd using: textString with: layoutManager];
@@ -564,7 +604,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 // It either colorizes the whole text or removes all the coloring.
 - (void)reColor:(NSNotification *)notification
 {
-	// if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
+    
+  	// if ([SUD boolForKey:SyntaxColoringEnabledKey]) {
     if (self.syntaxColor) {
 		[self colorizeAll];
 	} else {
@@ -628,7 +669,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 
 - (void) colorizeVisibleAreaInTextView:(NSTextView *)aTextView
 {
-	
+
     
     // No syntax coloring if the file is not TeX, or if it is disabled
 	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
@@ -674,5 +715,65 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     
 }
 
+- (void)cursorMoved: (NSTextView *)aTextView
+{
+    
+    NSLayoutManager *layoutManager;
+    NSString        *textString;
+    
+    float           r, g, b;
+    NSColor         *color;
+    NSRange         mySelectedLineRange, currentLineRange, fullRange;
+    NSUInteger      startl, endl, theEnd;
+    
+    if (self.syntaxcolorEntry)
+    {
+        
+        /*
+        r = 0.9;
+        g = 0.99;
+        b = 0.99;
+    
+        color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
+        emphasizeAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSBackgroundColorAttributeName, nil];
+        */
+ 
+        layoutManager = [aTextView layoutManager];
+        textString = [aTextView string];
+        
+        
+        if (self.syntaxColor)
+            [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:[aTextView visibleCharacterRange]];
+        else
+            {
+            fullRange.location = 0;
+            fullRange.length = [textString length];
+            [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:fullRange];
+            }
+         
+        
+        mySelectedLineRange = [aTextView selectedRange];
+        [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];
+        currentLineRange.location = startl;
+       currentLineRange.length = theEnd - startl;
+       [layoutManager addTemporaryAttributes:self.EntryColorAttribute forCharacterRange:currentLineRange];
+       
+    }
+    
+}
+
+- (void)removeCurrentLineColor: (NSTextView *)aTextView
+{
+    NSLayoutManager *layoutManager;
+    NSString        *textString;
+    NSRange         fullRange;
+    
+    layoutManager = [aTextView layoutManager];
+    textString = [aTextView string];
+    fullRange.location = 0;
+    fullRange.length = [textString length];
+    [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:fullRange];
+}
+    
 
 @end

@@ -46,13 +46,14 @@
     NSString *oldLiteStyle;
     NSString *oldDarkStyle;
 
-    IBOutlet NSButton       *_tabIndentButton;		/*" connected to "Use Tab" "*/
+    IBOutlet NSButton       *_tabIndentButton;		    /*" connected to "Use Tab" "*/
+    IBOutlet NSButton       *_syntaxColorLineButton;    /*" connected to "Syntax Active Line Coloring" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
-	IBOutlet NSButtonCell   *_selectActivateButton;         /*" connected to "Select on Activate" "*/
+	IBOutlet NSButtonCell   *_selectActivateButton;     /*" connected to "Select on Activate" "*/
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
-	IBOutlet NSButtonCell	*_spellCheckButton;		/*" connected to "SpellChecking "*/
-    IBOutlet NSButtonCell   *_autoSpellCorrectButton;  /*" connect to "Auto Spell Correcting "*/
-    IBOutlet NSButtonCell   *_editorAddBracketsButton; /*" connect to "Editor Can Add Brackets "*/
+	IBOutlet NSButtonCell	*_spellCheckButton;		    /*" connected to "SpellChecking "*/
+    IBOutlet NSButtonCell   *_autoSpellCorrectButton;   /*" connect to "Auto Spell Correcting "*/
+    IBOutlet NSButtonCell   *_editorAddBracketsButton;  /*" connect to "Editor Can Add Brackets "*/
 	IBOutlet NSButtonCell	*_autoCompleteButton;		/*" connected to "Auto Completion "*/
 	IBOutlet NSButtonCell	*_bibDeskCompleteButton;	/*" connected to BibDesk Completions "*/
 	IBOutlet NSButtonCell	*_lineNumberButton;			/*" connected to Line Number "*/
@@ -154,7 +155,10 @@
 	BOOL			previewBackgroundColorTouched;
 	BOOL			syntaxColorTouched;		/*" if user fiddled with syntax and then cancelled,
 																we restore the old one "*/
+    BOOL            syntaxColorLineTouched;        /*" if user fiddled with syntax and then cancelled,
+                                                                we restore the old one "*/
 	BOOL			oldSyntaxColor;			/*" value when preferences shown "*/
+    BOOL            oldSyntaxLineColor;
 	BOOL			autoCompleteTouched;
 	BOOL			bibDeskCompleteTouched;
 	BOOL			oldAutoComplete;
@@ -209,6 +213,7 @@
     IBOutlet NSColorWell    *SyntaxMarkerColorWell;
     IBOutlet NSColorWell    *SyntaxIndexColorWell;
     IBOutlet NSColorWell    *FootnoteColorWell;
+    IBOutlet NSColorWell    *EntryColorWell;
     
     IBOutlet NSColorWell    *EditorHighlightBracesColorWell;
     IBOutlet NSColorWell    *EditorHighlightContentColorWell;
@@ -260,6 +265,7 @@
 - (IBAction)sourceWindowPosChanged:sender;
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
+- (IBAction)syntaxColorLinePressed:sender;
 - (IBAction)selectActivatePressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
@@ -408,6 +414,7 @@
 - (IBAction)SyntaxMarkerColorChanged:sender;
 - (IBAction)SyntaxIndexColorChanged:sender;
 - (IBAction)FootnoteColorChanged:sender;
+- (IBAction)EntryColorChanged:sender;
 
 - (IBAction)EditorReverseSyncChanged:sender;
 - (IBAction)PreviewDirectSyncChanged:sender;

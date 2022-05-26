@@ -18,6 +18,7 @@
                 <outlet property="EditorHighlightContentColorWell" destination="x5k-hr-thk" id="PPl-LQ-XDQ"/>
                 <outlet property="EditorInvisibleCharColorWell" destination="FWB-MQ-Zcg" id="XLd-Ge-Qou"/>
                 <outlet property="EditorReverseSyncColorWell" destination="Fyu-Pq-Nog" id="v94-CK-FGn"/>
+                <outlet property="EntryColorWell" destination="dBX-Qb-3aT" id="oIk-H5-yc8"/>
                 <outlet property="FootnoteColorWell" destination="iF9-DL-vQk" id="LpI-1f-aeI"/>
                 <outlet property="ImageBackgroundColorWell" destination="FCc-ED-zW6" id="cRD-kx-9CQ"/>
                 <outlet property="ImageForegroundColorWell" destination="ZB5-Kj-whX" id="41q-7k-Foa"/>
@@ -131,6 +132,7 @@
                 <outlet property="_syncMatrix" destination="782" id="820"/>
                 <outlet property="_syncTabButton" destination="v3P-Cp-SXg" id="IwV-TI-cIM"/>
                 <outlet property="_syntaxColorButton" destination="683" id="690"/>
+                <outlet property="_syntaxColorLineButton" destination="Km8-EQ-4ZR" id="gv3-jv-TbK"/>
                 <outlet property="_tabIndentButton" destination="iFd-vo-Fav" id="alX-i6-sOn"/>
                 <outlet property="_tabView" destination="7" id="809"/>
                 <outlet property="_tagMenuButton" destination="sHr-e9-C6f" id="irc-5b-jMZ"/>
@@ -582,14 +584,14 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="Editor" translatesAutoresizingMaskIntoConstraints="NO" id="63">
-                                            <rect key="frame" x="38" y="228" width="266" height="273"/>
+                                            <rect key="frame" x="38" y="216" width="266" height="285"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="R8h-tl-oOu">
-                                                <rect key="frame" x="3" y="3" width="260" height="253"/>
+                                                <rect key="frame" x="3" y="3" width="260" height="265"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" mode="highlight" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="621">
-                                                        <rect key="frame" x="26" y="11" width="179" height="207"/>
+                                                        <rect key="frame" x="26" y="7" width="179" height="207"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="179" height="17"/>
@@ -681,7 +683,7 @@ DQ
                                                         </cells>
                                                     </matrix>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iFd-vo-Fav">
-                                                        <rect key="frame" x="24" y="225" width="178" height="18"/>
+                                                        <rect key="frame" x="24" y="237" width="178" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="Use Tabs for Indent Menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7yf-Ec-Q3g">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -689,6 +691,17 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="useTabPressed:" target="-2" id="qBD-ip-LbW"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Km8-EQ-4ZR">
+                                                        <rect key="frame" x="26" y="217" width="203" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Highlight Current Line" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3bU-pr-ssM">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="syntaxColorLinePressed:" target="-2" id="McX-Mq-Hpx"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -3259,6 +3272,23 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zad-Jv-CHZ">
+                                                        <rect key="frame" x="288" y="255" width="77" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Current Line" id="rFY-zR-hga">
+                                                            <font key="font" metaFont="message" size="11"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBX-Qb-3aT">
+                                                        <rect key="frame" x="290" y="231" width="59" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <connections>
+                                                            <action selector="EntryColorChanged:" target="-2" id="HTQ-84-ipz"/>
+                                                        </connections>
+                                                    </colorWell>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

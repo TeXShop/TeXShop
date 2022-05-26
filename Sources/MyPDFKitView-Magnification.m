@@ -7,6 +7,7 @@
 //
 
 #import "MyPDFKitView.h"
+#import "Globals.h"
 
 #define NSAppKitVersionNumber10_10_Max 1349
 
@@ -41,18 +42,32 @@
 
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level
 {
+    
     NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
     NSRect magRectWindow, tempRect;
     BOOL cursorVisible;
     CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
     NSInteger originalLevel, currentLevel = 0.0;
     CGFloat magScale = 2.5; // 4.0
+    NSString *filePath;
     
     NSData          *thePDFData;
     NSPDFImageRep   *thePDFImageRep;
     NSImage         *theImage;
     NSRect          theOriginalRect;
     
+    tempRect = [[self documentView] visibleRect];
+    NSRect mySelectedRect = [self convertRect: tempRect fromView: [self documentView]];
+    
+    NSData *mydata = [self dataWithPDFInsideRect:mySelectedRect];
+    filePath = [[DraggedImagePath stringByStandardizingPath]
+            stringByAppendingPathExtension: @"pdf"];
+    [mydata writeToFile:filePath atomically:NO];
+    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+    theImage = [[NSImage alloc] initWithData: thePDFData];
+    NSLog(@"got here");
+    
+     
      cursorVisible = YES;
     originalLevel = level+[theEvent clickCount];
     
@@ -60,11 +75,11 @@
     [self setOverView: theOverView];
     [[self documentView] addSubview: [self overView]];
     
-    tempRect = [[self documentView] visibleRect];
-    thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
+ //   tempRect = [[self documentView] visibleRect];
+ //   thePDFData = [[self documentView] dataWithPDFInsideRect:[[self documentView] visibleRect]];
     
-    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
-    theImage = [[NSImage alloc] initWithData: thePDFData];
+//    thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
+//    theImage = [[NSImage alloc] initWithData: thePDFData];
     
     [[self overView] setMagnifiedImage: theImage];
     
@@ -93,7 +108,8 @@
             if (!([theEvent type]==NSEventTypeFlagsChanged)) {
                 mouseLocWindow = [theEvent locationInWindow];
                 mouseLocView = [self convertPoint: mouseLocWindow fromView:nil];
-                mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+            //    mouseLocDocumentView = [[self documentView] convertPoint: mouseLocWindow fromView:nil];
+                mouseLocDocumentView = [self convertPoint: mouseLocWindow fromView: nil];
             }
             // check if the mouse is in the rect
             
@@ -147,15 +163,19 @@
 // Routine for El Capitan
 - (void)doMagnifyingGlassElCapitanNew:(NSEvent *)theEvent level: (NSInteger)level
 {
-    
-    NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
+     NSPoint mouseLocWindow, mouseLocView, mouseLocDocumentView;
     NSRect magRectWindow, tempRect, theOriginalRect, thePageOriginalRect;
+    NSRect pageBox;
+    float  pageHeight, pageWidth;
     BOOL cursorVisible;
+    NSInteger rotation;
     CGFloat magWidth = 0.0, magHeight = 0.0, magOffsetX = 0.0, magOffsetY = 0.0;
     NSInteger originalLevel, currentLevel = 0.0;
     CGFloat magScale = 2.5; // 4.0
     magScale = 1.5;
     NSPoint pageLowerLeft, viewLowerLeft;
+    float oldWidth, oldHeight;
+    float oldx, oldy;
     
     tempRect = [[self documentView] visibleRect];
     cursorVisible = YES;
@@ -164,10 +184,27 @@
     OverView *theOverView = [[OverView alloc] initWithFrame: [[self documentView] frame] ];
     [self setOverView: theOverView];
     [[self documentView] addSubview: [self overView]];
+    /*
+    mySelectedRect = [self convertRect: selectedRect fromView: [self documentView]];
+    
+    NSData *mydata = [self dataWithPDFInsideRect:mySelectedRect];
+    filePath = [[DraggedImagePath stringByStandardizingPath]
+            stringByAppendingPathExtension: extensionForType(IMAGE_TYPE_PDF)];
+  //  [mydata writeToFile:filePath atomically:NO];
+    */
+    
+    
+    
     
     NSPoint myLocation = [[self window] mouseLocationOutsideOfEventStream];
     myLocation = [self convertPoint: myLocation fromView:nil];
+  
     PDFPage *myPage = [self pageForPoint: myLocation nearest:YES];
+    rotation = myPage.rotation;
+    pageBox = [myPage boundsForBox: kPDFDisplayBoxMediaBox];
+    pageWidth = pageBox.size.width;
+    pageHeight = pageBox.size.height;
+    
     NSData	*myData = [myPage dataRepresentation];
     NSImage *myImageNew = [[NSImage alloc] initWithData: myData];
     pageLowerLeft.x = 0; pageLowerLeft.y = 0;
@@ -241,6 +278,40 @@
                 theOriginalRect.size.width = magWidth / magScale; theOriginalRect.size.height = magHeight / magScale;
                 
                 thePageOriginalRect = [self convertRect: theOriginalRect toPage: myPage];
+                if (rotation == 90)
+                {
+                    oldWidth = thePageOriginalRect.size.width;
+                    oldHeight = thePageOriginalRect.size.height;
+                    oldx = thePageOriginalRect.origin.x;
+                    oldy = thePageOriginalRect.origin.y;
+                    
+                    thePageOriginalRect.origin.x = oldy;
+                    thePageOriginalRect.origin.y = pageWidth - oldx - thePageOriginalRect.size.width;
+    
+                    thePageOriginalRect.size.width = oldHeight;
+                    thePageOriginalRect.size.height = oldWidth;
+                }
+                if (rotation == 180)
+                {
+                    thePageOriginalRect.origin.x = pageWidth - thePageOriginalRect.origin.x - thePageOriginalRect.size.width;
+                    thePageOriginalRect.origin.y = pageHeight - thePageOriginalRect.origin.y - thePageOriginalRect.size.height;
+                }
+                if (rotation == 270)
+                {
+                    oldWidth = thePageOriginalRect.size.width;
+                    oldHeight = thePageOriginalRect.size.height;
+                    oldx = thePageOriginalRect.origin.x;
+                    oldy = thePageOriginalRect.origin.y;
+                    
+                    thePageOriginalRect.origin.x = pageHeight - oldy - thePageOriginalRect.size.height;;
+                    thePageOriginalRect.origin.y = oldx;
+    
+                    thePageOriginalRect.size.width = oldHeight;
+                    thePageOriginalRect.size.height = oldWidth;
+                }
+                
+                
+                
                 
                 
                 [[self overView] setDrawRubberBand: NO];

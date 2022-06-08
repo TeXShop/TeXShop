@@ -155,7 +155,10 @@ static id _sharedInstance = nil;
 
 - (void)setPdfWindowWithDocument:(TSDocument *) doc isActive:(BOOL)flag
 {
-	// Update check mark in "Typeset" menu
+    NSInteger number, i;
+    id item;
+    
+    // Update check mark in "Typeset" menu
 	if ([doc documentType] == isTeX)
 		[self checkProgramMenuItem: [doc whichEngine] checked: flag];
 
@@ -166,12 +169,22 @@ static id _sharedInstance = nil;
 				NSLocalizedString(@"Preview", @"Preview")] submenu];
 		NSMenu *menu = [[previewMenu itemWithTitle:
 				NSLocalizedString(@"Display Format", @"Display Format")] submenu];
-		id item = [menu itemWithTag:[[doc pdfView] pageStyle]];
-		[item setState: flag ? NSOnState : NSOffState];
+        number = [menu numberOfItems];
+        for (i = 0; i < number; i++)
+            [[menu itemAtIndex:i] setState: NSOffState];
+        if ([doc pdfKitView] != nil) {
+            item = [menu itemWithTag:[[doc pdfKitView] pageStyle]];
+            [item setState: flag ? NSOnState : NSOffState];
+            }
 		menu = [[previewMenu itemWithTitle:
 				NSLocalizedString(@"Magnification", @"Magnification")] submenu];
-		item = [menu itemWithTag:[[doc pdfView] resizeOption]];
-		[item setState: flag ? NSOnState : NSOffState];
+        number = [menu numberOfItems];
+        for (i = 0; i < number; i++)
+            [[menu itemAtIndex:i] setState: NSOffState];
+        if ([doc pdfKitView] != nil) {
+            item = [menu itemWithTag:[[doc pdfKitView] resizeOption]];
+            [item setState: flag ? NSOnState : NSOffState];
+            }
 	}
 }
 

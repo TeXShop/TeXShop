@@ -15,6 +15,47 @@
 
 <div id="content_normal">
 
+
+<P><h5>TeXShop Changes 4.74</h5></P>
+
+The following minor bug fixes were made:
+
+<ul>
+<li> Voice Over is technology for those with limited sight; it  reads the screen while the user controls the computer with keyboard commands.
+Support for Voice Over is added automatically by the AppKit when sources are compiled. A user reported that Voice Over works in the TeXShop Source Window, but not in the Preview Window. Instead Voice Over claims that this window has no contents. Further experiments show that Voice Over can be tricked into working in the Preview Window by issuing the menu commands "Next Page" and then "Previous Page".  The trick requires that documents contain at least two pages. Add a blank page to one page documents to make the trick work for them. 
+
+<p> In TeXShop 4.74, this trick is applied automatically when preview windows are first opened or modified after typesetting. The trick is barely noticeable because it happens rapidly. This process is controlled by a hidden preference item and is off by default. To turn it on, issue the following command in Terminal:
+<pre>
+     defaults write TeXShop FixVoiceOver Yes
+</pre> 
+
+<p> There is hope that the fix will not be required in a future TeXShop version or with a future version of macOS.  That is why it is controlled by a hidden preference.
+
+<li>
+<p> Users can select the default Preview Page Style in Preferences: Single Page, Multi-Page, etc. An item in the Preview menu allows this choice to be temporarily changed for the currently active window. This menu is seldom used and has a bug. Sometimes more than one item is checked simultaneously in the menu. This is fixed.
+
+<li>
+<p> A slightly different bug involves  the Preference choice for Preview Magnification Method: Actual Size, Fixed Magnification, Fit To Window. Almost everyone should be using Fit To Window, the default choice.
+
+<p> Again, an item in the Preview menu allows this choice to be temporarily changed for the active window. But that menu behaves  strangely.  If the user chooses Actual Size, the item Fixed Magnification will be checked when the menu is next inspected. 
+
+<p> This bug is caused by a bad design choice when TeXShop was constructed long ago. The magnification tool should never have been included because the Macintosh has much better way to handle Preview magnification: use a pinch gesture in the track pad. But it is too late  to get rid of the magnify tool because some users rely on it. I strongly recommend using the gesture; then the menu in question will never be used and its strange behavior can be ignored.
+
+<p> In fact, every time the magnify tool is used even for a moment, the window's magnification mode is switched to Fixed Magnification.  There really are only two magnification modes for the window: Fit to Window and Fixed Magnification. When the user selects Actual Size, they are really switching to Fixed Magnification mode and simultaneously setting the magnification scale to 100. That is why the check mark moves.  For consistency, it also ought to move to Fixed Magnification when the magnify tool is used and Preview is in Fit To Window mode.
+
+<p> Changing user's menu choices behind their backs is bad design, and is forbidden in the Macintosh Interface Guidelines. A more acceptable solution would only allow using the magnify tool when Preview is in Fixed Magnification mode. But this would mean that a tool which always worked in the past would  sometimes stop working.
+
+<p> In the end I decided to change nothing. 
+
+<li>
+<p> When syncing from the Source Window to the Preview Window, TeXShop switches the Preview view to the page containing the desired item. This works well for users with large monitors. But a portable computer may be showing only a portion of the page, and the desired item can be off the visible portion of the page. Now TeXShop also scrolls the page to
+ make the desired item visible. Note that synctex is not perfect and in rare situations will  not choose a reasonable sync spot. 
+ 
+ </ul>
+
+
+
+
 <P><h5>TeXShop Changes 4.73</h5></P>
 
 The following changes were made:

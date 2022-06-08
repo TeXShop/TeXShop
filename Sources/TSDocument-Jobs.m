@@ -2039,6 +2039,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         }
                         
                     }
+                   
+            // Koch 2022 The following is a fix for VoiceOver in the Preview Window on Monterey
+                  
+                    if (self.activateVoiceOverFix)
+                    {
+                        SEL fixSelector = @selector(voiceOverFix);
+                        [self performSelector: fixSelector withObject: self afterDelay: 1];
+                    }
+                   
                 }
             }
             

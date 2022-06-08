@@ -503,6 +503,10 @@ enum RootCommand
 @property           NSInteger   syncWith; // 0 = OtherEditor, 1 = TextMate
 @property           NSInteger   syncWithOvals; // 0 = NO, 1 = YES
 
+// for Voice Over fix
+
+@property           BOOL        activateVoiceOverFix;
+
 
  - (IBAction)setSaveExtension: sender;
 - (IBAction)changeMouseMode: sender;
@@ -666,7 +670,7 @@ enum RootCommand
 - (NSTextView *)textView2;
 - (void)switchFrontWindow;
 - (void)activateFrontWindow;
-
+- (void)voiceOverFix;
 
 
 // BibDesk Completion

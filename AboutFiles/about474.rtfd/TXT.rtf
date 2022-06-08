@@ -1,0 +1,50 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoascreenfonts1\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww19000\viewh15440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+1) The Preview menu DisplayFormat shows several items and checks the active item. But sometimes, more than one item would be checked. This is fixed.\
+\
+2) The Preview menu Magnification behaves very strangely, but I decided to leave it alone and suspect it is almost never used. Here is what happens.\
+\
+	If you select "Fit to Window". then the pdf is scaled to exactly fit in the window. Moreover, if this window is then resized, the pdf is resized to still fit it exactly..\
+	This much is as expected. \
+\
+	However, if the magnify tool in the toolbar is then used, the window will not longer be scaled to exactly fit. In truth, the mode was changed by that tool to \
+	"Exact Magnification", but the menu doesn't show that. If the window is resized after this moment, the magnification will remain constant and the pdf will occupy\
+	larger or smaller portions of the Window.\
+\
+	If the menu item "Fixed Magnification" is chosen, then things work as expected. In particular, changing the window size doesn't change magnification, which\
+	is governed entirely by the magnification item in the toolbar.\
+\
+	If the menu item "Actual Size" is chosen, then magnification is set to 100. But instead of checking that item in the menu, the item "Fixed Magnification" is\
+	checked. And indeed after that, the system behaves exactly as if we checked "Exact Magnification" and then set it to be initially 100.\
+\
+3) This is "sort of" logical. However it is surprising to the user, who expects that if they select an item, then THAT ITEM will be checked.\
+\
+4) One way to fix this would be to \
+\
+	a) Keep ACTUAL SIZE if the user selects it and check that item\
+\
+AND\
+\
+	b) Turn off the magnification tool if either ACTUALSIZE or FIT TO WINDOW is selected.\
+\
+However, this fix would surprise users who would suddenly discover that the magnify toolbar item fails when it worked before.\
+\
+4) Another possible fix is to make FIT TO WINDOW switch to EXACT MAGNIFICATION if the user tries to magnify at a later time after selecting FIT TO WINDOW.\
+\
+But this fix would mean that the user's choice in the menu is sometimes changed behind their back. !!\
+\
+So I decided to just leave things as they are now.\
+\
+-------\
+\
+3) Search for "fixVoiceOver"  This is a fix for VoiceOver failing in the Preview Window on Monterey and perhaps other systems. \
+\
+There is a new hidden preference setting, FixVoiceOver, with default value NO. Set this to YES to add the fix.\
+\
+4) Next comes the scroll fix after syncing from source to preview. To find that code, search for tempSyncRect}

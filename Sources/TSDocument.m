@@ -128,6 +128,7 @@ NSInteger strSort(id s1, id s2, void *context)
         self.syncWithOvals = 1;
     else
         self.syncWithOvals = 0;
+    self.activateVoiceOverFix = [SUD boolForKey: FixVoiceOverKey];
     
  	tagLine = NO;
 	self.texRep = nil;
@@ -1448,8 +1449,28 @@ if (! skipTextWindow) {
     
     }
     
+// Koch 2022 The following is a fix for Voice Over in the Preview Window on Monterey and Higher
+   
+    if (self.activateVoiceOverFix)
+    {
+        SEL fixSelector = @selector(voiceOverFix);
+        [self performSelector: fixSelector withObject: self afterDelay: 1];
+    }
+
     
 }
+
+- (void)voiceOverFix
+{
+    MyPDFKitView *theView;
+    
+    
+     if ([self fromKit])
+        [[self pdfKitView] nextPage: self];
+    if ([self fromKit])
+        [[self pdfKitView] previousPage: self];
+}
+
 
 - (void)activateFrontWindow
    {

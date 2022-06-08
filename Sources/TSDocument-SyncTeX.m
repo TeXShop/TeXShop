@@ -2432,6 +2432,10 @@
 	float			x, y, h, v, width, height;
     PDFPage         *aPage;
     NSInteger       theindex;
+    NSRect          tempSyncRect;
+    NSRect          visRect;
+    NSString        *theString;
+    BOOL            doScroll;
     
     
     if (self.useConTeXtSyncParser)
@@ -2552,7 +2556,8 @@
 	
 	i = 0;
 	while (i < boxNumber) {
-		[(MyPDFKitView *)self.pdfKitWindow.activeView setSyncRect: i originX: hNumber[i] originY: vNumber[i] width: WNumber[i] height: HNumber[i]];  
+		[(MyPDFKitView *)self.pdfKitWindow.activeView setSyncRect: i originX: hNumber[i] originY: vNumber[i] width: WNumber[i] height: HNumber[i]];
+        tempSyncRect.origin.x = hNumber[i]; tempSyncRect.origin.y = vNumber[i]; tempSyncRect.size.width = WNumber[i]; tempSyncRect.size.height = HNumber[i];
 		i++;
 	}
     
@@ -2934,12 +2939,55 @@
 	[(MyPDFKitView *)self.pdfKitWindow.activeView setBoundsForMark: myOval];
 	[(MyPDFKitView *)self.pdfKitWindow.activeView setDrawMark: YES];
 	[self.pdfKitWindow.activeView goToPage: thePage];
-	
-	[self.pdfKitWindow.activeView goToPage: thePage];
     
-// SECONDCOLOR
+    // START OF SCROLL FIX AND EXPERIMENTATION
+    
+    [self.pdfKitWindow.activeView setCurrentSelection: NULL];
+    
+    /* More ambitious project, currently abandoned
+     
+    float bottomCorrection;
+    float topCorrection;
+    bottomCorrection = -60;
+    topCorrection = 120;
+    tempSyncRect.origin.y = tempSyncRect.origin.y + bottomCorrection;
+    tempSyncRect.size.height = tempSyncRect.size.height + topCorrection;
+    doScroll = YES;
+    NSRect theVisibleRect = [[self.pdfKitWindow.activeView documentView] visibleRect];
+    NSRect myTempSyncRect = [self.pdfKitWindow.activeView convertRect: tempSyncRect fromPage: thePage];
+    NSPoint aTempPoint = [[self.pdfKitWindow.activeView documentView] convertPoint: myTempSyncRect.origin fromView: self.pdfKitWindow.activeView];
+    myTempSyncRect.origin = aTempPoint;
+ //   NSLog(@"The visible rect origin is %f and %f", theVisibleRect.origin.x, theVisibleRect.origin.y);
+ //   NSLog(@"The temp Sync rect origin is %f and %f", myTempSyncRect.origin.x, myTempSyncRect.origin.y);
+ 
+//    if ((aTempPoint.y >= theVisibleRect.origin.y) && ((aTempPoint.y + myTempSyncRect.size.height) <= (theVisibleRect.origin.y + theVisibleRect.size.height)))
+//        doScroll = NO;
+    
+    NSLog(@"The tempSyncRect origin y is %f", aTempPoint.y);
+    NSLog(@"The visibleRect origin y is %f", theVisibleRect.origin.y);
+    newTempSyncRect = tempSyncRect;
+    newTempSyncRect.origin.y = tempSyncRect.origin.y - 30;
+    newTempSyncRect.size.height = tempSyncRect.size.height + 60;
+ 
+    tempSyncRect = newTempSyncRect;
+ */
+    
+    
+    theSelection = [thePage selectionForRect: tempSyncRect];
+    [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
+    
+    if (theSelection != NULL)
+    {
+        [self.pdfKitWindow.activeView scrollSelectionToVisible: self];
+    }
+    
     if (theSelection != NULL) {
         [self.pdfKitWindow.activeView setCurrentSelection: nil];
+    
+    // END OF SCROLL FIX AND EXPERIMENTATION
+	
+    
+// SECONDCOLOR
       //  [theSelection setColor: [NSColor yellowColor]];
       //  [self.pdfKitWindow.activeView setCurrentSelection: theSelection];
       //  [self.pdfKitWindow.activeView scrollSelectionToVisible:self];

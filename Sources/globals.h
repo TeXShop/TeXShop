@@ -550,6 +550,7 @@ extern NSString *AltPathKey;
 extern NSString *IgnoreStartOnRebootKey;
 extern NSString *OpenAsTabsKey;
 extern NSString *SyntaxColorEntryLineKey;
+extern NSString *FixVoiceOverKey;
 
 
 // end defaults

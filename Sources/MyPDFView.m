@@ -757,14 +757,16 @@ failed. If you change the code below, be sure to test carefully!
 						NSLocalizedString(@"Preview", @"Preview")] submenu];
 	NSMenu *menu = [[previewMenu itemWithTitle:
 				NSLocalizedString(@"Magnification", @"Magnification")] submenu];
-	[[menu itemWithTag: resizeOption] setState: NSOffState];
+    [[menu itemWithTag: resizeOption] setState: NSOffState];
+   
 	if (magSize == 1.0)
 		resizeOption = PDF_ACTUAL_SIZE;
 	else
 		resizeOption = PDF_FIT_TO_NONE;
+     
 	// uncheck menu item Preview=>Magnification
 	[[menu itemWithTag: resizeOption] setState: NSOnState];
-
+    
 	// end mitsu 1.29
 }
 

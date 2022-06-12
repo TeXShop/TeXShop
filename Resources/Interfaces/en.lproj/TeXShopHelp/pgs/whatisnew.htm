@@ -15,6 +15,26 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.75</h5></P>
+
+This release fixes two minor bugs and should be stable until the release of macOS Ventura in the fall.
+
+<ul>
+<li> In "double page" and "double-multipage" modes, the Preview window shows pairs of pages side by side. A preference item determines whether the first page is shown on the left side or the right side. This preference item stopped working some time ago because I failed to notice that Apple provided a new Boolean instance property for PDFView in High Sierra and later. The property is named "displaysRTL". The preference item again works on High Sierra and above.
+
+<p>
+<li> In TeXShop Preferences under the Editor tab, there are a series of items called "Parens Matching Settings". These items were added by my wonderful colleague Yusuke Terada to help users manage matching pairs of parentheses in TeX source code. Concentrate on the first and third, labeled "Highlight Enclosed Characters" and "Blink Highlight." If the third is checked, then every time a closing parenthesis ), }, ] is typed, the corresponding opening parenthesis blinks. If the first is also checked, then the entire region between the matching parentheses blinks red when the closing parenthesis is typed. 
+
+<p> But you can't have everything. The blink for a matching parenthesis always works, but the red color from the first item doesn't work if the new ability to highlight the current line is being used. That is because both of these items work by coloring the background and the two operations interfere with each other. I do not plan to fix this problem; users who depend on the red color should turn off highlighting the current line.
+
+<p> If only "Highlight Enclosed Characters" is checked and "Blink Highlight" is not checked (and if highlighting the current line is off),
+then the entire region between the matching parentheses turns red and remains red until the cursor is moved. This gives the user time to inspect the region between parentheses carefully, particularly if the region is  large. While moving the cursor turns off the red color, scrolling does not, so if the region between parentheses is extremely large, it can still be inspected by scrolling to the beginning. Some users rely on this feature.
+
+<p> Unfortunately, the new code to highlight the current line broke this final feature even when "highlight the current line" was turned off, so scrolling turned off the red color. This bug is fixed.
+
+</ul>
+
+
 
 <P><h5>TeXShop Changes 4.74</h5></P>
 

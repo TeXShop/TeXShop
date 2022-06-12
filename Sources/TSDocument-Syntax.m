@@ -263,9 +263,10 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     [layoutManager removeTemporaryAttribute:NSForegroundColorAttributeName forCharacterRange:colorRange];
     
     // the following line is deactivaeed active-line-colors are used because it caused them to to be removed when scrolling on May, 2022
-   
-    if ( ! self.syntaxcolorEntry)
-     [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:colorRange];
+    
+    // HERE-RED
+   if (( ! self.syntaxcolorEntry) && ( ![SUD boolForKey:AlwaysHighlightEnabledKey]))
+      [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:colorRange];
     
     // the next line was added by Daniel Toundykov to allow changing the foreground and background source colors
     // [layoutManager addTemporaryAttributes:self.regularColorAttribute forCharacterRange:colorRange];
@@ -726,7 +727,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     NSRange         mySelectedLineRange, currentLineRange, fullRange;
     NSUInteger      startl, endl, theEnd;
     
-    if (self.syntaxcolorEntry)
+     if (self.syntaxcolorEntry)
     {
         
         /*

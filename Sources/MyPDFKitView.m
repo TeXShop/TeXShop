@@ -247,11 +247,17 @@
 		case PDF_TWO_PAGE_STYLE:			[self setDisplayMode: kPDFDisplayTwoUp];
 											[self setDisplaysPageBreaks: YES];
 											switch (firstPageStyle) {
-												case PDF_FIRST_LEFT:	[self setDisplaysAsBook: NO];
-																		break;
+												case PDF_FIRST_LEFT:	if (atLeastHighSierra)
+                                                                            self.displaysRTL = NO;
+                                                                        else
+                                                                            [self setDisplaysAsBook: NO];
+                                                                        break;
 
-												case PDF_FIRST_RIGHT:	[self setDisplaysAsBook: YES];
-																		break;
+												case PDF_FIRST_RIGHT:	if (atLeastHighSierra)
+                                                                            self.displaysRTL = YES;
+                                                                        else
+                                                                            [self setDisplaysAsBook: YES];
+                                                                        break;
 												}
 											break;
 
@@ -262,11 +268,18 @@
 		case PDF_DOUBLE_MULTI_PAGE_STYLE:	[self setDisplayMode: kPDFDisplayTwoUpContinuous];
 											[self setDisplaysPageBreaks: YES];
 											switch (firstPageStyle) {
-												case PDF_FIRST_LEFT:	[self setDisplaysAsBook: NO];
-																		break;
+												case PDF_FIRST_LEFT:	if (atLeastHighSierra)
+                                                                            self.displaysRTL = NO;
+                                                                        else
+                                                                            [self setDisplaysAsBook: NO];
+                                                                        break;
 
-												case PDF_FIRST_RIGHT:	[self setDisplaysAsBook: YES];
-																		break;
+												case PDF_FIRST_RIGHT:   if (atLeastHighSierra)
+                                                                            self.displaysRTL = YES;
+                                                                        else
+                                                                            [self setDisplaysAsBook: YES];
+                                                                        break;
+                                               
 												}
 											break;
 

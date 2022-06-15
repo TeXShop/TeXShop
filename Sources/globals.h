@@ -551,6 +551,7 @@ extern NSString *IgnoreStartOnRebootKey;
 extern NSString *OpenAsTabsKey;
 extern NSString *SyntaxColorEntryLineKey;
 extern NSString *FixVoiceOverKey;
+extern NSString *DisplayAsBookKey;
 
 
 // end defaults

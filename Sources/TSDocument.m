@@ -167,7 +167,13 @@ NSInteger strSort(id s1, id s2, void *context)
 	self.lineNumberView2 = nil;
 	self.logLineNumberView = nil;
 	self.logExtension = nil;
-
+    self.bookDisplay = [SUD boolForKey:DisplayAsBookKey];
+    NSInteger tempInt = [SUD integerForKey: PdfFirstPageStyleKey];
+    if (tempInt == 1)
+        self.RTLDisplay = NO;
+    else
+        self.RTLDisplay = YES;
+  
 
 	lastCursorLocation = 0; // added by Terada
 	lastStringLength = 0; // added by Terada
@@ -2019,6 +2025,22 @@ in other code when an external editor is being used. */
         parserRange = [testString rangeOfString:@"% !TEX useAlternatePath"];
             if (parserRange.location != NSNotFound)
                 self.useAlternatePath = YES;
+        parserRange = [testString rangeOfString:@"% !TEX bookDisplay"];
+            if (parserRange.location != NSNotFound)
+                self.bookDisplay = YES;
+        parserRange = [testString rangeOfString:@"% !TEX standardDisplay"];
+            if (parserRange.location != NSNotFound)
+            {
+                self.bookDisplay = NO;
+            }
+        parserRange = [testString rangeOfString:@"% !TEX PageDirectionL2R"];
+            if (parserRange.location != NSNotFound)
+                self.RTLDisplay = NO;
+        parserRange = [testString rangeOfString:@"% !TEX PageDirectionR2L"];
+            if (parserRange.location != NSNotFound)
+            {
+                self.RTLDisplay = YES;
+            }
         
     }
         

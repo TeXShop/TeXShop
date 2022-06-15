@@ -350,7 +350,7 @@ NSString *IgnoreStartOnRebootKey = @"IgnoreStartOnReboot";
 NSString *OpenAsTabsKey = @"OpenAsTabs";
 NSString *SyntaxColorEntryLineKey = @"SyntaxColorEntryLine";
 NSString *FixVoiceOverKey = @"FixVoiceOver";
-
+NSString *DisplayAsBookKey = @"DisplayAsBook";
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
 

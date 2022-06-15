@@ -482,6 +482,8 @@ enum RootCommand
 @property           BOOL            useOldSyncParser;
 @property           BOOL            useConTeXtSyncParser;
 @property           BOOL            useAlternatePath;
+@property           BOOL            bookDisplay;
+@property           BOOL            RTLDisplay;
 
 
 // forScrap

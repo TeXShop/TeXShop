@@ -80,7 +80,7 @@
 
 - (id)init
 {
-	// WARNING: This may never be called. (??)	
+	// WARNING: This may never be called. (??) See initializeDisplay below!
 	if ((self = [super init])) {
 		protectFind = NO;
         self.handlingLink = 0;
@@ -188,7 +188,7 @@
     if (tempDelay > 2.0)
         tempDelay = 2.0;
     self.PDFFlashDelay = tempDelay;
-    
+   
     self.myHideView1 = nil;
     self.myHideView2 = nil;
     
@@ -244,46 +244,55 @@
 											[self setDisplaysPageBreaks: NO];
 											break;
 
-		case PDF_TWO_PAGE_STYLE:			[self setDisplayMode: kPDFDisplayTwoUp];
-											[self setDisplaysPageBreaks: YES];
-											switch (firstPageStyle) {
-												case PDF_FIRST_LEFT:	if (atLeastHighSierra)
-                                                                            self.displaysRTL = NO;
-                                                                        else
-                                                                            [self setDisplaysAsBook: NO];
-                                                                        break;
-
-												case PDF_FIRST_RIGHT:	if (atLeastHighSierra)
-                                                                            self.displaysRTL = YES;
-                                                                        else
-                                                                            [self setDisplaysAsBook: YES];
-                                                                        break;
-												}
-											break;
-
+		case PDF_TWO_PAGE_STYLE:			 if (atLeastHighSierra)
+                                                {
+                                                self.displaysAsBook = self.myDocument.bookDisplay;
+                                                self.displaysRTL = self.myDocument.RTLDisplay;
+                                                 }
+                                            else
+                                                {
+                                                switch(firstPageStyle)
+                                                    {
+                                                    case PDF_FIRST_LEFT:    [self setDisplaysAsBook: NO];
+                                                                            break;
+                                                            
+                                                    case PDF_FIRST_RIGHT:   [self setDisplaysAsBook: YES];
+                                                                            break;
+                                                    }
+                                                }
+                                                [self setDisplayMode: kPDFDisplayTwoUp];
+                                                [self setDisplaysPageBreaks: YES];
+                
+                                               
+                                            break;
+            
 		case PDF_MULTI_PAGE_STYLE:			[self setDisplayMode: kPDFDisplaySinglePageContinuous];
 											[self setDisplaysPageBreaks: YES];
 											break;
 
-		case PDF_DOUBLE_MULTI_PAGE_STYLE:	[self setDisplayMode: kPDFDisplayTwoUpContinuous];
-											[self setDisplaysPageBreaks: YES];
-											switch (firstPageStyle) {
-												case PDF_FIRST_LEFT:	if (atLeastHighSierra)
-                                                                            self.displaysRTL = NO;
-                                                                        else
-                                                                            [self setDisplaysAsBook: NO];
-                                                                        break;
-
-												case PDF_FIRST_RIGHT:   if (atLeastHighSierra)
-                                                                            self.displaysRTL = YES;
-                                                                        else
-                                                                            [self setDisplaysAsBook: YES];
-                                                                        break;
-                                               
-												}
-											break;
-
-		}
+		case PDF_DOUBLE_MULTI_PAGE_STYLE:	if (atLeastHighSierra)
+                                                {
+                                                self.displaysAsBook = self.myDocument.bookDisplay;
+                                                self.displaysRTL = self.myDocument.RTLDisplay;
+                                                     
+                                                }
+                                            else
+                                                {
+                                                switch(firstPageStyle)
+                                                    {
+                                                    case PDF_FIRST_LEFT:    [self setDisplaysAsBook: NO];
+                                                                            break;
+                                                            
+                                                    case PDF_FIRST_RIGHT:   [self setDisplaysAsBook: YES];
+                                                                            break;
+                                                    }
+                                                }
+                                                [self setDisplayMode: kPDFDisplayTwoUpContinuous];
+                                                [self setDisplaysPageBreaks: YES];
+                
+                                                
+                                            break;
+                }
 }
 
 - (void) setupMagnificationStyle

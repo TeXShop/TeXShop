@@ -210,7 +210,6 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     
-    
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
         atLeastMavericks = YES;
     else

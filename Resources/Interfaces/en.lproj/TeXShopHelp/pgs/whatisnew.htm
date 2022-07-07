@@ -15,6 +15,29 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 4.77</h5></P>
+The following issues are addressed:
+<ul>
+<li> David Sanchez reported a bug which could crash TeXShop. When "syntax coloring" and "color current line" are both on, typing a line of text followed by many blank lines and then  selecting and deleting the text and lines will crash the program. Forty blank lines are enough to cause the crash. This bug is fixed, and the fix forced an early release of version 4.77. 
+
+<p>
+<li> The menu command "Open from Stationery" now presents an alphabetized list of stationery.
+
+<p>
+<li> Finally, a comment about  keyboard shortcuts for menu items. These shortcuts are initially set in an interface builder file and thus  vary depending on the localization. Changing shortcuts is a nightmare and I essentially never do it nowadays. There are two ways users can make changes. The first and easiest is to set new shortcuts in the Keyboard Module of Apple's System Preferences.  In this module, select "Shortcuts" and on the left side of two panels which appear, select "App Shortcuts". Click the plus key to add a new shortcut and in the resulting panel change "All Applications" to "TeXShop."
+
+<p> This method works well for most shortcut choices, but a few choices fail in Monterey. The situation may improve in Ventura. One recent user ran into problems trying to select command-/ and command-\ for Comment and Uncomment.
+
+<p> A second method is to edit the file "KeyEquivalents.plist" in ~/Library/TeXShop/Menus.  Extensive comments at the top of the file explain exactly what to do. If changes are made for the same menu in both Apple Preferences and KeyEquivalents, the KeyEquivalent changes take precedence. So when the Apple Preference method fails, try the Key Equivalents method. Note that both methods require listing the exact menu title. This will vary by localization. Use the titles provided by your localization.
+
+<p> There is a complication a user recently brought to my attention. A few users activate more than one keyboard in the System Preferences Keyboard module under the "Input Sources" tab. The same physical keyboard is used, but the resulting characters depend on the keyboard chosen in a menu bar item on the right side of the screen. When a user switches keyboards, macOS may change the keyboard equivalents to different keys; the exact algorithm used is unclear. Menus with keyboard shortcuts show the keyboard shortcut on the right side, and these also change when switching keyboards. All of this is done automatically by macOS without any code from me.
+
+<p> The user bringing this to my attention used both the British and Spanish keyboards. When command-/ and command-\ were used as keyboard shortcuts with the British Keyboard, switching to Spanish caused strange choices of shortcuts, and switching back to English did not return to the correct settings. This seems to be a recent macOS bug, which may be fixed in a later system and at any rate only affects users who routinely use more than one keyboard and then happen to select specific buggy shortcuts.
+
+
+</ul>
+
+
 <P><h5>TeXShop Changes 4.76</h5></P>
 
 TeXShop 4.75 changed the behavior of Preview in "double page" and "double-multipage" modes. This proved to be controversial and is fixed in version 4.76. If your default display environment is "multipage", none of these changes matter to you.

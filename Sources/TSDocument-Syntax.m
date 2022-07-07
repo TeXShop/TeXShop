@@ -179,7 +179,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
      */
     
     // The next line may not be necessary, but seems to produce a smoother result. Koch/2022
-    [self cursorMoved:[self textView]];
+    // Actually, it causes a crash bug is a large number of blank lines are deleted and both syntax coloring and active line coloring are on. Koch, July 1, 2022
+    
+    // [self cursorMoved:[self textView]];
 
     
     colorIndexDifferently =  [self indexColorState];

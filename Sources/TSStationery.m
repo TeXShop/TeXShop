@@ -35,6 +35,14 @@
 }
 */
 
+NSInteger stringSortPref(id s1, id s2, void *context)
+{
+    NSComparisonResult result;
+    result =  [(NSString *)s1 localizedCaseInsensitiveCompare: (NSString *)s2];
+    return result;
+}
+
+
 - (IBAction)newFromStationery: (id)sender
 {
 	NSString			*title, *title1, *path, *comment, *extension;
@@ -53,7 +61,8 @@
 		
 		NSFileManager *fileManager = [ NSFileManager defaultManager ];
 		NSString *basePath = [ StationeryPath stringByStandardizingPath ];
-		NSArray *files = [ fileManager contentsOfDirectoryAtPath:basePath error: nil];
+        NSArray *filesoriginal = [ fileManager contentsOfDirectoryAtPath:basePath error: nil];
+        NSArray *files = [filesoriginal sortedArrayUsingFunction: stringSortPref context: NULL ];
 		
 		for (i = 0; i < [files count]; i++) {
 			title = [ files objectAtIndex: i ];

@@ -159,6 +159,7 @@ NSInteger strSort(id s1, id s2, void *context)
 	willClose = NO;
     self.spellLanguage = [SUD stringForKey: spellingLanguageDefaultKey];
     self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
+    fromAlternate = NO;
     
     self.syntaxcolorEntry = [SUD boolForKey:SyntaxColorEntryLineKey];
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
@@ -10318,6 +10319,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     [[self pdfKitView] doFindOne:sender];
 }
 
+- (IBAction) doPDFSearchFullWindow: sender
+{
+    [[self pdfKitView] doFindOneFullWindow:sender];
+}
+
 - (IBAction)changeMouseMode: sender
 {
     if (useFullSplitWindow)
@@ -10338,6 +10344,17 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 {
     return mySearchField;
 }
+
+- (NSSearchField *) mySearchField
+{
+    return mySearchField;
+}
+
+- (NSSearchField *) myFullSearchField
+{
+    return myFullSearchField;
+}
+
 
 - (NSTextView *)textView1
 {

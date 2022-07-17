@@ -437,6 +437,7 @@ if (@available(macOS 11.0, *))
 	NSMenuItem *menuFormRep;
 	NSMenu *submenu;
 	id submenuItem;
+    NSSearchToolbarItem  *mySearchToolbarItem;
 
     
     if ([itemIdent isEqual: kSharingTID]) {
@@ -986,16 +987,21 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         
         if ([SUD boolForKey: NewToolbarIconsKey])
             
-        { if (@available(macOS 11.0, *)) {
-                /*
-                toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
-                */
+        {
+              if (@available(macOS 11.0, *)) {
+                
+              //  toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+                
             
                    toolbarItem =
                     [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
-                     [toolbarItem setTarget: self];
-                     [toolbarItem setAction: @selector(doPDFSearch:)];
-                    
+                  
+                  mySearchToolbarItem = (NSSearchToolbarItem *)toolbarItem;
+                  mySearchField = mySearchToolbarItem.searchField;
+                  
+                  [toolbarItem setTarget: self];
+                  [toolbarItem setAction: @selector(doPDFSearch:)];
+            
                 }
             else
                 toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
@@ -1010,15 +1016,22 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     if ([itemIdent isEqual: skSearchTID]) {
         if ([SUD boolForKey: NewToolbarIconsKey])
             
-        { if (@available(macOS 11.0, *)) {
+        {
+            
+             if (@available(macOS 11.0, *)) {
                 
-                   toolbarItem =
-                    [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
-                     [toolbarItem setTarget: self];
-                     [toolbarItem setAction: @selector(doPDFSearch:)];
+                toolbarItem =  [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
+                
+                mySearchToolbarItem = (NSSearchToolbarItem *)toolbarItem;
+                myFullSearchField = mySearchToolbarItem.searchField;
+                
+              [toolbarItem setTarget: self];
+              [toolbarItem setAction: @selector(doPDFSearchFullWindow:)];
                     
                 }
             else
+            
+        
                 toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: myFullSearchField];
             }
         else

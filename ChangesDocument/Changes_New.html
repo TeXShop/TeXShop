@@ -14,13 +14,60 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 4.78</h3></P>
+Marco Santi suggested the first two  features below:
+<ul>
+<li> The tags menu marks the locations in the source file for "\chapter", "\section", "\subsection", and other commands. The command "\part" has been added for very large book projects divided into parts, each with several chapters.
+
+<p>
+<li> I am not a TeXShop power user.   If you watched me enter source text, you would loose all faith in the program. But there is one trick that I do use and recommend even for  beginners. Although they can typeset using a menu command or a toolbar command, it is much easier to enter the keystroke  command-T. 
+
+<p> This week, looking at the interface builder file defining the typeset menu, I found an additional  menu item in the Typeset menu that doesn't appear when TeXShop runs. The item title is
+"Trash Aux & Typeset".  That would have been very useful earlier this year when defective Aux files caused me to push the "Trash Aux Files" button in the console every time I wanted to typeset.
+
+<p> It turns out that this menu item has been there all along. Open the typeset menu, but do not choose an item. Then push the Option key. Notice that the first item changes from "Typeset" to "Trash Aux & Typeset", and the keyboard shortcut changes from command-T to option-command-T. So typing option-command-T will call the TeXShop command to trash Aux and related files, and then typeset.
+
+<p>  TeXShop 4.78 introduces a related trick. Suppose you are writing a long book, and you like to typeset after writing each new sentence. You don't care if this step updates the table of contents or reference numbers because you only want to look at the new sentence, so you typeset with pdflatex rather than pdflatexmk to speed up the process. But  every so often, you do want to update everything and so you switch to pdflatexmk. In version 4.78, holding down both the control and option keys changes the first menu "Typeset" to "Typeset with Alternate Engine" which calls pdflatexmk rather than pdflatex and has keyboard shortcut command-option-control-T. Thus three separate commands are instantly at your finger tips:
+<pre>
+        command-T                     = typeset with pdflatex
+        option-command-T              = kill aux and related files and then typeset with pdflatex
+        control-option-command-T      = typeset with pdflatexmk
+</pre>
+
+<p> This trick also works if you use XeLaTeX and xelatexmk or LuaLaTeX and lualatexmk. In fact, an arbitrary engine can be used for the first two commands and a second arbitrary engine can be selected for the third command. The first two commands use the default engine chosen in the toolbar, and the third command uses an engine that can be set in the Misc tab of TeXShop Preferences by editing the  "Alternate Engine" item.
+
+<p> Recall that you can also set the typesetting engine used for a source file using a magic comment line. This takes preference over the new feature in the Typeset command. 
+ 
+ <p> This new feature will work "out of the box" if pdflatexmk is one of the typesetting options available in the pull-down menu second left in the source toolbar. For several years it has been provided as one of the default engines. But if you are an old user, you might not have it because we do not update ~/Library/TeXShop/Engines when we update TeXShop. However, we do update
+ ~/Library/TeXShop/Engines/Inactive. So find pdflatexmk.engine in ~/Library/TeXShop/Engines/Inactive/Latexmk and drag it into the active area ~/Library/TeXShop/Engines. 
+
+
+<p>
+<li> If the mouse hovers over an entry in a table of contents, a small popup window opens showing the text at the referenced location. This window appears for about 5 seconds or until the mouse moves, and then vanishes. If the "Option" key is pressed after the window appears and held down through those 5 seconds,  the window will not vanish until the mouse moves. This behavior has been in TeXShop for some time.
+
+<p> This behavior has been enhanced slightly in version 4.78. If the option key is held down BEFORE the mouse hovers over an entry,  a larger popup window will appear showing more of the text in that referenced location. The text will appear with regular size rather than reduced size.  As before, if the option key continues to be held down for 5 seconds,  the window will not vanish until the mouse moves.
+
+<p>
+<li> MacOS Big Sur introduced a new kind of toolbar search field which expands when being used and collapses otherwise. When TeXShop runs on Big Sur or higher, it uses this new search field in the Preview Window.  Before that change, typing command-F when the Preview Window was active selected the search field. This broke with the new kind of search field.  The bug is now fixed, and thus command-F selects the search field in the Preview window and the find panel in the Edit window. 
+
+<p>
+<li> Finally, Marco Santi reported that the color choices in the Themes tag of TeXShop Preferences are not reliably set when changed. For example, if a color is selected for the Source Background using the RGB Sliders method of choosing colors, and the values are 255, 253, 35, and then another color is manipulated, when you return to the Source Background color, its values might be 255, 255, 38. 
+This bug is fixed. It had an interesting cause. The code which finds a color from a color well had two lines:
+<pre>
+     NSColor *newColor = ((NSColorWell *)theWell).color;
+     NSColor *theColor = [newColor colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
+</pre>
+I thought the second line performed a "normalization" of the color, but in fact it did a color correction of some sort. Now it is commented out and the first line sets "theColor".
+</ul> 
+
+
 <P><h3>TeXShop Changes 4.77</h3></P>
 The following issues are addressed:
 <ul>
 <li> David Sanchez reported a bug which could crash TeXShop. When "syntax coloring" and "color current line" are both on, typing a line of text followed by many blank lines and then  selecting and deleting the text and lines will crash the program. Forty blank lines are enough to cause the crash. This bug is fixed, and the fix forced an early release of version 4.77. 
 
 <p>
-<li> The menu command "Open from Stationery" now presents an alphabetized list of stationery.
+<li> The menu command "New from Stationery" now presents an alphabetized list of stationery.
 
 <p>
 <li> Finally, a comment about  keyboard shortcuts for menu items. These shortcuts are initially set in an interface builder file and thus  vary depending on the localization. Changing shortcuts is a nightmare and I essentially never do it nowadays. There are two ways users can make changes. The first and easiest is to set new shortcuts in the Keyboard Module of Apple's System Preferences.  In this module, select "Shortcuts" and on the left side of two panels which appear, select "App Shortcuts". Click the plus key to add a new shortcut and in the resulting panel change "All Applications" to "TeXShop."

@@ -504,6 +504,7 @@
          */
         
         g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+                               @"\\part",
                                @"\\section",
                                @"\\subsection",
                                @"\\subsubsection",
@@ -511,6 +512,7 @@
                                @"\\subparagraph",
                                @"\\frametitle",
                                @"% \\chapter",
+                               @"% \\part",
                                @"% \\section",
                                @"% \\subsection",
                                @"% \\subsubsection",
@@ -527,6 +529,7 @@
                                nil];
         
 		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+                               @"part: ",
                                @"    section: ",
                                @"        subsection: ",
                                @"            subsubsection: ",
@@ -534,6 +537,7 @@
                                @"            subparagraph: ",
                                @"        frametitle: ",
                                @"chapter: ",
+                               @"part: ",
                                @"    section: ",
                                @"        subsection: ",
                                @"            subsubsection: ",

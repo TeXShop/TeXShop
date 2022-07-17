@@ -38,6 +38,7 @@
 - (void) doChooseMethod: sender;
 - (void) doError: sender;
 - (void) doTypeset: sender;
+- (void) doAlternateTypeset: sender;
 - (void) displayLog: sender;
 - (void) displayConsole: sender;
 - (void) associatedWindow: (id)sender;

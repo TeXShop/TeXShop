@@ -34,6 +34,8 @@
 @property (weak) TSDocument	*myDocument;
 
 - (void) displayLog: sender;
+- (void) doTypeset: sender;
+- (void) doAlternateTypeset: sender;
 - (void) displayConsole: sender;
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 /*

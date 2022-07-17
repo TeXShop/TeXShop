@@ -56,6 +56,12 @@
 	[self.myDocument doTypeset: sender];
 }
 
+- (void) doAlternateTypeset: sender
+{
+    [self.myDocument doAlternateTypeset: sender];
+}
+
+
 - (void) displayLog: sender
 {
 	[self.myDocument displayLog: sender];

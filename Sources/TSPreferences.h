@@ -81,6 +81,7 @@
 	IBOutlet NSTextField	*_gsBinPathField;		/*" connected to tetex bin path "*/
 	IBOutlet NSTextField	*_texScriptCommandTextField;	/*" connected to "Personal Tex" "*/
 	IBOutlet NSTextField	*_latexScriptCommandTextField; /*" connected to Personal Latex" "*/
+    IBOutlet NSTextField    *_alternateEngineTextField;    /*" connected to "Personal Tex" "*/
 	IBOutlet NSMatrix	*_defaultScriptMatrix;		/*" connected to "Default Script" "*/
 	IBOutlet NSMatrix       *_defaultMetaPostMatrix;        /*" connected to "MetaPost" "*/
 	IBOutlet NSMatrix       *_defaultBibtexMatrix;          /*" connected to "Bibtex" "*/ // comment out by Terada
@@ -299,7 +300,6 @@
 - (IBAction)scrollPressed:sender;
 - (IBAction)firstDoublePageChanged:sender;
 - (IBAction)dictionaryPressed: sender;
-
 - (IBAction)texProgramChanged:sender;
 - (IBAction)latexProgramChanged:sender;
 - (IBAction)escapeWarningChanged:sender;
@@ -311,6 +311,7 @@
 - (IBAction)gsBinPathChanged:sender;
 - (IBAction)texScriptProgramChanged:sender;
 - (IBAction)latexScriptProgramChanged:sender;
+- (IBAction)alternateEngineChanged:sender;
 - (IBAction)defaultScriptChanged:sender;
 - (IBAction)syncChanged:sender;
 // - (IBAction)defaultMetaPostChanged:sender;

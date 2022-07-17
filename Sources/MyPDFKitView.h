@@ -62,7 +62,7 @@
                     IBOutlet    NSMatrix                        *mouseModeMatrix;
                     IBOutlet    NSMenu                          *mouseModeMenu;
                     IBOutlet    NSSearchField                   *_searchField;
-
+   
 
 //	NSWindow						*myPDFWindow;
 	NSInteger								pageStyle;
@@ -195,6 +195,7 @@
 - (IBAction) doStepper: sender;
 - (IBAction) doFind: sender;
 - (IBAction) doFindOne: sender;
+- (void) doFindOneFullWindow: (id) sender;
 - (void) doFindAgain;
 - (double)magnification;
 - (void) setMagnification: (double)magnification;

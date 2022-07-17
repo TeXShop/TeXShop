@@ -41,6 +41,7 @@
 - (void)doTag: (id)sender;
 - (void)newTag: (id)sender;
 - (void)doTypeset: (id)sender;
+- (void)doAlternateTypeset: (id)sender;
 - (void)doTex: (id)sender;
 - (void)doLatex: (id)sender;
 - (void)doBibtex: (id)sender;

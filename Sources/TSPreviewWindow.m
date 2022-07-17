@@ -218,6 +218,11 @@ extern NSPanel *pageNumberWindow;
 	[self.myDocument doTypeset: sender];
 }
 
+- (void) doAlternateTypeset: sender
+{
+    [self.myDocument doAlternateTypeset: sender];
+}
+
 - (void) flipShowSync: sender
 {
 	[self.myDocument flipShowSync: sender];
@@ -1018,12 +1023,12 @@ extern NSPanel *pageNumberWindow;
 	[(MyPDFKitView *)self.activeView goToKitPage: sender];
 }
 
-/*
+
 - (void) doFind: sender
 {
-	[(MyPDFKitView *)self.activeView doFind: sender];
+  //  [self makeFirstResponder: [self.myDocument pdfKitSearchField]];
 }
-*/
+
 
 - (IBAction) takeDestinationFromOutline: (id) sender
 {

@@ -54,6 +54,7 @@
 @property               BOOL            horizontal;
 @property               double          scrolladjust;
 
+
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 
 - (void) close;
@@ -80,7 +81,8 @@
 - (void) left: sender; // mitsu 1.29 (O)
 - (void) right: sender; // mitsu 1.29 (O)
 
-
+- (void) doTypeset: sender;
+- (void) doAlternateTypeset: sender;
 - (void) doError: sender;
 - (void) toggleSyntaxColor: sender;
 - (void) doChooseMethod: sender;

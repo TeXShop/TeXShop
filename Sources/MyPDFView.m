@@ -1532,7 +1532,7 @@ failed. If you change the code below, be sure to test carefully!
 // go to page number
 - (void)displayPage: (NSInteger)pagenumber
 {
-	NSRect myBounds, newVisible;
+    NSRect myBounds, newVisible;
 	NSPoint thePoint;
 
 	if (pageStyle == PDF_TWO_PAGE_STYLE && pagenumber/2 != [self.myRep currentPage]/2)

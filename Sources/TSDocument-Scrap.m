@@ -247,6 +247,7 @@
     self.scrapEncoding = nil;
     self.scrapProgram = nil;
     
+     
     length = [theSource length];
     programDone = NO; encodingDone = NO;
     linesTested = 0;

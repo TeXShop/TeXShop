@@ -595,7 +595,10 @@ for(NSString *key in enu)
 	NSUInteger        length;
 	NSInteger             linesTested, offset;
 	NSData          *myData;
+    BOOL            fromAlternateTemp;
 
+    fromAlternateTemp = fromAlternate;
+    fromAlternate = NO;
 
 	whichEngineLocal = (useTempEngine ? tempEngine : whichEngine);
 
@@ -687,7 +690,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     linesTested = 0;
     myRange.location = 0;
     myRange.length = 1;
-	
+    
+    
+   
 		
 	while ((myRange.location < length) && (!done) && (linesTested < 20)) {
 		[theSource getLineStart: &start end: &end contentsEnd: &irrelevant forRange: myRange];
@@ -800,7 +805,87 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 			}
 		}
 	}
-
+    
+    if ((!done) && (fromAlternateTemp))
+    {
+        
+        programString = [SUD stringForKey: AlternateEngineKey];
+        programString = [programString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        programString = [programString lowercaseString];
+        
+        if ([programString isEqualToString:@"pdftex"]) {
+            useTempEngine = YES;
+            tempEngine = TexEngine;
+            withLatex = NO;
+            theScript = kTypesetViaPDFTeX;
+            done = YES;
+        } else if ([programString isEqualToString:@"pdflatex"]) {
+            useTempEngine = YES;
+            tempEngine = LatexEngine;
+            withLatex = YES;
+            theScript = kTypesetViaPDFTeX;
+            done = YES;
+        } else if ([programString isEqualToString:@"tex"]) {
+            useTempEngine = YES;
+            tempEngine = TexEngine;
+            withLatex = NO;
+            theScript = kTypesetViaGhostScript;
+            done = YES;
+        } else if ([programString isEqualToString:@"latex"]) {
+            useTempEngine = YES;
+            tempEngine = LatexEngine;
+            withLatex = YES;
+            theScript = kTypesetViaGhostScript;
+            done = YES;
+        } else if ([programString isEqualToString:@"personaltex"]) {
+            useTempEngine = YES;
+            tempEngine = TexEngine;
+            withLatex = NO;
+            theScript = kTypesetViaPersonalScript;
+            done = YES;
+        } else if ([programString isEqualToString:@"personallatex"]) {
+            useTempEngine = YES;
+            tempEngine = LatexEngine;
+            withLatex = YES;
+            theScript = kTypesetViaPersonalScript;
+            done = YES;
+        } else if ([programString isEqualToString:@"bibtex"]) {
+            [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+            useTempEngine = YES;
+            tempEngine = BibtexEngine;
+            // whichEngine = BibtexEngine;
+            // [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+            // [self fixMacroMenu];
+            done = YES;
+        } else if ([programString isEqualToString:@"makeindex"]) {
+            // [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+            useTempEngine = YES;
+            tempEngine = IndexEngine;
+            // whichEngine = IndexEngine;
+            // [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+            // [self fixMacroMenu];
+            done = YES;
+        } else if ([programString isEqualToString:@"metapost"]) {
+            [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: NO];
+            whichEngine = MetapostEngine;
+            [[TSWindowManager sharedInstance] checkProgramMenuItem: whichEngine checked: YES];
+            [self fixMacroMenu];
+            done = YES;
+        } else {
+            i = UserEngine;
+            j = [programButton numberOfItems];
+            while ((i <= j) && (! done)) {
+                i++;
+                if ([[[[programButton itemAtIndex: (i - 2)] title] lowercaseString] isEqualToString:programString]) {
+                    done = YES;
+                    useTempEngine = YES;
+                    tempEngine = i - 1;
+                }
+            }
+        }
+    }
+    
+   
 	// Old Stuff
 	if ((! done) && ([SUD boolForKey:UseOldHeadingCommandsKey])) {
 		myRange.length = 1;
@@ -1810,6 +1895,24 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	else if ([titleString isEqualToString: @"MetaFont"])
 		[self doMetaFont: self];
 */
+}
+
+- (void)doAlternateTypeset: sender
+{
+    BOOL    useError;
+
+    fromAlternate = YES;
+    fromMenu = NO;
+    useError = NO;
+    if ((whichEngine == TexEngine) || (whichEngine == LatexEngine) || (whichEngine == MetapostEngine)) // || (whichEngine == ContextEngine))
+        useError = YES;
+    if (whichEngine >= UserEngine)
+        useError = YES;
+// changed by mitsu --(J) Typeset commmand
+    [self doJob: whichEngine withError:useError runContinuously:NO];
+// end change
+
+
 }
 
 - (void) doTexCommand: sender

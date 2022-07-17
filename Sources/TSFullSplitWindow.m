@@ -183,6 +183,11 @@
 	[self.myDocument doTypeset: sender];
 }
 
+- (void) doAlternateTypeset: sender
+{
+    [self.myDocument doAlternateTypeset: sender];
+}
+
 - (void) doTex: sender
 {
 	[self.myDocument doTex: sender];
@@ -349,7 +354,8 @@
 
 - (void)performFindPanelAction: sender
 {
-    [self.myDocument.textView performFindPanelAction: sender];
+   // [self.myDocument.textView performFindPanelAction: sender];
+    NSLog(@"oh no");
 }
 
 

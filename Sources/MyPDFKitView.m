@@ -1931,6 +1931,66 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 
 }
 
+// NOTE: When the code was written to combine the Source and Preview Windows in one FullSplitWindow, one error was made. When splitting the PDF view, it is
+// necessary to keep track of the two pieces and of which of them is active. This was previously done by the TSPreviewWindow code. It is still done there,
+// even though that window is not visible, rather than in the visible TSFullSplitWindow! I didn't move it today (July 16, 2022) because it still works.
+
+// However, it causes a strange problem. The Search toolbar tools (in TSPreviewWindow and in TSFullSplitWindow) ultimately use the activeView data to scroll
+// the PDFKitView appropriately. So the tool in the TSFullSplitWindow reaches through the TSPreviewWindow to find the active view. This looks strange,
+// but works. This happens in the procedure "doFindOne" which the SearchKitTool calls. However, ONE LINE of this procedure fails. It reads
+//    [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ]
+// and the problem is that the "active View" isn't in the pdfKitWindow, but instead in the TSFullSplitWindow. Out of laziness,
+// I wrote a brand new routine "doFindOneFullWindow" which the Search tool in the TSFullSplitWindow calls. It does exactly what "doFindOne" does until this
+// last line, when the correct window resets its first responder.
+// Perhaps later all of this will be cleaned up!
+
+
+
+- (void) doFindOneFullWindow: (id) sender
+{
+    PDFSelection                    *searchSelection;
+    self.oneOffSearchString = [sender stringValue];
+    
+    self.toolbarFind = YES;
+
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+    
+    searchSelection = [self currentSelection];
+    
+    if (flags & NSShiftKeyMask)
+    
+        searchSelection = [[self document] findString: [sender stringValue]
+                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+        
+   else
+        
+        searchSelection = [[self document] findString: [sender stringValue]
+                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+    
+    
+    if (searchSelection != NULL)
+    {
+        NSArray *thePages = [searchSelection pages];
+        PDFPage *thePage =  [thePages firstObject];
+        [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
+        [self setCurrentSelection: searchSelection];
+        [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
+    }
+    
+        [[self.myDocument fullSplitWindow] makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
+
+    
+/*
+    if (searchSelection == NULL)
+    {
+        [self clearSelection];
+    }
+ */
+        
+
+}
+
+
 - (void) doFindAgain
 {
     PDFSelection                    *searchSelection;
@@ -3161,8 +3221,9 @@ The system then remembers the new number and sends is to the Timer which will di
     NSInteger       H = 120, W = 400;
     NSInteger       leftSide, rightSide;
     NSRect          pageBounds;
+    BOOL            largerSize, cancel;
     
-    
+    largerSize = NO;
     
     NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
@@ -3194,6 +3255,11 @@ The system then remembers the new number and sends is to the Timer which will di
             linkedPoint = [theDestination point];
             // NSLog(@"The value is %f", linkedPoint.x);
             
+            if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+                largerSize = YES;
+           // if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+           //     cancel = NO;
+            
             // aRect = where text comes from
             if (linkedPoint.x < (pageBounds.size.width / 2))
             {
@@ -3201,6 +3267,15 @@ The system then remembers the new number and sends is to the Timer which will di
                 aRect.origin.y = linkedPoint.y - H + 10   ;
                 aRect.size.height = H;
                 aRect.size.width = W;
+                
+                if (largerSize) {
+                   // aRect.origin.x =  linkedPoint.x - 5 ;
+                    aRect.origin.x =  linkedPoint.x - 10 ;
+                    aRect.origin.y = linkedPoint.y - 3 * H  +10  ;
+                    aRect.size.height =  3 * H;
+                    //aRect.size.width = 1.1 * W;
+                    aRect.size.width = 1.1 * W + 5;
+                    }
             }
             else
             {
@@ -3208,7 +3283,19 @@ The system then remembers the new number and sends is to the Timer which will di
                 aRect.origin.y = linkedPoint.y - H * 0.6; //0.6;
                 aRect.size.height = H;
                 aRect.size.width = W;
+                
+                if (largerSize) {
+                   // aRect.origin.x =  linkedPoint.x - 5 ;
+                    aRect.origin.x =  linkedPoint.x - W - 10 ;
+                    aRect.origin.y = linkedPoint.y - 3 * H * 0.2  -10  ;
+                    aRect.size.height =  3 * H;
+                    //aRect.size.width = 1.1 * W;
+                    aRect.size.width = 1.1 * W + 5;
+                    }
             }
+            
+               
+            
             
             
             // bRect = position on viewing screen
@@ -3216,6 +3303,17 @@ The system then remembers the new number and sends is to the Timer which will di
             bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3.0 - 10;
             bRect.size.height = 2 * H / 3.0;
             bRect.size.width = 2 * W / 3.0;
+            
+            if (largerSize) {
+                bRect.origin.x = mouseLocDocumentView.x - 5;
+                bRect.origin.y = mouseLocDocumentView.y  - 3 * H - 10 ;
+                bRect.size.height = 3 * H ;
+                // bRect.size.width = 1.1 * W ;
+                bRect.size.width = 1.1 * W + 5;
+                }
+            
+            
+            
             
             // Now make Tristan Hubsch modification
             
@@ -6503,7 +6601,10 @@ else
     if ((key == 'f') && ([theEvent modifierFlags] & NSCommandKeyMask)) {
         // [self.drawer open];
         // [[self window] makeFirstResponder:_searchField ];
-        [[self window] makeFirstResponder: [self.myDocument pdfKitSearchField ]];
+       if ([self.myDocument useFullSplitWindow])
+            [[self.myDocument fullSplitWindow] makeFirstResponder: [self.myDocument myFullSearchField ]];
+        else
+            [[self window] makeFirstResponder: [self.myDocument mySearchField ]];
         return YES;
     }
     

@@ -351,6 +351,7 @@ NSString *OpenAsTabsKey = @"OpenAsTabs";
 NSString *SyntaxColorEntryLineKey = @"SyntaxColorEntryLine";
 NSString *FixVoiceOverKey = @"FixVoiceOver";
 NSString *DisplayAsBookKey = @"DisplayAsBook";
+NSString *AlternateEngineKey = @"AlternateEngine";
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
 

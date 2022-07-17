@@ -1739,6 +1739,15 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[SUD setObject:[_latexScriptCommandTextField stringValue] forKey:LatexScriptCommandKey];
 }
 
+/*" This method is connected to the textField that holds the alternate engine command. It is located on the Misc pane.
+"*/
+- (IBAction)alternateEngineChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:AlternateEngineKey] forKey:AlternateEngineKey];
+
+    [SUD setObject:[_alternateEngineTextField stringValue] forKey:AlternateEngineKey];
+}
 
 
 /*" This method is connected to the "Default Program" matrix on the TeX pane.
@@ -2526,6 +2535,7 @@ This method retrieves the application preferences from the defaults object and s
 
 	[_texScriptCommandTextField setStringValue:[defaults stringForKey:TexScriptCommandKey]];
 	[_latexScriptCommandTextField setStringValue:[defaults stringForKey:LatexScriptCommandKey]];
+    [_alternateEngineTextField setStringValue:[defaults stringForKey:AlternateEngineKey]];
 
 	[_defaultCommandMatrix selectCellWithTag:[defaults integerForKey:DefaultCommandKey]];
 	[_engineTextField setStringValue:[defaults stringForKey:DefaultEngineKey]];

@@ -239,8 +239,9 @@ static TSEncoding _availableTexworksEncodings[] = {
 		} else {
 			g_taggedTeXSections = [[NSArray alloc] initWithObjects:
 							filterBackslashToYen(@"\\chapter"),
-							filterBackslashToYen(@"\\section"),
-							filterBackslashToYen(@"\\subsection"),
+                            filterBackslashToYen(@"\\part"),
+                            filterBackslashToYen(@"\\section"),
+                            filterBackslashToYen(@"\\subsection"),
 							filterBackslashToYen(@"\\subsubsection"),
 							nil];
 		}

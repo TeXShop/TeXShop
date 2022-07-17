@@ -552,6 +552,7 @@ extern NSString *OpenAsTabsKey;
 extern NSString *SyntaxColorEntryLineKey;
 extern NSString *FixVoiceOverKey;
 extern NSString *DisplayAsBookKey;
+extern NSString *AlternateEngineKey;
 
 
 // end defaults

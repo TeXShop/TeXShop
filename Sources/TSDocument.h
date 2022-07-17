@@ -317,6 +317,8 @@ enum RootCommand
     NSString    *parameterString;
     BOOL        parameterExists;
     
+    BOOL        fromAlternate;
+    
 //	NSDate              *_pdfLastModDate;
 //	NSTimer             *_pdfRefreshTimer;
 //  id                  _pdfActivity;
@@ -544,6 +546,7 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (IBAction) doTemplate: sender;
 - (IBAction) doPDFSearch: sender;
+- (IBAction) doPDFSearchFullWindow: sender;
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
@@ -667,6 +670,8 @@ enum RootCommand
 - (void) makeWindowControllers;
 - (void) runPageLayout:sender;
 - (NSSearchField *) pdfKitSearchField;
+- (NSSearchField *) mySearchField;
+- (NSSearchField *) myFullSearchField;
 - (void) addTabbedWindows;
 - (NSTextView *)textView1;
 - (NSTextView *)textView2;
@@ -796,6 +801,7 @@ enum RootCommand
 - (void) doIndexTemp: sender;
 - (void) doMetaFontTemp: sender;
 - (IBAction) doTypeset: sender;
+- (IBAction) doAlternateTypeset: sender;
 - (IBAction) doUpdate: sender; // Tool to update tags and labels
 - (void) doTypesetForScriptContinuously:(BOOL)method;
 - (void) doJob:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous;

@@ -10259,11 +10259,15 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 [rightView addSubview: self.pdfKitWindow.pdfKitSplitView];
                 [self.pdfKitWindow.pdfKitSplitView setFrame: [rightView bounds]];
                 }
+            
+            
+              
+            
             [self.splitController setWindow: fullSplitWindow];
             [self addWindowController: self.splitController];
             NSString *splitPosition = [SUD stringForKey:DocumentSplitWindowPositionKey];
             if ([splitPosition length] > 5)
-                [fullSplitWindow setFrameFromString:splitPosition];
+               [fullSplitWindow setFrameFromString:splitPosition];
             
          //   [fullSplitWindow mergeAllWindows:self]; // WOW this line makes all split windows load as tabs
             

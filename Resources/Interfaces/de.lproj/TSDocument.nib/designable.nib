@@ -45,10 +45,10 @@
                 <outlet property="mouseModeMenu" destination="828" id="907"/>
                 <outlet property="mouseModeMenuKit" destination="577" id="839"/>
                 <outlet property="myDrawer" destination="739" id="bV9-Cd-FAR"/>
-                <outlet property="myFullSearchField" destination="129-vM-xCx" id="rXz-Df-3Vr"/>
+                <outlet property="myFullSearchField" destination="hmc-uV-ufF" id="YlZ-OJ-i4x"/>
                 <outlet property="myPDFKitView" destination="852" id="918"/>
                 <outlet property="myPDFKitView2" destination="1616" id="1620"/>
-                <outlet property="mySearchField" destination="WxM-bb-7Fd" id="EJ0-ev-fJp"/>
+                <outlet property="mySearchField" destination="WxM-bb-7Fd" id="A6k-4U-sja"/>
                 <outlet property="nextButton" destination="392" id="397"/>
                 <outlet property="oLog" destination="LeQ-ZI-sNu" id="6rH-t6-kQE"/>
                 <outlet property="openSaveBox" destination="497" id="560"/>
@@ -1138,10 +1138,10 @@ DQ
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <connections>
-                            <action selector="doFindOne:" target="852" id="NAa-Ym-ae1"/>
-                        </connections>
                     </searchFieldCell>
+                    <connections>
+                        <action selector="doPDFSearch:" target="-2" id="ggP-Ea-HK5"/>
+                    </connections>
                 </searchField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="417">
                     <rect key="frame" x="158" y="39" width="90" height="32"/>
@@ -1274,6 +1274,18 @@ DQ
                         <action selector="doBackForward:" target="-2" id="DxN-6q-8Kk"/>
                     </connections>
                 </segmentedControl>
+                <searchField wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hmc-uV-ufF">
+                    <rect key="frame" x="574" y="13" width="96" height="22"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="riE-QN-SoV">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </searchFieldCell>
+                    <connections>
+                        <action selector="doPDFSearchFullWindow:" target="-2" id="LWF-aO-bg9"/>
+                    </connections>
+                </searchField>
             </subviews>
             <point key="canvasLocation" x="155" y="-247"/>
         </customView>
@@ -2240,7 +2252,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="ud4-hp-Qbn">
                             <rect key="frame" x="1" y="1" width="276" height="323"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <textView importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="Odw-uT-b8h" customClass="ScrapTextView">
                                     <rect key="frame" x="0.0" y="0.0" width="276" height="323"/>

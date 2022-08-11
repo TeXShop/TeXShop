@@ -576,7 +576,7 @@ extern NSPanel *pageNumberWindow;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
-	
+    
 	if ([anItem action] == @selector(splitWindow:)) {
 		if (self.windowIsSplit)
 			[anItem setState:NSOnState];
@@ -687,6 +687,18 @@ extern NSPanel *pageNumberWindow;
 {
 	[self.myDocument savePreviewPosition];
 }
+
+
+- (void) saveHTMLPosition: sender
+{
+    [self.myDocument saveHTMLPosition: sender];
+}
+
+- (void) showHTMLWindow: sender
+{
+    [self.myDocument showHTMLWindow: sender];
+}
+ 
 
 - (void) savePortablePreviewPosition: sender
 {

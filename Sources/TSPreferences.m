@@ -145,9 +145,10 @@ Loads the .nib file if necessary, fills all the controls with the values from th
     oldSyntaxLineColor = [SUD boolForKey:SyntaxColorEntryLineKey];
 	autoCompleteTouched = NO;
 	bibDeskCompleteTouched = NO;
+    HtmlHomeTouched = NO;
 	oldAutoComplete = [SUD boolForKey:AutoCompleteEnabledKey];
 	oldBibDeskComplete = [SUD boolForKey:BibDeskCompletionKey];
-	magnificationTouched = NO;
+    magnificationTouched = NO;
 	// added by mitsu --(G) TSEncodingSupport
 	encodingTouched = NO;
 	commandCompletionCharTouched = NO;
@@ -1303,6 +1304,25 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 		[_pdfWindowPosButton setEnabled: NO];
 }
 
+//==============================================================================
+/*" This method is connected to the "HTML Window Position" Matrix.
+
+A tag of 0 means don't save the window position, a tag of 1 to save the setting. This should only flag the request to save the position, the actual saving of position and size can be left to [NSWindow setAutoSaveFrameName].
+"*/
+- (IBAction)htmlWindowPosChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:HtmlWindowPosModeKey] forKey:HtmlWindowPosModeKey];
+
+    [SUD setInteger:[[sender selectedCell] tag] forKey:HtmlWindowPosModeKey];
+
+    /* koch: button enabled only if appropriate */
+    if ([[sender selectedCell] tag] == 0)
+        [_htmlWindowPosButton setEnabled: YES];
+    else
+        [_htmlWindowPosButton setEnabled: NO];
+}
+
 /*" This method is connected to the 'use current pos as default' button.
 "*/
 - (IBAction)currentPdfWindowPosDefault:sender
@@ -1321,6 +1341,26 @@ A tag of 0 means don't save the window position, a tag of 1 to save the setting.
 		[_sourceWindowPosMatrix selectCellWithTag:PdfWindowPosFixed];
 	}
 }
+
+/*" This method is connected to the 'use current pos as default' button.
+"*/
+- (IBAction)currentHtmlWindowPosDefault:sender
+{
+    NSWindow    *activeWindow;
+
+    activeWindow = [[TSWindowManager sharedInstance] activeHTMLWindow];
+
+    if (activeWindow != nil) {
+        [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:HtmlWindowFixedPosKey] forKey:HtmlWindowFixedPosKey];
+        [SUD setObject:[activeWindow stringWithSavedFrame] forKey:HtmlWindowFixedPosKey];
+
+        // just in case: the radio button must be checked as well.
+        // [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:HtmlWindowPosModeKey] forKey:HtmlWindowPosModeKey];
+       //  [SUD setInteger:HtmlWindowPosFixed forKey:HtmlWindowPosModeKey];
+       //  [_sourceWindowPosMatrix selectCellWithTag:HtmlWindowPosFixed];
+    }
+}
+
 
 /*" This method is connected to the magnification text field on the Preview pane'.
 "*/
@@ -1570,6 +1610,21 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
     newValue = [[_tetexBinPathField stringValue] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	[SUD setObject: newValue forKey:TetexBinPath];
 }
+
+//==============================================================================
+/*" This method is connected to the textField that holds the HtmlHome value
+"*/
+- (IBAction)HtmlHomeChanged:sender
+{
+    NSString *newValue;
+    
+    // register the undo messages first
+    [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD objectForKey:HtmlHomeKey]                 forKey:TetexBinPath];
+
+    newValue = [[_HtmlHomeField stringValue] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [SUD setObject: newValue forKey:HtmlHomeKey];
+}
+
 
 //==============================================================================
 /*" This method is connected to the textField that holds the alternate path.
@@ -2421,12 +2476,20 @@ This method retrieves the application preferences from the defaults object and s
         [_consoleWindowPosButton setEnabled: YES];
     else
         [_consoleWindowPosButton setEnabled: NO];
+    
 	[_pdfWindowPosMatrix selectCellWithTag:[defaults integerForKey:PdfWindowPosModeKey]];
 	/* koch: */
 	if ([defaults integerForKey:PdfWindowPosModeKey] == 0)
 		[_pdfWindowPosButton setEnabled: YES];
 	else
 		[_pdfWindowPosButton setEnabled: NO];
+    
+    [_htmlWindowPosMatrix selectCellWithTag:[defaults integerForKey:HtmlWindowPosModeKey]];
+    /* koch: */
+    if ([defaults integerForKey:HtmlWindowPosModeKey] == 0)
+        [_htmlWindowPosButton setEnabled: YES];
+    else
+        [_htmlWindowPosButton setEnabled: NO];
 
 	magnification = [defaults floatForKey:PdfMagnificationKey];
 	mag = round(magnification * 100.0);
@@ -2530,6 +2593,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_texGSCommandTextField setStringValue:[defaults stringForKey:TexGSCommandKey]];
 	[_latexGSCommandTextField setStringValue:[defaults stringForKey:LatexGSCommandKey]];
 	[_tetexBinPathField setStringValue:[defaults stringForKey:TetexBinPath]];
+    [_HtmlHomeField setStringValue:[defaults stringForKey:HtmlHomeKey]];
     [_altPathField setStringValue:[defaults stringForKey:AltPathKey]];
 	[_gsBinPathField setStringValue:[defaults stringForKey:GSBinPath]];
 

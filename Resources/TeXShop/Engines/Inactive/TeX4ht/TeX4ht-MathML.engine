@@ -1,0 +1,9 @@
+#!/bin/tcsh
+
+# !TEX-bothPreview
+
+set path= ($path /Library/TeX/texbin /usr/texbin /usr/local/bin)
+
+make4ht "$1" "mathml"
+
+pdflatex  -file-line-error -synctex=1 "$1"

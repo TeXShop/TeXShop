@@ -168,6 +168,22 @@
 
 }
 
+- (IBAction)displayHTMLHelp:sender
+{
+    NSString                *fileName, *tempPath;
+    TSDocumentController    *myController;
+    NSURL                    *myURL;
+    NSError                   *outError;
+    TSDocument               *myDocument;
+    
+    tempPath = @"~/Library/TeXShop/HTML/Help.html";
+    fileName = [tempPath stringByExpandingTildeInPath];
+    myURL = [NSURL fileURLWithPath: fileName];
+    
+    myController = [TSDocumentController sharedDocumentController];
+    [myController openDocumentWithContentsOfURL: myURL display: YES error:&outError];
+}
+
 - (IBAction)displayShortCourse:sender
 {
 	NSString				*fileName;

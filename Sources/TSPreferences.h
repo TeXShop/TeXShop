@@ -66,6 +66,8 @@
     IBOutlet NSPopUpButton  *_openAsTabsMatrix;     /*" windows opening behavior "*/
 	IBOutlet NSMatrix	*_pdfWindowPosMatrix;		/*" connected to "PDF Window Position" "*/
 	IBOutlet NSButton	*_pdfWindowPosButton;		/* connected to current position button */
+    IBOutlet NSMatrix    *_htmlWindowPosMatrix;        /*" connected to "HTML Window Position" "*/
+    IBOutlet NSButton    *_htmlWindowPosButton;        /* connected to current position button */
     IBOutlet NSButton       *_antialiasButton;      /* connect to antialias checkbox */
     IBOutlet NSButton       *oneWindowButton;
 	IBOutlet NSTextField	*_magTextField;			/*" connected to magnification text field "*/
@@ -133,6 +135,8 @@
 	IBOutlet NSTextField *_bibTeXengineField; // added by Terada
 //	IBOutlet NSButton *_makeatletterButton; // added by Terada
     
+    IBOutlet NSTextField *_HtmlHomeField;
+    
     IBOutlet NSButton  *_sparkleAutomaticButton;
     IBOutlet NSMatrix  *_sparkleIntervalMatrix;
     
@@ -162,6 +166,7 @@
     BOOL            oldSyntaxLineColor;
 	BOOL			autoCompleteTouched;
 	BOOL			bibDeskCompleteTouched;
+    BOOL            HtmlHomeTouched;
 	BOOL			oldAutoComplete;
 	BOOL			oldBibDeskComplete;
     BOOL            oldSparkleAutomaticUpdate;
@@ -296,6 +301,8 @@
 
 - (IBAction)pdfWindowPosChanged:sender;
 - (IBAction)currentPdfWindowPosDefault:sender;
+- (IBAction)htmlWindowPosChanged:sender;
+- (IBAction)currentHtmlWindowPosDefault:sender;
 - (IBAction)magChanged:sender;
 - (IBAction)scrollPressed:sender;
 - (IBAction)firstDoublePageChanged:sender;
@@ -364,6 +371,8 @@
 - (IBAction)kpsetoolChanged:sender; // added by Terada
 - (IBAction)bibTeXengineChanged:sender; // added by Terada
 // - (IBAction)makeatletterChanged:sender; // added by Terada
+
+- (IBAction)HtmlHomeChanged:sender;
 
 - (IBAction)sparkleAutomaticCheck:sender;
 - (IBAction)sparkleInterval:sender;

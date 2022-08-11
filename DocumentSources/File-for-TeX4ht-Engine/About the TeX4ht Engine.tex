@@ -1,0 +1,42 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+%SetFonts
+
+%SetFonts
+
+
+\title{About the TeX4ht Engine}
+\author{Richard Koch}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+TeX4ht is a program by Eitan M. Gurari which uses a standard LaTeX source file as input, but outputs an html file. After Gurari died in 2009, other developers stepped up to maintain the program, and it is in very active development today. 
+
+The file TeX4ht.engine is an engine file for this project which works in TeXShop 5.00 and higher. To use it, drag TeX4ht.engine to the active  area $\sim$/Library/TeXShop/Engines. 
+
+Using the engine is easy. Write a standard LaTeX source file. Select the TeX4ht engine in the pulldown menu next to the typeset button and then push the Typeset button or type command-T. The engine will call both pdflatex and TeX4ht, creating both a pdf output file and an html output file. Then TeXShop will open the pdf file in a Preview window and the html file in an HTML window. This makes it easy to compare the standard pdflatex results with the corresponding web page. The web page will be active, so links and other standard html features will work. You can modify the source and typeset again, and both views will update.
+
+By adding the following magic line to the top of the source file, the TeX4ht engine will always be called and it is not necessary to use the pulldown menu:
+\begin{verbatim}
+     % !TEX TS-program = TeX4ht
+\end{verbatim}
+
+The folder containing this document also contains a short demonstration. Copy the folder named ``Example'' to your home directory or location for TeX source files, and typeset the document Sample.tex inside. Then compare the pdf and html outputs. Resize the windows and notice their different behavior. Add extra material and typeset again to verify that both views update. The sample file contains a web link. Click this in both the pdf and html windows and notice their different behavior.
+
+Math4ht has many parameters controlling its operation. Originally it created a large number of small pictures for  mathematical equations, and the web page displayed these pictures. It can also output MathML and many modern browsers can interprete these commands. An even nicer approach is to output html which is interpreted by MathJax. This  is the approach recommended by the American Mathematical Society and produces very acceptable typeset equations. Users will want to create their own engines to explore the advantages of these various approaches.
+
+Two engines are provided in this folder. The engine TeX4ht uses MathJax. The engine TeX4ht-MathML uses MathML. 
+
+
+
+\end{document}  

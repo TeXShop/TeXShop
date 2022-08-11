@@ -128,6 +128,12 @@ enum DocumentWindowPosition
 	DocumentWindowPosSave = 1
 };
 
+enum HtmlWindowPosition
+{
+    HtmlWindowPosFixed = 0,
+    HtmlWindowPosSave = 1
+};
+
 /*" Symbolic constants for the matrix used in 'PDF window Position' of the TSPreferences. "*/
 enum PdfWindowPosition
 {
@@ -553,6 +559,10 @@ extern NSString *SyntaxColorEntryLineKey;
 extern NSString *FixVoiceOverKey;
 extern NSString *DisplayAsBookKey;
 extern NSString *AlternateEngineKey;
+extern NSString *HtmlWindowNameKey;
+extern NSString *HtmlWindowPosModeKey;
+extern NSString *HtmlWindowFixedPosKey;
+extern NSString *HtmlHomeKey;
 
 
 // end defaults
@@ -571,6 +581,8 @@ extern NSString *MatrixPanelPath; // Jonas' Matrix addition
 extern NSString *BinaryPath;
 extern NSString *EnginePath;
 extern NSString *EngineInactivePath;
+extern NSString *HTMLHelpPath;
+extern NSString *HTMLInactivePath;
 extern NSString *ExternalEditorScriptsPath;
 extern NSString *ScriptsPath;
 extern NSString *NewPath;

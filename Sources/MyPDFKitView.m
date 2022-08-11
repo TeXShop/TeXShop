@@ -6603,8 +6603,9 @@ else
         // [[self window] makeFirstResponder:_searchField ];
        if ([self.myDocument useFullSplitWindow])
             [[self.myDocument fullSplitWindow] makeFirstResponder: [self.myDocument myFullSearchField ]];
-        else
-            [[self window] makeFirstResponder: [self.myDocument mySearchField ]];
+       else {
+             [[self window] makeFirstResponder: [self.myDocument mySearchField ]];
+       }
         return YES;
     }
     

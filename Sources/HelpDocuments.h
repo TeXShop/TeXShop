@@ -56,6 +56,7 @@
 - (IBAction)displayThisRelease:sender;
 - (IBAction)displayChanges:sender;
 - (IBAction)displayCommentLines:sender;
+- (IBAction)displayHTMLHelp:sender;
 
 - (void)okForPanel:sender;
 - (void)cancelForPanel:sender;

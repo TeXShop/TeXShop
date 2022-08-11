@@ -160,6 +160,7 @@ NSInteger strSort(id s1, id s2, void *context)
     self.spellLanguage = [SUD stringForKey: spellingLanguageDefaultKey];
     self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
     fromAlternate = NO;
+    self.PreviewType = 0; // use old method
     
     self.syntaxcolorEntry = [SUD boolForKey:SyntaxColorEntryLineKey];
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
@@ -301,6 +302,8 @@ NSInteger strSort(id s1, id s2, void *context)
     self.pdfKitWindow = nil;
     self.myPDFKitView = nil;
     self.myPDFKitView2 = nil;
+    [self.htmlWindow close];
+    self.htmlWindow = nil;
 	
 	[self invalidateCompletionConnection];
     
@@ -982,8 +985,7 @@ NSInteger strSort(id s1, id s2, void *context)
 	[self setupConsole];
  	[self setupLogWindow];
     
-    
-	
+
 if (! skipTextWindow) {
 	textView = textView1;
 	[self setupTextView:textView1];
@@ -2900,6 +2902,11 @@ if ( ! skipTextWindow) {
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textSplitWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:fullSplitWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentSplitWindowWillClose:) name:NSWindowWillCloseNotification object:fullSplitWindow];
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentSplitWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:fullSplitWindow];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(HtmlWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:self.htmlWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(HtmlWindowWillClose:) name:NSWindowWillCloseNotification object:self.htmlWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(HtmlWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:self.htmlWindow];
+    
 // added by mitsu --(J+) check mark in "Typeset" menu
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowDidResignKey:) name:NSWindowDidResignKeyNotification object:textWindow];
 }
@@ -3065,7 +3072,24 @@ if ( ! skipTextWindow) {
     NSRect   mainRect;
     BOOL     result;
     float    floatValue, x, y, temp, LargeArea, LargePDFArea, SmallArea, SmallPDFArea, MainDisplayArea;
-    NSString *docWindowString, *pdfWindowString, *portableDocWindowString, *portablePDFWindowString;
+    NSString *docWindowString, *pdfWindowString, *portableDocWindowString, *portablePDFWindowString, *htmlWindowString;
+    
+    if ( HtmlWindowPosFixed == [SUD integerForKey:HtmlWindowPosModeKey] ) {
+        htmlWindowString = [SUD stringForKey:HtmlWindowFixedPosKey];
+        if (htmlWindowString) {
+            NSScanner *htmlWindow = [NSScanner scannerWithString: htmlWindowString];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            result = [htmlWindow scanFloat: &floatValue];
+            }
+      }
+
     
    
     if ( DocumentWindowPosFixed == [SUD integerForKey:DocumentWindowPosModeKey] ) {
@@ -3154,28 +3178,66 @@ if ( ! skipTextWindow) {
     MainDisplayArea = mainRect.size.width * mainRect.size.height;
     
     
-	// inhibit ordering of windows by windowController.
-	[windowController setShouldCascadeWindows:NO];
-
-	// restore window position for the document window
-	NSWindow *activeTextWindow;
+    // inhibit ordering of windows by windowController.
+    [windowController setShouldCascadeWindows:NO];
     
-	// strangely, the "setFrameFromString" below causes a long delay is the file type is "pdf" but not for "tiff" or other types!
-	if (! [[[[self fileURL] path] pathExtension] isEqualToString: @"pdf"])
-		switch ([SUD integerForKey:DocumentWindowPosModeKey])
-		{
-			case DocumentWindowPosSave:
-				[textWindow setFrameAutosaveName:DocumentWindowNameKey];
-				// added by Terada (from this line)
-				activeTextWindow = [[TSWindowManager sharedInstance] activeTextWindow];
-				if(activeTextWindow){
-					[self repositionWindow:textWindow activeWindow:activeTextWindow];
-				}
-				// added by Terada (until this line)
-				break;
+    
+    
+    // restore window position for the html window
+    NSWindow *activeHTMLWindow;
+    
+    // strangely, the "setFrameFromString" below causes a long delay is the file type is "pdf" but not for "tiff" or other types!
+    if (! [[[[self fileURL] path] pathExtension] isEqualToString: @"html"])
+        switch ([SUD integerForKey:HtmlWindowPosModeKey])
+        {
+            case HtmlWindowPosSave:
+                [_htmlWindow setFrameAutosaveName:HtmlWindowNameKey];
+                // added by Terada (from this line)
+                activeHTMLWindow = [[TSWindowManager sharedInstance] activeHTMLWindow];
+                if(activeHTMLWindow){
+                    [self repositionWindow:_htmlWindow activeWindow:activeHTMLWindow];
+                }
+                // added by Terada (until this line)
+                break;
 
 
-			case DocumentWindowPosFixed:
+            case HtmlWindowPosFixed:
+                  
+                [_htmlWindow setFrameFromString:[SUD stringForKey:HtmlWindowFixedPosKey]];
+               
+               break;
+            
+         }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    // restore window position for the document window
+    NSWindow *activeTextWindow;
+    
+    // strangely, the "setFrameFromString" below causes a long delay is the file type is "pdf" but not for "tiff" or other types!
+    if (! [[[[self fileURL] path] pathExtension] isEqualToString: @"pdf"])
+        switch ([SUD integerForKey:DocumentWindowPosModeKey])
+        {
+            case DocumentWindowPosSave:
+                [textWindow setFrameAutosaveName:DocumentWindowNameKey];
+                // added by Terada (from this line)
+                activeTextWindow = [[TSWindowManager sharedInstance] activeTextWindow];
+                if(activeTextWindow){
+                    [self repositionWindow:textWindow activeWindow:activeTextWindow];
+                }
+                // added by Terada (until this line)
+                break;
+
+
+            case DocumentWindowPosFixed:
              //   NSLog(@"Main");
              //   NSLog([SUD stringForKey:DocumentWindowFixedPosKey]);
              //   NSLog([SUD stringForKey:PdfWindowFixedPosKey]);
@@ -3200,37 +3262,37 @@ if ( ! skipTextWindow) {
                 [textWindow setFrameFromString:[SUD stringForKey:DocumentWindowFixedPosKey]];
                 break;
             */
-		}
-	
-	// restore window position for the pdf window
-	switch ([SUD integerForKey:PdfWindowPosModeKey])
-	{
-		case PdfWindowPosSave:
-			[pdfWindow setFrameAutosaveName:PdfWindowNameKey];
-			[self.pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
-			// added by Terada (from this line)
-			NSInteger numberOfWindows = 0;
-			NSInteger i;
-			NSInteger *listOfWindows;
-			
-		//	NSCountWindowsForContext([NSApp contextID], &numberOfWindows);
+        }
+    
+    // restore window position for the pdf window
+    switch ([SUD integerForKey:PdfWindowPosModeKey])
+    {
+        case PdfWindowPosSave:
+            [pdfWindow setFrameAutosaveName:PdfWindowNameKey];
+            [self.pdfKitWindow setFrameAutosaveName:PdfKitWindowNameKey];
+            // added by Terada (from this line)
+            NSInteger numberOfWindows = 0;
+            NSInteger i;
+            NSInteger *listOfWindows;
+            
+        //    NSCountWindowsForContext([NSApp contextID], &numberOfWindows);
             NSCountWindows(&numberOfWindows);
-			
-			if (numberOfWindows>0){
-				listOfWindows = malloc(numberOfWindows * sizeof(NSInteger));
-				//NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
-				NSWindowList(numberOfWindows, listOfWindows);
-				for(i=0; i<numberOfWindows; i++){
-					NSWindow *aWindow = [NSApp windowWithWindowNumber:listOfWindows[i]];
-					if ([aWindow isKindOfClass:[TSPreviewWindow class]]) {
-						[self repositionWindow:self.pdfKitWindow activeWindow:aWindow];
-						break;
-					}
-				}
-				free(listOfWindows);        
-			}			
-			// added by Terada (until this line)
-			break;
+            
+            if (numberOfWindows>0){
+                listOfWindows = malloc(numberOfWindows * sizeof(NSInteger));
+                //NSWindowListForContext([NSApp contextID], numberOfWindows, listOfWindows);
+                NSWindowList(numberOfWindows, listOfWindows);
+                for(i=0; i<numberOfWindows; i++){
+                    NSWindow *aWindow = [NSApp windowWithWindowNumber:listOfWindows[i]];
+                    if ([aWindow isKindOfClass:[TSPreviewWindow class]]) {
+                        [self repositionWindow:self.pdfKitWindow activeWindow:aWindow];
+                        break;
+                    }
+                }
+                free(listOfWindows);
+            }
+            // added by Terada (until this line)
+            break;
 
 
         case PdfWindowPosFixed:
@@ -3258,64 +3320,64 @@ if ( ! skipTextWindow) {
 
 
 /*
-	// setup the popUp with all of our template names
-	[popupButton addItemsWithTitles:[[TSPreferences sharedInstance] allTemplateNames]];
+    // setup the popUp with all of our template names
+    [popupButton addItemsWithTitles:[[TSPreferences sharedInstance] allTemplateNames]];
 */
 
-	// FIXME/TODO: Unify the following code snippet with makeMenuFromDirectory:
+    // FIXME/TODO: Unify the following code snippet with makeMenuFromDirectory:
 
-	// new template menu (by S. Zenitani, Jan 31, 2003)
-	NSFileManager *fm;
-	NSString      *basePath, *path, *title;
-	NSArray       *fileListOld, *fileList;
-	id 	  newItem;
-	NSMenu 	  *submenu;
-	BOOL	   isDirectory;
-	NSUInteger i;
-	NSUInteger lv = 3;
+    // new template menu (by S. Zenitani, Jan 31, 2003)
+    NSFileManager *fm;
+    NSString      *basePath, *path, *title;
+    NSArray       *fileListOld, *fileList;
+    id       newItem;
+    NSMenu       *submenu;
+    BOOL       isDirectory;
+    NSUInteger i;
+    NSUInteger lv = 3;
 
-	fm       = [ NSFileManager defaultManager ];
-	basePath = [ TexTemplatePath stringByStandardizingPath ];
-	fileListOld = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
+    fm       = [ NSFileManager defaultManager ];
+    basePath = [ TexTemplatePath stringByStandardizingPath ];
+    fileListOld = [ fm contentsOfDirectoryAtPath: basePath error:NULL];
     fileList = [fileListOld sortedArrayUsingFunction: strSort context: NULL ];
 
-	for (i = 0; i < [fileList count]; i++) {
-		title = [ fileList objectAtIndex: i ];
-		path  = [ basePath stringByAppendingPathComponent: title ];
-		if ([fm fileExistsAtPath:path isDirectory: &isDirectory]) {
-			if (isDirectory ){
-				[popupButton addItemWithTitle: @""];
+    for (i = 0; i < [fileList count]; i++) {
+        title = [ fileList objectAtIndex: i ];
+        path  = [ basePath stringByAppendingPathComponent: title ];
+        if ([fm fileExistsAtPath:path isDirectory: &isDirectory]) {
+            if (isDirectory ){
+                [popupButton addItemWithTitle: @""];
                 [spopupButton addItemWithTitle: @""];
                newItem = [popupButton lastItem];
-				[newItem setTitle: title];
-				submenu = [[NSMenu alloc] init];
-				[self makeMenuFromDirectory: submenu basePath: path
-									 action: @selector(doTemplate:) level: lv];
-				[newItem setSubmenu: submenu];
+                [newItem setTitle: title];
+                submenu = [[NSMenu alloc] init];
+                [self makeMenuFromDirectory: submenu basePath: path
+                                     action: @selector(doTemplate:) level: lv];
+                [newItem setSubmenu: submenu];
                 newItem = [spopupButton lastItem];
                 [newItem setTitle: title];
                 submenu = [[NSMenu alloc] init];
                 [self makeMenuFromDirectory: submenu basePath: path
                                      action: @selector(doTemplate:) level: lv];
                 [newItem setSubmenu: submenu];
-			} else if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
-				title = [title stringByDeletingPathExtension];
-				[popupButton addItemWithTitle: @""];
+            } else if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
+                title = [title stringByDeletingPathExtension];
+                [popupButton addItemWithTitle: @""];
                 [spopupButton addItemWithTitle: @""];
-				newItem = [popupButton lastItem];
-				[newItem setTitle: title];
-				[newItem setAction: @selector(doTemplate:)];
-				[newItem setTarget: self];
-				[newItem setRepresentedObject: path];
+                newItem = [popupButton lastItem];
+                [newItem setTitle: title];
+                [newItem setAction: @selector(doTemplate:)];
+                [newItem setTarget: self];
+                [newItem setRepresentedObject: path];
                 newItem = [spopupButton lastItem];
                 [newItem setTitle: title];
                 [newItem setAction: @selector(doTemplate:)];
                 [newItem setTarget: self];
                 [newItem setRepresentedObject: path];
-			}
-		}
-	}
-	// end of addition
+            }
+        }
+    }
+    // end of addition
 }
 
 - (void) makeMenuFromDirectory: (NSMenu *)menu basePath: (NSString *)basePath action:(SEL)action level:(NSUInteger)level;
@@ -9283,6 +9345,23 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
 }
 
+/*
+- (void) saveHtmlPosition
+{
+    NSWindow    *activeWindow;
+    activeWindow = [[TSWindowManager sharedInstance] activeHTMLWindow];
+    
+    if (activeWindow != nil) {
+        [self fixPreferences];
+        [SUD setInteger:HtmlWindowPosFixed forKey:HtmlWindowPosModeKey];
+        [SUD setObject:[activeWindow stringWithSavedFrame] forKey:HtmlWindowFixedPosKey];
+        [SUD synchronize];
+    }
+    
+}
+*/
+
+
 
 - (void) fullscreen: sender
 {
@@ -10321,6 +10400,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 - (IBAction) doPDFSearch: sender
 {
     [[self pdfKitView] doFindOne:sender];
+}
+
+- (IBAction) doHtmlSearch: sender
+{
+    ;
 }
 
 - (IBAction) doPDFSearchFullWindow: sender

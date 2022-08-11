@@ -65,7 +65,7 @@
     [mydata writeToFile:filePath atomically:NO];
     thePDFImageRep = [NSPDFImageRep imageRepWithData: thePDFData];
     theImage = [[NSImage alloc] initWithData: thePDFData];
-    NSLog(@"got here");
+    // NSLog(@"got here");
     
      
      cursorVisible = YES;

@@ -231,5 +231,22 @@ static id _sharedInstance = nil;
 		itemWithTag:programID] setState: (flag)?NSOnState:NSOffState];
 }
 
+- (void)HtmlWindowDidBecomeKey:(NSNotification *)note
+{
+    self.activeHTMLWindow = [note object];
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: YES];
+}
+
+- (void)HtmlWindowWillClose:(NSNotification *)note
+{
+    self.activeHTMLWindow = nil;;
+}
+
+- (void)HtmlWindowDidResignKey:(NSNotification *)note
+{
+    [self checkProgramMenuItem: [[[note object] document] whichEngine] checked: NO];
+}
+
+
 
 @end

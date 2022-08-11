@@ -1,0 +1,39 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+%SetFonts
+
+%SetFonts
+
+
+\title{About the html Engine}
+\author{Richard Koch}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+This folder contains a simple engine used when editing html files. The engine works on TeXShop 4.80 and higher. To use it,
+drag the file html.engine from this folder into the active engine area, $\sim$/Library/TeXShop/Engines.
+
+TeXShop has always been able to edit html files, and it provides the correct syntax coloring for these files. When you want to see the web page in action, select the html engine in the pulldown menu next to the typeset button and then typeset. TeXShop will open a separate web browser window displaying the result. This web page is completely active, so links and other html elements will work. Continue editing the file. Each time you want to see the result, push control-T to typeset.
+
+A magic comment line can be added to the top of the source file setting html.engine as the default engine, and then selecting the engine in the pulldown menu is not necessary. The magic comment is
+\begin{verbatim}
+     % !TEX TS-program = html
+\end{verbatim}
+But there is a complication. The symbol \% is not a comment sign in html, so it will confuse the web browser when it interprets the html code. To fix this, enclose the line in html comment tags:
+\begin{verbatim}
+     <!--
+     % !TEX TS-program = html
+     -->
+\end{verbatim}
+
+\end{document}  

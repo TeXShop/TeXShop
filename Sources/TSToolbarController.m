@@ -45,6 +45,7 @@ static NSString* 	kSourceToolbarIdentifier 	= @"Source Toolbar Identifier";
 static NSString* 	kPDFToolbarIdentifier 		= @"PDF Toolbar Identifier";
 static NSString*	kPDFKitToolbarIdentifier	= @"PDFKit Toolbar Identifier";
 static NSString*    kFullWindowToolbarIdentifier = @"Full Window Toolbar Identifier";
+static NSString*    kHtmlWindowToolbarIdentifier = @"HTML Window Toolbar Identifier";
 
 // Source window toolbar items
 static NSString*	kTypesetTID			= @"Typeset";
@@ -125,6 +126,12 @@ static NSString *   skSharingTID       = @"SharingSplit";
 static NSString*    skSearchTID          = @"SearchKITSplit";
 static NSString*    skMouseModeTID         = @"MouseModeKITSplit";
 static NSString*    skBackForthKKTID       = @"BackForthKITSplit";
+
+// HtmlWindow special toolbar items
+static NSString*    kHtmlPreviousPageButtonTID  = @"HtmlPreviousPageButton";
+static NSString*    kHtmlNextPageButtonTID      = @"HtmlNextPageButton";
+static NSString*    kHtmlURLFieldTID            = @"HtmlURLField";
+static NSString*    kHtmlSearchTID              = @"HtmlSearch";
 
 @implementation TSDocument (ToolbarSupport)
 
@@ -384,6 +391,7 @@ if (@available(macOS 11.0, *))
 	[[self pdfWindow] setToolbar: [self makeToolbar: kPDFToolbarIdentifier]];
 	[self.pdfKitWindow setToolbar: [self makeToolbar: kPDFKitToolbarIdentifier]];
     [[self fullSplitWindow] setToolbar: [self makeToolbar: kFullWindowToolbarIdentifier]];
+   [[self htmlWindow] setToolbar: [self makeToolbar: kHtmlWindowToolbarIdentifier]];
 }
 
 // -----------------------------------------------------------------------------
@@ -393,6 +401,11 @@ if (@available(macOS 11.0, *))
 - (void)doPreviousPage:(id)sender
 {
 	[[self pdfView] previousPage: sender];
+}
+
+- (void)doHtmlPreviousPage:(id)sender
+{
+   [[self htmlView] goBack] ;
 }
 
 - (void)doPreviousPageKK:(id)sender
@@ -407,6 +420,12 @@ if (@available(macOS 11.0, *))
 - (void)doNextPage:(id)sender
 {
 	[[self pdfView] nextPage: sender];
+}
+
+- (void)doHtmlNextPage:(id)sender
+{
+    
+    [[self htmlView] goForward] ;
 }
 
 - (void)doNextPageKK:(id)sender
@@ -864,6 +883,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 		[menuFormRep setTitle: [toolbarItem label]];
 		[menuFormRep setAction: @selector(nextPage:)];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
+ 
 		return toolbarItem;
 	}
 
@@ -875,6 +895,15 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 	if ([itemIdent isEqual: kNextPageTID])
     {
         return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doNextPage:)];
+     }
+    
+    if ([itemIdent isEqual: kHtmlPreviousPageButtonTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.left" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"chevron.left" target:self action:@selector(doHtmlPreviousPage:)];
+     }
+    if ([itemIdent isEqual: kHtmlNextPageButtonTID])
+    {
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doHtmlNextPage:)];
      }
 \
 	if ([itemIdent isEqual: kBackForthKKTID]) {
@@ -1195,6 +1224,116 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		return toolbarItem;
 	}
+    
+    
+    
+     if ([itemIdent isEqual: kHtmlPreviousPageButtonTID]) {
+         
+         if ([SUD boolForKey: NewToolbarIconsKey])
+         {
+             if (@available(macOS 11.0, *)) {
+                 NSString *theName = @"chevron.left";
+                 NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
+                                                 accessibilityDescription: @"Previous Page"];
+                 [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                     customView:previousImage];
+                 }
+             else
+                  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                              customView:previousButton];
+         }
+     else
+
+          [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                              customView:previousButton];
+
+         /*
+         menuFormRep = [[NSMenuItem alloc] init];
+         [menuFormRep setTitle: [toolbarItem label]];
+         [menuFormRep setAction: @selector(previousPage:)];
+         [toolbarItem setMenuFormRepresentation: menuFormRep];
+          */
+        return toolbarItem;
+    }
+    
+    if ([itemIdent isEqual: kHtmlNextPageButtonTID]) {
+        
+        if ([SUD boolForKey: NewToolbarIconsKey])
+        {
+            if (@available(macOS 11.0, *)) {
+                NSString *theName = @"chevron.right";
+                NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
+                                                accessibilityDescription: @"Next Page"];
+                [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:previousImage];
+                }
+            else
+                [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                         customView:nextButton];
+        }
+    else
+
+         [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+                                             customView:nextButton];
+        /*
+        menuFormRep = [[NSMenuItem alloc] init];
+        [menuFormRep setTitle: [toolbarItem label]];
+        [menuFormRep setAction: @selector(nextPage:)];
+        [toolbarItem setMenuFormRepresentation: menuFormRep];
+        */
+        return toolbarItem;
+    }
+    
+    if ([itemIdent isEqual: kHtmlURLFieldTID]) {
+        
+        // TEMPORARY //
+        
+        toolbarItem =  [self makeToolbarItemFixedWithItemIdentifier:itemIdent key:itemIdent
+                                                    customView:myURLField];
+       // toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent];
+       // [toolbarItem setView: myURLField];
+        // [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
+        //                                    customView:myURLField];
+        return toolbarItem;
+    }
+
+// Note: the code below is temporary, because the html Search Field is not yet active.
+// The commented out line "mySearchField = mySearchToolbarItem.searchField" is left as a hint about what should be done
+// But the line itself is very dangerous, because "mySearchField" is a variable describing the Preview Search Field
+// When the line is not commented out, the consequence is that command-F no longer activates the Preview Search Field
+    
+    if ([itemIdent isEqual: kHtmlSearchTID]) {
+        
+        if ([SUD boolForKey: NewToolbarIconsKey])
+            
+        {
+              if (@available(macOS 11.0, *)) {
+                
+              //  toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+                
+            
+                   toolbarItem =
+                    [self  makeToolbarSearchItemWithItemIdentifier:itemIdent key:itemIdent];
+                  
+                  mySearchToolbarItem = (NSSearchToolbarItem *)toolbarItem;
+                  //mySearchField = mySearchToolbarItem.searchField;
+                  
+                  [toolbarItem setTarget: self];
+                  [toolbarItem setAction: @selector(doHtmlSearch:)];
+            
+                }
+            else
+                toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+            }
+        else
+             
+            toolbarItem =  [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent        customView: mySearchField];
+        
+        return toolbarItem;
+    }
+    
+    
+    
 
 
 	// itemIdent refered to a toolbar item that is not provide or supported by us or cocoa
@@ -1411,7 +1550,30 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         }
     }
 
-
+    if ([toolbarID isEqual:kHtmlWindowToolbarIdentifier]) {
+   
+        /*
+        return  [NSArray arrayWithObjects:
+                            khtmlPreviousPageButtonTID,
+                            khtmlNextPageButtonTID,
+                            khtmlURLFieldTID,
+                            NSToolbarFlexibleSpaceItemIdentifier,
+                            khtmlSearchTID,
+                            nil];
+         */
+        return  [NSArray arrayWithObjects:
+                            NSToolbarSpaceItemIdentifier,
+                            kHtmlPreviousPageButtonTID,
+                            NSToolbarSpaceItemIdentifier,
+                            kHtmlNextPageButtonTID,
+                            NSToolbarSpaceItemIdentifier,
+                            NSToolbarSpaceItemIdentifier,
+                            kHtmlURLFieldTID,
+                            NSToolbarSpaceItemIdentifier,
+                            NSToolbarFlexibleSpaceItemIdentifier,
+                            kHtmlSearchTID,
+                             nil];
+        }
 
 
 	return [NSArray array];
@@ -1661,6 +1823,32 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         
     }
 
+    if ([toolbarID isEqual:kHtmlWindowToolbarIdentifier]) {
+
+        /*
+        return [NSArray arrayWithObjects:
+                   
+                    kHtmlPreviousPageButtonTID,
+                    kHtmlNextPageButtonTID,
+                    kHtmlURLFieldTID,
+                    kHtmlSearchTID,
+                    NSToolbarCustomizeToolbarItemIdentifier,
+                    NSToolbarFlexibleSpaceItemIdentifier,
+                    NSToolbarSpaceItemIdentifier,
+                    NSToolbarSeparatorItemIdentifier,
+                nil];
+         */
+        return [NSArray arrayWithObjects:
+                    kHtmlPreviousPageButtonTID,
+                    kHtmlNextPageButtonTID,
+                    kHtmlURLFieldTID,
+                    kHtmlSearchTID,
+                    NSToolbarCustomizeToolbarItemIdentifier,
+                    NSToolbarFlexibleSpaceItemIdentifier,
+                    NSToolbarSpaceItemIdentifier,
+                    NSToolbarSeparatorItemIdentifier,
+                nil];
+    }
 
 	return [NSArray array];
 }
@@ -1779,6 +1967,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 						// TODO: Check whether we are on the last page
 						enable = (self.documentType == isPDF);
 	}
+ 
 
 	return enable;
 }

@@ -89,6 +89,8 @@
 - (void) rotateClockwise: sender;
 - (void) rotateCounterclockwise: sender;
 - (void) savePreviewPosition: sender;
+ - (void) showHTMLWindow: sender;
+ - (void) saveHTMLPosition: sender;
 - (void) savePortablePreviewPosition: sender;
 - (void) orderOut: sender;
 - (void) sendEvent:(NSEvent *)theEvent;

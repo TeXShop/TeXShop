@@ -23,11 +23,13 @@
  */
 
 #import <AppKit/AppKit.h>
+#import <WebKit/WebKit.h>
 #import "TSFullscreenWindow.h"
 #import <Quartz/Quartz.h>
 #import "NoodleLineNumberView.h"
 #import "NoodleLineNumberMarker.h"
 #import "TSPreviewWindow.h"
+#import "TSHTMLWindow.h"
 #import "ScrapTextView.h"
 #import "ScrapPDFKitView.h"
 #import "TSWindowController.h"
@@ -204,6 +206,8 @@ enum RootCommand
     IBOutlet    NSTextField     *saveFormatLabel;
     IBOutlet    NSPopUpButton   *saveFormatMenu;
     NSSavePanel                 *theSavePanel;
+    
+    IBOutlet    NSBox            *myURLField;
   
     
     
@@ -511,6 +515,19 @@ enum RootCommand
 
 @property           BOOL        activateVoiceOverFix;
 
+// for HTML
+@property (nonatomic, strong) IBOutlet TSHTMLWindow *htmlWindow;
+@property (nonatomic, strong) IBOutlet WKWebView *htmlView;
+
+// Values for PreviewType:  0 = use old method
+//                          1 = no Preview
+//                          2 = pdf Preview
+//                          3 = html Preview
+//                          4 = both pdf and html Preview
+@property NSInteger PreviewType;
+
+
+
 
  - (IBAction)setSaveExtension: sender;
 - (IBAction)changeMouseMode: sender;
@@ -546,6 +563,7 @@ enum RootCommand
 - (void) updateStatistics: sender;
 - (IBAction) doTemplate: sender;
 - (IBAction) doPDFSearch: sender;
+- (IBAction) doHtmlSearch: sender;
 - (IBAction) doPDFSearchFullWindow: sender;
 - (void) printSource: sender;
 - (BOOL) useFullSplitWindow;
@@ -944,6 +962,13 @@ enum RootCommand
 - (NSString *)xmlGetImageSource: (NSString *)titleLine;
 - (IBAction) toggleXML: sender;
 @end
+
+@interface TSDocument (HTML)
+- (void)showHTMLWindow: sender;
+- (void)saveHTMLPosition: sender;
+- (IBAction) gotoURL: sender;
+@end
+
 
 // END PATCH
 

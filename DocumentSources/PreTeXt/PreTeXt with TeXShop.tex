@@ -8,7 +8,8 @@
 \usepackage{amssymb}
 \usepackage{url}
 \usepackage{hyperref}
-
+\usepackage{quoting}
+\quotingsetup{font={itshape}, leftmargin=2em, rightmargin=0in, vskip=1ex}
 %SetFonts
 
 %SetFonts
@@ -22,9 +23,12 @@
 \maketitle
 %\section{}
 %\subsection{}
-\section{PreTeXt and XML}
 
-In PreTeXt,  document formatting is described using XML, but mathematical formulas are described using LaTeX. To understand what this means, we'll compare two short documents, one completely in LaTeX and the other in PreTeXt. Here's the LaTeX version:
+
+\section{PreTeXt and XML}
+ This document was originally written in 2019. It became out of date due to changes in PreTeXt. Both this document and the PreTeXt engines were updated in August, 2022. 
+ 
+ Below are two identical documents. Here is the LaTeX version:%In PreTeXt,  document formatting is described using XML, but mathematical formulas are described using LaTeX. To understand what % this means, we'll compare two short documents, one completely in LaTeX and the other in PreTeXt. Here's the LaTeX version:
 \begin{verbatim}
      \section{Introduction}
          Portland has many attractions.
@@ -61,30 +65,13 @@ The most familiar tag-based data structure is HTML for web documents, but it was
 
 There is an open source program called xsltproc which accepts an XML file and an XSL style sheet and uses this information to output the data in converted form. This program is already in Mac OS X.
 
-Therefore, TeXShop can ``typeset'' PreTeXt documents using xsltproc as soon as it has access to the PreTeXt  XSL files. This is easy because the PreTeXt folks package these files, together with examples, documentation, and everything else needed to use PreTeXt, in a single folder named ``mathbook''. So the first step in using PreTeXt on Mac OS is to retrieve this folder. Before doing that, we must make sure that TeXShop features are up to date.
-
- 
- \section{Updating ~/Library/TeXShop}
- 
- When TeXShop first runs, it saves a default Preferences file, which users cannot access directly. But they can change these preference choices using TeXShop Preferences.  TeXShop updates never modify these individual  choices.
- 
-TeXShop can be customized in another way. When TeXShop first runs, it creates a folder in the user's Library folder in their home directory,  $\sim$/Library/TeXShop. Inside this ``TeXShop'' folder, TeXShop writes various subfolders  holding individualized  Templates, Stationery, Macros, CommandCompletion files, Engine files, and Themes, i.e., color choices for the editor. TeXShop has a menu command ``Open $\sim$/Library/TeXShop'' taking users to this folder; the menu is important because Apple generally hides the $\sim$/Library folder. Users can modify the items in the various folders. For instance, they edit or replace  templates and  stationery. They define new macros and delete  default macros (usually via an internal editor rather than writing directly to the Macros folder). They extend and edit the command completion file, and so forth.
-
-Since these folders contain user information, TeXShop cannot update them. But sometimes TeXShop provides new default information for these folders and it is important that users get these updated files.  Indeed, several PreTeXt features require such updated files. Before starting PreTeXt work, you must obtain them. How?
-
-If you just installed TeXShop for the first time, you have the latest files. Stop reading and go to the next section.
-
-If you previously installed TeXShop, but seldom used it, and in particular if you never modified files in $\sim$/Library/TeXShop, then it is easy to get the latest updates. Use TeXShop to open $\sim$/Library/TeXShop. Then quit TeXShop.
-Throw the ``TeXShop'' folder in the trash. Restart TeXShop. It will create a brand new TeXShop folder and fill it with up to date subfolders. Stop reading and go to the next section.
-
-If, however, you use TeXShop extensively and have created your own macros, or edited your own templates, or changed the default colors, then you have to obtain the new material more carefully. Go to the TeShop Help menu, and open the first item, ``About This Release.''  A short section at the start of this document is about version 4.31 and carefully explains how to obtain the new items for the TeXShop folder.
- 
+Therefore, TeXShop can ``typeset'' PreTeXt documents using xsltproc as soon as it has access to the PreTeXt  XSL files. This is easy because the PreTeXt folks package these files, together with examples, documentation, and everything else needed to use PreTeXt, in a single folder named ``mathbook''. So the first step in using PreTeXt on Mac OS is to retrieve this folder. 
 
 \section{Getting mathbook into $\sim$/Documents}
 
 Inside the folder $\sim$/Library/TeXShop/Engines/Inactive where you found this document, there is a file named ``updatemathbook.sh.'' Drag a copy of this file into $\sim$/Documents, that is, the Documents folder in your home directory. 
 
-This shell  file calls the command 
+This shell  script calls the command 
      ``git clone https://github.com/rbeezer/mathbook''
 which tells your Macintosh to download a copy of mathbook from Robert Beezer's server. We'll first explain what to do if you are familiar with Apple's Terminal program; otherwise read to the end of this section. To get  the mathbook folder,  open Terminal and change directory to $\sim$/Documents. Execute the shellscript command 
 below and you are done:
@@ -102,51 +89,97 @@ Find Terminal in /Applications/Utilities. Drag a copy of this program to your do
 
 In Terminal, type ``sh updatemathbook.sh'' without the quotation marks and push RETURN. Terminal will print some information as the folder downloads. Done.
 
-
 \section{Activating the PreTeXt Engines}
 
-Return to the folder $\sim$/Library/TeXShop/Engines/Inactive/PreTeXt where the document you are reading resides. Inside this folder you will find three engine files named PreTeXt-HTML.engine, PreTeXt-LaTeX.engine, and PreTeXt-Validate.engine.
-Drag these files or copies of the files two levels up to the folder $\sim$/Library/TeXShop/Engines. The engines are now active. The first will convert a PreTeXt source file to an html file, and  open that file in your default browser. The second will convert a PreTeXt source file to a LaTeX file, typeset that file, and open the resulting pdf file. The third will check your XML source for tag placement errors, but requires further setup before use. See section \ref{validate}.
+Return to the folder $\sim$/Library/TeXShop/Engines/Inactive/PreTeXt where the document you are reading resides. Inside this folder you will find five engine files named PreTeXt-LaTeX.engine, PreTeXt-HTML.engine, PreTeXt-Both.engine, PreTeX-LaTeX-Includes.engine, and PreTeXt-Validate.engine.
+Drag these files or copies of the files two levels up to the folder $\sim$/Library/TeXShop/Engines. The engines are now active. The first will convert a PreTeXt source file to a pdf file and display the result in the Preview window. The second will convert a PreTeXt source file to an html file and display the result in the HTML window. The third will perform both conversions and show the results in both the Preview and HTML windows. The fourth will be explained later. The fifth will check your XML source for tag placement errors, but requires further setup before use. See section \ref{validate}.
 
-\section{The Minimal Example}
+ 
+ \section{Updating ~/Library/TeXShop}
+ 
+ This step is not essential, and if you find it confusing you can  skip the entire section.
+ 
+ When TeXShop first runs, it creates a folder in the user's Library folder in their home directory,  $\sim$/Library/TeXShop. Inside this ``TeXShop'' folder, TeXShop writes various subfolders  holding individualized  Templates, Stationery, Macros, CommandCompletion files, Engine files, and Themes, i.e., color choices for the editor. TeXShop has a menu command ``Open $\sim$/Library/TeXShop'' taking users to this folder; the menu is important because Apple generally hides the $\sim$/Library folder. Users can modify the items in the various folders. For instance, they may edit or replace  templates and  stationery; 
+ they extend and edit the command completion file, and so forth.
 
-In $\sim$/Documents/mathbook there is a folder named ``examples'' with a subfolder named ``minimal''. Make a copy of this ``minimal'' folder and drag it to your home directory.  Inside you will find a file named ``minimal.xml''. Open this file in TeXShop by dragging its icon to the TeXShop icon in the dock and dropping it there.
+Since these folders contain user information, TeXShop cannot update them. But sometimes TeXShop provides new default information for these folders and users may want to get updated files.  How can this be done?
 
-It is possible to typeset this source by selecting the engine PreTeXt-LaTeX in the pulldown menu next to the Typeset button, and then pushing Typeset. Try that now if you like. You have to typeset twice to get index You can also typeset to html by selecting the engine PreTeXt-HTML and then pushing Typeset.
+If you just installed TeXShop for the first time, you have the latest files. Stop reading and go to the next section.
 
-However there is an easier way which I recommend for the future. Just below the top line of the file, add three extra lines so the four lines read as follows:
+If you previously installed TeXShop, but seldom used it, and in particular if you never modified files in $\sim$/Library/TeXShop, then it is easy to get the latest updates. Use TeXShop to open $\sim$/Library/TeXShop. Then quit TeXShop.
+Throw the ``TeXShop'' folder in the trash. Restart TeXShop. It will create a brand new TeXShop folder and fill it with up to date subfolders. Stop reading and go to the next section.
+
+If, however, you use TeXShop extensively and have created your own macros, or edited your own templates, then you have to obtain the new material more carefully. Go to  $\sim$/Library/TeXShop'' and open the ``New'' folder. It has a subfolder named ``Version-4.31'' with four subfolders. The ``Stationery'' folder contains two files; drag copies of these files to $\sim$/Library/TeXShop/Stationery. The ``CommandCompletion'' folder contains one file; drag a copy of this file to $\sim$/Library/TeXShop/CommandCompletion. The ``Themes'' folder can be ignored.
+
+The ``Macros'' folder contains two files, but the important file is XML-Macros.plist, which contains two optional new macros. It is tricky to deal with this; feel free to stop here. Otherwise, if you have edited the Macros in TeXShop, you will know how to open this file and  add the macros there to the existing LaTeX macros. If you never edited the Macros in TeXShop, it will be easier to quit TeXShop, and move the folder $\sim$/Library/TeXShop/Macros to your desktop or the trash. The next time TeXShop runs, it will recreate this folder with the latest version of the Macros and you are done. 
+
+ \section{A Very Simple Example}
+ 
+ In $\sim$/Documents there is now a subfolder named ``mathbooks''. This is the folder you downloaded from the PreTeXt site. We'll often refer to this mathbooks folder in the rest of this report. The folder has a subfolder named ``examples''  and one of these examples is in a subfolder named ``hello-world''. Duplicate this folder and drag the copy to your home directory or other location where you store LaTeX projects.  Inside the folder is a file titled ``hello-world.xml''. This is the source for a very simple PreTeXt document. You'll soon discover that PreTeXt source files either have extension .xml or  extension .ptx. TeXShop understands that both extensions are PreTeXt files. We'll call them xml-files in this document. Open hello-world.xml in the new TeXShop.
+
+Select the PreTeXt-Both engine in the pull-down menu next to the Typeset button on the toolbar. Then typeset. This engine generates both a pdf file and an html file, and opens them in two windows. Congratulations. You have typeset your first PreTeXt document.
+
+You may forget to select the PreTeXt engine and get strange errors typesetting with pdflatex. Therefore it is useful to add a magic line to the source telling TeXShop to typeset with the PreTeXt-Both engine. The correct place for this line is in the blank second line of the source, just after an initial xml line and before a comment line with a long row of stars. TeXShop has a macro which makes this easy. Click once in this blank line to tell the Macro where to insert something and then choose the macro titled ``PreTeXt Header''. 
+
+The Macro actually inserts the following:
 \begin{verbatim}
-     <?xml version="1.0" encoding="UTF-8" ?>
      <!--
      % !TEX TS-program = PreTeXt-LaTeX
      -->
 \end{verbatim}
-The second and fourth of these lines form an xml comment, so PreTeXt will ignore the important third line. But TeXShop recognizes magic lines starting with \% !TEX as instructions to TeXShop itself. This particular line says to always typeset using the PreTeXt-LaTeX engine. Thus it isn't necessary to reach up and select the correct engine in the toolbar. It isn't even necessary to reach up and press the Typeset button, because the shortcut command-T will automatically typeset. 
 
-But suppose you want to  create an html file. Simple. Go to the top of the source and change LaTeX to HTML at the end of the magic line. Then typeset.
+Note that \% is a LaTeX comment symbol, but this does not denote a comment in xml.  So  PreTeXt would try to interpret the magic line. We avoid this by surrounding the line with xml comment markers. 
 
-It isn't even necessary to remember the three magic lines, Place the cursor between the first and second lines and in the Macros pulldown menu select PreTeXt Header. The magic lines will automatically be written to the source.
+There is only a macro for the PreTeXt-LaTeX engine, but it is easy enough to reach up and by hand change ``LaTeX'' to ``HTML'' or ``Both'' or ``LaTeX-Includes'' if you want to use one of the other engines. 
 
-\section{The Sample-Article Example}
+\section{The Minimal Example}
 
-Go to $\sim$/Documents/mathbook/examples and find the folder sample-article. Make a copy of this folder and drag it to your home directory. Inside you will find a file sample-article.xml. Open this file in TeXShop. Add the three magic lines to the top as before, and then typeset as LaTeX and typeset again as HTML. This is a very large document, so typesetting will take quite a long time, particularly the first time through. Have patience.
+It is time to try a more substantial example. Return to the mathbooks folder and its subfolder of examples. Select ``minimal'' and duplicate that folder. Drag the duplicate to your home directory or other location where you store LaTeX projects.
 
-The significance of this file is that it is supposed to contain an example of every feature in PreTeXt, and as new features are invented, they are documented in sample-article. So reading through this source is a good way to learn the details of PreTeXt.
+The source for the minimal example is in the subfolder named source, which has a single file named ``main.ptx''. Open that file in TeXShop. Note that this source file has a lot of documentation at the top explaining how to typeset it from the command line. One surprising thing this documentation reveals is that the output files will be named ``minimal.tex'', ``minimal.pdf'', and ``minimal.html''
+even though the source file is named ``main''. This is an unpleasant quirk of PreTeXT, which allows authors to give their output files different names than the source file. Indeed in the xml just below, notice that the article tag assigns this new name. This quirk will also show up in other examples, but without documentation so it is up to you to decipher what is happening.
+
+If you are converting xml to tex, this quirk causes no problems because the command line converter program has a flag allowing us to give the output any name we want. Consequently the engine PreTeXt-LaTeX will just ignore the quirk and work fine. Sadly the command line program which converts xml to html has some sort of bug. It accepts the same flag and outputs an html file with the correct name, but that file is empty. It also outputs a correct html file, but that has the name assigned by PreTeXt.
+
+There may be several ways to get around this problem, but the trick which works for me is just to rename the source file to the name that PreTeXt has chosen for the output. Consequently, rename ``main.ptx'' to ``minimal.ptx''.
+
+Next use the macro ``PreTeX Header'' to insert a magic line at the top of the source, as in our earlier example.
+
+Finally we are ready to typeset the sample xml file. Typeset first with the PreTeXt-LaTeX engine. We get a two-page document containing mathematics and a table.
+
+Change the magic line and typeset with the PreTeXt-Both engine.  We get two pages, and this time we see that the HTML version looks quite a lot different than the pdf version. If you are beginning to understand PreTeXt code, try to add material to the source and typeset again. Both windows will update.
+
+\section{Other Examples}
+
+It is time to confess that many Sample files in the Examples folder aren't as easy to process. One sample illustrates font handling in unusual languages. Our PreTeXt-LaTeX engine doesn't process that example because the tex output file must be typeset with XeLaTeX rather than pdflatex. Of course it is easy enough to modify the engine file and make that happen. But then we run into a second problem. A  virtue of XeLaTeX is that it can use system fonts on the host computer and isn't restricted to fonts in TeX Live. The downside is that such documents are not easily ported to different platforms. And sure enough, the PreTeXt authors seem to have used Linux fonts which XeLaTeX on the Macintosh doesn't understand.
+
+The PreTeXt project has developed an elaborate build system for documents composed of many different source files, anticipating that authors will typeset from the command line. It isn't  easy to convert these Samples for TeXShop use. But after all, if you decide to use PreTeXt, you get to decide how your source files are handled and you can follow the style of the examples we are discussing here. 
+
+\section{The Sample-Article}
+
+One of the samples is titled Sample-Article. This is a very interesting example because every time a new feature is added to PreTeXt, a sample of that feature is created in Sample-Article. So the sample has almost 214 pages and illustrates a vast number of PreTeXt techniques. Luckily, this sample does typeset in TeXShop. The only problem is that a fair number of illustrations are missing, but pdflatex runs continuously and handles these errors without intervention. 
+
+Copy the entire folder ``sample-article'' to your home directory. The source file is named ``sample-article.xml''. But this is one of those examples where the output file has a different name, ``derivatives''. So start by renaming ``sample-article.xml'' to ``derivatives.xml''.
+Then add the magic line near the top of the file, and by hand change the typesetting engine to PreTeXt-Both.
+
+Typeset. This time typesetting takes a long time, so do not get impatient. Ultimately two windows will appear showing the resulting pdf file and the corresponding html file.
+
 
 \section{The PreTeXt Guide}
 
-Go to $\sim$/Documents/mathbook/doc and find the folder ``guide''. Make a copy of this folder and drag it to your home directory. Inside you will find a file guide.xml. Open this file in TeXShop. Add the three magic lines to the top as before, and then typeset as LaTeX.
+Go to $\sim$/Documents/mathbook/doc and find the folder ``guide''. Make a copy of this folder and drag it to your home directory. Inside you will find a file guide.xml. Open this file in TeXShop. Add the three magic lines to the top as before. Then change the engine to
+``LaTeX-Includes''. Typeset. There will be a delay with no output in the console, but be patient. 
 
-The output is a  document, {\em The PreTeXt Guide}, giving a very readable systematic introduction to PreTeXt, followed by precise details of the language features. This is a good place to learn a little PreTeXt, start using it, and then read more as needed.
+The output is a  pdf document, {\em The PreTeXt Guide}, giving a very readable systematic introduction to PreTeXt, followed by precise details of the language features. This is a good place to learn a little PreTeXt, start using it, and then read more as needed. You need to typeset again to get the table of contents. In 2019, this new engine was not necessary, but the xml source for the Guide has lots of include statements, and an extra flag, -includes, is now required to force the conversion engine to accept those includes. That is why there is a different engine.
 
 
 \section{Using TeXShop with PreTeXt}
 
 The remaining sections of this document explain features of TeXShop which have been added to improve the experience of creating PreTeXt source files. 
 
-One example is syntax-coloring. TeXShop uses different algorithms to syntax-color xml files and to syntax-color other files. How does it know the difference? It uses its old algorithm unless the file extension is xml, and in that case it uses its new xml syntax-coloring. The same method is used to switch  other TeXShop behaviors to be described shortly.
+One example is syntax-coloring. TeXShop uses different algorithms to syntax-color xml files and to syntax-color other files. How does it know the difference? It uses its old algorithm unless the file extension is xml or ptx or a few others, and in those cases it uses its new xml syntax-coloring. The same method is used to switch  other TeXShop behaviors to be described shortly.
 
-When the user brings a new window to the foreground, TeXShop checks its extension. So a user can edit tex files and xml files at the same time. When a tex file is in front, TeXShop will use its old methods. When an xml file is in front, it will use new methods from version 4.30.
+When the user brings a new window to the foreground, TeXShop checks its extension. So a user can edit tex files and xml files at the same time. When a tex file is in front, TeXShop will use its old methods. When an xml file is in front, it will use new methods.
 
 \section{Starting a New Document}
 
@@ -240,6 +273,9 @@ Finally a new completion dictionary is provided for xml files, listing phrases l
 Command completion works as it already does for LaTeX files. Recall the idea. Type a few letters like
 $<$sec and push a magic key. This can be either the Escape key or the Tab key, as selected in TeXShop Preferences. I'll suppose the Tab key has been selected. TeXShop will then complete the command using one of the selections which matches $<$sec, like $<$section$>$ or $<$section xml-id="•"$>$. Pushing Tab again will cycle through all possible completions, including the original $<$sec. 
 
+{\em Interruption:} Sometimes Apple makes mistakes and valiantly stands their ground as users complain. The following two paragraphs of the original document have been kept to illustrate this point. They are about the machine I owned at the time, a 2016 Macbook Pro with Touchbar and the Butterfly Keyboard.  Last fall I replaced this machine with a 2021 16" Arm Macbook Pro, the best machine I have ever owned by a long shot, and all these problems went away.
+
+\begin{quoting}
 Aside: Command completion originally used the Escape key. A few users asked to use Tab instead, so the choice was added to TeXShop Preferences. I didn't understand the request, but I made the change anyway.
 
 Recent events changed my mind. My main work machine is a 2016 Macbook Pro with 2 TB of flash memory. It has great features, not so great features, and blah features. The flash memory is very fast, and there is enough of it that I have all the operating systems MacTeX currently supports on the machine: Sierra, High Sierra, Mojave, and Catalina. When I travel, I unplug the external display (which also supplies power) and take my entire computing life with me. Wonderful.
@@ -247,6 +283,7 @@ Recent events changed my mind. My main work machine is a 2016 Macbook Pro with 2
 The not so great feature is the butterfly keyboard, and if Apple would release a portable without it, I'd snap it up in a minute. Grrrr.
 
 The blah feature is the Touch Bar, and to get right down to the nitty-gritty, the Escape key is now not a key at all, but a touch spot on the Touch Bar. It isn't nearly as stable as an actual key, even if that key uses the butterfly mechanism. So if you have such a portable, I recommend using the Tab (actual) key, rather than the Escape (fake) key, for command completion. End of Aside.
+\end{quoting}
 
 \section{More on Command Completion}
  
@@ -303,7 +340,7 @@ So a completion without \#T\# would end up as a vertically aligned series of lin
 
 Finally, \#T\# is a new symbol introduced for PreTeXt, and it simply causes a tab. Notice that the indented nature of the completion was created by using an appropriate number of tabs following each RETURN linefeed.
 
-The dictionary CommandCompletionXML.txt is rather sparse in the initial beta release of TeXShop 4.30. I need help in finding appropriate completion symbols, which I'll happily add to the dictionary. Important symbols should occur several times with more and more parameters displayed. Thus for sections the following entries, and probably several others, should be included:
+The dictionary CommandCompletionXML.txt is rather sparse. I need help in finding appropriate completion symbols, which I'll happily add to the dictionary. Important symbols should occur several times with more and more parameters displayed. Thus for sections the following entries, and probably several others, should be included:
 \begin{verbatim}
      <section>
      <section xml-i="#INS#•#INS#">
@@ -315,6 +352,15 @@ The dictionary CommandCompletionXML.txt is rather sparse in the initial beta rel
 Currently the PreTeXt-LaTeX engine uses pdflatex to typeset the tex file produced by conversion from the xml source. But it can easily be edited to use xelatex instead. Ordinary pdflatex will correctly process some extended Unicode characters, but xetex expects unicode source files by design. So any project using extensive non-Roman fonts should switch to xelatex.
 
 Similarly, the PreTeXt-LaTeX engine can be edited to use pdflatexmk rather than pdflatex. Latexmk is a make script which keeps track of files that have changed and typesets as many times as necessary to give updated documents. For instance, it will typeset twice if there are references that require the aux file and a second pass to correctly update. 
+
+\section{End of Revision of 2019 Document}
+
+This ends my revision of the original document for PreTeXt 2022. At this point, the old document described using Java to activate the Validate Engine. I haven't used Java in years and don't want to install it on my new machine. Think of the remaining paragraphs as suggestions that might or might not work today. If you don't decide to use PreTeXt, these paragraphs won't make a difference. If you do decide to use it, you'll know more than I do after two or three days. 
+
+\newpage
+
+Here is the historical material:
+\begin{quotation}
 
 \section{\label{validate}The Validate Engine}
 
@@ -352,5 +398,7 @@ LaTeX has a command called ``includeonly'' for the Main file, which reads the he
 Users will discover other TeXShop features that work fine with PreTeXt. We mention two here. The TeXShop Window menu has an item named ``Use One Window.'' If it is selected, the xml source and the pdf output will be placed side by side in a single window. A preference setting determines which is on the left and which is on the right. The command "Use Separate Windows" returns to two window mode.
 
 If a project requires several source files, there are magic lines for TeXShop which tell it to open all of these source files as tabbed entries of a single source window. Read the Comments document in TeXShop Help and experiment to see how this works.
+
+\end{quotation}
 
 \end{document}

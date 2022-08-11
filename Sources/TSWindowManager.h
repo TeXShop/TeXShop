@@ -32,6 +32,7 @@
 
 @property (retain) 	NSWindow		*activeTextWindow;
 @property (retain)  NSWindow 		*activePDFWindow;
+@property (retain)  NSWindow        *activeHTMLWindow;
 
 
 + (id)sharedInstance;
@@ -57,5 +58,9 @@
 - (void)textSplitWindowDidBecomeKey:(NSNotification *)note;
 - (void)documentSplitWindowWillClose:(NSNotification *)note;
 - (void)documentSplitWindowDidResignKey:(NSNotification *)note;
+
+- (void)HtmlWindowDidBecomeKey:(NSNotification *)note;
+- (void)HtmlWindowWillClose:(NSNotification *)note;
+- (void)HtmlWindowDidResignKey:(NSNotification *)note;
 
 @end

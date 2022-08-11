@@ -29,13 +29,13 @@
 
 @interface MyPDFView : NSView
 {
-IBOutlet		id                  currentPage0;
-IBOutlet		id                  totalPage;
-IBOutlet		id                  myScale;
+IBOutlet		NSTextField                  *currentPage0;
+IBOutlet		NSTextField                  *totalPage;
+IBOutlet		NSTextField                  *myScale;
 IBOutlet		id                  myStepper;
-IBOutlet		id                  currentPage1;
-IBOutlet		id                  totalPage1;
-IBOutlet		id                  myScale1;
+IBOutlet		NSTextField                 *currentPage1;
+IBOutlet		NSTextField                  *totalPage1;
+IBOutlet		NSTextField                  *myScale1;
 IBOutlet		id                  myStepper1;
 	NSInteger			documentType;
 	double              oldMagnification;

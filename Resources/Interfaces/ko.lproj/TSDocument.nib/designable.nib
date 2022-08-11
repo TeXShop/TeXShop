@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="101000" identifier="macosx"/>
+        <deployment version="120000" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="19529"/>
         <plugIn identifier="com.apple.pdfkit.ibplugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,6 +24,8 @@
                 <outlet property="gotopageOutlet" destination="157" id="415"/>
                 <outlet property="gotopageOutletKK" destination="104" id="416"/>
                 <outlet property="hLog" destination="361" id="417"/>
+                <outlet property="htmlView" destination="Za4-kS-jBE" id="sEZ-XY-Iq5"/>
+                <outlet property="htmlWindow" destination="BPj-82-7qf" id="zk0-U8-DeP"/>
                 <outlet property="iLog" destination="373" id="418"/>
                 <outlet property="indexColorBox" destination="84" id="419"/>
                 <outlet property="indexColorSplitBox" destination="213" id="420"/>
@@ -49,6 +52,7 @@
                 <outlet property="myPDFKitView" destination="281" id="438"/>
                 <outlet property="myPDFKitView2" destination="282" id="439"/>
                 <outlet property="mySearchField" destination="d0k-uu-k0R" id="YMu-rc-mYc"/>
+                <outlet property="myURLField" destination="Yqu-7E-Yhg" id="1vR-u2-bYK"/>
                 <outlet property="nextButton" destination="148" id="440"/>
                 <outlet property="oLog" destination="357" id="441"/>
                 <outlet property="openSaveBox" destination="242" id="442"/>
@@ -2537,6 +2541,62 @@ Gw
             <point key="canvasLocation" x="11" y="-723"/>
         </customView>
         <menuItem title="ConTeXt" state="on" tag="6" id="83"/>
+        <window title="HTML Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="HTML Window" animationBehavior="default" toolbarStyle="expanded" id="BPj-82-7qf" customClass="TSHTMLWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="283" y="305" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <view key="contentView" id="WWv-2i-rOG">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <wkWebView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Za4-kS-jBE">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <wkWebViewConfiguration key="configuration">
+                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                            <wkPreferences key="preferences"/>
+                        </wkWebViewConfiguration>
+                    </wkWebView>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="myDocument" destination="-2" id="6rZ-dg-Xi6"/>
+            </connections>
+            <point key="canvasLocation" x="825" y="177"/>
+        </window>
+        <box boxType="custom" cornerRadius="4" title="Box" id="wW5-t9-UMM">
+            <rect key="frame" x="0.0" y="0.0" width="298" height="49"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <view key="contentView" id="Yqu-7E-Yhg" customClass="NSBox">
+                <rect key="frame" x="1" y="1" width="296" height="47"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NS3-cz-ymv">
+                        <rect key="frame" x="43" y="10" width="248" height="28"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="f9M-xV-lgq">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="lockDocument:" target="-2" id="NLs-gZ-1iV"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kEy-pu-Mdb">
+                        <rect key="frame" x="4" y="17" width="34" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="URL:" id="MgL-Sw-fQp">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="813" y="-117"/>
+        </box>
     </objects>
     <resources>
         <image name="BackAdorn" width="11" height="13"/>

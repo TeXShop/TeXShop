@@ -163,7 +163,6 @@ for(NSString *key in enu)
 
 - (void) doJobForScript:(NSInteger)type withError:(BOOL)error runContinuously:(BOOL)continuous
 {
-	
     SEL saveFinished;
     
     if (! fileIsTex)
@@ -1248,8 +1247,28 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 	BOOL                fixPath;
 	NSInteger                 whichEngineLocal;
     BOOL        MainLogs;
+    BOOL        KeepConsoleClosed;
+    NSString   *userEngineName1, *userEnginePath1, *normalizedEnginePath1, *textOfEngine1;
+    
+    KeepConsoleClosed = NO;
 
+    self.PreviewType = 0;
+    
 	whichEngineLocal = useTempEngine ? tempEngine : whichEngine;
+    
+    if (whichEngineLocal >= UserEngine)
+    {
+        userEngineName1 = [[[programButton itemAtIndex:(whichEngineLocal - 1)] title] stringByAppendingString:@".engine"];
+        userEnginePath1 = [[EnginePath stringByAppendingString:@"/"] stringByAppendingString: userEngineName1];
+        normalizedEnginePath1 = [userEnginePath1 stringByExpandingTildeInPath];
+        textOfEngine1 = [NSString stringWithContentsOfFile: normalizedEnginePath1 encoding:NSISOLatin9StringEncoding  error: NULL];
+        if ([textOfEngine1 containsString: @"!TEX-noConsole"])
+             KeepConsoleClosed = YES;
+    }
+         
+    
+    
+    
     
     // MainLogs = [SUD boolForKey: DisplayLogInfoKey];
     // Not needed since "sudden halt" bug is fixed
@@ -1305,8 +1324,6 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 		[outputWindow makeFirstResponder: texCommand];
 		
 		
-		// [outputWindow setTitle: [[[[self fileName] lastPathComponent] stringByDeletingPathExtension]
-		//         stringByAppendingString:@" console"]];
 		[outputWindow setTitle: [[[imagePath lastPathComponent] stringByDeletingPathExtension]
 			stringByAppendingString:@" console"]];
 		if ([SUD boolForKey:ConsoleBehaviorKey]) {
@@ -1315,12 +1332,14 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 				// BOOL front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
 				//if (front)
 				//		[outputWindow makeKeyWindow];
-		} else {
+		} else if (! KeepConsoleClosed)
+            {
 			if ([SUD boolForKey: BringPdfFrontOnTypesetKey])
 				[outputWindow makeKeyAndOrderFront: self];
 			else
-				[outputWindow orderFront: self]; 
-			}
+				[outputWindow orderFront: self];
+            }
+        
 		
 		
 		
@@ -1626,6 +1645,24 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 			  } else if (whichEngineLocal >= UserEngine) {
 				 NSString* userEngineName = [[[programButton itemAtIndex:(whichEngineLocal - 1)] title] stringByAppendingString:@".engine"];
 				 NSString* userEnginePath = [[EnginePath stringByAppendingString:@"/"] stringByAppendingString: userEngineName];
+                  
+                  NSString* normalizedEnginePath;
+                  NSString* textOfEngine;
+                  
+                  normalizedEnginePath = [userEnginePath stringByExpandingTildeInPath];
+                  textOfEngine = [NSString stringWithContentsOfFile: normalizedEnginePath encoding:NSISOLatin9StringEncoding  error: NULL];
+                  if ([textOfEngine containsString: @"!TEX-noPreview"])
+                      self.PreviewType = 1;
+                  else if ([textOfEngine containsString: @"!TEX-bothPreview"])
+                      self.PreviewType = 4;
+                  else if ([textOfEngine containsString: @"!TEX-pdfPreview"])
+                      self.PreviewType = 2;
+                  else if ([textOfEngine containsString: @"!TEX-htmlPreview"])
+                      self.PreviewType = 3;
+                  
+                   // NSLog(@"This is the spot to consult the engine script");
+                  
+                  
 				 // NSString* userPath = [sourcePath stringByDeletingPathExtension];
 				 // Koch: ditto, spaces in path
 				 // [args addObject: [userPath lastPathComponent]];
@@ -1690,6 +1727,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doTex1: sender
 {
+    
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"Plain TeX"];
     [sprogramButton selectItemWithTitle: @"Plain TeX"];
@@ -1707,6 +1745,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doLatex1: sender
 {
+    
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"LaTeX"];
     [sprogramButton selectItemWithTitle: @"LaTeX"];
@@ -1752,6 +1791,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doMetapost1: sender
 {
+    
+    
 // added by mitsu --(J++) Program popup button indicating Program name
 	[programButton selectItemWithTitle: @"MetaPost"];
     [sprogramButton selectItemWithTitle: @"MetaPost"];
@@ -1763,6 +1804,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doBibtex: sender
 {
+    
 // added by mitsu --(J++) Program popup button indicating Program name
 	// [programButton selectItemWithTitle: @"BibTeX"];
     // [sprogramButton selectItemWithTitle: @"BibTeX"];
@@ -1774,6 +1816,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doIndex: sender
 {
+    
 // added by mitsu --(J++) Program popup button indicating Program name
 	// [programButton selectItemWithTitle: @"MakeIndex"];
     // [sprogramButton selectItemWithTitle: @"MakeIndex"];
@@ -1802,22 +1845,23 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 // The temp forms which follow do not reset the default typeset buttons
 - (void) doTexTemp: sender
 {
+
 	[self doJob:TexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doLatexTemp: sender
 {
-	[self doJobForScript:LatexEngine withError:YES runContinuously:NO];
+    [self doJobForScript:LatexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doBibtexTemp: sender
 {
-	[self doJobForScript:BibtexEngine withError:YES runContinuously:NO];
+    [self doJobForScript:BibtexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doMetapostTemp: sender
 {
-	[self doJobForScript:MetapostEngine withError:YES runContinuously:NO];
+    [self doJobForScript:MetapostEngine withError:YES runContinuously:NO];
 }
 /*
 - (void) doContextTemp: sender
@@ -1828,7 +1872,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doIndexTemp: sender
 {
-	[self doJobForScript:IndexEngine withError:YES runContinuously:NO];
+    [self doJobForScript:IndexEngine withError:YES runContinuously:NO];
 }
 
 - (void) doMetaFontTemp: sender
@@ -1838,7 +1882,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void) doTypesetEE: sender
 {
-	[self doTypeset: sender];
+    [self doTypeset: sender];
 }
 
 - (void) doTypesetForScriptContinuously:(BOOL)method
@@ -1860,6 +1904,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 //    NSString	*titleString;
 	BOOL	useError;
+   
     
    if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))
    {
@@ -1901,6 +1946,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
     BOOL    useError;
 
+    
     fromAlternate = YES;
     fromMenu = NO;
     useError = NO;
@@ -1919,7 +1965,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 	NSData *myData;
 	NSString *command;
-
+    
+ 
 	if ((typesetStart) && (self.inputPipe)) {
 		command = [[texCommand stringValue] stringByAppendingString:@"\n"];
 		command = [self filterBackslashes:command];
@@ -2009,7 +2056,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 - (void)checkATaskStatusFromTerminationRoutine: (NSTask *)theTask
 {
-    NSString        *imagePath;
+    NSString        *imagePath, *htmlImagePath;
     NSString        *alternatePath;
     NSDictionary    *myAttributes;
     NSDate            *endDate;
@@ -2017,6 +2064,11 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     BOOL            alreadyFound;
     BOOL            front;
     BOOL            DisplayLogs, MainLogs;
+    BOOL            doPDF, doHTML;
+    NSString        *newURL, *theRevisedURL;
+    NSURL           *theURL;
+    NSURLRequest    *theRequest;
+    NSURL           *existingURL;
     
     // Crucial note: I now know that when the bug occurs, this routine is called,
     // possibly with terminationStatus = 13
@@ -2099,8 +2151,17 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         status = [theTask terminationStatus];
         
         if ((status == 0) || (status == 1))  {
-            imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
             
+            doPDF = NO; doHTML = NO;
+            if ((self.PreviewType == 0) || (self.PreviewType == 2) || (self.PreviewType == 4))
+                doPDF = YES;
+            if ((self.PreviewType == 3) || (self.PreviewType == 4))
+                doHTML = YES;
+            
+            imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            htmlImagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"html"];
+            if (doPDF)
+            {
             alreadyFound = NO;
             if ([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) {
                 myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
@@ -2168,6 +2229,33 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                 }
                 
             }
+            }
+            
+            if (doHTML)
+            {
+                alreadyFound = NO;
+                newURL = [@"file://" stringByAppendingString: htmlImagePath];
+                theURL = [NSURL URLWithString: newURL];
+                existingURL = [self.htmlView URL];
+                
+                if ((existingURL != nil) && ([theURL isEqual: existingURL]))
+                        
+                        {
+                        [self.htmlView reload];
+                        [self.htmlWindow makeKeyAndOrderFront: self];
+                        }
+                    else
+                    {
+                        theRequest = [NSURLRequest requestWithURL: theURL];
+                        [self.htmlView loadRequest: theRequest];
+                        self.htmlView.allowsMagnification = YES;
+                        [self.htmlWindow makeKeyAndOrderFront: self];
+                    }
+                }
+                
+ 
+                    
+            
             [self.texTask terminate];
             //        [self.texTask release];
         }
@@ -2179,7 +2267,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         self.texTask = nil;
         
     }
-
+    self.PreviewType = 0;
 }
 
 - (void)checkATaskStatus:(NSNotification *)aNotification

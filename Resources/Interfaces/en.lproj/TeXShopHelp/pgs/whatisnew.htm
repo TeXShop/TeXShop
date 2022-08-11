@@ -14,6 +14,248 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.00</h5></P>
+Version 5.00 is a major new release of TeXShop. But when typesetting traditional documents, there are no changes. Most users will see nothing new until they read this document. 
+
+<p> Rather than immediately explaining the new features, I'll demonstrate one addition. Make sure a document is open in TeXShop or an empty source window created by the "New" menu item is visible.  In the Preview menu, there is an item labeled "Show HTML Window". Select this item. A  window will appear looking like a Safari window and displaying HTML content. 
+
+<p>The Apple API's used by TeXShop contain a class called WKWebKitView
+which implements a web view for any standard Macintosh program. The new  HTML Window in TeXShop was created that way. Notice that the links in this page are active, so while the HTML code for the initial page is contained in TeXShop, it is easy to get to web pages that are live on the  web. Toolbar arrows allow you to move back and forth between pages. Almost all web features are active in this window.
+
+<p> A URL field at the top of the new window allows you to navigate to any web page you like. Unlike Safari, this field does not do Google searches, and it is very strict about syntax, so if the URL you type is not precisely correct, nothing may happen. The toolbar also contains a Search Field, but it is not currently active and will be activated in a future version of TeXShop.
+<p> The HTML Window behaves like the Source and Preview windows. Move it to a reasonable position, probably on the right side of the screen,  give it a reasonable size, and then choose the menu item "Save HTML Window Position."
+After that, the window will always appear in the selected position.
+
+<p> In TeXShop Preferences under the Preview tab, there are new items for the HTML Window. If you fill in the "Home URL" item with the URL of a significant web page, that page will appear rather than the TeXShop default page when selecting "Show HTML Window".
+
+<p> All this is well and good, but Safari does the same thing with much more support in the interface. So what's the point?
+
+<p><b> A Short Essay on NSDocument </b>
+
+<p>TeXShop is constructed using the NSDocument class in the Cocoa APIs. It has a nib file containing all the graphical elements used by a typical document, and source code files which process that document. When I program TeXShop I  imagine that it only opens and processes one document at a time;  thus the text in the source window will always be the source for that  document, and the view in the preview window will always be the pdf  for that document. All of the extra code to handle multiple documents is provided automatically by Cocoa.
+
+<p> When a new document is opened, all of the objects in the NSDocument nib file for that document are instantiated at once. Some are shown and many are hidden away to be used later on.  These objects include a source window, a preview window, a console window, a log window, a window with two panes for single window mode, and an extra graphics window in case the user opens a tiff, jpeg, or png file. The key new feature in version 5.00 of TeXShop is that the document nib file also contains an html window which can show  live html content. Thus if a typesetting engine produces html files rather than pdf files, the  html file can be previewed directly in TeXShop.
+<!--
+<p> When multiple documents are open in TeXShop,  multiple copies of each of these objects exist in memory, one for each open document. Luckily, the content of these windows is not added until the window is shown on the screen. So if a document only contains the text of a new chapter, its preview window and log window and html window will be empty.
+
+<p> Recently a user wrote that TeXShop consumed a lot of extra memory on his machine. He casually mentioned that he typically has 100 documents open at a time. I wrote back that TeXShop is not designed for that "use case". A book author could easily have 20 open chapter files, but if you tend to open 100 documents at a time, it is time to search for a program written to support that kind of work.
+-->
+<p> Recall that "Show HTML Window" opens a default HTML Window. This is not a global window available for common use by all documents. Instead it is the particular HTML window assigned to the active document. To verify this assertion, close all documents and  notice that the "Show HTML Window" menu item is grayed out. 
+ If you have two open documents, activate "Show HTML Window" twice, once when each document is active. Notice that you get two HTML windows. They will appear at the same spot, but you can separate them. 
+
+<!--
+<p> It is possible to use the command "Show HTML Window" to open a web page which you will constantly consult as you write your document, but opening that page in Safari is a better choice, because if your project directly creates HTML content, then typesetting will display the result in the HTML window and may erase your "reference page." 
+-->
+<p><b> An Example which Finally Illustrates the Point of All This: </b>
+
+<p><ul><li> In version 5.0 of TeXShop the folder ~/Library/TeXShop/Engines/Inactive contains a subfolder named "html". This folder contains an engine named  "html.engine". Drag this engine to the active area of the engines folder.
+
+<p> It is then possible to both edit and preview html source files directly in TeXShop. TeXShop has always had the ability to open html source files and syntax color the file appropriately. Open such a file and select the html engine in the toolbar. After editing, type command-T to typeset. Immediately the source will open in TeXShop's new HTML Window, and you'll see a live web preview of your html code.
+<!--
+<p> I'm not an html expert, but I'm responsible for the TeXShop web pages and Herbert Schulz and I took over maintaining the MacTeX web pages that were originally created by Wendy McKay. I edit these pages in TeXShop. That program has always been able to open html source files and syntax color the source appropriately. In the past, after making changes I opened the files in Safari to make certain the changes worked.
+-->
+
+<p> To do this efficiently, it is useful to add a magic comment line to the top of the html file with the text
+<pre>
+     % !TEX TS-program = html
+</pre>
+However, there is one tricky issue. The symbol % does not start a comment in html, so this magic line will confuse web browsers. The trick here is to surround the line with html comment symbols on lines immediately above and immediately below the magic comment. See the example file in the folder ~/Library/TeXShop/Engines/Inactive/html.
+
+<p> If your Macros menu is up to date, there is a macro named "PreTeXt Header" which makes this very easy. Select a spot near the top of the file, click to determine where the macro will place new text, and choose the macro. It will add both comment signs and a magic engine sign, but the magic engine will be named "PreTeXt" because the macro was invented for a different purpose. Change "PreTeXt" to "html". 
+
+<p><li>The new html features have  simplified my life.
+The Changes document you are currently reading was written in html and later converted to pdf.  As a writer, I suffer the fatal flaw of using too many words; don't claim you didn't notice. The only way I can create documents is to write once, and then edit over and over, each time removing words.  Version 5.00 of TeXShop makes this a breeze. Push the delete key, push command-T, and see the result.
+
+<p><li> As we will see shortly, there are other TeX applications which require short stretches of html code. I tend to forget html commands and find myself looking them up on Google. For instance, I type a tag containing "bold", but the correct tag contains just "b". 
+
+<p> TeXShop 5.00 has a  facility to help users like me. In the Help menu, there is a new item labeled "HTML Commands." This item brings up an html file listing appropriate tasks and the correct tags to implement the task. Each item also contains a short sample showing how the tag will actually be used. Unfortunately, this help document is written in html source code, so it is difficult to read. But the source can be typeset. Push command-T and you'll see a page that is easy to read.
+
+<p> There is  more. The help document can be edited and the changes will automatically be saved. So when you need a  command not listed, look it up usig Google and then add that example to the help file.  This facility is essential because the initial document provided in TeXShop doesn't list many commands.
+
+<p><li> The actual source for the help document is contained in a new directory ~/Library/TeXShop/HTML, and the actual document is named "Help.html". This folder can also contain support files. It currently contains an image "topdot.jpg" used by Help.html and a few other support files, and you can add similar support files. 
+
+<p> When TeXShop is updated, Help.html and the various support files will not be touched, because you may have edited these items. But the HTML folder also contains a subfolder named "Inactive" and that folder <i> will</i> be updated. So more extensive help files may be provided in the future, which you can merge with your own additions to the default file. Since I'm not an html expert, I encourage users to contribute better initial Help.html files for this Inactive folder.
+
+<p><li> There are <i> many </i> advantages in this new approach, but almost immediately you will notice that synctex does not work in either direction.  In one direction, there is a sort of clumsy replacement. If you have a position in the HTML window and you want to jump to the corresponding position in the source, select a fairly long section of text in the pdf and then copy. This text should come from a single line of output. Then switch to the source and paste the result in the Find panel. This will usually bring you to the corresponding spot in the source. It may be possible to automatic this process so a single click does the same thing. I'm investigating. I have no idea how to sync in the other direction.
+
+
+</ul>
+ 
+ <p><b> Another  Important Example: </b>
+<ul> <li> TeX4ht is a program written by Eitan M. Gurari. It uses a standard LaTeX source file as input, but outputs an html file instead of a pdf file. In 2009, Gurari was preparing a talk for the TeX User Group conference about an extension which outputs braille, when he suddenly died. His TeX4ht project has been taken over by other volunteers and is being actively developed currently.
+
+<p><li> Go to ~/Library/TeXShop/Engines/Inactive/TeX4ht. This folder contains an engine titled TeX4ht.engine. Make a copy of this  engine and drag it to the active engines folder ~/Library/TeXShop/Engines. The TeX4ht folder also contains a subfolder titled Example. Make a copy of this entire folder and drag it to your home directory or another directory used for TeX projects. Inside this folder is a LaTeX file named Sample.tex. Open it in TeXShop 5.00. A Source Window and a pdf Preview Window will open. Look carefully at the source file and notice that the first line is a magic comment saying to typeset using the TeX4ht engine.
+
+<p><li> Typeset.
+
+<p><li> Now alongside the pdf Preview Window there is an html Preview Window. The pdf window displays the output when typeset by pdfLaTeX. The html window displays the output when typeset by TeX4ht.  This makes it easy to compare the results. 
+<p><li> Resize both windows. They behave differently. 
+<p><li> If you have a trackpad, resize both window contents with a finger gesture. Both resize. In particular, finger gestures can magnify the html image.
+<p><li> Each document contains an active link at the end. Click these links. The pdf link causes Safari to open and display the new page. But the html link  opens the linked page in the original html window, and the Back arrow can take you back to the original content.
+
+<p><li> Add extra material to the source and typeset again. Notice that <i> both </i> windows are immediately updated. Neither window jumps to the top of the document when reloaded. For HTML, this is a major advantage over the old method of opening the output in Safari and clicking the reload icon when changes are made.
+
+<!--
+<p><li> In the case of pdflatex and related engines, Jerome Laurens wrote special code which is integrated directly into the typesetting engine. His code outputs a "synctex" file which is used by TeXShop and other front ends to do the syncing. This technique would only work for the new html engines if Laurens wrote similar code for each of them. Since pdf and html are completely different, this rewrite would not be simple by any means. As we will show shortly, there are many different ways to obtain html in the modern TeX world, and perhaps many more yet to be invented. Each would require a separate synctex.
+-->
+<p><li> Math4ht has many parameters controlling its operation. Originally it created a large number of small pictures for  mathematical equations, and the web page displayed these pictures. It can also output MathML and many modern browsers can interprete these commands. An even nicer approach is to render mathematics using MathJax. This  is the approach recommended by the American Mathematical Society and produces very acceptable typeset equations. Users will want to create their own engines to explore the advantages of these various approaches. The TeX4ht engine uses MathJax, but an alternate engine is also provided in Inactive/TeX4ht which uses MathML. 
+</ul>
+
+<p><b>How Are HTML Engines Constructed?</b>
+<ul><li> There are exactly five new commands which can be added to engine scripts to implement features like those just presented:
+<p><ul>
+<li> !TeX-noPreview
+<li> !TEX-pdfPreview
+<li> !TEX-htmlPreview
+<li> !TEX-bothPreview
+<li> !TEX-noConsole
+</ul>
+
+<p> Each command starts with "!TEX". The little circle above is not part of the command.
+
+<p><li> These are analogues of the magic comment lines used in TeXShop source, but there are a few differences. First, the lines can appear anywhere in an Engine file, because Engine files are short and it costs nothing to search the whole file. Second, the magic lines do not have to start at the beginning of a line; they can appear anywhere in the text. It is crucial, of course, that the lines look like comments to the shell interpreter. So for standard engines, each line should be prefaced with the # comment symbol. But engines can be interpreted by a variety of tools, and the comment symbol depends on the tool being used. That is why the actual magic comments can start anywhere on the page.
+
+<p><li> The standard behavior of TeXShop still applies if an engine has none of these lines. After executing all lines of the engine, TeXShop looks in the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window, unless the Option Key is depressed.
+
+<p><li> If the line "!TeX-noPreview" is present, no preview window appears even if some of the other lines are also present.
+
+<p><li> Otherwise if the lines "!TEX-pdfPreview" and or "!TEX-bothPreview" are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window.
+
+<p><li> If the lines "!TEX-htmlPreview" and or "!TEX-bothPreview" are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ".html". If so, it opens this html file in the HTML Window.
+
+<p><li> The line "!TEX-noConsole" suppresses showing the console. It is unlikely that this line will be used with any  engine except the one which processes html code.
+</ul>
+<p><b> TeX User Group Conferences </b>
+<p> Next I claim the privilege of interrupting this change document to write a blog post. Apologies.
+<p> The TeX User Group (TUG) was founded in 1980, shortly after the appearance of TeX.  It publishes a journal, <i> TUGboat,</i> three times a year and  creates the distribution <i> TeX Live</i>, which works on almost all computer platforms. TeX Live is created in collaboration with  similar TeX User Groups in other countries. TUG holds an annual meeting each year, sometimes in the U.S. and sometimes abroad.
+
+<p> In 2001 after MacOS X was released, I was invited to speak at the national TUG conference in Delaware by Wendy McKay; TUG offered to pay my way. I knew almost nothing about TUG, but imagined a conference of  2,000 users. We would meet in a large auditorium and listen to talks on solving common typesetting issues. Perhaps 100 Mac people would be there, excited to hear anything about MacOS X.
+
+<o> When I got to Delaware, I discovered that there were 45 people at the conference and almost every one was on the program. They paid their own way. I sheepishly refunded the travel money back to TUG.  There were only three or four Mac folks, but they all became significant in my life. 
+
+<p>Wendy worked for Jerrold Marsden at CalTech. Marsden was a leading authority in classical mechanics, and is the author of many well known mathematical textbooks. He used a Macintosh to write  mathematics very rapidly, and invited  TeX experts to CalTech to solve TeX problems. Among these was Ross Moore from Australia, who was also at the Delaware conference. He knows more deep facts about LaTeX than  anyone I know, and has often spoken at TUG conferences. He is currently working on accessibility for pdf documents written with LaTeX. Hans Hagen, author of ConTeXt, was also at Delaware.
+
+<p> Delaware had a special honored guest,  Hàn Thế Thành. His <i> pdftex </i> program added code to Knuth's TeX which output pdf files rather than  dvi files. His project was absolutely crucial for TeXShop because otherwise I'd have to make a dvi viewer, far beyond my capabilities. 
+
+<p>Thành came from Vietnam and his pdftex work was part of his PhD thesis  from Masaryk University, Brno, Czech Republic.
+He talked about that thesis at the conference, beginning with a detailed image of a page from the Gutenberg bible. This remarkably beautiful page had absolutely straight right margins. But when you measured with a ruler, they turned out not to be straight; instead commas and periods were pushed slightly into the margin, creating the illusion of a straight side. In his thesis, 
+Thành added that ability to pdfTeX and pdfLaTeX. 
+
+<p> I began my talk in Delaware by installing TeX onto a new MacOS X machine using Gerben Wierda's installer. In the process, the Finder crashed and I spent ten seconds restarting it. After the talk, a participant said to me "I'm not interested in your program, but it is amazing that you could restart the Finder without rebooting the machine." 
+
+<p> I have been to many TUG conferences. In Hawaii, the organizers pulled us out to look at the sunset because Mercury was  visible close to the horizon. A few days later they pulled us out at noon because on that one day at that one time, the Sun was directly overhead.  In a recent conference at Palo Alto, I met my collaborator Yusuke Terada, from Japan, for the first time. Shortly after we met, I looked over his shoulder at another participant, and  asked Terada "do you know who that is?" It was Donald Knuth.
+
+<p> Already in Delaware, there were talks about XML. The speakers  directly typed XML code during their talks, and the indentation grew and grew until it was two pages right of the original margin. It took me several years to understand the goal of these talks. XML is easily parsed by computers and LaTeX is not. Authors submit papers to publishers already formatted in a personal way, but the publishers need to reformat these articles to conform to the standard of a journal or book series. This can be done automatically by computers if the paper is in XML, but requires work by hand for articles in LaTeX.  All well and good, but I stopped paying attention to XML talks. 
+
+<p> There were also pessimistic talks by famous figures in the TeX world, predicting that TeX would be dead in another five years. Most of these talks were from England, and I gradually realized that many speakers had jobs in the Open University system. For these jobs, they didn't want to produce static articles, but rather interactive documents allowing students to input information and try experiments. Their students  had iPads and other portable machines and worked remotely. HTML web documents were much more useful than static LaTeX documents. Eventually I stopped listening to these talks as well.
+
+<p>In my little corner of the world, TeX had created a revolution. Our mathematics department used to employ three secretaries to type mathematical manuscripts. They are gone. Today if you go into a mathematician's office, there will be a computer running LaTeX and a chalk board. Research is done with these two devices and immediately typeset and sent to collaborators in Europe. All of our PhD students use TeX for quizzes and exams, and when we hired younger hot shots as Assistant Professors, they required graduate students to submit homework written in LaTeX.  If research articles in some other field must be in Microsoft Word, that's their problem, not mine.
+
+<p><b>Covid and Reconsidering TUG Talks</b>
+
+<p> Then Covid hit. Luckily I'm retired, but I watched my mathematical colleagues switch to remote teaching with only a week's notice. I don't know how they did it. Gradually I realized that those pessimistic talks contained an important message. 
+
+<p> Some of my colleagues at the University of Oregon switched to PreTeXt to write lecture notes; I'll describe that project in a moment, but suffice it to say that one goal of that project is to allow authors to write interactive material which can be accessed over the web. Authors write using XML. Perhaps I should have listened to those talks after all.
+
+<p> Here's my "dream setup for the future." A faculty member would write lecture notes in LaTeX. These notes would be typeset by an engine which outputs both pdf and html. The pdf document would contain the course in final polished form, so students could look back at the clear logical direction of the lectures. The html document would contain interactive material: movies, questions with student input, etc., so students would be actively involved, even if working remotely.
+
+<p> The  HTML Preview window has been added to support software that already exists, but even more to encourage new software which makes things  easier for authors.
+
+<p> Maybe PreTeXt will be the answer for interactive documents. Maybe an extended version of TeX4ht will be the tool of choice. Maybe projects not yet invented will rise to the top. It is likely that several solutions will ultimately emerge.
+
+<p><b>PreTeXt, a Project Worth Keeping an Eye On: </b>
+
+<p> At the 2014 TUG conference in Portland, Oregon, I heard a talk by Robert Beezer of the University of Puget Sound on Mathbook XML. A former PhD student of mine named Tom Judson was converting a textbook he had published into the new interactive XML format.  I talked to Beezer, but the conversation soon switched to a description of how Beezer and Judson met, which was via very serious bicycling in France.
+
+<p> A couple of years later, I found myself in a group of alumni of the University of Oregon,  wearing suits and talking about possible donations. As rapidly as possible, I retreated to the mathematics building where people wearing jeans talked about mathematics. One of the faculty members there asked if I knew anything about PreTeXt, a way of writing interactive mathematics that he and other faculty were using. I didn't, but I looked it up on the internet. Turns out, Beezer's project had been renamed. 
+
+<p> PreTeXt is an interesting project. The central idea is that authors enter  formatting commands using a special form of XML. But mathematics is entered in standard LaTeX form, so writing documents is quite straightforward and not nearly as verbose as documents entirely in XML. The source is then translated into other formats using XSL. In this way, PDF, HTML, EPUB and other versions can be created automatically from the source. All of this is described very clearly on the web site
+<a href="https://pretextbook.org">https://pretextbook.org</a>
+
+<p>In 2019, I spent a considerable amount of time revising TeXShop so it would be useful in this project. I added some new engines for PreTeXt,  provided appropriate syntax coloring for XML documents, and made other changes.
+
+<p> In the Covid years I lost track of the project. When I recently returned, I discovered that several changes have been made in the PreTeXt project and  TeXShop's PreTeXt engines no longer worked. So the material in ~/Library/TeXShop/Engines/Inactive/PreTeXt has been completely revised for version 5.00 of TeXShop. A new engine is included which shows the PreTeXt source in the Source Window  and the HTML output in the HTML window. This means that interactive features can be tested while the source is being written. Another engine provides  the PDF Preview in one window and HTML Preview in a second window so the two can be compared.
+
+<p> An enormous advantage of PreTeXt over  similar projects is that substantial effort is devoted to interactive elements. It is all well and good to argue that html output allows interaction, but this is only useful if authors have easy access to many different ways to interact with  readers; these cannot be scattered over the internet, but  must be gathered together and curated by someone. 
+
+<p> PreTeXt is a good example of a project which creates html files containing interactive elements. But it is a complicated project. To give it a try, go to  the folder mentioned in the previous paragraph and read the document "PreTeXt with TeXShop", which explains how to download the project and typeset several example files provided in the download.
+
+<p><b>Another Look at TeX4ht</b>
+
+<p> When writing this version of TeXShop, I used a small one page document to test TeX4ht. Then one night I woke up in the middle of the night and thought "I need to test a real document." So I picked a 35 page set of lecture notes with lots of png and jpeg illustrations, tables, and extensive mathematics and added just one line saying "typeset me with TeX4ht".  I hesitated briefly thinking "this may crash the program, or else it will take a long, long time to typeset." Then I pushed the typeset button.
+
+<p> Typesetting took only a few seconds, two windows appeared on the screen, one contained  pdf output supplied by pdflatex and one contained  html output supplied by TeX4ht. This HTML view had illustrations, mathematics, tables, everything. Amazing.
+
+<p> An hour later, I realized that the "iftex" package makes it possible to write source with different outcomes in the pdf and html windows. So I added "\usepackage{iftex}" to the header and wrote the following source text:
+<pre>
+	\ifpdf
+	     We'll include a static image, but in the browser you can see a movie here.
+	\else
+	     To understand this point, run the following movie
+	\fi
+</pre>
+	
+<p> The two preview windows had different text at that point.
+
+<p> My dream system requires more. In the html window, I want to write html code. So I need a new directive. Let us call it
+"beginHTML". Typical source code would then be
+<pre>
+	\ifpdf
+	     Here is the initial frame of a movie illustrating this point %and then code to display a jpg
+	\else
+	     \beginHTML
+	       -- html code to embed an actual movie --
+	     \endHTML
+	\fi
+</pre> 
+	
+<p> At this point, Karl Berry called my attention to the \HCode command in TeX4ht. Sure enough, it worked. For example, the following code fragment typesets fine:
+<pre>
+	\ifpdf
+		Here is the initial frame of a movie.
+	\else
+		\HCode{
+		-- a piece of html code; in this Changes document, the code is interpreted by html 
+		-- and you will see the result rather than the source code! --
+		Rather than <b> explaining </b> the new features, I'll demonstrate. Here's a link:
+		<A HREF="HumboldtTalk.pdf"> Slides: Dirac's Belt Trick, Quaternions, and the iPad </A> }
+	\fi
+</pre>
+	
+<p> But HCode has severe limitations. It can only accept a single paragraph, and TeX4ht itself embeds the text
+in a tag pair of p's. Only html source which can be embedded in a paragraph will be accepted. I could not, for instance, display a graphic this way.  I may not entirely understand HCode, so some of these things may  be possible.
+
+<p> Later I discovered that I could open the html file generated by TeX4ht and just copy/paste straight html code from various of my web pages into the output. This always worked fine, and I could do the more complicated tasks I desire.
+
+<p>This suggests that TeX4ht could be modified by adding a new command similar to HCode, say  HFullCode. This command would directly insert the material between { and } into the html document. It would not surround the insertion with a tag pair of p's and would preserve line breaks. I don't know if this is possible or will be done.
+
+<!--
+<p> I so not know if such an addition is possible. Even if it is, someone would have to collect together a large collection of snippets of html code which create a sufficient library of interactive elements. I cannot do that because I'm an html amateur. Are there any volunteers?
+-->
+
+<p> However, there is an  alternate way to provide interactive html content. Since TeX4ht projects can contain links, the pieces of interactive content can be placed on separate html pages. And since TeXShop supports authoring and Web preview of such separate pages, writing them could be part of a single workflow. 
+
+<p> Of course links could also be embedded in the pdf file, but this feels psychologically wrong. Students should think of the pdf as the polished final version of a course, to be read like an article or book. Students should think of the html version as an interactive document, asking questions, trying experiments, teaching how mathematics is actually created.  Reading it would be a typical web experience, where it is natural to follow links to further material.
+
+<p> One major problem is that interactive content will often contain mathematical equations. So those extra html pages need to contain mathematics. For author sanity those mathematical equations should be input using LaTeX notation and rendered using MathJax. The MathJax web site seems to suggest that this is possible, but I don't yet understand the details.
+
+<p> So let my final word repeat an earlier sentiment. Maybe PreTeXt will be the answer for interactive documents. Maybe TeX4ht will be the tool of choice. Maybe projects not yet invented will rise to the top, and several solutions will ultimately emerge.
+
+<p><b>Epilogue:</b>
+<p> Version 5.00 of TeXShop introduces two new features. First, TeXShop can display isolated web pages directly within the program using  "Show HTML Window." And second, TeXShop can preview html output of engines exactly as it now previews pdf output.  The first of these  is a sort of trick with limited utility, and the second is the key new ability.
+
+<p>  I can imagine use cases of the first feature. Suppose you are writing a document which is a response  to a currently active web page. You could load this web page with "Show HTML Window" to make it constantly available as you write, freeing Safari for random browsing.
+
+<p> However, there is an important difference between the way TeXShop opens PDF documents and the way it opens Web pages. When TeXShop opens a PDF file, it appears in an independent window on the screen, not tied to any project currently being edited. But when TeXShop opens a Web page, it uses a window from the active project. This is the same window that the project will use if it has to preview html output. 
+
+<o> When you use TeXShop for conventional LaTeX projects, it is fine to open an occasional active Web page with "Show HTML Window". But if you use TeXShop for projects which directly create html output, using "Show HTML Window" is not a good idea.
+
+</ul>
+
+
+<P><h5>TeXShop Changes 4.80 - 4.99</h5></P>
+
+These versions were never released.
 <P><h5>TeXShop Changes 4.79</h5></P>
 Two issues are addressed:
 <ul>

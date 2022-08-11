@@ -285,6 +285,8 @@ NSString *MatrixPanelPath = @"~/Library/TeXShop/MatrixPanel";
 NSString *BinaryPath = @"~/Library/TeXShop/bin";
 NSString *EnginePath = @"~/Library/TeXShop/Engines";
 NSString *EngineInactivePath = @"~/Library/TeXShop/Engines/Inactive";
+NSString *HTMLHelpPath = @"~/Library/TeXShop/HTML";
+NSString *HTMLInactivePath = @"~/Library/TeXShop/HTML/Inactive";
 NSString *ExternalEditorScriptsPath = @"~/Library/TeXShop/ExternalEditorScripts";
 NSString *ScriptsPath = @"~/Library/TeXShop/Scripts";
 NSString *NewPath = @"~/Library/TeXShop/New";
@@ -352,6 +354,11 @@ NSString *SyntaxColorEntryLineKey = @"SyntaxColorEntryLine";
 NSString *FixVoiceOverKey = @"FixVoiceOver";
 NSString *DisplayAsBookKey = @"DisplayAsBook";
 NSString *AlternateEngineKey = @"AlternateEngine";
+NSString *HtmlWindowNameKey = @"HtmlWindowName";
+NSString *HtmlWindowPosModeKey = @"HtmlWindowPosMode";
+NSString *HtmlWindowFixedPosKey = @"HtmlWindowFixedPos";
+NSString *HtmlHomeKey = @"HtmlHome";
+
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
 

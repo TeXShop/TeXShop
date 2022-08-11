@@ -377,6 +377,15 @@
 				  toPath:[EngineInactivePath stringByStandardizingPath]];
 	}
     
+    if (! [fileManager fileExistsAtPath: [HTMLHelpPath stringByStandardizingPath]] ){
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/HTML"]
+              toPath:[HTMLHelpPath stringByStandardizingPath]];
+        }
+    else if (needsUpdating) {
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/HTML/Inactive"]
+                  toPath:[HTMLInactivePath stringByStandardizingPath]];
+    }
+    
     if (! [fileManager fileExistsAtPath: [ExternalEditorScriptsPath stringByStandardizingPath]] ){
         [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/ExternalEditorScripts"]
               toPath:[ExternalEditorScriptsPath stringByStandardizingPath]];

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+% !TEX TS-program = html
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>TeXShop</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <style type="text/css" media="screen">@import "v1.css";</style>
+</head>
+
+<body style="padding:25px">
+
+
+<!-- main content -->
+<div id="main">
+<P><h3>TeXShop Changes 4.80</h3></P>
+Version 4.80 is a major new release of TeXShop. But
+<ul>
+<li> When typesetting traditional documents, there are no changes. Most users will see nothing new until they read this document.
+<p><li> New features do not work on Ventura, although the program runs fine there. I suspect this is a minor issue with a nib file, but will not investigate until this version is complete on Monterey.
+</ul>
+Rather than immediately explaining the new features, I'll demonstrate one addition. In the Preview menu, there are two new items labeled "Show HTML Window" and "Save HTML Window Position". Select the first item. A new window will appear looking like a Safari window and displaying HTML content. 
+
+<p>The Apple API's used by TeXShop contain a class called WKWebKitView
+which implements a web view for any standard Macintosh program. The new  HTML Window in TeXShop was created that way. Notice that the links in this page are active, so while the HTML code for the initial page is contained in TeXShop, it is easy to get to web pages that are live on the  web. Toolbar arrows allow you to move back and forth between pages. Almost all web features are active in this window.
+
+<p> A URL field at the top of the new window allows you to navigate to any web page you like. Unlike Safari, this field does not do Google searches, and it is very strict about syntax, so if the URL you type is not precisely correct, nothing may happen. The toolbar also contains a Search Field, but it is not currently active.
+
+<p> The HTML Window behaves like the Source and Preview windows. Move it to a reasonable position, probably on the right side of the screen,  give it a reasonable size, and then choose the menu item "Save HTML Window Position."
+After that, the window will always appear in the selected position.
+
+<p> In TeXShop Preferences under the Preview tab, there are new items for the HTML Window. If you fill in the "HTML Home URL" item with the URL of a significant web page, that page will appear rather than the TeXShop default page when selecting "Show HTML Window".
+
+<p> All this is well and good, but Safari does the same thing with much more support in the interface. So what's the point?
+
+<p> <b> A Short Essay on NSDocument: </b>  TeXShop is constructed using the NSDocument class in the Cocoa APIs. It has a nib file containing all the graphical elements used by a typical document, and source code files which process that document. When I program TeXShop I  imagine that it only opens and processes one document at a time;  the text in the source window will always be the source for that  document, and the view in the preview window will always be the pdf  for that document. All of the extra code to handle multiple documents is provided automatically by Cocoa.
+
+
+</ul>
+
+
+
+
+
+<br />
+<hr />
+<p> 
+Richard Koch   <br />
+Department of Mathematics <br />
+University of Oregon   <br />
+Eugene, Oregon 97403 <br />
+</p>
+
+</div>
+
+</body>
+</html>

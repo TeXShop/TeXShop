@@ -1,40 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>name</key>
-	<string>ROOT</string>
-	<key>submenu</key>
-	<array>
-		<dict>
-			<key>content</key>
-			<string>--applescript direct
-property sort_output : false-- If false, displays labels in the order they're found in the document.-- Otherwise, displays them in alphabetical order.property save_before_run : true-- The script only finds labels created in saved documents. If you don't want this script to save your document before it runs for whatever reason, set this to true.
---Adapted from Will Robertson's Insert Reference by Michael Sharpe, 2012
---THE SCRIPT:set tid to Applescript's text item delimiters
-set docname to #DOCUMENTNAME#if docname is equal to "" then	display dialog "No document---bailing out."	returnend ifif save_before_run then	tell application "TeXShop" to save docnameend ifset texpath to #FILEPATH#set texfiles_tosearch to the quoted form of the texpath -- search the current fileset q1 to display dialog "Choose from labels containing text:" default answer "" buttons {"Cancel", "Go"} default button "Go"if the button returned of q1 is "Go" then	set current_selection to text returned of q1else	return -- exit scriptend if-- DO SHELL SCRIPT COMPONENTS:set find_label_lines to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep '\\\\label{' ") as stringset trim_to_raw_labels to " | /usr/bin/sed 's/.*\\\\label{//' | /usr/bin/sed 's/}.*//'"set filter_selection to ""if (count of current_selection) &gt; 0 then	set filter_selection to " | /usr/bin/grep -i " &amp; quoted form of the current_selectionend ifif sort_output then	set sort to " | /usr/bin/sort -u"else	set sort to ""end if-- glue the shell scripts together:set get_labels_shell_script to find_label_lines &amp; trim_to_raw_labels &amp; sort
-
-try	-- filter choices with the current selection:	set s to (do shell script get_labels_shell_script &amp; filter_selection)
-	set choose_labels to every paragraph of son error	-- If it fails (e.g., nothing found) ask to diplay all labels:
-          if (count of current_selection) &gt; 0 then	    display dialog "No labels found that contain '" &amp; the current_selection &amp; "'. Would you like to view the whole list?" buttons {"Cancel", "View all"} default button "View all"	    if the button returned of the result is "View all" then	   	set s to (do shell script get_labels_shell_script)		set choose_labels to every paragraph of s	    else		return -- exit script	    end if
-        end ifend try-- In case the document doesn't contain any labels:if (count of choose_labels) is 0 then	display dialog "Sorry, no \\label{} items have been found." buttons {"OK"} default button "OK"	returnend if
-
-set label_chosen to choose from list choose_labels with prompt "Please choose from names of matching labels:"if label_chosen ≠ false then
-   --set find_label_line to ("/bin/cat " &amp; texfiles_tosearch &amp; " | /usr/bin/tr '\\r' '\\n'  | /usr/bin/grep -n '\\\\label{" &amp; label_chosen &amp;"}'") as string
-   --set s to (do shell script find_label_line)
-   --set Applescript's text item delimiters to ":"
-   --set j to item 1 of (s as list)
-   --set Applescript's text item delimiters to tid
-   set j to 7+(count of (item 1 of label_chosen))
-   tell application "TeXShop" --to tell document docname to goto line j
-            set i to search document docname for "\\label{" &amp; label_chosen &amp; "}" starting from 1
-            set offset of selection of document docname to i
-            set length of selection of document docname to j
-            tell application "System Events" to tell process "TeXShop" to keystroke (ASCII character 28) using {shift down}
-    end tellend if</string>
-			<key>name</key>
-			<string>Goto label</string>
-		</dict>
-	</array>
-</dict>
-</plist>

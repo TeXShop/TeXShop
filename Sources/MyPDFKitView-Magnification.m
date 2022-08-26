@@ -20,6 +20,14 @@
     // Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
     // and the old routine has problems in all of these places.
     
+    // If the user has magnified the image and then uses the magnifying glass, TeXShop creates an
+    // enormous image of the current page. This requires several gigabytes of memory, slows the program
+    // and leads to crashes. So we refuse to use the magnifying glass if rhe current magnification is
+    // more than 256 (fix on August 18, 2022)
+    
+    if (self.scaleFactor > 2.5)
+        return;
+    
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
         //        [self doMagnifyingGlassML: theEvent level:level] ;
         return;

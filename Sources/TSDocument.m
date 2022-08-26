@@ -737,7 +737,7 @@ NSInteger strSort(id s1, id s2, void *context)
 	[[aTextView textContainer] setWidthTracksTextView:YES];
 	[aTextView setDelegate:self];
 	[aTextView setAllowsUndo:YES];
-	[aTextView setRichText:YES]; // was NO
+	[aTextView setRichText:NO]; // was NO
 	[aTextView setUsesFontPanel:YES];
     [aTextView setFontSafely:[NSFont userFontOfSize:12.0]];
 	// [aTextView setTextColor: foregroundColor];
@@ -1708,6 +1708,8 @@ in other code when an external editor is being used. */
 	NSString		*stringObject;
 	
 	if (([extension isEqualToString: @"tex"]) || ([extension isEqualToString: @"TEX"])
+        || ([extension isEqualToString: @"html"])
+        || ([extension isEqualToString: @"HTML"])
 		|| ([extension isEqualToString: @"dtx"]) || ([extension isEqualToString: @"ins"])
 		|| ([extension isEqualToString: @"sty"]) || ([extension isEqualToString: @"cls"])
 		|| ([extension isEqualToString: @"Rnw"])

@@ -84,7 +84,7 @@
     
     scrapTextView.document = self;
     [scrapTextView setAllowsUndo: YES];
-    [scrapTextView setRichText: YES];
+    [scrapTextView setRichText: NO];
     [scrapTextView setAutomaticQuoteSubstitutionEnabled:NO];
     [scrapTextView setAutomaticLinkDetectionEnabled:NO];
     [scrapTextView setAutomaticDashSubstitutionEnabled:NO];

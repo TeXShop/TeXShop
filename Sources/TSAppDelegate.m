@@ -617,6 +617,8 @@
                       @"tex",
                       @"ltx",
                       @"ctx",
+                      @"html",
+                      @"xml",
                       @"texi",
                       @"mp",
                       @"sty",
@@ -656,8 +658,7 @@
                       @"glog",
                       @"gaux",
                       @"sh",
-                      @"xml",
-                      nil];
+                       nil];
     
     commandsToSpellCheck = [[NSArray alloc] initWithObjects:
                     @"\\emph",
@@ -1066,6 +1067,8 @@
 		@"TEX",
 		@"txt",
 		@"TXT",
+        @"html",
+        @"HTML",
 		@"bib",
 		@"mp",
 		@"ins",

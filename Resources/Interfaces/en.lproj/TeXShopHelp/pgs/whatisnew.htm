@@ -14,6 +14,39 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.01</h5></P>
+Recall that ~/Library/TeXShop stores user configuration files: templates, typesetting engines, macros, etc. Because users will modify the contents of most folders, TeXShop does not rewrite them during updates. But a few folders <i>are</i>  rewritten. Users can edit typesetting engines,  so ~/Library/TeXShop/Engines is not modified. But Engines/Inactive is a collection of alternate engines, and that folder is completely rewritten each time you update TeXShop so it contains the very latest versions of these unused engines.
+
+<p> If you think a folder is out of date, you can throw it away or move it to the desktop. The next time TeXShop runs, it will rewrite that folder using default values. 
+
+<p> On rare occasions it is advisable to modify a file in a folder whose contents you can edit. In those cases, the required modification is described in "About This Release" in the TeXShop Help Menu. Theoretically users will read "About This Release" every time they upgrade the program. Usually it will say that no changes are needed.
+
+<p> One special folder, ~/Library/TeXShop/New, is completely rewritten each time TeXShop is updated. For several years I kept old material in that folder, just in case. In version 5.01 I cleaned that folder and it now contains only two folders required for version 5.01 and explained in "About This Release".
+
+<p> Now on to other issues. The following changes were made:
+<ul>
+<li> When first writing a file to disk, a dialog allows you to choose the name and location of the file. The dialog has a pull-down menu allowing you to choose a file extension; the default extension is ".tex". This dialog now allows ".html" as an alternate extension.
+<p><li> TeXShop has keyboard shortcuts to enlarge or shrink the source text. They are "command-plus" and "command-minus", but neither requires the shift key. Unfortunately, at some point in the past it became necessary to "select-all" before issuing these commands. This is no longer necessary and the shortcuts again work by themselves. 
+<p><li>A small number of users ran into a memory management problem in TeXShop. The program suddenly required a large amount of memory to run, up to 4 gigabytes.
+
+<p>  I converted TeXShop from manual memory management to "automatic reference counting" many years ago. In this system, memory management is mostly done automatically by the Apple API's. So while  memory issues can appear, they are  rare. 
+
+<p> This particular problem turned out to be triggered by selecting a high magnification for the preview window, and then using the magnifying glass. To protect against the problem, the magnifying glass will now only work when the magnification level of the preview image is below 250. Otherwise nothing will happen when you use the  glass. If you want to inspect an area at very high magnification, use a pinch gesture to magnify as much as you like.
+
+<p> An explanation may be useful. When TeXShop magnifies, it first constructs a hidden image of the entire active page of the pdf display. If the page being displayed has been highly magnified, only a small portion of the page will appear on the screen, but the offscreen image must contain that entire page, and that can require a gigantic amount of memory. 
+</ul>
+
+TeXShop 5.00 and 5.01 contain new features to facilitate the creation of classroom material which combines the clear logical treatment of a set of pdf notes with the interactive features of a rough and tumble classroom and web experience: experiments, movies, question and answer sessions, and the like. You won't notice these changes unless I point them out. So I constructed an example project and an elaborate document that explains how that project was created.
+I'm hoping that most TeXShop users will read that document and work their way through the example project.
+
+<p> The example  adds about a megabyte to the size of TeXShop, but the elaborate document explaining it has lot of pictures and size almost 10 megabytes. Where could I put it? I decided to put it in ~/Library/TeXShop/New.  This increases the size of the TeXShop download by about 10 megabytes. But in a few months after the example has been distributed, it will be removed from New and we'll be back to the old download size.
+
+<p> I recommend that after installing TeXShop 5.01, you go to TeXShop's "TeXShop menu" and select
+"Open ~/Library/TeXShop." Open the "New" folder and copy the complete folder named "Demo" to your home directory or another place you save TeX projects. 
+
+<p> When you have a little time, go to that Demo folder. Read the short file "Preparing-for-the-Demo". The last paragraph will explain what to do next. Good luck.
+
+
 <P><h5>TeXShop Changes 5.00</h5></P>
 Version 5.00 is a major new release of TeXShop. But when typesetting traditional documents, there are no changes. Most users will see nothing new until they read this document. 
 

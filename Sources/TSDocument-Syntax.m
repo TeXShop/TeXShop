@@ -744,8 +744,9 @@ static BOOL isValidTeXCommandChar(NSInteger c)
         layoutManager = [aTextView layoutManager];
         textString = [aTextView string];
         
-        
-        if (self.syntaxColor)
+        [self removeCurrentLineColor: aTextView];
+        /*
+       if (self.syntaxColor)
             [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:[aTextView visibleCharacterRange]];
         else
             {
@@ -753,7 +754,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             fullRange.length = [textString length];
             [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:fullRange];
             }
-         
+        */
         
         mySelectedLineRange = [aTextView selectedRange];
         [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];

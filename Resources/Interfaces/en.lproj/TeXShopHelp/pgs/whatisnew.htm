@@ -14,6 +14,23 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.02</h5></P>
+TeXShop 5.01 came with a demo source file and support document explaining how to create web projects with interactive elements using TeXShop 5 and TeX4ht. Within days of releasing the program, I discovered a much better way to create these documents. In the new method, the interactive pieces of the document, which are written in html, can be written directly in the source code for TeX4ht, and the resulting web page can be read linearly with interactive elements following other text in the main document.
+
+<p> The demo source and support document have been revised to reflect this discovery. That is the main reason that TeXShop 5.02 has been released. As before, after installation go to ~/Library/TeXShop/New and copy the Demo folder to your home directory or another place you store TeX source files. When you have time, open this folder and follow the instructions inside.
+
+<p> Two other issues are addressed:
+<ul>
+<li> The code to color the input line in the source window had a minor bug. If the user issued a "select All" command and then cancelled it by clicking in a source line, the selectAll coloring was cancelled in the visible region, but scrolling revealed traces of it in other text. Repaired.
+
+<li><p> To fix a memory issue, TeXShop 5 refuses to open the magnifying glass if the pdf file has a magnification level above 250. One user complained, so there is now a hidden preference:
+<pre>
+     defaults write TeXShop GlassMaxMagnification 300
+</pre>
+The default value is 250 and any choice above that is asking for trouble.
+</ul>
+
+
 <P><h5>TeXShop Changes 5.01</h5></P>
 Recall that ~/Library/TeXShop stores user configuration files: templates, typesetting engines, macros, etc. Because users will modify the contents of most folders, TeXShop does not rewrite them during updates. But a few folders <i>are</i>  rewritten. Users can edit typesetting engines,  so ~/Library/TeXShop/Engines is not modified. But Engines/Inactive is a collection of alternate engines, and that folder is completely rewritten each time you update TeXShop so it contains the very latest versions of these unused engines.
 

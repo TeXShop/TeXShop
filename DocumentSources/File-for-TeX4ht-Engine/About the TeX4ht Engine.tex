@@ -20,7 +20,7 @@
 \maketitle
 %\section{}
 %\subsection{}
-TeX4ht is a program by Eitan M. Gurari which uses a standard LaTeX source file as input, but outputs an html file. After Gurari died in 2009, other developers stepped up to maintain the program, and it is in very active development today. 
+TeX4ht is a program by Eitan M. Gurari which uses a standard LaTeX source file as input, but outputs an html file. After Gurari died in 2009, other developers stepped up to maintain the program, and it is in very active development today. The principal developer is Michal Hoftich.
 
 The file TeX4ht.engine is an engine file for this project which works in TeXShop 5.00 and higher. To use it, drag TeX4ht.engine to the active  area $\sim$/Library/TeXShop/Engines. 
 
@@ -33,9 +33,30 @@ By adding the following magic line to the top of the source file, the TeX4ht eng
 
 The folder containing this document also contains a short demonstration. Copy the folder named ``Example'' to your home directory or location for TeX source files, and typeset the document Sample.tex inside. Then compare the pdf and html outputs. Resize the windows and notice their different behavior. Add extra material and typeset again to verify that both views update. The sample file contains a web link. Click this in both the pdf and html windows and notice their different behavior.
 
-Math4ht has many parameters controlling its operation. Originally it created a large number of small pictures for  mathematical equations, and the web page displayed these pictures. It can also output MathML and many modern browsers can interprete these commands. An even nicer approach is to output html which is interpreted by MathJax. This  is the approach recommended by the American Mathematical Society and produces very acceptable typeset equations. Users will want to create their own engines to explore the advantages of these various approaches.
+Math4ht has many parameters controlling its operation. Originally it created a large number of small pictures for  mathematical equations, and the web page displayed these pictures. It can also output MathML and let the browser interpret those commands. The command to do that is given below, where ``\$1'' adds a full path to the source file:
+\begin{verbatim}
+     make4ht "$1" "mathml,mathml"
+\end{verbatim}
+TeX4ht can also output MathML, but render the output with MathJax. The command for that is
+\begin{verbatim}
+     make4ht "$1" "mathml,mathjax"
+\end{verbatim}
+Finally, TeX4ht can output ordinary LaTeX code for mathematics and render the output with MathJax. The command for that is
+\begin{verbatim}
+     make4ht "$1" "mathjax"
+\end{verbatim}
+Three engines are provided in this folder for these three approaches. They are called TeX4htOnlyMathML.engine,
+TeX4htMathML.engine, and TeX4ht.engine. 
 
-Two engines are provided in this folder. The engine TeX4ht uses MathJax. The engine TeX4ht-MathML uses MathML. 
+
+I experimented with the last three variations.
+Asking the browser to render MathML was the worse choice; the results were acceptable but nothing to brag about. Outputting MathML but calling MathJax to render it worked very well. Outputting Latex code and asking MathJax to render it worked well for inline code, but produced displayed equations which were too large.
+However, this problem was fixed by Michal Hoftich one day after I wrote him about it in an email. So if you have updated TeX Live with TeX Live Utility on or after September 1, 2022, I recommend the third option. That is the reason that particular engine is just called TeX4ht.engine.
+
+Even if you do not have the updated TeX4ht, the third option can work once you understand why I ran into trouble. Recall that inline mathematics can be created using a pair of \$ signs, or by the paired symbols \textbackslash ( and \textbackslash ). 
+Similarly display mathematics can be created using a pair of \$\$ signs, or by the paired symbols  \textbackslash [ and \textbackslash ]. TeX4ht  understands both conventions. 
+
+Before September 1, TeX4ht in the third mode  inserted LaTeX code for display formulas written using the \textbackslash [ and \textbackslash ] pair, but produced a picture for display formulas written using a pair of \$\$. As of September 1, 2022, it inserts LaTeX code in both cases.
 
 
 

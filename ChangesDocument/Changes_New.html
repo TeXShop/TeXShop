@@ -17,6 +17,22 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 5.02</h3></P>
+TeXShop 5.01 came with a demo source file and support document explaining how to create web projects with interactive elements using TeXShop 5 and TeX4ht. Within days of releasing the program, I discovered a much better way to create these documents. In the new method, the interactive pieces of the document, which are written in html, can be written directly in the source code for TeX4ht, and the resulting web page can be read linearly with interactive elements following other text in the main document.
+
+<p> The demo source and support document have been revised to reflect this discovery. That is the main reason that TeXShop 5.02 has been released. As before, after installation go to ~/Library/TeXShop/New and copy the Demo folder to your home directory or another place you store TeX source files. When you have time, open this folder and follow the instructions inside.
+
+<p> Two other issues are addressed:
+<ul>
+<li> The code to color the input line in the source window had a minor bug. If the user issued a "select All" command and then cancelled it by clicking in a source line, the selectAll coloring was cancelled in the visible region, but scrolling revealed traces of it in other text. Repaired.
+
+<li><p> To fix a memory issue, TeXShop 5 refuses to open the magnifying glass if the pdf file has a magnification level above 250. One user complained, so there is now a hidden preference:
+<pre>
+     defaults write TeXShop GlassMaxMagnification 300
+</pre>
+The default value is 250 and any choice above that is asking for trouble.
+</ul>
+
 <P><h3>TeXShop Changes 5.01</h3></P>
 Recall that ~/Library/TeXShop stores user configuration files: templates, typesetting engines, macros, etc. Because users will modify the contents of most folders, TeXShop does not rewrite them during updates. But a few folders <i>are</i>  rewritten. Users can edit typesetting engines,  so ~/Library/TeXShop/Engines is not modified. But Engines/Inactive is a collection of alternate engines, and that folder is completely rewritten each time you update TeXShop so it contains the very latest versions of these unused engines.
 
@@ -45,7 +61,7 @@ I'm hoping that most TeXShop users will read that document and work their way th
 <p> The example  adds about a megabyte to the size of TeXShop, but the elaborate document explaining it has lot of pictures and size almost 10 megabytes. Where could I put it? I decided to put it in ~/Library/TeXShop/New.  This increases the size of the TeXShop download by about 10 megabytes. But in a few months after the example has been distributed, it will be removed from New and we'll be back to the old download size.
 
 <p> I recommend that after installing TeXShop 5.01, you go to TeXShop's "TeXShop menu" and select
-"Open ~/Library/TeXShop." Open the "New" folder and copy the complete folder named "Demo" to your home directory or another place you save TeX projects. 
+"Open ~/Library/TeXShop." Open the "New" folder and copy the complete folder named "Demo" to your home directory or another place you save TeX projects. If you rename this folder, make sure the name contains no spaces.
 
 <p> When you have a little time, go to that Demo folder. Read the short file "Preparing-for-the-Demo". The last paragraph will explain what to do next. Good luck.
 
@@ -106,7 +122,7 @@ The Changes document you are currently reading was written in html and later con
 
 <p> TeXShop 5.00 has a  facility to help users like me. In the Help menu, there is a new item labeled "HTML Commands." This item brings up an html file listing appropriate tasks and the correct tags to implement the task. Each item also contains a short sample showing how the tag will actually be used. Unfortunately, this help document is written in html source code, so it is difficult to read. But the source can be typeset. Push command-T and you'll see a page that is easy to read.
 
-<p> There is  more. The help document can be edited and the changes will automatically be saved. So when you need a  command not listed, look it up usig Google and then add that example to the help file.  This facility is essential because the initial document provided in TeXShop doesn't list many commands.
+<p> There is  more. The help document can be edited and the changes will automatically be saved. So when you need a  command not listed, look it up using Google and then add that example to the help file.  This facility is essential because the initial document provided in TeXShop doesn't list many commands.
 
 <p><li> The actual source for the help document is contained in a new directory ~/Library/TeXShop/HTML, and the actual document is named "Help.html". This folder can also contain support files. It currently contains an image "topdot.jpg" used by Help.html and a few other support files, and you can add similar support files. 
 

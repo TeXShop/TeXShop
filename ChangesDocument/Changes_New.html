@@ -17,6 +17,18 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 5.03</h3></P>
+After the release of version 5.02, a few small problems  emerged, particularly in the demo program. I made corrections on my web page without changing the version number, so if you downloaded early, you might have  small flaws and if you downloaded later, you don't. Two larger problems were reported and fixed the same way.
+
+<p> Now that the program is stable, it is time to bring everyone up to date. I do not expect further TeXShop updates for a couple of months, fingers crossed. Here are the two important bugs:
+<ul>
+<li> A pulldown menu in the Save Dialog allows users to change the extension of the saved file. This menu was out of sync by one element after the first four items.  So if you selected an extension, you got the previous extension in the list. This is fixed.
+<p><li> One user complained that the cursor occasionally vanishes and TeXShop must  be restarted to get it back. I cannot reproduce this bug. The Cocoa APIs contain a class named NSCursor which has two relevant commands: [NSCursor hide] and [NSCursor unhide]. It is, of course, important that calls to these routines be paired up so the cursor is not left hidden at the end. XCode can search the complete TeXShop code base; the search revealed that these cursor routines are only called in TeXShop during the operation of the magnifying glass. 
+
+<p> My routine had extra code to insure that the routines were called in pairs, but the final unhide was not protected in the same way. I added that protection. I don't know if the extra code is necessary because I cannot reproduce the bug, but it cannot hurt.
+</ul>
+
+
 <P><h3>TeXShop Changes 5.02</h3></P>
 TeXShop 5.01 came with a demo source file and support document explaining how to create web projects with interactive elements using TeXShop 5 and TeX4ht. Within days of releasing the program, I discovered a much better way to create these documents. In the new method, the interactive pieces of the document, which are written in html, can be written directly in the source code for TeX4ht, and the resulting web page can be read linearly with interactive elements following other text in the main document.
 
@@ -67,6 +79,7 @@ I'm hoping that most TeXShop users will read that document and work their way th
 
 
 <P><h3>TeXShop Changes 5.00</h3></P>
+
 Version 5.00 is a major new release of TeXShop. But when typesetting traditional documents, there are no changes. Most users will see nothing new until they read this document. 
 
 <p> Rather than immediately explaining the new features, I'll demonstrate one addition. Make sure a document is open in TeXShop or an empty source window created by the "New" menu item is visible.  In the Preview menu, there is an item labeled "Show HTML Window". Select this item. A  window will appear looking like a Safari window and displaying HTML content. 

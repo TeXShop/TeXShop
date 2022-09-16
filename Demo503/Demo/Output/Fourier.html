@@ -1,0 +1,1006 @@
+<!DOCTYPE html> 
+<html lang="en-US" xml:lang="en-US" > 
+<head><title>Dirichlet’s Theorem</title> 
+<meta  charset="utf-8" /> 
+<meta name="generator" content="TeX4ht (https://tug.org/tex4ht/)" /> 
+<meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<link rel="stylesheet" type="text/css" href="Fourier.css" /> 
+<meta name="src" content="Fourier.tex" /> 
+<script>window.MathJax = { tex: { tags: "ams", }, }; </script> 
+ <script type="text/javascript" async="async" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>  
+</head><body 
+>
+ <script src="https://sagecell.sagemath.org/static/embedded_sagecell.js"></script>
+<script>
+    // Make the div with id 'mycell' a Sage cell
+    sagecell.makeSagecell({inputLocation:  '#mycell',
+                               template:       sagecell.templates.minimal,
+                              evalButtonText: 'Activate'});
+    // Make *any* div with class 'compute' a Sage cell
+    sagecell.makeSagecell({inputLocation: 'div.compute',
+                              evalButtonText: 'Evaluate'});
+    </script>
+ 
+<div class="maketitle">
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+
+<h2 class="titleHead">Dirichlet’s Theorem</h2>
+<div class="author" ><span 
+class="cmr-12">Richard Koch</span></div>
+<br />
+<div class="date" ><span 
+class="cmr-12">August 30, 2022</span></div>
+</div>
+<h3 class="sectionHead"><span class="titlemark">1   </span> <a 
+ id="x1-10001"></a>Waves</h3>
+<!--l. 65--><p class="noindent" >A <span 
+class="cmti-10x-x-109">wave </span>is a periodic function \(f(x)\). This means that there is a fixed \(p\), called a <span 
+class="cmti-10x-x-109">period of </span>\(f\), and for all \(x\)
+we have \(f(x + p) = f(x)\). We can change the period by an easy renormalization, so from now on all waves have
+period \(2 \pi \).
+</p><!--l. 67--><p class="noindent" >Obviously \(\sin (x)\) is periodic; that is why we fixed \(2 \pi \) as the period. Notice that \(\sin (kx)\) also has this period for
+any integer \(k\).
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 71--><p class="noindent" ><img 
+src="Graphics/sin1.png" alt="PIC"  
+width="144" height="144"  />               <img 
+src="Graphics/sin2.png" alt="PIC"  
+width="144" height="144"  />               <img 
+src="Graphics/sin3.png" alt="PIC"  
+width="144" height="144"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 75--><p class="noindent" >Given one wave \(f\), we can obtain new waves by translation. This is called <span 
+class="cmti-10x-x-109">changing the phase</span>.
+Thus \(f(x - \delta )\) has phase \(\delta \).
+</p><!--l. 78--><p class="noindent" >The sum of waves is another wave. So we can obtain very general waves using formulas of the
+form \[\sum _{k = 0}^\infty A_k \sin (kx - \delta _k)\]
+</p><!--l. 81--><p class="noindent" >In the early part of the 1800’s, the great French mathematician Fourier declared that every wave
+can be uniquely written in this way. Moreover, given a wave, Fourier discovered an easy way to
+calculate the numbers \(A_k\) and \(\delta _k\). These numbers are called the <span 
+class="cmti-10x-x-109">amplitudes </span>and <span 
+class="cmti-10x-x-109">phases </span>of the wave
+harmonics.
+</p><!--l. 84--><p class="noindent" >The \(k = 0\) term in this formula is a constant and not very important. The \(k = 1\) term is the crucial term,
+giving the <span 
+class="cmti-10x-x-109">fundamental frequency </span>of the wave. If we are dealing with a sound wave, this
+determines the note that we hear. The higher terms represent the <span 
+class="cmti-10x-x-109">harmonics </span>of the wave:
+additional higher notes making up the sound. If \(k = 1\) represents a low C, the harmonics start an
+octave higher and give the notes \(C, G, C', E', G', B^{\flat '}, C''\) etc. These harmonics determine the quality of the sound, so we
+can distinguish the same note played by a flute, oboe, trumpet, etc. The human ear ignores the
+phases.
+</p><!--l. 86--><p class="noindent" >Fourier led an interesting life. During Napoleon’s invasion of Eqypt, he was the secretary of the
+academic branch of the army. While the rest of the army was doing whatever armies do, the
+academic branch was making tracings of hieroglyphics. Eventually the English threw the French
+out of Egypt, but the academic branch published those tracings and for the first time scholars in
+the West had specific examples of hieroglyphics instead of vague pictures. This eventually led to
+the decipherment of hieroglyphics.
+</p><!--l. 88--><p class="noindent" >Fourier’s assertion about waves was immediately challenged by Cauchy and others.
+They pointed out that the sine function is continuous and differentiable and thus only
+continuous and differentiable waves could be so represented. But many significant
+waves do not have these properties, including the square wave, the sawtooth wave, and
+others.
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 92--><p class="noindent" ><img 
+src="Graphics/square.png" alt="PIC"  
+width="144" height="144"  />               <img 
+src="Graphics/sawtooth.png" alt="PIC"  
+width="144" height="144"  />               <img 
+src="Graphics/wedge.png" alt="PIC"  
+width="144" height="144"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 96--><p class="noindent" >Cauchy had written a book on analysis, which contained the theorem that if \(f_k(x)\) are continuous
+functions and \(f(x) = \sum _{k = 1}^\infty f_k(x)\), then \(f(x)\) is also continuous. Cauchy’s proof was somewhat vague, and significantly
+did not contain the hypothesis that convergence is uniform. When Cauchy read Fourier’s
+manuscript, he advised Fourier not to publish because the book was not rigorous and contained
+false results. An academic discussion then began in France over the correct way to describe
+general waves.
+</p><!--l. 98--><p class="noindent" >But as sometimes happens in mathematics, the discussion was cut short by a spectacular
+theorem of Dirichlet, published in 1829. Dirichlet proved that the Fourier series of a piecewise
+differentiable function always converges pointwise to the function. So Fourier was correct and the
+theorem in Cauchy’s book was wrong. This led to the discovery of uniform convergence of series
+and far greater rigor in the subject. Over a century later, the University of Chicago published a
+“great books” series, with books by Plato, Aristotle, Darwin, Freud, and many others. Fourier’s
+book was in that series.
+</p>
+<h3 class="sectionHead"><span class="titlemark">2   </span> <a 
+ id="x1-20002"></a>Piecewise Differentiable Functions</h3>
+<!--l. 102--><p class="noindent" >So far we have put no restrictions on our functions. Arbitrary functions can be ugly: nowhere
+continuous, nowhere differentiable, not integrable, etc. So we restrict to a class of functions that
+contains all the waves discussed so far, and yet allows us to do standard calculations
+rigorously.
+</p><!--l. 104--><p class="noindent" >A function \(f(x)\) defined on the entire real line is said to be <span 
+class="cmti-10x-x-109">piecewise differentiable </span>if for any finite
+interval \([a, b] \subset R\), the interval can be broken into a union of finitely many subintervals \([a, x_1], [x_1, x_2], \ldots , [x_n, b]\) such that \(f\)
+restricted to each subinterval \([x_i, x_{i + 1}]\) is differentiable. If \(f\) is periodic, it suffices to break the interval \([0, 2 \pi ]\) into
+subintervals in this way.
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 108--><p class="noindent" ><img 
+src="Graphics/jumps.png" alt="PIC"  
+width="144" height="144"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 111--><p class="noindent" >The above picture shows the idea; this graph has three differentiable pieces. However, more needs
+to be said about the behavior at the endpoints of the subintervals.
+</p><!--l. 113--><p class="noindent" >We say that \(f(x)\) is differentiable on the interval \([x_k, x_{k + 1}]\) if there is a differentiable function \(g(x)\) on a larger open
+interval which agrees with \(f\) on \((x_k, x_{k + 1})\) and thus on the interval except perhaps at the endpoints. Thus in
+the definition of piecewise differentiability, functions are allowed to have discontinuities at the
+division points. The values they take at these points can be entirely arbitrary. But there is a
+natural “left value” by taking the limit of \(f(x)\) as \(x\) approaches the division point from the left, and a
+natural “right value” by taking the limit of \(f(x)\) as \(x\) approaches the division point from the
+right, and indeed one-sided derivatives exist at these division points by using these
+values.
+</p><!--l. 116--><p class="noindent" >Nothing in the following sections depends on the value of \(f\) at points of discontinuity. We will
+assume in this article that \(f\) is assigned the average of its value from the left and its value from
+the right at these points.
+</p>
+<h3 class="sectionHead"><span class="titlemark">3   </span> <a 
+ id="x1-30003"></a>A Slight Variation</h3>
+<!--l. 121--><p class="noindent" >In the previous section we used \(\sin (kx)\) but never mentioned \(\cos (kx)\). The reason is that \(\sin \) and \(\cos \) vary only by a
+phase: \[\sin (kx + {\pi / 2} ) = \sin (kx) \cos (\pi / 2) + \cos (kx) \sin (\pi / 2) = \cos (kx)\]
+</p><!--l. 125--><p class="noindent" >We can use this result to eliminate phases entirely at the cost of adding cosine terms. We get
+slightly nicer formulas by writing our original assertion using cosines rather than sines. So \[f(x) = \sum _{k = 0}^\infty \cos (kx - \delta _k)\] Now
+notice that \[\cos (kx - \delta _k) = \cos (kx) \cos (\delta _k) + \sin (kx) \sin (\delta _k) = a_k \cos (kx) + b_k \sin (kx)\] Here \[a_k = A_k \cos \delta _k\] \[b_k = A_k \sin \delta _k\] These are exactly the formulas which translate rectangular coordinates to
+polar coordinates in the plane. So if you know \(a_k\) and \(b_k\), plot the point \((a_k, b_k)\). Then \(A_k\) is the distance
+from this point to the origin and \(\delta _k\) is its angle. Going the other direction is just as
+easy.
+</p><!--l. 134--><p class="noindent" >Therefore instead of writing a Fourier series as we previously did, we can write \[f(x) = {{a_0} \over 2} + \sum _{k = 1}^\infty \Big ( a_k \cos (kx) + b_k \sin (kx) \Big )\]
+</p><!--l. 137--><p class="noindent" >Mathematicians always use this variation. Physicists prefer the first one because the Amplitude
+and Phrase have physical meaning. It is trivial to go back and forth between the two
+variants.
+</p><!--l. 139--><p class="noindent" >In the special case \(k = 0\), the term \(\cos (kx)\) is \(1\) and the term \(\sin (kx)\) is zero and thus the term \(a_k \cos (kx) + b_k \sin (kx)\) is just some constant.
+We call this constant \({a_0} \over 2\) rather than \(a_0\) for a reason that will soon be apparent.
+                                                                                  
+                                                                                  
+</p><!--l. 142--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">4   </span> <a 
+ id="x1-40004"></a>Complex Notation</h3>
+<!--l. 144--><p class="noindent" >We are about to explain Fourier’s amazing formula giving the \(a_k\) and \(b_k\) directly in terms of \(f(x)\). This
+formula involves just a little trigonometry. But we are lazy. Trigonometry becomes a lot easier if
+we use complex numbers, so we’ll do that.
+</p>
+<div class="newtheorem">
+<!--l. 147--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Definition</span><span 
+class="cmbx-10x-x-109"> 1</span> </span><span 
+class="cmti-10x-x-109">If</span> \(x\) <span 
+class="cmti-10x-x-109">is a real number, then </span>\[e^{ix} = \cos x + i \sin x\]
+</p>
+</div>
+<!--l. 149--><p class="noindent" >
+</p><!--l. 151--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>This result is a theorem in most complex variable courses. But for these lectures we can
+take it as the definition of \(e\) to a purely imaginary power. The sole reason for introducing this
+definition is that \[e^{i(x + y)} = e^{ix} e^{iy}\] Moreover, this formula is just the <span 
+class="cmti-10x-x-109">addition formulas </span>from trigonometry, as the
+short proof below shows. But the addition formulas are complicated and messy, while this
+exponential formula is easy.
+</p><!--l. 155--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>\begin {align*}  e^{i(x + y)} &amp;= \cos (x + y) + i \sin (x + y) \\ &amp;= \left ( \cos x \cos y - i \sin x \sin y \right ) + i \left ( \sin x \cos y + i \cos x \sin y \right ) \\ &amp;= \left ( \cos x + i \sin x \right ) \ \left ( \cos y + i \sin y \right )\\ &amp;= e^{ix} \ e^{iy}  \end {align*}
+</p><!--l. 163--><p class="noindent" >In complex notation, the formula for a Fourier series becomes \[f(x) = \sum _{k = - \infty }^\infty c_k e^{ikx}\] where \(x\) is still real, but \(f(x)\) is allowed
+to take complex values and the \(c_k\) are complex numbers.
+</p><!--l. 167--><p class="noindent" >We are about to state Fourier’s formula computing the \(a_k\) and \(b_k\) once \(f(x)\) is known. We’ll work first over
+the complex numbers where the algebra is much easier, and then we’ll give the easy translation
+to the real case.
+</p><!--l. 170--><p class="noindent" >
+                                                                                  
+                                                                                  
+</p>
+<h3 class="sectionHead"><span class="titlemark">5   </span> <a 
+ id="x1-50005"></a>The Orthogonality Relations</h3>
+<div class="newtheorem">
+<!--l. 174--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 1</span> </span><span 
+class="cmti-10x-x-109">If</span> \(k\) <span 
+class="cmti-10x-x-109">and</span> \(l\) <span 
+class="cmti-10x-x-109">are integers,</span>
+</p><!--l. 176--><p class="noindent" >\[\left . {1 \over {2 \pi }} \int _{- \pi }^\pi e^{ikx} \overline {e^{ilx}}\ dx = \right \{ \begin {array}{ll} 0 &amp; \mbox {if $k \ne l$} \\ \\ 1 &amp; \mbox {if $k = l$} \end {array}\]
+</p>
+</div>
+<!--l. 177--><p class="noindent" >
+</p><!--l. 179--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>The integrand is \(e^{ikx}e^{-ilx} = e^{i(k -l)}x\) and so the integral is \(\left .{1 \over {2 \pi }} {{e^{i(k -l)x}} \over {i(k -l)}} \right |_{-\pi }^\pi \). This expression is zero because \(e^{i(k -l)x}\) takes the same
+value at \(-\pi \) and \(\pi \). Indeed \(\cos (k - l) x\) and \(\sin (k - l)x\) are periodic of period \(2 \pi \).
+</p><!--l. 181--><p class="noindent" >This argument fails if \(k = l\) because we cannot divide by zero. But in that case \(e^{ikx} \overline {e^{ikx}} = e^{ikx} e^{-ikx} = e^0 = 1\) and the integral is
+\({1 \over {2 \pi }} \int _{- \pi }^\pi 1 \ dx = 1.\)
+</p><!--l. 183--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>By periodicity, we could just as well integrate from \(0\) to \(2 \pi \). It is traditional to integrate
+from \(-\pi \) to \(\pi \).
+</p><!--l. 185--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">6   </span> <a 
+ id="x1-60006"></a>Fourier’s Amazing Formula for \(c_k\)</h3>
+<div class="newtheorem">
+<!--l. 187--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 2</span><span 
+class="cmbx-10x-x-109"> (Fourier)</span> </span><span 
+class="cmti-10x-x-109">The</span> \(c_k\) <span 
+class="cmti-10x-x-109">are given by </span>\[c_k = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) e^{- i k x} \ dx\]
+</p>
+</div>
+<!--l. 190--><p class="noindent" >
+</p><!--l. 192--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof</span>: Suppose \(f(x) = \sum _{m = - \infty }^\infty c_m e^{imx}\). Multiply by sides by \(\overline {e^{i k x}}\) to obtain \[f(x) \overline {e^{ikx}} = \sum _{m = - \infty }^\infty c_m e^{imx} \overline {e^{ikx}}\] Integrate both sides from \(- \pi \) to \(\pi \) and assume it is
+legal to integrate term by term, to obtain \[{1 \over {2 \pi }} \int _{- \pi }^\pi f(x) \overline {e^{ikx}} \ dx = \sum _{m = - \infty }^\infty c_m {1 \over {2 \pi }} \int _{- \pi }^\pi e^{i m x} \overline {e^{ikx}}\ dx\] By the orthogonality relations, the integrals
+                                                                                  
+                                                                                  
+on the right are zero when \(m \ne k\) and one when \(m = k\). So the above formula collapses to give \[{1 \over {2 \pi }} \int _{- \pi }^\pi f(x) \overline {e^{ikx}} \ dx = c_k\]
+QED.
+</p><!--l. 200--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>Our worry about the rigor of integrating this series term by term will eventually be
+unimportant. We will simply define the \(c_k\) by this formula and then prove directly that the
+resulting series converges to \(f\).
+</p><!--l. 202--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">7   </span> <a 
+ id="x1-70007"></a>Fourier’s Amazing Formula for the \(a_k\) and \(b_k\)</h3>
+<div class="newtheorem">
+<!--l. 204--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 3</span> </span><span 
+class="cmti-10x-x-109">Suppose</span> \(f(x)\) <span 
+class="cmti-10x-x-109">takes real values. Then the</span> \(c_k\) <span 
+class="cmti-10x-x-109">computed using Fourier’s formula</span>
+<span 
+class="cmti-10x-x-109">satisfy</span>
+                                         \[c_{-k} = \overline {c_k}\]
+</p>
+</div>
+<!--l. 207--><p class="noindent" >
+</p><!--l. 209--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof </span>Conjugate the formula \(c_k = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) e^{- i k x} \ dx\). Since \(f\) is real valued, it does not change, and so the only change on
+the right side is that \(e^{-i k x}\) becomes \(\overline {e^{- i k x}} = e^{i k x}\) and thus \(k\) changes sign. QED.
+</p>
+<div class="newtheorem">
+<!--l. 214--><p class="noindent" ><span class="head">
+                                                                                  
+                                                                                  
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 4</span><span 
+class="cmbx-10x-x-109"> (Fourier)</span> </span><span 
+class="cmti-10x-x-109">If</span> \(f(x)\) <span 
+class="cmti-10x-x-109">takes real values and we write </span>\[f(x) = {{a_0} \over 2} + \sum _{k = 1}^\infty \left ( a_k \cos (kx) + b_k \sin (kx) \right )\] <span 
+class="cmti-10x-x-109">then </span>\[a_k = {1 \over \pi } \int _{- \pi }^\pi f(x) \cos (kx) \ dx \hspace {.5in} b_k = {1 \over \pi } \int _{- \pi }^\pi f(x) \sin (kx)\] <span 
+class="cmti-10x-x-109">and </span>\[c_k = {1 \over 2} \left ( a_k - i b_k \right )\]
+</p>
+</div>
+<!--l. 221--><p class="noindent" >
+</p><!--l. 223--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>We work in reverse. We have \[c_k = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) e^{- ikx} \ dx = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) \left ( \cos (kx) - i \sin (kx) \right ) \ dx\] \[ = {1 \over 2} \left ( a_k - i b_k \right )\] Then \begin {align*}  f(x) &amp;= \sum _{- \infty }^\infty c_k e^{ikx} \\ &amp;= \sum _{- \infty }^\infty {1 \over 2} \left ( a_k - i b_k \right ) \left ( \cos (kx) + i \sin (kx) \right ) \\ &amp;= {{a_0} \over 2} + {1 \over 2} \sum _{k = -1}^{-\infty } \left ( a_k - i b_k \right ) \left ( \cos (kx) + i \sin (kx) \right ) + {1 \over 2} \sum _{k = 1}^\infty \left ( a_k - i b_k \right ) \left ( \cos (kx) + i \sin (kx) \right ) \\ &amp;= {{a_0} \over 2} + {1 \over 2} \sum _{k = 1}^{\infty } \overline {\left ( a_k - i b_k \right )} \overline { \left ( \cos (kx) + i \sin (kx) \right ) }+ {1 \over 2} \sum _{k = 1}^\infty \left ( a_k - i b_k \right ) \left ( \cos (kx) + i \sin (kx) \right )\\ &amp;= {{a_0} \over 2} + \Re \Big [ \sum _{k = 1}^\infty \left ( a_k - i b_k \right ) \left ( \cos (kx) + i \sin (kx) \right ) \Big ] \\ &amp;= {{a_0} \over 2} + \sum _{k = 1}^\infty \left ( a_k \cos (kx) + b_k \sin (kx) \right )  \end {align*}
+</p><!--l. 236--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>In treatments which avoid complex numbers, the orthogonality relations are
+proved directly for products of two sine, for products of a sin and a cosine, and for
+products of two cosines, and then Fourier’s argument involving integrating term by
+term is applied twice, once multiplying both sides by a sin, and once multiplying by a
+cosine.
+</p><!--l. 238--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">8   </span> <a 
+ id="x1-80008"></a>Example</h3>
+<!--l. 240--><p class="noindent" >Apply these formulas to the square wave defined by \(f(x) = -1\) for \(- \pi &lt; x &lt; 0\) and \(f(x) = 1\) for \(0 &lt; x &lt; \pi \).
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 244--><p class="noindent" ><img 
+src="Graphics/squarewave.png" alt="PIC"  
+width="216" height="216"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 249--><p class="noindent" >Then each \(a_k = 0\) because \(f(x)\) is odd and \(\cos kx\) is even and the left and right integrals cancel. The \(b_k\) can be
+computed by integrating from \(0\) to \(\pi \) and multiplying by \(2\) since \(f\) and \(\sin kx\) are odd and so their product is
+even. We obtain \[b_k = {2 \over \pi } \int _0^\pi \sin kx \ dx = \left . {2 \over {k \pi }} \left (- \cos kx\right ) \right |_0^\pi = {2 \over {k \pi }} \left ( (-1)^{k + 1} + 1 \right )\]
+</p><!--l. 253--><p class="noindent" >So all terms are zero except \(b_k = {4 \over {k \pi }}\) for \(k\) odd. We conclude that \[f(x) = {4 \over \pi } \left (\sin x + {1 \over 3} \sin 3x + {1 \over 5} \sin 5x + \ldots \right )\] Substitute \(x = {\pi \over 2}\) in this formula to obtain \(1 = {4 \over \pi } \left (1 - {1 \over 3} + {1 \over 5} - \ldots \right )\)
+and thus Leibniz’ famous result \[{\pi \over 4} = 1 - {1 \over 3} + {1 \over 5} - \ldots \]
+</p>
+<h3 class="sectionHead"><span class="titlemark">9   </span> <a 
+ id="x1-90009"></a>Interactive Experiments</h3>
+<!--l. 266--><p class="noindent" >Below are the interactive experiments from the original Fourier project. </p>
+
+<h3>Elementary Constructions</h3>
+
+<p> We can have <b> bold type </b> and <i>italic text </i> and stuff like that.
+
+<pre>
+     This is an example
+     And so is this
+     And also this
+</pre>
+
+<h3> Calling Sage</h3>
+
+<p> Sage is a fantastic project from the University of Washington.
+to provide an open source program able to do mathematical calculations and display the result. A server exists to perform Sage calculations over the internet. Thus none of the examples below require a local copy of Sage. These examples were copied from Sage documentation; see
+<A HREF="https://wiki.sagemath.org/"> https://wiki.sagemath.org/</A></p> and also <A HREF="https://www.sagemath.org"> https://www.sagemath.org</A></p>
+
+                                                                                  
+                                                                                  
+<h4>Your own computations</h4>
+
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+    plot(sin(x), (x, 0, 2*pi))
+    </script></div>
+
+  <h4>Factorial</h4>
+  Click the Activate button below to calculate factorials.
+    <div id="mycell"><script type="text/x-sage">
+@interact
+def _(a=(1, 10)):
+    print(factorial(a))
+ </script>
+</div>
+
+<h4>Using Sage in 3D</h4>
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+x, y = var('x,y')
+plot3d(sin(x^2 - y^2), (x,-2, 2), (y,-2,2))
+</script></div>
+
+<h4>A Sage Computation</h4>
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+u, v = var('u,v')
+                                                                                  
+                                                                                  
+sage: fx = (3+sin(v)+cos(u))*cos(2*v)
+sage: fy = (3+sin(v)+cos(u))*sin(2*v)
+sage: fz = sin(u)+2*cos(v)
+sage: parametric_plot3d([fx, fy, fz], (u, 0, 2*pi), (v, 0, 2*pi),
+....:   frame=False, color="red")
+</script></div>
+
+<h4>A Different Sage Computation</h4>
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+#Plots Feigenbaum diagram: divides the parameter interval [2,4] for mu
+#into N steps. For each value of the parameter, iterate the discrete
+#dynamical system x->mu*x*(1-x), drop the first M1 points in the orbit
+#and plot the next M2 points in a (mu,x) diagram
+
+N=200
+M1=200
+M2=200
+x0=0.509434
+
+puntos=[]
+for t in range(N):
+   mu=2.0+2.0*t/N
+   x=x0
+   for i in range(M1):
+        x=mu*x*(1-x)
+   for i in range(M2):
+                                                                                  
+                                                                                  
+        x=mu*x*(1-x)
+        puntos.append((mu,x))
+point(puntos,pointsize=1)
+
+</script></div>
+
+<h4>A Calculus Course Experiment</h4>
+Here is an example by Nick Alexander (based on the work of Marshall Hampton)
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+var('x')
+@interact
+def midpoint(f = input_box(default = sin(x^2) + 2, type = SR),
+    interval=range_slider(0, 10, 1, default=(0, 4), label="Interval"),
+    number_of_subdivisions = slider(1, 20, 1, default=4, label="Number of boxes"),
+    endpoint_rule = selector(['Midpoint', 'Left', 'Right', 'Upper', 'Lower'], nrows=1, label="Endpoint rule")):
+
+    a, b = map(QQ, interval)
+    t = var('t')
+    func = fast_callable(f(x=t), RDF, vars=[t])
+    dx = ZZ(b-a)/ZZ(number_of_subdivisions)
+
+    xs = []
+    ys = []
+    for q in range(number_of_subdivisions):
+         if endpoint_rule == 'Left':
+             xs.append(q*dx + a)
+                                                                                  
+                                                                                  
+         elif endpoint_rule == 'Midpoint':
+             xs.append(q*dx + a + dx/2)
+         elif endpoint_rule == 'Right':
+             xs.append(q*dx + a + dx)
+         elif endpoint_rule == 'Upper':
+             x = find_local_maximum(func, q*dx + a, q*dx + dx + a)[1]
+             xs.append(x)
+         elif endpoint_rule == 'Lower':
+             x = find_local_minimum(func, q*dx + a, q*dx + dx + a)[1]
+             xs.append(x)
+    ys = [ func(x) for x in xs ]
+
+    rects = Graphics()
+    for q in range(number_of_subdivisions):
+         xm = q*dx + dx/2 + a
+         x = xs[q]
+         y = ys[q]
+         rects += line([[xm-dx/2,0],[xm-dx/2,y],[xm+dx/2,y],[xm+dx/2,0]], rgbcolor = (1,0,0))
+         rects += point((x, y), rgbcolor = (1,0,0))
+    min_y = min(0, find_local_minimum(func,a,b)[0])
+    max_y = max(0, find_local_maximum(func,a,b)[0])
+
+    pretty_print(html('<h3>Numerical integral with the {} rule</h3>'.format(endpoint_rule)))
+    show(plot(func,a,b) + rects, xmin = a, xmax = b, ymin = min_y, ymax = max_y)
+
+    def cap(x):
+         # print only a few digits of precision
+                                                                                  
+                                                                                  
+         if x < 1e-4:
+             return 0
+         return RealField(20)(x)
+    sum_html = "%s \\cdot \\left[ %s \\right]" % (dx, ' + '.join([ "f(%s)" % cap(i) for i in xs ]))
+    num_html = "%s \\cdot \\left[ %s \\right]" % (dx, ' + '.join([ str(cap(i)) for i in ys ]))
+
+    numerical_answer = integral_numerical(func,a,b,max_points = 200)[0]
+    estimated_answer = dx * sum([ ys[q] for q in range(number_of_subdivisions)])
+
+    pretty_print(html(r'''
+    <div class="math">
+    \begin{align*}
+    \int_{a}^{b} {f(x) \, dx} & = %s \\\
+    \sum_{i=1}^{%s} {f(x_i) \, \Delta x} & = %s \\\
+    & = %s \\\
+    & = %s . \end{align*} </div>'''
+                        % (numerical_answer, number_of_subdivisions, sum_html, num_html, estimated_answer)))
+</script></div>
+
+<h4>A Taylor Series Example</h4>
+Here is an example by Harald Schilly
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+var('x')
+x0  = 0
+f   = sin(x)*e^(-x)
+p   = plot(f,-1,5, thickness=2)
+                                                                                  
+                                                                                  
+dot = point((x0,f(x=x0)),pointsize=80,rgbcolor=(1,0,0))
+@interact
+def _(order=[1..12]):
+    ft = f.taylor(x,x0,order)
+    pt = plot(ft,-1, 5, color='green', thickness=2)
+    pretty_print(html(r'$f(x)\;=\;%s$'%latex(f)))
+    pretty_print(html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$'%(x0,latex(ft),order+1)))
+    show(dot + p + pt, ymin = -.5, ymax = 1)
+</script></div>
+
+<h4>The Witch of Maria Agnesi</h4>
+By  Marshall Hampton
+Type your own Sage computation below and click Evaluate.
+    <div class="compute"><script type="text/x-sage">
+xtreme = 4.1
+myaxes = line([[-xtreme,0],[xtreme,0]],rgbcolor = (0,0,0))
+myaxes = myaxes + line([[0,-1],[0,2.1]],rgbcolor = (0,0,0))
+a = 1.0
+t = var('t')
+npi = RDF(pi)
+def agnesi(theta):
+    mac = circle((0,a),a,rgbcolor = (0,0,0))
+    maL = line([[-xtreme,2*a],[xtreme,2*a]])
+    maL2 = line([[0,0],[2*a*cot(theta),2*a]])
+    p1 = [2*a*cot(theta),2*a*sin(theta)^2]
+    p2 = [2*a*cot(theta)-cot(theta)*(2*a-2*a*sin(theta)^2),2*a*sin(theta)^2]
+    maL3 = line([p2,p1,[2*a*cot(theta),2*a]], rgbcolor = (1,0,0))
+                                                                                  
+                                                                                  
+    map1 = point(p1)
+    map2 = point(p2)
+    am = line([[-.05,a],[.05,a]], rgbcolor = (0,0,0))
+    at = text('a',[-.1,a], rgbcolor = (0,0,0))
+    yt = text('y',[0,2.2], rgbcolor = (0,0,0))
+    xt = text('x',[xtreme + .1,-.1], rgbcolor = (0,0,0))
+    matext = at+yt+xt
+    ma = mac+myaxes+maL+am+matext+maL2+map1+maL3+map2
+    return ma
+
+def witchy(theta):
+    ma = agnesi(theta)
+    agplot = parametric_plot([2*a*cot(t),2*a*sin(t)^2],[t,.001,theta], rgbcolor = (1,0,1))
+    return ma+agplot
+
+a2 = animate([witchy(i) for i in srange(.1,npi-.1,npi/60)]+[witchy(i) for i in srange(npi-.1,.1,-npi/60)], xmin = -3, xmax = 3, ymin = 0, ymax = 2.3, figsize = [6,2.3], axes = False)
+
+a2.show()
+</script></div>
+
+<h3> Calling UTube</h3>
+
+<p> Here is a lecture by John Maynard, who recently won a Fields Prize.
+
+<iframe width="928" height="522" src="https://www.youtube.com/embed/kQqBeuk_xQw" title="13. Large gaps between primes in subsets - James Maynard (University of Oxford) [2017]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<h3>Mathematics</h3>
+                                                                                  
+                                                                                  
+
+<p> When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$</p>
+
+Also $$\int_0^\infty e^{- x^2} \ dx = {{\sqrt{\pi}} \over 2}$$
+
+And \(\alpha, \beta, \Gamma^{i_1}_{j_1 j_2}\).
+
+
+<!--l. 486--><p class="noindent" >Here is an entirely irrelevant link to the slides of a talk I once gave at Cal Poly Humboldt in
+Arcata, California: <a 
+href="https://pages.uoregon.edu/koch/HumboldtTalk.pdf" class="url" ><span 
+class="cmtt-10x-x-109">https://pages.uoregon.edu/koch/HumboldtTalk.pdf</span></a>
+</p><!--l. 488--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">10   </span> <a 
+ id="x1-1000010"></a>About PreTeXt</h3>
+<!--l. 490--><p class="noindent" >PreTeXt is an entirely separate project by Robert Beezer at the University of Puget Sound. I like
+to mention this project because it is very well designed. In PreTeXt, documents are written in
+xml with mathematical formulas written in LaTeX. The software then converts this source to
+pdf, or html, or other formats.
+</p><!--l. 492--><p class="noindent" >Beezer has gathered together several authors, who converted their textbooks from LaTeX to
+PreTeXt, adding interactive elements. When these authors desired other interactions not in
+PreTeXt, Beezer added them to PreTeXt. Thus the project is driven by real-world
+requirements.
+</p><!--l. 494--><p class="noindent" >The only reason PreTeXt is in this document is that I’d like to demonstrate that the other
+method of getting interaction by writing separate web pages still works.
+</p><!--l. 499--><p class="noindent" >This is the Minimal example from the PreTeXt distribution. <a 
+href="Interactive/Minimal/minimal.html" class="url" ><span 
+class="cmtt-10x-x-109">Interactive/Minimal/minimal.html</span></a>
+</p><!--l. 502--><p class="noindent" >
+</p>
+                                                                                  
+                                                                                  
+<h3 class="sectionHead"><span class="titlemark">11   </span> <a 
+ id="x1-1100011"></a>Dirichlet</h3>
+<!--l. 504--><p class="noindent" >Dirichlet is one of my heroes. His wife was a sister of Mendelsohn, so there was a lot of music in
+his home. After Gauss convinced Riemann to drop his plans to get a theology degree and study
+mathematics, Gauss sent him to Berlin for two years to work with Dirichlet. Dirichlet had an
+enormous influence in all of Riemann’s work.
+</p><!--l. 506--><p class="noindent" >In number theory, Dirichlet proved that infinitely many primes end in each of 1, 3, 7, 9 when
+written in base 10, and proved the corresponding result for all other bases. This result had been
+used by Legendre in an attempted proof of the law of quadratic reciprocity, but Gauss
+complained that the result was considerably deeper than the theorem Legendre proved
+with it. But Dirichlet proved that considerably deeper result. In his paper, Dirichlet
+wrote “a proof of this result is desirable, particularly since Legendre has already used
+it.”
+</p><!--l. 508--><p class="noindent" >Dirichlet’s work on harmonic differential equations and what we now call the ”Dirichlet
+principle” was profound. And finally, in Fourier theory he proved the following crucial
+result:
+</p>
+<div class="newtheorem">
+<!--l. 510--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 5</span><span 
+class="cmbx-10x-x-109"> (Dirichlet)</span> </span><span 
+class="cmti-10x-x-109">Suppose</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is a piecewise differentiable periodic function with</span>
+<span 
+class="cmti-10x-x-109">period</span> \(2 \pi \)<span 
+class="cmti-10x-x-109">. Compute the</span> \(a_k\) <span 
+class="cmti-10x-x-109">and</span> \(b_k\) <span 
+class="cmti-10x-x-109">using Fourier’s formula; this is possible because</span> \(f\) <span 
+class="cmti-10x-x-109">is certainly</span>
+<span 
+class="cmti-10x-x-109">Riemann integrable. Then the Fourier series of</span> \(f\) <span 
+class="cmti-10x-x-109">converges pointwise to</span> \(f\)<span 
+class="cmti-10x-x-109">. In particular,</span>
+<span 
+class="cmti-10x-x-109">at discontinuities of</span> \(f\) <span 
+class="cmti-10x-x-109">it converges to the average of the left and right limits of</span> \(f\) <span 
+class="cmti-10x-x-109">at the</span>
+<span 
+class="cmti-10x-x-109">singularity.</span>
+</p>
+</div>
+<!--l. 512--><p class="noindent" >
+</p><!--l. 516--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">12   </span> <a 
+ id="x1-1200012"></a>Beginning of the Proof of Dirichlet’s Theorem</h3>
+<!--l. 519--><p class="noindent" >We want to prove that the partial sums \[\sum _{-N}^N c_k e^{ikx}\] converge pointwise to \(f(x)\).
+</p><!--l. 523--><p class="noindent" >The first step is to find a more useful formula for this partial sum. This is just algebra, and it is
+                                                                                  
+                                                                                  
+very straightforward. Inserting the definition of \(c_k\), the partial sum equals \[\sum _{-N}^N \left ({1 \over {2 \pi }} \int _{- \pi }^\pi f(t) e^{-ikt} \ dt\right ) e^{ikx} = {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) \sum _{-N}^N e^{i k (x - t)} \ dt\]
+</p>
+<div class="newtheorem">
+<!--l. 526--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Definition</span><span 
+class="cmbx-10x-x-109"> 2</span> </span><span 
+class="cmti-10x-x-109">The Dirichlet kernel function is defined by </span>\[D_N(u) = \sum _{k = -N}^N e^{iku}\]
+</p>
+</div>
+<!--l. 529--><p class="noindent" >
+</p><!--l. 531--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>It follows that \[\sum _{-N}^N c_k e^{ikx} = {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) D_N(x - t) \ dt\] and we want to prove that as \(N \rightarrow \infty \), this expression has limit \(f(x)\).
+</p><!--l. 535--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">13   </span> <a 
+ id="x1-1300013"></a>A Formula for the Dirichlet Kernel</h3>
+<!--l. 537--><p class="noindent" >The second step is also algebra but the algebra is a little harder. Working with complex
+exponents makes the calculation easier. </p><div class="newtheorem">
+<!--l. 538--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 6</span> </span>\[D_N(u) = {{\sin \left (N + {1 \over 2} \right )u } \over {\sin {u \over 2}}}\]
+</p>
+</div>
+<!--l. 540--><p class="noindent" > <span 
+class="cmti-10x-x-109">Proof: </span>Multiply \(D_N(u)\) by \(e^{i {u \over 2}}\) and \(e^{-i {u \over 2}}\) to obtain the following expressions:
+</p><!--l. 544--><p class="noindent" >\[D_N(u) e^{i {u \over 2}} = \sum _{-N}^N e^{i \left (k + {1 \over 2}\right )u}\] \[D_N(u) e^{- i {u \over 2}} = \sum _{-N}^N e^{i \left (k - {1 \over 2}\right )u}\] Then subtract to get \[D_N(u) \left (e^{i {u \over 2}} - e^{- i {u \over 2}} \right ) = \sum _{-N}^N\left ( e^{i \left (k + {1 \over 2}\right )u} - e^{i \left (k - {1 \over 2}\right )u} \right ) \] But in the sum on the right, most of the terms cancel. Indeed, \(e^{i \left (k + {1 \over 2}\right )u} - e^{i \left ( (k + 1) - {1 \over 2} \right )} = 0\), so the \(k\)th
+term with positive sign cancels the \((k + 1)\)th term with negative sign. The only terms which do not
+cancel are the \(N\)th term with positive sign and the \((-N)\)th term with negative sign. We obtain \[D_N(u) \left (e^{i {u \over 2}} - e^{- i {u \over 2}} \right ) = e^{i \left ( N + {1 \over 2} \right )u} - e^{- i \left ( N + {1 \over 2} \right ) u}\]
+However, for any \(x\) we have \(e^{ix} - e^{-ix} = \left ( \cos x + i \sin x \right ) - \left ( \cos x - i \sin x \right ) = 2 i \ \sin x.\) So the previous formula can be rewritten \[D_N(u) \ 2i \ \sin {u \over 2} = 2 i \ \sin \left (N + {1 \over 2} \right ) u\] and the theorem
+immediately follows.
+</p><!--l. 555--><p class="noindent" >
+</p>
+                                                                                  
+                                                                                  
+<h3 class="sectionHead"><span class="titlemark">14   </span> <a 
+ id="x1-1400014"></a>Partial Sums for Real Fourier Series</h3>
+<!--l. 557--><p class="noindent" >Our conclusion can written in a form which doesn’t mention complex exponents. From section six
+we learn that \[{{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right ) = \sum _{k = -N}^N c_k e^{ikx}\] and from sections 7 and 8 we learn that \[\sum _{k = -N}^N c_k e^{ikx} = {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) D_N(x - t) \ dt = {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt \] This proves </p><div class="newtheorem">
+<!--l. 562--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 7</span> </span>\[{{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right ) = {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt \]
+</p>
+</div>
+<!--l. 564--><p class="noindent" >
+</p><!--l. 566--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">15   </span> <a 
+ id="x1-1500015"></a>A Picture of the Dirichlet Kernel; the Intuitive Reason Dirichlet’s Theorem Is
+True</h3>
+<!--l. 568--><p class="noindent" >The picture below shows the Dirichlet kernel when \(N = 50\).
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 572--><p class="noindent" ><img 
+src="Graphics/four.png" alt="PIC"  
+width="361" height="361"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 575--><p class="noindent" >Notice the very large peak at the origin. This is caused because both the numerator and the
+denominator of our formula for the Dirichlet kernel vanish at the origin. But for small \(x\), \(\sin x \sim x\). So
+\[{{\sin \left ( N + {1 \over 2} \right ) (x - t)} \over {\sin {{x - t} \over 2}}} \sim {{\left ( N + {1 \over 2} \right ) (x - t)} \over { {{x - t} \over 2}}}= 2N + 1\]
+</p><!--l. 578--><p class="noindent" >Everywhere else the kernel is small and oscillating. Indeed, if we stay away from the origin, then
+the denominator \(\sin {u \over 2}\) stays away from zero, and so the absolute value of the kernel is a multiple of \(\sin \left ( N + {1 \over 2}\right )u\),
+which oscillates rapidly.
+</p><!--l. 580--><p class="noindent" >When we compute the expression \[ {1 \over {2 \pi }} \int _{- \pi }^\pi f(t) {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt \] we must separate the integral into two pieces. The first piece
+will integrate over \(t\) very close to \(x\), where we have a peak. As \(N \rightarrow \infty \), the peak becomes narrower and
+narrower, sending this integral to zero, <span 
+class="cmti-10x-x-109">but </span>simultaneously the peak gets higher and higher,
+sending the integral to infinity. We will show that a sort of compromise occurs and the actual
+integral over this region approaches \(f(x)\).
+</p><!--l. 584--><p class="noindent" >But everywhere else, there are no peaks and we are integrating a fairly level function multiplied
+by a very rapidly oscillating function. When we integrate such a product, the negative regions
+and positive regions will tend to cancel out and the resulting integral should be very
+small.
+</p><!--l. 586--><p class="noindent" >Our job is now to make this intuition rigorous. We first handle integrating over \(t\) very close to \(x\),
+where the peak matters.
+</p>
+<h3 class="sectionHead"><span class="titlemark">16   </span> <a 
+ id="x1-1600016"></a>Handling the Peak</h3>
+<div class="newtheorem">
+<!--l. 591--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 8</span> </span>\[{1 \over {2 \pi }} \int _{- \pi }^\pi D_N(t)\ dt = 1\]
+</p>
+</div>
+<!--l. 593--><p class="noindent" >
+</p><!--l. 595--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>\[{1 \over {2 \pi }} \int _{- \pi }^\pi D_N(t)\ dt = \sum _{-N}^N {1 \over {2 \pi }} \int _{- \pi }^\pi e^{ikt} \ dt\] By the orthogonality relations, all of the terms in the sum on the right vanish except the
+term when \(k = 0\), which equals one.
+</p>
+                                                                                  
+                                                                                  
+<div class="newtheorem">
+<!--l. 599--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 9</span> </span><span 
+class="cmti-10x-x-109">If</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is piecewise continuous, </span>\[f(x) = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt\]
+</p>
+</div>
+<!--l. 601--><p class="noindent" >
+</p><!--l. 603--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>Notice that we are integrating with respect to \(t\), so \(f(x)\) is a constant. Consequently we can pull
+it out of the integral and cancel it from both sides. So it suffices to prove that \[1 = {1 \over {2 \pi }} \int _{- \pi }^\pi {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt\] The right hand
+side is just the Dirichlet kernel, so it suffices to prove that \[1 = {1 \over {2 \pi }} \int _{-\pi }^\pi D_N(x - t)\ dt\] Notice first that \[1 = \int _{- \pi }^\pi D_N(t) \ dt = \int _{- \pi }^\pi D_N(-t) \ dt\] because \(D_N(t) = \sum _{-N}^N e^{ikt}\) is
+symmetric across the \(y\)-axis. Notice next that \(D_N(x - t)\) is just a translation of \(D_N(-t)\). But \(D_N(-t)\) is periodic of
+period \(2 \pi \) because each \(e^{ikt}\) is periodic. If a function is periodic of period \(2 \pi \), the integral of the
+function from \(- \pi \) to \(\pi \) equals the integral of any translation of the function from \(-\pi \) to \(\pi \).
+QED.
+</p>
+<div class="newtheorem">
+<!--l. 611--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 10</span> </span><span 
+class="cmti-10x-x-109">If</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is piecewise continuous, </span>\[f(x) - \left ({{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right )\right ) = {1 \over {2 \pi }} \int _{- \pi }^\pi \Big ( f(x) - f(t)\Big ) {{\sin \left (N + {1 \over 2}\right )(x - t)} \over {\sin {{x - t} \over 2}}} \ dt\]
+</p>
+</div>
+<!--l. 613--><p class="noindent" >
+</p><!--l. 615--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>This follows immediately from theorems 7 and 9. QED.
+</p>
+<div class="newtheorem">
+<!--l. 617--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 11</span> </span><span 
+class="cmti-10x-x-109">If</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is piecewise continuous, </span>\[f(x) - \left ({{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right )\right ) = {1 \over {2 \pi }} \int _{- \pi }^\pi \Big ( f(x) - f(x + u)\Big ) {{\sin \left (N + {1 \over 2}\right )u} \over {\sin {{u \over 2}}}} \ du\]
+</p>
+</div>
+<!--l. 619--><p class="noindent" >
+</p><!--l. 621--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>Make the change of variable \(u = t - x\) in the previous formula. Notice that \(t = x + u\) and \(dt = du\). Using the identity
+                                                                                  
+                                                                                  
+\(\sin (-u) = - \sin u\), the previous result becomes the following: \[f(x) - \left ({{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right )\right ) = {1 \over {2 \pi }} \int _{- \pi - x}^{\pi - x} \Big ( f(x) - f(x + u)\Big ) {{\sin \left (N + {1 \over 2}\right )u} \over {\sin {{u \over 2}}}} \ du\] Every function of \(u\) in the integral on the right is
+periodic; in particular this holds for the Dirichlet kernel since it is a sum of periodic expressions.
+Consequently we can translate the limits of integration without changing the result.
+QED.
+</p><!--l. 625--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>The final result indeed handles the peak, for the following reason. We now have an extra
+\(f(x)\) on the left side, so instead of proving that both expressions converge to \(f(x)\), we want to prove that
+both expressions converge to zero.
+</p><!--l. 627--><p class="noindent" >In the integral on the right, instead of \(f(x + u)\) we have \(f(x) - f(x + u)\), which vanishes at the peak where \(u = 0\). This has the
+effect of cancelling out the influence of the peak, and now we only have to show that the integral
+goes to zero as \(N\) increases.
+</p><!--l. 632--><p class="noindent" >
+</p>
+<h3 class="sectionHead"><span class="titlemark">17   </span> <a 
+ id="x1-1700017"></a>Handling the Region Away from the Peak</h3>
+<!--l. 634--><p class="noindent" >We begin by reorganizing the right side of the previous formula. It equals \[ {1 \over {2 \pi }} \int _{- \pi }^\pi \left ( {{f(x) - f(x + u)} \over {u}}\right ) \left ( {{u} \over {\sin {{u} \over 2}}} \right ) \left [\cos {u \over 2} \sin Nu + \sin {u \over 2} \cos Nu \right ] \ du\] If we let \[g(u) = \left ( {{f(x) - f(x + u)} \over {u}}\right ) \left ( {{u} \over {\sin {{u} \over 2}}} \right ) \cos {u \over 2}\] and \[h(u) = \left ( {{f(x) - f(x + u)} \over {u}}\right ) \left ( {{u} \over {\sin {{u} \over 2}}} \right ) \sin {u \over 2}\] then
+our final formula is \[f(x) - \left ({{a_0} \over 2} + \sum _{k = 1}^N \left ( a_k \cos kx + b_k \sin kx \right )\right ) = {1 \over {2 \pi }} \int _{- \pi }^\pi g(u) \sin Nu \ du + {1 \over {2 \pi }} \int _{- \pi }^\pi h(u) \cos Nu \ du\]
+</p><!--l. 644--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>We are ready to describe the key step in Dirichlet’s proof. Fix a point \(x\) where \(f\) is
+differentiable. Since our function is piecewise differentiable, \(f\) will be differentiable at almost every
+point, so the argument we now give will usually work. We want to prove that the above formula
+converges to zero as \(N \rightarrow \infty \).
+</p><!--l. 646--><p class="noindent" >But notice that the functions \(g(u)\) and \(h(u)\) are piecewise continuous. Indeed, each of these expressions is
+a product of three terms. The first is piecewise differentiable (and thus piecewise continuous)
+except possibly when \(u = 0\). However, the limit of the expression as \(u \rightarrow 0\) exists because \(f\) is differentiable at
+\(x\). So the first term is continuous at \(u = 0\).
+</p><!--l. 648--><p class="noindent" >The second term is well-behaved except at \(u = 0\), but a famous result from calculus says that it also
+has a limit as \(u\) approaches zero and thus is continuous there.
+</p><!--l. 650--><p class="noindent" >So the right side of the previous formula is just the sum of the Fourier coefficients \(b_N\) for \(g\) and \(a_N\) for \(h\),
+where \(g\) and \(h\) are piecewise continuous.
+</p><!--l. 652--><p class="noindent" >This leads us to the final step in Dirichlet’s proof.
+</p><!--l. 654--><p class="noindent" >
+</p>
+                                                                                  
+                                                                                  
+<h3 class="sectionHead"><span class="titlemark">18   </span> <a 
+ id="x1-1800018"></a>The Riemann-Lebesgue Lemma</h3>
+<!--l. 656--><p class="noindent" >In this section, we will use very different ideas to prove the following result:
+</p>
+<div class="newtheorem">
+<!--l. 658--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 12</span><span 
+class="cmbx-10x-x-109"> (Riemann-Lebesque)</span> </span><span 
+class="cmti-10x-x-109">Suppose</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is a piecewise continuous function on</span> \([- \pi , \pi ]\)<span 
+class="cmti-10x-x-109">.</span>
+<span 
+class="cmti-10x-x-109">Let</span> \(a_n\) <span 
+class="cmti-10x-x-109">and</span> \(b_n\) <span 
+class="cmti-10x-x-109">be the Fourier coefficients of</span> \(f\)<span 
+class="cmti-10x-x-109">. Then</span> \(a_n \rightarrow 0\) <span 
+class="cmti-10x-x-109">and</span> \(b_n \rightarrow 0\) <span 
+class="cmti-10x-x-109">as</span> \(n\) <span 
+class="cmti-10x-x-109">approaches infinity.</span>
+</p>
+</div>
+<!--l. 660--><p class="noindent" >
+</p><!--l. 662--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>From our previous work, this proves Dirichlet’s theorem at all points where \(f(x)\) is
+differentiable.
+</p><!--l. 664--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>The rough idea of the proof is illustrated by the picture at the top of the next page. The
+Fourier coefficients are obtained by multiplying \(f\) by a rapidly oscillating function, and then
+integrating the product. But this product will contain many positive and negative spikes whose
+integrals will almost cancel each other.
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 668--><p class="noindent" ><img 
+src="Graphics/five.png" alt="PIC"  
+width="289" height="289"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 673--><p class="noindent" >The actual proof we give is more abstract; it feels like linear algebra rather than than
+analysis.
+</p><!--l. 675--><p class="noindent" ><span 
+class="cmti-10x-x-109">Proof: </span>We will work over the complex numbers and thus prove that \(c_n \rightarrow 0\) as \(n \rightarrow \infty \). Since \(c_n = {1 \over 2} (a_n - i b_n)\), this will prove
+the result.
+</p><!--l. 677--><p class="noindent" ><span 
+class="cmti-10x-x-109">Step 1 of proof: </span>Let \(V\) be the set of all piecewise continuous complex-valued functions defined on
+the interval \([ - \pi , \pi ]\). If \(f(x) \in V\), then \(f\) is continuous except at finite jumps. At such a point of discontinuity \(x_0\), the
+limit from the left \(L\) of \(f(x)\) exists as \(x\) approaches \(x_0\). Similarly the limit from the right \(R\) of \(f(x)\) exists as \(x\)
+approaches \(x_0\). We require that \(f(x_0) = {{L + R} \over 2}\).
+</p><!--l. 681--><p class="noindent" >Clearly we can add elements of \(V\) and multiply them by complex scalars. It is easy to verify that
+these operations make \(V\) into a complex vector space.
+</p><!--l. 683--><p class="noindent" >Now define an inner product on this space by writing \[&lt; f, g &gt; = {1 \over {2 \pi }} \int _{- \pi }^\pi f(x) \overline {g(x)} \ dx\] It is easy to prove that this satisfies all the
+requirements of a Hermitian inner product on \(V\): </p>
+     <ul class="itemize1">
+     <li class="itemize">
+     <!--l. 686--><p class="noindent" >\(&lt;f, g&gt;\) is linear in \(f\) and antilinear in \(g\)
+     </p></li>
+     <li class="itemize">
+     <!--l. 687--><p class="noindent" >\(&lt;f, g&gt; = \overline {&lt;g, f&gt;}\)
+     </p></li>
+     <li class="itemize">
+     <!--l. 688--><p class="noindent" >\(&lt;f, f&gt;\) is real and greater than or equal to zero
+     </p></li>
+     <li class="itemize">
+     <!--l. 689--><p class="noindent" >\(&lt;f, f&gt; = 0\) if and only if \(f\) is identically zero,</p></li></ul>
+<!--l. 692--><p class="noindent" >The hardest of these results is the final one. Since \(f\) is piecewise continuous, it is easy to see that if
+\(&lt;f, f&gt; = 0\), then \(f\) is identically zero on each subinterval of continuity, so we only have to worry about the
+points where \(f\) is not continuous. But our condition on the value of \(f\) at jump points then
+guarantees that \(f\) is also zero at these points.
+</p><!--l. 695--><p class="noindent" ><span 
+class="cmti-10x-x-109">Step 2 of proof: </span>If \(f \in V\), notice that its Fourier coefficient \(c_k\) is given by \(c_k = &lt;f, e^{ikx}&gt;\). Notice also that the \(e^{ikx}\) are
+orthonormal in \(V\). By the next to last property of our inner product, the following expression is
+real and greater than or equal to zero: \[ &lt;f - \sum _{-N}^N c_k e^{ikx}, f - \sum _{-N}^N c_k e^{ikx}&gt;\] Expanding out, this expression equals \[&lt;f, f&gt; - \sum c_k&lt;e^{ikx}, f&gt; - \sum \overline {c_k} &lt;f, e^{ikx}&gt; + \sum c_k \overline {c_l} &lt;e^{ikx}, e^{ilx}&gt; = \] \[&lt;f, f&gt; - \sum c_k \overline {&lt;f, e^{ikx}&gt;} - \sum \overline {c_k} &lt;f, e^{ikx}&gt; + \sum c_k \overline {c_l} &lt;e^{ikx}, e^{ilx}&gt; = \] \[&lt;f, f&gt; - \sum c_k \overline {c_k} - \sum \overline {c_k} c_k + \sum c_k \overline {c_k}\] In this last step,
+                                                                                  
+                                                                                  
+we applied the orthogonality relations.
+</p><!--l. 703--><p class="noindent" >The three terms at the end are the same, and \(c_k \overline {c_k} = \left | c_k \right |^2\), so the expression \(&lt;f, f&gt; - \sum _{-N}^N \left | c_k \right |^2\) is greater than or equal to zero.
+This is a famous result due to Bessel:
+</p>
+<div class="newtheorem">
+<!--l. 706--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Theorem</span><span 
+class="cmbx-10x-x-109"> 13</span><span 
+class="cmbx-10x-x-109"> (Bessel’s Inequality)</span> </span><span 
+class="cmti-10x-x-109">Suppose</span>  \(f(x)\)  <span 
+class="cmti-10x-x-109">is  piecewise  continuous  on</span>  \([- \pi , \pi ]\)  <span 
+class="cmti-10x-x-109">and  has</span>
+<span 
+class="cmti-10x-x-109">complex Fourier coefficients</span> \(c_k\)<span 
+class="cmti-10x-x-109">. Then for any finite</span> \(N\) <span 
+class="cmti-10x-x-109">we have </span>\[\sum _{k = - N}^N |c_k|^2 \le {1 \over {2 \pi }} \int _{- \pi }^\pi |f(x)|^2\ dx\]
+</p>
+</div>
+<!--l. 709--><p class="noindent" >
+</p>
+<div class="newtheorem">
+<!--l. 711--><p class="noindent" ><span class="head">
+<span 
+class="cmbx-10x-x-109">Corollary</span><span 
+class="cmbx-10x-x-109"> 14</span> </span><span 
+class="cmti-10x-x-109">If</span> \(f(x)\) <span 
+class="cmti-10x-x-109">is as above with Fourier coefficients</span> \(c_k\)<span 
+class="cmti-10x-x-109">, then</span> \(c_k \rightarrow 0\) <span 
+class="cmti-10x-x-109">as</span> \(|k| \rightarrow \infty \)<span 
+class="cmti-10x-x-109">.</span>
+</p>
+</div>
+<!--l. 713--><p class="noindent" >
+</p><!--l. 715--><p class="noindent" ><span 
+class="cmti-10x-x-109">Remark: </span>This proves the Riemann-Lebesgue lemma, and therefore it proves Dirichlet’s theorem
+at all points \(x\) where \(f\) is differentiable.
+</p>
+<h3 class="sectionHead"><span class="titlemark">19   </span> <a 
+ id="x1-1900019"></a>Dirichlet’s Theorem at Points of Continuity of \(f\)</h3>
+<!--l. 719--><p class="noindent" >Suppose next that \(x\) is a point where \(f\) is continuous, but not differentiable. The following periodic
+function has such points:
+</p>
+<figure class="figure"> 
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+<!--l. 723--><p class="noindent" ><img 
+src="Graphics/longwedge.png" alt="PIC"  
+width="289" height="289"  />
+                                                                                  
+                                                                                  
+</p>
+</figure>
+<!--l. 726--><p class="noindent" >The previous argument still works with just a minor patch. The problem is the term \[\left ( {{f(x) - f(x + u)} \over {u}}\right )\] in both \(g\)
+and \(h\) in our previous argument. The limit of this expression as \(u \rightarrow 0\) exists from the left and from the
+right, but the two limits are not equal. It follows that \(g\) and \(h\) have finite jumps at the
+origin. But both are still piece-wise continuous, and the argument proceeds as before.
+QED.
+</p>
+<h3 class="sectionHead"><span class="titlemark">20   </span> <a 
+ id="x1-2000020"></a>Dirichlet’s Theorem at Finite Jumps</h3>
+<!--l. 732--><p class="noindent" >To complete the proof of Dirichlet’s theorem, it suffices to handle the case of a finite jump. In
+this case we want to prove that the Fourier series converges to the average of the left and right
+values at the jump. The proof involves an easy trick. We earlier calculated the Fourier series of a
+square wave, and can directly verify the result in this case. If we have a function \(f\) with a finite
+jump, we can add an appropriate multiple of the square wave to make the sum continuous at \(x\).
+Dirichlet’s theorem has already been proved for this sum. The required result immediately
+follows for \(f\).
+</p><!--l. 734--><p class="noindent" >Here are the details.
+</p><!--l. 736--><p class="noindent" >The square wave \(S(x)\) has a jump at the origin. It’s value from the left is \(-1\) and its value from the
+right is \(1\) and their average is zero. The Fourier series of this wave is \[{4 \over \pi } \left ( \sin x + {1 \over 3} \sin 3x + {1 \over 5} \sin 5x + \ldots \right )\] and the value of
+this series at the origin is indeed zero. So Dirichlet’s theorem is true in this special
+case.
+</p><!--l. 740--><p class="noindent" >We can translate the square wave so the jump is at \(x_0\) by writing \(S(x - x_0)\). The corresponding Fourier series
+can be obtained by translating each \(\sin kx\) by the same amount: \[\sin k(x - x_0) = \sin (kx - k x_0) = \sin (kx) \cos (k x_0) - \cos (kx) \sin (k x_0)\] So Dirichlet’s theorem is still true for
+the translated function.
+</p><!--l. 743--><p class="noindent" >Suppose a different function \(f(x)\) has a jump at \(x_0\) with jump amount \(J\). Here \(f(x_0^-) = L\) and \(f(x_0^+) = R\) and \(J = R - L\).
+Then \(f(x) - {J \over 2} S(x - x_0)\) has no jump at \(x_0\). It’s value at \(x_0\) can be computed from either the left or the
+right, and from the right we get \[f(x_0^+) - {J \over 2} = R - {{R - L} \over 2} = {{R + L} \over 2}\] By the theorem already proved, the Fourier series
+of \(f(x) - {J \over 2} S(x - x_0)\) converges at \(x_0\) to the value of the function there and thus to \({R + L} \over 2\). But this Fourier
+series is just the Fourier series of \(f\) minus \(J \over 2\) times the Fourier series of \(S(x - x_0)\). We already
+know that this second series converges to zero at \(x_0\), so the series of \(f(x)\) must converge to \({R + L} \over 2\).
+QED.
+</p>
+ 
+</body> 
+</html>
+                                                                                  
+
+

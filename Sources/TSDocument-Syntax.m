@@ -764,6 +764,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
        
     }
     
+
+    
 }
 
 - (void)removeCurrentLineColor: (NSTextView *)aTextView

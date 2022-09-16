@@ -17,6 +17,20 @@
 - (void)doMagnifyingGlass:(NSEvent *)theEvent level: (NSInteger)level
 {
     
+    NSInteger   theScale;
+    float       theRealScale;
+ 
+    theScale = [SUD integerForKey: GlassMaxMagnificationKey];
+    if (theScale == 0)
+        theScale = 250;
+    theRealScale = theScale / 100.0;
+  // NSLog(@"The scale %d", theScale);
+  // NSLog(@"The real scale %f", theRealScale);
+  // NSLog(@"The actual scale %f", self.scaleFactor);
+
+    if (self.scaleFactor > theRealScale)
+        return;
+
     // Use new Magnifying Glass Routine on Lion, Mountain Lion, and Mavericks. It works in all these places
     // and the old routine has problems in all of these places.
     
@@ -25,8 +39,6 @@
     // and leads to crashes. So we refuse to use the magnifying glass if rhe current magnification is
     // more than 256 (fix on August 18, 2022)
     
-    if (self.scaleFactor > 2.5)
-        return;
     
     if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7)
         //        [self doMagnifyingGlassML: theEvent level:level] ;
@@ -162,7 +174,10 @@
         [self setOverView: nil];
     }
     
-    [NSCursor unhide];
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
     [self flagsChanged: theEvent]; // update cursor
     
 }
@@ -351,7 +366,10 @@
         [self setOverView: nil];
     }
     
-    [NSCursor unhide];
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
     [self flagsChanged: theEvent]; // update cursor
     
 }
@@ -498,7 +516,10 @@
     
     [self updateBackground:rect]; // [[self window] restoreCachedImage];
     // [[self window] flushWindow];
-    [NSCursor unhide];
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
     [[self documentView] setPostsBoundsChangedNotifications: postNote];
     [self flagsChanged: theEvent]; // update cursor
     // recache the image around marquee for quicker response

@@ -618,7 +618,6 @@
                       @"ltx",
                       @"ctx",
                       @"html",
-                      @"xml",
                       @"texi",
                       @"mp",
                       @"sty",
@@ -658,6 +657,9 @@
                       @"glog",
                       @"gaux",
                       @"sh",
+                      @"xml",
+                      @"ptx",
+                      @"py",
                        nil];
     
     commandsToSpellCheck = [[NSArray alloc] initWithObjects:

@@ -358,6 +358,7 @@ NSString *HtmlWindowNameKey = @"HtmlWindowName";
 NSString *HtmlWindowPosModeKey = @"HtmlWindowPosMode";
 NSString *HtmlWindowFixedPosKey = @"HtmlWindowFixedPos";
 NSString *HtmlHomeKey = @"HtmlHome";
+NSString *GlassMaxMagnificationKey = @"GlassMaxMagnification";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

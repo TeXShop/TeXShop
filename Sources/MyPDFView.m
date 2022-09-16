@@ -2436,7 +2436,10 @@ failed. If you change the code below, be sure to test carefully!
 
 	[[self window] restoreCachedImage];
 	[[self window] flushWindow];
-	[NSCursor unhide];
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
 	[self setPostsBoundsChangedNotifications: postNote];
 	[self flagsChanged: theEvent]; // update cursor
 	// recache the image around marquee for quicker response
@@ -2551,7 +2554,10 @@ failed. If you change the code below, be sure to test carefully!
         [self setOverView: nil];
     }
 	
-	[NSCursor unhide];
+    if (!cursorVisible) {
+        [NSCursor unhide];
+        cursorVisible = YES;
+    }
 	[self flagsChanged: theEvent]; // update cursor
     
 }

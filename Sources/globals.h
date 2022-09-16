@@ -563,6 +563,7 @@ extern NSString *HtmlWindowNameKey;
 extern NSString *HtmlWindowPosModeKey;
 extern NSString *HtmlWindowFixedPosKey;
 extern NSString *HtmlHomeKey;
+extern NSString *GlassMaxMagnificationKey;
 
 
 // end defaults

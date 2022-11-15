@@ -564,6 +564,7 @@ extern NSString *HtmlWindowPosModeKey;
 extern NSString *HtmlWindowFixedPosKey;
 extern NSString *HtmlHomeKey;
 extern NSString *GlassMaxMagnificationKey;
+extern NSString *EncodingMenuInSaveDialogKey;
 
 
 // end defaults
@@ -657,6 +658,7 @@ extern BOOL             atLeastHighSierra;
 extern BOOL             atLeastMojave;
 extern BOOL             atLeastCatalina;
 extern BOOL             atLeastMonterey;
+extern BOOL             atLeastVentura;
 extern BOOL             BuggyHighSierra;
 extern BOOL             editorCanAddBrackets;
 

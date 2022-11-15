@@ -17,6 +17,23 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 5.04</h3></P>
+Developers were given a preliminary version of macOS Ventura 13.1 around November 10, 2022. TeXShop has a serious bug when run on that system. The bug is fixed in TeXShop 5.04, and users should upgrade now to avoid the bug when Ventura 13.1 is released.
+
+<p> The bug is dramatic. If you open a new source window and enter some text, and then attempt to close the window, the window remains and becomes a zombie.When you quit TeXShop and open it again,  the window  reappears.  There is no way to get rid of it.
+
+<p>This dramatic behavior has a trivial cause. TeXShop adds a menu to the Save Dialog allowing users to set the encoding of the saved file. In all recent versions of TeXShop, the code creating this menu has one bad line which did nothing on earlier systems, but stops the Save Dialog from opening in Ventura 13.1. That bad line of code is no longer in TeXShop 5.04.
+
+<p> I took this opportunity to entirely remove the encoding pull-down menu from the Save Dialog. It is still present in the Open Dialog because a user could receive a file from a colleague with an unusual encoding and want to open that particular file.  If a user then edits the file and  saves it, the encoding used to open the file is also used to save it, so an encoding menu isn't needed in the Save Dialog.
+
+<p> If you  use the Save Dialog's encoding menu for other reasons, you can bring it back with a new hidden preference setting:
+<pre>
+     defaults write TeXShop EncodingMenuInSaveDialog YES
+</pre>
+
+<p> The encoding menu in the Save Dialog is typically used in one of two cases. The first is when a brand new file is saved and the user doesn't want to use the default encoding set in Preferences. In this case, a user could add a magic comment line setting the encoding to the unusual value and achieve the same result.  The other case is when users are trying to convert a file from one encoding to another. 
+That kind of conversion is tricky; opening a file in one encoding and saving in another can fail and lose information. Removing the encoding menu from the Save Dialog removes the temptation to act without careful planning.
+
 <P><h3>TeXShop Changes 5.03</h3></P>
 After the release of version 5.02, a few small problems  emerged, particularly in the demo program. I made corrections on my web page without changing the version number, so if you downloaded early, you might have  small flaws and if you downloaded later, you don't. Two larger problems were reported and fixed the same way.
 

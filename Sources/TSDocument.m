@@ -1593,10 +1593,14 @@ if (! skipTextWindow) {
 
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
 {
+    
 	NSView				*oldAccessoryView;
     NSInteger           theXMLIndex;
+    
+    if (! [SUD boolForKey:EncodingMenuInSaveDialogKey])
+        return YES;
   
-     if (! atLeastHighSierra)
+     if ((! atLeastHighSierra) || (NSAppKitVersionNumber >= 2299.31))
      {
         // Create the contents of the encoding menu on the fly
         [openSaveBox removeAllItems];
@@ -1670,7 +1674,7 @@ if (! skipTextWindow) {
     // saveFormatMenu.action = theButton.action;
     */
     
-    [saveFormatLabel takeStringValueFrom: theLabel];
+   // [saveFormatLabel takeStringValueFrom: theLabel];
     [savePanel setAccessoryView: openSaveViewHS]; //weird stuff!
     return YES;
 
@@ -5191,7 +5195,7 @@ preference change is cancelled. "*/
 	rightpar = [replacementString characterAtIndex:0];
 
 	if ([SUD boolForKey:ParensMatchingEnabledKey]) {
-		if (!(   ((rightpar == '}') && [SUD boolForKey:CheckBraceEnabledKey]) 
+ 		if (!(   ((rightpar == '}') && [SUD boolForKey:CheckBraceEnabledKey]) 
 			  || ((rightpar == ')') && [SUD boolForKey:CheckParenEnabledKey])
 			  || ((rightpar == '>') && [SUD boolForKey:CheckBracketEnabledKey])
 			  || ((rightpar == ']') && [SUD boolForKey:CheckSquareBracketEnabledKey]))) // modified by Terada

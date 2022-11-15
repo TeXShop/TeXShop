@@ -359,6 +359,7 @@ NSString *HtmlWindowPosModeKey = @"HtmlWindowPosMode";
 NSString *HtmlWindowFixedPosKey = @"HtmlWindowFixedPos";
 NSString *HtmlHomeKey = @"HtmlHome";
 NSString *GlassMaxMagnificationKey = @"GlassMaxMagnification";
+NSString *EncodingMenuInSaveDialogKey = @"EncodingMenuInSaveDialog";
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";
@@ -396,6 +397,7 @@ BOOL                atLeastHighSierra;
 BOOL                atLeastMojave;
 BOOL                atLeastCatalina;
 BOOL                atLeastMonterey;
+BOOL                atLeastVentura;
 BOOL                BuggyHighSierra;
 BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 

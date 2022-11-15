@@ -210,6 +210,8 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     
+    // NSLog(@"the system is %f", NSAppKitVersionNumber);
+    
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
         atLeastMavericks = YES;
     else
@@ -241,11 +243,16 @@
     else
         atLeastCatalina = NO;
     
-    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_11_1)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_15) // maybe also Big Sur with this definition
         atLeastMonterey = YES;
     else
         atLeastMonterey = NO;
     
+    if (floor(NSAppKitVersionNumber) >= 2299.0)
+        atLeastVentura = YES;
+    else
+        atLeastVentura = NO;
+
     
 /*
 #ifdef MOJAVEORHIGHER

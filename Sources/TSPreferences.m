@@ -24,6 +24,7 @@
  */
 
 #import "UseMitsu.h"
+#import "UseSparkle.h"
 
 #import "TSPreferences.h"
 #import "TSWindowManager.h"
@@ -33,7 +34,9 @@
 #import "TSAppDelegate.h" // mitsu 1.29 (O)
 #import "TSDocument.h"
 #import "TSConsoleWindow.h"
-#import <Sparkle/SUUpdater.h> 
+#ifdef USESPARKLE
+    #import <Sparkle/SUUpdater.h>
+#endif
 
 //#import "MyPDFView.h" // mitsu 1.29 (O)
 
@@ -838,6 +841,69 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [[NSNotificationCenter defaultCenter] postNotificationName:DocumentSyntaxColorNotification object:self];
 }
 
+/*" This method is connected to the 'block cursor' checkbox.
+"*/
+- (IBAction)blockCursorPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:BlockCursorKey] forKey:BlockCursorKey];
+
+     
+    [SUD setBool: [(NSCell *)sender state]  forKey:BlockCursorKey];
+}
+
+- (IBAction)blockWidthPressed:sender
+{
+    NSInteger   selectedValue;
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:BlockWidthKey] forKey:BlockWidthKey];
+
+    if ([[sender selectedCell] tag] == 0)
+        selectedValue = 0;
+    else
+        selectedValue = 1;
+    
+    [SUD setInteger: selectedValue forKey:BlockWidthKey];
+}
+
+
+- (IBAction)blockSidePressed:sender
+{
+    NSInteger   selectedValue;
+    
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:BlockSideKey] forKey:BlockSideKey];
+
+    /*
+    if ([[sender selectedCell] tag] == 0)
+        selectedValue = 0;
+    else
+        selectedValue = 1;
+    */
+    selectedValue = [[sender selectedCell] tag];
+    
+    [SUD setInteger: selectedValue forKey:BlockSideKey];
+}
+
+
+/*" This method is connected to the block cursor color well.
+ "*/
+- (IBAction)BlockCursorColorChanged:sender
+{
+    NSColor *newColor = [[NSColorPanel sharedColorPanel] color];
+    
+    [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:BlockCursorRKey] forKey:BlockCursorRKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:BlockCursorGKey] forKey:BlockCursorGKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setFloat:[SUD floatForKey:BlockCursorBKey] forKey:BlockCursorBKey];
+    
+    [SUD setFloat: [newColor redComponent] forKey:BlockCursorRKey];
+    [SUD setFloat: [newColor greenComponent] forKey:BlockCursorGKey];
+    [SUD setFloat: [newColor blueComponent] forKey: BlockCursorBKey];
+}
+
+
+
 /*" This method is connected to the source window background color well.
 "*/
 - (IBAction)setSourceBackgroundColor:sender
@@ -1042,6 +1108,7 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         [_consoleWindowPosMatrix selectCellWithTag:ConsoleWindowPosFixed];
     }
 }
+
 
 - (IBAction)XMLChapterButtonChanged:sender
 {
@@ -1709,6 +1776,8 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
 	[SUD setBool:[(NSCell *)sender state] forKey:SavePSEnabledKey];
 }
 
+#ifdef USESPARKLE
+
 /*" Sparkle Actions 
 "*/
 - (IBAction)sparkleAutomaticCheck:sender
@@ -1753,6 +1822,8 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
     
 }
 
+#endif
+
 
 
 - (IBAction)NewToolbarIconsCheck:sender;
@@ -1766,8 +1837,9 @@ integerForKey:PdfCopyTypeKey] forKey:PdfCopyTypeKey];
     [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:NewToolbarIconsKey] forKey:NewToolbarIconsKey];
     [SUD setBool:theValue forKey:NewToolbarIconsKey];
     
-    
+#ifdef USESPARKLE
     [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: theValue ];
+#endif
     
 }
 
@@ -2140,7 +2212,7 @@ A tag of 0 means "no", a tag of 1 means "yes".
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocumentBibDeskCompleteNotification object:self];
 	}
     
-  
+#ifdef USESPARKLE
     if (sparkleTouched) {
         [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates: oldSparkleAutomaticUpdate];
         
@@ -2156,6 +2228,7 @@ A tag of 0 means "no", a tag of 1 means "yes".
                 break;
         }
     }
+#endif
    
     
 	// added by mitsu --(G) TSEncodingSupport
@@ -2353,7 +2426,11 @@ This method retrieves the application preferences from the defaults object and s
             }
     }
     
-	
+    [_blockCursorButton setState: [defaults boolForKey:BlockCursorKey]];
+    NSColor *BlockCursorColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:BlockCursorRKey]
+        green: [defaults floatForKey:BlockCursorGKey] blue: [defaults floatForKey:BlockCursorBKey] alpha:1.0];
+    [BlockCursorColorWell setColor:BlockCursorColor];
+    
 	[_alwaysHighlightButton setState:![defaults boolForKey:AlwaysHighlightEnabledKey]]; // added by Terada
 	[_showIndicatorForMoveButton setState:[defaults boolForKey:ShowIndicatorForMoveEnabledKey]]; // added by Terada
 	[_highlightContentButton setState:[defaults boolForKey:HighlightContentEnabledKey]]; // added by Terada
@@ -2454,6 +2531,18 @@ This method retrieves the application preferences from the defaults object and s
 		[_commandCompletionMatrix selectCellWithTag:0];
 	else 
 		[_commandCompletionMatrix selectCellWithTag:1];
+    
+    if ([[defaults stringForKey:BlockWidthKey] isEqualToString: @"0"])
+        [_blockWidthMatrix selectCellWithTag:0];
+    else
+        [_blockWidthMatrix selectCellWithTag:1];
+    
+    if ([[defaults stringForKey:BlockSideKey] isEqualToString: @"0"])
+        [_blockSideMatrix selectCellWithTag:0];
+    else if ([[defaults stringForKey:BlockSideKey] isEqualToString: @"1"])
+        [_blockSideMatrix selectCellWithTag:1];
+    else
+        [_blockSideMatrix selectCellWithTag:2];
     
     if ([defaults integerForKey:LineBreakModeKey] == 0)
         [_wrapMatrix selectCellWithTag:0];

@@ -360,6 +360,13 @@ NSString *HtmlWindowFixedPosKey = @"HtmlWindowFixedPos";
 NSString *HtmlHomeKey = @"HtmlHome";
 NSString *GlassMaxMagnificationKey = @"GlassMaxMagnification";
 NSString *EncodingMenuInSaveDialogKey = @"EncodingMenuInSaveDialog";
+NSString *BlockCursorKey = @"BlockCursor";
+NSString *BlockCursorRKey = @"BlockCursorR";
+NSString *BlockCursorGKey = @"BlockCursorG";
+NSString *BlockCursorBKey = @"BlockCursorB";
+NSString *BlockWidthKey = @"BlockWidth";
+NSString *BlockSideKey = @"BlockSide";
+
 
 
 NSString *RepeatTypesetOnError13Key = @"RepeatTypesetOnError13";

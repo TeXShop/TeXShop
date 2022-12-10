@@ -51,7 +51,7 @@
 
 - (NSStringEncoding)encoding
 {
-	return _encoding;
+    	return _encoding;
 }
 
 - (NSString *)defaultType

@@ -565,6 +565,12 @@ extern NSString *HtmlWindowFixedPosKey;
 extern NSString *HtmlHomeKey;
 extern NSString *GlassMaxMagnificationKey;
 extern NSString *EncodingMenuInSaveDialogKey;
+extern NSString *BlockCursorKey;
+extern NSString *BlockCursorRKey;
+extern NSString *BlockCursorGKey;
+extern NSString *BlockCursorBKey;
+extern NSString *BlockWidthKey;
+extern NSString *BlockSideKey;
 
 
 // end defaults

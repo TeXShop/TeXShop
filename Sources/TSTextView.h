@@ -60,6 +60,8 @@
 - (void)moveBackwardTo$$:(id)sender;
 - (void)paste: (id)sender;
 - (void)updateInsertionPointStateAndRestartTimer:(BOOL)restartFlag;
+// - (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag;
+// -(void)_drawInsertionPointInRect:(NSRect)arg1 color:(NSColor *)color turnedOn:(BOOL)flag;
 
 @end
 

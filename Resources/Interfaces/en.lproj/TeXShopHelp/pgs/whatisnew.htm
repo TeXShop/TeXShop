@@ -14,6 +14,47 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.08</h5></P>
+TeXShop 5.05 -- 5.07 were never released. TeXShop 5.08 has three changes which will be minor for most users.
+
+<p><ul>
+<li> As reported in the version 5.03 changes, a user noticed that the insertion cursor -- the blinking vertical bar in the editor -- can occasionally vanish. The editor still knows where it is, so characters are inserted if you type. But the cursor is missing.
+
+<p> Recently, the same user found a way to trigger this bug. If you type command-space, a spotlight search field appears. When this field is dismissed, the cursor has vanished. Knowing how to create the bug makes it easy to figure out how to get the cursor back. Just click in a blank area of the desktop and then  in the source window, and the cursor will return.  Clicking in another TeXShop window or some other program's window will also do the trick. I'm still working on eliminating the bug completely.
+
+<p><li> When you open a file in TeXShop, the open dialog has a pull-down menu at the bottom allowing you to select the file's encoding. In Ventura, you must push the "Show Options" button to see this menu. If the menu is not used, TeXShop will use the default encoding set in TeXShop Preferences, which is almost always what you want. But if your colleagues send you a source with an unusual encoding, the pull-down menu is useful.
+
+<p> Until recently, a similar menu appeared at the bottom of the save dialog. But it was seldom used because without it TeXShop saves files with the same encoding used to open them, as you'd expect. 
+
+<p> However, some users were tempted to use the menu to change file encodings. They would open a file using one encoding, and then save it using a different encoding. This is  dangerous because characters available in one encoding but not in the other will be lost; since the file is overwritten in the process, these characters cannot be recovered. Therefore I removed the menu from the save dialog.
+
+<p> Recently, Unicode UTF-8 has become the standard encoding. It has the advantage of preserving all characters. Internally the TeXShop editor  uses unicode. The process described in the previous paragraph is less dangerous when converting to UTF-8, provided the file being converted was opened with the correct encoding. So in version 5.08 conversion returns, but in a way that is  less likely to mislead users. In the Edit menu under the "Transformations" submenu, there is an item named "Change Encoding". When selected, a dialog appears allowing you to select a new encoding for the file. Nothing will happen until the file is saved, but it will then be saved with the new encoding.
+
+<p><li> One user wrote that his eyesight is failing and he found it difficult to see the insertion cursor. He requested an optional block cursor.  I'm sympathetic because I lost the central vision in one eye several years ago.
+
+<p> Unfortunately, switching to a block cursor is not easy. In the Accessibility Pane of Apple's System Preferences, users can enlarge the standard cursor and change its color and outline color. But no such modifications are provided for the insertion cursor. Some programs provide a block cursor, but often they do not use Cocoa and  rely on  an open source library for editor support.
+
+<p> In Cocoa's NSTextEdit the source text is a single string, even if a document is an entire book. The central algorithm of NSTextEdit displays this string in the editor. Every time the string contains a line feed, the editor switches to a separate line, but for long lines the editor must select a blank spot to make a soft line feed. When the user enters text, the entire algorithm must run again to modify the layout of lines further along in the string. Adding a block character to the string would thus involve massive modifications of this central Apple code.
+
+<p> But of course TeXShop and other programs modify the display for syntax coloring and  other reasons. This modification is done in a different way, using what Apple calls an "attributed string." An attributed string is a standard string with extra information for each character, listing its foreground color, background color, and other items. The layout code in NSTextEdit is not changed for attributed strings; the attributes are only used when drawing the string after line breaks have been determined.
+
+<p> TeXShop already has a feature named "Highlight Current Line" which draws a light blue background beneath the entire line containing the insertion cursor. In TeXShop 4.08, this routine can be modified to draw a block cursor. The cursor colors the background of the two characters on either side of Apple's blinking insertion line.
+
+<p> To turn on the feature, select the item "Use Block Insertion Character" in the TeXShop Source Menu. This item turns on "Highlight Current Line" if it is not currently on, but switches it to Block Cursor Mode. The item only affects the active document; any other document open at the time is not changed.
+
+<p> Note that the Block Character colors the background of existing characters. Spaces are characters and their background can be drawn, but if no character is present at a spot, then the background cannot be colored. Thus when starting a brand new line, only the original insertion line is present until the first character is typed. After that, the block character highlights the background of the character left of the insertion line, but there is no character right of the line to highlight. When editing existing text, the characters on both sides are highlighted.
+
+<p> It is a good idea to select a source font with fixed width characters if you intend to use the block cursor. Otherwise as you scroll over the characters in a line, the cursor's width will constantly change. 
+
+<p> Since the menu items "Highlight current line" and "Use Block Insertion Character" are related, a change in one sometimes changes the other. When "Use Block Insertion Character" is turned on, "Highlight current line" is automatically turned on as well. When "Highlight current line" is turned off, so is "Use Block Insertion Character."
+
+<p> When "Use Block Insertion Character" is on and then turned off, "Highlight current line" remains on. 
+So it is easy to switch back and forth between hightlighting the  current line and  showing the block insertion character: toggle "Use Block Insertion Character" off or on.
+
+<p> If you want to use the block cursor on all files, turn it on in TeXShop Preferences using an item in the Misc1 tab. This item also makes it possible to modify the color and nature of the block cursor.
+   
+</ul>
+
 <P><h5>TeXShop Changes 5.04</h5></P>
 Developers were given a preliminary version of macOS Ventura 13.1 around November 10, 2022. TeXShop has a serious bug when run on that system. The bug is fixed in TeXShop 5.04, and users should upgrade now to avoid the bug when Ventura 13.1 is released.
 

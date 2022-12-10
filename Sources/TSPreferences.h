@@ -23,6 +23,7 @@
  */
 
 #import "UseMitsu.h"
+#import "UseSparkle.h"
 
 #import <AppKit/AppKit.h>
 
@@ -49,6 +50,7 @@
     IBOutlet NSButton       *_tabIndentButton;		    /*" connected to "Use Tab" "*/
     IBOutlet NSButton       *_syntaxColorLineButton;    /*" connected to "Syntax Active Line Coloring" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
+    IBOutlet NSButton       *_blockCursorButton;        /*" connected to "Block Cursor" "*/
 	IBOutlet NSButtonCell   *_selectActivateButton;     /*" connected to "Select on Activate" "*/
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
 	IBOutlet NSButtonCell	*_spellCheckButton;		    /*" connected to "SpellChecking "*/
@@ -112,6 +114,8 @@
 //	IBOutlet NSColorWell	*_highlightBracesColorWell;
 	IBOutlet NSTabView		*_tabView;
 	IBOutlet NSMatrix		*_consoleResizeMatrix;
+    IBOutlet NSMatrix       *_blockWidthMatrix;
+    IBOutlet NSMatrix       *_blockSideMatrix;
  
 	IBOutlet NSButton *_showInvisibleCharactersButton; // added by Terada
 	IBOutlet NSButton *_showTabCharacterButton; // added by Terada
@@ -233,6 +237,8 @@
     IBOutlet NSColorWell    *ImageForegroundColorWell;
     IBOutlet NSColorWell    *ImageBackgroundColorWell;
     
+    IBOutlet NSColorWell    *BlockCursorColorWell;
+    
     IBOutlet NSColorWell    *XMLCommentColorWell;
     IBOutlet NSColorWell    *XMLTagColorWell;
     IBOutlet NSColorWell    *XMLSpecialColorWell;  // for &
@@ -272,6 +278,9 @@
 - (IBAction)currentDocumentWindowPosDefault:sender;
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)syntaxColorLinePressed:sender;
+- (IBAction)blockCursorPressed:sender;
+- (IBAction)blockWidthPressed:sender;
+- (IBAction)blockSidePressed:sender;
 - (IBAction)selectActivatePressed:sender;
 - (IBAction)parensMatchPressed:sender;
 - (IBAction)spellCheckPressed:sender;
@@ -437,6 +446,7 @@
 - (IBAction)ConsoleAlphaChanged:sender;
 - (IBAction)ImageForegroundChanged:sender;
 - (IBAction)ImageBackgroundChanged:sender;
+- (IBAction)BlockCursorColorChanged:sender;
 
 - (IBAction)XMLCommentChanged:sender;
 - (IBAction)XMLTagChanged:sender;

@@ -163,6 +163,10 @@ NSInteger strSort(id s1, id s2, void *context)
     self.PreviewType = 0; // use old method
     
     self.syntaxcolorEntry = [SUD boolForKey:SyntaxColorEntryLineKey];
+    self.blockCursor = [SUD boolForKey:BlockCursorKey];
+    if (self.blockCursor)
+        self.syntaxcolorEntry = YES;
+    
 	lineNumbersShowing = [SUD boolForKey:LineNumberEnabledKey];
 	invisibleCharactersShowing = [SUD boolForKey:ShowInvisibleCharactersEnabledKey]; // added by Terada
 	self.lineNumberView1 = nil;
@@ -2740,16 +2744,37 @@ else {
 #pragma mark Encodings
 
 
-// The next three methods implement the encoding button in the save panel
+// The next five methods implement the encoding button in the save panel
 
-- (void) chooseEncoding: sender
+- (void) initializeTempEncoding
+{
+    _tempencoding = _encoding;
+}
+
+- (void) activateTempEncoding
+{
+    _encoding = _tempencoding;
+}
+
+- (void) chooseTempEncoding: sender
 {
 	_tempencoding = [[sender selectedCell] tag];
 }
 
+
 - (NSStringEncoding) encoding
 {
-	return _encoding;
+     return _encoding;
+}
+
+- (NSStringEncoding) currentDocumentEncoding
+{
+    return _encoding;
+}
+
+- (NSStringEncoding) temporaryEncoding
+{
+    return _tempencoding;
 }
 
 - (void)tryBadEncodingDialog: (NSWindow *)theWindow
@@ -4001,6 +4026,44 @@ preference change is cancelled. "*/
 		[self toLine: line];
 	}
 }
+
+- (void) changeEncoding: sender
+{
+//    NSLog(@"got here");
+    NSWindow    *theWindow;
+     
+    self.encodingWindowController = [[CustomModalWindowController alloc] initWithWindowNibName:@"CustomModalWindowController"];
+    
+    [self.encodingWindowController initializeEncodingMatrix: self];
+
+    if (self.useFullSplitWindow)
+        theWindow = self.fullSplitWindow;
+    else
+        theWindow = self.textWindow;
+     
+    // self.textWindow
+    [theWindow beginSheet:self.encodingWindowController.window  completionHandler:^(NSModalResponse returnCode) {
+          //  NSLog(@"Sheet closed");
+            
+            switch (returnCode) {
+                case NSModalResponseOK:
+                  //  NSLog(@"Done button tapped in Custom Sheet");
+                    break;
+                case NSModalResponseCancel:
+                  //  NSLog(@"Cancel button tapped in Custom Sheet");
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            self.encodingWindowController = nil;
+        }];
+
+        
+    }
+
+
 
 #pragma mark Templates
 
@@ -5827,6 +5890,14 @@ if (! useFullSplitWindow) {
             [anItem setState:NSOffState];
     }
     
+    if ([anItem action] == @selector(toggleBlockCursor:))
+    {
+        if (self.blockCursor)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+    }
+    
 	if (!fileIsTex) {
 		if ([anItem action] == @selector(saveDocument:) ||
 			[anItem action] == @selector(printSource:))
@@ -7002,6 +7073,8 @@ if (! useFullSplitWindow) {
     
      self.syntaxcolorEntry = ! self.syntaxcolorEntry;
     [sender setState: self.syntaxcolorEntry];
+    if ((self.blockCursor) && (! self.syntaxcolorEntry))
+       self.blockCursor = NO;
    
     if (self.syntaxcolorEntry)
         [self cursorMoved: textView];
@@ -7012,7 +7085,14 @@ if (! useFullSplitWindow) {
     }
 }
 
-
+- (IBAction)toggleBlockCursor:sender {
+    
+    self.blockCursor = ! self.blockCursor;
+    [sender setState: self.blockCursor];
+    if ((self.blockCursor) && (! self.syntaxcolorEntry))
+       self.syntaxcolorEntry = YES;
+    [self cursorMoved: textView];
+ }
 
 - (void) flipIndexColor: (NSInteger)state
 {

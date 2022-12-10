@@ -175,10 +175,44 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 
 - (void)updateInsertionPointStateAndRestartTimer:(BOOL)restartFlag
 {
-    [super updateInsertionPointStateAndRestartTimer: restartFlag];
-    [self.document performSelector: @selector(cursorMoved:) withObject:[self.document textView] afterDelay:0];
+  [super updateInsertionPointStateAndRestartTimer: restartFlag];
+[self.document performSelector: @selector(cursorMoved:) withObject:[self.document textView] afterDelay:0];
   //  [self.document cursorMoved:[self.document textView]];
 }
+
+/*
+-(void)_drawInsertionPointInRect:(NSRect)arg1 color:(NSColor *)color turnedOn:(BOOL)flag
+{
+    [super _drawInsertionPointInRect:(NSRect)arg1 color:(NSColor *)color turnedOn:(BOOL)flag];
+}
+
+
+- (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag
+{
+ 
+    NSRect myRect;
+    NSColor *myColor;
+    
+    myColor = [NSColor redColor];
+    
+    myRect = rect;
+
+    myRect.origin.y = myRect.origin.y + 0.2 * myRect.size.height;
+    myRect.size.height = 0.7 * myRect.size.height;
+    myRect.size.width = myRect.size.height;
+    // myRect.size.width = 15;
+    // myRect.size.height = 15;
+    // myRect.origin.y = myRect.origin.y + 5;
+    
+    NSBezierPath * path = [NSBezierPath bezierPathWithRect:myRect];
+        [path setClip];
+ 
+    [super drawInsertionPointInRect:(NSRect)myRect color:(NSColor *)myColor turnedOn:(BOOL)flag];
+}
+*/
+
+
+
 
 
 - (void)toggleSmartInsertDelete:(id)sender

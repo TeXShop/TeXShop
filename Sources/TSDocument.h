@@ -33,6 +33,7 @@
 #import "ScrapTextView.h"
 #import "ScrapPDFKitView.h"
 #import "TSWindowController.h"
+#import "CustomModalWindowController.h"
 
 #define NUMBEROFERRORS	20
 
@@ -258,7 +259,8 @@ enum RootCommand
 //	NSPipe              *synctexPipe;
 //	NSFileHandle        *synctexHandle;
     struct synctex_scanner_t *scanner;
-
+    
+   
 
 //	NSDate		*startDate;
 //	NSPDFImageRep	*texRep;
@@ -427,6 +429,7 @@ enum RootCommand
 @property (retain) NSTask              *forwardSyncTask;
 @property (retain) NSPipe              *forwardSyncPipe;
 @property (retain) NSFileHandle        *forwardSyncHandle;
+@property (strong) CustomModalWindowController *encodingWindowController;
 
 @property (retain) NSDate              *startDate;
 @property (retain) NSPDFImageRep       *texRep;
@@ -434,6 +437,8 @@ enum RootCommand
 @property (retain)  NSString            *spellLanguage;
 @property           BOOL                automaticSpelling;
 @property           BOOL                syntaxcolorEntry;
+@property           BOOL                blockCursor;
+
 
 
 @property           BOOL                fileIsXML;
@@ -569,6 +574,7 @@ enum RootCommand
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
 - (IBAction)toggleSyntaxColorEntry:sender;
+- (IBAction)toggleBlockCursor:sender;
 
 
 // - (void) tryScrap:(id)sender;
@@ -577,11 +583,18 @@ enum RootCommand
 - (IBAction) convertTiff:(id)sender;
 // - (void) okForRequest: sender;
 // - (void) okForPrintRequest: sender;
-- (void) chooseEncoding: sender;
+
+- (void) initializeTempEncoding;
+- (void) chooseTempEncoding: sender;
+- (void) activateTempEncoding;
 - (NSStringEncoding) encoding;
+- (NSStringEncoding) currentDocumentEncoding;
+- (NSStringEncoding) temporaryEncoding;
+
 - (void) close;
 - (void) setProjectFile: sender;
 - (void) doLine: sender;
+- (void) changeEncoding: sender;
 - (IBAction) doTag: sender;
 - (IBAction) doLabel: sender;
 - (IBAction) chooseProgram: sender;

@@ -109,6 +109,7 @@
                 <outlet property="_latexGSCommandTextField" destination="199" id="206"/>
                 <outlet property="_latexScriptCommandTextField" destination="152" id="210"/>
                 <outlet property="_lineNumberButton" destination="689" id="704"/>
+                <outlet property="_macroButton" destination="Z7t-O0-i6d" id="r6D-32-TXi"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="IOR-vQ-abf" id="E92-MZ-Ti1"/>
@@ -266,7 +267,7 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="13" y="54" width="635" height="562"/>
+                        <rect key="frame" x="13" y="53" width="635" height="562"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -1651,39 +1652,8 @@ DQ
                                     <rect key="frame" x="10" y="33" width="615" height="516"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <box fixedFrame="YES" title="Console Font" translatesAutoresizingMaskIntoConstraints="NO" id="752">
-                                            <rect key="frame" x="153" y="431" width="308" height="56"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView" id="bQw-SR-aff">
-                                                <rect key="frame" x="4" y="5" width="300" height="34"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <subviews>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="755">
-                                                        <rect key="frame" x="14" y="1" width="76" height="32"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="Set ..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="947">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="changeConsoleFont:" target="-2" id="808"/>
-                                                        </connections>
-                                                    </button>
-                                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="754">
-                                                        <rect key="frame" x="89" y="11" width="324" height="17"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="946">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                </subviews>
-                                            </view>
-                                            <font key="titleFont" metaFont="system"/>
-                                        </box>
                                         <box fixedFrame="YES" title="Poziția Ferestrei Console" translatesAutoresizingMaskIntoConstraints="NO" id="xCN-dK-eDZ">
-                                            <rect key="frame" x="153" y="308" width="308" height="103"/>
+                                            <rect key="frame" x="153" y="289" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="wua-0Z-tF4">
                                                 <rect key="frame" x="4" y="5" width="300" height="81"/>
@@ -1731,7 +1701,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="Console Resize" translatesAutoresizingMaskIntoConstraints="NO" id="772">
-                                            <rect key="frame" x="153" y="215" width="308" height="75"/>
+                                            <rect key="frame" x="153" y="196" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="Y3t-hK-M9z">
                                                 <rect key="frame" x="4" y="5" width="300" height="53"/>
@@ -1740,7 +1710,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="764">
-                                            <rect key="frame" x="178" y="226" width="147" height="38"/>
+                                            <rect key="frame" x="178" y="207" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1766,7 +1736,7 @@ DQ
                                             </connections>
                                         </matrix>
                                         <box fixedFrame="YES" title="Show Console" translatesAutoresizingMaskIntoConstraints="NO" id="828">
-                                            <rect key="frame" x="153" y="134" width="308" height="77"/>
+                                            <rect key="frame" x="153" y="115" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="guz-E5-kbI">
                                                 <rect key="frame" x="4" y="5" width="300" height="55"/>
@@ -1798,6 +1768,48 @@ DQ
                                                             <action selector="consoleBehaviorChanged:" target="-2" id="832"/>
                                                         </connections>
                                                     </matrix>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Console Font" translatesAutoresizingMaskIntoConstraints="NO" id="752">
+                                            <rect key="frame" x="153" y="405" width="308" height="86"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="bQw-SR-aff">
+                                                <rect key="frame" x="4" y="5" width="300" height="64"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z7t-O0-i6d">
+                                                        <rect key="frame" x="18" y="7" width="181" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Use Also for Macro Editor" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3lI-vh-8Ri">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="MacroPressed:" target="-2" id="X7j-Ox-6ej"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="754">
+                                                        <rect key="frame" x="89" y="39" width="213" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="946">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="755">
+                                                        <rect key="frame" x="14" y="29" width="76" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Set ..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="947">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="changeConsoleFont:" target="-2" id="808"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>

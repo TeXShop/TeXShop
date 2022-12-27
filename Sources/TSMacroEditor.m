@@ -148,7 +148,15 @@ static TSFilterMode savedFilter = kNoFilterMode;
 		[contentTextView setRichText:YES];
 		[contentTextView setUsesFontPanel:YES];
        // [contentTextView setTextColor: NSColor.systemBlueColor];
-		[contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
+        if ([SUD boolForKey:SameFontForMacroKey])
+            {
+                NSFont   *theFont;
+
+                theFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+                [contentTextView setFontSafely: theFont];
+           }
+        else
+            [contentTextView setFontSafely:[NSFont userFontOfSize:12.0]];
         [contentTextView setContinuousSpellCheckingEnabled: NO];
         [contentTextView setAutomaticSpellingCorrectionEnabled: NO];
         [contentTextView setSmartInsertDeleteEnabled: NO];

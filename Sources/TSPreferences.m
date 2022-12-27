@@ -852,6 +852,18 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     [SUD setBool: [(NSCell *)sender state]  forKey:BlockCursorKey];
 }
 
+/*" This method is connected to the 'use font for log and macro editor' checkbox.
+"*/
+- (IBAction)MacroPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:SameFontForMacroKey] forKey:SameFontForMacroKey];
+
+     
+    [SUD setBool: [(NSCell *)sender state]  forKey:SameFontForMacroKey];
+}
+
+
 - (IBAction)blockWidthPressed:sender
 {
     NSInteger   selectedValue;
@@ -2427,6 +2439,7 @@ This method retrieves the application preferences from the defaults object and s
     }
     
     [_blockCursorButton setState: [defaults boolForKey:BlockCursorKey]];
+    [_macroButton setState: [defaults boolForKey:SameFontForMacroKey]];
     NSColor *BlockCursorColor = [NSColor colorWithCalibratedRed: [defaults floatForKey:BlockCursorRKey]
         green: [defaults floatForKey:BlockCursorGKey] blue: [defaults floatForKey:BlockCursorBKey] alpha:1.0];
     [BlockCursorColorWell setColor:BlockCursorColor];

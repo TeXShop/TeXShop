@@ -506,63 +506,6 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     // Now we color the background of the active line
     [self doEntryLineAndCursorColoring: (NSTextView *)aTextView];
  
-    /*
-    float           r, g, b;
-    NSColor         *color;
-    NSRange         mySelectedLineRange, currentLineRange, cursorRange;
-    NSUInteger      startl, endl, theEnd;
-    NSDictionary    *emphasizeAttribute;
-    NSDictionary    *cursorAttribute;
-    
-    if (self.syntaxcolorEntry)
-    {
-        
-        
-        //    r = 0.9;
-        //    g = 0.99;
-        //    b = 0.99;
-        
-        //    color = [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
-        //    emphasizeAttribute = [[NSDictionary alloc] initWithObjectsAndKeys:color, NSBackgroundColorAttributeName, nil];
-        
-        mySelectedLineRange = [aTextView selectedRange];
-        [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];
-        currentLineRange.location = startl;
-        currentLineRange.length = theEnd - startl;
-        if (! self.blockCursor)
-            [layoutManager addTemporaryAttributes:self.EntryColorAttribute forCharacterRange:currentLineRange];
-        
-        else
-            
-        {
-            NSColor *cursorColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:BlockCursorRKey]
-                green: [SUD floatForKey:BlockCursorGKey] blue: [SUD floatForKey:BlockCursorBKey] alpha:1.0];
-            cursorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys: cursorColor, NSBackgroundColorAttributeName, nil];
-            cursorRange = [aTextView selectedRange];
-            if (cursorRange.length == 0)
-            {
-                cursorRange.length = 2;
-                cursorRange.location = cursorRange.location - 2;
-                if (cursorRange.location < startl)
-                {
-                    cursorRange.location = cursorRange.location + 1;
-                    cursorRange.length = cursorRange.length - 1;
-                }
-                if (cursorRange.location < startl)
-                {
-                    cursorRange.location = cursorRange.location + 1;
-                    cursorRange.length = cursorRange.length - 1;
-                }
-                [layoutManager addTemporaryAttributes:cursorAttribute forCharacterRange:cursorRange];
-            }
-        }
-     
-    }
- */
-    
-    // END OF ADDITION
- 
-    
     
     // finally, syntax color comments in XML
     if (self.fileIsXML)
@@ -750,80 +693,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 - (void)cursorMoved: (NSTextView *)aTextView
 {
     [self doEntryLineAndCursorColoring: (NSTextView *)aTextView];
-    
-    NSLayoutManager *layoutManager;
-    NSString        *textString;
-    
-    float           r, g, b;
-    NSColor         *color;
-    NSRange         mySelectedLineRange, currentLineRange, fullRange, cursorRange;
-    NSUInteger      startl, endl, theEnd;
-    NSDictionary    *cursorAttribute;
-    
-     if (self.syntaxcolorEntry)
-     {
-         
-    
-         
-         layoutManager = [aTextView layoutManager];
-        textString = [aTextView string];
-        
-        [self removeCurrentLineColor: aTextView];
-     
-         [self doEntryLineAndCursorColoring: (NSTextView *)aTextView];
-      /*
-   //    if (self.syntaxColor)
-   //         [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:[aTextVie
-     //           visibleCharacterRange]];
-   //     else
-   //         {
-   //         fullRange.location = 0;
-   //         fullRange.length = [textString length];
-   //         [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:fullRange];
-   //         }
-   
-         
-         mySelectedLineRange = [aTextView selectedRange];
-         [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];
-         currentLineRange.location = startl;
-         currentLineRange.length = theEnd - startl;
-         
-         
-       if (! self.blockCursor)
-           [layoutManager addTemporaryAttributes:self.EntryColorAttribute forCharacterRange:currentLineRange];
-      
-    
-         else
-             
-         {
-             NSColor *cursorColor = [NSColor colorWithCalibratedRed: [SUD floatForKey:BlockCursorRKey]
-                 green: [SUD floatForKey:BlockCursorGKey] blue: [SUD floatForKey:BlockCursorBKey] alpha:1.0];
-             cursorAttribute = [[NSDictionary alloc] initWithObjectsAndKeys: cursorColor, NSBackgroundColorAttributeName, nil];
-             cursorRange = [aTextView selectedRange];
-             if (cursorRange.length == 0)
-             {
-                 cursorRange.length = 2;
-                 cursorRange.location = cursorRange.location - 2;
-                 if (cursorRange.location < startl)
-                 {
-                     cursorRange.location = cursorRange.location + 1;
-                     cursorRange.length = cursorRange.length - 1;
-                 }
-                 if (cursorRange.location < startl)
-                 {
-                     cursorRange.location = cursorRange.location + 1;
-                     cursorRange.length = cursorRange.length - 1;
-                 }
-                 [layoutManager addTemporaryAttributes:cursorAttribute forCharacterRange:cursorRange];
-             }
-         }
-    */
-    
-    }
- 
-
-    
 }
+    
 
 - (void)removeCurrentLineColor: (NSTextView *)aTextView
 {
@@ -855,7 +726,8 @@ static BOOL isValidTeXCommandChar(NSInteger c)
         {
             layoutManager = [aTextView layoutManager];
             textString = [aTextView string];
-            
+            [layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:[aTextView visibleCharacterRange]];
+
             mySelectedLineRange = [aTextView selectedRange];
             [textString getLineStart:&startl end:&endl contentsEnd:&theEnd forRange:mySelectedLineRange];
             currentLineRange.location = startl;

@@ -571,6 +571,7 @@ extern NSString *BlockCursorGKey;
 extern NSString *BlockCursorBKey;
 extern NSString *BlockWidthKey;
 extern NSString *BlockSideKey;
+extern NSString *SameFontForMacroKey;
 
 
 // end defaults

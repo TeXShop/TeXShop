@@ -51,6 +51,7 @@
     IBOutlet NSButton       *_syntaxColorLineButton;    /*" connected to "Syntax Active Line Coloring" "*/
 	IBOutlet NSButtonCell	*_syntaxColorButton;		/*" connected to "Syntax Coloring" "*/
     IBOutlet NSButton       *_blockCursorButton;        /*" connected to "Block Cursor" "*/
+    IBOutlet NSButton       *_macroButton;              /*" connected to "Font for Log and Macro" "*/
 	IBOutlet NSButtonCell   *_selectActivateButton;     /*" connected to "Select on Activate" "*/
 	IBOutlet NSButtonCell	*_parensMatchButton;		/*" connected to "Parens Matching "*/
 	IBOutlet NSButtonCell	*_spellCheckButton;		    /*" connected to "SpellChecking "*/
@@ -279,6 +280,7 @@
 - (IBAction)syntaxColorPressed:sender;
 - (IBAction)syntaxColorLinePressed:sender;
 - (IBAction)blockCursorPressed:sender;
+- (IBAction)MacroPressed:sender;
 - (IBAction)blockWidthPressed:sender;
 - (IBAction)blockSidePressed:sender;
 - (IBAction)selectActivatePressed:sender;

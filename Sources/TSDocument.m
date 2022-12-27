@@ -695,8 +695,8 @@ NSInteger strSort(id s1, id s2, void *context)
 {
     
     [self setLogWindowBackgroundColorFromPreferences: nil];
-	[self setLogWindowForegroundColorFromPreferences: nil];
-	[self setLogWindowFontFromPreferences:nil];
+    [self setLogWindowForegroundColorFromPreferences: nil];
+    [self setLogWindowFontFromPreferences:nil];
     if ([SUD integerForKey: FindMethodKey] == 0)
         [self.logTextView setUsesFindPanel: YES];
     else if ([SUD integerForKey: FindMethodKey] == 1)
@@ -711,6 +711,7 @@ NSInteger strSort(id s1, id s2, void *context)
     self.logTextView.continuousSpellCheckingEnabled = NO;
     self.logTextView.grammarCheckingEnabled = NO;
     [self setTabBehavior: [self logWindow]];
+    
 }
 
 
@@ -9550,6 +9551,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSDate              *myDate;
     NSString            *enginePath, *tetexBinPath;
     NSMutableArray      *args;
+    
+ 
 
 	// theEncoding = NSISOLatin9StringEncoding;
     defaultEncoding = NSISOLatin9StringEncoding;

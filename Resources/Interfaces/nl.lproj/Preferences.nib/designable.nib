@@ -109,6 +109,7 @@
                 <outlet property="_latexGSCommandTextField" destination="199" id="206"/>
                 <outlet property="_latexScriptCommandTextField" destination="152" id="210"/>
                 <outlet property="_lineNumberButton" destination="689" id="704"/>
+                <outlet property="_macroButton" destination="HOP-Ea-0gt" id="Y0H-TJ-pEs"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="901" id="903"/>
                 <outlet property="_miniaturizeRootFileButton" destination="69p-5d-sPx" id="Lvx-Tw-LeU"/>
@@ -1526,14 +1527,14 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="Lettertype console" translatesAutoresizingMaskIntoConstraints="NO" id="752">
-                                            <rect key="frame" x="151" y="442" width="308" height="56"/>
+                                            <rect key="frame" x="151" y="419" width="308" height="79"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="dFa-LA-5bD">
-                                                <rect key="frame" x="4" y="5" width="300" height="34"/>
+                                                <rect key="frame" x="4" y="5" width="300" height="57"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="755">
-                                                        <rect key="frame" x="6" y="1" width="92" height="32"/>
+                                                        <rect key="frame" x="6" y="23" width="92" height="32"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="push" title="Stel in..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="947">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1544,7 +1545,7 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="754">
-                                                        <rect key="frame" x="97" y="11" width="324" height="17"/>
+                                                        <rect key="frame" x="97" y="33" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="946">
                                                             <font key="font" metaFont="system"/>
@@ -1552,12 +1553,23 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HOP-Ea-0gt">
+                                                        <rect key="frame" x="11" y="5" width="181" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Use Also for Macro Editor" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="I7b-lh-FyN">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="MacroPressed:" target="-2" id="tq4-tX-1RW"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="Positie Console" translatesAutoresizingMaskIntoConstraints="NO" id="wjW-lt-bEh">
-                                            <rect key="frame" x="151" y="326" width="308" height="103"/>
+                                            <rect key="frame" x="151" y="302" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="oq3-79-p9N">
                                                 <rect key="frame" x="4" y="5" width="300" height="81"/>
@@ -1605,7 +1617,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="Vergroten/verkleinen console" translatesAutoresizingMaskIntoConstraints="NO" id="772">
-                                            <rect key="frame" x="151" y="237" width="308" height="75"/>
+                                            <rect key="frame" x="151" y="213" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="uag-kb-Mss">
                                                 <rect key="frame" x="4" y="5" width="300" height="53"/>
@@ -1614,7 +1626,7 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="764">
-                                            <rect key="frame" x="176" y="248" width="147" height="38"/>
+                                            <rect key="frame" x="176" y="224" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1640,7 +1652,7 @@ DQ
                                             </connections>
                                         </matrix>
                                         <box fixedFrame="YES" title="Toon console" translatesAutoresizingMaskIntoConstraints="NO" id="828">
-                                            <rect key="frame" x="151" y="156" width="308" height="77"/>
+                                            <rect key="frame" x="151" y="132" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="MhN-bp-zVb">
                                                 <rect key="frame" x="4" y="5" width="300" height="55"/>

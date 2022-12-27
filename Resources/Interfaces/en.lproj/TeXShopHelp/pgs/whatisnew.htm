@@ -14,6 +14,21 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.09</h5></P>
+TeXShop 5.09 has one addition and one bug fix.
+<p><ul>
+<li> Marco Santi wanted a preference to set the font and size of text in the Macro Editor. There is already a preference to change the default font in the console. To avoid cluttering the Preference Dialog, version 5.09 allows users to also use this console font  in the Macro Editor. Just check the box "Use Also for Macro Editor" under the Console Tab.
+<p><li> Kurt Richard Todoroff reported an important bug that I could never reproduce. Just before typesettting concluded, his console would stop reporting output and the program would become unresponsive. Luckily, Todoroff knew exactly when this bug was introduced. Although he was using version 5.08, he told me that versions 5.00 and 5.01 typeset without problems but version 5.02 often failed.
+
+<p> For the next several days, Todoroff tested  versions of the program which I sent him. First I sent  unlabeled programs A and B. He reported that A didn't work, but B worked fine. Program A was 5.02 and program B was 5.01.  That test gave me confidence to proceed!
+
+<p> Version 5.02 was a minor update which fixed a bug in "Highlight Current Line."  I asked Todoroff to turn off "Highlight Current Line" in version 5.08 and the bug disappeared.  I then replaced my fix of both "Highlight Current Line" and "Use Block Cursor" with a better fix and the problem went away.
+
+<p> If you are curious, I'll say more. "Highlight Current Line" draws a light blue background under the line containing the insertion cursor. If the user clicks on a different line, this background must be erased, and then a  background must be added under the new line. To erase the background of the old line, I originally erased the background of all  lines in the visible portion of the source. But if the user scrolled so the original line was no longer on the screen and then clicked at a new spot, the old background would not be erased, and scrolling could later reveal two different current lines. In version 5.02, I fixed this by erasing the background color of the entire source text. This fix was very inefficient and bit me in the end. Now there is a much better fix.
+
+</ul>
+
+
 <P><h5>TeXShop Changes 5.08</h5></P>
 TeXShop 5.05 -- 5.07 were never released. TeXShop 5.08 has three changes which will be minor for most users.
 

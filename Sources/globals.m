@@ -366,6 +366,7 @@ NSString *BlockCursorGKey = @"BlockCursorG";
 NSString *BlockCursorBKey = @"BlockCursorB";
 NSString *BlockWidthKey = @"BlockWidth";
 NSString *BlockSideKey = @"BlockSide";
+NSString *SameFontForMacroKey = @"SameFontForMacro";
 
 
 

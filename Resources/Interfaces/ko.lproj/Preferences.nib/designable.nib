@@ -108,6 +108,7 @@
                 <outlet property="_latexGSCommandTextField" destination="243" id="400"/>
                 <outlet property="_latexScriptCommandTextField" destination="319" id="401"/>
                 <outlet property="_lineNumberButton" destination="38" id="402"/>
+                <outlet property="_macroButton" destination="9IX-uU-ovR" id="76b-KN-FEy"/>
                 <outlet property="_magTextField" destination="121" id="403"/>
                 <outlet property="_midEastButton" destination="39" id="404"/>
                 <outlet property="_miniaturizeRootFileButton" destination="335" id="405"/>
@@ -1652,14 +1653,14 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="콘솔 폰트" translatesAutoresizingMaskIntoConstraints="NO" id="165">
-                                            <rect key="frame" x="151" y="452" width="308" height="56"/>
+                                            <rect key="frame" x="151" y="426" width="308" height="82"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="pT9-B2-Zaf">
-                                                <rect key="frame" x="4" y="5" width="300" height="34"/>
+                                                <rect key="frame" x="4" y="5" width="300" height="60"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="166">
-                                                        <rect key="frame" x="14" y="1" width="76" height="32"/>
+                                                        <rect key="frame" x="14" y="24" width="76" height="32"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="push" title="설정..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="167">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1670,7 +1671,7 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="168">
-                                                        <rect key="frame" x="89" y="11" width="324" height="17"/>
+                                                        <rect key="frame" x="89" y="34" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="169">
                                                             <font key="font" metaFont="system"/>
@@ -1678,12 +1679,23 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9IX-uU-ovR">
+                                                        <rect key="frame" x="18" y="5" width="146" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="매크로 편집기에도 적용" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7Ff-r4-tfK">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="MacroPressed:" target="-2" id="WBQ-CF-8zD"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box fixedFrame="YES" title="콘솔창 위치" translatesAutoresizingMaskIntoConstraints="NO" id="174">
-                                            <rect key="frame" x="151" y="329" width="308" height="103"/>
+                                            <rect key="frame" x="151" y="311" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="hev-Cv-loZ">
                                                 <rect key="frame" x="4" y="5" width="300" height="81"/>
@@ -1731,7 +1743,7 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box fixedFrame="YES" title="콘솔창 리사이즈" translatesAutoresizingMaskIntoConstraints="NO" id="181">
-                                            <rect key="frame" x="151" y="240" width="308" height="75"/>
+                                            <rect key="frame" x="151" y="222" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="iOr-Kc-0F5">
                                                 <rect key="frame" x="4" y="5" width="300" height="53"/>
@@ -1740,7 +1752,7 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="182">
-                                            <rect key="frame" x="176" y="251" width="147" height="38"/>
+                                            <rect key="frame" x="176" y="233" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1766,7 +1778,7 @@ DQ
                                             </connections>
                                         </matrix>
                                         <box fixedFrame="YES" title="콘솔창 보이기" translatesAutoresizingMaskIntoConstraints="NO" id="186">
-                                            <rect key="frame" x="151" y="159" width="308" height="77"/>
+                                            <rect key="frame" x="151" y="141" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="hV6-Jb-yTe">
                                                 <rect key="frame" x="4" y="5" width="300" height="55"/>

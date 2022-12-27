@@ -109,6 +109,7 @@
                 <outlet property="_latexGSCommandTextField" destination="199" id="206"/>
                 <outlet property="_latexScriptCommandTextField" destination="152" id="210"/>
                 <outlet property="_lineNumberButton" destination="845" id="859"/>
+                <outlet property="_macroButton" destination="mia-3o-CbO" id="mDQ-cu-J9B"/>
                 <outlet property="_magTextField" destination="113" id="114"/>
                 <outlet property="_midEastButton" destination="846" id="862"/>
                 <outlet property="_miniaturizeRootFileButton" destination="lPg-WB-RRa" id="QR6-2I-VT3"/>
@@ -172,7 +173,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="267" y="174" width="663" height="610"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="663" height="610"/>
@@ -265,7 +266,7 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="16" y="56" width="630" height="552"/>
+                        <rect key="frame" x="16" y="64" width="630" height="552"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -1654,14 +1655,14 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="控制台字体" translatesAutoresizingMaskIntoConstraints="NO" id="752">
-                                            <rect key="frame" x="151" y="420" width="308" height="56"/>
+                                            <rect key="frame" x="151" y="388" width="308" height="88"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="zV8-uY-ceg">
-                                                <rect key="frame" x="4" y="5" width="300" height="37"/>
+                                                <rect key="frame" x="4" y="5" width="300" height="69"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="755">
-                                                        <rect key="frame" x="13" y="1" width="78" height="32"/>
+                                                        <rect key="frame" x="13" y="32" width="78" height="32"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="push" title="设置..." bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="906">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1672,7 +1673,7 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="754">
-                                                        <rect key="frame" x="89" y="11" width="324" height="17"/>
+                                                        <rect key="frame" x="89" y="42" width="324" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Helvetica 12" id="905">
                                                             <font key="font" metaFont="system"/>
@@ -1680,12 +1681,23 @@ DQ
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mia-3o-CbO">
+                                                        <rect key="frame" x="18" y="9" width="123" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="在宏编辑器中使用" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="bN5-72-R7f">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="MacroPressed:" target="-2" id="fDg-KW-qch"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
                                         <box fixedFrame="YES" title="源代码窗口位置" translatesAutoresizingMaskIntoConstraints="NO" id="Shw-3G-ymP">
-                                            <rect key="frame" x="151" y="298" width="308" height="103"/>
+                                            <rect key="frame" x="151" y="265" width="308" height="103"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="NAX-OF-g9j">
                                                 <rect key="frame" x="4" y="5" width="300" height="81"/>
@@ -1733,7 +1745,7 @@ DQ
                                             <font key="titleFont" size="13" name="AppleSDGothicNeo-Regular"/>
                                         </box>
                                         <box fixedFrame="YES" title="控制台窗口调整" translatesAutoresizingMaskIntoConstraints="NO" id="772">
-                                            <rect key="frame" x="151" y="213" width="308" height="75"/>
+                                            <rect key="frame" x="151" y="180" width="308" height="75"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="R0w-yx-lJA">
                                                 <rect key="frame" x="4" y="5" width="300" height="56"/>
@@ -1742,7 +1754,7 @@ DQ
                                             <font key="titleFont" size="13" name="STHeitiSC-Light"/>
                                         </box>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="764">
-                                            <rect key="frame" x="176" y="224" width="147" height="38"/>
+                                            <rect key="frame" x="176" y="198" width="147" height="38"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="147" height="18"/>
@@ -1768,7 +1780,7 @@ DQ
                                             </connections>
                                         </matrix>
                                         <box fixedFrame="YES" title="显示控制台" translatesAutoresizingMaskIntoConstraints="NO" id="828">
-                                            <rect key="frame" x="151" y="132" width="308" height="77"/>
+                                            <rect key="frame" x="151" y="99" width="308" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="uB7-Ts-rUB">
                                                 <rect key="frame" x="4" y="5" width="300" height="58"/>
@@ -3667,7 +3679,7 @@ DQ
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="272" y="172" width="428" height="235"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <view key="contentView" id="6Yd-W6-EWn">
                 <rect key="frame" x="0.0" y="0.0" width="428" height="235"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -3739,7 +3751,7 @@ DQ
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="311" y="495" width="261" height="107"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="gTZ-Lh-eu6">
                 <rect key="frame" x="0.0" y="0.0" width="261" height="107"/>

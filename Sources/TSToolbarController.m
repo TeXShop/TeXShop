@@ -836,7 +836,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         if ([SUD boolForKey: NewToolbarIconsKey])
         {
             if (@available(macOS 11.0, *)) {
-                NSString *theName = @"chevron.left";
+                NSString *theName = @"arrow.up";
                 NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
                                                 accessibilityDescription: @"Previous Page"];
                 [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -864,7 +864,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         if ([SUD boolForKey: NewToolbarIconsKey])
         {
             if (@available(macOS 11.0, *)) {
-                NSString *theName = @"chevron.right";
+                NSString *theName = @"arrow.down";
                 NSImage *previousImage = [NSImage imageWithSystemSymbolName: theName
                                                 accessibilityDescription: @"Next Page"];
                 [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent
@@ -890,11 +890,11 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
 	if ([itemIdent isEqual: kPreviousPageTID])
     {
-        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.left" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"chevron.left" target:self action:@selector(doPreviousPage:)];
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.up" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"arrow.up" target:self action:@selector(doPreviousPage:)];
      }
 	if ([itemIdent isEqual: kNextPageTID])
     {
-        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doNextPage:)];
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.down" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"arrow.down" target:self action:@selector(doNextPage:)];
      }
     
     if ([itemIdent isEqual: kHtmlPreviousPageButtonTID])
@@ -976,13 +976,13 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
 	if ([itemIdent isEqual: kPreviousPageKKTID])
     {
-        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.left" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"chevron.left" target:self action:@selector(doPreviousPageKK:)];
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.up" accessibility: @"Previous Page" imageName:@"PreviousPageAction" newImageName:@"arrow.up" target:self action:@selector(doPreviousPageKK:)];
      }
         
 
 	if ([itemIdent isEqual: kNextPageKKTID])
     {
-        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doNextPageKK:)];
+        return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"arrow.down" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"arrow.down" target:self action:@selector(doNextPageKK:)];
      }
     
 	if ([itemIdent isEqual: kGotoPageTID]) {

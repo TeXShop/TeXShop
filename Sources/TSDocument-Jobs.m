@@ -2234,10 +2234,18 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             if (doHTML)
             {
                 alreadyFound = NO;
-                newURL = [@"file://" stringByAppendingString: htmlImagePath];
-                theURL = [NSURL URLWithString: newURL];
+                NSString *htmlImagePath1 = [htmlImagePath stringByAppendingString:@"'"];
+                newURL = [@"file://'" stringByAppendingString: htmlImagePath1];
+                 
+               //  NSLog(htmlImagePath);
+               //  NSLog(newURL);
+                
+                // theURL = [NSURL URLWithString: newURL];
+                theURL = [NSURL fileURLWithPath: htmlImagePath isDirectory: NO];
+                
                 existingURL = [self.htmlView URL];
                 
+                 
                 if ((existingURL != nil) && ([theURL isEqual: existingURL]))
                         
                         {

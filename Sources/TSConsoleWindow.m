@@ -74,6 +74,7 @@
 
 - (void)associatedWindow: (id)sender
 {
+    
     TSDocument *myDocument = (TSDocument*)self.myDocument;
     [myDocument doError: sender];
     if ([myDocument externalEditor])

@@ -16,6 +16,29 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.11</h3></P>
+There are four changes:
+<p><ul>
+<li> Zheng-chao Han notified me of a bug when TeXShop typesets a source file stored in iCloud. To be honest, I had never used iCloud until this report. It was a pleasure to discover that TeXShop easily typesets files stored there. In version 5 of TeXShop, there is a new html preview window, which can be  used to preview typesetting jobs  which output html rather than pdf. But TeXShop would not open html files stored in iCloud, due to a space in one of the directory names in the full path to these files. This is fixed.
+
+<p> Incidentally, TeXShop does not work well with the third party product Google Drive. The insertion cursor will randomly jump to the bottom of the page when editing source files on this system. I suspect that Google Drive does not understand automatic saving. The solution is to move source files from Google Drive to your personal machine before editing them, and move the changed versions back to Google Drive when you are done. I cannot fix this problem because I do not have access to Google Drive source code. But they can fix it because they have access  to my code.
+<p><li> Simon C. Leemann suggested changing the symbols for PageUp and PageDown in the various Preview Windows to up and down arrows rather than left and right chevron symbols. Done.
+
+<p><li> Apple added support for tabbed windows in Cocoa, starting in macOS High Sierra. TeXShop adopted this feature and customized it slightly for LaTeX by defining a couple of magic comment lines about tabs, and adding a Preference Pane setting labeled "If Sync Opens a New Window, Open as Tab  in Root Window." 
+
+<p> Later, Apple improved their tab support, making it possible to provide full support for tabs in TeXShop starting with version 4.72. Read the Changes section for version 4.72 for details. To turn on this full support, find the item "Open New Windows as Tabs" in TeXShop Preferences and in the associated pull-down menu select "Always". 
+
+<p> When choosing this item, the magic comment lines about tabs should not be used, and the setting "If Sync Opens a New Window, Open as Tab  in Root Window" should not be selected. I should remove these features, but I hate to remove items which some people may still be using. Thanks to Mark Auer for pointing out that if both preference items just mentioned are selected, names of tabs can become permuted so the tab named "Chapter 1" can select source for "Chapter 2", etc. 
+
+<p> Mark Auer later reported another bug. If a tabbed window has a root file tab and tabs for various included chapter files, and if the project is typeset while showing the source for a particular chapter, the window switches to showing the root tab, even though the user is only interested in the chapter's source. Sadly, I could not reproduce this bug. 
+
+<p> Auer then sent me vast amounts of information about the bug. He made a movie showing it in action. He sent pictures of all of his TeXShop preference settings. He made a tiny example illustrating the problem. I looked and looked at all this information. Eventually I noticed that Mark wrote "! %TEX root = ./MyRoot.tex" while I wrote
+"! %TEX root =  MyRoot.tex". Both are correct, but that extra "./" caused the problem. Both forms are now accepted. Thanks, Mark.
+
+
+<p><li> Latexmk was updated to version 4.79. Note that TeXShop uses the version of latexmk in TeX Live if it is available. 
+</ul>
+
 <P><h3>TeXShop Changes 5.10</h3></P>
 The preference items to set the document and console fonts were broken in the English localization of version 5.09. Now they are fixed.
 

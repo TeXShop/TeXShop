@@ -328,8 +328,8 @@
 {
 	NSString			*projectPath, *nameString;
     NSStringEncoding    theEncoding;
-
-	projectPath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
+    
+  	projectPath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"texshop"];
 	if (![[NSFileManager defaultManager] fileExistsAtPath: projectPath])
 		return NO;
 
@@ -337,7 +337,7 @@
 	projectRoot = [projectRoot stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	if ([projectRoot length] == 0)
 		return NO;
-
+    
 	if ([projectRoot isAbsolutePath]) {
 		nameString = [NSString stringWithString:projectRoot];
 	} else {
@@ -531,9 +531,18 @@
 			relFile = [relFile substringFromIndex:3];
 		}
 		saveName = [NSString stringWithFormat:@"%@/%@",home,relFile];
-	}
+        
+ 	}
 	else
 		saveName = [NSString stringWithFormat:@"%@/%@",home,relFile];
+    
+    // NSString *aName = [saveName stringByStandardizingPath];
+    NSString *aName = [saveName stringByResolvingSymlinksInPath];
+    saveName = aName;
+
+    // NSLog(@"HEREHERE");
+    // NSLog(home);
+    // NSLog(saveName);
 
 	// see if \jobname is there
 	searchString = [self filterBackslashes:@"\\jobname"];

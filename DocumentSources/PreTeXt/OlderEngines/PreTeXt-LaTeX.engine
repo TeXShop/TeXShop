@@ -1,0 +1,39 @@
+#!/bin/zsh
+
+# !TEX-pdfPreview
+
+OUTFILE="`basename "$1"`"
+
+EXTENSION="${OUTFILE##*.}"
+
+
+
+if [[ "$EXTENSION" = "tex" ]]; then
+	echo "Cannot typeset file with extension .tex"
+	exit
+fi
+
+if  [[ "$EXTENSION" = "ctx" ]]; then
+	echo "Cannot typeset file with extension .ctx"
+	exit
+fi
+
+if  [[ "$EXTENSION" = "ltx" ]]; then
+	echo "Cannot typeset file with extension .ltx"
+	exit
+fi
+
+OUTFILE="${OUTFILE%.*}.tex"
+
+xsltproc -o "$OUTFILE"  $HOME/Documents/mathbook/xsl/pretext-latex.xsl "$1" 
+
+# test for successful tranlation
+if [ ${?} -ne 0 ]; then
+	echo ""
+	echo "Translation to LaTeX failed. Please use the PreTeXt-Validate engine to check your file."
+	exit
+fi
+# end of test for successful translation
+
+
+pdflatex --interaction=nonstopmode "$OUTFILE"

@@ -96,6 +96,15 @@
 	[self displayFile: fileName];
 }
 
+- (IBAction)displayManual:sender
+{
+    NSString                *fileName;
+     
+    fileName = [[NSBundle mainBundle] pathForResource:@"Manual" ofType:@"pdf"];
+    [self displayFile: fileName];
+}
+
+
 - (IBAction)displayGPLLicense:sender
 {
     NSString				*fileName;

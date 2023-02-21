@@ -25,9 +25,9 @@ fi
 
 OUTFILE="${OUTFILE%.*}.tex"
 
-xsltproc $HOME/Documents/mathbook/xsl/pretext-html.xsl "$1" 
+xsltproc -xinclude $HOME/Documents/mathbook/xsl/pretext-html.xsl "$1" 
 
-xsltproc -o "$OUTFILE"  $HOME/Documents/mathbook/xsl/pretext-latex.xsl "$1" 
+xsltproc -o "$OUTFILE"  -xinclude $HOME/Documents/mathbook/xsl/pretext-latex.xsl "$1" 
 
 # test for successful tranlation
 if [ ${?} -ne 0 ]; then

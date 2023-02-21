@@ -20,6 +20,7 @@
 }
 
 - (IBAction)displayGettingStartedTeXShop:sender;
+- (IBAction)displayManual:sender;
 - (IBAction)displayGettingStartedLatex:sender;
 - (IBAction)displayGettingStartedConTeXt:sender;
 - (IBAction)displayGettingStartedXeTeX:sender;

@@ -374,6 +374,8 @@ NSInteger strSort(id s1, id s2, void *context)
     NSRect      theVisibleRect;
     NSRange     theRange;
     NSInteger   drawerState, tabPreference;
+    CGFloat     indexPosition;
+    NSSplitView *theSplitView;
     
     [super restoreStateWithCoder:coder];
     
@@ -411,29 +413,48 @@ NSInteger strSort(id s1, id s2, void *context)
                     
         if (fromFullSplitWindow) {
             if ([coder containsValueForKey:@"SplitWindow"])
-                {
-                    windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
-                    [fullSplitWindow setFrameFromString:windowState];
-                }
+            {
+                windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
+                [fullSplitWindow setFrameFromString:windowState];
+            }
             if ([coder containsValueForKey:@"SplitWindowOrigin"])
-                {
-                    splitPoint = [coder decodePointForKey:@"SplitWindowOrigin"];
-                    [fullSplitWindow setFrameOrigin: splitPoint];
-                }
+            {
+                splitPoint = [coder decodePointForKey:@"SplitWindowOrigin"];
+                [fullSplitWindow setFrameOrigin: splitPoint];
+            }
             if ([coder containsValueForKey:@"VisibleSplitPDFRect"]) {
                 theVisibleRect = [coder decodeRectForKey:@"VisibleSplitPDFRect"];
                 [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
-                }
+            }
             if ([coder containsValueForKey:@"TextSelection"]) {
                 rangeString = [coder decodeObjectForKey:@"TextSelection"];
                 theRange = NSRangeFromString(rangeString);
                 [self.textView setSelectedRange: theRange];
                 [self.textView scrollRangeToVisible: theRange];
-                }
+            }
+             if ([coder containsValueForKey:@"LeftViewWidth"] &&
+                 [coder containsValueForKey:@"RightViewWidth"]) {
+                float leftWidth = [coder decodeFloatForKey:@"LeftViewWidth"];
+                float rightWidth = [coder decodeFloatForKey:@"RightViewWidth"];
+                NSSize leftSize, rightSize;
+                leftSize.height = leftView.frame.size.height;
+                leftSize.width = leftWidth;
+                rightSize.height = rightView.frame.size.height;
+                rightSize.width = rightWidth;
+                 if (leftWidth < rightWidth) {
+                     [leftView setFrameSize: leftSize];
+                     [rightView setFrameSize: rightSize];[rightView setFrameSize: rightSize];
+                 }
+                 else {
+                     [rightView setFrameSize: rightSize];
+                     [leftView setFrameSize: leftSize];
+                 }
+             }
+            
             if (fullSplitWindow.tabbingMode == NSWindowTabbingModePreferred)
                 [fullSplitWindow mergeAllWindows: fullSplitWindow];
-            }
         }
+    }
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
@@ -465,13 +486,16 @@ NSInteger strSort(id s1, id s2, void *context)
         NSRect theVisibleSplitRect = [[self.myPDFKitView documentView] visibleRect];
         NSRange theSelectedRange = [self.textView selectedRange];
         NSString *stringForRange = NSStringFromRange(theSelectedRange);
- 
+        float leftWidth = leftView.frame.size.width;
+        float rightWidth = rightView.frame.size.width;
        
         theSplitCode = [fullSplitWindow stringWithSavedFrame];
         [coder encodeObject: theSplitCode forKey:@"SplitWindow"];
         [coder encodePoint: theSplitOrigin forKey: @"SplitWindowOrigin"];
         [coder encodeRect: theVisibleSplitRect forKey:@"VisibleSplitPDFRect"];
         [coder encodeObject:stringForRange forKey:@"TextSelection"];
+        [coder encodeFloat: leftWidth forKey:@"LeftViewWidth"];
+        [coder encodeFloat: rightWidth forKey:@"RightViewWidth"];
  
     }
     
@@ -7297,6 +7321,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     
     if (interlinespace < 0.5)
         interlinespace = 1.0;
+    if (interlinespace < 0.0)
+        interlinespace = 0.0;
     if (interlinespace > 40.0)
         interlinespace = 1.0;
 	
@@ -10446,6 +10472,8 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             useFullSplitWindow = YES;
             [myDrawer setParentWindow: fullSplitWindow];
             // [self setWindow: fullSplitWindow];
+            
+            
         }
 }
 

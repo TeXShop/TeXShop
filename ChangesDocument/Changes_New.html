@@ -17,6 +17,37 @@
 <!-- main content -->
 <div id="main">
 
+<P><h3>TeXShop Changes 5.13</h3></P>
+Matthias Schmidt sent a carefully documented list of bugs in version 5.12. All
+are fixed in version 5.13.
+<p><ul>
+<p><li>The Preferences dialog has a button labeled "Set Default Values" at the bottom.
+Selecting this item changes all items in Preferences to their defaults when TeXShop is first opened.
+A bug in this command caused it to ignore reverting the source font or font size. This bug is fixed.
+
+<p> After selecting "Set Default Values", the
+ "Cancel" and "OK" buttons in Preferences work as usual, so selecting "Cancel" returns to the current defaults, while  "OK" accepts the default values. 
+ 
+ <p> Note that "Set Default Values" followed by "OK" removes any hidden preferences you may have set, so it should be used with caution.  However, the new TeXShop Manual in TeXShop Help, added in version 5.12, has a list of all hidden preferences at the very end. The list is long, but you may be able to find a preference there that you set and then forgot.
+ 
+ <p><li> If TeXShop is configured to open all documents in Single Window mode, and the program is quit while windows are open,  these windows will be restored the next time the program runs. However, TeXShop did not restore the position of the divider between source and preview views and the divider would be placed in the middle of the single window. Now TeXShop restores the position of the divider.
+ 
+ <p><li> In TeXShop Preferences under the Editor tab, the last three items in the Style box sometimes displayed as integers and sometimes as real numbers. The  TeXShop Manual claimed that these items do not work and can be ignored. But in fact the items work after a restart of TeXShop. 
+
+<p> Now the items always display as integers and take integer values. 
+
+<p> Moreover, setting an item causes an immediate change in any open source window, so users can experiment until they find satisfactory values.
+There is a small caveat. TeXShop only learns of changed values when the item is deactivated, so to see the result in open source windows, change a value and then click in a different box. It is tempting to instead push RETURN, but this accepts all changes and closes the Preferences window.
+
+<p> After making changes in the Style fields, the "Cancel" and "OK" buttons in Preferences work as usual to reject or accept all changes. If Style changes are rejected, source windows return to their previous style.
+
+<p><li> In the German localization, the "Parens Targets & Highlight Color" item in TeXShop Preferences under the Source tab was not hooked up correctly and misbehaved when used. This is fixed. 
+
+ <p><li> A number of small changes in the German localization were made for greater consistency across the interface.
+
+</ul>
+
+
 <P><h3>TeXShop Changes 5.12</h3></P>
 There are two changes:
 <p><ul>
@@ -277,7 +308,7 @@ The Changes document you are currently reading was written in html and later con
 <p><b>How Are HTML Engines Constructed?</b>
 <ul><li> There are exactly five new commands which can be added to engine scripts to implement features like those just presented:
 <p><ul>
-<li> !TeX-noPreview
+<li> !TEX-noPreview
 <li> !TEX-pdfPreview
 <li> !TEX-htmlPreview
 <li> !TEX-bothPreview
@@ -290,7 +321,7 @@ The Changes document you are currently reading was written in html and later con
 
 <p><li> The standard behavior of TeXShop still applies if an engine has none of these lines. After executing all lines of the engine, TeXShop looks in the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window, unless the Option Key is depressed.
 
-<p><li> If the line "!TeX-noPreview" is present, no preview window appears even if some of the other lines are also present.
+<p><li> If the line "!TEX-noPreview" is present, no preview window appears even if some of the other lines are also present.
 
 <p><li> Otherwise if the lines "!TEX-pdfPreview" and or "!TEX-bothPreview" are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window.
 

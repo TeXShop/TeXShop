@@ -2,7 +2,7 @@
 % !TEX encoding = UTF-8 Unicode
 \documentclass[11pt, oneside]{book}   	% use "amsart" instead of "article" for AMSLaTeX format
 
-% \def\skipbigillustrations{true}
+% \def\skipbigillustrations{true}			% smaller pdf and typesets faster if commented; makes no difference
 
 \usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
 \geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
@@ -55,7 +55,7 @@
  \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
             citecolor=blue, urlcolor=blue]{hyperref}
 
-\title{TeXShop Manual}
+\title{TeXShop Manual \\ Version 1.1}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -124,10 +124,10 @@ Below is the output when this source is processed by \TeX:
     \newpage
     \section{Donald Knuth and the Creation of \TeX}
     
- Donald Knuth is a professor of computer science at Stanford University. In 1962 while he was a Cal Tech graduate student,  Knuth agreed to write a book on theoretical computer science. He began the first draft in 1963 after receiving his PhD, and finished it in 1965. His initial draft had 3000 hand-written pages, which Knuth believed would shrink to about 600 printed pages. But the publisher informed him that in fact those 3000 pages would produce about 2000 printed pages. 
+ Donald Knuth is a professor of computer science at Stanford University. In 1962 while he was a Caltech graduate student,  Knuth agreed to write a book on theoretical computer science. He began the first draft in 1963 after receiving his PhD, and finished it in 1965. His initial draft had 3000 hand-written pages, which Knuth believed would shrink to about 600 printed pages. But the publisher informed him that in fact those 3000 pages would produce about 2000 printed pages. 
 Plans changed after that, and the publisher agreed to publish the work in seven volumes, to be called {\it The Art of Computer Programming}. These volumes are classics, owned and consulted by most computer scientists working today. The first three volumes were published in 1968, 1969, and 1973, and work on volume four began in 1973. 
 
-A couple of years later, Knuth revised volume two for reprinting. But when he got the galleys from the publisher in March, 2077, he was unhappy with the result. He learned that the hot lead process used originally had been replaced with photo-offset printing, and thus with a different collection of fonts.  Knuth told the publisher to postpone further action for six months while he consulted experts at Stanford and obtained better fonts for the system. That six month project actually took ten years, as Knuth brought typography experts to Stanford and learned the intricate details of typesetting.
+A couple of years later, Knuth revised volume two for reprinting. But when he got the galleys from the publisher in March, 1977, he was unhappy with the result. He learned that the hot lead process used originally had been replaced with photo-offset printing, and thus with a different collection of fonts.  Knuth told the publisher to postpone further action for six months while he consulted experts at Stanford and obtained better fonts for the system. That six month project actually took ten years, as Knuth brought typography experts to Stanford and learned the intricate details of typesetting.
 
 Knuth wrote a specification of \TeX\ in May, 1977. The first version was released in 1978, written in the SAIL programming language then in use at Stanford. In that same year, Knuth gave the 1978 Gibbs Lecture, an annual lecture for the American Mathematical Society. An expanded version was published by the AMS in December of 1979, titled {\it TeX and Metafont, New Directions in Typesetting}. That is how mathematicians first learned of the project.
 
@@ -137,7 +137,7 @@ Knuth returns to the program every few years to fix minor bugs. The current vers
 
 
 
-Knuth's typesetting project produced three important products: TeX, MetaFont, and the Computer Modern fonts. He described the results in five books, standing alongside the volumes of the {\em Art of Computer Programming}:
+Knuth's typesetting project produced three important products: TeX, MetaFont, and the Computer Modern Fonts. He described the results in five books, standing alongside the volumes of the {\em Art of Computer Programming}:
 one book with the complete \TeX\ program, one book with the complete Metafont program, one book showing the design of the Computer Modern Fonts with an entire page devoted to each character, one book with the  instruction manual for \TeX, and one book with the instruction manual for MetaFont. 
 
 After \TeX\ was frozen, Knuth resumed work on the Art of Computer Programming. Plans for Book 4 had expanded, and Volume 4A, published in 2011, was followed by volume 4B  published in October, 2022. Coming next is  volume 4C and perhaps 4D. These will be followed by Volumes 5, 6, and 7, time permitting.
@@ -190,17 +190,17 @@ Separate programs then handled the job of reading the dvi file, opening the corr
 
 Around 2001, modified versions of \TeX\ and \LaTeX\ named pdf\TeX\ and pdf\LaTeX\ were created by Hàn Thế Thành. These programs contained the original \TeX\ and could output dvi files, but they could also output pdf files directly. These pdf files could contain either mathematical descriptions of the fonts in Adobe Type 1 or TrueType form, or rasterized MetaFont font data. Nowadays, most people typesetting with \TeX\ or \LaTeX\ are actually using pdf\TeX\ or pdf\LaTeX.
  
-Knuth thought of MetaFont, \TeX\, and the Computer Modern Fonts as  equal partners in the new typesetting system.  Nowadays, MetaFont has mostly been replaced by font technology from other companies, (although the program plays an important roll in some projects). and the Computer Modern Fonts are one of several commonly used font families for technical documents. \TeX\ remains unsurpassed as a typesetting engine.
+Knuth thought of MetaFont, \TeX\, and the Computer Modern Fonts as  equal partners in the new typesetting system.  Nowadays, MetaFont has mostly been replaced by font technology from other companies, (although the program plays an important role in some projects). and the Computer Modern Fonts are one of several commonly used font families for technical documents. \TeX\ remains unsurpassed as a typesetting engine.
 
 
 \section{Front Ends and TeXShop}
 
 \TeX\ is a command line program. A user creates a source text file, say Sample.tex, and typesets it to produce an output file Sample.pdf. The call to activate \TeX\ can be done using Terminal or some other Unix shell, but otherwise there is no need to directly access the \TeX\ program. Often the program is hidden away in the system and hard for a casual user to even find.
 
-Interaction with \TeX\ is usually done via a GUI front end. This is a standard program which provides an editing window used to create the source file, a button to call the typesetting engine, and a preview window to display the resulting output file. Many front ends are available, often open source and free.
+Interaction with \TeX\ is usually done via a Graphical User Interface (GUI) front end. This is a standard program which provides an editing window used to create the source file, a button to call the typesetting engine, and a preview window to display the resulting output file. Many front ends are available, often open source and free.
 
 TeXShop is a GUI front end for the Macintosh. It was introduced in 2001, while macOS was still in beta, and has been extended ever since. A great many programmers all over the world contributed code to the program.
-Since the actual \TeX\ program is invisible, sometimes users get the false idea that TeXShop is itself doing the typesetting. Nothing could be further from the truth. TeXShop does not modify the source in any way before typesetting. It simply calls \TeX, saying in effect ``Here's a source file. Typeset it and call me when you are done. In the meantime, I'm going to take a little nap.''
+Since the actual \TeX\ program is invisible, sometimes users get the false idea that TeXShop is itself doing the typesetting. Nothing could be farther from the truth. TeXShop does not modify the source in any way before typesetting. It simply calls \TeX, saying in effect ``Here's a source file. Typeset it and call me when you are done. In the meantime, I'm going to take a little nap.''
 
 \section{Brief History of TeXShop }
 
@@ -209,7 +209,7 @@ I first became acquainted with \TeX\ and \LaTeX\ in 1991 when I bought a NeXt ma
 Around 1995, Apple ran into serious trouble. It was unable to complete its new operating system Copland, and there were rumors that the CEO was trying to find a buyer for the company. In December, 1996, Apple announced that it would use NeXtStep as its new operating system, having bought NeXT lock, stock, and barrel.
 And Steve Jobs would return as an unpaid consultant.
 
-This announcement thrilled me. At last the Mac would have an honest Unix foundation, advanced user interface, and modern programming environment. As a mainstream machine, it would support standard commercial programs like Word and Excel. For mathematics it only needed a Web browser, Mathematica, and \TeX, and the first two would clearly be available. I began pestering our Apple representative about the importance of \TeX.  He agreed, but I saw few signs of progress.
+This announcement thrilled me. At last the Mac would have an honest Unix foundation, advanced user interface, and modern programming environment. As a mainstream machine, it would support standard commercial programs like Word and Excel. For mathematics it only needed a Web browser, an email program, Mathematica, and \TeX, and the first three would clearly be available. I began pestering our Apple representative about the importance of \TeX.  He agreed, but I saw few signs of progress.
 
 I began running beta versions of OS X, and soon had \TeX\ itself running.  I tried to compile the Rokicki front end, but Apple switched their graphic system from display postscript to Quartz, a PDF-based  system, so that was a no go. I had written a few NeXtStep programs, and finally one day I thought that it should be possible to write a front end myself.
 
@@ -331,7 +331,7 @@ Close the document by hitting the red button at the top of the edit window. Ther
 
 Restart TeXShop by clicking on the icon in the dock. 
 
-It is possible to reopen the project by double clicking on the Untitled file or by starting TeXShop and navigating to Untitled in the Open dialog, but there is a much easier way. Start TeXShop and under the File menu choose the item ``Open Recent...'' In the resulting list, choose the document's name and you will immediately return to it.
+It is possible to reopen the project by double clicking on the Untitled file or by starting TeXShop and navigating to Untitled in the Open dialog, but there is a much easier way. Start TeXShop and under the File menu choose the item ``Open Recent''. In the resulting list, choose the document's name and you will immediately return to it.
 
 If you do not close the document before quitting TeXShop, then it may reappear automatically the next time you run TeXShop. This depends on a setting in Apple's System Preferences. Apple revised System Preferences in Ventura. If you are using an earlier system, run System Preferences and select the General module. If you are using Ventura, run System Preferences and select Desktop \& Dock. In the resulting dialog, boxes appear labeled ``Ask to keep changes when closing documents'' and ``Close windows when quitting an app''. If both are unchecked, then TeXShop and most other programs will reopen windows automatically if they were open when the program quit.
 
@@ -379,7 +379,7 @@ After reading one of these short works, I'd recommend starting to use the progra
 % TeXShop configuration files exist in two different spots in $\sim$Library. Preference settings are in
 % $\sim$Library/Preferences, in the file named TeXShop.plist. Many other items are in various subfolders of the folder $\sim$Library/TeXShop.
  
-TeXShop's Preference settings are in \path{~Library/Preferences} in the file  TeXShop.plist. It is never necessary to edit TeXShop.plist because the items in this file are set by the Preferences Dialog opened by an item in the main TeXShop menu.  In very rare situations, TeXShop.plist can be mangled when TeXShop is updated to a new version. This seems to happen to only a few people, and only when new preference items are added for a new version. When the problem occurs, the updated TeXShop refuses to open any file, or displays other bizarre behavior. To fix the problem:
+TeXShop's Preference settings are in \path{~/Library/Preferences} in the file  TeXShop.plist. It is never necessary to edit TeXShop.plist because the items in this file are set by the Preferences Dialog opened by an item in the main TeXShop menu.  In very rare situations, TeXShop.plist can be mangled when TeXShop is updated to a new version. This seems to happen to only a few people, and only when new preference items are added for a new version. When the problem occurs, the updated TeXShop refuses to open any file, or displays other bizarre behavior. To fix the problem:
 
  \begin{itemize}
  \item Quit TeXShop.
@@ -446,7 +446,12 @@ In a few cases, the design philosophy described above is slightly modified. An e
 
 Suppose first that you  want to magnify the source font temporarily, perhaps to look carefully at a formula or perhaps to show it to someone looking over your shoulder. This is easy. Activate the source window and then type command-plus to magnify the text and command-minus to shrink the text. Here command-plus means that the command key and the plus key should be depressed at the same time; command-minus means that the command key and the minus key should be depressed at the same time. Although the plus symbol is typed with the shift key, the shift key should not be used with this shortcut. Notice that only the active source window is affected by these changes. Moreover the changes are temporary; if the document is closed and then opened, it will have the standard font size.
 
-These commands are actually menu shortcuts. The {\em Source} menu has a {\em Font} submenu, which has two items {\em Bigger} and {\em Smaller}; the key shortcuts call these menus. However making text bigger or smaller is a common task and the menu items are hidden away, so it is best to just remember and use the shortcuts. 
+These commands are actually menu shortcuts. The {\em Source} menu has a {\em Font} submenu, which has two items {\em Bigger} and {\em Smaller}; the key shortcuts call these menus. However making text bigger or smaller is a common task and the menu items are hidden away, so it is best to just remember and use the shortcuts.
+
+The remarks about keyboard shortcuts in the previous two paragraphs apply to a U.S. keyboard. Many users, perhaps even a majority, will select another keyboard in the Keyboard Module of Apple's System Preferences
+(using the Input Sources item).  These selections map physical keys on the keyboard to characters, and can change menu shortcuts. To define appropriate shortcuts for Font Sizes, read the section ``Redefining Menu Shortcut Keystrokes'' in chapter 23.
+
+ 
 
 The source font itself can be changed using a menu command, but this is almost never done. Instead users make the change in Preferences so it will affect all future source windows.
 
@@ -521,7 +526,7 @@ The preference allows users to pick which characters are shown and by what symbo
 %The preference allows users to pick which characters are shown and by what symbol. The final  {\bf On by default} item is usually left unchecked, so these characters are not shown when a window is first opened. If puzzling behavior later develops, it can be turned on using a menu item.
 %
 
-    
+   \newpage 
  The remaining items are rarely changed, so they can only be set in the Preferences Pane:
 
 {\bf Use Tabs for Indent Menu} The third and fourth items in the TeXShop source menu are named
@@ -531,13 +536,31 @@ in which the hero loses a programming girlfriend because she uses spaces rather 
 
 {\bf Select on Activate} When checked, a click in the Source Window both selects the window and moves the cursor to that spot in the source. When unchecked, a click selects the window, but does not move the cursor.
 
-{\bf Correct Spelling} When selected, the Macintosh will not just underline misspelled words. It will also correct the spelling, and sometimes even change the wording. This item is present so the user can turn it off! We explain. A global preference turns correct spelling on or off for all applications. If this global preference turns it on, the {\bf Correct Spelling} item can turn it back off in TeXShop which leaving it on in other applications. 
+{\bf Correct Spelling} When selected, the Macintosh will not just underline misspelled words. It will also correct the spelling, and sometimes even change the wording. This item is present so the user can turn it off! We explain. A global preference turns correct spelling on or off for all applications. If this global preference turns it on, the {\bf Correct Spelling} item can turn it back off in TeXShop while leaving it on in other applications. 
 
 The remaining items in the first column and the first block of items in the second column will be explained later in the manual.
 
 {\bf Wrap Lines} \TeX\ usually ignores line feeds because it knows how to break lines. Some authors like to create a line feed near the end of each line, so their source contains a long list of relatively short lines. Other authors like to create a line feed only between paragraphs, so their lines span multiple lines of the window. In that case, TeXShop inserts a soft line break between words so the cursors jumps down to the next line when appropriate. This line break is just for the display and isn't sent on to TeX. Said another way, if you enlarge the window, the breaks will be recalculated; they aren't permanent elements of the source. Long ago, some users didn't want breaks except if they actually typed them, hence this preference setting. I have no idea why anyone would change the default value, which is {\bf by word}.
 
-{\bf Style} The first item sets the width of a tab; by default, the value is 4. The remaining items are left from an earlier version and do nothing. There are no plans to revive them.
+{\bf Style} The first item sets the width of a tab; by default, the value is 4. The next two items format paragraphs of source created by writing several lines without line feeds. By default, TeXShop starts all lines of such paragraphs at the left margin, but it is possible to indent the first line and not remaining lines, or start the first line at the margin and indent remaining lines or format in other ways. 
+
+The last item sets the spacing between lines, so the source
+can be single spaced or double spaced or somewhere between these extremes.
+
+\newpage
+Preference values for various style fields are integers. These values are constrained in various ways. Tab indent can be between 2 and 50, paragraph indent can be between 0 and 100, and interline spacing can be between 1 and 20. When larger or smaller values are entered, they are replaced with the closest allowed value.
+
+
+If a source window is open when the style items are set, the changes will appear immediately in the source, so users can experiment with  values until they find a pleasing set. However, there is a mild complication. When number entry boxes are used in preferences, changes in these boxes are not sent to the Mac until the box is deactivated. The easy way to deactivate a box is to activate another box by clicking in it. At that moment, the source window will be updated to reveal changes. It is tempting to press RETURN to deactivate a box, but the Preference dialog reacts to RETURN by accepting all changes and closing the Preference window.
+
+{\em Aside:} The first version of this manual had a different explanation for the style items. It read
+``The first item sets the width of a tab; by default, the value is 4. The remaining items are left from an earlier version and do nothing. There are no plans to revive them.'' To my  surprise, a user wrote telling me that the remaining items actually worked, but TeXShop had to be restarted to see the changes.  Sure enough. So I revised the items to immediately show their effect in source windows.
+
+
+
+
+
+
 
 \section{Parenthesis Pairs in the Source Editor}
 
@@ -615,7 +638,7 @@ This item is a drop-down menu listing 31 choices. The default choice is {\bf Uni
 
 If you have older files written using a different encoding, or if other people send files in unusual encodings, it is important to know more. 
 
-A computer file contains a long stream of whole numbers, each between 0 and 255. These are called bytes, and the ability to encode virtually any kind of information into a stream of bytes defines the current digital age. Thus a byte stream might represent music on a CD, or a movie on a DVD, or a jpg picture, or a computer program, or an encyclopedia.  Many computer files are ordinary text files. From the beginning of the personal computer era, text has been encoded into bytes using the ASCII encoding scheme. This method encodes all the characters on a standard American typewriter: small letters, capitol letters, punctuation marks, numbers, tab, carriage return. There are less than 128 such characters, so ASCII only uses bytes between 0 and 127. In the original version of \TeX, source files were standard ASCII files.
+A computer file contains a long stream of whole numbers, each between 0 and 255. These are called bytes, and the ability to encode virtually any kind of information into a stream of bytes defines the current digital age. Thus a byte stream might represent music on a CD, or a movie on a DVD, or a jpg picture, or a computer program, or an encyclopedia.  Many computer files are ordinary text files. From the beginning of the personal computer era, text has been encoded into bytes using the ASCII (American Standard Code for Information Interchange) encoding scheme. This method encodes all the characters on a standard American typewriter: small letters, capitol letters, punctuation marks, numbers, tab, carriage return. There are less than 128 such characters, so ASCII only uses bytes between 0 and 127. In the original version of \TeX, source files were standard ASCII files.
 
 ASCII is not sufficient in Europe and in  regions of the world that use completely different scripts. Scripts in Western Europe use accented vowels, umlauts, upside down question marks, and unusual Scandinavian letters. 
 Russia and other countries use the Cyrillic alphabet. Greek is written with the Greek alphabet.
@@ -626,7 +649,7 @@ Sadly, files encoded in this way do not contain a ``magic byte'' defining the en
 
 But meanwhile, computer manufacturers realized that the increasing globalization of the world required a new approach to text. They formed an independent organization, which created Unicode, a standard that can represent all of the scripts of the world, including hieroglyphics, Arabic, Chinese, and mathematics.  Virtually all computers have switched to Unicode; it is a central part of macOS. TeXShop is entirely Unicode-based internally. You can easily type English, Cyrillic, Chinese, Hebrew, and Arabic in a single TeXShop document;  the Hebrew and Arabic will even be written from right to left.
 
-Unicode does not define a  standard method to read and write Unicode to a file. But one very popular method is called UTF-8. This method has the  advantage that ordinary ASCII  is correct UTF-8 output. The remaining unicode symbols are coded using an elaborate scheme we need not explain. 
+Unicode does not define a  standard method to read and write Unicode to a file. But one very popular method is called UTF-8 (Unicode Transformation Format, 8-bit). This method has the  advantage that ordinary ASCII  is correct UTF-8 output. The remaining unicode symbols are coded using an elaborate scheme we need not explain. 
 
 Because there is no standard way to write Unicode to disk, every routine in macOS to read or write text requires an {\em encoding parameter}, which describes the type of encoding to be used by the operation. 
 If this parameter is UTF-8, then the contents of the editor will be completely preserved. If the parameter is IsoLatin9, then ASCII and Western European characters will be preserved, but Chinese, Arabic, Cyrillic, etc. characters will be lost.
@@ -710,11 +733,11 @@ In the second column of the same tab, select ``SyncTeX'' as the Sync method. The
 
 After making these choices, typesetting with TeXShop is easy. When you want to typeset, just push the ``Typeset'' button in the Source toolbar or select the ``Typeset'' menu at the top of the Typeset menu. This menu has a keyboard shortcut, command-T. After a few days, you'll ignore the toolbar item and the menu item and type command-T when you want to typeset.
 
-To switch between "Pdftex" and "TeX + DVI" for an occasional document, go to the Typeset menu and select the appropriate option at the bottom. This only affects the active document, so if you have two documents open, you can switch the typesetting method for one without changing it for the other.
+To switch between ``Pdftex'' and ``TeX + DVI'' for an occasional document, go to the Typeset menu and select the appropriate option at the bottom. This only affects the active document, so if you have two documents open, you can switch the typesetting method for one without changing it for the other.
 
 \section{Bibtex}
 
-The Typeset menu contains two other items, "BibTex" and "MakeIndex". These are explained in this section and the next section. 
+The Typeset menu contains two other items, ``BibTex'' and ``MakeIndex''. These are explained in this section and the next section. 
 
 BibTeX is a tool used to create bibliographies in LaTeX documents. The tool assumes that you have a large database of references which you often quote. Simple commands allow you to cite certain of these references in your LaTeX source, and BibTeX then creates a bibliography for your article containing only the items cited.
 
@@ -831,7 +854,7 @@ The pdftex defaults use two flags. The first, --file-line-error, tells pdftex ho
 There is one other flag you might want to add, --shell-escape. This flag gives pdftex permission to call other programs during typesetting. If you typeset source files which other people send you, this could be  dangerous because pdftex will call any program requested, even a program which erases your entire home directory. So we recommend avoiding the flag. But if you use it, you might want to check the item {\bf Shell Escape Warning}
 underneath. After that, when you typeset a file for the first time, a warning dialog will appear reminding you of ``shell-escape'' and asking if you still want to proceed.
 
-Typesetting with ``TeX + DVI'' calls a script named "simpdftex" which is part of TeX Live. If you want to know how the script works, open it in TeX Live and read it.
+Typesetting with ``TeX + DVI'' calls a script named ``simpdftex'' which is part of TeX Live. If you want to know how the script works, open it in TeX Live and read it.
 
 \chapter{Typesetting Engines II}
 \section{More History}
@@ -1120,7 +1143,7 @@ The aux file is not the only auxiliary file which LaTeX writes during typesettin
    gaux, glog, pdfsync, synctex, synctex(busy),latexmk, 
    fls, toc
 \end{verbatim}
-If typesetting goes seriously wrong, even the pdf file can become corrupt. Generally users do not want to trash the old pdf file since it is the preview image they will use when a new image is not created. But if you hold the down Shift key while activating Trash AUX Files,  the pdf file will also be removed.
+If typesetting goes seriously wrong, even the pdf file can become corrupt. Generally users do not want to trash the old pdf file since it is the preview image they will use when a new image is not created. But if you hold down the Shift key while activating Trash AUX Files,  the pdf file will also be removed.
 
 There is a complication for projects with a root file and included chapter files. In that case, typesetting the root file can leave root.aux and root.pdfsync in the folder with the root file, and chapter.aux in the folders with the various chapter files. So more extensive cleanup is needed. To make that happen, hold down the Option key while activating Trash AUX Files. Then all files in the root folder or any of its subfolders, regardless of name, will be trashed if they have an appropriate extension.
 
@@ -1144,7 +1167,7 @@ To make the aggressive behavior created by holding down the Option key the stand
 SyncTeX is a feature which allows users to rapidly move from a point in the source file to the corresponding point in the output  file, and vice-versa. This feature was first provided by {\em Textures}, a front end for the original Macintosh system written by Barry Smith in Portland, Oregon. My understanding is that Smith had rewritten the Pascal compiler and then large portions of the TeX code and used this knowledge to provide very accurate sync information. His company, Blue Sky Research, was in the process of porting {\em Textures} to macOS when he tragically died in 2012. 
 
 SyncTeX was first provided for regular systems on macOS by Jerome Laurens. His original method was a package which users activated in their source; this package output a synctex file containing information
-which front ends could use to sync between source and preview windows. Ufortunately, this package sometimes modified typesetting, so output when using it differed from output when not using it.
+which front ends could use to sync between source and preview windows. Unfortunately, this package sometimes modified typesetting, so output when using it differed from output when not using it.
 
 Later TeXShop provided a method directly in the program, bypassing Lauren's package; this didn't work very well and the less said about it, the better.
 
@@ -1196,14 +1219,14 @@ The commands listed so far work best for isolated moments when it is convenient 
 
 In short, if you use a mixture of standard mode windows and single window mode windows, you may run into unusual behavior when quitting and restarting.
 
-These problems do not occur if you always work in single window mode. To configure TeXShop for that behavior, select the option to ``Use One Window when Opening Source and Preview'' in TeXShop Preferences under the Preview tab. Then all documents will open in single window mode and restoring windows after quitting and restarting will work as expected. In short, you will have completely converted to One Window Mode for everything.
+These problems do not occur if you always work in single window mode. To configure TeXShop for that behavior, select the option to ``Use One Window'' when ``Opening Source and Preview'' in TeXShop Preferences under the Preview tab. Then all documents will open in single window mode and restoring windows after quitting and restarting will work as expected. In short, you will have completely converted to One Window Mode for everything.
 
 There are just two cautionary notes. First, projects with a root file and separate chapter files do not work in single window mode, so do not switch to single window mode if you use that facility.   And second, the  File menu's ``New'' command always produces a single source window (because there is no file to preview at first). So start new documents by writing a skeleton source file, typeset that file, and then switch that project to single window mode with the Window menu's ``Use Single Window'' command.   Do the same thing if a colleague sends you the source for a document, but no pdf. 
 
 
 \section{Multiple Windows with Tabs}
 
-Several years ago Apple introduced support for tabs in windows. Recently a user, Szilágyi Zsolt, wrote that TeXShop has a problem with tabs, and he sent a movie showing the problem in action. A few days later he solved the problem himself. I looked at the movie anyway, and Zsolt was doing things with tags in TeXShop that I never dreamed  possible. So I asked how he did them and was told that in Apple's System 
+Several years ago Apple introduced support for tabs in windows. Recently a user, Szilágyi Zsolt, wrote that TeXShop has a problem with tabs, and he sent a movie showing the problem in action. A few days later he solved the problem himself. I looked at the movie anyway, and Zsolt was doing things with tabs in TeXShop that I never dreamed  possible. So I asked how he did them and was told that in Apple's System 
 Preferences under the General tab, there is an item labeled ``Prefer tabs in full screen when opening documents.'' Here the words ``full screen'' appear in a pull-down menu whose other choices are ``never'' and ``always''. Selecting ``always'' greatly improves the way tabs work in TeXShop. 
 
 Next I discovered that some applications have their own similar preference. This makes it possible to improve tab support in these applications without forcing it upon the full system. For example, Safari has an item labeled ``Open pages in tabs instead of windows'' with possible values ``Never'', ``Automatically'', and ``Always''.  The choice ``Automatically'' causes Safari to follow the global preference item in System Preferences.
@@ -1841,7 +1864,7 @@ For example, a quotation on a typewriter would be written
 \begin{verbatim}
     He replied "that is not the point".
 \end{verbatim}
-But when typeset by LaTeX, this input would become "that is not the point" rather than the desired ``that is not the point''.
+But when typeset by LaTeX, this input would become ``that is not the point'' rather than the desired ``that is not the point''.
 Key Bindings can reprogram the \verb|"| character to input the correct symbols to start a LaTeX quote and the correct symbols to end that quote with the cursor positioned in the middle. If text is selected in the editor and then \verb|"|  is typed, Key Bindings can insert LaTeX quote symbols before the selection and after it.
 
 There is an item in TeXShop Preferences under the Edit tab to turn Key Bindings on or off when documents are first opened. To be frank, I leave it off because I find it confusing to type a key that is supposed to produce one symbol and have it produce something else. But if you can get around that hangup, turn it on.
@@ -1903,7 +1926,7 @@ It takes practice to learn which commands have completions and which do not. For
 \begin{verbatim}
      \begin{
 \end{verbatim}
- has no completions because  many TeX commands start with `begin'' and it makes little sense to list them all.
+ has no completions because  many TeX commands start with ``begin'' and it makes little sense to list them all.
  However
  \begin{verbatim}
       \begin{t
@@ -2117,6 +2140,16 @@ See the picture at the top of the next page for an illustration of ``Revert To''
    \caption{Revert To}
    \label{fig:example}
 \end{figure}
+
+\else
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5.5in]{Graphics/RevertTo.png} 
+   \caption{Revert To}
+   \label{fig:example}
+\end{figure}
+
 
 \fi
 
@@ -2635,24 +2668,30 @@ has code to call this ConTeXt interpretation code. To use it, ConTeXt uses shoul
 
 This is a welcome improvement, because now Hans both generates the synctex file for ConTeXt users and also provides the code to interprete the file. Consequently, he is free to make any further changes without requiring changes in the front ends. 
 
+In 2023, further changes were made to the ConTeXt distribution in TeX Live and MacTeX 
+and to the ConTeXt distribution available through the ConTeXt Garden. To cope with these changes,
+a new engine is provided in \path{~/Library/TeXShop/Engines/Inactive/ConTeXt-2023} called
+ConTeXt-2023. Use this engine if you are using TeX Live 2023 or MacTeX-2023, and if you are
+running macOS Monterey or Ventura or later. If you are using an earlier operating system, read the document in the ConTeXt-2023 to modify this engine appropriately.
+
 How should a ConTeXt user react to these changes. I recommend
 \begin{itemize}
 \item Go to the ConTeXt Garden site and install the latest version of ConTeXt in your home directory
-\item Add the ConTeXt engine listed earlier to \path{~/Library/TeXShop/Engines}. I call it ConTeXt2021. This engine is available in \path{~/Library/TeXShop/Engines/Inactive/ConTeXt-Sync}.
+\item Add the ConTeXt engine to \path{~/Library/TeXShop/Engines}. Use the engine ConTeXt2021 if you are using an older version of TeXLive or MacTeX, and the engine ConTeXt-2023 if you are using the 2023 or later version of TeX Live or MacTeX. 
 \item Add the magic lines
 \begin{verbatim}
+     % !TEX TS-program = ConTeXt-2023
      % !TEX useAlternatePath
      % !TEX useConTeXtSyncParser
 \end{verbatim}
-to the heading of your ConTeXt source files
+to the heading of your ConTeXt source files if you are using the ConTeXt Garden distribution. Omit the
+middle line if you are using the distribution in TeX Live and MacTeX.
 \item Add the line
 \begin{verbatim}
 		\setupsynctex[state=start,method=min] 
 \end{verbatim}
 to your ConTeXt source file; this line tells ConTeXt to generate the new synctex information.
 \end{itemize}
-
-All of this works for users who prefer to use the ConTeXt in TeX Live. They should just omit the magic line ``useAlternatePath''. 
 
 
 \chapter{Using an External Editor}
@@ -3523,6 +3562,19 @@ The solution is to rewrite the TeXShop Preferences data file from scratch. Do th
 \item Reset any Preference changes you made have made previously.
 \end{itemize}
 
+If this step doesn't fix the problem and you want to return to your earlier Preference settings, you can do so  using the saved copy on the desktop. But reinstalling this copy requires care because the system caches the Preference file for extra startup speed. Proceed as follows:
+\begin{itemize}
+\item Quit TeXShop.
+\item Replace the file ``TeXShop.plist'' currently in \path{~/Library/Preferences} with the old backup
+copy from the desktop.
+\item In Terminal type
+\begin{verbatim}
+     defaults read ~/Library/Preferences/TeXShop.plist
+\end{verbatim}
+\item Restart TeXShop.
+\end{itemize}
+
+
 \chapter{Left Over Items}
 
 \section{Menus}
@@ -3973,7 +4025,7 @@ When the Preview window first appears, its drawer is hidden. A hidden preference
 \end{verbatim}
 \newpage
 \subsubsection{<Preferences for Automatic Saving>}
-By default, automatic saving is on. I strongly recommend leaving it off, but it can be turned off via
+By default, automatic saving is on. I strongly recommend leaving it on, but it can be turned off via
 \begin{verbatim}
    defaults write TeXShop AutoSaveEnabled NO
 \end{verbatim}

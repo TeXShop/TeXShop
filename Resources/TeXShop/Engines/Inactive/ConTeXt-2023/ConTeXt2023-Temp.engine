@@ -1,0 +1,8 @@
+#!/bin/tcsh
+# Before using this engine, it might be necessary to run "context --generate" in Terminal.
+
+set FULLPATH=`readlink -f $3`
+
+set path= ($FULLPATH $path /Library/TeX/texbin /usr/texbin /usr/local/bin)
+
+context --autogenerate --synctex=1 "$1"

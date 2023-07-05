@@ -188,6 +188,11 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	[SUD setPersistentDomain:oldDefaults forName:@"TeXShop"];
 	[SUD synchronize];
 	[self updateControlsFromUserDefaults:SUD];
+    
+    // KOCH
+    // Here is the spot where we need to redraw the document and console with the remembered fonts
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
 }
 
 
@@ -236,6 +241,19 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 	[SUD synchronize];
 
 	[self updateControlsFromUserDefaults:SUD];
+    
+    // KOCH
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontRememberNotification object:self];
+    self.documentFont = [NSFont userFontOfSize:12.0];
+    [self updateDocumentFontTextField];
+    [SUD setObject:[NSArchiver archivedDataWithRootObject:self.documentFont] forKey:DocumentFontKey];
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
+    
+    [self updateConsoleFontTextField];
+    self.consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+    [SUD setObject: [self.consoleFont fontName] forKey:ConsoleFontNameKey];
+    [SUD setFloat: [self.consoleFont pointSize] forKey: ConsoleFontSizeKey];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ConsoleFontChangedNotification object:self];
 }
 
 
@@ -732,23 +750,37 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
     value = [tabIndentField integerValue];
     if (value < 2) {
         value = 2;
-        [tabIndentField setIntegerValue:2];
+//        [tabIndentField setIntegerValue:2];
     } else if (value > 50) {
         value = 50;
-        [tabIndentField setIntegerValue:50];
+//        [tabIndentField setIntegerValue:50];
     }
+    [tabIndentField setIntegerValue: value];
     
     [SUD setInteger:value forKey:tabsKey];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
 
 }
 
 - (IBAction)firstParagraphIndentPressed:(id)sender
 {
     double        value;
+    NSInteger     wholeValue;
+
     
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceFirstLineHeadIndentKey] forKey:SourceFirstLineHeadIndentKey];
     
     value = [firstParagraphIndentField doubleValue];
+    // KOCH
+    wholeValue = value;
+    if (wholeValue < 0)
+        wholeValue = 0;
+    if (wholeValue > 100)
+        wholeValue = 100;
+    [firstParagraphIndentField setIntegerValue:wholeValue];
+    value = wholeValue;
+    /*
     if (value < 0.0) {
         value = 0.0;
         [firstParagraphIndentField setDoubleValue:0];
@@ -756,19 +788,29 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         value = 100.0;
         [firstParagraphIndentField setDoubleValue:100.0];
     }
+    */
     
     [SUD setFloat:value forKey:SourceFirstLineHeadIndentKey];
     
-
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
 }
 
 - (IBAction)remainingParagraphIndentPressed:(id)sender
 {
     double        value;
+    NSInteger     wholeValue;
     
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceHeadIndentKey] forKey:SourceHeadIndentKey];
     
     value = [remainingParagraphIndentField doubleValue];
+    wholeValue = value;
+    if (wholeValue < 0)
+        wholeValue = 0;
+    if (wholeValue > 100)
+        wholeValue = 100;
+    [remainingParagraphIndentField setIntegerValue:wholeValue];
+    value = wholeValue;
+    /*
     if (value < 0.0) {
         value = 0.0;
         [remainingParagraphIndentField setDoubleValue:0.0];
@@ -776,20 +818,30 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         value = 100.0;
         [remainingParagraphIndentField setDoubleValue:100.0];
     }
+    */
     
     [SUD setFloat:value forKey:SourceHeadIndentKey];
     
-
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
     
 }
 
 - (IBAction)interlineSpacingPressed:(id)sender
 {
-    NSInteger        value;
+    double        value;
+    NSInteger     wholeValue;
     
     [[_undoManager prepareWithInvocationTarget:SUD] setObject:[SUD stringForKey:SourceInterlineSpaceKey] forKey:SourceInterlineSpaceKey];
     
     value = [interlineSpacingField doubleValue];
+    wholeValue = value;
+    if (wholeValue < 1)
+        wholeValue = 1;
+    if (wholeValue > 20)
+        wholeValue = 20;
+    [interlineSpacingField setIntegerValue:wholeValue];
+    value = wholeValue;
+    /*
     if (value < 1.0) {
         value = 1,0;
         [interlineSpacingField setDoubleValue:1.0];
@@ -797,10 +849,11 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         value = 20.0;
         [interlineSpacingField setDoubleValue:50.0];
     }
+    */
     
     [SUD setFloat:value forKey:SourceInterlineSpaceKey];
     
-
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocumentFontChangedNotification object:self];
 }
 
 
@@ -1983,8 +2036,12 @@ person script. See also: DefaultTypesetMode.
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
 	
-	[SUD setBool:[(NSCell *)sender state] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
-	
+   self.consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
+    
+    // become first responder so we will see the envents that NSFontManager sends
+    // up the responder chain
+    [_prefsWindow makeFirstResponder:_prefsWindow];
+    [[NSFontManager sharedFontManager] setSelectedFont:self.consoleFont isMultiple:NO];
 }
 
 
@@ -2686,9 +2743,16 @@ This method retrieves the application preferences from the defaults object and s
 	// [_tabsTextField setIntValue: tabSize];
     [tabIndentField setStringValue:[myNumber stringValue]];
     
-    [firstParagraphIndentField setStringValue:[defaults stringForKey: SourceFirstLineHeadIndentKey]];
-    [remainingParagraphIndentField setStringValue:[defaults stringForKey: SourceHeadIndentKey]];
-    [interlineSpacingField setStringValue:[defaults stringForKey: SourceInterlineSpaceKey]];
+    // [firstParagraphIndentField setStringValue:[defaults stringForKey: SourceFirstLineHeadIndentKey]];
+    // [remainingParagraphIndentField setStringValue:[defaults stringForKey: SourceHeadIndentKey]];
+    // [interlineSpacingField setStringValue:[defaults stringForKey: SourceInterlineSpaceKey]];
+    
+    [firstParagraphIndentField setIntegerValue:[defaults integerForKey: SourceFirstLineHeadIndentKey]];
+    [remainingParagraphIndentField setIntegerValue:[defaults integerForKey: SourceHeadIndentKey]];
+    if ([defaults integerForKey: SourceInterlineSpaceKey] == 0)
+        [interlineSpacingField setIntegerValue: 1];
+    else
+        [interlineSpacingField setIntegerValue:[defaults integerForKey: SourceInterlineSpaceKey]];
 
 	[_texCommandTextField setStringValue:[defaults stringForKey:TexCommandKey]];
 	[_latexCommandTextField setStringValue:[defaults stringForKey:LatexCommandKey]];

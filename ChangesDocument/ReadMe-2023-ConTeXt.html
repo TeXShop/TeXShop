@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+% !TEX TS-program = html
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>TeXShop</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <style type="text/css" media="screen">@import "v1.css";</style>
+</head>
+
+<body style="padding:25px">
+
+
+<!-- main content -->
+<div id="main">
+
+<P><h3>Using TeXShop, LaTeX and ConTeXt Simultaneously</h3></P>
+
+Use this folder only if you have upgraded to TeX Live 2023 or MacTeX-2023.
+The version of ConTeXt in TeX Live 2023 and MacTeX-2023 changed considerably from past years, so
+new Engines are provided. The situation is still in flux as the pretest period continues, but the suggestions
+below should continue to hold even if there are later updates. 
+
+<p>ConTeXt is part of TeX Live 2023. That version is updated once a year, but ConTeXt is under active development and changes more frequently. It is possible to get the latest ConTeXt by going to the ConTeXt Garden Wiki  and installing the version available there. This is a small download and can be done quickly, The process is clearly described on the Wiki, and very easy. The distribution can be installed anywhere you like; a natural place is in your home directory at ~/bin/context. Then it does not interfere with TeX Live.
+
+<p>
+If you install ConTeXt this way, go to TeXShop Preferences under the "Engine" tab and change the third item at the top, which is labeled "Alternate Path", to the path for ConTeXt binaries. If the binaries were installed in ~/bin/context, this path might be ~/bin/context/tex/texmf-osx-arm64/bin.
+<p>
+The remaining instructions work with both the ConTeXt in TeX Live and this alternate ConTeXt installation.
+Move the engine file ConTeXt2023 from ~/Library/TeXShop/Engines/Inactive/ConTeXt-2023 to ~/Library/TeXShop/Engines.
+<p>
+At the top of each ConTeXt source file, add the magic lines
+<PRE>
+     % !TEX TS-program = ConTeXt-2023
+     % !TEX useAlternatePath
+     % !TEX useConTeXtSyncParser
+</PRE>
+<p>
+Omit the middle line if you use the ConTeXt in TeX Live. In all cases add to the header of the ConTeXt document  the command
+<PRE>
+     \setupsynctex[state=start,method=min] 
+</PRE>
+
+<p> After these steps, typesetting with TeX, LaTeX, XeTeX, and other engines will work as usual, but typesetting with ConTeXt will also work as usual. The ConTeXt typesetting job will use the appropriate distribution and syncTeX will use new routines in ConTeXt rather than the usual syncTeX code. For more details on this
+final point, see the TeXShop changes for version 4.66,
+
+<p>
+Done.
+
+<p>Note: In some earlier versions of the pretest, it was necessary to run the following command just
+once before using ConTeXt. In case of trouble, try this fix.
+<PRE>
+    mtxrun --generate
+</PRE>
+
+<p>Note: as this is written, synctex fails with the ConTeXt in TeX Live, but works with the ConTeXt installed from  the ConTeXt Garden Wiki.
+
+<P><h3>Using ConTeXt with macOS Big Sur or Earlier, or from the Command Line</h3></P>
+
+The previous instructions require macOS Monterey or Ventura. If you use an earlier system, continue reading.
+
+<p>This document was written in early March, 2023. At that time,  ConTeXt had problems with paths which contain symbolic links. Thus it had problems with the standard path /Library/TeX/texbin used by MacTeX. There is no  problem calling a binary from such a path. But ConTeXt analyzed this path to find other directories in TeX Live, like texlive/2023/texmf-dist. 
+
+<p> There is a programming routine a program can use to find the call which started it running. 
+Thus if I type /Users/koch/usr/local/texlive/2023/bin/universal-darwin.luametatex, then luametatex can go up a level and find universal-darwin, or up two levels and find bin, or up three levels and find 2023. From there, it can
+find 2023/texmf-dist. But if this same program is called using /Library/TeX/texbin/luametatex, then going up a level gives texbin, two levels gives TeX, and three levels gives /Library, and there is no /Library/texmf-dist. Perhaps the ConTeXt folks will find another way to do this.
+
+<p> In the meantime, it is important to call ConTeXt in TeX Live 2023 using a path without symbolic links. Luckily, there is a shell command in Monterey and Ventura named "readlink" which understands a flag "-f", and the following command reads a path which may contain symbolic links and outputs a similar path without any such links:
+<PRE>
+     readlink -f path
+</PRE>
+Also when engines are called in recent versions of TeXShop, the variable $3 contains the path used to call the engine, either /Library/TeX or the alternate path discussed earlier. 
+
+<p> So the new engines for 2023 work by calling "readlink -f $3" to find the full path, and calling
+context using this full path.
+
+<p> If you use an earlier version of macOS, either you have no readlink or else your readlink does not understand this flag. The solution is to add a full path to your binaries to the start of your PATH before calling context.
+This can be hard coded into the engine. The disadvantage is that in a future year the engine must be changed.
+The real solution is to update to Monterey or Ventura and then the problem goes away!
+
+
+
+
+
+<P><h3>Using TeXShop, LaTeX, and ConTeXt with an External Editor.</h3></P>
+
+These ConTeXt changes also work with an external editor, but the configuration steps are a little more difficult. These steps are clearly described in the Changes document for TeXShop 4.66 available in the TeXShop Help menu, so read that document for details.
+
+<br />
+<br />
+
+<p> 
+Richard Koch   <br />
+2740 Washington St <br />
+Eugene, Oregon 97405 <br />
+</p>
+</div>
+</body>
+</html>

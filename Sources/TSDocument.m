@@ -374,8 +374,6 @@ NSInteger strSort(id s1, id s2, void *context)
     NSRect      theVisibleRect;
     NSRange     theRange;
     NSInteger   drawerState, tabPreference;
-    CGFloat     indexPosition;
-    NSSplitView *theSplitView;
     
     [super restoreStateWithCoder:coder];
     
@@ -443,7 +441,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 rightSize.width = rightWidth;
                  if (leftWidth < rightWidth) {
                      [leftView setFrameSize: leftSize];
-                     [rightView setFrameSize: rightSize];[rightView setFrameSize: rightSize];
+                     [rightView setFrameSize: rightSize];
                  }
                  else {
                      [rightView setFrameSize: rightSize];
@@ -4269,6 +4267,7 @@ preference change is cancelled. "*/
 
 - (void) setupLabels1
 {
+    
     if (!fileIsTex)
         return;
     //NDS - update labels here, whenever tags are updated
@@ -4278,6 +4277,8 @@ preference change is cancelled. "*/
 
 - (void)fixUpLabels:(id)sender
 {
+    
+    
 //    NSLog(@"got here");
    [self fixLabels];
 }
@@ -4285,6 +4286,7 @@ preference change is cancelled. "*/
 
 - (void) setupLabels2
 {
+
     if (!fileIsTex)
         return;
     //NDS - update labels here, whenever tags are updated
@@ -4295,9 +4297,10 @@ preference change is cancelled. "*/
         if ( (([[self textWindow] toolbar].isVisible) && ([myItems containsObject: theLabels]))
             || ( ([[self fullSplitWindow] toolbar].isVisible) && ([mySplitItems containsObject: theSLabels])))
         {
-            [self fixLabels];
+           [self fixLabels];
         }
     }
+ 
 }
 
 
@@ -4305,6 +4308,8 @@ preference change is cancelled. "*/
 // NDS added - generate label entries
 - (void) fixLabels
 {
+    
+    
     if (!fileIsTex) return;     //only for TeX docs
     NSString *text;             //the whole doc
     id newItem;                 //new popup entries

@@ -17,7 +17,25 @@
 <!-- main content -->
 <div id="main">
 
-<P><h3>TeXShop Changes 5.14</h3></P>
+<P><h3>TeXShop Changes 5.15</h3></P>
+Matthias Schmidt reported several bugs in TeXShop 5.12 when used in single window mode, particularly in the German localization. Version 5.13 of TeXShop fixed some of those bugs.
+ 
+ <p> Schmidt then reported a crash bug when configuring the toolbar, but only in single window mode when using the German localization. I fixed this in version 5.14 by removing the label tool from the German version. Other bugs reported by Schmidt were trickier, and I told him  I didn't intend to work on TeXShop during the rest of the summer, but would collect his bug reports in a folder. 
+ 
+ <p> During the next week I heard nothing back and happily attended the annual Bach Festival in Eugene, which ended with an amazing performance by Angela Hewitt of the Well-Tempered Clavier. The next day Schmidt sent  five patch files fixing every bug on his list and one old bug on my "to do" list. In particular, he put the label tool back in the  German localization, after finding the real cause of that bug. Many of the fixes were corrections to localized Interface Files, which I have been reluctant to touch since they seemed fragile in my hands. Version 5.15 of TeXShop is entirely the work of Matthias Schmidt.
+ 
+ <p><ul>
+ <li> Some translations of toolbar items in various languages did not actually appear when TeXShop ran. This should be fixed.
+ 
+ <p> <li> A number of German toolbar items were left in English, but should now appear in German.
+ 
+ <p><li> The label tool now correctly appears in German in single window mode. The crash is gone.
+ 
+ <p><li> When using single window mode in English, selecting the magnifying glass tool made it impossible to select any other tool. As a workaround, users were told to hold down the Option key while selecting other items. The bug is now fixed and the workaround is no longer needed.
+ 
+ </ul>
+ 
+ <P><h3>TeXShop Changes 5.14</h3></P>
 TeXShop 5.14 fixes a crash bug in the German localization of TeXShop. This bug has  been present for a long time and only affected single window mode. In that mode, TeXShop crashed when the user tried to customize the toolbar.
 
 <p> The bug was caused by the "Labels" tool. The fix eliminates that tool, but only in German and  only in single window mode.

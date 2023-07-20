@@ -20,7 +20,6 @@
 
 #import <AppKit/AppKit.h>
 #import <WebKit/WebKit.h>
-\
 
 @interface MyHTMLView : WKWebView 
 {

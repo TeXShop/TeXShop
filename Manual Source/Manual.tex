@@ -55,7 +55,7 @@
  \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
             citecolor=blue, urlcolor=blue]{hyperref}
 
-\title{TeXShop Manual \\ Version 1.2}
+\title{TeXShop Manual \\ Version 1.3}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -1056,7 +1056,7 @@ In TeXShop 5.00, an additional html-Preview window is provided, so typesetting j
      !TEX-noPreview
      !TEX-pdfPreview
      !TEX-htmlPreview
-     !TeX-bothPreview
+     !TEX-bothPreview
      !TEX-noConsole
 \end{verbatim}
  
@@ -3706,29 +3706,29 @@ Here is a complete list.
      Otherwise use the exact name and spelling of the appropriate engine.
 \end{verbatim}
 
-{\bf \% ~TEX encoding = }
+{\bf \% !TEX encoding = }
 \begin{verbatim}
      Set the encoding used to open the file, overriding all other methods 
      to determine this encoding. Irrelevant if all files use UTF-8 Unicode.
      Important if you deal with a mixture of encodings
 \end{verbatim}
 
-{\bf \% ~TEX root = }
+{\bf \% !TEX root = }
 \begin{verbatim}
      Point to the root file which includes this file. Can be a full path
      or a relative path. Should appear at the top of all included or
      input files, but definitely not at the top of the root file.
 \end{verbatim}
 
-{\bf \% ~TEX parameter = }
-{\bf \% ~TEX TS-parameter = }
+{\bf \% !TEX parameter = } \\
+{\bf \% !TEX TS-parameter = }
 \begin{verbatim}
      Occasionally used. Equals the string sent to an engine as the
      second argument $2 of an engine command. If the magic line 
      is missing, the second argument will be a single space.
 \end{verbatim}
 
-{\bf \% ~TEX spellcheck = }
+{\bf \% !TEX spellcheck = }
 \begin{verbatim}
      The exact name of the Spelling Dictionary to be used with this
      source file. Only important when a user writes documents in
@@ -3737,19 +3737,19 @@ Here is a complete list.
 
 \section{Magic Lines to Control Preview in Double Page Modes}
 
-{\bf \% ~TEX PageDirectionL2R }
+{\bf \% !TEX PageDirectionL2R }
 \begin{verbatim}
      The choice for languages written from left to right. Pages flow 
      from left to right.
 \end{verbatim}
 
-{\bf \% ~TEX PageDirectionR2L }
+{\bf \% !TEX PageDirectionR2L }
 \begin{verbatim}
      The choice for languages written from right to left. Pages flow 
      from right to left.
 \end{verbatim}
 
-{\bf \% ~TEX bookDisplay }
+{\bf \% !TEX bookDisplay }
 \begin{verbatim}
      The initial page stands alone, and then double pages begin.
      Since books start with an odd number of preliminary pages,
@@ -3758,7 +3758,7 @@ Here is a complete list.
      Window.
 \end{verbatim}
 
-{\bf \% ~TEX standardDisplay }
+{\bf \% !TEX standardDisplay }
 \begin{verbatim}
      The double pages begin immediately. Useful in Japan for
      certain special books.
@@ -3766,7 +3766,7 @@ Here is a complete list.
 
 \section{Magic Lines for ConTeXt}
 
-{\bf \% ~TEX useAlternatePath }
+{\bf \% !TEX useAlternatePath }
 \begin{verbatim}
      Tells the typesetting engine to find the binary program in
      the location "Alternate Path" set in TeXShop Preferences
@@ -3775,7 +3775,7 @@ Here is a complete list.
      files required by ConTeXt.
 \end{verbatim}
 
-{\bf \% ~TEX useConTeXtSyncParser }
+{\bf \% !TEX useConTeXtSyncParser }
 \begin{verbatim}
      The author of ConTeXt, Hans Hagen, likes to rewrite
      portions of the TeX infrastructure. He rewrote the
@@ -3785,7 +3785,7 @@ Here is a complete list.
      method.
 \end{verbatim}
 
-{\bf \% ~TEX useOldSyncParser }
+{\bf \% !TEX useOldSyncParser }
 \begin{verbatim}
      This magic line is obsolete. Hans Hagen first wrote
      his own code to create the synctex file output by Jerome
@@ -3797,7 +3797,7 @@ Here is a complete list.
 
 \section{A Magic Line for Beamer}
 
-{\bf \% ~TEX pdfSinglePage }
+{\bf \% !TEX pdfSinglePage }
 \begin{verbatim}
      Sets the Preview Window's Display Mode to SinglePage
      style even if it is set in preferences as MultiPage. When
@@ -3807,7 +3807,7 @@ Here is a complete list.
 
 \section{Obsolete Magic Lines}
 
-{\bf \% !TEX useTabs}
+{\bf \% !TEX useTabs} \\
 {\bf \% !TEX tabbedFile(}
 \begin{verbatim}
      These commands are described in the Changes document
@@ -3817,6 +3817,7 @@ Here is a complete list.
      better methods.
 \end{verbatim}
 
+\newpage
 {\bf \% !TEX projectFile = }
 \begin{verbatim}
      A very old method used to handle projects with a root file and
@@ -3838,14 +3839,14 @@ Here are the magic lines:
      !TEX-noPreview
      !TEX-pdfPreview
      !TEX-htmlPreview
-     !TeX-bothPreview
+     !TEX-bothPreview
      !TEX-noConsole
 \end{verbatim}
  The standard behavior of TeXShop still applies if an engine has none of these lines. After executing all lines of the engine, TeXShop looks in the document directory to see if there is a file with the same name as the source, but extension ``.pdf''. If so, it opens this pdf file in the Preview Window, unless the Option Key is depressed.
 
 If one or more commands are present, then
 \begin{itemize}
-\item if the line ``!TeX-noPreview'' is present, no preview window appears even if some of the other lines are also present;
+\item if the line ``!TEX-noPreview'' is present, no preview window appears even if some of the other lines are also present;
 \item otherwise if the lines ``!TEX-pdfPreview'' and or ``!TEX-bothPreview'' are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ``.pdf''; if so, it opens this pdf file in the Preview Window;
 \item if the lines ``!TEX-htmlPreview'' and or ``!TEX-bothPreview'' are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ``.html''; if so, it opens this html file in the HTML Window;
 \item and if the line ``!TEX-noConsole'' is present, the console is not shown.
@@ -4076,7 +4077,7 @@ These items should never be used, but are listed for completeness.
 
 Before TeXShop had a preference to set the font for the console and log windows, there was
 \begin{verbatim}
-   defaults write TeXShop ScreenFontForLogAndConsole -bool YES
+   defaults write TeXShop ScreenFontForLogAndConsole YES
 \end{verbatim}
 
 The following preference causes synchronization spots to be shown in the Preview window:
@@ -4142,7 +4143,7 @@ When macOS Mavericks was released, the Preview display of text became slightly f
 
 When macOS Mountain Lion was released, Apple  optimized text and font drawing for the Retina display. This caused a few fonts to appear slightly blurry in small sizes on a non Retina display. The following preference reverted back to the earlier behavior. This problem was fixed long ago, so the preference is now irrelevant:
 \begin{verbatim}
-   defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled -bool YES
+   defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled YES
 \end{verbatim}
 
 \section{Newer Hidden Preferences}
@@ -4228,11 +4229,14 @@ defaults write TeXShop ExtraCommandsNotToCheckParameter -array-add "\\emph"
 defaults write TeXShop ExtraCommandsNotToCheckParameter -array
 \end{verbatim}
 
+\newpage
+\subsubsection{<Preferences to Control Apple Find Bar>}
 The behavior of the Apple Find Bar was changed in TeXShop. Earlier it picked items one by one, but now the entire window being searched darkens during a search and all instances of the phrase being searched stand out in white, with the active element in yellow. To get the original behavior back:
 \begin{verbatim}
    defaults write TeXShop IncrementalSearch NO
 \end{verbatim}
 
+\subsubsection{<Preferences to Control Tags and Labels>}
 During one update, the code to create the Tags and Labels menus was made more efficient. But in case of trouble, users could revert some of this code. Trouble never materialized, so the following preferences are obsolete:
 \begin{verbatim}
     defaults write TeXShop UseNewTagsAndLabels NO
@@ -4263,6 +4267,7 @@ The optional menu to select the encoding was removed from the Save Dialog. To ge
    defaults write TeXShop EncodingMenuInSaveDialog YES
 \end{verbatim}
 
+\newpage
 \subsubsection{<Preferences for the Preview Window>}
 
 In double page mode, the initial page is shown by itself and then pages are shown side by side. This is called Book Mode. A hidden preference setting turns it off
@@ -4301,6 +4306,7 @@ This trick is off by default, but can be turned on to work automatically using
    defaults write TeXShop FixVoiceOver Yes
 \end{verbatim}
 
+\newpage
 \subsubsection{<Obsolete Preferences Introduced To Find a Bug>}
 
 Several years ago, a small number of users reported that while typesetting documents with at least 700 pages, typesetting would suddenly stop in the middle without an error message. This was the most difficult bug I ever faced. The Changes document explains how it was finally fixed. Before the fix, several hidden preferences were introduced so users could help search for a solution. All are now obsolete, but we list them below.
@@ -4369,12 +4375,9 @@ When scrolling the pdf display with a gesture or mouse in High Sierra, a bug pre
 
 \chapter{Working Around Bugs}
 
-In a small number of cases, it is easier to work around a bug than to fix it. These cases are explained below. 
+In a small number of cases, it may be easier to work around a bug than to fix it. When cases like that arise, they will be listed here.
 
-\begin{itemize}
-\item In single window mode, selecting the magnifying glass makes it impossible to switch to other "mouse modes" like text selection and pdf selection. This problem occurs in English and a few other localizations, but there is an easy work around. Hold down the Option key while selecting other tools and then selection works. 
-
-\end{itemize}
+There was indeed such a case involving the toolbar in single window mode using the English localization, but the bug was fixed in version 5.15. So currently no items are listed in this chapter.
 
  
 \chapter{Contributors}

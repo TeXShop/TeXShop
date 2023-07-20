@@ -642,15 +642,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         return toolbarItem;
     }
     //NDS added dropdown for going to a label
-
-    
     if ([itemIdent isEqual: skLabelsTID]) {
-        
-        BOOL NotGerman = YES;
-        NSString *testString = NSLocalizedString(@"Cancel", @"Cancel");
-        if ([testString isEqualToString: @"Abbrechen"])
-            NotGerman = NO;
-        
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:slabels];
          menuFormRep = [[NSMenuItem alloc] init] ;
         
@@ -658,11 +650,8 @@ if ([itemIdent isEqual: kSplitKKTID]) {
         [menuFormRep setTitle: [toolbarItem label]];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
         theSLabels = toolbarItem;
-        if (NotGerman)
-            return toolbarItem;
+        return toolbarItem;
     }
-    
-   
     
     if ([itemIdent isEqual: kUpdateTID]) {
     
@@ -916,7 +905,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     {
         return [self makeToolbarSymbolsItemWithItemIdentifier:itemIdent key:itemIdent symbolName: @"chevron.right" accessibility: @"Next Page" imageName:@"NextPageAction" newImageName:@"chevron.right" target:self action:@selector(doHtmlNextPage:)];
      }
-\
+
 	if ([itemIdent isEqual: kBackForthKKTID]) {
         
         toolbarItem = [self makeBackForthItemWithItemIdentifier: itemIdent key:itemIdent customView: backforthKK];

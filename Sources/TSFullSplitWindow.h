@@ -33,6 +33,8 @@
 @property(weak) IBOutlet TSDocument   *myDocument;
 @property BOOL wasClosed;
 
+- (void) doTextMagnify: sender;   // for toolbar in text mode
+- (void) doTextPage: sender;      // for toolbar in text mode
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
 - (void)doMove: (id)sender;

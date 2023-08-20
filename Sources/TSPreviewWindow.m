@@ -136,40 +136,12 @@ extern NSPanel *pageNumberWindow;
 
 - (void) doTextMagnify: sender
 {
-	id	thePanel;
-
-	thePanel = [self.myDocument magnificationPanel];
-
-	[NSApp beginSheet: thePanel
-			modalForWindow: self
-			modalDelegate: self
-			didEndSelector: @selector(magnificationDidEnd:returnCode:contextInfo:)
-			contextInfo: nil];
+    [self.myDocument doTextMagnify: sender];
 }
 
-- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
+- (void) doTextPage: sender
 {
-	// [sheet close];
-	[sheet orderOut: self];
-}
-
-- (void) doTextPage: sender      // for toolbar in text mode
-{
-	id	thePanel;
-
-	thePanel = [self.myDocument pagenumberPanel];
-
-	[NSApp beginSheet: thePanel
-			modalForWindow: self
-			modalDelegate: self
-			didEndSelector:  @selector(pagenumberDidEnd:returnCode:contextInfo:)
-			contextInfo: nil];
-}
-
-- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
-{
-	// [sheet close];
-	[sheet orderOut: self];
+    [self.myDocument doTextPage: sender];
 }
 
 - (void) displayLog: sender

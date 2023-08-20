@@ -3827,6 +3827,56 @@ preference change is cancelled. "*/
 		return pagenumberPanel;
 }
 
+- (void) doTextMagnify: sender
+{
+    id    thePanel;
+    id    theWindow;
+
+    thePanel = [self magnificationPanel];
+    theWindow = [sender target];
+
+    [NSApp beginSheet: thePanel
+            modalForWindow: theWindow
+            modalDelegate: self
+            didEndSelector: @selector(magnificationDidEnd:returnCode:contextInfo:)
+            contextInfo: nil];
+}
+
+- (void) doTextPage: sender
+{
+    id    thePanel;
+    id    theWindow;
+
+    thePanel = [self pagenumberPanel];
+    theWindow = [sender target];
+
+    [NSApp beginSheet: thePanel
+            modalForWindow: theWindow
+            modalDelegate: self
+            didEndSelector:  @selector(pagenumberDidEnd:returnCode:contextInfo:)
+            contextInfo: nil];
+}
+
+- (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
+{
+    id    theWindow;
+
+    theWindow = [sheet sheetParent];
+
+    // [sheet close];
+    [sheet orderOut: theWindow];
+}
+
+- (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo
+{
+    id    theWindow;
+
+    theWindow = [sheet sheetParent];
+
+    // [sheet close];
+    [sheet orderOut: theWindow];
+}
+
 - (void) quitMagnificationPanel: sender
 {
 	[NSApp endSheet: magnificationPanel returnCode: 0];

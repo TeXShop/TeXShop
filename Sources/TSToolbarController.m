@@ -467,7 +467,7 @@ if (@available(macOS 11.0, *))
         [shareButton setAction:@selector(doShareSource:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButton];
         menuFormRep = [[NSMenuItem alloc] init];
-        [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
+        [menuFormRep setTitle: [toolbarItem label]];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doShareSource:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -483,7 +483,7 @@ if (@available(macOS 11.0, *))
         [shareButtonFull setAction:@selector(doShareSource:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView: shareButtonFull];
         menuFormRep = [[NSMenuItem alloc] init];
-        [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
+        [menuFormRep setTitle: [toolbarItem label]];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doShareSource:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -499,7 +499,7 @@ if (@available(macOS 11.0, *))
         [shareButtonEE setAction:@selector(doSharePreview:)];
         toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemIdent customView:shareButtonEE];
         menuFormRep = [[NSMenuItem alloc] init];
-        [menuFormRep setTitle: @"Sharing"]; //[toolbarItem label]];
+        [menuFormRep setTitle: [toolbarItem label]];
         [menuFormRep setTarget: self];
         [menuFormRep setAction:@selector(doSharePreview:)];
         [toolbarItem setMenuFormRepresentation: menuFormRep];
@@ -1078,7 +1078,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 		[menuFormRep setTitle: NSLocalizedString(@"Page Number", @"Page Number")];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextPage:)];
-		[menuFormRep setTarget: self.pdfKitWindow];
+		[menuFormRep setTarget: fullSplitWindow];
 		return toolbarItem;
 	}
     
@@ -1089,7 +1089,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 		[menuFormRep setTitle: [toolbarItem label]];
 		[toolbarItem setMenuFormRepresentation: menuFormRep];
 		[menuFormRep setAction: @selector(doTextMagnify:)];
-		[menuFormRep setTarget: self.pdfKitWindow];
+		[menuFormRep setTarget: fullSplitWindow];
 		return toolbarItem;
 	}
 

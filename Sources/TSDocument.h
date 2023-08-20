@@ -560,6 +560,10 @@ enum RootCommand
 // endforsplit
 - (id) magnificationPanel;
 - (id) pagenumberPanel;
+- (void) doTextMagnify: sender;   // for toolbar in text mode
+- (void) doTextPage: sender;      // for toolbar in text mode
+- (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
+- (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 - (void) quitMagnificationPanel: sender;
 - (void) quitPagenumberPanel: sender;
 - (void) okForPanel: sender;  //needed?

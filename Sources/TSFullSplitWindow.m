@@ -123,9 +123,15 @@
 */
 
 
+- (void) doTextMagnify: sender
+{
+    [self.myDocument doTextMagnify: sender];
+}
 
-
-
+- (void) doTextPage: sender
+{
+    [self.myDocument doTextPage: sender];
+}
 
 - (void)displayConsole: (id)sender
 {

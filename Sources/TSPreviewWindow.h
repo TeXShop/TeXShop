@@ -60,8 +60,6 @@
 - (void) close;
 - (void) doTextMagnify: sender;   // for toolbar in text mode
 - (void) doTextPage: sender;      // for toolbar in text mode
-- (void) magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
-- (void) pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 - (void) previousPage: sender;
 - (void) nextPage: sender;
 - (void) zoomIn: sender;
@@ -107,8 +105,6 @@
 - (void)changePDFViewSize: (id)sender; // mitsu 1.29 (O)
 - (void)saveSelectionToFile: (id)sender; // mitsu 1.29 (O)
 #endif
-// - (void)pagenumberDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
-// - (void)magnificationDidEnd:(NSWindow *)sheet returnCode: (NSInteger)returnCode contextInfo: (void *)contextInfo;
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window

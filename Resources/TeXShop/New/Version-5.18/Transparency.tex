@@ -1,0 +1,42 @@
+% !TEX TS-program = latex
+
+% Sample file from Antonis Tsolomitis
+% Email:  atsol@aegean.gr
+% Web URL: https://myria.math.aegean.gr/~atsol/newpage-en/
+
+\documentclass{standalone}
+\usepackage{xcolor,color}
+\usepackage{pstricks,pst-geometrictools,pstricks-add,pst-node}
+\definecolor{BrickRed}{rgb}{.702,0.1333,0.1333}
+\definecolor{SeaGreen}{rgb}{.1804,.5451,.34117647}
+\begin{document}
+
+\begin{pspicture}(-4.0,-4)(14.7,4.5)
+\psline[linewidth=1pt](-1,0)(5,0)
+\psline[linewidth=0.6pt](4,-.2)(4,.2)\psline[linewidth=0.6pt](0,-.2)(0,.2)
+\rput(3.7,.3){$A$}\rput(0.4,.3){$A'$}
+\rput(2.6,-3.4){$M$}\rput(2.6,3.4){$N$}\rput(2.3,.3){$O$}\psdot[dotsize=3pt](2,0)
+\pnode(4,0){A}\pnode(0,0){B}\pnode(2,-1.5){M}\pnode(2.61,3.76){N1}\pnode(1.41,3.76){N2}
+\pscircle[linewidth=1pt](2,0){2}
+\psarc[linewidth=1pt,linecolor=BrickRed](4,0){4}{110}{250}
+\psscalebox{-1 1}{\psCompass[PoCScale=0.8]{2}(A)(N1)}
+\psarc[linewidth=1pt,linecolor=blue](0,0){4}{-70}{70}
+\psCompass[PoCScale=0.8,PoCFillCol=blue]{2}(B)(N2)
+%
+\psset{origin={9,0}}
+\psline[linewidth=1pt](-1,0)(5,0)
+\psline[linewidth=0.6pt](4,-.2)(4,.2)\psline[linewidth=0.6pt](0,-.2)(0,.2)
+\rput(12.7,.3){$A$}\rput(9.4,.3){$A'$}
+\rput(11.6,-3.4){$M$}\rput(11.6,3.4){$N$}\rput(11.3,.3){$O$}
+\pnode(4,0){A}\pnode(0,0){B}\pnode(2,-1.5){M}\pnode(2.61,3.76){N1}\pnode(1.41,3.76){N2}
+\pscircle[linewidth=1pt](2,0){2}
+\psarc[linewidth=1pt,linecolor=BrickRed](4,0){4}{110}{250}
+\psarc[linewidth=1pt,linecolor=blue](0,0){4}{-70}{70}
+\psRuler{0}(10.96,4)(10.96,-3)
+\psline[linewidth=1pt,linecolor=green](2,-4)(2,4)
+\psPencil[pencilColA=green,PenLength=3]{-120}(11,4)
+%
+\end{pspicture}
+
+\end{document}
+

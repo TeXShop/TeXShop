@@ -37,6 +37,61 @@
 
 @implementation TSDocument (JobProcessing)
 
+- (BOOL)TestGSVersion
+{
+    
+    NSString        *enginePath, *gsPath;
+    NSMutableArray  *args;
+    NSDate          *myDate;
+    NSString        *tetexBinPath;
+    
+     
+    if (self.gsversionTask != nil) {
+        [self.gsversionTask terminate];
+        myDate = [NSDate date];
+        while (([self.gsversionTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
+        self.gsversionTask = nil;
+        self.gsversionPipe = nil;
+    }
+    
+    self.gsversionTask = [[NSTask alloc] init];
+    [self.gsversionTask setEnvironment: [self environmentForSubTask]];
+    enginePath = [[NSBundle mainBundle] pathForResource:@"gstestwrap" ofType:nil];
+    tetexBinPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
+    args = [NSMutableArray array];
+    [args addObject:tetexBinPath];
+    
+    self.gsversionPipe = [NSPipe pipe];
+    [self.gsversionTask setStandardOutput: self.gsversionPipe];
+    self.gsversionHandle = [self.gsversionPipe fileHandleForReading];
+    
+    if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
+        [self.gsversionTask setLaunchPath:enginePath];
+        [self.gsversionTask setArguments:args];
+        [self.gsversionTask launch];
+        }
+    else
+       self.gsversionTask = nil;
+    
+    NSData *data = [self.gsversionHandle readDataToEndOfFile];
+    NSString *returnString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    
+    NSLog(returnString);
+    
+    return YES;
+    
+    if ([returnString isEqualToString: @"yes"])
+        return YES;
+    else
+        return NO;
+
+}
+    
+    
+    
+    
+
+
 - (NSDictionary *)environmentForSubTask
 {
 	NSMutableDictionary *env;
@@ -99,6 +154,11 @@ for(NSString *key in enu)
 	
 	return env;
 }
+
+
+    
+    
+    
 
 
 - (void)killRunningTasks
@@ -511,7 +571,10 @@ for(NSString *key in enu)
 			if ([SUD boolForKey:SavePSEnabledKey])
 				[args addObject: @"--keep-psfile"];
 		} else if ([[myFileName pathExtension] isEqualToString:@"ps"]) {
-			enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
+            if ([SUD boolForKey:UseTransparencyKey])
+                enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdftransparencywrap" ofType:nil];
+            else
+                enginePath = [[NSBundle mainBundle] pathForResource:@"ps2pdfwrap" ofType:nil];
 			if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
 				[args addObject: @"Panther"];
 			else
@@ -1105,8 +1168,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             {
             NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
                           nil, nil, nil, [textView window], nil, nil, nil, nil,
-                          NSLocalizedString(@"The link /Library/TeX/texbin does not exist. To fix this, go to http://tug.org/mactex and install MacTeX or Basic TeX (2015 or later). Or for a much smaller download, go to http://pages.uoregon.edu/koch and install FixLink.",
-                            @"The link /Library/TeX/texbin does not exist. To fix this, go to http://tug.org/mactex and install MacTeX or Basic TeX (2015 or later). Or for a much smaller download, go to http://pages.uoregon.edu/koch and install FixLink."),
+                          NSLocalizedString(@"The link /Library/TeX/texbin does not exist. To fix this, go to https://tug.org/mactex and install MacTeX or Basic TeX (2015 or later).",
+                            @"The link /Library/TeX/texbin does not exist. To fix this, go to https://tug.org/mactex and install MacTeX or Basic TeX (2015 or later)."),
                           filename);
                 return FALSE;
             }
@@ -1114,8 +1177,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
             {
             NSBeginAlertSheet(NSLocalizedString(@"Can't find required tool.", @"Can't find required tool."),
 						  nil, nil, nil, [textView window], nil, nil, nil, nil,
-						  NSLocalizedString(@"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX.",
-                            @"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to http://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX."),
+						  NSLocalizedString(@"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to https://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX.",
+                            @"%@ does not exist. TeXShop is a front end for TeX, but you also need a TeX distribution. Perhaps such a distribution was not installed or was removed during a system upgrade. If so, go to https://tug.org/mactex and follow the instructions to install MacTeX or BasicTeX."),
 						  filename);
                 return FALSE;
             }
@@ -1450,10 +1513,27 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 								myEngine = [[SUD stringForKey:LatexGSCommandKey] stringByExpandingTildeInPath]; // 1.35 (D)
 							else
 								myEngine = [[SUD stringForKey:TexGSCommandKey] stringByExpandingTildeInPath]; // 1.35 (D)
-						}
+						
 						
 						if (([SUD integerForKey:DistillerCommandKey] == 1) && (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_2))
 							myEngine = [myEngine stringByAppendingString: @" --distiller /usr/bin/pstopdf"];
+                        
+                        //KOCH2023
+                        else {
+                            
+                            BOOL versionOK = true;
+                            
+                            if ([SUD boolForKey:UseTransparencyKey])
+                                versionOK = [self TestGSVersion];
+                            
+                            if ( (versionOK) && (! [myEngine containsString:@"--distiller"]) && ([SUD boolForKey:UseTransparencyKey]))
+                            
+                                myEngine = [myEngine stringByAppendingString: @" --distilleropts \"-dALLOWPSTRANSPARENCY\" "];
+                   
+                                  
+                            }
+                        
+                        }
 						
 						break;
 						
@@ -1484,6 +1564,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 
 				if ((theScript == kTypesetViaGhostScript) && ([SUD boolForKey:SavePSEnabledKey])) 
 					[args addObject: @"--keep-psfile"];
+          
+               
+                
 			}
 			
 			// Koch: Feb 20; this allows spaces everywhere in path except
@@ -2191,10 +2274,11 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                     }
                     else {
                         [self fillLogWindowIfVisible];
-                        [fullSplitWindow makeKeyAndOrderFront: self];
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
-                        if (front)
+                        if (front) {
+                            [fullSplitWindow makeKeyAndOrderFront: self];
                             [fullSplitWindow makeFirstResponder:self.myPDFKitView];
+                        }
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];
@@ -2402,10 +2486,11 @@ else
                         }
                     else {
                         [self fillLogWindowIfVisible];
-                        [fullSplitWindow makeKeyAndOrderFront: self];
                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
-                        if (front)
+                        if (front) {
+                            [fullSplitWindow makeKeyAndOrderFront: self];
                             [fullSplitWindow makeFirstResponder:self.myPDFKitView];
+                        }
                         {
                             if (self.useOldSyncParser)
                                 [self allocateSyncScannerOld];

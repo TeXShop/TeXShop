@@ -1,0 +1,34 @@
+#!/bin/tcsh
+
+# A wrapper to make certain that ghostscript has version
+# at least 9.51.
+# By Richard Koch, Sept 16, 2023=
+
+
+set mygspath = "$argv[1]"
+
+if (-x ${mygspath}/ps2pdf) then
+	setenv PATH "${mygspath}:${PATH}"
+	rehash
+ 
+    set gsversion = `gs --version`
+    set major =  `echo $gsversion | cut -d. -f1`
+    set minor =  `echo $gsversion | cut -d. -f2`
+ 
+    if ( $major >= 10 || ( $major >= 9 && $minor >= 51 ) ) then
+    
+        echo "yes"
+        
+    else
+        
+        echo "no"
+        
+    endif
+ 
+ 
+ else
+ 
+    echo "no"
+    
+ endif
+    

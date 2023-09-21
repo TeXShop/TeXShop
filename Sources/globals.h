@@ -286,6 +286,7 @@ extern NSString *DefaultEngineKey;
 extern NSString *DefaultScriptKey;
 extern NSString *ConsoleBehaviorKey;
 extern NSString *SaveRelatedKey;
+extern NSString *UseTransparencyKey;
 extern NSString *DocumentFontKey;
 extern NSString *DocumentFontAttributesKey;
 extern NSString *DocumentWindowFixedPosKey;

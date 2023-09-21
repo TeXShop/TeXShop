@@ -29,6 +29,7 @@ NSString *DefaultEngineKey = @"DefaultEngine";
 NSString *DefaultScriptKey = @"DefaultScript";
 NSString *ConsoleBehaviorKey = @"ConsoleBehavior";
 NSString *SaveRelatedKey = @"SaveRelated";
+NSString *UseTransparencyKey = @"UseTransparency";
 NSString *DocumentFontKey = @"DocumentFont";
 NSString *DocumentFontAttributesKey = @"DocumentFontAttributes";
 NSString *DocumentWindowFixedPosKey = @"DocumentWindowFixedPosition";

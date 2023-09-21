@@ -14,6 +14,38 @@
 
 
 <div id="content_normal">
+
+<P><h5>TeXShop Changes 5.18</h5></P>
+Modern versions of
+Ghostscript do not process transparency operators in ps files unless the flag -dALLOWSPSTRANSPARENCY is added to the function call.  In TeXShop 5.18, a preference item titled  "Ghostscript Options" under the Typesetting tab can be checked to activate the flag. 
+This activation only applies in two circumstances:
+<p><ul>
+<li> When TeXShop opens a postscript file, it calls ps2pdf to convert the postscript to pdf and opens the pdf file. 
+Without the flag, transparency will be ignored in the ps file. With the flag, it will be respected.
+<p><li> When TeXShop typesets files in DVI mode, it runs TeX or LaTeX to create a dvi file, runs
+dvips to create a postscript file, converts the postscript file to pdf using ps2pdf, and displays the pdf file.
+Projects typeset in this way can use the package pstricks for extra typesetting effects, and pstricks  can add transparency to illustrations. Typesetting
+will only preserve transparency if the flag is set.
+</ul>
+<p>The flag requires Ghostscript 9.51 or higher. It has no effect when used with earlier versions of Ghostscript.
+<p> The flag is added (in DVI mode) only if the user has not added "--distillerops" to the simpdftex preference settings. 
+TeXShop does not want to interfere with users who are carefully controlling the Ghostscript flags themselves.
+<p> This preference item should still work when users supply their own Ghostscript, possibly from macports or homebrew, but that has not been tested.
+<p> Two sample files are provided for experimentation with the new setting. Select the TeXShop menu "Open ~/Library/TeXShop" and navigate to
+the folder New/Version-5.18. This folder contains two files which can be copied to your home directory: 
+Transparency.ps and Transparency.tex. Open Transparency.ps in TeXShop. If the new item is not selected, the ruler in the illustration will cover the material underneath. If the new item is selected, the ruler will be partially transparent and show items underneath.  Typeset the source file Transparency.tex to see the same change of behavior when typesetting in DVI mode. These samples were provided by Antonis Tsolomitis, with email address <a href="atsol@aegean.gr">atsol@aegean.gr</a> and web url 
+<a href="https://myria.math.aegean.gr/~atsol/newpage-en/">https://myria.math.aegean.gr/~atsol/newpage-en/</a>.
+<p> When new typesetting methods become available or older methods require new flags to operate properly, the changes are generally handled in TeXShop by creating new engine files. Herbert Schulz created such engines for transparency, available in ~/Library/TeXShop/Engines/Inactive/GhostscriptTransparencyEngines. The new preference
+item does not affect these engines, and the engines are more flexible than the preference setting, handling for instance versions of Ghostscript earlier than 9.51. Use Herbert's engines for full control. The new preference is for users who run into a problem and want to click a box for a quick solution.
+
+
+<P><h5>TeXShop Changes 5.17</h5></P>
+The following changes were made:
+<p><ul>
+<li> In Single Window mode, after typesetting a project with a root file the root source was brought forward even if the "Continue Editing" preference was selected. This behavior has been fixed by Matthias Schmidt.
+<p><li>Uwe Schmock improved the formatting of the TeXShop Manual.
+</ul>
+
 <P><h5>TeXShop Changes 5.16</h5></P>
 
 The changes in TeXShop 5.16 are due to Matthias Schmidt.
@@ -343,7 +375,7 @@ The Changes document you are currently reading was written in html and later con
 <p><b>How Are HTML Engines Constructed?</b>
 <ul><li> There are exactly five new commands which can be added to engine scripts to implement features like those just presented:
 <p><ul>
-<li> !TeX-noPreview
+<li> !TEX-noPreview
 <li> !TEX-pdfPreview
 <li> !TEX-htmlPreview
 <li> !TEX-bothPreview
@@ -356,7 +388,7 @@ The Changes document you are currently reading was written in html and later con
 
 <p><li> The standard behavior of TeXShop still applies if an engine has none of these lines. After executing all lines of the engine, TeXShop looks in the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window, unless the Option Key is depressed.
 
-<p><li> If the line "!TeX-noPreview" is present, no preview window appears even if some of the other lines are also present.
+<p><li> If the line "!TEX-noPreview" is present, no preview window appears even if some of the other lines are also present.
 
 <p><li> Otherwise if the lines "!TEX-pdfPreview" and or "!TEX-bothPreview" are present, TeXShop searches the document directory to see if there is a file with the same name as the source, but extension ".pdf". If so, it opens this pdf file in the Preview Window.
 
@@ -4737,7 +4769,7 @@ Once the link exists, older versions of TeX like TeXLive-2013 also work fine.
 <p> GUI programs must  be reconfigured to look for the new link. TeXShop 3.52 and
 later does this automatically.
 
-<p> For more information on TeX and El Capitan, see <a href="http://tug.org/mactex/elcapitan.html"><b>tug.org/mactex/elcapitan.html</b></a>
+<p> For more information on TeX and El Capitan, see <b>tug.org/mactex/elcapitan.html</b>
 
 <p> TeXShop 3.53 includes the following changes:
 
@@ -6183,7 +6215,7 @@ hidden preference to turn to patch off:
 	<li> An earlier version of TeXShop contained an automatic UTF-8-Mac to UFT-8 Conversion. 
 	But this routine converted some Japanese Kanji characters to different glyphs. This is
 	fixed by excluding certain characters from the conversion, as explained in the Unicode
-	Consortium Report <A HREF="http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table">http://tug.org/mactex"> http://unicode.org/reports/tr15/#Primary_Exclusion_List_Table</A>.
+	Consortium Report <A HREF="https://unicode.org/reports/tr15/#Primary_Exclusion_List_Table">https://unicode.org/reports/tr15/#Primary_Exclusion_List_Table</A>.
 	</ul>
  
 </ul>

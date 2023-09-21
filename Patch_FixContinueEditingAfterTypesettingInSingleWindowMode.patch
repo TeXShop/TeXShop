@@ -1,0 +1,32 @@
+diff --git a/Sources/TSDocument-Jobs.m b/Sources/TSDocument-Jobs.m
+index b993721..54153dd 100644
+--- a/Sources/TSDocument-Jobs.m
++++ b/Sources/TSDocument-Jobs.m
+@@ -2191,10 +2191,11 @@ - (void)checkATaskStatusFromTerminationRoutine: (NSTask *)theTask
+                     }
+                     else {
+                         [self fillLogWindowIfVisible];
+-                        [fullSplitWindow makeKeyAndOrderFront: self];
+                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+-                        if (front)
++                        if (front) {
++                            [fullSplitWindow makeKeyAndOrderFront: self];
+                             [fullSplitWindow makeFirstResponder:self.myPDFKitView];
++                        }
+                         {
+                             if (self.useOldSyncParser)
+                                 [self allocateSyncScannerOld];
+@@ -2402,10 +2403,11 @@ - (void)checkATaskStatus:(NSNotification *)aNotification
+                         }
+                     else {
+                         [self fillLogWindowIfVisible];
+-                        [fullSplitWindow makeKeyAndOrderFront: self];
+                         front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+-                        if (front)
++                        if (front) {
++                            [fullSplitWindow makeKeyAndOrderFront: self];
+                             [fullSplitWindow makeFirstResponder:self.myPDFKitView];
++                        }
+                         {
+                             if (self.useOldSyncParser)
+                                 [self allocateSyncScannerOld];

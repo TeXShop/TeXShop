@@ -53,9 +53,9 @@
 
 
  \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
-            citecolor=blue, urlcolor=blue]{hyperref}
+            citecolor=blue, urlcolor=blue, hyperfigures=true]{hyperref}
 
-\title{TeXShop Manual \\ Version 1.3}
+\title{TeXShop Manual \\ Version 1.3.2}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -63,8 +63,16 @@
 
 \maketitle
 
- \tableofcontents 
+\frontmatter
+\section*{Preface}
+This manual was written in early 2023. It first appeared in TeXShop 5.12, released on February 23, 2023. A few small changes were made with new 2023 program releases. The version number of the manual always increases when changes are made.
 
+In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded the text in a few spots, and improved formatting in other places. Thanks! I asked for permission to include his email address; it is \url{schmock@fam.tuwien.ac.at}
+
+ \newpage
+\pdfbookmark{Table of Contents}{ContentsLabel}
+ \tableofcontents 
+ \mainmatter
 { \chapter{About \TeX, \LaTeX, and TeXShop}
 \section{Introduction}
  \TeX\ and \LaTeX\ are typesetting programs, available without cost on most computer platforms. The user enters instructions using symbols on an ordinary typewriter, and the program converts these instructions into a document that looks like it came from a professional book publisher. }  
@@ -282,15 +290,17 @@ It is not necessary to read this manual linearly. Browse through it briefly to s
 
 \section{First Steps with \TeX\ and TeXShop}
 
-Go to \path{/Applications/TeX} and find TeXShop. Drag its icon to your dock. Click this icon to run the program. You will be presented with a blank window; at the top right of this window you'll find a pull down menu named ``Templates''. From this menu choose ``LaTeX Template''. The blank window will fill with some standard boilerplate required in each \TeX\ source file. The red lines are comments which \TeX\ ignores.
+Go to \path{/Applications/TeX} and find TeXShop. Drag its icon to your dock. Click this icon to run the program. You will be presented with a blank window; at the top right of this window you'll find a pull down menu named ``Templates'', see Figure \ref{fig:edit}. From this menu choose ``LaTeX Template''. The blank window will fill with some standard boilerplate required in each \TeX\ source file. The red lines are comments which \TeX\ ignores.
 
+\vspace{.2in}
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=3.5in]{Graphics/edit} 
-%   \caption{Edit Window}
- %  \label{fig:example}
+   \caption{New Edit Window with LaTeX Template}
+   \label{fig:edit}
 \end{figure}
 
+\newpage
 New material goes between the lines
 \begin{verbatim}
      \begin{document}
@@ -310,13 +320,13 @@ When you have some material, hit the ``Typeset'' button at the top left of the w
 
 When \TeX\ typesets, it creates three or four additional files, so it is not a good idea to save directly to a location with many other files. Instead,   navigate to a reasonable location, say \path{~/Documents}, and then click the ``New Folder'' button at the bottom of the dialog. Accept the default name or choose another and create the folder. Then name the document and save it. The default ``Untitled'' name will do.
 
-As soon as you save, \TeX\ will typeset the document and open a second window showing the result.
+As soon as you save, \TeX\ will typeset the document and open a second window showing the result, see Figure \ref{fig:TypesetWindow}.
 
 \begin{figure}[H] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=4.7in]{Graphics/edit2.png} 
-%   \caption{Typeset Window}
- %  \label{fig:example}
+   \caption{Typeset Window in front of the Edit Window}
+   \label{fig:TypesetWindow}
 \end{figure}
 
 
@@ -388,7 +398,7 @@ TeXShop's Preference settings are in \path{~/Library/Preferences} in the file  T
  \item In TeXShop's Preference panel, reset any items you may have changed.
  \end{itemize}
  
- \section{$\sim$/Library/TeXShop}
+ \section{\texorpdfstring{$\sim$/Library/TeXShop}{~/Library/TeXShop}}
  
  Other configuration files are in subfolders of the folder \path{~/Library/TeXShop}. Users will definitely want to edit some of these files. Some will never be touched; others will be explained shortly. Use the menu item
  {\bf Open $\sim$/Library/TeXShop} to access these folders.
@@ -449,8 +459,7 @@ Suppose first that you  want to magnify the source font temporarily, perhaps to 
 These commands are actually menu shortcuts. The {\em Source} menu has a {\em Font} submenu, which has two items {\em Bigger} and {\em Smaller}; the key shortcuts call these menus. However making text bigger or smaller is a common task and the menu items are hidden away, so it is best to just remember and use the shortcuts.
 
 The remarks about keyboard shortcuts in the previous two paragraphs apply to a U.S. keyboard. Many users, perhaps even a majority, will select another keyboard in the Keyboard Module of Apple's System Preferences
-(using the Input Sources item).  These selections map physical keys on the keyboard to characters, and can change menu shortcuts. To define appropriate shortcuts for Font Sizes, read the section ``Redefining Menu Shortcut Keystrokes'' in chapter 23.
-
+(using the Input Sources item).  These selections map physical keys on the keyboard to characters, and can change menu shortcuts. To define appropriate shortcuts for Font Sizes, read Section \ref{sec:MenuShortcutKeystrokes} ``Redefining Menu Shortcut Keystrokes''.
  
 
 The source font itself can be changed using a menu command, but this is almost never done. Instead users make the change in Preferences so it will affect all future source windows.
@@ -498,6 +507,12 @@ Several source window features  can  also be changed using menu items in the Sou
 
 {\bf Highlight Current Line} When selected, the background of the line containing the cursor is tinted a light blue. Lines can cover several physical lines, ending when the user finally types a linefeed.
 
+\begin{figure}[H] %  figure placement: here, top, bottom, or page
+       \centering
+       \includegraphics[width=\hsize]{Graphics/EditTab} 
+    \end{figure} 
+
+
 {\bf Syntax Color} When selected, the source text is syntax colored.
 
 {\bf Check Spelling} When selected, misspelled words are underlined in light red.
@@ -507,10 +522,6 @@ The preference allows users to pick which characters are shown and by what symbo
 
 
 
-\begin{figure}[H] %  figure placement: here, top, bottom, or page
-       \centering
-       \includegraphics[width=\hsize]{Graphics/EditTab} 
-    \end{figure} 
 
 %Several source window features  can be toggled on or off for the front source window using menu items in the Source menu. We'll list these items first; the corresponding Preference items select the default behavior when a window is first opened. For example, the text in the source window is usually syntax colored, but a menu item can toggle this behavior for the active window. The {\bf Syntax Coloring} Preference item determines whether syntax coloring is on when a window is first opened.
 %
@@ -526,7 +537,7 @@ The preference allows users to pick which characters are shown and by what symbo
 %The preference allows users to pick which characters are shown and by what symbol. The final  {\bf On by default} item is usually left unchecked, so these characters are not shown when a window is first opened. If puzzling behavior later develops, it can be turned on using a menu item.
 %
 
-   \newpage 
+\newpage
  The remaining items are rarely changed, so they can only be set in the Preferences Pane:
 
 {\bf Use Tabs for Indent Menu} The third and fourth items in the TeXShop source menu are named
@@ -705,7 +716,7 @@ Since LaTeX nowadays uses UTF-8 by default, the following lines should be added 
 Changing the encoding of a file is tricky. Do not attempt it without backing up the original version of the file. TeXShop users have sometimes tried to change from one encoding, A, to another, B, by using the open dialog's encoding menu to open the file with encoding A, and then using the save dialog's encoding menu to save the file with encoding B. Assume that neither file is UTF-8 and the file is currently encoded with encoding A.  When TeXShop opens the file, it converts all symbols to their appropriate Unicode form. Then when TeXShop saves the file, it converts all symbols contained in B to their appropriate B form, and discards all other symbols. So symbols in both A and B are correctly moved, while symbols only in A are discarded. Since the same file was opened and saved, the original form of the file is lost.
 
 Life is even trickier if the encoding of a file is unknown. Suppose a file was written with encoding A, but opened with encoding B, and then converted to encoding C. Suppose  A encodes $\alpha$ as character 200. Suppose B encodes  $\alpha$ as character 210 and encodes $\beta$ as character 220. Suppose encoding C encodes $\alpha$ as 200 and does not encode $\beta$.
-Then when the file with encoding A was opened with encoding B, the $\alpha$ became a $\beta$, and when this file was saved with encoding C, this $\beta$ was dropped, even though all three encodings encode $\alpha$.
+Then when the file with encoding A was opened with encoding B, the $\alpha$ became a $\beta$, and when this file was saved with encoding C, this $\beta$ was dropped, even though all three encodings encode~$\alpha$.
 
 
 There is a command line program which can convert from one encoding to another, {\em iconv}. This program gives different names to the input and output files, so the input is preserved. Use it instead of TeXShop if you must convert.  
@@ -777,8 +788,9 @@ Suppose the LaTeX source file is called ``myfile.tex'' and contains the followin
 
 \begin{verbatim}
     \begin{document}
-    Consider the argument of Felici~\cite{Felici:1991} in light of these comments.
-    \nocite{Liang:1983} We provide further remarks later.
+    Consider the argument of Felici~\cite{Felici:1991}
+    in light of these comments.\nocite{Liang:1983} 
+    We provide further remarks later.
     \bibliographystyle{plain}
     \bibliography{mybibliography}
     \end{document}
@@ -893,11 +905,11 @@ The key line is the final one. It tells the system to typeset the file \verb|"|\
 When TeXShop calls a shell script, it executes ``cd'' to change to the directory containing the  source file, and then it sends the shell script several pieces of information, which the script can access as \verb|"|\$1\verb|"|, \verb|"|\$2\verb|"|, etc. The most important of these is \verb|"|\$1\verb|"|, which contains the  name of the source file, including extension. So if TeXShop typesets Galois.tex, which is found in the folder $\sim$/Sources/GaloisStuff, 
 the directory will be
 \begin{verbatim}
-   /Users/koch/Sources/GaloisStuff
+     /Users/koch/Sources/GaloisStuff
 \end{verbatim}
 and \verb|"|\$1\verb|"| will equal
 \begin{verbatim}
-    Galois.tex
+     Galois.tex
 \end{verbatim}
 
 In a later section we will have  more to say about  creating engine files. 
@@ -924,7 +936,12 @@ If you get in the habit of adding  magic lines to the top of sources files, then
 
 In all of these places you select one of the four original typesetting methods using the following scheme:
 
-$$\begin{array}{ll} \mbox{tex} & \mbox{TeX with TeX and DVI} \\ \mbox{pdftex} & \mbox{TeX outputting pdf} \\ \mbox{latex} & \mbox{LaTeX with TeX and DVI} \\ \mbox{pdflatex} & \mbox{LaTeX outputting pdf} \\ \end{array} $$
+$$\begin{array}{ll} 
+\mbox{tex} & \mbox{TeX with TeX and DVI} \\ 
+\mbox{pdftex} & \mbox{TeX outputting pdf} \\ 
+\mbox{latex} & \mbox{LaTeX with TeX and DVI} \\ 
+\mbox{pdflatex} & \mbox{LaTeX outputting pdf} \\ 
+\end{array} $$
 
 In rare cases, you might  want to invent your own engines for some of these four built-in methods; that will work fine, just don't use the four specific names on the left side of the above list. 
 
@@ -1081,7 +1098,7 @@ It is unlikely that this final line will be used with any  engine except the one
 
 \section{A Magic Line}
 
-Many book authors arrange their sources for a book as follows. A preliminary ``root document'' contains the preamble,  defining  macros, loading various packages, , and so forth. Then this document ``includes'' or ``inputs'' separate source files for each chapter. Some authors put these chapter sources in separate folders which also contain the illustrations for that chapter. This organization dates back to Lamport himself, whose famous manual on LaTeX contained the ``include'' command and an ``includeonly'' command, so authors working on a subset of chapters could only typeset those chapters to save time, and then typeset everything at the end.
+Many book authors arrange their sources for a book as follows. A preliminary ``root document'' contains the preamble,  defining  macros, loading various packages, and so forth. Then this document ``includes'' or ``inputs'' separate source files for each chapter. Some authors put these chapter sources in separate folders which also contain the illustrations for that chapter. This organization dates back to Lamport himself, whose famous manual on LaTeX contained the ``include'' command and an ``includeonly'' command, so authors working on a subset of chapters could only typeset those chapters to save time, and then typeset everything at the end.
 
 Not all book sources are organized this way. I know several authors who created a single source file for a 700 page book.
 But the organization is not unusual. When it is used, TeXShop creates a separate window for the source of each chapter, opening only the window for the chapter currently being written. But the typeset button on such a window cannot just typeset the source in the window because that source has no preamble. Instead, it should typeset the root document, and create a single preview window showing the entire book, or possibly only chapters listed by ``includeonly''.  
@@ -1098,7 +1115,7 @@ The first letters of this magic line must be exactly as written above. This name
      ../../MyRoot.tex                    
      /Users/koch/TeX/MyBook/MyRoot.tex
 \end{verbatim}
-Use the first form if the root file is in the same folder as the chapter file. Use the second form if the root if in a folder which contains a subfolder for each chapter file. Use the third form if the root is further up the folder chain. Use the fourth form if you want to give a full path to the root file. Note that the fourth form is not portable, so moving the source folder of a project will require rewriting the magic lines of such chapters.
+Use the first form if the root file is in the same folder as the chapter file. Use the second form if the root is in a folder which contains a subfolder for each chapter file. Use the third form if the root is further up the folder chain. Use the fourth form if you want to give a full path to the root file. Note that the fourth form is not portable, so moving the source folder of a project will require rewriting the magic lines of such chapters.
 
 The Macros menu has an item labeled ``Root''. To add the magic line to a chapter source file, activate that source file and then select the macro. A Finder window will appear which you can use to navigate to the root file. The macro will then offer to create either a relative or an absolute magic line, replacing any earlier root magic line.
 
@@ -1115,7 +1132,7 @@ The Console window has a button labeled Goto Error. There is also a menu in the 
 
 If the project has a root file and various chapter files,  GotoError will open the source file containing the error if it is not currently open, and then go to the appropriate line in that source file. 
 
-The Goto Error command parses the console output to find error messages, and requires that TeX report these errors in suitable format. So calls to LaTeX, pdfTeX, XeTeX, and other engines should contain the flag
+The Goto Error command parses the console output to find error messages, and requires that TeX reports these errors in suitable format. So calls to LaTeX, pdfTeX, XeTeX, and other engines should contain the flag
 \begin{verbatim}
     --file-line-error 
 \end{verbatim}
@@ -1424,7 +1441,7 @@ LaTeX file has an error, the console will appear and wait for user input, but su
 Commands beginning with ``--AppleScript'' are run by a small auxiliary program in the TeXShop application bundle. Such commands can ask TeXShop to perform actions which might require user input, because in that
 case the auxiliary program will temporarily halt but TeXShop will remain active.
 
-Thus the syntax ``--AppleScript direct'' is appropriate for routine macros, but ``--AppleScript'' may be needed for fancy ones.
+Thus the syntax ``--AppleScript direct'' is suitable for routine macros, but ``--AppleScript'' may be needed for fancy ones.
 
 \section{Included Applescript Commands}
  
@@ -2121,24 +2138,29 @@ Just in case, TeXShop has a hidden feature to turn AutoSave off. The hidden pref
 \end{verbatim}
 Using this preference is strongly discouraged. I never test TeXShop with AutoSave disabled.
 
+\section{Lock}
+
+Often users have a folder of old papers which they haven't edited in a long time, but refer back to from time to time. If you open such a document and click the title, a dialog will open allowing you to "lock" the document. When a document is locked, it cannot be saved or changed. 
+If a document is locked, clicking on the title and unlocking the document makes it possible to edit again.
 
 
+\newpage
 \section{Revert To}
 
 
-Iff you work on a document for several hours and then notice that a crucial paragraph or illustration is now gone, there is an easy way to recover. In the File menu, select the item ``Revert to'' and select the option ``Browse All Versions.'' 
-The Macintosh screen then switches to a Time Machine view showing the current document on the left and a receding stack of earlier views on the right. You can leaf through these earlier versions, noting the date and time that each was created. All of these views are alive, so you can copy and paste between versions, or restore an earlier version. This works even if you have not activated Time Machine. So it is a sort of ``personal Time Machine just for TeXShop''. 
+If you work on a document for several hours and then notice that a crucial paragraph or illustration is now gone, there is an easy way to recover. In the File menu, select the item ``Revert to'' and select the option ``Browse All Versions.'' 
+The Macintosh screen then switches to a Time Machine view showing the current document on the left and a receding stack of earlier views on the right, see Figure \ref{fig:RevertTo}. You can leaf through these earlier versions, noting the date and time that each was created. All of these views are alive, so you can copy and paste between versions, or restore an earlier version. This works even if you have not activated Time Machine. So it is a sort of ``personal Time Machine just for TeXShop''. 
 
-See the picture at the top of the next page for an illustration of ``Revert To''.
-\newpage
+%See the picture at the top of the next page for an illustration of ``Revert To''.
+%\newpage
 
 \ifx\skipbigillustrations\undefined
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=5.5in]{Graphics/RevertTo.jpg} 
-   \caption{Revert To}
-   \label{fig:example}
+   \caption{Revert To, a Document-Specific Time Machine View}
+   \label{fig:RevertTo}
 \end{figure}
 
 \else
@@ -2146,24 +2168,18 @@ See the picture at the top of the next page for an illustration of ``Revert To''
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=5.5in]{Graphics/RevertTo.png} 
-   \caption{Revert To}
-   \label{fig:example}
+   \caption{Revert To, a Document-Specific Time Machine View}
+   \label{fig:RevertTo}
 \end{figure}
 
 
 \fi
 
-
-\section{Lock}
-
-Often users have a folder of old papers which they haven't edited in a long time, but refer back to from time to time. If you open such a document and click the title, a dialog will open allowing you to "lock" the document. When a document is locked, it cannot be saved or changed. 
-If a document is locked, clicking on the title and unlocking the document makes it possible to edit again.
-
-
-
+\newpage
 \section{Finding the Disk Version of a  Document}
 
 In TeXShop and most other programs on the Mac, you can click the title of a window while holding down the command key and see a complete path to your document, listed as a series of entries in a drop down menu. By selecting an item in this menu, you can directly go to that spot of the file system.
+
 
  
 \chapter{Preview Window}
@@ -2277,7 +2293,7 @@ The Preview menu also has menu items to rotate individual pages clockwise or cou
 
 \section{The Drawer and Two Search Fields} 
 
-The Preview Window has an associated Drawer, which can be toggled visible or invisible with an item in the window toolbar or the first item in the Preview menu. This drawer appears on the right side of the window if there is room there, and otherwise on the left side of the window. It's contents are divided into two pieces. The top pieces shows an outline of the document, listing chapters, sections, and subsections if available. Clicking on an item takes you to that point in the actual  Preview Window This top portion is blank if the pdf document does not contain an outline.
+The Preview Window has an associated Drawer, which can be toggled visible or invisible with an item in the window toolbar or the first item in the Preview menu. This drawer appears on the right side of the window if there is room there, and otherwise on the left side of the window. It's contents are divided into two pieces. The top pieces shows an outline of the document, listing chapters, sections, and subsections if available. Clicking on an item takes you to that point in the actual  Preview Window. This top portion is blank if the pdf document does not contain an outline.
 Outlines are automatically created by the hyperref package in LaTeX.
 
 The bottom of the drawer is a search field. Type an entry in the search field and a list of appearances of the entry will be created below the entry. The page where the entry occurs, and some of the surrounding text will be shown. Click on an entry to be taken to that spot.
@@ -2461,7 +2477,7 @@ Some of my colleagues at the University of Oregon switched to PreTeXt to write l
 
 Here's my "dream setup for the future." A faculty member would write lecture notes in LaTeX. These notes would be typeset by an engine which outputs both pdf and html. The pdf document would contain the course in final polished form, so students could look back at the clear logical direction of the lectures. The html document would contain interactive material: movies, questions with student input, etc., so students would be actively involved, even if working remotely.
 
-The HTML Preview window has been added to support such software, and to encourage new software which makes it easier for authors to include interactive material in their mathematical documents.
+The HTML Preview window has been added to support such software, and to encourage new software with interactive material in  mathematical documents.
 
 \section{TeX4ht and Interactive Documents}
 
@@ -2594,20 +2610,20 @@ For example, consider the text below, where <hello> has no associated closing ta
 
 A new completion dictionary is provided for html, xml, and ptx files, listing phrases likely to occur in a PreTeXt document. When an xml file is opened, TeXShop will automatically switch to this dictionary, and the menu command “Edit Command Completion File” will open this dictionary.
 
-Consult the document {\bf PreTeX with TeXShop} in \path{~/Library/TeXShop/Engines/Inactive/PreTeXt} for details about using and creating entries in this xml version of the command completion dictionary. 
+Consult the document {\bf PreTeX with TeXShop} in the directory \path{~/Library/TeXShop/Engines/Inactive/PreTeXt} for details about using and creating entries in this xml version of the command completion dictionary. 
 
 
 \chapter{ConTeXt}
 
 Recall that LaTeX is ordinary TeX used with the LaTeX macros written by Leslie Lamport. ConTeXt is TeX used with an entirely different set of macros written by Hans Hagen around 1990. Hagen works for an educational publishing company in the Netherlands, and that company needed to produce books with distinctive and colorful styles rather than the standardized documents produced by LaTeX. As Wikipedia wrote in their ConTeXt article,
 \begin{verbatim}
-  ConTeXt may be compared and contrasted with LaTeX, but the primary thrust 
-  of the two are rather distinct. ConTeXt from the ground up is a typography 
-  and typesetting system meant to provide users easy and consistent 
-  access to advanced typographical control — important for general-purpose 
-  typesetting tasks. The original vision of LaTeX is to insulate the user from 
-  typographical decisions — a useful approach for submitting e.g. articles 
-  for a scientific journal. 
+  ConTeXt may be compared and contrasted with LaTeX, but the primary 
+  thrust of the two are rather distinct. ConTeXt from the ground up is a 
+  typography and typesetting system meant to provide users easy and 
+  consistent access to advanced typographical control — important for
+  general-purpose typesetting tasks. The original vision of LaTeX is to
+  insulate the user from  typographical decisions — a useful approach for 
+  submitting e.g. articles for a scientific journal. 
 \end{verbatim}
 
 As ConTeXt developed, it faced limitations in the underlying TeX engines, and Hagen was also instrumental in a related project to create LuaTeX, a modern version of TeX with full support for Unicode, modern fonts, and precise control over typesetting. Today many LaTeX users typeset with LuaTeX rather than TeX or pdfTeX,
@@ -3016,7 +3032,7 @@ which reads
 
 \chapter{Themes}
 
-TeXShop uses customizable colors for syntax coloring, for various window backgrounds, and for other purposes. In the original version of TeXShop, users could modify these colors with a fairly baroque set of preference items. Then in macOS Mojave, Apple introduced ``Lite Mode'' and ``Dark Mode'' and an entirely new set of colors was required. At that point the old color preferences were ripped out of TeXShop and replaced by the Themes tab in Preferences. While previously many colors could only be changed using  obscure hidden Preference settings, now all color choices are available in the Themes tab.
+TeXShop uses customizable colors for syntax coloring, for various window backgrounds, and for other purposes. In the original version of TeXShop, users could modify these colors with a fairly baroque set of preference items. Then in macOS Mojave, Apple introduced ``Lite Mode'' and ``Dark Mode'' and an entirely new set of colors was required. At that point the old color preferences were ripped out of TeXShop and replaced by the Themes tab in Preferences, see Figure \ref{fig:Theme}. While previously many colors could only be changed using  obscure hidden Preference settings, now all color choices are available in the Themes tab.
 
 The Themes portion of Preferences is shown on the next page. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others will be explained shortly. A full set of such choices is called a "Theme". TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave and above. The second menu sets the theme used in Dark Mode on Mojave and above. The final menu sets the theme which Preferences is currently editing.
 
@@ -3034,11 +3050,11 @@ After editing a theme, push ``Cancel'' or ``OK'' to end a preference session. If
    \centering
    \includegraphics[width=5.5in]{Graphics/Theme.png} 
    \caption{Theme Preference Items}
-   \label{fig:example}
+   \label{fig:Theme}
 \end{figure}
 
 
-
+\newpage
 Some users may want to edit several different themes during a session. When these users are finished editing their first theme, they should press ``Save Edited Theme.'' This will save the changes for that  theme {\em permanently}, even if the entire session is ended using the ``Cancel'' button. Repeat the process for other themes. 
 
 To create a new theme, first change ``Theme to Edit'' to obtain reasonable starting colors for your new theme. Then push ``Create New Theme'' and fill in the resulting dialog with a title for this theme. Do not use spaces in this title. The new theme will become the ``Theme to Edit'' and you can begin changing colors.
@@ -3146,53 +3162,54 @@ The menu takes at least the following commands (and more if an xml file is being
 
 The item ``Tags Menu in Menubar'' under the Editor tab in TeXShop Preferences causes a duplicate of the Tags menu to appear in the menubar. 
 
-\section{Latex Panel, Matrix Panel}
+\newpage
+\section{Latex Panel, Matrix Panel, Unicode Panel}
 
 The Window menu has two items labeled ``LaTeX Panel'' and ``Matrix Panel''. Each causes an appropriate panel to open. 
 
-The LaTeX Panel floats above regular source windows in TeXShop and lists a large number of mathematical symbols. Activate a source window and click to position the Insertion Cursor. Then click on a symbol in the panel and the corresponding LaTeX code will be inserted at the indicated position in the source.
+The LaTeX Panel, see Figure \ref{fig:latexpanel}, floats above regular source windows in TeXShop and lists a large number of mathematical symbols. Activate a source window and click to position the Insertion Cursor. Then click on a symbol in the panel and the corresponding LaTeX code will be inserted at the indicated position in the source.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=2.5in]{Graphics/latexpanel.png} 
    \caption{Latex Panel}
-   \label{fig:example}
+   \label{fig:latexpanel}
 \end{figure}
+
 \newpage
 
-The Matrix Panel is similar, but more complicated. It creates matrices and tables. The number of rows and columns can be set. Experiment with other entries to see how they work.
+The Matrix Panel, see Figure \ref{fig:matrixpanel}, is similar, but more complicated. It creates matrices and tables. The number of rows and columns can be set. Experiment with other entries to see how they work.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=2.5in]{Graphics/matrixpanel.png} 
    \caption{Matrix Panel}
-   \label{fig:example}
+   \label{fig:matrixpanel}
 \end{figure}
 
 The Labels item on the toolbar works just like the Tags item, except that it lists labels in the Source Code. 
 
-\section{Unicode Panel}
+The TeXShop Editor is fully Unicode capable, so unusual scripts can be entered and typeset. Sometimes it is useful to know the particular Unicode characters being typed, and for that purpose Terada Yusuke provided a Unicode Panel. Select a portion of text, and then select ``Character Info..'' in the Edit Menu. Figure \ref{fig:arabic} shows this panel examining a piece of Arabic text in a source file to be typeset with XeLaTeX.
 
-The TeXShop Editor is fully Unicode capable, so  unusual scripts can be entered and typeset. Sometimes it is useful to know the particular Unicode characters being typed, and for that purpose Terada Yusuke provided a Unicode Panel. Select a portion of text, and then select ``Character Info..'' in the Edit Menu. The next page shows this panel examining a piece of Arabic text in a source file to be typeset with XeLaTeX.
-
-\newpage
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=3in]{Graphics/arabic.png} 
    \caption{Arabic Unicode}
-   \label{fig:example}
+   \label{fig:arabic}
 \end{figure}
+
+\newpage
 
 \section{Show Invisible}
 
-The Source menu has an item labeled ``Show Invisible Characters''. The specific invisible characters shown is determined by a setting in the Editor tab of TeXShop Preferences. Below is a short section of source with this item applied to it.
+The Source menu has an item labeled ``Show Invisible Characters''. The specific invisible characters shown is determined by a setting in the Editor tab of TeXShop Preferences. Figure \ref{fig:invisible} shows a short section of source code with this item applied to it.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=2in]{Graphics/invisible.png} 
    \caption{Invisible Characters}
-   \label{fig:example}
+   \label{fig:invisible}
 \end{figure}
 
 This particular example has three line feeds and two tab characters. 
@@ -3211,7 +3228,7 @@ causes the document to display in Single Page Mode.
 
 The menu item ``Statistics'' in the Edit menu counts the number of words, lines, and characters in the currently active source file. This is roughly the number of such items in the typeset document because the software is designed not to count LaTeX command words. The statistics panel calls ``detex'', a command line program in TeX Live, to do the actual counting.
 
-
+\newpage
 \section{Useful Items in the TeXShop Menu}
 
 {\bf Check for Updates}
@@ -3305,6 +3322,7 @@ TeXShop has been localized for English, French, German, Italian, Spanish, Portug
 
 
 \section{Redefining Menu Shortcut Keystrokes}
+\label{sec:MenuShortcutKeystrokes}
 
 Many TeXShop menu items have keyboard shortcuts. Eventually these shortcuts became a nightmare as users requested more and no more shortcuts were available. Some shortcuts are really essential, like command-T for typesetting and command-+ and command-- for changing the size of fonts. Others are used by many but not all users, and some are used by only a few.
 
@@ -3438,23 +3456,23 @@ Unfortunately, the new attribute is totally ignored by the ``Check Spelling'' se
 %
 %
 
-\section{CocoAspell}
+\section{cocoAspell}
 
 
 
-Coco-Aspell is an alternate spell checker by Anton Leuski. Leuski's project allows users to replace Apple's own dictionaries with new dictionaries that can be made ``LaTeX aware'', while still using all the Apple spelling facilities. Leuski made the project open source recently; see \url{https://github.com/leuski/cocoAspell}. 
+cocoAspell is an alternate spell checker by Anton Leuski. Leuski's project allows users to replace Apple's own dictionaries with new dictionaries that can be made ``LaTeX aware'', while still using all the Apple spelling facilities. Leuski made the project open source recently; see \url{https://github.com/leuski/cocoAspell}.
 I think of the project as the ``gold standard'' for TeX-aware spell checking, and if you use it, then the {\em Spell Checking} preference items discussed in the previous section should be turned off.
 
-Coco-Aspell can be difficult to install, and the latest commit to the open source project was August 5, 2017. 
+cocoAspell can be difficult to install, and the latest commit to the open source project was August 5, 2017.
 Leuski understandably stopped working on the project and nobody has stepped up to take it over. Users must then use the dictionaries supplied with cocoAspell, rather than dictionaries by Apple or others.  Below are two documents from 2019, a short description by Koch, and a longer description on installing the code by Schulz.
-These are the latest documents I possess on CocoAspell.
+These are the latest documents I possess on cocoAspell.
 
-\section{Cocoa-Aspell Usage (Koch)}
+\section{cocoAspell Usage (Koch)}
 % Thanks to Anton Leuski for allowing us to distribute cocoAspell in MacTeX. 
 
 cocoAspell is a spell checking service which attaches to the build-in spell checker from Apple. It knows about LaTeX and does not mark LaTeX keywords as misspelled. Since it is not notarized, it cannot be provided in our install packages; obtain it directly from the author's web site.
 
-The spell checker installs a Preference Pane named ``Spelling'' in Apple's System Preference. After running the cocoAspell installer, open this pane and configure it appropriately.
+The spell checker installs a Preference Pane named ``Spelling'' in Apple's System Preference, see Figure \ref{fig:PrefPaneSpelling}. After running the cocoAspell installer, open this pane and configure it appropriately.
 
 The Pref Pane requires macOS El Capitan or higher, because Apple changed the requirements for Preference Panes just before El Capitan. The cocoAspell pane meets all current Apple standards.
 
@@ -3464,27 +3482,27 @@ The Pref Pane requires macOS El Capitan or higher, because Apple changed the req
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=4in]{Graphics/PrefPane.png} 
-%   \caption{Spelling}
-   \label{fig:example}
+    \caption{Preference Pane ``Spelling'' in Apple's System Preference}
+    \label{fig:PrefPaneSpelling}
 \end{figure}
 
-On the left side, select those dictionaries which should appear in the Mac interface. For each selected dictionary, turn on ``Latex'' and possibly ''Context''. Notice that all dictionaries are variants of English. If you use another language, go to the web page to obtain and install an appropriate dictionary for that language.
+On the left side, select those dictionaries which should appear in the Mac interface. For each selected dictionary, turn on ``Latex'' and possibly ``Context''. Notice that all dictionaries are variants of English. If you use another language, go to the web page to obtain and install an appropriate dictionary for that language.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[angle=-0, width=4in]{Graphics/Spelling_and_Grammar.png} 
-%   \caption{Spelling and Grammar Window}
-   \label{fig:example}
+    \caption{Spelling and Grammar Window}
+    \label{fig:Spelling_and_Grammar}
 \end{figure}
 
-Now in the TeXShop Edit menu, show ``Show Spelling and Grammar.''  A panel will appear, shown below. At the bottom of this panel, select a cocoAspell dictionary instead of a built-in dictionary. Once it is selected, LaTeX keywords will not be marked as misspelled. Your editor should remember this choice across reboots. 
+Now in the TeXShop Edit menu, show ``Show Spelling and Grammar.''  A panel will appear, see Figure \ref{fig:Spelling_and_Grammar}. At the bottom of this panel, select a cocoAspell dictionary instead of a built-in dictionary. Once it is selected, LaTeX keywords will not be marked as misspelled. Your editor should remember this choice across reboots. 
 
-\section{Coco-Aspell Installing(Schulz)}
+\section{cocoAspell Installing (Schulz)}
 
 
 \subsection{Introduction}
 
-\cmd{CocoAspell} is a \LaTeX-aware Spell Checker that operates through Apple's \cmd{Spell Checking} System. Version 2.5, for \cmd{macOS 10.11} (\cmd{El Capitan}) and later, is available at <\url{http://people.ict.usc.edu/~leuski/cocoaspell/}> or as part of \cmd{MacTeXtras} available at <\url{http://www.tug.org/mactex/mactextras.html}>. 
+\cmd{cocoAspell} is a \LaTeX-aware Spell Checker that operates through Apple's \cmd{Spell Checking} System. Version 2.5, for \cmd{macOS 10.11} (\cmd{El Capitan}) and later, is available at <\url{http://people.ict.usc.edu/~leuski/cocoaspell/}> or as part of \cmd{MacTeXtras} available at <\url{http://www.tug.org/mactex/mactextras.html}>.
 
 If you've never installed \cmd{cocoAspell} before \emph{and} you are using \cmd{OS X 10.13.x} (High Sierra) (or later?) the install may partially fail; the dictionaries are not completely built under that OS version (or later?). There is a fix, provided by Thaddeus Perala, but it involves using the Command Line (\acr{CL}) tool called \cmd{make}.
 
@@ -3649,6 +3667,30 @@ This command reverses the cycle direction.
 
 TeXShop sometimes needs to convert a postscript file into pdf. This is usually done with Ghostscript, but users who did not install Ghostscript can use a distiller provided by Apple in macOS. In case one method is unsatisfactory, it can be useful to switch to the other temporarily.
 
+{\bf Use -dALLOWPSTRANSPARENCY}
+
+TeXShop uses Ghostscript in two crucial places. First, TeXShop can open and display postscript files. To do this,
+it converts the postscript file to a pdf file using ps2pdf, a program in the Ghostscript family,
+and then displays the pdf file. Second, TeXShop typesets in DVI mode by calling tex or latex to create a dvi file, and then calling dvips to convert the dvi file to postscript, and finally calling Ghostscript to convert the postscript file
+to a pdf file. An advantage of this chain is that PSTricks package can be used in the source to create special effects in the typeset output.
+
+The Ghostscript program  was originally written in postscript. Recently, the authors of Ghostscript rewrote the program in C. This rewrite revealed several spots where the original code introduced security bugs, and these bugs have been removed, occasionally by breaking very obscure features of postscript. Unfortunately for TeX, among the obscure features were all postscript transparency operators, so any transparency in the original postscript file is ignored in the pdf version of the file.
+
+To fix this, the Ghostscript authors added a special flag, ``-dALLOWPSTRANSPARENCY''.
+When Ghostscript is called with this flag set, the transparency operators are recognized (while the other more serious security bugs are still quashed).  This flag is available in Ghostscript 9.51 and higher. 
+
+A special preference titled ``Ghostscript Options'' under the Typesetting tab allows users to turn on this flag. The flag is off by default because some users have earlier versions of Ghostscript or never use transparency, and because the flag might conceivably be removed at some future date. 
+
+The flag only affects the two TeXShop operations described in the initial paragraph of this section. It has no effect if the user has selected the Apple distiller rather than Ghostscript for conversion operations. I suspect the flag works for users who have a Ghostscript provided by MacPorts or Homebrew rather than the Ghostscript provided in MacTeX, but this has not been tested. 
+
+The DVI typesetting chain is controlled by the Preference items ``TeX + dvips + distiller'' under the Engine tab. 
+These items call a script named {\em simpdftex} in TeXLive to control the typesetting process. This script recognizes many optional flags. A few are set by default. One of the optional flags not set by default is named
+{\em --distilleropts}; it allows a user to send  flags directly to the distiller (i.e., Ghostscript) portion of the chain. 
+If TeXShop discovers that this flag has been set by the user in TeXShop Preferences, then it does not add the
+-dALLOWPSTRANSPARENCY flag because the user is apparently controlling that operation directly.
+
+
+
 {\bf On Big Sur and Later}
 
 In Big Sur (macOS 11), Apple introduced a new style for toolbar items. The new style only works on Big Sur and higher.
@@ -3660,7 +3702,7 @@ Since TeXShop runs on High Sierra (macOS 10.13) and above, it has to be able to 
 
 The Latex panel contains a ``Custom'' tab; up to sixteen user-defined buttons can be placed on this tab. Other buttons in the Latex panel cannot be changed, but the text inserted when the button is pressed can be changed.
 
-To do so, edit the file \path{~/Library/TeXShop/LatexPanel/completions.plist} with TeXShop. The comments at the start of this file explain how to make these changes. Be sure to edit and save in UTF-8 format if you use Unicode characters.
+To do so, edit the file \path{~/Library/TeXShop/LatexPanel/completions.plist} with TeX\-Shop. The comments at the start of this file explain how to make these changes. Be sure to edit and save in UTF-8 format if you use Unicode characters.
 \newpage
 \section{Adding to the List of Files That Can Be Typeset}
 
@@ -3698,12 +3740,13 @@ Here is a complete list.
 \section{Commonly Used Magic Lines}
 
 {\bf \% !TEX program =}\\
-{\bf \% !TEX TS-program = }\\
+{\bf \% !TEX TS-program = }
 \begin{verbatim}
-     Set the typesetting program used for this file, overriding all other ways 
-     to determine the program. The words ``tex'', ``pdftex'', ``latex'', ``pdflatex''
-     indicate the built-in TeX + DVI, pdftex, LaTeX + DVI, pdflatex engines.
-     Otherwise use the exact name and spelling of the appropriate engine.
+     Set the typesetting program used for this file, overriding all other 
+     ways to determine the program. The words ``tex'', ``pdftex'',
+     ``latex'', ``pdflatex'' indicate the built-in TeX + DVI, pdftex,
+     LaTeX + DVI, pdflatex engines. Otherwise use the exact name and
+     spelling of the appropriate engine.
 \end{verbatim}
 
 {\bf \% !TEX encoding = }
@@ -4063,8 +4106,8 @@ TeXShop adds lines which begin with the words
 ConTeXt users may want additional words to be recognized and added to the Tag menu. For
 instance, they want
 \begin{verbatim}
-   \subsubsubsection, \subsubsubsubsection, \part, \title, \subject, \subsubject,
-   \subsubsubject, \subsubsubsubject, \subsubsubsubsubject
+   \subsubsubsection, \subsubsubsubsection, \part, \title, \subject,
+   \subsubject, \subsubsubject, \subsubsubsubject, \subsubsubsubsubject
 \end{verbatim}
 The following command adds these words
 \begin{verbatim}

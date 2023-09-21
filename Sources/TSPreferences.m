@@ -2160,6 +2160,16 @@ A tag of 0 means "always", a tag of 1 means "when errors occur".
 	[SUD setBool:[(NSCell *)sender state] forKey:SaveRelatedKey];
 }
 
+- (IBAction)useTransparencyPressed:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD boolForKey:UseTransparencyKey] forKey:UseTransparencyKey];
+
+    // since the default program values map identically to the tags of the NSButtonCells,
+    // we can use the tag directly here.
+    [SUD setBool:[(NSCell *)sender state] forKey:UseTransparencyKey];
+}
+
 /*" On Typesetting Pane
 
 A tag of 0 means "no", a tag of 1 means "yes".
@@ -2783,6 +2793,7 @@ This method retrieves the application preferences from the defaults object and s
 	[_defaultScriptMatrix selectCellWithTag:[defaults integerForKey:DefaultScriptKey]];
 	[_syncMatrix selectCellWithTag:[defaults integerForKey:SyncMethodKey]];
 	[_saveRelatedButton setState:[defaults boolForKey:SaveRelatedKey]];
+    [_useTransparencyButton setState:[defaults boolForKey:UseTransparencyKey]];
     [_syncTabButton setState:[defaults boolForKey:SyncUseTabsKey]];
 }
 

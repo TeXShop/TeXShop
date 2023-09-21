@@ -101,6 +101,7 @@
     IBOutlet NSTextField *remainingParagraphIndentField;
     IBOutlet NSTextField *interlineSpacingField;
 	IBOutlet NSButton	*_saveRelatedButton;		/*" connected to Save Related Files "*/
+    IBOutlet NSButton    *_useTransparencyButton; /*" connected to use -dALLOWPSTRANSPARENCY "*/
     IBOutlet NSButton   *_syncTabButton;
 	IBOutlet NSButton       *_autoPDFButton;
 	IBOutlet NSButton       *_ptexUtfOutputButton;          // zenitani 1.35 (C)

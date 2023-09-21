@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -154,6 +154,7 @@
                 <outlet property="_texGSCommandTextField" destination="202" id="205"/>
                 <outlet property="_texScriptCommandTextField" destination="156" id="209"/>
                 <outlet property="_useNewToolbarIconsButton" destination="8Bo-7s-d0a" id="ulU-MQ-w7O"/>
+                <outlet property="_useTransparencyButton" destination="217-aa-RyX" id="tVQ-so-IH4"/>
                 <outlet property="dictionaryPopup" destination="OZM-Tw-x8R" id="gm0-XW-NdD"/>
                 <outlet property="firstParagraphIndentField" destination="6Ic-Ft-d2h" id="Jl6-xD-E4e"/>
                 <outlet property="interlineSpacingField" destination="rgC-4Z-JXZ" id="vOU-RT-Kbl"/>
@@ -173,7 +174,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="267" y="188" width="669" height="628"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213.87799999999999" height="107"/>
             <view key="contentView" id="6">
                 <rect key="frame" x="0.0" y="0.0" width="669" height="628"/>
@@ -1683,7 +1684,7 @@ DQ
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="check" title="マクロエディタでも使用" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="yfe-jV-KOx">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                                            <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="MacroPressed:" target="-2" id="A5D-t0-qSq"/>
@@ -1824,10 +1825,10 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="デフォルトのスクリプト" translatesAutoresizingMaskIntoConstraints="NO" id="188">
-                                            <rect key="frame" x="64" y="227" width="225" height="99"/>
+                                            <rect key="frame" x="29" y="221" width="260" height="99"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="fdY-ne-O7N">
-                                                <rect key="frame" x="4" y="5" width="217" height="77"/>
+                                                <rect key="frame" x="4" y="5" width="252" height="77"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="186">
@@ -1865,10 +1866,10 @@ DQ
                                             <font key="titleFont" metaFont="system"/>
                                         </box>
                                         <box fixedFrame="YES" title="デフォルトのコマンド" translatesAutoresizingMaskIntoConstraints="NO" id="183">
-                                            <rect key="frame" x="64" y="330" width="225" height="168"/>
+                                            <rect key="frame" x="29" y="330" width="260" height="168"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <view key="contentView" id="7Tb-XR-EnH">
-                                                <rect key="frame" x="4" y="5" width="217" height="146"/>
+                                                <rect key="frame" x="4" y="5" width="252" height="146"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autosizesCells="NO" translatesAutoresizingMaskIntoConstraints="NO" id="181">
@@ -2039,6 +2040,28 @@ DQ
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="syncTabButtonPressed:" target="-2" id="ZVb-Jf-O5m"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                            <font key="titleFont" metaFont="system"/>
+                                        </box>
+                                        <box fixedFrame="YES" title="Ghostscriptオプション" translatesAutoresizingMaskIntoConstraints="NO" id="0bV-IV-W7A">
+                                            <rect key="frame" x="29" y="121" width="260" height="76"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView" id="oi5-9b-dtG">
+                                                <rect key="frame" x="4" y="5" width="252" height="54"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="217-aa-RyX">
+                                                        <rect key="frame" x="6" y="24" width="204" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="-dALLOWPSTRANSPARENCY" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MjJ-lN-2Vp">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="useTransparencyPressed:" target="-2" id="1an-Ql-awv"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -3675,7 +3698,7 @@ DQ
             <windowStyleMask key="styleMask" titled="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="272" y="172" width="428" height="235"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <view key="contentView" id="TKA-d5-95C">
                 <rect key="frame" x="0.0" y="0.0" width="428" height="235"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -3747,7 +3770,7 @@ DQ
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="311" y="495" width="261" height="107"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1079"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="GQv-wW-v7e">
                 <rect key="frame" x="0.0" y="0.0" width="261" height="107"/>

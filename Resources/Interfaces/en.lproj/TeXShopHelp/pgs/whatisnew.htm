@@ -15,6 +15,35 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 5.20</h5></P>
+Version 5.19 was never released. The following changes were made in 5.20:
+<p><ul>
+<li> Some people complained that line numbers in the source file are too small to read. A new preference under the "Source" tab allows users to choose between small and large line numbers. 
+
+<p><li> The Typst project by Martin Haug and Laurenz Mädje is a complete rewrite of both the input language and the typesetting abilities of TeX and LaTeX.  See <a href="https://typst.app">https://typst.app</a> for details. A TeXShop user, Jeroen Scheerder, recently created an engine file that allows TeXShop to  typeset Typst sources. Version 5.20 of TeXShop contains that engine in ~/Library/TeXShop/Engines/Inactive/Typst. This folder also contains  simple typst source files, called templates, and instructions explaining how to download and install typst. Thus users can
+easily experiment with Typst using TeXShop.
+
+<p><li> Typst source files have extension ".typ". This file extension was added to the list of extensions that TeXShop is willing to create and open, and to the list of file types that TeXShop can typeset. Moreover, source files with extension ".typ"
+can be added to ~/Library/TeXShop/Templates and then will appear in the Templates pulldown menu in the source window.
+
+<p><li> Version 5.18 of TeXShop contains a preference which adds a flag whenever Ghostscript is called telling the program to process transparency operators. This flag is understood by Ghostscript 9.51 and later, so TeXShop has code which checks the version of Ghostscript running, and does not add the flag when the version is earlier than 9.51.
+But very shortly after the release of TeXShop 5.18, Matthias Schmidt read that code and discovered that it did nothing because it was deactivated by a line of debugging code I forgot to remove. I  silently fixed the bug and most people updating to version 5.18 received a version without this bug. Since the bug was minor, I decided not to release a new version just to fix it. It is fixed for everyone in version 5.20.
+
+<p><li> The TeXShop manual was updated slightly to describe the changes in version 5.20. Uwe Schmock has also improved the manual and some of his changes are in the latest version.
+
+<p><li> Max Horn runs an important web site which may be unknown to most TeXShop users. The site is
+<a href="https://github.com/TeXShop/TeXShop">https://github.com/TeXShop/TeXShop</a> and contains
+the source code for most versions of TeXShop since the program began. While the Horn site was under construction,
+I sent him old sources obtained by turned on computers that had last run twenty years ago; they  started right up! That is how I found the original sources for the earliest TeXShop, which are linked from the the main TeXShop page, 
+<a href="https://pages.uoregon.edu/koch/texshop/texshop.html">https://pages.uoregon.edu/koch/texshop/texshop.html</a>.
+
+<p> I am ashamed to admit that git remains a mystery to me. So Horn has access to valuable information I know nothing about. Here's an example. Horn recently reported that the 5.18 sources suddenly contained a complete copy of the final program. That was 90 megs of useless information. Sure enough, a copy had accidentally been saved in the wrong spot.
+This problem was immediately fixed on the web, but I'm gradually digesting a list from Horn of other elements in the current sources that are probably no longer relevant. 
+
+ 
+</ul>
+
+
 <P><h5>TeXShop Changes 5.18</h5></P>
 Modern versions of
 Ghostscript do not process transparency operators in ps files unless the flag -dALLOWSPSTRANSPARENCY is added to the function call.  In TeXShop 5.18, a preference item titled  "Ghostscript Options" under the Typesetting tab can be checked to activate the flag. 

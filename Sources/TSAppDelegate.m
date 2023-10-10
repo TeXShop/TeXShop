@@ -253,7 +253,11 @@
     else
         atLeastVentura = NO;
 
-    
+    if (floor(NSAppKitVersionNumber) >= 2487.0)
+        atLeastSonoma = YES;
+    else
+        atLeastSonoma = NO;
+     
 /*
 #ifdef MOJAVEORHIGHER
     if (@available(macOS 10.14, *))
@@ -667,6 +671,7 @@
                       @"xml",
                       @"ptx",
                       @"py",
+                      @"typ",
                        nil];
     
     commandsToSpellCheck = [[NSArray alloc] initWithObjects:

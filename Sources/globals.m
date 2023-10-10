@@ -147,6 +147,7 @@ NSString *ExternalEditorTypesetAtStartKey = @"ExternalEditorTypesetAtStart";
 NSString *ConvertLFKey = @"ConvertLF";
 NSString *UseOgreKitKey = @"UseOgreKit";
 NSString *FindMethodKey = @"FindMethod";
+NSString *LineNumberSizeKey = @"LineNumberSize";
 NSString *BringPdfFrontOnAutomaticUpdateKey = @"BringPdfFrontOnAutomaticUpdate";
 NSString *BringPdfFrontOnTypesetKey = @"BringPdfFrontOnTypeset";
 NSString *SourceWindowAlphaKey = @"SourceWindowAlpha";
@@ -407,6 +408,7 @@ BOOL                atLeastMojave;
 BOOL                atLeastCatalina;
 BOOL                atLeastMonterey;
 BOOL                atLeastVentura;
+BOOL                atLeastSonoma;
 BOOL                BuggyHighSierra;
 BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 

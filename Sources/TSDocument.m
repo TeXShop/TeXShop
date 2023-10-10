@@ -1771,7 +1771,9 @@ in other code when an external editor is being used. */
         || ([extension isEqualToString: @"html"])
         || ([extension isEqualToString: @"ptx"])
         || ([extension isEqualToString: @"asy"])
-		|| ([extension isEqualToString: @"lbx"]))
+		|| ([extension isEqualToString: @"lbx"])
+        || ([extension isEqualToString: @"typ"])
+        )
 		return YES;
 		
 	otherExtensions = [SUD stringArrayForKey: OtherTeXExtensionsKey];
@@ -3414,7 +3416,12 @@ if ( ! skipTextWindow) {
                 [self makeMenuFromDirectory: submenu basePath: path
                                      action: @selector(doTemplate:) level: lv];
                 [newItem setSubmenu: submenu];
-            } else if ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
+            } else if (
+                       ([ [[title pathExtension] lowercaseString] isEqualToString: @"tex"])
+                       ||
+                       ([ [[title pathExtension] lowercaseString] isEqualToString: @"typ"])
+                       )
+                {
                 title = [title stringByDeletingPathExtension];
                 [popupButton addItemWithTitle: @""];
                 [spopupButton addItemWithTitle: @""];
@@ -3462,7 +3469,12 @@ if ( ! skipTextWindow) {
 										 action: action level: level];
 					[newItem setSubmenu: submenu];
 				}
-			} else if ([[[title pathExtension] lowercaseString] isEqualToString: @"tex"]) {
+			} else if (
+                       ([[[title pathExtension] lowercaseString] isEqualToString: @"tex"])
+                       ||
+                       ([[[title pathExtension] lowercaseString] isEqualToString: @"typ"])
+                    )
+                {
 				title = [title stringByDeletingPathExtension];
 				newItem = [menu addItemWithTitle: title action: action keyEquivalent: @""];
 				[newItem setTarget: self];

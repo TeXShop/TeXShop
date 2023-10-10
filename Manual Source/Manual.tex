@@ -54,8 +54,9 @@
 
  \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
             citecolor=blue, urlcolor=blue, hyperfigures=true]{hyperref}
+\usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.2}
+\title{TeXShop Manual \\ Version 1.3.3}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -122,12 +123,14 @@ Below is a typical \TeX\ source file.
 Below is the output when this source is processed by \TeX:
  
  \vspace{.3in}
+ \capstartfalse
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
        \centering
        \includegraphics[width=\hsize]{Graphics/output} 
     %   \caption{Typeset Version}
        \label{fig:typeset}
     \end{figure}
+\capstarttrue
     
     \newpage
     \section{Donald Knuth and the Creation of \TeX}
@@ -496,12 +499,20 @@ I do not recommend the other choice, but try it if you wish.
 
 TeXShop provides three different Find Panels. Select each and try it. After making a selection, TeXShop must be restarted before the new panel becomes active. The Apple Find Panel was the original choice in TeXShop twenty years ago. It is very basic. The Apple Find Bar is the newer method by Apple, used in Safari, XCode, and many other official Apple programs. It looks very minimal, but a close inspection shows that it has unexpected features. The OgreKit Find Panel is an open source project from Isao Sonobe in Japan. It is  full featured and supports Regular Expressions. This is the panel that most users ultimately adopt. It is not the default choice when you first use TeXShop because the OgreKit Panel does not work well in the Chinese localization.
 
+{\bf Line Number Size}
+
+The TeXShop editor displays line numbers in the left margin, unless these are turned off by a menu choice or
+second preference setting. These numbers are small so they are not distracting and work well with all font sizes.
+Some users found them hard to read. This setting allows users to request larger line numbers.
+
 \section{Other Editor Preference Items}
 
 
 The source window is also configured by various items in the Editor tab in Preferences. See the picture on the next page. We will discuss these items in a different order than listed in the Panel. 
 
-Several source window features  can  also be changed using menu items in the Source menu. We'll list these items first; the corresponding Preference items select the default behavior when a window is first opened. For example, the text in the source window is usually syntax colored, but a menu item can toggle this behavior for the active window. The {\bf Syntax Coloring} Preference item determines whether syntax coloring is on when a window is first opened.
+\newpage
+Several source window features  can  also be changed using menu items in the Source menu. We'll list these items first; the corresponding Preference items select the default behavior when a window is first opened. For example, the text in the source window is usually 
+syntax colored, but a menu item can toggle this behavior for the active window. The {\bf Syntax Coloring} Preference item determines whether syntax coloring is on when a window is first opened.
 
 {\bf Line Numbers} When selected, source lines are numbered.
 
@@ -537,7 +548,6 @@ The preference allows users to pick which characters are shown and by what symbo
 %The preference allows users to pick which characters are shown and by what symbol. The final  {\bf On by default} item is usually left unchecked, so these characters are not shown when a window is first opened. If puzzling behavior later develops, it can be turned on using a menu item.
 %
 
-\newpage
  The remaining items are rarely changed, so they can only be set in the Preferences Pane:
 
 {\bf Use Tabs for Indent Menu} The third and fourth items in the TeXShop source menu are named
@@ -558,7 +568,6 @@ The remaining items in the first column and the first block of items in the seco
 The last item sets the spacing between lines, so the source
 can be single spaced or double spaced or somewhere between these extremes.
 
-\newpage
 Preference values for various style fields are integers. These values are constrained in various ways. Tab indent can be between 2 and 50, paragraph indent can be between 0 and 100, and interline spacing can be between 1 and 20. When larger or smaller values are entered, they are replaced with the closest allowed value.
 
 
@@ -879,7 +888,7 @@ Typesetting scripts are called ``engines'' and are stored in $\sim$/Library/TeXS
 It is also possible to name the script which should typeset a given source file in a magic line at the top of the source. 
 A typical magic line might read
 \begin{verbatim}
-     % !TEX TS-program = LuaLaTeX
+     
 \end{verbatim}
 Then command-T applied to this source would typeset with LuaLaTeX.
 
@@ -2709,6 +2718,25 @@ middle line if you are using the distribution in TeX Live and MacTeX.
 to your ConTeXt source file; this line tells ConTeXt to generate the new synctex information.
 \end{itemize}
 
+\chapter{Typst}
+
+TeX4ht and ConTeXT are examples of projects to extend \TeX\ and \LaTeX\ is radical ways. Lua\TeX\ and Xe\TeX\ are similar rewrites of the basic system. But there are a few even more radical projects, which rewrite both the input language used for typesetting and the code which typesets. An interesting example is Typst, a project by Martin
+Haug and Laurenz Mädje in Berlin. They created an entirely new typesetting program from scratch, written in the programming language Rust. The input source for Typst documents is also new, designed to simplify input for various common typesetting tasks.
+
+For information, follow the link \url{https://typst.app}.
+
+An engine file by Jeroen Scheerder makes it possible for TeXShop to typeset these new input files using the Typst program, so TeXShop users can experiment with the new system. The folder $\sim$/Library/TeXShop/Engines/Inactive/Typst contains everything needed to get started. This folder has a file {\em AboutTypst} which explains how to download and install typst in /usr/local/bin; this turns out to be very easy. The folder also contains the engine "Typst.engine", which can be copied to the active engine directory. Finally several Typst source files are included to begin experimentation.
+
+TeXShop has been extended so it can open and create ".typ" files, and it knows that these files can be typeset.
+Such source files can be added to $\sim$/Library/TeXShop/Templates, making them appear in the pull-down Templates menu in the Source toolbar. 
+
+\newpage
+Add the following line to the top of any Typst source file. This line tells TeXShop to typeset the file using the
+typst program. The symbol \% does not indicate a comment in the Typst source language; instead comments
+start with //. That is why the line has two unexpected symbols at the start.
+\begin{verbatim}
+     // % !TEX TS-program = Typst
+\end{verbatim}
 
 \chapter{Using an External Editor}
 

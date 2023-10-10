@@ -94,15 +94,26 @@
     {
 //		[_font autorelease];
 //		_font = [aFont retain];
+        _font = aFont;
     }
 }
 
 - (NSFont *)font
 {
+    NSInteger lineSize;
+    
+    lineSize = [SUD integerForKey: LineNumberSizeKey];
+        
 	if (_font == nil)
-	{
-		return [NSFont labelFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
-	}
+    {
+        if (lineSize == 0)
+            return [NSFont labelFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeMini]];
+        else if (lineSize == 1)
+            return [NSFont labelFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
+        else
+            return [NSFont labelFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeMini]];
+    }
+        
     return _font;
 }
 
@@ -203,6 +214,12 @@
 
 - (void)scrollEnded:(NSNotification *)notification
 {
+    // This was introduced to fix a bug in an earlier system.
+    // It is not needed in Sonoma because Apple fixed that bug.
+    
+    if (atLeastSonoma)
+        return;
+    
     // Invalidate the line indices. They will be recalculated and recached on demand.
    // [self invalidateLineIndices];
     if (notification.object == self.myScrollView)

@@ -405,6 +405,7 @@ extern NSString *ExternalEditorTypesetAtStartKey;
 extern NSString *ConvertLFKey;
 extern NSString *UseOgreKitKey;
 extern NSString *FindMethodKey;
+extern NSString *LineNumberSizeKey;
 extern NSString *BringPdfFrontOnAutomaticUpdateKey;
 extern NSString *BringPdfFrontOnTypesetKey;
 extern NSString *SourceWindowAlphaKey;
@@ -667,6 +668,7 @@ extern BOOL             atLeastMojave;
 extern BOOL             atLeastCatalina;
 extern BOOL             atLeastMonterey;
 extern BOOL             atLeastVentura;
+extern BOOL             atLeastSonoma;
 extern BOOL             BuggyHighSierra;
 extern BOOL             editorCanAddBrackets;
 

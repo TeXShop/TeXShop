@@ -647,6 +647,21 @@ This method will be called when the matrix changes. Target 0 means 'all windows 
         [SUD setInteger:2 forKey:FindMethodKey];
 }
 
+/*" Set Line Number Size"*/
+- (IBAction)lineSizeChanged:sender
+{
+    // register the undo message first
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:[SUD integerForKey:LineNumberSizeKey] forKey:LineNumberSizeKey];
+
+    if ([[sender selectedCell] tag] == 0)
+        [SUD setInteger:0 forKey:LineNumberSizeKey];
+    else if ([[sender selectedCell] tag] == 1)
+        [SUD setInteger:1 forKey:LineNumberSizeKey];
+    else
+        [SUD setInteger:0 forKey:LineNumberSizeKey];
+}
+
+
 /*" Set Wrap Panel"*/
 - (IBAction)wrapPanelChanged:sender
 {
@@ -2637,6 +2652,13 @@ This method retrieves the application preferences from the defaults object and s
         [_findMatrix selectCellWithTag:1];
     else
         [_findMatrix selectCellWithTag:2];
+    
+    if ([defaults integerForKey:LineNumberSizeKey] == 0)
+        [_lineSizeMatrix selectCellWithTag:0];
+    else if ([defaults integerForKey:LineNumberSizeKey] == 1)
+        [_lineSizeMatrix selectCellWithTag:1];
+    else
+        [_lineSizeMatrix selectCellWithTag:2];
     
 	[_savePSButton setState:[defaults boolForKey:SavePSEnabledKey]];
 	[_scrollButton setState:[defaults boolForKey:NoScrollEnabledKey]];

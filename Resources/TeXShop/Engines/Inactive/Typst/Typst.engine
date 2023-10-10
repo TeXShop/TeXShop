@@ -1,0 +1,24 @@
+#!/bin/sh
+
+## $HOME/Library/TeXShop/Engines/Typst.engine
+## In documents, use:
+# \\ %!TEX TS-program = typst
+
+# The typst executable will probably come from homebrew (different places for arm64/x64),
+# or you might want to put it in your ~/bin
+PATH=/Library/TeX/texbin:$HOME/Library/TeXShop/bin:$HOME/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}
+
+fname="$1"; bfname=${1%\.*}
+TYPESET="typst"
+
+if which ${TYPESET} > /dev/null ; then
+	:
+else
+	echo "Typesetter \`${TYPESET}' not found, aborting." >&2; exit 1
+fi
+
+printf "$(date): Running \"${TYPESET} compile $1\" ... "
+
+${TYPESET} compile "$1"
+
+printf done.

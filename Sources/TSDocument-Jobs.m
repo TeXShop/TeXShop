@@ -76,9 +76,6 @@
     NSData *data = [self.gsversionHandle readDataToEndOfFile];
     NSString *returnString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     
-    NSLog(returnString);
-    
-    return YES;
     
     if ([returnString isEqualToString: @"yes"])
         return YES;

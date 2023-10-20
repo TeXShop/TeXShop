@@ -1,0 +1,113 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+ \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue]{hyperref}
+
+
+\title{About Typst}
+\author{Richard Koch}
+\date{\today}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{Introduction} 
+There are several projects in the TeX world attempting to rewrite \TeX\ from scratch. Sometimes  these programs input \LaTeX\ source files and just modify the typesetting code. Lua\TeX\ and Xe\TeX\ are familiar examples. Other programs start completely from scratch with new markup input languages. Typst is one of these.
+
+Another interesting example is JSBox by Doug McKenna. This was described at TUG meetings in 2014 and 2019. One goal of the project was to create documents for iPhones and iPads which reflow immediately when the user resizes the window, and which can contain interactive illustrations. JSBox is not well-known because McKenna did not release it as open source, but the iOS app {\em Hilbert Curves} by McKenna shows many of its capabilities. In his 2014 report, McKenna discussed showing the program to Donald Knuth, who encouraged him but warned that ``any rewrite of \TeX\ will be a full time job taking at least five years.''
+
+More recently Martin Haug and Laurenz Mädje began a project in Berlin to rewrite both the input language and the typesetting code for a Latex-like program.  Their program is named {\em Typst} and is programmed in Rust. The project began in 2019, so Knuth's estimate of the time it might take remains quite accurate. Details about the reasons for the rewrite, and the goals, can be found at their web site \url{https://typst.app}. 
+
+\section{A Typst Engine} 
+Recently I received a TeXShop engine file from Jeroen Scheerder which can typeset Typst
+source files. These source files usually have extension ``.typ'', so I added that as a file type which TeXShop
+recognizes and is willing to typeset. Thus TeXShop users can easily experiment with the new typesetting
+engine and its distinctive input language.
+
+To set this up, perform the following steps:
+\begin{itemize}
+\item Go to  \url{https://github.com/typst/typst/releases/}, scroll down to the ``Assets'' section, and download either typst-aarch64-apple-darwin.tar.xz or typst-x86\_64-apple-darwin.tar.xz depending on whether you have an Arm processor or an Intel processor. The zip file will decompress into a folder containing  ``typst'' and some license and readme files. The file ``typst'' is the full typesetting program.
+\item
+If you try to run typst, the Mac will display a dialog reading
+\begin{verbatim}
+   "typst" can't be opened because Apple 
+   cannot check it for malicious software.
+\end{verbatim}
+We should ask the authors to notarize the file with Apple, but if you trust them, you can remove the
+warning by opening Terminal, changing to the directory containing typst, and typing
+\begin{verbatim}
+     xattr -d com.apple.quarantine typst
+\end{verbatim}
+\item Then drag typst to /usr/local/bin.
+\item Find the file Typst.engine in the folder containing this document 
+and drag a copy to the active engine folder, ~/Library/TeXShop/Engines.
+\end{itemize}
+\vspace{.2 in}
+
+Now you are ready to experiment. If you are given a Typst source file, add the following line to the top of the file
+\begin{verbatim}
+     //% !TEX TS-program = Typst
+\end{verbatim}
+This line tells TeXShop to typeset using Typst. Unfortunately, \% is not a comment symbol in the Typst input language, so we preface the line with the comment symbol in that language, //. It is not necessary to remember this line; just
+choose the TeXShop Macro titled  ``Program'' and a list of active typesetting engines will appear. Select "Typst" and
+the line will be written at the top of your source. Add the extra // at the beginning.
+
+If instead you start a new source file completely from scratch, then when the Save dialog appears, find the pulldown menu "File Format:" at the bottom of the dialog and select "typ"; it is the very last element in the menu. 
+
+Recall that TeXShop has a "Templates" menu in the source toolbar, and new templates can be added to this
+item by simply adding their files to ~/Library/TeXShop/Templates. Until this version of TeXShop, these template
+files needed to have extension ".tex". Now files with extension ".typ" are also allowed there.
+
+\newpage
+\section{Sample Source Files}
+
+Since Typst introduces an entirely new input language, it would be desirable to obtain sources for several substantial documents to show what the program can do and how using it differs from using standard LaTeX.  As a mathematician, 
+for instance, I'd like to see the source for a 50 to 100 page set of lecture notes, complete will illustrations, complicated inline and displayed equations, tables, commutative diagrams, and the like.
+
+Unfortunately, such source documents do not seem to be available yet, although providing them is on the author's to-do list. Instead the Typst web page contains an elaborate manual for using the program, with many snippets explaining items that are easier to input in Typst than in LaTeX.  These snippets give a glimpse of what is possible, but close study
+of the manual is required to see how they all fit together.
+
+In the meantime, however, I discovered a ``Templates'' folder on the Typst site, with five templates titled
+{\em ams, dept-news, fiction, ieee,} and {\em letter}. Each of these produces a complete document  and these documents give a much clearer view of the current capabilities of the program.  See the folder TypstTemplates, with its five subfolders.
+
+In each folder, typeset the file named main.typ. The magic line telling TeXShop to typeset with Typst has already
+been added to these files. Typeset all five files for a good sample of the current capabilities of the program.
+
+\section{Packages}
+
+Packages are the rough equivalent of sty and class files in the LaTeX world. A Typst source document can input package files to extend the capabilities of the language.  An elaborate package system for Typst is under construction currently. See \url{https://github.com/typst/packages#local-packages} for details.
+
+In particular, the Typst world has an equivalent of $\sim$/Library/texmf where users can store their own packages and experimental packages from others not yet published for general use. On the Macintosh, this location is 
+$\sim$/Library/Application Support/typst/packages/local.   
+This location takes precedence over others in the current design, just as $\sim$/Library/texmf is searched first in LaTeX.
+
+The Typst Templates can be installed in ``$\sim$/Library/Application Support''
+to begin using the Typst package system.   Simply add the five folders ams, dept-news, fiction, ieee, letter directly to
+the local package folder to begin using the Typst package system. For example, you will have a folder
+\begin{verbatim}
+     ~/Library/Application Support/typst/packages/local/ams
+\end{verbatim}
+The folder $\sim$/Library/Application Support" already exists, 
+but folders typst, packages, and local will have to be created first.
+
+After this step, for example, the ams template can be compiled from a source which starts
+\begin{verbatim}
+     #import “@typst/ams:1.0.0”: *.
+\end{verbatim} 
+An advantage of this approach is that the output pdf file and any intermediate files will be created in the source
+directory of the source file, not in the source directory of the packages.
+
+This directory contains a sample mathematical document by Jeroen Scheerder on group theory. That document uses the ams package as an illustration of how this system works.
+
+\section{Acknowledgement}
+
+This new capability is really the work of Jeroen Scheerder, who wrote the engine file. Without his encouragement, I would not have  looked at the Typst site,  and certainly would not have realized that the project is very approachable in its current state. Contact Scheerder at \href{mailto:js@gumby.nl}{Jeroen Scheerder $<$js@gumby.nl$>$} if you have questions about the engine.
+\end{document}
+
+

@@ -395,24 +395,38 @@ NSInteger strSort(id s1, id s2, void *context)
         fromFullSplitWindow = [coder decodeBoolForKey:@"ForFullSplitWindow"];
         
         if (! fromFullSplitWindow) {
+            
             if ([coder containsValueForKey:@"TeXShopPDFWindow"]) {
-                windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
+                
+                if ([coder respondsToSelector:@selector(decodeObjectOfClass:forKey:)])
+                    windowState = (NSString *)[coder decodeObjectOfClass:[NSString class] forKey:@"TeXShopPDFWindow"];
+                else
+                    windowState = (NSString *)[coder decodeObjectForKey:@"TeXShopPDFWindow"];
                 [self.pdfKitWindow setFrameFromString:windowState];
-                }
+            }
+            
+            
+            
+            
             if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
                 thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
                 [self.pdfKitWindow setFrameOrigin: thePoint];
-                }
+            }
+            
             if ([coder containsValueForKey:@"VisiblePDFRect"]) {
                 theVisibleRect = [coder decodeRectForKey:@"VisiblePDFRect"];
                 [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
-                }
             }
+        }
+    }
                     
         if (fromFullSplitWindow) {
             if ([coder containsValueForKey:@"SplitWindow"])
             {
-                windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
+                if ([coder respondsToSelector:@selector(decodeObjectOfClass:forKey:)])
+                    windowState = (NSString *)[coder decodeObjectOfClass:[NSString class] forKey:@"SplitWindow"];
+                else
+                    windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
                 [fullSplitWindow setFrameFromString:windowState];
             }
             if ([coder containsValueForKey:@"SplitWindowOrigin"])
@@ -453,7 +467,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 [fullSplitWindow mergeAllWindows: fullSplitWindow];
         }
     }
-}
+
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
@@ -2605,6 +2619,7 @@ else {
 	[(TSToolbar *)[pdfWindow toolbar] turnVisibleOff:YES];
 	[(TSToolbar *)[self.pdfKitWindow toolbar] turnVisibleOff:YES];
 	[pdfWindow close];
+    [_htmlWindow close];
 	[self.pdfKitWindow close];
     [outputWindow close];
     [self.logWindow close];

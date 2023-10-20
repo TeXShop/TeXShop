@@ -58,7 +58,7 @@ This line tells TeXShop to typeset using Typst. Unfortunately, \% is not a comme
 choose the TeXShop Macro titled  ``Program'' and a list of active typesetting engines will appear. Select "Typst" and
 the line will be written at the top of your source. Add the extra // at the beginning.
 
-If instead you start a new source file completely from scratch, then when the Save dialog appears, find the pulldown menu "File Format:" at the bottom of the dialog and select "typ"; it is the very last element in the menu. 
+If  you start a new source file completely from scratch,  TeXShop will display a Save Dialog the first time you typeset it. The file must be saved with extension ``.typ'' so Typst will recognize it.  It is tempting to just type the new extension when you name the file, but that will not work because TeXShop will add an extra ".tex" to the end of the filename when saving. Instead, find the pulldown menu "File Format:" at the bottom of the dialog and select "typ"; it is the very last element in the menu. Once the file has been saved with the proper extension, TeXShop will use that extension from then on. 
 
 Recall that TeXShop has a "Templates" menu in the source toolbar, and new templates can be added to this
 item by simply adding their files to ~/Library/TeXShop/Templates. Until this version of TeXShop, these template
@@ -73,15 +73,61 @@ for instance, I'd like to see the source for a 50 to 100 page set of lecture not
 Unfortunately, such source documents do not seem to be available yet, although providing them is on the author's to-do list. Instead the Typst web page contains an elaborate manual for using the program, with many snippets explaining items that are easier to input in Typst than in LaTeX.  These snippets give a glimpse of what is possible, but close study
 of the manual is required to see how they all fit together.
 
-In the meantime, however, I discovered a ``Templates'' folder on the Typst site, with five templates titled
-{\em ams, dept-news, fiction, ieee,} and {\em letter}. Each of these produces a complete document  and these documents give a much clearer view of the current capabilities of the program.  See the folder TypstTemplates, with its five subfolders.
-
-In each folder, typeset the file named main.typ. The magic line telling TeXShop to typeset with Typst has already
-been added to these files. Typeset all five files for a good sample of the current capabilities of the program.
+In the meantime, however, I discovered a folder on the Typst site, with five samples titled
+{\em ams, dept-news, fiction, ieee,} and {\em letter}. Each of these produces a complete document  and these documents give a much clearer view of the current capabilities of the program.  See the folder SamplePrograms, with its five subfolders. In each subfolder, open and typeset the file {\em main.typ}. 
+The magic line telling TeXShop to typeset with Typst has already
+been added to these files. 
 
 \section{Acknowledgement}
 
 This new capability is really the work of Jeroen Scheerder, who wrote the engine file. Without his encouragement, I would not have  looked at the Typst site,  and certainly would not have realized that the project is very approachable in its current state. Contact Scheerder at \href{mailto:js@gumby.nl}{Jeroen Scheerder $<$js@gumby.nl$>$} if you have questions about the engine.
+
+\section{Packages}
+
+After the Typst folder was added in TeXShop version 5.20, Scheerder created a simple modification making it  easier to use. This modification is based on {\em Packages}.
+Packages are the rough equivalent of sty and class files in the LaTeX world; a Typst source document can input package files to extend the capabilities of the language.  An elaborate package system for Typst is under construction currently. See \url{https://github.com/typst/packages#local-packages} for details.
+
+In particular, the Typst world has an equivalent of $\sim$/Library/texmf where users can store their own packages and experimental packages from others not yet published for general use. On the Macintosh, this location is 
+$\sim$/Library/Application Support/typst/packages.   
+This location takes precedence over others, just as $\sim$/Library/texmf is searched first in LaTeX.
+
+Scheerder's modification split each sample program discussed earlier into two pieces, a package which any source file can use, and a template which can be used to start an appropriate source. The advantage is that users can modify the templates for their individual needs without having to understand or touch the underlying packages. 
+
+The modifications are in the folder ``Advanced'' in the same location as the file you are reading. Installing them is easy. Open $\sim$/Library/Application Support.
+Create a subfolder named ``typst'', and a subfolder of that named ``Packages''. Drag or copy the folder named ``typst''
+inside ``Advanced'' into the Packages folder. Then drag or copy the folder named ``TypstTemplates'' inside
+``Advanced'' into $\sim$/Library/TeXShop/Templates. Done.
+
+Now suppose you want to write a letter using Typst. Open a new source window in TeXShop. Find the Templates pulldown in the source toolbar, and notice that it now contains a folder named TypstTemplates. Select the template ``letter'' in this folder and the source for a letter will appear in your new source window. Revise the text as you wish. Then typeset. In the resulting Save Dialog, be sure to use the FileFormat: menu at the bottom to select file type ``typst''. 
+
+Recall that TeXShop templates can be edited. If the boilerplate text in the ``letter'' template is annoying, you can easily remove it and create a template which only contains the skeleton needed for each new letter.
+
+This process works for all other templates in the TypstTemplates folder except the ams template. That template
+has one minor problem due to the fact that the design of Packages is not yet finished. The ams Package 
+inputs a file named refs.bib with a sample bibliography. However, refs.bib should not be part of the package; instead it should be part of the source folder being created by the user writing a new article, because the references change for each article. Scheerder modified the ams template slightly so it looks for refs.bib in the source folder. But if that file is missing in the source file, then typesetting stops with an error. 
+
+The easy solution is to add a file named refs.bib to the source folder for any ams article you write. The folder 
+Advanced/TypstTemplates contains such a refs.bib file. Copy it to your first ams source folder. TeXShop can open and edit this file, so it is easy to convert it to a bibliography for your own document.. Any time you create a new file using the ams template, find a copy of this file in one of your other projects and copy it to the new project folder.
+
+%The Typst Templates can be installed in ``$\sim$/Library/Application Support''
+%to begin using the Typst package system.   Simply add the five folders ams, dept-news, fiction, ieee, letter directly to
+%the local package folder to begin using the Typst package system. For example, you will have a folder
+%\begin{verbatim}
+%     ~/Library/Application Support/typst/packages/local/ams
+%\end{verbatim}
+%The folder $\sim$/Library/Application Support" already exists, 
+%but folders typst, packages, and local will have to be created first.
+%
+%After this step, for example, the ams template can be compiled from a source which starts
+%\begin{verbatim}
+%     #import “@typst/ams:1.0.0”: *.
+%\end{verbatim} 
+%An advantage of this approach is that the output pdf file and any intermediate files will be created in the source
+%directory of the source file, not in the source directory of the packages.
+%
+%This directory contains a sample mathematical document by Jeroen Scheerder on group theory. That document uses the ams package as an illustration of how this system works.
+
+
 \end{document}
 
 

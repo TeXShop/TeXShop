@@ -1,0 +1,71 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2757
+\cocoascreenfonts1\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww19000\viewh15440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+1) I used Google to translate "Line Number Size" into Chinese. One day later I\
+got the official translations. Google and Linus agreed on the translation\
+of "Small" and "Large", but tranlated "Line Number Size" differently.\
+By then I had released 5.20. But I immediately changed the translation\
+of "Line Number Size" to Linus' in the 5.21 source. \
+\
+2) A small crash bug appeared in TeXShop when I added the html\
+window, because if the user closes the SOURCE for an html project,\
+the code doesn't automatically close the pdf window and yet\
+the NSDocument containing it vanishes. This was never reported\
+to me and I usually didn't run into it. The problem is fixed in 5.21\
+by simply closing that window when the corresponding source is closed.\
+\
+3) For some time, the "Save Dialog" had a menu at the bottom allowing\
+users to select a different encoding. Recently this was removed, since\
+opening a file with one encoding and then saving with a different encoding\
+leads to many unexpected results. There are other much better ways\
+to change file encodings.\
+\
+I left the interface builder element containing this pull down menu\
+in the TeXShop source, just in case. This element still had a connection\
+sending it to a "changeEncoding" method, but that method no longer\
+existed in the source. So when TeXShop started up, it tried to make\
+this connection, failed, and reported the failure in the log file.\
+\
+In 5.21, I removed the connection (while leaving the interface menus),\
+so the log file no longer reports a problem on startup.\
+\
+4) The log file when TeXShop is run in XCode showed a strange error:\
+\
+*** -[NSPersistentUIKeyedUnarchiver validateAllowedClass:forKey:] allowed \
+unarchiving safe plist type ''NSString' (0x1d9058918) [/System/Library/Frameworks/Foundation.framework]' \
+for key 'TeXShopPDFWindow', even though it was not explicitly included in the client allowed classes set: '\{(\
+)\}'. This will be disallowed in the future.\
+\
+This error is related to the system used by macOS to record window positions and\
+other data when TeXShop is closed, and restore this information when TeXShop is\
+next opened. Default methods do this in macOS without TeXShop intervention,\
+but TeXShop has been expanded to save and restore additional information,\
+including the location and size of the pdf window.\
+\
+All of this using NSCoding from the Foundation part of Cocoa. \
+When the program is closed, certain data is saved. When the program\
+is reopened, this data is reread and used to restore windows. The\
+above bug arises when TeXShop saves and later restores a string.\
+The NSCoding object can save and restore OBJECTS, and Strings\
+are a special kind of OBJECT. However, for security reasons, general\
+objects cannot be saved and restored. The problem was that\
+there was no direct say to say "this isn't a potentially dangerous\
+object; it's just a regular old string."\
+\
+This problem is fixed in 5.21. The fix may have solved an annoying\
+bug. Generally files open instantaneously in TeXShop. But in Sonora,\
+when restoring files that were open when the program quit, there\
+was sometimes a noticeable delay. I believe the delay is now gone.\
+\
+\
+\
+\
+\
+\
+\
+}

@@ -1,5 +1,5 @@
 //% !TEX TS-program = Typst
-#import "@typst/ams:0.1.0": *
+#import "@typst/ams:0.1.1": *
 #show: ams-article.with(
   title: "Mathematical Theorems",
   authors: (
@@ -14,7 +14,7 @@
   ),
   abstract: lorem(100),
   bib: bibliography("refs.bib"),	// hack to work around "refs.bib" being sought in the template  path
-  //bibliography-file: bibliography("refs.bib"),
+  //bibliography-file: "/refs.bib",
 )
 
 

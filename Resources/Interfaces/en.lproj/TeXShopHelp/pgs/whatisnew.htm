@@ -15,6 +15,46 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 5.22</h5></P>
+The following changes were made:
+<p><ul>
+<li> If the user removes a folder from ~/Library/TeXShop and then runs TeXShop, the folder will be
+recreated with default contents. Curiously, this did not apply to the folder ~/Library/TeXShop/Engines/Inactive,
+but now it does. Before this change, a user could remove ~/Library/TeXShop/Engines and that entire folder would be recreated, including the
+Inactive subdirectory, but that technique destroyed any special engines the user might have created.
+<p>When new versions of TeXShop are introduced, most folders in ~/Library/TeXShop are not changed
+because these folders store files created and edited by the user. But the Inactive folder is updated because users should have the latest versions of
+these items.  This update adds  new files and folders and modifies existing files and folders, but it does not remove
+files or folders no longer needed. I'm thinking of changing this behavior so Inactive is completely
+"cleaned up", but that is a more drastic step that needs to be carefully considered. In the meantime,
+users can accomplish that complete cleanup by removing the Inactive folder and letting TeXShop
+recreate it.
+<li> The Typst program was recently updated to version 0.9.0, and Jeroen Scheerder updated the
+material in ~/Library/TeXShop/Engines/Inactive/Typst  for the new version. If you are already using
+Typst in TeXShop, go to this location. An early section in the document "AboutTypst.pdf" explains
+how to download and install Typst. Follow these instructions to obtain the new version. The last section
+of this document explains how to move the contents of the "Advanced" folder into appropriate places.
+Scheerder revised the contents of "Advanced", so move the revised folders into the same spots. 
+<p><li> Version 5.20 added a preference item to activate transparency when calling Ghostscript. That item
+adds a flag to Ghostscript calls, but the flag is only relevant on recent versions of Ghostscript. So 
+TeXShop checked the version of Ghostscript and did not add the flag if the version being used was
+not recent enough. This check involved calling a shell script that was incompetently written (by me) and
+failed in Sonoma. The script has been rewritten and the bug is fixed on Sonoma.
+<p><li> In version 4.61, the bibtex UTI was changed from org.tug.bib to org.tug.tex.bibtex at the request of the BibDesk
+team. But not all data structures were changed, breaking the creation of new bibtex files from within TeXShop. This bug was not noticed until now. It is fixed.
+<p><li> Version 5.03 of TeXShop included an example program explaining how to create interactive
+documents using tex4ht. The source code for such a document is ordinary latex. When typeset by pdflatex,
+the result is a static pdf file. But when typeset by tex4ht, the result is a web page with interactive content.
+The sample document is in ~/Library/TeXShop/New/Demo.
+
+<p> Since tex4ht can output MathJax calls, the mathematical formulas on the web pages it creates are essentially perfect. But the
+illustrations are sometimes distorted. Recently I read a brief note by Michal Hoftich, who maintains
+tex4ht, explaining how to fix this problem. So TeXShop 5.22 installs a new folder,
+~/Library/TeXShop/New/Demo-Additions-5.22, containing a Read-Me file explaining the very
+simple modification to the Demo document which fixes illustrations. These Read-Me changes can 
+be made in the same  manner to other documents typeset by tex4ht.
+</ul>
+
 <P><h5>TeXShop Changes 5.21</h5></P>
 The following changes were made:
 <p><ul>

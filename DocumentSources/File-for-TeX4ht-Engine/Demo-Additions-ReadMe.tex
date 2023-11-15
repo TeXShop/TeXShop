@@ -1,0 +1,55 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+%SetFonts
+
+%SetFonts
+
+
+\title{Demo-Additions-ReadMe}
+\author{Richard Koch}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{Introduction} 
+The Demo folder in $\sim$/Library/TeXShop/New describes a method to create interactive documents with TeX. These documents are
+typeset with pdflatex for a static view, or by tex4ht for a dynamic web page. Document source files are essentially LaTeX,  with a little html code on the side. 
+An elaborate example in the folder shows how it all works.
+
+This method depends  on the program tex4ht, written by Eitan Gurari. When Gurari died in 2009, Michal Hoftich took over program maintenance. He is extremely active, with almost daily updates.
+
+Mathematical display on the web page is essentially perfect, because MathJax is used by tex4ht.
+But a few illustrations are distorted in the html version.
+
+I recently discovered a note from Michal Hoftich explaining how to fix these illustration problems. This document
+contains  easy steps to fix the problems in the demo, and by extension to improve html illustrations
+in all documents written using this method.
+
+ \section{The Fix} 
+
+The folder containing this ReadMe document also has two files, named {\em graphic.cfg} and {\em TeX4htAlt.engine}.
+Add a copy of graphic.cfg to the folder Demo/Fourier-for-TeXShop (which already contains Fourier.tex, Fourier.pdf,
+and a couple of subfolders). Add a copy of TeX4htAlt.engine to the active engine folder 
+$\sim$/Library/TeXShop/Engines. The engine can be renamed if you desire. 
+
+Typeset the demo document with the TeX4htAlt engine rather than the TeX4ht engine. The original engine still works and displays the illustration problem. The new engine fixes the problem.
+
+\section{Explanation}
+
+The behavior of tex4ht can be modified using configuration files. Michal Hoftich has designed the system so these configuration files do not clutter up the latex sources. Instead, a flag in the command line calling tex4ht can ask that a particular configuration file be loaded. If the source is compiled with pdflatex, nothing happens. If it is compiled with
+tex4ht, the configuration is included.
+
+Both the TeX4ht engine and the TeX4htAlt engine typeset twice, once with pdflatex and once with tex4ht. Two windows are opened, showing both the pdf output and the html output, so it is easy to compare the two outputs.
+The new engine  adds a configuration file to the tex4ht call.  This configuration file was added to the folder containing the demo's source files, so it is easily found by the system.
+
+
+
+\end{document}  

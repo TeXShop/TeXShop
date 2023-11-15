@@ -383,7 +383,13 @@
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines"]
 			  toPath:[EnginePath stringByStandardizingPath]];
 		}
-	else if (needsUpdating) {
+    
+    else if (! [fileManager fileExistsAtPath: [EngineInactivePath stringByStandardizingPath]] ){
+        [self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines/Inactive"]
+              toPath:[EngineInactivePath stringByStandardizingPath]];
+        }
+    
+ 	else if (needsUpdating) {
 		[self mirrorPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"TeXShop/Engines/Inactive"]
 				  toPath:[EngineInactivePath stringByStandardizingPath]];
 	}

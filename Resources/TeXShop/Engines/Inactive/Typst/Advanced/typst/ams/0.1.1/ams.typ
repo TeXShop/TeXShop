@@ -133,8 +133,7 @@
   show math.equation: set text(weight: 400)
 
   // Configure citation and bibliography styles.
-  set cite(style: "numerical", brackets: true)
-  set bibliography(style: "apa", title: "References")
+  set bibliography(style: "springer-mathphys", title: "References")
 
   show figure: it => {
     show: pad.with(x: 23pt)
@@ -209,7 +208,6 @@
   if bibliography-file != none {
     show bibliography: set text(8.5pt)
     show bibliography: pad.with(x: 0.5pt)
-    //bibliography-file
     bibliography(bibliography-file)
   }
 

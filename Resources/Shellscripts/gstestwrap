@@ -2,7 +2,7 @@
 
 # A wrapper to make certain that ghostscript has version
 # at least 9.51.
-# By Richard Koch, Sept 16, 2023=
+# By Richard Koch, Sept 16, 2023
 
 
 set mygspath = "$argv[1]"
@@ -17,18 +17,18 @@ if (-x ${mygspath}/ps2pdf) then
  
     if ( $major >= 10 || ( $major >= 9 && $minor >= 51 ) ) then
     
-        echo "yes"
+        exit 0
         
     else
         
-        echo "no"
+        exit 1
         
     endif
  
  
  else
  
-    echo "no"
+    exit 1
     
  endif
     

@@ -1,0 +1,29 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2758
+\cocoascreenfonts1\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww19000\viewh15440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+1) In version 4.61 of TeXShop, the definition of type bibtex was changed to match the\
+definition used by BibDesk, Consequently, the BibDesk icon should appear when\
+manipulating bibtex files. However, only half of the required entry changes were\
+made, breaking selecting "bibtex" type in the Save Dialog. This is now fixed.\
+\
+2) Mysteriously, in Sonoma, the transparency fix introduced a short time ago\
+failed. Debugging showed that the error came when testing the version of\
+ghostscript to make sure it was recent enough to understand the transparency flag.\
+The code called a tcsh shell which sent back a string: echo "yes" or echo "no".\
+But when Cocoa got the string back, it printed as "yes" but had length 4, so\
+[string IsEqualToString: @"yes"] returned NO.\
+\
+At first I fixed this with a kludge, but a closer examination of NSTask\
+gave a much easier way to write the Cocoa code calling the shell\
+script and an easier shell script. Now the script just returns\
+a result code using "exit 0" or "exit 1" and the Cocoa code\
+looks at that result.\
+\
+3) Latexmk version 4.81\
+\
+}

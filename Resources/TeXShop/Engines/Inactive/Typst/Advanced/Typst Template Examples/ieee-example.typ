@@ -1,5 +1,5 @@
 //% !TEX TS-program = Typst
-#import "@typst/ieee:0.1.0": *
+#import "@typst/ieee:0.1.1": *
 #show: ieee.with(
   title: "A typesetting system to untangle the scientific writing process",
   abstract: [
@@ -23,7 +23,7 @@
   ),
   index-terms: ("Scientific writing", "Typesetting", "Document creation", "Syntax"),
   bib: bibliography("refs.bib"),	// hack to work around "refs.bib" being sought in the template  path
-  //bibliography-file: bibliography("refs.bib"),
+  //bibliography-file: "/refs.bib",
 )
 
 = Introduction

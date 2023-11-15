@@ -44,15 +44,9 @@
     NSMutableArray  *args;
     NSDate          *myDate;
     NSString        *tetexBinPath;
+    int             status;
     
-     
-    if (self.gsversionTask != nil) {
-        [self.gsversionTask terminate];
-        myDate = [NSDate date];
-        while (([self.gsversionTask isRunning]) && ([myDate timeIntervalSinceDate:myDate] < 0.5)) ;
-        self.gsversionTask = nil;
-        self.gsversionPipe = nil;
-    }
+    status = 1;
     
     self.gsversionTask = [[NSTask alloc] init];
     [self.gsversionTask setEnvironment: [self environmentForSubTask]];
@@ -60,29 +54,23 @@
     tetexBinPath = [[SUD stringForKey:GSBinPath] stringByExpandingTildeInPath];
     args = [NSMutableArray array];
     [args addObject:tetexBinPath];
-    
-    self.gsversionPipe = [NSPipe pipe];
-    [self.gsversionTask setStandardOutput: self.gsversionPipe];
-    self.gsversionHandle = [self.gsversionPipe fileHandleForReading];
-    
     if ((enginePath != nil) && ([[NSFileManager defaultManager] fileExistsAtPath: enginePath])) {
         [self.gsversionTask setLaunchPath:enginePath];
         [self.gsversionTask setArguments:args];
         [self.gsversionTask launch];
+        [self.gsversionTask waitUntilExit];
+        status = [self.gsversionTask terminationStatus];
+        self.gsversionTask = nil;
         }
     else
        self.gsversionTask = nil;
     
-    NSData *data = [self.gsversionHandle readDataToEndOfFile];
-    NSString *returnString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-    
-    
-    if ([returnString isEqualToString: @"yes"])
+    if (status == 0)
         return YES;
     else
         return NO;
-
-}
+    
+ }
     
     
     
@@ -1521,8 +1509,9 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                             BOOL versionOK = true;
                             
                             if ([SUD boolForKey:UseTransparencyKey])
-                                versionOK = [self TestGSVersion];
-                            
+                               versionOK = [self TestGSVersion];
+                                
+                        
                             if ( (versionOK) && (! [myEngine containsString:@"--distiller"]) && ([SUD boolForKey:UseTransparencyKey]))
                             
                                 myEngine = [myEngine stringByAppendingString: @" --distilleropts \"-dALLOWPSTRANSPARENCY\" "];

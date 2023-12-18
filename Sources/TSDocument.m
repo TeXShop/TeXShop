@@ -98,6 +98,8 @@ NSInteger strSort(id s1, id s2, void *context)
 
 	colorStart = 0;
 	colorEnd = 0;
+    self.activeview = 1;
+
 	self.regularColorAttribute = 0;
 	self.commandColorAttribute = 0;
 	self.commentColorAttribute = 0;
@@ -377,6 +379,7 @@ NSInteger strSort(id s1, id s2, void *context)
     
     [super restoreStateWithCoder:coder];
     
+    
     if (atLeastSierra)
     {
         tabPreference = [SUD integerForKey:OpenAsTabsKey];
@@ -389,6 +392,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 [myDrawer close];
         }
     }
+ 
     
     if ([coder containsValueForKey:@"ForFullSplitWindow"]) {
         
@@ -418,7 +422,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
             }
         }
-    }
+  
                     
         if (fromFullSplitWindow) {
             if ([coder containsValueForKey:@"SplitWindow"])
@@ -467,7 +471,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 [fullSplitWindow mergeAllWindows: fullSplitWindow];
         }
     }
-
+}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
@@ -2903,7 +2907,7 @@ else {
     else
         [splitView setVertical: NO];
     
-
+     
 	selectedRange = [textView selectedRange];
 	newSize.width = 100;
 	newSize.height = 100;

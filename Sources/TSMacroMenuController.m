@@ -271,7 +271,7 @@ static id sharedMacroMenuController = nil;
 	NSString        *reason = 0;
 	NSMutableArray  *args;
 	NSString        *macroString;
-    NSString        *filePath, *displayName;
+    NSString        *filePath, *folderPath, *displayName;
     TSFullSplitWindow *mySplitWindow;
 	
 	if ([sender isKindOfClass: [NSMenuItem class]])
@@ -335,6 +335,7 @@ static id sharedMacroMenuController = nil;
 			[NSString stringWithFormat: @"\"%@\"", filePath]
 									  options: 0 range: NSMakeRange(0, [newString length])];
 		filePath = [filePath stringByDeletingPathExtension];
+        folderPath = [[filePath stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 		[newString replaceOccurrencesOfString: @"#PDFPATH#" withString:
 			[NSString stringWithFormat: @"\"%@.pdf\"", filePath]
 									  options: 0 range: NSMakeRange(0, [newString length])];
@@ -368,6 +369,9 @@ static id sharedMacroMenuController = nil;
 		[newString replaceOccurrencesOfString: @"#DOCUMENTNAME#" withString:
 			[NSString stringWithFormat: @"\"%@\"", displayName]
 									  options: 0 range: NSMakeRange(0, [newString length])];
+        
+        [newString replaceOccurrencesOfString: @"#FOLDERPATH#" withString:
+            [NSString stringWithFormat: @"\"%@\"", folderPath] options: 0 range: NSMakeRange(0, [newString length])];
 		
 		
 		if (([macroString length] >= 20) &&

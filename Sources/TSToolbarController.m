@@ -436,6 +436,7 @@ if (@available(macOS 11.0, *))
 - (void)toggleTheDrawer:(id)sender
 {
 	[[self pdfKitView] toggleDrawer: sender];
+    [[self pdfKitWindow] makeFirstResponder: [self pdfKitView]];
 }
 
 - (void)doNothing:(id)sender

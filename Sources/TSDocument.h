@@ -519,6 +519,15 @@ enum RootCommand
 @property           NSInteger   syncWith; // 0 = OtherEditor, 1 = TextMate
 @property           NSInteger   syncWithOvals; // 0 = NO, 1 = YES
 
+// for switch view
+
+@property           NSRange     firstrange;
+@property           NSRange     secondrange;
+@property           NSInteger   activeview; // values are 1, 2
+
+
+
+
 // for Voice Over fix
 
 @property           BOOL        activateVoiceOverFix;

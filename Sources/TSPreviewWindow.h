@@ -42,6 +42,7 @@
 //	BOOL		willClose;
 }
 
+@property               BOOL            firstTime;  // only remove constraints once from split views
 @property               BOOL            willClose;
 @property               BOOL            windowIsSplit;
 @property               BOOL            firstClose;
@@ -107,6 +108,7 @@
 #endif
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
+- (void)switchSplitViews: (id)sender;
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;
 // - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
@@ -119,5 +121,6 @@
 - (IBAction) convertTiff:(id)sender;
 
 - (BOOL)windowIsSplit;
+
 
 @end

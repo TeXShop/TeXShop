@@ -16,6 +16,198 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.23</h3></P>
+A note before listing changes. In macOS, holding down the Option key while a menu is visible can sometimes change the names of items in the menu, and add additional items. TeXShop inherits this feature and occasionally extends it. 
+In the Finder's File menu, holding down the Option key changes
+"Close" to "Close All" and "Duplicate" to "Save As". The same change is made in TeXShop's File menu.
+Sometimes, users complain that TeXShop is missing "Save As", but it is present once you know this trick.
+
+<p>TeXShop's Typeset menu has an item named "Typeset" which typesets the current document. An error in typesetting can cause a malformed aux file. Once the error is fixed, it is necessary to remove the bad aux file before typesetting again. Holding down the Option key changes the item "Typeset" to "Trash Aux & Typeset".
+
+<p>TeXShop's Window menu contains the item "Split Window". This item splits the window into
+an upper and lower portion, so independent pieces of the source or preview can be examined at the same time.
+Holding down the Option key changes this item to "Split Window Vertically", so the pieces are placed side by side rather than above and below each other.
+
+<p>The following changes were made in TeXShop 5.23:
+<ul> 
+<p><li> If your Macintosh is appropriately configured and you close TeXShop with a project open on the
+screen, that project will reappear when TeXShop is restarted, with the windows in the same positions they were in just before TeXShop quit. Until recently this happened instantly, but in the last several versions of
+TeXShop there was a delay before the old windows reappeared.  This turns out to be an error on my part,
+and it is fixed.
+
+<p><li> The package hyperref can create links from one portion of a document to another. For instance, each entry in the table of contents can become a link to that item in the text, and any reference to a theorem proved earlier can be followed by a link to the actual statement of the theorem. These links are active in the Preview window, so clicking
+on a link takes you to the corresponding linked spot in the text.
+ 
+<p> Hovering over such links will bring up a small view of the linked text without moving the scroll bar. This is  convenient if you are proofreading a series of linked items. For instance, hovering over a section number in the table of contents will display the beginning of that section in the text.
+Normally the popup is on screen for four seconds and then disappears. If the Shift key is down at the end of these four seconds, the popup will remain on the screen until the mouse moves. For a larger version of the popup, hold down the Option key before hovering over the link. (In previous versions of TeXShop, the Option key played both of these roles.)
+
+<p> This facility is enhanced in version 5.23 of TeXShop due to Uwe Schmock's request. Normally the popup is shown just below the link in the text.
+But sometimes the author will want to compare what comes right after the link to the information in the popup. In
+that case, hold down the Command key before activating the popup. The popup window will then appear just above the link. This trick can be combined with the Shift and Option key tricks mentioned in the previous paragraph.
+
+
+<p><li> TeXShop has a Macro facility which makes it possible for users to write applescripts to control
+common procedures. This impressive Macro facility and the Macro Editor were added to TeXShop long ago by Mitsuhiro Shishikura. The current expert in  applescripts is Michael Sharpe, who wrote the wonderful
+document "Notes on Applescript in TeXShop" in the TeXShop Help Menu.
+
+<p> TeXShop provides a number of constants that can be used in Applescripts it runs. These are listed in section 5 of Sharpe's manual. Examples are
+#FILEPATH#, #PDFPATH#, #DVIPATH#, #PSPATH#. The first provides the full path to the TeX source file, which might be /Users/koch/Documents/Fourier/Fourier.tex.  Others give full paths to the pdf file, dvi file, etc., in the same folder.
+One missing constant sometimes requested is #FOLDERPATH#, which would give a full path to the folder containing
+these files, rather than individual files in the folder. In the example just quoted, it would give
+/Users/koch/Documents/Fourier/. I recently discovered a request made four years ago on stackoverflow for such a constant, together with several later requests. Version 5.23 of TeXShop finally provides this missing
+constant.
+
+<p><li> In the TeXShop manual (which is typeset with XeLaTeX), I activated hyperref with the LaTeX command
+<pre>
+ \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue, hyperfigures=true]{hyperref}
+</pre>
+Uwe Schmock pointed out that adding "bookmarksnumbered" to this command would number
+the chapters and sections shown in the TeXShop drawer. As we will see, that proves to be a useful
+change for the manual and may be a useful change for your documents as well. Just change
+the command to
+<pre>
+ \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+            citecolor=blue, urlcolor=blue, hyperfigures=true, bookmarksnumbered]{hyperref}
+</pre> 
+
+<p> <li> A new item was added to the Windows menu, "Switch Views". This item is only active if the Preview Window is active. If the Preview Window has been split, the item interchanges the top and bottom views. When the window is later unsplit, the top portion becomes the full contents of the window. Using "Switch Views"
+before unsplitting brings the bottom portion to the full window.
+
+<p> The "Switch Views" menu item  also works when the Preview Window is active and unsplit, and this 
+use case may prove to be  more important than the original reason for introducing the command. Suppose you want to work on two
+related portions of a document.  In TeXShop's Preview Window, do not split the view. Instead, just scroll to one of the two interesting portions of your document. Then select "Switch
+Views" and scroll to a second related section of the document. You can now switch between these two portions using the Window menu "Switch Views", which has a keyboard shortcut Option-2. 
+
+<p> 
+So your document can have two active portions and you can switch between
+them with Option-2. Although "Switch Views" does not work in the Source window, you can easily edit and revise the two related portions of your document because sync works between the two Preview views and the source file. Suppose text in one of the two portions needs revision. Sync from that text to the source, edit the source, and retypeset.
+
+<p> The new command is not perfect. The two views may creep
+gradually when switched, so a little adjustment with the scroll bar might be needed after switching views. 
+The creep depends on window size and monitor size and may be acceptable for some configurations and not
+acceptable for others. Perhaps we can improve the feature in later TeXShop versions. 
+
+<p> A long time ago, a  different keystroke sequence was introduced to switch the views of a split preview window. That keystroke sequence has been removed in Version 5.23 because
+the new menu item is easy to find and use.
+
+<p><li> TeXShop configures the way documents are displayed using
+two preference items, which it calls "Display Format" and "Magnification". 
+Typical display  formats are Single Page, Double Page, Multipage, Double Multipage.
+Typical magnification items  are Fit to Window, Actual Size, and Fixed Magnification.
+These items can be selected in TeXShop Preferences, and then affect  Preview
+windows when they first open.
+
+<p> After a document is open, the two preference items can be changed for a
+particular Preview window using  items in the Preview menu. These choices are temporary
+while the document is being used, but revert back to the default choices for new documents.
+
+<p> When the window is not split, the Preview menu's submenu items "Magnification"
+and "Display Format" affect the document as a whole, and thus both views simultaneously.
+So if you change the magnification of the current view, and later use "Switch Views", the
+second view will also use the new magnification level. If you switch to "Double Page"
+mode in the current view and later use "Switch Views", the second view will also be
+in Double Page mode.
+
+<p> When the Preview window is split so both views are shown simultaneously,
+"Magnification" and "Display Format" changes made to the top view affect the
+entire document as above. Thus if the window is later unsplit, this changes will
+hold in the entire document, and also apply after "Switch Views" is used.
+
+<p> However, when the Preview window is split so both views are shown
+simultaneously, "Magnification" and "Display Format" changes made to the 
+bottom view will only apply to that portion of the split window, and only as long
+as the window remains split. This slight design inconsistency makes it possible
+for a user working with two sections of the document to temporarily magnify the
+bottom section and inspect fine details without propagating that magnification
+change to the rest of the interface.
+
+<p><li> An interesting and rather complicated interaction occurs when the Preview
+window is split and the drawer for this window is open. To describe this interaction,
+we  introduce a concept well-known to Macintosh programmers, but perhaps
+not to users. Suppose your Macintosh is in use and you type on the keyboard.
+How does the Macintosh know where to send those
+keystrokes? Which window should receive them? Which view of a split view? If the
+drawer of a window is open, should the keystroke go to the drawer or the window?
+
+<p> It turns out that at any moment the Macintosh has selected a "first responder". This is the object that first
+learns of keystrokes. The first responder is the beginning of a chain of more and more general
+objects. If the first responder is the drawer attached to a window, the keystroke
+ goes to that drawer. But if the drawer cannot use the keystroke, it passes down the chain
+to the next object, which might be the view associated with that drawer. If the view in turn cannot
+use the keystroke, it passes further down the chain, perhaps to the window containing the view. 
+If this window cannot use the keystroke, then the keystroke is lost and does nothing.
+
+<p> The first responder will change as a user works. Often this happens when the user clicks on
+a different view. In the example just given, if the window has a split view and the
+user clicks on the top view, then that view becomes first responder. Then keystrokes  never
+reach the drawer, but instead pass from the top view to the full window. 
+-All of this is complicated and often works ``automatically'' without even the programmer knowing
+the details of these responder chains. 
+
+<p> Consider now the following example. Suppose a preview window is active and contains two split views
+and an open drawer. Suppose the drawer is showing the various chapters of a document, and these
+chapters are numbered. If you select the second chapter of your document in the drawer, the top view will scroll to the start of this second chapter, and the drawer will mark the second chapter in blue. That blue mark indicates that the drawer is still the first responder. 
+
+<p> It turns out that numbered drawer contents respond to keyboard shortcuts. If you type Option-1, the drawer will select the first chapter. If you type Option-2 followed by Option-0, the drawer will select chapter 20. Type Option-UpArrow to select the first item and Option-DownArrow to select the last item.
+Type Option-1.5 to select Chapter 1, Section 5. If chapter 3 is selected, Option-RightArrow will open sub-levels
+and Option-LeftArrow will close sub-levels. Although these keystrokes select drawer items, it is still necessary to click these items to make the associated view scroll to them.
+
+<p> But how do we select items
+displayed in the bottom view? To do that, click in the bottom view. Notice that the blue selection bands
+in the drawer change to gray bands. So the drawer is no longer first responder; instead the bottom view
+is first responder. This action made another invisible change. It sent a message to the drawer's contents
+linking them to the second view. Now chapters and sections can be selected in the second view.
+
+<p> There is a final interesting interaction. Select a chapter in the drawer and type
+Option-2. This command does not switch the two views, because the first responder is the drawer rather than
+the Preview Window. Instead it selects chapter 2 in the drawer. But if we  click in either view, then
+that view becomes first responder rather than the drawer. So if we type Option-2, this keystroke will not go
+to the drawer, but rather to the view just clicked. That view does not understand Option-2, so it passes it on
+down to the Preview Window. The Preview Window does understand Option-2 as a shortcut for
+"Switch Views" and  switches the views.
+
+<p><li>Pdf documents can be encrypted and password-protected by Apple's Preview, or the commercial version of Adobe Acrobat. Such documents can still be opened by TeXShop and other pdf viewers. When the document is
+opened a window appears, but instead of showing the document, the window contains a text field where
+the user can type the password. After the user types that password, the document opens.
+
+<p>TeXShop does not contain a single line of code to make this happen. The initial page with a password entry field is created and managed by Apple, and the document is then decrypted when read from disk by Apple. TeXShop was not even recompiled to make this happen. Instead one day an update to macOS appeared and TeXShop got the feature for free. This is the glory of Cocoa (and Swift). 
+
+<p> Uwe Schmock wrote me after he distributed password-protected notes for his students. He discovered a small number of problems when TeXShop views a password-protected file. These problems are fixed in version 5.23 of TeXShop.
+
+<p> The first problem was that the contents of the drawer were empty when such a document was displayed. The reason is that TeXShop initialized the drawer before Apple began decrypting the file. This bug is fixed.
+
+<p> The second  problem was that when splitting the document horizontally or vertically, the
+position of the splitting bar was severely limited. This bug was caused because Apple applied constraints
+to the views displaying the two pieces, but TeXShop does not use constraints to position  subviews.
+This problem is also fixed.
+
+<p> A final problem is that students must remember the password of a file that they intend to read often. Many
+students save a short document on the computer listing passwords required in this way, but that certainly makes the password
+system less secure. Apple has a system to solve this problem. When the user types a password, Apple offers
+to save it in their keychain, which is encrypted. Unfortunately, Apple does not make that offer when opening a password protected pdf file. Perhaps in the future, ...
+
+<p>In the meantime, students might employ a trick to make  passwords easier to use with
+commonly read encrypted documents. In the Macro menu, select "Open Macro Editor". An editor appears.
+Select "New Item" and give the item an easy name. Then enter the following code:
+<pre>
+--Applescript direct
+
+      tell application "System Events" to keystroke "password"
+      tell application "System Events" to keystroke return
+ </pre>
+ <p> Replace the text "password" inside the quotation marks with the
+ actual password. Save the macro. When the text field appears asking for a password,
+ select this macro.
+ 
+ <p>There will be one problem. MacOS does not allow Applescripts to control the computer in this
+ manner without permission. So when the macro is first run, an error message will appear. Sometimes,
+ but not always, Apple will open System Settings to the spot where the appropriate permission can be
+ given. That spot is the Privacy & Security module of System Preferences, and the item "Automation"
+ in this item. A special item for TeXShop can be created and given permission to control "System Events".
+ 
+</ul>
+
 <P><h3>TeXShop Changes 5.22</h3></P>
 The following changes were made:
 <p><ul>

@@ -100,6 +100,7 @@
     currentMouseMode = mouseMode;
     [mouseModeMatrix selectCellWithTag: mouseMode];
     [[mouseModeMenu itemWithTag: mouseMode] setState: NSOnState];
+    
 }
 
 /*
@@ -329,11 +330,12 @@
 
 - (void) setupOutline
 {
-//     NSLog(@"setup outline");
+    // NSLog(@"setup outline");
     
 	if (![SUD boolForKey: UseOutlineKey])
 		return;
-
+    
+    
 //	if (_outline)
 //		[_outline release];
 //	_outline = NULL;
@@ -363,6 +365,9 @@
 
 - (void) notificationSetup;
 {
+    // [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(documentChanged:)
+    //                                            name: PDFViewDocumentChangedNotification object: self];
+    
 	 [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(pageChanged:)
 												 name: PDFViewPageChangedNotification object: self];
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(scaleChanged:)
@@ -405,7 +410,7 @@
 
 - (void) setup
 {
-	[self notificationSetup];
+    [self notificationSetup];
 	
 	// lines below were moved to toolbar setup to avoid "toolbar bug"
 	// mouseMode = [SUD integerForKey: PdfKitMouseModeKey];
@@ -491,8 +496,6 @@
 - (void) showWithPath: (NSString *)imagePath
 {
 
-    
-    
     PDFDocument	*pdfDoc;
 	NSData	*theData;
     PDFPage        *aPage;
@@ -1319,6 +1322,13 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 }
 
 
+- (void) didUnlock
+{
+//    NSLog(@"did unlock called");
+    [self setupOutline];
+}
+
+
 - (void) makePageChanges: (NSInteger) pageNumber
 {
 	NSInteger		numRows, i, newlySelectedRow;
@@ -1820,6 +1830,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 - (IBAction) toggleDrawer: (id) sender
 {
 	[_drawer toggle: self];
+    [self didUnlock];
 }
 
 // ------------------------------------------------------------------------------------------- takeDestinationFromOutline
@@ -3221,9 +3232,10 @@ The system then remembers the new number and sends is to the Timer which will di
     NSInteger       H = 120, W = 400;
     NSInteger       leftSide, rightSide;
     NSRect          pageBounds;
-    BOOL            largerSize, cancel;
+    BOOL            largerSize, pushUp;
     
     largerSize = NO;
+    pushUp = NO;
     
     NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
@@ -3257,8 +3269,8 @@ The system then remembers the new number and sends is to the Timer which will di
             
             if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
                 largerSize = YES;
-           // if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
-           //     cancel = NO;
+            if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+                pushUp = YES;
             
             // aRect = where text comes from
             if (linkedPoint.x < (pageBounds.size.width / 2))
@@ -3303,6 +3315,8 @@ The system then remembers the new number and sends is to the Timer which will di
             bRect.origin.y = mouseLocDocumentView.y - 2 * H / 3.0 - 10;
             bRect.size.height = 2 * H / 3.0;
             bRect.size.width = 2 * W / 3.0;
+            if (pushUp)
+                bRect.origin.y = bRect.origin.y + bRect.size.height + 10;
             
             if (largerSize) {
                 bRect.origin.x = mouseLocDocumentView.x - 5;
@@ -3310,6 +3324,8 @@ The system then remembers the new number and sends is to the Timer which will di
                 bRect.size.height = 3 * H ;
                 // bRect.size.width = 1.1 * W ;
                 bRect.size.width = 1.1 * W + 5;
+                if (pushUp)
+                    bRect.origin.y = bRect.origin.y + bRect.size.height + 10;
                 }
             
             
@@ -3383,7 +3399,7 @@ The system then remembers the new number and sends is to the Timer which will di
     
    // return; // activate this to leave "link destination" until cursor moves
     
-    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+    if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)
         return;
     
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];

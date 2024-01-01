@@ -1411,7 +1411,12 @@
 }
 
 
-
+- (NSMenu *)applicationDockMenu:(NSApplication *)sender
+{
+    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"New"];
+    [theMenu insertItemWithTitle:NSLocalizedString(@"New Document", @"New Document") action:@selector(newDocument:) keyEquivalent:@"" atIndex:0];
+    return theMenu;
+}
 
 
 @end

@@ -15,6 +15,30 @@
 
 <div id="content_normal">
 
+<P><h5>TeXShop Changes 5.24</h5></P>
+<p> The follow changes were made in TeXShop 5.24:
+<ul>
+<p><li> After a document is typeset, the new pdf file is loaded into the Preview Window, replacing
+the old version. This pdf must be scrolled to the exact spot shown before typesetting, so
+only edited items change and the document does not slowly creep up and down, or abruptly shift.
+Apple's PDFKit routines do not have a call making this task easy, so improving preview behavior has been
+a constant struggle over the years. In the last versions of TeXShop (in multipage and double multipage display modes) the image was very stable unless only a small portion of the upper page was shown and most of the screen displayed the following page. In that case, after typesetting the lower page jumped to fill the entire window. It was
+possible to predict exactly when this jump would occur. Slowly scroll the Preview window while looking at the "Page Number"
+item in the tool bar. When only about 1/3 of the top page is visible, the page number will suddenly jump
+to the next page. After that, typesetting will cause the undesirable jump.
+
+<p> This problem is fixed in TeXShop 5.24. I do not know exactly why my fix works, but several users have confirmed that it does. Don't look a gift horse in the mouth.
+
+<p> Incidentally, large changes made in the beginning of a document before it was scrolled to the current position and then typeset cause jumps which are unavoidable. This typically happens if a document has a table of contents. If a user kills the aux file and then typesets, the table of contents will vanish and the typeset document will jump ahead by several pages. Typesetting again creates the table of contents and the document jumps back to the expected place.
+
+<p><li> When the TeXShop icon is in the dock and TeXShop is running, holding the mouse button down over the program icon brings up a contextual menu listing several possible actions. This menu is created  by Apple with no TeXShop code involved. But it is possible for programmers to add items to the menu, and some Apple programs like TextEdit add a "New Document" item. So does TeXShop in version 5.24. 
+
+<p><li> TeXShop now contains latexmk version 4.82 by John Collins. Latexmk is also in TeX Live, and TeXShop will use that copy if it is available. Otherwise TeXShop will default to its internal copy of latexmk.
+
+<p><li> The "About TeXShop" dialog contained the line "Copyright 2001-2023, Richard Koch". The year 2023 has been replaced by 2024.
+</ul>
+
+
 <P><h5>TeXShop Changes 5.23</h5></P>
 A note before listing changes. In macOS, holding down the Option key while a menu is visible can sometimes change the names of items in the menu, and add additional items. TeXShop inherits this feature and occasionally extends it. 
 In the Finder's File menu, holding down the Option key changes

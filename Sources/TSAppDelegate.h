@@ -64,4 +64,5 @@
 // - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 - (void)makeDefaultEditor:(id)sender;
 - (void)updateXMLTabs;
+- (NSMenu *)applicationDockMenu:(NSApplication *)sender;
 @end

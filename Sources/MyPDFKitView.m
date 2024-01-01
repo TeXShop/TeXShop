@@ -657,9 +657,11 @@
 // will only set and use HideView2. In particular, the routines to remove HideView1 and HideView2 cannot be combined into just
 // one routine since only one variable will be known when the code runs.
 
-- (void) reShowWithPath: (NSString *)imagePath
+/*
+- (void) reShowWithPathOld: (NSString *)imagePath
 {
-	
+    
+    
 	PDFDocument	        *pdfDoc, *oldDoc;
 	PDFPage		        *aPage;
 	NSInteger			theindex, oldindex;
@@ -735,40 +737,40 @@
         
         NSImage *myImage;
       
-/*
-        NSInteger myChoice = [SUD integerForKey:CreateImageKey];
+
+ //        NSInteger myChoice = [SUD integerForKey:CreateImageKey];
         
     // First method
         
-        switch (myChoice)
-        {
-    case 0:
+ //      switch (myChoice)
+ //       {
+ //   case 0:
         
-        data = [myView dataWithPDFInsideRect:[myView frame]];
-        myImage = [[NSImage alloc] initWithData:data];
-        break;
+ //       data = [myView dataWithPDFInsideRect:[myView frame]];
+ //       myImage = [[NSImage alloc] initWithData:data];
+ //       break;
         
     // Alternate method, creates some blur
         
-    case 1:
+ //    case 1:
         
-        myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
-        [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
-        mySize = [myView bounds].size;
-        imgSize = NSMakeSize( mySize.width, mySize.height );
-        myImage = [[NSImage alloc]initWithSize:imgSize];
-        [myImage addRepresentation:myRep];
-        break;
+ //      myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+ //       [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
+ //      mySize = [myView bounds].size;
+ //       imgSize = NSMakeSize( mySize.width, mySize.height );
+ //      myImage = [[NSImage alloc]initWithSize:imgSize];
+ //      [myImage addRepresentation:myRep];
+ //      break;
         
         
     // Alternate method, has giant memory leak
         
-    default:
+ //   default:
         
-        myImage = [self screenCacheImageForView: myView];
-        break;
-    }
- */
+ //       myImage = [self screenCacheImageForView: myView];
+ //       break;
+ //   }
+ 
      if (atLeastMojave)
      {
          myView = [[self window] contentView];
@@ -780,18 +782,18 @@
         myView = [[self documentView] enclosingScrollView];
         myImage = [self screenCacheImageForView: myView];
     }
-/*
-     else
-     {
-         myView = [[self documentView] enclosingScrollView];
-         myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
-         [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
-         mySize = [myView bounds].size;
-         imgSize = NSMakeSize( mySize.width, mySize.height );
-         myImage = [[NSImage alloc]initWithSize:imgSize];
-         [myImage addRepresentation:myRep];
-     }
- */
+
+ //     else
+ //     {
+ //         myView = [[self documentView] enclosingScrollView];
+ //         myRep = [myView bitmapImageRepForCachingDisplayInRect: [myView bounds]];
+ //         [myView cacheDisplayInRect: [myView bounds] toBitmapImageRep: myRep];
+ //         mySize = [myView bounds].size;
+ //         imgSize = NSMakeSize( mySize.width, mySize.height );
+ //         myImage = [[NSImage alloc]initWithSize:imgSize];
+ //         [myImage addRepresentation:myRep];
+//     }
+ 
         
         sizeRect = [myView bounds];
        
@@ -913,27 +915,27 @@
     
     
  
-/*
+
 //   The test just below seems to show that we need to adjust by -1, and then
 //   the visible rect ends up in the correct spot. Perhaps this is the width of the
 //   line around the rectange (?)
     
-    NSNumber *myNumber = [NSNumber numberWithInteger: visibleRect.origin.y];
+//    NSNumber *myNumber = [NSNumber numberWithInteger: visibleRect.origin.y];
    // NSLog([myNumber stringValue]);
-    myNumber = [NSNumber numberWithInteger: visibleRect.size.height];
+//    myNumber = [NSNumber numberWithInteger: visibleRect.size.height];
    // NSLog([myNumber stringValue]);
 //
-   NSInteger difference = -1;
+//   NSInteger difference = -1;
     
 //    NSRect  modifiedVisibleRect = NSInsetRect(visibleRect, 1, 1);
  //   if (NSIsEmptyRect(modifiedVisibleRect))
  //       modifiedVisibleRect = visibleRect;
     
-	visibleRect.origin.y = visibleRect.origin.y + difference;
-	[[self documentView] scrollRectToVisible: visibleRect];
+//	visibleRect.origin.y = visibleRect.origin.y + difference;
+//	[[self documentView] scrollRectToVisible: visibleRect];
     
 //    [self scrollRectToVisible: modifiedVisibleRect];
-*/
+
 	//[[self window] enableFlushWindow];
 //    [self display];
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
@@ -957,6 +959,184 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
      }
 
 }
+*/
+
+
+- (void) reShowWithPath: (NSString *)imagePath
+{
+    
+    PDFDocument            *pdfDoc, *oldDoc;
+    PDFPage                *aPage;
+    NSInteger            theindex;
+    BOOL                needsInitialization;
+    NSInteger            i, amount, newAmount;
+    PDFPage                *myPage;
+    NSData                *theData;
+    NSRect              sizeRect;
+    BOOL                visibleRectExists;
+
+    
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
+        NSDisableScreenUpdates();
+
+    [self cleanupMarquee: YES];
+    
+    if (self.sourceFiles != nil)
+        self.sourceFiles = nil;
+   
+    if ([self document] == nil)
+        needsInitialization = YES;
+    else
+        needsInitialization = NO;
+    
+    NSRect visibleRect = [[[self documentView] enclosingScrollView] documentVisibleRect];
+    
+      if ((visibleRect.origin.x == 0) && (visibleRect.origin.y == 0) && (visibleRect.size.height == 0) && (visibleRect.size.height == 0))
+        visibleRectExists = NO;
+    else
+        visibleRectExists = YES;
+    
+    NSRect fullRect = [[self documentView] bounds];
+    
+    drawMark = NO;
+    aPage = [self currentPage];
+    theindex = [[self document] indexForPage: aPage];
+    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
+        theindex++; // mysteriously, this seems to fix the "jump to next page" problem in multiple and double multiple page modes
+   
+    if ([[self document] isFinding])
+        [[self document] cancelFindString];
+    if (_searchResults != NULL) {
+        [_searchResults removeAllObjects];
+        [_searchTable reloadData];
+        _searchResults = NULL;
+    }
+    
+   if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil))
+    {
+        NSView *myView;
+        
+         NSImage *myImage;
+      
+        if (atLeastMojave)
+        {
+            myView = [[self window] contentView];
+            myImage = [self screenCacheImageForView: myView];
+        }
+
+        else
+        {
+            myView = [[self documentView] enclosingScrollView];
+            myImage = [self screenCacheImageForView: myView];
+        }
+        
+        sizeRect = [myView bounds];
+       
+        self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
+        [self.myHideView1 setSizeRect: sizeRect];
+        self.myHideView1.originalImage = myImage;
+        
+        [myView addSubview: self.myHideView1];
+   }
+
+    if ([self doReleaseDocument]) {
+        pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
+        [self setDocument: pdfDoc];
+   } else {
+        oldDoc = [self document];
+        theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+        pdfDoc = [[PDFDocument alloc] initWithData: theData];
+        [self setDocument: pdfDoc];
+        if (oldDoc != NULL) {
+            [oldDoc setDelegate: NULL];
+        }
+    }
+
+    [[self document] setDelegate: self];
+    totalPages = [[self document] pageCount];
+    [totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
+    [totalPage1 setIntegerValue:totalPages];
+    [totalPage display];
+    [stotalPage display];
+    [totalPage1 display];
+    if (theindex > totalPages)
+        theindex = totalPages;
+    theindex--;
+    if (needsInitialization)
+        [self setup];
+    if (totalRotation != 0) {
+        for (i = 0; i < totalPages; i++) {
+            myPage = [[self document] pageAtIndex:i];
+            amount = [myPage rotation];
+            newAmount = amount + totalRotation;
+            [myPage setRotation: newAmount];
+        }
+        [self layoutDocumentView];
+    }
+    [self setupOutline];
+        
+    // WARNING: The next 9 lines of code are very fragile. Initially I used
+    // NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+    // and works on Intel but not on PowerPC.
+    // In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+    // but it doesn't seem to work there. If changes are made, be sure to test on
+    // Intel and on PowerPC.
+     
+    aPage = [[self document] pageAtIndex: theindex];
+    [self goToPage: aPage];
+    
+   
+    NSRect newFullRect = [[self documentView] bounds];
+    NSInteger difference = newFullRect.size.height - fullRect.size.height;
+    
+    
+ //   The fix below was required because otherwise the pages scrolled slightly with each
+ //   typesetting. Yusuke Terada has discovered that the bug was apparently fixed in amountrecent Yosemite
+ //   release, so the "fix" has been removed. Only time will tell ...
+    
+    
+    visibleRect.origin.y = visibleRect.origin.y + difference ;
+    
+    visibleRect.size.height = 3;
+    if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5))
+        [[self documentView] scrollRectToVisible: visibleRect];
+    else if (! visibleRectExists)
+    {
+        aPage = [[self document] pageAtIndex: 0];
+       [self goToPage: aPage];
+       visibleRect = [[self documentView] bounds];
+        visibleRect.origin.x = visibleRect.size.width / 2.0;
+       visibleRect.origin.y = visibleRect.size.height;
+        visibleRect.size.width = 10;
+        visibleRect.size.height = 10;
+       [[self documentView] scrollRectToVisible: visibleRect];
+    }
+    else
+    {
+        visibleRect.origin.x = 0;
+        visibleRect.origin.y = 0;
+        visibleRect.size.width = 10;
+        visibleRect.size.height = 10;
+       [[self documentView] scrollRectToVisible: visibleRect];
+    }
+    
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
+        NSEnableScreenUpdates();
+    
+   [self fixWhiteDisplay];
+    
+if ((atLeastHighSierra) && (self.PDFFlashFix))
+    {
+            [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
+                                              target:self
+                                           selector:@selector(removeHideView1:)
+                                            userInfo:Nil
+                                             repeats:NO];
+     }
+
+}
+
 
 - (void)saveLocation
 {

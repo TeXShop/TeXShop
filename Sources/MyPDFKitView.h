@@ -120,7 +120,7 @@
 // Variables used when splitting window
     
     NSInteger   splitTheIndex;
-    NSRect      splitVisibleRect, splitFullRect;
+    NSRect      splitVisibleRect, splitVisibleRectLimited, splitFullRect;
     
 	
 }
@@ -153,6 +153,13 @@
 @property double                                    horizontalHeight2;
 @property double                                    verticalWidth1;
 @property double                                    verticalWidth2;
+
+@property NSRect                                    oldVisibleRect;
+@property NSInteger                                 oldIndex;
+@property BOOL                                      oldUsed;
+@property BOOL                                      doScroll;
+@property BOOL                                      skipLinks;
+@property BOOL                                      globalLongTerm;
 
 
 
@@ -216,6 +223,7 @@
 - (void) fancyMouseDown: (NSEvent *)theEvent;
 - (BOOL) toolIsMagnification;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
+- (void) changeLinkPopups;
 
 // printing
 - (void) printDocument: sender;
@@ -269,9 +277,11 @@
 
 // splittingWindow
 - (void)saveLocation;
+- (void)saveLocationLimited;
 - (void)writeLocation: (NSInteger)anIndex andFullRect: (NSRect) fullRect andVisibleRect: (NSRect) visibleRect;
 - (void)readLocation: (NSInteger *) anIndex andFullRect: (NSRect *) fullRect andVisibleRect: (NSRect *) visibleRect;
 - (void)restoreLocation;
+- (void)restoreLocationLimited;
 - (double)returnHeight;
 @end
 

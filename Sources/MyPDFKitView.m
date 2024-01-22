@@ -193,6 +193,12 @@
     self.myHideView1 = nil;
     self.myHideView2 = nil;
     
+    self.oldUsed = NO;
+    self.doScroll = YES;
+    
+    self.skipLinks = NO;
+    self.globalLongTerm = NO;
+    
     
     // The initial Sierra beta had horrible scrolling, which the line below fixed
     // Apple fixed the bug in the second beta, but I kept the line through 3.73
@@ -966,8 +972,8 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
 {
     
     PDFDocument            *pdfDoc, *oldDoc;
-    PDFPage                *aPage;
-    NSInteger            theindex;
+    PDFPage                *aPage, *fixingPage;
+    NSInteger            theindex, fixingindex;
     BOOL                needsInitialization;
     NSInteger            i, amount, newAmount;
     PDFPage                *myPage;
@@ -1084,7 +1090,10 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     // Intel and on PowerPC.
      
     aPage = [[self document] pageAtIndex: theindex];
-    [self goToPage: aPage];
+    
+    
+    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
+        [self goToPage: aPage];
     
    
     NSRect newFullRect = [[self documentView] bounds];
@@ -1100,8 +1109,16 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     
     visibleRect.size.height = 3;
     if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5))
-        [[self documentView] scrollRectToVisible: visibleRect];
-    else if (! visibleRectExists)
+        {
+        
+            [[self documentView] scrollRectToVisible: visibleRect];
+            
+            // fixingPage = [self currentPage];
+            // fixingindex = [[self document] indexForPage: fixingPage];
+            // [self fixPageChanges: fixingindex];
+            
+        }
+     else if (! visibleRectExists)
     {
         aPage = [[self document] pageAtIndex: 0];
        [self goToPage: aPage];
@@ -1145,6 +1162,7 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     splitFullRect = [[self documentView] bounds];
 }
 
+
 - (double)returnHeight
 {
     return splitFullRect.size.height;
@@ -1179,6 +1197,27 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     [[self documentView] scrollRectToVisible: splitVisibleRect];
         
 }
+
+- (void)saveLocationLimited
+{
+    splitVisibleRectLimited = [[self documentView] visibleRect];
+}
+
+
+
+- (void)restoreLocationLimited
+{
+    NSRect      topRect;
+    
+  //  topRect = splitVisibleRectLimited;
+  //  [[self documentView] scrollRectToVisible: topRect];
+  //  NSLog(@"the origin is %f and then %f", topRect.origin.x, topRect.origin.y);
+  
+  [[self documentView] scrollRectToVisible: splitVisibleRectLimited];
+        
+}
+
+
 
 
 
@@ -1508,6 +1547,18 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     [self setupOutline];
 }
 
+- (void) fixPageChanges: (NSInteger) pageNumber
+{
+    NSUInteger        newPageIndex;
+    
+    newPageIndex = pageNumber + 1;
+    [currentPage0 setIntegerValue:newPageIndex];
+    [scurrentPage setIntegerValue:newPageIndex];
+    [currentPage1 setIntegerValue:newPageIndex];
+    [currentPage0 display];
+    [scurrentPage display];
+    [currentPage1 display];
+}
 
 - (void) makePageChanges: (NSInteger) pageNumber
 {
@@ -1791,6 +1842,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
         NSInteger number, i;
         id item;
     
+    // For "switchView"
+    self.doScroll = NO;
     
     [self cleanupMarquee: YES];
 	if ( newStyle != pageStyle)
@@ -3325,6 +3378,14 @@ The system then remembers the new number and sends is to the Timer which will di
  
 */
 
+- (void) changeLinkPopups
+{
+    self.skipLinks = ! self.skipLinks;
+    if (self.skipLinks)
+        [self doKillPopup];
+    
+}
+
 - (void) increaseTimerNumber
 {
     if (self.timerNumber < 5000)
@@ -3336,16 +3397,23 @@ The system then remembers the new number and sends is to the Timer which will di
 
 - (void) mouseMoved: (NSEvent *) theEvent
 {
-    BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
     
-   if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
-        // [self increaseTimerNumber];
-        [self doKillPopup]; // sets handlingLink to 0
-    }
-
     
-    else if (inLink && (self.handlingLink == 0) && (mouseMode != 5)) {
+if (! self.skipLinks)
     
+    {
+        
+        
+        BOOL inLink = (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0);
+        
+        if ( (! inLink) && (self.handlingLink > 0) && (mouseMode != 5)) {
+            // [self increaseTimerNumber];
+            [self doKillPopup]; // sets handlingLink to 0
+        }
+        
+        
+        else if (inLink && (self.handlingLink == 0) && (mouseMode != 5)) {
+            
             [self increaseTimerNumber];
             NSNumber *timerNumberObject = [NSNumber numberWithInteger: self.timerNumber];
             self.handlingLink = 1;
@@ -3353,13 +3421,13 @@ The system then remembers the new number and sends is to the Timer which will di
             NSValue *mouseLocationValue = [NSValue valueWithPoint: mouseLocation];
             NSArray *info = [NSArray arrayWithObjects: timerNumberObject, mouseLocationValue, theEvent, nil];
             [NSTimer scheduledTimerWithTimeInterval:0.2
-                                         target:self
-                                       selector:@selector(handleLink:)
-                                       userInfo:info
-                                        repeats:NO];
-            }
-    
-    
+                                             target:self
+                                           selector:@selector(handleLink:)
+                                           userInfo:info
+                                            repeats:NO];
+        }
+        
+    }
     
     
     
@@ -3412,10 +3480,11 @@ The system then remembers the new number and sends is to the Timer which will di
     NSInteger       H = 120, W = 400;
     NSInteger       leftSide, rightSide;
     NSRect          pageBounds;
-    BOOL            largerSize, pushUp;
+    BOOL            largerSize, pushUp, longTerm;
     
     largerSize = NO;
     pushUp = NO;
+  //  longTerm = NO;
     
     NSNumber *timerNumberObject = (NSNumber *)theTimer.userInfo[0];
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
@@ -3447,10 +3516,12 @@ The system then remembers the new number and sends is to the Timer which will di
             linkedPoint = [theDestination point];
             // NSLog(@"The value is %f", linkedPoint.x);
             
-            if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
-                largerSize = YES;
             if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+                largerSize = YES;
+            if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)
                 pushUp = YES;
+            if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+                self.globalLongTerm = YES;
             
             // aRect = where text comes from
             if (linkedPoint.x < (pageBounds.size.width / 2))
@@ -3570,6 +3641,7 @@ The system then remembers the new number and sends is to the Timer which will di
     if (self.overView) {
         [self.overView removeFromSuperview];
         self.overView = nil;
+        self.globalLongTerm = NO;
     }
     self.handlingLink = 0;
 }
@@ -3579,7 +3651,10 @@ The system then remembers the new number and sends is to the Timer which will di
     
    // return; // activate this to leave "link destination" until cursor moves
     
-    if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)
+    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        return;
+    
+    if (self.globalLongTerm)
         return;
     
     NSInteger aTimerNumber = [(NSNumber *)theTimer.userInfo[0] integerValue];
@@ -3589,6 +3664,7 @@ The system then remembers the new number and sends is to the Timer which will di
     if (self.overView) {
         [self.overView removeFromSuperview];
         self.overView = nil;
+        self.globalLongTerm = NO;
     }
     self.handlingLink = 0;
 }
@@ -6963,7 +7039,8 @@ else
         
 		[theMenu insertItemWithTitle: NSLocalizedString(@"Sync", @"Sync") action:@selector(doMenuSync:) keyEquivalent:@"" atIndex:0];
         [theMenu insertItemWithTitle: NSLocalizedString(@"Split Window", @"Split Window") action:@selector(splitWindow:) keyEquivalent:@"" atIndex:1];
-		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:2];
+        [theMenu insertItemWithTitle: NSLocalizedString(@"Link Popups", @"Link Popups") action:@selector(toggleLinkPopups:) keyEquivalent:@"" atIndex:2];
+		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:3];
 	}
     return theMenu;
 }

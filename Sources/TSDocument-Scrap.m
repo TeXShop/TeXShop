@@ -151,13 +151,17 @@
     
      
     beginDoc = [theSource rangeOfString: @"\\begin{document}"];
-    if (beginDoc.location == NSNotFound)
-       return;
     
-    header.location = 0;
-    header.length = beginDoc.location - 1;
-    lineheader = [theSource lineRangeForRange: header];
-    theHeader = [theSource substringToIndex: lineheader.length];
+    if (beginDoc.location == NSNotFound)
+  //      return;
+        theHeader = theSource;
+    else
+    {
+        header.location = 0;
+        header.length = beginDoc.location - 1;
+        lineheader = [theSource lineRangeForRange: header];
+        theHeader = [theSource substringToIndex: lineheader.length];
+    }
     newSource = [theHeader stringByAppendingString:@"\\begin{document}\n"];
     newSource = [newSource stringByAppendingString: [scrapTextView string]];
     newSource = [newSource stringByAppendingString:@"\n\\end{document}\n"];

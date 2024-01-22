@@ -72,6 +72,8 @@ extern NSPanel *pageNumberWindow;
 	self.windowIsSplit = NO;
 	self.willClose = NO;
     self.horizontal = YES;
+    self.oldUnsplitAfterSwitch = NO;
+    
     
 	return result;
 }
@@ -558,6 +560,17 @@ extern NSPanel *pageNumberWindow;
 			[anItem setState:NSOffState];
 		return YES;
 	}
+    
+    if ([anItem action] == @selector(toggleLinkPopups:)) {
+        MyPDFKitView *aView;
+        aView = (MyPDFKitView *)self.myPDFKitView;
+        
+        if (aView.skipLinks)
+            [anItem setState:NSOffState];
+        else
+            [anItem setState:NSOnState];
+        return YES;
+    }
 
 	if ([anItem action] == @selector(displayLatexPanel:))
 		return NO;
@@ -625,6 +638,7 @@ extern NSPanel *pageNumberWindow;
 // mitsu 1.29 (O)
 - (void)changePageStyle: (id)sender
 {
+    
 	if ([self.myDocument fromKit])
 		[[self.myDocument pdfKitView] changePageStyle: sender];
 	else
@@ -719,16 +733,19 @@ extern NSPanel *pageNumberWindow;
  */
 
 
-- (void) switchViews
+- (void)switchViews;
+
 {
     NSInteger       index1, index2;
+    NSInteger       pageIndex1, pageIndex2;
     NSRect          visibleRect1, visibleRect2;
     NSRect          splitFullRect1, splitFullRect2;
     
     MyPDFKitView    *aView, *aView2;
     NSRect          newFullRect, newSplitFullRect, newVisibleRect;
     NSInteger       difference;
-
+    
+    
 /*
     aView = (MyPDFKitView *)self.myPDFKitView;
     index1 = [aView index];
@@ -743,41 +760,70 @@ extern NSPanel *pageNumberWindow;
 
     if (self.windowIsSplit) {
         
-        aView = (MyPDFKitView *)self.myPDFKitView;
-        index1 = [aView index];
-        visibleRect1 = [[aView documentView] visibleRect];
-        splitFullRect1 = [[aView documentView] bounds];
+          self.oldUnsplitAfterSwitch = YES;
+        
+          aView = (MyPDFKitView *)self.myPDFKitView;
+          index1 = [aView index];
+          visibleRect1 = [[aView documentView] visibleRect];
+          splitFullRect1 = [[aView documentView] bounds];
 
-        aView = (MyPDFKitView *)self.myPDFKitView2;
-        index2 = [aView index];
-        visibleRect2 = [[aView documentView] visibleRect];
-        splitFullRect2 = [[aView documentView] bounds];
+          aView = (MyPDFKitView *)self.myPDFKitView2;
+          index2 = [aView index];
+          visibleRect2 = [[aView documentView] visibleRect];
+          splitFullRect2 = [[aView documentView] bounds];
+          
+          aView =(MyPDFKitView *)self.myPDFKitView;
+          [aView moveSplitToCorrectSpot: index2];
+          newFullRect = [[aView documentView] bounds];
+          newSplitFullRect = splitFullRect2;
+          newVisibleRect = visibleRect2;
+          difference = newFullRect.size.height - newSplitFullRect.size.height;
+          newVisibleRect.origin.y = newVisibleRect.origin.y + difference - 1;
+          [[aView documentView] scrollRectToVisible: newVisibleRect];
+          
         
-        aView =(MyPDFKitView *)self.myPDFKitView;
-        [aView moveSplitToCorrectSpot: index2];
-        newFullRect = [[aView documentView] bounds];
-        newSplitFullRect = splitFullRect2;
-        newVisibleRect = visibleRect2;
-        difference = newFullRect.size.height - newSplitFullRect.size.height;
-        newVisibleRect.origin.y = newVisibleRect.origin.y + difference - 1;
-        [[aView documentView] scrollRectToVisible: newVisibleRect];
+          
+          aView =(MyPDFKitView *)self.myPDFKitView2;
+          [aView moveSplitToCorrectSpot: index1];
+          newFullRect = [[aView documentView] bounds];
+          newSplitFullRect = splitFullRect1;
+          newVisibleRect = visibleRect1;
+          difference = newFullRect.size.height - newSplitFullRect.size.height;
+          newVisibleRect.origin.y = newVisibleRect.origin.y + difference - 1;
+          [[aView documentView] scrollRectToVisible: newVisibleRect];
         
-        aView =(MyPDFKitView *)self.myPDFKitView2;
-        [aView moveSplitToCorrectSpot: index1];
-        newFullRect = [[aView documentView] bounds];
-        newSplitFullRect = splitFullRect1;
-        newVisibleRect = visibleRect1;
-        difference = newFullRect.size.height - newSplitFullRect.size.height;
-        newVisibleRect.origin.y = newVisibleRect.origin.y + difference - 1;
-        [[aView documentView] scrollRectToVisible: newVisibleRect];
-    }
-    
+      }
+   
     else {
+        /*
+         [self mainSplitPdfKitWindow];
+         [self switchViews];
+         [self mainSplitPdfKitWindow];
+       */
         
-        [self mainSplitPdfKitWindow];
-        [self switchViews];
-        [self mainSplitPdfKitWindow];
+        aView = (MyPDFKitView *)self.myPDFKitView;
+        pageIndex1 = [[aView document] indexForPage:[aView currentPage]];
+        visibleRect1 = [[[aView documentView] enclosingScrollView] documentVisibleRect];
         
+        if (aView.oldUsed)
+        {
+            [aView goToPage: [[aView document] pageAtIndex: aView.oldIndex]];
+            if (aView.doScroll)
+                [[aView documentView] scrollRectToVisible: aView.oldVisibleRect];
+            //else
+               // NSLog(@"Did Not Scroll");
+            aView.doScroll = YES;
+            aView.oldIndex = pageIndex1;
+            aView.oldVisibleRect = visibleRect1;
+        }
+        else
+        {
+            aView.oldUsed = YES;
+            aView.oldIndex = pageIndex1;
+            aView.oldVisibleRect = visibleRect1;
+        }
+        
+         
      }
         
  }
@@ -787,14 +833,28 @@ extern NSPanel *pageNumberWindow;
     [self switchViews];
 }
 
+- (void)toggleLinkPopups:(id)sender;
+{
+    MyPDFKitView    *aView, *aView2;
+    
+    aView = (MyPDFKitView *)self.myPDFKitView;
+    aView2 = (MyPDFKitView *)self.myPDFKitView2;
+    [aView changeLinkPopups];
+    [aView2 changeLinkPopups];
+}
+
+/*
+
 - (void) mainSplitPdfKitWindow
 {
     NSSize        theSize, newSize1, newSize2;
     NSRect        theFrame, theFrame1, theFrame2;
     NSRect      myVisibleRect;
     double      myScrollAmount;
+    double      mag, magnification;
     BOOL        result;
     double      temp1, temp2, myHeight, myHeight1;
+    MyPDFKitView    *aView;
     
 // Fix encrypted pdf bug
     MyPDFKitView *firstView;
@@ -811,7 +871,8 @@ extern NSPanel *pageNumberWindow;
     }
 // end of fix
     
-    
+// "saveLocation" below saves index, documentview's visualRect, and documentview's bounds
+ 
     if (self.windowIsSplit)
         {
             [(MyPDFKitView *)self.myPDFKitView saveLocation];
@@ -916,6 +977,8 @@ extern NSPanel *pageNumberWindow;
         [self.myPDFKitView setFrameSize:theSize];
     }
     
+  
+    
     if (self.windowIsSplit)
         {
             if (self.horizontal)
@@ -943,12 +1006,32 @@ extern NSPanel *pageNumberWindow;
             //    [(MyPDFKitView *)self.myPDFKitView restoreLocation];
         
         myVisibleRect = ((MyPDFKitView *)self.myPDFKitView).documentView.visibleRect;
+            
+            
         myHeight = ((MyPDFKitView *)self.myPDFKitView2).documentView.visibleRect.size.height;
-        myHeight1 = self.pdfKitSplitView.dividerThickness;
-        myScrollAmount = myHeight + myHeight1 + 38; // ADJUST1;
+        
+        
+  //      NSRect myHeightV = ((MyPDFKitView *)self.myPDFKitView2).documentView.visibleRect;
+ //      double myScaleFactor = ((MyPDFKitView *)self.myPDFKitView2).scaleFactor;
+ //      double scaleFactorLower = myScaleFactor;
+ //      NSLog(@"height of lower half %f", myHeightV.size.height);
+ //      NSLog(@"scalefactor of lower half %f", myScaleFactor);
+            
+ //       myHeightV = ((MyPDFKitView *)self.myPDFKitView).documentView.visibleRect;
+ //       myScaleFactor = ((MyPDFKitView *)self.myPDFKitView).scaleFactor;
+ //       NSLog(@"height of upper half %f", myHeightV.size.height);
+ //       NSLog(@"scalefactor of upper half %f", myScaleFactor);
+            
+       // NSRect visibleRectInWindow = [self convertRect:myHeightV toView:nil];
         
             
-        myVisibleRect.origin.y = myVisibleRect.origin.y - myScrollAmount;
+        myHeight1 = self.pdfKitSplitView.dividerThickness;
+             
+        myScrollAmount = myHeight + myHeight1 + 35;
+           
+        // myScrollAmount = myHeight * scaleFactorLower + myHeight1;
+            
+         myVisibleRect.origin.y = myVisibleRect.origin.y - myScrollAmount;
         [[((MyPDFKitView *)self.myPDFKitView) documentView] scrollRectToVisible: myVisibleRect];
         }
         else
@@ -958,6 +1041,275 @@ extern NSPanel *pageNumberWindow;
     }
     
 }
+
+*/
+
+- (void) mainSplitPdfKitWindow
+{
+    NSSize        theSize, newSize1, newSize2;
+    NSRect        theFrame, theFrame1, theFrame2;
+    NSRect      myVisibleRect;
+    double      myScrollAmount;
+    double      mag, magnification;
+    BOOL        result;
+    double      temp1, temp2, myHeight, myHeight1;
+    MyPDFKitView    *aView;
+    BOOL        splitInMiddle;
+    BOOL        topToBottom;
+    
+    splitInMiddle = NO;
+    topToBottom = NO;
+    if (([NSEvent modifierFlags ] & NSEventModifierFlagShift) && ([NSEvent modifierFlags ] & NSEventModifierFlagControl))
+    {
+        splitInMiddle = YES;
+        self.oldUnsplitAfterSwitch = YES;
+    }
+    
+    else if ([NSEvent modifierFlags ] & NSEventModifierFlagShift)
+    {
+        topToBottom = YES;
+        splitInMiddle = YES;
+        self.oldUnsplitAfterSwitch = YES;
+    }
+    
+//    else if ([NSEvent modifierFlags ] & NSEventModifierFlagNumericPad)
+//    {
+//        topToBottom = YES;
+//        splitInMiddle = YES;
+//        self.oldUnsplitAfterSwitch = NO;
+//     }
+    
+// FIX ENCRYPTED PDF BUG
+    
+    MyPDFKitView *firstView;
+    MyPDFKitView *secondView;
+    
+    firstView = (MyPDFKitView *)self.myPDFKitView;
+    secondView = (MyPDFKitView *)self.myPDFKitView2;
+    
+    if (splitInMiddle)
+    {
+        [firstView autoScales];
+        [secondView autoScales];
+    }
+    
+    if (self.firstTime)
+    {
+        self.firstTime = NO;
+        [firstView removeConstraints: firstView.constraints];
+        [secondView removeConstraints: secondView.constraints];
+    }
+    
+// END OF ENCRYPTED PDF BUG FIX
+    
+    // "saveLocation" below saves index, documentview's visualRect, and documentview's bounds
+    
+// SAVE CURRENT LOCATIONS FOR LATER RESTORE
+    
+    if (self.windowIsSplit)
+        {
+           
+            [(MyPDFKitView *)self.myPDFKitView saveLocation];
+            [(MyPDFKitView *)self.myPDFKitView2 saveLocation];
+            ((MyPDFKitView *)self.myPDFKitView).locationSaved = YES;
+            ((MyPDFKitView *)self.myPDFKitView2).locationSaved = YES;
+        }
+    else {
+        [(MyPDFKitView *)self.myPDFKitView saveLocation];
+        [(MyPDFKitView *)self.myPDFKitView saveLocationLimited];
+    }
+    
+    
+// REVISE self.windowIsSplit FOR SPLITING, BUT DO NOT YET SPLIT
+    
+    
+    [(MyPDFKitView *)self.myPDFKitView cleanupMarquee: YES];
+    [(MyPDFKitView *)self.myPDFKitView2 cleanupMarquee: YES];
+    
+    
+    if (self.windowIsSplit) {
+        self.windowIsSplit = NO;
+        self.activeView = self.myPDFKitView;
+        result = [self.activeView becomeFirstResponder];
+        [(MyPDFKitView *)self.activeView resetSearchDelegate];
+    }
+    else {
+        self.windowIsSplit = YES;
+        self.activeView = self.myPDFKitView;
+        }
+    
+// ACTUALLY SPLIT OR UNSPLIT THE WINDOW
+    
+
+    if (self.windowIsSplit) {  // THIS SPLITS THE WINDOW
+        
+        // FORCE SPLIT BAR TO THE MIDDLE OF THE WINDOW
+        
+        theFrame = [self.myPDFKitView frame];
+        newSize1.width = theFrame.size.width;
+        newSize1.height = 100;
+        newSize2 = newSize1;
+        if ((self.horizontal) && (! splitInMiddle) && ((MyPDFKitView *)self.myPDFKitView2).horizontalSplitSaved)
+                {
+                    newSize1.height = ((MyPDFKitView *)self.myPDFKitView2).horizontalHeight1;
+                    newSize2.height = ((MyPDFKitView *)self.myPDFKitView2).horizontalHeight2;
+                }
+        if ((! self.horizontal) && ((MyPDFKitView *)self.myPDFKitView2).verticalSplitSaved)
+                {
+                    newSize1.width = ((MyPDFKitView *)self.myPDFKitView2).verticalWidth1;
+                    newSize2.width = ((MyPDFKitView *)self.myPDFKitView2).verticalWidth2;
+                }
+        [self.myPDFKitView setFrameSize:newSize1];
+        [self.myPDFKitView2 setFrameSize:newSize2];
+        
+        // DO SPLIT
+        
+        [self.pdfKitSplitView addSubview: self.myPDFKitView2];
+         [self.pdfKitSplitView adjustSubviews];
+        [(MyPDFKitView *)self.myPDFKitView restoreLocationLimited];
+        
+        // ADJUST DISPLAY PARAMETERS
+        
+        [(MyPDFKitView *)self.myPDFKitView2 setPageStyle:[(MyPDFKitView *)self.myPDFKitView pageStyle]];
+        [(MyPDFKitView *)self.myPDFKitView2 setFirstPageStyle:[(MyPDFKitView *)self.myPDFKitView firstPageStyle]];
+        if ( [(MyPDFKitView *)self.myPDFKitView resizeOption] == NEW_PDF_FIT_TO_NONE)
+          [(MyPDFKitView *)self.myPDFKitView2 setMagnification: [(MyPDFKitView *)self.myPDFKitView magnification]];
+        else {
+            [(MyPDFKitView *)self.myPDFKitView2 setResizeOption:[(MyPDFKitView *)self.myPDFKitView resizeOption]];
+            [(MyPDFKitView *)self.myPDFKitView2 setupMagnificationStyle];
+            }
+        [(MyPDFKitView *)self.myPDFKitView2 setupPageStyle];
+       //  [(MyPDFKitView *)self.myPDFKitView2 setupMagnificationStyle];
+
+        if ([self.myPDFKitView2 document] == nil)
+             [self.myPDFKitView2 setDocument:[self.myPDFKitView document]];
+                   
+        [(MyPDFKitView *)self.myPDFKitView2 moveSplitToCorrectSpot:[(MyPDFKitView *)self.myPDFKitView index]];
+    }
+
+    else
+    { //THIS UNSPLITS THE WINDOW
+        
+        if (self.horizontal)
+            {
+                theFrame1 = [self.myPDFKitView frame];
+                theFrame2 = [self.myPDFKitView2 frame];
+                // tempBounds = [self.myPDFKitView2 bounds];
+                temp1 = theFrame1.size.height;
+                temp2 = theFrame2.size.height;
+                ((MyPDFKitView *)self.myPDFKitView2).horizontalSplitSaved = YES;
+                ((MyPDFKitView *)self.myPDFKitView2).horizontalHeight1 = temp1;
+               // ((MyPDFKitView *)self.myPDFKitView2).horizontalHeight2 = temp2;
+                ((MyPDFKitView *)self.myPDFKitView2).horizontalHeight2 = temp2;
+                // [((MyPDFKitView *)self.myPDFKitView2) documentView].bounds = tempBounds;
+                
+                // theScale = ((MyPDFKitView *)self.myPDFKitView2).scaleFactor;
+                // ((MyPDFKitView *)self.myPDFKitView2).scale = theScale;
+            }
+        else
+            {
+                theFrame1 = [self.myPDFKitView frame];
+                theFrame2 = [self.myPDFKitView2 frame];
+                // tempBounds = [self.myPDFKitView2 bounds];
+                temp1 = theFrame1.size.width;
+                temp2 = theFrame2.size.width;
+                ((MyPDFKitView *)self.myPDFKitView2).verticalSplitSaved = YES;
+                ((MyPDFKitView *)self.myPDFKitView2).verticalWidth1 = temp1;
+                ((MyPDFKitView *)self.myPDFKitView2).verticalWidth2 = temp2;
+             }
+        [self.myPDFKitView2 removeFromSuperview];
+        theFrame = [self.myPDFKitView frame];
+        theSize.width = theFrame.size.width;
+        theSize.height = self.frame.size.height;
+        [self.myPDFKitView setFrameSize:theSize];
+    }
+  
+ // ADJUST SCROLLING OF SPLIT OR UNSPLIT WINDOW
+    
+    if (self.windowIsSplit)
+        {  // THIS ADJUSTS SCROLLING OF THE SPLIT WINDOW
+            if (self.horizontal)
+            {
+ 
+            myVisibleRect = ((MyPDFKitView *)self.myPDFKitView).documentView.visibleRect;
+            myHeight = ((MyPDFKitView *)self.myPDFKitView2).documentView.visibleRect.size.height;
+            myHeight1 = self.pdfKitSplitView.dividerThickness;
+            myScrollAmount = myHeight + myHeight1 - 2;
+         
+            
+            myVisibleRect.origin.y = myVisibleRect.origin.y + myScrollAmount;
+            [[((MyPDFKitView *)self.myPDFKitView) documentView] scrollRectToVisible: myVisibleRect];
+            }
+            else
+
+                ; // [(MyPDFKitView *)self.myPDFKitView restoreLocation];  // commenting out this line restores correct unsplit location
+            
+            if (((MyPDFKitView *)self.myPDFKitView2).locationSaved)
+                [(MyPDFKitView *)self.myPDFKitView2 restoreLocation];
+            
+            if (topToBottom)
+                [[((MyPDFKitView *)self.myPDFKitView2) documentView] scrollRectToVisible: myVisibleRect];
+            
+            
+        }
+    else
+    { // THIS ADJUSTS SCROLLING OF THE UNSPLIT WINDOW
+        if ((self.horizontal) && ( ! self.oldUnsplitAfterSwitch))
+        {
+            aView = (MyPDFKitView *)self.myPDFKitView;
+            
+            PDFPage *firstPage = [aView.document pageAtIndex:0];
+            CGRect firstPageBounds = [firstPage boundsForBox:aView.displayBox];
+            [aView goToRect:CGRectMake(0, firstPageBounds.size.height, 1, 1) onPage:firstPage];
+             
+            [(MyPDFKitView *)self.myPDFKitView restoreLocationLimited];
+        }
+        else if (! self.horizontal)
+            
+        {
+            self.oldUnsplitAfterSwitch = NO;
+            [(MyPDFKitView *)self.myPDFKitView restoreLocation];
+        }
+        
+        else
+        {
+            self.oldUnsplitAfterSwitch = NO;
+            
+            myVisibleRect = ((MyPDFKitView *)self.myPDFKitView).documentView.visibleRect;
+            
+            
+            myHeight = ((MyPDFKitView *)self.myPDFKitView2).documentView.visibleRect.size.height;
+            
+            
+            // NSRect myHeightV = ((MyPDFKitView *)self.myPDFKitView2).documentView.visibleRect;
+            // double myScaleFactor = ((MyPDFKitView *)self.myPDFKitView2).scaleFactor;
+            // double scaleFactorLower = myScaleFactor;
+            // NSLog(@"height of lower half %f", myHeightV.size.height);
+            // NSLog(@"scalefactor of lower half %f", myScaleFactor);
+            
+            // myHeightV = ((MyPDFKitView *)self.myPDFKitView).documentView.visibleRect;
+            // myScaleFactor = ((MyPDFKitView *)self.myPDFKitView).scaleFactor;
+            // NSLog(@"height of upper half %f", myHeightV.size.height);
+            // NSLog(@"scalefactor of upper half %f", myScaleFactor);
+            
+            // NSRect visibleRectInWindow = [self convertRect:myHeightV toView:nil];
+            
+            
+            myHeight1 = self.pdfKitSplitView.dividerThickness;
+            
+            myScrollAmount = myHeight + myHeight1 + 35;
+            
+            // myScrollAmount = myHeight * scaleFactorLower + myHeight1;
+            
+            myVisibleRect.origin.y = myVisibleRect.origin.y - myScrollAmount;
+            [[((MyPDFKitView *)self.myPDFKitView) documentView] scrollRectToVisible: myVisibleRect];
+            
+        }
+    }
+}
+
+
+
 
 
 - (void) splitPdfKitWindow: (id)sender

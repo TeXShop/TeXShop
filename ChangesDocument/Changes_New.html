@@ -16,6 +16,68 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.25</h3></P>
+<p> The following changes were made in TeXShop 5.25:
+<ul>
+
+<p><li> As in earlier versions of TeXShop, if you hover the mouse over a link in the Preview window, a small window opens  showing the text at the linked location; this window remains open for five seconds and then vanishes. There is a new menu item in the Preview menu called "Link Popups", suggested by Uwe Schmock. This menu is a toggle turning the hover behavior on or off. When it is on, the menu item is checked. 
+
+<p> If you click in the contents of the Preview window while the Control key is down, a contextual menu opens. The "Link Popups" item is also in this contextual menu.
+
+<p><li> The details of the small window created by hovering over a link can be changed by holding down any combination of three modifier keys  before moving a mouse to the link. These modifying keys have been changed so their names give a mnemonic for the effect they create. The SHIFT key shifts the small window to appear above the link, rather than  below it. The COMMAND key commands that a bigger window with larger text be displayed. The OPTION key selects the optional behavior that the small window will remain on the screen until the mouse moves. (If a user forgets to push the option key, it can be pushed later; if it is down at the five second mark, the window will remain open.)
+<p><li> Latexmk by John Collins was upgraded to version 4.82a.
+<p><li> The Edit menu contains an item named "Experiment". Select a section of tricky source text, perhaps a complicated series of mathematical equations. Then select the item. A new small window appears, showing the selected source. This window contains a "Typeset" button. Pushing that button produces a second small window showing the typeset output. It is then possible to experiment with the tricky source without modifying the actual document source, until the experiment produces the correct result. Copy the corrected source back to the document.
+<p> This item works by creating a new source file for the experiment. The new source contains everything in the main document header up to but not including \begin{document}, followed by \begin{document}, the experimental source,
+and \end{document}.
+<p> This even works if the header is the root document of a project, and the experimental source comes from one of the included files. However, previous versions of TeXShop assumed that \begin{document} was in this root document. Otherwise the Experiment menu item did nothing.
+<p> This TeXShop code has been slightly revised. If \begin{document} is not in the root document, then the entire root document is used rather than everything up to but not including \begin{document}. The Experiment menu item may  therefore work for a few additional projects.
+ 
+<p><li> The code implementing "switch views" in a Preview window that has not been split was completely rewritten
+for TeXShop 5.25. In version 5.23, there was noticeable creep of the two views as the views
+were switched over and over. This creep is gone and the views are now  stable.
+<p>
+Recall how "Switch Views" works. Scroll the Preview window to an interesting spot. Press Option-2 to select this
+spot, i.e., view. Scroll to a second interesting spot or view. Now Option-2 switches between these two views. 
+Either view can be scrolled when it is active and the scrolled position replaces the original position for that view.
+<p>In version 5.23, the two views were also the two views seen if the window was split. This is no
+longer the case. If either view is split, that view will become the top view in the split window, and the
+bottom view will show an entirely independent third position. If the window is then unsplit, and Option-2
+is used to switch to the alternate view in the full window, and then the window is split again, the alternate
+view will be the top view in the split window and the bottom view will be the same bottom view seen earlier.
+
+<p> Thus combining
+our two full views with splitting windows allows us to work with three independent portions of the pdf file.
+<p>Any "Display Format" and "Magnification" change made to a Preview Window affects
+both views. Thus if the window is changed to Double MultiPage mode and later switched with Option-2,
+the new view will also be in Double MultiPage mode. 
+
+<p><li> Finally, substantial efforts were made to improve the "split window" feature in the Preview window. This feature is difficult to modify because users have  many ways to change how it works, and improving it for one group of users can makes it worse for a different group of users. Users can split the window vertically or horizontally, they can move the bar separating the two pieces, they can scroll either piece, they can change the display format and magnification of the pieces, they can switch the two pieces. These users may be working on multiple window mode with separate source and preview windows, or single window mode with source and preview in separate halves of a single window. And after all these changes are made and the window is unsplit, users expect to be back to one normal window without any surprises.
+
+<p> A few users told me that as soon as something unexpected happened when splitting a window, they stopped using the feature for fear that the underlying pdf file would be damaged. So a word of reassurance is in order. None of these display modifications are written back to the pdf file. They only affect how TeXShop displays the file. If TeXShop does something strange, the file is perfectly safe. Retreat to full window mode and proceed as if nothing happened. If you like, write me to explain the surprise behavior. Then relax. 
+
+
+<p> A major complaint has been "display creep." A user splits the window, works in this mode for a while, then unsplits and expects to be exactly back where they started, only to discover that the text crept up or down by several lines. These users then cycle through split/unsplit cycles several times and noticed that each produces a further creep. A major effort has gone into eliminating these creeps. The program isn't perfect, but it is better than before.
+
+<p> The "creep problem" depends on display mode. In single page or double page modes, it is not a problem. The more common modes are multipage and double multipage modes, and there creep can occur. An effort was made to reduce the problem in these two modes.
+
+<p> If the Option key is held down when a window is split, the split is vertical. This mode actually works as expected, provided you know what to expect. When a window is split, the original single full window's contents are placed in the left vertical side. Since vertical sections are narrower than before,  more pages are shown. The original unsplit page is at the bottom of this display rather than the top. This is by design. Similarly when the window is unsplit, the bottom portion of the left side will become the new single window. This is also by design. If the left side is scrolled during the split phase, the new material at the bottom of the left side will become the full window after unsplitting. 
+
+<p> If the option key is not held down when a window is split, the split is horizontal and the original window's contents are placed in the top half. This is the point where major creeping occurred. To fix the problem, the behavior of unsplitting such a window has changed slightly. In version 5.25, TeXShop remembers the position of the window just
+before it was split, and that location returns when the window is unsplit. While the window is split, the top can be scrolled elsewhere. But when the window is unsplit, this new position will not expand to the full window; instead the window will return to its original position.
+
+<p> However, it is easy to scroll the top to a new position that is "permanent." Temporarily unsplit the window, 
+scroll to the new position, and split again. The old bottom half did not change, but the top half is at a new position
+and that position will be remembered and returned to the next time the window is unsplit. 
+
+<p> Note that this new behavior only affects horizontal splitting in Multipage or Double Multipage modes.
+
+<p> As in earlier versions of TeXShop, the lower and upper versions of the display can be switched by typing Option-2. This is rarely done, mainly in the situation where the user wants the lower half of the split window to become the full window when it is unsplit. But our "creep fix" cannot be applied in this case because the lower half was never in full page mode, and thus TeXShop does not have a full page mode to remember and return to. So in this very special case, the old code from TeXShop 5.24 is used when the window is unsplit. Consequently, Option-2 may produce slight creep, but since it is rarely used, that should not matter.
+
+<p><li> Two special variations have been added to the split window command in horizontal mode. Most users should ignore these variations, but one or two users may find them helpful. If the shift and control keys are held down when the Split Window menu is selected or the corresponding tool is checked, the window is forced to split so the lower and upper views are the same size. If just the shift key is held down in the same situation, the two views are forced to have the same size and they contain the same material. The first of these variations may be useful for users who rarely move the split bar and never change the magnification of either view. These users probably already have a stable situation without creep.
+In those rare cases when they do move the split bar (and pay with additional creep), the option takes them back to the stable situation. The second variation was created for a user who lectures directly from a screen showing typeset course notes. He typically shows a full window view of the  notes. But when he comes to a theorem, he splits the screen using the second variation. The theorem remains in the upper view, so students can refer back to it and recall the assumptions required for the conclusion. Meanwhile the lower view can be scrolled to show examples and then key steps of the proof. 
+
+</ul>
+
 <P><h3>TeXShop Changes 5.24</h3></P>
 <p> The follow changes were made in TeXShop 5.24:
 <ul>

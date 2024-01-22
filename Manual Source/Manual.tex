@@ -4,9 +4,13 @@
 
 % \def\skipbigillustrations{true}			% smaller pdf and typesets faster if commented; makes no difference
 
-\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+% See geometry.pdf to learn the layout options. There are lots.
+% Instead of letterpaper you can use a4paper or a5paper or ... 
+\usepackage[letterpaper]{geometry}
 %\geometry{landscape}                		% Activate for rotated page geometry
+
+%\geometry{papersize={450pt,610pt},textwidth=\textwidth,textheight=\textheight, centering, vmarginratio={4:1}}          % Test values, see Chapter "Presenting with TeXShop"
+
 \usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
@@ -14,6 +18,7 @@
 \usepackage{url}
 \usepackage{float}
 \usepackage{xcolor}
+\usepackage{enumitem}
 
 
 % Alternate Special Keys 
@@ -50,15 +55,20 @@
 \addto@hook\every@verbatim{\catcode`|=0}
 \makeatother
 
- \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
             citecolor=blue, urlcolor=blue, hyperfigures=true, bookmarksnumbered]{hyperref}
 
 %\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue, 
 %            citecolor=blue, urlcolor=blue, hyperfigures=true]{hyperref}
+
+\usepackage[capitalise,sort]{cleveref}  % Enhances LATEX’s cross-referencing features
+% To avoid the abbreviation Fig.
+\Crefname{figure}{Figure}{Figures}
+
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.5}
+\title{TeXShop Manual \\ Version 1.3.6}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -70,7 +80,8 @@
 \section*{Preface}
 This manual was written in early 2023. It first appeared in TeXShop 5.12, released on February 23, 2023. A few small changes were made with new 2023 program releases. The version number of the manual always increases when changes are made.
 
-In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded the text in a few spots, and improved formatting in other places. Thanks! I asked for permission to include his email address; it is \url{schmock@fam.tuwien.ac.at}
+In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded the text in a few spots, and improved formatting in other places.
+In January 2024 he contributed \cref{PresentingWithTeXShopChapter} to this manual. Thanks! I asked for permission to include his email address; it is \href{mailto:schmock@fam.tuwien.ac.at}{schmock@fam.tuwien.ac.at}.
 
  \newpage
 \pdfbookmark{Table of Contents}{ContentsLabel}
@@ -78,6 +89,7 @@ In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded
  \mainmatter
 { \chapter{About \TeX, \LaTeX, and TeXShop}
 \section{Introduction}
+\label{Introduction_Section}
  \TeX\ and \LaTeX\ are typesetting programs, available without cost on most computer platforms. The user enters instructions using symbols on an ordinary typewriter, and the program converts these instructions into a document that looks like it came from a professional book publisher. }  
 
 \TeX\ has been carefully designed to produce exactly the same output on all computer platforms. If the source file is written on a Macintosh and  sent to someone using Windows, Linux, or Unix, the typeset output on both platforms will use the same fonts, have the same line breaks,  have the same page breaks, and look identical. This makes collaboration  easy. 
@@ -193,7 +205,7 @@ When outline fonts are used on a computer platform, it is essential to postpone 
  This is not possible with fonts created by MetaFont, because neither Apple nor Microsoft adopted Knuth's formulas for outline fonts. TeX distributions still contain MetaFont, and an enormous number of fonts created for it over the years. But using these fonts brings many disadvantages, and for twenty years a major project in the TeX world has been modifying the system so it can use TrueType, Adobe Type 1, and OpenType fonts. Part of this project involved creating the LatinModern fonts, which are Adobe Type 1 versions of Knuth's Computer Modern Fonts, expanded to contain the symbols commonly used in Western Europe.
  
  You might think that such a replacement would involve an enormous rewrite of TeX itself, but that was not necessary. The original TeX program output a {\em device independent file}, that is, a dvi file. This file did not contain any fonts. Instead it contained instructions of the following form: 
- \begin{verbatim}
+\begin{verbatim}
       select font named "CM" of size "16 pt"
       print glyph 43 at position (23, 69)
       print glyph 68 at position (32, 69)
@@ -295,7 +307,7 @@ It is not necessary to read this manual linearly. Browse through it briefly to s
 
 \section{First Steps with \TeX\ and TeXShop}
 
-Go to \path{/Applications/TeX} and find TeXShop. Drag its icon to your dock. Click this icon to run the program. You will be presented with a blank window; at the top right of this window you'll find a pull down menu named ``Templates'', see Figure \ref{fig:edit}. From this menu choose ``LaTeX Template''. The blank window will fill with some standard boilerplate required in each \TeX\ source file. The red lines are comments which \TeX\ ignores.
+Go to \path{/Applications/TeX} and find TeXShop. Drag its icon to your dock. Click this icon to run the program. You will be presented with a blank window; at the top right of this window you'll find a pull down menu named ``Templates'', see \cref{fig:edit}. From this menu choose ``LaTeX Template''. The blank window will fill with some standard boilerplate required in each \TeX\ source file. The red lines are comments which \TeX\ ignores.
 
 \vspace{.2in}
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
@@ -325,7 +337,7 @@ When you have some material, hit the ``Typeset'' button at the top left of the w
 
 When \TeX\ typesets, it creates three or four additional files, so it is not a good idea to save directly to a location with many other files. Instead,   navigate to a reasonable location, say \path{~/Documents}, and then click the ``New Folder'' button at the bottom of the dialog. Accept the default name or choose another and create the folder. Then name the document and save it. The default ``Untitled'' name will do.
 
-As soon as you save, \TeX\ will typeset the document and open a second window showing the result, see Figure \ref{fig:TypesetWindow}.
+As soon as you save, \TeX\ will typeset the document and open a second window showing the result, see \cref{fig:TypesetWindow}.
 
 \begin{figure}[H] %  figure placement: here, top, bottom, or page
    \centering
@@ -379,7 +391,7 @@ The link \url{https://learnlatex.org} leads to a series of online \LaTeX\  lesso
 
 Another source is the first portion of George Gr\"{a}tzer's book \emph{More Math Into \LaTeX}. Gr\"{a}tzer gave permission to put this section in the TeXShop Help window, so you already have this as well.
 
-After reading one of these short works, I'd recommend starting to use the program for serious writing. This will be frustrating at first, and you'll probably want to buy one of the excellent books on \TeX\ for reference as you work. But don't ignore Google! A vast amount of information is available about \TeX\ and \LaTeX\ by asking succinct questions of Google. Try ``how do I type a url in LaTeX'' if you don't believe me.
+After reading one of these short works, I'd recommend starting to use the program for serious writing. This will be frustrating at first, and you'll probably want to buy one of the excellent books on \TeX\ for reference as you work. But don't ignore Google! A vast amount of information is available about \TeX\ and \LaTeX\ by asking succinct questions of Google. Try ``how do I type a URL in LaTeX'' if you don't believe me.
 
 \chapter{Behaviors Inherited from macOS}
 
@@ -2182,7 +2194,7 @@ If a document is locked, clicking on the title and unlocking the document makes 
 
 
 If you work on a document for several hours and then notice that a crucial paragraph or illustration is now gone, there is an easy way to recover. In the File menu, select the item ``Revert to'' and select the option ``Browse All Versions.'' 
-The Macintosh screen then switches to a Time Machine view showing the current document on the left and a receding stack of earlier views on the right, see Figure \ref{fig:RevertTo}. You can leaf through these earlier versions, noting the date and time that each was created. All of these views are alive, so you can copy and paste between versions, or restore an earlier version. This works even if you have not activated Time Machine. So it is a sort of ``personal Time Machine just for TeXShop''. 
+The Macintosh screen then switches to a Time Machine view showing the current document on the left and a receding stack of earlier views on the right, see \cref{fig:RevertTo}. You can leaf through these earlier versions, noting the date and time that each was created. All of these views are alive, so you can copy and paste between versions, or restore an earlier version. This works even if you have not activated Time Machine. So it is a sort of ``personal Time Machine just for TeXShop''. 
 
 %See the picture at the top of the next page for an illustration of ``Revert To''.
 %\newpage
@@ -2289,6 +2301,7 @@ I looked at the code in Preferences which controls the mysterious ``Change Page 
 
 \newpage
 \section{Preview Mouse Tools}
+\label{Preview_Mouse_Tools_Section}
 
 The Preview toolbar has an item determining the behavior of the mouse in the window. There are five choices:
 
@@ -2324,7 +2337,8 @@ The toolbar has two arrows pointing up and down for scrolling by a page, and two
 
 The Preview menu also has menu items to rotate individual pages clockwise or counterclockwise.
 
-\section{The Drawer and Two Search Fields} 
+\section{The Drawer and Two Search Fields}
+\label{Drawer_Section} 
 
 The Preview Window has an associated Drawer, which can be toggled visible or invisible with an item in the window toolbar or the first item in the Preview menu. This drawer appears on the right side of the window if there is room there, and otherwise on the left side of the window. It's contents are divided into two pieces. The top pieces shows an outline of the document, listing chapters, sections, and subsections if available. Clicking on an item takes you to that point in the actual  Preview Window. This top portion is blank if the pdf document does not contain an outline.
 Outlines are automatically created by the hyperref package in LaTeX. Here is a typical command to activate
@@ -2352,21 +2366,36 @@ The Preview Window has an alternate search tool in its toolbar. Enter an entry i
 
 \section{Following Links and URLs}
 
-The package hyperref can create links from one portion of a document to another. These links are active in the Preview window, so a reference to a theorem can be followed to the action theorem, a reference to the bibliography can be followed to the actual item, and so forth. In addition, url's are active, so clicking a url will open the corresponding page in Safari. 
 
-Hovering over various links will bring up a small view of the linked text. For instance, hovering over a section number in the table of contents will display the beginning of that section in the text. 
 
-Normally the popup is on screen for four seconds and then disappears.
-If the shift key is down at the end of these four seconds,
-the popup will remain on the screen until the mouse moves.
-For a larger version of the popup, hold down the option key
-before hovering over the link.
+The package hyperref can create links from one portion of a document to another. These links are active in the Preview window, so a reference to a theorem can be followed by a link to the actual text of the theorem, a reference to the bibliography can be followed by a link to the actual item in the bibliography, and so forth. In addition, URL's are active, so clicking a URL will open the corresponding page in your default browser.
 
-Normally the popup is shown just below the link in the text. But sometimes the author will want to compare what comes right after the link to the information in the popup. In that case, hold down the Command key before activating the popup. The popup window will then appear just above the link. This trick can be combined with the Shift and Option key tricks mentioned in the previous paragraph.
+The Backward/Forward arrows in the Preview window toolbar work  like similar arrows in Safari and other browsers. If you click on a link and jump to the linked page, the Backward arrow will take you back to the original page with the link, and the Forward arrow will take you again to the linked spot. These arrows maintain a ``stack of locations'', so if you follow several links, you can follow the chain backward to the original starting spot. 
+
+\section{Popup Windows and Hovering Over Links}
+\label{Popup_Windows_Section}
+Hovering over a link will bring up a small view of the linked text. For instance, hovering over a section number in the table of contents will display the beginning of that section in the text. 
+Normally the popup is on screen for four seconds and then disappears. This behavior can be changed with a
+modifier key, as explained below.
+
+There is a menu item in the Preview menu called ``Link Popups'', suggested by Uwe Schmock. This menu is a toggle turning the hover behavior on or off. When it is on, the menu item is checked. The hover behavior is on when windows are first opened.
+
+If you click in the contents of the Preview window while the Control key is down, a contextual menu opens. The ``Link Popups'' item is also in this contextual menu.
+
+\section{Modifying Popup Windows}
+\label{Modifying_Popup_Windows_Section}
+The details of the small window created by hovering over a link can be changed by holding down any combination of three modifier keys  before moving a mouse to the link. These modifying keys have been selected so their names give a mnemonic for the effect they create. The SHIFT key shifts the small window to appear above the link, rather than  below it. The COMMAND key commands that a bigger window with larger text be displayed. The OPTION key selects the optional behavior that the small window will remain on the screen until the mouse moves. (If a user forgets to push the option key, it can be pushed later; if it is down at the four second mark, the window will remain open.)
+
+
+
 
 \section{Too Much Magnification is Bad}
+\label{Too_Much_Magnification}
  
  One user liked to increase the default magnification significantly in the Preview Window, and in addition use the magnifying glass for extremely close inspection of fine details. This caused TeXShop to run out of memory and crash. TeXShop now protects itself by refusing to activate the magnifying glass if the default magnification is too large.
+ The default limit is a preview magnification of 250.
+On your own risk you can change it with a hidden preference,
+see the chapter on Hidden Preferences below.
  
 To understand the problem, it is useful to know how the magnifying glass works. When a user asks for the glass, TeXShop glues an extra view on top of the Preview window's content, but this view is transparent so the user does not notice that it is there. Then TeXShop creates an offscreen image of the entire active page being displayed on the screen. Next TeXShop reads the data from this offscreen image which is contained in a small rectangle centered on the mouse location, and draws this data to a larger rectangle in the transparent view. The result is a magnified view of the portion of the screen under the mouse; this magnified image is in the mostly transparent view rather than in the original Preview page.
 
@@ -3145,7 +3174,7 @@ which reads
 
 \chapter{Themes}
 
-TeXShop uses customizable colors for syntax coloring, for various window backgrounds, and for other purposes. In the original version of TeXShop, users could modify these colors with a fairly baroque set of preference items. Then in macOS Mojave, Apple introduced ``Lite Mode'' and ``Dark Mode'' and an entirely new set of colors was required. At that point the old color preferences were ripped out of TeXShop and replaced by the Themes tab in Preferences, see Figure \ref{fig:Theme}. While previously many colors could only be changed using  obscure hidden Preference settings, now all color choices are available in the Themes tab.
+TeXShop uses customizable colors for syntax coloring, for various window backgrounds, and for other purposes. In the original version of TeXShop, users could modify these colors with a fairly baroque set of preference items. Then in macOS Mojave, Apple introduced ``Lite Mode'' and ``Dark Mode'' and an entirely new set of colors was required. At that point the old color preferences were ripped out of TeXShop and replaced by the Themes tab in Preferences, see \cref{fig:Theme}. While previously many colors could only be changed using  obscure hidden Preference settings, now all color choices are available in the Themes tab.
 
 The Themes portion of Preferences is shown on the next page. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others will be explained shortly. A full set of such choices is called a "Theme". TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave and above. The second menu sets the theme used in Dark Mode on Mojave and above. The final menu sets the theme which Preferences is currently editing.
 
@@ -3222,26 +3251,66 @@ Thus the source and preview windows can be split horizontally, with one portion 
 or vertically, with one portion to the left of the other.
 Pushing the option key while clicking the split window toolbar item has the same effect.
 
+\section{The Active View in a Split Window}
+\label{Active_View_Split_Window}
+
+We  begin this section with a concept well-known to Macintosh programmers, but perhaps not to users. Suppose your Macintosh is in use and you type on the keyboard. How does the Macintosh know where to send those keystrokes? Which window should receive them? Which view of a split view? 
+
+It turns out that at any moment the Macintosh has selected a ``first responder''. 
+This is the object that first learns of keystrokes.  This first responder is the beginning of a chain of more and more general responders. Suppose, for instance, that the Preview window has been split and its drawer is open. Then
+the active view could be the top view, or the bottom view, or the drawer. Suppose it is the drawer. Then any keystroke will first go to that drawer. But if the drawer cannot use the keystroke, it passes down the chain to the next object, which might be the view associated with that drawer. If the view in turn cannot use the keystroke, it passes further down the chain, perhaps to the window containing the view. If this window cannot use the keystroke, then the keystroke is lost and does nothing.
+
+The first responder will change as a user works. Often this happens when the user clicks on a different view. If a Preview window has a split view and an open drawer and the user clicks on the bottom view, then that view becomes first responder. After that, keystrokes never reach the drawer or the top view. Instead they pass to the bottom view, and from that view to the entire window. All of this is complicated and  but works  ``automatically'' without even the programmer knowing the details of these responder chains.
+
+Similarly when the Source window is split, then it has two views and either could be the active view. In a split Source window,   the active view is the view showing the cursor. To make a particular view active, click on it.
+
+With this background, let us consider a concrete case. Suppose both the Source and Preview windows have been split and the Preview window has an open drawer. Suppose we are editing our document and going back and forth between source and preview using synctex. To make this work, we must select one of the two views in the Source window and click on it. That view now has a cursor. Similarly we must select one of the two views in the Preview window and click on it. This time there will be no particular indication that this view is active. Now we can use synctex between the active Source view and the active Preview view. 
+
+We have to be careful not to accidentally click in the inactive view in these windows. If we do, synctex results will begin appearing in unexpected places. If we accidentally click on the drawer, it will become the active view and synctex responses will vanish because that view cannot accept them.
+
+Here's another concrete case. Suppose the Preview window is split and its drawer is open. When we click in this drawer, it becomes the active view. We can use it to select chapters and sections in one of the two split views. 
+Suppose it starts selecting chapters in the top view, but we want it to select chapters in the bottom view. To make that happen, click on the bottom view, and then click on the drawer. When we clicked on the bottom view, it temporarily became the active view, but this had the side effect of associating that view with the drawer. When we clicked on
+the drawer again, it became the active view, but now it selects chapters in the bottom view.
+
+When the drawer is active and we select a chapter in the drawer, it is marked in blue. This blue banner indicates that the drawer is still the active view. If we then click in the related view, that view becomes active and the blue in the drawer turns to gray to indicate that the drawer is no longer active. But as we scroll through different sections of our document, the drawer shows new chapters and sections as we scroll through them, always in gray. 
+
+When the chapters in the drawer's outline view are numbered, several keyboard shortcuts are available in the
+drawer. If you type Option-1, the drawer will select the first chapter. If you type Option-2 followed by Option-0, the drawer will switch to Chapter 20. Type Option-UpArrow to select the first item and Option-DownArrow to select the last item. Type Option-1.5 to select Chapter 1, Section 5. If Chapter 3 is selected, Option-RightArrow will open sub-levels and Option-LeftArrow will close sub-levels. Although these keystrokes select drawer items, it is still necessary to click these items to make the associated view scroll to them.
+
+There is a final item related to responders and active views. If the source window is split and we then unsplit it, the active view in the Source window will expand and become the contents of the unsplit window. So if the top portion is active and
+then we unsplit the window, we'll see that top portion. But if the bottom portion is active and then we unsplit the
+window, we'll see that bottom portion.
+
+The Preview window does not work this way. Instead, the top view of a split window always becomes the view we see when we unsplit the window. So a slightly different philosophy guides the Preview window. The top view is the important piece, which will  appear whether or not we split the window. The bottom view is the secondary material, which we see only when the window is split.
+
+There are rare situations when we want the bottom portion of the Preview window to become the primary view after we unsplit. And for that, there is a special command.
+
+%There is a final interesting interaction. Select a chapter in the drawer and then type Option-2. This command does not switch the two views, because the first responder is the drawer rather than the Preview Window. Instead it selects chapter 2. But if we click in either view, then that view becomes first responder. After that when we type Option-2, this keystroke goes to the view rather than the drawer. Neither view understands Option-2, so the keystroke passes on down to the Preview Window. The Preview Window does understand Option-2 as a shortcut for ``Switch Views'' and switches the views.
+%
+%To summarize, if Option-2 fails to switch the views in split view mode when a drawer is visible, click in one of the
+%two views and then try again.
+
+
 \section{Switching Views}
 
 The Window menu contains another item named ``Switch Views''.  This item is only active when the
 Preview Window is active. It switches the top and bottom views of a split window, or the left and right views
 of a split window. This is useful because when the Preview Window is unsplit, the top view becomes the
 active view. Using ``Switch View'' first allows either view to become the active window when the window is
-unsplit. 
+unsplit.
 
-The mechanisms used to split the Source Window and the Preview Window differ under the hood,
-so it is not easily possible to make this item work in the Source Window.
+\newpage
+This feature is not available for the Source Window because it is not needed there. When the source window has been split into two views, the  view with the cursor will become the active window when the window is unsplit.
 
-\section{Switching Full Views}
+If ``Switch Views'' is used several times in a row, the images will slowly creep up or down, rather than returning to their exact starting positions. This creep is difficult to eliminate and irrelevant, 
+because the command is designed to be used just once in the rare case that the bottom view in the
+Preview window should become the main view after unsplitting.
 
 
-The ``Switch Views'' menu item also works when the Preview window is active and unsplit, and this use case may prove to be  more  important than the original reason for introducing the command. Suppose you want to work on two related portions of a document. In TeXShop's Preview Window, do not split the view. Instead, just scroll to one of the two interesting portions of your document. Then select ``Switch Views'' and scroll to a second related section of the document. You can now switch between these two portions using the Window menu ``Switch Views'', which has a keyboard shortcut Option-2. 
+\section{Revising the Document and Typesetting}
 
-So your document can have two active portions and you can switch between them with Option-2. 
-Although ``Switch Views'' does not work in the Source window, you can easily edit and revise the two related portions of your document because sync works between the two Preview views and the source file. Suppose text in one of the two portions needs revision. Sync from that text to the source, edit the source, and typeset.
+When the preview window is split, it is still easy to revise the source for either view and then typeset to see the result in Preview.  Click on either view and use synctex to find the corresponding spot in the source. Edit the source. Typeset. The revision will appear in both views of the split Preview window.
 
-The new command is not perfect. The two views may creep gradually when switched, so a little adjustment with the scroll bar might be needed after switching views. The creep depends on window size and monitor size and may be acceptable for some configurations and not acceptable for others. It may be possible to improve this aspect in future versions of TeXShop.
 
 \section{Changing the Display Format While Using Switch Views}
 
@@ -3249,36 +3318,367 @@ TeXShop configures the way documents are displayed using two preference items, c
 
 After such a document is opened, the preference items can be changed for any particular Preview window using items in the Preview menu. These choices are temporary while the document is being used, but revert back to the default choices for new documents.
 
-When the Preview window is not split, the menu items ``Display Format'' and ``Magnification'' affect both views simultaneously. So if you change the magnification of the current view, and later use ``Switch Views'', the second view will also use the new magnification level. If you switch to ``Double Page'' mode in the current view and later use ``Switch Views'', the second view will also be in Double Page mode.
+When the Preview window is not split, the menu items ``Display Format'' and ``Magnification'' affect both views simultaneously. So if you change the magnification of the current view, and later split the window, both views will use the new magnification level. If you switch to ``Double Page'' mode in the current view and later split the window, both views will be in Double Page mode.
 
-When the Preview window is split so both views are shown simultaneously, ``Display Format'' and ``Magnification'' changes made to the top view affect the entire document as above. Thus if the window is later unsplit, the changes will hold in the entire document, and also apply after ``Switch Views'' is used.
+When the Preview window is split so both views are shown simultaneously, ``Display Format'' and ``Magnification'' changes made to the top view affect the entire document as above. Thus if the window is later unsplit, the changes will hold in the entire document.
 
 However, when the Preview window is split so both views are shown simultaneously, ``Display Format'' and ``Magnification'' changes made to the bottom view will only apply to that portion of the split window, and only as long as the window remains split. This slight design inconsistency makes it possible for a user working with two sections of the document to temporarily magnify the bottom section and inspect fine details without propagating that magnification change to the rest of the interface.
 
-\section{Interacting with Split Preview Windows and a Drawer}
+\section{Avoiding Creep When Unsplitting}
 
-An interesting and rather complicated interaction occurs when the Preview window is split and the drawer for this window is open. To describe this interaction, we introduce a concept well-known to Macintosh programmers, but perhaps not to users. Suppose your Macintosh is in use and you type on the keyboard. How does the Macintosh know where to send those keystrokes? Which window should receive them? Which view of a split view? If the drawer of a window is open, should the keystroke go to the drawer or the window?
+When splitting the Preview window was introduced, we imagined that users faced with writing related sections of a document would split the window and  work in split mode constantly without unsplitting. To our surprise, a few users
+worked in a different way; they alternated between working with the split window and working with the unsplit top portion. These users noticed that when a document was split and then unsplit, the display  did not return to the exact starting spot, but instead crept up or down by several lines. If the two commands were cycled again and again, each cycle produced an additional creep. This became annoying. 
 
-It turns out that at any moment the Macintosh has selected a ``first responder''. 
-This is the object that first learns of keystrokes.  This first responder is the beginning of a chain of more and more general responders. If the first responder is the drawer attached to a window, the keystroke goes to that drawer. But if the drawer cannot use the keystroke, it passes down the chain to the next object, which might be the view associated with that drawer. If the view in turn cannot use the keystroke, it passes further down the chain, perhaps to the window containing the view. If this window cannot use the keystroke, then the keystroke is lost and does nothing.
+The problem did not occur in Single Page or Double Page display modes, but only in Multipage and Double Multipage modes. It did not occur when the window was split vertically, but only when it was split horizontally. In TeXShop 5.25, this problem was fixed by a slight design change. Just before splitting a window horizontally, the program records the position of its scroll bar. When the window is unsplit, the view returns to that recorded scroll bar position.
+This virtually eliminates the creep, but at a slight cost. When the user splits the window and then scrolls the top portion, unsplitting does not return to the new scroll position of the view, but instead to the original position before splitting. (This only happens when splitting horizontally in Multipage and Double Multipage modes.)
 
-The first responder will change as a user works. Often this happens when the user clicks on a different view. If a Preview window has a split view and an open drawer and the user clicks on the bottom view, then that view becomes first responder. After that, keystrokes never reach the drawer or the top view. Instead they pass from the bottom view to the entire window. All of this is complicated and often works ``automatically'' without even the programmer knowing the details of these responder chains.
+It is easy to get around this problem. Suppose you want to scroll the top portion of a split window to a new ``permanent position.'' Unsplit the window, scroll to the new position, and split it again. The lower half will not change, but the upper half will now remember its new position.
 
-Consider now the following example. Suppose a preview window is active and contains two split views and an open drawer. Suppose the drawer is showing the various chapters of a document, and these chapters are numbered. If you select the second chapter of your document in the drawer, the top view will scroll to the start of this second chapter, and the drawer will mark the second chapter in blue. That blue mark indicates that the drawer is still the first responder.
+\section{Two Options When Splitting Horizontally}
+\label{Options_Splitting_Horizontally_Section}
 
-When the chapters in the drawer's outline view are numbered, several keyboard shortcuts are available in the
-drawer. If you type Option-1, the drawer will select the first chapter. If you type Option-2 followed by Option-0, the drawer will switch to Chapter 20. Type Option-UpArrow to select the first item and Option-DownArrow to select the last item. Type Option-1.5 to select Chapter 1, Section 5. If Chapter 3 is selected, Option-RightArrow will open sub-levels and Option-LeftArrow will close sub-levels. Although these keystrokes select drawer items, it is still necessary to click these items to make the associated view scroll to them.
+ Two special variations have been added to the split window command in horizontal mode. Most users should ignore these variations, but one or two users may find them helpful. If the shift and control keys are held down when the Split Window menu is selected or the corresponding tool is checked, the window is forced to split so the lower and upper views are the same size. If just the shift key is held down in the same situation, the two views are forced to have the same size and to contain the same material. 
+ 
+ The first of these variations may be useful for users who rarely move the split bar and never change the magnification of either view. These users probably already have a stable situation without creep.
+In those rare cases when they do move the split bar (and pay with additional creep), the option takes them back to the stable situation. 
 
-But how do we select items in the bottom view? To do that, click in the bottom view. Notice that the blue selection band in the drawer changes to gray. So the drawer is no longer first responder; instead the bottom view is first responder. This action made another invisible change. It sent a message to the drawer's contents linking them to the second view. Now chapters and sections can be selected in the second view.
-
-There is a final interesting interaction. Select a chapter in the drawer and then type Option-2. This command does not switch the two views, because the first responder is the drawer rather than the Preview Window. Instead it selects chapter 2. But if we click in either view, then that view becomes first responder. After that when we type Option-2, this keystroke goes to the view rather than the drawer. Neither view understands Option-2, so the keystroke passes on down to the Preview Window. The Preview Window does understand Option-2 as a shortcut for ``Switch Views'' and switches the views.
-
-To summarize, if Option-2 fails to switch the views in split view mode when a drawer is visible, click in one of the
-two views and then try again.
-
+The second variation was created for a user who lectures directly from a screen showing typeset course notes. He typically shows a full page view of the notes, scrolling through each day's material. But when he comes to a theorem, he splits the screen using the second variation. The theorem remains in the upper view, so students can refer back to it and recall the assumptions required for the conclusion. Meanwhile the lower view can be scrolled to show example applications of the theorem and then key steps of the proof. 
 
 
+\section{Splitting Vertically}
 
+If the Option key is held down when a window is split, the split is vertical. This mode works as expected provided you know what to expect. When a window is split, the original single full window's contents are placed in the left vertical side. Since vertical sections are narrower than before,  more pages are shown. The original unsplit page is at the bottom of this display rather than the top. This is by design. Similarly when the window is unsplit, the bottom portion of the left side will become the new single window. This is also by design. If the left side is scrolled during the split phase, the new material at the bottom of the left side will become the full window after unsplitting. 
+
+\section{Final Note}
+
+A few users told us that as soon as something unexpected happened when splitting a window, they stopped using the feature for fear that the underlying pdf file would be damaged. So a word of reassurance is in order. None of these display modifications are written back to the pdf file. They only affect how TeXShop displays the file. If TeXShop does something strange, the file is perfectly safe. Retreat to full window mode and proceed as if nothing happened. If you like, write us to explain the surprise behavior. Then relax. 
+%\section{Changing the Display Format While Using Switch Views}
+%
+%TeXShop configures the way documents are displayed using two preference items, called ``Display Format'' and ``Magnification''. Typical display formats are Single Page, Double Page, MultiPage, Double MultiPage. Typical magnification choices are Fit to Window, Actual Size, and Fixed Magnification. These items can be selected in TeXShop Preferences, and then affect  Preview windows when they first open.
+%
+%After such a document is opened, the preference items can be changed for any particular Preview window using items in the Preview menu. These choices are temporary while the document is being used, but revert back to the default choices for new documents.
+%
+%When the Preview window is not split, the menu items ``Display Format'' and ``Magnification'' affect both views simultaneously. So if you change the magnification of the current view, and later use ``Switch Views'', the second view will also use the new magnification level. If you switch to ``Double Page'' mode in the current view and later use ``Switch Views'', the second view will also be in Double Page mode.
+%
+%When the Preview window is split so both views are shown simultaneously, ``Display Format'' and ``Magnification'' changes made to the top view affect the entire document as above. Thus if the window is later unsplit, the changes will hold in the entire document, and also apply after ``Switch Views'' is used.
+%
+%However, when the Preview window is split so both views are shown simultaneously, ``Display Format'' and ``Magnification'' changes made to the bottom view will only apply to that portion of the split window, and only as long as the window remains split. This slight design inconsistency makes it possible for a user working with two sections of the document to temporarily magnify the bottom section and inspect fine details without propagating that magnification change to the rest of the interface.
+%
+%\section{Interacting with Split Preview Windows and a Drawer}
+%
+%An interesting and rather complicated interaction occurs when the Preview window is split and the drawer for this window is open. To describe this interaction, we introduce a concept well-known to Macintosh programmers, but perhaps not to users. Suppose your Macintosh is in use and you type on the keyboard. How does the Macintosh know where to send those keystrokes? Which window should receive them? Which view of a split view? If the drawer of a window is open, should the keystroke go to the drawer or the window?
+%
+%It turns out that at any moment the Macintosh has selected a ``first responder''. 
+%This is the object that first learns of keystrokes.  This first responder is the beginning of a chain of more and more general responders. If the first responder is the drawer attached to a window, the keystroke goes to that drawer. But if the drawer cannot use the keystroke, it passes down the chain to the next object, which might be the view associated with that drawer. If the view in turn cannot use the keystroke, it passes further down the chain, perhaps to the window containing the view. If this window cannot use the keystroke, then the keystroke is lost and does nothing.
+%
+%The first responder will change as a user works. Often this happens when the user clicks on a different view. If a Preview window has a split view and an open drawer and the user clicks on the bottom view, then that view becomes first responder. After that, keystrokes never reach the drawer or the top view. Instead they pass from the bottom view to the entire window. All of this is complicated and often works ``automatically'' without even the programmer knowing the details of these responder chains.
+%
+%Consider now the following example. Suppose a preview window is active and contains two split views and an open drawer. Suppose the drawer is showing the various chapters of a document, and these chapters are numbered. If you select the second chapter of your document in the drawer, the top view will scroll to the start of this second chapter, and the drawer will mark the second chapter in blue. That blue mark indicates that the drawer is still the first responder.
+%
+%When the chapters in the drawer's outline view are numbered, several keyboard shortcuts are available in the
+%drawer. If you type Option-1, the drawer will select the first chapter. If you type Option-2 followed by Option-0, the drawer will switch to Chapter 20. Type Option-UpArrow to select the first item and Option-DownArrow to select the last item. Type Option-1.5 to select Chapter 1, Section 5. If Chapter 3 is selected, Option-RightArrow will open sub-levels and Option-LeftArrow will close sub-levels. Although these keystrokes select drawer items, it is still necessary to click these items to make the associated view scroll to them.
+%
+%But how do we select items in the bottom view? To do that, click in the bottom view. Notice that the blue selection band in the drawer changes to gray. So the drawer is no longer first responder; instead the bottom view is first responder. This action made another invisible change. It sent a message to the drawer's contents linking them to the second view. Now chapters and sections can be selected in the second view.
+%
+%There is a final interesting interaction. Select a chapter in the drawer and then type Option-2. This command does not switch the two views, because the first responder is the drawer rather than the Preview Window. Instead it selects chapter 2. But if we click in either view, then that view becomes first responder. After that when we type Option-2, this keystroke goes to the view rather than the drawer. Neither view understands Option-2, so the keystroke passes on down to the Preview Window. The Preview Window does understand Option-2 as a shortcut for ``Switch Views'' and switches the views.
+%
+%To summarize, if Option-2 fails to switch the views in split view mode when a drawer is visible, click in one of the
+%two views and then try again.
+%
+%
+
+\chapter{Switching Preview Views}
+
+\section{Back and Forward Arrows}
+\label{Back_Forward_Arrows_Section}
+
+\TeX\ documents can  contain related pieces of information in widely separated document locations. For instance, a reference in the text may be linked to an item in the bibliography, and a proof in one chapter may refer  to a theorem from an earlier chapter. In situations like these, it can be useful to edit both items at the same time, scrolling back and forth between the two locations. TeXShop has several features to make this task easier.
+
+The first of these comes from Web browsing. Web pages often have links to other sections or other pages and users navigate from one link to the next. A set of Back/Forward arrows keep track of this navigation and allow users to return to earlier links, or revisit later ones. This set is different than the Page Up/ Page Down pair, which navigate by page number.
+
+The hyperlink package provides links for a TeX document; this document can then be navigated from link to link using the Back/Forward arrows. This sort of navigation is easy to learn since it replicates an experience already familiar while browsing the web.
+
+Another tool to handle related sections is splitting the Preview window, as discussed in the previous chapter. 
+
+
+\section{Switch Views}
+
+The ``Switch Views'' menu item used when Preview windows are not split provides yet another way to handle related sections of a document, although it only navigates between two views. We already discussed this menu item for split Preview windows. But the use case when windows are not split may prove to be  more  important than the original reason for introducing the command. Suppose you want to work on two related portions of a document. In TeXShop's Preview Window, do not split the view. Instead, just scroll to one of the two interesting portions of your document. Then select the menu item ``Switch Views'' or type its keyboard shortcut Option-2, and scroll to a second related section of the document. You can now switch between these two portions using ``Switch Views'' or Option-2. 
+
+Although this operation is a variant of splitting the Preview window, it is better to think of it as an entirely independent way to make use of the small amount of window space available when several documents are open at once. Some users may split the Preview window but never use this variant. Others may use the variant and never split a window.
+
+Although ``Switch Views'' does not work in the Source window, you can easily edit and revise the two related portions of your document because synctex works between the two Preview views and the source file. Suppose text in one of the two portions needs revision. Sync from that text to the source, edit the source, and typeset.
+
+When this command was  introduced in TeXShop 5.23, it had a  ``creep problem''. The two views would creep up gradually when switched. This problem has been  fixed in TeXShop 5.25.
+
+The two views are not fixed; they can be scrolled if desired. So while one view is visible, we can scroll down to a new position. Then Option-2 will produce the second view. If we use Option-2 again, we'll go back to the newly scrolled position.
+
+\newpage
+\section{Independence from Split Window}
+\label{Independence_Split_Window_Section}
+
+When this feature was  introduced in TeXShop 5.23, the two views for the full window were also the two views displayed by splitting the window. This is no longer the case. Instead if either of the views for the full window is split, it will become the top view of the split window. The bottom view of this window is a completely separate view, which
+can be scrolled to any position desired. Unsplitting the window returns to the original view before it was split.
+If we then type Option-2 to get the second full view and then split that view, the second full view will appear as the top view of the split window, and the bottom view will be the same view obtained when we first split. This means that
+users who use the new Switch Preview Views feature can also use the older Split Window feature. Then they will deal with three independent views, the two views for the full window (which become the top view when splitting),
+and the bottom view when either view is split.
+
+Any ``Display Format'' and ``Magnification'' change made to a switched Preview Window affects both views. Thus
+if the window is changed to Double MultiPage mode and later switched with Option-2, the new view will also be
+in Double MultiPage mode. Small adjustments of the alternate view may be needed after switching to it for the first time with Option-2, but changing Display Format or Magnification is rarely done in the middle of an editing session, so the adjustment should not be annoying.
+
+\chapter{Presenting with TeXShop (Schmock)}
+\label{PresentingWithTeXShopChapter}
+
+\section{Introduction (Koch)}
+\label{PWT_Introduction}
+When TeXShop was first released at the turn of the century, visiting colloquium speakers at the University of Oregon sometimes connected their portable Macintosh to the projector and lectured directly from the program. That was fun for me, but it didn't last long. Mathematicians soon discovered {\em beamer}, which makes it easy to construct slides using \LaTeX. Presenting at another place probably means that you have to use a computer of your host institution, running on a different operating system, and maybe even in a language not familiar to you. Then it's usually best to create PDF slides with beamer or  another \LaTeX\ slide package. If possible, email them to the organizer in advance so the organizer can test whether everything works. Carry a USB stick with the PDF slides as a backup.
+Hopefully, you will get a remote control with back/forward buttons and a laser pointer (but bringing your own with a set of spare batteries is a good idea).
+
+If you are the only speaker or if you are supposed to teach a minicourse, then it's reasonable to inquire if you'll be able to connect your  portable to the projector. If the answer is yes,  then bring your Macintosh and  your own set of adaptors. You may be tempted to use Apple's Keynote and its spectacular transition effects. In that case, investigate
+the shareware program {\em Présentation.app} by Renaud Blanch, which can convert Beamer output to Keynote format. See \url{http://iihm.imag.fr/blanch/software/osx-presentation/}. 
+
+The covid pandemic brought to the foreground an entirely new set of issues as faculty members rapidly transitioned to teaching remotely using {\em Zoom} and other tools. Luckily, I was retired by then. It is a complete mystery to me how faculty managed to cope with this calamity, and it would be ridiculous for me to offer advice for that situation.
+
+More recently, I began to get requests from Uwe Schmock in Vienna, Austria, who was using TeXShop as a presentation tool while lecturing from an elaborate set of typeset notes he had written for the course and expanded during the covid pandemic.  He requested additional features in TeXShop to make this process smoother. 
+
+The students had a copy of those notes on their own machines, and could follow along during the lecture. Lecturing directly from a typeset article is dangerous because the speaker is tempted to scroll rapidly from one spot to another as students ask questions or  unexpected connections between theorems suddenly pop to mind. Watching rapid scrolls during a lecture is mind-numbing. But Schmock had tricks up his sleeve to avoid such scrolls. For example, when the lecture notes were straightforward, he would show full pages of the Preview window and talk his way through key points. But when a new theorem appeared, he would split the screen so the theorem remained in the top portion for easy reference, and slowly scroll the bottom half as he discussed major points in the proof. This allowed him to scroll past trivial calculations in the bottom view, and then stop as the next key idea in a proof emerged. 
+
+This use of the program was so unexpected that I asked Schmock to write a chapter of the manual describing what he does in detail. His chapter follows.
+
+\section{Presenting (Schmock)} 
+
+
+When it comes to presentations, you might think of creating and showing slides using commercial software, like Apple's \href{https://en.wikipedia.org/wiki/Keynote_(presentation_software)}{Keynote} or \href{https://en.wikipedia.org/wiki/Microsoft_PowerPoint}{Microsoft PowerPoint}.
+You might prefer free software, \LaTeX, and slides in PDF.
+For presenting the PDF slides, the full screen mode of Apple's \href{https://en.wikipedia.org/wiki/Preview_(macOS)}{Preview}, \href{https://en.wikipedia.org/wiki/Skim_(software)}{Skim}, the free Acrobat Reader, as well as the commercial \href{https://en.wikipedia.org/wiki/Adobe_Acrobat}{Adobe Acrobat} are possible choices.
+The aim of this chapter is to show that TeXShop -- in tandem with \LaTeX's \texttt{hyperref} package -- has some unique features, which can make it your top choice for not just creating PDF files (including slides) but also for presenting them.
+
+When presenting PDF documents, there are several situations and settings.
+The type of document can be
+\begin{enumerate}
+\item\label{PWT_PDF_Slides}
+PDF slides, preferably created with \LaTeX's \begin{verbatim}     \documentclass{beamer}\end{verbatim},
+\item\label{PWT_Given_PDF}
+a given PDF file, which you might be able to edit,
+\item\label{PWT_LaTeX_Source}
+a PDF file, for which you can modify the \LaTeX\ source code.
+\end{enumerate}
+Furthermore, there are at least three variants of presentation:
+\begin{enumerate}[label={(\alph*)}]
+\item
+\label{PWT_Other_Computer}
+Presentation at another place, like an invited or contributed talk at some university or conference. 
+\item
+\label{PWT_Connect_To_Beamer}
+Presentation in a class room or lecture hall, where you can connect your mobile computer directly to a projector and display your entire screen.
+\item
+\label{PWT_Online}
+Online presentation with proprietary software like \href{https://en.wikipedia.org/wiki/Skype}{Skype} or commercial software like \href{https://en.wikipedia.org/wiki/Zoom_(software)}{Zoom} or \href{https://en.wikipedia.org/wiki/Microsoft_Teams}{Microsoft Teams}, where you can share a specific window.
+\end{enumerate}
+
+Case \ref{PWT_Other_Computer} is off topic for my part, because TeXShop is not used for presentation, and \cref{PWT_Introduction} above already contains the usual advice.
+
+In the following I will not give a detailed tutorial for using TeXShop in all remaining combinations.
+Instead, here is a list of remarks and hints, which you can apply, combine, and adjust as you please.
+Let's start with some general remarks:
+\begin{itemize}
+\item
+Remember that some people in your audience might not have perfect eye sight or might not get a place in the lecture hall which gives them a good view of your presentation. Aim for a larger magnification and don't present too much on a single slide and not an entire page of a paper.
+Make use of your entire screen real estate.
+\item
+If you want to convey mathematical ideas or even a proof, don't distract your audience with too much action on the screen, and give them time to grasp the results before removing them from their view.
+Slow scrolling might be a compromise when compared to waiting and changing the slide abruptly.
+\item
+When using the traditional method of writing with chalk on a blackboard, it is a challenge to present the material quickly.
+When you present online or with a projector, the opposite is true.
+So try hard to limit yourself and don't present more theory than you could cover with the traditional method. Instead, show pictures, drawing, examples, etc.
+\item
+Before you begin a presentation with your computer:
+\begin{itemize}
+\item
+Quit all applications you don't plan to use, close all TeXShop and Finder windows you don't need, and clean up your desktop. In case \ref{PWT_Online} this makes selecting windows easier, and it protects your privacy is case you share your screen.
+\item
+Switch off various notifications under ``System Settings...'' $\to$ ``Notifications'', and check -- and possibly adjust -- under ``System Settings...'' $\to$ ``Lock Screen'', the time until the screen saver starts or the display is turned off. 
+Questions and discussions during or after the presentation can take a lot of time.
+\item
+If you plan to use the mouse pointer, go to ``System Settings...'' $\to$ ``Accessibility'' and increase the ``Pointer size'' above its normal size for better visibility.
+\end{itemize}
+\end{itemize}
+Now let's look at TeXShop-specific issues. 
+First for the presentation of slides (case \ref{PWT_PDF_Slides}).
+\begin{itemize}
+\item
+With the Preview window in front, go in the Preview menu to the item ``Magnification'' and select ``Fit to Window''.
+Similarly, in the item ``Display Format'' select ``Single Page'' (this step can also be done with the context menu).
+Then the full screen mode works best (click the green button of the traffic light).
+\item
+When the slides were created with document class beamer, then -- depending on the packages used -- internal links are created.
+However, if you use the mouse pointer, TeXShop's hover preview can be disturbing during the presentation.
+Use the toggle called ``Link Popups'' from TeXShop's Preview menu (or use the context menu of the Preview window) to switch them off, see also \cref{Popup_Windows_Section}.
+\end{itemize}
+
+When presenting online, see case \ref{PWT_Online}, there are advantages to sharing only the Preview window.
+\begin{itemize}
+\item
+All other windows and the desktop remain your private territory.
+\item
+If the toolbar of the Preview window shows the icons as well as the descriptions, control-click into the toolbar and select ``Icon Only'' from the context menu to recover some screen space. 
+\item
+The drawer of the Preview window (see \cref{Drawer_Section}) counts as a separate window and is not automatically shared together with it.
+So the drawer can be used for navigation (but read \cref{Active_View_Split_Window} and always click into the Preview window after using the drawer to avoid surprises).
+With the back and forward arrows (see \cref{Back_Forward_Arrows_Section}) of the Preview window's toolbar, you can easily navigate like in a browser window.
+In case \ref{PWT_LaTeX_Source}, you can add further entries to the drawer by using
+\begin{verbatim}     \pdfbookmark{Drawer entry}{Label name}\end{verbatim}
+at the desired places.
+I always add at least the Table of Contents -- see this manual's drawer -- for easier navigation. 
+\item
+Recall from \cref{Independence_Split_Window_Section} that the Preview window has three separate views, including two full views.
+Hence you can scroll to a figure in the Preview window, select ``Switch Views'' from the Window menu, and scroll to the beginning of your presentation.
+When the time arrives to show the figure, you press the keyboard equivalent Option-2 and the figure magically appears (under the assumption that you didn't change ``Display Format'' or ``Magnification'' in between).
+You don't have to stop sharing and start sharing again!
+\item
+By default, I use the mouse pointer for the Preview window.
+In the ``Change Mouse Mode'' icon of the toolbar, it is the second choice (text selection), see \cref{Preview_Mouse_Tools_Section}.
+Highlighting text by selecting it works fine, but can produce confusing results with bigger displayed formulas, so you should check these critical cases in advance.
+\end{itemize}
+
+When you have lecture notes for teaching a class (or a typeset solution of an exercise you present to your fellow students), then you can present these instead of taking the time to create additional slides (and to avoid the hassle to keep the slides current when you update the lecture notes).
+In this setting you can profit a lot from TeXShop's features!
+\begin{itemize}
+\item
+With the Preview window in front, go in the Preview menu to the item ``Magnification'' and select ``Fit to Window'', which acts like a ``Fit to Width''.
+If this is not large enough, then use ``Zoom In'' from ``Magnification'' or the context menu, the keyboard equivalent Shift-Command-+, or use the ``Scale'' field in the toolbar.
+Similarly, in the item ``Display Format'' select ``MultiPage'' (in the context menu, Apple's default name ``Single Page Continuous'' is used for the same functionality).
+\item
+In case \ref{PWT_LaTeX_Source}, there is another way so that ``Fit to Window'' is fine, and ``MultiPage'' is actually more useful in case a statement or a longer proof is interrupted by a page break: Remove most of the white space around the text without changing the line or page breaks (so the participants following your presentation an easily find the location to annotate their copy of the lecture notes).
+This manual, for example, uses
+\begin{verbatim}
+     \documentclass[11pt, oneside]{book}
+     \usepackage[letterpaper]{geometry}  
+\end{verbatim}
+In the log file I find
+\begin{verbatim}
+     \textwidth=430.00462pt
+     \textheight=556.47656pt
+\end{verbatim}
+For removing most the white border but keeping the headline, I would use slightly increased values for the paper size and add a line containing something like 
+\begin{verbatim}
+     \geometry{papersize={450pt,610pt}, textwidth=\textwidth,
+     textheight=\textheight, centering, vmarginratio={4:1}}
+\end{verbatim}
+to get a version of this manual for presentation.
+This ad hoc intervention does the job, and you don't have to fiddle around with the magnification during the presentation.
+
+Note that in this process the magnification in the Preview window might get so large that the magnifying class stops working, see \cref{Too_Much_Magnification} for details.
+\item
+When you present a proof, you will probably refer to previous results, equations, definitions, etc.
+\emph{Here TeXShop's exceptional hover preview comes into play, see \cref{Popup_Windows_Section,Modifying_Popup_Windows_Section}.}
+Make sure that the item ``Link Popups'' is checked in the Preview menu.
+If there is an internal link created by the \texttt{hyperref} package, then there will be a popup window below the link when you hover over it, reminding your audience about what is used at this stage of the proof.
+If this popup window covers something important, press the shift key when hovering over the link to shift the window up.
+By default, the popup window disappears after four seconds or when you move the mouse.
+This is probably long enough for you, but not for your audience.
+So exercise the option to display the popup window longer by pressing the option key when hovering over the link or when the four-seconds timer is about to run out.
+When the default popup window it too small -- no problem.
+You are in command, so press the command key when hovering over the link for a larger window!
+Of course, any combination of the three modifier keys also works as expected.
+
+If the above mnemonics for the modifier keys don't work for you, fix a sticky note to your keyboard.
+
+The position of the popup window is mostly relative to the location where you enter the active area of the link.
+Hence a shifted vertical placement of the popup window (by about a baseline skip) is easy and sometimes helpful.
+
+It's your responsibility to arrange by scrolling for sufficient vertical space so that the interesting part of the popup window is visible, in particular when you use the shift key for an upper placement.
+If you use the option for an extended duration of the popup view, then there is enough time for a careful gesture on the trackpad to ``scroll'' the preview including the popup. 
+\item
+In case \ref{PWT_LaTeX_Source}, make sure to place an internal link to every previous location in the order you want to show these.
+\item
+Sometimes during online teaching, case \ref{PWT_Online}, you might be tempted to use the mouse pointer to explain a correspondence between aspects in the popup window and the current situation  -- however, this doesn't work, because the popup window disappears as soon as you move the mouse.
+There is no old-fashioned stick or modern laser pointer to help you out.
+However, here is a solution, see also \cref{Options_Splitting_Horizontally_Section}: Scroll the Preview so that the link is in the upper half of the window.
+Hold down the shift key and toggle ``Split Window'' in the Window menu (or the context menu) or click in the toolbar the symbol consisting of two rectangles stacked on top of each other.
+This splits the Preview window into equal parts and duplicates the upper part of the full view into the lower part.
+Follow the internal link in the lower part.
+If desired, scroll each part a litte bit and move the dividing bar.
+When you switch back, i.e.\ unsplit the Preview window (no modifier key necessary), then the lower part vanishes and you see more of the upper one (and possibly experience an upward creep of a line or two).
+
+TeXShop remembers the position of the dividing bar and the view of the lower part is saved.
+If you split again (without any modifier key), you get back the setting which you just left.
+
+\item
+The ``Split Window'' just explained is also helpful when presenting a theorem.
+You probably want to keep it visible while discussing examples and going through its proof.
+Again as above, shift-split the Preview window, scroll each part a litte bit and move the dividing bar as you please.
+Then treat your examples and the proof in the lower part.
+When you are done with the theorem, select ``Switch Views'' from the Window menu (or press the keyboard equivalent option-2), then unsplit the Preview window.
+Up to a little bit of scrolling, you are at the end of the previous lower part, but now in full view. 
+
+\item
+Imagine you have a given problem set (case \ref{PWT_Given_PDF}) and your handwritten solutions including figures.
+Scan them and combine them with the problem set to produce one PDF file.
+Use TeXShop as PDF viewer, split the Preview window, scroll both parts to the desired locations, adjust the dividing bar.
+Now you are ready to recall the given problems in the upper part and to present your solutions in the lower one.
+Note that you can magnify the upper and lower part independently if desired!
+\end{itemize}
+
+For improved functionality of hover preview and -- more importantly -- for PDF files mainly read online, more accurate internal links are strongly recommended.
+Therefore, I propose the following adjustments when creating PDF files with the current version of the \texttt{hyperref} package:
+\begin{itemize}
+\item
+When you have a larger numbered formula, possibly covering several lines, then hover preview for a corresponding link might not show the beginning of the formula and clicking on the link might require some scrolling to bring it to full view.
+You can improve this behaviour by raising the hook (or anchor) of the internal link.
+Define a macro to work with the \texttt{hyperref} package, for example
+\begin{verbatim}
+     \makeatletter
+     \newcommand{\RaiseHook}[1]{\renewcommand\HyperRaiseLinkHook%
+     {\setlength\HyperRaiseLinkLength{#1\baselineskip}%
+     \global\let\HyperRaiseLinkHook\@empty}\ignorespaces}
+     \makeatother
+\end{verbatim}
+and add a command like
+\begin{verbatim}
+     \RaiseHook{1.6}
+\end{verbatim}
+just before you start a displayed two-line equation, for example.
+The number $1.6$ is in multiples of a baseline skip.
+When the command is used, it resets itself to the default value~$1$.
+To find the suitable numbers, you have to experiment a bit.
+A number is perfect, when a click on the link displays the entire formula at the top of the Preview window without superfluous space above it.
+Usually you have to start adding the \texttt{RaiseHook} command when your displayed formula contains a fraction ($1.2$), an integral with an upper bound ($1.4$), a summation symbol with an upper bound ($1.5$), a \texttt{cases} or \texttt{split} construction ($1.6$), or a \texttt{multline} environment ($2.2$).
+These numbers usually work in simple cases with my setting of the baseline skip.
+I suggest that you make your own list.
+
+\item
+When a numbered \LaTeX\ environment starts at the beginning of a page, then the corresponding internal link often points to the end of the previous page.
+In most cases it suffices to add
+\begin{verbatim}
+    \pagebreak[2]
+\end{verbatim}
+to the end of the previous line, sometimes \texttt{[2]} has to be increased to \texttt{[3]}.
+
+\item
+Links to a figure or a table might lead to the corresponding caption instead of the figure or table itself.
+To fix this behaviour, place
+\begin{verbatim}
+     \usepackage[all]{hypcap}
+\end{verbatim}
+after calling the package \texttt{hyperref}.
+To see it working, try the link to \cref{fig:edit} in this manual. 
+If there are figures without a caption (like the one at the end of \cref{Introduction_Section} in this manual), enclose it with 
+\begin{verbatim}
+     \capstartfalse
+     \begin{figure}
+        (Figure without caption)
+     \end{figure}
+     \capstarttrue
+\end{verbatim}
+For more information about the package, type \texttt{hypcap} in the window you get by selecting ``Show Help for Package...'' from TeXShop's Help menu.
+\end{itemize}
+There is always room for improvement.
+Feel free to send any suggestions about this chapter directly to me at \href{mailto:schmock@fam.tuwien.ac.at}{schmock@fam.tuwien.ac.at}.
+
+ 
 
 \chapter{Additional TeXShop Features}
 \section{Experiments}
@@ -3346,7 +3746,7 @@ The item ``Tags Menu in Menubar'' under the Editor tab in TeXShop Preferences ca
 
 The Window menu has two items labeled ``LaTeX Panel'' and ``Matrix Panel''. Each causes an appropriate panel to open. 
 
-The LaTeX Panel, see Figure \ref{fig:latexpanel}, floats above regular source windows in TeXShop and lists a large number of mathematical symbols. Activate a source window and click to position the Insertion Cursor. Then click on a symbol in the panel and the corresponding LaTeX code will be inserted at the indicated position in the source.
+The LaTeX Panel, see \cref{fig:latexpanel}, floats above regular source windows in TeXShop and lists a large number of mathematical symbols. Activate a source window and click to position the Insertion Cursor. Then click on a symbol in the panel and the corresponding LaTeX code will be inserted at the indicated position in the source.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
@@ -3357,7 +3757,7 @@ The LaTeX Panel, see Figure \ref{fig:latexpanel}, floats above regular source wi
 
 \newpage
 
-The Matrix Panel, see Figure \ref{fig:matrixpanel}, is similar, but more complicated. It creates matrices and tables. The number of rows and columns can be set. Experiment with other entries to see how they work.
+The Matrix Panel, see \cref{fig:matrixpanel}, is similar, but more complicated. It creates matrices and tables. The number of rows and columns can be set. Experiment with other entries to see how they work.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
@@ -3368,7 +3768,7 @@ The Matrix Panel, see Figure \ref{fig:matrixpanel}, is similar, but more complic
 
 The Labels item on the toolbar works just like the Tags item, except that it lists labels in the Source Code. 
 
-The TeXShop Editor is fully Unicode capable, so unusual scripts can be entered and typeset. Sometimes it is useful to know the particular Unicode characters being typed, and for that purpose Terada Yusuke provided a Unicode Panel. Select a portion of text, and then select ``Character Info..'' in the Edit Menu. Figure \ref{fig:arabic} shows this panel examining a piece of Arabic text in a source file to be typeset with XeLaTeX.
+The TeXShop Editor is fully Unicode capable, so unusual scripts can be entered and typeset. Sometimes it is useful to know the particular Unicode characters being typed, and for that purpose Terada Yusuke provided a Unicode Panel. Select a portion of text, and then select ``Character Info..'' in the Edit Menu. \Cref{fig:arabic} shows this panel examining a piece of Arabic text in a source file to be typeset with XeLaTeX.
 
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
@@ -3382,7 +3782,7 @@ The TeXShop Editor is fully Unicode capable, so unusual scripts can be entered a
 
 \section{Show Invisible}
 
-The Source menu has an item labeled ``Show Invisible Characters''. The specific invisible characters shown is determined by a setting in the Editor tab of TeXShop Preferences. Figure \ref{fig:invisible} shows a short section of source code with this item applied to it.
+The Source menu has an item labeled ``Show Invisible Characters''. The specific invisible characters shown is determined by a setting in the Editor tab of TeXShop Preferences. \Cref{fig:invisible} shows a short section of source code with this item applied to it.
 
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
@@ -3651,7 +4051,7 @@ These are the latest documents I possess on cocoAspell.
 
 cocoAspell is a spell checking service which attaches to the build-in spell checker from Apple. It knows about LaTeX and does not mark LaTeX keywords as misspelled. Since it is not notarized, it cannot be provided in our install packages; obtain it directly from the author's web site.
 
-The spell checker installs a Preference Pane named ``Spelling'' in Apple's System Preference, see Figure \ref{fig:PrefPaneSpelling}. After running the cocoAspell installer, open this pane and configure it appropriately.
+The spell checker installs a Preference Pane named ``Spelling'' in Apple's System Preference, see \cref{fig:PrefPaneSpelling}. After running the cocoAspell installer, open this pane and configure it appropriately.
 
 The Pref Pane requires macOS El Capitan or higher, because Apple changed the requirements for Preference Panes just before El Capitan. The cocoAspell pane meets all current Apple standards.
 
@@ -3674,7 +4074,7 @@ On the left side, select those dictionaries which should appear in the Mac inter
     \label{fig:Spelling_and_Grammar}
 \end{figure}
 
-Now in the TeXShop Edit menu, show ``Show Spelling and Grammar.''  A panel will appear, see Figure \ref{fig:Spelling_and_Grammar}. At the bottom of this panel, select a cocoAspell dictionary instead of a built-in dictionary. Once it is selected, LaTeX keywords will not be marked as misspelled. Your editor should remember this choice across reboots. 
+Now in the TeXShop Edit menu, show ``Show Spelling and Grammar.''  A panel will appear, see \cref{fig:Spelling_and_Grammar}. At the bottom of this panel, select a cocoAspell dictionary instead of a built-in dictionary. Once it is selected, LaTeX keywords will not be marked as misspelled. Your editor should remember this choice across reboots. 
 
 \section{cocoAspell Installing (Schulz)}
 

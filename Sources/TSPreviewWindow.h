@@ -54,6 +54,10 @@
 @property               double          mytimestamp;
 @property               BOOL            horizontal;
 @property               double          scrolladjust;
+@property               BOOL            oldUnsplitAfterSwitch;
+// @property               NSRect          oldVisibleRect;
+// @property               NSInteger       oldIndex;
+// @property               BOOL            oldUsed;
 
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
@@ -108,6 +112,7 @@
 #endif
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
+- (void)toggleLinkPopups: (id)sender;
 - (void)switchSplitViews: (id)sender;
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;

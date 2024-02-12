@@ -26,22 +26,51 @@
 #import "TSTextView.h"
 #import "globals.h"
 
+static BOOL isValidExtendedTeXCommandChar(NSInteger c, BOOL explColor);
 
-static BOOL isValidTeXCommandChar(NSInteger c);
-
-static BOOL isValidTeXCommandChar(NSInteger c)
+static BOOL isValidExtendedTeXCommandChar(NSInteger c, BOOL explColor)
 {
-	if ((c >= 'A') && (c <= 'Z'))
-		return YES;
-	else if ((c >= 'a') && (c <= 'z'))
-		return YES;
-	else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
-		return YES; // added by Terada
-    else if (((c == '@') || (c == '_') || (c == ':')) && [SUD boolForKey:expl3SyntaxColoringKey])
+    if ((c >= 'A') && (c <= 'Z'))
         return YES;
-	else
-		return NO;
+    else if ((c >= 'a') && (c <= 'z'))
+        return YES;
+    else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
+        return YES; // added by Terada
+    else if (((c == '@') || (c == '_') || (c == ':') || (c == '.')) && explColor) //[SUD boolForKey:expl3SyntaxColoringKey])
+        return YES;
+    else
+        return NO;
 }
+
+static BOOL isValidTeXCommandChar(NSInteger c, BOOL explColor);
+
+static BOOL isValidTeXCommandChar(NSInteger c, BOOL explColor)
+{
+    if ((c >= 'A') && (c <= 'Z'))
+        return YES;
+    else if ((c >= 'a') && (c <= 'z'))
+        return YES;
+    else if (c == '@' && [SUD boolForKey:MakeatletterEnabledKey]) // added by Terada
+        return YES; // added by Terada
+    else if (((c == '@') || (c == '_') || (c == ':')) && explColor) //[SUD boolForKey:expl3SyntaxColoringKey])
+        return YES;
+    else
+        return NO;
+}
+
+static BOOL isValidOrdinaryTeXCommandChar(NSInteger c);
+
+static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
+{
+    if ((c >= 'A') && (c <= 'Z'))
+        return YES;
+    else if ((c >= 'a') && (c <= 'z'))
+        return YES;
+    else
+        return NO;
+}
+
+
 
 /*
  * Syntax highlighting for TSDocument is implemented in the following code.
@@ -61,6 +90,7 @@ static BOOL isValidTeXCommandChar(NSInteger c)
  * TODO: Consider moving the whole syntax coloring code to a separate class.
  */
 @implementation TSDocument (SyntaxHighlighting)
+
 
 
 // Colorize ("perform syntax highlighting") all the characters in the given range.
@@ -110,15 +140,17 @@ static BOOL isValidTeXCommandChar(NSInteger c)
 - (void)colorizeText:(NSTextView *)aTextView range:(NSRange)range
 {
     NSLayoutManager *layoutManager;
-    NSString        *textString;
+    NSString        *textString, *argumentString;
     NSUInteger        length;
-    NSRange            colorRange, charRange;
-    NSUInteger        location;
-    NSInteger        theChar;
+    NSRange            colorRange, charRange, newColorRange, colorRangeKey;
+    NSUInteger        location, templocation, newlocation;
+    NSUInteger        loc1, loc2, loc3, loc4;
+    NSInteger         theChar, nextChar, thirdChar, fourthChar, fifthChar;
     NSUInteger        aLineStart;
     NSUInteger        aLineEnd;
     NSUInteger        end;
     NSInteger       count;
+    NSInteger       value;
     BOOL            colorIndexDifferently;
     BOOL            colorFootnoteDifferently;
     NSTimeInterval    theTime;
@@ -129,7 +161,11 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     NSString        *commandString;
     NSRange         specialRange;
     BOOL            allDone;
-    
+    BOOL            colorExpl3;
+    BOOL            hasUnderLineAndColon;
+    BOOL            isKeyCommand;
+     
+    colorExpl3 = self.useExplColor; // [SUD boolForKey:expl3SyntaxColoringKey];
     
     TurnOffCommandSpellChecking = [SUD boolForKey:TurnOffCommandSpellCheckKey];
     TurnOffCommentSpellChecking = [SUD boolForKey:TurnOffCommentSpellCheckKey];
@@ -278,14 +314,20 @@ static BOOL isValidTeXCommandChar(NSInteger c)
     
     // Now we iterate over the whole text and perform the actual recoloring.
     location = aLineStart;
+    
+    
     while (location < aLineEnd) {
         theChar = [textString characterAtIndex: location];
+        loc1 = location + 1;
+        loc2 = location + 2;
+        loc3 = location + 3;
+        loc4 = location + 4;
         
         if ((self.fileIsXML) && (theChar == '<'))
             [self syntaxColorXML: &location from: aLineStart to: aLineEnd using: textString with: layoutManager];
         
         else if ((self.fileIsXML) && (theChar == '&'))
-             [self syntaxColorLimitedXML: &location and: aLineEnd using: textString with: layoutManager];
+            [self syntaxColorLimitedXML: &location and: aLineEnd using: textString with: layoutManager];
         
         else if ((theChar == '{') || (theChar == '}') || (theChar == '[') || (theChar == ']') || (theChar == '&') || (theChar == '$')) {
             // The six special characters { } [ ] & $ get an extra color.
@@ -305,25 +347,181 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             if (TurnOffCommentSpellChecking)
                 [aTextView setSpellingState:0 range:colorRange];
         }
-        else if (theChar == g_texChar) {
+        
+        
+        
+        
+        else if (theChar == g_texChar)  {
             // A backslash (or a yen): a new TeX command starts here.
             // There are two cases: Either a sequence of letters A-Za-z follow, and we color all of them.
             // Or a single non-alpha character follows. Then we color that, too, but nothing else.
             colorRange.location = location;
             colorRange.length = 1;
             location++;
-            if ((location < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: location]))) {
+            if ((location < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: location], self.useExplColor))) {
                 location++;
                 colorRange.length = location - colorRange.location;
                 //    commandString = [textString substringWithRange: colorRange];
             } else {
-                while ((location < aLineEnd) && (isValidTeXCommandChar([textString characterAtIndex: location]))) {
+                while ((location < aLineEnd) && (isValidTeXCommandChar([textString characterAtIndex: location], self.useExplColor))) {
                     location++;
                     colorRange.length = location - colorRange.location;
                 }
             }
             commandString = [textString substringWithRange: colorRange];
-            [layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
+            
+            //expl modification; Koch; Feb, 2024
+            // if next letter exists and is l, g, or c, and expl coloring is on,
+            //     color with variable color
+            // else if _ and : are in the string and explcoloring is on,
+            //      color with expl3 command color
+            // else if string starts with "mykey"
+            //        color mykey with new color and color rest with regular function colorRange
+            // or if spaces follow my key and then a period, color everything after the . with regular function color
+            // msg_ comments in separate color
+            // different color for \__ ... commands or commands containing __
+            
+            if (colorExpl3)
+            {
+                
+                if (colorRange.length > 3)
+                {
+                    theChar = [commandString characterAtIndex: 1];
+                    nextChar = [commandString characterAtIndex: 2];
+                    thirdChar = [commandString characterAtIndex: 3];
+                }
+                
+                if (colorRange.length > 5)
+                {
+                    fourthChar = [commandString characterAtIndex: 4];
+                    fifthChar = [commandString characterAtIndex: 5];
+                }
+                
+                
+                hasUnderLineAndColon = (([commandString containsString:@"_"]) && ([commandString containsString:@":"]));
+                
+                
+                
+                if ((colorRange.length > 3) && (theChar == 'l') && (nextChar == '_') && (thirdChar != '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute1 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 3) && (theChar == 'g') && (nextChar == '_') && (thirdChar != '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute1 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 3) && (theChar == 'c') && (nextChar == '_') && (thirdChar != '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute1 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                
+                else if ((colorRange.length > 3) && (theChar == 'l') && (nextChar == '_') && (thirdChar == '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute3 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 3) && (theChar == 'g') && (nextChar == '_') && (thirdChar == '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute3 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 3) && (theChar == 'c') && (nextChar == '_') && (thirdChar == '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute3 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 3) && (theChar == '_') && (nextChar == '_') && hasUnderLineAndColon)
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute4 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                else if ((colorRange.length > 4) && (theChar == 'm') && (nextChar == 's') && (thirdChar == 'g') && (fourthChar == '_'))
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute5 forCharacterRange:colorRange];
+                    [aTextView setSpellingState:0 range:colorRange];
+                }
+                
+                /*
+                 else if ((colorRange.length > 5) && (theChar == 'm') && (nextChar == 'y') && (thirdChar == 'k') && (fourthChar == 'e') && (fifthChar == 'y'))
+                 {       // value = location - colorRange.location;
+                 // NSLog(@"location is %d", value);
+                 
+                 [layoutManager addTemporaryAttributes:self.explColorAttribute6 forCharacterRange:colorRange];
+                 [aTextView setSpellingState:0 range:colorRange];
+                 
+                 while ((location < aLineEnd) && ([textString characterAtIndex: location] == ' '))
+                 location++;
+                 
+                 newColorRange.location = location;
+                 newColorRange.length = 1;
+                 location++;
+                 if ((location < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: location], self.useExplColor))) {
+                 location++;
+                 newColorRange.length = location - newColorRange.location;
+                 }
+                 else {
+                 while ((location < aLineEnd) && (isValidTeXCommandChar([textString characterAtIndex: location], self.useExplColor))) {
+                 location++;
+                 newColorRange.length = location - newColorRange.location;
+                 }
+                 }
+                 [layoutManager addTemporaryAttributes:self.explColorAttribute7 forCharacterRange:newColorRange];
+                 [aTextView setSpellingState:0 range:newColorRange];
+                 }
+                 */
+                
+                
+                
+                
+                
+                
+                // we have something to do only when this is the end of colorRange but the line still has more characters
+                // in that case we should ignore spaces in this line and do something only if the first nonspace in the
+                // line is a period.
+                // starting at that period, we should find a new colorRange using the same rules we have been using
+                // Then color the original colorRange with explColorAttribute6 and color the next section with
+                // explColorAttribute7
+                
+                /*
+                 if (colorRange.length == 6)
+                 NSLog(@"yes");
+                 
+                 {
+                 location = aLineStart + 6;
+                 // while ((location < aLineEnd)  && ([textString characterAtIndex: location] == ' '))
+                 //    location++;
+                 if ((location < aLineEnd) && ([textString characterAtIndex: location] == '.'))
+                 {
+                 NSLog(@"all is well");
+                 }
+                 else
+                 NSLog(@"there is a problem");
+                 
+                 }
+                 */
+                
+                
+                // if (...)
+                //    [layoutManager addTemporaryAttributes:self.explColorAttribute7 forCharacterRange:colorRangeNew];
+                
+                
+                
+                else if (hasUnderLineAndColon)
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute2 forCharacterRange:colorRange];
+                
+                // note if a macro has no underline, but does have a colon, and colorExp13 is YES, then it will be colored the standard way automatically
+                
+                else
+                    [layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
+            }
+            else
+                
+                [layoutManager addTemporaryAttributes:self.commandColorAttribute forCharacterRange:colorRange];
+            
+            
             if (TurnOffCommandSpellChecking)
                 [aTextView setSpellingState:0 range:colorRange];
             
@@ -332,83 +530,83 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             if ((colorFootnoteDifferently) &&
                 (([commandString isEqualToString: @"\\footnote"]) ||
                  ([commandString isEqualToString: @"\\autocite"]) ||
-                //  ([commandString isEqualToString: @"\\cite"]) ||
+                 //  ([commandString isEqualToString: @"\\cite"]) ||
                  ([commandString hasPrefix: @"\\cite"]) ||
                  ([commandString hasPrefix: @"\\Cite"]) ||
                  ([commandString isEqualToString: @"\\footcite"]))) {
-             
+                
                 
                 while ((location < aLineEnd) && ([textString characterAtIndex:location] == '['))
                     [self bypassBracketUsing: layoutManager atLocation: &location andLineEnd: aLineEnd with: textString];
-                        
+                
                 if ((location < aLineEnd) && ([textString characterAtIndex:location] == '{'))
-                        {
-                        count = 1;
-                        charRange.location = location;
-                        charRange.length = 1;
-                        [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                        location++;
-                        colorRange.location = location;
-                        BOOL notDone = YES;
-                        while ((location < aLineEnd) && (notDone)) {
-                            theChar = [textString characterAtIndex: location];
-                            if (theChar == '{')
-                                count++;
-                            if (theChar == '}')
-                                count--;
-                            if (count == 0) {
-                                notDone = NO;
-                                allDone = YES;
-                                colorRange.length = location - colorRange.location;
-                                [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
-                                charRange.location = location;
-                                charRange.length = 1;
-                                [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                            }
-                            location++;
+                {
+                    count = 1;
+                    charRange.location = location;
+                    charRange.length = 1;
+                    [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
+                    location++;
+                    colorRange.location = location;
+                    BOOL notDone = YES;
+                    while ((location < aLineEnd) && (notDone)) {
+                        theChar = [textString characterAtIndex: location];
+                        if (theChar == '{')
+                            count++;
+                        if (theChar == '}')
+                            count--;
+                        if (count == 0) {
+                            notDone = NO;
+                            allDone = YES;
+                            colorRange.length = location - colorRange.location;
+                            [layoutManager addTemporaryAttributes:self.footnoteColorAttribute forCharacterRange:colorRange];
+                            charRange.location = location;
+                            charRange.length = 1;
+                            [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
                         }
+                        location++;
                     }
                 }
+            }
             
             if ((colorIndexDifferently) &&
                 // esindex below is a Spanish indexing command
                 (([commandString isEqualToString: @"\\index"]) ||
                  ([commandString isEqualToString: @"\\esindex"]))) {
-                    
-                    while ((location < aLineEnd) && ([textString characterAtIndex:location] == '['))
-                        [self bypassBracketUsing: layoutManager atLocation: &location andLineEnd: aLineEnd with: textString];
-                    
-                    if ((location < aLineEnd) && ([textString characterAtIndex:location] == '{'))
-                    {
-                        count = 1;
-                        charRange.location = location;
-                        charRange.length = 1;
-                        [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                        location++;
-                        colorRange.location = location;
-                        BOOL notDone = YES;
-                        while ((location < aLineEnd) && (notDone)) {
-                            theChar = [textString characterAtIndex: location];
-                            if (theChar == '{')
-                                count++;
-                            if (theChar == '}')
-                                count--;
-                            if (count == 0) {
-                                notDone = NO;
-                                allDone = YES;
-                                colorRange.length = location - colorRange.location;
-                                [layoutManager addTemporaryAttributes:self.indexColorAttribute forCharacterRange:colorRange];
-                                charRange.location = location;
-                                charRange.length = 1;
-                                [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
-                            }
-                            location++;
+                
+                while ((location < aLineEnd) && ([textString characterAtIndex:location] == '['))
+                    [self bypassBracketUsing: layoutManager atLocation: &location andLineEnd: aLineEnd with: textString];
+                
+                if ((location < aLineEnd) && ([textString characterAtIndex:location] == '{'))
+                {
+                    count = 1;
+                    charRange.location = location;
+                    charRange.length = 1;
+                    [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
+                    location++;
+                    colorRange.location = location;
+                    BOOL notDone = YES;
+                    while ((location < aLineEnd) && (notDone)) {
+                        theChar = [textString characterAtIndex: location];
+                        if (theChar == '{')
+                            count++;
+                        if (theChar == '}')
+                            count--;
+                        if (count == 0) {
+                            notDone = NO;
+                            allDone = YES;
+                            colorRange.length = location - colorRange.location;
+                            [layoutManager addTemporaryAttributes:self.indexColorAttribute forCharacterRange:colorRange];
+                            charRange.location = location;
+                            charRange.length = 1;
+                            [layoutManager addTemporaryAttributes:self.markerColorAttribute forCharacterRange:charRange];
                         }
+                        location++;
                     }
                 }
+            }
             
             
-      
+            
             
             // Next comes a big decision. We can automatically  remove the first two parameters, either
             //    optional or required or both. In that case, there is a built-in list of commands to skip
@@ -500,7 +698,65 @@ static BOOL isValidTeXCommandChar(NSInteger c)
             
             
         }
-        else location++;
+        else if (colorExpl3 && isValidOrdinaryTeXCommandChar(theChar)) {
+            
+            templocation = location;
+            colorRangeKey.location = location;
+            while ((templocation < aLineEnd) && isValidOrdinaryTeXCommandChar([textString characterAtIndex: templocation] ))
+                templocation++;
+            newlocation = templocation;
+            colorRangeKey.length = templocation - location;
+            //[layoutManager addTemporaryAttributes:self.explColorAttribute6 forCharacterRange:colorRangeKey];
+            //[aTextView setSpellingState:0 range:colorRangeKey];
+            
+            
+            
+            
+            while ((templocation < aLineEnd) && ([textString characterAtIndex: templocation] == ' '))
+                templocation++;
+            
+            
+            
+            
+            
+            newColorRange.location = templocation;
+            newColorRange.length = 1;
+            templocation++;
+           // if ((templocation < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: templocation], self.useExplColor))) {
+           //     templocation++;
+           //     newColorRange.length = templocation - newColorRange.location;
+          //  }
+          //  else
+            {
+                while ((templocation < aLineEnd) && (isValidExtendedTeXCommandChar([textString characterAtIndex: templocation], self.useExplColor))) {
+                    templocation++;
+                    newColorRange.length = templocation - newColorRange.location;
+                }
+            }
+            
+            argumentString = [textString substringWithRange: newColorRange];
+            isKeyCommand = NO;
+            if ([argumentString containsString:@"."])
+                isKeyCommand = YES;
+            
+         if (([argumentString containsString:@":"] || [argumentString containsString:@"_"]) && isKeyCommand)
+         {
+                [layoutManager addTemporaryAttributes:self.explColorAttribute6 forCharacterRange:colorRangeKey];
+                [aTextView setSpellingState:0 range:colorRangeKey];
+                [layoutManager addTemporaryAttributes:self.explColorAttribute7 forCharacterRange:newColorRange];
+                [aTextView setSpellingState:0 range:newColorRange];
+                
+                location = templocation;
+            }
+            else
+                location = newlocation;
+            
+        }
+   
+                
+       
+    else
+        location++;
     }
     
     // Now we color the background of the active line

@@ -34,6 +34,7 @@
 #import "ScrapPDFKitView.h"
 #import "TSWindowController.h"
 #import "CustomModalWindowController.h"
+#import "TSColorSupport.h"
 
 #define NUMBEROFERRORS	20
 
@@ -184,6 +185,7 @@ enum RootCommand
 	IBOutlet NSButton           *showFullPathButton; // added by Terada
     IBOutlet NSButton			*autoCompleteSplitButton;
     IBOutlet NSButton           *indexColorSplitBox;
+    
 
     
     IBOutlet	id              gotopageOutlet;
@@ -266,6 +268,7 @@ enum RootCommand
 //	NSPDFImageRep	*texRep;
 //	NSData		*previousFontData;	/*" holds font data in case preferences change is cancelled "*/
 	BOOL		fileIsTex;
+    
 
     
 //    TSDocumentType			_documentType;
@@ -307,7 +310,7 @@ enum RootCommand
 	BOOL				willClose;
     BOOL                doAbort;
     BOOL                xmlNoParameter;
-
+  
 	BOOL		_externalEditor;
 // added by mitsu --(H) Macro menu; macroButton
 	BOOL		doAutoComplete;
@@ -398,6 +401,14 @@ enum RootCommand
 @property (retain)  NSDictionary        *valueXMLColorAttribute;
 @property (retain)  NSDictionary        *specialXMLColorAttribute;
 @property (retain)  NSDictionary        *EntryColorAttribute;
+
+@property (retain)  NSDictionary        *explColorAttribute1;
+@property (retain)  NSDictionary        *explColorAttribute2;
+@property (retain)  NSDictionary        *explColorAttribute3;
+@property (retain)  NSDictionary        *explColorAttribute4;
+@property (retain)  NSDictionary        *explColorAttribute5;
+@property (retain)  NSDictionary        *explColorAttribute6;
+@property (retain)  NSDictionary        *explColorAttribute7;
 
 
 @property (retain)  NSTask              *synctexTask;
@@ -498,6 +509,7 @@ enum RootCommand
 @property           BOOL            useAlternatePath;
 @property           BOOL            bookDisplay;
 @property           BOOL            RTLDisplay;
+@property           BOOL            useExplColor;
 
 
 // forScrap
@@ -590,6 +602,7 @@ enum RootCommand
 - (BOOL) useFullSplitWindow;
 - (IBAction)toggleSyntaxColor:sender;
 - (IBAction)toggleSyntaxColorEntry:sender;
+- (IBAction)toggleExplColor: sender;
 - (IBAction)toggleBlockCursor:sender;
 
 
@@ -625,6 +638,7 @@ enum RootCommand
 - (void) changeAutoComplete: sender;
 - (void) changeShowFullPath: sender; // added by Terada
 - (void) fixAutoMenu;
+- (void) fixExplMenu;
 - (void) fixShowFullPathButton; // added by Terada
 - (NSString*) fileTitleName; // added by Terada
 // - (void) openStyleFile: (id)sender; // added by Terada
@@ -725,6 +739,7 @@ enum RootCommand
 - (void)switchFrontWindow;
 - (void)activateFrontWindow;
 - (void)voiceOverFix;
+- (void)readExplColors;
 
 
 // BibDesk Completion

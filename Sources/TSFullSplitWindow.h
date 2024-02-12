@@ -83,6 +83,7 @@
 - (void)abort:(id)sender;
 - (void)performFindPanelAction: sender;
 - (void) sendEvent:(NSEvent *)theEvent;
+- (void)toggleExplColor: sender;
 
 - (void)toggleDrawer: sender;
 - (void)previousPage: sender;

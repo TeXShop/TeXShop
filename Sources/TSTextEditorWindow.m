@@ -75,6 +75,7 @@
  	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
+    [self.myDocument fixExplMenu];
 	[self.myDocument fixMacroMenuForWindowChange];
     
     if (self.myDocument.fileIsXML)
@@ -238,6 +239,11 @@
 - (void)savePortableSourcePosition: sender
 {
 	[self.myDocument savePortableSourcePosition];
+}
+
+- (void)toggleExplColor: (id) sender
+{
+    [self.myDocument toggleExplColor:sender];
 }
 
 

@@ -38,6 +38,11 @@
     [[self myDocument].myPDFKitView toggleDrawer:sender];
 }
 
+- (void)toggleExplColor: sender
+{
+    [[self myDocument] toggleExplColor:sender];
+}
+
 - (void)previousPage: sender;
 {
     [[self myDocument].myPDFKitView previousPage:sender];
@@ -554,6 +559,7 @@
 // 	[self refreshTitle]; // added by Terada
 	[super becomeMainWindow];
 	[self.myDocument resetSpelling];
+    [self.myDocument fixExplMenu];
 	[self.myDocument fixMacroMenuForWindowChange];
 // WARNING: The following line caused a BIG delay when switching from the pdf window to the text window!!
 // It can be turned on with a hidden preference, but the only users who need it

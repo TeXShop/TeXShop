@@ -168,7 +168,7 @@ Loads the .nib file if necessary, fills all the controls with the values from th
 
 	[_prefsWindow makeKeyAndOrderFront:self];
     
-    [_tabsTextField setEnabled:NO]; // prevent _tabsTextField from expanding too long
+    [_tabsTextField setEnabled:NO]; // prevent _tabsTextField from sourceTextColoranding too long
     [_tabsTextField setEnabled:YES];
 
 }

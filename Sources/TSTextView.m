@@ -1047,7 +1047,14 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
                 do {
                     if (replacementRange.location >= 1){
                         c = [textString characterAtIndex: replacementRange.location-1];
-                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                     //   if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                        // Terada, 2/5/2024
+                        //    if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])
+                        //         || (((c == '@') || (c == '_') || (c == ':')) && [SUD boolForKey:expl3SyntaxColoringKey]) ){
+                                
+                            if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])
+                                || (((c == '@') || (c == '_') || (c == ':')) && self.document.useExplColor) ){
+
                             replacementRange.location--;
                             replacementRange.length++;
                             flag = YES;
@@ -1062,7 +1069,13 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
                 do {
                     if (replacementRange.location + replacementRange.length  < [textString length]){
                         c = [textString characterAtIndex: replacementRange.location + replacementRange.length];
-                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                     //   if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])){
+                        // Terada, 2/5/2024
+                        //    if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])
+                        //         || (((c == '@') || (c == '_') || (c == ':')) && [SUD boolForKey:expl3SyntaxColoringKey]) ){
+                        if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || (c == '@' && [SUD boolForKey:MakeatletterEnabledKey])
+                             || (((c == '@') || (c == '_') || (c == ':')) && self.document.useExplColor) ){
+
                             replacementRange.length++;
                             flag = YES;
                         }else{

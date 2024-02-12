@@ -3227,6 +3227,7 @@ if (self.myDocument.useConTeXtSyncParser)
 		!([theEvent modifierFlags] & NSCommandKeyMask) &&
 		!([theEvent modifierFlags] & NSControlKeyMask))
 		currentMouseMode = mouseMode;
+    
 	
 	if (!([theEvent modifierFlags] & NSAlternateKeyMask) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		currentMouseMode = mouseMode;
@@ -3764,7 +3765,7 @@ if (! self.skipLinks)
 
 - (void) mouseUp: (NSEvent *) theEvent
 {
-
+    
 	if (downOverLink) {
 		downOverLink = NO;
 		if (([self areaOfInterestForMouse: theEvent] &  kPDFLinkArea) != 0)

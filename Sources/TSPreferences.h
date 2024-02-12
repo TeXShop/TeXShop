@@ -248,6 +248,14 @@
     IBOutlet NSColorWell    *XMLParameterColorWell;
     IBOutlet NSColorWell    *XMLValueColorWell;
     
+    IBOutlet NSColorWell    *explFunctionColorWell;
+    IBOutlet NSColorWell    *explVariableColorWell;
+    IBOutlet NSColorWell    *explIntenseFunctionColorWell;
+    IBOutlet NSColorWell    *explIntenseVariableColorWell;
+    IBOutlet NSColorWell    *explmykeyColorWell;
+    IBOutlet NSColorWell    *explmykeyArgumentColorWell;
+    IBOutlet NSColorWell    *explmsgColorWell;
+    
     IBOutlet NSButton       *XMLchapter;
     IBOutlet NSButton       *XMLsection;
     IBOutlet NSButton       *XMLsubsection;
@@ -440,6 +448,14 @@
 - (IBAction)FootnoteColorChanged:sender;
 - (IBAction)EntryColorChanged:sender;
 
+- (IBAction)explFunctionColorChanged:sender;
+- (IBAction)explVariableColorChanged:sender;
+- (IBAction)explIntenseFunctionColorChanged:sender;
+- (IBAction)explIntenseVariableColorChanged:sender;
+- (IBAction)explmykeyColorChanged:sender;
+- (IBAction)explmykeyArgumentColorChanged:sender;
+- (IBAction)explmsgColorChanged:sender;
+
 - (IBAction)EditorReverseSyncChanged:sender;
 - (IBAction)PreviewDirectSyncChanged:sender;
 - (IBAction)EditorHighlightBracesChanged:sender;
@@ -453,7 +469,6 @@
 - (IBAction)ImageBackgroundChanged:sender;
 - (IBAction)BlockCursorColorChanged:sender;
 
-- (IBAction)XMLCommentChanged:sender;
 - (IBAction)XMLTagChanged:sender;
 - (IBAction)XMLSpecialChanged:sender;
 - (IBAction)XMLParameterChanged:sender;

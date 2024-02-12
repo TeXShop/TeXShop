@@ -68,7 +68,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.6}
+\title{TeXShop Manual \\ Version 1.3.7}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -168,6 +168,7 @@ one book with the complete \TeX\ program, one book with the complete Metafont pr
 After \TeX\ was frozen, Knuth resumed work on the Art of Computer Programming. Plans for Book 4 had expanded, and Volume 4A, published in 2011, was followed by volume 4B  published in October, 2022. Coming next is  volume 4C and perhaps 4D. These will be followed by Volumes 5, 6, and 7, time permitting.
 
 \section{TeX and LaTeX}
+\label{LatexHistory}
 
 The TeX program understands a limited number of  very primitive commands. Because these commands are primitive, several must be strung together to produce desired results. TeX allows users to define {\em macros}, new commands made by stringing primitive commands together, and Knuth wrote a large collection of such macros known as ``Plain TeX.'' When users today say they use \TeX, they are really claiming to use \TeX\ and the Plain TeX macro package. 
 
@@ -472,6 +473,7 @@ Creating a new template with TeXShop is easy. If you like, start with an existin
 \chapter{Editing Preferences}
 
 \section{Preference Design}
+\label{MenuDesign}
 
 TeXShop has a Preference Panel, which can be opened using the {\bf Preferences...} item in the main TeXShop menu. In macOS Ventura and later, this item is renamed {\bf Settings}. The panel has tabs which display various related groups of preference settings. At bottom right are two buttons labeled {\bf Cancel} and {\bf OK}. It is necessary to push {\bf OK} after making changes if you want these changes to take effect. Some changes take effect immediately, while others become active when documents are reopened.
 
@@ -1380,7 +1382,7 @@ Version 3.82 and 3.84 introduced  magic comment lines dealing with tabs. Read th
 
 \chapter{Macros}
 
-TeXShop users can write and execute AppleScript commands using the Macros feature of TeXShop. But what is Applescript? Let me  quote Apple's {\em Introduction to AppleScript Language Guide}:
+TeXShop users can write and execute AppleScript commands using the Macros feature of TeXShop. But what is AppleScript? Let me  quote Apple's {\em Introduction to AppleScript Language Guide}:
 \begin{quotation}
 AppleScript is a scripting language created by Apple. It allows users to directly control scriptable Macintosh applications, as well as parts of macOS itself. You can create scripts—sets of written instructions—to automate repetitive tasks, combine features from multiple scriptable applications, and create complex workflows.
 
@@ -1389,9 +1391,9 @@ A scriptable application is one that can be controlled by a script. For AppleScr
 
 Macros and the Macro Editor are by Mitsuhiro Shishikura. Default Latex macros were created by Mitsuhiro Shishikura and Hirokazu Ogawa. Default Context macros were created by Hans Hagen.
 
-I should confess that I find AppleScript difficult to use. The language was designed to be ``conversational'', but this creates ambiguities, at least for me. The current AppleScript expert for TeXShop is Michael Sharpe, who wrote a great document about it named {\em Notes on Applescript in TeXShop}. His document is provided as an item in the TeXShop Help Menu.
+I should confess that I find AppleScript difficult to use. The language was designed to be ``conversational'', but this creates ambiguities, at least for me. The current AppleScript expert for TeXShop is Michael Sharpe, who wrote a great document about it named {\em Notes on AppleScript in TeXShop}. His document is provided as an item in the TeXShop Help Menu.
 
-An example will explain why AppleScript is useful. Around 2009, Ramon Figueroa-Centeno wrote three crucial applescript commands named ``Program'', ``Encoding'', and ``Root''. These are available near the top of the Macros menu, and I use them every day and recommend them to all TeXShop users. Each creates a magic comment line. For instance, the ``Program'' command displays a list of all active engines. Select one of these, and the corresponding magic line similar to 
+An example will explain why AppleScript is useful. Around 2009, Ramon Figueroa-Centeno wrote three crucial AppleScript commands named ``Program'', ``Encoding'', and ``Root''. These are available near the top of the Macros menu, and I use them every day and recommend them to all TeXShop users. Each creates a magic comment line. For instance, the ``Program'' command displays a list of all active engines. Select one of these, and the corresponding magic line similar to 
 \begin{verbatim}
     % !TEX program = xelatex
 \end{verbatim}
@@ -1404,7 +1406,7 @@ TeXShop Help Panel.
 		
 TeXShop Macros and the Macro Editor were written by Mitsuhiro Shishikura.  The available Macros depend on the typesetting engine chosen. If this engine is LaTeX, then a series of macros suitable for LaTeX will be displayed. If the engine is ConTeXT, then macros for ConTeXt will be displayed. When TeXShop is first installed, it has macros for only these two engines; the LaTeX macros will be displayed for all engines except ConTeXt.
 
-Macros come in two kinds. Some insert strings into the TeX source file; these macros are similar to buttons in the Latex panel. Other macros run Applescript scripts.
+Macros come in two kinds. Some insert strings into the TeX source file; these macros are similar to buttons in the Latex panel. Other macros run AppleScript scripts.
 
 Macros are stored in
 \begin{verbatim}
@@ -1453,7 +1455,7 @@ Using this knowledge, it is easy to understand and modify the default macros.
 Open the Macro Editor and examine the macro menu on the left. It is shown in an outline view similar to the view of the file system obtained by choosing the middle button of the View tab in the Finder. To rearrange items, drag them from one spot to another. Notice that items can be placed at different levels by sliding left and right. To rename an item, select it in the outline view and type a new name in the field at the top right.
 
 
-\section{Applescript Macros}
+\section{AppleScript Macros}
 
 If a macro begins with the string
 \begin{verbatim}
@@ -1463,7 +1465,7 @@ or
 \begin{verbatim}
      --AppleScript direct
 \end{verbatim}
-then the resulting applescript code will run when the Macro is chosen. For example, consider the macro titled ``View pdf with Acrobat''. Choosing this macro when the source file is active (and the pdf file has been created) will start Adobe Acrobat Reader and open the output pdf file in that program. The corresponding applescript code reads
+then the resulting AppleScript code will run when the Macro is chosen. For example, consider the macro titled ``View pdf with Acrobat''. Choosing this macro when the source file is active (and the pdf file has been created) will start Adobe Acrobat Reader and open the output pdf file in that program. The corresponding AppleScript code reads
 \begin{verbatim}
      --AppleScript direct
 
@@ -1473,7 +1475,7 @@ then the resulting applescript code will run when the Macro is chosen. For examp
        end tell
 \end{verbatim}
 
-Commands beginning with ``--AppleScript direct'' are run directly by TeXShop. During the time this applescript is running, TeXShop's event loop is not active. Consequently, the script cannot call TeXShop to perform an
+Commands beginning with ``--AppleScript direct'' are run directly by TeXShop. During the time this AppleScript is running, TeXShop's event loop is not active. Consequently, the script cannot call TeXShop to perform an
 action which might require user input. For example, it cannot ask TeXShop to run LaTeX, because if the
 LaTeX file has an error, the console will appear and wait for user input, but such input would not be recognized.
 
@@ -1482,10 +1484,10 @@ case the auxiliary program will temporarily halt but TeXShop will remain active.
 
 Thus the syntax ``--AppleScript direct'' is suitable for routine macros, but ``--AppleScript'' may be needed for fancy ones.
 
-\section{Included Applescript Commands}
+\section{Included AppleScript Commands}
  
  TeXShop comes with an extended collection of
-Applescripts by Will Robertson, Claus Gerhardt and others. Some of these scripts automate workflow when a series of typesetting commands must be issued in sequence. By copying and modifying the scripts, users can construct scripts appropriate for their own workflow.  
+AppleScripts by Will Robertson, Claus Gerhardt and others. Some of these scripts automate workflow when a series of typesetting commands must be issued in sequence. By copying and modifying the scripts, users can construct scripts appropriate for their own workflow.  
 
 In this section, we will describe some of these scripts. 
 
@@ -1533,7 +1535,7 @@ Many editors now understand multiple line feed conventions, so often you'll have
 do, use the scripts above. Suppose the source file for a document is named
 MyFile.tex. Then ``Convert to Mac'' will create a new file named MyFile\_Mac.tex with the same source
 code and Macintosh line feed conventions. ``Convert to Unix'' and ``Convert to Windows'' work the same way.
-All of these scripts call a binary program by Craig Stuart Sapp named ``flip'' in ~/Library/TeXShop/bin. 
+All of these scripts call a binary program by Craig Stuart Sapp named ``flip'' in \path{~/Library/TeXShop/bin}. 
 %See
 %\url{http://ccrma-www.stanford.edu/~craig/utility/flip/} for details.
 
@@ -1575,8 +1577,8 @@ The script latex-makeindex-mpost saves the source and runs pdflatex, makeindex, 
 
 AppleScript syntax is a subject all its own. To learn more about it, read one of several books on the subject. If you installed the developer tools which come with Mac OS X, there is an online book about AppleScript in the Developer folder.
 
-When TeXShop interpretes an applescript macro, it first replaces any string \#FILEPATH\#, \#PDFPATH\#, \#DVIPATH\#, \#PSPATH\#, \#LOGPATH\#, \#AUXPATH\# with the complete path name of the source tex file, pdf file, dvi file, ps file, log file, or aux file respectively. Similarly, the strings \#INDPATH\#, \#BBLPATH\#, and \#HTMLPATH\# are replaced with the complete path name of the ind file, bbl file, or html file. Each of these items refer to the
-frontmost document when the Applescript actually runs.
+When TeXShop interpretes an AppleScript macro, it first replaces any string \#FILEPATH\#, \#PDFPATH\#, \#DVIPATH\#, \#PSPATH\#, \#LOGPATH\#, \#AUXPATH\# with the complete path name of the source tex file, pdf file, dvi file, ps file, log file, or aux file respectively. Similarly, the strings \#INDPATH\#, \#BBLPATH\#, and \#HTMLPATH\# are replaced with the complete path name of the ind file, bbl file, or html file. Each of these items refer to the
+frontmost document when the AppleScript actually runs.
 
 Starting with TeXShop 5.23, the string   \#FOLDERPATH\# is also available and will be replaced with the complete path to
 the folder containing the tex, pdf, log, and aux files of a document. So if
@@ -1586,7 +1588,7 @@ the folder containing the tex, pdf, log, and aux files of a document. So if
 In addition, any string \#NAMEPATH\# 
 is replaced with the complete path name of the source tex file minus its extension,
 and any string \#DOCUMENTNAME\# is replaced with  the display name of the current document.
-This last replacement is somewhat subtle; it gives the title of the document as shown at the top of the source window.  If a document was saved with the ``hide extension'' box checked, \#DOCUMENTNAME\# will contain only the document name. But if the document was saved without checking ``hide extension'', \#DOCUMENTNAME\# will contain the document name and extension. This information can be used to locate the calling document for Applescript code as follows:
+This last replacement is somewhat subtle; it gives the title of the document as shown at the top of the source window.  If a document was saved with the ``hide extension'' box checked, \#DOCUMENTNAME\# will contain only the document name. But if the document was saved without checking ``hide extension'', \#DOCUMENTNAME\# will contain the document name and extension. This information can be used to locate the calling document for AppleScript code as follows:
 
 \begin{verbatim}
    tell document #DOCUMENTNAME# of application "TeXShop"
@@ -1594,7 +1596,7 @@ This last replacement is somewhat subtle; it gives the title of the document as 
    end tell
 \end{verbatim}
 
-There are at least two ways to write Applescript commands. Applescript can run shell commands, so after preliminary processing with an applescript, a shell command can be called to do the actual work. TeXShop comes with several examples of this technique; some of these examples will be explained in a later help section. Applescript commands can also call built-in TeXShop commands and thus work directly. A later section will give examples of
+There are at least two ways to write AppleScript commands. AppleScript can run shell commands, so after preliminary processing with an AppleScript, a shell command can be called to do the actual work. TeXShop comes with several examples of this technique; some of these examples will be explained in a later help section. AppleScript commands can also call built-in TeXShop commands and thus work directly. A later section will give examples of
 this technique.
 
 TeXShop understands the following commands:
@@ -1619,7 +1621,7 @@ TeXShop understands the following commands:
    goto line
 \end{verbatim}
 The first seven commands call TeXShop typesetting routines. These commands typeset continuously without
-stopping at errors. The next seven commands also call TeXShop typesetting commands, but this time if there is an error, the user is allowed to interact with the console. When a typesetting command is called, control returns to the applescript immediately without waiting until the operation is complete. The ``taskdone'' call returns NO if typesetting is still running, and YES when it is done. The calls ``refreshpdf'' and ``refreshtext'' cause pdf and text documents to display the latest version of their files on the screen. The ``goto line'' command tells the editor
+stopping at errors. The next seven commands also call TeXShop typesetting commands, but this time if there is an error, the user is allowed to interact with the console. When a typesetting command is called, control returns to the AppleScript immediately without waiting until the operation is complete. The ``taskdone'' call returns NO if typesetting is still running, and YES when it is done. The calls ``refreshpdf'' and ``refreshtext'' cause pdf and text documents to display the latest version of their files on the screen. The ``goto line'' command tells the editor
 to select a given line; for example:
 \begin{verbatim}
   tell document #DOCUMENTNAME# of application "TeXShop"
@@ -1632,7 +1634,7 @@ to select a given line; for example:
 AppleScript can create dialogs and act on user input. For example, insert the following script and test its behavior.
 \begin{verbatim}
   -- AppleScript <br>
-  -- Use a dialog to enter user defined information into an applescript.
+  -- Use a dialog to enter user defined information into an AppleScript.
   -- There are two feedbacks possible 'text' and "choice of buttons".
   -- The returned information can be used to define corresponding variables.
   -- The number of buttons may not exceed three.
@@ -1654,7 +1656,7 @@ AppleScript can create dialogs and act on user input. For example, insert the fo
 
 One command in this example, ``activate'',  requires comment. When TeXShop is asked to run an AppleScript, it calls a separate program to run the script. That program, Scriptrunner, is in the TeXShop bundle. Any dialogs created by the script will be displayed by Scriptrunner rather than by TeXShop. The ``activate'' command brings Scriptrunner to the front so dialogs will appear on top of other windows.
 
-\section{Writing Complete Applescripts}
+\section{Writing Complete AppleScripts}
 
 If a TeX project contains a bibliography,
 a sequence of typesetting commands must be run to update the bibliography. Latex is run first to create
@@ -1662,12 +1664,12 @@ an .aux file. Bibtex is run to create .bbl and .blg  files from this .aux file.
 Latex is run again to add the bibliography to the document. Latex is run a final time to update the references to the bibliography in the document.
 
 
-Your projects may contain similar sequences of typesetting commands. It is possible to use applescript to automate these sequences. 
+Your projects may contain similar sequences of typesetting commands. It is possible to use AppleScript to automate these sequences. 
 
 To see how to do that we'll examine the
 OtherScripts: Bibliography command which comes with TeXShop. Here is the body of that command:
 \begin{verbatim}
-  --Applescript
+  --AppleScript
   
   set fileName to #FILEPATH#
   if fileName is equal to  ""
@@ -1716,12 +1718,12 @@ The first line of this command indicates that this is an AppleScript macro. The 
 The next line tells TeXShop to save the document. Notice that we use \#DOCUMENTNAME\# to refer to the document in question. 
 
 The remaining commands run latexinteractive, bibtex, latex, and
-latex. Recall that control returns to applescript immediately after calling a typesetting command
-before the typesetting job is over. The repeat loop tells the script to check whether the job is complete before running another typesetting task. The line ``delay 2'' causes applescript to pause rather than continually asking if the task is done and thereby slowing the entire computer down.
+latex. Recall that control returns to AppleScript immediately after calling a typesetting command
+before the typesetting job is over. The repeat loop tells the script to check whether the job is complete before running another typesetting task. The line ``delay 2'' causes AppleScript to pause rather than continually asking if the task is done and thereby slowing the entire computer down.
 
 \section{Writing Command Scripts}
 
-We will use the AppleScript ``pdflatexc'' by Claus Gerhardt to illustrate the principles involved in calling a Unix shell script from an Applescript.
+We will use the AppleScript ``pdflatexc'' by Claus Gerhardt to illustrate the principles involved in calling a Unix shell script from an AppleScript.
 This particular shell script isn't very interesting; it adds the location of the TeX binary files to the \$PATH variable and calls pdflatex to typeset.
 
 The shell script itself is independent of
@@ -1742,7 +1744,7 @@ in sequence. That is when these techniques become useful.
 
 The AppleScript used to call this shell script is more interesting. Here it is:
 \begin{verbatim}
-  --Applescript
+  --AppleScript
   -- Apply only to an already saved file.
   -- Claus Gerhardt, Nov. 2003
 
@@ -1816,7 +1818,7 @@ Notice the space behind cmd and the quotes. The ampersand is a binary concatenat
 \end{verbatim}
 
 
-When the shell is called via an applescript, the default working directory is the root directory. The command
+When the shell is called via an AppleScript, the default working directory is the root directory. The command
 \begin{verbatim}
      do shell script "cd " dirName
 \end{verbatim}
@@ -2170,7 +2172,7 @@ Since the Macintosh is only saving changes, it has a complete record of all the 
 
 You might wonder if the file containing a document has all the old versions hidden away somewhere. Could I send someone the TeX source of a letter of recommendation which currently says ``Paul is a creative student'', but whose initial version said ``Paul hasn't had a new idea in years"? Happily, no. Files on disk only contain the latest version.
 
-Before AutoSave, files that had been edited were marked as "dirty" with a black circle in the red close button at top left of the window. Now edited documents are marked by appending the word ``- Edited'' to the document's name in the window's title bar. The file menu still has a ``Save'' command. If you save in this way, the ``- Edited'' notice goes away. Apple sometimes calls this operation ``Saving a version''.
+Before AutoSave, files that had been edited were marked as ``dirty'' with a black circle in the red close button at top left of the window. Now edited documents are marked by appending the word ``- Edited'' to the document's name in the window's title bar. The file menu still has a ``Save'' command. If you save in this way, the ``- Edited'' notice goes away. Apple sometimes calls this operation ``Saving a version''.
 
 What happens if you decide to experiment, get confused, end up with a source document that makes no sense, and then discover it has been automatically saved out from under you, and the previous version of the file is gone? Since {\em undo} works across file saves, just undo the bad changes.
 
@@ -2185,7 +2187,7 @@ Using this preference is strongly discouraged. I never test TeXShop with AutoSav
 
 \section{Lock}
 
-Often users have a folder of old papers which they haven't edited in a long time, but refer back to from time to time. If you open such a document and click the title, a dialog will open allowing you to "lock" the document. When a document is locked, it cannot be saved or changed. 
+Often users have a folder of old papers which they haven't edited in a long time, but refer back to from time to time. If you open such a document and click the title, a dialog will open allowing you to ``lock'' the document. When a document is locked, it cannot be saved or changed. 
 If a document is locked, clicking on the title and unlocking the document makes it possible to edit again.
 
 
@@ -2271,7 +2273,7 @@ In addition, two new special comment lines are provided so the property can be s
      % !TEX bookDisplay
      % !TEX standardDisplay
 \end{verbatim}
-In Japan, text can be written horizontally or vertically. When it is written vertically, pages should appear from right to left. Therefore we also provide special comment lines to set "displaysRTL" on a document by document basis:
+In Japan, text can be written horizontally or vertically. When it is written vertically, pages should appear from right to left. Therefore we also provide special comment lines to set ``displaysRTL'' on a document by document basis:
 \begin{verbatim}
      % !TEX PageDirectionL2R
      % !TEX PageDirectionR2L
@@ -2517,8 +2519,8 @@ encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 When the html help document is edited in TeXShop; the changes will automatically be saved. So when you need a command not listed, look it up using Google and then add that example to the help file. The initial document provided in TeXShop doesn't list many commands because I don't know much html, but if you expand it, it will gradually become more useful.
 
-The actual source for the help document is contained in a new directory \path{~/Library/TeXShop/HTML}, and the source is named "Help.html". This folder can also contain support files. It currently contains an image ``topdot.jpg'' used by Help.html and a few other support files, and you can add similar support files.
-When TeXShop is updated, Help.html and the various support files will not be touched, because you may have edited these items. But the HTML folder also contains a subfolder named "Inactive" and that folder will be updated. So more extensive help files may be provided in the future, which you can merge with your own additions to the default file. I encourage users to contribute better initial Help.html files for this Inactive folder.
+The actual source for the help document is contained in a new directory \path{~/Library/TeXShop/HTML}, and the source is named ``Help.html''. This folder can also contain support files. It currently contains an image ``topdot.jpg'' used by Help.html and a few other support files, and you can add similar support files.
+When TeXShop is updated, Help.html and the various support files will not be touched, because you may have edited these items. But the HTML folder also contains a subfolder named ``Inactive'' and that folder will be updated. So more extensive help files may be provided in the future, which you can merge with your own additions to the default file. I encourage users to contribute better initial Help.html files for this Inactive folder.
 
 \section{TeX4ht}
 
@@ -2553,9 +2555,9 @@ TeX problems. Among these was Ross Moore from Australia, who was also at the Del
 Delaware had a special honored guest, Hàn Thế Thành. His pdftex program added code to Knuth's TeX which output pdf files rather than dvi files. His project was absolutely crucial for TeXShop because otherwise I'd have to make a dvi viewer, far beyond my capabilities.
 Thành came from Vietnam and his pdftex work was part of his PhD thesis from Masaryk University, Brno, Czech Republic. He talked about that thesis at the conference, beginning with a detailed image of a page from the Gutenberg bible. This remarkably beautiful page had absolutely straight right margins. But when you measured with a ruler, they turned out not to be straight; instead commas and periods were pushed slightly into the margin, creating the illusion of a straight side. In his thesis, Thành added that ability to pdfTeX and pdfLaTeX.
 
-I began my talk in Delaware by installing TeX onto a new MacOS X machine using Gerben Wierda's installer. In the process, the Finder crashed and I spent ten seconds restarting it. After the talk, a participant said to me "I'm not interested in your program, but it is amazing that you could restart the Finder without rebooting the machine."
+I began my talk in Delaware by installing TeX onto a new MacOS X machine using Gerben Wierda's installer. In the process, the Finder crashed and I spent ten seconds restarting it. After the talk, a participant said to me ``I'm not interested in your program, but it is amazing that you could restart the Finder without rebooting the machine.''
 
-I have been to many TUG conferences. In Hawaii, the organizers pulled us out to look at the sunset because Mercury was visible close to the horizon. A few days later they pulled us out at noon because on that one day at that one time, the Sun was directly overhead. In a recent conference at Palo Alto, I met my collaborator Yusuke Terada, from Japan, for the first time. Shortly after we met, I looked over his shoulder at another participant, and asked Terada "do you know who that is?" It was Donald Knuth.
+I have been to many TUG conferences. In Hawaii, the organizers pulled us out to look at the sunset because Mercury was visible close to the horizon. A few days later they pulled us out at noon because on that one day at that one time, the Sun was directly overhead. In a recent conference at Palo Alto, I met my collaborator Yusuke Terada, from Japan, for the first time. Shortly after we met, I looked over his shoulder at another participant, and asked Terada ``do you know who that is?'' It was Donald Knuth.
 
 Already in Delaware, there were talks about XML. The speakers directly typed XML code during their talks, and the indentation grew and grew until it was two pages right of the original margin. It took me several years to understand the goal of these talks. XML is easily parsed by computers and LaTeX is not. Authors submit papers to publishers already formatted in a personal way, but the publishers need to reformat these articles to conform to the standard of a journal or book series. This can be done automatically by computers if the paper is in XML, but requires work by hand for articles in LaTeX. All well and good, but I stopped paying attention to XML talks.
 
@@ -2567,7 +2569,7 @@ Then Covid hit. Luckily I'm retired, but I watched my mathematical colleagues sw
 
 Some of my colleagues at the University of Oregon switched to PreTeXt to write lecture notes; I'll describe that project in a moment, but suffice it to say that one goal of that project is to allow authors to write interactive material which can be accessed over the web. Authors write using XML. Perhaps I should have listened to those talks after all.
 
-Here's my "dream setup for the future." A faculty member would write lecture notes in LaTeX. These notes would be typeset by an engine which outputs both pdf and html. The pdf document would contain the course in final polished form, so students could look back at the clear logical direction of the lectures. The html document would contain interactive material: movies, questions with student input, etc., so students would be actively involved, even if working remotely.
+Here's my ``dream setup for the future.'' A faculty member would write lecture notes in LaTeX. These notes would be typeset by an engine which outputs both pdf and html. The pdf document would contain the course in final polished form, so students could look back at the clear logical direction of the lectures. The html document would contain interactive material: movies, questions with student input, etc., so students would be actively involved, even if working remotely.
 
 The HTML Preview window has been added to support such software, and to encourage new software with interactive material in  mathematical documents.
 
@@ -2810,9 +2812,9 @@ Haug and Laurenz Mädje in Berlin. They created an entirely new typesetting prog
 
 For information, follow the link \url{https://typst.app}.
 
-An engine file by Jeroen Scheerder makes it possible for TeXShop to typeset these new input files using the Typst program, so TeXShop users can experiment with the new system. The folder $\sim$/Library/TeXShop/Engines/Inactive/Typst contains everything needed to get started. This folder has a file {\em AboutTypst} which explains how to download and install typst in /usr/local/bin; this turns out to be very easy. The folder also contains the engine "Typst.engine", which can be copied to the active engine directory. Finally several Typst source files are included to begin experimentation.
+An engine file by Jeroen Scheerder makes it possible for TeXShop to typeset these new input files using the Typst program, so TeXShop users can experiment with the new system. The folder $\sim$/Library/TeXShop/Engines/Inactive/Typst contains everything needed to get started. This folder has a file {\em AboutTypst} which explains how to download and install typst in /usr/local/bin; this turns out to be very easy. The folder also contains the engine ``Typst.engine'', which can be copied to the active engine directory. Finally several Typst source files are included to begin experimentation.
 
-TeXShop has been extended so it can open and create ".typ" files, and it knows that these files can be typeset.
+TeXShop has been extended so it can open and create ``.typ'' files, and it knows that these files can be typeset.
 Such source files can be added to $\sim$/Library/TeXShop/Templates, making them appear in the pull-down Templates menu in the Source toolbar. 
 
 \newpage
@@ -2823,7 +2825,7 @@ start with //. That is why the line has two unexpected symbols at the start.
      // % !TEX TS-program = Typst
 \end{verbatim}
 
-If  you start a new source file completely from scratch,  TeXShop will display a Save Dialog the first time you typeset it. The file must be saved with extension ``.typ'' so Typst will recognize it.  It is tempting to just type the new extension when you name the file, but that will not work because TeXShop will add an extra ".tex" to the end of the filename when saving. Instead, find the pulldown menu "File Format:" at the bottom of the dialog and select "typ"; it is the very last element in the menu. Once the file has been saved with the proper extension, TeXShop will use that extension from then on. 
+If  you start a new source file completely from scratch,  TeXShop will display a Save Dialog the first time you typeset it. The file must be saved with extension ``.typ'' so Typst will recognize it.  It is tempting to just type the new extension when you name the file, but that will not work because TeXShop will add an extra ``.tex'' to the end of the filename when saving. Instead, find the pulldown menu ``File Format:'' at the bottom of the dialog and select ``typ''; it is the very last element in the menu. Once the file has been saved with the proper extension, TeXShop will use that extension from then on. 
 
 \section{Packages}
 
@@ -2866,7 +2868,7 @@ For users who prefer external editors most of the time, there is a preference it
 
 Some editors are able to call Unix typesetting commands directly. A new preference item, ``Automatic Preview Update'', has been added to improve your experience with these editors. When this item is active and a .tex file is opened using ``Open for Preview'', the pdf preview display automatically updates whenever the pdf file is rewritten. Thus you can typeset with an external editor and the preview window will automatically show changes. The preference also applies to .pdf files opened in TeXShop, and if TeXShop is configured to use an external editor, the preference applies to .tex files opened with ``Open''.
 
-The following applescript commands have been added to TeXShop so editors can call TeXShop directly:
+The following AppleScript commands have been added to TeXShop so editors can call TeXShop directly:
 \begin{verbatim}
    typesetinteractive
    texinteractive
@@ -2879,7 +2881,7 @@ The following applescript commands have been added to TeXShop so editors can cal
    refreshpdf
    open_for_externaleditor
 \end{verbatim}
-The first seven commands activate TeXShop typesetting commands. Applescript will return immediately after these calls without waiting for typesetting to complete. The ``taskdone'' call can be used to test completion; it returns NO while typesetting is being done, and YES when it is finished. Each of these calls refreshes the preview window at the end of typesetting. If your editor calls TeXShop to typeset, the ``Automatic Preview Update'' preference can be turned off.
+The first seven commands activate TeXShop typesetting commands. AppleScript will return immediately after these calls without waiting for typesetting to complete. The ``taskdone'' call can be used to test completion; it returns NO while typesetting is being done, and YES when it is finished. Each of these calls refreshes the preview window at the end of typesetting. If your editor calls TeXShop to typeset, the ``Automatic Preview Update'' preference can be turned off.
 If the external editor modifies the pdf output directly, it can call ``refreshpdf'' to refresh the pdf display. This is only needed if ``Automatic Preview Update'' is off. Finally ``open\_for\_externaleditor'' opens a tex file by calling ``Open for Preview''.
 
 \section{Preliminary Version: Using Sync with an External Editor}
@@ -2925,7 +2927,7 @@ In the previous section, we activated ``Goto Error'' and ``Sync from Preview to 
 \$2. The first variable contained a line number of the source window and the second variable contained a full path to the  file to be displayed by the editor. When called in this way, the script should cause the editor to open the source file if it is not already open, scroll to the line number, and mark that line in some fashion. 
 Activating this feature also required that TeXShop run in external editor mode, and that the hidden preference item ``OtherEditorSync'' be set to YES. 
 
-The actual script would be written by the authors of the external editor, because only they know how to ask their editor to perform this action. The script might contains an applescript command, or perhaps activate a third party program which  communicates with the external editor. In a couple of cases, the script is already known because these editors communicate with other front ends. Below are scripts for TextMate, and for BBEdit.
+The actual script would be written by the authors of the external editor, because only they know how to ask their editor to perform this action. The script might contains an AppleScript command, or perhaps activate a third party program which  communicates with the external editor. In a couple of cases, the script is already known because these editors communicate with other front ends. Below are scripts for TextMate, and for BBEdit.
 Thanks to Max Horn for these.
 
 TextMate:
@@ -2978,7 +2980,7 @@ The Editor can call TeXShop to perform this operation in one of two ways. First,
      EOD
 \end{verbatim}
 
-Notice that this shell script receives three variables, and passes them on to an applescript which then runs and connects with TeXShop. Some editors may be able to run applescript commands directly. They can ignore the shell script and copy and run the applescript command.
+Notice that this shell script receives three variables, and passes them on to an AppleScript which then runs and connects with TeXShop. Some editors may be able to run AppleScript commands directly. They can ignore the shell script and copy and run the AppleScript command.
 
 \section{Irrelevant Comments}
 
@@ -2991,9 +2993,9 @@ One form of communication occurs when a program starts another program. It can t
 
 Shell scripts are a special case of this. When such a script first starts, it can retrieve the parameters used to call it, as \$1, \$2, \$3, and so forth. Cocoa has a special class called NSTask for starting other programs, so communicating when new programs start is easy to implement on the Mac, and in particular communicating by starting shell scripts is easy.
 
-Applescript is another form of communication between independent programs.  Indeed, a major use of applescript is to make programs ``scriptable'', so they can be controlled by other pieces of code. Deep down inside, applescript implements special methods to make this communication between independent tasks possible.
+AppleScript is another form of communication between independent programs.  Indeed, a major use of AppleScript is to make programs ``scriptable'', so they can be controlled by other pieces of code. Deep down inside, AppleScript implements special methods to make this communication between independent tasks possible.
 
-There are, however, two problems with applescript. The first is that it can be insecure, and Apple has started to address this problem by allowing programs to refuse to accept applescript communication. It is reasonable to fear future additional restrictions. The second problem with Applescript may be my fault. I don't grok the language, and it doesn't grok me. So I waste hours and hours trying to make Applescript do something trivial, like pass more than one variable in a procedure.
+There are, however, two problems with AppleScript. The first is that it can be insecure, and Apple has started to address this problem by allowing programs to refuse to accept AppleScript communication. It is reasonable to fear future additional restrictions. The second problem with AppleScript may be my fault. I don't grok the language, and it doesn't grok me. So I waste hours and hours trying to make AppleScript do something trivial, like pass more than one variable in a procedure.
 
 Notice that TextMate and BBEdit have another method of communicating with external programs. Each has an independent program in /usr/local/bin, which can ask the main program to perform certain tasks. I looked at the TextMate code. It called low level Unix socket commands; I admired it in the same way that I admired a 21 year old pianist who performed Liszt's Hungarian Rhapsody Number 6: fantastic, but something I could never do.
 
@@ -3011,9 +3013,9 @@ To support users who prefer an external editor, a new folder has been added to \
 
 TeXShop contains additional commands making it easy to interact with external editors. These commands are documented below, but the text is quite technical. In practice, this information can be used to write scripts which automate the interaction, and these scripts will then end up in the ExternalEditorScripts folder. In the end, users can interact with TeXShop without understanding the details below.
 
-If an external editor is used for ConTeXt work, TeXShop does not open the source file and thus cannot see the magic lines introduced in the previous chapter. So a method is needed for external editors to pass this type of information to TeXShop. We provide new applescript commands for this purpose.
+If an external editor is used for ConTeXt work, TeXShop does not open the source file and thus cannot see the magic lines introduced in the previous chapter. So a method is needed for external editors to pass this type of information to TeXShop. We provide new AppleScript commands for this purpose.
 
-Eight new applescript commands have been added to TeXShop:
+Eight new AppleScript commands have been added to TeXShop:
 \begin{verbatim}
    StandardBinPath
    AlternateBinPath
@@ -3035,11 +3037,11 @@ Earlier, we introduced two two hidden Preference items]:
      defaults write TeXShop TextMateSync YES
      defaults write TeXShop OtherEditorSync YES
 \end{verbatim}
-These items still work, but are no longer recommended. Instead, use the next three applescript commands. The command ``SyncWithNoEditor'' tells TeXShop that the editor does not communicate at all. The command ``SyncWithTextMate'' says that TextMate is the external editor and TeXShop should use the commands built into this program. The command ``SyncWithOtherEditor'' says that some other editor is being used and TeXShop should call a shell script to communicate with that editor, as described below and also in the previous sections.
+These items still work, but are no longer recommended. Instead, use the next three AppleScript commands. The command ``SyncWithNoEditor'' tells TeXShop that the editor does not communicate at all. The command ``SyncWithTextMate'' says that TextMate is the external editor and TeXShop should use the commands built into this program. The command ``SyncWithOtherEditor'' says that some other editor is being used and TeXShop should call a shell script to communicate with that editor, as described below and also in the previous sections.
 
 The ``SyncRootName'' command is rarely used and will be explained later.
 
-To clarify the use of these commands, the following applescript command tells TeXShop to typeset using the version of ConTeXt installed in the alternate location, to sync using the new ConTeXt methods, and to interact using the ``other editors'' method: 
+To clarify the use of these commands, the following AppleScript command tells TeXShop to typeset using the version of ConTeXt installed in the alternate location, to sync using the new ConTeXt methods, and to interact using the ``other editors'' method: 
 \begin{verbatim}
       tell application "TeXShop"
            set the front_document to the front document
@@ -3054,9 +3056,9 @@ To clarify the use of these commands, the following applescript command tells Te
 \end{verbatim}
 
 
-This script can be made into a TeXShop applescript macro. Recall that TeXShop has a menu item to call Macros, so the Macro can be called even if TeXShop is in external editor mode. Call it just once when you work on a ConTeXt source, and after that the TeXShop typeset command will use the alternate ConTeXt distribution, will sync using the new ConTeXt sync methods, and will communicate using the ``other editors'' protocol. 
+This script can be made into a TeXShop AppleScript macro. Recall that TeXShop has a menu item to call Macros, so the Macro can be called even if TeXShop is in external editor mode. Call it just once when you work on a ConTeXt source, and after that the TeXShop typeset command will use the alternate ConTeXt distribution, will sync using the new ConTeXt sync methods, and will communicate using the ``other editors'' protocol. 
 
-If your editor supports applescript and allows users to add additional commands, you can build this command into the editor rather than creating a macro.  If your editor does not support applescript but can call shellscripts,  you can easily embed the applescript in a shell script:
+If your editor supports AppleScript and allows users to add additional commands, you can build this command into the editor rather than creating a macro.  If your editor does not support AppleScript but can call shellscripts,  you can easily embed the AppleScript in a shell script:
 \begin{verbatim}
    #!/bin/bash
      
@@ -3076,13 +3078,13 @@ If your editor supports applescript and allows users to add additional commands,
 
 From now on, we concentrate on the actual communication between TeXShop and the external editor.
 
-Your editor may already support sync from preview to source. When TeXShop syncs in that direction, it finds the location of the click in the preview window and processes this information using either Jerome Lauren's original sync code or the new ConTeXt Sync code. It ultimately produces two pieces of information,  the line number of the corresponding text in the source file, and a full path to the source file. This full path is required when source documents include other files, so the correct file will be opened and displayed. The remaining issue is communicating those two parameters, "\$1" = line number and "\$2" = source path, to the editor, so it will open "\$2" if it is not already open and then select line "\$1".
+Your editor may already support sync from preview to source. When TeXShop syncs in that direction, it finds the location of the click in the preview window and processes this information using either Jerome Lauren's original sync code or the new ConTeXt Sync code. It ultimately produces two pieces of information,  the line number of the corresponding text in the source file, and a full path to the source file. This full path is required when source documents include other files, so the correct file will be opened and displayed. The remaining issue is communicating those two parameters, ``\$1'' = line number and ``\$2'' = source path, to the editor, so it will open ``\$2'' if it is not already open and then select line ``\$1''.
 
-As it happens, TextMate contains a small file named "mate" which it can install in /usr/local/bin.  If mate is called with two string parameters "\$1" and "\$2", it opens the file with path "\$2" if it is not already open, and then selects line "\$1". 
+As it happens, TextMate contains a small file named ``mate'' which it can install in /usr/local/bin.  If mate is called with two string parameters ``\$1'' and ``\$2'', it opens the file with path ``\$2'' if it is not already open, and then selects line ``\$1''. 
 If the command SyncWithTextMate has been called, then TeXShop will call this ``mate'' program and configuration is complete. Incidentally, this call is also used when a TeXShop user selects ``Go To Error''. 
 
 If a different external editor is being used and the command SyncWithOtherEditor has been called, then
-TeXShop behaves in more or less the same way. Instead of calling ``mate'' in /usr/local/bin, it calls a binary named ``othereditor'' in /usr/local/bin. It calls this with the same two parameters "\$1" and "\$2". 
+TeXShop behaves in more or less the same way. Instead of calling ``mate'' in /usr/local/bin, it calls a binary named ``othereditor'' in /usr/local/bin. It calls this with the same two parameters ``\$1'' and ``\$2''. 
 
 The catch is that someone else has to write this ``othereditor'' file, which must have its execute bit set. However, it may be trivial to write this file for widely used editors, provided they have provided the necessary hooks.  Below are two such scripts, one for TextMate and one for BBEdit. The TextMate script is provided to show that SyncWithOtherEditor also works for it; the BBEdit script shows that another famous editor supports the required communication.
 
@@ -3105,7 +3107,7 @@ Finally, we must implement sync the other way from source file to preview. In th
 ``\$3'' a full path to the source file. If the source file clicked was just the original file which TeXShop opened in external editor mode, then it already knows ``\$3''. But if the user's projects involve included or input files, then the third parameter is essential to tell TeXShop where to find the sync information.
 
 The author of your editor must supply the code to convert a click into these three pieces of information. The editor should then call TeXShop, giving it the three parameters ``\$1'', ``\$2'', ``\$3''. 
-TeXShop expects the information to come as an applescript command. Below is that command. Of course the editor has to supply the strings ``linenumber'', ``indexnumber'', and ``full path to source file'':
+TeXShop expects the information to come as an AppleScript command. Below is that command. Of course the editor has to supply the strings ``linenumber'', ``indexnumber'', and ``full path to source file'':
 \newpage
 \begin{verbatim}
      tell application "TeXShop"
@@ -3121,7 +3123,7 @@ TeXShop expects the information to come as an applescript command. Below is that
      end tell
 \end{verbatim}
 
-If your editor prefers to call a shell script, it is easy to embed the applescript in such a script:
+If your editor prefers to call a shell script, it is easy to embed the AppleScript in such a script:
 \begin{verbatim}
    #!/bin/bash
 
@@ -3150,7 +3152,7 @@ If your editor prefers to call a shell script, it is easy to embed the applescri
    EOD
 \end{verbatim}
 
-%The two code samples just provided are a little confusing, because when I wrote them several years ago, I didn't know how to send more than one parameter to an applescript call. So I used a trick. The "sync_preview_line" applescript call  sends the parameter "$1" to TeXShop, where it is stored as an instance variable. The "sync_preview_index" command sends "$2" to TeXShop in the same way. <b>But</b> the call "sync_preview_name" call sends "$3" to TeXShop and then runs the sync command to highlight the appropriate spot in the preview window.
+%The two code samples just provided are a little confusing, because when I wrote them several years ago, I didn't know how to send more than one parameter to an AppleScript call. So I used a trick. The "sync_preview_line" AppleScript call  sends the parameter "$1" to TeXShop, where it is stored as an instance variable. The "sync_preview_index" command sends "$2" to TeXShop in the same way. <b>But</b> the call "sync_preview_name" call sends "$3" to TeXShop and then runs the sync command to highlight the appropriate spot in the preview window.
 
 ]Note that before using the above call, you must tell TeXShop the information it cannot find from magic lines:
 \begin{itemize}
@@ -3160,12 +3162,12 @@ If your editor prefers to call a shell script, it is easy to embed the applescri
 \end{itemize}
 
 Before asking the author of your editor to write the required code for syncing from editor to preview window, you may wish to test that it works. To simplify your life, you might suppose that all of the source code is in the main file.
-In that case, it isn't necessary to pass the full path to the source file, and so the last line of the applescript command
+In that case, it isn't necessary to pass the full path to the source file, and so the last line of the AppleScript command
 which reads 
 \begin{verbatim}
      sync\_preview\_name theName "full path to source file"
 \end{verbatim}
- can be replaced with an applescript command with no parameter:
+ can be replaced with an AppleScript command with no parameter:
 \begin{verbatim}
       SyncRootName
  \end{verbatim}
@@ -3176,9 +3178,9 @@ which reads
 
 TeXShop uses customizable colors for syntax coloring, for various window backgrounds, and for other purposes. In the original version of TeXShop, users could modify these colors with a fairly baroque set of preference items. Then in macOS Mojave, Apple introduced ``Lite Mode'' and ``Dark Mode'' and an entirely new set of colors was required. At that point the old color preferences were ripped out of TeXShop and replaced by the Themes tab in Preferences, see \cref{fig:Theme}. While previously many colors could only be changed using  obscure hidden Preference settings, now all color choices are available in the Themes tab.
 
-The Themes portion of Preferences is shown on the next page. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others will be explained shortly. A full set of such choices is called a "Theme". TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave and above. The second menu sets the theme used in Dark Mode on Mojave and above. The final menu sets the theme which Preferences is currently editing.
+The Themes portion of Preferences is shown on the next page. On the right are all colors currently set by TeXShop. Some items have an obvious meaning and others will be explained shortly. A full set of such choices is called a ``Theme''. TeXShop allows users to create as many themes as they like. These themes are listed in three pulldown menus on the left: Lite Mode Theme, Dark Mode Them, Theme to Edit. The first menu sets the theme used on all systems below Mojave, and the theme used in Lite Mode on Mojave and above. The second menu sets the theme used in Dark Mode on Mojave and above. The final menu sets the theme which Preferences is currently editing.
 
-TeXShop is shipped with several themes, including "LiteTheme" and "DarkTheme". These are the default themes for Lite Mode and Dark Mode. As explained later, there is a way for users to rename or remove Themes known to TeXShop. But TeXShop will always replace "LiteTheme" and "DarkTheme"
+TeXShop is shipped with several themes, including ``LiteTheme'' and ``DarkTheme''. These are the default themes for Lite Mode and Dark Mode. As explained later, there is a way for users to rename or remove Themes known to TeXShop. But TeXShop will always replace ``LiteTheme'' and ``DarkTheme''
 and use them if other required themes are missing.
 
 Gary Gray contributed GLG-Dark for Dark mode. Gray then tweaked this theme, and ended up with a dark theme that was was so my better than mine  that I ended up using it as the default and renaming it DarkTheme. So Gray lost credit, but gained users. Thanks.
@@ -3203,7 +3205,7 @@ To create a new theme, first change ``Theme to Edit'' to obtain reasonable start
 
 One final item in the left column must be explained, but it is essentially obsolete. When the theme panel was first introduced, some users had spent time using the original color preference system to revise the default colors, only to have that system ripped out of the program. Their color preference choices, however, still remained in the Preferences data base. The button ``New Theme from Prefs'' created a new color theme using these old preference choices. There is just one other use for this button which someone might conceivably still use. When the old color preference system existed, some people on the internet developed color themes for TeXShop and made them available as shell scripts which reset various TeXShop color setting preferences. These shell scripts still work, but they no longer affect the appearance of TeXShop. After running such a script, you can use ``New Theme from Prefs'' to convert the old scripted theme to a regular new Theme.
 
-Recall that various TeXShop items which users can customize are set in \path{~/Library/TeXShop}. This folder has various subfolders. There is a new folder in \path{~/Library/TeXShop} named ``Themes''.  This folder contains very small ".plist" files describing the various Themes in TeXShop. If you create a theme you like, give it to others by putting its plist file on the Internet. To install a new theme of this kind, just drop its plist form in the Themes folder.
+Recall that various TeXShop items which users can customize are set in \path{~/Library/TeXShop}. This folder has various subfolders. There is a new folder in \path{~/Library/TeXShop} named ``Themes''.  This folder contains very small ``.plist'' files describing the various Themes in TeXShop. If you create a theme you like, give it to others by putting its plist file on the Internet. To install a new theme of this kind, just drop its plist form in the Themes folder.
 
 You can also remove Themes you no longer use by removing their plist files from the Themes folder. Avoid removing themes being used for Lite Mode or Dark Mode (although TeXShop should react gracefully when it runs into this situation). As explained earlier, the themes LiteTheme and DarkTheme will be recreated if they are removed.
 
@@ -3236,7 +3238,89 @@ The colors ``Invisible Chars, Enclosed Chars, Braces'' are used for some feature
  Finally the XML Syntax colors are colors used when TeXShop syntax colors html, xml, and ptr files, as described in the chapter on Html, TeX4ht, and PreTeXt.
  
  To be completely honest, one color is not set in the Themes panel. It is the color of the optional block cursor, set in the Misc1 tab of Preferences. This will be discussed in a later chapter of this Manual.
+ 
+ \chapter{expl3 Syntax Coloring}
+ 
+ \section{Latex3 and expl3}
+ 
+ Recall the early history of \LaTeX, described earlier in this manual (see \cref{LatexHistory}). After the release of \LaTeX2e, the original plan was to  eventually replace \LaTeX2e with \LaTeX3. But the team later decided on a series of gradual improvements, so important changes to \LaTeX\ have occurred in recent years without making old source files obsolete. For an overview of the current project, see \url{https://www.latex-project.org/latex3/}. 
+ 
+ An important step in modern \LaTeX\ programming occurred when the team designed and adopted expl3. They describe expl3 as ``a new set of programming conventions that have been designed to meet the requirements of implementing large scale \TeX\ macro programming projects such as \LaTeX. These programming conventions are the base layer of \LaTeX3.''  To read a detailed description from the team, go to \url{ctan.org}. At the top of the home page, search for ``expl3''. The first item to appear is named {\em Package expl3}. Go to this package. In the documentation section at the top, click on ``Package documentation.''  This produces a document whose current revision as this chapter was written is January 22, 2024.
+ 
+ \section{Activating expl3 Syntax Coloring}
+ 
+ The TeXShop Source menu has an item named ``Syntax Color expl3 Code''. This menu is a toggle which turns expl3 syntax coloring on or off. When coloring is on, the menu has a checkmark. If expl3 coloring is off, TeXShop syntax coloring works as it always has. When expl3 coloring is on, the old syntax coloring still occurs, but in addition expl3 code is given special coloring. In either case, there will only be coloring if the menu item ``Show Syntax Color'' is checked.
+ This menu item is just above ``Syntax Color expl3 Code''.
+ \newpage
+ Like most TeXShop menus, ``Syntax Color expl3 Code'' applies to individual document source windows rather than to all windows at once. For a discussion of this philosophy, see \cref{MenuDesign}. Thus expl3 coloring can be active in one source window and inactive in a second source window.
+ 
+ When source windows are first opened, expl3 coloring is off. This design was selected because most \LaTeX\ programmers will use, but not write, \LaTeX\ macros. If you are an exception and want expl3 coloring to be on when documents are first selected, you can set a hidden preference to make this happen. The preference is
+ \begin{verbatim}
+     defaults write TeXShop expl3SyntaxColoring YES
+ \end{verbatim}
+ 
+ \section{expl3 Coloring Rules}
+ 
+ The colors used for expl3 syntax coloring can be changed in TeXShop Preferences using the Themes tab. This method works as usual, and seven additional colors are provided for expl3 coloring.
+ 
+ I am not a macro programmer, so my description of expl3 syntax may be a little rough. Syntax coloring is in TeXShop because it was requested by Alan Munn, and the description of the syntax comes directly from Munn. If you are a macro programmer, thank Munn for the new feature.
+ 
+ There are essentially six types of expl3 statements: functions, variables, double underscore functions, double underscore variables, msg commands for warnings and errors, and key setting commands and their arguments.
+Munn describes the difference between functions and double underscore functions as ``private vs public macros, i.e., internal macros which are documented and can be relied on by other packages vs. internal macros that are not documented and should not be relied on by other packages.'' A similar remark applies to variables. But I'll refer to them as functions (which have a single underscore) and double underscore functions, because that is what I paid attention to in the coloring code.
 
+As we will soon see, the string containing a function name and its argument has no spaces. This entire string is assigned one color, called the ``function'' color. The same rule holds for variables, double underscore functions, double underscore variables, and msg commands. The resulting colors are named
+\begin{verbatim}
+     function, variable, __function, __variable, msg
+\end{verbatim}
+
+Commands which set the value of a key have a slightly different syntax. Below is an example of such a command.
+\begin{verbatim}
+     thiskey .tl_set:N = {...}     
+\end{verbatim}
+Such a command always starts with the name of the key, followed with optional spaces which are ignored and then a period. The period begins a string with no spaces giving the key argument. The argument must contain at least one underscore or at least one colon. TeXShop assigns two colors to such a command. The name of the key gets the first color. The period and all characters in the argument get the second color. Thus two colors are used, named
+\begin{verbatim}
+     key, argument
+\end{verbatim}
+
+Here are four functions:
+\begin{verbatim}
+     \tl_set:Nn
+     \clist_pop:NN
+     \mymodule_function:Nn
+     \mymodule_function:V
+\end{verbatim}
+
+A variable always begins with a backslash, one of the letters l, g, c, and an underscore; here are three variables:
+\begin{verbatim}
+     \l_mymodule_localvariable_clist
+     \g_mymodule_globalvariable_int
+     \c_mymodule_constant_str
+\end{verbatim}
+     
+Here is a double underscore function:
+\begin{verbatim}
+     \__tl_set:Nn
+\end{verbatim}
+and here are three double underscore variables:
+\begin{verbatim}
+     \l__mymodule_localvariable_clist
+     \g__mymodule_globalvariable_int
+     \c__mymodule_constant_str
+\end{verbatim}
+Here is a msg:
+\begin{verbatim}
+     \msg_this_and_that
+\end{verbatim}
+and here are two key commands:
+\begin{verbatim}
+      akey.is_nothing = {hello}
+      thirdkey  .this_and_more:N = {something}
+\end{verbatim}
+
+Note that functions, variables, double underscore functions, double underscore variables, and msg commands
+all consist of a string with no spaces. More precisely, this string can contain any lower case letter `a' - `z', any upper case letter `A' - `Z', the underscore character, the colon character `:', and the sign `@'. Any other character ends the string and is not part of the string.
+ 
+ 
 \chapter{Splitting Windows}
 \section{Splitting Source and Preview Windows}
 
@@ -3246,7 +3330,7 @@ The Window Menu contains a menu item  ``Split Window'' which is a similar toggle
 This menu item has a keyboard shortcut, so if you are working with, say, the Preview Window, you can
 split or unsplit it with a keystroke without even reaching up to the toolbar.
 
-When the Option key is pressed, the Window menu  ``Split Window'' changes to ``Split Window Vertically."
+When the Option key is pressed, the Window menu  ``Split Window'' changes to ``Split Window Vertically.''
 Thus the source and preview windows can be split horizontally, with one portion above the other,
 or vertically, with one portion to the left of the other.
 Pushing the option key while clicking the split window toolbar item has the same effect.
@@ -3685,7 +3769,7 @@ Feel free to send any suggestions about this chapter directly to me at \href{mai
 
 This feature was requested by Wendy McKay.
 
-The item  "Experiment..." in the Edit menu  is available when the source window is active. The item allows users to experiment with short, but complicated, fragments of TeX before copying the source into the main document.
+The item  ``Experiment...'' in the Edit menu  is available when the source window is active. The item allows users to experiment with short, but complicated, fragments of TeX before copying the source into the main document.
 
 When the item is chosen, a panel appears. Type a TeX fragment into the panel, say 
 \begin{verbatim}
@@ -3708,7 +3792,7 @@ After this item was introduced, it was mentioned on the web site \url{tex.stacke
 If no selection is made and instead the cursor is simply positioned by clicking at a point, then the Experiment window opens with
 its previous contents. Thus if a user carefully edits an equation, closes the experiment window, and then decides on a final change, the contents can be brought back for another edit.
 
-Typesetting for "Experiment" uses the Preference settings for pdflatex and simpdftex latex. If the user's pulldown menu is set to latex, the three choices of 1) pdflatex, 2) tex + dvi, 3) personal script are obeyed. This should make the command work for TeX in Japan.
+Typesetting for ``Experiment'' uses the Preference settings for pdflatex and simpdftex latex. If the user's pulldown menu is set to latex, the three choices of 1) pdflatex, 2) tex + dvi, 3) personal script are obeyed. This should make the command work for TeX in Japan.
 
 
 \section{Tags Toolbar Item and Menu; Labels Item}
@@ -4202,7 +4286,7 @@ macros on the left, and their coding on the right. We are going to add a new mac
 On the right side of the editing window, give the item a reasonable name. In the content region just below,
 type the following text:
 \begin{verbatim}
---Applescript direct
+--AppleScript direct
 
       tell application "System Events" to keystroke "password"
       tell application "System Events" to keystroke return
@@ -4657,7 +4741,7 @@ TeXShop supports command completion. Type the first portion of a complicated TeX
 
 Since jumping to the next or previous mark is a common operation, TeXShop also allows users to type option-escape to get to the next mark and control-escape to get to the previous mark.
 
-A Preference Panel item allows users to use "tab" instead of "escape" as the key which triggers command completion. In that case, the shortcuts which jump from mark to mark become option-tab and control-tab.
+A Preference Panel item allows users to use ``tab'' instead of ``escape'' as the key which triggers command completion. In that case, the shortcuts which jump from mark to mark become option-tab and control-tab.
 
 Occasionally, third party utilities make use of option-escape, control-escape, option-tab, and control-tab for other purposes. If TeXShop's use of these shortcuts interferes with these utilities, you can turn off these particular TeXShop shortcuts with a hidden preference:
 \begin{verbatim}

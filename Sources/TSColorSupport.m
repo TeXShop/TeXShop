@@ -113,6 +113,7 @@ static id sharedColorSupport = nil;
 
 // When colors are added later, dictionaries may not have them; the four calls below give default values until the user selects new
 // colors for these keys and consequentlycolor adds entries to dictionaries
+
 - (NSColor *)liteColorWithKey: (NSString *)theKey
 {
     if ([theKey isEqualToString: @"EditorFlash"])
@@ -121,17 +122,49 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 0.35  green: 0.35  blue: 0.35 alpha:1.00];
     else if ([theKey isEqualToString: @"EntryColor"])
         return [NSColor colorWithRed: 0.9  green: 0.99  blue: 0.99 alpha:1.00];
-    
+
     else if ([theKey isEqualToString: @"XMLComment"])
-        return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];
-    else if ([theKey isEqualToString: @"XMLTag"])
-        return [NSColor colorWithRed: 1.00  green: 0.00  blue: 0.20 alpha:1.00];
-    else if ([theKey isEqualToString: @"XMLSpecial"])
-        return [NSColor colorWithRed: 0.00  green: 0.30  blue: 1.00 alpha:1.00];
-    else if ([theKey isEqualToString: @"XMLParameter"])
-        return [NSColor colorWithRed: 0.00  green: 1.00  blue: 0.00 alpha:1.00];
-    else if ([theKey isEqualToString: @"XMLValue"])
-        return [NSColor colorWithRed: 0.60  green: 0.60  blue: 0.20 alpha:1.00];
+            return [NSColor colorWithRed: 0.50  green: 0.50  blue: 0.50 alpha:1.00];
+        else if ([theKey isEqualToString: @"XMLTag"])
+            return [NSColor colorWithRed: 1.00  green: 0.00  blue: 0.20 alpha:1.00];
+        else if ([theKey isEqualToString: @"XMLSpecial"])
+            return [NSColor colorWithRed: 0.00  green: 0.30  blue: 1.00 alpha:1.00];
+        else if ([theKey isEqualToString: @"XMLParameter"])
+            return [NSColor colorWithRed: 0.00  green: 1.00  blue: 0.00 alpha:1.00];
+        else if ([theKey isEqualToString: @"XMLValue"])
+            return [NSColor colorWithRed: 0.60  green: 0.60  blue: 0.20 alpha:1.00];
+    
+    /*
+    myColor1 = [NSColor colorWithRed: 1.0 green: 0.0 blue: 1.0 alpha: 1.00];
+    self.explColorAttribute1 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor1, NSForegroundColorAttributeName, nil];
+    myColor2 = [NSColor colorWithRed: .2 green: 0.5 blue: 0.5 alpha: 1.00];
+    self.explColorAttribute2 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor2, NSForegroundColorAttributeName, nil];
+    myColor3 = [NSColor colorWithRed: .5 green: 0.5 blue: .5 alpha: 1.00];
+    self.explColorAttribute3 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor3, NSForegroundColorAttributeName, nil];
+    myColor4 = [NSColor colorWithRed: .8 green: 0.8 blue: 0.1 alpha: 1.00];
+    self.explColorAttribute4 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor4, NSForegroundColorAttributeName,nil];
+    myColor5 = [NSColor colorWithRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.00];
+    self.explColorAttribute5 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor5, NSForegroundColorAttributeName,nil];
+    myColor6 = [NSColor colorWithRed: 0.0 green: 1.0 blue: 1.0 alpha: 1.00];
+    self.explColorAttribute6 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor6, NSForegroundColorAttributeName,nil];
+    myColor7 = [NSColor colorWithRed: 0.7 green: 0.0 blue: 0.7 alpha: 1.00];
+    self.explColorAttribute7 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor7, NSForegroundColorAttributeName,nil];
+    */
+    
+        else if ([theKey isEqualToString: @"explFunction"])
+            return [NSColor colorWithRed: .00 green: 0.10 blue: 0.57 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explVariable"])
+            return [NSColor colorWithRed: .31 green: 0.56 blue: .00 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explIntenseFunction"])
+            return [NSColor colorWithRed: .58 green: 0.32 blue: 0.00 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explIntenseVariable"])
+            return [NSColor colorWithRed: .37 green: 0.37 blue: .37 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explmykey"])
+            return [NSColor colorWithRed: .58 green: .21 blue: 1.0 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explmykeyArgument"])
+            return [NSColor colorWithRed: 0.85 green: 0.29 blue: 0.36 alpha: 1.00];
+        else if ([theKey isEqualToString: @"explmsg"])
+            return [NSColor colorWithRed: .00 green: .57 blue: .57 alpha: 1.00];
     
     else
         return [NSColor colorWithRed: 1.00  green: 1.00 blue: 1.00 alpha:1.00];
@@ -156,6 +189,21 @@ static id sharedColorSupport = nil;
         return [NSColor colorWithRed: 0.00  green: 1.00  blue: 0.00 alpha:1.00];
     else if ([theKey isEqualToString: @"XMLValue"]) //not actually used
         return [NSColor colorWithRed: 0.60  green: 0.60  blue: 0.20 alpha:1.00];
+    
+    else if ([theKey isEqualToString: @"explFunction"])
+        return [NSColor colorWithRed: .57 green: 0.57 blue: 0.00 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explVariable"])
+        return [NSColor colorWithRed: .31 green: 0.56 blue: .00 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explIntenseFunction"])
+        return [NSColor colorWithRed: 1.00 green: 0.58 blue: 0.00 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explIntenseVariable"])
+        return [NSColor colorWithRed: .66 green: 0.66 blue: .66 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explmykey"])
+        return [NSColor colorWithRed: .58 green: .21 blue: 1.0 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explmykeyArgument"])
+        return [NSColor colorWithRed: 0.85 green: 0.29 blue: 0.36 alpha: 1.00];
+    else if ([theKey isEqualToString: @"explmsg"])
+        return [NSColor colorWithRed: .00 green: .57 blue: .57 alpha: 1.00];
 
     
     else
@@ -172,6 +220,30 @@ static id sharedColorSupport = nil;
 {
       return [self darkColorWithKey: theKey];
 }
+
+- (NSColor *)colorForKey: (NSString *)theKey isWindowDark: (BOOL)mode
+{
+    NSColor *theColor;
+    NSDictionary *theDictionary;
+    
+    if (mode)
+        theDictionary = darkColors;
+     else
+         theDictionary = liteColors;
+        
+    
+    NSArray *theColorArray = [theDictionary objectForKey: theKey];
+    if (theColorArray != nil)
+        {
+            theColor = [NSColor colorWithRed: [theColorArray[0] doubleValue]  green: [theColorArray[1] doubleValue]  blue: [theColorArray[2] doubleValue]  alpha: [theColorArray[3] doubleValue]];
+            return (theColor);
+        }
+    if (mode)
+        return [self darkColorWithKey: theKey];
+    else
+        return [self liteColorWithKey: theKey];
+}
+
 
 
 - (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (double)red

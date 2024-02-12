@@ -59,7 +59,7 @@
 #import "NSText-Extras.h"  // Terada
 #import "TSGlyphPopoverController.h"  // Terada
 #import "TSWindowController.h"
-#import "TSColorSupport.h"
+
 
 #define COLORTIME  0.02
 #define COLORLENGTH 5000
@@ -86,8 +86,45 @@ NSInteger strSort(id s1, id s2, void *context)
     return result;
 }
 
+
+- (void)readExplColors
+{
+    BOOL    withDarkColors;
+    NSColor *myColor1, *myColor2, *myColor3, *myColor4, *myColor5, *myColor6, *myColor7;
+
+/*
+#ifdef MOJAVEORHIGHER
+    if ((atLeastMojave) && ([self textWindow].effetiveAppearance.name == NSAppearanceNameDarkAqua))
+        withDarkColors = YES;
+    else
+#endif
+        withDarkColors = NO;
+*/
+withDarkColors = NO;
+
+    {
+        myColor1 = [[TSColorSupport sharedInstance] colorForKey: @"explVariable" isWindowDark: withDarkColors];
+        self.explColorAttribute1 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor1, NSForegroundColorAttributeName, nil];
+        myColor2 = [[TSColorSupport sharedInstance] colorForKey:  @"explFunction" isWindowDark: withDarkColors];
+        self.explColorAttribute2 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor2, NSForegroundColorAttributeName, nil];
+        myColor3 = [[TSColorSupport sharedInstance] colorForKey:  @"explIntenseVariable" isWindowDark: withDarkColors];
+        self.explColorAttribute3 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor3, NSForegroundColorAttributeName, nil];
+        myColor4 = [[TSColorSupport sharedInstance] colorForKey:  @"explIntenseFunction" isWindowDark: withDarkColors];
+        self.explColorAttribute4 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor4, NSForegroundColorAttributeName,nil];
+        myColor5 = [[TSColorSupport sharedInstance] colorForKey: @"explmsg" isWindowDark: withDarkColors];
+        self.explColorAttribute5 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor5, NSForegroundColorAttributeName,nil];
+        myColor6 = [[TSColorSupport sharedInstance] colorForKey:  @"explmykey" isWindowDark: withDarkColors];
+        self.explColorAttribute6 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor6, NSForegroundColorAttributeName,nil];
+        myColor7 = [[TSColorSupport sharedInstance] colorForKey: @"explmykeyArgument" isWindowDark: withDarkColors];
+        self.explColorAttribute7 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor7, NSForegroundColorAttributeName,nil];
+    }
+}
+
+
 - (id)init
 {
+    NSColor *myColor1, *myColor2, *myColor3, *myColor4, *myColor5, *myColor6, *myColor7;
+    
 	id result = [super init];
 	
 	isFullScreen = NO;
@@ -106,6 +143,26 @@ NSInteger strSort(id s1, id s2, void *context)
 	self.indexColorAttribute = 0;
 	self.markerColorAttribute = 0;
     
+    [self readExplColors];
+    
+    
+    /*
+    myColor1 = [NSColor colorWithRed: 1.0 green: 0.0 blue: 1.0 alpha: 1.00];
+    self.explColorAttribute1 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor1, NSForegroundColorAttributeName, nil];
+    myColor2 = [NSColor colorWithRed: .2 green: 0.5 blue: 0.5 alpha: 1.00];
+    self.explColorAttribute2 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor2, NSForegroundColorAttributeName, nil];
+    myColor3 = [NSColor colorWithRed: .5 green: 0.5 blue: .5 alpha: 1.00];
+    self.explColorAttribute3 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor3, NSForegroundColorAttributeName, nil];
+    myColor4 = [NSColor colorWithRed: .8 green: 0.8 blue: 0.1 alpha: 1.00];
+    self.explColorAttribute4 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor4, NSForegroundColorAttributeName,nil];
+    myColor5 = [NSColor colorWithRed: 1.0 green: 1.0 blue: 0.0 alpha: 1.00];
+    self.explColorAttribute5 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor5, NSForegroundColorAttributeName,nil];
+    myColor6 = [NSColor colorWithRed: 0.0 green: 1.0 blue: 1.0 alpha: 1.00];
+    self.explColorAttribute6 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor6, NSForegroundColorAttributeName,nil];
+    myColor7 = [NSColor colorWithRed: 0.7 green: 0.0 blue: 0.7 alpha: 1.00];
+    self.explColorAttribute7 = [[NSDictionary alloc] initWithObjectsAndKeys:myColor7, NSForegroundColorAttributeName,nil];
+    */
+     
     fullscreenPageStyle = 0;
     fullscreenResizeOption = 0;
     oldPageStyle = 2;
@@ -181,7 +238,7 @@ NSInteger strSort(id s1, id s2, void *context)
         self.RTLDisplay = NO;
     else
         self.RTLDisplay = YES;
-  
+    
 
 	lastCursorLocation = 0; // added by Terada
 	lastStringLength = 0; // added by Terada
@@ -370,12 +427,15 @@ NSInteger strSort(id s1, id s2, void *context)
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    NSString    *windowState, *rangeString;
-    NSPoint     thePoint, splitPoint;
-    BOOL        fromFullSplitWindow;
-    NSRect      theVisibleRect;
-    NSRange     theRange;
-    NSInteger   drawerState, tabPreference;
+    NSString        *windowState, *rangeString;
+    NSPoint         thePoint, splitPoint;
+    BOOL            fromFullSplitWindow;
+    NSRect          theVisibleRect;
+    NSRange         theRange;
+    NSInteger       drawerState, tabPreference;
+    
+    MyPDFKitView    *aView;
+    NSInteger       pageIndex;
     
     [super restoreStateWithCoder:coder];
     
@@ -409,9 +469,14 @@ NSInteger strSort(id s1, id s2, void *context)
                 [self.pdfKitWindow setFrameFromString:windowState];
             }
             
+            if ([coder containsValueForKey:@"VisiblePDFPage"])
+            {
+                pageIndex = [coder decodeIntegerForKey:@"VisiblePDFPage"];
+                aView = (MyPDFKitView *)self.myPDFKitView;
+                [aView goToPage: [[aView document] pageAtIndex: pageIndex]];
+            }
             
-            
-            
+            /*
             if ([coder containsValueForKey:@"TeXShopPDFWindowOrigin"]) {
                 thePoint = [coder decodePointForKey:@"TeXShopPDFWindowOrigin"];
                 [self.pdfKitWindow setFrameOrigin: thePoint];
@@ -421,6 +486,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 theVisibleRect = [coder decodeRectForKey:@"VisiblePDFRect"];
                 [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
             }
+            */
         }
   
                     
@@ -433,6 +499,15 @@ NSInteger strSort(id s1, id s2, void *context)
                     windowState = (NSString *)[coder decodeObjectForKey:@"SplitWindow"];
                 [fullSplitWindow setFrameFromString:windowState];
             }
+            
+            if ([coder containsValueForKey:@"SplitVisiblePDFPage"])
+            {
+                pageIndex = [coder decodeIntegerForKey:@"SplitVisiblePDFPage"];
+                aView = (MyPDFKitView *)self.myPDFKitView;
+                [aView goToPage: [[aView document] pageAtIndex: pageIndex]];
+            }
+            
+            /*
             if ([coder containsValueForKey:@"SplitWindowOrigin"])
             {
                 splitPoint = [coder decodePointForKey:@"SplitWindowOrigin"];
@@ -442,6 +517,7 @@ NSInteger strSort(id s1, id s2, void *context)
                 theVisibleRect = [coder decodeRectForKey:@"VisibleSplitPDFRect"];
                 [[self.myPDFKitView documentView] scrollRectToVisible: theVisibleRect];
             }
+            */
             if ([coder containsValueForKey:@"TextSelection"]) {
                 rangeString = [coder decodeObjectForKey:@"TextSelection"];
                 theRange = NSRangeFromString(rangeString);
@@ -479,27 +555,32 @@ NSInteger strSort(id s1, id s2, void *context)
     
     // record PDF window's size and position
     NSString *theCode, *theSplitCode;
- 
-     
+    MyPDFKitView *aView;
+    NSInteger pageIndex;
      
     [coder encodeBool:useFullSplitWindow forKey:@"ForFullSplitWindow"];
     [coder encodeInteger:[myDrawer state] forKey:@"TeXShopDrawerState"];
 
     if (! useFullSplitWindow) {
-        NSRect theRect = [self.pdfKitWindow frame];
-        NSPoint theOrigin = theRect.origin;
-        NSRect theVisibleRect = [[self.myPDFKitView documentView] visibleRect];
+        
+        aView = (MyPDFKitView *)self.myPDFKitView;
+        pageIndex = [[aView document] indexForPage: [aView currentPage]];
+        [coder encodeInteger: pageIndex forKey:@"VisiblePDFPage"];
+        
+        // NSRect theRect = [self.pdfKitWindow frame];
+        // NSPoint theOrigin = theRect.origin;
+        //NSRect theVisibleRect = [[self.myPDFKitView documentView] visibleRect];
        
         theCode = [self.pdfKitWindow stringWithSavedFrame];
         [coder encodeObject: theCode forKey:@"TeXShopPDFWindow"];
-        [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
-        [coder encodeRect: theVisibleRect forKey:@"VisiblePDFRect"];
+        // [coder encodePoint: theOrigin forKey:@"TeXShopPDFWindowOrigin"];
+        // [coder encodeRect: theVisibleRect forKey:@"VisiblePDFRect"];
      }
     
     if (useFullSplitWindow) {
-        NSRect theSplitRect = [fullSplitWindow frame];
-        NSPoint theSplitOrigin = theSplitRect.origin;
-        NSRect theVisibleSplitRect = [[self.myPDFKitView documentView] visibleRect];
+        // NSRect theSplitRect = [fullSplitWindow frame];
+        // NSPoint theSplitOrigin = theSplitRect.origin;
+        // NSRect theVisibleSplitRect = [[self.myPDFKitView documentView] visibleRect];
         NSRange theSelectedRange = [self.textView selectedRange];
         NSString *stringForRange = NSStringFromRange(theSelectedRange);
         float leftWidth = leftView.frame.size.width;
@@ -507,8 +588,12 @@ NSInteger strSort(id s1, id s2, void *context)
        
         theSplitCode = [fullSplitWindow stringWithSavedFrame];
         [coder encodeObject: theSplitCode forKey:@"SplitWindow"];
-        [coder encodePoint: theSplitOrigin forKey: @"SplitWindowOrigin"];
-        [coder encodeRect: theVisibleSplitRect forKey:@"VisibleSplitPDFRect"];
+        aView = (MyPDFKitView *)self.myPDFKitView;
+        pageIndex = [[aView document] indexForPage: [aView currentPage]];
+        [coder encodeInteger: pageIndex forKey:@"SplitVisiblePDFPage"];
+        
+        // [coder encodePoint: theSplitOrigin forKey: @"SplitWindowOrigin"];
+        // [coder encodeRect: theVisibleSplitRect forKey:@"VisibleSplitPDFRect"];
         [coder encodeObject:stringForRange forKey:@"TextSelection"];
         [coder encodeFloat: leftWidth forKey:@"LeftViewWidth"];
         [coder encodeFloat: rightWidth forKey:@"RightViewWidth"];
@@ -879,6 +964,7 @@ NSInteger strSort(id s1, id s2, void *context)
 
 	[super windowControllerDidLoadNib:aController];
     self.syntaxColor = [SUD boolForKey: SyntaxColoringEnabledKey];
+    self.useExplColor = [SUD boolForKey: expl3SyntaxColoringKey];
     [self applyInvisibleCharactersShowing]; // added by Terada
     
  //   [self.splitController setWindow: fullSplitWindow];
@@ -6001,6 +6087,14 @@ if (! useFullSplitWindow) {
             [anItem setState:NSOffState];
     }
     
+    if ([anItem action] == @selector(toggleExplColor:))
+    {
+        if (self.useExplColor)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+    }
+    
     if ([anItem action] == @selector(toggleBlockCursor:))
     {
         if (self.blockCursor)
@@ -7180,6 +7274,16 @@ if (! useFullSplitWindow) {
     
 }
 
+- (IBAction)toggleExplColor:sender {
+    
+     self.useExplColor = ! self.useExplColor;
+    [sender setState: self.useExplColor];
+        
+  if (self.syntaxColor)
+      [self reColor:nil];
+    
+}
+
 - (IBAction)toggleSyntaxColorEntry:sender {
     
      self.syntaxcolorEntry = ! self.syntaxcolorEntry;
@@ -7253,6 +7357,19 @@ if (! useFullSplitWindow) {
 				  [[[[anObject menuFormRepresentation] submenu] itemAtIndex:0] setState: NSOffState];
 			}
 		}
+}
+
+- (void)fixExplMenu
+{
+    NSMenu *sourceMenu;
+    NSMenuItem *explMenu;
+    
+    sourceMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Source", @"Source")] submenu];
+    if (sourceMenu) {
+        explMenu = [sourceMenu itemWithTitle:NSLocalizedString(@"Syntax Color expl3 Code", @"Syntax Color expl3 Code")];
+        if (explMenu)
+            [explMenu setState: self.useExplColor];
+    }
 }
 
 // added by Terada (- (void) fixShowFullPathButton)
@@ -10656,6 +10773,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 {
     return textView2;
 }
+
 
 
 @end

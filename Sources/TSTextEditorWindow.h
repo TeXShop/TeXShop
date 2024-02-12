@@ -52,6 +52,7 @@
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 - (void)close;
 - (void)performFindPanelAction: sender;
+- (void)toggleExplColor: sender;
 
 // end forsplit
 @end

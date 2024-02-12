@@ -20,10 +20,15 @@
 - (NSColor *)colorFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey;
 - (NSColor *)colorAndAlphaFromDictionary:(NSDictionary *)theDictionary andKey: (NSString *)theKey;
 
+
 - (NSColor *)liteColorWithKey: (NSString *)theKey;
 - (NSColor *)darkColorWithKey: (NSString *)theKey;
 - (NSColor *)liteColorAndAlphaWithKey: (NSString *)theKey;
 - (NSColor *)darkColorAndAlphaWithKey: (NSString *)theKey;
+
+- (NSColor *)colorForKey: (NSString *)theKey isWindowDark: (BOOL)mode;
+
+// - (NSColor *)colorForKey: (NSString *)theKey  whiledark: (BOOL)mode;
 
 - (void)changeColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey fromColorWell: (id)theWell;
 - (void)setColorValueInDictionary: (NSMutableDictionary *)theDictionary forKey: (NSString *)theKey withRed: (double)red

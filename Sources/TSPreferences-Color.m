@@ -173,6 +173,16 @@ NSInteger stringSort(id s1, id s2, void *context)
     SyntaxCommandColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SyntaxCommand"];
     SyntaxMarkerColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SyntaxMarker"];
     SyntaxIndexColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"SyntaxIndex"];
+
+        
+    explFunctionColorWell.color = [colorSupport colorForKey: @"explFunction" isWindowDark: withDarkColors];
+    explVariableColorWell.color = [colorSupport colorForKey: @"explVariable" isWindowDark: withDarkColors];
+    explIntenseFunctionColorWell.color = [colorSupport colorForKey: @"explIntenseFunction" isWindowDark: withDarkColors];
+    explIntenseVariableColorWell.color = [colorSupport colorForKey: @"explIntenseVariable" isWindowDark: withDarkColors];
+    explmykeyColorWell.color = [colorSupport colorForKey: @"explmykey" isWindowDark: withDarkColors];
+    explmykeyArgumentColorWell.color = [colorSupport colorForKey: @"explmykeyArgument" isWindowDark: withDarkColors];
+    explmsgColorWell.color = [colorSupport colorForKey: @"explmsg" isWindowDark: withDarkColors];
+   
     
     EditorHighlightBracesColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorHighlightBraces"];
     EditorHighlightContentColorWell.color = [colorSupport colorAndAlphaFromDictionary:EditingColors andKey: @"EditorHighlightContent"];
@@ -911,6 +921,111 @@ NSInteger stringSort(id s1, id s2, void *context)
     [colorSupport changeColorValueInDictionary: EditingColors forKey: @"XMLValue" fromColorWell:sender];
     [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
     
+}
+
+- (IBAction)explFunctionColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explFunction"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explFunction" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explVariableColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explVariable"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explVariable" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explIntenseFunctionColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explIntenseFunction"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explIntenseFunction" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explIntenseVariableColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explIntenseVariable"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explIntenseVariable" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explmykeyColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explmykey"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explmykey" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explmykeyArgumentColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explmykeyArgument"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explmykeyArgument" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
+}
+
+- (IBAction)explmsgColorChanged:sender
+{
+    TSColorSupport *colorSupport = [TSColorSupport sharedInstance];
+    
+    if ((! _prefsWindow.keyWindow ) && (! [NSColorPanel sharedColorPanel].keyWindow))
+    {
+        [[NSColorPanel sharedColorPanel] close];
+        NSColor *oldColor = [colorSupport colorFromDictionary:EditingColors andKey: @"explmsg"];
+        ((NSColorWell *)sender).color = oldColor;
+    }
+    [colorSupport changeColorValueInDictionary: EditingColors forKey: @"explmsg" fromColorWell:sender];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SourceColorChangedNotification object:self userInfo: EditingColors];
+
 }
 
 

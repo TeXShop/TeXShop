@@ -14,7 +14,7 @@
 @property (retain) NSArray			*g_autocompletionKeys;  // added by Terada
 @property (retain) NSString         *g_defaultLanguage;
 @property (retain) NSString         *CommandCompletionPath;
-
+@property (retain) NSString         *tempAppleScriptPath;
 
 + (GlobalData *)sharedGlobalData;
 

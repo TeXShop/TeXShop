@@ -27,6 +27,7 @@
 #import "TSTextEditorWindow.h"
 #import "TSFullSplitWindow.h"
 #import "globals.h"
+#import "GlobalData.h"
 #import "TSEncodingSupport.h"
 // mistu 1.29
 #import "TSWindowManager.h"
@@ -397,6 +398,15 @@ static id sharedMacroMenuController = nil;
 			
 			// save newScript in file named scriptFileName in directory scriptFilePath
 			NSFileManager *fileManager = [NSFileManager defaultManager];
+            NSString *tmpScriptPath = [GlobalData sharedGlobalData].tempAppleScriptPath;
+            if (tmpScriptPath == nil)
+                {
+                    [GlobalData sharedGlobalData].tempAppleScriptPath = NSTemporaryDirectory();
+                    // tmpScriptPath = [GlobalData sharedGlobalData].tempAppleScriptPath;
+                    // NSLog(tmpScriptPath);
+                }
+               
+            /*
 			if (!([fileManager fileExistsAtPath: [TempPath stringByStandardizingPath]])) {
 				// create the necessary directories
 				NS_DURING
@@ -411,15 +421,17 @@ static id sharedMacroMenuController = nil;
 					return;
 				}
 			}
-			NSString *scriptFilePath = [TempPath stringByStandardizingPath];
-			NSString *scriptFileName = [scriptFilePath stringByAppendingString: @"/tempscript"];
+            NSString *scriptFilePath = [TempPath stringByStandardizingPath];
+            NSString *scriptFileName = [scriptFilePath stringByAppendingString: @"/tempscript"];
+            */
+            
+            NSString *scriptFilePath = [[GlobalData sharedGlobalData].tempAppleScriptPath stringByStandardizingPath];
+            NSString *globallyUniqueString = [[NSProcessInfo processInfo] globallyUniqueString];
+			NSString *scriptFileName = [scriptFilePath stringByAppendingString: globallyUniqueString];
 			
 			NS_DURING
-				// [fileManager createFileAtPath:scriptFileName contents:[newString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]  attributes:nil];
-            //[newString writeToFile: scriptFileName atomically: NO encoding:NSISOLatin1StringEncoding error:NULL];
-            [newString writeToFile: scriptFileName atomically: NO encoding:NSUTF8StringEncoding error:NULL]; // modified by Terada
-
-			NS_HANDLER
+                [newString writeToFile: scriptFileName atomically: NO encoding:NSUTF8StringEncoding error:NULL]; // modified by Terada
+            NS_HANDLER
 				return;
 			NS_ENDHANDLER
 			

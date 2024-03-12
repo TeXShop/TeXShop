@@ -196,7 +196,9 @@
     self.oldUsed = NO;
     self.doScroll = YES;
     
-    self.skipLinks = NO;
+//    self.skipLinks = NO;
+    
+    self.skipLinks = (! [SUD boolForKey: LinkPopupsKey]);
     self.globalLongTerm = NO;
     
     

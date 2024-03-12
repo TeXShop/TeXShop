@@ -16,6 +16,31 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.28</h3></P>
+<p> The release of version 5.28 coincides with the release of TeX Live 2024 and MacTeX-2024, and some changes are related to that release:
+<ul>
+<p><li> A few subfolders of
+~/Library/TeXShop/Engines/Inactive, including <B>Arara</B> and <B>ConTeXt</B>, were revised for this release.
+
+<p> TeXShop rewrites the Inactive folder whenever a new version of the program is released, but the rewrite is  conservative, updating old files and adding new files and folders. No files or folders are ever removed, so the Inactive folder can become cluttered with  irrelevant material. If you want only the latest version of this folder, move the Inactive folder to the desktop (do not move other folders). The next time TeXShop starts, it will recreate Inactive with the current default version.
+
+<p><li> When TeXShop displays a preview file containing links and the user hovers the mouse over a link, a small window temporarily opens showing the linked area. This behavior can be toggled on or off using the menu item ``Link Popups'' in the Preview menu. By default, the behavior is on when a document is first opened, but this default can now be changed using a hidden preference
+<pre>
+  defaults write LinkPopups NO
+</pre>
+
+<p><li>When TeXShop opens a source file, it checks the directory containing the file to see if it contains a file with the same name as the source but extension ".pdf". If so, TeXShop also opens the pdf file. If the user holds down the Option key while opening the file, the corresponding pdf file is not opened. This last behavior seems to have broken several years ago, but the feature works again.
+
+<p><li> A very interesting bug was reported by Jeff Simmons. Later he discovered the exact cause of the bug and suggested an appropriate fix. When a macro begins with the words "--applescript direct", the applescript is run by TeXShop itself. But when a macro begins with "--applescript", the macro is run by a small auxiliary program in TeXShop. Simmons created and ran such a macro. Later he logged out of macOS and logged in as a different user. But when he tried to run a new "--applescript" macro as this second user, TeXShop instead ran the original macro.
+
+<p> Because the auxiliary program is not TeXShop, TeXShop had to find a way to give it the applescript code  it should run. Luckily, Unix provides a folder named tmp where programs can store temporary information. So TeXShop put the appropriate applescript program in tmp, and then gave the auxiliary program the name of this file. Since tmp may be used by many programs, knowing the name of the desired file is important.
+
+<p> Then the author of TeXShop (and that would be me)  made a stupid mistake. He always used the same name for the applescript file in tmp. As long as the same user ran applescript programs, there was no issue, because each new applescript file in tmp overwrote the previous one. But if a user logged out and then logged in as someone else, the new user did not have permission to overwrite the previous file, so the old file remained and ran.
+
+<p> This is not a subtle mistake and Unix programmers are aghast after reading this explanation. But Simmons taught me an important lesson, and I'm grateful. By the way, it turns out that Apple has its own substitute for tmp and TeXShop now does the right thing. If you are a Cocoa programmer, please don't write me.
+
+</ul>
+
 <P><h3>TeXShop Changes 5.27</h3></P>
 <p> Version 5.26 was never released. There are three changes in version 5.27:
 <ul>

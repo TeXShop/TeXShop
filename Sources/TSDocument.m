@@ -958,8 +958,7 @@ withDarkColors = NO;
 	NSInteger				i;
 	BOOL			done;
 	NSString		*defaultCommand;
-    NSEvent         *currentEvent;
-    NSUInteger      optionKeyPressed;
+    BOOL            optionKeyPressed;
     
 
 	[super windowControllerDidLoadNib:aController];
@@ -969,10 +968,12 @@ withDarkColors = NO;
     
  //   [self.splitController setWindow: fullSplitWindow];
     
-    currentEvent = [NSApp currentEvent];
-    optionKeyPressed = [currentEvent modifierFlags] & NSAlternateKeyMask;
+    NSUInteger optionPressed = NSEvent.modifierFlags & NSEventModifierFlagOption;
+    if (optionPressed == 0)
+        optionKeyPressed = NO;
+    else
+        optionKeyPressed = YES;
     
-	
 	// WARNING: I moved this to the start from much further on; the original location is still present
 	// but commented out. This speeds up loading dramatically, and I think it causes no problems. The basic idea is
 	// to resize windows before they have data rather than afterward; resizing after editing data is present
@@ -1497,9 +1498,9 @@ if (! skipTextWindow) {
     
 	imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
     
-	if (([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) && (!optionKeyPressed)) {
+	if (([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) && (! optionKeyPressed)) {
 
-		PDFfromKit = YES;
+ 		PDFfromKit = YES;
 		myAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath: imagePath error:NULL];
 		self.pdfLastModDate = [myAttributes objectForKey:NSFileModificationDate];
 

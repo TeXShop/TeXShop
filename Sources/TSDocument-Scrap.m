@@ -162,7 +162,7 @@
         lineheader = [theSource lineRangeForRange: header];
         theHeader = [theSource substringToIndex: lineheader.length];
     }
-    newSource = [theHeader stringByAppendingString:@"\\begin{document}\n"];
+    newSource = [theHeader stringByAppendingString:@"\n\\begin{document}\n"];
     newSource = [newSource stringByAppendingString: [scrapTextView string]];
     newSource = [newSource stringByAppendingString:@"\n\\end{document}\n"];
  

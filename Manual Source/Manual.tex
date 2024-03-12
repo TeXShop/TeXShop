@@ -15,7 +15,7 @@
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
-\usepackage{url}
+
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{enumitem}
@@ -23,7 +23,7 @@
 
 % Alternate Special Keys 
 \newcommand{\acr}[1]{\textsf{#1}}
-
+\usepackage[obeyspaces]{url}
 \newcommand{\optkey}{\texttt{Opt}}
 \newcommand{\ctlkey}{\texttt{Ctl}}
 \newcommand{\cmdkey}{\texttt{Cmd}}
@@ -68,7 +68,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.7}
+\title{TeXShop Manual \\ Version 1.3.8}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -78,10 +78,11 @@
 
 \frontmatter
 \section*{Preface}
-This manual was written in early 2023. It first appeared in TeXShop 5.12, released on February 23, 2023. A few small changes were made with new 2023 program releases. The version number of the manual always increases when changes are made.
-
+This manual was started in early 2023. It first appeared in TeXShop 5.12, released on February 23, 2023. 
 In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded the text in a few spots, and improved formatting in other places.
 In January 2024 he contributed \cref{PresentingWithTeXShopChapter} to this manual. Thanks! I asked for permission to include his email address; it is \href{mailto:schmock@fam.tuwien.ac.at}{schmock@fam.tuwien.ac.at}.
+
+The version number of the manual  increases when changes are made. Small changes are made with each new TeXShop release, including additional chapters from time to time.
 
  \newpage
 \pdfbookmark{Table of Contents}{ContentsLabel}
@@ -90,11 +91,11 @@ In January 2024 he contributed \cref{PresentingWithTeXShopChapter} to this manua
 { \chapter{About \TeX, \LaTeX, and TeXShop}
 \section{Introduction}
 \label{Introduction_Section}
- \TeX\ and \LaTeX\ are typesetting programs, available without cost on most computer platforms. The user enters instructions using symbols on an ordinary typewriter, and the program converts these instructions into a document that looks like it came from a professional book publisher. }  
+ \TeX\ and \LaTeX\ are typesetting programs available without cost on most computer platforms. The user enters instructions using symbols on an ordinary typewriter, and the program converts these instructions into a document that looks like it came from a professional book publisher. }  
 
 \TeX\ has been carefully designed to produce exactly the same output on all computer platforms. If the source file is written on a Macintosh and  sent to someone using Windows, Linux, or Unix, the typeset output on both platforms will use the same fonts, have the same line breaks,  have the same page breaks, and look identical. This makes collaboration  easy. 
 
-TeXShop is a GUI front end for TeX. In contrast to \TeX, the program runs only on the Macintosh, making extensive use of the interface features available on that platform. It is available without cost. 
+TeXShop is a GUI front end for TeX. In contrast to \TeX, TeXShop runs only on the Macintosh, making extensive use of the interface features available on that platform. It is available without cost. 
 
 Making \TeX\ platform independent, but making the front end dependent on the platform is a deliberate design decision. Books, articles, letters, and slides can be read by anyone. But when an author is writing such a document, the author should be able to use all the advanced features that a particular operating system provides.
 
@@ -158,7 +159,7 @@ Knuth wrote a specification of \TeX\ in May, 1977. The first version was release
 
 In 1982, Knuth substantially revised TeX and rewrote the entire program in Pascal. This is the version that most early adopters first saw. Use of the program gradually increased during the 1980's, as experts from other countries began making important contributions. Originally, each font used in TeX had at most 128 characters. This was sufficient for the letters on an American typewriter, but not sufficient for the umlauts, accents, upside down question marks, and other characters used in Western Europe. The Europeans convinced Knuth to increase font table sizes to 256 characters for version 3.0 of TeX, released in 1989. In 1991, Knuth froze the design of TeX, believing that the stability of an unchanged system was  more important than new features.  As we will see,  other programmers  later created pdfTeX, luaTeX, XeTeX, and other systems with Knuth's approval, but if a program is named \TeX, it is the 1989 version by Knuth. 
 
-Knuth returns to the program every few years to fix minor bugs. The current version as of 2022 is 3.141592653. Knuth has decreed that the version number will be set to exactly $\pi$ when he dies, and the code will not change after that.
+Knuth returns to the program every few years to fix minor bugs. The version as of 2022 is 3.141592653. Knuth has decreed that the version number will be set to exactly $\pi$ when he dies, and the code will not change after that.
 
 
 
@@ -275,8 +276,7 @@ MacTeX is for users who definitely need \TeX\ for serious projects. It is large 
 
 MacTeX is sometimes criticized for installing too much, including items the user will never need. But the advice to install everything  comes from talks given at TeX User Group Conferences by speakers who  used \TeX\ for less than a year. They  unanimously advised installing everything and thereby avoiding frustration.
 
-BasicTeX installs everything in /usr/local/texlive/2022basic. MacTeX installs everything in /usr/local/texlive/2022.
-These distributions are updated once a year, so the 2022 will become 2023 around April of 2023. To uninstall BasicTeX, just drag the 2022basic folder to the trash. To uninstall MacTeX, just drag the 2022 folder to the trash.
+MacTeX installs everything in /usr/local/texlive/2024. BasicTeX installs everything in /usr/local/texlive/2024basic. These distributions are updated once a year, so the 2024 will become 2025 around April of 2025. To uninstall MacTeX, just drag the 2024 folder to the trash.To uninstall BasicTeX, just drag the 2024basic folder to the trash. 
 
 MacTeX installs TeXShop in /Applications/TeX. After installing, a user should select the menu item ``Check for Updates'' to update TeXShop to the very latest version.
 
@@ -336,7 +336,7 @@ if you prefer to separate paragraphs with an empty line instead of an indent.
 
 When you have some material, hit the ``Typeset'' button at the top left of the window. A dialog will appear asking you to save the document.  You can give the document a name in a field at the top; a field below that shows the folder where the document will be saved. At the right side of this field there is a small arrow. If the arrow points down, click it and the dialog will expand to a form which allows you to navigate to other locations and create new folders.
 
-When \TeX\ typesets, it creates three or four additional files, so it is not a good idea to save directly to a location with many other files. Instead,   navigate to a reasonable location, say \path{~/Documents}, and then click the ``New Folder'' button at the bottom of the dialog. Accept the default name or choose another and create the folder. Then name the document and save it. The default ``Untitled'' name will do.
+When \TeX\ typesets, it creates three or four additional files, so it is not a good idea to save directly to a location with many other files. Instead, create a new folder in a convenient location inside your home directory and put the source file inside this folder. This is easy using the dialog which just opened.  Navigate to a reasonable location, say \path{~/Documents}. Then click the ``New Folder'' button at the bottom of the dialog. Choose a reasonable name for this new folder. Then name the document and save it. The default ``Untitled'' name will do, but serious projects require a meaningful name.
 
 As soon as you save, \TeX\ will typeset the document and open a second window showing the result, see \cref{fig:TypesetWindow}.
 
@@ -418,7 +418,7 @@ Holding down the Option key changes this item to ``Split Window Vertically'', so
 
  Although Macintosh computers are often used by a single person,  the operating system is designed for multiple use. If your machine is used by several family members, each with their own login name, then a family member can change TeXShop's Preference settings without disturbing the settings when you use the machine.
  
- Each user's home directory contains a special folder named $\sim$Library containing the configuration files for  that user. Because this folder's contents are highly technical, Apple sometimes hides the folder. To further confuse matters, there is also a system library denoted /Library, which has nothing to do with user preferences.
+ Each user's home directory contains a special folder named \path{~/Library} containing the configuration files for  that user. Because this folder's contents are highly technical, Apple sometimes hides the folder. To further confuse matters, there is also a system library denoted \path{/Library}, which has nothing to do with user preferences.
  TeXShop has a menu item in the TeXShop menu to open the location \path{~/Library/TeXShop}.
  
  
@@ -2709,6 +2709,8 @@ Consult the document {\bf PreTeX with TeXShop} in the directory \path{~/Library/
 
 \chapter{ConTeXt}
 
+
+
 Recall that LaTeX is ordinary TeX used with the LaTeX macros written by Leslie Lamport. ConTeXt is TeX used with an entirely different set of macros written by Hans Hagen around 1990. Hagen works for an educational publishing company in the Netherlands, and that company needed to produce books with distinctive and colorful styles rather than the standardized documents produced by LaTeX. As Wikipedia wrote in their ConTeXt article,
 \begin{verbatim}
   ConTeXt may be compared and contrasted with LaTeX, but the primary 
@@ -2723,25 +2725,34 @@ Recall that LaTeX is ordinary TeX used with the LaTeX macros written by Leslie L
 As ConTeXt developed, it faced limitations in the underlying TeX engines, and Hagen was also instrumental in a related project to create LuaTeX, a modern version of TeX with full support for Unicode, modern fonts, and precise control over typesetting. Today many LaTeX users typeset with LuaTeX rather than TeX or pdfTeX,
 and that engine is a standard part of TeX Live.
 
-Both ConTeXt and LuaTeX changed rapidly during the thirty years from 1990 to 2020, and the yearly updates of TeX Live had a hard time catching up. Since ConTeXt is  independent of the various style packages and fonts of standard TeX, the ConTeXt support group developed a special distribution containing only ConTeXt, LuaTeX, and  the files needed to support them. ConTeXt users typically use this distribution for ConTeXt projects and TeX Live for other TeX projects. The two distributions easily coexist. See the text below for details.
+Nicola Vitacolonna is responsible for the next few developments, first calling some new features in ConTeXt to my attention and then helping me support them in TeXShop. Send thanks to him.
+
+
+
+\section{ConTeXt Garden}
+
+The binaries in the TeX Live distribution of TeX are updated once a year. All other style files, class files, and the like are updated daily. This approach is reasonable because the binaries are quite stable, while the auxiliary files are constantly being updated by thousands of contributors.
+
+ConTeXt is a special case because its author, Hans Hagen, is constantly making improvements. So the copy of ConTeXt in TeX Live is often out of date. Luckily, ConTeXt users have access to a beautiful wiki called the ConTeXt Garden; see \url{https://wiki.contextgarden.net/Main_Page}. This page has a link titled ``Install ConTeXt and start typesetting'' which leads to a page with easy ways to install a complete ConTeXt system on MacOS, Windows, GNU/Linux, FreeBSD, and OpenBSD. The MacOS portion has binaries for both Intel and  Arm. The distribution contains everything needed to typeset, including recent copies of luametatex, but it is quite small. It can be installed  in a user's home directory. ConTeXt users typically use this distribution for ConTeXt projects and TeX Live for other TeX projects. 
+
+%Both ConTeXt and LuaTeX changed rapidly during the thirty years from 1990 to 2020, and the yearly updates of TeX Live had a hard time catching up. Since ConTeXt is  independent of the various style packages and fonts of standard TeX, the ConTeXt support group developed a special distribution containing only ConTeXt, LuaTeX or luametatex, and  the files needed to support them. 
 
 % This distribution is available from \url{https://wiki.contextgarden.net/Main_Page}, a standard location to find the latest ConTeXt information. On the main page right at the top, there is a link called ``Install ConTeXt and start typesetting'' which rapidly leads to a download and installation of everthing needed for both Intel and Arm macOS machines. The distribution will be installed in your home directory and will not interfere with TeX Live in any way.
 %
 %The next to last line of the simple installation instructions say ``Update the PATH environment variable''. This can be ignored using TeXShop because of the simple instructions below for using the ConTeXt distribution for ConTeXt projects and TeX Live for everything else.
 
-Nicola Vitacolonna is responsible for the next few developments, first calling some new features in ConTeXt to my attention and then helping me support them in TeXShop. Send thanks to him.
 
-The binaries in the TeX Live distribution of TeX are updated once a year. All other style files, class files, and the like are updated daily. This approach is reasonable because the binaries are quite stable, while the auxiliary files are constantly being updated by thousands of contributors.
 
-ConTeXt is a special case because its author, Hans Hagen, is constantly making improvements. So the copy of ConTeXt in TeX Live is often out of date. Luckily, ConTeXt users have access to a beautiful wiki called the ConTeXt Garden; see \url{https://wiki.contextgarden.net/Main_Page}. This page has a link titled ``Install ConTeXt and start typesetting'' which leads to a page with easy ways to install a complete ConTeXt system on MacOS, Windows, GNU/Linux, FreeBSD, and OpenBSD. The MacOS portion has binaries for both Intel and  Arm. The distribution contains everything needed to typeset, including a recent copy of LuaTeX, but it is quite small. It can be installed  in a user's home directory. 
 
-ConTeXt users should certainly use this distribution, and reconfigure TeXShop to point to it. However, this makes life difficult for users who write both ConTeXt and ordinary LaTeX documents. A recent version of TeXShop fixes this problem. In TeXShop Preferences under the ``Engine'' tab, the ``Path Settings'' item at the top has a new item named ``Alternative Distribution.'' Set this item to the path of your  ConTeXt distribution, which depends on the location you picked to install it. Then add the magic line below to the top of your ConTeXt source files:
+
+A recent version of TeXShop makes it easy for the two distributions to coexist. In TeXShop Preferences under the ``Engine'' tab, the ``Path Settings'' item at the top has a new item named ``Alternative Distribution.'' Set this item to the path of your  ConTeXt distribution, which depends on the location you picked to install it. Then add the magic line below to the top of your ConTeXt source files:
 \begin{verbatim}
      % !TEX useAlternatePath
 \end{verbatim}
 These ConTeXt documents will be typeset by the ConTeXt Garden distribution, while ordinary LaTeX documents will continue to use TeX Live.
 
 Other users may find this feature useful in special circumstances. The ``Alternate Distribution'' preference item can point to any TeX distribution and the magic line can be used in any source file. However, the magic line only affects typesetting ``engines'', and not the built-in calls to TeX, LaTeX, BibTeX, or Make Index. Recall that these engine files are just shell scripts. When such a script is called, it is called with three arguments:
+
 \begin{itemize}
 \item "\$1": the full path to the source file
 \item	"\$2": an optional parameter determined by the magic line
@@ -2762,46 +2773,124 @@ Putting this all together, here is an engine file which calls the Magic Garden v
    mtxrun --script context --autogenerate "$1"
 \end{verbatim}
 
-Jerome Laurens wrote synctex and it is used for all typesetting engines in TeX Live. Laurens adds code to the engines which generate a synctex file. He also provides C code for front end developers to process the synctex file and provide the key information to display a sync location.
+\section{SyncTeX in ConTeXt}
 
-But Hans Hagen eventually rewrites everything for ConTeXt, and several years ago he replaced Laurens' code with his own version to generate the synctex file in ConTeXt. This was painful for me because Hagen used Lauren's original design of synctex and ignored a later modern version. So TeXShop had to include two versions of the C code for front end developers, one for all engines except ConTeXt and a second just for ConTeXt. A magic line
+SyncTeX is technology by Jerome Laurens; using it, a user can jump from a spot in the source file of a document to the corresponding spot in the output pdf file, and vice versa. Laurens provides code which generates a synctex file during typesetting. This code has been adopted by the authors of most current \TeX\ typesetting engines. Laurens also provides C code for front end developers which can open this synctex file and provide the key information allowing them to sync from one window to another.
+
+But Hans Hagen eventually rewrites everything for ConTeXt, and several years ago he replaced Laurens' code with his own version to generate the synctex file in ConTeXt. This was painful for me because Hagen used Lauren's original design of synctex and ignored a later modern version. So TeXShop had to include two versions of the C code for front end developers, one for all engines except ConTeXt and a second just for ConTeXt. 
+
+But recently Hagen also wrote code to interprete the synctex file for ConTeXt users. This is a welcome improvement, which has been in TeXShop since version 4.65. To use it, ConTeXt users must take two actions. First, near the top of the root source file of a project, they must include the line
 \begin{verbatim}
-   % !TEX useOldSyncParser
+        % !TEX useConTeXtSyncParser
 \end{verbatim}
-was added for ConTeXt users, telling TeXShop to use the original Lauren's code rather than the latest version to interprete the synctex file in ConTeXt.
-
-Recently Hagen also wrote  code to interprete the synctex file for ConTeXt users. Now TeXShop
-has code to call this ConTeXt interpretation code. To use it, ConTeXt uses should replace the previous magic line with
+And second, users must add to the header section of the root ConTeXt source file the line
 \begin{verbatim}
-	% !TEX useConTeXtSyncParser
-\end{verbatim}
+      \setupsynctex[state=start,method=min] 
+\end{verbatim} 
+These rules apply to all recent versions of ConTeXt.
 
-This is a welcome improvement, because now Hans both generates the synctex file for ConTeXt users and also provides the code to interprete the file. Consequently, he is free to make any further changes without requiring changes in the front ends. 
+%
+%Jerome Laurens wrote synctex and it is used for all typesetting engines in TeX Live. Laurens adds code to the engines which generate a synctex file. He also provides C code for front end developers to process the synctex file and provide the key information to display a sync location.
+%
+%But Hans Hagen eventually rewrites everything for ConTeXt, and several years ago he replaced Laurens' code with his own version to generate the synctex file in ConTeXt. This was painful for me because Hagen used Lauren's original design of synctex and ignored a later modern version. So TeXShop had to include two versions of the C code for front end developers, one for all engines except ConTeXt and a second just for ConTeXt. A magic line
+%\begin{verbatim}
+%   % !TEX useOldSyncParser
+%\end{verbatim}
+%was added for ConTeXt users, telling TeXShop to use the original Lauren's code rather than the latest version to interprete the synctex file in ConTeXt.
+%
+%Recently Hagen also wrote  code to interprete the synctex file for ConTeXt users. Now TeXShop
+%has code to call this ConTeXt interpretation code. To use it, ConTeXt uses should replace the previous magic line with
+%\begin{verbatim}
+%	% !TEX useConTeXtSyncParser
+%\end{verbatim}
+%
+%This is a welcome improvement, because now Hans both generates the synctex file for ConTeXt users and also provides the code to interprete the file. Consequently, he is free to make any further changes without requiring changes in the front ends.
+%
+%
+%In 2023, further changes were made to the ConTeXt distribution in TeX Live and MacTeX 
+%and to the ConTeXt distribution available through the ConTeXt Garden. In particular, ConTeXt now used a binary named {\bf luametatex} to typeset rather than using standard {\bf luatex}. To cope with these changes,
+%a new engine is provided in TeXShop called
+%ConTeXt-2023.  
 
-In 2023, further changes were made to the ConTeXt distribution in TeX Live and MacTeX 
-and to the ConTeXt distribution available through the ConTeXt Garden. To cope with these changes,
-a new engine is provided in \path{~/Library/TeXShop/Engines/Inactive/ConTeXt-2023} called
-ConTeXt-2023. Use this engine if you are using TeX Live 2023 or MacTeX-2023, and if you are
-running macOS Monterey or Ventura or later. If you are using an earlier operating system, read the document in the ConTeXt-2023 to modify this engine appropriately.
+\section{2024 and Beyond}
 
-How should a ConTeXt user react to these changes. I recommend
-\begin{itemize}
-\item Go to the ConTeXt Garden site and install the latest version of ConTeXt in your home directory
-\item Add the ConTeXt engine to \path{~/Library/TeXShop/Engines}. Use the engine ConTeXt2021 if you are using an older version of TeXLive or MacTeX, and the engine ConTeXt-2023 if you are using the 2023 or later version of TeX Live or MacTeX. 
-\item Add the magic lines
+In 2024, ConTeXt  comes in three forms. First there is the traditional ConTeXt gradually developed and extended over the years, and meant to be typeset using LuaTeX. Later the ConTeXt developers introduced a  self-contained distribution typeset by a special program named {\bf luametatex}.  Both the traditional and the new ConTeXt are in TeX Live 2024 and MacTeX-2024, and later. But since ConTeXt is still under active development, many users prefer the special distribution offered by ConTeXt Garden which can be installed in a user's home directory and is updated frequently. 
+
+The Inactive ConTeXt folder in TeXShop contains three engine files, one for each version of ConTeXt:
 \begin{verbatim}
-     % !TEX TS-program = ConTeXt-2023
-     % !TEX useAlternatePath
-     % !TEX useConTeXtSyncParser
+     ConTeXt.engine
+     ConTeXt-TL.engine
+     ConTeXt-CG.engine
 \end{verbatim}
-to the heading of your ConTeXt source files if you are using the ConTeXt Garden distribution. Omit the
-middle line if you are using the distribution in TeX Live and MacTeX.
-\item Add the line
+
+\
+
+\section{Typesetting the Traditional ConTeXt in TeX Live}
+
+Drag the engine {\bf ConTeXt.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. An easy way to do that is to include the following two magic lines at the top of the root source file for a project:
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+Add the line
+\begin{verbatim}
+   \setupsynctex[state=start,method=min]    
+\end{verbatim}
+to the header of your ConTeXt source file.
+
+\section{Typesetting ConTeXt in TeX Live using luametatex}
+
+Drag the engine {\bf ConTeXt-TL.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. An easy way to do that is to include the following two magic lines at the top of the root source file for a project:
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt-TL
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+Add the line
+\begin{verbatim}
+   \setupsynctex[state=start,method=min]    
+\end{verbatim}
+to the header of your ConTeXt source file.
+
+\section{Installing the ConTeXt Garden Version}
+
+This version can be installed anywhere in your home directory. For simplicity, we will create a folder named ``context'' and install it in
+\path{~/context}. 
+
+Go to the Wiki, click the ``Install ConTeXt'' link at top right, find the MacOS box at top center, and click either the link {\bf X86 64bits} or {\bf ARM 64bits} to download a small folder to your downloads directory. Use the first link if you have an Intel processor and the second if you have an Arm processor. I have an arm processor and my downloads folder now has a folder named ``context-osx-arm64''. Drag whatever folder you got to \path{~/context} or the location you selected for ConTeXt.
+
+Open Terminal in \path{/Applications/Utilities} and enter the following commands, revising the first line if you picked a different location for the installation:
+\begin{verbatim}
+     cd ~/context/context-osx-arm64
+     sh install.sh
+\end{verbatim}
+This will take some time as the script contacts ConTeXt Garden, and then downloads and installs ConTeXt. A progress report is printed in Terminal, ending with the line ``The following settings were used.''
+
+To update if a new version of the distribution is made available, just repeat these instructions.
+
+\section{Typesetting ConTeXt from ConTeXt Garden}
+
+Drag the engine {\bf ConTeXt-CG.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. Before doing this for the first time, modify an item in TeXShop Preferences. Open Preferences, go to the Engine Tab, and change the ``Alternate Path'' item to read
+\begin{verbatim}
+	~/context/context-osx-arm64/tex/texmf-osx-arm64/bin
+\end{verbatim}
+The first word will change if you installed ConTeXt in a different location, and the remaining items will change in an obvious way if you used the Intel version of the installation rather than the Arm version.
+
+Use the magic lines
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt-CG
+   % !TEX useAlternatePath
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+The  second line tells TeXShop to use the ConTeXt Garden distribution in your home directory rather than the standard TeX Live distribution. TeXShop knows the location of the distribution in your home directory because it is determined by the ``Alternate Path'' preference item in TeXShop Preferences, which you set in the previous section.
+ Include the line
 \begin{verbatim}
 		\setupsynctex[state=start,method=min] 
 \end{verbatim}
-to your ConTeXt source file; this line tells ConTeXt to generate the new synctex information.
-\end{itemize}
+in the preamble to  your ConTeXt source file.
+
 
 \chapter{Typst}
 
@@ -4771,7 +4860,10 @@ When TeXShop opens a .tex file for an external editor, it checks the dates of th
    defaults write TeXShop ExternalEditorTypesetAtStart NO
 \end{verbatim}
 
-
+When the TeXShop Preview Window displays a page containing links and the mouse hovers over a link, a small window pops up showing the contents of the linked area. This feature can be toggled on or off using the menu ``Link Popups'' in the Preview menu. By default, the item is active when a document is first opened. To change this,
+\begin{verbatim}
+   defaults write TeXShop LinkPopups NO
+\end{verbatim}
 
 \subsubsection{<Preferences for the Preview Window Drawer>}
 
@@ -4779,7 +4871,7 @@ When the Preview window first appears, its drawer is hidden. A hidden preference
 \begin{verbatim}
    defaults write TeXShop PreviewDrawerOpen YES
 \end{verbatim}
-\newpage
+
 \subsubsection{<Preferences for Automatic Saving>}
 By default, automatic saving is on. I strongly recommend leaving it on, but it can be turned off via
 \begin{verbatim}
@@ -4815,6 +4907,7 @@ TeXShop adds lines which begin with the words
  \begin{verbatim}
     defaults write TeXShop TagSections NO
  \end{verbatim}
+ \newpage
 ConTeXt users may want additional words to be recognized and added to the Tag menu. For
 instance, they want
 \begin{verbatim}
@@ -4984,7 +5077,7 @@ defaults write TeXShop ExtraCommandsNotToCheckParameter -array-add "\\emph"
 defaults write TeXShop ExtraCommandsNotToCheckParameter -array
 \end{verbatim}
 
-\newpage
+
 \subsubsection{<Preferences to Control Apple Find Bar>}
 The behavior of the Apple Find Bar was changed in TeXShop. Earlier it picked items one by one, but now the entire window being searched darkens during a search and all instances of the phrase being searched stand out in white, with the active element in yellow. To get the original behavior back:
 \begin{verbatim}
@@ -5128,11 +5221,18 @@ When scrolling the pdf display with a gesture or mouse in High Sierra, a bug pre
    defaults write TeXShop ContinuousHighSierraFix NO
 \end{verbatim}
 
-\chapter{Working Around Bugs}
+\chapter{Unusual Bugs}
 
-In a small number of cases, it may be easier to work around a bug than to fix it. When cases like that arise, they will be listed here.
+In a small number of cases, it may be easier to work around a bug than to fix it. When cases like that arise, they will be listed here. We'll also list   very rare bugs with unexpected solutions. This section should be short because bugs are regularly fixed in TeXShop.
 
-There was indeed such a case involving the toolbar in single window mode using the English localization, but the bug was fixed in version 5.15. So currently no items are listed in this chapter.
+\section{Zombie Untitled Windows}
+
+If macOS is configured appropriately, then when TeXShop is quit while windows are open, these windows will appear  in their old positions when the program is restarted. To restart TeXShop without opening the old windows, hold down the Option key while TeXShop restarts.
+
+In this configuration, there is a very rare bug which can cause TeXShop to open a zombie untitled window. This window cannot be closed, and appears each time TeXShop starts. Other things begin to go wrong as well. I've been notified of this behavior exactly twice in the last eight years.
+
+This bug occurs because there is mangled information about old window locations in the folder
+\path{~/Library/Autosave Information}. TeXShop  has no code to write to this location and the mangled entries come directly from macOS. To fix the bug, go to this folder and remove all files containing the word ``TeXShop'' in their names. Then restart the Macintosh.
 
  
 \chapter{Contributors}

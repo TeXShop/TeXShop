@@ -1,0 +1,109 @@
+\documentclass[11pt, oneside]{amsart}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+\usepackage{amssymb}
+\usepackage{url}
+
+\title{Setting Up ConTeXt}
+\author{Richard Koch}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+ConTeXt is an alternate set of macros created by Hans Hagen in The Netherlands and used by him to publish textbooks for school children.  It makes an abrupt departure from the macro style developed by \TeX\ and \LaTeX. ConTeXt has been under active development for two decades and in turn inspired the creation of LuaTeX. For extensive details, see \url{https://wiki.contextgarden.net}. I will refer to this wiki site as {\em ConTeXt Garden}.
+
+ConTeXt comes in three forms. First there is the traditional ConTeXt gradually developed and extended over the years, and meant to be typeset using LuaTeX. Recently the ConTeXt developers introduced a new self-contained distribution typeset by a special program named {\bf luametatex}.  Both the traditional and the new ConTeXt are in TeX Live 2024. But since ConTeXt is still under active development, many users prefer a special distribution offered by ConTeXt Garden which can be installed in a user's home directory and is updated frequently. Updating this version is very easy.
+
+The Inactive ConTeXt folder in TeXShop contains three engine files, one for each version of ConTeXt:
+\begin{verbatim}
+     ConTeXt.engine
+     ConTeXt-TL.engine
+     ConTeXt-CG.engine
+\end{verbatim}
+
+TeXShop was modified a year ago so users can typeset with the ConTeXt Garden version in their home directory and simultaneously the full regular TeX and LaTeX programs in TeX Live without having to switch distributions.
+The modification will be explained later.
+
+\section{SyncTeX in ConTeXt}
+
+SyncTeX is technology by Jerome Laurens; using it, a user can jump from a spot in the source file of a document to the corresponding spot in the output pdf file, and vice versa. Laurens provides code which generates a synctex file during typesetting. This code has been adopted by the authors of most current \TeX\ typesetting engines. Laurens also provides C code for front end developers which can open this synctex file and provide the key information allowing them to sync from one window to another.
+
+But Hans Hagen eventually rewrites everything for ConTeXt, and several years ago he replaced Laurens' code with his own version to generate the synctex file in ConTeXt. This was painful for me because Hagen used Lauren's original design of synctex and ignored a later modern version. So TeXShop had to include two versions of the C code for front end developers, one for all engines except ConTeXt and a second just for ConTeXt. 
+
+But recently Hagen also wrote code to interprete the synctex file for ConTeXt users. This is a welcome improvement, which has been in TeXShop since version 4.65. To use it, ConTeXt users must take two actions. First, near the top of the root source file of a project, they must include the line
+\begin{verbatim}
+        % !TEX useConTeXtSyncParser
+\end{verbatim}
+And second, users must add to the header section of the root ConTeXt source file the line
+\begin{verbatim}
+      \setupsynctex[state=start,method=min] 
+\end{verbatim} 
+These rules apply to all three versions of ConTeXt.
+
+\section{Typesetting the Traditional ConTeXt in TeX Live}
+
+Drag the engine {\bf ConTeXt.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. An easy way to do that is to include the following two magic lines at the top of the root source file for a project:
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+Add the line
+\begin{verbatim}
+   \setupsynctex[state=start,method=min]    
+\end{verbatim}
+to the header of your ConTeXt source file.
+
+\section{Typesetting ConTeXt in TeX Live using luametatex}
+
+Drag the engine {\bf ConTeXt-TL.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. An easy way to do that is to include the following two magic lines at the top of the root source file for a project:
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt-TL
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+Add the line
+\begin{verbatim}
+   \setupsynctex[state=start,method=min]    
+\end{verbatim}
+to the header of your ConTeXt source file.
+
+\section{Installing the ConTeXt Garden Version}
+
+This version can be installed anywhere in your home directory. For simplicity, we will create a folder named ``context'' and install it in
+\path{~/context}. 
+
+Go to the Wiki, click the ``Install ConTeXt'' link at top right, find the MacOS box at top center, and click either the link {\bf X86 64bits} or {\bf ARM 64bits} to download a small folder to your downloads directory. Use the first link if you have an Intel processor and the second if you have an Arm processor. I have an arm processor and my downloads folder now has a folder named ``context-osx-arm64''. Drag whatever folder you got to \path{~/context} or the location you selected for ConTeXt.
+
+Open Terminal in \path{/Applications/Utilities} and enter the following commands, revising the first line if you picked a different location for the installation:
+\begin{verbatim}
+     cd ~/context/context-osx-arm64
+     sh install.sh
+\end{verbatim}
+This will take some time as the script contacts ConTeXt Garden, and then downloads and installs ConTeXt. A progress report is printed in Terminal, ending with the line ``The following settings were used.''
+
+To update if a new version of the distribution is made available, just repeat these instructions.
+
+\section{Typesetting ConTeXt from ConTeXt Garden using luametatex}
+
+Drag the engine {\bf ConTeXt-CG.engine} from the Inactive folder of engines in TeXShop to the active engine section
+\path{~/Library/TeXShop/Engines}. Use this engine to typeset. Before doing this for the first time, modify an item in TeXShop Preferences. Open Preferences, go to the Engine Tab, and change the ``Alternate Path'' item to read
+\begin{verbatim}
+	~/context/context-osx-arm64/tex/texmf-osx-arm64/bin
+\end{verbatim}
+The first word will change if you installed ConTeXt in a different location, and the remaining items will change in an obvious way if you used the Intel version of the installation rather than the Arm version.
+
+\section{Magic Lines for Context-CG Source Files}
+
+The root source file for a ConTeXt document typeset using the ConTeXt Garden installation needs three magic lines:
+\begin{verbatim}
+   % !TEX TS-program = ConTeXt-CG
+   % !TEX useAlternatePath
+   % !TEX useConTeXtSyncParser
+\end{verbatim}
+The  second line tells TeXShop to use the ConTeXt Garden distribution in your home directory rather than the standard TeX Live distribution. TeXShop knows the location of the distribution in your home directory because it is determined by the ``Alternate Path'' preference item in TeXShop Preferences, which you set in the previous section.
+
+\end{document}  

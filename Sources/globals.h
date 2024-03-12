@@ -574,6 +574,7 @@ extern NSString *BlockCursorBKey;
 extern NSString *BlockWidthKey;
 extern NSString *BlockSideKey;
 extern NSString *SameFontForMacroKey;
+extern NSString *LinkPopupsKey;
 
 
 // end defaults

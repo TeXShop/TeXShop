@@ -335,6 +335,8 @@
     specialWindowOpened = NO;
     */
     
+    [GlobalData sharedGlobalData].tempAppleScriptPath = nil;
+    
  	NSFileManager *fileManager = [NSFileManager defaultManager];
 	
 	oldVersion = 0.0;

@@ -68,7 +68,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.8}
+\title{TeXShop Manual \\ Version 1.3.9}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -770,7 +770,7 @@ There is a command line program which can convert from one encoding to another, 
 
 A few months after the TeXShop release, a user suggested offering users an alternate way to typeset.  Instead of calling pdftex to create a pdf file, TeXShop could call \ \TeX\ to create a dvi file, and then call dvips to convert this dvi file to a postscript file, and finally call ghostscript to convert the ps file to pdf.  Except for the last step, this is how \TeX\  and \LaTeX\ originally typeset.
 
-The advantage of offering both typesetting methods was that  pdftex can accept pdf, png, and jpg illustrations, but not eps illustrations. The dvips chain can accept eps illustrations, but not pdf, png, and jpg illustrations. In addition, there is a package called {\em pdftricks} which directly inserts postscript into the output file. This only works when the dvips route is used to typeset. Finally, back in 2001 some publishers required authors to submit a dvi file, and such a file was created by the second chain.
+The advantage of offering both typesetting methods was that  pdftex can accept pdf, png, and jpg illustrations, but not eps illustrations. The dvips chain can accept eps illustrations, but not pdf, png, and jpg illustrations. In addition, there is a package called {\em pstricks} which directly inserts postscript into the output file. This only works when the dvips route is used to typeset. Finally, back in 2001 some publishers required authors to submit a dvi file, and such a file was created by the second chain.
 
 Nowadays, typesetting with the second method is only necessary if you use pstricks. Starting in 2011, TeX Live automatically converts eps illustrations to pdf illustrations during typesetting, and publishers almost never ask for a dvi file.
 
@@ -922,7 +922,7 @@ Typesetting scripts are called ``engines'' and are stored in $\sim$/Library/TeXS
 It is also possible to name the script which should typeset a given source file in a magic line at the top of the source. 
 A typical magic line might read
 \begin{verbatim}
-     
+    % !TEX TS-program = LuaLaTeX    
 \end{verbatim}
 Then command-T applied to this source would typeset with LuaLaTeX.
 

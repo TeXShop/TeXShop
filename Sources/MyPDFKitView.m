@@ -970,6 +970,11 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
 */
 
 
+/* THE ROUTINE BELOW WAS USED THROUGH VERSION 5.28; the key feature of this code was to remove small creeps each time
+ the document was typeset.
+ */
+
+/*
 - (void) reShowWithPath: (NSString *)imagePath
 {
     
@@ -1097,49 +1102,288 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
     if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
         [self goToPage: aPage];
     
+     NSRect newFullRect = [[self documentView] bounds];
+     NSInteger difference = newFullRect.size.height - fullRect.size.height;
+     
+     
+     //   The fix below was required because otherwise the pages scrolled slightly with each
+     //   typesetting. Yusuke Terada has discovered that the bug was apparently fixed in amountrecent Yosemite
+     //   release, so the "fix" has been removed. Only time will tell ...
+     
+  
+       visibleRect.origin.y = visibleRect.origin.y + difference ;
+       
+       visibleRect.size.height = 3;
+       if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5))
+       {
+           
+           [[self documentView] scrollRectToVisible: visibleRect];
+           
+           // fixingPage = [self currentPage];
+           // fixingindex = [[self document] indexForPage: fixingPage];
+           // [self fixPageChanges: fixingindex];
+           
+       }
+       else if (! visibleRectExists)
+       {
+           aPage = [[self document] pageAtIndex: 0];
+           [self goToPage: aPage];
+           visibleRect = [[self documentView] bounds];
+           visibleRect.origin.x = visibleRect.size.width / 2.0;
+           visibleRect.origin.y = visibleRect.size.height;
+           visibleRect.size.width = 10;
+           visibleRect.size.height = 10;
+           [[self documentView] scrollRectToVisible: visibleRect];
+       }
+       else
+       {
+           visibleRect.origin.x = 0;
+           visibleRect.origin.y = 0;
+           visibleRect.size.width = 10;
+           visibleRect.size.height = 10;
+           [[self documentView] scrollRectToVisible: visibleRect];
+       }
    
-    NSRect newFullRect = [[self documentView] bounds];
-    NSInteger difference = newFullRect.size.height - fullRect.size.height;
+ 
     
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
+        NSEnableScreenUpdates();
     
- //   The fix below was required because otherwise the pages scrolled slightly with each
- //   typesetting. Yusuke Terada has discovered that the bug was apparently fixed in amountrecent Yosemite
- //   release, so the "fix" has been removed. Only time will tell ...
+   [self fixWhiteDisplay];
     
+if ((atLeastHighSierra) && (self.PDFFlashFix))
+    {
+            [NSTimer scheduledTimerWithTimeInterval:self.PDFFlashDelay
+                                              target:self
+                                           selector:@selector(removeHideView1:)
+                                            userInfo:Nil
+                                             repeats:NO];
+     }
+
+}
+*/
+
+
+
+/*
+In March, 2024, an important bug surfaced in the previous routine. The routine below contains a fix. The basic idea of the earlier
+ routine was to calculate a precise visible region for the pdf just before replacing it with a new typeset version. After the
+ replacement, "scrollRectToVisible" took us back to the appropriate place. Note that if a document had a table of contents, and was
+ typeset after killing aux files, then the new version would temporarily have no table of contents, and we would not return to the
+ original location. This small problem was acceptable.
+ 
+ But there was another more important problem. If the old visible rect is near the end of the document and  sufficiently many
+ pages are removed, then the old visible rect may be past the end of the new version of the pdf file. I believe that in old versions
+ of macOS, the routine "scrollrectToVisible" adjusted for this, But certainly in Sonoma and perhaps earlier systems, the adjustment
+ is unpleasant. The pdf jumps to its starting page, but if in "fit-to-window" mode it also changes magnification to 1 (i.e., 100%).
+ Moreover, the resulting page number on the pdf toolbar is a large negative number!
+ 
+ The fix works as follows. Before switching from the old pdf to the new typeset version, we remember the numberofpages in
+ the old pdf, and the index of the current page. Then we switch to the new pdf. We "scrollrectToVisible" provided the
+ index of the old current page is small enough to be the index of some page in the new pdf. Note that the visibleRect might not
+ be entirely inside the current pdf, but that does not matter.
+ 
+ If, however, the old current page is not longer a possible page in the new version of the pdf, we instead go to the last page of the
+ current pdf.
+ 
+ Experiments show that this solves all problems, including the problem of negative page numbers. Those negative page numbers would
+ be reported to the routine "pageChanged". But to be absolutely safe, if a negative page number or an impossibly large page number
+ is reported to "pageChanged", we change it to "1". This only affects the display on the toolbar, not the actual operation of the program.
+
+ */
+
+- (void) reShowWithPath: (NSString *)imagePath
+{
     
-    visibleRect.origin.y = visibleRect.origin.y + difference ;
+    PDFDocument            *pdfDoc, *oldDoc;
+    PDFPage                *aPage, *fixingPage;
+    NSInteger            theindex, fixingindex;
+    NSInteger           theindexold, totalpagesold;
+    BOOL                needsInitialization;
+    NSInteger            i, amount, newAmount;
+    PDFPage                *myPage;
+    NSData                *theData;
+    NSRect              sizeRect;
+    BOOL                visibleRectExists;
+    CGFloat             theScale;
+    NSInteger           theMode;
+
+    // self.PDFFlashFix = NO;
     
-    visibleRect.size.height = 3;
-    if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5))
-        {
+    theScale = [self scaleFactor];
+    theMode = [self displayMode];
+    
+    if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || (! [self.myDocument externalEditor]))
+        NSDisableScreenUpdates();
+
+    [self cleanupMarquee: YES];
+    
+    if (self.sourceFiles != nil)
+        self.sourceFiles = nil;
+   
+    if ([self document] == nil)
+        needsInitialization = YES;
+    else
+        needsInitialization = NO;
+    
+    NSRect visibleRect = [[[self documentView] enclosingScrollView] documentVisibleRect];
+    
+      if ((visibleRect.origin.x == 0) && (visibleRect.origin.y == 0) && (visibleRect.size.height == 0) && (visibleRect.size.height == 0))
+        visibleRectExists = NO;
+    else
+        visibleRectExists = YES;
+    
+    NSRect fullRect = [[self documentView] bounds];
+    
+    drawMark = NO;
+    totalpagesold = [[self document] pageCount];
+    aPage = [self currentPage];
+    theindexold = [[self document] indexForPage: aPage];
+    theindex = theindexold;
+    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
+        theindex++; // mysteriously, this seems to fix the "jump to next page" problem in multiple and double multiple page modes
+   
+    if ([[self document] isFinding])
+        [[self document] cancelFindString];
+    if (_searchResults != NULL) {
+        [_searchResults removeAllObjects];
+        [_searchTable reloadData];
+        _searchResults = NULL;
+    }
+    
+   if ((atLeastHighSierra) && self.PDFFlashFix && (self.myHideView1 == nil))
+    {
+        NSView *myView;
         
-            [[self documentView] scrollRectToVisible: visibleRect];
+         NSImage *myImage;
+      
+        if (atLeastMojave)
+        {
+            myView = [[self window] contentView];
+            myImage = [self screenCacheImageForView: myView];
+        }
+
+        else
+        {
+            myView = [[self documentView] enclosingScrollView];
+            myImage = [self screenCacheImageForView: myView];
+        }
+        
+        sizeRect = [myView bounds];
+       
+        self.myHideView1 = [[HideView alloc] initWithFrame: sizeRect];
+        [self.myHideView1 setSizeRect: sizeRect];
+        self.myHideView1.originalImage = myImage;
+        
+        [myView addSubview: self.myHideView1];
+   }
+
+    if ([self doReleaseDocument]) {
+        pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
+        [self setDocument: pdfDoc];
+   } else {
+        oldDoc = [self document];
+        theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+        pdfDoc = [[PDFDocument alloc] initWithData: theData];
+        [self setDocument: pdfDoc];
+        if (oldDoc != NULL) {
+            [oldDoc setDelegate: NULL];
+        }
+    }
+    
+  
+
+    [[self document] setDelegate: self];
+    totalPages = [[self document] pageCount];
+    [totalPage setIntegerValue:totalPages];
+    [stotalPage setIntegerValue:totalPages];
+    [totalPage1 setIntegerValue:totalPages];
+    [totalPage display];
+    [stotalPage display];
+    [totalPage1 display];
+    
+    if (theindex >  (totalPages - 1))
+        theindex = totalPages - 1;
+    
+    
+    if (needsInitialization)
+        [self setup];
+    if (totalRotation != 0) {
+        for (i = 0; i < totalPages; i++) {
+            myPage = [[self document] pageAtIndex:i];
+            amount = [myPage rotation];
+            newAmount = amount + totalRotation;
+            [myPage setRotation: newAmount];
+        }
+        [self layoutDocumentView];
+    }
+    [self setupOutline];
+        
+    // WARNING: The next 9 lines of code are very fragile. Initially I used
+    // NSDisableScreenUpdates until I discovered that this call is only in 10.4.3 and above
+    // and works on Intel but not on PowerPC.
+    // In the code below, you'd think that goToPage should be inside the disableFlushWindow,
+    // but it doesn't seem to work there. If changes are made, be sure to test on
+    // Intel and on PowerPC.
+     
+    
+    
+    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
+    {
+        aPage = [[self document] pageAtIndex: theindex];
+        [self goToPage: aPage];
+    }
+    
+  
+
+     NSRect newFullRect = [[self documentView] bounds];
+     NSInteger difference = newFullRect.size.height - fullRect.size.height;
+     
+     
+     //   The fix below was required because otherwise the pages scrolled slightly with each
+     //   typesetting. Yusuke Terada has discovered that the bug was apparently fixed in amountrecent Yosemite
+     //   release, so the "fix" has been removed. Only time will tell ...
+     
+  
+       visibleRect.origin.y = visibleRect.origin.y + difference ;
+       
+       visibleRect.size.height = 3;
+     //  if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5)) // && ((totalpagesold <= totalPages) || (theindexold < totalPages)))
+        if (visibleRectExists && ((totalpagesold <= totalPages) || (theindexold < totalPages)))
+       {
+           
+           [[self documentView] scrollRectToVisible: visibleRect];
+           
+       }
+    
+        else if (! visibleRectExists)
             
-            // fixingPage = [self currentPage];
-            // fixingindex = [[self document] indexForPage: fixingPage];
-            // [self fixPageChanges: fixingindex];
+        {
+           // This was the original fix covering everything else, rather than just
+           // no visibleRect. Then we found a better fix, given just below.
+           // The case "no visibleRect" seems to never occur. We keep this code just in case.
+           
+            
+           //  NSLog(@"no visible rect");
+           //  NSLog(@"Got here");
+           //  NSLog(@"the factor is %f", self.scaleFactor);
+            self.scaleFactor = theScale;
+            self.displayMode = theMode;
+           
+        }
+    
+        else
+            
+        {
+            // NSLog(@"new option");
+            
+            aPage = [[self document] pageAtIndex: theindex];
+            [self goToPage: aPage];
             
         }
-     else if (! visibleRectExists)
-    {
-        aPage = [[self document] pageAtIndex: 0];
-       [self goToPage: aPage];
-       visibleRect = [[self documentView] bounds];
-        visibleRect.origin.x = visibleRect.size.width / 2.0;
-       visibleRect.origin.y = visibleRect.size.height;
-        visibleRect.size.width = 10;
-        visibleRect.size.height = 10;
-       [[self documentView] scrollRectToVisible: visibleRect];
-    }
-    else
-    {
-        visibleRect.origin.x = 0;
-        visibleRect.origin.y = 0;
-        visibleRect.size.width = 10;
-        visibleRect.size.height = 10;
-       [[self documentView] scrollRectToVisible: visibleRect];
-    }
     
+    
+   
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
         NSEnableScreenUpdates();
     
@@ -1449,6 +1693,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 	CGFloat	theScale;
 	NSInteger		magsize;
 	
+   //  NSLog(@"scaleChange");
+    
 	theScale = [self scaleFactor];
 	magsize = theScale * 100;
 	scaleMag = magsize;
@@ -1502,7 +1748,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     NSArray     *myVisiblePages;
     NSInteger   numberOfPages;
     
- 
+   
     if (! [[self window] isKeyWindow])
           return;
     
@@ -1539,6 +1785,12 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     
     aPage = [self currentPage];
     pageNumber = [[self document] indexForPage: aPage];
+    
+    // the following fixes a bug that no longer occurs, but
+    // does no harm
+    if ((pageNumber > 1000000) || (pageNumber < 0))
+        pageNumber = 1;
+    
     [self makePageChanges: pageNumber];
 }
 
@@ -7098,7 +7350,6 @@ else
 	[self fixMagnificationControls]; //needed when magnify in split mode
 	[self scaleChanged: nil];
 	[self pageChanged: nil];
-	
 }
 
 - (BOOL)becomeFirstResponder

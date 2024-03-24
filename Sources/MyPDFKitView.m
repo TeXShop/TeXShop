@@ -971,7 +971,8 @@ if ((atLeastHighSierra) && (self.PDFFlashFix))
 
 
 /* THE ROUTINE BELOW WAS USED THROUGH VERSION 5.28; the key feature of this code was to remove small creeps each time
- the document was typeset.
+ the document was typeset. A bug was fixed in 5.30, creating a new "reShowWithPath", but it failed in all modes with fixed magnification.
+ So I reverted to the routine below in these other modes.
  */
 
 /*
@@ -1207,7 +1208,8 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
     BOOL                visibleRectExists;
     CGFloat             theScale;
     NSInteger           theMode;
-
+    
+    
     // self.PDFFlashFix = NO;
     
     theScale = [self scaleFactor];
@@ -1228,11 +1230,12 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
     
     NSRect visibleRect = [[[self documentView] enclosingScrollView] documentVisibleRect];
     
-      if ((visibleRect.origin.x == 0) && (visibleRect.origin.y == 0) && (visibleRect.size.height == 0) && (visibleRect.size.height == 0))
+    if ((visibleRect.origin.x == 0) && (visibleRect.origin.y == 0) && (visibleRect.size.height == 0) && (visibleRect.size.width == 0))
         visibleRectExists = NO;
     else
         visibleRectExists = YES;
     
+     
     NSRect fullRect = [[self documentView] bounds];
     
     drawMark = NO;
@@ -1240,8 +1243,9 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
     aPage = [self currentPage];
     theindexold = [[self document] indexForPage: aPage];
     theindex = theindexold;
-    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
-        theindex++; // mysteriously, this seems to fix the "jump to next page" problem in multiple and double multiple page modes
+    
+//    if ((self.displayMode == kPDFDisplaySinglePage) || (self.displayMode == kPDFDisplayTwoUp))
+ //       theindex++; // mysteriously, this seems to fix the "jump to next page" problem in multiple and double multiple page modes
    
     if ([[self document] isFinding])
         [[self document] cancelFindString];
@@ -1349,9 +1353,11 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
        
        visibleRect.size.height = 3;
      //  if ((visibleRect.size.width > 0.5) && (visibleRect.origin.y > 0.5)) // && ((totalpagesold <= totalPages) || (theindexold < totalPages)))
-        if (visibleRectExists && ((totalpagesold <= totalPages) || (theindexold < totalPages)))
+       
+    if (visibleRectExists && ((totalpagesold <= totalPages) || (theindexold < totalPages)))
        {
            
+          // NSLog(@"visibleRect exists and regular scroll to visible");
            [[self documentView] scrollRectToVisible: visibleRect];
            
        }
@@ -1364,11 +1370,11 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
            // The case "no visibleRect" seems to never occur. We keep this code just in case.
            
             
-           //  NSLog(@"no visible rect");
-           //  NSLog(@"Got here");
-           //  NSLog(@"the factor is %f", self.scaleFactor);
-            self.scaleFactor = theScale;
-            self.displayMode = theMode;
+          // NSLog(@"no visible rect");
+          // NSLog(@"Got here");
+          // NSLog(@"the factor is %f", self.scaleFactor);
+          //  self.scaleFactor = theScale;
+          //  self.displayMode = theMode;
            
         }
     

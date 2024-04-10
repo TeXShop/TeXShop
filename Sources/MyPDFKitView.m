@@ -1209,6 +1209,7 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
     CGFloat             theScale;
     NSInteger           theMode;
     
+    // NSLog(@"Called reShowWithPath");
     
     // self.PDFFlashFix = NO;
     

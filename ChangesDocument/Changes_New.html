@@ -16,6 +16,19 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.32</h3></P>
+<p> Version 5.32 fixes one bug. The following process will trigger the process for a few people but probably not you. Create a source window using the menu command "New". Enter one or two lines of text and then save the file using the menu command "Save As". Quit TeXShop and restart it again. Open the new source file. The file's name will be added to TeXShop's "Window" menu, but the corresponding source window will not appear. It seems that TeXShop has created a source file which it cannot display. This is an alarming bug.
+
+<p> Here is the good news. There is nothing wrong with the file; it contains the correct text and can easily be opened using a trick. Even better, the bug only occurs if the user has selected "Syntax Color expl3 Code" in the TeXShop Source Window. This menu is a toggle which turns expl3 coloring on or off. When a window first opens, it is off.
+The only problem is that TeXShop has a hidden preference which turns the item on by default when windows are first opened:
+<pre>
+   defaults write TeXShop expl3SyntaxColoring YES
+</pre>
+Only users who set this hidden preference are likely to see the bug.
+
+<p> The bug has nothing to do with TeXShop's file saving code. It is a bug in TeXShop's syntax coloring code. When opening a source file, TeXShop syntax colors the source just before making the window visible. If the syntax coloring fails, the window is never made visible.
+TeXShop 5.32 fixes one step in the expl3 syntax coloring routine. After that, the routine does not fail and all windows open correctly.
+ 
 <P><h3>TeXShop Changes 5.31</h3></P>
 <p> Version 5.31, released one day after the 5.30 release, fixes two bugs in that release. The first bug caused the Preview window to advance a page after each typesetting job in Single  and Double Page modes. The second bug caused new projects to set magnification to 100 when initially typeset.
 

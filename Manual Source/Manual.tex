@@ -990,7 +990,7 @@ In rare cases, you might  want to invent your own engines for some of these four
 
 That is all you need to know to use typesetting engines. The rest of the chapter will discuss particular engines provided by TeXShop, and then explain how you can construct your own engines. Less than half of TeXShop users construct new engines, so you can skip that step until you need something unusual.
 
-\section{pdflatexmk}
+\section{latexmk}
 
 \TeX\ is a single-pass compiler; it reads the source file just once as it typesets. But some typesetting tasks cannot be finished in a single pass. If a book has a table of contents, \TeX\ cannot create the table of contents until it knows the names of the book chapters and the pages where they start. To solve this sort of problem, users typeset twice. In the first pass, \TeX\ writes a file called the ``auxiliary file'' to the source directory; in the second pass, this file is consulted to find the required extra information.
 
@@ -998,7 +998,7 @@ Sometimes other programs are run between the passes. If a file has an index, an 
 
 Some tasks require three or more passes through \TeX\ before the job is complete.
 
-There is a script in TeX Live named {\bf pdflatexmk}, by John Collins, which automates this process. It calls \LaTeX\ as many times as necessary to produce an up to date document, with intermediate calls to other programs if necessary. My colleague Herbert Schulz is an expert on this script and works with Collins to insure that it is well-supported on the Mac. He has created an engine which calls pdflatexmk to typeset. Many TeXShop users make this their default typesetting engine. The extra typesetting time with smaller projects is almost unnoticeable. The extra work on large books is essential, because  the author can then preview a complete version of the work.
+There is a script in TeX Live named {\bf latexmk}, by John Collins, which automates this process. It calls \LaTeX\ as many times as necessary to produce an up to date document, with intermediate calls to other programs if necessary. My colleague Herbert Schulz is an expert on this script and works with Collins to insure that it is well-supported on the Mac. He has created an engine which calls pdflatexmk to typeset. Many TeXShop users make this their default typesetting engine. The extra typesetting time with smaller projects is almost unnoticeable. The extra work on large books is essential, because  the author can then preview a complete version of the work.
 
 The pdflatexmk engine is already a possible choice when you first install TeXShop. The subfolder
 Engines/Inactive/latexmk contains several documents by Herbert Schulz with  more details, and  related engines if you want to replace pdflatex with XeLaTeX or LuaTeX or other typesetting methods and use the script.
@@ -1007,6 +1007,26 @@ If typesetting speed is an issue, TeXShop has an obscure trick to help. While a 
 control-option-command-T, which typesets with pdflatexmk. Therefore you can set the typesetting engine to pdflatex, typeset with command-T as a rule, but typeset with control-option-command-T occasionally.
 
 This trick fails if you typeset with unusual engines. For example, suppose you typeset with XeLaTeX rather than pdflatex. Then there is a special engine in Engines/Inactive/latexmk which calls XeLaTeX rather than pdflatex. So the special command for control-option-command-T should call that XeLaTeX form of pdflatexmk rather than ordinary pdflatexmk. In TeXShop Preferences under the Misc2 tab there is a setting named ``Alternate Engine'' allowing pdflatexmk to be changed to any other desired engine, including the special XeLaTeX version of pdflatexmk.
+
+\section{latexmk history by Herbert Schulz}
+
+When I started using \textbf{latexmk} it only supported latex and pdflatex directly (via command line options). To make it work with latex, pdflatex, xelatex and lualatex with the default command line options needed, I redefined some internal \textbf{latexmk} commands (\textbf{\$latex} for the latexmk engine and \textbf{\$pdflatex} for the other engines) to work the way I needed them to work for TeXShop (e.g., using synctex and file-line-error).
+
+Over time the engines have been extended to use Apple's new default \textbf{zsh} and TeXShop's
+\begin{verbatim}
+    % !TEX parameter =
+\end{verbatim}
+magic comment; e.g.
+\begin{verbatim}
+    % !TEX parameter = -shell-escape
+\end{verbatim}
+for adding shell-escape to the \textbf{latexmk} based engines. You can even use more than one option; e.g.,
+\begin{verbatim}
+    % !TEX parameter = -shell-escape -auxdir="aux files" 
+\end{verbatim}
+which tells the latexmk based engine to store all auxiliary files in the (possibly created) \path{aux files} folder. Note: not all packages that create auxiliary files will work this way.
+
+The engines also use a set of default \textbf{latexmk} settings so that several popular packages work out of the box. That information is found in \path{~/Library/TeXShop/bin/latexmkrcedit} which is initially copied from \path{~/Library/TeXShop/bin/tslatexmk/latexmkrcDONTedit} if it doesn't already exist the first time any of the engines are run. It is left alone after that since it is meant to be edited by you for use by all  engines.
 
 \section{The Inactive Folder}
 
@@ -1085,8 +1105,8 @@ Here are recipes to do this using the shell zsh. These recipes may or may not wo
    fi
 \end{verbatim}
 
-If this script was used as an engine script and the file Galois.tex was typeset, no typesetting would occur but the console would display the following messagesa
-\newpage
+If this script was used as an engine script and the file Galois.tex was typeset, no typesetting would occur but the console would display the following messages
+
 \begin{verbatim}
     Galois.tex
  
@@ -1099,6 +1119,7 @@ If this script was used as an engine script and the file Galois.tex was typeset,
 \end{verbatim}
 The second line is blank because \$2 contains nothing. The word filename is a variable, defined and given a string value in the script, and \$filename is the value of that variable. Thus \$filename, \$basename, and \$extension are the full name of the source with extension, the name without extension, and the extension. The string \$basename.pdf equals the old basename with new extension ``.pdf''.
 
+\newpage
 Unfortunately, shell syntax is very picky. The line 
 \begin{verbatim}
    filename="$1"
@@ -1126,7 +1147,7 @@ It is crucial, of course, that the lines look like comments to the shell interpr
 
 The standard behavior of TeXShop still applies if an engine has none of these lines. After executing all lines of the engine, TeXShop looks in the document directory to see if there is a file with the same name as the source, but extension ``.pdf''. If so, it opens this pdf file in the Preview Window, unless the Option Key is depressed.
 
-
+\newpage
 If one or more commands are present, then
 \begin{itemize}
 \item if the line ``!TEX-noPreview'' is present, no preview window appears even if some of the other lines are also present;

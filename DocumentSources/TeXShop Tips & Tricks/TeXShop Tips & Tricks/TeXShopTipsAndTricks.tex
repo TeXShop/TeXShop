@@ -1,0 +1,736 @@
+% !TEX program = pdflatexmk
+% !TEX encoding = UTF-8 Unicode
+% !TEX spellcheck = English
+\documentclass[letterpaper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[body={6.0in,9.0in}, vmarginratio=1:1]{geometry}
+\usepackage[small,compact]{titlesec}
+
+%\usepackage[expert]{fourier}
+\usepackage{fourier}
+\usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{microtype}
+
+\usepackage{booktabs}
+
+% Include graphicx
+\usepackage{graphicx}
+%\usepackage{applekeys}
+
+\usepackage{xcolor}
+\usepackage[colorlinks, urlcolor=darkgray, linkcolor=darkgray]{hyperref}
+\DeclareUrlCommand\path{\urlstyle{sf}}
+
+\usepackage[textfont=it]{caption}
+\usepackage{floatrow}
+\floatsetup[table]{style=plaintop}
+\usepackage{subfig}
+
+%\newcommand{\MacTeX}{Mac\TeX}
+\newcommand{\MacTeX}{Mac\kern-.12em\TeX}
+\newcommand{\BibTeX}{B\textsc{i\kern-.025em  b}\kern-.13em\TeX}
+\newcommand{\conTeXt}{Con\kern-.12em\TeX t}
+\newcommand{\TS}{\textsf{\TeX Shop}}
+% default small caps used for utopia are ugly; don't want to use [expert] here.
+%\newcommand{\acr}[1]{\textsc{#1}}
+%\usepackage{relsize}
+%\newcommand{\acr}[1]{\textrm{\smaller\uppercase{#1}}}
+\newcommand{\acr}[1]{\textsf{#1}}
+%\newcommand{\cmd}[1]{\texttt{#1}}
+%\newcommand{\mnu}[1]{\texttt{#1}}
+\newcommand{\cmd}[1]{\textsf{#1}}
+\newcommand{\mnu}[1]{\textsf{#1}}
+\newcommand{\To}{\,\(\to\)\,}
+
+% set | as a command character within verbatim so you can execute commands there
+\usepackage{verbatim}
+\makeatletter
+\addto@hook\every@verbatim{\catcode`|=0}
+\makeatother
+
+% define colored items to be inserted in verbatim environments
+\setlength{\fboxsep}{0pt}
+%\newcommand{\selmark}{\colorbox{green}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+\newcommand{\selmark}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{•}}}
+\newcommand{\selection}{\colorbox{cyan}{\rule[-0.5ex]{0ex}{2.1ex}\texttt{…}}}
+
+\usepackage[toc]{multitoc}
+
+\usepackage{tikzducks}
+
+
+\title{\TS\ Tips \& Tricks\\\small v0.8--2018/09/02}
+\author{H. Schulz
+%\raisebox{-5pt}{%
+%\begin{tikzpicture}
+%\begin{scope}[scale=0.2,yshift=-150pt]
+%  \duck[body=yellow!50!brown!40!white,
+%    crazyhair=gray!50!white,
+%    eyebrow,
+%    glasses=brown!70!black,
+%%    book=\scalebox{0.1}{$E-mc^{2}$},
+%    book=\scalebox{0.1}{\includegraphics[scale=0.05]{figs/TeXShop.png}},
+%    bookcolour=red!20!brown]
+%\end{scope}
+%\end{tikzpicture}%
+%}
+\\\small\href{mailto:herbs2@mac.com}{herbs2@mac.com}}
+\date{}
+
+\begin{document}
+\maketitle
+%\thispagestyle{empty}
+\tableofcontents
+
+\begin{center}
+\rule{0.5\textwidth}{1pt}
+\end{center}
+%\newpage
+
+\section{Introduction}
+
+\TS\ is a ``Front End'' for a \TeX\ distribution on \cmd{Mac OS~X}. As such it allows the user to create and edit \TeX\ source files, interact with the \TeX\ distribution (e.g., typeset the source file) and finally preview the final \acr{pdf} file. It also allows the user to go back and forth between preview and source.
+
+Over the years \TS\ has added many features. Some of them are obvious and are meant to help a novice get started. Others are a bit more subtle in their use and the underlying power of these features needs to be coaxed out.
+
+Note: Starting with \TS\ 3.99 the \mnu{Source} tab of \mnu{TeXShop}\To\mnu{Preferences} has been split into  \mnu{Source} and \mnu{Editor} tabs. This document will use the notation of \TS\ 3.99 and later; if you are using earlier versions of \TS\ items in the \mnu{Editor} tab are found in the \mnu{Source} tab.
+
+\subsection{What Isn't Here}
+
+This article is, first of all, \emph{not} about \TeX\ or \LaTeX. I don't intend to teach you how to write \TeX\ source. There are many fine books and articles that will teach you how to become a \TeX pert or, at least, a \TeX pätzer like me.
+
+Although there is some introductory material it is also \emph{not} meant as a complete manual for the use of \TS\ for the total novice. Over time it might evolve into such a document but I've got to start somewhere and this is that start.
+
+\subsection{What Is Here}
+
+In this article I hope to introduce you to some of the more subtle things you can do to make your life as a \TeX\ source editor easier. These include adding keyboard commands and extending the editing capabilities of \TS; helping you make short(er) work of creating documents, etc., with the use of Macros and Command Completion; and, finally, how one can extend the processing capabilities of \TS\ using Engines.
+
+\section{Editing, Typesetting and Viewing --- the Work Cycle}
+
+This is about as close to a beginner's section you will get in this document.
+
+The usual cycle for producing a document with \TS\ is: first, edit the Source document, entering necessary codes for the typesetting phase; second, typeset the edited document and; third, examine the resulting \cmd{pdf} file. You may have to return to editing the document after attempting to typeset if errors are detected during the typeset phase. You will almost always cycle through these stages multiple times.
+
+\subsection{Editing the Source File}
+
+The first thing you've got to do to create that great work is to type it into the source document that will be typeset and viewed later. This involves both putting \LaTeX\ markup as well as your wonderful words into the document.
+
+To get started you can open a new document using \mnu{File}\To\mnu{New} (\cmd{Cmd-N}) and then fill in the start of a new document by choosing a template from the \mnu{Templates} popup menu in the Source Window or use the \mnu{File}\To\mnu{New From Stationery…} command and picking appropriate Stationery from the list. Note that the templates and stationery provided are certainly not complete; if you have some that you think are of general use feel free to submit them for inclusion in \TS. You can add personal Templates and Stationery to \path{~/Library/TeXShop/Templates} and \path{~/Library/TeXShop/Stationery} respectively. \textbf{Note: In \TS\ 3.58 and later you can use the \mnu{TeXShop}\To\mnu{Open \path{~/Library/TeXShop}} Menu item to open that folder in Finder. Note: \path{~/Library} is the \cmd{Library} folder in your \cmd{HOME} folder; \emph{not} \path{/Library}, the \cmd{Library} folder at the \cmd{root} of your Hard Drive. Note: Under \textsf{Mac OS X 10.7 and later} the \cmd{Library} folder is ``hidden'' by default; in \cmd{Finder} hold the \cmd{Opt} key down and click on the \mnu{Go} menu and it will be available. Under \textsf{OS X 10.9 and later} you can \emph{permanently} show \path{~/Library} in your \cmd{HOME} folder by opening and selecting your \cmd{HOME} folder, choosing \mnu{View}\To\mnu{Show View Options} (\cmd{Cmd-J}) in \cmd{Finder} and then checking \cmd{Show Library Folder}.}
+
+Stationary is meant to be a skeleton for a complete, new document while a Template can be added at any point in a document so may just contain fragments that may be useful as additions to certain documents; e.g., specific entries for certain packages that may only be needed in a particular document. On the other hand, a Template may also contain the skeleton for a complete new document for a particular use; that's the way I tend to use them.
+
+\subsubsection{\LaTeX\ \& Matrix Panels}
+
+While I believe that panels with a clickable interface actually hinder learning I'll mention that \TS\ has two panels: one to help with entering \LaTeX\ code (the \LaTeX\ Panel) and one for setting up the basic structure of a matrix or tabular (the Matrix Panel). These are toggled on/off under the \mnu{Window} Menu. % or with the keyboard shortcuts\footnote{The given shortcuts are for the English localization and may be different with other localizations.} \texttt{Opt-Cmd-{}-} and \texttt{Opt-Cmd-=} respectively.
+ Figure~(\ref{fig:LandMPanels}) shows what the panels look like.
+%\begin{figure}
+%\includegraphics[width=2.5in]{figs/LaTeXPanel}\hfill\includegraphics[width=2.5in]
+%{figs/MatrixPanel}
+%\caption{The \LaTeX\ \& Matrix Panels.}
+%\label{fig:LandMPanels}
+%\end{figure}
+
+\begin{figure}
+\centering
+\subfloat[][]{%
+\label{fig:LPanel}
+\framebox{\includegraphics[width=2.5in]{figs/LaTeXPanel}}}%
+\qquad%
+\subfloat[][]{%
+\label{fig:MPanel}
+\framebox{\includegraphics[width=2.5in]{figs/MatrixPanel}}}%
+\caption[LaTeX and Matrix Panels.]{
+\subref{fig:LPanel} The \LaTeX\ Panel; and
+\subref{fig:MPanel} Matrix Panel.}
+\label{fig:LandMPanels}
+\end{figure}
+
+It is possible to make a few changes and additions to the \LaTeX\ Panel by editing the 
+\path{~/Library/TeXShop/LatexPanel/completion.plist} file. \textbf{Note: all \cmd{plist} files must be edited using UTF-8 Unicode encoding.}
+
+\subsubsection{The Tags Popup}
+
+The \mnu{Tags} popup menu on the Source Toolbar will automatically list sectioning commands so you can quickly jump to a relevant part of your document source. You can add your own tag to the list at a particular place in the document by placing the line
+\begin{verbatim}
+%:my tag name
+\end{verbatim}
+at that position and it will then appear in the popup list so you can jump to that location quickly. See Figure~(\ref{fig:Tags}). Sorry, tags are not recursively included for files you \verb|\include| or \verb|\input|.
+
+\begin{figure}
+\centering
+\framebox{\includegraphics[width=1.5in]{figs/Tags}}
+\caption{The Tags Popup Menu.}
+\label{fig:Tags}
+\end{figure}
+
+\subsubsection{Find/Replace}
+
+There are three \acr{Find/Replace} ``panels'' available with \TS\ 3.xx (two with \TS\ 2.xx). Each is discussed individually below. You choose the Find/Replace Panel you wish to use on the \mnu{Source} tab under \mnu{TeXShop}\To\mnu{Preferences}. You must restart \TS\ to enable any changes made to the Find/Replace Panel choice in \mnu{Preferences}.
+\begin{description}
+\item[Apple Find Panel]
+The traditional Apple Find/Replace panel. A simple to use panel for finding and replacing text.   The Standard Apple Find/Replace Panel is shown in Figure~(\ref{fig:ApplePanel}) on page~\pageref{fig:ApplePanel}.
+\item[OgreKit Find Panel]
+An advanced Find/Replace panel that supports Regular Expressions (\acr{regex} for short) of various styles (press the More Options button to select the dialect). \acr{Regex} is a very advanced way to find and replace text and is a good investment of your time to learn. The OgreKit Find Panel with the \cmd{More Options} panel displayed is shown in Figure~(\ref{fig:Ogrekit}) on Page~\pageref{fig:Ogrekit}.
+\item[Apple Find Bar]
+Only available in \cmd{OS X 10.7} and later; and therefore only in \acr{\TS\ 3.xx}. It provides a drop down bar for doing Find with an additional line if you select Replace. See  Figure~(\ref{fig:AppleBar}) on page~\pageref{fig:AppleBar} for an example of the Apple Find Bar; the additional Replace line is displayed.
+\end{description}
+
+\begin{figure}
+\centering
+\subfloat[][]{%
+\label{fig:ApplePanel}
+\framebox{\includegraphics[width=2.25in]{figs/ApplePanel}}}%
+\qquad%
+\subfloat[][]{%
+\label{fig:Ogrekit}
+\framebox{\includegraphics[width=3.25in]{figs/OgreKit}}}%
+\\[5pt]
+\subfloat[][]{%
+\label{fig:AppleBar}
+\framebox{\includegraphics[width=5in]{figs/AppleBar}}}
+\caption[Find/Replace Panels.]{The Find/Replace ``panels'' available in \TS: 
+\subref{fig:ApplePanel} the standard Apple Find Panel; 
+\subref{fig:Ogrekit} the Ogrekit Find Panel with the \cmd{More Options} panel displayed; and, 
+\subref{fig:AppleBar} the Apple Find Bar available with \TS\ 3.xx.}
+\label{fig:FindPanels}
+\end{figure}
+
+\subsubsection{Spell Checking}
+
+By default \TS\ allows you to use Apple's Spell Checker as built into most applications. Unfortunately that Spell Checker doesn't know anything about \LaTeX\ commands so there is a tendency to flag those commands as misspelled words. There are several Spell Check applications that are \LaTeX-aware with the two most popular being \cmd{Excalibur} (maintained by Rick Zaccone, currently at version 4.07 and installed in \path{/Applications/TeX/Excalibur} by the \MacTeX\ install package) and \cmd{cocoAspell} (by Anton Leuski and currently at version 2.5 for \cmd{El Capitan} and later) which installs a \cmd{Spelling} Preference Pane in \cmd{System Preferences}. More information about these two Spell Checkers is found below.
+
+If you use different dictionaries for different documents (e.g., English or German depending upon the document) you can have \TS\ automatically choose the proper dictionary on a document by document basis by placing a line like
+\begin{verbatim}
+% !TEX spellcheck = English
+\end{verbatim}
+(for the \cmd{English (Aspell)} dictionary in this case) near the top of each document. Search for `\cmd{checking spelling}' (without the quotes) in \TS's \mnu{Help}\To\mnu{TeXShop Help Panel…} for more detailed information on the designation of a particular dictionary.
+
+\paragraph{\cmd{Excalibur}}
+
+The \cmd{Excalibur} Spell Checker is a stand-alone application that reads in a Source file, allows you to run a spell check which you then Save as a modified Source file; \TS\ automatically picks up the changes in that Source file. There are several versions of Macros that allow you to run \cmd{Excalibur} from within \TS. One by Michael Sharpe (with minor modifications by H. Schulz) can be downloaded from <\url{https://herbs.github.io}> as \cmd{TeXShopExcaliburMacro.zip}. With any of those macros \TS\ automatically picks up the spell checked and saved version of the Source file and \emph{replaces} the old contents of the displayed Source document by the spell checked version; any changes you make to the Source file while \cmd{Excalibur} is still correcting the document \emph{will be lost} so don't do that!
+
+More dictionaries for \cmd{Excalibur} are available at <\url{http://excalibur.sourceforge.net}>.
+
+\paragraph{\cmd{cocoAspell}}
+
+The \cmd{cocoAspell} Spell Checker integrates itself into the Apple Spell Check system. After enabling it and choosing the active dictionaries from the installed \cmd{Spelling} Preference Pane in \cmd{System Preferences} you can choose one to use within \TS\ by using \mnu{Edit}\To\mnu{Show Spelling and Grammar} (\cmd{Cmd-:}) and choosing an \cmd{Aspell} dictionary. You must \cmd{Quit} and Restart \TS\ if you wish to make that dictionary the default.
+
+Information on obtaining and installing more dictionaries for \cmd{cocoAspell} is available at <\url{http://people.ict.usc.edu/~leuski/cocoaspell/}>. Version 2.5 of \cmd{cocoAspell} installs and works properly with \cmd{macOS} versions \cmd{El Capitan}, \cmd{Sierra} and later. If you have a problem installing on \cmd{High Sierra} or later download the document `\cmd{InstallingCocoAspell.pdf.zip}` from <\url{https://herbs.github.io}>, un-zip it and follow the directions to complete the installation.
+
+
+\subsubsection{``Hiding'' Index Commands}\label{sec:Index}
+
+Indexing commands tend to duplicate information that is part of the text and therefore interfere with the process of comprehending the text itself. It is possible to have \TS\ colorize \verb|\index| commands in a bright yellow. To do that you need to add a `\cmd{ColorIndex}' checkbox to the Source window's Toolbar. With the Source window active you can either \cmd{Right-Click} (or \cmd{Ctl-Click}) on the Toolbar, choose \mnu{Customize Toolbar\dots}, or \mnu{Window}\To\mnu{Customize Toolbar\dots}, and Drag and Drop the \cmd{ColorIndex} checkbox to a place on the Toolbar. Checking that box will make all \verb"\index{text}" commands turn a bright yellow, by default, and ``recede'' into the background; see Figure (\ref{fig:DefaultSyntax}) on page \pageref{fig:DefaultSyntax}.
+
+\subsubsection{Syntax Coloring}
+
+\TS\ provides Syntax Coloring for \TeX\ documents as an aid to pick out text versus markup in source documents. To activate the Syntax Coloring make sure that \mnu{Syntax Coloring} is checked in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Editor}. The default color scheme is a bright red for comments, a dark blue for commands and a dark green for ``marker'' characters (\cmd{\{}, \cmd{\}} and \cmd{\$}); see Figure~(\ref{fig:DefaultSyntax}) on page \pageref{fig:DefaultSyntax}. In addition, as noted in section (\ref{sec:Index}) above, \TS\ offers a special Syntax Coloring for \verb"\index" commands so that they ``recede'' into the background and you can more easily read the surrounding text.
+
+\paragraph{For \TS\ earlier than 4.08.}
+You may not like the default Syntax Coloring scheme. Searching for `\cmd{syntax colors}' (without the quotes) in \TS's Help Panel gives information on how to change the colors for comments, commands and ``marker'' characters. It is also possible to change the color of\, \verb"\index" commands from the default bright yellow to some other color. The corresponding hidden preference variables are \cmd{indexred}, \cmd{indexgreen} and \cmd{indexblue}. See Figure (\ref{fig:HSSyntax}) on page \pageref{fig:HSSyntax} for an example. (If you like those adjusted syntax colors you can download \cmd{TeXShopSyntaxColors.zip} from <\url{https://herbs.github.io}>. You can also edit those scripts to create colors you prefer.)
+
+\paragraph{For \TS\ version 4.08 and later.}
+Recent versions of \TS\ now have a \cmd{Themes} tab in \mnu{\TS}\To\mnu{Preferences}. This tab allows you to change many colors of foreground, background, syntax colors, etc., and save them as a complete Color Theme to be used in the standard Light Mode or the Dark Mode that comes with \cmd{macOS Mohave}. See the version 4.08 section of the \cmd{Changes} document under the \mnu{Help} menu for complete instructions.
+
+If you have changed the syntax colors for pre-4.08 versions of \TS\ using the method given above those colors will \emph{not} be used by version 4.08 out of the box. To retrieve those colors see the method in the \cmd{Changes} document above.
+\begin{figure}
+\centering
+\subfloat[][]{%
+\label{fig:DefaultSyntax}
+\framebox{\includegraphics[width=1.5in]{figs/DefaultSyntaxColors}}}%
+\qquad%
+\subfloat[][]{%
+\label{fig:HSSyntax}
+\framebox{\includegraphics[width=1.56in]{figs/HSSyntaxColors}}}%
+\caption[\TS\ Syntax Colors]{The Default (\ref{fig:DefaultSyntax}) and an alternate set (\ref{fig:HSSyntax}) of Syntax Colors in \TS.}
+\label{fig:SyntaxColors}
+\end{figure}
+
+\subsubsection{Line Numbers}
+
+It is sometimes handy to show line numbers to the left of your Source document. Errors and warnings shown in the Console window during typesetting give the File Name and Line Number in the proper Source file. To turn on Line Numbering by default check the \cmd{Line Numbers} box in the \cmd{Editor} section of the \cmd{Editor} pane in \mnu{TeXShop}\To\mnu{Preferences}. You can use \cmd{Source}\To\mnu{Show Line Numbers} (\cmd{Ctl-Cmd-L}) to toggle \cmd{Line Numbering} on/off for a particular document. There is also an \mnu{Edit}\To\mnu{Line Number…} (\cmd{Cmd-L}) Menu Item which will prompt for a line number and then jump to that location.
+
+Note: \textsf{Lines} are defined to be bounded by typed \cmd{Return} characters so a soft-wrapped paragraph will count as a single line.
+
+\subsection{Typesetting}
+
+Once you are ready to take a look at how your document will appear you typeset it with the default engine, \texttt{pdflatex} out of the box, by simply using the \mnu{Typeset}\To\mnu{Typeset} (\cmd{Cmd-T}) command.
+
+You may wish to use a different engine as your default. You can change the default engine in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Typesetting}.
+
+If you use the \cmd{pstricks} package extensively or include many \acr{eps} graphics files in your document you may wish to typeset using \texttt{latex}\To\texttt{dvips}\To\texttt{ps2pdf} since \texttt{pdf(la)tex} does not allow for direct inclusion of \acr{eps} files\footnote{The \texttt{pdflatex} program in \MacTeX-2010 and later will do on-the-fly conversion of \acr{eps} files.}. The easiest way to do this is to include the line
+\begin{verbatim}
+% !TEX TS-program = latex
+\end{verbatim}
+at the top of your document. Then \TS\ will use the \texttt{latex+distiller} typesetting method noted above no matter what the default engine setting. Change \texttt{latex} to \texttt{pdflatex} to force use of \texttt{pdflatex} to typeset your file.
+
+\subsubsection{Removing ``\cmd{Aux}'' files}
+
+The process of typesetting produces several auxiliary files that contain information about cross references, bibliography, indexes, etc. If an error occurs during typesetting these files can be left in some unknown state and need to to be removed before attempting to typeset the document again. The \mnu{File}\To\mnu{Trash Aux Files} (\cmd{Ctl-Cmd-A}) command removes most of the files that may create problems.
+
+With \TS\ 3.22 and later there is an additional way to remove those files and then typeset the document with a single command. If you hold the \cmd{Opt} key down while clicking the \mnu{Typeset} menu the \mnu{Typeset}\To\mnu{Typeset} command becomes \mnu{Typeset}\To\mnu{Trash Aux \& Typeset} (\cmd{Opt-Cmd-T}).
+
+Search for `\cmd{trash aux}' in \mnu{Help}\To\mnu{TeXShop Help Panel…} for the list of all file extensions removed by the \mnu{Trash Aux Files} and \mnu{Trash Aux \& Typeset} menu commands. The \cmd{Terminal} commands used to add additional extensions to the trash list and return the list to the default list of extensions is also given in that section of \TS's Help Panel.
+
+\subsubsection{Experimenting}
+
+Version 3.37 and later of \TS\ has an \mnu{Edit}\To\mnu{Experiment…} menu item. Clicking on that item, with a Source file open, opens a new, resizable ``Experiment'' window which allows you to enter text. When you click the \mnu{Typeset} button on that window \TS\ will use the preamble from your open Source file and typeset the text in the Experiment window, opening a special Preview window to show the result. Great for experimenting with a figure to get it just right, etc.
+
+\subsubsection{Dealing with Errors}
+
+Figure~(\ref{fig:ConsoleWindow}) on page \pageref{fig:ConsoleWindow} shows the \cmd{Console} Window which appears when you typeset a file. The \cmd{Console} tab of \mnu{TeXShop}\To\mnu{Preferences} allows you to change the background and foreground (character) colors\footnote{I've chosen colors that correspond to my ancient Heathkit Terminal.} along with some other preferences.
+
+\begin{figure}
+\centering
+\framebox{\includegraphics[width=2.75in]{figs/ConsoleWindow}}
+\caption{Console Window}
+\label{fig:ConsoleWindow}
+\end{figure}
+
+If your typeset run comes across an error it will stop and wait for input which is done on the bottom line. If you wish to end the typeset run you can click on the \cmd{Abort} button. Click on the \cmd{Goto Error} (\cmd{Ctl-Cmd-E}) to move to the error location in the proper Source file. Understand that your typesetting run gives an error when it finally figures out there is an unrecoverable error but that error may be much earlier in your Source file. Also, make sure to read Section (\ref{sec:root}) to properly set up the files in a distributed document.
+
+\subsection{Viewing the Output \acr{pdf} File}
+
+Assuming the document was successfully typeset the \acr{pdf} file will automatically open in a separate Preview window.
+
+You can control how it's displayed in the \mnu{Preview} Menu. You can change the default settings in \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Preview}.
+
+\subsubsection{Synchronizing between \acr{pdf} and Source}
+
+With more recent \TeX\ distributions you can also skip back and forth between a location in the Preview Window and the equivalent location in the Source Window by \cmd{Cmd-Clicking} in either one to go to the (approximate) location in the other. See Figure~(\ref{fig:SourcePreviewSync}) for an example of Source\To Preview and Preview\To Source synchronization.
+
+%\begin{figure}
+%\centering
+%\framebox{\includegraphics[width=2.75in]{figs/SourceToPreviewSync}}\qquad\framebox{\includegraphics[width=2.75in]{figs/PreviewToSourceSync}}
+%\caption{Source\protect\To Preview and Preview\protect\To Source Synchronization.}
+%\label{fig:SourcePreviewSync}
+%\end{figure}
+\begin{figure}
+\centering
+\subfloat[][]{%
+\label{fig:SourceToPreview}
+\framebox{\includegraphics[width=2.8in]{figs/SourceToPreviewSync}}}%
+\qquad%
+\subfloat[][]{%
+\label{fig:PreviewToSource}
+\framebox{\includegraphics[width=2.8in]{figs/PreviewToSourceSync}}}%
+\caption[Source/Preview Synch.]{
+\subref{fig:SourceToPreview} Source\To Preview Synchronization; and
+\subref{fig:PreviewToSource} Preview\To Source Synchronization.}
+\label{fig:SourcePreviewSync}
+\end{figure}
+
+\subsection{Working with a Large Document}\label{sec:root}
+
+It is often handy to break a large document into more manageable subordinate parts and then create a ``root'' file which contains the preamble and \verb|\include| commands to bring all the parts together for typesetting.
+
+To have \TS\ ``know'' which file to typeset when working on a subordinate file put the line
+\begin{verbatim}
+% !TEX root = path/to/rootfile.tex
+\end{verbatim}
+at the top of your subordinate file; \path{path/to/rootfile.tex} is the relative or absolute path to the root file for this document. Once this is done \TS\ will typeset the root file if you press \mnu{Typeset}\To\mnu{Typeset} (\cmd{Cmd-T}) even though you are editing a subordinate file and properly synchronize between the Source and \acr{pdf}. E.g., if the root file is called \path{mygreatbook.tex} and the chapter files, \path{chapter1.tex}, etc., are in a \cmd{chapters} sub-folder below the root file then place the line
+\begin{verbatim}
+% !TEX root = ../mygreatbook.tex
+\end{verbatim}
+at the top of each of the chapter files. The \path{../} means go up one folder level to find the root file.
+
+\subsubsection{Switching between Source Windows}
+
+If you have multiple source files open you can switch between just those windows by using the \mnu{Window}\To\mnu{Next/Previous Source Window} (\cmd{Cmd-F2}/\cmd{Shft-Cmd-F2}) menu commands.
+
+\subsection{Working with \cmd{BibDesk} and Citations}
+
+\TS\ has a built-in ``plugin'' that interacts with the \cmd{BibDesk} bibliography application to allow you to complete citation references in the \verb|\cite| command.  To enable the use of the ``plugin'' make sure that \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Editor}\To\mnu{Editor}\To\mnu{BibDesk Completions} is checked. 
+
+To use it you must first open the required bibliography (\texttt{bib}) file(s) in \cmd{BibDesk}. Enter several characters from the reference label within the \verb|\cite| command and press \cmd{F5} to get a list of matching references from the \texttt{bib} file(s) with a bit of information about each one. Scroll to the one you want and press \cmd{Return} or \cmd{Tab}. See Figure~(\ref{fig:bibdesk}) 
+on page~\pageref{fig:bibdesk} for an example.
+
+%\begin{figure}
+%\centering
+%\fbox{\includegraphics[width=2.7in]{figs/BibDeskPlugin}}\qquad\fbox{\includegraphics[height=1.2in]{figs/BibDeskPluginXref}}
+%\caption{Examples of using the \textsf{BibDesk} Plugin for citations and cross-references inside \TS.}
+%\label{fig:bibdesk}
+%\end{figure}
+\begin{figure}
+\centering
+\subfloat[][]{%
+\label{fig:BibDeskBib}
+\fbox{\includegraphics[width=2.7in]{figs/BibDeskPlugin}}}%
+\qquad%
+\subfloat[][]{%
+\label{fig:BibDeskXref}
+\fbox{\includegraphics[height=1.2in]{figs/BibDeskPluginXref}}}%
+\caption[BibDesk Plugin Use.]{
+BibDesk Plugin: \subref{fig:BibDeskBib} citation insertion; and
+\subref{fig:PreviewToSource} cross-reference insertion.}
+\label{fig:bibdesk}
+\end{figure}
+
+The ``plugin'' also works for entering cross-references within \verb|\ref| or \verb|\pageref| commands but only for those with labels in the file you are editing.
+
+\subsection{Getting Help for Packages}
+
+There are many times when having help about a given package can be handy. \TS\ has an interface to \texttt{texdoc} which will bring up that documentation. Execute \mnu{Help}\To\mnu{Show Help for Package…} (\cmd{Opt-Cmd-I}) and enter the name of the package.
+
+You can also easily look at a package directly with the \mnu{Help}\To\mnu{Open Style File…} command and enter the full package file name \emph{including the proper extension} (e.g., \texttt{.sty} for packages or \texttt{.cls} for document classes).
+
+% Keyboard Shortcuts
+%	For Menu Items via System Preferences->Keyboard & Mouse->Keyboard Shortcuts
+%	For built-in frameworks via ~/Library/KeyBindings/DefaultKeyBinding.dict
+%	Via editing MainMenu.nib
+\section{Controlling the Keyboard}
+
+One of the best ways to speed up your entry of text in a source file is to keep your hands on the keyboard as much as possible---only one of the reasons I don't like the ``clicky'' interface of the \LaTeX\ and Matrix Panels. There are many shortcuts associated with the \TS\ menu system but this section is about changing and adding others and other keyboard customizations.
+
+\subsection{Menu Shortcuts \& System Preferences}
+
+Sometimes you'd like to add a shortcut to a menu item that doesn't have one or add one to a command whose shortcut you dislike. Mac~OS~X 10.4 (Tiger) and later have a method to add shortcuts to specific menu items both globally and in specific programs. This feature has become much more reliable in OS~X~10.5 and especially in OS~X~10.6 and later.
+
+One example using Mac~OS~X~10.6 (Snow Leopard) or later: \TS\ 2.36 has added a \mnu{File}\To\mnu{New from Stationery…} command, without a shortcut, which can be very helpful once you set up stationery the way you want. To add \cmd{Opt-Cmd-N} as the shortcut to that menu item: open up the \textsf{System Preferences} application to \mnu{Keyboard}\To\mnu{Keyboard Shortcuts} (just \mnu{Shortcuts} in \cmd{Mavericks}) and select \mnu{Application Shortcuts} (\mnu{App Shortcuts} in \cmd{Mavericks}); press the \mnu{+} button to add a shortcut; select \TS\ as the application; enter the exact menu title [\mnu{New from Stationery…} --- note you \emph{must} enter a real ellipsis, `…', (\cmd{Opt-;} with the English keyboard layout)]; and press \cmd{Opt-Cmd-N} as the shortcut.
+
+Note: If you don't like a particular shortcut to a menu item you can usually change it to something that suits you better using the same technique used above.
+
+\subsection{More Editing Help}
+
+\TS\ is built using Apple's programmers interfaces (called frameworks) and therefore inherits all the properties and functionality of those interfaces. There are many things available through the Text framework that aren't tied to the keyboard by default, e.g., many `\cmd{emacs}-like' keyboard commands, but Apple has made it possible to add those commands to all applications that use the Text framework; e.g., \textsf{TextEdit} and \textsf{Mail} as well as \TS.
+
+This is done by creating a special file, \path{DefaultKeyBinding.dict}, and placing it in a particular location, \path{~/Library/KeyBindings} (you may have to create the \path{KeyBindings} folder there if it doesn't already exist).
+
+You can get more information about this, as well as a (useful) sample, by downloading the \textsf{KeyBindings.zip} file at <\url{https://herbs.github.io}>.
+
+%\subsection{What is Broken}
+
+% Key Bindings (auto-completion)
+%	via ~/Library/TeXShop/Keyboard/autocompletion.plist
+\subsection{Key Bindings}
+
+Besides adding shortcuts to Menu Items you can actually bind keystrokes, within \TS, to expand into groups of characters. Checking the \mnu{TeXShop}\To\mnu{Preferences}\To\mnu{Editor}\To\mnu{Key Bindings} option will enable this feature (again use the \cmd{Editor} tab in \TS\ 3.99 and later). You can also toggle it on/off for any particular document using the \mnu{Source}\To\mnu{Key Bindings}\To\mnu{Toggle On/Off} Menu Item. This feature was previously called Auto Completion; not to be confused with Command Completion---see section (\ref{sec:CC}) below. Note: this facility only works with code generated by a single keystroke (possibly obtained by pressing multiple keys at once rather than in sequence); e.g. it won't work with é on the US keyboard since that is generated by the two keystroke sequence (\cmd{Opt-e e}).
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox[\FBwidth]
+{\includegraphics[width=3in]{figs/KeyBindingMenu}}{\caption{The Key Bindings Menu.}\label{fig:keybindingmenu}}%
+\ffigbox[\FBwidth]
+{\includegraphics[width=2.7in]{figs/KeyBindingEditor}}{\caption{The Key Bindings Editor.}\label{fig:keybindeditor}}
+\end{floatrow}
+\end{figure}
+
+E.g., pressing \cmd{Opt-,} with a US keyboard layout, usually enters \texttt{\(\leq\)} into your document but with Key Binding enabled \verb|\leq| will be entered. Similarly, with some text selected pressing \verb|"| will surround the selected text with \verb|``| and \verb|''|.
+
+You can add, remove or change the key bindings using the Key Bindings Editor (\mnu{Source}\To\mnu{Key Bindings}\To\mnu{Edit Key Bindings File…}). Figures~(\ref{fig:keybindingmenu}) and (\ref{fig:keybindeditor}) show the \mnu{Key Bindings} Menu and Editor.
+
+Once in the Editor the left hand column displays the input keystroke while the right hand column shows what will be substituted for that keystroke. To see how you produce some of those keystrokes enable the Keyboard Viewer in \mnu{System Preferences}\To\mnu{Keyboard}\To\mnu{Keyboard} by checking the `\mnu{Show Keyboard \& Character Viewers in menu bar}' item and then clicking on the new keyboard icon in your Menu Bar.
+
+\section{Macros}
+
+Macros can be simple text substitutions or Applescript programs that can do all sorts of processing on a file. You can also assign a keyboard shortcut to any macro for direct execution. The ones that are part of \TS\ are found under the \mnu{Macros} Menu.
+
+You can remove or add additional macros to the menu by using the \mnu{Macro Editor} (use the \mnu{Macros}\To\mnu{Open Macro Editor} command). The \mnu{Macro Editor} window and extra menu items in the \mnu{Macros} Menu when the Editor is open are shown in Figures~(\ref{fig:MacroEditorWindow}) and (\ref{fig:MacrosMenu}) respectively.
+
+Besides writing your own macros you can add macros supplied by others to the \mnu{Macros} menu one of two ways: copy and paste the text version of the macro into a \mnu{New Item} in the \mnu{Macro Editor}; or obtain the macro as a \texttt{plist} file and use the \mnu{Add macros from file…} command found in the \mnu{Macros} Menu when the \mnu{Macro Editor} is open (again, see Figure~(\ref{fig:MacrosMenu})).
+
+More information on macros can be found by searching for \cmd{macros} in \mnu{Help}\To\mnu{TeXShop Help Panel…}.
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox[\FBwidth]
+{\includegraphics[width=3.1in]{figs/MacroEditorWindow}}{\caption{The Macro Editor Window.}\label{fig:MacroEditorWindow}}%
+\ffigbox[\FBwidth]
+{\includegraphics[width=2.5in]{figs/MacrosMenu}}{\caption{The extra menu items when the Macro Editor is open.}\label{fig:MacrosMenu}}
+\end{floatrow}
+\end{figure}
+
+\subsection{Text Macros}
+
+Text macros are simple text substitutions. You can also tell \TS\ to insert any selected text using \verb|#SEL#|, place the cursor using \verb|#INS#| and even put in multiple lines in the macro itself. Then you can assign the text macro to a keyboard shortcut.
+
+I like to use \cmd{Cmd-B} and \cmd{Cmd-I} to insert \verb|\textbf{|\selection\verb|}| and \verb|\emph{|\selection\verb|}| into the document where \selection\ is any possible selected text. Macros to do that are already under the \mnu{Macros}\To\mnu{Text Styles} Menu so we need only assign keyboard shortcuts to them. To assign \cmd{Cmd-I} to the \mnu{emphasize} macro: open the \mnu{Macro Editor} where the form of the \mnu{Macros} menu appears in the left hand pane; click the \mnu{emphasize} macro found under \mnu{Text Styles}; click the Key insertion box and simply insert a lower case `\texttt{i}' (the \cmd{Cmd} key is assumed and additional modifier keys can be checked off).
+
+\subsection{Applescript Macros}
+
+You cannot distinguish Applescript macros in the \mnu{Macros} Menu from text macros but they can do complicated processing and add/change the source file in \TS. One example in the default set is the \mnu{Program} macro that creates a
+\begin{verbatim}
+% !TEX TS-program = xxxx
+\end{verbatim}
+line at the top of a file with your choice of engine substituted for \texttt{xxxx}. You can look at the Applescript code for this macro by clicking on its name in the \mnu{Macro Editor}.
+
+Some detailed tips on creating Applescript Macros for use in \TS\ can be found in the \mnu{Help}\To\mnu{Notes on Applescript in TeXShop} document by Michael Sharpe.
+
+%\begin{figure}
+%\centering
+%\framebox{\includegraphics[width=2.25in]{figs/MacrosMenu}}
+%\caption{The extra menu items when the Macro Editor is open.}
+%\label{fig:MacrosMenu}
+%\end{figure}
+
+% Command Completion
+%	via ~/Library/TeXShop/CommandCompletion.txt & Macros
+\section{Command Completion}\label{sec:CC}
+
+\LaTeX\ markup is rather wordy which is nice because it describes what it's supposed to do but a bit painful to write. Command Completion allows you to insert complete environments and commands with a few keystrokes and the press of a ``trigger'' key (this is \cmd{Esc} by default but can be changed to \cmd{Tab} in the \cmd{Source} Tab's \cmd{Command Completion Triggered By:} section in \mnu{TeXShop}\To\mnu{Preferences}). 
+
+Commands that have arguments usually have a Mark (\texttt{•}) inserted for each argument. You move to the next argument by using the \mnu{Source}\To\mnu{Command Completion}\To\mnu{Marks}\To\mnu{Next Mark} command (\cmd{Ctl-Cmd-F} [or \cmd{Opt-Trigger}]). \emph{This also selects the Mark so typing automatically removes the Mark and substitutes the typed information}. See the complete documentation in the \path{~/Library/TeXShop/CommandCompletion} folder for much more information. The complete list of completions and abbreviations is available in \cmd{Appendix A}, starting on page (\pageref{sec:CCTables}).
+
+\subsection{Completions}
+
+You can complete many commands by starting to type them and pressing the trigger key. Variations on the commands with differing numbers of optional arguments are generated by additional presses of the trigger. One example: typing \verb|\sec| and then the trigger on a new line produces
+\begin{verbatim}
+\section{|selmark}
+\end{verbatim}
+while a second press of the trigger gives
+\begin{verbatim}
+\section*{|selmark}
+\end{verbatim}
+the *-variant of the command and a final press of the trigger gives
+\begin{verbatim}
+\section[|selmark]{•}
+\end{verbatim}
+with the optional argument.
+
+\subsection{Substitutions or Abbreviations}
+
+Besides completions for partial command insertions there are also many abbreviations. These are short mnemonics for complete substitutions. 
+
+All abbreviations for environments start with a `\texttt{b}'. To generate a complete \cmd{itemize} environment place \verb|\bite| on a line by itself and press the trigger key to get
+\begin{verbatim}
+\begin{itemize}
+\item
+|selmark
+\end{itemize}•
+\end{verbatim}
+with an extra Mark at the end so you can easily jump to the end of the environment. Additional items can be generated by typing \verb|\it| and the trigger to get
+\begin{verbatim}
+\item
+|selmark
+\end{verbatim}
+ready for entry of text.
+
+In addition to the \verb|\section| command lower level sectioning commands have abbreviations. Sub-sections can be generated by typing \verb|\ssec| and the trigger to get
+\begin{verbatim}
+\subsection{|selmark}
+\end{verbatim}
+with subsequent presses of the trigger key giving the *-variant and finally the variant with the optional argument.
+
+As a final example \verb|\tt| and the trigger gives the \verb|\texttt{|\selmark\verb|}| command and a second press of the trigger gives the declaration \verb|\ttfamily| with similar results for other font changing commands.
+
+A set of tables for all the completions and abbreviations supplied with \TS\ can be found in Appendix A on page \pageref{sec:CCTables}.
+
+\subsection{But Typing \cmd{\textbackslash} is Difficult}
+
+Some keyboard localizations make it difficult to type `\verb|\|' directly; e.g., it takes multiple keystrokes to do so using the French keyboard localization. Hope isn't lost! In most cases an abbreviation or start of command doesn't have to start with a `\verb|\|' but rather any `white space character' (i.e., the start of a fresh line, a space or tab). So instead of 
+\begin{verbatim}
+\sec
+\end{verbatim}
+and the trigger key to produce
+\begin{verbatim}
+\section{|selmark}
+\end{verbatim}
+you can use
+\begin{verbatim}
+sec
+\end{verbatim}
+\emph{at the start of a line} and the trigger key to produce the same completed command.
+
+Similarly, writing \verb|tt| and the trigger will give \verb|\texttt{|\selmark\verb|}| since it is preceded by a space character. However \verb|`tt| will \emph{not} work since the \verb|tt| \emph{isn't} preceded by a `white space character'; in that case you will have to use \verb|`\tt|. The simplest way to make that easier is to create a macro that does nothing but insert a `\verb|\|' (without the quotes) and assign it to a simple \mnu{Cmd} based keystroke.
+
+\subsection{Hey, it doesn't work!}
+
+If these examples don't work you probably need to let \TS\ update the \path{~/Library/TeXShop/CommandCompletion} folder; simply delete that folder from \path{~/Library/TeXShop} and restart \TS.
+
+% Engines
+%	via ~/Library/TeXShop/Engines/
+\section{Extending Processing via Engines}
+
+\TS\ offers several default ``engines'' (also referred to as ``scripts'' which is left over from earlier times) in its \mnu{Typeset} Menu. These include running \mnu{Plain TeX} or \mnu{LaTeX} (either using \texttt{pdftex} or \texttt{TeX+DVI}), \mnu{BibTeX}, \mnu{MakeIndex}, \mnu{MetaPost} or \mnu{ConTeXt}. But there are many things you may wish to do that fall outside of this limited set so \TS\ also allows you to create new engines that are stored in \path{~/Library/TeXShop/Engines}. These additional engines do not show up in the \mnu{Typeset} menu but only in the popup list on the Source and Preview Toolbar (see Figure~(\ref{fig:EnginesPopup}) on page \pageref{fig:EnginesPopup}). 
+
+You can use these engines by choosing from that popup list and then pressing the Typeset button or, a better choice if you use different engines for different documents, by putting a line like
+\begin{verbatim}
+% !TEX TS-program = xelatex
+\end{verbatim}
+at the top of your source file; the example given will run the \texttt{xelatex} engine on this file independent of other choices. You can override the choice you make in the line with one of the basic engines (e.g., run \mnu{BibTeX}) by using the items in the \mnu{Typeset} Menu directly.
+
+\TS\ is shipped with a few engines activated (i.e., directly in the \path{~/Library/TeXShop/Engines} folder) but also includes several additional ones in \path{~/Library/TeXShop/Engines/Inactive}. As an example let's activate and use the \cmd{pdflatexmk} engine found in \path{~/Library/TeXShop/Engines/Inactive/Latexmk}.
+
+\begin{figure}
+\centering
+\framebox{\includegraphics[width=2.0in]{figs/EnginesPopup}}
+\caption{The Engines Popup Menu on the Source Toolbar.}
+\label{fig:EnginesPopup}
+\end{figure}
+
+\subsection{The \texttt{pdflatexmk} engine}
+
+If your document has cross-references, bibliographies and/or indexes it takes multiple \texttt{pdflatex} runs with intermediate runs of \texttt{bibtex} and/or \texttt{makeindex} to create the bibliographies, indexes and resolve all cross-references. The \texttt{pdflatexmk} engine automates this whole process.
+
+\TS\ 3.07 or 2.46 and later activate the pdflatexmk engine by default \emph{in a fresh installation}. If you are using an earlier version of \TS, or even updated to the latest version from an earlier version, you need to activate the engine. To activate the engine simply move the \texttt{pdflatexmk.engine} file from \path{~/Library/TeXShop/Engines/Inactive/Latexmk} two folders up, to \path{~/Library/TeXShop/Engines}. When you restart \TS\ you can check that \cmd{pdflatexmk} is now in the popup menu.
+
+Then place the line
+\begin{verbatim}
+% !TEX TS-program = pdflatexmk
+\end{verbatim}
+at the top of your source file. From then on when you simply typeset the file (\mnu{Typeset}\To\mnu{Typeset} or \cmd{Cmd-T}) \TS\ will use this engine and the complete process of typesetting the document to its final form will be carried out.
+
+\section*{Appendices}
+\addcontentsline{toc}{section}{Appendices}
+\appendix
+
+%\section{---\quad \TS\ Preferences}
+
+
+\section{---\quad Command Completion Tables}\label{sec:CCTables}
+The following tables contain the Command Completions and Abbreviations included by default with \TS. Table~\ref{tbl:environments} on page~\pageref{tbl:environments} is a list of all included environment abbreviations. Table~\ref{tbl:commands} on page~\pageref{tbl:commands} lists included abbreviations/completions for commands and declarations. Finally, Table~\ref{tbl:greek} on page~\pageref{tbl:greek} are the included abbreviations for Greek letters.
+
+It is important to remember that with a given abbreviation successive presses of the trigger key go to the next match in the list. E.g., there are three sectioning commands, \cmd{sec} for the standard section command, \cmd{secs} for the ``starred'' version of the command and \cmd{seco} for the version with an optional argument; if you enter \cmd{sec} as your abbreviation successive presses of the trigger goes from the \cmd{sec} to the \cmd{secs} to the \cmd{seco} versions before returning to your original abbreviation. That means there are many abbreviations that you never need to remember.
+
+Note: do \emph{not} attempt to memorize these tables. Learn a few items that you use all the time and then slowly add to your knowledge as you need them.
+\begin{table}[H]
+\small
+\centering
+\begin{tabular}{llll}
+\textbf{Abbreviation} & \textbf{Environment} & \textbf{Abbreviation} & \textbf{Environment} \\
+\cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3} \cmidrule[0.5pt](lr){4-4}
+barr      & array       & blett   & letter \\
+babs      & abstract    & blist   & list \\
+bali      & align       & bminp   & minipage \\
+balis     & align*      & bminpo  & minipage \\
+baliat    & alignat     & bmult   & multline \\
+baliats   & alignat*    & bmults  & multline* \\
+balied    & aligned     & bpict   & picture \\
+baliedat  & alignedat   & bpmat   & pmatrix \\
+baliedato & alignedat   & bquot   & quotation \\
+bapp      & appendix    & bquo    & quote \\
+bbmat     & bmatrix     & bsplit  & split \\
+bcase     & cases       & bsubeq  & subequations \\
+bcent     & center      & btab    & tabular \\
+bcenum    & compactenum & btabs   & tabular* \\
+bcenumo   & compactenum & btabx   & tabularx \\
+bcitem    & compactitem & btabl   & table \\
+bcitemo   & compactitem & btablo  & table \\
+bdes      & description & btabls  & table* \\
+benu      & enumerate   & btablso & table* \\
+benuo     & enumerate   & btbl    & table \\
+bequ      & equation    & btblo   & table \\
+bequs     & equation*   & btbls   & table* \\
+beqn      & eqnarray    & btblso  & table* \\
+beqns     & eqnarray*   & btabb   & tabbing \\
+bfig      & figure      & bbib    & thebibliography \\
+bfigo     & figure      & bindex  & theindex \\
+bframe    & frame       & btheo   & theorem \\
+bframeo   & frame       & btitpg  & titlepage \\
+bflalig   & flalign     & btrivl  & trivlist \\
+bflaligs  & flalign*    & bvarw   & varwidth \\
+bfll      & flushleft   & bverb   & verbatim \\
+bflr      & flushright  & bvers   & verse \\
+bgath     & gather      & bwrap   & wrapfigure \\
+bgaths    & gather*     & bwrapo  & wrapfigure \\
+bgathed   & gathered    & bwrapo2 & wrapfigure \\
+bgathedo  & gathered    & bwrapoo & wrapfigure \\
+bite      & itemize     &         & \\
+biteo     & itemize     &         & \\
+\end{tabular}
+\caption{Environment abbreviations.}
+\label{tbl:environments}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\makebox[\textwidth]{%
+\begin{tabular}{llllll}
+\textbf{Abbreviation} & \textbf{Command} & \textbf{Abbreviation} & \textbf{Command} & \textbf{Abbreviation} & \textbf{Command} \\
+\cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3} \cmidrule[0.5pt](lr){4-4} \cmidrule[0.5pt](lr){5-5} \cmidrule[0.5pt](lr){6-6}
+\texttt{-{}-}    & textendash        & midr       & midrule        & renewcomo       & renewcommand \\
+\texttt{-{}-{}-} & textemdash        & mnorm      & mathnormal     & renewcomoo      & renewcommand \\
+\texttt{-{}-{}-} & textemdash w/sp   & msf        & mathsf         & rncm            & renewcommand \\
+adlen            & addtolength       & mtt        & mathtt         & rnewc           & renewcommand \\
+adcount          & addtocounter      & mit        & mathit         & rncmo           & renewcommand \\
+bf               & textbf            & midr       & midrule        & rnewcoo         & renewcommand \\
+bfd              & bfseries          & mnorm      & mathnormal     & rncmoo          & renewcommand \\
+biblio           & bibliography      & mdd        & mdseries       & rmc             & rmfamily \\
+bibstyle         & bibliographystyle & mbox       & mbox           & rbox            & raisebox \\
+botr             & bottomrule        & makebox    & makebox        & rboxo           & raisebox \\
+bibitem          & bibitem           & mboxo      & makebox        & rboxoo          & raisebox \\
+bibitemo         & bibitem           & makebox    & makebox        & sec             & section \\
+center           & centering         & mboxoo     & makebox        & secs            & section* \\
+chap             & chapter           & mpar       & marginpar      & seco            & section \\
+cmidr            & cmidrule          & multic     & multicolumn    & ssec            & subsection \\
+cmidro           & cmidrule          & ncol       & space \& space & ssecs           & subsection* \\
+em               & emph              & ncm        & newcommand     & sseco           & subsection \\ 
+emd              & em                & newc       & newcommand     & sssec           & subsubsection \\
+foot             & footnote          & ncmo       & newcommand     & sssecs          & subsubsection* \\
+frac             & frac              & newco      & newcommand     & ssseco          & subsubsection \\
+fbox             & fbox              & ncmoo      & newcommand     & spar            & subparagraph \\
+fboxo            & framebox          & newcoo     & newcommand     & spars           & subparagraph* \\
+fboxoo           & framebox          & nct        & newcolumntype  & sparo           & subparagraph \\
+geometry         & geometry          & newct      & newcolumntype  & setl            & setlength \\
+hw               & headwidth         & newpg      & newpage        & stcount         & stepcounter \\
+hw2tw            & headw\(=\)textw   & npg        & newpage        & sf              & textsf \\
+href             & href              & nline      & newline        & sfd             & sffamily \\
+item             & item              & newlin     & newline        & sc              & textsc \\
+ito              & item              & nlen       & newlength      & scd             & scshape \\
+incg             & includegraphics   & newlen     & newlength      & sl              & textsl \\
+incgo            & includegraphics   & nenv       & newenvironment & sld             & slshape \\
+it               & textit            & newenv     & newenvironment & sqrt            & sqrt \\
+itd              & itshape           & nenvo      & newenvironment & sqrto           & sqrt \\
+latex            & LaTeX             & newenvo    & newenvironment & tt              & texttt \\
+latexs           & LaTeX w/sp        & nenvoo     & newenvironment & ttd             & ttfamily \\
+latexe           & LaTeXe            & newenvoo   & newenvironment & tw              & textwidth \\
+latexes          & LaTeXe w/sp       & pgref      & pageref        & tex             & TeX \\
+label            & label             & par        & paragraph      & texs            & TeX w/sp \\
+lbl              & label             & pars       & paragraph*     & tilde           & textasciitilde \\
+lettrine         & lettrine          & paro       & paragraph      & topr            & toprule \\
+lettrineo        & lettrine          & pgs        & pagestyle      & toc             & tableofcontents \\
+listf            & listoffigures     & parbox     & parbox         & tableofcontents & tableofcontents \\
+listt            & listoftables      & parboxo    & parbox         & tpgs            & thispagestyle \\
+rule             & rule              & parboxoo   & parbox         & thispagestyle   & thispagestyle \\
+ruleo            & rule              & parboxooo  & parbox         & up              & textup \\
+mbf              & mathbf            & pbox       & parbox         & upd             & upshape \\
+mrm              & mathrm            & pboxo      & parbox         & url             & url \\
+mcal             & mathcal           & pboxoo     & parbox         & usep            & usepackage \\
+msf              & mathsf            & pboxooo    & parbox         & usepo           & usepackage \\
+mtt              & mathtt            & ref        & ref            & verb            & verb \\ 
+mit              & mathit            & renewcom   & renewcommand   & verb2           & verb \\
+\end{tabular}
+}
+\caption{Commands and Declarations.}
+\label{tbl:commands}
+\end{table}
+
+\begin{table}[H]
+\small\centering
+\begin{tabular}{llll}
+\textbf{Abbreviation} & \textbf{Command} & \textbf{Abbreviation} & \textbf{Command} \\
+\cmidrule[0.5pt](lr){1-1} \cmidrule[0.5pt](lr){2-2} \cmidrule[0.5pt](lr){3-3} \cmidrule[0.5pt](lr){4-4}
+xa  & alpha      & xvp  & varpi \\
+xb  & beta       & xph  & phi \\
+xch & chi        & xcph & Phi \\
+xd  & delta      & xvph & varphi \\
+xcd & Delta      & xps  & psi \\
+xe  & epsilon    & xcps & Psi \\
+xve & varepsilon & xs   & sigma \\
+xet & eta        & xcs  & Sigma \\
+xg  & gamma      & xvs  & varsigma \\
+xcg & Gamma      & xz   & zeta \\
+xio & iota       & xr   & rho \\
+xk  & kappa      & xvr  & varrho \\
+xl  & lambda     & xt   & tau \\
+xcl & Lambda     & xth  & theta \\
+xm  & mu         & xcth & Theta \\
+xn  & nu         & xvth & vartheta \\
+xo  & omega      & xu   & upsilon \\
+xco & Omega      & xcu  & Upsilon \\
+xp  & pi         & xx   & xi \\
+xcp & Pi         & xcx  & Xi \\
+\end{tabular}
+\caption{Greek Letters. The `\texttt{d}' versions are not shown.}
+\label{tbl:greek}
+\end{table}
+
+%\section{---\quad \TS\ Directives}\label{sec:Directives}
+%
+%\section{---\quad Toolbars}\label{sec:Toolbars}
+%
+%\section{---\quad Hidden Preferences}\label{sec:HiddenPrefs}
+
+\end{document}

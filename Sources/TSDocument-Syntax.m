@@ -164,7 +164,7 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
     BOOL            colorExpl3;
     BOOL            hasUnderLineAndColon;
     BOOL            isKeyCommand;
-     
+    
     colorExpl3 = self.useExplColor; // [SUD boolForKey:expl3SyntaxColoringKey];
     
     TurnOffCommandSpellChecking = [SUD boolForKey:TurnOffCommandSpellCheckKey];
@@ -218,12 +218,12 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
     // Actually, it causes a crash bug is a large number of blank lines are deleted and both syntax coloring and active line coloring are on. Koch, July 1, 2022
     
     // [self cursorMoved:[self textView]];
-
+    
     
     colorIndexDifferently =  [self indexColorState];
     colorFootnoteDifferently = [SUD boolForKey: SyntaxColorFootnoteKey];
     
-   
+    
     // Fetch the underlying layout manager and string.
     layoutManager = [aTextView layoutManager];
     textString = [aTextView string];
@@ -234,13 +234,19 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
         return;
     if (range.location + range.length > length && ![SUD boolForKey:AlwaysHighlightEnabledKey]) // modified by Terada
         //    if (range.location + range.length > length)
+    {
+    //    NSLog(@"fixed");
         range.length = length - range.location;
+    }
+    
+    // NSLog(@"The location and length are %d and %d", range.location, range.length);
     
     // We only perform coloring for full lines here, so extend the given range to full lines.
     // Note that aLineStart is the start of *a* line, but not necessarily the same line
     // for which aLineEnd marks the end! We may span many lines.
     [textString getLineStart:&aLineStart end:&aLineEnd contentsEnd:nil forRange:range];
     
+    // NSLog(@"got here");
     
     // Handle Persian, Arabic, and Hebrew Justification
     
@@ -276,7 +282,7 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
         }
     }
     
-    
+    // NSLog(@"after Hebrew");
     
     // We reset the color of all chars in the given range to the regular color; later, we'll
     // then only recolor anything which is supposed to have another color.
@@ -311,6 +317,7 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
     /* End of this strange section.
      */
     
+    // NSLog(@"After confusing section");
     
     // Now we iterate over the whole text and perform the actual recoloring.
     location = aLineStart;
@@ -349,8 +356,8 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
         }
         
         
-        
-        
+   
+    
         else if (theChar == g_texChar)  {
             // A backslash (or a yen): a new TeX command starts here.
             // There are two cases: Either a sequence of letters A-Za-z follow, and we color all of them.
@@ -698,6 +705,8 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
             
             
         }
+    
+       
         else if (colorExpl3 && isValidOrdinaryTeXCommandChar(theChar)) {
             
             templocation = location;
@@ -715,6 +724,10 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
             while ((templocation < aLineEnd) && ([textString characterAtIndex: templocation] == ' '))
                 templocation++;
             
+            BOOL atEndOfLine = NO;
+            if (templocation == aLineEnd)
+                atEndOfLine = YES;
+            
             
             
             
@@ -722,11 +735,11 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
             newColorRange.location = templocation;
             newColorRange.length = 1;
             templocation++;
-           // if ((templocation < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: templocation], self.useExplColor))) {
-           //     templocation++;
-           //     newColorRange.length = templocation - newColorRange.location;
-          //  }
-          //  else
+            // if ((templocation < aLineEnd) && (!isValidTeXCommandChar([textString characterAtIndex: templocation], self.useExplColor))) {
+            //     templocation++;
+            //     newColorRange.length = templocation - newColorRange.location;
+            //  }
+            //  else
             {
                 while ((templocation < aLineEnd) && (isValidExtendedTeXCommandChar([textString characterAtIndex: templocation], self.useExplColor))) {
                     templocation++;
@@ -734,25 +747,33 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
                 }
             }
             
-            argumentString = [textString substringWithRange: newColorRange];
             isKeyCommand = NO;
-            if ([argumentString containsString:@"."])
-                isKeyCommand = YES;
-            
-         if (([argumentString containsString:@":"] || [argumentString containsString:@"_"]) && isKeyCommand)
-         {
-                [layoutManager addTemporaryAttributes:self.explColorAttribute6 forCharacterRange:colorRangeKey];
-                [aTextView setSpellingState:0 range:colorRangeKey];
-                [layoutManager addTemporaryAttributes:self.explColorAttribute7 forCharacterRange:newColorRange];
-                [aTextView setSpellingState:0 range:newColorRange];
+            if (! atEndOfLine)
+            {
+                argumentString = [textString substringWithRange: newColorRange];
+                if ([argumentString containsString:@"."])
+                    isKeyCommand = YES;
                 
-                location = templocation;
+                if (([argumentString containsString:@":"] || [argumentString containsString:@"_"]) && isKeyCommand)
+                {
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute6 forCharacterRange:colorRangeKey];
+                    [aTextView setSpellingState:0 range:colorRangeKey];
+                    [layoutManager addTemporaryAttributes:self.explColorAttribute7 forCharacterRange:newColorRange];
+                    [aTextView setSpellingState:0 range:newColorRange];
+                    
+                    location = templocation;
+                }
+                else
+                    location = newlocation;
             }
+            
             else
+            {
                 location = newlocation;
+            }
             
         }
-   
+
                 
        
     else

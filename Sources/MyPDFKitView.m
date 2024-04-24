@@ -551,14 +551,15 @@
 	
    
     [self.myPDFWindow makeKeyAndOrderFront: self];
-    if ([SUD boolForKey: FixPreviewBlurKey])
-        [self removeBlurringByResettingMagnification]; // for Yosemite's bug
-	if ([SUD boolForKey:PreviewDrawerOpenKey]) 
+   // if ([SUD boolForKey: FixPreviewBlurKey])
+   //     [self removeBlurringByResettingMagnification]; // for Yosemite's bug
+	if ([SUD boolForKey:PreviewDrawerOpenKey])
 		[self toggleDrawer: self];
    
     
-     aPage = [[self document] pageAtIndex: 0];
+    aPage = [[self document] pageAtIndex: 0];
     [self goToPage: aPage];
+    
      visibleRect = [[self documentView] bounds];
       visibleRect.origin.x = visibleRect.size.width / 2.0;
      visibleRect.origin.y = visibleRect.size.height;
@@ -567,6 +568,7 @@
      visibleRect.size.width = 10;
      visibleRect.size.height = 10;
     [[self documentView] scrollRectToVisible: visibleRect];
+    
 //    NSLog(@"This is page routine.");
      
     
@@ -1193,10 +1195,35 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
 
  */
 
+/*
+ More fundamental discussion: There are two key routines to display the pdf output. The routine "showWithPath" is called
+ when TeXShop first opens a source document. It's job is to initialize and then display the associated pdf file. The
+ routine "reShowWithPath" is called each time TeXShop typesets. It's job is to replace the old pdf data with the new
+ pdf data in the preview window, and then scroll so nothing seems to change except the revised TeX output.
+ 
+ However, there are two tricky special cases. The first occurs if a new source is created, or if a source file is opened
+ which has not been typeset so there is no associated pdf file. In that case, "showWithPath" is never called. When the
+ user typesets, "reShowWithPath" is called. To in this case it must initialize the PdfView, load the data, and display
+ the file. It should not scroll because there is no previous scroll position selected by the user. Instead it should
+ display the start of the pdf file.
+ 
+ The second tricky case occurs if the user closes the preview window. Since this window is part of the NSDocument object
+ associated with the source file, the window is not removed from memory. It disappears from the screen, but its scroll
+ position and configuration are still known. The only way to make that window reappear is to typeset the source. The
+ user believes they are typesetting from scratch, so the start of the pdf file should appear. But actually without
+ help the pdf will scroll to its old position.
+ 
+ We handle these two special cases with boolean values attached to the preview window: noPdfFile and previewClosed.
+ If noPdfFile = YES, then there was no pdf file when the document was opened and so reShowWithPath must initialize
+ the PdfView. It also sets noPdfFile --> NO so this doesn't happen with further typesetting. Similarly
+ if previewClosed = YES, when the pdf is scrolled to the top when displayed, and previewClosed --> NO
+ so this will not happen in the future.
+ */
+
 - (void) reShowWithPath: (NSString *)imagePath
 {
     
-    PDFDocument            *pdfDoc, *oldDoc;
+    PDFDocument            *pdfDoc, *oldDoc, *aDoc;
     PDFPage                *aPage, *fixingPage;
     NSInteger            theindex, fixingindex;
     NSInteger           theindexold, totalpagesold;
@@ -1209,9 +1236,101 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
     CGFloat             theScale;
     NSInteger           theMode;
     
-    // NSLog(@"Called reShowWithPath");
-    
     // self.PDFFlashFix = NO;
+    
+    if (self.myPDFWindow.noPdfFile  || self.myPDFWindow.previewClosed)
+    {
+        
+        if ([[self document] isFinding])
+            [[self document] cancelFindString];
+        if (_searchResults != NULL) {
+            [_searchResults removeAllObjects];
+            [_searchTable reloadData];
+            _searchResults = NULL;
+        }
+        
+        if ([self doReleaseDocument]) {
+            pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
+            [self setDocument: pdfDoc];
+       } else {
+            oldDoc = [self document];
+            theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+            pdfDoc = [[PDFDocument alloc] initWithData: theData];
+            [self setDocument: pdfDoc];
+            if (oldDoc != NULL) {
+                [oldDoc setDelegate: NULL];
+            }
+        }
+
+        totalPages = [[self document] pageCount];
+        [totalPage setIntegerValue:totalPages];
+        [stotalPage setIntegerValue:totalPages];
+        [totalPage1 setIntegerValue:totalPages];
+        [totalPage display];
+        [stotalPage display];
+        [totalPage1 display];
+        
+        if (self.sourceFiles != nil)
+            self.sourceFiles = nil;
+        
+        if (self.myPDFWindow.noPdfFile)
+            [self setup];
+        
+        self.myPDFWindow.noPdfFile = NO;
+        self.myPDFWindow.previewClosed = NO;
+         
+        aPage = [[self document] pageAtIndex: 0];
+        [self goToPage: aPage];
+        
+        return;
+        
+    }
+    
+    /*
+    
+    if (self.myPDFWindow.previewClosed) {
+         self.myPDFWindow.previewClosed = NO;
+        
+        if ([[self document] isFinding])
+            [[self document] cancelFindString];
+        if (_searchResults != NULL) {
+            [_searchResults removeAllObjects];
+            [_searchTable reloadData];
+            _searchResults = NULL;
+        }
+        
+        if ([self doReleaseDocument]) {
+            pdfDoc = [[PDFDocument alloc] initWithURL: [NSURL fileURLWithPath: imagePath]];
+            [self setDocument: pdfDoc];
+       } else {
+            oldDoc = [self document];
+            theData = [NSData dataWithContentsOfURL: [NSURL fileURLWithPath: imagePath]];
+            pdfDoc = [[PDFDocument alloc] initWithData: theData];
+            [self setDocument: pdfDoc];
+            if (oldDoc != NULL) {
+                [oldDoc setDelegate: NULL];
+            }
+        }
+
+        totalPages = [[self document] pageCount];
+        [totalPage setIntegerValue:totalPages];
+        [stotalPage setIntegerValue:totalPages];
+        [totalPage1 setIntegerValue:totalPages];
+        [totalPage display];
+        [stotalPage display];
+        [totalPage1 display];
+        
+        if (self.sourceFiles != nil)
+            self.sourceFiles = nil;
+        
+        aPage = [[self document] pageAtIndex: 0];
+        [self goToPage: aPage];
+        
+        return;
+        
+    }
+     */
+
     
     theScale = [self scaleFactor];
     theMode = [self displayMode];

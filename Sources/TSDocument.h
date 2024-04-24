@@ -454,7 +454,6 @@ enum RootCommand
 @property           BOOL                blockCursor;
 
 
-
 @property           BOOL                fileIsXML;
 
 @property           BOOL                pdfSinglePage;

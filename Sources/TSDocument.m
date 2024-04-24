@@ -962,9 +962,11 @@ withDarkColors = NO;
     
 
 	[super windowControllerDidLoadNib:aController];
+      
     self.syntaxColor = [SUD boolForKey: SyntaxColoringEnabledKey];
     self.useExplColor = [SUD boolForKey: expl3SyntaxColoringKey];
     [self applyInvisibleCharactersShowing]; // added by Terada
+    self.pdfKitWindow.previewClosed = NO;
     
  //   [self.splitController setWindow: fullSplitWindow];
     
@@ -1497,6 +1499,12 @@ if (! skipTextWindow) {
     
     
 	imagePath = [[[[self fileURL] path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+    
+    if (! [[NSFileManager defaultManager] fileExistsAtPath: imagePath])
+        self.pdfKitWindow.noPdfFile = YES;
+    else
+        self.pdfKitWindow.noPdfFile = NO;
+    
     
 	if (([[NSFileManager defaultManager] fileExistsAtPath: imagePath]) && (! optionKeyPressed)) {
 
@@ -3601,6 +3609,8 @@ if ( ! skipTextWindow) {
 /*" Changes the font of %textView to the one saved in the NSUserDefaults. This method is also registered with NSNotificationCenter and a notifictaion will be send whenever the font changes in the preferences panel.
 "*/
 {
+   
+    
 	NSData	*fontData;
 	NSFont 	*font;
  

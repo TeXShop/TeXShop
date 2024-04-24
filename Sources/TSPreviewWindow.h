@@ -59,6 +59,18 @@
 // @property               NSInteger       oldIndex;
 // @property               BOOL            oldUsed;
 
+// The property previewClosed is initialized to NO when the main document is first opened.
+// This property is set to YES if the user closes the Preview Window.
+// If the window is later opened, usually by typesetting, it is scrolled to the beginning when previewClosed = YES,
+// and then previewClosed is set to NO.
+//
+// noPdfFile will be YES only when the initial source document has no related preview file
+
+@property BOOL                                      previewClosed;
+@property BOOL                                      noPdfFile;
+
+
+
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)defaultFrame;
 

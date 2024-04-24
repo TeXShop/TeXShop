@@ -86,6 +86,7 @@ extern NSPanel *pageNumberWindow;
 //	[self.myPDFKitView setDocument: nil];
 //	[self.myPDFKitView2 setDocument: nil];
 	self.willClose = YES;
+    self.previewClosed = YES;
  // self.myDocument = nil;
     if ([theDocument skipTextWindow]) {
         self.myDocument = nil;

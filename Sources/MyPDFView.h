@@ -142,7 +142,6 @@ IBOutlet		id                  myStepper1;
 - (void)drawDotsForPage:(NSInteger)page atPoint: (NSPoint)p;
 - (void)setShowSync: (BOOL)value;
 - (void)doMagnifyingGlassMavericks:(NSEvent *)theEvent level: (NSInteger)level;
-
 @end
 
 @interface FlippedClipView : NSClipView {

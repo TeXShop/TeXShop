@@ -20,14 +20,16 @@
 \maketitle
 %\section{}
 %\subsection{}
-\section{Special Comment Lines}
-A "Special Comment Line" is a command in the source which is interpreted by TeXShop. Such lines must occur in the first twenty lines of a source file and begin with the comment symbol \%, so they are ignored by LaTeX and other TeX engines.
-TeXShop understands the following special comment lines:
+\section{Magic Comment Lines}
+A ``Magic Comment Line'' is a command in the source which is interpreted by TeXShop. Such lines must occur in the first twenty lines of a source file.
+%  and begin with the comment symbol \%.
+%TeXShop understands the following special comment lines:
 
 \begin{itemize}
 \item \% !TEX program =
 \item \% !TEX encoding =
 \item \% !TEX root =
+\item	\% !TEX numberingCorrection = 
 \item \% !TEX useTabs
 \item \% !TEX useTabsWithFiles
 \item \% !TEX tabbedFile\{ \}(optional short name)
@@ -42,6 +44,7 @@ TeXShop understands the following special comment lines:
 \item \% !TEX standardDisplay
 \item \% !TEX PageDirectionL2R
 \item	\% !TEX PageDirectionR2L
+
 \end{itemize}
 
 \section{Program Examples}
@@ -102,7 +105,14 @@ These Special Comment lines fix the encoding used to read and write a source fil
  information from the user, but produces more flexible tabs. The ``useTabsWithFiles'' line introduces the method, which then produces a tabbed window for each ``tabbedFile'' line. This line contains a partial or full path to the file in curly brackets. The tabs will be named using these paths, but this can create long tab names, so it is possible to provide  shorter names for the tabs inside round brackets. These
  shorter names are optional. Optional names are only available in High Sierra and above.
  
+ \newpage
  \section{More Examples}
+ \begin{verbatim}
+       % !TEX numberingCorrection = 0 + current - desired 
+ \end{verbatim}
+This command lists the number of preliminary pages before the main material is given on pages starting with page 1. 
+TeXShop uses this information to synchronize the PageNumber box on the toolbar with actual page numbers in the document.
+
  \begin{verbatim}
       % !TEX pdfSinglePage
  \end{verbatim}
@@ -148,6 +158,7 @@ One consequence of this development is that Hans can  modify sync code if he wis
  
 TeXShop needs to be reconfigured to use this distribution rather than TeX Live. This is easy for someone who always typesets with ConTeXt, but troublesome for users who write some documents in LaTeX and some in ConTeXt. TeXShop now has a Preference setting in the Engine tab called "Alternate Path" where users can insert the full path to their ConTeXt distribution. The special command line "useAlternatePath" can then be added to the top of a ConTeXt document to use that path to ConTeXt rather than the standard path to TeX Live.
 
+\newpage
 \begin{verbatim}
        % !TEX bookDisplay
        % !TEX standardDisplay
@@ -182,7 +193,6 @@ TeXShop obeys the following hidden preferences. The first two are new in version
 {\em Remark:}  If YES, the source window opens in front of the preview window when a document is first opened. \newline
 \end{itemize}
 
-\newpage
 \vspace{.3in}
 {\em Version 4.08 and Earlier Versions}
 \begin{itemize}
@@ -212,7 +222,6 @@ TeXShop obeys the following hidden preferences. The first two are new in version
 \item defaults write TeXShop FlashDelay 0.25
 \end{itemize}
 
-\newpage
 \vspace{.3in}
 {\em Version 4.76 and Later}
 

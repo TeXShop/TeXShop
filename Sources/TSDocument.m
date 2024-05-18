@@ -178,6 +178,7 @@ withDarkColors = NO;
     self.useOldSyncParser = NO;
     self.useConTeXtSyncParser = NO;
     self.useAlternatePath = NO;
+    self.numberingCorrection = 0;
     self.syncEditorMethod = 0;
     if ([SUD boolForKey: TextMateSyncKey])
         self.syncEditorMethod = 2;
@@ -2045,8 +2046,8 @@ in other code when an external editor is being used. */
 
 
 - (NSStringEncoding)dataEncoding:(NSData *)theData {
-	NSString            *firstBytes, *encodingString, *testString, *spellcheckString;
-	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange, pdfRange, parserRange;
+	NSString            *firstBytes, *encodingString, *testString, *spellcheckString, *numberingString;
+	NSRange             encodingRange, newEncodingRange, myRange, theRange, spellcheckRange, tabRange, pdfRange, parserRange, numberingRange;
 	NSUInteger          length, start, end;
 	BOOL                done;
 	NSInteger           linesTested, offset;
@@ -2158,6 +2159,8 @@ in other code when an external editor is being used. */
     myRange.location = 0;
     myRange.length = 1;
     
+    self.numberingCorrection = 0;
+    
     while ((myRange.location < length) && (!done) && (linesTested < 20)) {
         [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
         myRange.location = end;
@@ -2191,6 +2194,24 @@ in other code when an external editor is being used. */
             if (parserRange.location != NSNotFound)
             {
                 self.RTLDisplay = YES;
+            }
+        parserRange = [testString rangeOfString:@"% !TEX numberingCorrection = "];
+            if (parserRange.location != NSNotFound)
+            {
+                // NSLog(@"aha");
+                numberingRange.location = parserRange.location + 29;
+                // NSLog(@"start %d", parserRange.length);
+                // NSLog(testString);
+                numberingRange.length = (testString.length - parserRange.length);
+                // NSLog(@"we have %d", numberingRange.length);
+                if (numberingRange.length > 0)
+                    {
+                    numberingString = [testString substringWithRange: numberingRange];
+                    self.numberingCorrection = [numberingString integerValue];
+                    }
+                else
+                    self.numberingCorrection = 0;
+                
             }
         
     }
@@ -2379,6 +2400,46 @@ in other code when an external editor is being used. */
 
 //END PATCH
 
+- (void)RescanMagicComments:sender
+{
+    NSString        *firstBytes, *testString, *numberingString;
+    NSUInteger      length, start, end;
+    BOOL            done;
+    NSInteger       linesTested;
+    NSRange         myRange, theRange, parserRange, numberingRange;
+    
+    self.numberingCorrection = 0;
+    
+    firstBytes = [self.textView string];
+    
+    length = [firstBytes length];
+ 
+    done = NO;
+    linesTested = 0;
+    myRange.location = 0;
+    myRange.length = 1;
+    
+    while ((myRange.location < length) && (!done) && (linesTested < 20)) {
+        [firstBytes getLineStart: &start end: &end contentsEnd: nil forRange: myRange];
+        myRange.location = end;
+        myRange.length = 1;
+        linesTested++;
+        
+        theRange.location = start; theRange.length = (end - start);
+        testString = [firstBytes substringWithRange: theRange];
+        parserRange = [testString rangeOfString:@"% !TEX numberingCorrection = "];
+            if (parserRange.location != NSNotFound)
+            {
+                numberingRange.location = parserRange.location + 29;
+                numberingRange.length = (testString.length - parserRange.length);
+                if (numberingRange.length > 0)
+                {
+                    numberingString = [testString substringWithRange: numberingRange];
+                    self.numberingCorrection = [numberingString integerValue];
+                }
+            }
+    }
+}
 
 - (BOOL)readFromURL: (NSURL *)absoluteURL ofType: (NSString *)typeName error: (NSError **)outError {
 // - (BOOL)readFromFile:(NSString *)fileName ofType:(NSString *)type {
@@ -2989,6 +3050,12 @@ else {
 - (void) splitPreviewWindow: sender
 {
 	[self.pdfKitWindow splitPdfKitWindow: sender];
+}
+
+
+- (BOOL) isSplit
+{
+    return windowIsSplit;
 }
 
 - (void) splitWindow: sender
@@ -8499,7 +8566,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 	path = [[[self fileURL] path] stringByDeletingLastPathComponent];
  //    pathURL = [NSURL URLWithString: path];
     pathURL = [NSURL fileURLWithPath: path isDirectory: YES];
-	fileName = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
+	// fileName = [[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension];
+    // Yusuke Terada Fix, 5/10/2024
+    fileName = [[[[[self fileURL] path] lastPathComponent] stringByDeletingPathExtension] normalizedStringWithModifiedNFC];
 	NSFileManager *myFileManager = [NSFileManager defaultManager];
 	
 	if (aggressiveTrash) {
@@ -8531,7 +8600,9 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         anObject = [theURL path];
 		doMove = YES;
 		extension = [anObject pathExtension];
-        objectFileName = [[anObject lastPathComponent] stringByDeletingPathExtension];
+        // objectFileName = [[anObject lastPathComponent] stringByDeletingPathExtension];
+        // Fix by Yusuke Terada, May 10,2024
+        objectFileName = [[[anObject lastPathComponent] stringByDeletingPathExtension] normalizedStringWithModifiedNFC];
 		if ((! aggressiveTrash) || [extension isEqualToString:@"pdf"]) {
 			if (! [objectFileName isEqualToString:fileName])
 				doMove = NO;

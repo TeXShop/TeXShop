@@ -509,6 +509,7 @@ enum RootCommand
 @property           BOOL            bookDisplay;
 @property           BOOL            RTLDisplay;
 @property           BOOL            useExplColor;
+@property           NSInteger       numberingCorrection;
 
 
 // forScrap
@@ -574,12 +575,14 @@ enum RootCommand
 
 - (IBAction)reFillLog: sender;
 
-// forsplit
+// forsp
 - (void) splitWindow: sender;
 - (void) splitPreviewWindow: sender;
 - (void) showHideLineNumbers: sender;
 - (void) showHideInvisibleCharacters: sender;// added by Terada
 - (void) setTextView: (id)aView;
+- (BOOL) isSplit;
+
 // endforsplit
 - (id) magnificationPanel;
 - (id) pagenumberPanel;
@@ -603,6 +606,7 @@ enum RootCommand
 - (IBAction)toggleSyntaxColorEntry:sender;
 - (IBAction)toggleExplColor: sender;
 - (IBAction)toggleBlockCursor:sender;
+- (IBAction)RescanMagicComments:sender;
 
 
 // - (void) tryScrap:(id)sender;

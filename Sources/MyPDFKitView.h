@@ -224,6 +224,10 @@
 - (BOOL) toolIsMagnification;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) changeLinkPopups;
+- (void)setCurrentSelection:(PDFSelection *)selection;
+- (void)displayTotalPage: (NSInteger) totalPageCount;
+- (void) displayPageChange: (NSInteger)pageNumber;
+                    
 
 // printing
 - (void) printDocument: sender;
@@ -283,6 +287,7 @@
 - (void)restoreLocation;
 - (void)restoreLocationLimited;
 - (double)returnHeight;
+
 @end
 
 @interface MyPDFKitView (PDFDocumentDelegate)

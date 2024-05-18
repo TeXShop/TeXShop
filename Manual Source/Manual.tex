@@ -1,5 +1,6 @@
 % !TEX TS-program = XeLaTeX
 % !TEX encoding = UTF-8 Unicode
+% !TEX numberingCorrection = 8 + current - desired
 \documentclass[11pt, oneside]{book}   	% use "amsart" instead of "article" for AMSLaTeX format
 
 % \def\skipbigillustrations{true}			% smaller pdf and typesets faster if commented; makes no difference
@@ -68,7 +69,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.11}
+\title{TeXShop Manual \\ Version 1.3.12}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -1265,6 +1266,30 @@ This sync feature is a useful way to open appropriate chapter files. If a projec
 
 There is one tricky feature of SyncTeX. The information in the synctex file created by the typesetting engines contains full paths to files. So if a folder containing a LaTeX project is sent to someone else or moved to another location, synctex will no longer work and Command-click will do nothing. To fix this, just typeset again. That creates a new synctex file.
 
+\chapter[Synchronizing Page Numbers]{Synchronizing Page Numbers with the Toolbar Page Number Box}
+
+It is not uncommon for large documents to  contain several pages of preliminary material before the main text begins. Suppose those preliminary pages are numbered i, ii, iii, iv, v, and the main pages are  numbered 1, 2, 3, 4, 5.  Then entries in TeXShop's PageNumber box in the toolbar will not be in sync with the actual page numbers in the text. TeXShop  has a magic comment line to fix this problem. The comment line reads
+\begin{verbatim}
+    % !TEX numberingCorrection = 0 + current - desired  
+\end{verbatim}
+where ``0'' should be replaced by the number of preliminary pages in the document. Suppose, for example, that the document has three preliminary pages, and ``0'' is replaced with ``3''. Then in the PageNumber box in the toolbar, these pages will be listed as 1\#, 2\#, 3\#, 1, 2, 3, 4, ...
+
+Consequently page numbers with a sharp sign list elements in the preface, and elements with plain numbers list the main pages and are in sync with the actual page numbers of these pages in the document. I experimented with changing the first list to i, ii, iii, iv, v, but these roman numerals quickly became  large and overflowed the box. Moreover, using them in the reverse direction was awkward.
+
+As just hinted, this also works when using the PageNumber box in reverse to go to a particular page. Type a regular number to go to that exact page in the main text. Type something like 3\# to go to the third page in the preface.
+
+This design will get out of sync if additional pages are added to the preliminary material. But most editing is done with the main text and sync problems are then relatively rare, caused for instance when a table of contents flows onto an extra page.  TeXShop has a trick to make fixing this sort of problem easy. Suppose you suddenly notice that
+you are on page 72 of the actual text, but the PageNumber box contains 78. Return to the magic comment line, which might read
+\begin{verbatim} 
+    % !TEX numberingCorrection = 3 + current - desired  
+\end{verbatim}
+The end of this is a formula telling you how to fix the problem. Think of ``current'' as the current PageNumber entry, 78. Think of ``desired'' as the entry you want, 72. The above formula then reads 3 + 78 - 72 or 9. This is new number you should enter in the magic comment to replace the original 3.
+
+There is one final problem. Magic comment lines are read when TeXShop first opens a document, but TeXShop does not keep track of later changes to the lines. Thus editing the numberingCorrection line will not immediately fix page number synchronization. But the TeXShop Source menu has a new item named ``Rescan Magic Comments'' which will complete the process.
+
+The Total Pages box in the toolbar still counts the total number of pages in the document. This will be larger than the total number of pages in the main material, so the final page number of the main material will be smaller than the number in this box.
+
+
 \chapter{Organizing Windows in TeXShop}
 
 \section{Introduction}
@@ -2160,7 +2185,7 @@ and if the Control key is pushed, the items change to
 \begin{verbatim}
      Next Mark
      Previous Mark 
-     Insert Command
+     Insert Comment
 \end{verbatim}
 Each of these items has a keyboard shortcut. The Schulz document explains how these items can simplify entry of new command completion elements using the editor.
 
@@ -4600,6 +4625,11 @@ Here is a complete list.
      multiple languages.
 \end{verbatim}
 
+{\bf \% !TEX numberingCorrection = 0 + current - desired }
+\begin{verbatim}
+     The number of preliminary pages before the main text numbering starts at page 1.
+\end{verbatim}
+
 \section{Magic Lines to Control Preview in Double Page Modes}
 
 {\bf \% !TEX PageDirectionL2R }
@@ -4629,6 +4659,7 @@ Here is a complete list.
      certain special books.
 \end{verbatim}
 
+\newpage
 \section{Magic Lines for ConTeXt}
 
 {\bf \% !TEX useAlternatePath }
@@ -4670,6 +4701,7 @@ Here is a complete list.
      choice.
 \end{verbatim}
 
+\newpage
 \section{Obsolete Magic Lines}
 
 {\bf \% !TEX useTabs} \\
@@ -4682,7 +4714,7 @@ Here is a complete list.
      better methods.
 \end{verbatim}
 
-\newpage
+
 {\bf \% !TEX projectFile = }
 \begin{verbatim}
      A very old method used to handle projects with a root file and

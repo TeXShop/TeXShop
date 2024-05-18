@@ -16,7 +16,7 @@
 \usepackage{url}
 
 
-\title{About TeXShop 5.33}
+\title{About TeXShop 5.35}
 \author{Richard Koch}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -38,9 +38,20 @@ New versions of TeXShop generally do not change these user modifications because
 ccc.
 In the future, please read this document when you upgrade. Each release of TeXShop will contain a new version.
 
-\section{Changes in 5.29 - 5.33}
+\section{Changes in 5.35}
 
-Version 5.29 was never released. No changes in versions 5.30 - 5.33 require user interaction.
+This version contains a new magic comment line, and it is useful to create a macro which inserts this line. Since the macro is short, it is easiest to do this directly in the Macro editor. Go to the TeXShop Macros menu and select the first item ``Open Macro Editor..." An editing panel will appear showing existing macros on the left side. The first three items are likely to be ``Program, Encoding, Root.'' Select the item which will come just before the new macro. I selected ``Root''. Then below this list, push the button labeled ``New Item". The right side of the panel will switch to an area where the new macro can be created and named. Start at the top of this area by naming the item.
+I named it ``Numbering''. In the Content area just below, type
+\begin{verbatim}
+  % !TEX numberingCorrection = 0 + current - desired
+\end{verbatim}
+This is the new macro. The text ``+ current - desired'' can be translated is desired, without hurting anything.
+You are done editing, so push the ``Save'' button at the bottom of the edit panel.
+
+
+\section{Changes in 5.29 - 5.34}
+
+Version 5.29 was never released. No changes in versions 5.30 - 5.33 require user interaction. TeXShop 5.34 was never released.
 
 
 \section{Changes in 5.28}

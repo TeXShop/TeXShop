@@ -541,9 +541,27 @@
 	[totalPage display];
     [stotalPage display];
 	[totalPage1 display];
+    
+    
+    if (self.myDocument.numberingCorrection == 0)
+        {
+            [currentPage0 setIntegerValue: 1];
+            [scurrentPage setIntegerValue: 1];
+            [currentPage1 setIntegerValue: 1];
+        }
+     else
+        {
+            [currentPage0 setStringValue: @"1#"];
+            [scurrentPage setStringValue: @"1#"];
+            [currentPage1 setStringValue: @"1#"];
+        }
+     [currentPage0 display];
+     [scurrentPage display];
+     [currentPage1 display];
+    
 	[[self document] setDelegate: self];
     
-    
+    // either set page 
     
     [self setupOutline];
     if ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_10_Max) || ( ! [self.myDocument externalEditor]))
@@ -1269,6 +1287,23 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
         [totalPage display];
         [stotalPage display];
         [totalPage1 display];
+     
+        if (self.myDocument.numberingCorrection == 0)
+            {
+                [currentPage0 setIntegerValue: 1];
+                [scurrentPage setIntegerValue: 1];
+                [currentPage1 setIntegerValue: 1];
+            }
+         else
+            {
+                [currentPage0 setStringValue: @"1#"];
+                [scurrentPage setStringValue: @"1#"];
+                [currentPage1 setStringValue: @"1#"];
+            }
+         [currentPage0 display];
+         [scurrentPage display];
+         [currentPage1 display];
+         
         
         if (self.sourceFiles != nil)
             self.sourceFiles = nil;
@@ -1927,8 +1962,123 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     [self setupOutline];
 }
 
+- (NSString *)romanStringValue: (NSInteger) n
+{
+    NSNumber    *aNumber;
+    NSString    *romanString;
+ 
+    /*
+    switch (n) {
+    case 1: return @"i"; break;
+    case 2: return @"ii"; break;
+    case 3: return @"iii"; break;
+    case 4: return @"iv"; break;
+    case 5: return @"v"; break;
+    case 6: return @"vi"; break;
+    case 7: return @"vii"; break;
+    case 8: return @"viii"; break;
+    case 9: return @"ix"; break;
+    case 10: return @"x"; break;
+    case 11: return @"xi"; break;
+    case 12: return @"xii"; break;
+    case 13: return @"xiii"; break;
+    case 14: return @"xiv"; break;
+    case 15: return @"xv"; break;
+    }
+   
+  
+    switch (n) {
+    case 1: return @"I"; break;
+    case 2: return @"II"; break;
+    case 3: return @"III"; break;
+    case 4: return @"IV"; break;
+    case 5: return @"V"; break;
+    case 6: return @"VI"; break;
+    case 7: return @"VII"; break;
+    case 8: return @"VIII"; break;
+    case 9: return @"IX"; break;
+    case 10: return @"X"; break;
+    case 11: return @"XI"; break;
+    case 12: return @"XII"; break;
+    case 13: return @"XIII"; break;
+    case 14: return @"XIV"; break;
+    case 15: return @"XV"; break;
+    }
+   */
+    
+    aNumber = [NSNumber numberWithInteger: n];
+    romanString = [aNumber stringValue];
+    romanString = [romanString stringByAppendingString:@"#"];
+    return romanString;
+    
+     
+    
+// ---------------------------------
+    
+    
+    NSString *theRomanString = @"";
+    NSInteger theNumber = n;
+    NSInteger i;
+    
+    
+    /*
+     NSLog(@"the page is %d", n);
+     
+     switch (theNumber) {
+     
+     case 1: return @"i"; break;
+     case 2: return @"ii"; break;
+     case 3: return @"iii"; break;
+     case 4: return @"iv"; break;
+     case 5: return @"v"; break;
+     default: return @"0"; break;
+     }
+     return @"0";
+     */
+    
+    if (theNumber < 1)
+        return @"0";
+    if (theNumber > 8000)
+        return @"0";
+    
+    /*
+     
+     See https://www.appypie.com/roman-numerals-swift.
+     By Aasif Khan | December 28, 2021 5:50 pm
+     
+     */
+    
+    theNumber = 7;
+    
+    NSInteger decimals[13] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    //   NSString  *numerals[13] = @[@"m", @"cm", @"d", @"cd", @"c", @"xc", @"l", @"xl", @"x",  @"ix", @"v", @"iv", @"i"];
+    NSString *numerals[13] = {@"M", @"CM", @"D", @"CD", @"C", @"XC", @"L", @"XL", @"X", @"IX", @"V", @"IV", @"I"};
+    NSInteger numberOfItems = 13;
+    
+    
+    
+    while (theNumber > 0)
+    {
+       
+        if (theNumber >= decimals[i])
+        {
+           // NSLog(@"the number is %d", theNumber);
+            theNumber = theNumber - decimals[i];
+            theRomanString = [theRomanString stringByAppendingString: numerals[i]];
+         //   if (theNumber == 0)
+         //       return theRomanString;
+        }
+    }
+     return theRomanString;
+}
+
+
+
 - (void) fixPageChanges: (NSInteger) pageNumber
 {
+    [self displayPageChange: pageNumber];
+    
+    /*
     NSUInteger        newPageIndex;
     
     newPageIndex = pageNumber + 1;
@@ -1938,6 +2088,62 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     [currentPage0 display];
     [scurrentPage display];
     [currentPage1 display];
+    */
+}
+
+// the next is currently unused because I don't think it necessary to revise the total page count
+- (void) displayTotalPage: (NSInteger)totalPageCount;
+{
+    NSInteger revisedCount;
+    
+    revisedCount = totalPageCount - self.myDocument.numberingCorrection;
+    if (revisedCount < 0)
+        revisedCount = 0;
+    
+    [totalPage setIntegerValue:revisedCount];
+    [stotalPage setIntegerValue:revisedCount];
+    [totalPage1 setIntegerValue:revisedCount];
+    [totalPage display];
+    [stotalPage display];
+    [totalPage1 display];
+
+}
+
+- (void) displayPageChange: (NSInteger)pageNumber
+{
+    NSInteger      newPageIndex;
+    NSInteger       newValue;
+    NSString        *romanStringValue;
+    
+    newPageIndex = pageNumber + 1;
+    newValue = newPageIndex - self.myDocument.numberingCorrection;
+    
+    if (newValue <= 0)
+    {
+        romanStringValue = [self romanStringValue: newPageIndex];
+    }
+    
+     // [currentPage0 setIntegerValue:newPageIndex];
+    // [scurrentPage setIntegerValue:newPageIndex];
+    // [currentPage1 setIntegerValue:newPageIndex];
+    
+    if (newValue > 0)
+    {
+        [currentPage0 setIntegerValue:newValue];
+        [scurrentPage setIntegerValue:newValue];
+        [currentPage1 setIntegerValue:newValue];
+    }
+    else
+    {
+        [currentPage0 setStringValue:romanStringValue];
+        [scurrentPage setStringValue:romanStringValue];
+        [currentPage1 setStringValue:romanStringValue];
+    }
+    
+    [currentPage0 display];
+    [scurrentPage display];
+    [currentPage1 display];
+
 }
 
 - (void) makePageChanges: (NSInteger) pageNumber
@@ -1946,14 +2152,42 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 	NSUInteger	    newPageIndex;
 	NSIndexSet		*myIndexSet;
     PDFOutline      *outlineItem;
+    // NSInteger       newValue;
+    // NSString        *romanStringValue;
+    
+    [self displayPageChange: pageNumber];
+    
+/*
     
     newPageIndex = pageNumber + 1;
- 	[currentPage0 setIntegerValue:newPageIndex];
-    [scurrentPage setIntegerValue:newPageIndex];
-	[currentPage1 setIntegerValue:newPageIndex];
+    newValue = newPageIndex - self.myDocument.numberingCorrection;
+    
+    if (newValue <= 0)
+    {
+        romanStringValue = [self romanStringValue: newPageIndex];
+    }
+    
+ 	// [currentPage0 setIntegerValue:newPageIndex];
+    // [scurrentPage setIntegerValue:newPageIndex];
+	// [currentPage1 setIntegerValue:newPageIndex];
+    
+    if (newValue > 0)
+    {
+        [currentPage0 setIntegerValue:newValue];
+        [scurrentPage setIntegerValue:newValue];
+        [currentPage1 setIntegerValue:newValue];
+    }
+    else
+    {
+        [currentPage0 setStringValue:romanStringValue];
+        [scurrentPage setStringValue:romanStringValue];
+        [currentPage1 setStringValue:romanStringValue];
+    }
+    
     [currentPage0 display];
     [scurrentPage display];
     [currentPage1 display];
+ */
     
  	// Skip out if there is no outline.
 //	if ([[self document] outlineRoot] == NULL)
@@ -2202,6 +2436,32 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 
 }
 
+- (NSInteger) getModifiedValue: (id)sender
+{
+    NSInteger tempPage, revisedPage;
+    NSString *tempModifier;
+    
+    tempPage = [sender integerValue];
+    tempModifier = [sender stringValue];
+    
+    if ([tempModifier containsString: @"#"])
+        revisedPage = tempPage;
+    else
+        revisedPage = tempPage + self.myDocument.numberingCorrection;
+    
+    return revisedPage;
+    
+    /*
+    if ([tempModifier containsString: @"#"])
+        {
+            revisedPage = tempPage + self.myDocument.numberingCorrection;
+            return revisedPage;
+         }
+    else
+        return tempPage;
+    */
+}
+
 
 - (void) goToKitPage: (id)sender
 {
@@ -2209,8 +2469,9 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 
 	if  ((pageStyle == PDF_SINGLE_PAGE_STYLE) || (pageStyle == PDF_TWO_PAGE_STYLE))
 		[self cleanupMarquee: YES];
-	thePage = [sender integerValue];
-	if (sender == currentPage1)
+	// thePage = [sender integerValue]; // only change for inputting numericCorrected page numbers
+    thePage = [self getModifiedValue: sender];
+	 if (sender == currentPage1)
 		[NSApp endSheet:[self.myDocument pagenumberPanel]];
 	[self goToKitPageNumber: thePage];
 
@@ -2511,17 +2772,87 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 	return [(PDFOutline *)item label];
 }
 
+/* Koch, May 13, 2024
+ 
+The next three calls are tricky and require a little explanation.
+ 
+TeXShop supports search through the drawer in the Preview Window using sample code provided by Apple.
+ But later I added a search field to the Preview Window toolbar. That search is independent
+ of the drawer search and is implemented by the next three routines.
+ 
+ The toolbar search works like this: click in the toolbar search field, enter text you want to find, which I'll denote THIS,
+ and push RETURN to start the search. If nothing is currently selected, then the first occurrence of the entered text
+ will be selected. If some text is selected, not necessarily "THIS", but just anything, then the first occurrence of THIS after that
+ selection will be chosen. You can also type command-F, which corresponds to Find/Find... in the Edit menu,
+ and the search field will be selected ready to type the search text.
+ 
+ After that, type command-G to find the next element, command-shift-G to find the previous element. Both correspond to menu
+ items in Edit/Find. I haven't figured out how these two menu commands reach the pdf code (!!).
+ 
+ Apple provides "toolbar search fields", so it is not mysterious that Edit/Find/Find...
+ should be automatically connected to such a field. I provided the action of this field, which is to (indirectly) call doFindOne below.
+ This routine sets myPDFKitView.oneOffSearchString to the string the user typed in the search field, and then (simplifying things slightly)
+ calls
+    
+   searchSelection = [[self document] findString: [sender stringValue]
+            fromSelection:searchSelection withOptions: NSCaseInsensitiveSearch];
+ 
+ and sets the currentSelection to the result. In this crucial call, [self document] is the PDFKit NSDocument object associated with the
+ PDF file, which indeed has a routine findString:fromSelection:withOptions. Thus this call will indeed start with the current selection,
+ which is the top of the file if nothing is currently selected, and find the first occurrence of "THIS". Note that "oneOffSearchString"
+ is a red herring; it is not used in this call.
+ 
+ There is one very tricky feature of the code below. If the window is split, then there will be two MyPDFKitView objects and each
+ will have separate MyPDFKitView code. So, for instance, [self setCurrentSelection: searchSelection] will not do the correct thing
+ if the code for the top half of the window is running, but the bottom half of the window is active. Since doFindOne is connected to
+ the code for the full window, and thus for the top half of the window in full screen view, we must carefully call the piece of code
+ for the bottom window is it is active when doFindOne runs.
+ 
+ Until version 5.34, there was a bug which caused command-G and command-shift-G to fail when the lower half of the preview window
+ was active. This bug only occurred in separate window mode; when a single window displayed both source and preview, find worked.
+ The initial doFindOne code worked, but after that no subsequent selections were displayed in the lower window.
+ 
+ It turns out that the doFindOne code does not run when command-G and command-shift-G search for subsequent occurrences of "THIS".
+ I have not quite deciphered the events in that case, but I know for sure that the PDFKit call setCurrentSelect ultimately chooses
+ the new match. For that reason, the first piece of code below has been added to override the default behavior of setCurrentSelection.
+ When the top half of the window is active or we are in single window mode, this call calls super and thus the override has no effect.
+ But when the bottom half of the window is active in two page mode, we set the new selection in both halves. This has a curious
+ effect I don't quite understand. The top half is being used to keep track of the active selection, but the bottom half displays it.
+ 
+ 
+ */
+- (void)setCurrentSelection:(PDFSelection *)selection;
+                    
+{
+    MyPDFKitView                    *theActiveView;
+    
+    theActiveView = (MyPDFKitView *)self.myDocument.pdfKitWindow.activeView;
+    
+    if ((self == theActiveView) || ([self.myDocument isSplit]))
+    {
+        [super setCurrentSelection: selection];
+       // NSLog(@"set current selection");
+    }
+    else
+    {
+        [super setCurrentSelection: selection];
+        [theActiveView setCurrentSelection: selection];
+      //  NSLog(@"problem case");
+    }
+}
+
 - (void) doFindOne: (id) sender
 {
     PDFSelection                    *searchSelection;
-    self.oneOffSearchString = [sender stringValue];
     
+    // Koch, May 13, 2024: I strong suspect that the next two lines are irrelevant!
+    self.oneOffSearchString = [sender stringValue];
     self.toolbarFind = YES;
-
-    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
     
     searchSelection = [self currentSelection];
-    
+   
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+ 
     if (flags & NSShiftKeyMask)
     
         searchSelection = [[self document] findString: [sender stringValue]
@@ -2538,20 +2869,11 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
         NSArray *thePages = [searchSelection pages];
         PDFPage *thePage =  [thePages firstObject];
         [self.myDocument.pdfKitWindow.activeView goToPage: thePage];
-        [self setCurrentSelection: searchSelection];
+        [self.myDocument.pdfKitWindow.activeView setCurrentSelection: searchSelection];
         [self.myDocument.pdfKitWindow.activeView scrollSelectionToVisible:self];
     }
     
    [self.myDocument.pdfKitWindow makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
-
-    
-/*
-    if (searchSelection == NULL)
-    {
-        [self clearSelection];
-    }
- */
-        
 
 }
 
@@ -2573,24 +2895,25 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 - (void) doFindOneFullWindow: (id) sender
 {
     PDFSelection                    *searchSelection;
-    self.oneOffSearchString = [sender stringValue];
     
+    // Koch, May 13, 2024: I strong suspect that the next two lines are irrelevant!
+    self.oneOffSearchString = [sender stringValue];
     self.toolbarFind = YES;
-
-    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
     
     searchSelection = [self currentSelection];
-    
+   
+    NSUInteger flags = [[NSApp currentEvent] modifierFlags];
+                           
     if (flags & NSShiftKeyMask)
-    
+                           
         searchSelection = [[self document] findString: [sender stringValue]
-                                        fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
-        
-   else
-        
+                fromSelection:searchSelection withOptions:(NSCaseInsensitiveSearch | NSBackwardsSearch)];
+                               
+    else
+                               
         searchSelection = [[self document] findString: [sender stringValue]
-                                              fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
-    
+                fromSelection:searchSelection withOptions:NSCaseInsensitiveSearch];
+
     
     if (searchSelection != NULL)
     {
@@ -2602,16 +2925,6 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     }
     
         [[self.myDocument fullSplitWindow] makeFirstResponder: self.myDocument.pdfKitWindow.activeView ];
-
-    
-/*
-    if (searchSelection == NULL)
-    {
-        [self clearSelection];
-    }
- */
-        
-
 }
 
 

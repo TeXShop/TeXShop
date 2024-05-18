@@ -16,6 +16,30 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.35</h3></P>
+Version 5.34 was never released. Version 5.35 has two minor bug fixes and one new feature:
+<ul>
+<p><li> Yusuke Terada reported a bug in "Trash AUX Files".  When handling filenames containing Japanese diacritical marks, the "decomposed-form-string" and the "precomposed-form-string" might not match. Since Terada is a major TeXShop contributor, he provided a fix in the same report. Lucky me!
+<p><li> Uwe Schmock complained that if the search field at the top of the preview window is used and the window is split, searching works in the top half of the window but not in the bottom half. This is fixed.
+<p> Incidentally, searching in either half has a feature I only recently discovered. Suppose you want to search for a word like "number". You'll type this word in the toolbar's search field and push return to start searching. Then type command-G repeatedly to find additional occurrences of the word, or command-shift-G to search backward. The unexpected feature is the following. If you select a word like "hello" in the text before starting the search as above, then the search will start after this selection rather than at the beginning of the pdf document.
+<p><li> The new TeXShop feature concerns documents which contain several pages of preliminary material before the main text begins. Suppose those preliminary pages are numbered i, ii, iii, iv, v, , ... and the main pages are  numbered 1, 2, 3, 4, ... Then entries in TeXShop's PageNumber box in the toolbar will not be in sync with the actual page numbers in the text. TeXShop now has a magic comment line to fix this problem. The comment line reads
+<pre> 
+    % !TEX numberingCorrection = 0 + current - desired  
+</pre>
+where "0" should be replaced by the number of preliminary pages in the document. Suppose, for example, that the document has three preliminary pages, and "0" is replaced with "3". Then in the PageNumber box in the toolbar, these pages will be listed as 1#, 2#, 3#, 1, 2, 3, 4, ...
+<p>Consequently page numbers with a sharp sign list elements in the preface, and elements with plain numbers list the main pages and are in sync with the actual page numbers of these pages in the document. I experimented with changing the first list to i, ii, iii, iv, v, vi, ..., but these roman numerals quickly became  large and overflowed the box. Moreover, using them in the reverse direction was awkward.
+<p> As just hinted, this also works when using the PageNumber box in reverse to go to a particular page. Type a regular number to go to that exact page in the main text. Type something like 3# to go to the third page in the preface.
+<p> This design will get out of sync if additional pages are added to the preliminary material. But most editing is done with the main text and sync problems are then relatively rare, caused for instance when a table of contents flows onto an extra page.  TeXShop has a trick to make fixing this sort of problem easy. Suppose you suddenly notice that
+you are on page 72 of the actual text, but the PageNumber box contains 78. Return to the magic comment line, which might read
+<pre> 
+    % !TEX numberingCorrection = 3 + current - desired  
+</pre>
+The end of this is a formula telling you how to fix the problem. Think of "current" as the current PageNumber entry, 78. Think of "desired" as the entry you want, 72. The above formula then reads 3 + 78 - 72 or 9. This is new number you should enter in the magic comment to replace the original 3.
+<p> There is one final problem. Magic comment lines are read when TeXShop first opens a document, but TeXShop does not keep track of later changes to the lines. Thus editing the numberingCorrection line will not immediately fix page number synchronization. But the TeXShop Source menu has a new item named "Rescan Magic Comments" which will complete the process.
+
+</ul>
+
+
 <P><h3>TeXShop Changes 5.33</h3></P>
 There are three changes in version 5.33:
 <ul>

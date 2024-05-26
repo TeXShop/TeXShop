@@ -14,6 +14,50 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.36</h5></P>
+Version 5.36 has one minor bug fix and a major improvement of the PageNumber correction introduced in version 5.35.
+<ul>
+<p><li> In a  document with over a thousand pages, the PageNumber box in the toolbar displays the number with a comma, as in 1,325. But users who want to go to a different page must enter the new page number without a comma. This makes it impossible to edit the existing number, say by changing 25 to 17 to go to page 1,317. This is fixed.
+<p><li> Suppose a document has several pages of preliminary material before the main text begins. Perhaps these preliminary pages are numbered i, ii, iii, iv, v, ... and the main pages are numbered 1, 2, 3, 4, 5, ... Then entries in the PageNumber box will not be in sync with the actual page numbers in the text. The previous version of TeXShop introduced a fix for this problem, which required the user to insert a magic comment line and manually indicate the number of preliminary pages. The fix then numbered the preliminary pages 1#, 2#, 3#, ... and the main pages 1, 2, 3, ...
+Moreover, users could enter a number like 17 in the box to go to main page 17, and 2# in the box to go to the second preliminary page.
+
+<p> This fix is still present in TeXShop 5.36, but the method of turning it on has been supplanted by a better method which does not require a magic comment line. The new method adds a macro to the source file which inserts an extra line in the console output and log file
+during typesetting. That line reads "Start of main material: 3." Here 3 is replaced with the page number of the first main page. TeXShop looks for this line during typesetting; if it occurs,  the PageNumber is modified as in the old method. A big advantage is that as the preliminary material grows during editing, the fix automatically adjusts without user intervention.
+
+<p> To activate this fix when using LaTeX and related engines, add the line
+<pre>
+    \write128{Start of main material: \the\ReadonlyShipoutCounter.}
+</pre>
+to a spot in the source just after the main material is introduced.
+
+<p> If instead you are using plain TeX or related engines, add the line
+<pre> 
+    \write128{Start of main material: \the\pageno.}
+</pre>
+to a spot in the source just after the main material is introduced.
+
+
+<p> TeXShop users need to find a way to remember these additional lines. Some may add items to the Macro
+menu, while others may modify their templates. It is also possible to add appropriate items to the Command Completion dictionary.
+
+<p> After these lines have been added to the source, it is necessary to typeset to see changes in the PageNumber box. A lot of effort has gone into modifying the PageNumber whenever appropriate information is available in the log file. When TeXShop opens a new document, it checks to see if a log file is present, and if so it reads the log file to adjust the PageNumber box. If TeXShop is closed while documents are open, the documents will reappear the next time TeXShop starts with correct PageNumber entries. 
+
+<p> Suppose a situation I did not anticipate causes the new code to crash the program when reading an old document, even when the extra lines above have not been added to the source. In that case, write me immediately and I'll fix the problem. But in the meantime, you can fix the crash. Add the magic comment below to the top of the source. This comment completely cancels all of the new code, and the number 0 in the comment tells it to make no changes in the numbering.
+<pre>
+    % !TEX numberingCorrection = 0 + current - desired
+</pre>
+
+<p> Fixing Page Number boxes is a standard feature of pdf display programs like Preview, Skim, and Adobe Acrobat. These programs do not have access to the source file, and often work by parsing the table of contents information in the pdf file. TeXShop is a program for authors rather than a pdf display program, so it is natural for it to find the information to fix the Page Number box in the source file.
+
+<p> Some users may prefer to view pdf files in TeXShop. If these users have access to the Log file associated with the pdf, they can get Number Box correction without using the source file. Just place the Log file in the same location as the pdf file, and TeXShop will automatically open and parse it, and adjust Page Numbers accordingly.
+
+<p> This feature is even available if you do not have access to the Log file. For example, the Driver Manual for my car is a pdf file with two preliminary pages and then the main pages numbered 1, 2, 3, ... Using Apple's Text Edit in plain text mode, I created a small file with the same name as the pdf manual, but extension ".log". The complete contents of this file were
+<pre>
+     Start of main material: 3.
+</pre>
+After this file was placed in the location of the manual, opening the manual in TeXShop provided PageNumber boxes with the correct numbering.
+</ul>
+
 <P><h5>TeXShop Changes 5.35</h5></P>
 Version 5.34 was never released. Version 5.35 has two minor bug fixes and one new feature:
 <ul>

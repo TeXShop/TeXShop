@@ -643,6 +643,13 @@ for(NSString *key in enu)
 	NSInteger             linesTested, offset;
 	NSData          *myData;
     BOOL            fromAlternateTemp;
+    
+    [self RescanMagicComments: self];
+    if (self.automaticCorrection)
+        {
+        self.numberingCorrection = 0;
+        }
+    
 
     fromAlternateTemp = fromAlternate;
     fromAlternate = NO;

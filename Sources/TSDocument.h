@@ -510,6 +510,7 @@ enum RootCommand
 @property           BOOL            RTLDisplay;
 @property           BOOL            useExplColor;
 @property           NSInteger       numberingCorrection;
+@property           BOOL            automaticCorrection;
 
 
 // forScrap
@@ -711,6 +712,7 @@ enum RootCommand
 - (void) endFullScreen;
 - (void)displayConsole: (id)sender;
 - (void)displayLog: (id)sender;
+- (void)checkLogFile;
 - (void)reDisplayLog;
 - (void)resetSpelling;
 - (void)resignSpelling;
@@ -743,6 +745,7 @@ enum RootCommand
 - (void)activateFrontWindow;
 - (void)voiceOverFix;
 - (void)readExplColors;
+
 
 
 // BibDesk Completion

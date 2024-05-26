@@ -179,6 +179,7 @@ withDarkColors = NO;
     self.useConTeXtSyncParser = NO;
     self.useAlternatePath = NO;
     self.numberingCorrection = 0;
+    self.automaticCorrection = YES;
     self.syncEditorMethod = 0;
     if ([SUD boolForKey: TextMateSyncKey])
         self.syncEditorMethod = 2;
@@ -440,7 +441,14 @@ withDarkColors = NO;
     
     [super restoreStateWithCoder:coder];
     
-    
+    if ([coder containsValueForKey:@"NumberingCorrectionKey"]) {
+        
+        self.numberingCorrection = [coder decodeIntegerForKey:@"NumberingCorrectionKey"];
+        
+    }
+        
+        
+        
     if (atLeastSierra)
     {
         tabPreference = [SUD integerForKey:OpenAsTabsKey];
@@ -553,6 +561,9 @@ withDarkColors = NO;
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
     [super encodeRestorableStateWithCoder: coder];
+    
+    // record numberingCorrection
+    [coder encodeInteger: self.numberingCorrection forKey: @"NumberingCorrectionKey"];
     
     // record PDF window's size and position
     NSString *theCode, *theSplitCode;
@@ -1358,6 +1369,7 @@ if (! skipTextWindow) {
 		if (imageFound) {
 			if (self.documentType == isPDF) {
 
+                [self checkLogFile];
 				PDFfromKit = YES;
 				[self.myPDFKitView showWithPath: imagePath];
   				// [myPDFKitView2 prepareSecond];
@@ -1444,6 +1456,8 @@ if (! skipTextWindow) {
     [self setTabBehavior: textWindow];
     [self setTabBehavior: self.pdfKitWindow];
     [self setTabBehavior: self.fullSplitWindow];
+    
+    [self checkLogFile];
     
 	// changed by mitsu --(J) Typeset command and (J++) Program popup button indicating Program name
 	defaultcommand = [SUD integerForKey:DefaultCommandKey];
@@ -2195,10 +2209,14 @@ in other code when an external editor is being used. */
             {
                 self.RTLDisplay = YES;
             }
-        parserRange = [testString rangeOfString:@"% !TEX numberingCorrection = "];
+       // parserRange = [testString rangeOfString:@"% !TEX numberingCorrection Automatic"];
+       // if (parserRange.location != NSNotFound)
+       //     self.automaticCorrection = YES;
+       // else
+            parserRange = [testString rangeOfString:@"% !TEX numberingCorrection = "];
             if (parserRange.location != NSNotFound)
             {
-                // NSLog(@"aha");
+                self.automaticCorrection = NO;
                 numberingRange.location = parserRange.location + 29;
                 // NSLog(@"start %d", parserRange.length);
                 // NSLog(testString);
@@ -2213,6 +2231,8 @@ in other code when an external editor is being used. */
                     self.numberingCorrection = 0;
                 
             }
+            else
+                self.automaticCorrection = YES;
         
     }
         
@@ -2404,17 +2424,19 @@ in other code when an external editor is being used. */
 {
     NSString        *firstBytes, *testString, *numberingString;
     NSUInteger      length, start, end;
-    BOOL            done;
+    BOOL            done, found;
     NSInteger       linesTested;
     NSRange         myRange, theRange, parserRange, numberingRange;
     
     self.numberingCorrection = 0;
+    self.automaticCorrection = NO;
     
     firstBytes = [self.textView string];
     
     length = [firstBytes length];
  
     done = NO;
+    found = NO;
     linesTested = 0;
     myRange.location = 0;
     myRange.length = 1;
@@ -2427,6 +2449,9 @@ in other code when an external editor is being used. */
         
         theRange.location = start; theRange.length = (end - start);
         testString = [firstBytes substringWithRange: theRange];
+        // parserRange = [testString rangeOfString:@"% !TEX numberingCorrection Automatic"];
+        // if (parserRange.location != NSNotFound)
+        //    self.automaticCorrection = YES;
         parserRange = [testString rangeOfString:@"% !TEX numberingCorrection = "];
             if (parserRange.location != NSNotFound)
             {
@@ -2436,9 +2461,14 @@ in other code when an external editor is being used. */
                 {
                     numberingString = [testString substringWithRange: numberingRange];
                     self.numberingCorrection = [numberingString integerValue];
+                    found = YES;
                 }
             }
+            
     }
+    
+    if (! found)
+        self.automaticCorrection = YES;
 }
 
 - (BOOL)readFromURL: (NSURL *)absoluteURL ofType: (NSString *)typeName error: (NSError **)outError {
@@ -6901,6 +6931,58 @@ if (! useFullSplitWindow) {
     }  // for
 }
 
+- (void)checkLogFile
+{
+    NSStringEncoding    theEncoding = _encoding;
+    NSError             *error;
+    NSRange             mainRange;
+    NSString            *lineNumberString, *loopString;
+    NSInteger           mainOffset;
+    
+    NSString    *myPath = [[self fileURL] path];
+    NSString    *logPath = [[myPath stringByDeletingPathExtension] stringByAppendingPathExtension:@"log"];
+    NSString    *logContents = [NSString stringWithContentsOfFile:logPath encoding:theEncoding error:&error];
+    if (logContents == nil)
+        logContents = [NSString stringWithContentsOfFile:logPath encoding:NSISOLatin9StringEncoding error:&error];
+    if (logContents == nil)
+        return;
+    
+    /*
+        mainRange = [logContents rangeOfString: @"Start of main material:"];
+        if (mainRange.location != NSNotFound)
+        {
+            lineNumberString = [logContents substringFromIndex: mainRange.location + 23];
+            mainOffset = [lineNumberString integerValue];
+            if (mainOffset > 0)
+                self.numberingCorrection = mainOffset - 1;
+        }
+     */
+    
+    loopString = logContents;
+
+    if (self.automaticCorrection)
+        do
+        {
+            mainRange = [loopString rangeOfString: @"Start of main material:"];
+            if (mainRange.location != NSNotFound)
+            {
+                lineNumberString = [loopString substringFromIndex: mainRange.location + 23];
+                mainOffset = [lineNumberString integerValue];
+                if (mainOffset > 0)
+                    self.numberingCorrection = mainOffset - 1;
+                loopString = lineNumberString;
+            }
+        }
+      while
+          (mainRange.location != NSNotFound);
+}
+    
+    
+    
+    
+    
+
+
 - (void) writeTexOutput: (NSNotification *)aNotification
 {
     NSString        *detexString, *texloganalyserString;
@@ -6916,16 +6998,18 @@ if (! useFullSplitWindow) {
 //        myData = [myFileHandle availableData];
         if ([myData length]) {
             dispatch_async(process_queue, ^{
-                NSString        *newOutput, *numberOutput, *searchString, *tempString;
-                NSRange        myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange;
-                NSInteger            error;
+                NSString        *newOutput, *numberOutput, *searchString, *tempString, *loopString;
+                NSRange        myRange, lineRange, searchRange, testRange, errorRange, pathRange, searchDotsRange, mainRange;
+                NSInteger      error, mainOffset;
                 NSUInteger    myLength;
                 NSUInteger        start, end, start1, end1;
                 NSStringEncoding    theEncoding;
                 NSString    *thePath;
                 NSNumber    *theNumber;
                 NSString    *theNumberString, *theLine;
-                NSString    *searchText;
+                NSString    *searchText, *lineNumberString;
+                
+                
 
                 // theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
             theEncoding = _encoding;
@@ -6936,9 +7020,27 @@ if (! useFullSplitWindow) {
 				newOutput = [[NSString alloc] initWithData: myData encoding: NSISOLatin9StringEncoding];
 			}
 			
-			// NSLog(newOutput);
-			// 1.35 (F) end
+                loopString = newOutput;
 			
+          if (self.automaticCorrection)
+             do
+             {
+                 mainRange = [loopString rangeOfString: @"Start of main material:"];
+                 if (mainRange.location != NSNotFound)
+                 {
+                     lineNumberString = [loopString substringFromIndex: mainRange.location + 23];
+                     mainOffset = [lineNumberString integerValue];
+                     if (mainOffset > 0)
+                         self.numberingCorrection = mainOffset - 1;
+                     loopString = lineNumberString;
+                 }
+             }
+            while
+                 (mainRange.location != NSNotFound);
+          
+                
+                
+                
 			
 			myLength = [newOutput length];
 			testRange.location = [newOutput length] - 2;

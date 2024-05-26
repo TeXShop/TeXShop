@@ -2439,10 +2439,20 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 - (NSInteger) getModifiedValue: (id)sender
 {
     NSInteger tempPage, revisedPage;
-    NSString *tempModifier;
+    NSString  *tempModifier, *fixedString;
     
+ // When a document has more than 1000 pages, the page box shows something like 1,250
+ // Changing this number while leaving the comma fails, so a user cannot just change 0 to 3
+ // The new code below fixes this bug.
+ /*
     tempPage = [sender integerValue];
     tempModifier = [sender stringValue];
+ */
+    tempModifier = [sender stringValue];
+    fixedString = [tempModifier stringByReplacingOccurrencesOfString: @"," withString: @""];
+    tempPage = [fixedString integerValue];
+    
+    
     
     if ([tempModifier containsString: @"#"])
         revisedPage = tempPage;

@@ -1,6 +1,5 @@
 % !TEX TS-program = XeLaTeX
 % !TEX encoding = UTF-8 Unicode
-% !TEX numberingCorrection = 8 + current - desired
 \documentclass[11pt, oneside]{book}   	% use "amsart" instead of "article" for AMSLaTeX format
 
 % \def\skipbigillustrations{true}			% smaller pdf and typesets faster if commented; makes no difference
@@ -20,7 +19,10 @@
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{enumitem}
+%\newcommand\abspagenumber{\inteval{\ReadonlyShipoutCounter+1}}
 
+\AtBeginDocument{\xdef\abspagenumber{1}}
+\AddToHook{shipout/after}{\xdef\abspagenumber{\inteval{\ReadonlyShipoutCounter+1}}}
 
 % Alternate Special Keys 
 \newcommand{\acr}[1]{\textsf{#1}}
@@ -69,7 +71,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.12}
+\title{TeXShop Manual \\ Version 1.3.13}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -89,7 +91,9 @@ The version number of the manual  increases when changes are made. Small changes
 \pdfbookmark{Table of Contents}{ContentsLabel}
  \tableofcontents 
  \mainmatter
-{ \chapter{About \TeX, \LaTeX, and TeXShop}
+ { \chapter{About \TeX, \LaTeX, and TeXShop}
+% \typeout{Start of main material: \abspagenumber.}
+\write128{Start of main material: \the\ReadonlyShipoutCounter.}
 \section{Introduction}
 \label{Introduction_Section}
  \TeX\ and \LaTeX\ are typesetting programs available without cost on most computer platforms. The user enters instructions using symbols on an ordinary typewriter, and the program converts these instructions into a document that looks like it came from a professional book publisher. }  
@@ -1268,26 +1272,106 @@ There is one tricky feature of SyncTeX. The information in the synctex file crea
 
 \chapter[Synchronizing Page Numbers]{Synchronizing Page Numbers with the Toolbar Page Number Box}
 
-It is not uncommon for large documents to  contain several pages of preliminary material before the main text begins. Suppose those preliminary pages are numbered i, ii, iii, iv, v, and the main pages are  numbered 1, 2, 3, 4, 5.  Then entries in TeXShop's PageNumber box in the toolbar will not be in sync with the actual page numbers in the text. TeXShop  has a magic comment line to fix this problem. The comment line reads
-\begin{verbatim}
-    % !TEX numberingCorrection = 0 + current - desired  
-\end{verbatim}
-where ``0'' should be replaced by the number of preliminary pages in the document. Suppose, for example, that the document has three preliminary pages, and ``0'' is replaced with ``3''. Then in the PageNumber box in the toolbar, these pages will be listed as 1\#, 2\#, 3\#, 1, 2, 3, 4, ...
+\section[Synchronizing]{Synchronizing the PageNumber Box}
 
-Consequently page numbers with a sharp sign list elements in the preface, and elements with plain numbers list the main pages and are in sync with the actual page numbers of these pages in the document. I experimented with changing the first list to i, ii, iii, iv, v, but these roman numerals quickly became  large and overflowed the box. Moreover, using them in the reverse direction was awkward.
+Suppose a document has several pages of preliminary material before the main text begins. Perhaps these preliminary pages are numbered i, ii, iii, iv, v, ... and the main pages are numbered 1, 2, 3, 4, 5, ... Then entries in the PageNumber box will not be in sync with the actual page numbers in the text. TeXShop provides a fix for this problem.  When the fix is applied, preliminary pages are numbered 1\#, 2\#, 3\#, ...  in the PageNumber box, and main pages are numbered 1, 2, 3, ... Consequently page numbers with a sharp sign list elements in the preface, and page numbers without a sharp sign list main pages and are in sync with the actual page numbers of these pages in the document. I experimented with changing the first list to i, ii, iii, iv, v, vi, ..., but these roman numerals quickly became  large and overflowed the box. Moreover, using them in the reverse direction was awkward.
 
 As just hinted, this also works when using the PageNumber box in reverse to go to a particular page. Type a regular number to go to that exact page in the main text. Type something like 3\# to go to the third page in the preface.
 
-This design will get out of sync if additional pages are added to the preliminary material. But most editing is done with the main text and sync problems are then relatively rare, caused for instance when a table of contents flows onto an extra page.  TeXShop has a trick to make fixing this sort of problem easy. Suppose you suddenly notice that
+The fix does not change the behavior of the  box listing the total number of pages, since it is often useful to know how many pages altogether are in a document. If you insert the total number of pages into the PageNumber box and press enter, you will go to the end of the document, but the actual page number can be less than the total number of pages.
+
+\section{Activating the Fix}
+
+The fix is activated by adding extra output to the console and log file during typesetting. This output has the form
+\begin{verbatim}
+   Start of main material: 17
+\end{verbatim}
+where 17 is replaced by the number of the page where the main material begins. TeXShop searches for this string in the console during typesetting and applies the fix if the string is found. Also when TeXShop first opens a source file, it searches the log file for the string and applies the fix if possible. Finally if a file with the fix is open when TeXShop quits and the file appears when TeXShop is restarted, the fix will automatically be applied. Thus once a file has been typeset, the fix should always be applied during normal operations.
+
+Fixing Page Number boxes is a standard feature of pdf display programs like Preview, Skim, and Adobe Acrobat. These programs do not have access to the source file, and often work by parsing the table of contents information in the pdf file. TeXShop is a program for authors rather than a pdf display program, so it is natural for it to find the information to fix the Page Number box in the log file.
+
+Some users may prefer to view pdf files in TeXShop. This is possible because TeXShop can open pdf files directly, rather than having them appear indirectly when opening the source file.
+If these users have access to the Log file associated with the pdf, they can get Number Box correction without using the source file. Just place the Log file in the same location as the pdf file, and TeXShop will automatically open and parse it, and adjust Page Numbers accordingly.
+
+This feature is even available if you do not have access to the Log file. For example, the Driver Manual for my car is a pdf file with two preliminary pages and then the main pages numbered 1, 2, 3, ... Using Apple's Text Edit in plain text mode, I created a small file with the same name as the pdf manual, but extension ``.log''. The complete contents of this file were
+\begin{verbatim}
+     Start of main material: 3.
+\end{verbatim}
+After this file was placed in the location of the manual, opening the manual in TeXShop provided PageNumber boxes with the correct numbering.
+ 
+ \newpage
+ \section[Outputting Fix]{Getting TeX and LaTeX to Output the Crucial Line}
+ 
+To activate this fix when using LaTeX and related engines, add the line
+%\begin{verbatim}
+%   \newcommand\abspagenumber{\inteval{\ReadonlyShipoutCounter+1}}
+%\end{verbatim}
+%to the preface of the source file, and  add the line
+%\begin{verbatim}
+%    \typeout{Start of main material: \abspagenumber.}
+%\end{verbatim}
+%to a spot in the source just after the main material is introduced.
+%Most users should replace this second line with
+\begin{verbatim}
+    \write128{Start of main material: \the\ReadonlyShipoutCounter.}
+\end{verbatim}
+to the spot in the source just after the main material is introduced.
+
+If instead you are using plain TeX or related engines, add the line
+%ignore the new command for the preface, and change the
+%command for the main material to
+%\begin{verbatim}
+%    \message{Start of main material: \the\pageno.}
+%\end{verbatim}
+%Most users should replace this second line with
+\begin{verbatim}
+   \write128{Start of main material: \the\pageno.}
+\end{verbatim}
+to the spot in the source just after the main material is introduced.
+ 
+%the location of the command for plain TeX is somewhat sensitive, and it helps to end the preliminary material with
+%\begin{verbatim}
+%    \vfil \break
+%\end{verbatim}
+%
+My colleague Herbert Schulz has a large project using the amsbook document class. Among other things, that class defines two commands ``frontmatter'' and ``mainmatter''. These commands may also be defined in the LaTeX book document class.  Schulz discovered that he could activate the fix by just redefining mainmatter in the header as follows:
+\begin{verbatim}
+\let\OLDmain=\mainmatter
+\renewcommand{\mainmatter}
+    {\OLDmain\write128{Start of main material:\ReadonlyShipoutCounter.}}
+\end{verbatim} 
+The last two lines above should be combined to form one line with no spaces between the end of the second line and the start of the final line.  This has not yet been extensively tested, but it provides a very easy fix when it works.
+
+%\newpage
+%Yet another improvement is to replace the definition of \textbackslash abspagenumber in the preamble with the following line, which uses the new hook mechanism in recent versions of LaTeX:
+%\begin{verbatim}
+%\AtBeginDocument{\xdef\abspagenumber{1}}
+%\AddToHook{shipout/after}{\xdef\abspagenumber{\inteval{\ReadonlyShipoutCounter+1}}}
+%\end{verbatim}
+%
+TeXShop users need to find a way to remember these additional lines. Some may add items to the Macro
+menu, while others may modify their templates. It is also possible to add appropriate items to the Command Completion dictionary.
+
+
+\section[An Earlier Way]{An Earlier Way to Activate the Fix}
+
+Version 3.55 of TeXShop first introduced a fix for the PageNumber box, but using a more primitive method to activate the fix. This method is still available, but should seldom be needed. 
+
+The old method required adding the following magic comment line to the source:
+\begin{verbatim}
+    % !TEX numberingCorrection = 0 + current - desired  
+\end{verbatim}
+where ``0'' should be replaced by the number of preliminary pages in the document. If this magic line is present, then the earlier fix is turned off and the comment is used instead. 
+
+This method will get out of sync when additional pages are added to the preliminary material. But most editing is done with the main text and sync problems are then relatively rare, caused for instance when a table of contents flows onto an extra page.  TeXShop 3.55 had a trick to make fixing this sort of problem easy. Suppose you suddenly notice that
 you are on page 72 of the actual text, but the PageNumber box contains 78. Return to the magic comment line, which might read
 \begin{verbatim} 
     % !TEX numberingCorrection = 3 + current - desired  
 \end{verbatim}
 The end of this is a formula telling you how to fix the problem. Think of ``current'' as the current PageNumber entry, 78. Think of ``desired'' as the entry you want, 72. The above formula then reads 3 + 78 - 72 or 9. This is new number you should enter in the magic comment to replace the original 3.
 
-There is one final problem. Magic comment lines are read when TeXShop first opens a document, but TeXShop does not keep track of later changes to the lines. Thus editing the numberingCorrection line will not immediately fix page number synchronization. But the TeXShop Source menu has a new item named ``Rescan Magic Comments'' which will complete the process.
+There is one final problem. Magic comment lines are read when TeXShop first opens a document, but TeXShop does not keep track of later changes to the lines. Thus editing the numberingCorrection line will not immediately fix page number synchronization. But the TeXShop Source menu has a new item named ``Rescan Magic Comments'' which will complete the process. Use this menu whenever you edit the magic comment.
 
-The Total Pages box in the toolbar still counts the total number of pages in the document. This will be larger than the total number of pages in the main material, so the final page number of the main material will be smaller than the number in this box.
 
 
 \chapter{Organizing Windows in TeXShop}

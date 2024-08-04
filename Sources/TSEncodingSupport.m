@@ -236,15 +236,35 @@ static TSEncoding _availableTexworksEncodings[] = {
 					filterBackslashToYen(@"\\subsubsubsubject"),
 					filterBackslashToYen(@"\\subsubsubsubsubject"),
 					nil];
-		} else {
-			g_taggedTeXSections = [[NSArray alloc] initWithObjects:
-							filterBackslashToYen(@"\\chapter"),
-                            filterBackslashToYen(@"\\part"),
-                            filterBackslashToYen(@"\\section"),
-                            filterBackslashToYen(@"\\subsection"),
-							filterBackslashToYen(@"\\subsubsection"),
-							nil];
 		}
+        else {
+            g_taggedTeXSections = [[NSArray alloc] initWithObjects:
+                                   filterBackslashToYen(@"\\chapter"),
+                                   filterBackslashToYen(@"\\part{"),
+                                   filterBackslashToYen(@"\\section"),
+                                   filterBackslashToYen(@"\\subsection"),
+                                   filterBackslashToYen(@"\\subsubsection"),
+                                   filterBackslashToYen(@"\\paragraph"),
+                                   filterBackslashToYen(@"\\subparagraph"),
+                                   filterBackslashToYen(@"\\frametitle"),
+                                   filterBackslashToYen(@"% \\chapter"),
+                                   filterBackslashToYen(@"% \\part{"),
+                                   filterBackslashToYen(@"% \\section"),
+                                   filterBackslashToYen(@"% \\subsection"),
+                                   filterBackslashToYen(@"% \\subsubsection"),
+                                   filterBackslashToYen(@"% \\paragraph"),
+                                   filterBackslashToYen(@"% \\subparagraph"),
+                                   filterBackslashToYen(@"% \\begin{macro}"),
+                                   filterBackslashToYen(@"% \\begin{environment}"),
+                                   // NDS - add powerdot support here
+                                   filterBackslashToYen(@"\\begin{slide}"),
+                                   filterBackslashToYen(@"\\begin{wideslide}"),
+                                   filterBackslashToYen(@"\\begin{notes}"),
+                                   filterBackslashToYen(@"\\begin{frame}"),
+                                   // NDS end
+                                   nil];
+        }
+ 
 				// mitsu 1.29 (P)
 
 		// If the command completion list already exists, and we are about to change the filter mode:

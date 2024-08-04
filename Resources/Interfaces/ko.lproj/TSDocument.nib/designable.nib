@@ -10,11 +10,15 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TSDocument">
             <connections>
+                <outlet property="EditModeCheckBox" destination="HkA-uK-6Vi" id="NKR-Zr-uEX"/>
+                <outlet property="annotationChoices" destination="1s6-ii-Hn5" id="Az5-Wp-YzG"/>
+                <outlet property="annotationMenu" destination="wBT-CT-3rd" id="qmr-Rg-bNR"/>
                 <outlet property="autoCompleteButton" destination="125" id="404"/>
                 <outlet property="autoCompleteSplitButton" destination="127" id="405"/>
                 <outlet property="backforthKK" destination="88" id="406"/>
                 <outlet property="drawerKK" destination="86" id="407"/>
                 <outlet property="eLog" destination="367" id="408"/>
+                <outlet property="errorLog" destination="N96-5D-KgD" id="wdn-Nw-SPR"/>
                 <outlet property="extensionPanel" destination="377" id="409"/>
                 <outlet property="extensionResult" destination="381" id="410"/>
                 <outlet property="fLog" destination="365" id="411"/>
@@ -101,6 +105,11 @@
                 <outlet property="stags" destination="184" id="477"/>
                 <outlet property="statisticsForm" destination="271" id="478"/>
                 <outlet property="statisticsPanel" destination="269" id="479"/>
+                <outlet property="stringCenter" destination="BEG-6y-vGC" id="5Mm-sy-1Yd"/>
+                <outlet property="stringLeft" destination="YUL-oX-kSz" id="EOZ-YB-FgT"/>
+                <outlet property="stringRight" destination="6PL-aF-owp" id="D08-lD-Klh"/>
+                <outlet property="stringWindow" destination="8pf-iT-s4q" id="Vn9-bz-rr8"/>
+                <outlet property="stringWindowTextView" destination="sJi-Zl-qnV" id="6Zt-IA-cge"/>
                 <outlet property="stypesetButton" destination="Fpi-Hd-u3O" id="cyd-uJ-q7I"/>
                 <outlet property="syncBox" destination="113" id="480"/>
                 <outlet property="tLog" destination="369" id="481"/>
@@ -141,7 +150,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="7fw-jP-WRU">
                                     <rect key="frame" x="1" y="1" width="589" height="368"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" smartInsertDelete="YES" id="8" customClass="TSTextView">
                                             <rect key="frame" x="0.0" y="0.0" width="589" height="368"/>
@@ -168,7 +177,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="wKD-fM-LZj">
                                     <rect key="frame" x="1" y="1" width="589" height="404"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" usesFontPanel="YES" allowsUndo="YES" usesRuler="YES" smartInsertDelete="YES" id="13" customClass="TSTextView">
                                             <rect key="frame" x="0.0" y="0.0" width="589" height="404"/>
@@ -2004,6 +2013,142 @@ DQ
                     </connections>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="-282" y="132"/>
+        </menu>
+        <menu id="wBT-CT-3rd">
+            <items>
+                <menuItem title="선택부분" id="RUt-Dm-FhK">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="선택부분" id="31t-z3-yMU">
+                        <items>
+                            <menuItem title="취소선" id="Ml9-FM-kgl">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="strikeoutAnnotation:" target="-1" id="ux2-Qr-oWq"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="하일라이트" id="jup-vn-Zdh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="highlightAnnotation:" target="-1" id="kBW-ik-5AA"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="밑줄" id="hNX-qf-fNB">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="underlineAnnotation:" target="-1" id="VhV-T6-YeC"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="도형" id="p6E-26-AXj">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="도형" id="Qr3-Bo-Jas">
+                        <items>
+                            <menuItem title="사각형" id="3c6-PB-KV9">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="squareAnnotation:" target="-1" id="5re-A6-2sS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="사각형(경계선)" id="nGV-Fl-MRx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="bsquareAnnotation:" target="-1" id="KIj-J8-6sN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="원" id="bCE-x9-Q6c">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="circleAnnotation:" target="-1" id="cLT-Z2-FfA"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="원(경계선)" id="Rbq-kh-PDx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="bcircleAnnotation:" target="-1" id="7GY-ZX-nls"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="화살표" id="ug9-Wc-gpC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="arrowAnnotation:" target="-1" id="lCK-F4-Bq5"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="글자" id="0n7-oJ-CJb">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="글자" id="IoJ-Vt-qD4">
+                        <items>
+                            <menuItem title="텍스트" id="Akl-cv-KY0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="textAnnotation:" target="-1" id="yG3-Tn-dD0"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="텍스트(경계선)" id="MAB-ig-9Bj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="btextAnnotation:" target="-1" id="bII-Q8-O2q"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="팝업" id="ROF-76-LrY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="popupAnnotation:" target="-1" id="Ao9-Id-m0B"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="패널" id="n3Z-PG-Pld">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="패널" id="VJr-6g-XQs">
+                        <items>
+                            <menuItem title="색상 패널" id="b7M-W8-iUa">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showColorPanel:" target="-1" id="M1b-GK-88P"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="글꼴 패널" id="Gre-gC-cP6">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showFontPanel:" target="-1" id="iAt-N8-Vuj"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="텍스트 패널" id="VFd-hw-ntF">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showTextPanel:" target="-1" id="dew-XP-9Wd"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="실행 모드" id="Ky1-zF-XZD">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRunMode:" target="-1" id="6VW-qz-UX4"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="주석 저장" id="Kgp-Vi-mSI">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="saveAnnotations:" target="-1" id="W8b-yC-5bi"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="스트림 삭제" id="ZOu-C8-BUp">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeStreams:" target="-1" id="l7y-yL-YsN"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="1071" y="643"/>
         </menu>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="341" customClass="TSFullscreenWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
@@ -2063,7 +2208,7 @@ DQ
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="351">
-                        <rect key="frame" x="503" y="528" width="105" height="32"/>
+                        <rect key="frame" x="492" y="512" width="105" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="다시표시" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="352">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2169,11 +2314,20 @@ DQ
                             <font key="font" size="13" name="AppleSDGothicNeo-Regular"/>
                         </buttonCell>
                     </button>
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N96-5D-KgD">
+                        <rect key="frame" x="497" y="560" width="74" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="errors" bezelStyle="regularSquare" imagePosition="left" inset="2" id="TKD-Zb-JAv">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
             </view>
             <connections>
                 <outlet property="myDocument" destination="-2" id="545"/>
             </connections>
+            <point key="canvasLocation" x="113" y="-661"/>
         </window>
         <window title="관련 파일 열기" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Extension" animationBehavior="default" id="377" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
@@ -2600,6 +2754,308 @@ Gw
             </view>
             <point key="canvasLocation" x="813" y="-117"/>
         </box>
+        <window identifier="TextPanel" title="텍스트" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="TextAnnotationWindow" animationBehavior="default" id="8pf-iT-s4q" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="1812" y="261" width="370" height="157"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <value key="minSize" type="size" width="200" height="100"/>
+            <view key="contentView" id="ov3-Yd-MSQ">
+                <rect key="frame" x="0.0" y="0.0" width="370" height="157"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sPj-rp-6DR">
+                        <rect key="frame" x="0.0" y="43" width="369" height="114"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" drawsBackground="NO" id="ME3-Vr-Ikb">
+                            <rect key="frame" x="0.0" y="0.0" width="369" height="114"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView wantsLayer="YES" importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" smartInsertDelete="YES" id="sJi-Zl-qnV">
+                                    <rect key="frame" x="0.0" y="0.0" width="369" height="114"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="369" height="114"/>
+                                    <size key="maxSize" width="10000000" height="10000000"/>
+                                    <color key="insertionPointColor" name="textInsertionPointColor" catalog="System" colorSpace="catalog"/>
+                                </textView>
+                            </subviews>
+                        </clipView>
+                        <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="nUF-Un-quX">
+                            <rect key="frame" x="-100" y="-100" width="240" height="16"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="aJL-ea-MT5">
+                            <rect key="frame" x="353" y="0.0" width="16" height="114"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LFJ-qp-RI2">
+                        <rect key="frame" x="284" y="4" width="73" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="승인" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Gab-bY-8wr">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="acceptString:" target="-2" id="tG2-xZ-SGq"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YUL-oX-kSz">
+                        <rect key="frame" x="18" y="11" width="57" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="왼쪽" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Bj3-mM-P4P">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="stringLeftPushed:" target="-2" id="iQ3-xg-otx"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BEG-6y-vGC">
+                        <rect key="frame" x="79" y="11" width="60" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="가운데" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Qpe-xr-TdN">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="stringCenterPushed:" target="-2" id="bud-GN-pCC"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6PL-aF-owp">
+                        <rect key="frame" x="158" y="11" width="68" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="오른쪽" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Knk-5G-P3Q">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="stringRightPushed:" target="-2" id="fUB-WS-IXJ"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1621" y="819.5"/>
+        </window>
+        <window title="주석 패널" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="AnnotationPanel" animationBehavior="default" id="1s6-ii-Hn5" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="272" y="172" width="414" height="194"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <view key="contentView" id="8Sg-iF-Vvp">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="194"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HkA-uK-6Vi">
+                        <rect key="frame" x="18" y="166" width="75" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="편집 모드" bezelStyle="regularSquare" imagePosition="left" inset="2" id="qiV-Pd-KCv">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleEditMode:" target="-1" id="gwy-SZ-CgW"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bNh-4d-eg0">
+                        <rect key="frame" x="13" y="129" width="101" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="색상 패널" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dS8-3s-6sK">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="showColorPanel:" target="-1" id="kh6-MV-uby"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nac-F3-NFX">
+                        <rect key="frame" x="13" y="97" width="101" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="글꼴 패널" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8gk-BJ-rpE">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="showFontPanel:" target="-1" id="fBm-Sy-fm9"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nde-MR-Jb7">
+                        <rect key="frame" x="13" y="21" width="101" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="스트림 삭제" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oVo-pK-mH1">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="removeStreams:" target="-1" id="NAn-LX-3g3"/>
+                        </connections>
+                    </button>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SgO-IQ-PId">
+                        <rect key="frame" x="157" y="40" width="240" height="118"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="tools" id="dEc-Pe-gGU"/>
+                    </imageView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eOa-Uz-Xyg">
+                        <rect key="frame" x="156" y="100" width="43" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="DQu-Lc-fXb">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UHC-mg-oAJ">
+                        <rect key="frame" x="156" y="102" width="43" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Kyd-5T-4wk">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="squareAnnotation:" target="-1" id="bnA-sl-IFF"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s5x-Ng-1nz">
+                        <rect key="frame" x="204" y="102" width="46" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="wEN-80-78H">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="bsquareAnnotation:" target="-1" id="IHa-cV-nFW"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ff6-aL-Thc">
+                        <rect key="frame" x="312" y="129" width="75" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="9ml-Vj-ieQ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="underlineAnnotation:" target="-1" id="idO-9k-GP8"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IbS-ei-dSk">
+                        <rect key="frame" x="153" y="59" width="49" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="avb-Ne-e0S">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="arrowAnnotation:" target="-1" id="ARC-Bb-2KT"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BkJ-Xn-SMS">
+                        <rect key="frame" x="200" y="59" width="46" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Jjb-xf-Ags">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="textAnnotation:" target="-1" id="mIc-e9-g9a"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q6h-or-1Wd">
+                        <rect key="frame" x="245" y="100" width="64" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="5XK-C4-w8N">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="circleAnnotation:" target="-1" id="VJn-2L-aB7"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KbL-Nk-PlH">
+                        <rect key="frame" x="312" y="102" width="75" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Pz0-Hi-SuA">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="bcircleAnnotation:" target="-1" id="gmg-b7-M70"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aR6-vv-QXb">
+                        <rect key="frame" x="254" y="59" width="46" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Zp9-0J-01c">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="btextAnnotation:" target="-1" id="cmV-ot-43S"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ybf-Dg-Vml">
+                        <rect key="frame" x="156" y="132" width="46" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="VtW-8F-usB">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="strikeoutAnnotation:" target="-1" id="79L-QV-q3P"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ydh-ah-eTi">
+                        <rect key="frame" x="222" y="129" width="69" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="VFq-K9-RPW">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="highlightAnnotation:" target="-1" id="YnD-n0-uYJ"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MQT-p9-nVr">
+                        <rect key="frame" x="326" y="59" width="46" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="8Rx-F4-Gji">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="popupAnnotation:" target="-1" id="84i-lq-Omv"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oOj-Ea-TVr">
+                        <rect key="frame" x="13" y="59" width="101" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="텍스트 패널" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NwC-eH-LFt">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="showTextPanel:" target="-2" id="KQC-en-bHA"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bJi-sP-zuP">
+                        <rect key="frame" x="220" y="161" width="83" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="주석 저장" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kJk-GU-GXY">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="saveAnnotations:" target="-1" id="m2Y-le-lID"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1643" y="1079"/>
+        </window>
     </objects>
     <resources>
         <image name="BackAdorn" width="11" height="13"/>
@@ -2611,5 +3067,6 @@ Gw
         <image name="OpenHandCursor" width="16" height="16"/>
         <image name="Select" width="16" height="16"/>
         <image name="TextTool" width="11" height="13"/>
+        <image name="tools" width="288" height="132"/>
     </resources>
 </document>

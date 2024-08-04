@@ -49,6 +49,8 @@
 #import "TSFullSplitWindow.h"
 #import "TSColorSupport.h"
 
+
+
 #define NUMBER_OF_SOURCE_FILES	60
 
 #define NSAppKitVersionNumber10_9 1265
@@ -172,11 +174,17 @@
 }
 
 
-
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
 
 - (void) initializeDisplay
 {
     double tempDelay;
+    
+    _editMode = NO;
+    self.firstTime = YES;
     
     protectFind = NO;
     self.handlingLink = 0;
@@ -200,6 +208,9 @@
     
     self.skipLinks = (! [SUD boolForKey: LinkPopupsKey]);
     self.globalLongTerm = NO;
+   // self.useAnnotationMenu = NO;
+    self.stringAlignment = 1;
+    [self.myDocument setStringWindowAlignment: self.stringAlignment];
     
     
     // The initial Sierra beta had horrible scrolling, which the line below fixed
@@ -1237,6 +1248,8 @@ In March, 2024, an important bug surfaced in the previous routine. The routine b
  if previewClosed = YES, when the pdf is scrolled to the top when displayed, and previewClosed --> NO
  so this will not happen in the future.
  */
+
+
 
 - (void) reShowWithPath: (NSString *)imagePath
 {
@@ -2439,7 +2452,7 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 - (NSInteger) getModifiedValue: (id)sender
 {
     NSInteger tempPage, revisedPage;
-    NSString  *tempModifier, *fixedString;
+    NSString  *tempModifier, *tempModifier1, *fixedString;
     
  // When a document has more than 1000 pages, the page box shows something like 1,250
  // Changing this number while leaving the comma fails, so a user cannot just change 0 to 3
@@ -2449,7 +2462,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
     tempModifier = [sender stringValue];
  */
     tempModifier = [sender stringValue];
-    fixedString = [tempModifier stringByReplacingOccurrencesOfString: @"," withString: @""];
+    tempModifier1 = [tempModifier stringByReplacingOccurrencesOfString:@"." withString:@""];
+    fixedString = [tempModifier1 stringByReplacingOccurrencesOfString: @"," withString: @""];
     tempPage = [fixedString integerValue];
     
     
@@ -3397,7 +3411,7 @@ TeXShop supports search through the drawer in the Preview Window using sample co
 	NSInteger					rotation;
 	NSRect				boxRect;
 	NSAffineTransform   *transform;
-	
+ 
 	// boxRect = [page boundsForBox: [self displayBox]];
 	boxRect = [page boundsForBox: kPDFDisplayBoxMediaBox];
 	rotation = [page rotation];
@@ -3524,6 +3538,8 @@ TeXShop supports search through the drawer in the Preview Window using sample co
     BOOL				redOvals;
 	NSColor				*myColor;
     NSColor             *myBackgroundColor;
+    BOOL                result;
+   
 
     /*
     if (self.useTemporary != nil)
@@ -3869,6 +3885,8 @@ if (self.myDocument.useConTeXtSyncParser)
      }
      */
     
+    result = [self annotationDrawPage: page];
+       
 }
 
 
@@ -3904,8 +3922,12 @@ if (self.myDocument.useConTeXtSyncParser)
     }
 }
 
+
  - (void) mouseDown: (NSEvent *) theEvent
 {
+    
+    if ([self annotationMouseDown: theEvent])
+        return;
     
     if ((BuggyHighSierra) && (! [SUD boolForKey:continuousHighSierraFixKey]))
         {
@@ -4090,6 +4112,14 @@ The system then remembers the new number and sends is to the Timer which will di
     
 }
 
+/*
+- (void) changeAnnotationMenu
+{
+    self.useAnnotationMenu = ! self.useAnnotationMenu;
+}
+*/
+
+
 - (void) increaseTimerNumber
 {
     if (self.timerNumber < 5000)
@@ -4101,7 +4131,7 @@ The system then remembers the new number and sends is to the Timer which will di
 
 - (void) mouseMoved: (NSEvent *) theEvent
 {
-    
+   
     
 if (! self.skipLinks)
     
@@ -4378,6 +4408,10 @@ if (! self.skipLinks)
 
 - (void) mouseDragged: (NSEvent *) theEvent
 {
+    
+    if ([self annotationMouseDragged: theEvent])
+       return;
+    
  	if (downOverLink) {
 		[super mouseDragged: theEvent];
 		return;
@@ -4387,7 +4421,7 @@ if (! self.skipLinks)
 
 		case NEW_MOUSE_MODE_SCROLL:				break;
 
-		case NEW_MOUSE_MODE_SELECT_TEXT:		[super mouseDragged: theEvent];
+		case NEW_MOUSE_MODE_SELECT_TEXT:	    [super mouseDragged: theEvent];
 												break;
 
 		case NEW_MOUSE_MODE_MAG_GLASS:			break;
@@ -4468,6 +4502,10 @@ if (! self.skipLinks)
 
 - (void) mouseUp: (NSEvent *) theEvent
 {
+    
+    if ([self annotationMouseUp: theEvent])
+        return;
+   
     
 	if (downOverLink) {
 		downOverLink = NO;
@@ -7535,6 +7573,9 @@ else
 {
 	NSString	*theKey;
 	unichar		key;
+ 
+ 
+    
 
 	theKey = [theEvent characters];
 	if ([theKey length] >= 1)
@@ -7601,6 +7642,11 @@ else
 {
     NSString	*theKey;
     unichar		key;
+    BOOL        result;
+    
+    if ([self annotationKeyDown: theEvent])
+        return;
+   
     
 // In any case, we want to extend the functionality of the left and right arrow keys
     theKey = theEvent.characters;
@@ -7735,7 +7781,8 @@ else
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
- 
+    NSMenu  *aMenu;
+    
 	NSMenu *theMenu = [super menuForEvent: theEvent];
 	if (theMenu != nil) {
 		menuPoint = [theEvent locationInWindow];
@@ -7745,6 +7792,12 @@ else
         [theMenu insertItemWithTitle: NSLocalizedString(@"Split Window", @"Split Window") action:@selector(splitWindow:) keyEquivalent:@"" atIndex:1];
         [theMenu insertItemWithTitle: NSLocalizedString(@"Link Popups", @"Link Popups") action:@selector(toggleLinkPopups:) keyEquivalent:@"" atIndex:2];
 		[theMenu insertItem:[NSMenuItem separatorItem] atIndex:3];
+        
+        aMenu = [self.myDocument getContextMenu];
+        if (aMenu)
+            theMenu = aMenu;
+        // if (self.useAnnotationMenu)
+        //    theMenu = [self.myDocument getAnnotationMenu];
 	}
     return theMenu;
 }
@@ -7911,5 +7964,8 @@ else
 {
     return _drawer;
 }
+
+
+
 
 @end

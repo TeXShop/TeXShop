@@ -553,6 +553,7 @@ extern NSPanel *pageNumberWindow;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
+    BOOL    value;
     
 	if ([anItem action] == @selector(splitWindow:)) {
 		if (self.windowIsSplit)
@@ -572,6 +573,20 @@ extern NSPanel *pageNumberWindow;
             [anItem setState:NSOnState];
         return YES;
     }
+    
+    /*
+    if ([anItem action] == @selector(toggleAnnotationMenu:)) {
+        MyPDFKitView *aView;
+        aView = (MyPDFKitView *)self.myPDFKitView;
+        
+        if (aView.useAnnotationMenu)
+            [anItem setState:NSOnState];
+        else
+            [anItem setState:NSOffState];
+        
+        return YES;
+    }
+    */
 
 	if ([anItem action] == @selector(displayLatexPanel:))
 		return NO;
@@ -843,6 +858,20 @@ extern NSPanel *pageNumberWindow;
     [aView changeLinkPopups];
     [aView2 changeLinkPopups];
 }
+
+/*
+- (void)toggleAnnotationMenu:(id)sender;
+{
+    MyPDFKitView    *aView;
+    
+    aView = (MyPDFKitView *)self.myPDFKitView;
+    
+    [aView changeAnnotationMenu];
+    
+}
+*/
+
+
 
 /*
 

@@ -24,6 +24,14 @@
 \AtBeginDocument{\xdef\abspagenumber{1}}
 \AddToHook{shipout/after}{\xdef\abspagenumber{\inteval{\ReadonlyShipoutCounter+1}}}
 
+% Theorems
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{axiom}{Axiom}
+
 % Alternate Special Keys 
 \newcommand{\acr}[1]{\textsf{#1}}
 \usepackage[obeyspaces]{url}
@@ -71,15 +79,16 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.3.13}
+\title{TeXShop Manual \\ Version 1.4.1}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
 \begin{document}
-
-\maketitle
-
 \frontmatter
+\maketitle
+\clearpage{}
+\setcounter{page}{2}
+
 \section*{Preface}
 This manual was started in early 2023. It first appeared in TeXShop 5.12, released on February 23, 2023. 
 In  August, 2023, Uwe Schmock added reference numbers to illustrations, reworded the text in a few spots, and improved formatting in other places.
@@ -492,7 +501,7 @@ For example, the Source menu has an item called {\bf Show Syntax Color} and Pref
 
 The {\bf Syntax Coloring} preference item does not change syntax coloring in these two files. Instead, it determines whether new documents will have syntax coloring or not when first opened. Uncheck the item and press OK. Then open a new document and notice that it has no syntax coloring.
 
-\section{Source Font and Font Size}
+\section{Source Font and Font Size}\label{Font_Size}
 
 In a few cases, the design philosophy described above is slightly modified. An example is the method to set the font size and font in the source window. This is an important case, so we'll completely describe it in this section.
 
@@ -1013,7 +1022,7 @@ control-option-command-T, which typesets with pdflatexmk. Therefore you can set 
 
 This trick fails if you typeset with unusual engines. For example, suppose you typeset with XeLaTeX rather than pdflatex. Then there is a special engine in Engines/Inactive/latexmk which calls XeLaTeX rather than pdflatex. So the special command for control-option-command-T should call that XeLaTeX form of pdflatexmk rather than ordinary pdflatexmk. In TeXShop Preferences under the Misc2 tab there is a setting named ``Alternate Engine'' allowing pdflatexmk to be changed to any other desired engine, including the special XeLaTeX version of pdflatexmk.
 
-\section{latexmk history by Herbert Schulz}
+\section[latexmk History]{latexmk History by Herbert Schulz}
 
 When I started using \textbf{latexmk} it only supported latex and pdflatex directly (via command line options). To make it work with latex, pdflatex, xelatex and lualatex with the default command line options needed, I redefined some internal \textbf{latexmk} commands (\textbf{\$latex} for the latexmk engine and \textbf{\$pdflatex} for the other engines) to work the way I needed them to work for TeXShop (e.g., using synctex and file-line-error).
 
@@ -1300,7 +1309,7 @@ This feature is even available if you do not have access to the Log file. For ex
 After this file was placed in the location of the manual, opening the manual in TeXShop provided PageNumber boxes with the correct numbering.
  
  \newpage
- \section[Outputting Fix]{Getting TeX and LaTeX to Output the Crucial Line}
+ \section[Outputting the Crucial Line]{Getting TeX and LaTeX to Output the Crucial Line}
  
 To activate this fix when using LaTeX and related engines, add the line
 %\begin{verbatim}
@@ -1353,7 +1362,7 @@ TeXShop users need to find a way to remember these additional lines. Some may ad
 menu, while others may modify their templates. It is also possible to add appropriate items to the Command Completion dictionary.
 
 
-\section[An Earlier Way]{An Earlier Way to Activate the Fix}
+\section[Earlier Way to Fix]{An Earlier Way to Activate the Fix}
 
 Version 3.55 of TeXShop first introduced a fix for the PageNumber box, but using a more primitive method to activate the fix. This method is still available, but should seldom be needed. 
 
@@ -4203,15 +4212,15 @@ If this preference is NO, then the previous behavior will hold. If it is YES, th
 TeXShop has been localized for English, French, German, Italian, Spanish, Portuguese as used in Brazil, Chinese, Japanese, and Korean, Three other languages were  briefly supported, Dutch, Portuguese for Portugal, and Romanian. The program can be run in these three languages, but many commands will be in English.
 
 
-\section{Redefining Menu Shortcut Keystrokes}
+\section{Redefining Menu Shortcut Keystrokes}\label{Define_Shortcut}
 \label{sec:MenuShortcutKeystrokes}
 
-Many TeXShop menu items have keyboard shortcuts. Eventually these shortcuts became a nightmare as users requested more and no more shortcuts were available. Some shortcuts are really essential, like command-T for typesetting and command-+ and command-- for changing the size of fonts. Others are used by many but not all users, and some are used by only a few.
+Many TeXShop menu items have keyboard shortcuts. Eventually these shortcuts became a nightmare as users requested additional ones and no more shortcuts were available. Some shortcuts are really essential, like command-T for typesetting and command-+ and command-- for changing the size of fonts. Others are used by many but not all users, and some are used by only a few.
 
 Nowadays I ignore shortcut requests, letting users modify the shortcuts themselves if desired. There are two ways to do this. 
 
 One method is provided by Apple in System Preferences under the Keyboard Module. The details which follow apply to Ventura and later, but similar methods are available for earlier systems. Select the Keyboard module and push the item {\em Keyboard Shortcuts...} On the left side, select {\em App Shortcuts}. In the resulting dialog, push the plus key. A new dialog appears. On the top line in the pull-down menu, select TeXShop. TeXShop may not be in the resulting list; in that case select {\em Other} at the end of the menu and then choose TeXShop.
-On the second line, type the exact name of the menu command you want to work with. On the final line, type the desired shortcut. Press {\em Cancel} or {\em Done} to end the session.
+On the second line, type the exact name of the menu command you want to work with. This will be the menu name in the localization you use, not necessarily the English menu name. On the final line, type the desired shortcut. Press {\em Cancel} or {\em Done} to end the session.
 
 Before Apple created this Preference Item, TeXShop provided a way for users to modify its shortcuts. This method still exists, but it is seldom used. In a pinch, you can try it. 
 
@@ -4421,6 +4430,697 @@ sudo make install
 \end{verbatim}
 in Terminal. You will have to give your administrator password to run the second command. After some output the prompt should return and you can open the \cmd{cocoAspell} \cmd{Spelling} pane in \cmd{System Preferences} to finish your configuration.
 
+\chapter{Annotations}
+
+\section{Annotations in General}
+
+TeXShop has always had the ability to open annotated pdf files and view the annotations, because PDFKit supports annotations and TeXShop can open arbitrary pdf files. Recently TeXShop gained the ability to {\em create} these annotations. The new feature has been designed in a nonintrusive manner. If the feature is not used, the only visible interface difference over past versions of the program is an additional item in the Preview menu named ``Annotation Panel;''  no new tools have been added to the toolbar and no additional code will run. 
+
+\subsection{Who Defined Annotations?}
+The PDF document format was created by Adobe. The resulting API allows annotations to be added to the individual pages of such a document. These annotations become part of the pdf file and are shown by pdf display software conforming to the standards. Most annotations prescribed by Adobe are supported by PDFKit, Apple's pdf rendering framework. The behavior of some annotations depend on the particular implementation in PDFKit. For example, popups in PDFKit work slightly differently than popups in Adobe Acrobat. 
+
+Two typical pdf pages are shown in the following illustration.  The first page was produced by pdfTeX from a standard LaTeX source file. Various annotations have been drawn on this page and are shown on the second page. Annotations can be added to the pages of a given pdf document by several programs, including
+Apple's Preview, the third party  application Skim, Adobe Acrobat, and many others. The particular annotations on this illustration were created by TeXShop 5.42, and show the set of annotations it can provide. All are standard annotations which can be provided by the more sophisticated programs as well.
+
+
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=7in]{Graphics/screen.jpg} 
+   \caption{TeXShop Annotations}
+   \label{fig:example}
+\end{figure}
+
+\newpage
+
+%TeXShop can strikeout, emphasize, or underline various lines of text. It can draw squares and bordered squares,
+%and resize them to become rectangles. It can draw circles and bordered circles, and resize them to become ovals. It can draw arrows and can draw pieces of text, either with transparent background or with colored background. It can draw popup text, which corresponds to the  square icons in the margin of the annotated page. Clicking on such an icon expands it to a scrollable section of text, which the user can read and  edit. 
+%
+%The  colors in the diagram can be changed, the text fonts can be changed, and the strings displayed by these fonts can be rewritten. 
+%While annotations are saved in a pdf file, they do not appear in the \LaTeX\ source of a document. This would not make sense, because material moves from page to page when source files are revised, but  annotations are attached to particular pages and never cross page boundaries.
+
+Notice that annotations are attached to individual pages of a document. While annotations are saved in a pdf file, they do not appear in the \LaTeX\ source of a document. This would not make sense, because material moves from page to page when source files are revised, but  annotations are attached to particular pages and never cross page boundaries.
+Programs that annotate usually have access only to a pdf file and do not care how it was produced.
+
+\LaTeX\ pdf files and pdf annotations are  created in entirely different ways. Source files are written documents, composed on a keyboard and later typeset. But annotations are drawn. To be sure, \LaTeX\ documents can have illustrations, but these are part of the text rather than annotations about the text. So in a vague sense, \LaTeX\ documents are written by {\em authors}, but annotations are created by {\em editors}.
+
+While TeXShop 5.42 is the first version of the program which can create annotations, earlier versions are easily used by authors whose editors annotate their copy. Here is how that works. Suppose I have written a document, and hand the pdf output file to an editor. The editor  opens the pdf file in Preview, Skim, Adobe Acrobat, or some other program, 
+and annotates the pages. The annotated pdf file is sent back to me. TeXShop can open pdf files, so I open both my original document and the annotated pdf. Thus I see three windows: my source, the typeset output from the source with no annotations, and the annotated version. Looking at the annotated copy, I gradually revise and typeset my original document. The result is a pdf file without annotations which has been revised using the editor's annotations.
+
+%There is no reason that an editor would use TeXShop to annotate because other programs work just as well or better. Thus I expect the majority of users who work with annotations of their copy will not change their habits with TeXShop 5.42.
+
+\subsection{Using LaTeX to Annotate}
+
+When \LaTeX\ authors hear about annotations, they often suppose that  a \LaTeX\ package could be created which adds annotations to the margins of the document. Then the third party annotation program could be eliminated and the original author and the author's editor could work entirely in \LaTeX. There are indeed several packages of this form, and one of them may be exactly what you are looking for. 
+%Most of these packages are in TeX Live and documented on CTAN. 
+We mention them briefly as an alternate approach.
+
+For a package which mimics Adobe annotations, consider {\em todonotes, pdfcomment,} or {\em marginnote}.
+Also investigate the {\em marginpar} command in standard \LaTeX. 
+
+Edward Tufte is a statistician famous for producing beautiful books which make statistical results easy to visualize.
+His books add extra comments in the margin, rather than using footnotes.
+The {\em tufte-latex} package in TeX Live and CTAN can help produce books with a similar design.
+
+\subsection{*Fermat as Annotator} 
+
+{\bf Warning:} This section and the starred sections which follow provide a mathematical interlude which can be skipped.
+
+Why would a mathematician care about annotations?  There is a famous case when a great mathematician's number theoretic legacy consists of annotations rather than books. That mathematician is, of course, Fermat, who  left annotations in his copy of {\em Arithmetica}, a book written by Diophantus of Alexandria sometime around 260 A.D. 
+
+Fermat also left letters to Mersenne and others. 
+But Fermat  had difficulty writing up his proofs, and at one point tried to induce Pascal to help,  without success. Fermat's work only survives because after his death, his son published a copy of {\em Arithmetica} containing Fermat's annotations. The book sat on dusty shelves unnoticed until Euler asked for a copy after hearing about some of Fermat's conjectures.
+
+Number theory is a tricky subject, because it is  difficult to distinguish between trivial or easy results, and
+difficult, profound results. Fermat understood the distinction in his bones.  So if we are going to work with annotations, let us celebrate Fermat by describing some of his results. 
+
+We'll begin with a beautiful but easy example not by Fermat, to make the contrast with the depth of his results clearer.
+There is a method to check calculations called ``casting out nines.'' Suppose a calculation by hand produces
+$$247,397,414 \times 525,996,123 = 130,130,080,604,225,922$$ 
+We want to check this calculation. Any large positive integer can be converted to a single digit integer by ``casting out nines:'' add all the digits, add all the digits of the new sum, repeat until the answer has only one digit. For instance, 
+$$247,397,414 \rightarrow 41 \rightarrow 5 \mbox{     and     } 525,996,123 \rightarrow 42 \rightarrow 6$$
+$$130,130,080,604,225,922 \rightarrow 48 \rightarrow 12 \rightarrow 3$$
+The simple result in question says that the product of the two numbers obtained by casting out nines from the terms of the original product, $5 \times 6 = 30 \rightarrow 3$,  must equal the number obtained by casting out nines from the answer, also $3$. If these numbers disagree, the original multiplication was wrong.
+
+To prove this, consider the quotient ring $\mathbf{Z}_9$. The nine elements of this ring are represented by
+$0$ through $8$, but since $0$ is equivalent to $9$, so we can also represent these elements by $1$ through $9$.
+The natural map $\mathbf{Z} \rightarrow \mathbf{Z}_9$ is given by casting out nines because $10$ is equivalent to $1$ in $\mathbf{Z}_9$.
+For example, $736 = 7(10)^2 + 3(10) + 6 \sim 7 + 3 + 6 = 16 = 1(10) + 6 \sim 1 + 6 = 7$. The check by casting out nines works because the natural map $\mathbf{Z} \rightarrow \mathbf{Z}_9$ preserves addition and multiplication.
+
+An example of a difficult theorem found by Fermat arises when we try to write a positive integer $n$ as a sum of two squares: $n = a^2 + b^2$. We begin with the previous easy idea, this time looking at the map $\mathbf{Z} \rightarrow \mathbf{Z}_4$.
+The ring $\mathbf{Z}_4$ has four elements $0, 1, 2, 3$ and their squares are $0, 1, 0, 1$. So $a^2 + b^2$ equals
+$0 + 0, 0 + 1, 1 + 0,$ or $1+ 1$, and thus $0, 1, 2$, but never $3$. Therefore if $n$ divided by $4$ has remainder $3$,
+then $n$ cannot be written as a sum of two squares.
+
+Next we conjecture that this is the only restriction and all other $n$ can be written as the sum of two squares, but this is false. For instance,
+$21$ has remainder $1$ when divided by $4$, but case by case analysis shows that it is not a sum of two squares.
+
+
+
+
+%Perhaps studying $Z \rightarrow Z_n$ for some $n \ne 4$ would give further information, but that also turns out to be a blind alley. 
+However, Fermat noticed and eventually proved that the original conjecture holds for prime numbers. 
+If $p$ is prime, then $p = a^2 + b^2$ if and only if $p$ divided by $4$ does not have remainder $3$.
+
+The only even prime is $2 = 1^2 + 1^2$, so we assume $p$ is odd. We  write $p \equiv 1 \pmod 4$
+if the remainder is $1$ when $p$ is divided by $4$, and $p \equiv 3 \pmod 4$ otherwise.
+It turns out that the unordered pair $\{a, b\}$ is unique when $p \equiv 1 \pmod 4$, 
+so the natural way to prove Fermat's result is to find a formula for $a$ and $b$ in terms of $p$. No such formula has ever been found, and in examples, $a$ and $b$ vary widely when $p$ changes.
+
+
+So a completely different proof is required showing that $a$ and $b$ exist without giving their values. It is not clear how to start such a proof.  Fermat apparently succeeded in late 1640 because he described the result in  a letter to Mersenne written on Christmas day, 1640. His proof does not survive. After much effort, a proof was found by Euler
+and described in a letter to Goldbach written on April 12, 1749.
+Many different proofs have been discovered over the years; indeed ten years ago a  proof called ``the windmill proof'' became a big topic in the mathematical world.  All known proofs are highly ingenious.
+
+Only one of Fermat's proofs has survived, and this time we know that proof because the margin in {\em Arithmetica} was large enough to contain it. Recall that a Pythagorian triangle is a right triangle with three integer sides. The theorem states that a Pythagorian triangle cannot have square area.
+
+The result about areas of triangles also proves Fermat's last theorem in the special case $n = 4$. If $u > v$ are positive integers, the Greeks already knew that the triangle with sides $u^2 - v^2, 2uv, u^2 + v^2$ is a right triangle because $(u^2 - v^2)^2 + (2uv)^2 = (u^2 + v^2)^2$. The area of the resulting triangle is $(u^2 - v^2)uv$. We can try to disprove Fermat's area theorem by selecting squares for $u$ and $v$. Set $u = c^2$ and $v = a^2$. Then the area is $(c^4 - a^4)c^2 a^2$
+and Fermat will be wrong if we can select $c$ and $a$ so $c^4 - a^4$ is also a square. Thus we need to find a non-trivial solution for 
+$c^4 - a^4 = b^2$ or $c^4 = a^4 + b^2$. According to Fermat, this is impossible, so
+certainly the even harder problem $c^4 = a^4 + b^4$ is impossible. 
+
+\newpage
+\subsection{*Fermat and the Method of Descent}
+
+One of the advantages of writing this manual  is that I can put anything in it that I like. 
+I'm going to describe Fermat's proof that the area of a Pythagorian triangle cannot be a square.
+%and summarize a couple of  proofs of the two square theorem.
+% I'm going to give the proofs of the two theorems of Fermat mentioned in the previous section. 
+This has nothing to do with TeXShop. I want to do this because the only way to fully appreciate Fermat is to read his actual proof.
+%. And second, difficult proofs often lead to new theories that are more important than the problems that suggested them, and Fermat's theorems illustrate this particularly clearly.
+
+Although Fermat did not publish  most proofs, he did describe his basic technique in letters to Mersenne. Fermat called the technique ``the method of descent''. To prove his result about areas of Pythagorian triangles, Fermat demonstrated that if he had one Pythagorian triangle whose area is a perfect square,  he could use that triangle to find another such triangle with smaller area.
+Repeating the process again and again would lead to an infinite sequence of triangles, and their areas would be an infinite sequence of decreasing positive integers. No such sequence can exist, so the triangle which started the process cannot exist.
+
+The method of descent was used by Fermat to prove other results. Each of these proofs requires a revision of how descent will be used, followed by a very difficult proof that the required descent can be done.
+%Each new proof requires a revision of the kind of descent to use, and then a very difficult proof of the descent step. 
+So Fermat's hint of how to proceed was only useful for the very best mathematicians.
+
+Fermat was aware of earlier mathematical results and used them in his arguments. Therefore we must review three earlier results before describing Fermat's proof.
+
+\subsubsection{*Areas of Pythagorian Triangles}
+
+Once we know the 3-4-5 triangle, we can find other Pythagorian triples by  multiplying all sides by a constant. So we find a 6-8-10 triple and a 9-12-15 triple. In a sense this is cheating and we  haven't found genuinely new triangles. We call a Pythagorian triangle {\em primitive} if no prime divides all three sides. In that case, no prime can divide a pair of sides because once $p$ divides two sides, it divides all three by $a^2 + b^2 = c^2$. It is enough to find the primitive triples because all others are found by magnifying by a constant. 
+
+The area of a Pythagorian triangle is always an integer. Indeed the
+area is ${{ab} \over 2}$ and this result follows unless $a$ and $b$ are both odd. But consider the map
+$\mathbf{Z} \rightarrow \mathbf{Z}_4$. When $a$ and $b$ are both odd, each maps to $1$ or $3$ and both of these numbers have square $1$ in $\mathbf{Z}_4$, so $a^2 + b^2$ will map to $2$. Then $c^2$ would map to $2$, but this is impossible because no element of $\mathbf{Z}_4$ has square $2$.
+
+\newpage
+
+\subsubsection{*Euclid's Formula}
+Recall that we can get a Pythagorian triple by selecting positive integers $u > v$ and letting
+$a = u^2 - v^2$, $b = 2uv$, $c = u^2 + v^2$. For example, $u = 2$, $v = 1$ produces the $(3, 4, 5)$ triangle.
+Euclid proved that the converse is true in the following sense: if $(a, b, c)$ is a primitive Pythagorian triple
+then one of $a$ and $b$ is even and one is odd. By switching them we can assume that $a$ is odd and $b$ is even.  Euclid proved it is possible to find $u > v > 0$ such that $a = u^2 - v^2$, $b = 2uv$, $c = u^2 + v^2$. No prime divides both $u$ and $v$ and one of  $u$ and $v$ is even and one is odd.
+
+Euclid's argument and modern simplifications can easily be found on the internet, so we will not repeat it here.
+
+%
+%
+%We will prove this.  If a prime divides two of the numbers, then it divides the third because $a^2 + b^2 = c^2$. So no prime divides a pair of $a, b, c$. If both $a$ and $b$ are even, then $2$ divides both, which cannot happen. If $a$ and $b$ are both odd, then the map $Z \rightarrow Z_4$ sends $a$ and $b$ to $1$ or $3$ and both of these elements have square $1$ in $Z_4$. So $a^2 + b^2$ maps to $2$ in $Z_4$ and $c^2$ maps to $2$. But this is impossible because no element in $Z_4$ squares to $2$.
+%
+%If $a^2 + b^2 = c^2$, then $(x, y) = \left({a \over c}, {b \over c} \right)$ is a point on the unit circle and both coordinates of this point are rational. We can  compute the equation of the straight line from $(-1, 0)$ to $(x, y)$ by straightforward algebra; since all numbers are rational, the resulting equation has rational coordinates. This line passes through the vertical axis, and the intersection coordinate must be rational.  
+%
+%
+%\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+%   \centering
+%   \includegraphics[width=2in]{Graphics/Graphic1.png} 
+%   \caption{Euclid's Formula}
+%   \label{fig:example}
+%\end{figure}
+%
+%It is easy to find a formula for $(x, y)$ in terms of $t$; indeed $(x, y) = \left({{1 - t^2} \over {1 + t^2}}, {{2t} \over {1 + t^2}}\right).$ Since $t$ is rational, write $t = {v \over u}$ in lowest terms. Clearly $0 < t < 1$, so $u > v > 0$. Easy substitution
+%gives
+%$$\left( {a \over c}, {b \over c} \right) = \left( {{u^2 - v^2} \over {u^2 + v^2}}, {{2 uv} \over {u^2 + v^2}} \right)$$
+%From this, to prove that $a = u^2 - v^2, b = 2uv, c = u^2 + v^2$ it suffices to show that the fractions on the right side are written in lowest terms. 
+%
+%If a prime divides both $u^2 - v^2$ and $u^2 + v^2$, it divides their sum $2 u^2$
+%and their difference $2 v^2$. So either $p = 2$ or else $p$ divides both $u$ and $v$. The second case is impossible because we wrote ${v \over u}$ in lowest terms. We conclude that either $a = u^2 - v^2, c = u^2 + v^2$, or
+%$a = {{u^2 - v^2} \over 2}, c = {{u^2 + v^2} \over 2}$.
+%
+%If a prime divides both $2uv$ and $u^2 + v^2$, then $p = 2$ or  $p$ divides $u$ or $p$ divides $v$. But since
+%$p$ divides $u^2 + v^2$, if it divides one of $u$ and $v$, then it divides them both. This is impossible because we wrote ${v \over u}$ in lowest terms. So again the only problem is $p = 2$. We conclude that either
+%$b = {2 uv}, c = u^2 + v^2$ or else $b = {{2 uv} \over 2}, c = {{u^2 + v^2} \over 2}$.
+%
+%Putting these results together, either $a = u^2 - v^2, b = 2 uv, c = u^2 + v^2$ or else
+%$a = {{u^2 - v^2} \over 2}, b = {{2uv} \over 2}, c = {{u^2 + v^2} \over 2}$. But we are assuming
+%that $a$ is odd and $b$ is even. If $b = {{2uv} \over 2} = uv$ and $b$ is even, then $2$ divides $u$ or $v$.
+%Since ${{u^2 + v^2} \over 2}$ is an integer, $2$ divides $u^2 + v^2$, so if it divides one of $u$ and $v$,
+% it divides the other. This is impossible because ${v \over u}$ is in lowest terms. Euclid's result is
+%proved.
+
+\subsubsection{*Progressions of Squares}
+
+
+
+We also need a beautiful result well-known in the medieval world, but somehow forgotten today. It is occasionally possible to find three squares
+$a^2 < b^2 < c^2$ such that $b^2$ is exactly in the middle between the other squares. We call this a {\em progression of squares}. Two examples are $1 < 25 < 49$ and $49 < 169 < 289$. We'd like to describe all such progressions.
+
+High school algebra students know that $(a + b)^2 = a^2 + 2 ab + b^2$ and $(a - b)^2 = a^2 - 2ab + b^2$. We can use this to find examples of progressions of squares. Choose positive integers $a > b$ and write
+$$(a - b)^2 < a^2 + b^2 < (a + b)^2$$
+This is almost a progression of squares because the two ends are square and these ends differ from the middle by the same $2ab$. To complete the process, we need only choose $a$ and $b$ so the middle is a square:
+$$a^2 + b^2 = c^2$$
+In this astonishing way, the theory of progressions of squares leads right back to the theory of Pythagorian triangles!
+Specifically, if $a^2 + b^2 = c^2$ gives a Pythagorian triangle, then $(a - b)^2 < c^2 < (a + b)^2$ is a progression of squares. For instance the 3-4-5 triple gives $1 < 25 < 49$ and the 5-12-13 triple gives
+$49 < 169 < 289$. 
+
+Notice that the common distance between adjacent terms in the progression is the distance from $(a - b)^2 = a^2 + b^2 - 2ab$ to $c^2 = a^2 + b^2$, and so just $2ab$. This is  four times the area of the triangle.
+
+ All progressions of squares arise in this way. If $e^2 < f^2 < g^2$ is a progression of squares, we want to find a triangle $a^2 + b^2 = c^2$ such that $e = a - b, f = c, g = a + b$. Solving gives
+$a = {{g + e} \over 2}, b = {{g - e} \over 2}, c = f$. Since we started with a progression of squares, $f^2 - e^2$ = $g^2 - f^2$ and their sum $g^2 - e^2 = (g - e)(g + e)$ is even. So at least one of $g - e$ and $g + e$ is even. If one is even and one is odd, then their sum $2g$ is odd, but clearly
+$2g$ is even. So both are even and $a,  b$ are integers. Finally, $a^2 + b^2 = \left({{g + e} \over 2}\right)^2 + 
+\left({{g - e} \over 2}\right)^2 = {{g^2 + e^2} \over 2}$. Let $d$ be the distance from $e^2$ to $f^2$, and thus
+also the distance from $f^2$ to $g^2$. Then $g^2 = e^2 + 2d$ and ${{e^2 + g^2} \over 2} = {{2 e^2 + 2d} \over 2}
+= e^2 + d = f^2$. Since $c = f$, $a^2 + b^2 = c^2$.
+
+\subsubsection{*Fermat's Argument by Descent}
+
+We now come to Fermat's crucial argument by descent. Suppose $a^2 + b^2 = c^2$ is a Pythagorian triangle with square area. We need to find another such triangle with smaller area. If our triangle is not primitive, this is trivial; choose a prime $p$ which divides all three sides and use the triple $\left( {a \over p}, {b \over p}, {c \over p} \right)$.
+The resulting triangle has area ${{ab} \over {p^2}}$. This is an integer because it is the area of a Pythagorian triangle, and it is a square because $ab$ and $p^2$ are squares. 
+So we have descent.
+
+Otherwise our triangle is primitive and by switching sides if necessary we can assume that $a$ is odd and $b$
+is even. By Euclid's theorem, we can write $$a = u^2 - v^2, b = 2uv, c = u^2 + v^2$$
+where no prime divides both $u$ and $v$. The area of the triangle is then $${{ab} \over 2} = (u^2 - v^2)uv = (u - v)(u + v)uv$$
+This area is a square. If we factor each of the four terms into primes, we will get a factorization $p_1^{k_1}p_2^{k_2} \ldots p_r^{k_r}$ in which all exponents are even.
+
+We will show that no prime divides two of the factors, so each separate factor must be a square. Indeed the only tricky case is when a prime $p$ divides both $u + v$ and $u - v$. Then it divides their sum $2u$ and their difference $2v$. So
+either $p$ divides both $u$ and $v$, which is impossible by Euclid's result, or $p = 2$. But one of $u$ and $v$ is even and one is odd, so $2$ cannot divide $u - v$ or $u + v$.
+
+Consider the progression $u - v, u, u + v$. Each of these terms is a square, so they form a progression of squares. By our results on such progressions, this progression is associated with a Pythagorian triangle. That triangle is the triangle Fermat will use to descend. The common distance between adjacent squares is $v$. This is four times the area of the new triangle, so the new triangle has area ${v \over 4}$, which is certainly smaller than the
+area $(u - v)(u + v) u v$ of the original triangle. Since the new triangle has integer sides, its area is an integer.
+Since both $v$ and $4$ are squares, the area of the new triangle is a square. The proof is complete!
+ 
+\newpage
+\subsubsection{*Proving the Two Squares Theorem by Descent}
+
+Difficult proofs often lead to new theories that are more important than the problems that suggested them, and Fermat's theorems illustrate this particularly clearly. %We'll show how this played out with the two squares theorem.
+
+We do not know Fermat's proof of the two squares theorem. But Euler's proof was by descent, and many people believe Fermat's proof was similar. Euler's proof has two main steps. In step one, he shows that some positive  multiple of the prime, $mp$, can be written as a sum of squares. In step two he shows that if $mp$ is a sum of squares and $m > 1$, then some smaller multiple $m_1p$ is also a sum of squares. This is the descent step, from which the theorem immediately follows.
+
+The first step appears to be trivial because if $m = p$ then $mp = p^2 = p^2 + 0^2$.
+But unhappily, the proof of the descent step requires knowing that $m < p$, so the first step is harder than it looks.
+We are going to prove that first step because it shows two more connections to the work of Fermat.
+%But we will stop before giving Euler's proof of descent.
+
+
+%We are going to sketch a proof of this first step which uses yet another discovery of Fermat and  has a strange echo of the two square theorem in a different context.
+
+%Fermat's results come up in completely
+%different number theoretic contexts. 
+%
+%
+%
+%
+%
+%
+%Euler's proofs of these steps involved tricky  elementary number theory. 
+%%But later the theory of finite fields evolved from Gauss' study of quadratic reciprocity, and this theory simplified step one of Euler's argument. 
+%Then in 1832, Gauss wrote a monograph on quartic reciprocity in which he introduced what are now called the {\em Gaussian integers}. These numbers led to a much easier proof of Fermat's theorem, while simultaneously showing that the theorem is not an isolated amusing fact, but instead plays a central role in number theory.
+
+%\subsubsection{Unique Factorization of Gaussian Integers}
+%
+%We will sketch Gauss' theory. A Gaussian integer is a complex number of the form
+%$a + b i$ where $a$ and $b$ are ordinary integers. A Gaussian rational is a complex number of the form
+%$q_1 + q_2 i$ where $q_1$ and $q_2$ are ordinary rational numbers. We sometimes denote the two sets
+%as $Z[i]$ and $Q[i]$. Our goal is to show that ordinary number theory works equally well using these objects.
+%In particular, we will define prime numbers in $Z[i]$ and prove unique factorization. 
+%
+%We start with the division algorithm, which is second grade arithmetic as taught by a mathematician. Second graders are taught that when you divide integers, you get a quotient and a remainder. 
+%So if  $b > 0$,   divide and get  ${a \over b} = q + {r \over b}$. Mathematicians prefer writing
+%$$a = bq + r \mbox{   where   } 0 \le r < b$$
+%This same result holds in Gaussian integers, but first we need to handle that inequality. It is natural to measure the size of a Gaussian number $\alpha$ by $|\alpha|$, but that involves a square root. So we square the number and use $N(q_1 + q_2 i) = q_1^2 + g_2^2$. Then if $\alpha$ and $\beta$ are Gaussian integers,
+%$N(\alpha)$ is an integer, and $N(\alpha) \ge 0$, and $N(\alpha) = 0$ implies $\alpha = 0$, and
+%$N(\alpha \beta) = N(\alpha) N(\beta)$
+%
+%\begin{lemma} If $\alpha$ and $\beta$ are Gaussian integers and $\beta \ne 0$, we can find Gaussian integers
+%$\gamma$ and $\delta$ such that
+%$$\alpha = \beta \gamma + \delta$$
+%and $N(\delta) < N(\beta)$.
+%\end{lemma}
+%
+%The proof of this is straightforward once we notice that $\alpha$ and $\beta$ are Gaussian rationals and we can divide these complex rationals in the usual way, getting a quotient of the form $q_1 + q_2 i$. Write
+%$q_i = n_i + r_i$ where $n_i$ is an integer and $|r_i| \le {1 \over 2}$. Let $\gamma = n_1 + n_2 i$ and let
+%$\delta = \alpha - \beta \gamma$. Then $\delta = (r_1 + r_2i) \beta$ and $N(\delta) = (r_1^2 + r_2^2) N(\beta)$
+%and $(r_1^2 + r_2^2) < 1$.
+%.
+%In $Z$, the numbers $\pm 1$ divide everything, so changing the sign of a number does not affect  divisibility properties. We often resolve this ambiguity by requiring that integers be positive. A Gaussian integer is called {\em a unit} if it is nonzero and divides everything. These units lead to similar ambiguity.
+%
+%\begin{lemma}
+%A Gaussian integer is a unit if and only it its norm is one. The Gaussian units are $\pm 1$ and $\pm i$.
+%\end{lemma}
+%
+%To show this, suppose $\alpha$ is an arbitrary Gaussian integer and $\gamma$ is a unit. Then
+%$\alpha ={ { \alpha} \over {\gamma}} \gamma$ and both terms are Gaussian integers. So
+%$$N(\alpha) = N\left({ { \alpha} \over {\gamma}} \right) N(\gamma)$$
+%and all terms are ordinary integers. It follows that $N(\gamma)$ divides the norm of any Gaussian integer.
+%Thus it divides $N(2) = 2^2$ and $N(3) = 3^2$, =so we must have $N(\gamma) = 1$.
+%If $\gamma = a + bi$ with $a, b \in Z$, we have $a^2 + b^2 = 1$ and one easily shows that $\gamma = \pm 1$ or $\pm i$.
+%
+%We define a Gaussian prime $\gamma$ to be a Gaussian integer which is not zero and not a unit, and such that
+%in any factorization $\gamma = \alpha \beta$, one of $\alpha$ and $\beta$ is a unit.
+%
+%\begin{lemma} Any Gaussian integer is either zero, a unit, or a product of Gaussian primes.
+%\end{lemma}
+%
+%The proof is by induction on the norm of the element. The result is clear for elements of norm zero or one. If $\alpha$ has higher norm, the result holds if $\alpha$ is a Gaussian prime. Otherwise $\alpha = \beta \gamma$ and neither is a unit, so $N(\alpha) = N(\beta) N(\gamma)$ and $N(\beta) < N(\alpha), N(\gamma) < N(\alpha)$. By induction, both 
+%$\beta$ and $\gamma$ are products of Gaussian primes and we are done.
+%
+%We want to prove that this factorization is unique. The argument involves extending a well-known property of ordinary integers to Gaussian integers. That property says that if $p$ is prime and $p$ divides $ab$, then
+%$p$ divides $a$ or $p$ divides $b$. This is false in general, since $6$ divides $12 = 3 \times 4$ and yet $6$ doesn't divide either factor. But it is true for primes because of unique factorization. If $p$ divides $ab$, then
+%${{ab} \over p} = c$ or $ab = pc$. Factor both sides. Since $p$ occurs on the right, it also appears on the left, coming either from $a$ or from $b$.
+%
+%A beautiful argument to be given in a minute proves this directly without using unique factorization. This argument is really the key step in proving unique factorization of ordinary integers, so it is almost sacred to mathematicians. Moreover, this argument essentially depends on the division algorithm from second grade.
+%Since the division algorithm also works for Gaussian integers, so does this sacred argument I'm about to reveal.
+%
+%But first let me just state the generalization and show that unique factorization of Gaussian integers follows immediately.
+%
+%%The argument is slightly technical and I'll just plow through it;
+%%all mathematicians can repeat the argument in their sleep.
+%
+%%An ideal in the Gaussian integers is a nonempty set of integers ${\cal I}$ such that $\alpha, \beta \in {\cal I}$
+%%implies $\alpha + \beta \in {\cal I}$ and $\alpha \in {\cal I}$ and \beta any Gaussian integer implies
+%%$\alpha \beta \in {\cal I}$.
+%
+%\begin{lemma} Let $\alpha$ be a Gaussian prime, and suppose $\alpha$ divides a product $\beta \gamma$.
+%Then $\alpha$ divides $\beta$ or $\alpha$ divides $\gamma$.
+%\end{lemma}
+%
+%\begin{theorem} Factorization of Gaussian integers into primes is unique up to order and units.
+%\end{theorem}
+%
+%Proof: Suppose $\alpha_1, \ldots, \alpha_k$ and $\beta_1, \ldots, \beta_l$ are Gaussian primes and
+%$\alpha_1 \cdot \ldots \cdot \alpha_k = \beta_1 \cdot \ldots \cdot \beta_l$. It follows that $\alpha_1$ divides the left side, so it divides the right side. Applying the lemma over and over, $\alpha_1$ must divide one of the $\beta_i$. Since both are primes, they must be the same up to a unit. Multiply $\beta_i$ by an appropriate unit and then cancel these two terms. Now continue the argument. Eventually one side must be just a unit, so the other side must be an equal unit, and we are done.
+%
+%Now I'm ready for the sacred argument! I'll mainly give this argument for ordinary integers, but it will be immediately clear that it also works for Gaussian integers. We start with a technical definition. A nonempty subset ${\cal I} \subset Z$ is
+%called {\em an ideal} if it is closed under addition (that is, when $a \in {\cal I}$ and $b \in {\cal I}$, we also have $a + b \in \cal I$) and closed under multiplication by arbitrary integers (that is, if $k$ is any integer and $a \in {\cal I}$, then $ka \in {\cal I}$. The sacred argument has two pieces, and the first piece shows that any such ideal contains an element $m$ such that ${\cal I}$ is just all
+%$km$ as $k$ varies over the integers. We say that $\cal I$ is the ideal generated by $m$. 
+%
+%Let us prove this result. If ${\cal I}$ just contains $0$, then $m = 0$ will work. Otherwise let $m$ be the smallest positive element in ${\cal I}$. Since $m \in {\cal I}$, all $km$ must belong to {\cal I}. We will show that every element has this form. Let $a$ belong to the ideal. Apply the division algorithm to a and m, writing $a = qm + r. Then the ideal contains $a$ and $qm$, so it contains $a - qm$, so it contains $r$. But $0 \le r < m$, so by the choice of $m$ we have
+%$r = 0$ and thus $a = qm$ as desired.
+%
+%I will let the reader revise this argument for Gaussian integers. This is very easy.
+%
+%Next we prove finish the sacred argument to prove that if $p$ is prime and $p$ divides $ab$, then $p$ divides $a$ or $p$ divides $b$. We are done if $p$ divides $a$. Suppose not and let ${\cal I}$ be the set of all
+%$kp + la$ as $k$ and $l$ run over all integers. It is easy to see that this is an ideal. So it must be generated
+%by a single $m$ by the first half of the sacred argument.  
+
+
+\subsubsection{*Finite Fields}
+We earlier used elementary properties of addition and multiplication in the set $\mathbf{Z}_n$. It is useful to make our language about $\mathbf{Z}_n$ clear. When we claim that two numbers are equal in $\mathbf{Z}_n$, this means they both have the same remainder when divided by $n$. Suppose for instance that $n = 7$. We are allowed to write $9 \in \mathbf{Z}_7$, but notice that  $9 = 2$ there. Addition and multiplication also use this rule. In ordinary arithmetic, $4 + 5 = 9$ and $4 \times 5 = 20$. If we are working in $\mathbf{Z}_7$, we are allowed to write these results as $4 + 5 = 2$ and $4 \times 5 = 6$.
+
+When $n$ is prime, we can also divide. 
+%Writing $p$ in this case,  in $Z_n$. If $n$ is a prime $p$, we can also divide by non-zero elements in $Z_p$, so $Z_p$ becomes what is called a {\em field}
+%and the standard rules of high school algebra all apply. 
+For example, consider $6 \in \mathbf{Z}_{13}$. What is ${1 \over 6}$? Let us try all the possibilities. Multiplying $6$ by
+$1, 2, 3, \ldots$ gives $6, 12, 5, 11, 4, 10, 3, 9, 2, 8, 1, 7$ so the inverse of $6$ is $11$. Indeed $6$ times $11$ equals $66$, but $66$ divided by $13$ has remainder $1$, so we can write $6 \times 11 = 1$. Dividing by $6$
+is then the same thing as multiplying by $11$. 
+
+Let us prove that this works in general for prime $p$.  
+Suppose $a$ is an ordinary integer which represents a nonzero element in $\mathbf{Z}_p$. Then $p$ does not
+divide $a$. Consider the map $$x \rightarrow ax: \mathbf{Z}_p \rightarrow \mathbf{Z}_p$$ This map is one-to-one, for if
+$ax = ay$ in $\mathbf{Z}_p$, then $a(x - y) = 0$ in $\mathbf{Z}_p$ and so $p$ divides $a(x - y)$. Since $p$ does not divide $a$,
+$p$ divides $x - y$, so $x$ and $y$ have the same remainder when divided by $p$ and represent the same element in $\mathbf{Z}_p$. Since  our map is one-to-one from a finite set to itself,  it must also be onto. So $1$ is in the image of the map and there is a $b$ with $ab = 1$ in $\mathbf{Z}_p$.  This $b$ is the multiplicative inverse of $a$. 
+
+The quadratic formula works in $\mathbf{Z}_p$, but we have to be slightly cautious. The quadratic formula requires dividing by $2$, so the formula makes no sense in $\mathbf{Z}_2$. This exceptional case can always be studied by hand, so from now on we assume that $p \ne 2$. The quadratic formula also involves square roots, so we need to understand such roots in $\mathbf{Z}_p$. The truth is that only these square roots  interest us, and introducing the quadratic formula was a ruse.
+
+Let us first examine the special case, $\mathbf{Z}_7$. If we square $1, 2, 3, 4, 5, 6$, we get $1, 4, 2, 2, 4, 1$. So $1, 2,$ and $4$ have square roots and $3, 5, 6$ do not. The square root of $1$ is $1$ or $6$. We can also write $\sqrt{1} = \pm 1$
+because $-1 = 6$, that is, $1 + 6 = 7 = 0$.  The square root of $2$ is $3$ or $4$. Again $4 = -3$ because $3 + 4 = 7 = 0$. The square root of $4$ is $\pm 2$, that is $2$ and $5$.
+
+These results generalize to all $\mathbf{Z}_p$ for $p$ odd. Half of the non-zero elements of $\mathbf{Z}_p$ have square roots and half do not. If a nonzero element $a$ has a square root $b$, then $-b$ is also a square root and $-b \ne b$ and these are the only square roots of $a$. In short, square roots in $\mathbf{Z}_p$ are exactly like square roots in the real numbers $\mathbf{R}$.
+Half of the numbers have square roots, and then $\sqrt{a} = \pm b$.  The proof of these results in the general case is quite easy and left to the reader.
+
+%The proof of these statements is quite easy. If $b$ and $c$ both represent square roots of $a$ in $Z_p$, then $p$ divides $b^2 - a$ and $c^2 - a$ and thus $p$ divides $b^2 - c^2 = (b - c)(b + c)$, so $p$ divides one of these terms. So either $p$ divides $b - c$ and  $b$ and $c$ represent the same element of $Z_p$, or else $p$ divides $b + c$ and
+%$-b$ and $c$ represent the same element. In short, the only square roots of $a$ in $Z_p$ are $\pm b$. If these are equal, then  $b$ = $-b$ in $Z_p$ and $2b = 0$ in $Z_p$, so $p$ divides $2b$. We assume $p$ odd, so $p$ divides $b$ and thus $b = 0$  in $Z_p$. So $b^2 = a$ is zero. In short, the only element in $Z_p$ with only one square root is $0$.
+%
+%In number theory courses, an elaborate theory of square roots in $Z_p$ is developed, culminating in Gauss' proof of the law of quadratic reciprocity. We do not need that theory. But it is fun to discuss one special case. 
+
+Although square roots in the real numbers and $\mathbf{Z}_p$ are similar, there is one difference which is surprising at first. Sometimes $\sqrt{-1} \in \mathbf{Z}_p$. For example if $p = 5$, then $-1 = 4$ and $\sqrt{-1} = \pm 2$. If $p = 7$, then $-1 = 6$ and we earlier showed that $6$ is not a square. If $p = 13$, then
+$-1 = 12$ and we suspect that $\sqrt{12}$ does not exist. But actually $\sqrt{12} = 5$ or $8$; for instance $5^2 = 25 = 12$. We would like to know which primes satisfy $\sqrt{-1} \in \mathbf{Z}_p$? The amazing answer takes us right back to Fermat: 
+
+\begin{theorem}
+If $p$ is an odd prime, then $\sqrt{-1} \in \mathbf{Z}_p$ if and only if $p \equiv 1 \pmod 4$.
+\end{theorem}
+
+The proof of this theorem depends on yet another great Fermat discovery: if $p$ is prime and $a$ is any integer, then
+$p$ divides $a^p - a$. This result is called {\em Fermat's little theorem}; easy proofs can be found on the internet.
+If you want to prove this yourself, try induction on $a$. Using this result, we prove a useful lemma:
+
+\begin{lemma}
+If $p$ is an odd prime and $a \in \mathbf{Z}_p$ is not zero, then $a^{{p - 1} \over 2} = \pm 1$ in $\mathbf{Z}_p$. All squares give $1$
+and all nonsquares give $-1$.
+\end{lemma}
+
+For a proof, write $a^p - a = a(a^{p - 1} - 1)$. If $p$ does not divide $a$, then Fermat's theorem asserts that $p$ divides
+$a^{p - 1} - 1$. Said another way, every non-zero element $a \in \mathbf{Z}_p$ satisfies $a^{p - 1} = 1$ in $\mathbf{Z}_p$. 
+Since $p$ is odd, we can write this $\left( a^{{p - 1} \over 2} \right)^2 = 1$ in $\mathbf{Z}_p$. Consequently
+$a^{{p - 1} \over 2}  =  \pm 1$ in $\mathbf{Z}_p$. 
+
+In the special case that $a$ is a square $b^2$, $a^{ {p - 1} \over 2} = b^{p - 1} = 1$. 
+Hence $a$ satisfies the equation $X^{ {p - 1} \over 2} - 1 = 0$. This polynomial equation has degree ${{p - 1} \over 2}$
+and hence at most ${{p - 1} \over 2}$ roots. However half of the elements in $\mathbf{Z}_p$ are squares, and they are all roots of the polynomial. So they are the only roots and  all nonsquares  must satisfy $a^{ {p - 1} \over 2} = -1$. This proves the lemma.
+
+We now prove the theorem. We know $\sqrt{-1} \in \mathbf{Z}_p$ if and only if $(-1)^{{p - 1} \over 2} = 1$. 
+If $p \equiv 1 \pmod 4$, then $p = 4k + 1$ and ${{p - 1} \over 2} = 2k$. This is even, so
+$(-1)^{{p - 1} \over 2} = 1$ and $\sqrt{-1} \in \mathbf{Z}_p$. Otherwise $p = 4k + 3$ and ${{p - 1} \over 2} = 2k + 1.$
+This is odd, so $(-1)^{{p - 1} \over 2} = -1$ and $\sqrt{-1} \not \in \mathbf{Z}_p$. 
+
+%\subsubsection{Step 1}
+%Using this result, we can complete step 1 of Euler's program to prove the two square theorem.
+%Since we are assuming that $p$ divided by $4$ has remainder $1$, $\sqrt{-1} \in Z_p$. Consequently we can find an integer $a$ such that $a^2 = -1$ in $Z_p$. Thus $p$ divides $a^2 + 1$. Said another way, there is an $m$ such that
+%$mp = a^2 + 1$. Since $a^2 + 1$ is a sum of two squares, we are almost there. We need to show that $m < p$.
+%The integer $a$ represents a nonzero element of $Z_p$, so we can assume $1 \le a \le p - 1$. 
+
+\subsubsection{*The First Half of Euler's Descent}
+
+From this, we easily prove that if $p \equiv 1 \pmod 4$, then  $mp$ is a sum of squares for some $m$ with $1 \le m < p$.  By the previous theorem, we can find $a \in \mathbf{Z}_p$ such that $a^2 = -1$. Thus $a^2 + 1 = 0$ in $\mathbf{Z}_p$, or equivalently $p$ divides $a^2 + 1$ and so $mp = a^2 + 1$ for some $m$.  Since $a$ represents an element of $\mathbf{Z}_p$, we can assume that $1 \le a < p$. Thus $mp$ is a sum of two squares, and
+$$m = {{a^2 + 1} \over p} \le {{(p - 1)^2 + 1} \over p} = p - 2 + {2 \over p} < p$$
+
+%Consult the internet or number theory books for the rest of Euler's proof.
+
+\subsubsection{*Gaussian Integers and Dedekind's Proof}
+
+In 1832, Gauss wrote a monograph on quartic reciprocity in which he introduced what are now called the {\em Gaussian integers}. These numbers led to a much easier proof of Fermat's theorem, while simultaneously showing that the theorem is not an isolated amusing fact, but instead plays a central role in number theory.
+
+A Gaussian integer is a complex number of the form
+$a + b i$ where $a$ and $b$ are ordinary integers. A Gaussian rational is a complex number of the form
+$q_1 + q_2 i$ where $q_1$ and $q_2$ are ordinary rational numbers. We sometimes denote the two sets
+as $\mathbf{Z}[i]$ and $\mathbf{Q}[i]$. Gauss showed that ordinary number theory works equally well using these objects.
+
+We often need to compute the ``size'' of a Gaussian integer. The natural measure of size is  $|a + i b| = \sqrt{a^2 + b^2}$,
+but this square root is usually not rational and leads us out of the realm of number theory. So  Gauss used the square of this value, which is called the {\em norm} of the number: $N(a + bi) = a^2 + b^2$. This norm is an integer and it is trivial to show that $N(\alpha) \ge 0, N(\alpha) = 0$ if and only if $\alpha = 0$, and
+$N(\alpha \beta) = N(\alpha) N(\beta)$. 
+
+In the ordinary integers, $1$ and $-1$ divide all numbers. So every number can be trivially factored: $a = (-1)(-a)$. 
+We often avoid this ambiguity by restricting attention to positive integers. In the Gaussian integers, $\pm 1$ and $\pm i$ divide all numbers; they are called {\em units}. This time we live with the resulting ambiquity by calling $\alpha$ a prime if in all factorizations $\alpha = \beta \gamma$, one of $\beta$ and $\gamma$ is a unit. Similarly we think of  two primes as essentially the same if one is a unit times the other. Notice that $N(\alpha) = 1$ if and only if $\alpha$ is a unit.
+
+Gauss then proved that every Gaussian integer can be factored as a product of prime Gaussian integers and the factorization is unique up to order and units. The proof is straightforward and can be found on the internet and in many books. There is an easy consequence. We say that $\alpha$ divides $\beta$ if ${{\beta} \over {\alpha}}$ is a Gaussian integer; unique factorization implies that if a prime $\alpha$ divides $\beta \gamma$, then it divides $\beta$ or divides $\gamma$.
+
+Now comes the exciting part. Gauss explicitly determined all Gaussian primes. If $\pi$ is a Gaussian prime, we have
+$$\overline{\pi} \pi = N(\pi) = p_1p_2 \ldots p_k = \pi_1 \pi_2 \ldots \pi_l$$
+We explain. The first equality holds because the norm of any complex number is the product of that number with its conjugate. The second equality holds because $N(\pi)$ is an ordinary integer, and thus can be factored into a product of ordinary primes. The final equality holds because each of these ordinary primes can be further factored in the Gaussian integers.
+
+However we have unique factorization for Gaussian integers, so the right side must equal $\overline{\pi} \pi$ up to units. It follows that the number of $p_i$ can only be one or two. If there are two $p_i$, they must be equal because up to units each $p_i$ equals $\pi$ or its conjugate, and the $p_i$ are real. So actually, one of two things must occur:
+$$\overline{\pi} \pi = N(\pi) = p^2 = p^2$$
+$$\overline{\pi} \pi = N(\pi) = p = \overline{\pi} \pi$$
+In the top case, the ordinary prime $p$ is also a Gaussian prime. In the bottom case, the ordinary prime $p$
+factors as two conjugate Gaussian primes $a + bi$ and $a - bi$. So $p = (a + bi)(a - bi) = a^2 + b^2$. But this connects the theory of Gaussian primes directly to Fermat's two squares theorem! If $p$ cannot be written as the sum of two squares, we must be in the top case and $p$ is a Gaussian prime. If $p$ can be written as the sum of two squares $p = a^2 + b^2$, then $p = (a + bi)(a - bi)$, so $p$ factors as the product of these two Gaussian primes.
+
+In particular, if $p \equiv 3 \pmod 4$, then $p$ is a Gaussian prime. If $p \equiv 1 \pmod 4$, then $p$ factors as a product of two Gaussian primes by Fermat's two squares theorem. But even more is true. Dedekind discovered about thirty years later that we can use all of this to actually prove Fermat's two squares theorem! Here is his argument.
+
+Suppose $p \equiv 1 \pmod 4$, but we don't know if $p$ can be written as a sum of two squares. If not, then $p$ is itself a Gaussian prime. By the first half of Euler's descent proved earlier, $p$ divides $a^2 + 1$ for some $a$. So $p$ divides $(a + i)(a - i)$ and since $p$ is a Gaussian prime,  $p$ divides one or the other. But
+$${{a \pm i} \over p} = {a \over p} \pm {1 \over p} i$$
+and the second coefficient is definitely not an integer. QED.
+
+\newpage
+The sequence of primes $2, 3, 5, 7, 11, 13, 17, 19, 23, \ldots$ plays a mysterious crucial role in the study of ordinary numbers.  The sequence of Gaussian primes $1 + i, 3, 2 + i, 2 - i, 7, 11, 2 + 3i, 2 - 3i, 4 + i, 4 - i, 19, 23, \ldots$
+plays an equally mysterious crucial role in the study of Gaussian integers. Gauss revealed this sequence in 1832, but it had essentially been found by Fermat two hundred years earlier.
+
+
+%
+%\subsubsection{The Gaussian Integers and Dedekind's Proof}
+%
+%In 1832, Gauss wrote a monograph on quartic reciprocity in which he introduced what are now called the {\em Gaussian integers}. These numbers led to a much easier proof of Fermat's theorem, while simultaneously showing that the theorem is not an isolated amusing fact, but instead plays a central role in number theory.
+%
+%A Gaussian integer is a complex number of the form
+%$a + b i$ where $a$ and $b$ are ordinary integers. A Gaussian rational is a complex number of the form
+%$q_1 + q_2 i$ where $q_1$ and $q_2$ are ordinary rational numbers. We sometimes denote the two sets
+%as $Z[i]$ and $Q[i]$. Gauss showed that ordinary number theory works equally well using these objects.
+%You can find the details in many easy sources, so we will not repeat them here.
+%
+%In $Z$, the numbers $\pm 1$ divide all integers; to avoid ambiguities we restrict attention to positive integers.
+%In the Gaussian integers, $\pm 1$ and $\pm i$ divide all numbers. We call these {\em units}. Rather than restricting numbers to avoid  ambiguity, we say a number $\alpha$ is prime if in any factorization $\alpha = \beta \times \gamma$, one of the factors is a unit. Gauss proved that the Gaussian integers satisfy unique factorization if we interprete the theorem to say that any number not zero or a unit is a product of primes, which are unique except that the primes that appear on one side can appear multiplied by various units on the other side.
+%
+%Gauss  determined exactly what Gaussian integers are prime, and it is here that Fermat's two squares theorem appears with greater force. Gauss first proves that all Gaussian primes appear by factoring ordinary primes. If we factor $p = 2$, we get $(1 + i)^2$ up to a unit, so $1 + i$ is a Gaussian prime. If $p \equiv 3 \pmod 4$,
+%it does not factor, and $p$ is a Gaussian prime. So $7$ and $11$ are Gaussian primes. Finally if $p \equiv 1 \pmod 4$, then $p = a^2 + b^2$ by Fermat's theorem, and in the Gaussian integers we can write this
+%as $p = (a + bi)(a - bi)$. Both numbers are Gaussian primes, and they are distinct modulo units. So for example
+%$5 = (2 + i)(2 - i)$ and  $2 + i$ and $2 - i$ are distinct Gaussian primes.
+%
+%Writing many years after Gauss, Dedekind converted this argument into an easy proof of Fermat's theorem.
+%Suppose $p \equiv 1 \pmod 4$, but we do not know whether we can write $p = a^2 + b^2$. If not, $p$ must be a Gaussian prime. But $p \equiv 1 \pmod 4$ implies that $\sqrt{-1} \in Z_p$ and thus that an integer $a$
+%exists such that $p$ divides $a^2 + 1$. In the Gaussian integers, this means that $p$ divides $(a + i)(a - i)$.
+%If an ordinary prime $p$ divides a product of ordinary integers $ab$, then it must divide $a$ or $b$, and this result is still true in the Gaussian integers. 
+%Since $p$ is a Gaussian prime, $p$ must divide $a + i$ or $a - i$. But
+%$${{a \pm i} \over p} = {a \over p} \pm {1 \over p} i$$
+%and ${1 \over p}$ is not a regular integer. Therefore these quotients, while rational Gaussian numbers, are not Gaussian integers. QED.
+%
+
+\subsection{Why Add Annotations to TeXShop?}
+
+Since annotations can be created by many  programs and then used in TeXShop, a reader might wonder why the ability to annotate within TeXShop has been added to the program. There are several reasons, but none very profound. If only simple annotations are needed, it may be easier to stay in TeXShop rather than switch to another program. All of the programs which annotate provide  great flexibility, but that can make them difficult to learn to use.
+In contrast, TeXShop provides only a few  annotations and simple editing tools, so it is easy to learn how to use it in a few minutes.  I'm hoping that some users learn about annotations with TeXShop, find the process interesting, and then investigate  more powerful annotation programs.
+
+Annotations created in another program can be edited in TeXShop. This may be a useful feature, although
+it comes with the warning that not all annotations from elsewhere behave well in TeXShop's editing mode. 
+Experiment.
+
+Finally, adding annotations was an interesting summer project for me. 
+
+\newpage
+\section{Annotating in TeXShop} 
+
+\subsection{Getting Started}
+
+Suppose a particular page is visible in TeXShop's Preview Window and you wish to add annotations to the page.
+Select the item ``Annotation Panel...'' in TeXShop's Preview menu. A small panel will appear, floating over the screen,
+This panel contains all tools needed to annotate.
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=3.5in]{Graphics/annotationPanel.png} 
+   \caption{Annotation Panel}
+   \label{fig:example}
+\end{figure}
+
+The eleven graphic items on the right side correspond to the eleven annotations which TeXShop can create. More about them in a minute.
+
+When annotations are being created in TeXShop, the user toggles the program between two modes known as ``Edit Mode'' and ``Run Mode''. Run mode is the standard mode which TeXShop has used up to now. Annotations can be displayed in this mode, but not created. Edit mode is the mode which allows creation and manipulation of new annotations. To toggle between the two modes, click the top left ``Edit Mode'' button.
+
+While this mode is off, click in the Preview window while holding down the Control key. The standard Preview  contextual menu appears. TeXShop creates the first three items in this menu, but most items come directly from Apple. Repeat this procedure when Edit Mode is on. A different contextual menu appears, designed specifically for annotation. Some users may prefer annotating with this contextual menu. Experiment if you like.
+
+The Adobe API for annotations states that each annotation must contain  the name of the person who wrote it and the time when it was created. Therefore the recipient of an annotated document can determine who wrote each comment. This useful feature comes with a warning: if you tell your boss that you stayed up all night working on his document and you actually worked for an hour and a half, the document can reveal the truth. 
+
+
+\subsection{Adding Annotations to a Page}
+The top three annotations are created by first selecting one or several
+lines of text. Next click on the words ``strike'', ``emphasize'', or ``underline'' to annotate the selection. If a selection involves several lines, each line becomes a separate annotation. Click on an annotated line to select it. Drag the mouse
+to drag the annotated portion left or right. Click on the small red box at the right side to resize the annotation, making the annotated portion shorter or longer. After you are satisfied, click elsewhere to deselect the new annotation.
+
+Each remaining annotation is created in the same way. If you like, select a small portion of text. Then click on the annotation you want in the Panel. This annotation will appear near your selection if you selected text first. Otherwise the annotation will appear near the bottom of the page. Click inside the new annotation and move it to its desired spot. Click on the small red rectangle at bottom right to resize the annotation. Resizing squares and circles creates rectangles and ovals. But if the Option key is down, resizing is constrained to only create larger or smaller squares and circles. To use this constraint, begin resizing as usual. Then press and hold down Option and the resized figure will immediately snap to become a circle or square.
+
+In the above, click in the center of the icon in the Annotation Panel rather than near the boundary. Otherwise you may miss the area that registers the click.
+
+The same dragging technique is used to move the arrow anywhere you like. In this case the small resizing rectangle is the head of the arrow and is not drawn. Click on the head and drag to fix the tail of the arrow and move the head anywhere you like. Selecting and moving arrows is slightly buggy in the initial version of TeXShop Annotations. 
+For details, read the section about arrows later in this chapter.
+
+The last three annotations hold text. The first of these creates text with a transparent background; the second creates text with a colored background. The final element creates a popup symbol; it is often useful to drag this to a spot in the margin. During Run mode, a click on the popup icon will cause it to expand to a scrollable area containing text. 
+In Edit mode, clicking on the icon while the Option key is down causes it to expand; you can then enter the initial text for the annotation.
+
+%When one of the first two annotations is selected, a TextEdit window will appear and float over the preview window. Enter the text for the annotation in this window and push the ``OK'' button. Drag the resulting annotation to its final spot and resize if necessary. 
+
+Once a series of annotations is on the page, select one and press the tab key. This will cycle from annotation to annotation, selecting each in turn. To remove an annotation, select it and press the ``delete'' key.
+
+As we later explain, the font and color used by the regular annotations showing text can be changed. This is not possible for popup annotations; the text size and font used when popups expand is fixed once and for all.
+But there is a useful trick which works both while creating popups in Edit mode, and reading them in Run mode.
+Select the text by typing command-A and then enlarge the text by typing command-= several times.  This makes the text easy to read and edit. When the popup is closed, this size change is lost, so you must apply this trick each time you expand the popup.
+
+The previous trick works on a U. S. keyboard, but fails on other keyboards. This problem can be fixed. 
+The keystrokes call  the menu items ``Bigger'' and ``Smaller'' in the Source menu's Font menu. Using System Settings, users of macOS can create their own keyboard shortcuts to menu items. See \cref{Font_Size}  and  \cref{Define_Shortcut} of this manual.
+
+ Popups create a fairly small region to display  text, but here there is good news. In Apple's next operating system, Sequoia, the region for text has been enlarged. This is the only detectable change in that system discovered so far that affects a \TeX\ or \LaTeX\ program.
+
+\subsection{Editing  Text in Annotations}
+We have already explained how to create the text in popup annotations. The text in the other two textual annotations is created using the panel which appears by pushing ``Show Text Panel''. A small editing panel will float over the screen. Every time one of the textual annotations is selected, the text of the annotation will  appear in the Text Panel. Edit this text in the usual way, modifying words or adding new text. Push OK and the new text will appear in the selected annotation.
+
+The text panel has three radio buttons at the bottom labeled ``Left'', ``Center'', ``Right''. Select a button to
+determine the alignment of text in the Text Panel and corresponding alignment in the annotation.
+
+The Text Panel contains {\em Rich Text}, which leads to an annoyance. In rich text, each paragraph can have its own alignment, so a centered paragraph could be followed by a left justified paragraph. We will not use this feature in TeXShop, but it causes a problem. When you select an annotation containing text, that text automatically appears in the Text Panel with the correct justification.
+If you click at the very end of this text and then begin adding extra lines, those lines may be left justified even if the original text is centered. To avoid this, click at the end of the text, and  then delete one character. Type to add that character back and after that text entered in the panel will be correctly justified.
+
+This trick is not needed if you click in the middle of the text to revise it, or if you select and delete all the old text and type entirely different text.
+
+
+\subsection{Changing Annotation Colors}
+
+To edit colors, push the ``Show Color Panel'' button in the Annotation Panel. A Color Picker will float over the page;
+move it near the bottom. To change the color of an annotation, select the annotation and then select a color in the Color Panel. The annotation color will immediately change. This process can modify colors of selection annotations, colors of rectangles and circles, colors of arrows, and background colors of textual annotations. To change the color of the actual text in such an annotation, hold down the option key when selecting the color.
+
+Changing the color of  a Popup annotation initially changes the color of its icon. But when the annotation  pops up, the icon color becomes the color of the text background. Thus a very light gray is useful, while a dark color will make the text difficult to read. The color of the text itself cannot be changed.
+
+\subsection{Changing Annotation Fonts} Push the ``Show Font Panel'' button in the Annotation Panel to make a floating Font Panel appear; move it near the bottom of the page. This panel can change the font of the text with transparent background, and also the font of the text with colored background. First select the appropriate annotation, and then select a new font in the Font Panel.
+
+The Color Picker has several modes of operation. Colors can be selected by picking a point in a circle filled with colors, or by adjusting sliders, or by selecting a particular crayon. Once you select a mode, the picker will use that mode whenever the Color Picker opens, until you again change modes. 
+
+\subsection{Saving Annotated PDF Files}
+
+Recall that annotation data is not part of the source file. If you annotate a page of the preview output and then typeset again, the preview pdf will be replaced by a new typeset copy and the annotations will be lost. 
+Therefore before typesetting, it is important to save your annotated pdf file.
+
+To do this, push the ``Save Annotations'' button in the Annotation Panel. The panel will automatically switch to Run mode and a standard Macintosh Save Dialog will appear. This dialog will contain a default folder where the file will be saved, and a default file name for the file. The folder will be the folder containing your source document, so if you are working with a document titled ``Fourier.tex'', it will be the folder containing this file. If instead you opened a pdf file,
+it will be the folder containing that file.  
+
+The default name of the file being saved will be the name of the project followed by ``-Annotated''. So in the case of Fourier.tex,
+it will be Fourier-Annotated.pdf. This name can be modified to anything you desire. If a file already exists with the name you select, a warning will appear allowing you to choose a different file name, or overwrite the existing file. 
+
+The entire pdf file, including all annotated pages, will be saved. But if you hold down the Option key while selecting ``Save Annotations'', then only pages with annotations will be in the output file.
+
+
+
+A common way to work on a project like Fourier.tex is to annotate the corresponding pdf file and save the annotated copy, say as Fourier-Annotated.pdf. Then continue annotating other pages, and each time a page is finished, save it as Fourier-Annotated.pdf, overwriting the previous version. If you fear losing previous work,
+save the copies as Fourier-Annoted-5.pdf, etc. Each will contain all older annotations and the new annotations as well. If you are annotating several pages in this way, do not typeset in the middle of the process.
+
+\subsection{Removing Image Streams}
+
+Suppose you have an annotated pdf file like Fourier-Annotated.pdf, or perhaps an annotated document created by Adobe Acrobat, Skim, Preview, or something else. These files can all be opened in TeXShop, of course. 
+Then by opening the Annotation Panel and switching to Edit mode, the annotations can be revised.
+
+When annotated copies are saved to disk, it is common for the software to save an ``image stream'' for each annotation. This image stream is a sort of picture of the annotation, which can be displayed quickly and rapidly, without looking at the underlying data describing the annotation in detail. One advantage of this technique is that annotations created by one program on a particular computer can  be opened accurately by a different program on a different computer.
+
+But a disadvantage is that if you decide to edit these annotations, the images cannot be modified. They can only be resized and usually this process is constrained to preserve aspect ratio. So if you have an oval, for instance, and you resize, the resized oval may no longer touch all four sides of the bounding rectangle. It is impossible to change colors, or fonts.
+
+There is a way to fix this problem. If an annotated pdf file is loaded, then soon after switching to Edit mode push the
+``Remove Streams'' button. All image streams of annotations will then be removed, and annotations again
+become editable. 
+
+This trick is not important if the annotated file you create in TeXShop will be opened by someone who will only view the annotations. It is usually not important if the annotated file you create in TeXShop is opened by another program like Adobe Acrobat or Preview which can edit annotations (perhaps because these programs automatically remove image streams). But it is very important if the annotated file you create in TeXShop is being opened for further editing in TeXShop. Otherwise the editing process will be miserable.
+
+\newpage
+\subsection{Interacting with Adobe Acrobat}
+
+Adobe Acrobat and Adobe Acrobat Reader run on most computer platforms, so when publishing companies want annotated copy from a writer, they often require annotations created on one of these programs. Preview is a standard program available on all Macintosh computers and can also create and edit annotations. 
+
+Both Acrobat and Preview can create files with additional annotations not provided by TeXShop. There is no problem viewing these files in TeXShop, but attempting to edit them in TeXShop can cause trouble. Experiment first if you intend to do this.
+
+
+On the other hand, it is reasonable to create an annotated file in TeXShop and then edit that file in Acrobat or Preview, and  possibly move the file back to TeXShop for further editing. We'll explain a few glitches, but this process generally works well.
+
+When a file from TeXShop is opened in Acrobat or Acrobat Reader, it is not necessary to remove the streams first. Acrobat may complain about invalid encodings in certain fonts. It may also put up a warning with the text ``Acrobat cannot open this file because a task is still active in Acrobat.'' Both messages are harmless. Just save the file in Acrobat and proceed. 
+
+The file will look exactly the same in Adobe as it did in TeXShop. Now start editing. Selecting and resizing rectangles and circles with or without border accomplishes the same thing in TeXShop and Acrobat, although the method of grabbing and dragging the object is slightly different. This also holds for arrows. If the arrow is resized,  the head of the arrow will change to a slightly different form. Popups work as before. 
+
+Moving and resizing text works as before with one exception. As soon as the text is touched, its alignment changes  to ``Left.'' I believe Acrobat and TeXShop set text alignment in a different way; I also suspect that the previous ``task is still active'' message is due to this difference. But there is a very easy fix.
+Double click the text annotation and a small window will pop up next to it. This window allows several features to be changed, but in particular a single click changes the alignment.  After alignment is fixed once in Acrobat, it never breaks again.
+
+That's it. Save any changes.
+
+If an Acrobat-edited document is opened in TeXShop, it will look exactly like it did in Adobe. After switching to Edit mode, arrows may vanish. If that happens, select ``Remove Streams''. Arrows will immediately return, and with the TeXShop arrow head rather than the Adobe head. Editing in TeXShop then proceeds normally.
+
+\subsection{Interacting with Preview}
+
+Opening a TeXShop document in Preview does not require removing streams first. The document will initially look exactly like it did in TeXShop.
+
+All objects can be selected and moved with results exactly the same in TeXShop and Preview, although the process of selecting and moving is slightly different.  Resizing rectangles and circles with or without border works the same.
+Resizing text is slightly different because Preview only resizes horizontally. This resizing also changes the size of the text.  A tool in the ``Preview Annotation Toolbar'' can easily resize the text if desired. (This tool can also change the font and color of the text.) 
+
+The main difference between TeXShop and Preview is their treatment of arrows. In Preview, arrows have three small selection points, at both ends and in the middle. Grab the beginning or end point to resize the arrow. As long as you do not touch the middle, all is well. 
+
+Save the file when you are done editing.
+Then open the file in TeXShop. It will look exactly the same. Change to Edit Mode and Remove Streams.
+Everything will work as before with one exception. It you select or resize text annotations, they will forget the font choices and switch to default fonts. These fonts can be changed back to desired fonts in TeXShop.
+
+Return to editing in Preview, and this time also resize arrows by moving the middle point. This creates curved arrows, a nifty touch. When the file is moved back to TeXShop, the curved arrows initially remain. But this time, changing to
+Edit mode makes the arrows disappear. Remove streams. The arrow still is gone. Select any annotation and then begin pushing the tab key. This cycles through all existing annotations. When the cycle reaches an arrow, at first you will see an empty box, but shortly after that the arrow will reappear. It has the same start and end, but is now straight. 
+After this step, proceed normally.
+
+\newpage
+
+
+%This trick is particularly important if you create annotations in TeXShop and later want to open and edit  when the file was annotated on TeXShop because TeXShop understands the underlying annotations.
+%
+%The trick also works if a pdf was annotated on, say, Preview, and then opened on TeXShop. In that case some annotations may behave strangely after removing streams because Preview and TeXShop do not always use the same techniques. For example, arrows in Preview have three resize tabs, two at both ends and one in the middle. By pulling the middle tab, the arrow can be made to curve. TeXShop only creates straight arrows, so experimentation is needed to know what happens when curved arrows are moved to TeXShop.
+
+%If you intend to create annotations using one program and edit them with a different program, careful tests are needed to see what works and what doesn't, before  plunging into the project.
+
+\section{Miscellaneous Items}
+\subsection{History of the Code}
+The TeXShop annotation code is based on an Apple sample program named {\em PDFAnnotation Editor macOS Application} copyright 2017 and available from Apple.  The code provided a foundation for this project, but has been considerably extended. TeXShop's annotation code would not have been possible without this start from Apple. 
+
+
+\subsection{Arrows}
+
+Each annotation is determined by its
+bounds rectangle. In the case of an arrow, the start of the arrow will be at one corner of the rectangle and the
+end of the arrow will be at the opposite corner. A user resizes the arrow by resizing the bounding rectangle.
+
+Arrow creation should be done as follows.  Make an arrow. Then move the arrow until its starting point is at the desired location.
+Finally  grab the tip and move it to where you want the arrow to end; the  start of the arrow remains fixed
+during this operation.
+
+In macOS, rectangles are determined by two pieces of data: the location on the page of the bottom left corner, and the width and height of the rectangle as measured from this corner. Therefore if an arrow points toward the first quadrant, there is a very simple correlation between the coordinates of the beginning and end of the arrow and the corresponding bounds rectangle.
+
+But when the arrow is resized and its end moves to another quadrant, the origin of the bounds rectangle is no longer the beginning of the arrow and a complicated new formula is required to get from the arrow to the corresponding bounds rectangle.
+
+Unfortunately, the definition of rectangles in macOS requires that height and width be nonnegative. But when I wrote the code, I cheated and assumed that negative heights and widths would  be accepted. This worked and vastly simplified the resize code.
+
+Currently TeXShop switches the bounds rectangle to ``regular legal form'' when arrows are deselected,
+and switches the arrow to ``easy to use slightly illegal form" when arrows are selected for editing. 
+
+Because of this design, moving and resizing arrows should be done as follows. To move an arrow, first click to select the arrow but avoid any dragging component during the click. Then move the arrow by pushing the mouse button and holding it down during the motion. If these steps are not followed, the arrow may jump when it is first clicked. Nothing is seriously wrong, so recover and continue editing.
+
+\subsection{Annotations and Automatic Saving}
+
+Recall that TeXShop adopts automatic saving. What is to stop TeXShop from saving a partly constructed annotation behind your back, overwriting your old pdf output file? If you are working on a project which no longer typesets, perhaps you cannot restore the pdf output broken by such an automatic save.
+
+If you are bothered by this nightmare, I have good news.  Before version 5.42, TeXShop never created a pdf file, never modified a pdf file it had previously opened, and indeed could not write pdf files to disk at all.  When you started a new document with only a source window open and then pushed ``Typeset'',  a new pdf file appeared and TeXShop opened that file and displayed it in the Preview Window. But that new file was created and written to disk by pdfTeX, or LuaTeX, or some other typesetting engine in TeX Live. Never by TeXShop. When you edited the source and typeset again, a new version of the pdf file overwrote the old version and was displayed in the Preview Window. But the overwrite was done by pdfTeX, or LuaTeX, or some other typesetting engine. Never by TeXShop.
+
+Older versions of TeXShop could open and display pdf files. But the program could not edit such files, and could not save the file back to disk.
+
+A ``TeXShop project'' contains  a tex source file, which is automatically saved as it is edited, and references to a pdf file which TeXShop can open and display but cannot edit or write to disk. When a pdf file is opened by TeXShop, it is still associated to a ``TeXShop project'', but this time the associated source file is empty. So the source file cannot be  saved to disk, and as before the related pdf file can be opened and viewed, but cannot be changed or saved.
+
+If you annotate a pdf file in Preview, Skim, or Adobe Acrobat, and then open the annotated file in TeXShop, it will never be modified or written by TeXShop because TeXShop doesn't know how to write pdf files! 
+
+Until now, that is. Version 5.42 of TeXShop has finally learned how to write pdf files to disk. But the only way to save a pdf file is by pushing the button ``Save Annotations'' in the Annotation Panel, and only the user can initiate that action. There is no automatic saving of annotated files. The Save Panel will issue a warning if the user tries to overwrite an existing file. 
+
+{\bf Warning:} TeXShop 5.42 does not issue a warning if you typeset or quit the program before saving your annotations.  This feature  may be added
+in the future. In the initial version, I wanted to avoid the distraction of such warnings because they would confuse users who activate automatic saving.  You may lose some annotations at first; complain and I'll be motivated to fix this in a later version. 
+
+
+\subsection{Don't Do This}
+
+Each document has its own individual annotation panel, so if several projects are open and each is being annotated, confusion will ensue. Don't do this.
+
 \chapter{Japan}
 
 For reasons I do not understand, a series of very important TeXShop code contributions have come from Japan. The OgreKit Find Panel  is a project by Isao Sonabe used by several open source programs. It provides support for regular expressions. The Macro support comes from  Mitsuhiro Shishikura, who also created the magnifying glass and the original Display and Magnifying Modes for the Preview Window. More recently, Yusuke Terada contributed the Character Info panel to obtain Unicode information, the invisible character support,  several different ways to simplify entry of matching parentheses during text entry, and other features.
@@ -4429,7 +5129,7 @@ All of these people sent me code with only a few connection points, and then sen
 
 There are special problems when typesetting Japanese text, and I understand only a tiny fraction of what is required. I first heard of problems when Japanese students at the University of Oregon came to my office with bug reports about TeXShop. These reports made no sense, and seemed to involve the yen symbol. The students were emissaries rather than users and didn't have details. 
 
-Eventually I learned the story, which is amusing. When Apple originally sold Macs in Japan, they used the standard American keyboard. There was one problem. Even if the owner typed in English, a yen symbol was essential. So Apple used the backslash key, changing the symbol on the key top to a yen, and changing the backslash to a yen in all the fonts. This caused no problem in LaTeX because the input code was still ascii for backslash.
+Eventually I learned the story, which is amusing. When Apple originally sold Macs in Japan, they used the standard U.S. keyboard. There was one problem. Even if the owner typed in English, a yen symbol was essential. So Apple used the backslash key, changing the symbol on the key top to a yen, and changing the backslash to a yen in all the fonts. This caused no problem in LaTeX because the input code was still ascii for backslash.
 
 Then later, Apple grew more conscientious about unicode, and now their keyboards really output a Unicode Yen.
 Luckily, Donald Knuth had not hardwired the backslash character into TeX, but had made that character configurable. Since the Japanese were used to using the yen symbol, they just recompiled TeX so commands started with yen. However, this required that all of the style and package files be slightly edited to also use a yen.
@@ -4459,7 +5159,7 @@ The solution is to rewrite the TeXShop Preferences data file from scratch. Do th
 \item Quit TeXShop.
 \item Go to \path{~/Library/Preferences}, find the file {\em TeXShop.plist}, and drag this file to the desktop.
 \item Restart TeXShop.
-\item Reset any Preference changes you made have made previously.
+\item Reset any Preference changes you might have made previously.
 \end{itemize}
 
 If this step doesn't fix the problem and you want to return to your earlier Preference settings, you can do so  using the saved copy on the desktop. But reinstalling this copy requires care because the system caches the Preference file for extra startup speed. Proceed as follows:
@@ -4852,7 +5552,7 @@ There is a way to discover all TeXShop Preferences and their current values. In 
 
 \newpage
 
-\section{Preferences Created Before Yosemite }
+\section{Long Standing Hidden Preferences }
 
 These preferences have existed for a long time. Most of them are still active, if seldom used.
 
@@ -4935,6 +5635,8 @@ Version 2.38 also marks matching parentheses with a yellow badge over the parent
 \begin{verbatim}
    defaults write TeXShop brieflyFlashYellowForMatch NO
 \end{verbatim}
+
+\newpage
 
 \subsubsection {<Preferences for Line Spacing in the Source Window>}
 The command below sets the line spacing in the source window. The default value 1.0 corresponds to standard single spacing, the value 10.0 corresponds to double spacing, and values outside the range 0.5 < value < 40.0 will be ignored.
@@ -5034,6 +5736,7 @@ Ulrich Bauer added a patch to make TeXShop perform better when used with a serve
    defaults write TeXShop WatchServer NO
 \end{verbatim}
 
+\newpage
 \subsubsection{<Preferences for the Tags Menu>}
 
 TeXShop adds lines which begin with the words
@@ -5043,8 +5746,7 @@ TeXShop adds lines which begin with the words
  to the Tag menu. To turn this off
  \begin{verbatim}
     defaults write TeXShop TagSections NO
- \end{verbatim}
- \newpage
+\end{verbatim}
 ConTeXt users may want additional words to be recognized and added to the Tag menu. For
 instance, they want
 \begin{verbatim}
@@ -5056,6 +5758,7 @@ The following command adds these words
    defaults write TeXShop ConTeXtTags
 \end{verbatim}
 
+\newpage
 \subsubsection{<Obsolete Preferences>}
 
 These items should never be used, but are listed for completeness.
@@ -5252,7 +5955,7 @@ The optional menu to select the encoding was removed from the Save Dialog. To ge
    defaults write TeXShop EncodingMenuInSaveDialog YES
 \end{verbatim}
 
-\newpage
+
 \subsubsection{<Preferences for the Preview Window>}
 
 In double page mode, the initial page is shown by itself and then pages are shown side by side. This is called Book Mode. A hidden preference setting turns it off
@@ -5290,8 +5993,8 @@ This trick is off by default, but can be turned on to work automatically using
 \begin{verbatim}
    defaults write TeXShop FixVoiceOver Yes
 \end{verbatim}
-
 \newpage
+
 \subsubsection{<Obsolete Preferences Introduced To Find a Bug>}
 
 Several years ago, a small number of users reported that while typesetting documents with at least 700 pages, typesetting would suddenly stop in the middle without an error message. This was the most difficult bug I ever faced. The Changes document explains how it was finally fixed. Before the fix, several hidden preferences were introduced so users could help search for a solution. All are now obsolete, but we list them below.

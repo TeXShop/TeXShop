@@ -482,9 +482,9 @@
     
     // WARNING: g_taggedTeXSections may be reset in EncodingSupport
 	
-	if ([SUD boolForKey: ConTeXtTagsKey]) {
+    if ([SUD boolForKey: ConTeXtTagsKey]) {
         
-		g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
+        g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
                                @"\\section",
                                @"\\subsection",
                                @"\\subsubsection",
@@ -499,7 +499,7 @@
                                @"\\subsubsubsubsubject",
                                nil];
         
-		g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
+        g_taggedTagSections = [[NSArray alloc] initWithObjects:@"chapter: ",
                                @"section: ",
                                @"    subsection: ",
                                @"        subsubsection: ",
@@ -514,8 +514,9 @@
                                @"            subsubsubsubsubject: ",
                                nil];
         
-        
-	} else {
+    }
+    
+  else {
 		
         /*
          g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
@@ -532,7 +533,7 @@
          */
         
         g_taggedTeXSections = [[NSArray alloc] initWithObjects:@"\\chapter",
-                               @"\\part",
+                               @"\\part{",
                                @"\\section",
                                @"\\subsection",
                                @"\\subsubsection",
@@ -540,7 +541,7 @@
                                @"\\subparagraph",
                                @"\\frametitle",
                                @"% \\chapter",
-                               @"% \\part",
+                               @"% \\part{",
                                @"% \\section",
                                @"% \\subsection",
                                @"% \\subsubsection",
@@ -680,6 +681,7 @@
                       @"ptx",
                       @"py",
                       @"typ",
+                      @"adoc",
                        nil];
     
     commandsToSpellCheck = [[NSArray alloc] initWithObjects:

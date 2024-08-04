@@ -108,6 +108,13 @@ enum RootCommand
     IBOutlet ScrapTextView     *scrapTextView;
     IBOutlet ScrapPDFKitView    *scrapPDFKitView;
     
+    IBOutlet NSPanel            *stringWindow;
+    IBOutlet NSTextView         *stringWindowTextView;
+    IBOutlet NSButton           *stringLeft;
+    IBOutlet NSButton           *stringCenter;
+    IBOutlet NSButton           *stringRight;
+    
+    
     IBOutlet    NSWindow        *fullSplitWindow;
     IBOutlet    NSView          *leftView;
     IBOutlet    NSView          *rightView;
@@ -124,7 +131,6 @@ enum RootCommand
 
 	IBOutlet NSWindow			*outputWindow;		/*" window displaying the output of the running TeX process "*/
 	IBOutlet NSTextView			*outputText;		/*" text displaying the output of the running TeX process "*/
-
 	IBOutlet NSTextField		*texCommand;		/*" connected to the command textField on the errors panel "*/
 	IBOutlet NSPopUpButton		*popupButton;		/*" popupButton displaying all the TeX templates "*/
     IBOutlet NSPopUpButton      *spopupButton;        /*" popupButton displaying all the TeX templates "*/
@@ -205,13 +211,16 @@ enum RootCommand
     IBOutlet    NSControl       *uLog;
     IBOutlet    NSControl       *vLog;
     IBOutlet    NSControl       *wLog;
+    IBOutlet    NSControl       *errorLog;
     
     IBOutlet    NSTextField     *saveFormatLabel;
     IBOutlet    NSPopUpButton   *saveFormatMenu;
     NSSavePanel                 *theSavePanel;
     
-    IBOutlet    NSBox            *myURLField;
-  
+    IBOutlet    NSBox           *myURLField;
+    
+    IBOutlet    NSMenu          *annotationMenu;
+    IBOutlet    NSPanel         *annotationChoices;
     
     
     NSMenu				*mouseModeMenuKit; // mitsu 1.29 (O)
@@ -452,6 +461,7 @@ enum RootCommand
 @property           BOOL                automaticSpelling;
 @property           BOOL                syntaxcolorEntry;
 @property           BOOL                blockCursor;
+@property           BOOL                docUseAnnotationMenu;
 
 
 @property           BOOL                fileIsXML;
@@ -548,6 +558,7 @@ enum RootCommand
 // for HTML
 @property (nonatomic, strong) IBOutlet TSHTMLWindow *htmlWindow;
 @property (nonatomic, strong) IBOutlet WKWebView *htmlView;
+@property (nonatomic, strong) IBOutlet NSButton *EditModeCheckBox;
 
 // Values for PreviewType:  0 = use old method
 //                          1 = no Preview
@@ -557,7 +568,7 @@ enum RootCommand
 @property NSInteger PreviewType;
 
 
-
+- (NSMenu *)getContextMenu;
 
  - (IBAction)setSaveExtension: sender;
 - (IBAction)changeMouseMode: sender;
@@ -597,6 +608,16 @@ enum RootCommand
 - (void) cancelForPanel: sender;  //needed?
 - (void) showStatistics: sender;
 - (void) updateStatistics: sender;
+
+- (IBAction) saveAnnotations: sender;
+- (IBAction) setEditMode: sender;
+- (IBAction) removeStreams: sender;
+- (IBAction) showColorPanel: sender;
+- (IBAction) showFontPanel: sender;
+- (IBAction) showTextPanel: sender;
+- (IBAction) acceptString: sender;
+- (void) setToggleEditModeCheck: (NSInteger)value;
+
 - (IBAction) doTemplate: sender;
 - (IBAction) doPDFSearch: sender;
 - (IBAction) doHtmlSearch: sender;
@@ -608,6 +629,8 @@ enum RootCommand
 - (IBAction)toggleExplColor: sender;
 - (IBAction)toggleBlockCursor:sender;
 - (IBAction)RescanMagicComments:sender;
+- (IBAction)endTheSheetWithOK:(id)sender;
+- (IBAction)endTheSheetWithCancel:(id)sender;
 
 
 // - (void) tryScrap:(id)sender;
@@ -745,7 +768,17 @@ enum RootCommand
 - (void)activateFrontWindow;
 - (void)voiceOverFix;
 - (void)readExplColors;
-
+- (void)showStringWindow;
+- (void)setStringWindowString: (NSString *)theString;
+- (void)setStringWindowAlignment: (NSInteger)value;
+- (IBAction)stringLeftPushed:(id)sender;
+- (IBAction)stringCenterPushed:(id)sender;
+- (IBAction)stringRightPushed:(id)sender;
+- (NSString *)getStringWindowString;
+- (NSWindow *)getStringWindow;
+- (NSTextView *)getStringWindowTextView;
+- (NSMenu *)getAnnotationMenu;
+- (NSPanel *)getChoicesPanel;
 
 
 // BibDesk Completion
@@ -837,6 +870,8 @@ enum RootCommand
 
 - (NSString *)filterBackslashes:(NSString *)aString;
 - (NSStringEncoding)dataEncoding:(NSData *)theData;
+- (void)annotationPanelWillClose:(NSNotification *)notification;
+
 
 @end
 

@@ -120,12 +120,141 @@ withDarkColors = NO;
     }
 }
 
+- (void)showStringWindow
+{
+ //   stringWindow.floatingPanel = YES;
+    [stringWindow orderFront:self];
+}
+
+- (void)setStringWindowString: (NSString *)theString
+{
+    NSString *currentString;
+    NSRange theRange;
+    NSTextView  *theTextView;
+    
+      
+    currentString = [stringWindowTextView string];
+    theRange.location = 0;
+    theRange.length = [currentString length];
+    
+    [stringWindowTextView insertText: theString replacementRange: theRange];
+}
+
+- (void)setStringWindowAlignment: (NSInteger)value
+{
+    NSTextView* theTextView;
+    NSRange     theRange;
+    NSInteger   theLength;
+    
+    theTextView = [self getStringWindowTextView];
+    theRange.location = 0;
+    theLength = [[theTextView string] length];
+    theRange.length = theLength;
+    
+     switch(value)
+    {
+        case 0:
+            [theTextView setAlignment:NSTextAlignmentLeft range: theRange ];
+            break;
+            
+        case 1:
+            [theTextView setAlignment:NSTextAlignmentCenter range: theRange ];
+            break;
+            
+        case 2:
+            [theTextView setAlignment:NSTextAlignmentRight range: theRange ];
+            break;
+            
+        default:
+            [theTextView setAlignment:NSTextAlignmentCenter range: theRange ];
+            
+           
+           
+    }
+  
+    
+}
+
+- (void)stringLeftPushed:(id)sender
+{
+    [stringLeft setState:1];
+    [stringCenter setState:0];
+    [stringRight setState:0];
+    [self.myPDFKitView setStringAlignment:0];
+    [self setStringWindowAlignment: 0];
+}
+
+- (void)stringCenterPushed:(id)sender
+{
+    [stringLeft setState:0];
+    [stringCenter setState:1];
+    [stringRight setState:0];
+    [self.myPDFKitView setStringAlignment:1];
+    [self setStringWindowAlignment: 1];
+}
+
+- (void)stringRightPushed:(id)sender
+{
+    [stringLeft setState:0];
+    [stringCenter setState:0];
+    [stringRight setState:1];
+    [self.myPDFKitView setStringAlignment:2];
+    [self setStringWindowAlignment: 2];
+}
+
+
+
+- (NSString *)getStringWindowString
+{
+    NSTextView *theTextView;
+    NSString    *theString;
+    
+    theTextView = [self getStringWindowTextView];
+    theString = [theTextView string];
+    return theString;
+    
+    // return @"Hello, world";
+    
+    //return [stringWindowTextView string];
+}
+
+- (NSPanel *)getStringWindow
+{
+    return stringWindow;
+}
+
+- (NSTextView *)getStringWindowTextView
+{
+    return stringWindowTextView;
+}
+
+- (NSMenu *)getAnnotationMenu
+{
+    return annotationMenu;
+}
+
+- (NSPanel *)getChoicesPanel
+{
+    return annotationChoices;
+}
+
+-  (NSMenu *)getContextMenu
+{
+    
+    if (self.docUseAnnotationMenu)
+        return [self getAnnotationMenu];
+    else
+        return nil;
+        
+}
 
 - (id)init
 {
     NSColor *myColor1, *myColor2, *myColor3, *myColor4, *myColor5, *myColor6, *myColor7;
     
 	id result = [super init];
+    
+    self.docUseAnnotationMenu = NO;
 	
 	isFullScreen = NO;
 
@@ -144,6 +273,7 @@ withDarkColors = NO;
 	self.markerColorAttribute = 0;
     
     [self readExplColors];
+    [self setToggleEditModeCheck:0];
     
     
     /*
@@ -222,7 +352,7 @@ withDarkColors = NO;
     self.automaticSpelling = [SUD boolForKey:spellingAutomaticDefaultKey];
     fromAlternate = NO;
     self.PreviewType = 0; // use old method
-    
+    // [stringCenter setState:1];
     self.syntaxcolorEntry = [SUD boolForKey:SyntaxColorEntryLineKey];
     self.blockCursor = [SUD boolForKey:BlockCursorKey];
     if (self.blockCursor)
@@ -2815,6 +2945,10 @@ else {
     [self.logWindow close];
     [scrapPDFWindow close];
     [scrapWindow close];
+    [annotationChoices close];
+    [[self getStringWindow] close];
+    [[NSColorPanel sharedColorPanel] close];
+    [[NSFontPanel sharedFontPanel] close];
 	
 	/* The next line fixes a crash bug in Jaguar; see notifyActiveTextWindowClosed for
 	a description. */
@@ -3138,6 +3272,11 @@ else {
 	}
 }
 
+- (void)annotationPanelWillClose:(NSNotification *)notification
+{
+        [self.myPDFKitView setRunMode:self];
+        [self.myPDFKitView closePanels];
+}
 
 - (void)registerForNotifications
 /*" This method registers all notifications that are necessary to work properly together with the other AppKit and TeXShop objects.
@@ -3155,9 +3294,13 @@ else {
  //                                                name:NSApplicationWillTerminateNotification object:nil];
 
 
-	// register for notifications when the document window becomes key so we can remember which window was
-	// the frontmost. This is needed for the preferences.
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(annotationPanelWillClose:) name:NSWindowWillCloseNotification  object:annotationChoices];
+    
+    // register for notifications when the document window becomes key so we can remember which window was
+    // the frontmost. This is needed for the preferences.
+
+   
 if ( ! skipTextWindow) {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelsAndTagsAtClick:) name:NSPopUpButtonWillPopUpNotification object:nil];
     
@@ -3165,6 +3308,7 @@ if ( ! skipTextWindow) {
 	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(annotationPanelWillClose:) name:NSWindowWillCloseNotification  object:annotationChoices];
     
     [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textSplitWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:fullSplitWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentSplitWindowWillClose:) name:NSWindowWillCloseNotification object:fullSplitWindow];
@@ -4878,13 +5022,19 @@ preference change is cancelled. "*/
                 NSUInteger    i;
                 for (i = 0; i < [g_taggedTeXSections count]; ++i) {
                     NSString* tag = [g_taggedTeXSections objectAtIndex:i];
-                    
+                     
                     if ([line hasPrefix:tag]) {
                         // Extract the text after the 'section' command, then prefix it with a nice header
                         // text taken from g_taggedTagSections.
                         // This tries to only extract the text inside a matching pair of braces '{' and '}'.
                         // To see why, consider this example:
                         //   \section*{Section {\bf headers} are important} \label{a-section-label}
+                        
+                        // 2024 Koch
+                        if ([tag isEqualToString: @"\\part{"])
+                            tag = @"\\part";
+                        if ([tag isEqualToString: @"% \\part{"])
+                            tag = @"% \\part";
                         
                         NSInteger braceCount = 0;
                         unichar c;
@@ -6978,10 +7128,7 @@ if (! useFullSplitWindow) {
 }
     
     
-    
-    
-    
-
+ 
 
 - (void) writeTexOutput: (NSNotification *)aNotification
 {
@@ -6991,9 +7138,9 @@ if (! useFullSplitWindow) {
     NSInteger                 lineCount, wordCount;
     BOOL                result;
 
-	NSFileHandle *myFileHandle = [aNotification object];
-	if (myFileHandle == self.readHandle) {
-		// NSData* myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+    NSFileHandle *myFileHandle = [aNotification object];
+    if (myFileHandle == self.readHandle) {
+        // NSData* myData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         NSData* myData = [self availableDataOrError: myFileHandle];
 //        myData = [myFileHandle availableData];
         if ([myData length]) {
@@ -7013,15 +7160,15 @@ if (! useFullSplitWindow) {
 
                 // theEncoding = [[TSEncodingSupport sharedInstance] defaultEncoding];
             theEncoding = _encoding;
-			newOutput = [[NSString alloc] initWithData: myData encoding: theEncoding];
-			
-			// 1.35 (F) fix --- suggested by Kino-san
-			if (newOutput == nil) {
-				newOutput = [[NSString alloc] initWithData: myData encoding: NSISOLatin9StringEncoding];
-			}
-			
+            newOutput = [[NSString alloc] initWithData: myData encoding: theEncoding];
+            
+            // 1.35 (F) fix --- suggested by Kino-san
+            if (newOutput == nil) {
+                newOutput = [[NSString alloc] initWithData: myData encoding: NSISOLatin9StringEncoding];
+            }
+            
                 loopString = newOutput;
-			
+            
           if (self.automaticCorrection)
              do
              {
@@ -7041,78 +7188,78 @@ if (! useFullSplitWindow) {
                 
                 
                 
-			
-			myLength = [newOutput length];
-			testRange.location = [newOutput length] - 2;
-			testRange.length = 1; 
-			if ((makeError) && (myLength > 2) && (errorNumber < NUMBEROFERRORS)  &&
-					([[newOutput substringWithRange: testRange] isEqualToString: @"?"])) { 
-				searchString = @"l.";
-				lineRange.location = 0;
-				lineRange.length = 1;
-				while (lineRange.location < myLength) {
-					[newOutput getLineStart: &start end: &end contentsEnd: nil forRange: lineRange];
-					lineRange.location = end;
-					searchRange.location = start;
-					searchRange.length = end - start;
-					tempString = [newOutput substringWithRange: searchRange];
-					myRange = [tempString rangeOfString: searchString];
-					if ((myRange.location = 1) && (myRange.length > 0)) {
-						numberOutput = [tempString substringFromIndex:(myRange.location + 1)];
-						error = [numberOutput integerValue];
-						if ((error > 0) && (self->errorNumber < NUMBEROFERRORS)) {
-							self->errorLine[self->errorNumber] = error;
-							
-							// new code to find text just before error
-							if (self->errorText[self->errorNumber] != nil)
-				//				[errorText[errorNumber] release];
-							self->errorText[self->errorNumber] = nil;
-							
-							searchDotsRange = [numberOutput rangeOfString: @"..."];
-							if (searchDotsRange.location == NSNotFound) {
-								searchDotsRange = [numberOutput rangeOfString: @" "];
-								if (searchDotsRange.location != NSNotFound) {
-									searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 1)];
-									if (searchText != nil)
-										self->errorText[self->errorNumber] = searchText ;
-								}
-							}
-							else {
-								searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 3)];
-								if (searchText != nil)
-									self->errorText[self->errorNumber]  = searchText ;
-							}
-								
-							
-							// new code to find file containing error
-							// ----------
-					//		if (errorLinePath[errorNumber] != nil)
-					//			[errorLinePath[errorNumber] release];
-							self->errorLinePath[self->errorNumber] = nil;
-							
-							theNumber = [NSNumber numberWithInteger:error];
-							theNumberString = [theNumber stringValue];
-							theLine = [[@":" stringByAppendingString: theNumberString] stringByAppendingString: @":"];
-							errorRange = [newOutput rangeOfString: theLine];
-							if (errorRange.location != NSNotFound) {
-								[newOutput getLineStart: &start1 end: &end1 contentsEnd: nil forRange: errorRange];
-								pathRange.location = start1;
-								pathRange.length = errorRange.location - pathRange.location;
-								thePath = [newOutput substringWithRange: pathRange];
-								self->errorLinePath[self->errorNumber] = thePath ;
-							}
-							// end of new code
-							// -----------
-							
-							self->errorNumber++;
+            
+            myLength = [newOutput length];
+            testRange.location = [newOutput length] - 2;
+            testRange.length = 1;
+            if ((makeError) && (myLength > 2) && (errorNumber < NUMBEROFERRORS)  &&
+                    ([[newOutput substringWithRange: testRange] isEqualToString: @"?"])) {
+                searchString = @"l.";
+                lineRange.location = 0;
+                lineRange.length = 1;
+                while (lineRange.location < myLength) {
+                    [newOutput getLineStart: &start end: &end contentsEnd: nil forRange: lineRange];
+                    lineRange.location = end;
+                    searchRange.location = start;
+                    searchRange.length = end - start;
+                    tempString = [newOutput substringWithRange: searchRange];
+                    myRange = [tempString rangeOfString: searchString];
+                    if ((myRange.location = 1) && (myRange.length > 0)) {
+                        numberOutput = [tempString substringFromIndex:(myRange.location + 1)];
+                        error = [numberOutput integerValue];
+                        if ((error > 0) && (self->errorNumber < NUMBEROFERRORS)) {
+                            self->errorLine[self->errorNumber] = error;
+                            
+                            // new code to find text just before error
+                            if (self->errorText[self->errorNumber] != nil)
+                //                [errorText[errorNumber] release];
+                            self->errorText[self->errorNumber] = nil;
+                            
+                            searchDotsRange = [numberOutput rangeOfString: @"..."];
+                            if (searchDotsRange.location == NSNotFound) {
+                                searchDotsRange = [numberOutput rangeOfString: @" "];
+                                if (searchDotsRange.location != NSNotFound) {
+                                    searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 1)];
+                                    if (searchText != nil)
+                                        self->errorText[self->errorNumber] = searchText ;
+                                }
+                            }
+                            else {
+                                searchText = [numberOutput substringFromIndex: (searchDotsRange.location + 3)];
+                                if (searchText != nil)
+                                    self->errorText[self->errorNumber]  = searchText ;
+                            }
+                                
+                            
+                            // new code to find file containing error
+                            // ----------
+                    //        if (errorLinePath[errorNumber] != nil)
+                    //            [errorLinePath[errorNumber] release];
+                            self->errorLinePath[self->errorNumber] = nil;
+                            
+                            theNumber = [NSNumber numberWithInteger:error];
+                            theNumberString = [theNumber stringValue];
+                            theLine = [[@":" stringByAppendingString: theNumberString] stringByAppendingString: @":"];
+                            errorRange = [newOutput rangeOfString: theLine];
+                            if (errorRange.location != NSNotFound) {
+                                [newOutput getLineStart: &start1 end: &end1 contentsEnd: nil forRange: errorRange];
+                                pathRange.location = start1;
+                                pathRange.length = errorRange.location - pathRange.location;
+                                thePath = [newOutput substringWithRange: pathRange];
+                                self->errorLinePath[self->errorNumber] = thePath ;
+                            }
+                            // end of new code
+                            // -----------
+                            
+                            self->errorNumber++;
                             [self->outputWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:)
                                                                 withObject:self waitUntilDone:NO];
-						}
-					}
+                        }
+                    }
                 }
-			}
+            }
 
-			dispatch_sync(dispatch_get_main_queue(), ^{ // GUI stuff should happen on main thread
+            dispatch_sync(dispatch_get_main_queue(), ^{ // GUI stuff should happen on main thread
                 self->typesetStart = YES;
                 NSRange theRange = [self->outputText selectedRange];
                 theRange.length = [newOutput length];
@@ -7122,12 +7269,12 @@ if (! useFullSplitWindow) {
                 }
                 [self->outputText scrollRangeToVisible: [self->outputText selectedRange]];
                 });
-	//		[newOutput release];
+    //        [newOutput release];
             });
             // [self.readHandle readInBackgroundAndNotify];
             [self.readHandle waitForDataInBackgroundAndNotify];
             }
-	}
+    }
     else if (myFileHandle == self.texloganalyserHandle) {
         texloganalyserData = [self availableDataOrError: myFileHandle];
         // texloganalyserData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
@@ -7138,10 +7285,10 @@ if (! useFullSplitWindow) {
             // [self.logTextView insertText: texloganalyserString];
             
             NSRange theRange = [self.logTextView selectedRange];
-			theRange.length = [texloganalyserString length];
-			[self.logTextView replaceCharactersInRange: [self.logTextView selectedRange] withString: texloganalyserString];
-			[self.logTextView scrollRangeToVisible: [self.logTextView selectedRange]];
- 			// [self.texloganalyserHandle readInBackgroundAndNotify];
+            theRange.length = [texloganalyserString length];
+            [self.logTextView replaceCharactersInRange: [self.logTextView selectedRange] withString: texloganalyserString];
+            [self.logTextView scrollRangeToVisible: [self.logTextView selectedRange]];
+             // [self.texloganalyserHandle readInBackgroundAndNotify];
             [self.texloganalyserHandle waitForDataInBackgroundAndNotify];
         }
         
@@ -7156,32 +7303,36 @@ if (! useFullSplitWindow) {
    
     
     else if (myFileHandle == self.detexHandle) {
-		// detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
+        // detexData = [[aNotification userInfo] objectForKey:@"NSFileHandleNotificationDataItem"];
         detexData = [self availableDataOrError: myFileHandle];
-		if ([detexData length]) {
-			detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];
-			NSScanner *myScanner = [NSScanner scannerWithString:detexString];
-			result = [myScanner scanInteger:&lineCount];
-			if (result)
-				result = [myScanner scanInteger:&wordCount];
-			if (result)
-				result = [myScanner scanInteger:&charCount];
-			if (result) {
-				NSNumber *lineNumber = [NSNumber numberWithInteger:lineCount];
-				NSNumber *wordNumber = [NSNumber numberWithInteger:wordCount];
-				NSNumber *charNumber = [NSNumber numberWithInteger:charCount];
-				[[statisticsForm cellAtIndex:0] setObjectValue:[wordNumber stringValue]];
-				[[statisticsForm cellAtIndex:1] setObjectValue:[lineNumber stringValue]];
-				[[statisticsForm cellAtIndex:2] setObjectValue:[charNumber stringValue]];
-			}
-		}
-		if (self.statTempFile) { // we got statistics for a selection and need to erase the temp file
-			[[NSFileManager defaultManager] removeItemAtPath:self.statTempFile error: NULL];
-		//	[self.statTempFile release];
-			self.statTempFile = nil;
-			}
-	}
+        if ([detexData length]) {
+            detexString = [[NSString alloc] initWithData: detexData encoding: NSISOLatin9StringEncoding];
+            NSScanner *myScanner = [NSScanner scannerWithString:detexString];
+            result = [myScanner scanInteger:&lineCount];
+            if (result)
+                result = [myScanner scanInteger:&wordCount];
+            if (result)
+                result = [myScanner scanInteger:&charCount];
+            if (result) {
+                NSNumber *lineNumber = [NSNumber numberWithInteger:lineCount];
+                NSNumber *wordNumber = [NSNumber numberWithInteger:wordCount];
+                NSNumber *charNumber = [NSNumber numberWithInteger:charCount];
+                [[statisticsForm cellAtIndex:0] setObjectValue:[wordNumber stringValue]];
+                [[statisticsForm cellAtIndex:1] setObjectValue:[lineNumber stringValue]];
+                [[statisticsForm cellAtIndex:2] setObjectValue:[charNumber stringValue]];
+            }
+        }
+        if (self.statTempFile) { // we got statistics for a selection and need to erase the temp file
+            [[NSFileManager defaultManager] removeItemAtPath:self.statTempFile error: NULL];
+        //    [self.statTempFile release];
+            self.statTempFile = nil;
+            }
+    }
 }
+    
+    
+
+
 
 // Code by Nicolas Ojeda Bar, modified by Martin Heusse
 - (NSInteger) textViewCountTabs: (NSTextView *) aTextView andSpaces: (NSInteger *) spaces
@@ -7757,7 +7908,60 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
 }
 // end addition
 
+- (IBAction) saveAnnotations: sender;
+{
+    /*
+    NSString    *filePath;
+    NSString    *rawPath;
+    NSString    *writePath;
+    
+    filePath = [[self fileURL] path];
+    if (filePath)
+        {
+            rawPath = [filePath stringByDeletingPathExtension];
+            writePath = [[rawPath stringByAppendingString:@"-Annotated"] stringByAppendingPathExtension:@"pdf"];
+            [self.myPDFKitView.document writeToFile: writePath];
+            // NSLog(writePath);
+        }
+     */
+    
+    [self.myPDFKitView saveAnnotations:sender];
+}
 
+- (IBAction) setEditMode: sender;
+{
+    [self.myPDFKitView setEditMode:sender];
+}
+
+- (IBAction) removeStreams: sender;
+{
+    [self.myPDFKitView removeStreams:sender];
+}
+
+- (IBAction) showColorPanel: sender;
+{
+    [self.myPDFKitView showColorPanel:sender];
+}
+
+- (IBAction) showFontPanel: sender;
+{
+    [self.myPDFKitView showFontPanel:sender];
+}
+
+- (IBAction) showTextPanel: sender;
+{
+    [self.myPDFKitView showTextPanel:sender];
+}
+
+- (IBAction) acceptString: sender;
+{
+    [self.myPDFKitView acceptString:sender];
+}
+
+- (void) setToggleEditModeCheck: (NSInteger)value
+{
+    [self.EditModeCheckBox setState: value];
+}
 
 // added by John A. Nairn
 // check for linked files.
@@ -9961,6 +10165,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     NSStringEncoding    defaultEncoding;
 	NSStringEncoding	theEncoding;
     NSString            *flags;
+    BOOL                errorFlag;
     NSDate              *myDate;
     NSString            *enginePath, *tetexBinPath;
     NSMutableArray      *args;
@@ -9985,6 +10190,74 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
                 content = [[NSString alloc] initWithData:logData encoding:defaultEncoding] ;
             if (!content) 
                 return NO;
+            
+            
+            errorFlag = NO;
+            if ([errorLog intValue] != 0)
+                errorFlag = YES;
+            
+            if (errorFlag)
+            {
+                 
+                NSUInteger  myLength, lineLength;
+                NSRange     lineRange, searchRange, errorRange;
+                NSString    *lineString, *previousLine, *searchString;
+                NSUInteger  start, end;
+                NSString    *numberOutput;
+                NSInteger   errorLineNumber;
+                
+                
+                // NSLog(@"got here");
+                [self.logTextView setString: @""];
+                
+                myLength = [content length];
+                lineRange.location = 0;
+                lineRange.length = 1;
+                searchString = @"l.";
+                
+                previousLine = @"\r";
+                
+                while (lineRange.location < myLength) {
+                    [content getLineStart: &start end: &end contentsEnd: nil forRange: lineRange];
+                    lineRange.location = end;
+                    
+                    searchRange.location = start;
+                    searchRange.length = end - start;
+                    lineString = [content substringWithRange: searchRange];
+                    lineLength = [lineString length];
+                    
+                    errorRange = [lineString rangeOfString: searchString];
+                    
+                     if (errorRange.location != NSNotFound)
+                     //    [self.logTextView insertText: lineString];
+                    {
+                        // NSLog(@"there is an error");
+                        if ((errorRange.location + 2) < lineLength)  {
+                            numberOutput = [lineString substringFromIndex:(errorRange.location + 2)];
+                            // [self.logTextView insertText: numberOutput];
+                            errorLineNumber = [numberOutput integerValue];
+                            if (errorLineNumber > 0)
+                            {
+                                [self.logTextView insertText: previousLine];
+                                [self.logTextView insertText: lineString];
+                                [self.logTextView insertText: @"\r"];
+                            }
+                            
+                        }
+                       
+                    }
+                    previousLine = lineString;
+                    
+                   // [self.logTextView insertText: lineString];
+                }
+                            
+                    
+                
+             //   [self.logWindow setRepresentedFilename: logPath];
+             //   [self.logWindow setTitle:[logPath lastPathComponent]];
+             //   return YES;
+                
+            }
             
             flags = @"-";
             if ([eLog intValue] != 0)
@@ -10012,10 +10285,11 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
             if ([wLog intValue] != 0)
                 flags = [flags stringByAppendingString: @"w"];
             
-            if (([flags length] == 1) || (! [self.logExtension isEqualToString:@"log"]))
+            if (([flags length] == 1) && (!errorFlag) || (! [self.logExtension isEqualToString:@"log"]))
                 [self.logTextView setString: content];
             else {
-                [self.logTextView setString:@""];
+                if (!errorFlag)
+                    [self.logTextView setString:@""];
                 if (self.texloganalyserTask != nil) {
                     [self.texloganalyserTask terminate];
                     myDate = [NSDate date];
@@ -10958,6 +11232,15 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
     return textView2;
 }
 
+- (IBAction)endTheSheetWithOK:(id)sender
+{
+    [self.myPDFKitView endTheSheetWithOK: sender];
+}
+
+- (IBAction)endTheSheetWithCancel:(id)sender
+{
+    [self.myPDFKitView endTheSheetWithCancel: sender];
+}
 
 
 @end

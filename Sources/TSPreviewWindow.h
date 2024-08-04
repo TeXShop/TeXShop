@@ -125,6 +125,7 @@
 //- (void)configurePaperSize: sender;
 - (void) splitPdfKitWindow: (id)sender; 
 - (void)toggleLinkPopups: (id)sender;
+- (void)toggleApplicationMenu: (id)sender;
 - (void)switchSplitViews: (id)sender;
 - (void) splitWindow: (id)sender; // so menu item can split both source and preview window
 - (void)fixAfterRotation: (BOOL) clockwise;

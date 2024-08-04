@@ -23,6 +23,7 @@
  */
 
 #import <AppKit/AppKit.h>
+#import <ApplicationServices/ApplicationServices.h>
 #import <Quartz/Quartz.h>
 #import <AppKit/NSEvent.h>
 #import "OverView.h"
@@ -122,9 +123,28 @@
     NSInteger   splitTheIndex;
     NSRect      splitVisibleRect, splitVisibleRectLimited, splitFullRect;
     
+// Variables for Annotations
+    
+    PDFAnnotation    *_activeAnnotation;
+    NSPoint            _mouseDownLoc;
+    NSPoint            _clickDelta;
+    NSRect            _wasBounds;
+    NSPoint        _wasPoint;
+    BOOL            _mouseDownInAnnotation;
+    BOOL            _dragging;
+    BOOL            _resizing;
+    BOOL           _resizeLineUsingEnd;
+    BOOL            _resizeLineUsingStart;
+    BOOL            _editMode;
+    NSRect         selectedBounds;
+    PDFPage        *selectedPage;
+    BOOL           withBorder;
+    
+    
 	
 }
 
+// @property BOOL      useAnnotationMenu;
 @property (retain) PDFOutline						*outline;
 @property (retain) NSMutableArray					*searchResults;
 @property (weak) TSPreviewWindow                    *myPDFWindow;
@@ -160,6 +180,9 @@
 @property BOOL                                      doScroll;
 @property BOOL                                      skipLinks;
 @property BOOL                                      globalLongTerm;
+@property NSInteger                                 stringAlignment;
+
+@property BOOL                                      firstTime;
 
 
 
@@ -168,6 +191,7 @@
 - (void) awakeFromNib;
 - (void) setup;
 - (void) initializeDisplay;
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 - (void) showWithPath: (NSString *)imagePath;
 - (void) reShowWithPath: (NSString *)imagePath;
 - (void) showForSecond;
@@ -224,6 +248,7 @@
 - (BOOL) toolIsMagnification;
 - (BOOL) validateMenuItem:(NSMenuItem *)anItem;
 - (void) changeLinkPopups;
+// - (void) changeAnnotationMenu;
 - (void)setCurrentSelection:(PDFSelection *)selection;
 - (void)displayTotalPage: (NSInteger) totalPageCount;
 - (void) displayPageChange: (NSInteger)pageNumber;
@@ -288,6 +313,7 @@
 - (void)restoreLocationLimited;
 - (double)returnHeight;
 
+
 @end
 
 @interface MyPDFKitView (PDFDocumentDelegate)
@@ -317,3 +343,52 @@
 - (void)sendLineToTextMate: (NSInteger)aLine forPath: (NSString *)aPath;
 - (void)sendLineToOtherEditor: (NSInteger)aLine forPath: (NSString *)aPath;
 @end
+
+
+@interface MyPDFKitView (Annotations)
+- (void)strikeoutAnnotation: (id)sender;
+- (void)highlightAnnotation: (id)sender;
+- (void)underlineAnnotation: (id)sender;
+- (void)squareAnnotation: (id)sender;
+- (void)bsquareAnnotation: (id)sender;
+- (void)circleAnnotation: (id)sender;
+- (void)bcircleAnnotation: (id)sender;
+- (void)textAnnotation: (id)sender;
+- (void)btextAnnotation: (id)sender;
+- (void)arrowAnnotation: (id)sender;
+- (void)popupAnnotation: (id)sender;
+- (void)displayChoicesPanel: (id)sender;
+- (IBAction)endTheSheetWithOK:(id)sender;
+- (IBAction)endTheSheetWithCancel:(id)sender;
+
+
+// - (void) saveDocument: (id) sender;
+// - (void) saveDocumentAs: (id) sender;
+// - (void) delete: (id) sender;
+// - (void) reflectFont;
+// - (NSRect) resizeThumbForRect: (NSRect) rect rotation: (NSInteger) rotation;
+
+ - (void) transformContextForPage: (PDFPage *) page;
+ - (void) selectAnnotation: (PDFAnnotation *) annotation;
+ - (void) annotationChanged;
+ - (void)setEditMode: (id)sender;
+- (void)removeStreams: (id)sender;
+- (void)showColorPanel: (id)sender;
+- (void)showFontPanel: (id)sender;
+- (void)showTextPanel: (id)sender;
+- (void)acceptString: (id)sender;
+- (void)setRunMode: (id)sender;
+- (void)closePanels;
+- (void) saveAnnotations: (id)sender;
+- (void) toggleEditMode: (id)sender;
+
+- (BOOL)annotationDrawPage: (PDFPage *)page;
+- (BOOL)annotationMouseDown: (NSEvent *)theEvent;
+- (BOOL)annotationMouseDragged: (NSEvent *)theEvent;
+- (BOOL)annotationMouseUp: (NSEvent *)theEvent;
+- (BOOL)annotationKeyDown: (NSEvent *)theEvent;
+
+
+@end
+
+

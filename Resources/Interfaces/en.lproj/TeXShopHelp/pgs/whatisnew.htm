@@ -14,6 +14,73 @@
 
 
 <div id="content_normal">
+<P><h3>TeXShop Changes 5.42</h3></P>
+Versions 5.37 - 5.41 were never released. Version 5.42 has seven small changes and one major additional feature:
+<ul>
+<p><li> Recall that version 5.36 fixed a bug reported by Hans Schoutens which surfaced when his document reached a length of 1000 pages. His Page Number box displayed the number with a comma, writing for instance 1,213. In that case, it was not possible to use the box to go to page 1,209 by just changing the last two digits, because TeXShop ignores all numerals after the comma. I fixed this problem by removing all commas in the box before using the number to go to another page.
+<p>Shortly after making this fix, a similar complaint came from Emilio Faro Rivas. But in his country, periods are used  to separate groups of three digits, and commas are used to set off the fractional part of a number. So while I would write 1,213.74, Rivas would write 1.213,74. 
+
+<p> In the Language & Region control panel, Apple provides four different ways to determine how numbers are written. Since page numbers cannot have fractional part, TeXShop now removes all commas and periods from the Page Number box before interpreting the number.
+
+<p> Learning of two books with more than 1000 pages in the course of a couple of days reminded me of the English critic who met Edward Gibbons after skimming through the volumes of the Decline and Fall of the Roman Empire, and said "always scribble, scribble, scribble, eh Mr Gibbons.''
+<p><li> Version 5.42 fixes a bug reported by Juan Luis Varona Malumbres. In TeXShop Preferences under the Misc2 tab, there is an item reading "During File Save, Automatic UTF-8-Mac to UTF-8 Conversion", but this item no longer worked. I checked back to TeXShop 5.18 and the item was already broken then. The ultimate cause is embarrassing.  TeXShop's code interpreting a change in this preference read as follows
+<pre>
+     1) Remember the old Conversion value so we can undo if the user clicks "Cancel" rather than "OK"
+     2) Activate the font panel for the Console Font.
+     3) Modify the Console Font if the user chooses a new font.
+</pre> 
+Huh? It turns out that sometime in the past, a mistaken copy and paste operation replaced the rest of the
+code for Conversion with pieces of code for the Console Font. Miraculously, that bad code still compiled, and
+caused no problems when the Preference Panel ran except that the Conversion item no longer worked. The misplaced Console code also existed in its regular spot, where it did what it was supposed to do.  The bad code was removed and the original code was reinserted. Problem fixed.
+<p><li> Peter Smith requested that the keyboard shortcut command-T also apply if an Experiment window is open, and typeset for that window rather than for the entire document. Done.
+<p><li> If TeXShop opens the Log file of a project, a header at the top allows users to filter the contents of the log file based on various criteria, showing for instance all warnings, or all underfull boxes. This feature was added to TeXShop twenty years ago, and I had completely forgotten how it works. It turns out that texloganalyser is a perl script 
+by Thomas van Oudenhove, which he has maintained over the years. This script is in TeXLive, and TeXShop
+ calls the script to parse. Thanks, Thomas van Oudenhove, after all these years!
+ <p> This script does not have an option to print only error messages. But error messages in files typeset by TeXShop leave an easy-to-recognize trace in the log file due to the flag "-file-line-error" added by default in Preferences.
+ TeXShop already uses this trace to implement Goto Error. So an extra button has been added to the header when TeXShop displays Log Files allowing users to search for error messages.
+ <p><li> TeXShop can now open, write, and edit .adoc files. This was requested by Richard Bennett, who wrote that he is transitioning to using the asciidoc format and wanted to edit such files in TeXShop.
+ <p><li> In languages like Spanish, many words begin with "part", so using "part" as a trigger word in the Tags menu leads to incorrect items. This problem is fixed by changing the trigger to "part{".
+ <p><li> Finally, a comment about the PageNumber correction system introduced in versions 5.35 and 5.36
+ of TeXshop. Large documents often begin with preliminary pages,  numbered with Roman numerals. After that, the main pages begin, with numbering starting at page 1. But then the page number in the TeXShop Page Number Box  does not agree with the actual page number  shown in the document.
+<p> Version 5.36 provides an easy fix by asking the author to add just one line of source code. After the fix, TeXShop reports preliminary pages as 1#, 2#, 3#, ..., and then regular pages as 1, 2, 3, ...
+<p> To activate this fix when using LaTeX and related engines, add the line
+<pre>
+    \write128{Start of main material: \the\ReadonlyShipoutCounter.}
+</pre>
+to a spot in the source just after the main material is introduced.
+
+<p> If instead you are using plain TeX or related engines, add the line
+<pre>
+    \write128{Start of main material: \the\pageno.}
+</pre>
+to a spot in the source just after the main material is introduced.
+<p> Alan C. Bowen pointed out that the fix also works in ConTeXt, and in that case the line to add is
+<pre>
+    \write128{Start of main material: \the\realpageno}
+</pre>
+<p><li>The new feature is that TeXShop can now annotate pages of a pdf document. 
+See the "Annotation" chapter of the TeXShop manual for details.
+<p> It has always been possible to annotate pdf files created by TeXShop using a third party program like Preview, Skim, Adobe Acrobat, etc. The resulting annotated file can be opened in TeXShop and displayed alongside the
+original source and preview windows. So an author can write a paper in TeXShop, send the pdf output to an editor to be annotated in Adobe Acrobat, open the annotated version alongside the regular version in TeXShop, and revise as needed. All of this is possible in earlier versions of TeXShop because Apple's PDFKit supports annotation. This use pattern is likely to remain standard in the future because the listed programs and many others have  sophisticated annotation capabilities.
+<p> TeXShop 5.42  provides only a subset of easy to use annotations, but these may be
+helpful for those just starting to annotate, or if one author is creating both a manuscript and the annotated version
+at the same time. 
+<p> The new feature has been added in a nonintrusive manner. No new tools were added to the toolbar, no new code runs in standard mode, and the only difference a regular user will notice is a new item in the Preview menu called "Annotation Panel". 
+The ability to annotate in TeXShop may not change  authors' working habits, but it was a fun summer project for me.
+
+<p> For those who don't read the manual, here's a short survey. The annotation panel contains all tools needed to annotate. Switch between Edit mode and Run mode at top left. Annotations are created, moved,  resized, and modified in Edit mode. They are fixed in Run mode. Create new annotations by clicking on the picture of the annotation in the panel. For instance, select some text and then click strikeout to strike out the text. Emphasize and underline work the same way.
+
+<p> For  other annotations, select some pdf text and click on a picture in the panel to make an annotation appear near the text selection. Or just click the picture and the annotation will appear at bottom left. Drag and resize annotations
+after creation. To change annotation colors, open the Color Panel,
+select an annotation, and then select a color. One annotation shows text on a colored background. Change the background color as above, and hold down the option key while selecting a color to change the text color. 
+To change the fonts in annotations with text, open the Font Panel, select an annotation, and  change the font in the panel. To modify the text in annotations with text, open the Text Panel and edit the copy of text it contains.
+
+<p> Popups are annotations that look like a small icon, often in the document margin. In Run mode, clicking on this icon opens a panel of scrollable text. The font and color of this text cannot be changed; to change the background color,  change the color of the icon. To insert text in a popup during Edit mode, click on the icon while holding down the option key to reveal the editable panel of text.
+
+<p>A special note of thanks to Uwe Schmock, who was helpful with both program design and the manual pages during work on Annotations. He has a  list of further desirable changes, but eventually I cried "enough."
+</ul>
+
+
 <P><h5>TeXShop Changes 5.36</h5></P>
 Version 5.36 has one minor bug fix and a major improvement of the PageNumber correction introduced in version 5.35.
 <ul>

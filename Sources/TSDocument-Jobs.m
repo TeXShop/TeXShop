@@ -1980,6 +1980,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 {
 //    NSString	*titleString;
 	BOOL	useError;
+    
+    if ([scrapWindow isVisible]) {
+        [self typesetScrap: sender];
+        return;
+        }
+    
    
     
    if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))

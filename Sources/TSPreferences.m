@@ -2050,13 +2050,16 @@ person script. See also: DefaultTypesetMode.
 {
 	// register the undo message first
 	[[_undoManager prepareWithInvocationTarget:SUD] setBool:[SUD boolForKey:AutomaticUTF8MACtoUTF8ConversionKey] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
-	
+    [SUD setBool:[(NSButton *)sender state] forKey:AutomaticUTF8MACtoUTF8ConversionKey];
+ 
+/*
    self.consoleFont = [NSFont fontWithName: [SUD stringForKey:ConsoleFontNameKey] size:[SUD floatForKey:ConsoleFontSizeKey]];
     
     // become first responder so we will see the envents that NSFontManager sends
     // up the responder chain
     [_prefsWindow makeFirstResponder:_prefsWindow];
     [[NSFontManager sharedFontManager] setSelectedFont:self.consoleFont isMultiple:NO];
+ */
 }
 
 

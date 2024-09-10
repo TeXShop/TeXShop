@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23090" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23090"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -290,27 +290,41 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Orthographe..." keyEquivalent=":" id="131">
-                                <connections>
-                                    <action selector="showGuessPanel:" target="-1" id="134"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Vérifier l'orthographe" keyEquivalent=";" id="133">
-                                <connections>
-                                    <action selector="checkSpelling:" target="-1" id="135"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Vérifier l'orthographe lors de la frappe" id="437">
-                                <connections>
-                                    <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem id="M1B-pm-Fhn">
-                                <string key="title">Corriger l'orthographe automatiquement	</string>
+                            <menuItem title="Orthographe et grammaire" id="AEk-pF-CfB">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="LWR-ti-VP1"/>
-                                </connections>
+                                <menu key="submenu" title="Orthographe et grammaire" id="DLm-Gp-HET">
+                                    <items>
+                                        <menuItem title="Afficher l’orthographe et la grammaire" keyEquivalent=":" id="LhO-rO-pdK">
+                                            <connections>
+                                                <action selector="showGuessPanel:" target="-1" id="O0k-P3-4Ir"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Vérifier le document maintenant" keyEquivalent=";" id="8O6-dX-cCg">
+                                            <connections>
+                                                <action selector="checkSpelling:" target="-1" id="Ka9-FR-Ib4"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="3QN-53-c8w"/>
+                                        <menuItem title="Vérifier l’orthographe lors de la saisie" id="ZkF-BT-fPb">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleContinuousSpellChecking:" target="-1" id="oyX-6O-KiL"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Vérifier la grammaire et l’orthographe" id="aIg-gH-xgh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleGrammarChecking:" target="-1" id="LGL-8j-pde"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Corriger l’orthographe automatiquement" id="hc2-TX-85Q">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="mAt-IL-L5n"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Substitutions" id="858">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -1389,7 +1403,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="611" id="832">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="528">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="611"/>
@@ -1424,7 +1438,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="407" width="323" height="153"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="819">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="153"/>
@@ -1490,7 +1504,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" id="891">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1590,7 +1604,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="423" width="332" height="137"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="925">
                 <rect key="frame" x="0.0" y="0.0" width="332" height="137"/>

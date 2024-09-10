@@ -252,7 +252,9 @@ withDarkColors = NO;
 {
     NSColor *myColor1, *myColor2, *myColor3, *myColor4, *myColor5, *myColor6, *myColor7;
     
-	id result = [super init];
+	//id result = [super init];
+    id result = [super init];
+    self = result;
     
     self.docUseAnnotationMenu = NO;
 	
@@ -1003,8 +1005,10 @@ withDarkColors = NO;
 													alpha:1.0];
 */
    
-										
-
+  //  aTextView.writingToolsBehavior = .limited;
+  //  aTextView.writingToolsAllowedInputOptions = [.plainText];
+    
+    
 	[aTextView setAutoresizingMask: NSViewWidthSizable];
 	[[aTextView textContainer] setWidthTracksTextView:YES];
 	[aTextView setDelegate:self];
@@ -1104,6 +1108,8 @@ withDarkColors = NO;
     
 
 	[super windowControllerDidLoadNib:aController];
+    
+  
       
     self.syntaxColor = [SUD boolForKey: SyntaxColoringEnabledKey];
     self.useExplColor = [SUD boolForKey: expl3SyntaxColoringKey];
@@ -3302,9 +3308,19 @@ else {
 
    
 if ( ! skipTextWindow) {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelsAndTagsAtClick:) name:NSPopUpButtonWillPopUpNotification object:nil];
+   // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelsAndTagsAtClick:) name:NSPopUpButtonWillPopUpNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(TagsAtClick2:) name:NSMenuDidBeginTrackingNotification object:[tags menu]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(TagsAtClick2:) name:NSMenuDidBeginTrackingNotification object:[stags menu]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(LabelsAtClick2:) name:NSMenuDidBeginTrackingNotification object:[labels menu]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(LabelsAtClick2:) name:NSMenuDidBeginTrackingNotification object:[slabels menu]];
     
-	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
+    //NSMenu *tagsMenu = [[[NSApp mainMenu] itemWithTitle:
+    //                     NSLocalizedString(@"Tags", @"Tags")] submenu];
+    // if ([[NSUserDefaults standardUserDefaults] boolForKey:TagMenuInMenuBarKey])
+    //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(TagsAtClick3:) name:NSMenuDidBeginTrackingNotification
+    //                                             object:tagsMenu];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSLaTeXPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSMatrixPanelController sharedInstance] selector:@selector(textWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:textWindow];
 	[[NSNotificationCenter defaultCenter] addObserver:[TSWindowManager sharedInstance] selector:@selector(documentWindowWillClose:) name:NSWindowWillCloseNotification object:textWindow];
@@ -4658,6 +4674,24 @@ preference change is cancelled. "*/
     [self setupTags1];
 }
 
+- (void) TagsAtClick2:(NSNotification *)notification
+{
+     
+    if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
+        return;
+    
+    [self setupTags1];
+}
+
+
+- (void) LabelsAtClick2:(NSNotification *)notification
+{
+    if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
+        return;
+    
+    [self setupLabels1];
+}
+
 - (void)doUpdate: (id)sender;
 {
     if ( ! [SUD boolForKey:UseNewTagsAndLabelsKey])
@@ -4826,6 +4860,8 @@ preference change is cancelled. "*/
     NSUInteger    length;
     NSUInteger    lineNumber = 0;
     NSUInteger    destLineNumber;
+    
+
     
     titleString = [sender title];
     matchString = [sender representedObject];

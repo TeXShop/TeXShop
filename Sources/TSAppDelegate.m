@@ -81,6 +81,9 @@
 }
 */
 
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
+    return YES;
+}
 
 - (void)testForIntel;
 {	

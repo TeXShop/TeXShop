@@ -1986,9 +1986,12 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
         return;
         }
     
-   
+    NSUInteger modifiers = ([NSEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask);
     
-   if (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2))
+    if (
+        (([sender respondsToSelector: @selector(tag)]) && ([sender tag] == -2)) ||
+        (modifiers == NSAlternateKeyMask)
+        )
    {
         [self trashAUXFiles:self];
        

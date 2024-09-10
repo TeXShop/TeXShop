@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23090" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23090"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -290,26 +290,41 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Rechtschreibung..." keyEquivalent=":" id="131">
-                                <connections>
-                                    <action selector="showGuessPanel:" target="-1" id="134"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Rechtschreibprüfung" keyEquivalent=";" id="133">
-                                <connections>
-                                    <action selector="checkSpelling:" target="-1" id="135"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Rechtschreibprüfung bei Eingabe" id="437">
-                                <connections>
-                                    <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Rechtschreibung automatisch korrigieren" id="dM2-mx-apy">
+                            <menuItem title="Rechtschreibung und Grammatik" id="Aof-ZA-oS5">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="8dS-X3-icG"/>
-                                </connections>
+                                <menu key="submenu" title="Rechtschreibung und Grammatik" id="JTH-iq-SUy">
+                                    <items>
+                                        <menuItem title="Rechtschreibung und Grammatik einblenden" keyEquivalent=":" id="mjq-Q9-pTd">
+                                            <connections>
+                                                <action selector="showGuessPanel:" target="-1" id="ehJ-Qh-uTp"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Dokument jetzt prüfen" keyEquivalent=";" id="2fh-9X-gGq">
+                                            <connections>
+                                                <action selector="checkSpelling:" target="-1" id="Xi6-ul-5HL"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="TVx-d6-HZq"/>
+                                        <menuItem title="Während der Texteingabe prüfen" id="Puf-si-yA7">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleGrammarChecking:" target="-1" id="lak-le-uqq"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Rechtschreibung und Grammatik prüfen" id="hEh-nJ-8JU">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleContinuousSpellChecking:" target="-1" id="dTC-Wg-MxA"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Rechtschreibung autom. korrigieren" id="4FY-NY-Fzh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="AGd-FR-mvZ"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Ersetzungen" id="839">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -1386,7 +1401,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="617" id="813">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="528">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="617"/>
@@ -1420,7 +1435,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="407" width="323" height="153"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="800">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="153"/>
@@ -1487,7 +1502,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" id="872">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1587,7 +1602,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="423" width="370" height="137"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="906">
                 <rect key="frame" x="0.0" y="0.0" width="370" height="137"/>

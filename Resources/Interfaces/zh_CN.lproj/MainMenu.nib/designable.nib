@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23090" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23090"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -290,26 +290,41 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="拼写..." keyEquivalent=":" id="131">
-                                <connections>
-                                    <action selector="showGuessPanel:" target="-1" id="134"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="检查拼写" keyEquivalent=";" id="133">
-                                <connections>
-                                    <action selector="checkSpelling:" target="-1" id="135"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="键入时检查拼写" id="437">
-                                <connections>
-                                    <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="自动更正拼写" id="POY-Ed-wVp">
+                            <menuItem title="拼写和语法" id="REi-Nl-cx8">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="HEA-9m-2tX"/>
-                                </connections>
+                                <menu key="submenu" title="拼写和语法" id="595-fB-WGc">
+                                    <items>
+                                        <menuItem title="显示拼写和语法" keyEquivalent=":" id="g1D-15-g78">
+                                            <connections>
+                                                <action selector="showGuessPanel:" target="-1" id="diU-db-A3r"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="立即检查文稿" keyEquivalent=";" id="mMZ-n1-zwz">
+                                            <connections>
+                                                <action selector="checkSpelling:" target="-1" id="eRD-Xk-Fmg"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="KSd-a2-R01"/>
+                                        <menuItem title="键入时检查拼写" id="Pqs-pE-BCq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleContinuousSpellChecking:" target="-1" id="58w-Uz-lJ2"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="检查拼写和语法" id="yNz-MO-XrV">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleGrammarChecking:" target="-1" id="lFj-5U-3NB"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="自动纠正拼写" id="835-Bo-cjh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="c7S-jG-MSG"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="替换" id="973">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -1387,7 +1402,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="637" id="868">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="528">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="637"/>
@@ -1421,7 +1436,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="855">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="136"/>
@@ -1481,7 +1496,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" id="1007">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1590,7 +1605,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="1066">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="136"/>

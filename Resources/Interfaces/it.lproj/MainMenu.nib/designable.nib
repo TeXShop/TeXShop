@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23090" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23090"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -290,26 +290,41 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Ortografia..." keyEquivalent=":" id="131">
-                                <connections>
-                                    <action selector="showGuessPanel:" target="-1" id="134"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Controlla Ortografia" keyEquivalent=";" id="133">
-                                <connections>
-                                    <action selector="checkSpelling:" target="-1" id="135"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Controlla Ortografia mentre scrivo" id="437">
-                                <connections>
-                                    <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Correggi ortografia mentre scrivo" id="rba-0H-7Ix">
+                            <menuItem title="Grammatica e ortografia" id="q1b-8w-YAz">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="DoA-HM-oIa"/>
-                                </connections>
+                                <menu key="submenu" title="Grammatica e ortografia" id="FdC-tV-IBb">
+                                    <items>
+                                        <menuItem title="Mostra ortografia e grammatica" keyEquivalent=":" id="JGQ-zm-6Af">
+                                            <connections>
+                                                <action selector="showGuessPanel:" target="-1" id="YMg-1T-fFy"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Controlla il documento adesso" keyEquivalent=";" id="XC0-lE-ozi">
+                                            <connections>
+                                                <action selector="checkSpelling:" target="-1" id="OvA-mF-rSU"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="SjI-Xe-KYi"/>
+                                        <menuItem title="Controlla ortografia durante l'inserimento" id="cEB-o1-myh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleContinuousSpellChecking:" target="-1" id="ZhQ-l6-ln4"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Controlla grammatica insieme all'ortografia" id="Vd5-AE-djK">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleGrammarChecking:" target="-1" id="enE-9h-81F"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Correggi automaticamente ortografia" id="vPo-kg-n3j">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="boR-0k-UL5"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Sostituzioni" id="835">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -1385,7 +1400,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="617" id="809">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="528">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="617"/>
@@ -1393,7 +1408,7 @@
                         </menu>
                     </popUpButtonCell>
                 </popUpButton>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="518">
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="518">
                     <rect key="frame" x="26" y="13" width="61" height="14"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Encoding:" id="808">
@@ -1419,7 +1434,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="407" width="323" height="153"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="796">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="153"/>
@@ -1439,7 +1454,7 @@ DQ
                             <action selector="okForPanel:" target="672" id="806"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="799">
+                    <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="799">
                         <rect key="frame" x="20" y="60" width="283" height="21"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="812">
@@ -1462,7 +1477,7 @@ Gw
                             <action selector="cancelForPanel:" target="672" id="805"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="797">
+                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="797">
                         <rect key="frame" x="17" y="89" width="289" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="810">
@@ -1486,7 +1501,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" id="868">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1586,7 +1601,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="902">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="136"/>
@@ -1606,7 +1621,7 @@ DQ
                             <action selector="okForPanel:" target="672" id="915"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="903">
+                    <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="903">
                         <rect key="frame" x="20" y="60" width="283" height="21"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="910">
@@ -1629,7 +1644,7 @@ Gw
                             <action selector="cancelForPanel:" target="672" id="914"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="906">
+                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="906">
                         <rect key="frame" x="17" y="89" width="289" height="27"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Style File Name (lower case is usually best)" id="907">

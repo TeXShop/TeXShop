@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23090" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23090"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -292,26 +292,41 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="スペル..." keyEquivalent=":" id="131">
-                                <connections>
-                                    <action selector="showGuessPanel:" target="-1" id="134"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="スペルチェック" keyEquivalent=";" id="133">
-                                <connections>
-                                    <action selector="checkSpelling:" target="-1" id="135"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="入力中に自動スペルチェック" id="437">
-                                <connections>
-                                    <action selector="toggleContinuousSpellChecking:" target="-1" id="438"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="スペルを自動的に修正" id="yHF-Gq-mrr">
+                            <menuItem title="スペルと文法" id="8cF-7W-nmx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="BYB-jp-ZWc"/>
-                                </connections>
+                                <menu key="submenu" title="スペルと文法" id="XiG-ms-KKC">
+                                    <items>
+                                        <menuItem title="スペルと文法を表示" keyEquivalent=":" id="9L8-HA-gAF">
+                                            <connections>
+                                                <action selector="showGuessPanel:" target="-1" id="VxL-OI-sT2"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="書類を今すぐチェック" keyEquivalent=";" id="YFu-Sp-ioO">
+                                            <connections>
+                                                <action selector="checkSpelling:" target="-1" id="ZUQ-ex-yaf"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="xcT-tz-v0V"/>
+                                        <menuItem title="入力中にスペルチェック" id="X4G-jb-0c2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleContinuousSpellChecking:" target="-1" id="Mok-wt-xa6"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="スペルと一緒に文法をチェック" id="MGa-pM-CTg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleGrammarChecking:" target="-1" id="sTa-hd-g79"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="スペルを自動的に修正" id="3wn-vB-SKG">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleAutomaticSpellingCorrection:" target="-1" id="E39-sq-F0j"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="自動置換" id="853">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -1389,7 +1404,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="-- DO NOT LOCALIZE THIS! --" bezelStyle="rounded" alignment="left" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="637" id="826">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="528">
                             <items>
                                 <menuItem title="-- DO NOT LOCALIZE THIS! --" state="on" id="637"/>
@@ -1423,7 +1438,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="430" width="323" height="130"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="813">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="130"/>
@@ -1488,7 +1503,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="425" y="845" width="511" height="441"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" id="887">
                 <rect key="frame" x="0.0" y="0.0" width="511" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1588,7 +1603,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="633" y="424" width="323" height="136"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="926">
                 <rect key="frame" x="0.0" y="0.0" width="323" height="136"/>

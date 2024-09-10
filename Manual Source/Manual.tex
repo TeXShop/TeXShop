@@ -1222,7 +1222,7 @@ Several passes may be needed before the document is completely up to date. If th
 If the source has an error and the user aborted typesetting when the error was reported, the aux file may be corrupt. In that case, LaTeX will open the aux file when it typesets a second time and become confused.
 This often happens shortly before the ``begin{document}'' line. A source file which claims to have an error there may instead have a corrupt aux file. The solution for this problem is to throw the aux file in the trash and typeset again from scratch.
 
-This sort of problem tends to be rare for small documents and common for large documents or documents with many illustrations. TeXShop has a button in the console labeled ``Trash Aux Files'' which trashes the aux files in the document's folder. There is also a menu item in the Source menu and a keyboard shortcut to trash these files.
+This sort of problem tends to be rare for small documents and common for large documents or documents with many illustrations. TeXShop has a button in the console labeled ``Trash Aux Files'' which trashes the aux files in the document's folder. There is also a menu item in the File menu and a keyboard shortcut to trash these files.
 When you run into the problem, push the button or menu item and then typeset again.
 
 Because the problem is common for large documents, there is an even better shortcut. Recall that command-T typesets. A similar shortcut,  option-command-T,  trashes the aux files and then typesets. If the Typeset menu is open, notice that pushing the Option key changes the item titled ``Typeset'' to read ``Trash Aux \& Typeset''. 
@@ -4020,7 +4020,7 @@ After this item was introduced, it was mentioned on the web site \url{tex.stacke
 If no selection is made and instead the cursor is simply positioned by clicking at a point, then the Experiment window opens with
 its previous contents. Thus if a user carefully edits an equation, closes the experiment window, and then decides on a final change, the contents can be brought back for another edit.
 
-Typesetting for ``Experiment'' uses the Preference settings for pdflatex and simpdftex latex. If the user's pulldown menu is set to latex, the three choices of 1) pdflatex, 2) tex + dvi, 3) personal script are obeyed. This should make the command work for TeX in Japan.
+Typesetting for ``Experiment...'' uses the Preference settings for pdflatex and simpdftex latex. If the user's pulldown menu is set to latex, the three choices of 1) pdflatex, 2) tex + dvi, 3) personal script are obeyed. This should make the command work for TeX in Japan.
 
 
 \section{Tags Toolbar Item and Menu; Labels Item}
@@ -5121,6 +5121,47 @@ in the future. In the initial version, I wanted to avoid the distraction of such
 
 Each document has its own individual annotation panel, so if several projects are open and each is being annotated, confusion will ensue. Don't do this.
 
+\chapter{Writing Tools}
+
+Writing Tools is an Apple Intelligence feature of macOS 15, Sequoia. It is not present in the initial release of Sequoia, but will appear in a later release. 
+
+To activate Writing Tools, select one or several paragraphs of the source code. Then locate the Writing Tools submenu in the Edit menu and select ``Show Writing Tools''. The panel shown below will appear next to the source window.
+
+\vspace{.02in}
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=6.5in]{Graphics/writingtools.png} 
+   \caption{WritingTools}
+   \label{fig:example}
+\end{figure} 
+
+\vspace{.05in}
+
+Writing Tools is also available in the source window's contextual menu; control-click in the source window to reveal this  contextual menu. 
+
+An even easier way to activate Writing Tools is to select a portion of the source text and then move the mouse to the line number column near the top of your selection. A blue dot will appear; click this dot.
+
+The Writing Tools  items described above do not appear when TeXShop runs on an earlier system or on the initial release of Sequoia.  When Apple  updates Sequoia, Writing Tools will appear without updating TeXShop. The various Writing Tools interface items are supplied by macOS
+and are not part of the TeXShop code.
+
+Writing tools offers to rewrite the selected section of  source text in one of several styles. It can make the source more informal, or more professional, or more concise. The original text will be replaced by  rewritten text;  Writing Tools  allows you to accept this change or revert back to the original version.
+
+Earlier versions of macOS offered to automatically revise spelling as you type. That system often made wrong guesses about what was being typed, converting text into a mishmash of strange words and Freudian slips. Luckily the feature could be turned off, both in System Settings and directly in TeXShop.
+
+Writing Tools is not like that. It improved several samples I gave it, and otherwise left text alone. This was quite a surprise to me, and I suspect others will find the feature useful as well. Only time will tell as Apple makes the feature widely available.
+
+Just for the heck of it, I asked Writing Tools to rewrite an entire 40 page LaTeX document about irreducible representations of symmetric groups. The document had Young diagrams,  illustrations, and very technical mathematical sections. And of course the source  contained a large number of LaTeX commands. Apple Intelligence seems to have been  trained on LaTeX documents, because most LaTeX commands were left unchanged. 
+
+After the revision, the document no longer typeset. But it took less than fifteen minutes to fix these problems. A typical problem was that
+$\backslash$begin\{theorem\} was left alone but $\backslash$end\{theorem\} was removed. Surprisingly, all Young diagrams and all illustrations were left unchanged, and almost all technical mathematical material remained as before. Writing Tools mostly changed informal discussions in the text. Apple surely doesn't expect users to put entire LaTeX articles through the Writing Tools wringer,  but the experiment shows that it is more capable than you might expect.
+It will be interesting to see what others think when the code has wider release among LaTeX users.
+
+
+
+
+
+
 \chapter{Japan}
 
 For reasons I do not understand, a series of very important TeXShop code contributions have come from Japan. The OgreKit Find Panel  is a project by Isao Sonabe used by several open source programs. It provides support for regular expressions. The Macro support comes from  Mitsuhiro Shishikura, who also created the magnifying glass and the original Display and Magnifying Modes for the Preview Window. More recently, Yusuke Terada contributed the Character Info panel to obtain Unicode information, the invisible character support,  several different ways to simplify entry of matching parentheses during text entry, and other features.
@@ -6065,6 +6106,16 @@ When scrolling the pdf display with a gesture or mouse in High Sierra, a bug pre
 
 In a small number of cases, it may be easier to work around a bug than to fix it. When cases like that arise, they will be listed here. We'll also list   very rare bugs with unexpected solutions. This section should be short because bugs are regularly fixed in TeXShop.
 
+\section{Tags}
+
+Two bugs were discovered in TeXShop 5.42, but these bugs have  been active since 2005. When a document is first opened, the Tags menu is populated with tags for chapters, sections, and so forth. Later as the document is edited, the Tags menu is revised; new tags are added as they are entered into the source, and tags are removed when they are removed from the source. But this revision step did not happen if the toolbar was in
+``Text Only'' mode, and it never happened to the Tags menu in the TeXShop menu bar. Note that the menu bar
+version only appears if an appropriate preference item is selected.
+
+In TeXShop 5.43 and later, this bug is fixed for the tabs menu in the toolbar. It was impossible to fix for the Tags menu in the menu bar without creating performance issues when large documents are edited. However, there is an easy workaround. If the Tags menu in the menu bar is noticeably out of date, use the toolbar's tag menu just once.
+Then the tags menu in both places will be up to date and either can be used. 
+
+
 \section{Zombie Untitled Windows}
 
 If macOS is configured appropriately, then when TeXShop is quit while windows are open, these windows will appear  in their old positions when the program is restarted. To restart TeXShop without opening the old windows, hold down the Option key while TeXShop restarts.
@@ -6073,6 +6124,8 @@ In this configuration, there is a very rare bug which can cause TeXShop to open 
 
 This bug occurs because there is mangled information about old window locations in the folder
 \path{~/Library/Autosave Information}. TeXShop  has no code to write to this location and the mangled entries come directly from macOS. To fix the bug, go to this folder and remove all files containing the word ``TeXShop'' in their names. Then restart the Macintosh.
+
+
 
  
 \chapter{Contributors}

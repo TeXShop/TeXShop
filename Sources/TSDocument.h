@@ -658,7 +658,9 @@ enum RootCommand
 - (id) pdfView;
 - (id) pdfKitView;
 - (void) doCompletion:(NSNotification *)notification;
-- (void) updateTagsAtClick:(NSNotification *)notification;
+// - (void) updateTagsAtClick2:(NSNotification *)notification;
+- (void) TagsAtClick2:(NSNotification *)notification;
+- (void) LabelsAtClick2:(NSNotification *)notification;
   
 
 - (void) doMatrix:(NSNotification *)notification; // Matrix by Jonas

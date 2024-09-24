@@ -1465,6 +1465,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // Adam Maxwell addition
 
 
+
 // added by Yusuke Terada
 - (void)changeFont:(id)sender
 {
@@ -1483,6 +1484,7 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
     
     [self fixupTabs];
 }
+ 
 
 - (void)fixupTabs
 {

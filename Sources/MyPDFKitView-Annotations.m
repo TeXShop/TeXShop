@@ -1892,11 +1892,13 @@ static NSRect RectPlusScale (NSRect aRect, float scale)
 
 // ----------------------------------------------------------------------------------------------------------- changeFont
 
+
+
 - (void) changeFont: (id) sender
 {
     NSFont        *newFont;
     
-    // Skip out if not in 'edit mode'.
+     // Skip out if not in 'edit mode'.
     if (_editMode == NO)
         return;
     
@@ -1911,18 +1913,23 @@ static NSRect RectPlusScale (NSRect aRect, float scale)
         [_activeAnnotation setFont: newFont];
     }
     
-    /*
-     if ([type isEqualToString:PDFAnnotationSubtypeText])
-    {
-        newFont = [sender convertFont: [_activeAnnotation font]];
-        [_activeAnnotation setFont: newFont];
-    }
-    */
+    
+//     if ([type isEqualToString:PDFAnnotationSubtypeText])
+//    {
+//        newFont = [sender convertFont: [_activeAnnotation font]];
+//        [_activeAnnotation setFont: newFont];
+//    }
+    
     
     
     // Lazy.
     [self setNeedsDisplay: YES];
 }
+
+
+ 
+ 
+
 
 - (void) changeColor: (id) sender
 {

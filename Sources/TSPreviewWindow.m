@@ -404,7 +404,9 @@ extern NSPanel *pageNumberWindow;
 		[super sendEvent: theEvent];
 		return;
 	}
-	
+    
+
+
 	if ([self.myDocument fromKit] && ([theEvent type] == NSEventTypeKeyDown) && ([theEvent modifierFlags] & NSCommandKeyMask)) {
 		if ([[theEvent characters] characterAtIndex:0] == '[') {
 			// [[self.myDocument pdfKitView] goBack: self];
@@ -419,7 +421,8 @@ extern NSPanel *pageNumberWindow;
 		} 
 	
 	}
-  
+
+
     
 #ifdef IMMEDIATEMAGNIFY
   if (([self.myDocument fromKit]) && ([theEvent type] == NSEventTypeLeftMouseDown) && ([[self.myDocument pdfKitView] toolIsMagnification]))
@@ -553,7 +556,6 @@ extern NSPanel *pageNumberWindow;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
-    BOOL    value;
     
 	if ([anItem action] == @selector(splitWindow:)) {
 		if (self.windowIsSplit)

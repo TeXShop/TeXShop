@@ -2277,6 +2277,8 @@ if ((atLeastHighSierra) && (! atLeastMojave) && (self.myDocument.pdfKitWindow.wi
 
 - (void)zoomIn: sender
 {
+    
+  
 	
 	NSInteger	scale;
 	

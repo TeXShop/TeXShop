@@ -921,14 +921,29 @@ static BOOL isValidOrdinaryTeXCommandChar(NSInteger c)
 
 - (void) colorizeVisibleAreaInTextView:(NSTextView *)aTextView
 {
-
+    CGFloat editWidth;
+    
+    // Nov 5, 2024. Koch.
+    // Warning: the next three lines and the value 60.0
+    // are required to prevent a crash if the splitbar
+    // is moved to the extreme left.
     
     // No syntax coloring if the file is not TeX, or if it is disabled
 	// if (!fileIsTex || ![SUD boolForKey:SyntaxColoringEnabledKey])
      if (!fileIsTex || !self.syntaxColor)
 		return;
+    
+    // Nov 5, 2024. Koch.
+    // Warning: the next three lines and the value 60.0
+    // are required to prevent a crash if the splitbar
+    // is moved to the extreme left.
+    
+    editWidth = [aTextView theViewWidth];
+    // NSLog(@"the width is %f", editWidth);
+    
+    if (editWidth > 60.0)
 
-	[self colorizeText:aTextView range:[aTextView visibleCharacterRange]];
+        [self colorizeText:aTextView range:[aTextView visibleCharacterRange]];
 }
 
 

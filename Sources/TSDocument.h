@@ -397,6 +397,7 @@ enum RootCommand
     
 }
 
+
 @property (retain)  NSDictionary		*regularColorAttribute;
 @property (retain)  NSDictionary		*commandColorAttribute;
 @property (retain)  NSDictionary		*commentColorAttribute;
@@ -566,6 +567,8 @@ enum RootCommand
 //                          3 = html Preview
 //                          4 = both pdf and html Preview
 @property NSInteger PreviewType;
+
+
 
 
 - (NSMenu *)getContextMenu;
@@ -781,6 +784,11 @@ enum RootCommand
 - (NSTextView *)getStringWindowTextView;
 - (NSMenu *)getAnnotationMenu;
 - (NSPanel *)getChoicesPanel;
+- (BOOL)experimentActive;
+- (void)activateExperimentWindow;
+- (void)activateExperimentPDFWindow;
+- (void)switchExperimentWindows;
+
 
 
 // BibDesk Completion

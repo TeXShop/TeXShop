@@ -1013,6 +1013,145 @@ static NSRect RectPlusScale (NSRect aRect, float scale)
     for (NSInteger i = 0; i < [originalDocument pageCount]; i++) {
         PDFPage *originalPage = [originalDocument pageAtIndex:i];
         NSArray<PDFAnnotation *> *annotations = [originalPage annotations];
+        NSArray<PDFAnnotation *> *copiedAnnotations = [annotations copy];
+        // Check if the page contains annotations
+        if (annotations.count > 0) {
+            desiredType = NO;
+            for (NSInteger j = 0; j < annotations.count; j++)
+            {
+                theType = annotations[j].type;
+                 if (([theType isEqualToString: @"StrikeOut"]) ||
+                    ([theType isEqualToString: @"Highlight"]) ||
+                    ([theType isEqualToString: @"Underline"]) ||
+                    ([theType isEqualToString: @"Circle"]) ||
+                    ([theType isEqualToString: @"Square"]) ||
+                    ([theType isEqualToString: @"Line"])||
+                    ([theType isEqualToString: @"FreeText"]) ||
+                    ([theType isEqualToString: @"Text"]))
+                {
+                    desiredType = YES;
+                    pagesExist = YES;
+                }
+              }
+            
+             if (desiredType)
+            {
+                
+                // If annotations exist, add the page to the modified document
+                // Oct 17,2024; Koch; the line below fixes doubling annotations when selected pages are saved
+                PDFPage *copiedPage = [originalPage copy]; // [originalPage copy];
+               
+               for (PDFAnnotation *annotation in copiedAnnotations)
+                    [copiedPage removeAnnotation: annotation];
+                    
+                // Optionally, you can copy the annotations if needed
+                // Oct 17, 2024; Koch; omit next three lines
+                
+              //  for (PDFAnnotation *annotation in annotations) {
+              //       PDFAnnotation *copiedAnnotation = [annotation copy];
+              //       [copiedPage addAnnotation:copiedAnnotation];
+                  //  theType = annotation.type;
+                  //  if (([theType isEqualToString: @"StrikeOut"]) ||
+                  //      ([theType isEqualToString: @"Highlight"]) ||
+                  //      ([theType isEqualToString: @"Underline"]))
+                  //      [originalPage removeAnnotation: annotation];
+              //   }
+              
+                [modifiedDocument insertPage:copiedPage atIndex:[modifiedDocument pageCount]];
+               
+            }
+        }
+    }
+          
+    if (pagesExist)
+        return modifiedDocument;
+    else
+        return self.document;
+}
+
+/*
+
+- (PDFDocument *)constructOutputSecond
+{
+    BOOL pagesExist, desiredType;
+    NSString    *theType;
+    pagesExist = NO;
+    NSString    *theLabel;
+    
+    PDFDocument *originalDocument = self.document;
+    PDFDocument *modifiedDocument = [[PDFDocument alloc] init];
+    
+    for (NSInteger i = 0; i < [originalDocument pageCount]; i++) {
+        PDFPage *originalPage = [originalDocument pageAtIndex:i];
+        NSArray<PDFAnnotation *> *annotations = [originalPage annotations];
+        NSArray<PDFAnnotation *> *copiedAnnotations = [annotations copy];
+        // Check if the page contains annotations
+        if (annotations.count > 0) {
+            desiredType = NO;
+            for (NSInteger j = 0; j < annotations.count; j++)
+            {
+                theType = annotations[j].type;
+                 if (([theType isEqualToString: @"StrikeOut"]) ||
+                    ([theType isEqualToString: @"Highlight"]) ||
+                    ([theType isEqualToString: @"Underline"]) ||
+                    ([theType isEqualToString: @"Circle"]) ||
+                    ([theType isEqualToString: @"Square"]) ||
+                    ([theType isEqualToString: @"Line"])||
+                    ([theType isEqualToString: @"FreeText"]) ||
+                    ([theType isEqualToString: @"Text"]))
+                {
+                    desiredType = YES;
+                    pagesExist = YES;
+                }
+              }
+            
+             if (desiredType)
+            {
+                
+                // If annotations exist, add the page to the modified document
+                // Oct 17,2024; Koch; the line below fixes doubling annotations when selected pages are saved
+                PDFPage *copiedPage = [originalPage copy]; // [originalPage copy];
+                
+                for (PDFAnnotation *annotation in copiedAnnotations)
+                    [copiedPage removeAnnotation: annotation];
+                    
+                // Optionally, you can copy the annotations if needed
+                // Oct 17, 2024; Koch; omit next three lines
+                
+                for (PDFAnnotation *annotation in annotations) {
+                     PDFAnnotation *copiedAnnotation = [annotation copy];
+                     [copiedPage addAnnotation:copiedAnnotation];
+                    theType = annotation.type;
+                    if (([theType isEqualToString: @"StrikeOut"]) ||
+                        ([theType isEqualToString: @"Highlight"]) ||
+                        ([theType isEqualToString: @"Underline"]))
+                        [originalPage removeAnnotation: annotation];
+                 }
+                
+                [modifiedDocument insertPage:copiedPage atIndex:[modifiedDocument pageCount]];
+            }
+        }
+    }
+          
+    if (pagesExist)
+        return modifiedDocument;
+    else
+        return self.document;
+}
+
+- (PDFDocument *)constructOutputOld
+{
+    BOOL pagesExist, desiredType;
+    NSString    *theType;
+    pagesExist = NO;
+    NSString    *theLabel;
+    
+    PDFDocument *originalDocument = self.document;
+    PDFDocument *modifiedDocument = [[PDFDocument alloc] init];
+    
+    for (NSInteger i = 0; i < [originalDocument pageCount]; i++) {
+        PDFPage *originalPage = [originalDocument pageAtIndex:i];
+        NSArray<PDFAnnotation *> *annotations = [originalPage annotations];
         
         // Check if the page contains annotations
         if (annotations.count > 0) {
@@ -1038,13 +1177,16 @@ static NSRect RectPlusScale (NSRect aRect, float scale)
             {
                 
                 // If annotations exist, add the page to the modified document
-                PDFPage *copiedPage = [originalPage copy];
+                // Oct 17,2024; Koch; the line below fixes doubling annotations when selected pages are saved
+                PDFPage *copiedPage = originalPage; // [originalPage copy];
                 
                 // Optionally, you can copy the annotations if needed
-                for (PDFAnnotation *annotation in annotations) {
-                    PDFAnnotation *copiedAnnotation = [annotation copy];
-                    [copiedPage addAnnotation:copiedAnnotation];
-                }
+                // Oct 17, 2024; Koch; omit next three lines
+                
+               //  for (PDFAnnotation *annotation in annotations) {
+               //     PDFAnnotation *copiedAnnotation = [annotation copy];
+               //     [copiedPage addAnnotation:copiedAnnotation];
+               // }
                 
                 [modifiedDocument insertPage:copiedPage atIndex:[modifiedDocument pageCount]];
             }
@@ -1056,6 +1198,8 @@ static NSRect RectPlusScale (NSRect aRect, float scale)
     else
         return self.document;
 }
+*/
+
 
 /*
 // --------------------------------------------------- printDocument

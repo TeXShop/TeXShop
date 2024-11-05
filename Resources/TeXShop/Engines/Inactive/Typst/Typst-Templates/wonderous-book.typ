@@ -1,8 +1,8 @@
 // % !TEX TS-program = Typst
-#import "@typst/fiction:0.1.0": *
-//#import "template.typ": *
+#import "@preview/wonderous-book:0.1.0": book
+
 #show: book.with(
-  title: "Liam's Playlist",
+  title: [Liam's Playlist],
   author: "Janet Doe",
   dedication: [for Rachel],
   publishing-info: [
@@ -32,22 +32,3 @@ But he knew it was impossible. She was out of his league. She was from another w
 
 = Magic
 #lorem(600)
-
-/*
-= Mystery
-#lorem(600)
-
-= Money
-#lorem(6000)
-
-= Mistakes
-#lorem(6000)
-
-= Memory
-#lorem(6000)
-
-= Miracle
-#lorem(6000)
-
-= Monday again
-#lorem(6000)

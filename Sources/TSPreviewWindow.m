@@ -387,10 +387,14 @@ extern NSPanel *pageNumberWindow;
     if ([self.myDocument externalEditor])
         return;
  	if ([self.myDocument documentType] == isTeX) {
- 		if ([self.myDocument getCallingWindow] == nil) {
-            [[self.myDocument textWindow] makeKeyAndOrderFront: self];
-            }
-		else
+        
+        if ([self.myDocument experimentActive])
+           [self.myDocument switchExperimentWindows];
+        
+        else if ([self.myDocument getCallingWindow] == nil)
+          [[self.myDocument textWindow] makeKeyAndOrderFront: self];
+            
+  		else
 			[[self.myDocument getCallingWindow] makeKeyAndOrderFront: self];
 
 		}

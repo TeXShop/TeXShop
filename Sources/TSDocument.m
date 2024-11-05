@@ -238,6 +238,46 @@ withDarkColors = NO;
     return annotationChoices;
 }
 
+- (BOOL)experimentActive
+{
+    if ([scrapWindow isVisible] && [scrapPDFWindow isVisible])
+        return YES;
+    else
+        return NO;
+}
+
+- (void)activateExperimentWindow
+{
+    [scrapWindow makeKeyAndOrderFront: self];
+}
+
+- (void)activateExperimentPDFWindow
+{
+    [scrapPDFWindow makeKeyAndOrderFront: self];
+}
+
+- (void)switchExperimentWindows
+{
+    NSInteger level1, level2;
+    
+    if ([scrapWindow isVisible] && [scrapPDFWindow isVisible])
+    {
+        if ([scrapWindow isKeyWindow])
+            [scrapPDFWindow makeKeyAndOrderFront: self];
+        else if ([scrapPDFWindow isKeyWindow])
+            [scrapWindow makeKeyAndOrderFront: self];
+        else {
+            level1 = [scrapWindow level];
+            level2 = [scrapPDFWindow level];
+            if (level1 < level2)
+                [scrapPDFWindow makeKeyAndOrderFront: self];
+            else
+                [scrapWindow makeKeyAndOrderFront: self];
+        }
+      }
+}
+
+
 -  (NSMenu *)getContextMenu
 {
     
@@ -11205,6 +11245,7 @@ static NSArray *tabStopArrayForFontAndTabWidth(NSFont *font, NSUInteger tabWidth
         [fullSplitWindow makeFirstResponder: textView];
         
 }
+
 
 - (BOOL) useFullSplitWindow
 {

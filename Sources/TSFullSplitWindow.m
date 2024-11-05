@@ -604,7 +604,10 @@
 
 - (void)associatedWindow:(id)sender
 {
-    [self.myDocument doAssociatedWindow];
+    if ([self.myDocument experimentActive])
+       [self.myDocument switchExperimentWindows];
+    else
+        [self.myDocument doAssociatedWindow];
 /*
     if ([self.myDocument documentType] == isTeX) {
         [self.myDocument bringPdfWindowFront];

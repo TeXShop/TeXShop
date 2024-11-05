@@ -1,19 +1,20 @@
-//% !TEX TS-program = Typst
-#import "template.typ": *
+// % !TEX TS-program = Typst
+#import "@preview/unequivocal-ams:0.1.1": ams-article, theorem, proof
+
 #show: ams-article.with(
-  title: "Mathematical Theorems",
+  title: [Mathematical Theorems],
   authors: (
     (
-      name: "Ralph Howard",
+      name: "Janet Doe",
       department: [Department of Mathematics],
-      organization: [University of South Carolina],
-      location: [Columbia, SC 29208],
-      email: "howard@math.sc.edu",
-      url: "www.math.sc.edu/~howard"
+      organization: [University of Exampleville],
+      location: [Tennessee, TN 59341],
+      email: "jdoe@math.ue.edu",
+      url: "math.ue.edu/~jdoe"
     ),
   ),
   abstract: lorem(100),
-  bibliography-file: "refs.bib",
+  bibliography: bibliography("refs.bib"),
 )
 
 Call me Ishmael. Some years ago --- never mind how long precisely ---

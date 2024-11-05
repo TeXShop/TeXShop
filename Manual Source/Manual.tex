@@ -79,7 +79,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.4.1}
+\title{TeXShop Manual \\ Version 1.4.2}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -3037,7 +3037,6 @@ in the preamble to  your ConTeXt source file.
 
 TeX4ht and ConTeXT are examples of projects to extend \TeX\ and \LaTeX\ is radical ways. Lua\TeX\ and Xe\TeX\ are similar rewrites of the basic system. But there are a few even more radical projects, which rewrite both the input language used for typesetting and the code which typesets. An interesting example is Typst, a project by Martin
 Haug and Laurenz Mädje in Berlin. They created an entirely new typesetting program from scratch, written in the programming language Rust. The input source for Typst documents is also new, designed to simplify input for various common typesetting tasks.
-
 For information, follow the link \url{https://typst.app}.
 
 An engine file by Jeroen Scheerder makes it possible for TeXShop to typeset these new input files using the Typst program, so TeXShop users can experiment with the new system. The folder $\sim$/Library/TeXShop/Engines/Inactive/Typst contains everything needed to get started. This folder has a file {\em AboutTypst} which explains how to download and install typst in /usr/local/bin; this turns out to be very easy. The folder also contains the engine ``Typst.engine'', which can be copied to the active engine directory. Finally several Typst source files are included to begin experimentation.
@@ -3053,33 +3052,71 @@ start with //. That is why the line has two unexpected symbols at the start.
      // % !TEX TS-program = Typst
 \end{verbatim}
 
-If  you start a new source file completely from scratch,  TeXShop will display a Save Dialog the first time you typeset it. The file must be saved with extension ``.typ'' so Typst will recognize it.  It is tempting to just type the new extension when you name the file, but that will not work because TeXShop will add an extra ``.tex'' to the end of the filename when saving. Instead, find the pulldown menu ``File Format:'' at the bottom of the dialog and select ``typ''; it is the very last element in the menu. Once the file has been saved with the proper extension, TeXShop will use that extension from then on. 
+If  you start a new source file completely from scratch,  TeXShop will display a Save Dialog the first time you typeset it. The file must be saved with extension ``.typ'' so Typst will recognize it.  It is tempting to just type the new extension when you name the file, but that will not work because TeXShop will add an extra ``.tex'' to the end of the filename when saving. Instead, find the pulldown menu ``File Format:'' at the bottom of the dialog and select ``typ''; it is near the bottom in the menu. Once the file has been saved with the proper extension, TeXShop will use that extension from then on. 
 
-\section{Packages}
+\section{Packages and Templates}
 
 
-After the Typst folder was added in TeXShop version 5.20, Scheerder created a simple modification making it  easier to use. This modification is based on {\em Packages}.
-Packages are the rough equivalent of sty and class files in the LaTeX world; a Typst source document can input package files to extend the capabilities of the language.  An elaborate package system for Typst is under construction currently. See \url{https://github.com/typst/packages#local-packages} for details.
+%After the Typst folder was added in TeXShop version 5.20, Scheerder created a simple modification making it  easier to use. This modification is based on {\em Packages}.
+{\em Packages} are the rough equivalent of sty and class files in the LaTeX world; a Typst source document can input package files to extend the capabilities of the language.  An elaborate package system for Typst is under construction currently. See \url{https://github.com/typst/packages#local-packages} for details.
 
 In particular, the Typst world has an equivalent of $\sim$/Library/texmf where users can store their own packages and experimental packages from others not yet published for general use. On the Macintosh, this location is 
 $\sim$/Library/Application Support/typst/packages.   
 This location takes precedence over others, just as $\sim$/Library/texmf is searched first in LaTeX.
 
-Scheerder's modification split each sample program discussed earlier into two pieces, a package which any source file can use, and a template which can be used to start an appropriate source. The advantage is that users can modify the templates for their individual needs without having to understand or touch the underlying packages. 
+An earlier version of TeXShop added packages to this location so users could try out sample Typst documents from 
+the Typst web site. However, this is no longer necessary because Typst now automatically downloads and caches packages when a source file includes them. 
 
-The file {\em AboutTypst} in $\sim$/Library/TeXShop/Engines/Inactive/Typst explains how to easily
-install Scheerder's modifications, which are contained in a subfolder named Advanced.
+There is an easy way to try sample templates created by the Typst project. Go to
+ \url{https://typst.app/universe/search/?kind=packages}. In the column at top left of the resulting page, select ``Templates''. 
+The right side of the page then shows  icons for around 390 sample templates.. 
+\newpage
+For example, let us try the tufte-memo. 
+Click the icon for {\em tufte-memo} and notice that the web view switches to a page about this document. On the right side there is a line in black containing the text
+\begin{verbatim}
+     typst init @preview/tufte-memo:0.1.2
+\end{verbatim}
+Open Terminal in Applications/Utilities and type the following commands:
+\begin{verbatim}
+     cd
+     mkdir typst-docs
+     cd typst-docs
+     typst init @preview/tufte-memo:0.1.2
+\end{verbatim}
+The first three lines create a folder in your home directory for typst projects; feel free to revise this portion.
+The last line is the magic line from the Typst web page which creates a folder named {\em tufte-memo}
+in the typst-docs directory and fills this folder with all files needed to run the project. The final part of this line,  ``:0.1.2'', lists the version of the extra package which the document uses.
+This portion can be omitted and then Typst will download the latest version of this package.
 
-Now suppose you want to write a letter using Typst. Open a new source window in TeXShop. Find the Templates pulldown in the source toolbar, and notice that it  contains a folder named TypstTemplates. Select the template ``letter'' in this folder and the source for a letter will appear in your new source window. Revise the text as you wish. Then typeset. In the resulting Save Dialog, be sure to use the FileFormat: menu at the bottom to select file type ``typst''. 
+Open the folder {\em tufte-memo}. Inside you will find several files, include {\em main.typ} and possibly {\em main.pdf}. These titles can be changed if you prefer a more precise name for the document. Open {\em main.typ} in TeXShop. At the very top, add the line
+\begin{verbatim}
+     // % !TEX TS-program = Typst
+\end{verbatim}
+Now typeset. Done.
 
-Recall that TeXShop templates can be edited. If the boilerplate text in the ``letter'' template is annoying, you can easily remove it and create a template which only contains the skeleton needed for each new letter.
+\section{Other Samples}
 
-This process works for all other templates in the TypstTemplates folder except the ams template. That template
-has one minor problem due to the fact that the design of Packages is not yet finished. The ams Package 
-inputs a file named refs.bib with a sample bibliography. However, refs.bib should not be part of the package; instead it should be part of the source folder being created by the user writing a new article, because the references change for each article. Scheerder modified the ams template slightly so it looks for refs.bib in the source folder. But if that file is missing in the source file, then typesetting stops with an error. 
+The Typst templates web page has several other samples that are particularly recommended.
+These include {\em unequivocal-asm, charged-ieee, wonderous-book, dashing-dept-news,
+ilm, touying-simpl-hkustgv, letter-pro,} and {\em fireside}. 
 
-The easy solution is to add a file named refs.bib to the source folder for any ams article you write. The ``Advanced'' folder contains such a refs.bib file. Copy it to your first ams source folder. TeXShop can open and edit this file, so it is easy to convert it to a bibliography for your own document.. Any time you create a new file using the ams template, find a copy of this file in one of your other projects and copy it to the new project folder.
 
+
+%Scheerder's modification split each sample program discussed earlier into two pieces, a package which any source file can use, and a template which can be used to start an appropriate source. The advantage is that users can modify the templates for their individual needs without having to understand or touch the underlying packages. 
+%
+%The file {\em AboutTypst} in $\sim$/Library/TeXShop/Engines/Inactive/Typst explains how to easily
+%install Scheerder's modifications, which are contained in a subfolder named Advanced.
+%
+%Now suppose you want to write a letter using Typst. Open a new source window in TeXShop. Find the Templates pulldown in the source toolbar, and notice that it  contains a folder named TypstTemplates. Select the template ``letter'' in this folder and the source for a letter will appear in your new source window. Revise the text as you wish. Then typeset. In the resulting Save Dialog, be sure to use the FileFormat: menu at the bottom to select file type ``typst''. 
+%
+%Recall that TeXShop templates can be edited. If the boilerplate text in the ``letter'' template is annoying, you can easily remove it and create a template which only contains the skeleton needed for each new letter.
+%
+%This process works for all other templates in the TypstTemplates folder except the ams template. That template
+%has one minor problem due to the fact that the design of Packages is not yet finished. The ams Package 
+%inputs a file named refs.bib with a sample bibliography. However, refs.bib should not be part of the package; instead it should be part of the source folder being created by the user writing a new article, because the references change for each article. Scheerder modified the ams template slightly so it looks for refs.bib in the source folder. But if that file is missing in the source file, then typesetting stops with an error. 
+%
+%The easy solution is to add a file named refs.bib to the source folder for any ams article you write. The ``Advanced'' folder contains such a refs.bib file. Copy it to your first ams source folder. TeXShop can open and edit this file, so it is easy to convert it to a bibliography for your own document.. Any time you create a new file using the ams template, find a copy of this file in one of your other projects and copy it to the new project folder.
+%
 
 
 \chapter{Using an External Editor}
@@ -4021,6 +4058,15 @@ If no selection is made and instead the cursor is simply positioned by clicking 
 its previous contents. Thus if a user carefully edits an equation, closes the experiment window, and then decides on a final change, the contents can be brought back for another edit.
 
 Typesetting for ``Experiment...'' uses the Preference settings for pdflatex and simpdftex latex. If the user's pulldown menu is set to latex, the three choices of 1) pdflatex, 2) tex + dvi, 3) personal script are obeyed. This should make the command work for TeX in Japan.
+
+ ``Experiments'' are for moments when you want to work on a single tricky problem,
+usually involving complicated mathematical formulas or tikz illustrations, and you don't want to risk
+making a mistake in the source file that would be difficult to find and fix. Instead
+you work in two windows that float over the main document.
+These windows are only there for a short, specific task, and most of the extra infrastructure
+provided by TeXShop still applies to the underlying Source and Preview windows. For example, the ``Comment'' and ``Indent''
+commands in the source menu continue to access the main Source window and ignore the
+floating Experiment window. 
 
 
 \section{Tags Toolbar Item and Menu; Labels Item}

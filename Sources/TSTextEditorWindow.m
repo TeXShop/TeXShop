@@ -133,7 +133,13 @@
 - (void)associatedWindow:(id)sender
 {
 	if ([self.myDocument documentType] == isTeX) {
-		[self.myDocument bringPdfWindowFront];
+        
+        if ([self.myDocument experimentActive])
+            [self.myDocument switchExperimentWindows];
+        
+       else
+        
+            [self.myDocument bringPdfWindowFront];
 	}
 }
 

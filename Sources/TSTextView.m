@@ -2793,6 +2793,16 @@ static BOOL launchBibDeskAndOpenURLs(NSArray *fileURLs)
 
 @implementation NSTextView (TeXShop)
 
+- (CGFloat)theViewWidth
+{
+    NSView  *myContentView;
+    CGFloat myWidth;
+    
+    myContentView = [[self enclosingScrollView] contentView];
+    myWidth = myContentView.bounds.size.width;
+    return myWidth;
+}
+
 // Compute the range of characters visible in this text view (a range into the
 // NSTextStorage of this view).
 - (NSRange)visibleCharacterRange

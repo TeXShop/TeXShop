@@ -81,11 +81,18 @@
         return;
     if ([myDocument useFullSplitWindow])
     {
-        [[myDocument fullSplitWindow] makeKeyAndOrderFront:self];
-        [myDocument doAssociatedWindow];
+        if ([self.myDocument experimentActive])
+           [self.myDocument switchExperimentWindows];
+        else {
+            [[myDocument fullSplitWindow] makeKeyAndOrderFront:self];
+            [myDocument doAssociatedWindow];
+        }
     }
     else if ([myDocument documentType] == isTeX) {
-        if ([myDocument getCallingWindow] == nil)
+        
+        if ([self.myDocument experimentActive])
+           [self.myDocument switchExperimentWindows];
+        else if ([myDocument getCallingWindow] == nil)
             [[myDocument textWindow] makeKeyAndOrderFront: self];
         else
             [[myDocument getCallingWindow] makeKeyAndOrderFront: self];

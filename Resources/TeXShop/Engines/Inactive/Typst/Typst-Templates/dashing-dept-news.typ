@@ -1,14 +1,14 @@
-//% !TEX TS-program = Typst
-#import "@typst/dept-news:0.1.0": *
-//#import "template.typ": *
-#show: dept-news.with(
-  title: "Chemistry Department",
+// % !TEX TS-program = Typst
+#import "@preview/dashing-dept-news:0.1.0": newsletter, article
+
+#show: newsletter.with(
+  title: [Chemistry Department],
   edition: [
     March 18th, 2023 \
     Purview College
   ],
   hero-image: (
-    path: "newsletter-cover.jpg",
+    image: image("newsletter-cover.jpg"),
     caption: [Award-wining science],
   ),
   publication-info: [
@@ -21,7 +21,7 @@
 = The Sixtus Award goes to Purview
 It's our pleasure to announce that our department has recently been awarded the highly-coveted Sixtus Award for Excellence in Chemical Research. This is a massive achievement for our department, and we couldn't be prouder.
 
-#blockquote[Prof. Herzog][
+#quote(block: true, attribution: [Prof. Herzog])[
   Our Lab has synthesized the most elements of them all.
 ]
 

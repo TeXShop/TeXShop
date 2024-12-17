@@ -370,6 +370,7 @@ NSString *BlockWidthKey = @"BlockWidth";
 NSString *BlockSideKey = @"BlockSide";
 NSString *SameFontForMacroKey = @"SameFontForMacro";
 NSString *LinkPopupsKey = @"LinkPopups";
+NSString *MathExpressionCompletionKey = @"MathExpressionCompletion";
 
 
 
@@ -410,6 +411,7 @@ BOOL                atLeastCatalina;
 BOOL                atLeastMonterey;
 BOOL                atLeastVentura;
 BOOL                atLeastSonoma;
+BOOL                atLeastSequoia;
 BOOL                BuggyHighSierra;
 BOOL                editorCanAddBrackets; // this preference is a global since it is accessed after each keystroke in the editor
 

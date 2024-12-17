@@ -14,6 +14,38 @@
 
 
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.48</h5></P>
+Version 5.48 has one noticeable change and a few additional items:
+<ul>
+<p><li> Apple Intelligence in Sequoia 15.2 introduces a new feature called Math Expression Completion. If a user types "e =" in an editor, the editor automatically adds "2.718"; if a user types "x + \pi =", the editor  adds "3.14159". This addition is almost never appropriate in TeX source code, so TeXShop 5.48 has a hidden preference item to turn it off or on. By default it is off. To turn it on, issue the command below in Terminal, where the final integer is positive. When this integer is zero, the feature will be turned off.
+<pre>
+   defaults write TeXShop MathExpressionCompletion 1
+</pre>
+The feature can also be turned off by turning Apple Intelligence off in Apple's System Settings, but this is overkill. For instance, Writing Tools can be helpful when editing paragraphs with TeXShop. 
+
+<p><li> A user discovered a bug in the Macro command "Close Begin/End". The word "is" occurs twice in line 147, which reads "tell me to to set environment_name to do shell script". This is fixed in version 5.48, but updating the program does not update the user's Macros since they can be modified by the user. 
+If you might use this macro, edit this item yourself using "Open Macro Editor" at the top of the "Macros" menu.
+
+<p><li> George Grätzer recently uploaded an interesting style file to CTAN and TeX Live named 
+"Gratzer-Color-Scheme". Adding the line below to the header of a  LaTeX, XeLaTeX, or LuaLaTeX  document
+will cause all theorems to be printed in red, all lemmas and propositions to be printed in blue, and all 
+definitions to be printed in green. Give it a try.
+<pre>
+   \usepackage{Gratzer-Color-Scheme}
+</pre>
+
+ 
+<p><li> The TeXShop help menu has an item titled "First Steps with General Typesetting". The document has a section toward the end showing how to type Arabic, Hebrew, and Japanese text in source files using XeLaTeX. The code selecting a Hebrew font broke in a recent TeX Live update, and the current document fixes this problem.
+
+<p><li> A ConTeXt user requested that TeXShop define the extensions lmt, mkiv, mkvi, mkxl, mklx, and tuc
+because ConTeXt can produce files with these extensions and he wanted to examine such files using Quick Look. I was reluctant to add so many new extensions to TeXShop for this very special purpose. Therefore I wrote a small program named "Helper" which defines the extensions. Installing that program causes Quick Look to display files with these extensions. Helper contains a primitive editor, so clicking a file with one of these extensions opens the file in Helper.
+
+<p> This Helper program is available on my web site, <A HREF="https://pages.uoregon.edu/koch/"> https://pages.uoregon.edu/koch/ </A>. The site also contains the complete source code for Helper, so a user with a similar problem can extend Helper to deal with additional extensions. This is not a common problem and most users will ignore Helper.
+
+<p><li> Latexmk is updated to version 4.86.
+
+</ul>
+
 
 <P><h5>TeXShop Changes 5.47</h5></P>
 Version 5.47 has a few minor changes:

@@ -260,6 +260,17 @@
         atLeastSonoma = YES;
     else
         atLeastSonoma = NO;
+    
+   // double value;
+   // value = NSAppKitVersionNumber;
+   // NSLog(@"The value is %f", value);
+    
+    if (floor(NSAppKitVersionNumber) >= 2575.0)
+        atLeastSequoia = YES;
+    else
+        atLeastSequoia = NO;
+    
+    
      
 /*
 #ifdef MOJAVEORHIGHER

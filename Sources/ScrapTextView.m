@@ -28,10 +28,31 @@
 
 @implementation ScrapTextView
 
+- (void)awakeFromNib
+{
+/*
+    if ([self respondsToSelector:@selector(setMathExpressionCompletionType:)])
+    {   if ([SUD integerForKey:MathExpressionCompletionKey] == 0)
+            [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
+    }
+ */
+    
+    if (atLeastSequoia)
+    {
+         if (([self respondsToSelector:@selector(setMathExpressionCompletionType:)]) &&
+            ([SUD integerForKey:MathExpressionCompletionKey] == 0))
+            
+        {
+            if (@available(macOS 15.0, *))
+                [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
+        }
+    }
+
+}
+
 - (id)initWithFrame:(NSRect)frameRect
 {
-    self = [super initWithFrame: frameRect];
-    
+
     latexSpecial = NO;
     wasCompleted = NO; // was completed on last keyDown
     replaceLocation = NSNotFound; // completion started here

@@ -79,7 +79,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.4.2}
+\title{TeXShop Manual \\ Version 1.4.3}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -6080,9 +6080,18 @@ This trick is off by default, but can be turned on to work automatically using
 \begin{verbatim}
    defaults write TeXShop FixVoiceOver Yes
 \end{verbatim}
+
+\subsubsection{<Preferences for Apple Intelligence>}
+
+Apple Intelligence in Sequoia 15.2 introduces a new feature called Math Expression Completion. If a user types $e =$ in an editor, the editor automatically adds ``2.718''; if a user types $x + \pi =$, the editor  adds ``3.14159''. This addition is almost never appropriate in TeX source code, so TeXShop 5.48 has a hidden preference item to turn it on or off. By default it is off. To turn it on, issue the command below in Terminal, where the final integer is positive. When this integer is zero, the feature will be turned off.
+\begin{verbatim}
+   defaults write TeXShop MathExpressionCompletion 1
+\end{verbatim}
+
+
 \newpage
 
-\subsubsection{<Obsolete Preferences Introduced To Find a Bug>}
+\subsubsection{<Obsolete Preferences Introduced To Fix a Bug>}
 
 Several years ago, a small number of users reported that while typesetting documents with at least 700 pages, typesetting would suddenly stop in the middle without an error message. This was the most difficult bug I ever faced. The Changes document explains how it was finally fixed. Before the fix, several hidden preferences were introduced so users could help search for a solution. All are now obsolete, but we list them below.
 \begin{verbatim}

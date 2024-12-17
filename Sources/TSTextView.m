@@ -54,6 +54,29 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
 // added by Terada (- (void)awakeFromNib)
 - (void)awakeFromNib
 {
+
+    /*
+    if ([self respondsToSelector:@selector(setMathExpressionCompletionType:)])
+    {   if ([SUD integerForKey:MathExpressionCompletionKey] == 0)
+        if (@available(macOS 15.0, *)) {
+            [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
+        }
+    }
+    */
+    
+    if (atLeastSequoia)
+    {
+        if (([self respondsToSelector:@selector(setMathExpressionCompletionType:)]) &&
+            ([SUD integerForKey:MathExpressionCompletionKey] == 0))
+            
+        {
+            if (@available(macOS 15.0, *))
+                [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
+        }
+    }
+
+    
+    [super awakeFromNib];
     
 	TSLayoutManager *layoutManager = [[TSLayoutManager alloc] init];
 	[[self textContainer] replaceLayoutManager:layoutManager];

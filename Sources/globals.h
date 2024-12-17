@@ -575,6 +575,7 @@ extern NSString *BlockWidthKey;
 extern NSString *BlockSideKey;
 extern NSString *SameFontForMacroKey;
 extern NSString *LinkPopupsKey;
+extern NSString *MathExpressionCompletionKey;
 
 
 // end defaults
@@ -670,6 +671,7 @@ extern BOOL             atLeastCatalina;
 extern BOOL             atLeastMonterey;
 extern BOOL             atLeastVentura;
 extern BOOL             atLeastSonoma;
+extern BOOL             atLeastSequoia;
 extern BOOL             BuggyHighSierra;
 extern BOOL             editorCanAddBrackets;
 

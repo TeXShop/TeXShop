@@ -67,12 +67,30 @@ static const CFAbsoluteTime MAX_WAIT_TIME = 10.0;
     if (atLeastSequoia)
     {
         if (([self respondsToSelector:@selector(setMathExpressionCompletionType:)]) &&
-            ([SUD integerForKey:MathExpressionCompletionKey] == 0))
-            
-        {
-            if (@available(macOS 15.0, *))
-                [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
-        }
+                    ([SUD integerForKey:MathExpressionCompletionKey] == 0))
+                    
+                {
+                    if (@available(macOS 15.0, *))
+                        [self setMathExpressionCompletionType: NSTextInputTraitTypeNo];
+                }
+        
+        else if (([self respondsToSelector:@selector(setMathExpressionCompletionType:)]) &&
+                 ([SUD integerForKey:MathExpressionCompletionKey] == 1))
+                 
+             {
+                 if (@available(macOS 15.0, *))
+                     [self setMathExpressionCompletionType: NSTextInputTraitTypeYes];
+             }
+     
+       else if (([self respondsToSelector:@selector(setMathExpressionCompletionType:)]) &&
+              ([SUD integerForKey:MathExpressionCompletionKey] == 2))
+              
+          {
+              if (@available(macOS 15.0, *))
+                  [self setMathExpressionCompletionType: NSTextInputTraitTypeDefault];
+          }
+  
+ 
     }
 
     

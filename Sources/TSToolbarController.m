@@ -27,6 +27,19 @@
  * Revised on August 1, 2018 by Richard Koch
  */
 
+/*
+ * WARNING: This code began to fail on Mohave; discovered in January, 2025.
+   It continued to work on Catalina and above, and on High Sierra.
+ * TeXShop 4.79 worked, but TS 5.00 and above failed.
+ * Tests showed the failure was due to the new preference item "Use New Toolbar Icons".
+ * When this item was turned off, the program worked again.
+ * To get a permanant fix, all
+ *     if  ([SUD boolForKey:NewToolbarIconsKey])
+ * were changed to
+ *      if  ([SUD boolForKey:NewToolbarIconsKey] && atLeastMonterey)
+ * note that atLeastMonterey is actually code for atLeastBigSur
+*/
+
 #import "UseMitsu.h"
 #import "globals.h"
 
@@ -232,7 +245,7 @@ else
 
 - (NSToolbarItem*) makeToolbarSymbolsItemWithItemIdentifier:(NSString *)itemIdent key:(NSString *)itemKey symbolName: (NSString *)symbolName accessibility: (NSString *)accessibility imageName:(NSString *)imageName newImageName:(NSString *)newImageName target:(id)target action:(SEL)action
 {
-    if ([SUD boolForKey: NewToolbarIconsKey])
+    if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
         {
              if (@available(macOS 11.0, *)) {
                 NSImage *symbolImage = [NSImage imageWithSystemSymbolName: symbolName
@@ -259,7 +272,7 @@ else
 {
 	NSToolbarItem*	toolbarItem = [self makeToolbarItemWithItemIdentifier:itemIdent key:itemKey];
 	[toolbarItem setView: customView];
-    if ([SUD boolForKey: NewToolbarIconsKey]) {
+    if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey) {
         NSButton *myButton = customView;
         if ([[customView class] isSubclassOfClass: [NSButton class]])
             myButton.bezelStyle = NSBezelStyleTexturedRounded;
@@ -286,7 +299,7 @@ else
 {
     NSToolbarItem *theToolbarItem;
     
-    if ([SUD boolForKey: NewToolbarIconsKey])
+    if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
     {
         if (@available(macOS 11.0, *)) {
             NSImage *firstImage = [NSImage imageWithSystemSymbolName: @"hand.point.up.left"
@@ -323,7 +336,7 @@ else
 {
     NSToolbarItem *theToolbarItem;
     
-    if ([SUD boolForKey: NewToolbarIconsKey])
+    if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
     {
         if (@available(macOS 11.0, *)) {
             NSImage *firstImage = [NSImage imageWithSystemSymbolName: @"arrowtriangle.left.fill"
@@ -834,7 +847,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
     if ([itemIdent isEqual: kPreviousPageButtonTID]){
 
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
         {
             if (@available(macOS 11.0, *)) {
                 NSString *theName = @"arrow.up";
@@ -862,7 +875,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
 	if ([itemIdent isEqual: kNextPageButtonTID]) {
         
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
         {
             if (@available(macOS 11.0, *)) {
                 NSString *theName = @"arrow.down";
@@ -1015,7 +1028,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
 
      if ([itemIdent isEqual: kSearchKKTID]) {
         
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
             
         {
               if (@available(macOS 11.0, *)) {
@@ -1044,7 +1057,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     }
     
     if ([itemIdent isEqual: skSearchTID]) {
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
             
         {
             
@@ -1230,7 +1243,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     
      if ([itemIdent isEqual: kHtmlPreviousPageButtonTID]) {
          
-         if ([SUD boolForKey: NewToolbarIconsKey])
+         if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
          {
              if (@available(macOS 11.0, *)) {
                  NSString *theName = @"chevron.left";
@@ -1259,7 +1272,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     
     if ([itemIdent isEqual: kHtmlNextPageButtonTID]) {
         
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
         {
             if (@available(macOS 11.0, *)) {
                 NSString *theName = @"chevron.right";
@@ -1305,7 +1318,7 @@ if ([itemIdent isEqual: kSplitKKTID]) {
     
     if ([itemIdent isEqual: kHtmlSearchTID]) {
         
-        if ([SUD boolForKey: NewToolbarIconsKey])
+        if ([SUD boolForKey: NewToolbarIconsKey] && atLeastMonterey)
             
         {
               if (@available(macOS 11.0, *)) {

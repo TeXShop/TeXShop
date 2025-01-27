@@ -11,9 +11,38 @@
 
 <BODY>
 
-
-
 <div id="content_normal">
+<P><h5>TeXShop Changes 5.49</h5></P>
+There are a few minor changes:
+<ul>
+<p><li> Last year, TeXShop 5.00 through TeXShop 5.48 crashed when run on macOS Mojave.
+The bug is fixed and TeXShop 5.49 again works on High Sierra and above using either Intel
+or Arm processors.
+<p><li> Sequoia 15.2 introduced a new feature called Math Expression Completion. When the
+user typed "e = " in an editor, the editor automatically added "2.718". This feature was on by
+default, but a new TeXShop 5.48 preference turned it off.
+
+<p> According to Apple's documentation, MathExpressionCompletion can have three values. So TeXShop 5.49
+revises the associated preference  and allows users to select any of the three values. As before
+<pre>
+   defaults write TeXShop MathExpressionCompletion 0
+</pre>
+sets the value to NSTextInputTraitTypeNo and turns the item off. This is its default value. Changing the last integer to
+1 sets the value to NSTextInputTraitTypeYes, and setting the last integer to 2 sets the value to
+NSTextInputTraitTypeDefault.  Both of these choices turn the feature on. All other last integers set the value to NSTextInputTraitTypeNo and turn the feature off. In earlier betas of Sequoia 15.3, these new preference values failed to turn the feature back on, but they work correctly in the release version of Sequoia 15.3.
+
+<p><li> TeXShop 5.49 has Latexmk 4.86a.
+<p><li> A new template named LatexSpanishTemplate by Juan Luis Varona Malumbres
+contains recommended packages for Spanish; comments in the template list similar packages for other European languages. This template is provided automatically for new users, but TeXShop does not update the Templates folder for older users.
+These users will find the template in ~/Library/TeXShop/New/Templates and can move it to the
+active location ~/Library/TeXShop/Templates.
+<p><li> Several users working with tabbed windows ran into the same problem. They saw the
+ item "If Sync Opens a New Window, Open as Tab in Root Window" in TeXShop Preferences
+ and turned this item on. The item is a relic of older days before
+ TeXShop fully supported Apple's tab design, and should be off for most users. This fact is pointed out in the manual and it is off by default for new users.  I don't want to remove the item because a few users on older systems may still use it. The English localization of Preference Settings now warns against activating the item.
+ <p><li> The "About TeXShop" dialog now claims a copyright from 2001 to 2025.
+</ul>
+
 <P><h5>TeXShop Changes 5.48</h5></P>
 Version 5.48 has one noticeable change and a few additional items:
 <ul>

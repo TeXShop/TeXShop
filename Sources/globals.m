@@ -371,6 +371,7 @@ NSString *BlockSideKey = @"BlockSide";
 NSString *SameFontForMacroKey = @"SameFontForMacro";
 NSString *LinkPopupsKey = @"LinkPopups";
 NSString *MathExpressionCompletionKey = @"MathExpressionCompletion";
+NSString *BringFrontOnTypesetKey = @"BringFrontOnTypeset";
 
 
 

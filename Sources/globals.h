@@ -576,6 +576,7 @@ extern NSString *BlockSideKey;
 extern NSString *SameFontForMacroKey;
 extern NSString *LinkPopupsKey;
 extern NSString *MathExpressionCompletionKey;
+extern NSString *BringFrontOnTypesetKey;
 
 
 // end defaults

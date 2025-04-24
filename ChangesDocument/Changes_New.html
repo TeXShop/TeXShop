@@ -16,6 +16,60 @@
 
 <!-- main content -->
 <div id="main">
+<P><h3>TeXShop Changes 5.51</h3></P>
+Version 5.50 was never released. Version 5.51 has three changes:
+<ul>
+<p><li> The  Preview Window has a selection tool, used by authors to select a portion of
+the screen. This portion is  automatically converted to png, pdf, jpeg, or tiff and the image can be dragged to another program like Mail or Keynote. This facility is also in LaTeXiT, and for serious work the LaTeXiT version is better because the image contains the LaTeX source and thus can be edited later. But the TeXShop tool is useful for quick and dirty work.
+
+<p> The TeXShop tool broke at some point in the past, as I discovered when I tried to use it for my own work. While the selection rectangle was being drawn, the entire rectangle sometimes vanished.
+That is because TeXShop asked for a very thin boundary line around the selection; as screen
+resolutions improve, screens can draw lines so fine that they are invisible. Increasing the line thickness fixed the problem.
+
+<p><li> TeXShop's Settings Panel under the Typeset
+tab has an item titled "After Typesetting" which allows users to determine the active window after typesetting is complete.
+Originally TeXShop activated the preview window because users wanted to inspect the typesetting result. But  some users wanted the source window to become active so they could  glance at the preview result and immediately continue writing. TeXShop now offers a third mode as well, called ``Stay in Current Window.''  
+Since typesetting can be initiated by typing command-T in any document window, the new mode activates that window when typesetting ends. Typesetting can be initiated in the Source, Preview, Console, or Log windows. <!-- The following feature was requested by Rupert Klein. -->
+This change only affects multiple-window mode; it wouldn't make sense in single-window mode, where in some sense both windows are active at once. 
+
+<p> The console window is special because other Preference settings affect its behavior. During typesetting, it can either pop to the front or remain  hidden behind other windows. But if there is an error, then it pops forward.
+This behavior remains valid with the new preference setting. If typesetting is initiated in the source window,
+the console can pop forward if the user set this in Preferences, but at the end the source window will
+pop back on top. However, if there is an error,  the console will pop to the top and remain there after typesetting ends.
+
+<p> The TeXShop "Typeset" menu has an item calling BibTeX which dates from the early days of TeXShop and is not affected by the new Preference. Today there are  better ways to handle BibTeX by calling it in a typesetting engine. To give the idea, I'll sketch my rather naive approach. Create the engine below
+and name it
+BibStuff. 
+<pre>
+  #!/bin/tcsh
+
+  set path= ($path /Library/TeX/texbin /usr/texbin /usr/local/bin)
+
+  pdflatex --file-line-error --synctex=1 "$1"
+  bibtex   "$1:r"
+  pdflatex --file-line-error --synctex=1 "$1"
+  pdflatex --file-line-error --synctex=1 "$1"
+</pre>
+and add the following line to the top of your source window:
+<pre>
+   % !TEX TS-program = BibStuff
+</pre>
+This engine will automatically call BibTeX when necessary.
+If you are dealing with a pre-built bibliography and only worried about citing items
+in your current paper, the source database containing the bibliography need not
+even be opened and the standard rules for "Stay in Current Window" apply.
+If you are also editing  the bibliography database, you can open an extra window
+containing it. The bad news is that TeXShop will consider this a window for a different project, so it won't activate
+if after typesetting. The good news is that you will not need to run BibTeX after changing the database; the engine will notice that it has been changed and automatically reread it.
+
+<p> The BibStuff engine calls latex three times. If you are working
+on the actual text of your document and not dealing with citations at the moment,  deactivate
+the magic line by adding a symbol after the initial comment, and you'll only typeset once.
+
+<p><li> The contents of ~/Library/TeXShop/Engines/Inactive/Typst changed to reflect
+the new Typst release of March 7, 2025.
+</ul>
+
 <P><h3>TeXShop Changes 5.49</h3></P>
 There are a few minor changes:
 <ul>

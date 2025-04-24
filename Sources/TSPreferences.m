@@ -2149,19 +2149,30 @@ A tag of 0 means "Activate Preview"; a tag of 1 means "Continue Editing".
 "*/
 - (IBAction)afterTypesettingChanged:sender;
 {
-	BOOL	oldValue, newValue;
+	BOOL	oldBoolValue, newBoolValue;
+    NSInteger oldValue, newValue;
 	NSInteger		tagValue;
 	
-	oldValue = [SUD boolForKey:BringPdfFrontOnTypesetKey];
+	oldBoolValue = [SUD boolForKey:BringPdfFrontOnTypesetKey];
+    oldValue = [SUD integerForKey:BringFrontOnTypesetKey];
 	tagValue = [[sender selectedCell] tag];
-	if (tagValue == 0)
-		newValue = YES;
+    
+    if (tagValue == 1)
+		newBoolValue = NO;
 	else
-		newValue = NO;
+		newBoolValue = YES;
+    
+    newValue = tagValue;
+    if (newValue > 2)
+        newValue = 0;
+    
 	// register the undo message first
-	[[_undoManager prepareWithInvocationTarget:SUD] setBool:oldValue forKey:BringPdfFrontOnTypesetKey];
-
-	[SUD setBool:newValue forKey:BringPdfFrontOnTypesetKey];
+	[[_undoManager prepareWithInvocationTarget:SUD] setBool:oldBoolValue forKey:BringPdfFrontOnTypesetKey];
+    [[_undoManager prepareWithInvocationTarget:SUD] setInteger:oldValue forKey:BringFrontOnTypesetKey];
+    
+	[SUD setBool:newBoolValue forKey:BringPdfFrontOnTypesetKey];
+    [SUD setInteger:newValue forKey: BringFrontOnTypesetKey];
+    
 }
 
 /*" This method is connected to the "Console" matrix on the TeX pane.
@@ -2439,7 +2450,7 @@ This method retrieves the application preferences from the defaults object and s
 	NSData	*fontData, *attributesData;
 	double	magnification;
 	NSInteger		mag, tabSize;
-	NSInteger		myTag;
+	NSInteger		myTag, myInteger;
 	BOOL	myBool;
 	NSNumber    *myNumber;
     
@@ -2760,13 +2771,17 @@ This method retrieves the application preferences from the defaults object and s
 	myTag = [defaults integerForKey:DistillerCommandKey];
 	[_distillerMatrix selectCellWithTag: myTag];
 	
+    /*
 	myBool = [defaults boolForKey:BringPdfFrontOnTypesetKey];
 	if (myBool == YES)
 		myTag = 0;
 	else
 		myTag = 1;
 	[_afterTypesettingMatrix selectCellWithTag: myTag];
-	
+	*/
+    myInteger = [defaults integerForKey:BringFrontOnTypesetKey];
+    myTag = myInteger;
+    [_afterTypesettingMatrix selectCellWithTag: myTag];
 
 
 	// end mitsu 1.29

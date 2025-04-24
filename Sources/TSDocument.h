@@ -244,7 +244,7 @@ enum RootCommand
 //   TSDocument          *rootDocument;
     
 
-
+    NSWindow            *WindowAfterTypeset;
 	NSStringEncoding	_encoding;
 	NSStringEncoding	_tempencoding;
 	DefaultTypesetMode			whichScript;		/*" 100 = pdftex, 101 = gs, 102 = personal script "*/

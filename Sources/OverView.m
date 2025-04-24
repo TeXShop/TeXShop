@@ -54,7 +54,7 @@
     if (drawRubberBand) {
         NSBezierPath    *path;
         path = [NSBezierPath bezierPath];
-        [path setLineWidth: 0.01];
+        [path setLineWidth: 0.51];
         theSelectionRect.origin.y = theSelectionRect.origin.y;
         [path appendBezierPathWithRect: theSelectionRect];
     

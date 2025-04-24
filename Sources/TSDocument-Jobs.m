@@ -1976,8 +1976,16 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
 // end change
 }
 
-- (void) doTypeset: sender
-{
+- (void) doTypeset: sender;
+
+ {
+  
+    NSInteger prefValue = [SUD integerForKey: BringFrontOnTypesetKey];
+    if (prefValue == 2)
+        WindowAfterTypeset = [NSApplication.sharedApplication keyWindow];
+    else
+        WindowAfterTypeset = nil;
+     
 //    NSString	*titleString;
 	BOOL	useError;
     
@@ -2154,6 +2162,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
     NSURL           *theURL;
     NSURLRequest    *theRequest;
     NSURL           *existingURL;
+    NSInteger       myFrontOnTypeset;
     
     // Crucial note: I now know that when the bug occurs, this routine is called,
     // possibly with terminationStatus = 13
@@ -2264,14 +2273,49 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         //[pdfKitWindow setTitle: [imagePath lastPathComponent]]; // removed by Terada
                         [self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
                         [self fillLogWindowIfVisible];
-                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
-                        if ((front) || (! [self.pdfKitWindow isVisible]))
-                            [self.pdfKitWindow makeKeyAndOrderFront: self];
+                        
+                        
+                        myFrontOnTypeset = [SUD integerForKey: BringFrontOnTypesetKey];
+                        if (myFrontOnTypeset == 2)
                         {
-                            if (self.useOldSyncParser)
-                                [self allocateSyncScannerOld];
-                            else if (! self.useConTeXtSyncParser)
-                                [self allocateSyncScanner];
+                            if (WindowAfterTypeset == textWindow)
+                                [self.textWindow makeKeyAndOrderFront: self];
+                            
+                            else if (WindowAfterTypeset == self.pdfKitWindow)
+                                [self.pdfKitWindow makeKeyAndOrderFront: self];
+                            
+                            else if (WindowAfterTypeset == outputWindow)
+                                [outputWindow makeKeyAndOrderFront: self];
+                            
+                            else if (WindowAfterTypeset == self.logWindow)
+                                [self.logWindow makeKeyAndOrderFront: self];
+                            
+                            /*
+                             {
+                             if (self.useOldSyncParser)
+                             [self allocateSyncScannerOld];
+                             else if (! self.useConTeXtSyncParser)
+                             [self allocateSyncScanner];
+                             }
+                             */
+                            
+                        }
+                        
+                        
+                        else
+                        {
+                            
+                            
+                            
+                            front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                            if ((front) || (! [self.pdfKitWindow isVisible]))
+                                [self.pdfKitWindow makeKeyAndOrderFront: self];
+                            {
+                                if (self.useOldSyncParser)
+                                    [self allocateSyncScannerOld];
+                                else if (! self.useConTeXtSyncParser)
+                                    [self allocateSyncScanner];
+                            }
                         }
                     }
                     else {

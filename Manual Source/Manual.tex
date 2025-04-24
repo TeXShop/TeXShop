@@ -79,7 +79,7 @@
             
 \usepackage[all]{hypcap}  % For well-positioned anchors for floats
 
-\title{TeXShop Manual \\ Version 1.4.3}
+\title{TeXShop Manual \\ Version 1.4.5}
 \author{Richard Koch}
 %\date{}							% Activate to display a given date or no date
 
@@ -789,19 +789,81 @@ The advantage of offering both typesetting methods was that  pdftex can accept p
 Nowadays, typesetting with the second method is only necessary if you use pstricks. Starting in 2011, TeX Live automatically converts eps illustrations to pdf illustrations during typesetting, and publishers almost never ask for a dvi file.
 
 So since 2001 TeXShop could typeset in four ways: \TeX\ with pdftex, \TeX\ with the dvips chain, \LaTeX\ with pdftex, and \LaTeX\ with the dvips chain. 
-Perhaps as much as 70\% of \TeX\ typesetting today still uses one of these original toolchains, so  this chapter will explain how to configure and use TeXShop in one of these ways. 
+Much \TeX\ typesetting today still uses one of these original toolchains.
+
+\newpage
+However, two very important computing advances are not supported by these four methods. The first of these is Unicode. As computer use spread from Western Europe and the U.S. to the rest of the world, computer companies discovered customers writing in Chinese, Japanese, Korean, Cyrillic, Arabic, Persian, Hebrew,
+and a host of other languages. A standard called Unicode was  developed to encode these scripts,
+and indeed essentially all languages used anywhere in the world.  It was then necessary to extend
+TeX and LaTeX so source files could be written in Unicode. The two most important  extensions
+are XeTeX and LuaTeX, and more and more writers are switching from TeX to XeTeX or LuaTeX,
+or from LaTeX to XeLaTeX or LuaLaTeX. 
+
+A second advance in computing involves fonts. Knuth wrote a program called MetaFont that
+could be used to design font families, and he developed the Computer Modern font family with all
+characters required in Western Europe or mathematics. But Computer Modern does not contain the vast array of new characters in Unicode,
+and the world ultimately adopted a different standard for fonts, called open type fonts.
+Vast collections of such fonts became available with support for more and more languages covered by Unicode. The Macintosh comes with a large supply of such fonts. Both XeTeX and LuaTeX
+have been modified to let TeX users substitute the fonts which came with their systems for the Computer
+Modern Fonts.
+
+TeXShop fully supports these developments. Internally, its editor works in unicode, and source
+files can use any Unicode script. TeXShop even allows users to insert Arabic and Hebrew from
+right to left rather than left to write. But if the source code uses these extra Unicode characters,
+then it is important to typeset with XeTeX or LuaTeX rather than with TeX or pdfTeX. 
+
+A piece of good news is that both XeTeX and LuaTeX can typeset old source files written for
+TeX or LaTeX without making any changes at all. So it is essentially as easy to start working
+with TeX using XeTeX or LuaTeX as it is to begin with ordinary TeX. Instruction books
+about TeX and LaTeX make perfect sense when used on a machine running XeTeX or LuaTeX.
+
 
 \section{Configuring \TeX\ and \LaTeX\ Typesetting}
 
-Go to TeXShop Preferences and select the {\bf Typesetting} tab. In the first column, select either \TeX\ or \LaTeX\ as the default command. Most people use \LaTeX, so that the is default choice. We'll discuss the third option later.
+With this history out of the way, it is time to explain how to configure TeXShop to typeset
+using whatever engine you decide to use. You'll do this by using Settings (that is, Preferences). 
 
-Below this item, select either ``Pdftex'' or ``TeX + DVI'' as the default script.  Most people select ``Pdftex''. If you use pstricks or have many very old documents, ``TeX + DVI'' may be a better choice. We'll discuss the third item later.
+Go to TeXShop Preferences and select the {\bf Typesetting} tab. In the first column, select either \TeX\ or \LaTeX\ as the default command. Most people use \LaTeX, so that the is default choice.
+We'll describe the third choice in this box shortly.
 
-In the second column of the same tab, select ``SyncTeX'' as the Sync method. The other choices are there for historical reasons and can be ignored.
+Below these items is another group labeled ``Default Script''. Select either ``Pdftex'' or ``TeX + DVI'' as the default script.  Most people select ``Pdftex''. If you use pstricks or have many very old documents, ``TeX + DVI'' may be a better choice. 
+
+To switch between ``Pdftex'' and ``TeX + DVI'' for an occasional document, go to the Typeset menu and select the appropriate option at the bottom. This only affects the active document, so if you have two documents open, you can switch the typesetting method for one without changing it for the other.
+
+
+ If you want to use Xe\TeX\ rather than \LaTeX, choose the third option in the ``Default Command'' box and write XeLaTeX in the command slot. If you want to use Lua\TeX\ rather than \LaTeX, write the word LuaLaTeX in the slot. 
 
 After making these choices, typesetting with TeXShop is easy. When you want to typeset, just push the ``Typeset'' button in the Source toolbar or select the ``Typeset'' menu at the top of the Typeset menu. This menu has a keyboard shortcut, command-T. After a few days, you'll ignore the toolbar item and the menu item and type command-T when you want to typeset.
 
-To switch between ``Pdftex'' and ``TeX + DVI'' for an occasional document, go to the Typeset menu and select the appropriate option at the bottom. This only affects the active document, so if you have two documents open, you can switch the typesetting method for one without changing it for the other.
+At the very bottom of the first column in this Preferences tab, there is an item labeled
+``Use -dALLOWPSTRANSPARENCY''. This is only active when using TeX + DVI mode.
+In this mode, when a graphic is created, it is processed by Ghostscript.
+In modern versions of Ghostscript, the postscript code has been converted to C and made
+safer, but this modernization can break transparency. This preference sets a flag
+telling Ghostscript to process transparency calls correctly. The preference will be irrelevant for most
+people.
+
+In the second column of the preference pane, the first box is  titled ``After Typesetting''.
+This preference determines which window is pulled to the front after typesetting is done.
+Users often want to 
+inspect the output to make sure it is correct, so the choice  ``Bring Preview Forward'' pulls the
+Preview Window to the top. But some users
+prefer to glance at Preview and immediately begin writing additional source. The item
+``Continue Editing'' brings the Edit Window forward to make this task easy.
+
+There is yet a third option. The keyboard shortcut Command-T can be typed in any of the
+ windows Source, Preview, Console, Log and  asks TeX to typeset the document. When the
+ third option is chosen and typesetting ends, the window where Command-T was typed
+ comes to the front.
+ 
+ TeXShop has the ability to sync between the source and the preview windows. Several methods
+ to do this have been tried over the years, but the modern approach is called ``SyncTeX (TeX > 2010)
+ and should be chosen in the "Sync Method" box. Sync will be discussed in detail in a later chapter.
+ 
+ The box labeled ``If Sync Opens a New Window'' is left over from an older version of TeXShop.
+ This item is obsolete and should not be checked. I keep old items in case someone is still using them.
+
+
 
 \section{Bibtex}
 
@@ -809,9 +871,8 @@ The Typeset menu contains two other items, ``BibTex'' and ``MakeIndex''. These a
 
 BibTeX is a tool used to create bibliographies in LaTeX documents. The tool assumes that you have a large database of references which you often quote. Simple commands allow you to cite certain of these references in your LaTeX source, and BibTeX then creates a bibliography for your article containing only the items cited.
 
-Here is a brief example taken from The LaTeX Companion by Goossens, Mittelbach, and Samarin. Consult this book for many additional details. Suppose the database is a file called ``mybibliography.bib'' containing the text shown on the next page. In this text, the entries ``Felici:1991, Knuth:WEB,'' and ``Liang:1983'' are key values used to cite the articles in the LaTeX source.
+Here is a brief example taken from The LaTeX Companion by Goossens, Mittelbach, and Samarin. Consult this book for many additional details. Suppose the database is a file called ``mybibliography.bib'' containing the text shown below. In this text, the entries ``Felici:1991, Knuth:WEB,'' and ``Liang:1983'' are key values used to cite the articles in the LaTeX source.
 
-\newpage
 \begin{verbatim}
     @article{Felici:1991,
     author ={James Felici},
@@ -911,12 +972,12 @@ Homebrew, or MikTeX, the location of the binaries will be different. Consult the
 The second item in the tab is a full path to the Ghostscript binary. This is /usr/local/bin for the copy of Ghostscript installed by MacTeX. The standard build sequence for Ghostscript will also install it at this location. If you use the Ghostscript in MacPorts or Homebrew, consult their documentation for the proper location. Many typesetting engines do not use Ghostscript, so this is not a crucial preference item.
 
 The Alternate Path preference will be explained later and is not used by the toolchains discussed in this chapter.
-\newpage
-Below these items, the command line calls are listed for each of the four typesetting methods discussed so far. Suppose you have a \LaTeX\ source file named Galois.tex and you have opened Apple's Terminal program and changed to the directory containing this source. You could typeset the source file with pdflatex by typing the following line in Terminal:
+
+Below these items, the command line calls are listed for each of the four typesetting methods discussed so far that call pdftex. These items are irrelevant if you switched to Xe\TeX\ or Lua\TeX. Suppose you have a \LaTeX\ source file named Galois.tex and you have opened Apple's Terminal program and changed to the directory containing this source. You could typeset the source file with pdflatex by typing the following line in Terminal:
 \begin{verbatim}
      pdflatex --file-line-error --synctex=1 Galois.tex
 \end{verbatim}
-TeXShop calls the typesetting engine in exactly the same way. These four preference settings list the appropriate four calls.
+TeXShop calls the typesetting engine in exactly the same way. These four preference settings list the appropriate four calls. 
 
 The pdftex defaults use two flags. The first, --file-line-error, tells pdftex how to display errors in the console; TeXShop uses this to take you directly to the source lines with the reported error, as explained later. The second flag, --synctex=1, activates code by Jerome Laurens which tells pdftex to generate sync data during typesetting. TeXShop later uses this data to sync between spots in the source file and corresponding spots in the preview output, as explained later.
 
@@ -5643,88 +5704,6 @@ There is a way to discover all TeXShop Preferences and their current values. In 
 
 These preferences have existed for a long time. Most of them are still active, if seldom used.
 
-\subsubsection{<Obsolete Color Preferences>}
-
-Originally, many syntax colors, foreground and background colors, and other TeXShop colors could be modified using hidden preferences. These preference items still exist, but they now do nothing. Modern colors are determined by themes, which are stored as small files in \path{~/Library/TeXShop/Themes} rather than in the Preferences database.
-
-With syntax coloring, comments are colored red, commands are colored blue, and the symbols \$, \{, and \} are colored dark green. These colors could be changed. A color is determined by the red, green, and blue components of the color; each is a number between 0.00 and 1.00. 
-\begin{verbatim}
-   defaults write TeXShop commentred 0.0
-   defaults write TeXShop commentgreen 1.0
-   defaults write TeXShop commentblue 0.0
-\end{verbatim}
-
-\begin{verbatim}
-   defaults write TeXShop commandred 0.0
-   defaults write TeXShop commandgreen 1.0
-   defaults write TeXShop commandblue 0.0
-\end{verbatim}
-
-\begin{verbatim}
-   defaults write TeXShop markerred 0.0
-   defaults write TeXShop markergreen 1.0
-   defaults write TeXShop markerblue 0.0
-\end{verbatim}
-
-The background color of the source window could be changed. 
-\begin{verbatim}
-   defaults write TeXShop background_R 0.42
-   defaults write TeXShop background_G 0.39
-   defaults write TeXShop background_B 0.77
-\end{verbatim}
-%Warning: the next two items have not worked since version 2.10. They will be fixed eventually, but probably not in the immediate future.
-The text color of the source window could be changed. This change requires that syntax coloring be on.
-\begin{verbatim}
-   defaults write TeXShop foreground_R 0.42
-   defaults write TeXShop foreground_G 0.39
-   defaults write TeXShop foreground_B 0.77
-\end{verbatim}
-
-The color of the insertion point in the source window could be changed.
-\begin{verbatim}
-   defaults write TeXShop insertionpoint_R 0.42
-   defaults write TeXShop insertionpoint_G 0.39
-   defaults write TeXShop insertionpoint_B 0.77
-\end{verbatim}
-
-The background color of the preview window could be changed. This background color will not affect printing.
-\begin{verbatim}
-   defaults write TeXShop Pdfbackground_R 0.42
-   defaults write TeXShop Pdfbackground_G 0.39
-   defaults write TeXShop Pdfbackground_B 0.77
-\end{verbatim}
-The transparency of the source, preview, and console windows could be changed. Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is completely opaque. 
-\begin{verbatim}
-   defaults write TeXShop ConsoleWindowAlpha 0.75
-   defaults write TeXShop SourceWindowAlpha 0.75
-   defaults write TeXShop PreviewWindowAlpha 0.75
-\end{verbatim}
-Version 2.38 of TeXShop introduced new parenthesis matching code and the ability to display invisible characters. The new code employs three colors: a temporary color assigned to parenthesis pairs (magenta), a temporary color assigned to the background of the text between these parenthesis pairs (yellow), and the color of invisible characters (orange). The first of these colors could be changed in the Preference Panel. The other two colors were controlled by hidden preference items:
-\begin{verbatim}
-   defaults write TeXShop highlightContentRed 1.00
-   defaults write TeXShop highlightContentGreen 1.00
-   defaults write TeXShop highlightContentBlue 0.00
-\end{verbatim}
-
-\begin{verbatim}
-   defaults write TeXShop invisibleCharRed 1.00
-   defaults write TeXShop invisibleCharGreen 0.50
-   defaults write TeXShop invislbleCharBlue 0.00
-\end{verbatim}
-
-\begin{verbatim}
-   defaults write TeXShop ReverseSyncRed 1.00
-   defaults write TeXShop ReverseSyncGreen 1.00
-   defaults write TeXShop ReverseSyncBlue 0.00
-\end{verbatim}
-
-Version 2.38 also marks matching parentheses with a yellow badge over the parenthesis which flashes briefly and then disappears. To turn the badge off:
-\begin{verbatim}
-   defaults write TeXShop brieflyFlashYellowForMatch NO
-\end{verbatim}
-
-\newpage
-
 \subsubsection {<Preferences for Line Spacing in the Source Window>}
 The command below sets the line spacing in the source window. The default value 1.0 corresponds to standard single spacing, the value 10.0 corresponds to double spacing, and values outside the range 0.5 < value < 40.0 will be ignored.
 \begin{verbatim}
@@ -5845,93 +5824,10 @@ The following command adds these words
    defaults write TeXShop ConTeXtTags
 \end{verbatim}
 
-\newpage
-\subsubsection{<Obsolete Preferences>}
 
-These items should never be used, but are listed for completeness.
-
-Before TeXShop had a preference to set the font for the console and log windows, there was
-\begin{verbatim}
-   defaults write TeXShop ScreenFontForLogAndConsole YES
-\end{verbatim}
-
-The following preference causes synchronization spots to be shown in the Preview window:
-\begin{verbatim}
-   defaults write TeXShop ShowSyncMarks YES
-\end{verbatim}
-
-TeXShop used to support a different set of source commands to determine the typesetting engine, file encoding, and root file; examples are 
-\begin{verbatim}
-  %&latex, %&encoding= UTF-8 Unicode, %SourceDoc ../Main.tex
-\end{verbatim}
- This syntax was a poor choice on my part and has been changed. If you have a lot of old documents, you can temporarily turn this choice back on using the command below. This preference change should only be made in an emergency.
-\begin{verbatim}
-   defaults write TeXShop UseOldHeadingCommands YES
-\end{verbatim}
-
-The left and right arrow keys scroll left and right if the preview page is narrower than the total page width, but otherwise they page up and down. A hidden preference changes this behavior so the left and right arrow keys always page.
-\begin{verbatim}
-   defaults write TeXShop LeftRightArrowsAlwaysPage YES
-\end{verbatim}
-
-The console text reporting typesetting behavior and errors shows black text. The text can be made to switch to red after the first error with a hidden preference.
-\begin{verbatim}
-   defaults write TeXShop RedConsoleAfterError YES
-\end{verbatim}
-
-In the editing window, a soft line break occurs after words. This behavior can be changed to ``no line break'' = 0, ``line break after words'' = 1, or ``line break after characters'' = 2.
-\begin{verbatim}
-   defaults write TeXShop LineBreakMode 1
-\end{verbatim}
-
-TeXShop  supports SyncTeX. If synctex fails, TeXShop falls back on the Search synchronization method. For users who would like to experiment with synctex by itself, there is a hidden preference to turn off this fallback behavior:
-\begin{verbatim}
-   defaults write TeXShop SyncTeXOnly YES
-\end{verbatim}
- 
- Early versions of TeXShop considered backslash @ to be a single command which ended with the @ sign, so lines like
- the one below in style files would only be partly colored. This was later fixed.
-\begin{verbatim}
-   \ifx\@@input\@undefined\let\@@input\input\fi
-\end{verbatim}
-If you prefer the original method
-\begin{verbatim}
-   defaults write TeXShop MakeatletterEnabled NO
-\end{verbatim}
-
-\subsubsection{<Preferences to Fix Temporary macOS Bugs>}
-
-The items in this section are now irrelevant and mentioned only for historical reasons. When TeXShop was  released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. The bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.
-
-Later a hidden preference was added to release the data if desired. The values of this preference were 0 to release the data on system 10.4.3 or higher, where the bug was less severe, 1 to never release the data, and 2 to always release the data. The default value was 1, causing the program to use the original workaround.
-\begin{verbatim}
-   defaults write TeXShop ReleaseDocumentClasses 1
-\end{verbatim}
-Apple fixed the problem on Leopard and none of these kludges are active on that system or higher.
-
-
-When macOS Mavericks was released, the Preview display of text became slightly flurry on many screens. 
- This problem is long gone, but at the time we attempted to improve the situation with
- \begin{verbatim}
-    defaults write TeXShop FixPreviewBlur YES
- \end{verbatim}
-
-When macOS Mountain Lion was released, Apple  optimized text and font drawing for the Retina display. This caused a few fonts to appear slightly blurry in small sizes on a non Retina display. The following preference reverted back to the earlier behavior. This problem was fixed long ago, so the preference is now irrelevant:
-\begin{verbatim}
-   defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled YES
-\end{verbatim}
 
 \section{Newer Hidden Preferences}
 
-\subsubsection{<Preferences for the Entire Program>}
-
-When macOS is shut down, a dialog appears with an optional check box labeled ``Reopen windows when logging back in.'' If this is checked, all programs running when the machine was shut down will restart the next time the machine is rebooted. One user reported that TeXShop gets into an infinite loop when restarted in this way. I could not reproduce this problem. 
-
-There is a hidden preference  for users who run into this problem. With this preference set, all other programs
-will start when the machine is rebooted, but TeXShop will not. Restart it manually.
-\begin{verbatim}
-   defaults write TeXShop IgnoreStartOnReboot YES
-\end{verbatim}
 
 \subsubsection{<Preferences for the Source Window>}
 
@@ -6083,13 +5979,25 @@ This trick is off by default, but can be turned on to work automatically using
 
 \subsubsection{<Preferences for Apple Intelligence>}
 
-Apple Intelligence in Sequoia 15.2 introduces a new feature called Math Expression Completion. If a user types $e =$ in an editor, the editor automatically adds ``2.718''; if a user types $x + \pi =$, the editor  adds ``3.14159''. This addition is almost never appropriate in TeX source code, so TeXShop 5.48 has a hidden preference item to turn it on or off. By default it is off. To turn it on, issue the command below in Terminal, where the final integer is positive. When this integer is zero, the feature will be turned off.
+Apple Intelligence in Sequoia 15.2 introduces a new feature called Math Expression Completion. If a user types ``$e =$'' in an editor, the editor automatically adds ``2.718''; if a user types ``$x + \pi =$'', the editor  adds ``3.14159''. This addition is almost never appropriate in TeX source code, so TeXShop has a hidden preference item to turn it on or off. By default, it is off.
+
+The feature is controlled by an item in the Apple API called
+MathExpressionCompletion, which has three possible values. The command
 \begin{verbatim}
-   defaults write TeXShop MathExpressionCompletion 1
+   defaults write TeXShop MathExpressionCompletion 0
 \end{verbatim}
+sets this item to NSTextInputTraitTypeNo and turns the feature off. Changing the last integer to 1
+sets the item to NSTextInputTraitTypeYes; changing the last integer to 2 sets the item to
+NSTextInputTraitTypeDefault. Both of these choices turn the feature on. Setting the last integer to any other value sets the item to NSTextInputTraitTypeNo and turns the item off.
 
 
-\newpage
+
+
+
+\section{Obsolete Hidden Preferences}
+
+These settings work around bugs that were later permanently fixed, or were created for
+older versions of the program and no longer do anything.
 
 \subsubsection{<Obsolete Preferences Introduced To Fix a Bug>}
 
@@ -6101,7 +6009,7 @@ Several years ago, a small number of users reported that while typesetting docum
    defaults write RepeatTypesetOnError13 NO
 \end{verbatim}
 
-\subsubsection{<Preferences Related to the Flash Bug>}
+\subsubsection{<Obsolete Preferences Related to the Flash Bug>}
 When Apple rewrote PdfKit, they introduced a significant bug. When a document was scrolled so the first page was not showing in the Preview window, and then the document was typeset, there would be an irritating flash when the new version of the document was loaded. I reported this bug to Apple, who eventually told me they would not be able to fix the bug. However, they suggested that I could fix it in TeXShop using the following elaborate method. Just before reloading the page, cover the preview window with a transparent view. Since the view is transparent, users will not notice it. Now draw a picture of the screen into this transparent view. Users will not notice that  because the new image matches the image underneath. Now update the document. There will be no flash because it is hidden under the new view. Finally remove the covering view.
 
 This fix works and has been used in TeXShop for several years. But it can be turned off:
@@ -6113,7 +6021,7 @@ A key parameter in this fix is the length of time the transparent view remains o
    defaults write TeXShop FlashDelay 0.25
 \end{verbatim}
 
-\subsubsection{<Various Obsolete Preferences>}
+\subsubsection{<Various Obsolete Bugfixes>}
 
 
 A bug in TeXShop 3.38 was caused by a single line of code added to help a few users in Japan. These users
@@ -6147,6 +6055,7 @@ In Yosemite, there was a problem scrolling with left and right arrows in the Pre
    defaults write defaults write TeXShop YosemiteScrollBug NO
 \end{verbatim}
 
+
 Another bug caused blank split pages in the Preview window after typesetting. Our fix could be turned off if Apple later fixed the problem, as they did:
 \begin{verbatim}
    defaults write TeXShop FixSplitBlankPages NO
@@ -6156,6 +6065,174 @@ When scrolling the pdf display with a gesture or mouse in High Sierra, a bug pre
 \begin{verbatim}
    defaults write TeXShop ContinuousHighSierraFix NO
 \end{verbatim}
+
+\subsubsection{<Obsolete Bug for the Entire Program>}
+
+When macOS is shut down, a dialog appears with an optional check box labeled ``Reopen windows when logging back in.'' If this is checked, all programs running when the machine was shut down will restart the next time the machine is rebooted. One user reported that TeXShop gets into an infinite loop when restarted in this way. I could not reproduce this problem. 
+
+There is a hidden preference  for users who run into this problem. With this preference set, all other programs
+will start when the machine is rebooted, but TeXShop will not. Restart it manually.
+\begin{verbatim}
+   defaults write TeXShop IgnoreStartOnReboot YES
+\end{verbatim}
+
+\subsubsection{<Other Obsolete Preferences>}
+
+These items should never be used, but are listed for completeness.
+
+Before TeXShop had a preference to set the font for the console and log windows, there was
+\begin{verbatim}
+   defaults write TeXShop ScreenFontForLogAndConsole YES
+\end{verbatim}
+
+The following preference causes synchronization spots to be shown in the Preview window:
+\begin{verbatim}
+   defaults write TeXShop ShowSyncMarks YES
+\end{verbatim}
+
+TeXShop used to support a different set of source commands to determine the typesetting engine, file encoding, and root file; examples are 
+\begin{verbatim}
+  %&latex, %&encoding= UTF-8 Unicode, %SourceDoc ../Main.tex
+\end{verbatim}
+ This syntax was a poor choice on my part and has been changed. If you have a lot of old documents, you can temporarily turn this choice back on using the command below. This preference change should only be made in an emergency.
+\begin{verbatim}
+   defaults write TeXShop UseOldHeadingCommands YES
+\end{verbatim}
+
+The left and right arrow keys scroll left and right if the preview page is narrower than the total page width, but otherwise they page up and down. A hidden preference changes this behavior so the left and right arrow keys always page.
+\begin{verbatim}
+   defaults write TeXShop LeftRightArrowsAlwaysPage YES
+\end{verbatim}
+
+The console text reporting typesetting behavior and errors shows black text. The text can be made to switch to red after the first error with a hidden preference.
+\begin{verbatim}
+   defaults write TeXShop RedConsoleAfterError YES
+\end{verbatim}
+
+In the editing window, a soft line break occurs after words. This behavior can be changed to ``no line break'' = 0, ``line break after words'' = 1, or ``line break after characters'' = 2.
+\begin{verbatim}
+   defaults write TeXShop LineBreakMode 1
+\end{verbatim}
+
+TeXShop  supports SyncTeX. If synctex fails, TeXShop falls back on the Search synchronization method. For users who would like to experiment with synctex by itself, there is a hidden preference to turn off this fallback behavior:
+\begin{verbatim}
+   defaults write TeXShop SyncTeXOnly YES
+\end{verbatim}
+ 
+ Early versions of TeXShop considered backslash @ to be a single command which ended with the @ sign, so lines like
+ the one below in style files would only be partly colored. This was later fixed.
+\begin{verbatim}
+   \ifx\@@input\@undefined\let\@@input\input\fi
+\end{verbatim}
+If you prefer the original method
+\begin{verbatim}
+   defaults write TeXShop MakeatletterEnabled NO
+\end{verbatim}
+
+\subsubsection{<Other Obsolete Items>}
+
+The items in this section are now irrelevant and mentioned only for historical reasons. When TeXShop was  released on Tiger, users ran into an annoying bug which caused the program to gradually slow to a crawl after several typesetting actions. This bug was fixed a couple of days after the release. The problem occurred when a new pdf file was loaded into the PdfKitView in the Preview window. According to Apple documentation, this should have released the previous data structure from memory. The release did occur, but it caused the program slowdown. The bug fix consisted of tricking the system into believing that the data structures were still being used so the system didn't try to release them.
+
+Later a hidden preference was added to release the data if desired. The values of this preference were 0 to release the data on system 10.4.3 or higher, where the bug was less severe, 1 to never release the data, and 2 to always release the data. The default value was 1, causing the program to use the original workaround.
+\begin{verbatim}
+   defaults write TeXShop ReleaseDocumentClasses 1
+\end{verbatim}
+Apple fixed the problem on Leopard and none of these kludges are active on that system or higher.
+
+
+When macOS Mavericks was released, the Preview display of text became slightly flurry on many screens. 
+ This problem is long gone, but at the time we attempted to improve the situation with
+ \begin{verbatim}
+    defaults write TeXShop FixPreviewBlur YES
+ \end{verbatim}
+
+When macOS Mountain Lion was released, Apple  optimized text and font drawing for the Retina display. This caused a few fonts to appear slightly blurry in small sizes on a non Retina display. The following preference reverted back to the earlier behavior. This problem was fixed long ago, so the preference is now irrelevant:
+\begin{verbatim}
+   defaults write TeXShop NSFontDefaultScreenFontSubstitutionEnabled YES
+\end{verbatim}
+
+
+
+\subsubsection{<Obsolete Color Preferences>}
+
+Originally, many syntax colors, foreground and background colors, and other TeXShop colors could be modified using hidden preferences. These preference items still exist, but they now do nothing. Modern colors are determined by themes, which are stored as small files in \path{~/Library/TeXShop/Themes} rather than in the Preferences database.
+
+With syntax coloring, comments are colored red, commands are colored blue, and the symbols \$, \{, and \} are colored dark green. These colors could be changed. A color is determined by the red, green, and blue components of the color; each is a number between 0.00 and 1.00. 
+\begin{verbatim}
+   defaults write TeXShop commentred 0.0
+   defaults write TeXShop commentgreen 1.0
+   defaults write TeXShop commentblue 0.0
+\end{verbatim}
+
+\begin{verbatim}
+   defaults write TeXShop commandred 0.0
+   defaults write TeXShop commandgreen 1.0
+   defaults write TeXShop commandblue 0.0
+\end{verbatim}
+
+\begin{verbatim}
+   defaults write TeXShop markerred 0.0
+   defaults write TeXShop markergreen 1.0
+   defaults write TeXShop markerblue 0.0
+\end{verbatim}
+
+The background color of the source window could be changed. 
+\begin{verbatim}
+   defaults write TeXShop background_R 0.42
+   defaults write TeXShop background_G 0.39
+   defaults write TeXShop background_B 0.77
+\end{verbatim}
+%Warning: the next two items have not worked since version 2.10. They will be fixed eventually, but probably not in the immediate future.
+The text color of the source window could be changed. This change requires that syntax coloring be on.
+\begin{verbatim}
+   defaults write TeXShop foreground_R 0.42
+   defaults write TeXShop foreground_G 0.39
+   defaults write TeXShop foreground_B 0.77
+\end{verbatim}
+
+The color of the insertion point in the source window could be changed.
+\begin{verbatim}
+   defaults write TeXShop insertionpoint_R 0.42
+   defaults write TeXShop insertionpoint_G 0.39
+   defaults write TeXShop insertionpoint_B 0.77
+\end{verbatim}
+
+The background color of the preview window could be changed. This background color will not affect printing.
+\begin{verbatim}
+   defaults write TeXShop Pdfbackground_R 0.42
+   defaults write TeXShop Pdfbackground_G 0.39
+   defaults write TeXShop Pdfbackground_B 0.77
+\end{verbatim}
+The transparency of the source, preview, and console windows could be changed. Here an alpha value of 0.00 is completely transparent and an alpha value of 1.00 is completely opaque. 
+\begin{verbatim}
+   defaults write TeXShop ConsoleWindowAlpha 0.75
+   defaults write TeXShop SourceWindowAlpha 0.75
+   defaults write TeXShop PreviewWindowAlpha 0.75
+\end{verbatim}
+Version 2.38 of TeXShop introduced new parenthesis matching code and the ability to display invisible characters. The new code employs three colors: a temporary color assigned to parenthesis pairs (magenta), a temporary color assigned to the background of the text between these parenthesis pairs (yellow), and the color of invisible characters (orange). The first of these colors could be changed in the Preference Panel. The other two colors were controlled by hidden preference items:
+\begin{verbatim}
+   defaults write TeXShop highlightContentRed 1.00
+   defaults write TeXShop highlightContentGreen 1.00
+   defaults write TeXShop highlightContentBlue 0.00
+\end{verbatim}
+
+\begin{verbatim}
+   defaults write TeXShop invisibleCharRed 1.00
+   defaults write TeXShop invisibleCharGreen 0.50
+   defaults write TeXShop invislbleCharBlue 0.00
+\end{verbatim}
+
+\begin{verbatim}
+   defaults write TeXShop ReverseSyncRed 1.00
+   defaults write TeXShop ReverseSyncGreen 1.00
+   defaults write TeXShop ReverseSyncBlue 0.00
+\end{verbatim}
+
+Version 2.38 also marks matching parentheses with a yellow badge over the parenthesis which flashes briefly and then disappears. To turn the badge off:
+\begin{verbatim}
+   defaults write TeXShop brieflyFlashYellowForMatch NO
+\end{verbatim}
+
 
 \chapter{Unusual Bugs}
 

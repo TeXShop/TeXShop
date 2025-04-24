@@ -316,6 +316,7 @@ withDarkColors = NO;
     
     [self readExplColors];
     [self setToggleEditModeCheck:0];
+    WindowAfterTypeset = textWindow;
     
     
     /*

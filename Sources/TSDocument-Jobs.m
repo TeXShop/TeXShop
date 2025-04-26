@@ -2274,6 +2274,15 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                         [self.pdfKitWindow setTitle: [[[self fileTitleName] stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"]]; // removed by Terada
                         [self fillLogWindowIfVisible];
                         
+                        front = [SUD boolForKey: BringPdfFrontOnTypesetKey];
+                        if (front || (! [self.pdfKitWindow isVisible]))
+                            [self.pdfKitWindow makeKeyAndOrderFront: self];
+                        {
+                            if (self.useOldSyncParser)
+                                [self allocateSyncScannerOld];
+                            else if (! self.useConTeXtSyncParser)
+                                [self allocateSyncScanner];
+                        }
                         
                         myFrontOnTypeset = [SUD integerForKey: BringFrontOnTypesetKey];
                         if (myFrontOnTypeset == 2)
@@ -2281,8 +2290,8 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                             if (WindowAfterTypeset == textWindow)
                                 [self.textWindow makeKeyAndOrderFront: self];
                             
-                            else if (WindowAfterTypeset == self.pdfKitWindow)
-                                [self.pdfKitWindow makeKeyAndOrderFront: self];
+                            // else if (WindowAfterTypeset == self.pdfKitWindow)
+                            //    [self.pdfKitWindow makeKeyAndOrderFront: self];
                             
                             else if (WindowAfterTypeset == outputWindow)
                                 [outputWindow makeKeyAndOrderFront: self];
@@ -2301,7 +2310,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                             
                         }
                         
-                        
+                        /*
                         else
                         {
                             
@@ -2317,6 +2326,7 @@ if ((whichEngineLocal != 3) && (whichEngineLocal != 4) && (! fromMenu)) { //don'
                                     [self allocateSyncScanner];
                             }
                         }
+                        */
                     }
                     else {
                         [self fillLogWindowIfVisible];

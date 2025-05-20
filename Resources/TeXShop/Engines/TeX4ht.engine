@@ -4,7 +4,8 @@
 
 set path= ($path /Library/TeX/texbin /usr/texbin /usr/local/bin)
 
-make4ht "$1" "mathjax"
+pdflatex -file-line-error -synctex=1 "$1"
 
-pdflatex  -file-line-error -synctex=1 "$1"
+make4ht -c MyConfig/myconfigfile.cfg "$1" "mathjax"
+
 

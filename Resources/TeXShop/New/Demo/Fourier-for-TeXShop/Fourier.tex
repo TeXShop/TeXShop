@@ -1,4 +1,5 @@
 % !TEX TS-program = pdflatex
+% Alternate engine: TeX4ht
 \documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
 \geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
@@ -25,25 +26,20 @@
 \newtheorem{warning}{Warning}
 \def\Re{\mbox{Re}}
 
+% \usepackage{mymacros}
 
 \title{Dirichlet's Theorem}
 \author{Richard Koch}
 
 \begin{document}
-
-% The code below activates direct html input into the TeX4ht document, and then
-% activates SageMath
+ \maketitle
+ %\tableofcontents
+ 
+\section{Waves} 
 
 \ifx\HCode\undefined
 \else
- % declare environment foo:
- \ScriptEnv{html}
-    {\ifvmode\IgnorePar\fi\EndP\NoFonts\hfill\break }
-    {\EndNoFonts }
-  \fi
 
- \ifx\HCode\undefined
- \else
  \begin{html}
  <script src="https://sagecell.sagemath.org/static/embedded_sagecell.js"></script>
 <script>
@@ -56,12 +52,10 @@
                            evalButtonText: 'Evaluate'});
     </script>
  \end{html}
- \fi
- 
- \maketitle
- %\tableofcontents
- 
-\section{Waves} 
+
+\fi
+
+ % We have $\U$ and $\V$ and $\S$ and $\R$ and also $\ZZ$.
 
 A {\em wave} is a periodic function \(f(x)\). This means that there is a fixed \(p\), called a  {\em period of} \(f\), and for all \(x\) we have \(f(x + p) = f(x)\). We can change the period by an easy renormalization, so from now on all waves have period \(2 \pi\).
 
@@ -187,7 +181,9 @@ This argument fails if $k = l$ because we cannot divide by zero. But in that cas
 
 \begin{theorem}[Fourier]
 The $c_k$ are given by
-\[c_k = {1 \over {2 \pi}} \int_{- \pi}^\pi f(x) e^{- i k x} \ dx\]
+\begin{equation} \label{eq:hello}
+c_k = {1 \over {2 \pi}} \int_{- \pi}^\pi f(x) e^{- i k x} \ dx
+\end{equation}
 \end{theorem}
 
 {\em Proof}: Suppose $f(x) = \sum_{m = - \infty}^\infty c_m e^{imx}$. Multiply by sides by $\overline{e^{i k x}}$ to obtain
@@ -204,7 +200,9 @@ Integrate both sides from $- \pi$ to $\pi$ and assume it is legal to integrate t
  
  \begin{theorem}
  Suppose $f(x)$ takes real values. Then the $c_k$ computed using Fourier's formula satisfy
- $$c_{-k} = \overline{c_k}$$
+ \begin{equation} \label{eq:two}
+ c_{-k} = \overline{c_k}
+ \end{equation}
 \end{theorem}
 
 {\em Proof} Conjugate the formula $c_k = {1 \over {2 \pi}} \int_{- \pi}^\pi f(x) e^{- i k x} \ dx$. Since $f$ is real valued, it does not change, and so the only change on the right side is that $e^{-i k x}$ becomes
@@ -261,8 +259,12 @@ $1 = {4 \over \pi} \left(1 - {1 \over 3} + {1 \over 5} - \ldots\right)$ and thus
 \ifx\HCode\undefined
 \section{First Steps}
 
+Here is an entirely irrelevant link to the slides of a talk I once gave at Cal Poly Humboldt in Arcata, California: \url{https://pages.uoregon.edu/koch/HumboldtTalk.pdf}
+
 \else
 \section{Interactive Experiments}
+
+Here is an entirely irrelevant link to the slides of a talk I once gave at Cal Poly Humboldt in Arcata, California: \url{https://pages.uoregon.edu/koch/HumboldtTalk.pdf}
 
 Below are the interactive experiments from the original Fourier project. 
 \begin{html}
@@ -467,8 +469,8 @@ a2.show()
 <h3> Calling UTube</h3>
 
 <p> Here is a lecture by John Maynard, who recently won a Fields Prize.
-
-<iframe width="928" height="522" src="https://www.youtube.com/embed/kQqBeuk_xQw" title="13. Large gaps between primes in subsets - James Maynard (University of Oxford) [2017]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<!-- 928 x 522, multiply by .75  -->
+<iframe width="696" height="392" src="https://www.youtube.com/embed/kQqBeuk_xQw" title="13. Large gaps between primes in subsets - James Maynard (University of Oxford) [2017]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <h3>Mathematics</h3>
 
@@ -482,8 +484,6 @@ And \(\alpha, \beta, \Gamma^{i_1}_{j_1 j_2}\).
 \end{html}
 
 \fi
-
-Here is an entirely irrelevant link to the slides of a talk I once gave at Cal Poly Humboldt in Arcata, California: \url{https://pages.uoregon.edu/koch/HumboldtTalk.pdf}
 
 \section{About PreTeXt}
 
@@ -745,5 +745,6 @@ $f(x_0^+) = R$ and $J = R - L$. Then $f(x) - {J \over 2} S(x - x_0)$ has no jump
 can be computed from either the left or the right, and from the right we get \[f(x_0^+) - {J \over 2} = R - {{R - L} \over 2} = {{R + L} \over 2}\]
 By the theorem already proved, the Fourier series of $f(x) - {J \over 2} S(x - x_0)$ converges at $x_0$ to the value of the function there and thus to ${{R + L} \over 2}$. But this Fourier series is just the Fourier series of $f$ minus ${J \over 2}$ times the Fourier series of $S(x - x_0)$. We already know that this second series converges to zero at $x_0$,  so the series of $f(x)$ must converge to ${{R + L} \over 2}$. QED. 
 
+Two equations have labels. They are the equation \ref{eq:hello} and also \eqref{eq:two}.
 
 \end{document}  
